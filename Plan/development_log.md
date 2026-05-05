@@ -56,3 +56,22 @@ Added planning files:
 - `Plan/06_project_operating_principles.md`
 - `Plan/07_phased_roadmap.md`
 - `Plan/08_new_session_checklist.md`
+
+Full skeleton request completed:
+
+- Added repository `README.md`.
+- Added `.env.example` and Docker Compose with PostgreSQL, backend, and frontend services.
+- Added FastAPI backend skeleton under `backend/`.
+- Added SQLAlchemy session/base and initial person/alias models.
+- Added Alembic migration skeleton.
+- Added domain constants for duty types and call levels.
+- Added first hard-rule validator for 24-hour duty spacing.
+- Added pytest test skeleton for health and spacing validation.
+- Added Vite + TypeScript frontend skeleton under `frontend/`.
+- Added API metadata loading in the frontend to prove backend/frontend contract shape.
+- Updated roadmap checklists for completed scaffold items.
+
+Verification:
+
+- `python -m compileall backend\app backend\tests` passed.
+- `python -m pytest backend\tests` could not run because `pytest` is not installed in the current Python environment yet.

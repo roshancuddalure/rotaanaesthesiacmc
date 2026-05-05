@@ -16,8 +16,8 @@ Checklist:
 - [x] Record evidence-based operating principles.
 - [x] Initialize Git repository.
 - [x] Create first Git commit.
-- [ ] Create base project scaffold.
-- [ ] Add README for developers.
+- [x] Create base project scaffold.
+- [x] Add README for developers.
 
 Deliverable:
 
@@ -29,14 +29,14 @@ Goal: define the domain in code before UI complexity starts.
 
 Checklist:
 
-- [ ] Create Python backend project structure.
+- [x] Create Python backend project structure.
 - [ ] Add PostgreSQL-ready schema models.
 - [ ] Define duty type enum/config.
 - [ ] Define call level enum/config.
 - [ ] Define person, alias, unit, posting, leave, duty slot, and assignment models.
 - [ ] Define configurable rule settings for duty limits and spacing.
 - [ ] Add rule version/effective-date structure.
-- [ ] Add pytest setup.
+- [x] Add pytest setup.
 
 Deliverable:
 
@@ -69,8 +69,8 @@ Goal: give rota admins a usable web interface.
 
 Checklist:
 
-- [ ] Create Vite + TypeScript frontend.
-- [ ] Create FastAPI JSON endpoints.
+- [x] Create Vite + TypeScript frontend.
+- [x] Create FastAPI JSON endpoints.
 - [ ] Add admin-only authentication placeholder or simple login.
 - [ ] Add dashboard shell/navigation.
 - [ ] Add people list and person profile.
@@ -158,7 +158,7 @@ Goal: make the app reliable for team use.
 
 Checklist:
 
-- [ ] Dockerize backend/frontend/database.
+- [x] Dockerize backend/frontend/database.
 - [ ] Add backup and restore workflow.
 - [ ] Add production configuration.
 - [ ] Add proper authentication.
