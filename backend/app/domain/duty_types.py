@@ -61,6 +61,7 @@ DUTY_TYPES: tuple[DutyType, ...] = (
     duty_type("CB_CO3RD_24HR", "CB Co-3rd Call", "cb", True),
     duty_type("CB_CO4TH_24HR", "CB Co-4th Call", "cb", True),
     duty_type("CB_CO_12HR", "CB Co-Call 12hr", "cb"),
+    duty_type("CB_PAEDS", "CB Paeds", "cb"),
     duty_type("CAESAR_A_12HR", "Caesar A", "caesar"),
     duty_type("CAESAR_B_24HR", "Caesar B", "caesar", True),
     duty_type("RC_1ST_A_24HR", "RC 1st Call A", "rc", True),
@@ -71,6 +72,7 @@ DUTY_TYPES: tuple[DutyType, ...] = (
     duty_type("RC_CO3RD_24HR", "RC Co-3rd Call", "rc", True),
     duty_type("RC_CO4TH_24HR", "RC Co-4th Call", "rc", True),
     duty_type("RC_12HR", "RC 12hr", "rc"),
+    duty_type("RC_CO_12HR", "RC Co-Call 12hr", "rc"),
     duty_type("SCHELL_24HR", "Schell Call", "schell", True),
     duty_type("FLOATING_24HR", "Floating Consultant", "floating", True),
     duty_type("FIFTH_CALL", "5th Call", "fifth_call", True),
@@ -82,4 +84,3 @@ DUTY_TYPES: tuple[DutyType, ...] = (
     duty_type("PAEDS_CALL", "Paeds Call", "paeds"),
     duty_type("NEURO_DEPT", "Neuro Department", "neuro"),
 )
-

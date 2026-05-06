@@ -94,22 +94,33 @@ Weekend means Saturday or Sunday. Track weekend status for all duty types, even 
 4. For each unit column cell:
    - split special posting rows by slash or comma;
    - clean each name;
+   - discard non-person labels and date ranges;
    - map category to call level or posting type;
    - emit person-month unit/call level or posting record.
 5. If a unitwise file covers multiple months, apply it to each covered month.
 
 ## Name Resolution Decision Tree
 
-1. Clean obvious suffix noise:
+1. Reject non-person values before creating member records:
+   - blank, x/xxxx/xxxxx placeholders,
+   - pure numbers such as 2, 5, 2.0,
+   - date/date-range strings,
+   - header labels such as Date, Day, Unit, Unit I,
+   - campus/posting labels such as MAIN, RC, PAC, ICU, SICU, DRP, Pain Call,
+   - guide-listed non-person placeholders such as Dr Aadil, Dr Harish, Dr Prabhu.
+2. Clean obvious suffix noise:
    - date ranges,
    - ICU/SICU/MICU/DRP/BP/ONLY markers,
    - parenthetical qualifiers,
+   - till/until date suffixes such as "Kiruthiga - Till sept 27",
    - trailing punctuation.
-2. Apply explicit alias table.
-3. Apply case normalization and common spelling variant mappings.
-4. If confidence is high, link to canonical person.
-5. If ambiguous, place into duplicate review queue.
-6. Never merge known distinct people automatically.
+3. Split unitwise special-posting composite cells by slash or comma, then clean each part.
+4. Do not split rota-duty cells like "KISHORE / HANSON" automatically; treat those as scheduling notes unless manually reviewed.
+5. Apply explicit alias table.
+6. Apply case normalization and common spelling variant mappings.
+7. If confidence is high, link to canonical person.
+8. If ambiguous, place into duplicate review queue.
+9. Never merge known distinct people automatically.
 
 Known distinct people from the reference guide include:
 
@@ -123,6 +134,22 @@ Known distinct people from the reference guide include:
 - Joel Koil Raj and Joel Daniel.
 - Karthik Pandian and Karthik S.
 - Jeenu Ann Jose and Jeenu D.
+
+## CMC Anaesthesia Guide Notes
+
+Source: `d:\00 ANESTHESIA CMC\rota\algo\CMC_Anaesthesia_Duty_Analysis_Guide.md`.
+
+Key framework:
+
+- Rota files define duty assignments by day.
+- Unitwise files define monthly unit, call level, and special posting context.
+- PAC, shifts, Caesar A, CB co-call 12hr, RC 12hr, RC co-call 12hr, CHAD, RUHSA, Neuro department, CART, and 5th call are tracked outside the main 24-hour duty total according to their category rules.
+- Schell + Floating combined rows must emit two records for the same person/date: `SCHELL_24HR` and `FLOATING_24HR`.
+- 5th call is consultant/faculty on-call, tracked separately, not included in main 24-hour totals.
+- Floating consultant is included in main 24-hour totals.
+- Call level and promotion tracking come from unitwise data, not from rota duty rows.
+- Special postings such as Pain, SICU/ICU, DRP, and Neuro ICU come from unitwise data.
+- Deduplication is a controlled admin process. Similar names may be different people; known distinct-person pairs from the guide must not be auto-merged.
 
 ## Leave Conflict Decision Tree
 

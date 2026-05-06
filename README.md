@@ -47,6 +47,28 @@ uvicorn app.main:app --reload
 pytest
 ```
 
+## One-command Launch
+
+From the project root:
+
+```powershell
+.\start.ps1
+```
+
+This checks backend/frontend dependencies, uses your existing local PostgreSQL when it is already reachable, starts PostgreSQL through Docker when available, waits for the database, applies migrations, starts the FastAPI backend, starts the Vite frontend, and opens the app in your browser.
+
+On Windows you can also use:
+
+```powershell
+.\launch.bat
+```
+
+If PowerShell blocks scripts on your machine, run:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\start.ps1
+```
+
 ## Frontend
 
 Planned local commands:
@@ -75,4 +97,3 @@ Before changing architecture or domain behavior, read:
 - `Plan/08_new_session_checklist.md`
 
 Important discoveries and implementation decisions must be logged in `Plan/development_log.md`.
-

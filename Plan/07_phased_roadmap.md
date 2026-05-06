@@ -30,12 +30,12 @@ Goal: define the domain in code before UI complexity starts.
 Checklist:
 
 - [x] Create Python backend project structure.
-- [ ] Add PostgreSQL-ready schema models.
-- [ ] Define duty type enum/config.
-- [ ] Define call level enum/config.
-- [ ] Define person, alias, unit, posting, leave, duty slot, and assignment models.
-- [ ] Define configurable rule settings for duty limits and spacing.
-- [ ] Add rule version/effective-date structure.
+- [x] Add PostgreSQL-ready schema models.
+- [x] Define duty type enum/config.
+- [x] Define call level enum/config.
+- [x] Define person, alias, unit, posting, leave, duty slot, and assignment models.
+- [x] Define configurable rule settings for duty limits and spacing.
+- [x] Add rule version/effective-date structure.
 - [x] Add pytest setup.
 
 Deliverable:
@@ -46,18 +46,21 @@ Deliverable:
 
 Goal: import Jan 2025 to May 2026 historical data into the new system.
 
+Status: historical rota/unitwise parsing and normalized import are working locally, with traceability and admin mapping review in place.
+
 Checklist:
 
-- [ ] Build rota Excel parser.
-- [ ] Build unitwise Excel parser.
-- [ ] Implement date reconstruction.
-- [ ] Implement duty classification rules.
+- [x] Build rota Excel parser.
+- [x] Build unitwise Excel parser.
+- [x] Implement date reconstruction.
+- [x] Implement duty classification rules.
 - [ ] Implement PAC block override.
-- [ ] Implement name cleaning and alias mapping.
+- [x] Implement name cleaning and alias mapping.
 - [ ] Implement special posting extraction.
-- [ ] Store import batches and source traceability.
+- [x] Add admin-editable duty/unit/posting mapping configuration.
+- [x] Store import batches and source traceability.
 - [ ] Produce import validation report.
-- [ ] Seed historical records.
+- [x] Seed historical records.
 
 Deliverable:
 
@@ -71,9 +74,12 @@ Checklist:
 
 - [x] Create Vite + TypeScript frontend.
 - [x] Create FastAPI JSON endpoints.
-- [ ] Add admin-only authentication placeholder or simple login.
-- [ ] Add dashboard shell/navigation.
+- [x] Add admin-only authentication placeholder or simple login.
+- [x] Add dashboard shell/navigation.
 - [ ] Add people list and person profile.
+- [x] Add department members management foundation.
+- [x] Add name deduplication review foundation.
+- [x] Add trusted roster reconciliation.
 - [ ] Add alias review screen.
 - [ ] Add import center and import status screen.
 - [ ] Add validation issues screen.
@@ -144,7 +150,7 @@ Checklist:
 - [ ] Export finalized rota to Excel.
 - [ ] Match familiar department spreadsheet layout where possible.
 - [ ] Export analysis tables to Excel.
-- [ ] Build dashboard analytics.
+- [x] Build dashboard analytics.
 - [ ] Add self-contained offline HTML report export if feasible.
 - [ ] Add report audit metadata: date generated, source/rule version, filters.
 

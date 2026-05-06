@@ -87,3 +87,64 @@ The system should be an admin-facing web app that can:
 5. Export final rota outputs to Excel.
 6. Generate analysis reports, including offline HTML if feasible.
 
+## 2026-05-06 User Direction
+
+### Admin-Controlled Mapping
+
+Duty-label mapping, unit mapping, and posting/group mapping must be comprehensively editable from the frontend admin panel.
+
+Implication:
+
+- Parser mappings should not be locked only in backend code.
+- Historical import should seed suggested mappings, but rota admins must be able to review and change them.
+- The rota board and import pipeline should use the admin-approved mapping configuration.
+- Uncertain labels should be surfaced as review items rather than silently guessed.
+
+### Dynamic Analysis Dashboard
+
+The app should have a native Analysis section similar in coverage to the existing standalone HTML report, but integrated into the software UX.
+
+Implication:
+
+- The dashboard should be computed dynamically from normalized database records.
+- Analysis should update after each monthly rota is approved/finalized.
+- Draft rota periods should not affect official analysis totals.
+- Historical imported periods can be included as analysis-ready data.
+- The old HTML report is evidence for useful metrics, not the UI implementation to embed directly.
+
+### Department Members And Deduplication
+
+The software needs a dedicated department members management section.
+
+Implication:
+
+- The department member list should be maintained separately from raw imported names.
+- Imported name variants should be deduplicated through an admin review pass.
+- Canonical members should keep aliases so future imports can resolve names correctly.
+- Member designation/promotion history should be stored with effective dates.
+- Analytics and rota workflows should eventually use canonical members and designation history.
+- Invalid imported names must be blocked or cleaned before they become department members.
+- Non-person spreadsheet values such as date labels, unit headers, campus labels, placeholders, and numeric artifacts should be discarded.
+
+### Login And Privileges
+
+The system should now use rota-team login accounts.
+
+Implication:
+
+- Supported roles are rota board member, computer admin, and superadmin.
+- Computer admin and superadmin can access software diagnostics.
+- Superadmin can create login accounts for the rota team.
+- The default seeded superadmin is username `rotachief` with password `rotateam`.
+- Forgot-password support can create a local reset token during this development phase; production delivery should later move to email/SMS or another secure channel.
+
+### Trusted Department Roster
+
+`Plan/Data/ANAESTHESIA department doctors(namelist).xlsx` is the trusted reference for corrected department member names.
+
+Implication:
+
+- Roster reconciliation should use this workbook to canonicalize imported person names.
+- Previous imported spellings must be preserved as aliases.
+- Conservative exact/near-exact matching is preferred over risky broad fuzzy merges.
+- Invalid spreadsheet artifacts should still be handled by the invalid-member cleanup pass.
