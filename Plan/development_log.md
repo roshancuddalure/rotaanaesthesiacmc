@@ -729,3 +729,293 @@ Analysis rule reconciliation against guide/reference:
 - Verification:
   - backend `pytest tests` passed: 35 tests,
   - frontend `npm run build` passed after Windows/Vite sandbox escalation.
+
+## 2026-05-07 - Rota Board UX Phase 1
+
+Goal:
+
+- Shift the main frontend away from a computer-admin/debug console and toward a rota-board working interface.
+- Hide manual review, duplicate cleanup, alias review, import diagnostics, mapping controls, and raw admin machinery from rota board users.
+
+Implemented:
+
+- Added `Plan/11_rota_board_ux_plan.md` as the dedicated UX direction and phase tracker.
+- Changed frontend shell branding from `Admin console` to `Rota board`.
+- Board-facing navigation now shows:
+  - Overview,
+  - Duty Analysis,
+  - Department Members,
+  - coming-soon board tools.
+- Admin-only navigation now appears under an `Admin tools` group for `computer_admin` and `superadmin`:
+  - Mappings,
+  - Historical Import,
+  - Login Accounts,
+  - Diagnostics.
+- Overview now shows board-relevant duty metrics instead of mapping/import counts:
+  - total 24hr duties,
+  - weekend 24hr duties,
+  - active personnel,
+  - months analysed,
+  - top total duty load,
+  - top weekend duty load.
+- Department Members now hides audit/cleanup/duplicate/reconciliation tools for rota board users.
+- Department Members call-level control is read-only for rota board users and editable only for admin roles.
+- Direct frontend access to hidden admin views redirects non-admin users back to Overview.
+- Frontend historical import type was updated to match the cleaned historical-analysis import response shape.
+
+Small correctness fixes found during verification:
+
+- `call_level_from_posting()` now handles underscore/hyphen posting types such as `1ST_CALL`.
+- Bare `Priyadarshini` is no longer swallowed by a broad exact alias and remains context-resolved.
+- Bare `Joanna` maps to historical `Joanna`; `Joanna Emmanuel` remains a distinct full-name alias.
+
+Verification:
+
+- Frontend `npm run build` passed after Windows/Vite sandbox escalation.
+- Backend `pytest -q` passed: 50 tests.
+
+## 2026-05-07 - Rota Board UX Phase 2
+
+Goal:
+
+- Polish the board-facing frontend so it reads as a rota-board workload review tool, not an admin/debug console.
+
+Implemented:
+
+- Added a stronger Overview hierarchy with a workload summary header, period label, and direct actions for Duty Analysis and Department Members.
+- Added board insight cards for highest total duty load, highest weekend duty load, and active personnel coverage.
+- Highlighted key board metrics:
+  - total 24hr duties,
+  - weekend 24hr duties,
+  - weekend share,
+  - average 24hr duties per active person.
+- Renamed Analysis tabs to board-facing labels:
+  - Board Summary,
+  - People,
+  - Weekend Load,
+  - Duty Mix,
+  - CART / Schell,
+  - PAC / Shifts,
+  - Call Changes.
+- Renamed overview analysis headings and `Total records` wording to `Assignments reviewed`.
+- Grouped individual person popup metrics into:
+  - Duty Load,
+  - Campus Calls,
+  - Special Duties.
+- Department Members now shows active, historical, and call-level summary chips for board users.
+- Renamed Department Members position disclosure to `Position Mix`.
+
+Verification:
+
+- Frontend `npm run build` passed after Windows/Vite sandbox escalation.
+
+## 2026-05-07 - Rota Board UX Phase 3
+
+Goal:
+
+- Convert the board-facing frontend to work cleanly on phone and tablet widths.
+
+Implemented:
+
+- Added mobile card fallbacks for wide Analysis tables in:
+  - Weekend Load,
+  - Duty Mix,
+  - CART / Schell,
+  - 5th Call,
+  - PAC / Shifts,
+  - Postings,
+  - Call Changes.
+- Preserved the richer desktop table views while hiding them on mobile where card fallbacks exist.
+- Made the individual person popup behave like a full-screen mobile sheet.
+- Improved mobile analysis tabs with larger touch targets and horizontal snap scrolling.
+- Added a mobile-only bottom navigation bar for Overview, Analysis, and Members.
+- Synced active state between sidebar navigation and mobile bottom navigation.
+- Improved mobile analysis search, count wrapping, card row wrapping, and long text overflow handling.
+- Reduced mobile chart height and bar width so graphs fit smaller screens better.
+- Improved mobile topbar/member/filter layouts for touch use.
+
+Verification:
+
+- Frontend `npm run build` passed after Windows/Vite sandbox escalation.
+
+## 2026-05-07 - Leave Management Engine Planning
+
+Goal:
+
+- Convert the rough leave-management note into a 360-degree planning document before implementation.
+
+Created:
+
+- `Plan/leave management engine/01_leave_management_engine_planning_report.md`
+- `Plan/leave management engine/02_leave_engine_reference_notes.md`
+
+Planning decisions recommended:
+
+- Use CSV as the official upload template.
+- Support XLSX as a convenience upload converted into the same internal row schema.
+- Map leave only to canonical Department Members.
+- Keep manual leave entry/editing selector-based, not free text.
+- Treat approved leave as a hard rota conflict.
+- Treat pending/requested leave as a warning unless the department decides otherwise.
+- Build unit-wise and call-level leave pressure dashboards.
+- Keep entitlement/balance calculation out of MVP unless explicitly requested.
+
+Implementation recommendation:
+
+- Start with manual leave API and calendar storage first.
+- Add import preview after the core leave model works.
+- Integrate with rota generation only after leave conflicts and daily blocks are reliable.
+
+## 2026-05-07 - Leave Engine First Layer
+
+Goal:
+
+- Build the first usable leave-management layer before final leave slot/call-level slot rules are provided.
+
+Implemented:
+
+- Added `Plan/leave management engine/03_leave_engine_first_layer_action_plan.md`.
+- Extended `LeaveRequest` with:
+  - `leave_slot`,
+  - `raw_person_name`,
+  - `updated_at`.
+- Added Alembic migration:
+  - `backend/alembic/versions/20260507_0007_leave_first_layer.py`.
+- Added leave service helpers for:
+  - month bounds,
+  - inclusive leave-day counting,
+  - month overlap filtering,
+  - daily leave calendar entries,
+  - monthly leave summary,
+  - unit/call-level context lookup.
+- Added authenticated leave API routes:
+  - `GET /api/v1/leave/requests`,
+  - `POST /api/v1/leave/requests`,
+  - `PUT /api/v1/leave/requests/{leave_id}`,
+  - `POST /api/v1/leave/requests/{leave_id}/cancel`,
+  - `GET /api/v1/leave/calendar`.
+- Added frontend leave API types and functions.
+- Added board-facing `Leave` navigation in sidebar and mobile bottom nav.
+- Added first Leave screen with:
+  - month selector,
+  - summary metrics,
+  - call-level/unit breakdown,
+  - manual leave form using Department Member dropdown,
+  - month calendar pressure cards,
+  - leave list and mobile cards,
+  - cancel action.
+- Kept leave entry selector-based; no free-text member creation in the board UI.
+- Fixed the historical name-resolution regression where bare `Joanna` must map to historical `Joanna`, not `Joanna Emmanuel`.
+
+Verification:
+
+- Backend `pytest -q` passed: 52 tests.
+- Frontend `npm run build` passed after Windows/Vite sandbox escalation.
+
+Follow-up migration deployment work:
+
+- Applied local database migration to Alembic head `20260507_0007`.
+- Updated backend Docker image build to include:
+  - `alembic.ini`,
+  - `backend/alembic`,
+  - `backend/docker-entrypoint.sh`.
+- Added Docker entrypoint that runs `alembic upgrade head` before starting Uvicorn.
+- This makes fresh Docker deployments auto-apply database migrations when the backend container starts.
+- Re-verified backend tests after migration deployment change: `pytest -q` passed, 52 tests.
+
+Leave section runtime fix:
+
+- Fixed a frontend calendar crash caused by local-time date arithmetic rolling ISO dates backward in UTC.
+- `addDaysIso()` now uses UTC-safe date math.
+- Leave calendar day labels now render with UTC date formatting to avoid timezone date shifts.
+- Verification:
+  - frontend `npm run build` passed,
+  - backend `pytest tests/test_leave.py -q` passed.
+
+## 2026-05-07 - Unit Management Planning
+
+Goal:
+
+- Plan the Unit Management system before implementation, because it must drive leave-aware and elective-staffing-aware rota slot generation.
+
+Created:
+
+- `Plan/unit management engine/01_unit_management_interface_and_workflow_plan.md`
+- `Plan/unit management engine/02_unit_management_first_layer_action_plan.md`
+
+Planning direction:
+
+- Unit Management should assign Department Members to monthly units by call level/posting type.
+- It should use existing `Unit` and `PersonPosting` models as the foundation.
+- It should calculate daily unit availability from:
+  - monthly unit assignments,
+  - leave requests,
+  - duty assignments,
+  - future post-duty/rest rules.
+- First implementation layer should be manual assignment board plus basic validation.
+- Final rota-generator slot adjustment should wait until unit staffing thresholds and duty-to-elective blocking rules are confirmed.
+
+## 2026-05-07 - Unit Management First Layer
+
+Implemented:
+
+- Added `backend/app/services/unit_management.py` for:
+  - active units,
+  - monthly unit assignment lookup,
+  - posting type normalization,
+  - leave-aware unit summaries,
+  - basic monthly assignment validation.
+- Added authenticated Unit Management API routes:
+  - `GET /api/v1/units`,
+  - `GET /api/v1/unit-management/month`,
+  - `POST /api/v1/unit-management/assignments`,
+  - `PUT /api/v1/unit-management/assignments/{assignment_id}`,
+  - `DELETE /api/v1/unit-management/assignments/{assignment_id}`.
+- Added frontend Unit Management section with:
+  - month selector,
+  - assignment metrics,
+  - validation panel,
+  - add/edit assignment form,
+  - unit/call-level grouped member cards,
+  - assignment table for desktop,
+  - responsive mobile cards.
+- Fixed mobile bottom nav layout to support all five board sections.
+- Kept the workflow Department Member based; no alias/debug review UI is exposed on the rota-board screen.
+- Added `backend/tests/test_unit_management.py`.
+
+Verification:
+
+- Backend `pytest -q` passed: 54 tests.
+- Frontend `npm run build` passed after Windows/Vite sandbox escalation.
+
+## 2026-05-07 - Unit Management Phase 2
+
+User clarification:
+
+- The Unit Management board must start fresh for a month and should not show already-imported/historical unitwise assignments.
+- Assignments added by the rota team should still be recorded and reloadable.
+- Unit cards should open a popup where members can be added, removed, edited, or moved to another unit.
+- Validation warnings should be collapsible instead of taking over vertical page space.
+
+Implemented:
+
+- Unit Management now filters monthly assignments to `PersonPosting.source == "unit_board"`.
+- New Unit Management assignments are saved with `source = "unit_board"`.
+- Historical/imported postings remain available for other analysis/import flows but no longer populate the Unit Management board.
+- Unit cards now open a unit-specific popup.
+- The popup includes:
+  - leave-aware unit summary,
+  - collapsible unit validation,
+  - editable assignment rows,
+  - add-member form,
+  - remove action,
+  - unit move control.
+- Replaced the page-level add/edit workflow with popup-based unit editing.
+- Made the main validation section collapsible.
+- Added test coverage to confirm historical/imported postings are ignored by Unit Management.
+
+Verification:
+
+- Backend `pytest tests/test_unit_management.py -q` passed.
+- Backend `pytest -q` passed: 54 tests.
+- Frontend `npm run build` passed after Windows/Vite sandbox escalation.

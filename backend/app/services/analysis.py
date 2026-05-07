@@ -3,6 +3,7 @@ import csv
 from dataclasses import dataclass, field
 from datetime import date
 from pathlib import Path
+import re
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
@@ -19,9 +20,34 @@ CALL_LEVEL_RANKS = {
     "1ST_CALL": 1,
     "2ND_CALL": 2,
     "3RD_CALL": 3,
+    "CO_3RD_CALL": 3,
     "CO_4TH_CALL": 4,
     "4TH_CALL": 5,
     "5TH_CALL": 6,
+}
+# Maps duty_type → implied call level, used as fallback when no posting record exists
+DUTY_TYPE_CALL_LEVEL: dict[str, str] = {
+    "MAIN_1ST_24HR": "1ST_CALL",
+    "MAIN_1ST_CO_24HR": "1ST_CALL",
+    "MAIN_2ND_24HR": "2ND_CALL",
+    "MAIN_3RD_24HR": "3RD_CALL",
+    "MAIN_4TH_24HR": "4TH_CALL",
+    "MAIN_CO3RD_24HR": "CO_3RD_CALL",
+    "MAIN_CO4TH_24HR": "CO_4TH_CALL",
+    "CB_1ST_24HR": "1ST_CALL",
+    "CB_3RD_24HR": "3RD_CALL",
+    "CB_4TH_24HR": "4TH_CALL",
+    "CB_CO3RD_24HR": "CO_3RD_CALL",
+    "CB_CO4TH_24HR": "CO_4TH_CALL",
+    "RC_1ST_A_24HR": "1ST_CALL",
+    "RC_1ST_B_24HR": "1ST_CALL",
+    "RC_2ND_24HR": "2ND_CALL",
+    "RC_3RD_24HR": "3RD_CALL",
+    "RC_4TH_24HR": "4TH_CALL",
+    "RC_CO3RD_24HR": "CO_3RD_CALL",
+    "RC_CO4TH_24HR": "CO_4TH_CALL",
+    "CAESAR_B_24HR": "2ND_CALL",
+    "FIFTH_CALL": "5TH_CALL",
 }
 KNOWN_DUTY_TYPES = {duty_type.key for duty_type in DUTY_TYPES}
 REPO_DIR = Path(__file__).resolve().parents[3]
@@ -60,6 +86,7 @@ class PersonAnalysis:
     drp_months: set[str] = field(default_factory=set)
     neuro_icu_months: set[str] = field(default_factory=set)
     call_levels: dict[str, str] = field(default_factory=dict)
+    inferred_call_levels: dict[str, str] = field(default_factory=dict)
     units: dict[str, str] = field(default_factory=dict)
     months_active: set[str] = field(default_factory=set)
     promotions: list[dict[str, str]] = field(default_factory=list)
@@ -107,22 +134,28 @@ def duty_category_key(duty_type: str) -> str | None:
     }.get(duty_type)
 
 
+_ORDINAL_PATTERNS: list[tuple[re.Pattern[str], str]] = [
+    # CO-1st must come before plain 1st
+    (re.compile(r"\bCO[\s_-]*1ST\b|\bCO[\s_-]*FIRST\b|\bCO[\s_-]*1\b"), "CO_1ST_CALL"),
+    # CO-4th must come before plain 4th
+    (re.compile(r"\bCO[\s_-]*4TH\b|\bCO[\s_-]*FOURTH\b|\bCO[\s_-]*4\b"), "CO_4TH_CALL"),
+    # Plain ordinals — match the ordinal word/abbreviation only, not bare year digits
+    (re.compile(r"\b1ST\b|\bFIRST\b"), "1ST_CALL"),
+    (re.compile(r"\b2ND\b|\bSECOND\b"), "2ND_CALL"),
+    (re.compile(r"\b3RD\b|\bTHIRD\b"), "3RD_CALL"),
+    (re.compile(r"\b4TH\b|\bFOURTH\b"), "4TH_CALL"),
+    (re.compile(r"\b5TH\b|\bFIFTH\b"), "5TH_CALL"),
+]
+
+
 def call_level_from_posting(posting_type: str) -> str | None:
-    label = posting_type.upper()
-    if "CO" in label and "1" in label:
-        return "CO_1ST_CALL"
-    if "1" in label and "CALL" in label:
-        return "1ST_CALL"
-    if "2" in label and "CALL" in label:
-        return "2ND_CALL"
-    if "3" in label and "CALL" in label:
-        return "3RD_CALL"
-    if "CO" in label and "4" in label:
-        return "CO_4TH_CALL"
-    if "4" in label and "CALL" in label:
-        return "4TH_CALL"
-    if "5" in label and "CALL" in label:
-        return "5TH_CALL"
+    label = re.sub(r"[_-]+", " ", posting_type.upper())
+    # Only attempt extraction if there is a call-related keyword present
+    if "CALL" not in label and not re.search(r"\bCO[-_]?[14]", label):
+        return None
+    for pattern, level in _ORDINAL_PATTERNS:
+        if pattern.search(label):
+            return level
     return None
 
 
@@ -143,6 +176,34 @@ def empty_month_dict(months: list[str]) -> dict[str, int]:
     return {month: 0 for month in months}
 
 
+def enforce_monotonic_call_levels(person: PersonAnalysis, months: list[str]) -> None:
+    """
+    Call levels can only ever increase (promotions only, no demotions).
+    Walk through months in order and ensure each month's level is at least
+    as high as the highest level seen so far.  This corrects noise from
+    inferred levels when a person does a duty outside their normal call slot
+    (e.g. a 4th-caller covering a 2nd-call duty).
+    Posting-derived levels are already stored in call_levels; inferred ones
+    were merged in. Either way, we enforce monotonicity here.
+    """
+    peak_rank = -1
+    peak_level: str | None = None
+    for month in months:
+        level = person.call_levels.get(month)
+        if level is None:
+            # Carry forward the highest known level to fill gaps
+            if peak_level is not None:
+                person.call_levels[month] = peak_level
+            continue
+        rank = CALL_LEVEL_RANKS.get(level, -1)
+        if rank >= peak_rank:
+            peak_rank = rank
+            peak_level = level
+        else:
+            # Level is lower than peak — clamp to peak (ignore downward noise)
+            person.call_levels[month] = peak_level  # type: ignore[assignment]
+
+
 def build_promotions(person: PersonAnalysis, months: list[str]) -> None:
     previous_level: str | None = None
     for month in months:
@@ -150,7 +211,9 @@ def build_promotions(person: PersonAnalysis, months: list[str]) -> None:
         if level is None:
             continue
         if previous_level is not None and level != previous_level:
-            person.promotions.append({"month": month, "from": previous_level, "to": level})
+            # Only record upward changes (monotonicity is already enforced, but be defensive)
+            if CALL_LEVEL_RANKS.get(level, -1) > CALL_LEVEL_RANKS.get(previous_level, -1):
+                person.promotions.append({"month": month, "from": previous_level, "to": level})
         previous_level = level
 
 
@@ -202,6 +265,14 @@ def analyze_dashboard(db: Session) -> dict[str, object]:
         assert isinstance(duty_type_counts, dict)
         duty_type_counts[duty_type] = duty_type_counts.get(duty_type, 0) + 1
 
+        # Accumulate inferred call levels by duty type — stored separately so postings can override.
+        # Among multiple inferred levels in the same month keep the highest-ranked one.
+        inferred_level = DUTY_TYPE_CALL_LEVEL.get(duty_type)
+        if inferred_level is not None:
+            existing = person.inferred_call_levels.get(month)  # type: ignore[attr-defined]
+            if existing is None or CALL_LEVEL_RANKS.get(inferred_level, -1) > CALL_LEVEL_RANKS.get(existing, -1):
+                person.inferred_call_levels[month] = inferred_level  # type: ignore[attr-defined]
+
         category = duty_category_key(duty_type)
         if category is not None:
             setattr(person, category, getattr(person, category) + 1)
@@ -251,6 +322,12 @@ def analyze_dashboard(db: Session) -> dict[str, object]:
             getattr(person, bucket).add(month)
 
     for person in people.values():
+        # Fill call levels for months with no posting record using duty-type inference
+        for month, inferred in person.inferred_call_levels.items():
+            if month not in person.call_levels:
+                person.call_levels[month] = inferred
+        # Enforce monotonic progression — call levels only go up, never down
+        enforce_monotonic_call_levels(person, months)
         for month in months:
             person.monthly_24hr.setdefault(month, 0)
             person.fifth_call_monthly.setdefault(month, 0)

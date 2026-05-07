@@ -84,6 +84,30 @@ export interface HistoricalImportSummary {
   skipped_assignments: number;
 }
 
+export interface HistoricalAnalysisImportResult {
+  dry_run: {
+    matched_rota_assignments: number;
+    skipped_rota_assignments: number;
+    matched_main_24hr_assignments: number;
+    matched_weekend_main_24hr_assignments: number;
+  };
+  import: {
+    duty_rows_read: number;
+    posting_rows_read: number;
+    people_created: number;
+    periods_created: number;
+    units_created: number;
+    duty_slots_created: number;
+    duty_assignments_created: number;
+    postings_created: number;
+    existing_duty_assignments: number;
+    existing_postings: number;
+    skipped_unknown_people: number;
+    skipped_unmapped_duties: number;
+    source: string;
+  };
+}
+
 export interface AnalysisPerson {
   name: string;
   total_24hr: number;
@@ -216,6 +240,134 @@ export interface DepartmentMember {
   }>;
 }
 
+export interface LeavePerson {
+  id: string;
+  canonical_name: string;
+  active_status: string;
+  call_level: string | null;
+}
+
+export interface LeaveRequest {
+  id: string;
+  person: LeavePerson;
+  leave_type: string;
+  leave_slot: string;
+  starts_on: string;
+  ends_on: string;
+  status: string;
+  source: string;
+  raw_person_name: string | null;
+  notes: string | null;
+  days: number;
+}
+
+export interface LeaveSummary {
+  month: string;
+  starts_on: string;
+  ends_on: string;
+  total_requests: number;
+  blocking_requests: number;
+  people_on_leave: number;
+  total_leave_days: number;
+  busiest_day: { date: string; count: number } | null;
+  status_counts: Record<string, number>;
+  type_counts: Record<string, number>;
+  slot_counts: Record<string, number>;
+  unit_counts: Record<string, number>;
+  call_level_counts: Record<string, number>;
+}
+
+export interface LeaveDayEntry {
+  leave_id: string;
+  person_id: string;
+  person_name: string;
+  leave_type: string;
+  leave_slot: string;
+  status: string;
+  unit: string | null;
+  posting_type: string | null;
+  call_level: string;
+}
+
+export interface LeaveCalendar {
+  month: string;
+  summary: LeaveSummary;
+  days: Record<string, LeaveDayEntry[]>;
+}
+
+export interface LeaveRequestPayload {
+  person_id: string;
+  leave_type: string;
+  leave_slot: string;
+  starts_on: string;
+  ends_on: string;
+  status: string;
+  notes?: string | null;
+}
+
+export interface UnitRead {
+  id: string;
+  code: string;
+  name: string;
+  campus: string | null;
+  active_status: string;
+  notes: string | null;
+}
+
+export interface UnitPerson {
+  id: string;
+  canonical_name: string;
+  active_status: string;
+  call_level: string | null;
+}
+
+export interface UnitAssignment {
+  id: string;
+  person: UnitPerson;
+  unit: UnitRead | null;
+  posting_type: string;
+  starts_on: string;
+  ends_on: string | null;
+  source: string;
+  notes: string | null;
+}
+
+export interface UnitSummary {
+  unit_id: string;
+  assigned_members: number;
+  people_with_leave: number;
+  leave_days: number;
+  leave_by_call_level: Record<string, number>;
+}
+
+export interface UnitValidationIssue {
+  severity: "error" | "warning" | "info";
+  code: string;
+  message: string;
+  person_id: string | null;
+  unit_id: string | null;
+  posting_id: string | null;
+}
+
+export interface UnitManagementMonth {
+  month: string;
+  starts_on: string;
+  ends_on: string;
+  units: UnitRead[];
+  assignments: UnitAssignment[];
+  unit_summaries: UnitSummary[];
+  validation_issues: UnitValidationIssue[];
+}
+
+export interface UnitAssignmentPayload {
+  person_id: string;
+  unit_id: string;
+  posting_type: string;
+  starts_on: string;
+  ends_on?: string | null;
+  notes?: string | null;
+}
+
 export interface MemberAudit {
   total_members: number;
   active_members: number;
@@ -333,8 +485,8 @@ export function getHistoricalImportStatus(): Promise<HistoricalImportStatus> {
   return request<HistoricalImportStatus>("/api/v1/admin/imports/historical/status");
 }
 
-export function runHistoricalImport(): Promise<HistoricalImportSummary> {
-  return request<HistoricalImportSummary>("/api/v1/admin/imports/historical/run", {
+export function runHistoricalImport(): Promise<HistoricalAnalysisImportResult> {
+  return request<HistoricalAnalysisImportResult>("/api/v1/admin/imports/historical/run", {
     method: "POST",
     body: "{}",
   });
@@ -355,6 +507,63 @@ export function getAnalysisManualReview(): Promise<AnalysisManualReview> {
 export function getMembers(q = ""): Promise<DepartmentMember[]> {
   const query = q ? `?q=${encodeURIComponent(q)}` : "";
   return request<DepartmentMember[]>(`/api/v1/admin/members${query}`);
+}
+
+export function getLeaveCalendar(month: string): Promise<LeaveCalendar> {
+  return request<LeaveCalendar>(`/api/v1/leave/calendar?month=${encodeURIComponent(month)}`);
+}
+
+export function getLeaveRequests(month: string): Promise<LeaveRequest[]> {
+  return request<LeaveRequest[]>(`/api/v1/leave/requests?month=${encodeURIComponent(month)}`);
+}
+
+export function createLeaveRequest(payload: LeaveRequestPayload): Promise<LeaveRequest> {
+  return request<LeaveRequest>("/api/v1/leave/requests", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function updateLeaveRequest(id: string, payload: LeaveRequestPayload): Promise<LeaveRequest> {
+  return request<LeaveRequest>(`/api/v1/leave/requests/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function cancelLeaveRequest(id: string): Promise<LeaveRequest> {
+  return request<LeaveRequest>(`/api/v1/leave/requests/${id}/cancel`, {
+    method: "POST",
+    body: "{}",
+  });
+}
+
+export function getUnits(): Promise<UnitRead[]> {
+  return request<UnitRead[]>("/api/v1/units");
+}
+
+export function getUnitManagementMonth(month: string): Promise<UnitManagementMonth> {
+  return request<UnitManagementMonth>(`/api/v1/unit-management/month?month=${encodeURIComponent(month)}`);
+}
+
+export function createUnitAssignment(payload: UnitAssignmentPayload): Promise<UnitAssignment> {
+  return request<UnitAssignment>("/api/v1/unit-management/assignments", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function updateUnitAssignment(id: string, payload: UnitAssignmentPayload): Promise<UnitAssignment> {
+  return request<UnitAssignment>(`/api/v1/unit-management/assignments/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function deleteUnitAssignment(id: string): Promise<{ status: string }> {
+  return request<{ status: string }>(`/api/v1/unit-management/assignments/${id}`, {
+    method: "DELETE",
+  });
 }
 
 export function getMemberAudit(): Promise<MemberAudit> {

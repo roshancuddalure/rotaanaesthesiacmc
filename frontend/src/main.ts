@@ -6,43 +6,54 @@ import {
   type AnalysisPerson,
   type AnalysisPreflight,
   type DepartmentMember,
-  type DuplicateCandidate,
   type DiagnosticsSummary,
   type InvalidMembersResult,
+  type LeaveCalendar,
+  type LeaveRequest,
   type MappingOptions,
   type MappingType,
   type MemberAudit,
+  type UnitAssignment,
+  type UnitManagementMonth,
+  type UnitRead,
   type UserAccount,
   addMemberDesignation,
-  autoMergeDuplicates,
   cleanupInvalidMembers,
   clearAuthToken,
+  cancelLeaveRequest,
   createMember,
+  createLeaveRequest,
+  createUnitAssignment,
   createUserAccount,
+  deleteUnitAssignment,
   forgotPassword,
   getAnalysisDashboard,
   getAnalysisManualReview,
   getAnalysisPreflight,
-  getDedupeCandidates,
   getCurrentUser,
   getDiagnosticsSummary,
   getInvalidMembers,
+  getLeaveCalendar,
+  getLeaveRequests,
   getMappingOptions,
   getMappings,
   getHistoricalImportStatus,
   getMemberAudit,
   getMembers,
+  getUnitManagementMonth,
+  getUnits,
   healthCheck,
   listUserAccounts,
-  mergeMembers,
   prefillCallLevels,
   resetPassword,
   reconcileTrustedRoster,
   runHistoricalImport,
   scanHistoricalMappings,
   signIn,
+  updateLeaveRequest,
   updateMapping,
   updateMember,
+  updateUnitAssignment,
 } from "./services/api";
 
 /* ============================================================
@@ -139,19 +150,41 @@ let analysis: AnalysisDashboard | null = null;
 let analysisManualReview: AnalysisManualReview | null = null;
 let analysisPreflight: AnalysisPreflight | null = null;
 let members: DepartmentMember[] = [];
-let dedupeCandidates: DuplicateCandidate[] = [];
 let invalidMembers: InvalidMembersResult = { count: 0, people: [] };
 let memberAudit: MemberAudit | null = null;
 let memberSearch = "";
+let memberStatusFilter: "all" | "active" | "historical" = "active";
 let memberPositionFilter = "all";
 let memberCallLevelFilter = "all";
 let memberSort = "name";
 let memberSortDirection: "asc" | "desc" = "asc";
+let leaveMonth = new Date().toISOString().slice(0, 7);
+let leaveCalendar: LeaveCalendar | null = null;
+let leaveRequests: LeaveRequest[] = [];
+let unitMonth = new Date().toISOString().slice(0, 7);
+let unitManagement: UnitManagementMonth | null = null;
+let units: UnitRead[] = [];
+let unitAssignments: UnitAssignment[] = [];
+let unitModalUnitId: string | null = null;
+let unitEditingAssignmentId: string | null = null;
 let currentUser: UserAccount | null = null;
 let accounts: UserAccount[] = [];
 
+function isAdminUser(): boolean {
+  return currentUser?.role === "computer_admin" || currentUser?.role === "superadmin";
+}
+
 function renderShell() {
   sidebarOpen = false;
+  const adminNav = isAdminUser()
+    ? `
+        <div class="nav-section-label">Admin tools</div>
+        <button data-view="mappings">Mappings</button>
+        <button data-view="imports">Historical Import</button>
+        <button data-view="accounts">Login Accounts</button>
+        <button data-view="diagnostics">Diagnostics</button>
+      `
+    : "";
   app.innerHTML = `
   <a href="#view-root" class="skip-link">Skip to content</a>
   <div class="sidebar-overlay" id="sidebar-overlay"></div>
@@ -161,7 +194,7 @@ function renderShell() {
         <span class="brand-mark">DR</span>
         <div>
           <h1>Duty Rota</h1>
-          <p>Admin console</p>
+          <p>Rota board</p>
         </div>
         <button class="sidebar-close" id="sidebar-close" aria-label="Close menu">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -169,16 +202,13 @@ function renderShell() {
       </div>
       <nav class="nav" aria-label="Main navigation">
         <button data-view="overview" class="active" aria-current="page">Overview</button>
-        <button data-view="analysis">Analysis</button>
-        <button data-view="mappings">Mappings</button>
-        <button data-view="imports">Imports</button>
+        <button data-view="analysis">Duty Analysis</button>
         <button data-view="members">Department Members</button>
-        <button data-view="accounts">Login Accounts</button>
-        <button data-view="diagnostics">Diagnostics</button>
+        <button data-view="leave">Leave</button>
+        <button data-view="units">Unit Management</button>
         <button disabled title="Coming soon">Rota Board</button>
-        <button disabled title="Coming soon">Leave</button>
-        <button disabled title="Coming soon">Validation</button>
         <button disabled title="Coming soon">Exports</button>
+        ${adminNav}
       </nav>
     </aside>
     <section class="content">
@@ -189,7 +219,7 @@ function renderShell() {
           </button>
           <div>
             <p class="eyebrow" id="section-eyebrow">Overview</p>
-            <h2 id="section-title">CMC Anaesthesia duty rota operations</h2>
+            <h2 id="section-title">CMC Anaesthesia rota board</h2>
           </div>
         </div>
         <div class="topbar-actions">
@@ -199,6 +229,13 @@ function renderShell() {
       </header>
       <div id="view-root"></div>
     </section>
+    <nav class="mobile-bottom-nav" aria-label="Mobile section navigation">
+      <button data-view="overview" class="active" aria-current="page">Overview</button>
+      <button data-view="analysis">Analysis</button>
+      <button data-view="members">Members</button>
+      <button data-view="leave">Leave</button>
+      <button data-view="units">Units</button>
+    </nav>
   </main>
 `;
   document.getElementById("sidebar-toggle")?.addEventListener("click", () => {
@@ -215,6 +252,12 @@ function renderShell() {
     toggleSidebar(false);
     const btn = document.getElementById("sidebar-toggle");
     if (btn) btn.setAttribute("aria-expanded", "false");
+  });
+  document.getElementById("sign-out")?.addEventListener("click", () => {
+    clearAuthToken();
+    currentUser = null;
+    renderLogin();
+    showToast("Signed out", "info");
   });
 }
 
@@ -410,27 +453,74 @@ function updateLocalMapping(id: string, patch: Partial<AdminMapping>) {
   mappings = mappings.map((mapping) => (mapping.id === id ? { ...mapping, ...patch } : mapping));
 }
 
-function renderOverview() {
-  setHeader("Overview", "CMC Anaesthesia duty rota operations");
+async function renderOverview() {
+  setHeader("Overview", "CMC Anaesthesia rota board");
   if (!viewRoot) return;
+  viewRoot.innerHTML = `<section class="panel"><h3>Loading overview...</h3></section>`;
+  try {
+    analysis = analysis ?? await getAnalysisDashboard();
+  } catch (error) {
+    viewRoot.innerHTML = `
+      <section class="panel">
+        <h3>Analysis unavailable</h3>
+        <p>${error instanceof Error ? error.message : "Unable to load duty analysis."}</p>
+      </section>
+    `;
+    return;
+  }
+  const topTotal = topPeople("total_24hr", 6);
+  const topWeekend = topPeople("total_weekend_24hr", 6);
+  const firstMonth = analysis.months[0];
+  const lastMonth = analysis.months[analysis.months.length - 1];
+  const periodLabel = [analysis.month_labels[firstMonth], analysis.month_labels[lastMonth]]
+    .filter(Boolean)
+    .join(" to ");
+  const totalLeader = topTotal[0];
+  const weekendLeader = topWeekend[0];
   viewRoot.innerHTML = `
-    <section class="summary-grid">
-      <article class="metric">
-        <span>${mappings.length}</span>
-        <p>Mapping rows</p>
+    <section class="board-hero">
+      <div>
+        <span class="board-kicker">${escapeHtml(periodLabel || "Current duty analysis")}</span>
+        <h3>Duty workload at a glance</h3>
+        <p>Review the main 24hr duty load, weekend burden, and people who may need balancing attention.</p>
+      </div>
+      <div class="board-hero-actions">
+        <button class="primary" data-view-shortcut="analysis">Open Duty Analysis</button>
+        <button class="icon-button" data-view-shortcut="members">Find Member</button>
+      </div>
+    </section>
+    <section class="summary-grid four-col board-metrics">
+      <article class="metric metric-primary"><span>${analysis.summary.total_24hr.toLocaleString()}</span><p>Total 24hr duties</p></article>
+      <article class="metric metric-weekend"><span>${analysis.summary.total_weekend_24hr.toLocaleString()}</span><p>Weekend 24hr</p></article>
+      <article class="metric"><span>${analysis.summary.weekend_percent}%</span><p>Weekend share</p></article>
+      <article class="metric"><span>${analysis.summary.avg_24hr_per_active_person}</span><p>Avg per active person</p></article>
+    </section>
+    <section class="board-insight-grid">
+      <article class="board-insight">
+        <span>Highest total load</span>
+        <button class="person-link" data-analysis-person="${escapeHtml(totalLeader?.name ?? "")}">${escapeHtml(totalLeader?.name ?? "No data")}</button>
+        <strong>${totalLeader?.total_24hr ?? 0} duties</strong>
       </article>
-      <article class="metric">
-        <span>${mappings.filter((mapping) => mapping.status === "needs_review").length}</span>
-        <p>Need review</p>
+      <article class="board-insight">
+        <span>Highest weekend load</span>
+        <button class="person-link" data-analysis-person="${escapeHtml(weekendLeader?.name ?? "")}">${escapeHtml(weekendLeader?.name ?? "No data")}</button>
+        <strong>${weekendLeader?.total_weekend_24hr ?? 0} duties</strong>
       </article>
-      <article class="metric">
-        <span>${mappings.filter((mapping) => mapping.status === "reviewed").length}</span>
-        <p>Reviewed</p>
+      <article class="board-insight">
+        <span>People active</span>
+        <strong>${analysis.summary.active_personnel} of ${analysis.summary.personnel}</strong>
+        <small>${analysis.summary.months} months reviewed</small>
       </article>
     </section>
-    <section class="panel">
-      <h3>Import Control</h3>
-      <p>Open Mappings to review duty labels, unit names, and posting groups before imported data is used on the rota board.</p>
+    <section class="analytics-grid">
+      <article class="panel">
+        <h3>Highest 24hr Duty Load</h3>
+        ${renderMiniRank(topTotal, "total_24hr")}
+      </article>
+      <article class="panel">
+        <h3>Highest Weekend Load</h3>
+        ${renderMiniRank(topWeekend, "total_weekend_24hr")}
+      </article>
     </section>
   `;
 }
@@ -440,6 +530,52 @@ let analysisTab: string = "overview";
 let analysisPersonSearch: string = "";
 let analysisPersonSort: keyof AnalysisPerson = "total_24hr";
 let analysisPersonSortDir: "asc" | "desc" = "desc";
+
+// Pagination state — one page index per table, keyed by a stable table id
+const PAGE_SIZE = 25;
+const analysisPagination: Record<string, number> = {};
+
+function getPage(tableId: string): number {
+  return analysisPagination[tableId] ?? 0;
+}
+
+function setPage(tableId: string, page: number): void {
+  analysisPagination[tableId] = page;
+}
+
+function resetPages(): void {
+  for (const key of Object.keys(analysisPagination)) {
+    analysisPagination[key] = 0;
+  }
+}
+
+function paginate<T>(items: T[], tableId: string, pageSize = PAGE_SIZE): T[] {
+  const page = getPage(tableId);
+  return items.slice(page * pageSize, (page + 1) * pageSize);
+}
+
+function renderPaginator(tableId: string, totalItems: number, pageSize = PAGE_SIZE): string {
+  const totalPages = Math.ceil(totalItems / pageSize);
+  if (totalPages <= 1) return "";
+  const page = getPage(tableId);
+  const start = page * pageSize + 1;
+  const end = Math.min((page + 1) * pageSize, totalItems);
+  const prev = page > 0
+    ? `<button class="page-btn" data-set-page="${tableId}:${page - 1}">&#8592; Prev</button>`
+    : `<button class="page-btn" disabled>&#8592; Prev</button>`;
+  const next = page < totalPages - 1
+    ? `<button class="page-btn" data-set-page="${tableId}:${page + 1}">Next &#8594;</button>`
+    : `<button class="page-btn" disabled>Next &#8594;</button>`;
+  return `
+    <div class="paginator">
+      <span class="page-label">Page ${page + 1} of ${totalPages}</span>
+      <div class="paginator-controls">
+        ${prev}
+        <span class="page-info">${start}–${end} of ${totalItems}</span>
+        ${next}
+      </div>
+    </div>`;
+}
 
 function topPeople(key: keyof AnalysisPerson, limit = 8): AnalysisPerson[] {
   if (!analysis) return [];
@@ -499,6 +635,16 @@ function renderPersonMetric(label: string, value: number): string {
   return `<article class="person-metric"><strong>${value}</strong><span>${label}</span></article>`;
 }
 
+function renderPersonMetricGroup(title: string, metrics: Array<[string, number]>): string {
+  const cards = metrics.map(([label, value]) => renderPersonMetric(label, value)).join("");
+  return `
+    <section class="person-metric-section">
+      <h4>${title}</h4>
+      <div class="person-metric-grid">${cards}</div>
+    </section>
+  `;
+}
+
 function renderMiniRank(people: AnalysisPerson[], key: keyof AnalysisPerson): string {
   if (!people.length) return `<p class="empty-state">No data</p>`;
   return people
@@ -511,6 +657,31 @@ function renderMiniRank(people: AnalysisPerson[], key: keyof AnalysisPerson): st
       `,
     )
     .join("");
+}
+
+function renderAnalysisDataCard(
+  title: string,
+  rows: Array<[string, string | number]>,
+  personName?: string,
+): string {
+  const heading = personName
+    ? `<button class="person-link" data-analysis-person="${escapeHtml(personName)}">${escapeHtml(title)}</button>`
+    : escapeHtml(title);
+  return `
+    <article class="data-card analysis-data-card">
+      <div class="data-card-title">${heading}</div>
+      ${rows
+        .map(
+          ([label, value]) => `
+            <div class="data-card-row">
+              <span class="data-card-label">${escapeHtml(label)}</span>
+              <span class="data-card-value">${value}</span>
+            </div>
+          `,
+        )
+        .join("")}
+    </article>
+  `;
 }
 
 function renderBarChart(
@@ -585,21 +756,21 @@ function renderAnalysisOverviewTab(): string {
     total: analysis!.month_stats[month].persons,
   }));
   return `
-    <div class="summary-grid four-col">
-      <article class="metric"><span>${analysis.summary.total_24hr.toLocaleString()}</span><p>Total 24hr duties</p></article>
-      <article class="metric"><span>${analysis.summary.total_weekend_24hr.toLocaleString()}</span><p>Weekend 24hr</p></article>
+    <div class="summary-grid four-col board-metrics">
+      <article class="metric metric-primary"><span>${analysis.summary.total_24hr.toLocaleString()}</span><p>Total 24hr duties</p></article>
+      <article class="metric metric-weekend"><span>${analysis.summary.total_weekend_24hr.toLocaleString()}</span><p>Weekend 24hr</p></article>
       <article class="metric"><span>${analysis.summary.weekend_percent}%</span><p>Weekend share</p></article>
       <article class="metric"><span>${analysis.summary.avg_24hr_per_active_person}</span><p>Avg per active person</p></article>
     </div>
     <div class="summary-grid four-col">
-      <article class="metric"><span>${analysis.summary.personnel}</span><p>Total personnel</p></article>
-      <article class="metric"><span>${analysis.summary.active_personnel}</span><p>Active in period</p></article>
+      <article class="metric"><span>${analysis.summary.personnel}</span><p>Personnel in list</p></article>
+      <article class="metric"><span>${analysis.summary.active_personnel}</span><p>Active personnel</p></article>
       <article class="metric"><span>${analysis.summary.months}</span><p>Months analysed</p></article>
-      <article class="metric"><span>${analysis.summary.total_records.toLocaleString()}</span><p>Total records</p></article>
+      <article class="metric"><span>${analysis.summary.total_records.toLocaleString()}</span><p>Assignments reviewed</p></article>
     </div>
     <div class="analytics-grid">
       <article class="panel chart-panel">
-        <h3>24hr Duties per Month</h3>
+        <h3>Monthly 24hr Load</h3>
         <div class="chart-legend">
           <span class="legend-dot weekend-dot"></span>Weekend &nbsp;
           <span class="legend-dot weekday-dot"></span>Weekday
@@ -607,17 +778,17 @@ function renderAnalysisOverviewTab(): string {
         <div class="bar-chart">${renderMonthBars()}</div>
       </article>
       <article class="panel chart-panel">
-        <h3>Day-of-Week Distribution</h3>
+        <h3>Day of Week Pattern</h3>
         <div class="bar-chart">${renderDayBars()}</div>
       </article>
     </div>
     <div class="analytics-grid">
       <article class="panel chart-panel">
-        <h3>Active Personnel per Month</h3>
+        <h3>People Active by Month</h3>
         <div class="bar-chart">${renderBarChart(monthPersonEntries)}</div>
       </article>
       <article class="panel">
-        <h3>Duty Category Totals</h3>
+        <h3>Duty Mix</h3>
         <div class="category-grid">${categories}</div>
       </article>
     </div>
@@ -655,16 +826,19 @@ function renderSortTh(label: string, key: keyof AnalysisPerson): string {
 }
 
 function refreshPersonnelResultsInPlace(): boolean {
+  const TID = "personnel";
   const tbody = document.getElementById("analysis-person-tbody");
   const cards = document.getElementById("analysis-person-cards");
   const count = document.getElementById("analysis-person-count");
   if (!tbody || !cards || !count) return false;
 
   const people = filteredSortedPeople();
-  const rows = people.map((person, index) => `
+  const pageItems = paginate(people, TID);
+  const offset = getPage(TID) * PAGE_SIZE;
+  const rows = pageItems.map((person, index) => `
         <tr>
           <td>
-            <button class="person-link" data-analysis-person="${escapeHtml(person.name)}">${index + 1}. ${escapeHtml(person.name)}</button>
+            <button class="person-link" data-analysis-person="${escapeHtml(person.name)}">${offset + index + 1}. ${escapeHtml(person.name)}</button>
             <small>${person.months_active.length} mo active${person.promotions.length ? ` · ${person.promotions.length} promo${person.promotions.length > 1 ? "s" : ""}` : ""}</small>
           </td>
           <td class="num">${person.total_24hr}</td>
@@ -681,11 +855,11 @@ function refreshPersonnelResultsInPlace(): boolean {
           <td class="num">${person.shift}</td>
         </tr>
       `).join("");
-  const cardHtml = people.map((person) => `
+  const cardHtml = pageItems.map((person, index) => `
     <article class="data-card">
       <div class="data-card-row">
         <span class="data-card-label">Name</span>
-        <span class="data-card-value"><button class="person-link" data-analysis-person="${escapeHtml(person.name)}">${escapeHtml(person.name)}</button></span>
+        <span class="data-card-value"><button class="person-link" data-analysis-person="${escapeHtml(person.name)}">${offset + index + 1}. ${escapeHtml(person.name)}</button></span>
       </div>
       <div class="data-card-row"><span class="data-card-label">Total 24hr</span><span class="data-card-value">${person.total_24hr}</span></div>
       <div class="data-card-row"><span class="data-card-label">Weekend</span><span class="data-card-value">${person.total_weekend_24hr}</span></div>
@@ -696,20 +870,26 @@ function refreshPersonnelResultsInPlace(): boolean {
     </article>
   `).join("");
 
+  const paginatorHtml = renderPaginator(TID, people.length);
   tbody.innerHTML = rows || `<tr><td colspan="13" class="empty">No results.</td></tr>`;
-  cards.innerHTML = cardHtml || `<p class="empty">No results.</p>`;
+  const tablePaginator = document.getElementById("personnel-table-paginator");
+  if (tablePaginator) tablePaginator.innerHTML = paginatorHtml;
+  cards.innerHTML = (cardHtml || `<p class="empty">No results.</p>`) + paginatorHtml;
   count.textContent = `${people.length} of ${analysis?.people.length ?? 0} people`;
   return true;
 }
 
 function renderAnalysisPersonnelTab(): string {
+  const TID = "personnel";
   const people = filteredSortedPeople();
-  const rows = people
+  const pageItems = paginate(people, TID);
+  const offset = getPage(TID) * PAGE_SIZE;
+  const rows = pageItems
     .map(
       (person, index) => `
         <tr>
           <td>
-            <button class="person-link" data-analysis-person="${escapeHtml(person.name)}">${index + 1}. ${escapeHtml(person.name)}</button>
+            <button class="person-link" data-analysis-person="${escapeHtml(person.name)}">${offset + index + 1}. ${escapeHtml(person.name)}</button>
             <small>${person.months_active.length} mo active${person.promotions.length ? ` · ${person.promotions.length} promo${person.promotions.length > 1 ? "s" : ""}` : ""}</small>
           </td>
           <td class="num">${person.total_24hr}</td>
@@ -729,11 +909,11 @@ function renderAnalysisPersonnelTab(): string {
     )
     .join("");
 
-  const cards = people.map((person) => `
+  const cards = paginate(people, TID).map((person, index) => `
     <article class="data-card">
       <div class="data-card-row">
         <span class="data-card-label">Name</span>
-        <span class="data-card-value"><button class="person-link" data-analysis-person="${escapeHtml(person.name)}">${escapeHtml(person.name)}</button></span>
+        <span class="data-card-value"><button class="person-link" data-analysis-person="${escapeHtml(person.name)}">${offset + index + 1}. ${escapeHtml(person.name)}</button></span>
       </div>
       <div class="data-card-row"><span class="data-card-label">Total 24hr</span><span class="data-card-value">${person.total_24hr}</span></div>
       <div class="data-card-row"><span class="data-card-label">Weekend</span><span class="data-card-value">${person.total_weekend_24hr}</span></div>
@@ -771,9 +951,11 @@ function renderAnalysisPersonnelTab(): string {
         </thead>
         <tbody id="analysis-person-tbody">${rows || `<tr><td colspan="13" class="empty">No results.</td></tr>`}</tbody>
       </table>
+      <div id="personnel-table-paginator">${renderPaginator(TID, people.length)}</div>
     </section>
     <section id="analysis-person-cards" class="card-list">
       ${cards || `<p class="empty">No results.</p>`}
+      ${renderPaginator(TID, people.length)}
     </section>
   `;
 }
@@ -781,6 +963,7 @@ function renderAnalysisPersonnelTab(): string {
 // ── Tab: Weekend ──────────────────────────────────────────────────────────────
 function renderAnalysisWeekendTab(): string {
   if (!analysis) return "";
+  const TID = "weekend";
   const weekendPeople = [...analysis.people]
     .filter((p) => p.total_weekend_24hr > 0)
     .sort((a, b) => b.total_weekend_24hr - a.total_weekend_24hr);
@@ -797,17 +980,29 @@ function renderAnalysisWeekendTab(): string {
     total: analysis!.month_stats[month].weekend_24hr,
   }));
 
-  const rows = weekendPeople
+  const pageItems = paginate(weekendPeople, TID);
+  const offset = getPage(TID) * PAGE_SIZE;
+  const rows = pageItems
     .map(
       (p, i) => `
         <tr>
-          <td><button class="person-link" data-analysis-person="${escapeHtml(p.name)}">${i + 1}. ${escapeHtml(p.name)}</button></td>
+          <td><button class="person-link" data-analysis-person="${escapeHtml(p.name)}">${offset + i + 1}. ${escapeHtml(p.name)}</button></td>
           <td class="num">${p.total_weekend_24hr}</td>
           <td class="num">${p.day_breakdown["Saturday"] ?? 0}</td>
           <td class="num">${p.day_breakdown["Sunday"] ?? 0}</td>
           <td class="num">${p.total_24hr > 0 ? Math.round((p.total_weekend_24hr / p.total_24hr) * 100) : 0}%</td>
         </tr>
       `,
+    )
+    .join("");
+  const cards = weekendPeople
+    .map((p, i) =>
+      renderAnalysisDataCard(`${i + 1}. ${p.name}`, [
+        ["Total Weekend", p.total_weekend_24hr],
+        ["Saturdays", p.day_breakdown["Saturday"] ?? 0],
+        ["Sundays", p.day_breakdown["Sunday"] ?? 0],
+        ["Share of Total", `${p.total_24hr > 0 ? Math.round((p.total_weekend_24hr / p.total_24hr) * 100) : 0}%`],
+      ], p.name),
     )
     .join("");
 
@@ -817,7 +1012,7 @@ function renderAnalysisWeekendTab(): string {
         <h3>Weekend 24hr Duties per Month</h3>
         <div class="bar-chart">${renderBarChart(weekendMonthEntries)}</div>
       </article>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div class="weekend-rank-grid">
         <article class="panel">
           <h3>Top Saturday</h3>
           ${topSat
@@ -834,7 +1029,7 @@ function renderAnalysisWeekendTab(): string {
         </article>
       </div>
     </div>
-    <section class="panel table-panel" style="margin-top:16px">
+    <section class="panel table-panel hide-mobile" style="margin-top:16px">
       <table class="analysis-table">
         <thead>
           <tr>
@@ -847,13 +1042,16 @@ function renderAnalysisWeekendTab(): string {
         </thead>
         <tbody>${rows || `<tr><td colspan="5" class="empty">No weekend duties.</td></tr>`}</tbody>
       </table>
+      ${renderPaginator(TID, weekendPeople.length)}
     </section>
+    <section class="card-list analysis-card-list">${cards || `<p class="empty">No weekend duties.</p>`}</section>
   `;
 }
 
 // ── Tab: Duty Types ───────────────────────────────────────────────────────────
 function renderAnalysisDutyTypesTab(): string {
   if (!analysis) return "";
+  const TID = "duty-types";
   const dutyKeys: Array<[string, keyof AnalysisPerson]> = [
     ["Main 24hr", "main_24hr"],
     ["CB 24hr", "cb_24hr"],
@@ -869,13 +1067,17 @@ function renderAnalysisDutyTypesTab(): string {
       return `<article class="panel"><h3>${label}</h3>${renderMiniRank(top, key)}</article>`;
     })
     .join("");
-  const dutyTypeRows = [...analysis.people]
+  const allDutyPeople = [...analysis.people]
     .filter((p) => p.total_24hr > 0)
-    .sort((a, b) => b.total_24hr - a.total_24hr)
-    .map(
-      (p, i) => `
+    .sort((a, b) => b.total_24hr - a.total_24hr);
+  const pageItems = paginate(allDutyPeople, TID);
+  const offset = getPage(TID) * PAGE_SIZE;
+  const dutyTypeRows = pageItems
+    .map((p, i) => ({
+      person: p,
+      row: `
         <tr>
-          <td><button class="person-link" data-analysis-person="${escapeHtml(p.name)}">${i + 1}. ${escapeHtml(p.name)}</button></td>
+          <td><button class="person-link" data-analysis-person="${escapeHtml(p.name)}">${offset + i + 1}. ${escapeHtml(p.name)}</button></td>
           <td class="num">${p.total_24hr}</td>
           <td class="num">${p.main_24hr}</td>
           <td class="num">${p.cb_24hr}</td>
@@ -885,11 +1087,23 @@ function renderAnalysisDutyTypesTab(): string {
           <td class="num">${p.caesar_b}</td>
         </tr>
       `,
+    }));
+  const dutyTypeCards = dutyTypeRows
+    .map(({ person }, i) =>
+      renderAnalysisDataCard(`${offset + i + 1}. ${person.name}`, [
+        ["Total 24hr", person.total_24hr],
+        ["Main", person.main_24hr],
+        ["CB", person.cb_24hr],
+        ["RC", person.rc_24hr],
+        ["Schell", person.schell],
+        ["Floating", person.floating],
+        ["Caesar B", person.caesar_b],
+      ], person.name),
     )
     .join("");
   return `
     <div class="analysis-duty-grid">${rankSections}</div>
-    <section class="panel table-panel" style="margin-top:16px">
+    <section class="panel table-panel hide-mobile" style="margin-top:16px">
       <table class="analysis-table">
         <thead>
           <tr>
@@ -903,41 +1117,63 @@ function renderAnalysisDutyTypesTab(): string {
             <th class="num">Caesar B</th>
           </tr>
         </thead>
-        <tbody>${dutyTypeRows || `<tr><td colspan="8" class="empty">No data.</td></tr>`}</tbody>
+        <tbody>${dutyTypeRows.map((item) => item.row).join("") || `<tr><td colspan="8" class="empty">No data.</td></tr>`}</tbody>
       </table>
+      ${renderPaginator(TID, allDutyPeople.length)}
     </section>
+    <section class="card-list analysis-card-list">${dutyTypeCards || `<p class="empty">No data.</p>`}</section>
   `;
 }
 
 // ── Tab: CART & Schell ────────────────────────────────────────────────────────
 function renderAnalysisCartSchellTab(): string {
   if (!analysis) return "";
-  const cartRows = [...analysis.people]
+  const CART_TID = "cart-performers";
+  const allCartPeople = [...analysis.people]
     .filter((p) => p.cart > 0)
-    .sort((a, b) => b.cart - a.cart)
-    .map(
-      (p, i) => `
+    .sort((a, b) => b.cart - a.cart);
+  const cartOffset = getPage(CART_TID) * PAGE_SIZE;
+  const cartRows = paginate(allCartPeople, CART_TID)
+    .map((p, i) => ({
+      person: p,
+      row: `
         <tr>
-          <td><button class="person-link" data-analysis-person="${escapeHtml(p.name)}">${i + 1}. ${escapeHtml(p.name)}</button></td>
+          <td><button class="person-link" data-analysis-person="${escapeHtml(p.name)}">${cartOffset + i + 1}. ${escapeHtml(p.name)}</button></td>
           <td class="num">${p.cart}</td>
           <td class="num">${p.schell}</td>
           <td class="num">${p.floating}</td>
         </tr>
       `,
-    )
-    .join("");
+    }));
   const schellOnlyRows = [...analysis.people]
     .filter((p) => p.schell > 0 && p.cart === 0)
     .sort((a, b) => b.schell - a.schell)
     .slice(0, 15)
-    .map(
-      (p, i) => `
+    .map((p, i) => ({
+      person: p,
+      row: `
         <tr>
           <td><button class="person-link" data-analysis-person="${escapeHtml(p.name)}">${i + 1}. ${escapeHtml(p.name)}</button></td>
           <td class="num">${p.schell}</td>
           <td class="num">${p.floating}</td>
         </tr>
       `,
+    }));
+  const cartCards = cartRows
+    .map(({ person }, i) =>
+      renderAnalysisDataCard(`${cartOffset + i + 1}. ${person.name}`, [
+        ["CART", person.cart],
+        ["Schell", person.schell],
+        ["Floating", person.floating],
+      ], person.name),
+    )
+    .join("");
+  const schellCards = schellOnlyRows
+    .map(({ person }, i) =>
+      renderAnalysisDataCard(`${i + 1}. ${person.name}`, [
+        ["Schell", person.schell],
+        ["Floating", person.floating],
+      ], person.name),
     )
     .join("");
   return `
@@ -952,27 +1188,37 @@ function renderAnalysisCartSchellTab(): string {
       </article>
     </div>
     <div class="analytics-grid" style="margin-top:16px">
-      <section class="panel table-panel">
+      <section class="panel table-panel hide-mobile">
         <h3 style="padding:14px 16px 0">CART Performers</h3>
         <table class="analysis-table">
           <thead><tr><th>Name</th><th class="num">CART</th><th class="num">Schell</th><th class="num">Floating</th></tr></thead>
-          <tbody>${cartRows || `<tr><td colspan="4" class="empty">No CART duties.</td></tr>`}</tbody>
+          <tbody>${cartRows.map((item) => item.row).join("") || `<tr><td colspan="4" class="empty">No CART duties.</td></tr>`}</tbody>
         </table>
+        ${renderPaginator(CART_TID, allCartPeople.length)}
       </section>
-      <section class="panel table-panel">
+      <section class="panel table-panel hide-mobile">
         <h3 style="padding:14px 16px 0">Schell Only (No CART)</h3>
         <table class="analysis-table">
           <thead><tr><th>Name</th><th class="num">Schell</th><th class="num">Floating</th></tr></thead>
-          <tbody>${schellOnlyRows || `<tr><td colspan="3" class="empty">No data.</td></tr>`}</tbody>
+          <tbody>${schellOnlyRows.map((item) => item.row).join("") || `<tr><td colspan="3" class="empty">No data.</td></tr>`}</tbody>
         </table>
       </section>
     </div>
+    <section class="mobile-section card-list analysis-card-list">
+      <h3>CART Performers</h3>
+      ${cartCards || `<p class="empty">No CART duties.</p>`}
+    </section>
+    <section class="mobile-section card-list analysis-card-list">
+      <h3>Schell Only (No CART)</h3>
+      ${schellCards || `<p class="empty">No data.</p>`}
+    </section>
   `;
 }
 
 // ── Tab: 5th Call ─────────────────────────────────────────────────────────────
 function renderAnalysisFifthCallTab(): string {
   if (!analysis) return "";
+  const TID = "fifth-call";
   const fifthPeople = [...analysis.people]
     .filter((p) => p.fifth_call > 0)
     .sort((a, b) => b.fifth_call - a.fifth_call);
@@ -980,18 +1226,34 @@ function renderAnalysisFifthCallTab(): string {
     label: analysis!.month_labels[month],
     total: analysis!.people.reduce((sum, p) => sum + (p.fifth_call_monthly[month] ?? 0), 0),
   }));
-  const rows = fifthPeople
-    .map(
-      (p, i) => `
+  const pageItems = paginate(fifthPeople, TID);
+  const offset = getPage(TID) * PAGE_SIZE;
+  const rows = pageItems
+    .map((p, i) => ({
+      person: p,
+      row: `
         <tr>
-          <td><button class="person-link" data-analysis-person="${escapeHtml(p.name)}">${i + 1}. ${escapeHtml(p.name)}</button></td>
+          <td><button class="person-link" data-analysis-person="${escapeHtml(p.name)}">${offset + i + 1}. ${escapeHtml(p.name)}</button></td>
           <td class="num">${p.fifth_call}</td>
           <td class="num">${p.fifth_call_weekend}</td>
           <td class="num">${p.fifth_call - p.fifth_call_weekend}</td>
           ${analysis!.months.map((m) => `<td class="num">${p.fifth_call_monthly[m] ?? 0}</td>`).join("")}
         </tr>
       `,
-    )
+    }));
+  const cards = rows
+    .map(({ person }, i) => {
+      const activeMonths = analysis!.months
+        .filter((m) => (person.fifth_call_monthly[m] ?? 0) > 0)
+        .map((m) => `${analysis!.month_labels[m]}: ${person.fifth_call_monthly[m]}`)
+        .join(", ");
+      return renderAnalysisDataCard(`${offset + i + 1}. ${person.name}`, [
+        ["Total", person.fifth_call],
+        ["Weekend", person.fifth_call_weekend],
+        ["Weekday", person.fifth_call - person.fifth_call_weekend],
+        ["Active Months", activeMonths || "-"],
+      ], person.name);
+    })
     .join("");
   return `
     <div class="analytics-grid">
@@ -1004,7 +1266,7 @@ function renderAnalysisFifthCallTab(): string {
         ${renderMiniRank(topPeople("fifth_call", 12), "fifth_call")}
       </article>
     </div>
-    <section class="panel table-panel" style="margin-top:16px">
+    <section class="panel table-panel hide-mobile" style="margin-top:16px">
       <table class="analysis-table">
         <thead>
           <tr>
@@ -1015,22 +1277,29 @@ function renderAnalysisFifthCallTab(): string {
             ${analysis.months.map((m) => `<th class="num">${analysis!.month_labels[m]}</th>`).join("")}
           </tr>
         </thead>
-        <tbody>${rows || `<tr><td colspan="${4 + analysis.months.length}" class="empty">No 5th call duties.</td></tr>`}</tbody>
+        <tbody>${rows.map((item) => item.row).join("") || `<tr><td colspan="${4 + analysis.months.length}" class="empty">No 5th call duties.</td></tr>`}</tbody>
       </table>
+      ${renderPaginator(TID, fifthPeople.length)}
     </section>
+    <section class="card-list analysis-card-list">${cards || `<p class="empty">No 5th call duties.</p>`}</section>
   `;
 }
 
 // ── Tab: Shifts & PAC ─────────────────────────────────────────────────────────
 function renderAnalysisShiftsPacTab(): string {
   if (!analysis) return "";
-  const rows = [...analysis.people]
+  const TID = "shifts-pac";
+  const allShiftsPac = [...analysis.people]
     .filter((p) => p.pac > 0 || p.shift > 0 || p.caesar_a > 0 || p.rc12hr > 0 || p.cb_co12hr > 0)
-    .sort((a, b) => b.pac + b.shift - (a.pac + a.shift))
-    .map(
-      (p, i) => `
+    .sort((a, b) => b.pac + b.shift - (a.pac + a.shift));
+  const pageItems = paginate(allShiftsPac, TID);
+  const offset = getPage(TID) * PAGE_SIZE;
+  const rows = pageItems
+    .map((p, i) => ({
+      person: p,
+      row: `
         <tr>
-          <td><button class="person-link" data-analysis-person="${escapeHtml(p.name)}">${i + 1}. ${escapeHtml(p.name)}</button></td>
+          <td><button class="person-link" data-analysis-person="${escapeHtml(p.name)}">${offset + i + 1}. ${escapeHtml(p.name)}</button></td>
           <td class="num">${p.pac}</td>
           <td class="num">${p.shift}</td>
           <td class="num">${p.caesar_a}</td>
@@ -1038,6 +1307,16 @@ function renderAnalysisShiftsPacTab(): string {
           <td class="num">${p.cb_co12hr}</td>
         </tr>
       `,
+    }));
+  const cards = rows
+    .map(({ person }, i) =>
+      renderAnalysisDataCard(`${offset + i + 1}. ${person.name}`, [
+        ["PAC", person.pac],
+        ["Shifts", person.shift],
+        ["Caesar A", person.caesar_a],
+        ["RC 12hr", person.rc12hr],
+        ["CB Co 12hr", person.cb_co12hr],
+      ], person.name),
     )
     .join("");
   return `
@@ -1051,7 +1330,7 @@ function renderAnalysisShiftsPacTab(): string {
         ${renderMiniRank(topPeople("shift", 12), "shift")}
       </article>
     </div>
-    <section class="panel table-panel" style="margin-top:16px">
+    <section class="panel table-panel hide-mobile" style="margin-top:16px">
       <table class="analysis-table">
         <thead>
           <tr>
@@ -1063,45 +1342,62 @@ function renderAnalysisShiftsPacTab(): string {
             <th class="num">CB Co 12hr</th>
           </tr>
         </thead>
-        <tbody>${rows || `<tr><td colspan="6" class="empty">No shift/PAC data.</td></tr>`}</tbody>
+        <tbody>${rows.map((item) => item.row).join("") || `<tr><td colspan="6" class="empty">No shift/PAC data.</td></tr>`}</tbody>
       </table>
+      ${renderPaginator(TID, allShiftsPac.length)}
     </section>
+    <section class="card-list analysis-card-list">${cards || `<p class="empty">No shift/PAC data.</p>`}</section>
   `;
 }
 
 // ── Tab: Postings ─────────────────────────────────────────────────────────────
 function renderAnalysisPostingsTab(): string {
   if (!analysis) return "";
-  const buckets: Array<[string, "pain_months" | "sicu_months" | "drp_months" | "neuro_icu_months"]> = [
-    ["Pain Call", "pain_months"],
-    ["SICU / ICU", "sicu_months"],
-    ["DRP", "drp_months"],
-    ["Neuro ICU", "neuro_icu_months"],
+  const buckets: Array<[string, "pain_months" | "sicu_months" | "drp_months" | "neuro_icu_months", string]> = [
+    ["Pain Call", "pain_months", "postings-pain"],
+    ["SICU / ICU", "sicu_months", "postings-sicu"],
+    ["DRP", "drp_months", "postings-drp"],
+    ["Neuro ICU", "neuro_icu_months", "postings-neuro"],
   ];
   const sections = buckets
-    .map(([label, key]) => {
+    .map(([label, key, tid]) => {
       const people = [...analysis!.people]
         .filter((p) => p[key].length > 0)
         .sort((a, b) => b[key].length - a[key].length);
       if (!people.length) return "";
-      const rows = people
-        .map(
-          (p, i) => `
+      const pageItems = paginate(people, tid);
+      const offset = getPage(tid) * PAGE_SIZE;
+      const rows = pageItems
+        .map((p, i) => ({
+          person: p,
+          row: `
             <tr>
-              <td><button class="person-link" data-analysis-person="${escapeHtml(p.name)}">${i + 1}. ${escapeHtml(p.name)}</button></td>
+              <td><button class="person-link" data-analysis-person="${escapeHtml(p.name)}">${offset + i + 1}. ${escapeHtml(p.name)}</button></td>
               <td class="num">${p[key].length} mo</td>
               <td>${p[key].map((m) => analysis!.month_labels[m] ?? m).join(", ")}</td>
             </tr>
           `,
+        }));
+      const cards = rows
+        .map(({ person }, i) =>
+          renderAnalysisDataCard(`${offset + i + 1}. ${person.name}`, [
+            ["Months", `${person[key].length} mo`],
+            ["Period", person[key].map((m) => analysis!.month_labels[m] ?? m).join(", ")],
+          ], person.name),
         )
         .join("");
       return `
-        <section class="panel table-panel" style="margin-bottom:16px">
+        <section class="panel table-panel hide-mobile" style="margin-bottom:16px">
           <h3 style="padding:14px 16px 0">${label} <span class="posting-count">${people.length} people</span></h3>
           <table class="analysis-table">
             <thead><tr><th>Name</th><th class="num">Months</th><th>Period</th></tr></thead>
-            <tbody>${rows}</tbody>
+            <tbody>${rows.map((item) => item.row).join("")}</tbody>
           </table>
+          ${renderPaginator(tid, people.length)}
+        </section>
+        <section class="mobile-section card-list analysis-card-list">
+          <h3>${label} <span class="posting-count">${people.length} people</span></h3>
+          ${cards}
         </section>
       `;
     })
@@ -1125,11 +1421,17 @@ function renderAnalysisPromotionsTab(): string {
     });
   });
 
-  const timelineRows = analysis.months
-    .flatMap((m) => {
-      const label = analysis!.month_labels[m];
-      return (timelineMap[label] ?? []).map(
-        (c) => `
+  const TL_TID = "promotions-timeline";
+  const PP_TID = "promotions-by-person";
+  const PROMO_PAGE = 15;
+
+  const allTimelineItems = analysis.months.flatMap((m) => {
+    const label = analysis!.month_labels[m];
+    return (timelineMap[label] ?? []).map((c) => ({ label, c }));
+  });
+  const tlOffset = getPage(TL_TID) * PROMO_PAGE;
+  const timelineRows = paginate(allTimelineItems, TL_TID, PROMO_PAGE)
+    .map(({ label, c }) => `
           <tr>
             <td>${label}</td>
             <td><button class="person-link" data-analysis-person="${escapeHtml(c.name)}">${escapeHtml(c.name)}</button></td>
@@ -1137,39 +1439,69 @@ function renderAnalysisPromotionsTab(): string {
             <td>→</td>
             <td><strong>${analysisCallLevelLabel(c.to)}</strong></td>
           </tr>
-        `,
-      );
-    })
+        `)
+    .join("");
+  const timelineCards = paginate(allTimelineItems, TL_TID, PROMO_PAGE)
+    .map(({ label, c }) =>
+      renderAnalysisDataCard(c.name, [
+        ["Month", label],
+        ["From", analysisCallLevelLabel(c.from)],
+        ["To", analysisCallLevelLabel(c.to)],
+      ], c.name),
+    )
     .join("");
 
-  const personRows = promoted
+  const ppOffset = getPage(PP_TID) * PROMO_PAGE;
+  const personRows = paginate(promoted, PP_TID, PROMO_PAGE)
     .map(
       (p, i) => `
         <tr>
-          <td><button class="person-link" data-analysis-person="${escapeHtml(p.name)}">${i + 1}. ${escapeHtml(p.name)}</button></td>
+          <td><button class="person-link" data-analysis-person="${escapeHtml(p.name)}">${ppOffset + i + 1}. ${escapeHtml(p.name)}</button></td>
           <td>${p.promotions.map((pr) => `${analysis!.month_labels[pr.month] ?? pr.month}: ${analysisCallLevelLabel(pr.from)} → ${analysisCallLevelLabel(pr.to)}`).join("<br>")}</td>
         </tr>
       `,
     )
     .join("");
+  const personCards = paginate(promoted, PP_TID, PROMO_PAGE)
+    .map((p, i) =>
+      renderAnalysisDataCard(`${ppOffset + i + 1}. ${p.name}`, [
+        [
+          "Changes",
+          p.promotions
+            .map((pr) => `${analysis!.month_labels[pr.month] ?? pr.month}: ${analysisCallLevelLabel(pr.from)} -> ${analysisCallLevelLabel(pr.to)}`)
+            .join("<br>"),
+        ],
+      ], p.name),
+    )
+    .join("");
 
   return `
     <div class="analytics-grid">
-      <section class="panel table-panel">
+      <section class="panel table-panel hide-mobile">
         <h3 style="padding:14px 16px 0">Promotion Timeline</h3>
         <table class="analysis-table">
           <thead><tr><th>Month</th><th>Person</th><th>From</th><th></th><th>To</th></tr></thead>
           <tbody>${timelineRows || `<tr><td colspan="5" class="empty">No promotions detected.</td></tr>`}</tbody>
         </table>
+        ${renderPaginator(TL_TID, allTimelineItems.length, PROMO_PAGE)}
       </section>
-      <section class="panel table-panel">
+      <section class="panel table-panel hide-mobile">
         <h3 style="padding:14px 16px 0">Promotions by Person</h3>
         <table class="analysis-table">
           <thead><tr><th>Name</th><th>Call Level Changes</th></tr></thead>
           <tbody>${personRows || `<tr><td colspan="2" class="empty">No promotions.</td></tr>`}</tbody>
         </table>
+        ${renderPaginator(PP_TID, promoted.length, PROMO_PAGE)}
       </section>
     </div>
+    <section class="mobile-section card-list analysis-card-list">
+      <h3>Promotion Timeline</h3>
+      ${timelineCards || `<p class="empty">No promotions detected.</p>`}
+    </section>
+    <section class="mobile-section card-list analysis-card-list">
+      <h3>Promotions by Person</h3>
+      ${personCards || `<p class="empty">No promotions.</p>`}
+    </section>
   `;
 }
 
@@ -1179,28 +1511,30 @@ function renderAnalysisPersonModal(person: AnalysisPerson): string {
   const allLevels = Object.values(person.call_levels);
   const uniqueLevels = Array.from(new Set(allLevels)).map(analysisCallLevelLabel);
   const units = Array.from(new Set(Object.values(person.units).filter(Boolean)));
-  const subtitle = [uniqueLevels.join(" → "), units.join(", ")].filter(Boolean).join(" · ");
+  const popupSubtitle = [uniqueLevels.join(" -> "), units.join(", ")].filter(Boolean).join(" | ");
 
-  const metricCards = [
+  const dutyLoadMetrics: Array<[string, number]> = [
     ["Total 24hr", person.total_24hr],
     ["Weekend 24hr", person.total_weekend_24hr],
     ["Weekday 24hr", person.total_weekday_24hr],
+    ["5th Call", person.fifth_call],
+    ["5th Wknd", person.fifth_call_weekend],
+  ];
+  const campusMetrics: Array<[string, number]> = [
     ["Main Calls", person.main_24hr],
     ["CB Calls", person.cb_24hr],
     ["RC Calls", person.rc_24hr],
+    ["RC 12hr", person.rc12hr],
+  ];
+  const specialMetrics: Array<[string, number]> = [
     ["Schell", person.schell],
     ["Floating", person.floating],
+    ["Caesar A", person.caesar_a],
     ["Caesar B", person.caesar_b],
     ["CART", person.cart],
-    ["5th Call", person.fifth_call],
-    ["5th Wknd", person.fifth_call_weekend],
-    ["Caesar A", person.caesar_a],
     ["PAC", person.pac],
     ["Shifts", person.shift],
-    ["RC 12hr", person.rc12hr],
-  ]
-    .map(([label, value]) => renderPersonMetric(String(label), Number(value)))
-    .join("");
+  ];
 
   const dayCards = analysis.days
     .map((day) => {
@@ -1279,12 +1613,14 @@ function renderAnalysisPersonModal(person: AnalysisPerson): string {
         <header class="person-modal-header">
           <div>
             <h3 id="person-modal-title">${escapeHtml(person.name)}</h3>
-            <p>${escapeHtml(subtitle || `${person.months_active.length} active months`)}</p>
+            <p>${escapeHtml(popupSubtitle || `${person.months_active.length} active months`)}</p>
           </div>
-          <button class="modal-close" data-close-person-modal aria-label="Close">×</button>
+          <button class="modal-close" data-close-person-modal aria-label="Close">x</button>
         </header>
         <div class="person-modal-body">
-          <div class="person-metric-grid">${metricCards}</div>
+          ${renderPersonMetricGroup("Duty Load", dutyLoadMetrics)}
+          ${renderPersonMetricGroup("Campus Calls", campusMetrics)}
+          ${renderPersonMetricGroup("Special Duties", specialMetrics)}
           ${postingBadges ? `<h4>Special Postings</h4><div class="posting-badges">${postingBadges}</div>` : ""}
           <h4>24hr Duties by Day of Week</h4>
           <div class="person-day-grid">${dayCards}</div>
@@ -1415,15 +1751,15 @@ function renderManualReview(review: AnalysisManualReview): string {
 
 // ── Tab bar + main renderAnalysis ─────────────────────────────────────────────
 const ANALYSIS_TABS = [
-  { id: "overview", label: "Overview" },
-  { id: "personnel", label: "Personnel" },
-  { id: "weekend", label: "Weekend" },
-  { id: "duty-types", label: "Duty Types" },
-  { id: "cart-schell", label: "CART & Schell" },
+  { id: "overview", label: "Board Summary" },
+  { id: "personnel", label: "People" },
+  { id: "weekend", label: "Weekend Load" },
+  { id: "duty-types", label: "Duty Mix" },
+  { id: "cart-schell", label: "CART / Schell" },
   { id: "fifth-call", label: "5th Call" },
-  { id: "shifts-pac", label: "Shifts & PAC" },
+  { id: "shifts-pac", label: "PAC / Shifts" },
   { id: "postings", label: "Postings" },
-  { id: "promotions", label: "Promotions" },
+  { id: "promotions", label: "Call Changes" },
 ] as const;
 
 function renderAnalysisTabContent(): string {
@@ -1517,6 +1853,10 @@ function renderTextTarget(mapping: AdminMapping): string {
 function renderMappings() {
   setHeader("Mappings", "Admin mapping control");
   if (!viewRoot) return;
+  if (!isAdminUser()) {
+    void renderOverview();
+    return;
+  }
 
   const filtered = filteredMappings();
 
@@ -1618,6 +1958,10 @@ function renderMappings() {
 async function renderImports() {
   setHeader("Imports", "Historical data import");
   if (!viewRoot) return;
+  if (!isAdminUser()) {
+    await renderOverview();
+    return;
+  }
 
   const status = await getHistoricalImportStatus();
   viewRoot.innerHTML = `
@@ -1690,8 +2034,15 @@ function callLevelLabel(value: string | null): string {
     "3RD_CALL_SR_AP": "3rd Call",
     "3RD_CALL_PG_2023": "3rd Call",
     "DM_PDF": "3rd Call",
+    "CO_4TH_CALL": "Co 4th Call",
     "4TH_CALL": "4th Call",
     "5TH_CALL": "5th Call",
+    "PAIN": "Pain",
+    "SICU": "SICU",
+    "DRP": "DRP",
+    "NEURO_ICU": "Neuro ICU",
+    "PAC": "PAC",
+    "OTHER_SPECIAL": "Other Special",
   }[value ?? ""] ?? value ?? "Unassigned";
 }
 
@@ -1716,7 +2067,8 @@ function filteredMembers(): DepartmentMember[] {
       const matchesSearch = !search || haystack.includes(search);
       const matchesPosition = memberPositionFilter === "all" || position === memberPositionFilter;
       const matchesCallLevel = memberCallLevelFilter === "all" || callLevel === memberCallLevelFilter;
-      return matchesSearch && matchesPosition && matchesCallLevel;
+      const matchesStatus = memberStatusFilter === "all" || member.active_status === memberStatusFilter;
+      return matchesSearch && matchesPosition && matchesCallLevel && matchesStatus;
     })
     .sort((a, b) => {
       let result = 0;
@@ -1747,19 +2099,23 @@ function renderMemberRows(rows: DepartmentMember[]): string {
   return rows
     .map((member) => {
       const statusClass = member.active_status === "active" ? "active" : "inactive";
-      const aliases = member.aliases?.length ? `<small>Also: ${member.aliases.join(", ")}</small>` : "";
+      const position = memberPosition(member);
+      const callLevel = callLevelLabel(normalizeCallLevel(member.call_level));
+      const callLevelCell = isAdminUser()
+        ? `
+            <select class="call-level-select" data-call-level="${member.id}" id="call-level-${member.id}" aria-label="Call level for ${member.canonical_name}">
+              ${renderCallLevelChoices(member.call_level)}
+            </select>
+          `
+        : `<span class="call-level-readonly">${callLevel}</span>`;
       return `
         <tr>
           <td class="member-name-cell">
             <strong>${member.canonical_name}</strong>
-            ${aliases}
+            <small>${position}</small>
           </td>
           <td><span class="status-dot ${statusClass}">${member.active_status}</span></td>
-          <td>
-            <select class="call-level-select" data-call-level="${member.id}" id="call-level-${member.id}" aria-label="Call level for ${member.canonical_name}">
-              ${renderCallLevelChoices(member.call_level)}
-            </select>
-          </td>
+          <td>${callLevelCell}</td>
         </tr>
       `;
     })
@@ -1801,8 +2157,12 @@ function renderCallLevelFilterOptions(): string {
 }
 
 function renderPositionBreakdown(): string {
-  if (!memberAudit) return "";
-  return Object.entries(memberAudit.positions)
+  const counts = members.reduce<Record<string, number>>((acc, member) => {
+    const position = memberPosition(member);
+    acc[position] = (acc[position] ?? 0) + 1;
+    return acc;
+  }, {});
+  return Object.entries(counts)
     .sort((a, b) => b[1] - a[1])
     .map(([position, count]) => `<div class="category-pill"><span>${position}</span><strong>${count}</strong></div>`)
     .join("");
@@ -1825,18 +2185,23 @@ function renderMemberCards(rows: DepartmentMember[]): string {
   return rows
     .map(
       (member) => {
-        const aliases = member.aliases?.length ? `<small>Also: ${member.aliases.join(", ")}</small>` : "";
         const statusClass = member.active_status === "active" ? "active" : "inactive";
+        const callLevel = callLevelLabel(normalizeCallLevel(member.call_level));
+        const callLevelControl = isAdminUser()
+          ? `
+              <select class="call-level-select" data-call-level="${member.id}" aria-label="Call level for ${member.canonical_name}">
+                ${renderCallLevelChoices(member.call_level)}
+              </select>
+            `
+          : `<small>${callLevel}</small>`;
         return `
         <article class="member-card">
           <div>
             <strong>${member.canonical_name}</strong>
             <small><span class="status-dot ${statusClass}">${member.active_status}</span></small>
-            ${aliases}
+            <small>${memberPosition(member)}</small>
           </div>
-          <select class="call-level-select" data-call-level="${member.id}" aria-label="Call level for ${member.canonical_name}">
-            ${renderCallLevelChoices(member.call_level)}
-          </select>
+          ${callLevelControl}
         </article>
       `;
       },
@@ -1851,87 +2216,624 @@ function updateMemberCards(rows: DepartmentMember[]) {
   }
 }
 
-function renderDedupeRows(): string {
-  return dedupeCandidates
-    .map((candidate, index) => {
-      const options = candidate.people
-        .map((person) => `<option value="${person.id}">${person.canonical_name}</option>`)
-        .join("");
-      return `
-        <tr>
-          <td><strong>${candidate.normalized_name}</strong></td>
-          <td>${candidate.people.map((person) => person.canonical_name).join("<br>")}</td>
-          <td><select data-dedupe-target="${index}" aria-label="Target for ${candidate.normalized_name}">${options}</select></td>
-          <td><button class="icon-button" data-merge-candidate="${index}">Merge</button></td>
-        </tr>
-      `;
-    })
+
+function addDaysIso(dateIso: string, offset: number): string {
+  const [year, month, day] = dateIso.split("-").map(Number);
+  const date = new Date(Date.UTC(year, month - 1, day + offset));
+  return date.toISOString().slice(0, 10);
+}
+
+function formatIsoDay(dateIso: string): string {
+  return new Date(`${dateIso}T00:00:00Z`).toLocaleDateString(undefined, {
+    day: "numeric",
+    timeZone: "UTC",
+    weekday: "short",
+  });
+}
+
+function leaveTypeLabel(value: string): string {
+  return value.replace(/_/g, " ").toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
+function renderLeaveMemberOptions(selected = ""): string {
+  return members
+    .map(
+      (member) =>
+        `<option value="${member.id}" ${member.id === selected ? "selected" : ""}>${escapeHtml(member.canonical_name)}</option>`,
+    )
     .join("");
 }
 
-function renderDedupeCards(): string {
-  return dedupeCandidates
-    .map((candidate, index) => {
-      const options = candidate.people
-        .map((person) => `<option value="${person.id}">${person.canonical_name}</option>`)
-        .join("");
+function renderLeaveBreakdown(title: string, values: Record<string, number>): string {
+  const rows = Object.entries(values)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 8)
+    .map(([label, value]) => `<div class="category-pill"><span>${escapeHtml(leaveTypeLabel(label))}</span><strong>${value}</strong></div>`)
+    .join("");
+  return `
+    <article class="panel">
+      <h3>${title}</h3>
+      <div class="category-grid">${rows || `<p class="empty-state">No data.</p>`}</div>
+    </article>
+  `;
+}
+
+function renderLeaveCalendarDays(): string {
+  if (!leaveCalendar) return "";
+  const start = leaveCalendar.summary.starts_on;
+  const end = leaveCalendar.summary.ends_on;
+  const days: string[] = [];
+  for (let day = start; day <= end; day = addDaysIso(day, 1)) {
+    days.push(day);
+  }
+  return days
+    .map((day) => {
+      const entries = leaveCalendar!.days[day] ?? [];
+      const pressure = entries.length >= 6 ? "high" : entries.length >= 3 ? "watch" : entries.length ? "normal" : "";
       return `
-        <article class="data-card">
-          <div class="data-card-row"><span class="data-card-label">Key</span><span class="data-card-value">${candidate.normalized_name}</span></div>
-          <div class="data-card-row"><span class="data-card-label">People</span><span class="data-card-value">${candidate.people.map((p) => p.canonical_name).join(", ")}</span></div>
-          <div class="data-card-row"><span class="data-card-label">Target</span>
-            <select data-dedupe-target="${index}" aria-label="Target for ${candidate.normalized_name}">${options}</select>
-          </div>
-          <div class="data-card-row"><button class="icon-button" data-merge-candidate="${index}">Merge</button></div>
+        <article class="leave-day-card ${pressure ? `leave-pressure-${pressure}` : ""}">
+          <span>${formatIsoDay(day)}</span>
+          <strong>${entries.length}</strong>
+          <small>${entries.slice(0, 3).map((entry) => escapeHtml(entry.person_name)).join(", ") || "No leave"}</small>
         </article>
       `;
     })
     .join("");
 }
 
+function renderLeaveRows(): string {
+  return leaveRequests
+    .map(
+      (leave) => `
+        <tr>
+          <td><strong>${escapeHtml(leave.person.canonical_name)}</strong><small>${escapeHtml(leave.person.call_level ?? "Unassigned")}</small></td>
+          <td>${leave.starts_on}${leave.starts_on !== leave.ends_on ? ` to ${leave.ends_on}` : ""}</td>
+          <td>${escapeHtml(leaveTypeLabel(leave.leave_slot))}</td>
+          <td>${escapeHtml(leaveTypeLabel(leave.leave_type))}</td>
+          <td><span class="status-dot ${leave.status === "approved" ? "active" : "inactive"}">${escapeHtml(leave.status)}</span></td>
+          <td class="num">${leave.days}</td>
+          <td><button class="icon-button" data-cancel-leave="${leave.id}" ${leave.status === "cancelled" ? "disabled" : ""}>Cancel</button></td>
+        </tr>
+      `,
+    )
+    .join("");
+}
+
+function renderLeaveCards(): string {
+  return leaveRequests
+    .map(
+      (leave) => `
+        <article class="data-card">
+          <div class="data-card-title">${escapeHtml(leave.person.canonical_name)}</div>
+          <div class="data-card-row"><span class="data-card-label">Dates</span><span class="data-card-value">${leave.starts_on}${leave.starts_on !== leave.ends_on ? ` to ${leave.ends_on}` : ""}</span></div>
+          <div class="data-card-row"><span class="data-card-label">Slot</span><span class="data-card-value">${escapeHtml(leaveTypeLabel(leave.leave_slot))}</span></div>
+          <div class="data-card-row"><span class="data-card-label">Type</span><span class="data-card-value">${escapeHtml(leaveTypeLabel(leave.leave_type))}</span></div>
+          <div class="data-card-row"><span class="data-card-label">Status</span><span class="data-card-value">${escapeHtml(leave.status)}</span></div>
+          <div class="data-card-row"><button class="icon-button" data-cancel-leave="${leave.id}" ${leave.status === "cancelled" ? "disabled" : ""}>Cancel</button></div>
+        </article>
+      `,
+    )
+    .join("");
+}
+
+async function renderLeave() {
+  setHeader("Leave", "Leave calendar and availability");
+  if (!viewRoot) return;
+  viewRoot.innerHTML = `<section class="panel"><h3>Loading leave...</h3></section>`;
+  try {
+    if (!members.length) members = await getMembers();
+    [leaveCalendar, leaveRequests] = await Promise.all([
+      getLeaveCalendar(leaveMonth),
+      getLeaveRequests(leaveMonth),
+    ]);
+  } catch (error) {
+    showToast(error instanceof Error ? error.message : "Failed to load leave", "error");
+    viewRoot.innerHTML = `<section class="panel"><h3>Leave unavailable</h3><p>Unable to load leave calendar.</p></section>`;
+    return;
+  }
+  const summary = leaveCalendar.summary;
+  viewRoot.innerHTML = `
+    <section class="roster-command">
+      <div class="roster-command-header">
+        <div>
+          <h3>Leave Management</h3>
+          <p>First layer: manually add approved/requested leave and review monthly leave pressure.</p>
+        </div>
+        <span class="audit-badge">${summary.month}</span>
+      </div>
+      <div class="member-filter-row">
+        <label for="leave-month" class="visually-hidden">Leave month</label>
+        <input id="leave-month" type="month" value="${leaveMonth}" aria-label="Leave month" />
+      </div>
+    </section>
+    <section class="summary-grid four-col board-metrics">
+      <article class="metric metric-primary"><span>${summary.total_requests}</span><p>Leave requests</p></article>
+      <article class="metric"><span>${summary.people_on_leave}</span><p>People on leave</p></article>
+      <article class="metric"><span>${summary.total_leave_days}</span><p>Total leave days</p></article>
+      <article class="metric metric-weekend"><span>${summary.busiest_day?.count ?? 0}</span><p>Highest day pressure</p></article>
+    </section>
+    <section class="analytics-grid">
+      ${renderLeaveBreakdown("By Call Level", summary.call_level_counts)}
+      ${renderLeaveBreakdown("By Unit", summary.unit_counts)}
+    </section>
+    <section class="panel leave-form-panel">
+      <h3>Add Leave</h3>
+      <form class="leave-form" id="leave-form">
+        <label>
+          <span>Member</span>
+          <select id="leave-person" required>${renderLeaveMemberOptions()}</select>
+        </label>
+        <label>
+          <span>Starts</span>
+          <input id="leave-start" type="date" value="${summary.starts_on}" required />
+        </label>
+        <label>
+          <span>Ends</span>
+          <input id="leave-end" type="date" value="${summary.starts_on}" required />
+        </label>
+        <label>
+          <span>Slot</span>
+          <select id="leave-slot">
+            <option value="FULL_DAY">Full day</option>
+            <option value="AM">AM</option>
+            <option value="PM">PM</option>
+            <option value="NIGHT">Night</option>
+            <option value="CUSTOM">Custom</option>
+          </select>
+        </label>
+        <label>
+          <span>Type</span>
+          <select id="leave-type">
+            <option value="ANNUAL_LEAVE">Annual leave</option>
+            <option value="ACADEMIC_LEAVE">Academic leave</option>
+            <option value="CONFERENCE">Conference</option>
+            <option value="EXAM">Exam</option>
+            <option value="SICK_LEAVE">Sick leave</option>
+            <option value="OTHER">Other</option>
+          </select>
+        </label>
+        <label>
+          <span>Status</span>
+          <select id="leave-status">
+            <option value="approved">Approved</option>
+            <option value="requested">Requested</option>
+          </select>
+        </label>
+        <label class="leave-notes">
+          <span>Notes</span>
+          <input id="leave-notes" placeholder="Optional note" />
+        </label>
+        <button class="primary" type="submit">Add Leave</button>
+      </form>
+    </section>
+    <section class="panel">
+      <h3>Month Calendar</h3>
+      <div class="leave-calendar-grid">${renderLeaveCalendarDays()}</div>
+    </section>
+    <section class="panel table-panel hide-mobile" style="margin-top:16px">
+      <table>
+        <thead><tr><th>Member</th><th>Dates</th><th>Slot</th><th>Type</th><th>Status</th><th class="num">Days</th><th></th></tr></thead>
+        <tbody>${renderLeaveRows() || `<tr><td colspan="7" class="empty">No leave recorded for this month.</td></tr>`}</tbody>
+      </table>
+    </section>
+    <section class="card-list">
+      ${renderLeaveCards() || `<p class="empty">No leave recorded for this month.</p>`}
+    </section>
+  `;
+}
+
+const UNIT_POSTING_TYPES = [
+  ["1ST_CALL", "1st Call"],
+  ["2ND_CALL", "2nd Call"],
+  ["3RD_CALL", "3rd Call"],
+  ["4TH_CALL", "4th Call"],
+  ["CO_4TH_CALL", "Co 4th Call"],
+  ["5TH_CALL", "5th Call"],
+  ["PAIN", "Pain"],
+  ["SICU", "SICU"],
+  ["DRP", "DRP"],
+  ["NEURO_ICU", "Neuro ICU"],
+  ["PAC", "PAC"],
+  ["OTHER_SPECIAL", "Other Special"],
+];
+
+function renderUnitOptions(selected = ""): string {
+  return units
+    .map((unit) => `<option value="${unit.id}" ${unit.id === selected ? "selected" : ""}>${escapeHtml(unit.name)}</option>`)
+    .join("");
+}
+
+function renderUnitPostingTypeOptions(selected = ""): string {
+  return UNIT_POSTING_TYPES
+    .map(([value, label]) => `<option value="${value}" ${value === selected ? "selected" : ""}>${label}</option>`)
+    .join("");
+}
+
+function unitSummary(unitId: string) {
+  return unitManagement?.unit_summaries.find((summary) => summary.unit_id === unitId) ?? null;
+}
+
+function unitAssignmentsFor(unitId: string): UnitAssignment[] {
+  return unitAssignments.filter((assignment) => assignment.unit?.id === unitId);
+}
+
+function validationIssuesForUnit(unitId: string) {
+  const assignmentIds = new Set(unitAssignmentsFor(unitId).map((assignment) => assignment.id));
+  return (unitManagement?.validation_issues ?? []).filter(
+    (issue) => issue.unit_id === unitId || (issue.posting_id ? assignmentIds.has(issue.posting_id) : false),
+  );
+}
+
+function renderUnitAssignmentsByUnit(): string {
+  if (!unitManagement) return "";
+  if (!unitManagement.units.length) {
+    return `<section class="panel"><p class="empty-state">No active units found. Add units through historical import or admin seed before assigning members.</p></section>`;
+  }
+  return unitManagement.units
+    .map((unit) => {
+      const assignments = unitAssignmentsFor(unit.id);
+      const grouped = UNIT_POSTING_TYPES
+        .map(([postingType, label]) => {
+          const people = assignments.filter((assignment) => assignment.posting_type === postingType);
+          if (!people.length) return "";
+          return `
+            <div class="unit-call-group">
+              <span>${label}</span>
+              <div class="unit-chip-row">
+                ${people
+                  .map(
+                    (assignment) => `
+                      <span class="unit-member-chip">
+                        ${escapeHtml(assignment.person.canonical_name)}
+                      </span>
+                    `,
+                  )
+                  .join("")}
+              </div>
+            </div>
+          `;
+        })
+        .join("");
+      const summary = unitSummary(unit.id);
+      const assigned = summary?.assigned_members ?? 0;
+      const onLeave = summary?.people_with_leave ?? 0;
+      const available = Math.max(0, assigned - onLeave);
+      const unitIssues = validationIssuesForUnit(unit.id);
+      return `
+        <article class="unit-card" role="button" tabindex="0" data-open-unit-modal="${unit.id}" aria-label="Manage ${escapeHtml(unit.name)} unit">
+          <header>
+            <div>
+              <h3>${escapeHtml(unit.name)}</h3>
+              <p>${escapeHtml(unit.campus ?? unit.code)}</p>
+            </div>
+            <strong>${assignments.length}</strong>
+          </header>
+          <div class="audit-chip-row">
+            <span><strong>${assigned}</strong> assigned</span>
+            <span><strong>${onLeave}</strong> on leave</span>
+            <span><strong>${available}</strong> roughly available</span>
+            <span><strong>${summary?.leave_days ?? 0}</strong> leave days</span>
+          </div>
+          ${unitIssues.length ? `<span class="unit-warning-strip">${unitIssues.length} validation ${unitIssues.length === 1 ? "item" : "items"}</span>` : ""}
+          ${grouped || `<p class="empty-state">No members assigned for this month.</p>`}
+        </article>
+      `;
+    })
+    .join("");
+}
+
+function renderUnitAssignmentRows(): string {
+  return unitAssignments
+    .map(
+      (assignment) => `
+        <tr>
+          <td><strong>${escapeHtml(assignment.person.canonical_name)}</strong><small>${escapeHtml(assignment.person.call_level ?? "Unassigned")}</small></td>
+          <td>${escapeHtml(assignment.unit?.name ?? "No unit")}</td>
+          <td>${escapeHtml(callLevelLabel(assignment.posting_type))}</td>
+          <td>${assignment.starts_on}${assignment.ends_on ? ` to ${assignment.ends_on}` : ""}</td>
+          <td>${escapeHtml(assignment.notes ?? "")}</td>
+          <td>
+            <button class="icon-button" data-open-unit-modal="${assignment.unit?.id ?? ""}">Manage Unit</button>
+          </td>
+        </tr>
+      `,
+    )
+    .join("");
+}
+
+function renderUnitValidationIssues(): string {
+  const issues = unitManagement?.validation_issues ?? [];
+  if (!issues.length) {
+    return `<details class="panel quality-ok unit-validation-panel"><summary><span>Validation</span><span class="quality-status-badge">Clear</span></summary><p>No basic unit assignment issues found.</p></details>`;
+  }
+  const rows = issues
+    .map(
+      (issue) => `
+        <div class="validation-row ${issue.severity}">
+          <strong>${escapeHtml(issue.severity.toUpperCase())}</strong>
+          <span>${escapeHtml(issue.message)}</span>
+        </div>
+      `,
+    )
+    .join("");
+  const errors = issues.filter((issue) => issue.severity === "error").length;
+  const warnings = issues.filter((issue) => issue.severity === "warning").length;
+  return `
+    <details class="panel quality-warning unit-validation-panel">
+      <summary>
+        <span>Validation warnings</span>
+        <span class="quality-status-badge">${errors} errors / ${warnings} warnings</span>
+      </summary>
+      <div class="validation-list">${rows}</div>
+    </details>
+  `;
+}
+
+function renderUnitIssueDetails(unitId: string): string {
+  const issues = validationIssuesForUnit(unitId);
+  if (!issues.length) {
+    return `
+      <details class="unit-modal-validation">
+        <summary>Validation <span>Clear</span></summary>
+        <p>No issues found for this unit.</p>
+      </details>
+    `;
+  }
+  return `
+    <details class="unit-modal-validation">
+      <summary>Validation <span>${issues.length}</span></summary>
+      <div class="validation-list">
+        ${issues
+          .map(
+            (issue) => `
+              <div class="validation-row ${issue.severity}">
+                <strong>${escapeHtml(issue.severity.toUpperCase())}</strong>
+                <span>${escapeHtml(issue.message)}</span>
+              </div>
+            `,
+          )
+          .join("")}
+      </div>
+    </details>
+  `;
+}
+
+function renderUnitAssignmentEditors(unitId: string): string {
+  const assignments = unitAssignmentsFor(unitId);
+  if (!assignments.length) {
+    return `<p class="empty-state">No members assigned yet. Add the first member below.</p>`;
+  }
+  return assignments
+    .map(
+      (assignment) => `
+        <form class="unit-assignment-editor" data-unit-row-form="${assignment.id}">
+          <label>
+            <span>Member</span>
+            <select name="person_id" required>${renderLeaveMemberOptions(assignment.person.id)}</select>
+          </label>
+          <label>
+            <span>Unit</span>
+            <select name="unit_id" required>${renderUnitOptions(assignment.unit?.id ?? unitId)}</select>
+          </label>
+          <label>
+            <span>Posting</span>
+            <select name="posting_type" required>${renderUnitPostingTypeOptions(assignment.posting_type)}</select>
+          </label>
+          <label>
+            <span>Starts</span>
+            <input name="starts_on" type="date" value="${assignment.starts_on}" required />
+          </label>
+          <label>
+            <span>Ends</span>
+            <input name="ends_on" type="date" value="${assignment.ends_on ?? ""}" />
+          </label>
+          <label class="unit-editor-notes">
+            <span>Notes</span>
+            <input name="notes" value="${escapeHtml(assignment.notes ?? "")}" placeholder="Optional note" />
+          </label>
+          <div class="unit-editor-actions">
+            <button class="primary" type="submit">Save</button>
+            <button class="icon-button" type="button" data-delete-unit-assignment="${assignment.id}">Remove</button>
+          </div>
+        </form>
+      `,
+    )
+    .join("");
+}
+
+function renderUnitModal(unit: UnitRead): string {
+  if (!unitManagement) return "";
+  const assignments = unitAssignmentsFor(unit.id);
+  const summary = unitSummary(unit.id);
+  const assigned = summary?.assigned_members ?? 0;
+  const onLeave = summary?.people_with_leave ?? 0;
+  const available = Math.max(0, assigned - onLeave);
+  return `
+    <div class="modal-backdrop" id="unit-management-modal">
+      <section class="person-modal unit-modal" role="dialog" aria-modal="true" aria-labelledby="unit-modal-title">
+        <header class="person-modal-header">
+          <div>
+            <h3 id="unit-modal-title">${escapeHtml(unit.name)}</h3>
+            <p>${escapeHtml(unitManagement.month)} unit assignment workspace</p>
+          </div>
+          <button class="modal-close" data-close-unit-modal aria-label="Close">x</button>
+        </header>
+        <div class="person-modal-body unit-modal-body">
+          <div class="audit-chip-row">
+            <span><strong>${assigned}</strong> assigned</span>
+            <span><strong>${onLeave}</strong> on leave</span>
+            <span><strong>${available}</strong> roughly available</span>
+            <span><strong>${summary?.leave_days ?? 0}</strong> leave days</span>
+          </div>
+          ${renderUnitIssueDetails(unit.id)}
+          <h4>Assigned Members</h4>
+          <div class="unit-editor-list">${renderUnitAssignmentEditors(unit.id)}</div>
+          <h4>Add Member</h4>
+          <form class="leave-form unit-modal-form" id="unit-assignment-form" data-modal-unit-id="${unit.id}">
+            <label>
+              <span>Member</span>
+              <select id="unit-person" required>${renderLeaveMemberOptions()}</select>
+            </label>
+            <label>
+              <span>Unit</span>
+              <select id="unit-select" required>${renderUnitOptions(unit.id)}</select>
+            </label>
+            <label>
+              <span>Call level / posting</span>
+              <select id="unit-posting-type" required>${renderUnitPostingTypeOptions()}</select>
+            </label>
+            <label>
+              <span>Starts</span>
+              <input id="unit-start" type="date" value="${unitManagement.starts_on}" required />
+            </label>
+            <label>
+              <span>Ends</span>
+              <input id="unit-end" type="date" value="${unitManagement.ends_on}" />
+            </label>
+            <label class="leave-notes">
+              <span>Notes</span>
+              <input id="unit-notes" placeholder="Optional note" />
+            </label>
+            <button class="primary" type="submit">Add Assignment</button>
+          </form>
+        </div>
+      </section>
+    </div>
+  `;
+}
+
+function openUnitModal(unitId: string) {
+  document.querySelector("#unit-management-modal")?.remove();
+  const unit = units.find((item) => item.id === unitId);
+  if (!unit || !viewRoot) return;
+  unitModalUnitId = unitId;
+  unitEditingAssignmentId = null;
+  viewRoot.insertAdjacentHTML("beforeend", renderUnitModal(unit));
+}
+
+function closeUnitModal() {
+  unitModalUnitId = null;
+  unitEditingAssignmentId = null;
+  document.querySelector("#unit-management-modal")?.remove();
+}
+
+function unitAssignmentPayloadFromForm(form: HTMLFormElement) {
+  return {
+    person_id:
+      form.querySelector<HTMLSelectElement>("[name='person_id']")?.value ??
+      form.querySelector<HTMLSelectElement>("#unit-person")?.value ??
+      "",
+    unit_id:
+      form.querySelector<HTMLSelectElement>("[name='unit_id']")?.value ??
+      form.querySelector<HTMLSelectElement>("#unit-select")?.value ??
+      "",
+    posting_type:
+      form.querySelector<HTMLSelectElement>("[name='posting_type']")?.value ??
+      form.querySelector<HTMLSelectElement>("#unit-posting-type")?.value ??
+      "",
+    starts_on:
+      form.querySelector<HTMLInputElement>("[name='starts_on']")?.value ??
+      form.querySelector<HTMLInputElement>("#unit-start")?.value ??
+      "",
+    ends_on:
+      form.querySelector<HTMLInputElement>("[name='ends_on']")?.value ??
+      form.querySelector<HTMLInputElement>("#unit-end")?.value ??
+      "",
+    notes:
+      form.querySelector<HTMLInputElement>("[name='notes']")?.value ??
+      form.querySelector<HTMLInputElement>("#unit-notes")?.value ??
+      "",
+  };
+}
+
+async function renderUnitManagement() {
+  setHeader("Unit Management", "Monthly unit assignments");
+  if (!viewRoot) return;
+  viewRoot.innerHTML = `<section class="panel"><h3>Loading unit management...</h3></section>`;
+  try {
+    if (!members.length) members = await getMembers();
+    [units, unitManagement] = await Promise.all([getUnits(), getUnitManagementMonth(unitMonth)]);
+    unitAssignments = unitManagement.assignments;
+  } catch (error) {
+    showToast(error instanceof Error ? error.message : "Failed to load unit management", "error");
+    viewRoot.innerHTML = `<section class="panel"><h3>Unit Management unavailable</h3><p>Unable to load monthly unit assignments.</p></section>`;
+    return;
+  }
+  const errors = unitManagement.validation_issues.filter((issue) => issue.severity === "error").length;
+  const warnings = unitManagement.validation_issues.filter((issue) => issue.severity === "warning").length;
+  const leaveDays = unitManagement.unit_summaries.reduce((sum, item) => sum + item.leave_days, 0);
+  viewRoot.innerHTML = `
+    <section class="roster-command">
+      <div class="roster-command-header">
+        <div>
+          <h3>Unit Management</h3>
+          <p>Assign members to monthly units by call level. Leave-aware summaries are shown for planning.</p>
+        </div>
+        <span class="audit-badge">${unitManagement.month}</span>
+      </div>
+      <div class="member-filter-row">
+        <label for="unit-month" class="visually-hidden">Unit month</label>
+        <input id="unit-month" type="month" value="${unitMonth}" aria-label="Unit month" />
+      </div>
+    </section>
+    <section class="summary-grid four-col board-metrics">
+      <article class="metric metric-primary"><span>${unitAssignments.length}</span><p>Assignments</p></article>
+      <article class="metric"><span>${unitManagement.units.length}</span><p>Active units</p></article>
+      <article class="metric"><span>${leaveDays}</span><p>Unit leave days</p></article>
+      <article class="metric metric-weekend"><span>${errors}/${warnings}</span><p>Errors / warnings</p></article>
+    </section>
+    ${renderUnitValidationIssues()}
+    <section class="unit-card-grid">${renderUnitAssignmentsByUnit()}</section>
+    <section class="panel table-panel hide-mobile" style="margin-top:16px">
+      <table>
+        <thead><tr><th>Member</th><th>Unit</th><th>Call level/posting</th><th>Dates</th><th>Notes</th><th></th></tr></thead>
+        <tbody>${renderUnitAssignmentRows() || `<tr><td colspan="6" class="empty">No unit assignments for this month.</td></tr>`}</tbody>
+      </table>
+    </section>
+  `;
+  if (unitModalUnitId) {
+    openUnitModal(unitModalUnitId);
+  }
+}
+
 async function renderMembers() {
-  setHeader("Members", "Department members and deduplication");
+  setHeader("Members", "Department members");
   if (!viewRoot) return;
   viewRoot.innerHTML = `<section class="panel"><h3>Loading members...</h3></section>`;
-  [members, dedupeCandidates, invalidMembers, memberAudit] = await Promise.all([
-    getMembers(),
-    getDedupeCandidates(),
-    getInvalidMembers(),
-    getMemberAudit(),
-  ]);
+  if (isAdminUser()) {
+    [members, invalidMembers, memberAudit] = await Promise.all([
+      getMembers(),
+      getInvalidMembers(),
+      getMemberAudit(),
+    ]);
+  } else {
+    members = await getMembers();
+    invalidMembers = { count: 0, people: [] };
+    memberAudit = null;
+  }
   renderMembersView();
 }
 
 function renderMembersView() {
-  if (!viewRoot || !memberAudit) return;
+  if (!viewRoot) return;
   const rows = filteredMembers();
-
-  viewRoot.innerHTML = `
-    <section class="roster-command ${memberAudit.status === "clean" ? "quality-ok" : "quality-warning"}">
-      <div class="roster-command-header">
-        <div>
-          <h3>Roster Audit: ${memberAudit.status === "clean" ? "Clean" : "Needs Review"}</h3>
-          <p>${memberAudit.status === "clean" ? "One clean row per member. No invalid names or duplicate groups." : "Review the audit counts before using this roster for rota logic."}</p>
-        </div>
-        <span class="audit-badge">${memberAudit.status === "clean" ? "Clean" : "Review"}</span>
-      </div>
-      <div class="audit-chip-row">
-        <span><strong id="visible-member-count">${rows.length}</strong> visible</span>
-        <span><strong>${memberAudit.total_members}</strong> members</span>
-        <span><strong>${memberAudit.invalid_members}</strong> invalid</span>
-        <span><strong>${memberAudit.duplicate_groups}</strong> duplicates</span>
-        <span><strong>${memberAudit.missing_call_levels}</strong> unassigned calls</span>
-      </div>
-      <div class="member-control-bar">
-        <div class="member-filter-row">
-          <label for="member-search" class="visually-hidden">Search members</label>
-          <input id="member-search" placeholder="Search members or positions" value="${memberSearch}" aria-label="Search members or positions" />
-          <label for="member-position-filter" class="visually-hidden">Filter by position</label>
-          <select id="member-position-filter" aria-label="Filter by position">${renderPositionOptions()}</select>
-          <label for="member-call-filter" class="visually-hidden">Filter by call level</label>
-          <select id="member-call-filter" aria-label="Filter by call level">${renderCallLevelFilterOptions()}</select>
-          <button class="icon-button" id="clear-member-filters">Clear</button>
-        </div>
+  const activeMembers = members.filter((member) => member.active_status === "active").length;
+  const historicalMembers = members.length - activeMembers;
+  const callLevelOrder: [string, string][] = [
+    ["1ST_CALL", "1st"],
+    ["2ND_CALL", "2nd"],
+    ["3RD_CALL", "3rd"],
+    ["4TH_CALL", "4th"],
+    ["5TH_CALL", "5th"],
+  ];
+  const callLevelCounts = callLevelOrder.map(([key, label]) => ({
+    key,
+    label,
+    count: members.filter((m) => normalizeCallLevel(m.call_level) === key).length,
+  }));
+  const unassignedCount = members.filter((m) => !m.call_level).length;
+  const adminTools = isAdminUser() && memberAudit
+    ? `
         <details class="member-tools">
           <summary>Admin tools</summary>
           <div class="member-tool-row">
@@ -1941,15 +2843,69 @@ function renderMembersView() {
               <button class="primary" type="submit" id="create-member">Create Member</button>
             </form>
             <button class="icon-button" id="cleanup-members">Clean Invalid Names</button>
-            <button class="icon-button" id="auto-merge-duplicates">Auto-Merge Exact Duplicates</button>
             <button class="icon-button" id="prefill-call-levels">Prefill Call Levels</button>
             <button class="icon-button" id="reconcile-roster">Reconcile Trusted Roster</button>
           </div>
         </details>
+      `
+    : "";
+  const adminAudit = isAdminUser() && memberAudit
+    ? `
+        <div class="audit-chip-row admin-only-inline">
+          <span><strong>${memberAudit.invalid_members}</strong> invalid</span>
+          <span><strong>${memberAudit.duplicate_groups}</strong> duplicates</span>
+          <span><strong>${memberAudit.missing_call_levels}</strong> unassigned calls</span>
+        </div>
+      `
+    : "";
+
+  viewRoot.innerHTML = `
+    <section class="roster-command">
+      <div class="roster-command-header">
+        <div>
+          <h3>Department Members</h3>
+          <p>Search the department list by name, position, or call level.</p>
+        </div>
+        <span class="audit-badge">${rows.length} shown</span>
+      </div>
+      <div class="audit-chip-row">
+        <span><strong id="visible-member-count">${rows.length}</strong> shown</span>
+        <span><strong>${members.length}</strong> total</span>
+        <span><strong>${activeMembers}</strong> active</span>
+        <span><strong>${historicalMembers}</strong> historical</span>
+      </div>
+      <div class="call-level-chip-row">
+        ${callLevelCounts.map(({ key, label, count }) => `
+          <button class="call-chip ${memberCallLevelFilter === callLevelLabel(key) ? "selected" : ""}" data-call-chip="${callLevelLabel(key)}" title="Filter to ${label} Call members">
+            <span class="call-chip-label">${label}</span>
+            <strong class="call-chip-count">${count}</strong>
+          </button>`).join("")}
+        <span class="call-chip unassigned-chip" title="Members with no call level assigned">
+          <span class="call-chip-label">Unassigned</span>
+          <strong class="call-chip-count">${unassignedCount}</strong>
+        </span>
+      </div>
+      ${adminAudit}
+      <div class="member-control-bar">
+        <div class="member-filter-row">
+          <div class="status-toggle-group" role="group" aria-label="Filter by status">
+            <button class="status-toggle ${memberStatusFilter === "active" ? "active" : ""}" data-member-status="active">Active</button>
+            <button class="status-toggle ${memberStatusFilter === "all" ? "active" : ""}" data-member-status="all">All</button>
+            <button class="status-toggle ${memberStatusFilter === "historical" ? "active" : ""}" data-member-status="historical">Historical</button>
+          </div>
+          <label for="member-search" class="visually-hidden">Search members</label>
+          <input id="member-search" class="member-search-input" placeholder="Search members or positions" value="${memberSearch}" aria-label="Search members or positions" />
+          <label for="member-position-filter" class="visually-hidden">Filter by position</label>
+          <select id="member-position-filter" aria-label="Filter by position">${renderPositionOptions()}</select>
+          <label for="member-call-filter" class="visually-hidden">Filter by call level</label>
+          <select id="member-call-filter" aria-label="Filter by call level">${renderCallLevelFilterOptions()}</select>
+          <button class="filter-clear-btn" id="clear-member-filters" aria-label="Clear all filters">Clear</button>
+        </div>
+        ${adminTools}
       </div>
     </section>
     <details class="panel disclosure-panel">
-      <summary>Designation / Position Stats</summary>
+      <summary>Position Mix</summary>
       <div class="category-grid">${renderPositionBreakdown()}</div>
     </details>
     <section class="panel table-panel">
@@ -1971,17 +2927,6 @@ function renderMembersView() {
     </section>
     <section class="member-card-list" id="member-card-list">
       ${renderMemberCards(rows)}
-    </section>
-    <section class="panel table-panel hide-mobile">
-      <table class="dedupe-table">
-        <thead>
-          <tr><th>Candidate Key</th><th>Possible Duplicates</th><th>Canonical Target</th><th></th></tr>
-        </thead>
-        <tbody>${renderDedupeRows() || `<tr><td colspan="4" class="empty">No duplicate candidates found.</td></tr>`}</tbody>
-      </table>
-    </section>
-    <section class="card-list">
-      ${renderDedupeCards() || `<p class="empty">No duplicate candidates found.</p>`}
     </section>
   `;
 }
@@ -2080,29 +3025,35 @@ async function loadMappings() {
 function bindNavigation() {
   document.querySelectorAll<HTMLButtonElement>("[data-view]").forEach((button) => {
     button.addEventListener("click", () => {
-      document
-        .querySelectorAll<HTMLButtonElement>("[data-view]")
-        .forEach((item) => {
-          item.classList.remove("active");
+      const selectedView = button.dataset.view ?? "overview";
+      document.querySelectorAll<HTMLButtonElement>("[data-view]").forEach((item) => {
+        const isSelected = item.dataset.view === selectedView;
+        item.classList.toggle("active", isSelected);
+        if (isSelected) {
+          item.setAttribute("aria-current", "page");
+        } else {
           item.removeAttribute("aria-current");
-        });
-      button.classList.add("active");
-      button.setAttribute("aria-current", "page");
+        }
+      });
       closeSidebarOnMobile();
-      if (button.dataset.view === "mappings") {
+      if (selectedView === "mappings") {
         renderMappings();
-      } else if (button.dataset.view === "imports") {
+      } else if (selectedView === "imports") {
         void renderImports();
-      } else if (button.dataset.view === "analysis") {
+      } else if (selectedView === "analysis") {
         void renderAnalysis();
-      } else if (button.dataset.view === "members") {
+      } else if (selectedView === "members") {
         void renderMembers();
-      } else if (button.dataset.view === "accounts") {
+      } else if (selectedView === "leave") {
+        void renderLeave();
+      } else if (selectedView === "units") {
+        void renderUnitManagement();
+      } else if (selectedView === "accounts") {
         void renderAccounts();
-      } else if (button.dataset.view === "diagnostics") {
+      } else if (selectedView === "diagnostics") {
         void renderDiagnostics();
       } else {
-        renderOverview();
+        void renderOverview();
       }
     });
   });
@@ -2150,6 +3101,97 @@ function bindViewEvents() {
       }
       return;
     }
+    if (form.id === "leave-form") {
+      event.preventDefault();
+      const btn = form.querySelector<HTMLButtonElement>("button[type='submit']");
+      const personId = form.querySelector<HTMLSelectElement>("#leave-person")?.value ?? "";
+      const startsOn = form.querySelector<HTMLInputElement>("#leave-start")?.value ?? "";
+      const endsOn = form.querySelector<HTMLInputElement>("#leave-end")?.value ?? "";
+      const leaveSlot = form.querySelector<HTMLSelectElement>("#leave-slot")?.value ?? "FULL_DAY";
+      const leaveType = form.querySelector<HTMLSelectElement>("#leave-type")?.value ?? "ANNUAL_LEAVE";
+      const status = form.querySelector<HTMLSelectElement>("#leave-status")?.value ?? "approved";
+      const notes = form.querySelector<HTMLInputElement>("#leave-notes")?.value ?? "";
+      if (!personId || !startsOn || !endsOn) {
+        showToast("Member and leave dates are required", "warning");
+        return;
+      }
+      setButtonLoading(btn, true, "Add Leave");
+      try {
+        await createLeaveRequest({
+          person_id: personId,
+          starts_on: startsOn,
+          ends_on: endsOn,
+          leave_slot: leaveSlot,
+          leave_type: leaveType,
+          status,
+          notes: notes || null,
+        });
+        showToast("Leave added", "success");
+        await renderLeave();
+      } catch (error) {
+        showToast(error instanceof Error ? error.message : "Failed to add leave", "error");
+        resetButton(btn);
+      }
+      return;
+    }
+    if (form.id === "unit-assignment-form") {
+      event.preventDefault();
+      const btn = form.querySelector<HTMLButtonElement>("button[type='submit']");
+      const formValues = unitAssignmentPayloadFromForm(form);
+      if (!formValues.person_id || !formValues.unit_id || !formValues.posting_type || !formValues.starts_on) {
+        showToast("Member, unit, posting, and start date are required", "warning");
+        return;
+      }
+      setButtonLoading(btn, true, "Add Assignment");
+      try {
+        const payload = {
+          person_id: formValues.person_id,
+          unit_id: formValues.unit_id,
+          posting_type: formValues.posting_type,
+          starts_on: formValues.starts_on,
+          ends_on: formValues.ends_on || null,
+          notes: formValues.notes || null,
+        };
+        await createUnitAssignment(payload);
+        showToast("Unit assignment added", "success");
+        unitModalUnitId = payload.unit_id;
+        unitEditingAssignmentId = null;
+        await renderUnitManagement();
+      } catch (error) {
+        showToast(error instanceof Error ? error.message : "Failed to save unit assignment", "error");
+        resetButton(btn);
+      }
+      return;
+    }
+    if (form.dataset.unitRowForm) {
+      event.preventDefault();
+      const assignmentId = form.dataset.unitRowForm;
+      const btn = form.querySelector<HTMLButtonElement>("button[type='submit']");
+      const formValues = unitAssignmentPayloadFromForm(form);
+      if (!formValues.person_id || !formValues.unit_id || !formValues.posting_type || !formValues.starts_on) {
+        showToast("Member, unit, posting, and start date are required", "warning");
+        return;
+      }
+      setButtonLoading(btn, true, "Save");
+      try {
+        const payload = {
+          person_id: formValues.person_id,
+          unit_id: formValues.unit_id,
+          posting_type: formValues.posting_type,
+          starts_on: formValues.starts_on,
+          ends_on: formValues.ends_on || null,
+          notes: formValues.notes || null,
+        };
+        await updateUnitAssignment(assignmentId, payload);
+        unitModalUnitId = payload.unit_id;
+        showToast("Unit assignment updated", "success");
+        await renderUnitManagement();
+      } catch (error) {
+        showToast(error instanceof Error ? error.message : "Failed to save unit assignment", "error");
+        resetButton(btn);
+      }
+      return;
+    }
   });
 
   viewRoot?.addEventListener("click", async (event) => {
@@ -2160,9 +3202,69 @@ function bindViewEvents() {
       return;
     }
 
+    const viewShortcut = target.closest<HTMLButtonElement>("[data-view-shortcut]");
+    if (viewShortcut?.dataset.viewShortcut) {
+      const view = viewShortcut.dataset.viewShortcut;
+      document.querySelector<HTMLButtonElement>(`[data-view="${view}"]`)?.click();
+      return;
+    }
+
+    const pageBtn = target.closest<HTMLButtonElement>("[data-set-page]");
+    if (pageBtn?.dataset.setPage) {
+      const [tableId, pageStr] = pageBtn.dataset.setPage.split(":");
+      setPage(tableId, parseInt(pageStr, 10));
+      refreshAnalysisTabContent();
+      return;
+    }
+
+    const cancelLeaveBtn = target.closest<HTMLButtonElement>("[data-cancel-leave]");
+    if (cancelLeaveBtn?.dataset.cancelLeave) {
+      setButtonLoading(cancelLeaveBtn, true, "Cancel");
+      try {
+        await cancelLeaveRequest(cancelLeaveBtn.dataset.cancelLeave);
+        showToast("Leave cancelled", "success");
+        await renderLeave();
+      } catch (error) {
+        showToast(error instanceof Error ? error.message : "Failed to cancel leave", "error");
+        resetButton(cancelLeaveBtn);
+      }
+      return;
+    }
+
+    const unitOpenBtn = target.closest<HTMLElement>("[data-open-unit-modal]");
+    if (unitOpenBtn?.dataset.openUnitModal) {
+      openUnitModal(unitOpenBtn.dataset.openUnitModal);
+      return;
+    }
+
+    const unitDeleteBtn = target.closest<HTMLButtonElement>("[data-delete-unit-assignment]");
+    if (unitDeleteBtn?.dataset.deleteUnitAssignment) {
+      if (!confirmAction("Remove this unit assignment?")) return;
+      setButtonLoading(unitDeleteBtn, true, "Remove");
+      try {
+        await deleteUnitAssignment(unitDeleteBtn.dataset.deleteUnitAssignment);
+        if (unitEditingAssignmentId === unitDeleteBtn.dataset.deleteUnitAssignment) {
+          unitEditingAssignmentId = null;
+        }
+        showToast("Unit assignment removed", "success");
+        await renderUnitManagement();
+      } catch (error) {
+        showToast(error instanceof Error ? error.message : "Failed to remove unit assignment", "error");
+        resetButton(unitDeleteBtn);
+      }
+      return;
+    }
+
+    if (target.id === "cancel-unit-edit") {
+      unitEditingAssignmentId = null;
+      await renderUnitManagement();
+      return;
+    }
+
     const analysisTabBtn = target.closest<HTMLButtonElement>("[data-analysis-tab]");
     if (analysisTabBtn?.dataset.analysisTab) {
       analysisTab = analysisTabBtn.dataset.analysisTab;
+      resetPages();
       refreshAnalysisTabContent();
       return;
     }
@@ -2210,7 +3312,7 @@ function bindViewEvents() {
         const result = await runHistoricalImport();
         const output = document.querySelector<HTMLPreElement>("#import-result");
         if (output) output.textContent = JSON.stringify(result, null, 2);
-        showToast(`Import complete: ${result.duty_assignments_created ?? 0} assignments`, "success");
+        showToast(`Import complete: ${result.import.duty_assignments_created ?? 0} assignments`, "success");
       } catch (error) {
         showToast(error instanceof Error ? error.message : "Import failed", "error");
       } finally {
@@ -2221,10 +3323,30 @@ function bindViewEvents() {
 
     if (target.id === "clear-member-filters") {
       memberSearch = "";
+      memberStatusFilter = "active";
       memberPositionFilter = "all";
       memberCallLevelFilter = "all";
       memberSort = "name";
       memberSortDirection = "asc";
+      saveFocus();
+      renderMembersView();
+      restoreFocus();
+      return;
+    }
+
+    const statusToggle = target.closest<HTMLButtonElement>("[data-member-status]");
+    if (statusToggle?.dataset.memberStatus) {
+      memberStatusFilter = statusToggle.dataset.memberStatus as "all" | "active" | "historical";
+      saveFocus();
+      renderMembersView();
+      restoreFocus();
+      return;
+    }
+
+    const callChip = target.closest<HTMLButtonElement>("[data-call-chip]");
+    if (callChip?.dataset.callChip) {
+      const clicked = callChip.dataset.callChip;
+      memberCallLevelFilter = memberCallLevelFilter === clicked ? "all" : clicked;
       saveFocus();
       renderMembersView();
       restoreFocus();
@@ -2265,24 +3387,6 @@ function bindViewEvents() {
       return;
     }
 
-    if (target.id === "auto-merge-duplicates") {
-      if (!confirmAction("Auto-merge exact duplicates? This action cannot be undone.")) return;
-      const btn = target.closest<HTMLButtonElement>("#auto-merge-duplicates");
-      setButtonLoading(btn, true, "Auto-Merge Exact Duplicates");
-      try {
-        const result = await autoMergeDuplicates();
-        await renderMembers();
-        const output = document.createElement("section");
-        output.className = "panel wide";
-        output.innerHTML = `<h3>Duplicate Merge Result</h3><pre>${JSON.stringify(result, null, 2)}</pre>`;
-        viewRoot?.prepend(output);
-        showToast("Duplicates merged", "success");
-      } catch (error) {
-        showToast(error instanceof Error ? error.message : "Merge failed", "error");
-        resetButton(btn);
-      }
-      return;
-    }
 
     if (target.id === "prefill-call-levels") {
       const btn = target.closest<HTMLButtonElement>("#prefill-call-levels");
@@ -2368,29 +3472,6 @@ function bindViewEvents() {
       return;
     }
 
-    const mergeButton = target.closest<HTMLButtonElement>("[data-merge-candidate]");
-    if (mergeButton?.dataset.mergeCandidate) {
-      if (!confirmAction("Merge these duplicates? This action cannot be undone.")) return;
-      const index = Number(mergeButton.dataset.mergeCandidate);
-      const candidate = dedupeCandidates[index];
-      const select = document.querySelector<HTMLSelectElement>(`[data-dedupe-target="${index}"]`);
-      const targetPersonId = select?.value;
-      if (!candidate || !targetPersonId) return;
-      const sourceIds = candidate.people
-        .map((person) => person.id)
-        .filter((personId) => personId !== targetPersonId);
-      const btn = mergeButton;
-      setButtonLoading(btn, true, "Merge");
-      try {
-        await mergeMembers(targetPersonId, sourceIds);
-        showToast("Members merged", "success");
-        await renderMembers();
-      } catch (error) {
-        showToast(error instanceof Error ? error.message : "Merge failed", "error");
-        resetButton(btn);
-      }
-      return;
-    }
 
     const save = target.closest<HTMLButtonElement>("[data-save]");
     if (save?.dataset.save) {
@@ -2414,12 +3495,22 @@ function bindViewEvents() {
     if (target.matches("[data-close-person-modal]") || target.id === "analysis-person-modal") {
       closeAnalysisPersonModal();
     }
+    if (target.matches("[data-close-unit-modal]") || target.id === "unit-management-modal") {
+      closeUnitModal();
+    }
   });
 
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
       closeAnalysisPersonModal();
+      closeUnitModal();
       if (sidebarOpen) toggleSidebar(false);
+    }
+    const target = event.target as HTMLElement;
+    const unitOpener = target.closest<HTMLElement>("[data-open-unit-modal]");
+    if (unitOpener?.dataset.openUnitModal && (event.key === "Enter" || event.key === " ")) {
+      event.preventDefault();
+      openUnitModal(unitOpener.dataset.openUnitModal);
     }
   });
 
@@ -2439,7 +3530,20 @@ function bindViewEvents() {
       restoreFocus();
       return;
     }
+    if (target.id === "leave-month") {
+      leaveMonth = target.value || leaveMonth;
+      await renderLeave();
+      return;
+    }
+    if (target.id === "unit-month") {
+      unitMonth = target.value || unitMonth;
+      closeUnitModal();
+      unitEditingAssignmentId = null;
+      await renderUnitManagement();
+      return;
+    }
     if (target.dataset.callLevel) {
+      if (!isAdminUser()) return;
       const member = members.find((item) => item.id === target.dataset.callLevel);
       if (!member) return;
       member.call_level = target.value || null;
@@ -2474,6 +3578,7 @@ function bindViewEvents() {
     const target = event.target as HTMLInputElement;
     if (target.id === "analysis-person-search") {
       analysisPersonSearch = target.value;
+      setPage("personnel", 0);
       refreshPersonnelResultsInPlace();
       return;
     }
@@ -2495,8 +3600,10 @@ async function bootApp() {
     await healthCheck();
     currentUser = currentUser ?? await getCurrentUser();
     setApiStatus("API online", "ok");
-    await loadMappings();
-    renderOverview();
+    if (isAdminUser()) {
+      await loadMappings();
+    }
+    await renderOverview();
   } catch (error) {
     setApiStatus("API offline", "error");
     if (viewRoot) {
