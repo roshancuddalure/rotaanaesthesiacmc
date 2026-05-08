@@ -1,0 +1,57 @@
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session
+
+from app import models  # noqa: F401
+from app.db.session import Base
+from app.domain.duty_types import DUTY_TYPES
+from app.services.rota_rules import (
+    RotaPhaseOneRules,
+    default_phase_one_rules,
+    get_phase_one_rules,
+    save_phase_one_rules,
+)
+
+
+def test_phase_one_defaults_cover_duty_dictionary() -> None:
+    rules = default_phase_one_rules()
+    duty_keys = {item.key for item in rules.duty_rules}
+
+    assert duty_keys == {item.key for item in DUTY_TYPES}
+    assert rules.rest_rules.minimum_gap_after_24hr_hours == 24
+    assert rules.unit_staffing_rules.warning_unavailable_percent == 30
+    assert rules.unit_staffing_rules.hard_block_unavailable_percent == 40
+    assert rules.duty_rules_by_key["MAIN_1ST_24HR"].is_mandatory is True
+    assert rules.duty_rules_by_key["PAC"].is_adjustable is True
+
+
+def test_phase_one_rules_persist_as_rule_setting() -> None:
+    engine = create_engine("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(engine)
+
+    with Session(engine) as session:
+        rule_version, rules = get_phase_one_rules(session)
+        rules.rest_rules.minimum_gap_after_24hr_hours = 36
+        rules.unit_staffing_rules.warning_unavailable_percent = 25
+        saved_version, saved_rules = save_phase_one_rules(session, rules)
+
+        assert saved_version.id == rule_version.id
+        assert saved_rules.rest_rules.minimum_gap_after_24hr_hours == 36
+
+    with Session(engine) as session:
+        _, loaded_rules = get_phase_one_rules(session)
+
+        assert loaded_rules.rest_rules.minimum_gap_after_24hr_hours == 36
+        assert loaded_rules.unit_staffing_rules.warning_unavailable_percent == 25
+
+
+def test_phase_one_rules_reject_duplicate_duty_keys() -> None:
+    rules = default_phase_one_rules()
+    payload = rules.model_dump(mode="json")
+    payload["duty_rules"].append(payload["duty_rules"][0])
+
+    try:
+        RotaPhaseOneRules.model_validate(payload)
+    except ValueError as exc:
+        assert "Duty rule keys must be unique" in str(exc)
+    else:
+        raise AssertionError("Duplicate duty keys should fail validation")

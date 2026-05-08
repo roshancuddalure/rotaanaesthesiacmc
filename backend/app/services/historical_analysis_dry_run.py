@@ -81,7 +81,6 @@ MANUAL_ALIAS_OVERRIDES = {
     "annielynb": "Annielyn Benitta P J",
     "annieylb": "Annielyn Benitta P J",
     "anneilyn": "Annielyn Benitta P J",
-    "annielynb": "Annielyn Benitta P J",
     "annielynbenittapj": "Annielyn Benitta P J",
     "anjali": "Anjali Rachel Mathew",
     "anjalir": "Anjali Rachel Mathew",
@@ -225,7 +224,6 @@ MANUAL_ALIAS_OVERRIDES = {
     "shanmuga": "Shanmuga Sundaram",
     "shamugam": "Shanmuga Sundaram",
     "shanmughasundrum": "Shanmuga Sundaram",
-    "shanmughasundaram": "Shanmuga Sundaram",
     "shanmughasundharam": "Shanmuga Sundaram",
     "tamizhanabn": "Thamizhanban D",
     "thamizan": "Thamizhanban D",
@@ -240,11 +238,7 @@ MANUAL_ALIAS_OVERRIDES = {
     "karthikpandiyan": "Karthikpandian S",
     "karthikpandians": "Karthikpandian S",
     "vineeth": "Vineeth Indla",
-    "vineethindla": "Vineeth Indla",
-    "kaviyasree": "Kaviya Sree",
-    "kaviyasri": "Kaviya Sree",
     "kaviyas": "Kaviya Sree",
-    "kaviyashri": "Kaviya Sree",
     "calwin": "Calvin Lawrence Dalmeida",
     "calvin": "Calvin Lawrence Dalmeida",
     "calwinlawrence": "Calvin Lawrence Dalmeida",
@@ -309,12 +303,9 @@ MANUAL_ALIAS_OVERRIDES = {
     "kishorekumard": "Kishorekumar D",
     "kishorekumar": "Kishorekumar D",
     "kishorefn": "Kishorekumar D",
-    "kishorehanson": "Kishorekumar D",    # KISHORE / HANSON split → kishore part
-    "kaviarasan": "Kaviarasan",
-    "kaviarsan": "Kaviarasan",
+    "kishorehanson": "Kishorekumar D",
     "jeevap": "Jeeva Priscilla D M",
     "jeevapriscilla": "Jeeva Priscilla D M",
-    "jeevapriscilladm": "Jeeva Priscilla D M",
     "jevevap": "Jeeva Priscilla D M",
     "jeevapricilla": "Jeeva Priscilla D M",
     "roshnib": "Roshini Benedicta R",
@@ -331,7 +322,6 @@ MANUAL_ALIAS_OVERRIDES = {
     "sudycutymahalah": "Sudi Cuty Mahlah",
     "sudycutimahlah": "Sudi Cuty Mahlah",
     "tirzah": "Trizah Narayana Moorthy",
-    "tirzahnm": "Trizah Narayana Moorthy",
     "tirzahnarayanamoorthy": "Trizah Narayana Moorthy",
     "tirzahnaryanamoorthy": "Trizah Narayana Moorthy",
     "tirzhanaryanamoorthy": "Trizah Narayana Moorthy",
@@ -340,7 +330,6 @@ MANUAL_ALIAS_OVERRIDES = {
     "rahavirajendran": "Rahavi Rajendran",
     "mizpah": "Jammi Mizpah Shen",
     "jammimizpah": "Jammi Mizpah Shen",
-    "jammimizpahshen": "Jammi Mizpah Shen",
     "jamimizpahshen": "Jammi Mizpah Shen",
     "nissi": "Dity Nissi",
     "dittynissi": "Dity Nissi",
@@ -351,10 +340,7 @@ MANUAL_ALIAS_OVERRIDES = {
     "jonathansb": "Jonathan Samuel B",
     "jim": "Jim Shahi G S",
     "jimshai": "Jim Shahi G S",
-    "jimshahigs": "Jim Shahi G S",
     "emy": "Emy Hanna Moni",
-    "emyhannah": "Emy Hanna Moni",
-    "emyhannamoni": "Emy Hanna Moni",
     "emmyhanna": "Emy Hanna Moni",
     "emmyhannamoni": "Emy Hanna Moni",
     "emihannah": "Emy Hanna Moni",
@@ -362,11 +348,8 @@ MANUAL_ALIAS_OVERRIDES = {
     "emiliah": "Emy Hanna Moni",
     "mawii": "Ramengmawii Khawlhring",
     "ramengmawii": "Ramengmawii Khawlhring",
-    "rmawii": "Ramengmawii Khawlhring",
-    "ramengmawiikhawlhring": "Ramengmawii Khawlhring",
     "ramengmawikhawlring": "Ramengmawii Khawlhring",
     "ramengmawiikhawlring": "Ramengmawii Khawlhring",
-    "ramengmawikhawlring": "Ramengmawii Khawlhring",
     "ramengmawiikhwalring": "Ramengmawii Khawlhring",
     "abella": "Jebamalai Rita Abella K",
     "abellaj": "Jebamalai Rita Abella K",
@@ -376,7 +359,6 @@ MANUAL_ALIAS_OVERRIDES = {
     "anishapauline": "Anisha Pauline L",
     "anishapaulinel": "Anisha Pauline L",
     "meeta": "Meeta G",
-    "meetag": "Meeta G",
     "ken": "Ken Mathew",
     "kenmathew": "Ken Mathew",
     "steve": "T Steve Solomon",
@@ -393,10 +375,7 @@ MANUAL_ALIAS_OVERRIDES = {
     "rajesh": "Rajesh Ravi",
     "rajeshravi": "Rajesh Ravi",
     "premj": "Prem Jepina P",
-    "premjepina": "Prem Jepina P",
-    "premjepinap": "Prem Jepina P",
     "harsha": "Harshavardhini R",
-    "harshavardhini": "Harshavardhini R",
     "harshavardhini": "Harshavardhini R",
     "harshavardhinir": "Harshavardhini R",
     "harshvardhini": "Harshavardhini R",
@@ -413,13 +392,11 @@ MANUAL_ALIAS_OVERRIDES = {
     "arulnirmal": "Arul Nirmal Raj S",
     "arulnirmalrajs": "Arul Nirmal Raj S",
     "praise": "V Praise Prudveer Nazson",
-    "praisevp": "V Praise Prudveer Nazson",
     "praisepv": "V Praise Prudveer Nazson",
     "praiseprudveernazson": "V Praise Prudveer Nazson",
     "praiseprudveernazsonpaeds": "V Praise Prudveer Nazson",
     "praiseprudveernasonpaeds": "V Praise Prudveer Nazson",
     "priaseprudveernazson": "V Praise Prudveer Nazson",
-    "vpraiseprudveernazson": "V Praise Prudveer Nazson",
     "irfath": "Mohammed Irfath Khan B",
     "mdirfath": "Mohammed Irfath Khan B",
     "mohdirfath": "Mohammed Irfath Khan B",
@@ -436,7 +413,6 @@ MANUAL_ALIAS_OVERRIDES = {
     "jenosheltonv": "Jeno Shelton V",
     "karthikp": "Karthikpandian S",
     "karthikpandian": "Karthikpandian S",
-    "karthikpandians": "Karthikpandian S",
     "kartikpandian": "Karthikpandian S",
     "smithae": "Smitha Elizabeth George",
     "smithaelizabethgeorge": "Smitha Elizabeth George",
@@ -460,22 +436,13 @@ MANUAL_ALIAS_OVERRIDES = {
     "prasinlrp": "Prashin L R P",
     "prasin": "Prashin L R P",
     # Context-resolved names
-    "naveen": "Koppaka Naveen Kumar",  # all entries are <4th call
-    "naveenkopakka": "Koppaka Naveen Kumar",
-    "naveenkoppaka": "Koppaka Naveen Kumar",
-    "kopakkanaveen": "Koppaka Naveen Kumar",
-    "kopakkanaveen": "Koppaka Naveen Kumar",
-    "kopakkanaveen": "Koppaka Naveen Kumar",
+    "naveen": "Koppaka Naveen Kumar",
     "kopakkanaveen": "Koppaka Naveen Kumar",
     "kopakkanaveenkumarctvs": "Koppaka Naveen Kumar",
     "kopakkanaveenkumar": "Koppaka Naveen Kumar",
     "kopakkanaveenk": "Koppaka Naveen Kumar",
     "kopakanavienkumar": "Koppaka Naveen Kumar",
     "kopakanavieen": "Koppaka Naveen Kumar",
-    "kopakanavieen": "Koppaka Naveen Kumar",
-    "kopakanavieen": "Koppaka Naveen Kumar",
-    "kopakanavieen": "Koppaka Naveen Kumar",
-    "kopakkanaveen": "Koppaka Naveen Kumar",
     "preethi": "Preethi A",            # bare "preethi" in 4th call = Preethi A
     "preethia": "Preethi A",
     "joel": "Joel Koil Raj J",         # bulk 2025 entries are Joel Koil Raj
@@ -504,7 +471,6 @@ MANUAL_ALIAS_OVERRIDES = {
     "angelinemaryabraham": "Angeline Mary Abraham",
     "yuvraj": "Yuvaraj K",
     "divyaaj": "Divya J",
-    "divyaj": "Divya J",
     "diivyaaj": "Divya J",
     "shruthis": "Shruti Singh",
     "shruthi": "Shruti Singh",
@@ -521,9 +487,7 @@ MANUAL_ALIAS_OVERRIDES = {
     "jeeenujose": "Jeenu Ann Jose",
     "riyas": "Riya Sarah Abraham",
     "riyasarahabraham": "Riya Sarah Abraham",
-    "joerenitta": "Joe Renitta S",
     "joerenita": "Joe Renitta S",
-    "joerenittas": "Joe Renitta S",
     "abhishma": "Abishma A M",
     "abhishmaam": "Abishma A M",
     "abishmaam": "Abishma A M",
@@ -555,12 +519,9 @@ MANUAL_ALIAS_OVERRIDES = {
     "hannaha": "Hanna A",
     "selvinderan": "Selvendiran P",
     "selvendiran": "Selvendiran P",
-    "selvendiranp": "Selvendiran P",
-    "selvinderanp": "Selvendiran P",
     "kaviyasri": "Kaviya",
     "kaviyasree": "Kaviya",
     "kaviyashri": "Kaviya",
-    "tamizhanban": "Thamizhanban D",
     # ── Third batch: all remaining skipped names ──────────────────────────────
     # SERINA / KAREN → 5th call → ambiguous in original roster; now mapped
     "serina": "Serina Ruth Salin",
@@ -600,7 +561,6 @@ MANUAL_ALIAS_OVERRIDES = {
     "samdc": "Samuel D C",
     # Jonathan → Schell/Shift 2026-03; Jonathan Samuel B
     "jonathan": "Jonathan Samuel B",
-    "jonathanjoseph": "Jonathan Joseph",
     # Anju → PAC/Shift 2026-03; Anju Emma Brillin
     "anju": "Anju Emma Brillin",
     # PRAVEEN → CB 4th call 2025-06; Praveen Benjamin D
@@ -622,7 +582,6 @@ MANUAL_ALIAS_OVERRIDES = {
     "franklinvedha": "Franklin Vedha Prabhu",
     "franklinvedu": "Franklin Vedha Prabhu",
     "franklinvp": "Franklin Vedha Prabhu",
-    "franklinj": "Franklin Vedha Prabhu",
     "franklinvedhaprabhu": "Franklin Vedha Prabhu",
     "franklinjbp": "Franklin Vedha Prabhu",
     # Andrea Chris → 2nd/3rd call 2022 batch
@@ -635,7 +594,6 @@ MANUAL_ALIAS_OVERRIDES = {
     "shwethaa": "Swetha A",
     "swethaa": "Swetha A",
     "swethab": "Swetha A",
-    "swetha": "Swetha A",
     "swetha": "Swetha A",
     "shwethasicu": "Swetha A",
     # Beula P / Beaula P → Beaula P (official)
@@ -691,18 +649,14 @@ MANUAL_ALIAS_OVERRIDES = {
     "abinipesicumicuposting": "Abin Iype",
     # Tamizhanban D → Thamizhanban D (already covered above, extra variants)
     "tamizhanband": "Thamizhanban D",
-    "thamizhanband": "Thamizhanban D",
     # Devi Balasubramaniam → Devi Balasubramanyam
     "devibalasubramaniam": "Devi Balasubramanyam",
     "devibalasubhramanyam": "Devi Balasubramanyam",
     "devibalasubramanyam": "Devi Balasubramanyam",
     "devibalasubramaniyam": "Devi Balasubramanyam",
-    # Emmy Hanna Moni / Emmy Hana Moni → Emy Hanna Moni
-    "emmyhannamoni": "Emy Hanna Moni",
     "emmyhanamoni": "Emy Hanna Moni",
     # Savarin Jeba → Savarin Jebha J
     "savarinjeba": "Savarin Jebha J",
-    "savarinjebha": "Savarin Jebha J",
     "savarinjebhaj": "Savarin Jebha J",
     "savarin jeba": "Savarin Jebha J",
     # MOULESWARAN → Mouleeswaran S
@@ -711,8 +665,6 @@ MANUAL_ALIAS_OVERRIDES = {
     "mouleeswaran s": "Mouleeswaran S",
     "mouleeswaran(am)": "Mouleeswaran S",
     "mouleswaranamashapmannm": "Mouleeswaran S",
-    # RIA MASHI → Ria Masih
-    "riamashi": "Ria Masih",
     # SAMZI / Samzal L → Samzai Lungalang
     "samzi": "Samzai Lungalang",
     "samzall": "Samzai Lungalang",
@@ -724,9 +676,7 @@ MANUAL_ALIAS_OVERRIDES = {
     "emiloia": "Emilia Mary Pushparaj",
     "emiliyam": "Emilia Mary Pushparaj",
     "emiliya": "Emilia Mary Pushparaj",
-    "emiliamarypushparaj": "Emilia Mary Pushparaj",
     "emmiliamarypushparaj": "Emilia Mary Pushparaj",
-    "emilya": "Emilia Mary Pushparaj",
     # Priscila → Priscilla S
     "priscila": "Priscilla S",
     "priscillas": "Priscilla S",
@@ -736,7 +686,6 @@ MANUAL_ALIAS_OVERRIDES = {
     # Joffin → Jofin F A
     "joffin": "Jofin F A",
     "joffinfa": "Jofin F A",
-    "jofinfa": "Jofin F A",
     # Febin Saji → Febin Shaji
     "febinsaji": "Febin Shaji",
     "febinshaji": "Febin Shaji",
@@ -757,7 +706,6 @@ MANUAL_ALIAS_OVERRIDES = {
     "malaikaabidansari": "Malaika Abid Ansari",
     # Pradheeshya / Praddepa → Pradeeshya Parthiban
     "pradheeshya": "Pradeeshya Parthiban",
-    "pradeeshyaparthiban": "Pradeeshya Parthiban",
     "praddepa": "Pradeeshya Parthiban",
     "pradheeshyajeninhelvispfabian": "Pradeeshya Parthiban",
     # Pardeepa → Pradeepa C
@@ -776,15 +724,12 @@ MANUAL_ALIAS_OVERRIDES = {
     # Graceline → Graceline Vandana N
     "grceline": "Graceline Vandana N",
     "gracelinevn": "Graceline Vandana N",
-    "gracelinevandanan": "Graceline Vandana N",
     # Stepehen / Stephen Abishai → Stephen Abishai Barreto
     "stephen": "Stephen Abishai Barreto",
     "stephenabishai": "Stephen Abishai Barreto",
     "stepehenabishaibarreto": "Stephen Abishai Barreto",
     "stephenabishaibarreto": "Stephen Abishai Barreto",
     "stepehenabishaibarrito": "Stephen Abishai Barreto",
-    # Shanmugha Sudharam / Shanmugha Sundram → Shanmuga Sundaram
-    "shanmughasundharam": "Shanmuga Sundaram",
     "shanmughasundram": "Shanmuga Sundaram",
     # Sathyadev Jangam → Satyadev Jangam
     "sathyadevjangam": "Satyadev Jangam",
@@ -793,7 +738,6 @@ MANUAL_ALIAS_OVERRIDES = {
     "amritapramod": "Amrita Pramod",
     # Soumya Sheona Loyal → Saumya Sheona Loyal
     "soumyasheonaloyal": "Saumya Sheona Loyal",
-    "saumyasheonaloyal": "Saumya Sheona Loyal",
     # Nafval Mohammed → Navfal Mohamed S A
     "nafvalmohammed": "Navfal Mohamed S A",
     "nafvalmohammedsa": "Navfal Mohamed S A",
@@ -890,25 +834,14 @@ MANUAL_ALIAS_OVERRIDES = {
     # Indla Joseph Vineeth → Indla Joseph Vineeth
     "indlajosephvineeth": "Indla Joseph Vineeth",
     "vineethindla": "Indla Joseph Vineeth",
-    # Joanathan Samuel → Jonathan Samuel B
-    "joanathansamuel": "Jonathan Samuel B",
-    # Angelyn Veronica
-    "angelynveronica": "Angelyn Veronica",
-    # Abella Zakam David split entries
-    "abellaj": "Jebamalai Rita Abella K",
     # Roham → Rohan Chacko Jacob (typo)
     "roham": "Rohan Chacko Jacob",
-    # Remaining skipped variants
-    "ramengmawiikhwalring": "Ramengmawii Khawlhring",
     "ramengmawikhwalring": "Ramengmawii Khawlhring",
     "sharonebenezar": "Sharon J Ebenezer",
-    "praiseprudveernazson": "V Praise Prudveer Nazson",
     "praiseprudveernason": "V Praise Prudveer Nazson",
     "sudymahlah": "Sudi Cuty Mahlah",
     "sudymahlahtirzah": "Sudi Cuty Mahlah",
     "sudycutymahlahtirzah": "Sudi Cuty Mahlah",
-    "sadhanandareddy": "SADHANANDA",
-    "sadhanandha": "SADHANANDA",
     "samuelcherwinwesley": "Samuel Cherwin Wesley",
     "abhilashrn": "Abhilash R N",
     "jeromekumar": "Jerome Kumar",
@@ -922,12 +855,8 @@ MANUAL_ALIAS_OVERRIDES = {
     "antrof": "Antrofelix M",
     "shanmugan": "Shanmuga Sundaram",
     "praiseprudveernazon": "V Praise Prudveer Nazson",
-    # VIONBARATHI → Vinobharathi E
-    "vionbarathi": "Vinobharathi E",
     # Immannuel → Immanuel Christopher J
     "immannuelc": "Immanuel Christopher J",
-    # Shjimol G → Shijimol G
-    "shjimolg": "Shijimol G",
     # Aanton → Anton Max Cassella Kumar
     "aanton": "Anton Max Cassella Kumar",
     # ANTRO F → Antrofelix M
@@ -935,9 +864,6 @@ MANUAL_ALIAS_OVERRIDES = {
     "antrofelix": "Antrofelix M",
     "antrofelixa": "Antrofelix M",
     "antrofelixm": "Antrofelix M",
-    # JONA E → Jona Samraj D
-    "jonae": "Jona Samraj D",
-    "jonasamrajd": "Jona Samraj D",
     # Chritina R → Christina Reshma R
     "chritinar": "Christina Reshma R",
     # Emiloia → Emilia Mary Pushparaj
@@ -955,7 +881,6 @@ MANUAL_ALIAS_OVERRIDES = {
     "sudhrashan": "Sudharsan T R",
     # Lilli → Lilly Sophia M
     "lilli": "Lilly Sophia M",
-    "lillysophiam": "Lilly Sophia M",
     # Sugashnin → Sugashini
     "sugashnin": "Sugashini",
     # SOFIA → Sophia Nag (already done)
@@ -966,23 +891,13 @@ MANUAL_ALIAS_OVERRIDES = {
     # Manna Mary Mathew → Manna Mary Thomas
     "mannamarymathew": "Manna Mary Thomas",
     "mannamarythomas": "Manna Mary Thomas",
-    # Kopakka Naveen / Kopaka Naveen → Koppaka Naveen Kumar
-    "kopakkanaveen": "Koppaka Naveen Kumar",
     "kopakanaveen": "Koppaka Naveen Kumar",
-    "kopakkanaveenk": "Koppaka Naveen Kumar",
-    "kopakanaveen": "Koppaka Naveen Kumar",
-    "kopakkanaveenkumar": "Koppaka Naveen Kumar",
     "kopakanavenkumar": "Koppaka Naveen Kumar",
-    "kopakanavienkumar": "Koppaka Naveen Kumar",
-    "kopakanavieen": "Koppaka Naveen Kumar",
     "kopakanaveenkumar": "Koppaka Naveen Kumar",
     "kopakkanaveen(bp115)": "Koppaka Naveen Kumar",
-    "kopakkanaveenkumarctvs": "Koppaka Naveen Kumar",
     # Hanosn → Hanson J
     "hanosn": "Hanson J",
     "hansonj": "Hanson J",
-    # SWETHA B → Swetha A
-    "swethab": "Swetha A",
     # Sahlu → Shalu Sharma
     "sahlu": "Shalu Sharma",
     "shalus": "Shalu Sharma",
@@ -1008,8 +923,6 @@ MANUAL_ALIAS_OVERRIDES = {
     "rasicadias": "Rasica Dias",
     # Poornima / Pornima → Poornima K
     "poornima": "Poornima K",
-    "pornima": "Poornima K",
-    "poornimak": "Poornima K",
     # Monal Antony → Monal Antony A G (already Antrofelix ≠ Monal Antony)
     "monalantony": "Monal Antony A G",
     "monalantonyag": "Monal Antony A G",
@@ -1047,7 +960,6 @@ MANUAL_ALIAS_OVERRIDES = {
     "praiseprudeveer": "V Praise Prudveer Nazson",
     "vinobharathye": "Vinobharathi E",
     "matthews": "Mathews Joji",
-    "mathewsjoji": "Mathews Joji",
     "preerna": "Prerna Nayan",
     "calwinl": "Calvin Lawrence Dalmeida",
     "karthikpan": "Karthikpandian S",
@@ -1079,7 +991,6 @@ MULTI_PERSON_SPLITS: dict[str, list[str]] = {
     "shaluvimal": ["Shalu Sharma", "Vimal B"],
     "inbhaidayamannamary": ["Inba Idhaya A", "Manna Mary Thomas"],
     "inbhaidayamannamarythomas": ["Inba Idhaya A", "Manna Mary Thomas"],
-    "inbhaidayamannamary": ["Inba Idhaya A", "Manna Mary Thomas"],
     "abishmamohdirfath": ["Abishma A M", "Mohammed Irfath Khan B"],
     "abishmamohammedirfath": ["Abishma A M", "Mohammed Irfath Khan B"],
     "ruthtiga joelkoil": ["Ruth Tigga", "Joel Koil Raj J"],

@@ -772,6 +772,149 @@ Small correctness fixes found during verification:
 Verification:
 
 - Frontend `npm run build` passed after Windows/Vite sandbox escalation.
+
+## 2026-05-08 - Rota Generator Phase 11 QA Sweep
+
+Goal:
+
+- Debug and harden the rota workflow after the feature phases, with a focus on build health, backend correctness, migration state, and documented acceptance checks before real-data walkthroughs.
+
+Fixed:
+
+- Cleaned up accumulated backend Ruff failures from older historical-analysis code.
+- Removed an unused manual-review source read in `backend/app/services/analysis.py`.
+- Removed duplicate historical name-alias keys in `backend/app/services/historical_analysis_dry_run.py`, preserving the effective runtime values Python was already using.
+
+Verification:
+
+- Backend Ruff passed across the full backend package: `ruff check --no-cache .`.
+- Full backend test suite passed: `pytest`, 89 tests.
+- Local database migration state is current at Alembic head `20260508_0012`.
+- Frontend `npm run build` passed after Windows/Vite sandbox escalation.
+- Running frontend responded locally with HTTP 200 at `http://127.0.0.1:5173`.
+
+Notes:
+
+- Pytest still reports cache write warnings because `.pytest_cache` is permission-restricted in the local environment; the tests themselves pass.
+- Browser-level visual QA remains a manual/user-acceptance step because the project does not yet include automated browser screenshot tests.
+- The next real debug pass should use actual monthly leave sheets, actual department member data, and a full month setup through publish/export.
+
+## 2026-05-08 - Rota Generator Phase 9
+
+Goal:
+
+- Give the rota board a review surface for warnings, overrides, workload, and exchange approvals before the rota moves toward publish/export.
+
+Implemented:
+
+- Added `RotaExchangeRequest` audit model and Alembic migration:
+  - `backend/alembic/versions/20260508_0011_rota_review_exchange.py`.
+- Added `backend/app/services/rota_review.py`.
+- Review dashboard now combines:
+  - generated rota slots,
+  - safety status,
+  - candidate suggestions,
+  - saved assignments,
+  - override reasons,
+  - person-wise monthly duty load,
+  - exchange request audit rows.
+- Added API routes:
+  - `GET /api/v1/rota-review/month`,
+  - `POST /api/v1/rota-review/exchanges`,
+  - `POST /api/v1/rota-review/exchanges/{exchange_id}/approve`,
+  - `POST /api/v1/rota-review/exchanges/{exchange_id}/reject`.
+- Exchange requests record:
+  - original assignment,
+  - target member,
+  - requester,
+  - approver/rejector,
+  - request and decision reasons,
+  - validation snapshot,
+  - applied assignment ID after approval.
+- Approved exchanges reuse the validated assignment workflow and save assignments with source `exchange_approved`.
+- Added frontend API types/functions for Rota Review.
+- Added the `Rota Review` navigation view with:
+  - review and safety metrics,
+  - warnings/open-slots table,
+  - person-wise duty-load table,
+  - exchange request form,
+  - approve/reject controls for pending exchange requests.
+- Applied local database migration to Alembic head `20260508_0011`.
+- Added focused tests in `backend/tests/test_rota_review.py`.
+
+Verification:
+
+- New-code Ruff passed with `--no-cache`.
+- Focused review tests passed: `pytest tests/test_rota_review.py`, 3 tests.
+- Rota-focused backend suite passed: assignment, auto-fill, candidates, review, safety, and template tests, 17 tests.
+- Full backend test suite passed: `pytest`, 86 tests.
+- Frontend `npm run build` passed after Windows/Vite sandbox escalation.
+
+Notes:
+
+- Phase 9 now creates traceable board corrections and approved exchanges, but final publish locking/export remains Phase 10.
+
+## 2026-05-08 - Rota Generator Phase 10
+
+Goal:
+
+- Add final publish approval and export so the rota board can produce a defensible Excel output from the reviewed rota.
+
+Implemented:
+
+- Added `RotaPublishApproval` audit model and Alembic migration:
+  - `backend/alembic/versions/20260508_0012_rota_publish_approvals.py`.
+- Added `backend/app/services/rota_publish.py`.
+- Publish checklist now blocks final approval when:
+  - monthly unit scope is not locked,
+  - no generated slots exist,
+  - slots remain open,
+  - hard safety blockers remain,
+  - exchange requests are still pending.
+- Publish checklist allows warnings and override assignments only when the board confirms them.
+- Publishing records:
+  - approver,
+  - approval note,
+  - warning confirmation,
+  - checklist snapshot,
+  - rule version metadata,
+  - publish timestamp.
+- Publishing marks the rota period status as `published`.
+- Added final Excel export after publish with workbook sheets:
+  - Summary,
+  - Final Rota,
+  - Duty Counts,
+  - Unit Safety,
+  - Review Items,
+  - Leave Safety Conflicts,
+  - Exchange Audit.
+- Added API routes:
+  - `GET /api/v1/rota-publish/month`,
+  - `POST /api/v1/rota-publish/publish`,
+  - `GET /api/v1/rota-publish/export`.
+- Added frontend API types/functions for publish and Excel download.
+- Added the `Publish & Export` navigation view with:
+  - publish readiness metrics,
+  - clear checks,
+  - blockers,
+  - warnings,
+  - approval note and warning confirmation,
+  - final Excel download.
+- Applied local database migration to Alembic head `20260508_0012`.
+- Added focused tests in `backend/tests/test_rota_publish.py`.
+
+Verification:
+
+- New-code Ruff passed with `--no-cache`.
+- Focused publish tests passed: `pytest tests/test_rota_publish.py`, 3 tests.
+- Rota-focused backend suite passed: publish, review, assignment, auto-fill, candidates, safety, and template tests, 20 tests.
+- Full backend test suite passed: `pytest`, 89 tests.
+- Frontend `npm run build` passed after Windows/Vite sandbox escalation.
+
+Notes:
+
+- Phase 10 creates a publishable/exportable rota, but visual QA, workflow debugging, and edge-case hardening remain intentionally deferred to Phase 11.
+
 - Backend `pytest -q` passed: 50 tests.
 
 ## 2026-05-07 - Rota Board UX Phase 2
@@ -1018,4 +1161,652 @@ Verification:
 
 - Backend `pytest tests/test_unit_management.py -q` passed.
 - Backend `pytest -q` passed: 54 tests.
+- Frontend `npm run build` passed after Windows/Vite sandbox escalation.
+
+## 2026-05-07 - Rota Generator Phase Plan And Phase 1
+
+Goal:
+
+- Record the rota generator phase action plan and start Phase 1 implementation.
+- Phase 1 should create a flexible rule foundation before monthly unit scope, leave-aware slot generation, and assignment logic are built.
+
+Planning:
+
+- Added `Plan/Rota generator/03_phase_action_plan.md`.
+- The plan divides the rota generator into 10 phases:
+  - rule foundation,
+  - monthly rota period and unit scope,
+  - leave import and leave pressure,
+  - leave-aware empty slot template generation,
+  - availability and unit safety,
+  - manual assignment with validation,
+  - candidate suggestions,
+  - safe auto-fill,
+  - review/override/exchange,
+  - publish/export.
+
+Implemented Phase 1:
+
+- Added `backend/app/services/rota_rules.py`.
+- Added default Phase 1 rota rule bundle from the confirmed duty dictionary.
+- Stored the rule bundle through existing `RuleVersion` and `RuleSetting` tables under key `rota_generator.phase1`.
+- Added configurable duty fields:
+  - label,
+  - group,
+  - duration,
+  - 24-hour and main-count flags,
+  - mandatory/adjustable flags,
+  - same-day and next-day elective blocking flags,
+  - active flag,
+  - allowed call-level placeholders.
+- Added default guardrails:
+  - 24-hour minimum rest gap after 24-hour duty,
+  - post-24hr next-day elective blocking,
+  - 30 percent warning threshold,
+  - 40 percent hard block threshold,
+  - minimum available unit count.
+- Added admin API:
+  - `GET /api/v1/admin/rota-rules/phase-one`,
+  - `PUT /api/v1/admin/rota-rules/phase-one`.
+- Added frontend API types and functions for Phase 1 rules.
+- Added admin-only `Rota Rules` navigation entry.
+- Added frontend `Rota Rules` screen for editing:
+  - rest hours,
+  - unit staffing thresholds,
+  - monthly duty limit placeholders,
+  - duty dictionary labels/groups/durations,
+  - mandatory/adjustable/elective-blocking/active flags,
+  - allowed call-level CSV.
+- Added focused backend tests in `backend/tests/test_rota_rules.py`.
+
+Verification:
+
+- Backend focused tests passed: `pytest tests/test_rota_rules.py -q`.
+- Backend full test suite passed: `pytest -q`, 57 tests.
+- Ruff passed for new backend files with `--no-cache`.
+- Frontend `npm run build` passed after Windows/Vite sandbox escalation.
+
+Notes:
+
+- No new database table was added for Phase 1. The first rule bundle uses the already existing versioned rule storage so the structure can evolve safely after rota-board feedback.
+
+## 2026-05-07 - Rota Generator Phase 2
+
+User decision:
+
+- Broad debugging, older lint cleanup, visual QA, and hardening should be handled in Phase 11.
+- The forward build should continue through the rota-generator phases first.
+
+Planning:
+
+- Updated `Plan/Rota generator/03_phase_action_plan.md` to add Phase 11: Debugging, QA, And Hardening.
+
+Implemented Phase 2:
+
+- Added monthly generation scope database models:
+  - `MonthlyGenerationScope`,
+  - `MonthlyGenerationScopeUnit`.
+- Added Alembic migration:
+  - `backend/alembic/versions/20260507_0008_monthly_generation_scope.py`.
+- Added `backend/app/services/rota_setup.py` for:
+  - creating/getting a monthly rota period,
+  - creating/getting a monthly generation scope,
+  - including/excluding units for a month,
+  - locking/unlocking the unit scope with reason support,
+  - cloning the previous month's unit scope,
+  - unit readiness summary based on Unit Management assignments and leave pressure.
+- Added API routes:
+  - `GET /api/v1/rota-setup/month`,
+  - `PUT /api/v1/rota-setup/month/scope`,
+  - `POST /api/v1/rota-setup/month/clone-previous`.
+- Added frontend API types/functions for monthly rota setup.
+- Added board-facing `Rota Setup` navigation item.
+- Added Rota Setup screen with:
+  - month selector,
+  - included/excluded/unselected unit control,
+  - clone previous month action,
+  - lock scope checkbox,
+  - lock/unlock reason,
+  - excluded-units-in-safety toggle,
+  - readiness table with assigned members, call mix, leave pressure, and warnings.
+- Added backend tests in `backend/tests/test_rota_setup.py`.
+- Applied local database migration to Alembic head `20260507_0008`.
+
+Verification:
+
+- Focused backend tests passed: `pytest tests/test_rota_setup.py tests/test_rota_rules.py -q`, 6 tests.
+- New-code Ruff passed with `--no-cache`.
+- Full backend test suite passed: `pytest -q`, 60 tests.
+- Frontend `npm run build` passed after Windows/Vite sandbox escalation.
+
+## 2026-05-07 - Rota Generator Phase 3
+
+Goal:
+
+- Add leave import preview and generator-facing leave pressure data before leave-aware slot generation begins.
+
+Implemented Phase 3:
+
+- Added `backend/app/services/leave_import.py`.
+- Leave import preview supports CSV/XLS/XLSX files.
+- Preview recognizes common column names:
+  - name/person/doctor/member,
+  - start/from/date,
+  - end/to,
+  - type/category,
+  - slot/session,
+  - status,
+  - notes/reason/remarks.
+- Preview matches names against canonical Department Members and saved aliases.
+- Preview reports:
+  - matched rows,
+  - unresolved rows,
+  - invalid rows,
+  - parsed start/end dates,
+  - leave type/slot/status,
+  - row-level issues.
+- Added generator-facing leave pressure calculation in `backend/app/services/leave.py`.
+- Leave pressure exposes:
+  - daily total leave pressure,
+  - blocking approved-leave count,
+  - unit totals,
+  - call-level totals,
+  - per-day blocker rows for the future generator.
+- Added API routes:
+  - `POST /api/v1/leave/import-preview`,
+  - `GET /api/v1/leave/pressure`.
+- Added frontend API types/functions for leave import preview and pressure.
+- Updated Leave screen:
+  - import-preview upload panel,
+  - matched/unresolved/invalid preview table,
+  - generator leave pressure panel,
+  - busiest leave-pressure days.
+- Added tests for:
+  - leave pressure blockers,
+  - import preview matching,
+  - upload preview API.
+
+Verification:
+
+- Focused backend tests passed: `pytest tests/test_leave.py -q`, 5 tests.
+- New-code Ruff passed with `--no-cache`.
+- Full backend test suite passed: `pytest -q`, 63 tests.
+- Frontend `npm run build` passed after Windows/Vite sandbox escalation.
+
+Notes:
+
+- Phase 3 intentionally previews imported leave but does not yet commit imported rows in bulk. The commit/apply workflow should come after the rota board approves the exact leave import template and review behavior.
+
+## 2026-05-07 - Rota Generator Phase 3B
+
+Goal:
+
+- Upgrade the leave parser before Phase 4 because the real department leave workbook uses a wide date-column format, not only a simple table.
+
+Evidence:
+
+- Inspected `Plan/Data/MAY 2026 LEAVE DETAILS.xlsx`.
+- The workbook has multiple sheets (`MAY 26`, `MAY 2026`).
+- It stores dates across columns with names under each date, split across the month.
+- This requires a wide-calendar parser in addition to simple CSV/XLSX table parsing.
+
+Planning:
+
+- Added Phase 3B to `Plan/Rota generator/03_phase_action_plan.md`.
+
+Implemented:
+
+- Upgraded `backend/app/services/leave_import.py`:
+  - multi-sheet Excel parsing,
+  - table-header auto-detection,
+  - wide date-column calendar detection,
+  - weekday/noise row filtering,
+  - name extraction under date columns,
+  - consecutive date compression into leave ranges,
+  - source sheet and source format metadata,
+  - parser warnings per sheet,
+  - duplicate leave-row detection.
+- Extended leave import preview API response with:
+  - `sheets`,
+  - `source_formats`,
+  - `parser_warnings`,
+  - row-level `sheet_name`,
+  - row-level `source_format`,
+  - row-level `confidence`.
+- Updated frontend preview table to show source sheet, parser format, confidence, and parser warnings.
+- Added test coverage for wide calendar-style Excel parsing.
+
+Verification:
+
+- Focused leave tests passed: `pytest tests/test_leave.py -q`, 6 tests.
+- New-code Ruff passed with `--no-cache`.
+- Full backend test suite passed: `pytest -q`, 64 tests.
+- Frontend `npm run build` passed after Windows/Vite sandbox escalation.
+
+Notes:
+
+- The parser is still preview-only. Bulk apply/import should be added only after the rota board confirms how unresolved and duplicate rows should be handled.
+
+## 2026-05-07 - Rota Generator Phase 3C
+
+Goal:
+
+- Turn the advanced leave parser into a safe apply workflow that updates the monthly Leave calendar from confidently matched CSV/XLS/XLSX rows.
+
+Learning/reference pass:
+
+- Reviewed official pandas CSV/Excel docs for file-like inputs, multi-sheet Excel handling, and header-less reads.
+- Reviewed openpyxl workbook loading and merged-cell behavior.
+- Reviewed Python `difflib.SequenceMatcher` for conservative near-match suggestions.
+
+Implemented:
+
+- Added Phase 3C to `Plan/Rota generator/03_phase_action_plan.md`.
+- Upgraded name cleaning in `backend/app/services/leave_import.py`:
+  - strips common titles such as Dr/Prof,
+  - normalizes punctuation and spacing,
+  - removes slot markers from name cells,
+  - preserves raw names for audit.
+- Strengthened name matching:
+  - automatic import only uses canonical Department Member or alias exact normalized matches,
+  - uncertain near matches are shown as suggestions but are not auto-imported.
+- Added slot parsing:
+  - explicit slot columns,
+  - AM/PM/FN/AN/NIGHT/FULL DAY values,
+  - parenthesized/suffixed name-cell markers such as `Name (AM)`.
+- Added XLSX merged-cell support using openpyxl so wide leave workbooks can be read more reliably.
+- Added duplicate detection:
+  - duplicate rows inside the uploaded file,
+  - existing matching leave already stored in the database.
+- Added `apply_leave_import()` service:
+  - creates `LeaveRequest` rows only for safe matched preview rows,
+  - skips unresolved/invalid/duplicate/uncertain rows,
+  - stores import source and raw person name.
+- Added API route:
+  - `POST /api/v1/leave/import-apply`.
+- Added frontend API function:
+  - `applyLeaveImport()`.
+- Added Leave screen action:
+  - `Apply Matched Rows` after preview.
+- After apply, the monthly leave calendar and pressure panels reload from saved leave records.
+- Added tests for:
+  - slot extraction from name cells,
+  - wide-calendar Excel parsing,
+  - safe apply service,
+  - apply API updating the calendar.
+
+Real-file smoke test:
+
+- Ran the parser against `Plan/Data/MAY 2026 LEAVE DETAILS.xlsx`.
+- Result:
+  - total rows: 177,
+  - matched rows: 151,
+  - unresolved rows: 26,
+  - invalid rows: 0,
+  - sheets detected: `MAY 26`, `MAY 2026`,
+  - source format: `wide_calendar`,
+  - parser warnings: none.
+
+Verification:
+
+- Focused leave tests passed: `pytest tests/test_leave.py -q`, 9 tests.
+- New-code Ruff passed with `--no-cache`.
+- Full backend test suite passed: `pytest -q`, 67 tests.
+- Frontend `npm run build` passed after Windows/Vite sandbox escalation.
+
+Notes:
+
+- The apply workflow intentionally imports only safe exact/alias matches. Suggested fuzzy matches remain review-only to protect the rota calendar from wrong-person leave records.
+
+## 2026-05-07 - Phase 3C Parser Tightening
+
+Goal:
+
+- Reduce noisy leave-import rows and make name/slot extraction more precise before calendar updates.
+
+Implemented:
+
+- Hardened CSV reading with delimiter sniffing and encoding fallbacks.
+- Added Unicode and hidden-character cleanup for Excel/CSV cells.
+- Expanded accepted name/date/type/slot column aliases.
+- Expanded slot normalization for first-half/second-half/session-style values.
+- Added leave-type normalization for common leave codes such as AL, CL, EL, SL, ML, LOP, and LWP.
+- Added stricter noise filters for repeated headers, summary rows, weekdays, months, NIL/no-leave cells, leave-code-only cells, dates, and numeric-only cells.
+- Improved name cleanup:
+  - strips row numbers and list markers,
+  - removes bracketed slot/status/leave-code annotations,
+  - removes trailing leave annotations such as `Casual Leave`, `CL`, `Approved`,
+  - keeps raw imported text for audit.
+- Improved fuzzy suggestion scoring so multiple aliases for the same person do not suppress a good suggestion.
+- Added ambiguity protection for normalized keys shared by more than one department member.
+- Improved wide-calendar grouping so adjacent days still group when one cell has harmless annotations.
+
+Verification:
+
+- Focused leave tests passed: `pytest tests/test_leave.py`, 11 tests.
+- New-code Ruff passed with `--no-cache`.
+- Full backend test suite passed: `pytest`, 69 tests.
+- Real May workbook smoke test now drops header/event noise:
+  - total rows: 170,
+  - matched rows: 151,
+  - unresolved rows: 19,
+  - invalid rows: 0,
+  - parser warnings: none.
+
+Notes:
+
+- The stricter parser still only auto-applies rows with exact canonical/alias matches and no issues. Noisy, ambiguous, duplicate, or suggested-only rows remain review-only.
+
+## 2026-05-07 - Rota Generator Phase 4
+
+Goal:
+
+- Generate the leave-aware empty monthly duty-slot template after monthly units and leave pressure are known.
+
+Implemented:
+
+- Added template generation audit models:
+  - `RotaTemplateGenerationRun`,
+  - `RotaTemplateGenerationEvent`.
+- Added generated-slot metadata on `DutySlot`:
+  - `template_status`,
+  - `template_reason`,
+  - `generation_run_id`.
+- Added Alembic migration:
+  - `backend/alembic/versions/20260507_0009_rota_template_generation.py`.
+- Added `backend/app/services/rota_template.py`:
+  - uses the locked monthly unit scope,
+  - generates slots only for included units,
+  - defaults to active mandatory duty rules,
+  - allows selected duty keys for the template editor,
+  - checks active leave pressure per unit/date before creating a slot,
+  - creates normal `ready` slots for safe dates,
+  - creates `needs_review` slots for mandatory duties under warning/hard pressure,
+  - skips unsafe adjustable slots and records a blocked event,
+  - records explanations for created, skipped, and blocked decisions.
+- Added API routes:
+  - `GET /api/v1/rota-template/month`,
+  - `POST /api/v1/rota-template/generate`.
+- Added frontend API types/functions for Rota Template.
+- Added board-facing `Rota Template` screen with:
+  - month selector,
+  - included-unit summary,
+  - date-window controls,
+  - weekday/weekend toggles,
+  - replace-existing-generated-slots toggle,
+  - duty template checklist,
+  - generated empty slots table,
+  - latest generation decision log.
+- Added tests in `backend/tests/test_rota_template.py`.
+- Applied local database migration to Alembic head `20260507_0009`.
+
+Verification:
+
+- Focused Phase 4 tests passed: `pytest tests/test_rota_template.py`, 3 tests.
+- Full backend test suite passed: `pytest`, 72 tests.
+- New-code Ruff passed with `--no-cache`.
+- Frontend `npm run build` passed after Windows/Vite sandbox escalation.
+
+Notes:
+
+- Phase 4 still generates empty slots only. Person assignment, unit availability recalculation after assignment, and candidate ranking remain Phase 5 onward.
+
+## 2026-05-07 - Leave Calendar Day Popup
+
+Goal:
+
+- Make each leave-management calendar day open a detailed popup showing who requested leave on that date, grouped by department call level.
+
+Implemented:
+
+- Converted leave calendar day cards into accessible clickable controls.
+- Added a leave-day modal in `frontend/src/main.ts`.
+- Grouped day entries by `call_level` from Department Member data.
+- Each person row shows:
+  - member name,
+  - matched unit/posting,
+  - leave type,
+  - leave slot,
+  - leave status.
+- Added modal close support through close button, backdrop click, and Escape.
+- Added frontend styles for the call-wise leave popup.
+
+Verification:
+
+- Frontend `npm run build` passed after Windows/Vite sandbox escalation.
+
+## 2026-05-07 - UX Wording And Statistic Help
+
+Goal:
+
+- Remove confusing internal code-style wording from user-facing leave screens and add brief hover explanations for statistic titles.
+
+Implemented:
+
+- Added reusable statistic label and `?` help icon helpers in `frontend/src/main.ts`.
+- Added hover descriptions to the main metric cards across:
+  - Overview,
+  - Duty Analysis,
+  - Historical Import,
+  - Leave,
+  - Unit Management,
+  - Rota Rules,
+  - Rota Setup,
+  - Rota Template,
+  - Diagnostics.
+- Cleaned leave-day popup labels:
+  - `imported_pending_review` now displays as `Imported, Pending Review`,
+  - call/posting values display as readable call levels,
+  - unit names display in normal user-facing casing.
+- Cleaned leave import preview labels for match status/source/method.
+- Added CSS for compact `?` help icons without disrupting metric/card layout.
+
+Verification:
+
+- Frontend `npm run build` passed after Windows/Vite sandbox escalation.
+
+## 2026-05-08 - Rota Generator Phase 5
+
+Goal:
+
+- Add the availability and unit safety engine so every generated slot can show staffing impact before a person is assigned.
+
+Implemented:
+
+- Added `backend/app/services/rota_safety.py`.
+- Safety checks now calculate each slot's eligible unit/call-level pool from Unit Management postings.
+- The safety engine subtracts:
+  - approved leave that overlaps the duty timing,
+  - same-day blocking duty assignments,
+  - previous-day 24-hour duty rest blockers.
+- Review-pending/imported leave is shown as `Needs Review` without removing the person from the available pool.
+- Phase 1 unit staffing thresholds drive `Safe`, `Needs Review`, and `Hard Blocked` statuses.
+- Added unit-day safety summaries with slot counts and minimum available eligible members.
+- Added API route:
+  - `GET /api/v1/rota-safety/month`.
+- Added frontend API types/functions for Rota Safety.
+- Updated the Rota Template screen with:
+  - safety metric cards,
+  - per unit/day safety table,
+  - per-slot safety column beside template status,
+  - readable `Safe`, `Needs Review`, and `Hard Blocked` labels.
+- Added focused backend tests in `backend/tests/test_rota_safety.py`.
+
+Verification:
+
+- New-code Ruff passed with `--no-cache`.
+- Full backend test suite passed: `pytest`, 75 tests.
+- Frontend `npm run build` passed after Windows/Vite sandbox escalation.
+
+Notes:
+
+- Phase 5 is calculation and visibility only. Phase 6 should connect the same engine to manual assign/replace/clear actions so validation and safety refresh happen immediately after each assignment.
+
+## 2026-05-08 - Rota Generator Phase 6
+
+Goal:
+
+- Let the rota board manually build assignments into generated slots while enforcing leave, rest, call-level, count-limit, and staffing safety checks.
+
+Implemented:
+
+- Added `backend/app/services/rota_assignment.py`.
+- Added manual assignment API routes:
+  - `POST /api/v1/rota-assignments/slots/{slot_id}/assign`,
+  - `DELETE /api/v1/rota-assignments/assignments/{assignment_id}`.
+- Manual assignment supports:
+  - assigning an open slot,
+  - replacing an existing slot assignment,
+  - clearing a saved assignment.
+- Validation now checks:
+  - approved leave conflicts,
+  - review-pending/imported leave warnings,
+  - same-day blocking duty conflicts,
+  - previous-day 24-hour rest blockers,
+  - active unit membership for the slot date,
+  - call-level eligibility,
+  - monthly 24-hour/weekend/group/campus duty count limits when configured,
+  - unit staffing safety status from the Phase 5 engine.
+- Assignments with warning/error validation issues require an override reason before saving.
+- Updated safety calculation so the assignment already saved on the same slot does not incorrectly block that slot's own safety display.
+- Extended Rota Template slot responses with saved assignments.
+- Added frontend API types/functions for assign/clear.
+- Updated the Rota Template generated slots table with:
+  - current assigned member display,
+  - assign/replace member selector,
+  - override reason field,
+  - clear assignment action,
+  - assigned/open slot summary metrics.
+- Improved frontend API error handling so validation messages from the backend are shown to the user.
+- Added focused backend tests in `backend/tests/test_rota_assignment.py`.
+
+Verification:
+
+- New-code Ruff passed with `--no-cache`.
+- Focused assignment/safety tests passed: `pytest tests/test_rota_assignment.py tests/test_rota_safety.py`, 7 tests.
+- Full backend test suite passed: `pytest`, 79 tests.
+- Frontend `npm run build` passed after Windows/Vite sandbox escalation.
+
+Notes:
+
+- Phase 6 uses safety candidates from Unit Management. Phase 7 should turn these candidate pools into ranked, explainable suggestions using fairness and duty burden scoring.
+
+## 2026-05-08 - Rota Generator Phase 7
+
+Goal:
+
+- Add ranked, explainable candidate suggestions so the rota board can quickly choose sensible people for each generated slot before auto-fill exists.
+
+Implemented:
+
+- Added `backend/app/services/rota_candidates.py`.
+- Added candidate API routes:
+  - `GET /api/v1/rota-candidates/slots/{slot_id}`,
+  - `GET /api/v1/rota-candidates/month`.
+- Candidate pools now separate:
+  - eligible candidates,
+  - candidates needing review,
+  - blocked candidates.
+- Candidate ranking now scores:
+  - person-specific safety status,
+  - total current monthly duty burden,
+  - 24-hour burden,
+  - weekend 24-hour burden,
+  - same duty group burden,
+  - same campus burden,
+  - nearest rest gap,
+  - staffing pressure,
+  - override/validation state,
+  - fairness against current assigned-member average.
+- Every candidate returns plain-language reasons explaining load, blockers, rest gap, fairness, and validation issues.
+- Added frontend API types/functions for Rota Candidate Suggestions.
+- Updated the Rota Template screen with:
+  - candidate summary metrics,
+  - top candidate suggestion cards per slot,
+  - `Use` action for safe suggestions,
+  - `Review` action that selects a risky candidate into the manual assignment controls,
+  - `Reject` action that hides a suggestion for the current session.
+- Added focused backend tests in `backend/tests/test_rota_candidates.py`.
+
+Verification:
+
+- New-code Ruff passed with `--no-cache`.
+- Focused candidate/assignment/safety tests passed: `pytest tests/test_rota_candidates.py tests/test_rota_assignment.py tests/test_rota_safety.py`, 9 tests.
+- Full backend test suite passed: `pytest`, 81 tests.
+- Frontend `npm run build` passed after Windows/Vite sandbox escalation.
+
+Notes:
+
+- Phase 7 suggestions are advisory and still save through the Phase 6 validated assignment endpoint. Phase 8 should use these rankings to safely auto-fill only low-risk empty slots.
+
+## 2026-05-08 - Rota Generator Phase 8
+
+Goal:
+
+- Create a first draft rota by automatically filling only slots with safe, clear, top-ranked candidates while leaving every risky slot open for board review.
+
+Implemented:
+
+- Added auto-fill audit models:
+  - `RotaAutoFillRun`,
+  - `RotaAutoFillEvent`.
+- Added Alembic migration:
+  - `backend/alembic/versions/20260508_0010_rota_auto_fill.py`.
+- Added `backend/app/services/rota_auto_fill.py`.
+- Safe auto-fill now:
+  - scans generated duty slots,
+  - skips slots that already have an active assignment,
+  - gets ranked candidates from the Phase 7 engine,
+  - assigns only candidates with `eligible` status, clear validation, and no override requirement,
+  - leaves review-needed or blocked slots open,
+  - records an event for each assigned, skipped, or blocked decision.
+- Auto-filled assignments use source `safe_auto_fill_draft`.
+- Auto-fill audit event links use `ON DELETE SET NULL` so later clearing assignments or regenerating slots does not break historical reports.
+- Added API routes:
+  - `GET /api/v1/rota-auto-fill/month`,
+  - `POST /api/v1/rota-auto-fill/draft`.
+- Added frontend API types/functions for safe auto-fill.
+- Updated the Rota Template screen with:
+  - `Safe Auto-Fill` action,
+  - auto-fill result toast,
+  - latest auto-fill summary metrics,
+  - latest auto-fill decision report table.
+- Added focused backend tests in `backend/tests/test_rota_auto_fill.py`.
+- Applied local database migration to Alembic head `20260508_0010`.
+
+Verification:
+
+- New-code Ruff passed with `--no-cache`.
+- Focused auto-fill/candidate/assignment/safety tests passed: `pytest tests/test_rota_auto_fill.py tests/test_rota_candidates.py tests/test_rota_assignment.py tests/test_rota_safety.py`, 11 tests.
+- Full backend test suite passed: `pytest`, 83 tests.
+- Frontend `npm run build` passed after Windows/Vite sandbox escalation.
+
+Notes:
+
+- Phase 8 deliberately does not fill any slot that needs an override. Phase 9 should provide a review dashboard for those remaining warnings/errors and board corrections.
+
+## 2026-05-08 - Rota Template Calendar UX Refinement
+
+Goal:
+
+- Make generated rota slots and saved assignments easier for users to review by showing them in a calendar-style interface similar to Leave Management.
+
+Implemented:
+
+- Replaced the main generated-slot table on the Rota Template screen with a clickable rota calendar.
+- Each day card now shows assigned slots versus total generated slots.
+- Day cards use visual states for open, assigned, review-needed, and hard-blocked rota days.
+- Added a rota day popup with:
+  - slot totals,
+  - assigned and open counts,
+  - safety counts,
+  - unit-grouped slot cards,
+  - current assigned member,
+  - safety details,
+  - suggested members,
+  - manual assignment controls.
+- Rota day popups close on backdrop click, close button, Escape, or after assignment changes refresh the template.
+
+Verification:
+
 - Frontend `npm run build` passed after Windows/Vite sandbox escalation.

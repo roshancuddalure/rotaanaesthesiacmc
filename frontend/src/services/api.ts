@@ -22,7 +22,22 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     ...options,
   });
   if (!response.ok) {
-    throw new Error(`API request failed: ${response.status}`);
+    let message = `API request failed: ${response.status}`;
+    let detail: unknown = null;
+    try {
+      const payload = await response.json();
+      detail = payload.detail;
+      if (typeof payload.detail === "string") {
+        message = payload.detail;
+      } else if (payload.detail?.message) {
+        message = payload.detail.message;
+      }
+    } catch {
+      // Keep the status-based fallback when the server does not return JSON.
+    }
+    const error = new Error(message) as Error & { detail?: unknown };
+    error.detail = detail;
+    throw error;
   }
   return response.json() as Promise<T>;
 }
@@ -295,6 +310,66 @@ export interface LeaveCalendar {
   days: Record<string, LeaveDayEntry[]>;
 }
 
+export interface LeavePressure {
+  month: string;
+  starts_on: string;
+  ends_on: string;
+  days: Array<{
+    date: string;
+    total_people: number;
+    blocking_people: number;
+    unit_counts: Record<string, number>;
+    call_level_counts: Record<string, number>;
+    entries: LeaveDayEntry[];
+  }>;
+  unit_totals: Record<string, number>;
+  call_level_totals: Record<string, number>;
+  blockers: Array<Record<string, unknown>>;
+}
+
+export interface LeaveImportPreview {
+  filename: string;
+  month: string;
+  total_rows: number;
+  matched_rows: number;
+  unresolved_rows: number;
+  invalid_rows: number;
+  sheets: string[];
+  source_formats: string[];
+  parser_warnings: string[];
+  rows: Array<{
+    row_number: number;
+    sheet_name?: string;
+    source_format?: string;
+    confidence?: string;
+    match_confidence?: string;
+    raw_person_name: string;
+    cleaned_person_name?: string;
+    person_id: string | null;
+    person_name: string | null;
+    suggested_person_id?: string | null;
+    suggested_person_name?: string | null;
+    match_method?: string | null;
+    starts_on: string | null;
+    ends_on: string | null;
+    leave_type: string;
+    leave_slot: string;
+    status: string;
+    notes: string;
+    preview_status: string;
+    issues: string[];
+  }>;
+}
+
+export interface LeaveImportApplyResult {
+  filename: string;
+  month: string;
+  created_rows: number;
+  skipped_rows: number;
+  skipped_preview_rows: LeaveImportPreview["rows"];
+  preview: LeaveImportPreview;
+}
+
 export interface LeaveRequestPayload {
   person_id: string;
   leave_type: string;
@@ -451,6 +526,489 @@ export interface DiagnosticsSummary {
   invalid_name_rules: string[];
 }
 
+export interface DutyRule {
+  key: string;
+  label: string;
+  group: string;
+  campus: string | null;
+  duration_hours: number;
+  start_time: string;
+  end_time: string;
+  is_24hr: boolean;
+  counts_in_main_24hr: boolean;
+  is_mandatory: boolean;
+  is_adjustable: boolean;
+  blocks_elective_same_day: boolean;
+  blocks_elective_next_day: boolean;
+  active: boolean;
+  allowed_call_levels: string[];
+  allowed_designations: string[];
+  allowed_units: string[];
+  excluded_units: string[];
+}
+
+export interface RotaPhaseOneRules {
+  rule_version: {
+    id: string;
+    name: string;
+    description: string | null;
+    effective_from: string;
+    effective_to: string | null;
+    is_active: boolean;
+    created_at: string;
+  };
+  duty_rules: DutyRule[];
+  duty_count_limits: {
+    max_24hr_per_month: number | null;
+    max_weekend_24hr_per_month: number | null;
+    max_same_group_per_month: number | null;
+    max_same_campus_per_month: number | null;
+  };
+  rest_rules: {
+    minimum_gap_after_24hr_hours: number;
+    post_24hr_blocks_next_day_elective: boolean;
+  };
+  unit_staffing_rules: {
+    minimum_available_count: number;
+    warning_unavailable_percent: number;
+    hard_block_unavailable_percent: number;
+    small_unit_uses_absolute_minimum: boolean;
+  };
+  notes: string | null;
+}
+
+export interface RotaSetupUnitReadiness {
+  unit_id: string;
+  unit_name: string;
+  unit_code: string;
+  campus: string | null;
+  scope_status: "included" | "excluded" | "unselected";
+  readiness: "ready" | "needs_review";
+  assigned_members: number;
+  call_level_counts: Record<string, number>;
+  people_with_leave: number;
+  leave_days: number;
+  warnings: string[];
+}
+
+export interface RotaSetupMonth {
+  month: string;
+  rota_period: {
+    id: string;
+    name: string;
+    starts_on: string;
+    ends_on: string;
+    status: string;
+  };
+  scope: {
+    id: string;
+    include_excluded_units_in_safety: boolean;
+    is_locked: boolean;
+    lock_reason: string | null;
+    units: Array<{ unit_id: string; status: "included" | "excluded"; notes: string | null }>;
+  };
+  unit_readiness: RotaSetupUnitReadiness[];
+}
+
+export interface RotaTemplateMonth {
+  month: string;
+  rota_period: {
+    id: string;
+    name: string;
+    starts_on: string;
+    ends_on: string;
+    status: string;
+  };
+  scope: {
+    id: string;
+    is_locked: boolean;
+    included_units: Array<{ id: string; code: string; name: string; campus: string | null }>;
+  };
+  rule_version: {
+    id: string;
+    name: string;
+  };
+  duty_options: Array<{
+    key: string;
+    label: string;
+    group: string;
+    is_mandatory: boolean;
+    is_adjustable: boolean;
+    active: boolean;
+  }>;
+  summary: {
+    total_slots: number;
+    ready_slots: number;
+    needs_review_slots: number;
+    status_counts: Record<string, number>;
+  };
+  latest_run: null | {
+    id: string;
+    status: string;
+    included_units: number;
+    created_slots: number;
+    needs_review_slots: number;
+    skipped_slots: number;
+    blocked_slots: number;
+    summary: Record<string, unknown>;
+    created_at: string;
+    events: Array<{
+      id: string;
+      unit_id: string | null;
+      unit_name: string | null;
+      unit_code: string | null;
+      duty_date: string | null;
+      duty_type: string | null;
+      action: string;
+      severity: string;
+      reason: string;
+      details: Record<string, unknown>;
+      created_at: string;
+    }>;
+  };
+  slots: Array<{
+    id: string;
+    unit_id: string | null;
+    unit_name: string | null;
+    unit_code: string | null;
+    duty_date: string;
+    duty_type: string;
+    call_level: string | null;
+    slot_label: string;
+    starts_at: string;
+    ends_at: string;
+    is_24hr: boolean;
+    max_assignees: number;
+    source: string;
+    template_status: string;
+    template_reason: string | null;
+    assignments: RotaSlotAssignment[];
+    notes: string | null;
+  }>;
+}
+
+export interface RotaSlotAssignment {
+  id: string;
+  person_id: string;
+  person_name: string;
+  call_level: string | null;
+  status: string;
+  source: string;
+  override_reason: string | null;
+  created_at: string;
+}
+
+export interface RotaSafetyPerson {
+  person_id: string;
+  person_name: string;
+  call_level: string;
+  posting_type: string;
+  blockers?: Array<Record<string, unknown>>;
+}
+
+export interface RotaSafetySlot {
+  slot_id: string;
+  unit_id: string | null;
+  unit_name: string | null;
+  unit_code: string | null;
+  duty_date: string;
+  duty_type: string;
+  slot_label: string;
+  required_call_levels: string[];
+  safety_status: "safe" | "needs_review" | "hard_blocked" | string;
+  reasons: string[];
+  total_unit_members: number;
+  eligible_members: number;
+  available_members: number;
+  hard_blocked_members: number;
+  warning_members: number;
+  available_people: RotaSafetyPerson[];
+  hard_blocked_people: RotaSafetyPerson[];
+  warning_people: RotaSafetyPerson[];
+}
+
+export interface RotaSafetyMonth {
+  month: string;
+  rota_period: {
+    id: string;
+    name: string;
+    starts_on: string;
+    ends_on: string;
+    status: string;
+  };
+  scope: {
+    id: string;
+    is_locked: boolean;
+  };
+  summary: {
+    total_slots: number;
+    safe_slots: number;
+    needs_review_slots: number;
+    hard_blocked_slots: number;
+    status_counts: Record<string, number>;
+  };
+  slots: RotaSafetySlot[];
+  unit_day_safety: Array<{
+    unit_id: string | null;
+    unit_name: string | null;
+    unit_code: string | null;
+    date: string;
+    safety_status: "safe" | "needs_review" | "hard_blocked" | string;
+    slots: number;
+    safe_slots: number;
+    needs_review_slots: number;
+    hard_blocked_slots: number;
+    minimum_available_members: number;
+  }>;
+}
+
+export interface RotaTemplateGeneratePayload {
+  duty_keys: string[] | null;
+  starts_on?: string | null;
+  ends_on?: string | null;
+  include_weekdays: boolean;
+  include_weekends: boolean;
+  replace_existing: boolean;
+}
+
+export interface RotaManualAssignmentPayload {
+  person_id: string;
+  replace_existing: boolean;
+  override_reason?: string | null;
+}
+
+export interface RotaManualAssignmentResult {
+  status: string;
+  assignment: RotaSlotAssignment | null;
+  validation: {
+    status: string;
+    issues: Array<{ severity: string; code: string; message: string }>;
+    requires_override: boolean;
+    slot_safety?: RotaSafetySlot;
+  } | null;
+  slot_safety: RotaSafetySlot | null;
+}
+
+export interface RotaCandidate {
+  person_id: string;
+  person_name: string;
+  call_level: string | null;
+  posting_type: string | null;
+  candidate_status: "eligible" | "needs_review" | "blocked" | string;
+  rank_score: number;
+  score_parts: Record<string, number>;
+  requires_override: boolean;
+  validation_status: string;
+  validation_issues: Array<{ severity: string; code: string; message: string }>;
+  counts: {
+    total_assignments: number;
+    total_24hr: number;
+    weekend_24hr: number;
+    same_group: number;
+    same_campus: number;
+  };
+  rest_gap_hours: number | null;
+  reasons: string[];
+}
+
+export interface RotaCandidateSlot {
+  slot_id: string;
+  duty_date: string;
+  duty_type: string;
+  unit_id: string | null;
+  unit_name: string | null;
+  unit_code: string | null;
+  safety_status: string;
+  candidates: RotaCandidate[];
+}
+
+export interface RotaCandidateMonth {
+  month: string;
+  summary: {
+    slots_checked: number;
+    slots_with_candidates: number;
+    eligible_candidates: number;
+    needs_review_candidates: number;
+    blocked_candidates: number;
+  };
+  slots: RotaCandidateSlot[];
+}
+
+export interface RotaAutoFillEvent {
+  id: string;
+  slot_id: string | null;
+  assignment_id: string | null;
+  person_id: string | null;
+  person_name: string | null;
+  unit_name: string | null;
+  unit_code: string | null;
+  duty_date: string | null;
+  duty_type: string | null;
+  action: string;
+  severity: string;
+  reason: string;
+  details: Record<string, unknown>;
+  created_at: string;
+}
+
+export interface RotaAutoFillRun {
+  id: string;
+  status: string;
+  total_slots: number;
+  assigned_slots: number;
+  skipped_slots: number;
+  review_slots: number;
+  blocked_slots: number;
+  summary: Record<string, unknown>;
+  created_at: string;
+  events: RotaAutoFillEvent[];
+}
+
+export interface RotaAutoFillMonth {
+  month: string;
+  latest_run: RotaAutoFillRun | null;
+}
+
+export interface RotaReviewSlot {
+  id: string;
+  unit_id: string | null;
+  unit_name: string | null;
+  unit_code: string | null;
+  duty_date: string;
+  duty_type: string;
+  slot_label: string;
+  call_level: string | null;
+  template_status: string;
+  template_reason: string | null;
+}
+
+export interface RotaReviewIssue {
+  severity: string;
+  code: string;
+  message: string;
+}
+
+export interface RotaReviewItem {
+  slot: RotaReviewSlot;
+  severity: string;
+  issues: RotaReviewIssue[];
+  safety: RotaSafetySlot | null;
+  assignments: RotaSlotAssignment[];
+  candidates: RotaCandidate[];
+  recommended_action: string;
+}
+
+export interface RotaPersonWorkload {
+  person_id: string;
+  person_name: string;
+  call_level: string | null;
+  total_assignments: number;
+  total_24hr: number;
+  weekend_24hr: number;
+  override_assignments: number;
+  assignments: Array<{
+    assignment_id: string;
+    slot_id: string;
+    duty_date: string;
+    duty_type: string;
+    unit_name: string | null;
+    override_reason: string | null;
+  }>;
+}
+
+export interface RotaAssignmentOption {
+  assignment: RotaSlotAssignment & { slot_id: string };
+  slot: RotaReviewSlot;
+  label: string;
+}
+
+export interface RotaExchangeRequest {
+  id: string;
+  rota_period_id: string;
+  from_assignment_id: string | null;
+  from_slot: RotaReviewSlot | null;
+  from_person: { id: string; canonical_name: string; call_level: string | null } | null;
+  to_person: { id: string; canonical_name: string; call_level: string | null } | null;
+  requested_by: string | null;
+  approved_by: string | null;
+  applied_assignment_id: string | null;
+  status: string;
+  request_reason: string;
+  decision_reason: string | null;
+  validation_status: string;
+  validation_snapshot: Record<string, unknown>;
+  created_at: string;
+  decided_at: string | null;
+}
+
+export interface RotaReviewMonth {
+  month: string;
+  rota_period: {
+    id: string;
+    name: string;
+    starts_on: string;
+    ends_on: string;
+    status: string;
+  };
+  scope: {
+    id: string;
+    is_locked: boolean;
+  };
+  summary: {
+    total_slots: number;
+    assigned_slots: number;
+    open_slots: number;
+    review_items: number;
+    hard_blocked_items: number;
+    override_assignments: number;
+    exchange_requests: number;
+    pending_exchange_requests: number;
+  };
+  review_items: RotaReviewItem[];
+  person_workload: RotaPersonWorkload[];
+  exchange_requests: RotaExchangeRequest[];
+  assignment_options: RotaAssignmentOption[];
+}
+
+export interface RotaPublishChecklistItem {
+  status: string;
+  title: string;
+  detail: string;
+}
+
+export interface RotaPublishApproval {
+  id: string;
+  rota_period_id: string;
+  approved_by: string | null;
+  status: string;
+  confirmed_warnings: boolean;
+  approval_note: string;
+  summary: Record<string, unknown>;
+  created_at: string;
+}
+
+export interface RotaPublishMonth {
+  month: string;
+  rota_period: {
+    id: string;
+    name: string;
+    starts_on: string;
+    ends_on: string;
+    status: string;
+  };
+  rule_version: {
+    id: string;
+    name: string;
+  };
+  summary: RotaReviewMonth["summary"];
+  can_publish: boolean;
+  requires_warning_confirmation: boolean;
+  checks: RotaPublishChecklistItem[];
+  blockers: RotaPublishChecklistItem[];
+  warnings: RotaPublishChecklistItem[];
+  latest_publish: RotaPublishApproval | null;
+}
+
 export function getMappingOptions(): Promise<MappingOptions> {
   return request<MappingOptions>("/api/v1/admin/mappings/options");
 }
@@ -511,6 +1069,38 @@ export function getMembers(q = ""): Promise<DepartmentMember[]> {
 
 export function getLeaveCalendar(month: string): Promise<LeaveCalendar> {
   return request<LeaveCalendar>(`/api/v1/leave/calendar?month=${encodeURIComponent(month)}`);
+}
+
+export function getLeavePressure(month: string): Promise<LeavePressure> {
+  return request<LeavePressure>(`/api/v1/leave/pressure?month=${encodeURIComponent(month)}`);
+}
+
+export async function previewLeaveImport(month: string, file: File): Promise<LeaveImportPreview> {
+  const formData = new FormData();
+  formData.append("file", file);
+  const response = await fetch(`${API_BASE_URL}/api/v1/leave/import-preview?month=${encodeURIComponent(month)}`, {
+    method: "POST",
+    headers: authToken ? { Authorization: `Bearer ${authToken}` } : {},
+    body: formData,
+  });
+  if (!response.ok) {
+    throw new Error(`API request failed: ${response.status}`);
+  }
+  return response.json() as Promise<LeaveImportPreview>;
+}
+
+export async function applyLeaveImport(month: string, file: File): Promise<LeaveImportApplyResult> {
+  const formData = new FormData();
+  formData.append("file", file);
+  const response = await fetch(`${API_BASE_URL}/api/v1/leave/import-apply?month=${encodeURIComponent(month)}`, {
+    method: "POST",
+    headers: authToken ? { Authorization: `Bearer ${authToken}` } : {},
+    body: formData,
+  });
+  if (!response.ok) {
+    throw new Error(`API request failed: ${response.status}`);
+  }
+  return response.json() as Promise<LeaveImportApplyResult>;
 }
 
 export function getLeaveRequests(month: string): Promise<LeaveRequest[]> {
@@ -702,4 +1292,162 @@ export function resetPassword(token: string, newPassword: string): Promise<{ sta
 
 export function getDiagnosticsSummary(): Promise<DiagnosticsSummary> {
   return request<DiagnosticsSummary>("/api/v1/diagnostics/summary");
+}
+
+export function getRotaPhaseOneRules(): Promise<RotaPhaseOneRules> {
+  return request<RotaPhaseOneRules>("/api/v1/admin/rota-rules/phase-one");
+}
+
+export function updateRotaPhaseOneRules(payload: Omit<RotaPhaseOneRules, "rule_version">): Promise<RotaPhaseOneRules> {
+  return request<RotaPhaseOneRules>("/api/v1/admin/rota-rules/phase-one", {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function getRotaSetupMonth(month: string): Promise<RotaSetupMonth> {
+  return request<RotaSetupMonth>(`/api/v1/rota-setup/month?month=${encodeURIComponent(month)}`);
+}
+
+export function updateRotaSetupScope(month: string, payload: {
+  included_unit_ids: string[];
+  excluded_unit_ids: string[];
+  include_excluded_units_in_safety: boolean;
+  is_locked: boolean;
+  lock_reason?: string | null;
+}): Promise<RotaSetupMonth> {
+  return request<RotaSetupMonth>(`/api/v1/rota-setup/month/scope?month=${encodeURIComponent(month)}`, {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function clonePreviousRotaSetupScope(month: string): Promise<RotaSetupMonth> {
+  return request<RotaSetupMonth>(`/api/v1/rota-setup/month/clone-previous?month=${encodeURIComponent(month)}`, {
+    method: "POST",
+    body: "{}",
+  });
+}
+
+export function getRotaTemplateMonth(month: string): Promise<RotaTemplateMonth> {
+  return request<RotaTemplateMonth>(`/api/v1/rota-template/month?month=${encodeURIComponent(month)}`);
+}
+
+export function getRotaSafetyMonth(month: string): Promise<RotaSafetyMonth> {
+  return request<RotaSafetyMonth>(`/api/v1/rota-safety/month?month=${encodeURIComponent(month)}`);
+}
+
+export function getRotaCandidateMonth(month: string): Promise<RotaCandidateMonth> {
+  return request<RotaCandidateMonth>(`/api/v1/rota-candidates/month?month=${encodeURIComponent(month)}&limit_per_slot=5`);
+}
+
+export function getRotaAutoFillMonth(month: string): Promise<RotaAutoFillMonth> {
+  return request<RotaAutoFillMonth>(`/api/v1/rota-auto-fill/month?month=${encodeURIComponent(month)}`);
+}
+
+export function getRotaReviewMonth(month: string): Promise<RotaReviewMonth> {
+  return request<RotaReviewMonth>(`/api/v1/rota-review/month?month=${encodeURIComponent(month)}`);
+}
+
+export function getRotaPublishMonth(month: string): Promise<RotaPublishMonth> {
+  return request<RotaPublishMonth>(`/api/v1/rota-publish/month?month=${encodeURIComponent(month)}`);
+}
+
+export function generateRotaTemplate(
+  month: string,
+  payload: RotaTemplateGeneratePayload,
+): Promise<RotaTemplateMonth> {
+  return request<RotaTemplateMonth>(`/api/v1/rota-template/generate?month=${encodeURIComponent(month)}`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function assignRotaSlot(
+  slotId: string,
+  payload: RotaManualAssignmentPayload,
+): Promise<RotaManualAssignmentResult> {
+  return request<RotaManualAssignmentResult>(`/api/v1/rota-assignments/slots/${slotId}/assign`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function clearRotaAssignment(assignmentId: string): Promise<RotaManualAssignmentResult> {
+  return request<RotaManualAssignmentResult>(`/api/v1/rota-assignments/assignments/${assignmentId}`, {
+    method: "DELETE",
+  });
+}
+
+export function runRotaAutoFillDraft(month: string): Promise<RotaAutoFillRun> {
+  return request<RotaAutoFillRun>(`/api/v1/rota-auto-fill/draft?month=${encodeURIComponent(month)}`, {
+    method: "POST",
+    body: "{}",
+  });
+}
+
+export function requestRotaExchange(payload: {
+  assignment_id: string;
+  to_person_id: string;
+  reason: string;
+}): Promise<RotaExchangeRequest> {
+  return request<RotaExchangeRequest>("/api/v1/rota-review/exchanges", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function approveRotaExchange(
+  exchangeId: string,
+  decisionReason?: string | null,
+): Promise<RotaExchangeRequest> {
+  return request<RotaExchangeRequest>(`/api/v1/rota-review/exchanges/${exchangeId}/approve`, {
+    method: "POST",
+    body: JSON.stringify({ decision_reason: decisionReason || null }),
+  });
+}
+
+export function rejectRotaExchange(
+  exchangeId: string,
+  decisionReason?: string | null,
+): Promise<RotaExchangeRequest> {
+  return request<RotaExchangeRequest>(`/api/v1/rota-review/exchanges/${exchangeId}/reject`, {
+    method: "POST",
+    body: JSON.stringify({ decision_reason: decisionReason || null }),
+  });
+}
+
+export function publishRotaMonth(
+  month: string,
+  payload: { confirm_warnings: boolean; approval_note: string },
+): Promise<RotaPublishMonth> {
+  return request<RotaPublishMonth>(`/api/v1/rota-publish/publish?month=${encodeURIComponent(month)}`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+function filenameFromDisposition(disposition: string | null, fallback: string): string {
+  const match = disposition?.match(/filename="?([^";]+)"?/i);
+  return match?.[1] ?? fallback;
+}
+
+export async function downloadRotaExport(month: string): Promise<{ blob: Blob; filename: string }> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/rota-publish/export?month=${encodeURIComponent(month)}`, {
+    headers: authToken ? { Authorization: `Bearer ${authToken}` } : {},
+  });
+  if (!response.ok) {
+    let message = `API request failed: ${response.status}`;
+    try {
+      const payload = await response.json();
+      if (typeof payload.detail === "string") message = payload.detail;
+    } catch {
+      // Keep status fallback when export errors are not JSON.
+    }
+    throw new Error(message);
+  }
+  return {
+    blob: await response.blob(),
+    filename: filenameFromDisposition(response.headers.get("Content-Disposition"), `final-rota-${month}.xlsx`),
+  };
 }

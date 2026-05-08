@@ -142,3 +142,88 @@ def leave_summary(db: Session, month: str) -> dict[str, object]:
         "call_level_counts": dict(call_level_counts),
     }
 
+
+def leave_pressure(db: Session, month: str) -> dict[str, object]:
+    starts_on, ends_on = month_bounds(month)
+    leaves = [
+        leave
+        for leave in leave_requests_for_month(db, month)
+        if leave.status.lower() in ACTIVE_LEAVE_STATUSES
+    ]
+    daily: dict[str, dict[str, object]] = {}
+    unit_totals: Counter[str] = Counter()
+    call_level_totals: Counter[str] = Counter()
+    blockers: list[dict[str, object]] = []
+
+    for leave in leaves:
+        first = max(leave.starts_on, starts_on)
+        last = min(leave.ends_on, ends_on)
+        unit_name, posting_type = posting_context_for_month(db, leave.person_id, first)
+        unit_key = unit_name or "Unknown unit"
+        call_level = person_call_level(leave.person)
+        for day in date_range(first, last):
+            day_key = day.isoformat()
+            if day_key not in daily:
+                daily[day_key] = {
+                    "date": day_key,
+                    "total_people": 0,
+                    "blocking_people": 0,
+                    "unit_counts": Counter(),
+                    "call_level_counts": Counter(),
+                    "entries": [],
+                }
+            day_bucket = daily[day_key]
+            day_bucket["total_people"] = int(day_bucket["total_people"]) + 1
+            if leave.status.lower() in BLOCKING_LEAVE_STATUSES:
+                day_bucket["blocking_people"] = int(day_bucket["blocking_people"]) + 1
+            day_bucket["unit_counts"][unit_key] += 1  # type: ignore[index]
+            day_bucket["call_level_counts"][call_level] += 1  # type: ignore[index]
+            day_bucket["entries"].append(  # type: ignore[union-attr]
+                {
+                    "leave_id": str(leave.id),
+                    "person_id": str(leave.person_id),
+                    "person_name": leave.person.canonical_name,
+                    "status": leave.status,
+                    "leave_type": leave.leave_type,
+                    "leave_slot": leave.leave_slot,
+                    "unit": unit_name,
+                    "posting_type": posting_type,
+                    "call_level": call_level,
+                }
+            )
+            unit_totals[unit_key] += 1
+            call_level_totals[call_level] += 1
+            blockers.append(
+                {
+                    "date": day_key,
+                    "person_id": str(leave.person_id),
+                    "person_name": leave.person.canonical_name,
+                    "status": leave.status,
+                    "is_blocking": leave.status.lower() in BLOCKING_LEAVE_STATUSES,
+                    "unit": unit_name,
+                    "posting_type": posting_type,
+                    "call_level": call_level,
+                    "leave_type": leave.leave_type,
+                    "leave_slot": leave.leave_slot,
+                }
+            )
+
+    serialized_days = []
+    for day in sorted(daily.values(), key=lambda item: str(item["date"])):
+        serialized_days.append(
+            {
+                **day,
+                "unit_counts": dict(day["unit_counts"]),  # type: ignore[arg-type]
+                "call_level_counts": dict(day["call_level_counts"]),  # type: ignore[arg-type]
+            }
+        )
+
+    return {
+        "month": month,
+        "starts_on": starts_on.isoformat(),
+        "ends_on": ends_on.isoformat(),
+        "days": serialized_days,
+        "unit_totals": dict(unit_totals),
+        "call_level_totals": dict(call_level_totals),
+        "blockers": blockers,
+    }

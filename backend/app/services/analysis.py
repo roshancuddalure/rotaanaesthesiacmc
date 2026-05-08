@@ -516,7 +516,6 @@ def analysis_manual_review(limit: int = 300) -> dict[str, object]:
                 cleaned = row.get("cleaned_person_name", "")
                 status = row.get("status", "")
                 reason = row.get("reason", "")
-                source_kind = row.get("source_kind", "")
                 skipped_counter[(cleaned, status, reason)] += 1
                 status_counter[status] += 1
                 if len(skipped_rows) < limit:

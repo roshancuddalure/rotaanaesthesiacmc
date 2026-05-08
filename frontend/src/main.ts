@@ -9,23 +9,42 @@ import {
   type DiagnosticsSummary,
   type InvalidMembersResult,
   type LeaveCalendar,
+  type LeaveDayEntry,
+  type LeaveImportPreview,
+  type LeavePressure,
   type LeaveRequest,
   type MappingOptions,
   type MappingType,
   type MemberAudit,
+  type RotaAutoFillMonth,
+  type RotaCandidate,
+  type RotaCandidateMonth,
+  type RotaPhaseOneRules,
+  type RotaPublishChecklistItem,
+  type RotaPublishMonth,
+  type RotaReviewMonth,
+  type RotaSafetyPerson,
+  type RotaSafetyMonth,
+  type RotaSetupMonth,
+  type RotaTemplateMonth,
   type UnitAssignment,
   type UnitManagementMonth,
   type UnitRead,
   type UserAccount,
   addMemberDesignation,
+  approveRotaExchange,
+  assignRotaSlot,
   cleanupInvalidMembers,
+  clearRotaAssignment,
   clearAuthToken,
   cancelLeaveRequest,
+  clonePreviousRotaSetupScope,
   createMember,
   createLeaveRequest,
   createUnitAssignment,
   createUserAccount,
   deleteUnitAssignment,
+  downloadRotaExport,
   forgotPassword,
   getAnalysisDashboard,
   getAnalysisManualReview,
@@ -34,9 +53,18 @@ import {
   getDiagnosticsSummary,
   getInvalidMembers,
   getLeaveCalendar,
+  getLeavePressure,
   getLeaveRequests,
   getMappingOptions,
   getMappings,
+  getRotaAutoFillMonth,
+  getRotaCandidateMonth,
+  getRotaPhaseOneRules,
+  getRotaPublishMonth,
+  getRotaReviewMonth,
+  getRotaSafetyMonth,
+  getRotaSetupMonth,
+  getRotaTemplateMonth,
   getHistoricalImportStatus,
   getMemberAudit,
   getMembers,
@@ -45,15 +73,24 @@ import {
   healthCheck,
   listUserAccounts,
   prefillCallLevels,
+  previewLeaveImport,
   resetPassword,
   reconcileTrustedRoster,
   runHistoricalImport,
+  runRotaAutoFillDraft,
   scanHistoricalMappings,
   signIn,
   updateLeaveRequest,
   updateMapping,
   updateMember,
+  updateRotaPhaseOneRules,
+  updateRotaSetupScope,
   updateUnitAssignment,
+  applyLeaveImport,
+  generateRotaTemplate,
+  publishRotaMonth,
+  rejectRotaExchange,
+  requestRotaExchange,
 } from "./services/api";
 
 /* ============================================================
@@ -161,12 +198,28 @@ let memberSortDirection: "asc" | "desc" = "asc";
 let leaveMonth = new Date().toISOString().slice(0, 7);
 let leaveCalendar: LeaveCalendar | null = null;
 let leaveRequests: LeaveRequest[] = [];
+let leavePressure: LeavePressure | null = null;
+let leaveImportPreview: LeaveImportPreview | null = null;
+let leaveImportFile: File | null = null;
 let unitMonth = new Date().toISOString().slice(0, 7);
 let unitManagement: UnitManagementMonth | null = null;
 let units: UnitRead[] = [];
 let unitAssignments: UnitAssignment[] = [];
 let unitModalUnitId: string | null = null;
 let unitEditingAssignmentId: string | null = null;
+let rotaPhaseOneRules: RotaPhaseOneRules | null = null;
+let rotaSetupMonth = new Date().toISOString().slice(0, 7);
+let rotaSetup: RotaSetupMonth | null = null;
+let rotaTemplateMonth = new Date().toISOString().slice(0, 7);
+let rotaTemplate: RotaTemplateMonth | null = null;
+let rotaSafety: RotaSafetyMonth | null = null;
+let rotaCandidates: RotaCandidateMonth | null = null;
+let rotaAutoFill: RotaAutoFillMonth | null = null;
+let rotaReviewMonth = new Date().toISOString().slice(0, 7);
+let rotaReview: RotaReviewMonth | null = null;
+let rotaPublishMonth = new Date().toISOString().slice(0, 7);
+let rotaPublish: RotaPublishMonth | null = null;
+const rejectedRotaCandidates = new Set<string>();
 let currentUser: UserAccount | null = null;
 let accounts: UserAccount[] = [];
 
@@ -179,6 +232,7 @@ function renderShell() {
   const adminNav = isAdminUser()
     ? `
         <div class="nav-section-label">Admin tools</div>
+        <button data-view="rota-rules">Rota Rules</button>
         <button data-view="mappings">Mappings</button>
         <button data-view="imports">Historical Import</button>
         <button data-view="accounts">Login Accounts</button>
@@ -206,6 +260,10 @@ function renderShell() {
         <button data-view="members">Department Members</button>
         <button data-view="leave">Leave</button>
         <button data-view="units">Unit Management</button>
+        <button data-view="rota-setup">Rota Setup</button>
+        <button data-view="rota-template">Rota Template</button>
+        <button data-view="rota-review">Rota Review</button>
+        <button data-view="rota-publish">Publish & Export</button>
         <button disabled title="Coming soon">Rota Board</button>
         <button disabled title="Coming soon">Exports</button>
         ${adminNav}
@@ -490,10 +548,10 @@ async function renderOverview() {
       </div>
     </section>
     <section class="summary-grid four-col board-metrics">
-      <article class="metric metric-primary"><span>${analysis.summary.total_24hr.toLocaleString()}</span><p>Total 24hr duties</p></article>
-      <article class="metric metric-weekend"><span>${analysis.summary.total_weekend_24hr.toLocaleString()}</span><p>Weekend 24hr</p></article>
-      <article class="metric"><span>${analysis.summary.weekend_percent}%</span><p>Weekend share</p></article>
-      <article class="metric"><span>${analysis.summary.avg_24hr_per_active_person}</span><p>Avg per active person</p></article>
+      ${metricCard(analysis.summary.total_24hr.toLocaleString(), "Total 24hr duties", undefined, "metric-primary")}
+      ${metricCard(analysis.summary.total_weekend_24hr.toLocaleString(), "Weekend 24hr", undefined, "metric-weekend")}
+      ${metricCard(`${analysis.summary.weekend_percent}%`, "Weekend share")}
+      ${metricCard(analysis.summary.avg_24hr_per_active_person, "Avg per active person")}
     </section>
     <section class="board-insight-grid">
       <article class="board-insight">
@@ -617,6 +675,89 @@ function escapeHtml(value: string): string {
     .replace(/'/g, "&#039;");
 }
 
+const STAT_HELP: Record<string, string> = {
+  "Total 24hr duties": "All 24-hour duty assignments counted in the selected historical period.",
+  "Weekend 24hr": "24-hour duties that happened on Saturdays or Sundays.",
+  "Weekend share": "The percentage of all 24-hour duties that fell on weekends.",
+  "Avg per active person": "Average 24-hour duty load among people active in the analysed period.",
+  "Personnel in list": "Total department members currently included in the database.",
+  "Active personnel": "Members marked active and expected to be considered for planning.",
+  "Months analysed": "Historical months included in this analysis.",
+  "Assignments reviewed": "Duty assignment records read from the imported historical rota data.",
+  People: "Department members stored in the system.",
+  "Duty assignments": "Imported or saved records linking a person to a duty slot.",
+  "Unit postings": "Records linking members to units or call levels for a month.",
+  "Duty slots": "Duty positions stored in the system before a person is assigned.",
+  "Import batches": "Historical import runs saved by the software.",
+  "Import warnings": "Rows or labels that need review after import or diagnostics.",
+  "Leave requests": "Leave records for the selected month, including approved and pending review leave.",
+  "People on leave": "Unique department members who have leave recorded in this month.",
+  "Total leave days": "Total calendar days covered by active leave records in this month.",
+  "Highest day pressure": "The largest number of people on leave on any one day in this month.",
+  "By Call Level": "Leave totals grouped by the member's department call level.",
+  "By Unit": "Leave totals grouped by the unit assigned in Unit Management.",
+  "Pressure By Call Level": "Generator-facing leave pressure grouped by call level.",
+  "Pressure By Unit": "Generator-facing leave pressure grouped by assigned unit.",
+  Assignments: "Current monthly unit assignment records.",
+  "Active units": "Units currently marked active in Unit Management.",
+  "Unit leave days": "Total leave days affecting members assigned to units this month.",
+  "Errors / warnings": "Unit setup issues found before rota generation.",
+  "Duty types": "Configurable duty categories available to the rota generator.",
+  "Rest hours": "Minimum rest gap after a 24-hour duty.",
+  "Warning threshold": "Leave pressure level where the software asks for review but still allows planning.",
+  "Hard block threshold": "Leave pressure level where adjustable slots are blocked or skipped.",
+  "Included units": "Units selected to participate in this month's rota generation.",
+  "Excluded units": "Units deliberately excluded from this month's rota generation.",
+  "Ready included": "Included units with enough basic setup to proceed.",
+  "Need review": "Items that can proceed only after board review or explanation.",
+  "Template slots": "Empty duty slots generated for the month before people are assigned.",
+  "Ready slots": "Generated empty slots that passed the current leave-pressure checks.",
+  "Blocked/skipped": "Adjustable slots skipped because rules or leave pressure made them unsafe.",
+  "Safety checked": "Generated slots checked against current leave, unit membership, same-day duties, and rest rules.",
+  "Safe slots": "Slots with enough eligible available members under the current rules.",
+  "Needs review": "Slots that can still be planned, but have pending leave or staffing pressure that needs board review.",
+  "Hard blocked": "Slots where confirmed blockers or staffing thresholds make assignment unsafe without rule changes or override.",
+  "Minimum available": "Lowest available eligible member count found across unit-day safety checks.",
+  "Assigned slots": "Generated slots that already have a saved member assignment.",
+  "Open slots": "Generated slots that still need a member assignment.",
+  "Suggestion slots": "Generated slots where the software found at least one candidate from Unit Management.",
+  "Safe suggestions": "Candidates with no person-specific leave, rest, or validation blocker.",
+  "Review suggestions": "Candidates that may be usable but need board review or an override reason.",
+  "Blocked suggestions": "Candidates with hard blockers such as approved leave, rest conflict, or rule-limit problems.",
+  "Auto-filled slots": "Slots assigned automatically using only top safe suggestions with clear validation.",
+  "Left open": "Slots auto-fill deliberately did not assign, usually because they need review or have no safe candidate.",
+  "Review left open": "Slots left open because the best candidate still needs board review.",
+  "Blocked left open": "Slots left open because no safe candidate was available.",
+  "Review items": "Open slots, warning slots, hard-blocked slots, and override assignments needing board attention.",
+  "Hard-blocked items": "Review items with hard safety blockers under the current rule and leave data.",
+  "Override assignments": "Saved assignments that include a board override reason.",
+  "Exchange requests": "Requested member swaps recorded for this rota month.",
+  "Pending exchanges": "Exchange requests still waiting for approval or override review.",
+  "People assigned": "People who currently have at least one saved duty assignment in this rota month.",
+  "Checklist blockers": "Publish checklist items that must be fixed before final approval.",
+  "Checklist warnings": "Remaining warnings that can be published only with board confirmation.",
+  "Invalid member names": "Member names that still need cleanup before reliable matching.",
+  "Login accounts": "User accounts that can sign in to this website.",
+  total: "People with leave recorded on this date.",
+  approved: "Leave already marked approved.",
+  "requested/review": "Leave requested or imported and still needing review.",
+  "call groups": "Number of call-level groups represented in this day's leave list.",
+};
+
+function helpIcon(help: string): string {
+  return `<span class="help-icon" tabindex="0" title="${escapeHtml(help)}" aria-label="${escapeHtml(help)}">?</span>`;
+}
+
+function statLabel(label: string, help?: string): string {
+  const description = help ?? STAT_HELP[label];
+  return `<span class="stat-label">${escapeHtml(label)}${description ? helpIcon(description) : ""}</span>`;
+}
+
+function metricCard(value: string | number, label: string, help?: string, className = ""): string {
+  const classes = `metric${className ? ` ${className}` : ""}`;
+  return `<article class="${classes}"><span>${escapeHtml(String(value))}</span><p>${statLabel(label, help)}</p></article>`;
+}
+
 function analysisCallLevelLabel(key: string): string {
   return (
     ({
@@ -632,7 +773,7 @@ function analysisCallLevelLabel(key: string): string {
 }
 
 function renderPersonMetric(label: string, value: number): string {
-  return `<article class="person-metric"><strong>${value}</strong><span>${label}</span></article>`;
+  return `<article class="person-metric"><strong>${value}</strong><span>${statLabel(label, `Count for ${label} in the selected historical period.`)}</span></article>`;
 }
 
 function renderPersonMetricGroup(title: string, metrics: Array<[string, number]>): string {
@@ -757,16 +898,16 @@ function renderAnalysisOverviewTab(): string {
   }));
   return `
     <div class="summary-grid four-col board-metrics">
-      <article class="metric metric-primary"><span>${analysis.summary.total_24hr.toLocaleString()}</span><p>Total 24hr duties</p></article>
-      <article class="metric metric-weekend"><span>${analysis.summary.total_weekend_24hr.toLocaleString()}</span><p>Weekend 24hr</p></article>
-      <article class="metric"><span>${analysis.summary.weekend_percent}%</span><p>Weekend share</p></article>
-      <article class="metric"><span>${analysis.summary.avg_24hr_per_active_person}</span><p>Avg per active person</p></article>
+      ${metricCard(analysis.summary.total_24hr.toLocaleString(), "Total 24hr duties", undefined, "metric-primary")}
+      ${metricCard(analysis.summary.total_weekend_24hr.toLocaleString(), "Weekend 24hr", undefined, "metric-weekend")}
+      ${metricCard(`${analysis.summary.weekend_percent}%`, "Weekend share")}
+      ${metricCard(analysis.summary.avg_24hr_per_active_person, "Avg per active person")}
     </div>
     <div class="summary-grid four-col">
-      <article class="metric"><span>${analysis.summary.personnel}</span><p>Personnel in list</p></article>
-      <article class="metric"><span>${analysis.summary.active_personnel}</span><p>Active personnel</p></article>
-      <article class="metric"><span>${analysis.summary.months}</span><p>Months analysed</p></article>
-      <article class="metric"><span>${analysis.summary.total_records.toLocaleString()}</span><p>Assignments reviewed</p></article>
+      ${metricCard(analysis.summary.personnel, "Personnel in list")}
+      ${metricCard(analysis.summary.active_personnel, "Active personnel")}
+      ${metricCard(analysis.summary.months, "Months analysed")}
+      ${metricCard(analysis.summary.total_records.toLocaleString(), "Assignments reviewed")}
     </div>
     <div class="analytics-grid">
       <article class="panel chart-panel">
@@ -1966,32 +2107,14 @@ async function renderImports() {
   const status = await getHistoricalImportStatus();
   viewRoot.innerHTML = `
     <section class="summary-grid">
-      <article class="metric">
-        <span>${status.people}</span>
-        <p>People</p>
-      </article>
-      <article class="metric">
-        <span>${status.duty_assignments}</span>
-        <p>Duty assignments</p>
-      </article>
-      <article class="metric">
-        <span>${status.postings}</span>
-        <p>Unit postings</p>
-      </article>
+      ${metricCard(status.people, "People")}
+      ${metricCard(status.duty_assignments, "Duty assignments")}
+      ${metricCard(status.postings, "Unit postings")}
     </section>
     <section class="summary-grid">
-      <article class="metric">
-        <span>${status.duty_slots}</span>
-        <p>Duty slots</p>
-      </article>
-      <article class="metric">
-        <span>${status.import_batches}</span>
-        <p>Import batches</p>
-      </article>
-      <article class="metric">
-        <span>${status.import_warnings}</span>
-        <p>Import warnings</p>
-      </article>
+      ${metricCard(status.duty_slots, "Duty slots")}
+      ${metricCard(status.import_batches, "Import batches")}
+      ${metricCard(status.import_warnings, "Import warnings")}
     </section>
     <section class="panel action-panel">
       <div>
@@ -2048,11 +2171,13 @@ function callLevelLabel(value: string | null): string {
 
 function normalizeCallLevel(value: string | null): string | null {
   if (!value) return null;
-  if (value.includes("1ST_CALL")) return "1ST_CALL";
-  if (value.includes("2ND_CALL")) return "2ND_CALL";
-  if (value.includes("3RD_CALL") || value === "DM_PDF") return "3RD_CALL";
-  if (value.includes("4TH_CALL")) return "4TH_CALL";
-  if (value.includes("5TH_CALL")) return "5TH_CALL";
+  const normalized = value.toUpperCase().replace(/[^A-Z0-9]+/g, "_");
+  if (normalized.includes("1ST_CALL") || normalized.includes("1ST")) return "1ST_CALL";
+  if (normalized.includes("2ND_CALL") || normalized.includes("2ND")) return "2ND_CALL";
+  if (normalized.includes("3RD_CALL") || normalized.includes("3RD") || normalized === "DM_PDF") return "3RD_CALL";
+  if (normalized.includes("CO_4TH") || normalized.includes("CO4TH")) return "CO_4TH_CALL";
+  if (normalized.includes("4TH_CALL") || normalized.includes("4TH")) return "4TH_CALL";
+  if (normalized.includes("5TH_CALL") || normalized.includes("5TH")) return "5TH_CALL";
   return value;
 }
 
@@ -2235,6 +2360,50 @@ function leaveTypeLabel(value: string): string {
   return value.replace(/_/g, " ").toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
+function leaveStatusLabel(value: string): string {
+  return (
+    ({
+      approved: "Approved",
+      requested: "Requested",
+      imported_pending_review: "Imported, Pending Review",
+      rejected: "Rejected",
+      cancelled: "Cancelled",
+      canceled: "Cancelled",
+    } as Record<string, string>)[value] ?? leaveTypeLabel(value)
+  );
+}
+
+function displayUnitName(value: string | null): string {
+  if (!value) return "Unit not assigned";
+  return value
+    .replace(/\bUNIT\b/g, "Unit")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function displayPostingLabel(value: string | null): string {
+  if (!value) return "No unit posting";
+  return callLevelLabel(normalizeCallLevel(value));
+}
+
+function previewStatusLabel(value: string): string {
+  return (
+    ({
+      matched: "Matched",
+      needs_review: "Needs Review",
+    } as Record<string, string>)[value] ?? leaveTypeLabel(value)
+  );
+}
+
+function matchMethodLabel(value: string | null | undefined): string {
+  return (
+    ({
+      normalized_exact: "Exact name match",
+      ambiguous_exact: "Ambiguous name",
+    } as Record<string, string>)[value ?? ""] ?? leaveTypeLabel(value ?? "")
+  );
+}
+
 function renderLeaveMemberOptions(selected = ""): string {
   return members
     .map(
@@ -2248,14 +2417,39 @@ function renderLeaveBreakdown(title: string, values: Record<string, number>): st
   const rows = Object.entries(values)
     .sort((a, b) => b[1] - a[1])
     .slice(0, 8)
-    .map(([label, value]) => `<div class="category-pill"><span>${escapeHtml(leaveTypeLabel(label))}</span><strong>${value}</strong></div>`)
+    .map(([label, value]) => {
+      const displayLabel = title.toLowerCase().includes("call level")
+        ? callLevelLabel(normalizeCallLevel(label))
+        : displayUnitName(label);
+      return `<div class="category-pill"><span>${escapeHtml(displayLabel)}</span><strong>${value}</strong></div>`;
+    })
     .join("");
   return `
     <article class="panel">
-      <h3>${title}</h3>
+      <h3>${statLabel(title)}</h3>
       <div class="category-grid">${rows || `<p class="empty-state">No data.</p>`}</div>
     </article>
   `;
+}
+
+const CALL_LEVEL_ORDER = [
+  "1ST_CALL",
+  "2ND_CALL",
+  "3RD_CALL",
+  "4TH_CALL",
+  "CO_4TH_CALL",
+  "5TH_CALL",
+  "Unassigned",
+];
+
+function callLevelSortValue(callLevel: string): number {
+  const normalized = normalizeCallLevel(callLevel) ?? "Unassigned";
+  const index = CALL_LEVEL_ORDER.indexOf(normalized);
+  return index >= 0 ? index : CALL_LEVEL_ORDER.length;
+}
+
+function leaveDayEntries(day: string): LeaveDayEntry[] {
+  return leaveCalendar?.days[day] ?? [];
 }
 
 function renderLeaveCalendarDays(): string {
@@ -2271,14 +2465,87 @@ function renderLeaveCalendarDays(): string {
       const entries = leaveCalendar!.days[day] ?? [];
       const pressure = entries.length >= 6 ? "high" : entries.length >= 3 ? "watch" : entries.length ? "normal" : "";
       return `
-        <article class="leave-day-card ${pressure ? `leave-pressure-${pressure}` : ""}">
+        <button class="leave-day-card ${pressure ? `leave-pressure-${pressure}` : ""}" type="button" data-leave-day="${day}" aria-label="${entries.length} leave request${entries.length === 1 ? "" : "s"} on ${day}">
           <span>${formatIsoDay(day)}</span>
           <strong>${entries.length}</strong>
           <small>${entries.slice(0, 3).map((entry) => escapeHtml(entry.person_name)).join(", ") || "No leave"}</small>
-        </article>
+        </button>
       `;
     })
     .join("");
+}
+
+function renderLeaveDayCallGroups(day: string): string {
+  const entries = leaveDayEntries(day);
+  if (!entries.length) {
+    return `<p class="empty">No leave requests recorded for this day.</p>`;
+  }
+  const groups = entries.reduce<Record<string, LeaveDayEntry[]>>((acc, entry) => {
+    const key = entry.call_level || "Unassigned";
+    acc[key] = acc[key] ?? [];
+    acc[key].push(entry);
+    return acc;
+  }, {});
+  return Object.entries(groups)
+    .sort(([a], [b]) => callLevelSortValue(a) - callLevelSortValue(b) || a.localeCompare(b))
+    .map(([callLevel, groupEntries]) => `
+      <section class="leave-day-call-group">
+        <header>
+          <h4>${escapeHtml(callLevelLabel(normalizeCallLevel(callLevel)))}</h4>
+          <span>${groupEntries.length}</span>
+        </header>
+        <div class="leave-day-person-list">
+          ${groupEntries
+            .sort((a, b) => a.person_name.localeCompare(b.person_name))
+            .map((entry) => `
+              <article class="leave-day-person">
+                <strong>${escapeHtml(entry.person_name)}</strong>
+                <small>${escapeHtml(displayUnitName(entry.unit))} / ${escapeHtml(displayPostingLabel(entry.posting_type))}</small>
+                <small>${escapeHtml(leaveTypeLabel(entry.leave_type))} / ${escapeHtml(leaveTypeLabel(entry.leave_slot))} / ${escapeHtml(leaveStatusLabel(entry.status))}</small>
+              </article>
+            `)
+            .join("")}
+        </div>
+      </section>
+    `)
+    .join("");
+}
+
+function renderLeaveDayModal(day: string): string {
+  const entries = leaveDayEntries(day);
+  const approved = entries.filter((entry) => entry.status === "approved").length;
+  const requested = entries.filter((entry) => entry.status === "requested" || entry.status === "imported_pending_review").length;
+  return `
+    <div class="modal-backdrop" id="leave-day-modal">
+      <section class="person-modal leave-day-modal" role="dialog" aria-modal="true" aria-labelledby="leave-day-modal-title">
+        <header class="person-modal-header">
+          <div>
+            <h3 id="leave-day-modal-title">${escapeHtml(formatIsoDay(day))} Leave Requests</h3>
+            <p>${escapeHtml(day)} / grouped by department call level</p>
+          </div>
+          <button class="modal-close" data-close-leave-day-modal aria-label="Close">x</button>
+        </header>
+        <div class="person-modal-body leave-day-modal-body">
+          <div class="audit-chip-row">
+            <span><strong>${entries.length}</strong> ${statLabel("total")}</span>
+            <span><strong>${approved}</strong> ${statLabel("approved")}</span>
+            <span><strong>${requested}</strong> ${statLabel("requested/review")}</span>
+            <span><strong>${new Set(entries.map((entry) => entry.call_level || "Unassigned")).size}</strong> ${statLabel("call groups")}</span>
+          </div>
+          ${renderLeaveDayCallGroups(day)}
+        </div>
+      </section>
+    </div>
+  `;
+}
+
+function openLeaveDayModal(day: string) {
+  document.querySelector("#leave-day-modal")?.remove();
+  document.body.insertAdjacentHTML("beforeend", renderLeaveDayModal(day));
+}
+
+function closeLeaveDayModal() {
+  document.querySelector("#leave-day-modal")?.remove();
 }
 
 function renderLeaveRows(): string {
@@ -2286,11 +2553,11 @@ function renderLeaveRows(): string {
     .map(
       (leave) => `
         <tr>
-          <td><strong>${escapeHtml(leave.person.canonical_name)}</strong><small>${escapeHtml(leave.person.call_level ?? "Unassigned")}</small></td>
+          <td><strong>${escapeHtml(leave.person.canonical_name)}</strong><small>${escapeHtml(callLevelLabel(normalizeCallLevel(leave.person.call_level)))}</small></td>
           <td>${leave.starts_on}${leave.starts_on !== leave.ends_on ? ` to ${leave.ends_on}` : ""}</td>
           <td>${escapeHtml(leaveTypeLabel(leave.leave_slot))}</td>
           <td>${escapeHtml(leaveTypeLabel(leave.leave_type))}</td>
-          <td><span class="status-dot ${leave.status === "approved" ? "active" : "inactive"}">${escapeHtml(leave.status)}</span></td>
+          <td><span class="status-dot ${leave.status === "approved" ? "active" : "inactive"}">${escapeHtml(leaveStatusLabel(leave.status))}</span></td>
           <td class="num">${leave.days}</td>
           <td><button class="icon-button" data-cancel-leave="${leave.id}" ${leave.status === "cancelled" ? "disabled" : ""}>Cancel</button></td>
         </tr>
@@ -2308,12 +2575,72 @@ function renderLeaveCards(): string {
           <div class="data-card-row"><span class="data-card-label">Dates</span><span class="data-card-value">${leave.starts_on}${leave.starts_on !== leave.ends_on ? ` to ${leave.ends_on}` : ""}</span></div>
           <div class="data-card-row"><span class="data-card-label">Slot</span><span class="data-card-value">${escapeHtml(leaveTypeLabel(leave.leave_slot))}</span></div>
           <div class="data-card-row"><span class="data-card-label">Type</span><span class="data-card-value">${escapeHtml(leaveTypeLabel(leave.leave_type))}</span></div>
-          <div class="data-card-row"><span class="data-card-label">Status</span><span class="data-card-value">${escapeHtml(leave.status)}</span></div>
+          <div class="data-card-row"><span class="data-card-label">Status</span><span class="data-card-value">${escapeHtml(leaveStatusLabel(leave.status))}</span></div>
           <div class="data-card-row"><button class="icon-button" data-cancel-leave="${leave.id}" ${leave.status === "cancelled" ? "disabled" : ""}>Cancel</button></div>
         </article>
       `,
     )
     .join("");
+}
+
+function renderLeaveImportPreview(): string {
+  if (!leaveImportPreview) {
+    return `<p class="empty">Upload a CSV or XLSX leave file to preview name matching and date parsing before importing.</p>`;
+  }
+  const rows = leaveImportPreview.rows.slice(0, 25).map((row) => `
+    <tr>
+      <td>${row.row_number}</td>
+      <td><strong>${escapeHtml(row.raw_person_name)}</strong><small>${escapeHtml(row.person_name ?? row.suggested_person_name ?? "Unresolved")}</small></td>
+      <td>${row.starts_on ?? ""} to ${row.ends_on ?? ""}</td>
+      <td>${escapeHtml(row.leave_type)} / ${escapeHtml(row.leave_slot)}</td>
+      <td><small>${escapeHtml(row.sheet_name ?? "")}</small><small>${escapeHtml(row.source_format ? leaveTypeLabel(row.source_format) : "")}${row.match_method ? ` / ${escapeHtml(matchMethodLabel(row.match_method))}` : ""}</small></td>
+      <td><span class="status ${row.preview_status === "matched" ? "ok" : "error"}">${escapeHtml(previewStatusLabel(row.preview_status))}</span></td>
+      <td>${row.issues.map((issue) => `<small>${escapeHtml(issue)}</small>`).join("") || "<small>None</small>"}</td>
+    </tr>
+  `).join("");
+  const canApply = leaveImportPreview.matched_rows > 0 && leaveImportFile;
+  return `
+    <div class="audit-chip-row">
+      <span><strong>${leaveImportPreview.total_rows}</strong> rows</span>
+      <span><strong>${leaveImportPreview.matched_rows}</strong> matched</span>
+      <span><strong>${leaveImportPreview.unresolved_rows}</strong> unresolved</span>
+      <span><strong>${leaveImportPreview.invalid_rows}</strong> invalid</span>
+      <span><strong>${leaveImportPreview.sheets?.length ?? 0}</strong> sheets</span>
+    </div>
+    ${leaveImportPreview.parser_warnings?.length ? `<div class="issue-list">${leaveImportPreview.parser_warnings.map((warning) => `<p>${escapeHtml(warning)}</p>`).join("")}</div>` : ""}
+    <div class="topbar-actions" style="margin:12px 0;">
+      <button class="primary" id="apply-leave-import" ${canApply ? "" : "disabled"}>Apply Matched Rows</button>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Row</th><th>Member</th><th>Dates</th><th>Type / Slot</th><th>Source</th><th>Status</th><th>Issues</th></tr></thead>
+        <tbody>${rows || `<tr><td colspan="7" class="empty">No preview rows.</td></tr>`}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+function renderLeavePressurePanel(): string {
+  if (!leavePressure) return "";
+  const busiest = [...leavePressure.days].sort((a, b) => b.total_people - a.total_people).slice(0, 7);
+  return `
+    <section class="panel">
+      <h3>Generator Leave Pressure</h3>
+      <div class="analytics-grid">
+        ${renderLeaveBreakdown("Pressure By Call Level", leavePressure.call_level_totals)}
+        ${renderLeaveBreakdown("Pressure By Unit", leavePressure.unit_totals)}
+      </div>
+      <div class="card-list compact-card-list">
+        ${busiest.map((day) => `
+          <article class="data-card">
+            <div class="data-card-row"><span class="data-card-label">Date</span><span class="data-card-value">${day.date}</span></div>
+            <div class="data-card-row"><span class="data-card-label">People</span><span class="data-card-value">${day.total_people}</span></div>
+            <div class="data-card-row"><span class="data-card-label">Blocking</span><span class="data-card-value">${day.blocking_people}</span></div>
+          </article>
+        `).join("") || `<p class="empty">No active leave pressure for this month.</p>`}
+      </div>
+    </section>
+  `;
 }
 
 async function renderLeave() {
@@ -2322,9 +2649,10 @@ async function renderLeave() {
   viewRoot.innerHTML = `<section class="panel"><h3>Loading leave...</h3></section>`;
   try {
     if (!members.length) members = await getMembers();
-    [leaveCalendar, leaveRequests] = await Promise.all([
+    [leaveCalendar, leaveRequests, leavePressure] = await Promise.all([
       getLeaveCalendar(leaveMonth),
       getLeaveRequests(leaveMonth),
+      getLeavePressure(leaveMonth),
     ]);
   } catch (error) {
     showToast(error instanceof Error ? error.message : "Failed to load leave", "error");
@@ -2347,14 +2675,26 @@ async function renderLeave() {
       </div>
     </section>
     <section class="summary-grid four-col board-metrics">
-      <article class="metric metric-primary"><span>${summary.total_requests}</span><p>Leave requests</p></article>
-      <article class="metric"><span>${summary.people_on_leave}</span><p>People on leave</p></article>
-      <article class="metric"><span>${summary.total_leave_days}</span><p>Total leave days</p></article>
-      <article class="metric metric-weekend"><span>${summary.busiest_day?.count ?? 0}</span><p>Highest day pressure</p></article>
+      ${metricCard(summary.total_requests, "Leave requests", undefined, "metric-primary")}
+      ${metricCard(summary.people_on_leave, "People on leave")}
+      ${metricCard(summary.total_leave_days, "Total leave days")}
+      ${metricCard(summary.busiest_day?.count ?? 0, "Highest day pressure", undefined, "metric-weekend")}
     </section>
     <section class="analytics-grid">
       ${renderLeaveBreakdown("By Call Level", summary.call_level_counts)}
       ${renderLeaveBreakdown("By Unit", summary.unit_counts)}
+    </section>
+    ${renderLeavePressurePanel()}
+    <section class="panel leave-form-panel">
+      <h3>Import Preview</h3>
+      <form class="leave-form" id="leave-import-form">
+        <label class="leave-notes">
+          <span>CSV / XLSX file</span>
+          <input id="leave-import-file" type="file" accept=".csv,.xls,.xlsx" />
+        </label>
+        <button class="primary" type="submit">Preview File</button>
+      </form>
+      ${renderLeaveImportPreview()}
     </section>
     <section class="panel leave-form-panel">
       <h3>Add Leave</h3>
@@ -2777,10 +3117,10 @@ async function renderUnitManagement() {
       </div>
     </section>
     <section class="summary-grid four-col board-metrics">
-      <article class="metric metric-primary"><span>${unitAssignments.length}</span><p>Assignments</p></article>
-      <article class="metric"><span>${unitManagement.units.length}</span><p>Active units</p></article>
-      <article class="metric"><span>${leaveDays}</span><p>Unit leave days</p></article>
-      <article class="metric metric-weekend"><span>${errors}/${warnings}</span><p>Errors / warnings</p></article>
+      ${metricCard(unitAssignments.length, "Assignments", undefined, "metric-primary")}
+      ${metricCard(unitManagement.units.length, "Active units")}
+      ${metricCard(leaveDays, "Unit leave days")}
+      ${metricCard(`${errors}/${warnings}`, "Errors / warnings", undefined, "metric-weekend")}
     </section>
     ${renderUnitValidationIssues()}
     <section class="unit-card-grid">${renderUnitAssignmentsByUnit()}</section>
@@ -2931,6 +3271,1081 @@ function renderMembersView() {
   `;
 }
 
+function parseNumberOrNull(value: string): number | null {
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+  const parsed = Number(trimmed);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function parseCsv(value: string): string[] {
+  return value.split(",").map((item) => item.trim()).filter(Boolean);
+}
+
+async function renderRotaRules() {
+  setHeader("Rota Rules", "Rule foundation and duty dictionary");
+  if (!viewRoot) return;
+  if (!isAdminUser()) {
+    await renderOverview();
+    return;
+  }
+  viewRoot.innerHTML = `<section class="panel"><h3>Loading rota rules...</h3></section>`;
+  try {
+    rotaPhaseOneRules = await getRotaPhaseOneRules();
+  } catch (error) {
+    showToast(error instanceof Error ? error.message : "Failed to load rota rules", "error");
+    viewRoot.innerHTML = `<section class="panel"><h3>Rota rules unavailable</h3><p>Unable to load Phase 1 rule settings.</p></section>`;
+    return;
+  }
+
+  const rules = rotaPhaseOneRules;
+  const dutyRows = rules.duty_rules.map((rule, index) => `
+    <tr>
+      <td><strong>${escapeHtml(rule.label)}</strong><small>${escapeHtml(rule.key)}</small></td>
+      <td><input data-rule-index="${index}" data-rule-field="label" value="${escapeHtml(rule.label)}" /></td>
+      <td><input data-rule-index="${index}" data-rule-field="group" value="${escapeHtml(rule.group)}" /></td>
+      <td><input data-rule-index="${index}" data-rule-field="duration_hours" type="number" min="0" max="48" value="${rule.duration_hours}" /></td>
+      <td class="checkbox-cell"><input data-rule-index="${index}" data-rule-field="is_mandatory" type="checkbox" ${rule.is_mandatory ? "checked" : ""} /></td>
+      <td class="checkbox-cell"><input data-rule-index="${index}" data-rule-field="is_adjustable" type="checkbox" ${rule.is_adjustable ? "checked" : ""} /></td>
+      <td class="checkbox-cell"><input data-rule-index="${index}" data-rule-field="blocks_elective_same_day" type="checkbox" ${rule.blocks_elective_same_day ? "checked" : ""} /></td>
+      <td class="checkbox-cell"><input data-rule-index="${index}" data-rule-field="blocks_elective_next_day" type="checkbox" ${rule.blocks_elective_next_day ? "checked" : ""} /></td>
+      <td class="checkbox-cell"><input data-rule-index="${index}" data-rule-field="active" type="checkbox" ${rule.active ? "checked" : ""} /></td>
+      <td><input data-rule-index="${index}" data-rule-field="allowed_call_levels" value="${escapeHtml(rule.allowed_call_levels.join(", "))}" placeholder="1ST_CALL, 2ND_CALL" /></td>
+    </tr>
+  `).join("");
+
+  viewRoot.innerHTML = `
+    <form id="rota-rules-form">
+      <section class="panel action-panel">
+        <div>
+          <h3>Phase 1 Rule Version</h3>
+          <p>${escapeHtml(rules.rule_version.name)}. These settings drive duty eligibility, rest, unit pressure, and future leave-aware slot generation.</p>
+        </div>
+        <button class="primary" type="submit" id="save-rota-rules">Save Rules</button>
+      </section>
+      <section class="summary-grid four-col">
+        ${metricCard(rules.duty_rules.length, "Duty types")}
+        ${metricCard(rules.rest_rules.minimum_gap_after_24hr_hours, "Rest hours")}
+        ${metricCard(`${rules.unit_staffing_rules.warning_unavailable_percent}%`, "Warning threshold")}
+        ${metricCard(`${rules.unit_staffing_rules.hard_block_unavailable_percent}%`, "Hard block threshold")}
+      </section>
+      <section class="panel">
+        <h3>Guardrails</h3>
+        <div class="form-grid">
+          <label>Minimum gap after 24hr duty<input id="rule-rest-hours" type="number" min="0" max="168" value="${rules.rest_rules.minimum_gap_after_24hr_hours}" /></label>
+          <label>Minimum available per unit<input id="rule-min-available" type="number" min="0" value="${rules.unit_staffing_rules.minimum_available_count}" /></label>
+          <label>Warning unavailable %<input id="rule-warning-percent" type="number" min="0" max="100" value="${rules.unit_staffing_rules.warning_unavailable_percent}" /></label>
+          <label>Hard block unavailable %<input id="rule-hard-percent" type="number" min="0" max="100" value="${rules.unit_staffing_rules.hard_block_unavailable_percent}" /></label>
+          <label>Max 24hr duties/month<input id="rule-max-24hr" type="number" min="0" value="${rules.duty_count_limits.max_24hr_per_month ?? ""}" placeholder="Unset" /></label>
+          <label>Max weekend 24hr/month<input id="rule-max-weekend" type="number" min="0" value="${rules.duty_count_limits.max_weekend_24hr_per_month ?? ""}" placeholder="Unset" /></label>
+        </div>
+        <label class="checkbox-line"><input id="rule-post-blocks" type="checkbox" ${rules.rest_rules.post_24hr_blocks_next_day_elective ? "checked" : ""} /> Post-24hr duty blocks next-day elective availability</label>
+        <label class="checkbox-line"><input id="rule-small-unit" type="checkbox" ${rules.unit_staffing_rules.small_unit_uses_absolute_minimum ? "checked" : ""} /> Small units use absolute minimum availability</label>
+      </section>
+      <section class="panel table-panel">
+        <h3>Duty Dictionary</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Duty</th>
+              <th>Label</th>
+              <th>Group</th>
+              <th>Hours</th>
+              <th>Mandatory</th>
+              <th>Adjustable</th>
+              <th>Same Day</th>
+              <th>Next Day</th>
+              <th>Active</th>
+              <th>Allowed Calls</th>
+            </tr>
+          </thead>
+          <tbody>${dutyRows}</tbody>
+        </table>
+      </section>
+    </form>
+  `;
+}
+
+async function renderRotaSetup() {
+  setHeader("Rota Setup", "Monthly rota period and unit scope");
+  if (!viewRoot) return;
+  viewRoot.innerHTML = `<section class="panel"><h3>Loading rota setup...</h3></section>`;
+  try {
+    rotaSetup = await getRotaSetupMonth(rotaSetupMonth);
+  } catch (error) {
+    showToast(error instanceof Error ? error.message : "Failed to load rota setup", "error");
+    viewRoot.innerHTML = `<section class="panel"><h3>Rota setup unavailable</h3><p>Unable to load monthly rota setup.</p></section>`;
+    return;
+  }
+
+  const included = new Set(rotaSetup.scope.units.filter((item) => item.status === "included").map((item) => item.unit_id));
+  const excluded = new Set(rotaSetup.scope.units.filter((item) => item.status === "excluded").map((item) => item.unit_id));
+  const readyCount = rotaSetup.unit_readiness.filter((item) => item.scope_status === "included" && item.readiness === "ready").length;
+  const reviewCount = rotaSetup.unit_readiness.filter((item) => item.scope_status === "included" && item.readiness !== "ready").length;
+  const rows = rotaSetup.unit_readiness.map((unit) => {
+    const callMix = Object.entries(unit.call_level_counts).map(([key, count]) => `${escapeHtml(callLevelLabel(normalizeCallLevel(key)))}: ${count}`).join(", ") || "No members";
+    return `
+      <tr>
+        <td><strong>${escapeHtml(unit.unit_name)}</strong><small>${escapeHtml(unit.unit_code)}${unit.campus ? ` / ${escapeHtml(unit.campus)}` : ""}</small></td>
+        <td>
+          <select data-scope-unit="${unit.unit_id}">
+            <option value="unselected" ${unit.scope_status === "unselected" ? "selected" : ""}>Not selected</option>
+            <option value="included" ${included.has(unit.unit_id) ? "selected" : ""}>Included</option>
+            <option value="excluded" ${excluded.has(unit.unit_id) ? "selected" : ""}>Excluded</option>
+          </select>
+        </td>
+        <td>${unit.assigned_members}</td>
+        <td>${callMix}</td>
+        <td>${unit.people_with_leave} people / ${unit.leave_days} days</td>
+        <td><span class="status ${unit.readiness === "ready" ? "ok" : "error"}">${unit.readiness === "ready" ? "Ready" : "Needs review"}</span></td>
+        <td>${unit.warnings.map((warning) => `<small>${escapeHtml(warning)}</small>`).join("") || "<small>None</small>"}</td>
+      </tr>
+    `;
+  }).join("");
+
+  viewRoot.innerHTML = `
+    <form id="rota-setup-form">
+      <section class="panel action-panel">
+        <div>
+          <h3>${escapeHtml(rotaSetup.rota_period.name)}</h3>
+          <p>${rotaSetup.rota_period.starts_on} to ${rotaSetup.rota_period.ends_on}. Select the units that should participate in this month's rota generation.</p>
+        </div>
+        <div class="topbar-actions">
+          <label for="rota-setup-month" class="visually-hidden">Rota setup month</label>
+          <input id="rota-setup-month" type="month" value="${rotaSetupMonth}" />
+          <button class="icon-button" type="button" id="clone-rota-scope">Clone Previous</button>
+          <button class="primary" type="submit" id="save-rota-setup">Save Scope</button>
+        </div>
+      </section>
+      <section class="summary-grid four-col">
+        ${metricCard(included.size, "Included units")}
+        ${metricCard(excluded.size, "Excluded units")}
+        ${metricCard(readyCount, "Ready included")}
+        ${metricCard(reviewCount, "Need review")}
+      </section>
+      <section class="panel">
+        <h3>Generation Scope</h3>
+        <label class="checkbox-line"><input id="scope-safety-excluded" type="checkbox" ${rotaSetup.scope.include_excluded_units_in_safety ? "checked" : ""} /> Show excluded units in safety calculations</label>
+        <label class="checkbox-line"><input id="scope-locked" type="checkbox" ${rotaSetup.scope.is_locked ? "checked" : ""} /> Lock this unit scope before generation</label>
+        <label>Lock or unlock reason
+          <input id="scope-lock-reason" value="${escapeHtml(rotaSetup.scope.lock_reason ?? "")}" placeholder="Reason required when unlocking" />
+        </label>
+      </section>
+      <section class="panel table-panel">
+        <h3>Units For This Month</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Unit</th>
+              <th>Scope</th>
+              <th>Members</th>
+              <th>Call Mix</th>
+              <th>Leave Pressure</th>
+              <th>Readiness</th>
+              <th>Warnings</th>
+            </tr>
+          </thead>
+          <tbody>${rows || `<tr><td colspan="7" class="empty">No units found.</td></tr>`}</tbody>
+        </table>
+      </section>
+    </form>
+  `;
+}
+
+function latestTemplateDutyKeys(template: RotaTemplateMonth): Set<string> {
+  const rawKeys = template.latest_run?.summary?.duty_keys;
+  if (Array.isArray(rawKeys)) {
+    return new Set(rawKeys.map((item) => String(item)));
+  }
+  return new Set(template.duty_options.filter((duty) => duty.is_mandatory).map((duty) => duty.key));
+}
+
+function renderTemplateDutyOptions(template: RotaTemplateMonth): string {
+  const selectedKeys = latestTemplateDutyKeys(template);
+  return template.duty_options.map((duty) => `
+    <label class="template-duty-option">
+      <input type="checkbox" data-template-duty="${escapeHtml(duty.key)}" ${selectedKeys.has(duty.key) ? "checked" : ""} />
+      <span>
+        <strong>${escapeHtml(duty.label)}</strong>
+        <small>${escapeHtml(duty.group)}${duty.is_mandatory ? " / mandatory" : ""}${duty.is_adjustable ? " / adjustable" : ""}</small>
+      </span>
+    </label>
+  `).join("");
+}
+
+function safetyStatusLabel(status?: string): string {
+  if (status === "safe") return "Safe";
+  if (status === "needs_review") return "Needs Review";
+  if (status === "hard_blocked") return "Hard Blocked";
+  return status ? leaveTypeLabel(status) : "Not Checked";
+}
+
+function safetyStatusClass(status?: string): string {
+  if (status === "safe") return "ok";
+  if (status === "needs_review") return "warning";
+  if (status === "hard_blocked") return "error";
+  return "";
+}
+
+function templateSafetyBySlot(): Map<string, RotaSafetyMonth["slots"][number]> {
+  return new Map((rotaSafety?.slots ?? []).map((slot) => [slot.slot_id, slot]));
+}
+
+function templateCandidatesBySlot(): Map<string, RotaCandidateMonth["slots"][number]> {
+  return new Map((rotaCandidates?.slots ?? []).map((slot) => [slot.slot_id, slot]));
+}
+
+function renderSlotSafetyCell(safety?: RotaSafetyMonth["slots"][number]): string {
+  if (!safety) {
+    return `<span class="status">Not Checked</span><small>Run the safety check with the current template.</small>`;
+  }
+  const reason = safety.reasons.slice(0, 1).join(" ");
+  return `
+    <div class="safety-cell">
+      <span class="status ${safetyStatusClass(safety.safety_status)}">${escapeHtml(safetyStatusLabel(safety.safety_status))}</span>
+      <small>${safety.available_members}/${safety.eligible_members} eligible available</small>
+      ${reason ? `<small>${escapeHtml(reason)}</small>` : ""}
+    </div>
+  `;
+}
+
+function assignmentSourceLabel(source: string): string {
+  if (source === "manual_rota_board") return "Manual assignment";
+  if (source === "historical_analysis_import") return "Historical import";
+  if (source === "safe_auto_fill_draft") return "Safe auto-fill";
+  if (source === "exchange_approved") return "Approved exchange";
+  return leaveTypeLabel(source);
+}
+
+function candidateStatusLabel(status: string): string {
+  if (status === "eligible") return "Safe";
+  if (status === "needs_review") return "Needs Review";
+  if (status === "blocked") return "Blocked";
+  return leaveTypeLabel(status);
+}
+
+function candidateStatusClass(status: string): string {
+  if (status === "eligible") return "ok";
+  if (status === "needs_review") return "warning";
+  if (status === "blocked") return "error";
+  return "";
+}
+
+function rejectedCandidateKey(slotId: string, personId: string): string {
+  return `${slotId}:${personId}`;
+}
+
+function renderCandidateSuggestion(
+  slot: RotaTemplateMonth["slots"][number],
+  candidate: RotaCandidate,
+): string {
+  const key = rejectedCandidateKey(slot.id, candidate.person_id);
+  if (rejectedRotaCandidates.has(key)) return "";
+  const topReasons = candidate.reasons.slice(0, 3);
+  const canAccept = candidate.candidate_status === "eligible" && !candidate.requires_override;
+  return `
+    <article class="candidate-card" data-candidate-card="${escapeHtml(key)}">
+      <div>
+        <strong>${escapeHtml(candidate.person_name)}</strong>
+        <small>${escapeHtml(callLevelLabel(candidate.call_level ?? ""))} / score ${candidate.rank_score}</small>
+      </div>
+      <span class="status ${candidateStatusClass(candidate.candidate_status)}">${escapeHtml(candidateStatusLabel(candidate.candidate_status))}</span>
+      <div class="candidate-reasons">
+        ${topReasons.map((reason) => `<small>${escapeHtml(reason)}</small>`).join("")}
+      </div>
+      <div class="candidate-actions">
+        <button class="icon-button" type="button" data-${canAccept ? "accept" : "select"}-candidate="${escapeHtml(key)}">${canAccept ? "Use" : "Review"}</button>
+        <button class="icon-button" type="button" data-reject-candidate="${escapeHtml(key)}">Reject</button>
+      </div>
+    </article>
+  `;
+}
+
+function renderCandidateSuggestions(
+  slot: RotaTemplateMonth["slots"][number],
+  candidateSlot?: RotaCandidateMonth["slots"][number],
+): string {
+  const candidates = (candidateSlot?.candidates ?? [])
+    .filter((candidate) => !rejectedRotaCandidates.has(rejectedCandidateKey(slot.id, candidate.person_id)))
+    .slice(0, 3);
+  if (!candidates.length) {
+    return `<span class="empty-state compact-empty">No suggestions</span>`;
+  }
+  return `<div class="candidate-list">${candidates.map((candidate) => renderCandidateSuggestion(slot, candidate)).join("")}</div>`;
+}
+
+function assignmentCandidatesForSlot(safety?: RotaSafetyMonth["slots"][number]): Array<{
+  person: RotaSafetyPerson;
+  status: "available" | "review" | "blocked";
+  label: string;
+}> {
+  if (!safety) return [];
+  const candidates = new Map<string, { person: RotaSafetyPerson; status: "available" | "review" | "blocked"; label: string }>();
+  safety.available_people.forEach((person) => {
+    candidates.set(person.person_id, { person, status: "available", label: "Available" });
+  });
+  safety.warning_people.forEach((person) => {
+    candidates.set(person.person_id, { person, status: "review", label: "Needs Review" });
+  });
+  safety.hard_blocked_people.forEach((person) => {
+    candidates.set(person.person_id, { person, status: "blocked", label: "Blocked" });
+  });
+  const rank = { available: 0, review: 1, blocked: 2 };
+  return Array.from(candidates.values()).sort((a, b) => {
+    const statusDiff = rank[a.status] - rank[b.status];
+    if (statusDiff !== 0) return statusDiff;
+    return a.person.person_name.localeCompare(b.person.person_name);
+  });
+}
+
+function renderSlotAssignments(slot: RotaTemplateMonth["slots"][number]): string {
+  if (!slot.assignments.length) {
+    return `<span class="empty-state compact-empty">Open</span>`;
+  }
+  return `
+    <div class="assigned-list">
+      ${slot.assignments.map((assignment) => `
+        <div class="assigned-person">
+          <strong>${escapeHtml(assignment.person_name)}</strong>
+          <small>${escapeHtml(callLevelLabel(assignment.call_level ?? ""))} / ${escapeHtml(assignmentSourceLabel(assignment.source))}</small>
+          ${assignment.override_reason ? `<small>Override: ${escapeHtml(assignment.override_reason)}</small>` : ""}
+          <button class="icon-button" type="button" data-clear-rota-assignment="${escapeHtml(assignment.id)}">Clear</button>
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
+
+function renderManualAssignmentControls(
+  slot: RotaTemplateMonth["slots"][number],
+  safety?: RotaSafetyMonth["slots"][number],
+): string {
+  const candidates = assignmentCandidatesForSlot(safety);
+  if (!candidates.length) {
+    return `<div class="manual-assignment-cell"><span class="empty-state compact-empty">No eligible candidates from Unit Management.</span></div>`;
+  }
+  const hasAssignments = slot.assignments.length > 0;
+  return `
+    <div class="manual-assignment-cell">
+      <label class="visually-hidden" for="assign-person-${escapeHtml(slot.id)}">Assign member</label>
+      <select id="assign-person-${escapeHtml(slot.id)}" data-assign-person="${escapeHtml(slot.id)}">
+        <option value="">Select member</option>
+        ${candidates.map((candidate) => `
+          <option value="${escapeHtml(candidate.person.person_id)}">
+            ${escapeHtml(candidate.person.person_name)} - ${escapeHtml(callLevelLabel(candidate.person.call_level))} (${escapeHtml(candidate.label)})
+          </option>
+        `).join("")}
+      </select>
+      <input data-assign-override="${escapeHtml(slot.id)}" placeholder="Override reason if needed" />
+      <label class="checkbox-line compact-checkbox">
+        <input type="checkbox" data-assign-replace="${escapeHtml(slot.id)}" ${hasAssignments ? "checked" : ""} />
+        Replace current
+      </label>
+      <button class="primary" type="button" data-assign-slot="${escapeHtml(slot.id)}">${hasAssignments ? "Replace" : "Assign"}</button>
+    </div>
+  `;
+}
+
+type RotaTemplateSlot = RotaTemplateMonth["slots"][number];
+type RotaSlotSafety = RotaSafetyMonth["slots"][number];
+type RotaSlotCandidates = RotaCandidateMonth["slots"][number];
+
+function rotaTemplateSlotsByDay(template: RotaTemplateMonth): Map<string, RotaTemplateSlot[]> {
+  const byDay = new Map<string, RotaTemplateSlot[]>();
+  template.slots.forEach((slot) => {
+    const slots = byDay.get(slot.duty_date) ?? [];
+    slots.push(slot);
+    byDay.set(slot.duty_date, slots);
+  });
+  return byDay;
+}
+
+function sortRotaSlots(slots: RotaTemplateSlot[]): RotaTemplateSlot[] {
+  return [...slots].sort((a, b) => (
+    (a.unit_name ?? "Unassigned unit").localeCompare(b.unit_name ?? "Unassigned unit")
+    || leaveTypeLabel(a.duty_type).localeCompare(leaveTypeLabel(b.duty_type))
+    || a.slot_label.localeCompare(b.slot_label)
+  ));
+}
+
+function rotaCalendarSafetyClass(slots: RotaTemplateSlot[], safetyBySlot: Map<string, RotaSlotSafety>): string {
+  if (!slots.length) return "rota-day-empty";
+  const hasHardBlock = slots.some((slot) => safetyBySlot.get(slot.id)?.safety_status === "hard_blocked");
+  if (hasHardBlock) return "rota-day-hard";
+  const hasReview = slots.some((slot) => (
+    safetyBySlot.get(slot.id)?.safety_status === "needs_review"
+    || (slot.template_status !== "ready" && slot.template_status !== "safe")
+  ));
+  if (hasReview) return "rota-day-review";
+  const allAssigned = slots.every((slot) => slot.assignments.length > 0);
+  return allAssigned ? "rota-day-assigned" : "rota-day-ready";
+}
+
+function renderRotaTemplateCalendarDays(template: RotaTemplateMonth): string {
+  if (!template.slots.length) return "";
+  const safetyBySlot = templateSafetyBySlot();
+  const slotsByDay = rotaTemplateSlotsByDay(template);
+  const days: string[] = [];
+  for (let day = template.rota_period.starts_on; day <= template.rota_period.ends_on; day = addDaysIso(day, 1)) {
+    days.push(day);
+  }
+  return days.map((day) => {
+    const slots = slotsByDay.get(day) ?? [];
+    const assignedSlots = slots.filter((slot) => slot.assignments.length > 0).length;
+    const openSlots = Math.max(0, slots.length - assignedSlots);
+    const assignedNames = Array.from(new Set(slots.flatMap((slot) => slot.assignments.map((assignment) => assignment.person_name))));
+    const summary = slots.length
+      ? `${assignedSlots}/${slots.length} assigned${assignedNames.length ? `. ${assignedNames.slice(0, 2).map(escapeHtml).join(", ")}` : openSlots ? ". Open duties" : ". Complete"}`
+      : "No generated slots";
+    return `
+      <button class="leave-day-card rota-day-card ${rotaCalendarSafetyClass(slots, safetyBySlot)}" type="button" data-rota-day="${day}" aria-label="${slots.length} rota slot${slots.length === 1 ? "" : "s"} on ${day}, ${assignedSlots} assigned">
+        <span>${formatIsoDay(day)}</span>
+        <strong>${slots.length ? `${assignedSlots}/${slots.length}` : "0"}</strong>
+        <small>${summary}</small>
+      </button>
+    `;
+  }).join("");
+}
+
+function rotaDaySlots(day: string): RotaTemplateSlot[] {
+  if (!rotaTemplate) return [];
+  return sortRotaSlots(rotaTemplate.slots.filter((slot) => slot.duty_date === day));
+}
+
+function renderRotaSlotDetailCard(
+  slot: RotaTemplateSlot,
+  safety?: RotaSlotSafety,
+  candidateSlot?: RotaSlotCandidates,
+): string {
+  return `
+    <article class="rota-slot-card">
+      <header>
+        <div>
+          <h4>${escapeHtml(slot.unit_name ?? "Unassigned unit")}</h4>
+          <p>${escapeHtml(slot.unit_code ?? "No unit code")} / ${escapeHtml(slot.slot_label || leaveTypeLabel(slot.duty_type))}</p>
+        </div>
+        <span class="status ${slot.template_status === "ready" ? "ok" : "warning"}">${escapeHtml(leaveTypeLabel(slot.template_status))}</span>
+      </header>
+      <div class="rota-slot-card-grid">
+        <div>
+          <span>Duty</span>
+          <strong>${escapeHtml(leaveTypeLabel(slot.duty_type))}</strong>
+          <small>${slot.is_24hr ? "24-hour duty" : `${escapeHtml(slot.starts_at)} to ${escapeHtml(slot.ends_at)}`}</small>
+        </div>
+        <div>
+          <span>Required call</span>
+          <strong>${escapeHtml(callLevelLabel(slot.call_level ?? ""))}</strong>
+          <small>Maximum ${slot.max_assignees} assignee${slot.max_assignees === 1 ? "" : "s"}</small>
+        </div>
+        <div>
+          <span>Template reason</span>
+          <strong>${escapeHtml(slot.template_reason || "Ready for assignment")}</strong>
+          <small>${escapeHtml(slot.source ? assignmentSourceLabel(slot.source) : "Generated template")}</small>
+        </div>
+      </div>
+      <div class="rota-slot-detail-section">
+        <h5>Safety check</h5>
+        ${renderSlotSafetyCell(safety)}
+      </div>
+      <div class="rota-slot-detail-section">
+        <h5>Assigned member</h5>
+        ${renderSlotAssignments(slot)}
+      </div>
+      <div class="rota-slot-detail-section">
+        <h5>Suggested members</h5>
+        ${renderCandidateSuggestions(slot, candidateSlot)}
+      </div>
+      <div class="rota-slot-detail-section">
+        <h5>Manual assignment</h5>
+        ${renderManualAssignmentControls(slot, safety)}
+      </div>
+    </article>
+  `;
+}
+
+function renderRotaDayUnitGroups(day: string): string {
+  const slots = rotaDaySlots(day);
+  if (!slots.length) {
+    return `<p class="empty">No generated rota slots recorded for this day.</p>`;
+  }
+  const safetyBySlot = templateSafetyBySlot();
+  const candidatesBySlot = templateCandidatesBySlot();
+  const groups = slots.reduce<Record<string, RotaTemplateSlot[]>>((acc, slot) => {
+    const key = slot.unit_name ?? "Unassigned unit";
+    acc[key] = acc[key] ?? [];
+    acc[key].push(slot);
+    return acc;
+  }, {});
+  return Object.entries(groups)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([unitName, unitSlots]) => `
+      <section class="leave-day-call-group rota-day-unit-group">
+        <header>
+          <h4>${escapeHtml(unitName)}</h4>
+          <span>${unitSlots.length}</span>
+        </header>
+        <div class="rota-slot-card-list">
+          ${unitSlots.map((slot) => renderRotaSlotDetailCard(slot, safetyBySlot.get(slot.id), candidatesBySlot.get(slot.id))).join("")}
+        </div>
+      </section>
+    `)
+    .join("");
+}
+
+function renderRotaDayModal(day: string): string {
+  const slots = rotaDaySlots(day);
+  const safetyBySlot = templateSafetyBySlot();
+  const assignedSlots = slots.filter((slot) => slot.assignments.length > 0).length;
+  const openSlots = Math.max(0, slots.length - assignedSlots);
+  const safeSlots = slots.filter((slot) => safetyBySlot.get(slot.id)?.safety_status === "safe").length;
+  const reviewSlots = slots.filter((slot) => safetyBySlot.get(slot.id)?.safety_status === "needs_review").length;
+  const hardBlockedSlots = slots.filter((slot) => safetyBySlot.get(slot.id)?.safety_status === "hard_blocked").length;
+  return `
+    <div class="modal-backdrop" id="rota-day-modal">
+      <section class="person-modal rota-day-modal" role="dialog" aria-modal="true" aria-labelledby="rota-day-modal-title">
+        <header class="person-modal-header">
+          <div>
+            <h3 id="rota-day-modal-title">${escapeHtml(formatIsoDay(day))} Rota Slots</h3>
+            <p>${escapeHtml(day)} / generated duty slots with assignment controls</p>
+          </div>
+          <button class="modal-close" data-close-rota-day-modal aria-label="Close">x</button>
+        </header>
+        <div class="person-modal-body rota-day-modal-body">
+          <div class="audit-chip-row">
+            <span><strong>${slots.length}</strong> ${statLabel("Slots", "Generated duty slots on this date.")}</span>
+            <span><strong>${assignedSlots}</strong> ${statLabel("Assigned", "Slots on this date that already have a saved member assignment.")}</span>
+            <span><strong>${openSlots}</strong> ${statLabel("Open", "Slots on this date that still need a member assignment.")}</span>
+            <span><strong>${safeSlots}</strong> ${statLabel("Safe", "Slots where the current safety check found clear available candidates.")}</span>
+            <span><strong>${reviewSlots}</strong> ${statLabel("Review", "Slots that can be planned only after board review or override.")}</span>
+            <span><strong>${hardBlockedSlots}</strong> ${statLabel("Hard Blocked", "Slots with hard blockers under the current rules and leave data.")}</span>
+          </div>
+          ${renderRotaDayUnitGroups(day)}
+        </div>
+      </section>
+    </div>
+  `;
+}
+
+function openRotaDayModal(day: string) {
+  document.querySelector("#rota-day-modal")?.remove();
+  (viewRoot ?? document.body).insertAdjacentHTML("beforeend", renderRotaDayModal(day));
+}
+
+function closeRotaDayModal() {
+  document.querySelector("#rota-day-modal")?.remove();
+}
+
+function renderUnitDaySafetyRows(safety: RotaSafetyMonth): string {
+  return safety.unit_day_safety.slice(0, 100).map((row) => `
+    <tr>
+      <td>${escapeHtml(row.date)}</td>
+      <td><strong>${escapeHtml(row.unit_name ?? "Unassigned unit")}</strong><small>${escapeHtml(row.unit_code ?? "")}</small></td>
+      <td><span class="status ${safetyStatusClass(row.safety_status)}">${escapeHtml(safetyStatusLabel(row.safety_status))}</span></td>
+      <td>${row.slots}</td>
+      <td>${row.safe_slots}</td>
+      <td>${row.needs_review_slots}</td>
+      <td>${row.hard_blocked_slots}</td>
+      <td>${row.minimum_available_members}</td>
+    </tr>
+  `).join("");
+}
+
+function renderTemplateEvents(template: RotaTemplateMonth): string {
+  const events = template.latest_run?.events ?? [];
+  return events.slice(0, 80).map((event) => `
+    <tr>
+      <td>${escapeHtml(event.duty_date ?? "")}</td>
+      <td>${escapeHtml(event.unit_name ?? "Unit")}</td>
+      <td>${escapeHtml(event.duty_type ? leaveTypeLabel(event.duty_type) : "")}</td>
+      <td><span class="status ${event.severity === "error" ? "error" : "ok"}">${escapeHtml(leaveTypeLabel(event.action))}</span></td>
+      <td>${escapeHtml(event.reason)}</td>
+    </tr>
+  `).join("");
+}
+
+function autoFillActionLabel(action: string): string {
+  if (action === "assigned") return "Assigned";
+  if (action === "skipped") return "Left Open";
+  if (action === "blocked") return "Blocked";
+  return leaveTypeLabel(action);
+}
+
+function renderAutoFillEvents(run: NonNullable<RotaAutoFillMonth["latest_run"]>): string {
+  return run.events.slice(0, 100).map((event) => `
+    <tr>
+      <td>${escapeHtml(event.duty_date ?? "")}</td>
+      <td><strong>${escapeHtml(event.unit_name ?? "Unit")}</strong><small>${escapeHtml(event.unit_code ?? "")}</small></td>
+      <td>${escapeHtml(event.duty_type ? leaveTypeLabel(event.duty_type) : "")}</td>
+      <td>${escapeHtml(event.person_name ?? "")}</td>
+      <td><span class="status ${event.severity === "error" ? "error" : event.severity === "warning" ? "warning" : "ok"}">${escapeHtml(autoFillActionLabel(event.action))}</span></td>
+      <td>${escapeHtml(event.reason)}</td>
+    </tr>
+  `).join("");
+}
+
+function renderAutoFillReport(autoFill: RotaAutoFillMonth | null): string {
+  const run = autoFill?.latest_run;
+  if (!run) {
+    return `
+      <section class="panel table-panel">
+        <h3>Safe Auto-Fill Report</h3>
+        <p class="empty-state">No safe auto-fill draft has been run for this month yet.</p>
+      </section>
+    `;
+  }
+  return `
+    <section class="summary-grid four-col">
+      ${metricCard(run.assigned_slots, "Auto-filled slots", undefined, "metric-primary")}
+      ${metricCard(run.skipped_slots, "Left open")}
+      ${metricCard(run.review_slots, "Review left open", undefined, "metric-weekend")}
+      ${metricCard(run.blocked_slots, "Blocked left open")}
+    </section>
+    <section class="panel table-panel">
+      <h3>Safe Auto-Fill Report</h3>
+      <table>
+        <thead><tr><th>Date</th><th>Unit</th><th>Duty</th><th>Member</th><th>Action</th><th>Reason</th></tr></thead>
+        <tbody>${renderAutoFillEvents(run) || `<tr><td colspan="6" class="empty">No auto-fill decisions recorded.</td></tr>`}</tbody>
+      </table>
+      ${run.events.length > 100 ? `<p class="empty">Showing first 100 of ${run.events.length} auto-fill decisions.</p>` : ""}
+    </section>
+  `;
+}
+
+async function renderRotaTemplate() {
+  setHeader("Rota Template", "Leave-aware empty slot generation and staffing safety");
+  if (!viewRoot) return;
+  viewRoot.innerHTML = `<section class="panel"><h3>Loading rota template...</h3></section>`;
+  try {
+    [rotaTemplate, rotaSafety, rotaCandidates, rotaAutoFill] = await Promise.all([
+      getRotaTemplateMonth(rotaTemplateMonth),
+      getRotaSafetyMonth(rotaTemplateMonth),
+      getRotaCandidateMonth(rotaTemplateMonth),
+      getRotaAutoFillMonth(rotaTemplateMonth),
+    ]);
+  } catch (error) {
+    showToast(error instanceof Error ? error.message : "Failed to load rota template", "error");
+    viewRoot.innerHTML = `<section class="panel"><h3>Rota template unavailable</h3><p>Unable to load leave-aware template and safety controls.</p></section>`;
+    return;
+  }
+
+  const template = rotaTemplate;
+  const safety = rotaSafety;
+  const candidates = rotaCandidates;
+  const autoFill = rotaAutoFill;
+  const locked = template.scope.is_locked;
+  const latest = template.latest_run;
+  const includedUnitNames = template.scope.included_units.map((unit) => unit.name).join(", ");
+  const minimumAvailable = safety.unit_day_safety.length
+    ? Math.min(...safety.unit_day_safety.map((row) => row.minimum_available_members))
+    : 0;
+  const assignedSlotCount = template.slots.filter((slot) => slot.assignments.length > 0).length;
+  const openSlotCount = Math.max(0, template.slots.length - assignedSlotCount);
+  const selectedDutyKeys = latestTemplateDutyKeys(template);
+  const selectedDutyCount = selectedDutyKeys.size;
+  const selectedMandatoryCount = template.duty_options.filter((duty) => selectedDutyKeys.has(duty.key) && duty.is_mandatory).length;
+  const selectedAdjustableCount = template.duty_options.filter((duty) => selectedDutyKeys.has(duty.key) && duty.is_adjustable).length;
+
+  viewRoot.innerHTML = `
+    <form id="rota-template-form">
+      <section class="panel action-panel">
+        <div>
+          <h3>${escapeHtml(template.rota_period.name)}</h3>
+          <p>${template.rota_period.starts_on} to ${template.rota_period.ends_on}. ${template.scope.included_units.length} included unit(s): ${escapeHtml(includedUnitNames || "none")}.</p>
+        </div>
+        <div class="topbar-actions">
+          <label for="rota-template-month" class="visually-hidden">Rota template month</label>
+          <input id="rota-template-month" type="month" value="${rotaTemplateMonth}" />
+          <button class="primary" type="submit" id="generate-rota-template" ${locked ? "" : "disabled"}>Generate Template</button>
+          <button class="icon-button" type="button" id="run-safe-auto-fill" ${openSlotCount ? "" : "disabled"}>Safe Auto-Fill</button>
+        </div>
+      </section>
+      <section class="summary-grid four-col">
+        ${metricCard(template.summary.total_slots, "Template slots")}
+        ${metricCard(template.summary.ready_slots, "Ready slots")}
+        ${metricCard(template.summary.needs_review_slots, "Need review")}
+        ${metricCard(latest?.blocked_slots ?? 0, "Blocked/skipped")}
+      </section>
+      <section class="summary-grid four-col">
+        ${metricCard(safety.summary.total_slots, "Safety checked")}
+        ${metricCard(safety.summary.safe_slots, "Safe slots", undefined, "metric-primary")}
+        ${metricCard(safety.summary.needs_review_slots, "Needs review", undefined, "metric-weekend")}
+        ${metricCard(safety.summary.hard_blocked_slots, "Hard blocked")}
+      </section>
+      <section class="summary-grid four-col">
+        ${metricCard(minimumAvailable, "Minimum available")}
+        ${metricCard(safety.unit_day_safety.length, "Unit-day checks", "Distinct unit and date combinations checked for staffing safety.")}
+        ${metricCard(assignedSlotCount, "Assigned slots")}
+        ${metricCard(openSlotCount, "Open slots")}
+      </section>
+      <section class="summary-grid four-col">
+        ${metricCard(candidates.summary.slots_with_candidates, "Suggestion slots")}
+        ${metricCard(candidates.summary.eligible_candidates, "Safe suggestions", undefined, "metric-primary")}
+        ${metricCard(candidates.summary.needs_review_candidates, "Review suggestions", undefined, "metric-weekend")}
+        ${metricCard(candidates.summary.blocked_candidates, "Blocked suggestions")}
+      </section>
+      ${locked ? "" : `<section class="panel quality-panel"><h3>Scope Not Locked</h3><p>Lock the monthly unit scope in Rota Setup before generating the empty template.</p></section>`}
+      <details class="panel template-settings-panel">
+        <summary>
+          <div>
+            <h3>Template Generation Settings</h3>
+            <p>${selectedDutyCount} of ${template.duty_options.length} duty types selected. ${selectedMandatoryCount} mandatory and ${selectedAdjustableCount} adjustable duties included.</p>
+          </div>
+          <span class="settings-disclosure-badge">Edit settings</span>
+        </summary>
+        <div class="template-settings-body">
+          <div class="template-settings-group">
+            <h4>Generation Window</h4>
+            <div class="form-grid">
+              <label>Start date<input id="template-start" type="date" value="${template.rota_period.starts_on}" /></label>
+              <label>End date<input id="template-end" type="date" value="${template.rota_period.ends_on}" /></label>
+            </div>
+            <div class="settings-check-row">
+              <label class="checkbox-line"><input id="template-weekdays" type="checkbox" checked /> Include weekdays</label>
+              <label class="checkbox-line"><input id="template-weekends" type="checkbox" checked /> Include weekends</label>
+              <label class="checkbox-line"><input id="template-replace" type="checkbox" checked /> Replace existing generated empty slots</label>
+            </div>
+          </div>
+          <div class="template-settings-group">
+            <div class="settings-group-title">
+              <h4>Duty Template Editor</h4>
+              <span>${selectedDutyCount}/${template.duty_options.length} selected</span>
+            </div>
+            <div class="template-duty-grid">${renderTemplateDutyOptions(template)}</div>
+          </div>
+        </div>
+      </details>
+    </form>
+    <section class="panel table-panel">
+      <h3>Unit-Day Safety</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Unit</th>
+            <th>Safety</th>
+            <th>Slots</th>
+            <th>Safe</th>
+            <th>Review</th>
+            <th>Hard Blocked</th>
+            <th>Minimum Available</th>
+          </tr>
+        </thead>
+        <tbody>${renderUnitDaySafetyRows(safety) || `<tr><td colspan="8" class="empty">No safety checks yet. Generate empty slots first.</td></tr>`}</tbody>
+      </table>
+      ${safety.unit_day_safety.length > 100 ? `<p class="empty">Showing first 100 of ${safety.unit_day_safety.length} unit-day checks.</p>` : ""}
+    </section>
+    <section class="panel rota-calendar-panel">
+      <h3>Rota Calendar</h3>
+      <p class="panel-note">Click a day to review generated slots, current assignments, safety notes, suggested members, and manual assignment controls.</p>
+      ${template.slots.length
+        ? `<div class="leave-calendar-grid rota-calendar-grid">${renderRotaTemplateCalendarDays(template)}</div>`
+        : `<p class="empty-state">No generated slots yet. Generate the template after locking the monthly unit scope.</p>`}
+    </section>
+    ${renderAutoFillReport(autoFill)}
+    <section class="panel table-panel">
+      <h3>Latest Generation Decisions</h3>
+      <table>
+        <thead><tr><th>Date</th><th>Unit</th><th>Duty</th><th>Action</th><th>Reason</th></tr></thead>
+        <tbody>${renderTemplateEvents(template) || `<tr><td colspan="5" class="empty">No generation decisions recorded yet.</td></tr>`}</tbody>
+      </table>
+    </section>
+  `;
+}
+
+function exchangeStatusLabel(status: string): string {
+  if (status === "pending_approval") return "Pending Approval";
+  if (status === "needs_override") return "Needs Override";
+  if (status === "approved") return "Approved";
+  if (status === "rejected") return "Rejected";
+  if (status === "blocked") return "Blocked";
+  return leaveTypeLabel(status);
+}
+
+function exchangeStatusClass(status: string): string {
+  if (status === "approved") return "ok";
+  if (status === "pending_approval") return "warning";
+  if (status === "needs_override") return "warning";
+  if (status === "blocked" || status === "rejected") return "error";
+  return "";
+}
+
+function renderReviewCandidateSummary(candidates: RotaCandidate[]): string {
+  if (!candidates.length) return `<span class="empty-state compact-empty">No suggestions</span>`;
+  return `
+    <div class="review-candidate-stack">
+      ${candidates.slice(0, 3).map((candidate) => `
+        <span>
+          <strong>${escapeHtml(candidate.person_name)}</strong>
+          <small>${escapeHtml(candidateStatusLabel(candidate.candidate_status))} / score ${candidate.rank_score}</small>
+        </span>
+      `).join("")}
+    </div>
+  `;
+}
+
+function renderReviewItemRows(review: RotaReviewMonth): string {
+  return review.review_items.slice(0, 120).map((item) => `
+    <tr>
+      <td>${escapeHtml(item.slot.duty_date)}</td>
+      <td><strong>${escapeHtml(item.slot.unit_name ?? "Unassigned unit")}</strong><small>${escapeHtml(item.slot.unit_code ?? "")}</small></td>
+      <td>${escapeHtml(leaveTypeLabel(item.slot.duty_type))}</td>
+      <td><span class="status ${item.severity === "error" ? "error" : "warning"}">${escapeHtml(item.severity === "error" ? "Hard Blocked" : "Needs Review")}</span></td>
+      <td>
+        <div class="review-issue-stack">
+          ${item.issues.map((issue) => `<small>${escapeHtml(issue.message)}</small>`).join("")}
+        </div>
+      </td>
+      <td>${renderSlotAssignments({ assignments: item.assignments } as RotaTemplateMonth["slots"][number])}</td>
+      <td>${renderReviewCandidateSummary(item.candidates)}</td>
+      <td>${escapeHtml(item.recommended_action)}</td>
+    </tr>
+  `).join("");
+}
+
+function renderWorkloadRows(review: RotaReviewMonth): string {
+  return review.person_workload.slice(0, 120).map((row) => `
+    <tr>
+      <td><strong>${escapeHtml(row.person_name)}</strong><small>${escapeHtml(callLevelLabel(row.call_level))}</small></td>
+      <td>${row.total_assignments}</td>
+      <td>${row.total_24hr}</td>
+      <td>${row.weekend_24hr}</td>
+      <td>${row.override_assignments}</td>
+      <td>${row.assignments.slice(0, 3).map((assignment) => `${escapeHtml(assignment.duty_date)} / ${escapeHtml(leaveTypeLabel(assignment.duty_type))}`).join("<br>")}</td>
+    </tr>
+  `).join("");
+}
+
+function renderExchangeAssignmentOptions(review: RotaReviewMonth): string {
+  return review.assignment_options.map((option) => `
+    <option value="${escapeHtml(option.assignment.id)}">
+      ${escapeHtml(option.label)}
+    </option>
+  `).join("");
+}
+
+function renderExchangeTargetOptions(): string {
+  return members
+    .filter((member) => member.active_status === "active")
+    .sort((a, b) => a.canonical_name.localeCompare(b.canonical_name))
+    .map((member) => `
+      <option value="${escapeHtml(member.id)}">
+        ${escapeHtml(member.canonical_name)} - ${escapeHtml(callLevelLabel(member.call_level))}
+      </option>
+    `)
+    .join("");
+}
+
+function renderExchangeRows(review: RotaReviewMonth): string {
+  return review.exchange_requests.slice(0, 80).map((exchange) => {
+    const canDecide = !["approved", "rejected", "blocked"].includes(exchange.status);
+    return `
+      <tr>
+        <td><span class="status ${exchangeStatusClass(exchange.status)}">${escapeHtml(exchangeStatusLabel(exchange.status))}</span></td>
+        <td>${escapeHtml(exchange.from_slot?.duty_date ?? "")}<small>${escapeHtml(exchange.from_slot?.unit_name ?? "Unit")}</small></td>
+        <td><strong>${escapeHtml(exchange.from_person?.canonical_name ?? "Current member")}</strong><small>to ${escapeHtml(exchange.to_person?.canonical_name ?? "Target member")}</small></td>
+        <td>${escapeHtml(exchange.request_reason)}${exchange.decision_reason ? `<small>Decision: ${escapeHtml(exchange.decision_reason)}</small>` : ""}</td>
+        <td>${escapeHtml(exchange.requested_by ?? "")}${exchange.approved_by ? `<small>Decided by ${escapeHtml(exchange.approved_by)}</small>` : ""}</td>
+        <td>
+          ${canDecide ? `
+            <div class="exchange-decision-cell">
+              <input data-exchange-decision="${escapeHtml(exchange.id)}" placeholder="${exchange.status === "needs_override" ? "Approval reason required" : "Optional decision note"}" />
+              <button class="primary" type="button" data-approve-exchange="${escapeHtml(exchange.id)}">Approve</button>
+              <button class="icon-button" type="button" data-reject-exchange="${escapeHtml(exchange.id)}">Reject</button>
+            </div>
+          ` : `<span class="empty-state compact-empty">Closed</span>`}
+        </td>
+      </tr>
+    `;
+  }).join("");
+}
+
+async function renderRotaReview() {
+  setHeader("Rota Review", "Warnings, overrides, workload, and exchange approvals");
+  if (!viewRoot) return;
+  viewRoot.innerHTML = `<section class="panel"><h3>Loading rota review...</h3></section>`;
+  try {
+    [rotaReview, members] = await Promise.all([
+      getRotaReviewMonth(rotaReviewMonth),
+      getMembers(),
+    ]);
+  } catch (error) {
+    showToast(error instanceof Error ? error.message : "Failed to load rota review", "error");
+    viewRoot.innerHTML = `<section class="panel"><h3>Rota review unavailable</h3><p>Unable to load review dashboard and exchange controls.</p></section>`;
+    return;
+  }
+  const review = rotaReview;
+  viewRoot.innerHTML = `
+    <section class="panel action-panel">
+      <div>
+        <h3>${escapeHtml(review.rota_period.name)}</h3>
+        <p>${review.rota_period.starts_on} to ${review.rota_period.ends_on}. Review open slots, overrides, workload, and exchange requests before final publish.</p>
+      </div>
+      <div class="topbar-actions">
+        <label for="rota-review-month" class="visually-hidden">Rota review month</label>
+        <input id="rota-review-month" type="month" value="${rotaReviewMonth}" />
+        <button class="icon-button" type="button" data-view-shortcut="rota-template">Open Template</button>
+      </div>
+    </section>
+    <section class="summary-grid four-col">
+      ${metricCard(review.summary.review_items, "Review items", undefined, "metric-weekend")}
+      ${metricCard(review.summary.hard_blocked_items, "Hard-blocked items")}
+      ${metricCard(review.summary.override_assignments, "Override assignments")}
+      ${metricCard(review.summary.pending_exchange_requests, "Pending exchanges")}
+    </section>
+    <section class="summary-grid four-col">
+      ${metricCard(review.summary.total_slots, "Template slots")}
+      ${metricCard(review.summary.assigned_slots, "Assigned slots", undefined, "metric-primary")}
+      ${metricCard(review.summary.open_slots, "Open slots")}
+      ${metricCard(review.person_workload.length, "People assigned")}
+    </section>
+    <section class="panel table-panel">
+      <h3>Warnings And Open Slots</h3>
+      <table>
+        <thead><tr><th>Date</th><th>Unit</th><th>Duty</th><th>Status</th><th>Reason</th><th>Assigned</th><th>Suggestions</th><th>Action</th></tr></thead>
+        <tbody>${renderReviewItemRows(review) || `<tr><td colspan="8" class="empty">No review items found for this month.</td></tr>`}</tbody>
+      </table>
+    </section>
+    <section class="panel table-panel">
+      <h3>Person-Wise Duty Load</h3>
+      <table>
+        <thead><tr><th>Member</th><th>Total</th><th>24hr</th><th>Weekend 24hr</th><th>Overrides</th><th>Recent Duties</th></tr></thead>
+        <tbody>${renderWorkloadRows(review) || `<tr><td colspan="6" class="empty">No saved assignments yet.</td></tr>`}</tbody>
+      </table>
+    </section>
+    <section class="panel">
+      <h3>Request Exchange</h3>
+      <form class="leave-form exchange-form" id="rota-exchange-form">
+        <label>Current assignment<select id="exchange-assignment" required><option value="">Select assignment</option>${renderExchangeAssignmentOptions(review)}</select></label>
+        <label>New member<select id="exchange-target" required><option value="">Select member</option>${renderExchangeTargetOptions()}</select></label>
+        <label class="leave-notes">Reason<input id="exchange-reason" placeholder="Why this exchange is needed" required /></label>
+        <button class="primary" type="submit">Request Exchange</button>
+      </form>
+    </section>
+    <section class="panel table-panel">
+      <h3>Exchange Requests</h3>
+      <table>
+        <thead><tr><th>Status</th><th>Slot</th><th>Exchange</th><th>Reason</th><th>Audit</th><th>Decision</th></tr></thead>
+        <tbody>${renderExchangeRows(review) || `<tr><td colspan="6" class="empty">No exchange requests yet.</td></tr>`}</tbody>
+      </table>
+    </section>
+  `;
+}
+
+function checklistStatusClass(status: string): string {
+  if (status === "clear") return "ok";
+  if (status === "warning") return "warning";
+  if (status === "blocked") return "error";
+  return "";
+}
+
+function renderChecklistCards(items: RotaPublishChecklistItem[], empty: string): string {
+  if (!items.length) return `<p class="empty-state">${escapeHtml(empty)}</p>`;
+  return `
+    <div class="publish-checklist-grid">
+      ${items.map((item) => `
+        <article class="publish-checklist-card">
+          <header>
+            <span class="status ${checklistStatusClass(item.status)}">${escapeHtml(leaveTypeLabel(item.status))}</span>
+            <strong>${escapeHtml(item.title)}</strong>
+          </header>
+          <p>${escapeHtml(item.detail)}</p>
+        </article>
+      `).join("")}
+    </div>
+  `;
+}
+
+function renderLatestPublish(publish: RotaPublishMonth): string {
+  const latest = publish.latest_publish;
+  if (!latest) {
+    return `<p class="empty-state">This rota has not been published yet.</p>`;
+  }
+  return `
+    <div class="audit-chip-row">
+      <span><strong>${escapeHtml(exchangeStatusLabel(latest.status))}</strong> status</span>
+      <span><strong>${escapeHtml(latest.approved_by ?? "Unknown")}</strong> approved by</span>
+      <span><strong>${escapeHtml(new Date(latest.created_at).toLocaleString())}</strong> approved at</span>
+      <span><strong>${latest.confirmed_warnings ? "Yes" : "No"}</strong> warnings confirmed</span>
+    </div>
+    <p>${escapeHtml(latest.approval_note)}</p>
+  `;
+}
+
+async function renderRotaPublish() {
+  setHeader("Publish & Export", "Final checklist, board approval, and Excel export");
+  if (!viewRoot) return;
+  viewRoot.innerHTML = `<section class="panel"><h3>Loading publish checklist...</h3></section>`;
+  try {
+    rotaPublish = await getRotaPublishMonth(rotaPublishMonth);
+  } catch (error) {
+    showToast(error instanceof Error ? error.message : "Failed to load publish checklist", "error");
+    viewRoot.innerHTML = `<section class="panel"><h3>Publish unavailable</h3><p>Unable to load final checklist and export controls.</p></section>`;
+    return;
+  }
+  const publish = rotaPublish;
+  viewRoot.innerHTML = `
+    <section class="panel action-panel">
+      <div>
+        <h3>${escapeHtml(publish.rota_period.name)}</h3>
+        <p>${publish.rota_period.starts_on} to ${publish.rota_period.ends_on}. Rule version: ${escapeHtml(publish.rule_version.name)}.</p>
+      </div>
+      <div class="topbar-actions">
+        <label for="rota-publish-month" class="visually-hidden">Publish month</label>
+        <input id="rota-publish-month" type="month" value="${rotaPublishMonth}" />
+        <button class="icon-button" type="button" data-view-shortcut="rota-review">Open Review</button>
+      </div>
+    </section>
+    <section class="summary-grid four-col">
+      ${metricCard(publish.summary.total_slots, "Template slots")}
+      ${metricCard(publish.summary.assigned_slots, "Assigned slots", undefined, "metric-primary")}
+      ${metricCard(publish.summary.open_slots, "Open slots")}
+      ${metricCard(publish.blockers.length, "Checklist blockers")}
+    </section>
+    <section class="summary-grid four-col">
+      ${metricCard(publish.summary.review_items, "Review items", undefined, "metric-weekend")}
+      ${metricCard(publish.summary.hard_blocked_items, "Hard-blocked items")}
+      ${metricCard(publish.summary.override_assignments, "Override assignments")}
+      ${metricCard(publish.warnings.length, "Checklist warnings")}
+    </section>
+    <section class="panel publish-status-panel ${publish.can_publish ? "quality-ok" : "quality-warning"}">
+      <h3>${publish.can_publish ? "Ready For Board Approval" : "Not Ready To Publish"}</h3>
+      <p>${publish.can_publish ? "No blocking checklist items remain. Confirm warnings if present, then publish." : "Resolve every blocker before final approval can be recorded."}</p>
+    </section>
+    <section class="analytics-grid">
+      <article class="panel">
+        <h3>Clear Checks</h3>
+        ${renderChecklistCards(publish.checks, "No clear checks yet.")}
+      </article>
+      <article class="panel">
+        <h3>Blockers</h3>
+        ${renderChecklistCards(publish.blockers, "No blockers.")}
+      </article>
+    </section>
+    <section class="panel">
+      <h3>Warnings To Confirm</h3>
+      ${renderChecklistCards(publish.warnings, "No remaining warnings need confirmation.")}
+    </section>
+    <section class="panel">
+      <h3>Publish Approval</h3>
+      <form class="publish-form" id="rota-publish-form">
+        <label class="checkbox-line">
+          <input id="publish-confirm-warnings" type="checkbox" ${publish.requires_warning_confirmation ? "" : "checked"} />
+          Confirm remaining warnings and override assignments
+        </label>
+        <label>Approval note<textarea id="publish-approval-note" rows="3" placeholder="Record who approved this rota and any board note"></textarea></label>
+        <button class="primary" type="submit" ${publish.can_publish ? "" : "disabled"}>Publish Final Rota</button>
+      </form>
+    </section>
+    <section class="panel action-panel">
+      <div>
+        <h3>Final Excel Export</h3>
+        ${renderLatestPublish(publish)}
+      </div>
+      <button class="primary" type="button" id="download-rota-export" ${publish.latest_publish ? "" : "disabled"}>Download Excel</button>
+    </section>
+  `;
+}
+
 async function renderAccounts() {
   setHeader("Accounts", "Rota team login accounts");
   if (!viewRoot) return;
@@ -3000,9 +4415,9 @@ async function renderDiagnostics() {
     const diagnostics: DiagnosticsSummary = await getDiagnosticsSummary();
     viewRoot.innerHTML = `
       <section class="summary-grid">
-        <article class="metric"><span>${diagnostics.database_counts.import_warnings ?? 0}</span><p>Import warnings</p></article>
-        <article class="metric"><span>${diagnostics.invalid_member_names}</span><p>Invalid member names</p></article>
-        <article class="metric"><span>${diagnostics.database_counts.user_accounts ?? 0}</span><p>Login accounts</p></article>
+        ${metricCard(diagnostics.database_counts.import_warnings ?? 0, "Import warnings")}
+        ${metricCard(diagnostics.invalid_member_names, "Invalid member names")}
+        ${metricCard(diagnostics.database_counts.user_accounts ?? 0, "Login accounts")}
       </section>
       <section class="panel wide">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
@@ -3048,6 +4463,16 @@ function bindNavigation() {
         void renderLeave();
       } else if (selectedView === "units") {
         void renderUnitManagement();
+      } else if (selectedView === "rota-setup") {
+        void renderRotaSetup();
+      } else if (selectedView === "rota-template") {
+        void renderRotaTemplate();
+      } else if (selectedView === "rota-review") {
+        void renderRotaReview();
+      } else if (selectedView === "rota-publish") {
+        void renderRotaPublish();
+      } else if (selectedView === "rota-rules") {
+        void renderRotaRules();
       } else if (selectedView === "accounts") {
         void renderAccounts();
       } else if (selectedView === "diagnostics") {
@@ -3080,6 +4505,152 @@ function bindViewEvents() {
         await renderAccounts();
       } catch (error) {
         showToast(error instanceof Error ? error.message : "Failed to create account", "error");
+        resetButton(btn);
+      }
+      return;
+    }
+    if (form.id === "rota-rules-form") {
+      event.preventDefault();
+      if (!rotaPhaseOneRules) return;
+      const btn = form.querySelector<HTMLButtonElement>("#save-rota-rules");
+      const nextRules = JSON.parse(JSON.stringify(rotaPhaseOneRules)) as RotaPhaseOneRules;
+      nextRules.rest_rules.minimum_gap_after_24hr_hours = Number(form.querySelector<HTMLInputElement>("#rule-rest-hours")?.value ?? 24);
+      nextRules.rest_rules.post_24hr_blocks_next_day_elective = Boolean(form.querySelector<HTMLInputElement>("#rule-post-blocks")?.checked);
+      nextRules.unit_staffing_rules.minimum_available_count = Number(form.querySelector<HTMLInputElement>("#rule-min-available")?.value ?? 1);
+      nextRules.unit_staffing_rules.warning_unavailable_percent = Number(form.querySelector<HTMLInputElement>("#rule-warning-percent")?.value ?? 30);
+      nextRules.unit_staffing_rules.hard_block_unavailable_percent = Number(form.querySelector<HTMLInputElement>("#rule-hard-percent")?.value ?? 40);
+      nextRules.unit_staffing_rules.small_unit_uses_absolute_minimum = Boolean(form.querySelector<HTMLInputElement>("#rule-small-unit")?.checked);
+      nextRules.duty_count_limits.max_24hr_per_month = parseNumberOrNull(form.querySelector<HTMLInputElement>("#rule-max-24hr")?.value ?? "");
+      nextRules.duty_count_limits.max_weekend_24hr_per_month = parseNumberOrNull(form.querySelector<HTMLInputElement>("#rule-max-weekend")?.value ?? "");
+      form.querySelectorAll<HTMLInputElement>("[data-rule-index]").forEach((input) => {
+        const index = Number(input.dataset.ruleIndex);
+        const field = input.dataset.ruleField;
+        const rule = nextRules.duty_rules[index];
+        if (!rule || !field) return;
+        if (field === "duration_hours") rule.duration_hours = Number(input.value || 0);
+        else if (field === "allowed_call_levels") rule.allowed_call_levels = parseCsv(input.value);
+        else if (input.type === "checkbox") {
+          (rule as unknown as Record<string, boolean>)[field] = input.checked;
+        } else {
+          (rule as unknown as Record<string, string>)[field] = input.value.trim();
+        }
+      });
+      setButtonLoading(btn, true, "Save Rules");
+      try {
+        const { rule_version: _ruleVersion, ...payload } = nextRules;
+        rotaPhaseOneRules = await updateRotaPhaseOneRules(payload);
+        showToast("Rota rules saved", "success");
+        await renderRotaRules();
+      } catch (error) {
+        showToast(error instanceof Error ? error.message : "Failed to save rota rules", "error");
+        resetButton(btn);
+      }
+      return;
+    }
+    if (form.id === "rota-setup-form") {
+      event.preventDefault();
+      const btn = form.querySelector<HTMLButtonElement>("#save-rota-setup");
+      const includedUnitIds: string[] = [];
+      const excludedUnitIds: string[] = [];
+      form.querySelectorAll<HTMLSelectElement>("[data-scope-unit]").forEach((select) => {
+        const unitId = select.dataset.scopeUnit;
+        if (!unitId) return;
+        if (select.value === "included") includedUnitIds.push(unitId);
+        if (select.value === "excluded") excludedUnitIds.push(unitId);
+      });
+      setButtonLoading(btn, true, "Save Scope");
+      try {
+        rotaSetup = await updateRotaSetupScope(rotaSetupMonth, {
+          included_unit_ids: includedUnitIds,
+          excluded_unit_ids: excludedUnitIds,
+          include_excluded_units_in_safety: Boolean(form.querySelector<HTMLInputElement>("#scope-safety-excluded")?.checked),
+          is_locked: Boolean(form.querySelector<HTMLInputElement>("#scope-locked")?.checked),
+          lock_reason: form.querySelector<HTMLInputElement>("#scope-lock-reason")?.value || null,
+        });
+        showToast("Rota setup saved", "success");
+        await renderRotaSetup();
+      } catch (error) {
+        showToast(error instanceof Error ? error.message : "Failed to save rota setup", "error");
+        resetButton(btn);
+      }
+      return;
+    }
+    if (form.id === "rota-template-form") {
+      event.preventDefault();
+      const btn = form.querySelector<HTMLButtonElement>("#generate-rota-template");
+      const dutyKeys = Array.from(form.querySelectorAll<HTMLInputElement>("[data-template-duty]"))
+        .filter((input) => input.checked)
+        .map((input) => input.dataset.templateDuty)
+        .filter((value): value is string => Boolean(value));
+      if (!dutyKeys.length) {
+        showToast("Select at least one duty type", "warning");
+        return;
+      }
+      if (!confirmAction("Generate the leave-aware empty slot template for this month?")) return;
+      setButtonLoading(btn, true, "Generate Template");
+      try {
+        rotaTemplate = await generateRotaTemplate(rotaTemplateMonth, {
+          duty_keys: dutyKeys,
+          starts_on: form.querySelector<HTMLInputElement>("#template-start")?.value || null,
+          ends_on: form.querySelector<HTMLInputElement>("#template-end")?.value || null,
+          include_weekdays: Boolean(form.querySelector<HTMLInputElement>("#template-weekdays")?.checked),
+          include_weekends: Boolean(form.querySelector<HTMLInputElement>("#template-weekends")?.checked),
+          replace_existing: Boolean(form.querySelector<HTMLInputElement>("#template-replace")?.checked),
+        });
+        showToast(`Generated ${rotaTemplate.latest_run?.created_slots ?? 0} empty slot(s)`, "success");
+        rejectedRotaCandidates.clear();
+        await renderRotaTemplate();
+      } catch (error) {
+        showToast(error instanceof Error ? error.message : "Failed to generate rota template", "error");
+        resetButton(btn);
+      }
+      return;
+    }
+    if (form.id === "rota-exchange-form") {
+      event.preventDefault();
+      const btn = form.querySelector<HTMLButtonElement>("button[type='submit']");
+      const assignmentId = form.querySelector<HTMLSelectElement>("#exchange-assignment")?.value ?? "";
+      const toPersonId = form.querySelector<HTMLSelectElement>("#exchange-target")?.value ?? "";
+      const reason = form.querySelector<HTMLInputElement>("#exchange-reason")?.value.trim() ?? "";
+      if (!assignmentId || !toPersonId || !reason) {
+        showToast("Assignment, new member, and reason are required", "warning");
+        return;
+      }
+      setButtonLoading(btn, true, "Request Exchange");
+      try {
+        const exchange = await requestRotaExchange({
+          assignment_id: assignmentId,
+          to_person_id: toPersonId,
+          reason,
+        });
+        showToast(`Exchange request saved: ${exchangeStatusLabel(exchange.status)}`, "success");
+        await renderRotaReview();
+      } catch (error) {
+        showToast(error instanceof Error ? error.message : "Failed to request exchange", "error");
+        resetButton(btn);
+      }
+      return;
+    }
+    if (form.id === "rota-publish-form") {
+      event.preventDefault();
+      const btn = form.querySelector<HTMLButtonElement>("button[type='submit']");
+      const confirmWarnings = Boolean(form.querySelector<HTMLInputElement>("#publish-confirm-warnings")?.checked);
+      const approvalNote = form.querySelector<HTMLTextAreaElement>("#publish-approval-note")?.value.trim() ?? "";
+      if (!approvalNote) {
+        showToast("Approval note is required", "warning");
+        return;
+      }
+      if (!confirmAction("Publish this rota as final?")) return;
+      setButtonLoading(btn, true, "Publish Final Rota");
+      try {
+        rotaPublish = await publishRotaMonth(rotaPublishMonth, {
+          confirm_warnings: confirmWarnings,
+          approval_note: approvalNote,
+        });
+        showToast("Final rota published", "success");
+        await renderRotaPublish();
+      } catch (error) {
+        showToast(error instanceof Error ? error.message : "Failed to publish rota", "error");
         resetButton(btn);
       }
       return;
@@ -3130,6 +4701,26 @@ function bindViewEvents() {
         await renderLeave();
       } catch (error) {
         showToast(error instanceof Error ? error.message : "Failed to add leave", "error");
+        resetButton(btn);
+      }
+      return;
+    }
+    if (form.id === "leave-import-form") {
+      event.preventDefault();
+      const btn = form.querySelector<HTMLButtonElement>("button[type='submit']");
+      const file = form.querySelector<HTMLInputElement>("#leave-import-file")?.files?.[0];
+      if (!file) {
+        showToast("Choose a CSV or XLSX leave file first", "warning");
+        return;
+      }
+      setButtonLoading(btn, true, "Preview File");
+      try {
+        leaveImportFile = file;
+        leaveImportPreview = await previewLeaveImport(leaveMonth, file);
+        showToast("Leave import preview ready", "success");
+        await renderLeave();
+      } catch (error) {
+        showToast(error instanceof Error ? error.message : "Failed to preview leave file", "error");
         resetButton(btn);
       }
       return;
@@ -3231,6 +4822,18 @@ function bindViewEvents() {
       return;
     }
 
+    const leaveDayBtn = target.closest<HTMLButtonElement>("[data-leave-day]");
+    if (leaveDayBtn?.dataset.leaveDay) {
+      openLeaveDayModal(leaveDayBtn.dataset.leaveDay);
+      return;
+    }
+
+    const rotaDayBtn = target.closest<HTMLButtonElement>("[data-rota-day]");
+    if (rotaDayBtn?.dataset.rotaDay) {
+      openRotaDayModal(rotaDayBtn.dataset.rotaDay);
+      return;
+    }
+
     const unitOpenBtn = target.closest<HTMLElement>("[data-open-unit-modal]");
     if (unitOpenBtn?.dataset.openUnitModal) {
       openUnitModal(unitOpenBtn.dataset.openUnitModal);
@@ -3258,6 +4861,203 @@ function bindViewEvents() {
     if (target.id === "cancel-unit-edit") {
       unitEditingAssignmentId = null;
       await renderUnitManagement();
+      return;
+    }
+
+    if (target.id === "clone-rota-scope") {
+      const btn = target.closest<HTMLButtonElement>("#clone-rota-scope");
+      setButtonLoading(btn, true, "Clone Previous");
+      try {
+        rotaSetup = await clonePreviousRotaSetupScope(rotaSetupMonth);
+        showToast("Previous month scope cloned", "success");
+        await renderRotaSetup();
+      } catch (error) {
+        showToast(error instanceof Error ? error.message : "Failed to clone previous scope", "error");
+        resetButton(btn);
+      }
+      return;
+    }
+
+    if (target.id === "apply-leave-import") {
+      const btn = target.closest<HTMLButtonElement>("#apply-leave-import");
+      if (!leaveImportFile) {
+        showToast("Preview a leave file before applying import", "warning");
+        return;
+      }
+      if (!confirmAction("Create leave records for all safely matched preview rows?")) return;
+      setButtonLoading(btn, true, "Apply Matched Rows");
+      try {
+        const result = await applyLeaveImport(leaveMonth, leaveImportFile);
+        leaveImportPreview = result.preview;
+        showToast(`Imported ${result.created_rows} leave row(s); skipped ${result.skipped_rows}`, "success");
+        await renderLeave();
+      } catch (error) {
+        showToast(error instanceof Error ? error.message : "Failed to apply leave import", "error");
+        resetButton(btn);
+      }
+      return;
+    }
+
+    if (target.id === "run-safe-auto-fill") {
+      const btn = target.closest<HTMLButtonElement>("#run-safe-auto-fill");
+      if (!confirmAction("Run safe auto-fill for open slots? Only clear, low-risk suggestions will be assigned.")) return;
+      setButtonLoading(btn, true, "Safe Auto-Fill");
+      try {
+        const result = await runRotaAutoFillDraft(rotaTemplateMonth);
+        rejectedRotaCandidates.clear();
+        showToast(`Auto-filled ${result.assigned_slots} slot(s); left ${result.skipped_slots} open`, "success");
+        closeRotaDayModal();
+        await renderRotaTemplate();
+      } catch (error) {
+        showToast(error instanceof Error ? error.message : "Safe auto-fill failed", "error");
+        resetButton(btn);
+      }
+      return;
+    }
+
+    const assignSlotBtn = target.closest<HTMLButtonElement>("[data-assign-slot]");
+    if (assignSlotBtn?.dataset.assignSlot) {
+      const slotId = assignSlotBtn.dataset.assignSlot;
+      const personId = document.querySelector<HTMLSelectElement>(`[data-assign-person="${slotId}"]`)?.value ?? "";
+      const overrideReason = document.querySelector<HTMLInputElement>(`[data-assign-override="${slotId}"]`)?.value.trim() ?? "";
+      const replaceExisting = Boolean(document.querySelector<HTMLInputElement>(`[data-assign-replace="${slotId}"]`)?.checked);
+      if (!personId) {
+        showToast("Select a member to assign", "warning");
+        return;
+      }
+      setButtonLoading(assignSlotBtn, true, replaceExisting ? "Replace" : "Assign");
+      try {
+        const result = await assignRotaSlot(slotId, {
+          person_id: personId,
+          replace_existing: replaceExisting,
+          override_reason: overrideReason || null,
+        });
+        showToast(result.status === "unchanged" ? "Member is already assigned to this slot" : "Rota assignment saved", "success");
+        closeRotaDayModal();
+        await renderRotaTemplate();
+      } catch (error) {
+        showToast(error instanceof Error ? error.message : "Failed to save rota assignment", "error");
+        resetButton(assignSlotBtn);
+      }
+      return;
+    }
+
+    const acceptCandidateBtn = target.closest<HTMLButtonElement>("[data-accept-candidate]");
+    if (acceptCandidateBtn?.dataset.acceptCandidate) {
+      const [slotId, personId] = acceptCandidateBtn.dataset.acceptCandidate.split(":");
+      const slot = rotaTemplate?.slots.find((item) => item.id === slotId);
+      if (!slot || !personId) return;
+      setButtonLoading(acceptCandidateBtn, true, "Use");
+      try {
+        await assignRotaSlot(slotId, {
+          person_id: personId,
+          replace_existing: slot.assignments.length > 0,
+          override_reason: null,
+        });
+        showToast("Suggested candidate assigned", "success");
+        closeRotaDayModal();
+        await renderRotaTemplate();
+      } catch (error) {
+        showToast(error instanceof Error ? error.message : "Failed to use suggestion", "error");
+        resetButton(acceptCandidateBtn);
+      }
+      return;
+    }
+
+    const selectCandidateBtn = target.closest<HTMLButtonElement>("[data-select-candidate]");
+    if (selectCandidateBtn?.dataset.selectCandidate) {
+      const [slotId, personId] = selectCandidateBtn.dataset.selectCandidate.split(":");
+      const select = document.querySelector<HTMLSelectElement>(`[data-assign-person="${slotId}"]`);
+      const reason = document.querySelector<HTMLInputElement>(`[data-assign-override="${slotId}"]`);
+      if (select && personId) {
+        select.value = personId;
+        reason?.focus();
+        showToast("Suggestion selected. Add an override reason before assigning.", "info");
+      }
+      return;
+    }
+
+    const rejectCandidateBtn = target.closest<HTMLButtonElement>("[data-reject-candidate]");
+    if (rejectCandidateBtn?.dataset.rejectCandidate) {
+      rejectedRotaCandidates.add(rejectCandidateBtn.dataset.rejectCandidate);
+      rejectCandidateBtn.closest<HTMLElement>("[data-candidate-card]")?.remove();
+      showToast("Suggestion hidden for this session", "info");
+      return;
+    }
+
+    const clearAssignmentBtn = target.closest<HTMLButtonElement>("[data-clear-rota-assignment]");
+    if (clearAssignmentBtn?.dataset.clearRotaAssignment) {
+      if (!confirmAction("Clear this rota assignment?")) return;
+      setButtonLoading(clearAssignmentBtn, true, "Clear");
+      try {
+        await clearRotaAssignment(clearAssignmentBtn.dataset.clearRotaAssignment);
+        showToast("Rota assignment cleared", "success");
+        closeRotaDayModal();
+        await renderRotaTemplate();
+      } catch (error) {
+        showToast(error instanceof Error ? error.message : "Failed to clear rota assignment", "error");
+        resetButton(clearAssignmentBtn);
+      }
+      return;
+    }
+
+    const approveExchangeBtn = target.closest<HTMLButtonElement>("[data-approve-exchange]");
+    if (approveExchangeBtn?.dataset.approveExchange) {
+      const exchangeId = approveExchangeBtn.dataset.approveExchange;
+      const decisionReason = document.querySelector<HTMLInputElement>(
+        `[data-exchange-decision="${exchangeId}"]`,
+      )?.value.trim() ?? "";
+      if (!confirmAction("Approve this exchange and replace the current assignment?")) return;
+      setButtonLoading(approveExchangeBtn, true, "Approve");
+      try {
+        await approveRotaExchange(exchangeId, decisionReason || null);
+        showToast("Exchange approved and assignment updated", "success");
+        await renderRotaReview();
+      } catch (error) {
+        showToast(error instanceof Error ? error.message : "Failed to approve exchange", "error");
+        resetButton(approveExchangeBtn);
+      }
+      return;
+    }
+
+    const rejectExchangeBtn = target.closest<HTMLButtonElement>("[data-reject-exchange]");
+    if (rejectExchangeBtn?.dataset.rejectExchange) {
+      const exchangeId = rejectExchangeBtn.dataset.rejectExchange;
+      const decisionReason = document.querySelector<HTMLInputElement>(
+        `[data-exchange-decision="${exchangeId}"]`,
+      )?.value.trim() ?? "";
+      if (!confirmAction("Reject this exchange request?")) return;
+      setButtonLoading(rejectExchangeBtn, true, "Reject");
+      try {
+        await rejectRotaExchange(exchangeId, decisionReason || null);
+        showToast("Exchange rejected", "success");
+        await renderRotaReview();
+      } catch (error) {
+        showToast(error instanceof Error ? error.message : "Failed to reject exchange", "error");
+        resetButton(rejectExchangeBtn);
+      }
+      return;
+    }
+
+    if (target.id === "download-rota-export") {
+      const btn = target.closest<HTMLButtonElement>("#download-rota-export");
+      setButtonLoading(btn, true, "Download Excel");
+      try {
+        const { blob, filename } = await downloadRotaExport(rotaPublishMonth);
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+        showToast("Final Excel export downloaded", "success");
+        resetButton(btn);
+      } catch (error) {
+        showToast(error instanceof Error ? error.message : "Failed to download export", "error");
+        resetButton(btn);
+      }
       return;
     }
 
@@ -3495,6 +5295,12 @@ function bindViewEvents() {
     if (target.matches("[data-close-person-modal]") || target.id === "analysis-person-modal") {
       closeAnalysisPersonModal();
     }
+    if (target.matches("[data-close-leave-day-modal]") || target.id === "leave-day-modal") {
+      closeLeaveDayModal();
+    }
+    if (target.matches("[data-close-rota-day-modal]") || target.id === "rota-day-modal") {
+      closeRotaDayModal();
+    }
     if (target.matches("[data-close-unit-modal]") || target.id === "unit-management-modal") {
       closeUnitModal();
     }
@@ -3503,6 +5309,8 @@ function bindViewEvents() {
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
       closeAnalysisPersonModal();
+      closeLeaveDayModal();
+      closeRotaDayModal();
       closeUnitModal();
       if (sidebarOpen) toggleSidebar(false);
     }
@@ -3532,6 +5340,8 @@ function bindViewEvents() {
     }
     if (target.id === "leave-month") {
       leaveMonth = target.value || leaveMonth;
+      leaveImportPreview = null;
+      leaveImportFile = null;
       await renderLeave();
       return;
     }
@@ -3540,6 +5350,28 @@ function bindViewEvents() {
       closeUnitModal();
       unitEditingAssignmentId = null;
       await renderUnitManagement();
+      return;
+    }
+    if (target.id === "rota-setup-month") {
+      rotaSetupMonth = target.value || rotaSetupMonth;
+      await renderRotaSetup();
+      return;
+    }
+    if (target.id === "rota-template-month") {
+      rotaTemplateMonth = target.value || rotaTemplateMonth;
+      rejectedRotaCandidates.clear();
+      closeRotaDayModal();
+      await renderRotaTemplate();
+      return;
+    }
+    if (target.id === "rota-review-month") {
+      rotaReviewMonth = target.value || rotaReviewMonth;
+      await renderRotaReview();
+      return;
+    }
+    if (target.id === "rota-publish-month") {
+      rotaPublishMonth = target.value || rotaPublishMonth;
+      await renderRotaPublish();
       return;
     }
     if (target.dataset.callLevel) {

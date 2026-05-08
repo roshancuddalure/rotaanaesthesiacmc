@@ -1,14 +1,15 @@
 from datetime import date
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from pydantic import BaseModel, field_validator
 from sqlalchemy.orm import Session, selectinload
 
 from app.api.v1.auth import current_user
 from app.db.session import get_db
 from app.models import LeaveRequest, Person, UserAccount
-from app.services.leave import leave_day_entries, leave_requests_for_month, leave_summary, month_bounds
+from app.services.leave import leave_day_entries, leave_pressure, leave_requests_for_month, leave_summary, month_bounds
+from app.services.leave_import import apply_leave_import, preview_leave_import
 
 router = APIRouter()
 
@@ -66,6 +67,28 @@ class LeaveCalendarRead(BaseModel):
     month: str
     summary: dict[str, object]
     days: dict[str, list[dict[str, object]]]
+
+
+class LeaveImportPreviewRead(BaseModel):
+    filename: str
+    month: str
+    total_rows: int
+    matched_rows: int
+    unresolved_rows: int
+    invalid_rows: int
+    sheets: list[str] = []
+    source_formats: list[str] = []
+    parser_warnings: list[str] = []
+    rows: list[dict[str, object]]
+
+
+class LeaveImportApplyRead(BaseModel):
+    filename: str
+    month: str
+    created_rows: int
+    skipped_rows: int
+    skipped_preview_rows: list[dict[str, object]]
+    preview: dict[str, object]
 
 
 def leave_to_read(leave: LeaveRequest) -> LeaveRequestRead:
@@ -197,3 +220,47 @@ def get_leave_calendar(
         days=leave_day_entries(db, leaves, month),
     )
 
+
+@router.get("/leave/pressure")
+def get_leave_pressure(
+    month: str,
+    _user: UserAccount = Depends(current_user),
+    db: Session = Depends(get_db),
+) -> dict[str, object]:
+    try:
+        month_bounds(month)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return leave_pressure(db, month)
+
+
+@router.post("/leave/import-preview")
+async def preview_leave_upload(
+    month: str,
+    file: UploadFile = File(...),
+    _user: UserAccount = Depends(current_user),
+    db: Session = Depends(get_db),
+) -> LeaveImportPreviewRead:
+    try:
+        month_bounds(month)
+        content = await file.read()
+        result = preview_leave_import(db, file.filename or "leave-import", content, month)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return LeaveImportPreviewRead(**result)
+
+
+@router.post("/leave/import-apply")
+async def apply_leave_upload(
+    month: str,
+    file: UploadFile = File(...),
+    _user: UserAccount = Depends(current_user),
+    db: Session = Depends(get_db),
+) -> LeaveImportApplyRead:
+    try:
+        month_bounds(month)
+        content = await file.read()
+        result = apply_leave_import(db, file.filename or "leave-import", content, month)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return LeaveImportApplyRead(**result)
