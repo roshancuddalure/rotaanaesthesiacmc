@@ -72,6 +72,9 @@ class PersonAnalysis:
     caesar_a: int = 0
     pac: int = 0
     shift: int = 0
+    main_shift: int = 0
+    rc_shift: int = 0
+    pb_shift: int = 0
     rc12hr: int = 0
     cb_co12hr: int = 0
     chad: int = 0
@@ -125,6 +128,9 @@ def duty_category_key(duty_type: str) -> str | None:
         "CAESAR_A_12HR": "caesar_a",
         "PAC": "pac",
         "SHIFT": "shift",
+        "MAIN_SHIFT": "main_shift",
+        "RC_SHIFT": "rc_shift",
+        "PB_SHIFT": "pb_shift",
         "RC_12HR": "rc12hr",
         "RC_CO_12HR": "rc12hr",
         "CB_CO_12HR": "cb_co12hr",
@@ -353,6 +359,9 @@ def analyze_dashboard(db: Session) -> dict[str, object]:
                 "caesar_a": person.caesar_a,
                 "pac": person.pac,
                 "shift": person.shift,
+                "main_shift": person.main_shift,
+                "rc_shift": person.rc_shift,
+                "pb_shift": person.pb_shift,
                 "rc12hr": person.rc12hr,
                 "cb_co12hr": person.cb_co12hr,
                 "chad": person.chad,
@@ -389,6 +398,9 @@ def analyze_dashboard(db: Session) -> dict[str, object]:
             "cart",
             "pac",
             "shift",
+            "main_shift",
+            "rc_shift",
+            "pb_shift",
             "caesar_a",
             "caesar_b",
             "rc12hr",

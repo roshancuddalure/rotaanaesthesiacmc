@@ -106,6 +106,43 @@ def test_manual_assignment_allows_override_and_recalculates_slot_safety() -> Non
         assert session.query(DutyAssignment).count() == 1
 
 
+def test_manual_assignment_blocks_wrong_call_level_even_with_override() -> None:
+    engine = create_engine("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(engine)
+
+    with Session(engine) as session:
+        unit, _blocked, _available, slot = seed_manual_assignment_context(session)
+        wrong_call = Person(canonical_name="Wrong Call Member", call_level="4TH_CALL")
+        session.add(wrong_call)
+        session.flush()
+        session.add(
+            PersonPosting(
+                person=wrong_call,
+                unit=unit,
+                posting_type="4TH_CALL",
+                starts_on=date(2026, 5, 1),
+                source="unit_board",
+            )
+        )
+        session.commit()
+
+        try:
+            assign_person_to_slot(
+                session,
+                slot_id=slot.id,
+                person_id=wrong_call.id,
+                override_reason="Board tried to force wrong call",
+            )
+        except RotaAssignmentError as exc:
+            assert exc.status_code == 409
+            assert exc.validation is not None
+            assert exc.validation["status"] == "blocked"
+            assert exc.validation["requires_override"] is False
+            assert any(issue["code"] == "call_level_mismatch" for issue in exc.validation["issues"])
+        else:
+            raise AssertionError("Wrong call level assignment should be blocked")
+
+
 def test_manual_assignment_replace_and_clear() -> None:
     engine = create_engine("sqlite+pysqlite:///:memory:")
     Base.metadata.create_all(engine)

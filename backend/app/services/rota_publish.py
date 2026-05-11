@@ -98,7 +98,7 @@ def rota_publish_checklist(db: Session, month: str) -> dict[str, object]:
     else:
         checks.append(checklist_item("clear", "Exchange requests", "No pending exchange approvals remain."))
 
-    warning_items = max(0, int(summary["review_items"]) - int(summary["hard_blocked_items"]))
+    warning_items = int(summary.get("unresolved_warning_items", max(0, int(summary["review_items"]) - int(summary["hard_blocked_items"]))))
     if warning_items:
         warnings.append(
             checklist_item(
@@ -284,6 +284,101 @@ def safety_conflict_rows(safety: dict[str, object]) -> list[list[Any]]:
     return rows
 
 
+def publish_readiness_rows(checklist: dict[str, object]) -> list[list[Any]]:
+    rows: list[list[Any]] = []
+    for group_name in ["blockers", "warnings", "checks"]:
+        for item in checklist.get(group_name, []):
+            if not isinstance(item, dict):
+                continue
+            rows.append(
+                [
+                    group_name,
+                    item.get("status"),
+                    item.get("title"),
+                    item.get("detail"),
+                ]
+            )
+    return rows
+
+
+def review_item_rows(review: dict[str, object]) -> list[list[Any]]:
+    rows: list[list[Any]] = []
+    for item in review["review_items"]:
+        for issue in item["issues"]:
+            decision = issue.get("decision") if isinstance(issue, dict) else None
+            decision = decision if isinstance(decision, dict) else {}
+            rows.append(
+                [
+                    item["slot"]["duty_date"],
+                    item["slot"]["unit_name"],
+                    item["slot"]["duty_type"],
+                    item["severity"],
+                    issue["code"],
+                    issue["message"],
+                    "yes" if issue.get("accepted") else "no",
+                    decision.get("decision_type"),
+                    decision.get("note"),
+                    decision.get("decided_by"),
+                    decision.get("updated_at"),
+                    item["recommended_action"],
+                ]
+            )
+    return rows
+
+
+def review_decision_rows(review: dict[str, object]) -> list[list[Any]]:
+    rows: list[list[Any]] = []
+    for item in review["review_items"]:
+        for issue in item["issues"]:
+            decision = issue.get("decision") if isinstance(issue, dict) else None
+            if not isinstance(decision, dict):
+                continue
+            rows.append(
+                [
+                    item["slot"]["duty_date"],
+                    item["slot"]["unit_name"],
+                    item["slot"]["duty_type"],
+                    issue.get("code"),
+                    decision.get("decision_type"),
+                    decision.get("note"),
+                    decision.get("decided_by"),
+                    decision.get("created_at"),
+                    decision.get("updated_at"),
+                ]
+            )
+    return rows
+
+
+def fairness_rows(review: dict[str, object]) -> list[list[Any]]:
+    rows: list[list[Any]] = []
+    for row in review.get("call_level_fairness", []):
+        group_totals = row.get("group_totals", {})
+        over_assigned = row.get("over_assigned", [])
+        under_assigned = row.get("under_assigned", [])
+        rows.append(
+            [
+                row.get("call_level"),
+                row.get("people"),
+                row.get("average_assignments"),
+                row.get("total_assignments"),
+                row.get("total_24hr"),
+                row.get("weekend_24hr"),
+                ", ".join(f"{key}: {value}" for key, value in dict(group_totals).items()),
+                ", ".join(
+                    f"{person.get('person_name')} ({person.get('total_assignments')})"
+                    for person in over_assigned
+                    if isinstance(person, dict)
+                ),
+                ", ".join(
+                    f"{person.get('person_name')} ({person.get('total_assignments')})"
+                    for person in under_assigned
+                    if isinstance(person, dict)
+                ),
+            ]
+        )
+    return rows
+
+
 def final_rota_export(db: Session, month: str) -> tuple[str, bytes]:
     checklist = rota_publish_checklist(db, month)
     if checklist["latest_publish"] is None:
@@ -309,9 +404,21 @@ def final_rota_export(db: Session, month: str) -> tuple[str, bytes]:
         ["Assigned slots", checklist["summary"]["assigned_slots"]],
         ["Open slots", checklist["summary"]["open_slots"]],
         ["Review items", checklist["summary"]["review_items"]],
+        ["Hard blocked items", checklist["summary"].get("hard_blocked_items")],
+        ["Accepted review items", checklist["summary"].get("accepted_review_items")],
+        ["Unresolved warnings", checklist["summary"].get("unresolved_warning_items")],
         ["Override assignments", checklist["summary"]["override_assignments"]],
+        ["Pending exchanges", checklist["summary"].get("pending_exchange_requests")],
+        ["Over-assigned fairness flags", checklist["summary"].get("over_assigned_people")],
+        ["Under-assigned fairness flags", checklist["summary"].get("under_assigned_people")],
     ]
     write_rows(workbook, "Summary", ["Field", "Value"], summary_rows)
+    write_rows(
+        workbook,
+        "Publish Readiness",
+        ["Group", "Status", "Title", "Detail"],
+        publish_readiness_rows(checklist),
+    )
     write_rows(
         workbook,
         "Final Rota",
@@ -334,18 +441,47 @@ def final_rota_export(db: Session, month: str) -> tuple[str, bytes]:
     write_rows(
         workbook,
         "Duty Counts",
-        ["Member", "Call Level", "Total Assignments", "24hr", "Weekend 24hr", "Overrides"],
+        [
+            "Member",
+            "Call Level",
+            "Total Assignments",
+            "24hr",
+            "Weekday Assignments",
+            "Weekend Assignments",
+            "Weekend 24hr",
+            "Duty Groups",
+            "Overrides",
+        ],
         [
             [
                 row["person_name"],
                 row["call_level"],
                 row["total_assignments"],
                 row["total_24hr"],
+                row.get("weekday_assignments"),
+                row.get("weekend_assignments"),
                 row["weekend_24hr"],
+                ", ".join(f"{key}: {value}" for key, value in dict(row.get("group_counts", {})).items()),
                 row["override_assignments"],
             ]
             for row in review["person_workload"]
         ],
+    )
+    write_rows(
+        workbook,
+        "Call Fairness",
+        [
+            "Call Level",
+            "People",
+            "Average Assignments",
+            "Total Assignments",
+            "24hr",
+            "Weekend 24hr",
+            "Duty Group Totals",
+            "High Load People",
+            "Low Load People",
+        ],
+        fairness_rows(review),
     )
     write_rows(
         workbook,
@@ -369,19 +505,27 @@ def final_rota_export(db: Session, month: str) -> tuple[str, bytes]:
     write_rows(
         workbook,
         "Review Items",
-        ["Date", "Unit", "Duty", "Severity", "Issue", "Recommended Action"],
         [
-            [
-                item["slot"]["duty_date"],
-                item["slot"]["unit_name"],
-                item["slot"]["duty_type"],
-                item["severity"],
-                issue["message"],
-                item["recommended_action"],
-            ]
-            for item in review["review_items"]
-            for issue in item["issues"]
+            "Date",
+            "Unit",
+            "Duty",
+            "Severity",
+            "Issue Code",
+            "Issue",
+            "Accepted",
+            "Decision Type",
+            "Decision Note",
+            "Decided By",
+            "Decided At",
+            "Recommended Action",
         ],
+        review_item_rows(review),
+    )
+    write_rows(
+        workbook,
+        "Review Decisions",
+        ["Date", "Unit", "Duty", "Issue Code", "Decision Type", "Decision Note", "Decided By", "Created At", "Updated At"],
+        review_decision_rows(review),
     )
     write_rows(
         workbook,
@@ -392,10 +536,28 @@ def final_rota_export(db: Session, month: str) -> tuple[str, bytes]:
     write_rows(
         workbook,
         "Exchange Audit",
-        ["Status", "Date", "Unit", "From", "To", "Requested By", "Approved By", "Reason", "Decision", "Created At"],
+        [
+            "Status",
+            "Validation Status",
+            "Requires Override",
+            "Date",
+            "Unit",
+            "From",
+            "To",
+            "Requested By",
+            "Approved By",
+            "Reason",
+            "Decision",
+            "Created At",
+            "Decided At",
+        ],
         [
             [
                 exchange["status"],
+                exchange["validation_status"],
+                (exchange.get("validation_snapshot") or {}).get("validation", {}).get("requires_override")
+                if isinstance(exchange.get("validation_snapshot"), dict)
+                else "",
                 (exchange["from_slot"] or {}).get("duty_date"),
                 (exchange["from_slot"] or {}).get("unit_name"),
                 (exchange["from_person"] or {}).get("canonical_name"),
@@ -405,6 +567,7 @@ def final_rota_export(db: Session, month: str) -> tuple[str, bytes]:
                 exchange["request_reason"],
                 exchange["decision_reason"],
                 exchange["created_at"],
+                exchange["decided_at"],
             ]
             for exchange in review["exchange_requests"]
         ],

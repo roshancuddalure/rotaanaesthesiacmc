@@ -99,6 +99,12 @@ def test_publish_records_approval_and_exports_workbook() -> None:
         assert "Final Rota" in workbook.sheetnames
         assert "Duty Counts" in workbook.sheetnames
         assert "Unit Safety" in workbook.sheetnames
+        assert "Publish Readiness" in workbook.sheetnames
+        assert "Call Fairness" in workbook.sheetnames
+        assert "Review Decisions" in workbook.sheetnames
+        assert workbook["Review Items"].cell(row=1, column=7).value == "Accepted"
+        assert workbook["Exchange Audit"].cell(row=1, column=2).value == "Validation Status"
+        assert workbook["Call Fairness"].cell(row=1, column=1).value == "Call Level"
 
 
 @contextmanager

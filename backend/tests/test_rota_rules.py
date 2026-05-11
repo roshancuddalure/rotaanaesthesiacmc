@@ -4,7 +4,9 @@ from sqlalchemy.orm import Session
 from app import models  # noqa: F401
 from app.db.session import Base
 from app.domain.duty_types import DUTY_TYPES
+from app.models import RuleSetting
 from app.services.rota_rules import (
+    PHASE_ONE_SETTING_KEY,
     RotaPhaseOneRules,
     default_phase_one_rules,
     get_phase_one_rules,
@@ -42,6 +44,26 @@ def test_phase_one_rules_persist_as_rule_setting() -> None:
 
         assert loaded_rules.rest_rules.minimum_gap_after_24hr_hours == 36
         assert loaded_rules.unit_staffing_rules.warning_unavailable_percent == 25
+
+
+def test_phase_one_rules_merge_new_duty_types_into_existing_settings() -> None:
+    engine = create_engine("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(engine)
+
+    with Session(engine) as session:
+        rule_version, rules = get_phase_one_rules(session)
+        rules.duty_rules = [rule for rule in rules.duty_rules if rule.key not in {"MAIN_SHIFT", "RC_SHIFT", "PB_SHIFT"}]
+        setting = session.query(RuleSetting).filter_by(
+            rule_version_id=rule_version.id,
+            key=PHASE_ONE_SETTING_KEY,
+        ).one()
+        setting.value = rules.model_dump(mode="json")
+        session.commit()
+
+        _, loaded_rules = get_phase_one_rules(session)
+
+        loaded_keys = {rule.key for rule in loaded_rules.duty_rules}
+        assert {"MAIN_SHIFT", "RC_SHIFT", "PB_SHIFT"}.issubset(loaded_keys)
 
 
 def test_phase_one_rules_reject_duplicate_duty_keys() -> None:

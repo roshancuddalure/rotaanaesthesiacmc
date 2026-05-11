@@ -1,22 +1,28 @@
 from datetime import date
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from pydantic import BaseModel
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.api.v1.auth import current_user
 from app.db.session import get_db
-from app.models import Person, PersonPosting, Unit, UserAccount
+from app.models import Person, PersonPosting, Unit, UnitCallMinimum, UserAccount
+from app.services.rota_call_levels import normalize_call_level
 from app.services.leave import month_bounds
 from app.services.unit_management import (
     UNIT_BOARD_SOURCE,
     active_units,
     monthly_unit_assignments,
     normalize_posting_type,
+    unit_call_member_counts,
     unit_leave_summary,
     validate_unit_month,
+)
+from app.services.unit_assignment_import import (
+    apply_unit_assignment_import,
+    preview_unit_assignment_import,
 )
 
 router = APIRouter()
@@ -27,8 +33,17 @@ class UnitRead(BaseModel):
     code: str
     name: str
     campus: str | None
+    minimum_free_people: int
     active_status: str
     notes: str | None
+
+
+class UnitCallMinimumRead(BaseModel):
+    unit_id: UUID
+    call_level: str
+    assigned_members: int
+    minimum_free_people: int
+    max_allowed: int
 
 
 class UnitPersonRead(BaseModel):
@@ -73,7 +88,31 @@ class UnitManagementMonthRead(BaseModel):
     units: list[UnitRead]
     assignments: list[UnitAssignmentRead]
     unit_summaries: list[UnitSummaryRead]
+    unit_call_minimums: list[UnitCallMinimumRead]
     validation_issues: list[UnitValidationIssueRead]
+
+
+class UnitAssignmentImportPreviewRead(BaseModel):
+    filename: str
+    month: str
+    total_rows: int
+    matched_rows: int
+    unresolved_rows: int
+    invalid_rows: int
+    sheets: list[str] = []
+    source_formats: list[str] = []
+    parser_warnings: list[str] = []
+    rows: list[dict[str, object]]
+
+
+class UnitAssignmentImportApplyRead(BaseModel):
+    filename: str
+    month: str
+    created_rows: int
+    deleted_existing_rows: int
+    skipped_rows: int
+    skipped_preview_rows: list[dict[str, object]]
+    preview: dict[str, object]
 
 
 class UnitAssignmentPayload(BaseModel):
@@ -85,12 +124,53 @@ class UnitAssignmentPayload(BaseModel):
     notes: str | None = None
 
 
+class UnitCallMinimumPayload(BaseModel):
+    call_level: str
+    minimum_free_people: int
+
+
+class UnitSettingsPayload(BaseModel):
+    minimum_free_people: int
+    call_minimums: list[UnitCallMinimumPayload] = []
+
+
+CALL_LEVEL_ORDER = ["1ST_CALL", "2ND_CALL", "3RD_CALL", "4TH_CALL", "CO_4TH_CALL", "5TH_CALL", "Unassigned"]
+
+
+def unit_call_minimum_rows(
+    units: list[Unit],
+    assignments: list[PersonPosting],
+    month: str,
+) -> list[UnitCallMinimumRead]:
+    counts = unit_call_member_counts(assignments, month)
+    rows: list[UnitCallMinimumRead] = []
+    for unit in units:
+        minimums = {normalize_call_level(item.call_level): item.minimum_free_people for item in unit.call_minimums}
+        call_levels = sorted(
+            {call for (unit_id, call), count in counts.items() if unit_id == unit.id and count > 0}.union(minimums),
+            key=lambda call: (CALL_LEVEL_ORDER.index(call) if call in CALL_LEVEL_ORDER else 99, call),
+        )
+        for call_level in call_levels:
+            assigned = counts.get((unit.id, call_level), 0)
+            rows.append(
+                UnitCallMinimumRead(
+                    unit_id=unit.id,
+                    call_level=call_level,
+                    assigned_members=assigned,
+                    minimum_free_people=int(minimums.get(call_level, 0)),
+                    max_allowed=assigned,
+                )
+            )
+    return rows
+
+
 def unit_to_read(unit: Unit) -> UnitRead:
     return UnitRead(
         id=unit.id,
         code=unit.code,
         name=unit.name,
         campus=unit.campus,
+        minimum_free_people=unit.minimum_free_people,
         active_status=unit.active_status,
         notes=unit.notes,
     )
@@ -182,10 +262,96 @@ def get_unit_management_month(
             )
             for unit in units
         ],
+        unit_call_minimums=unit_call_minimum_rows(units, assignments, month),
         validation_issues=[
             UnitValidationIssueRead(**issue) for issue in validate_unit_month(assignments, month)
         ],
     )
+
+
+@router.put("/unit-management/units/{unit_id}/settings")
+def update_unit_settings(
+    unit_id: UUID,
+    payload: UnitSettingsPayload,
+    month: str | None = None,
+    _user: UserAccount = Depends(current_user),
+    db: Session = Depends(get_db),
+) -> UnitRead:
+    if payload.minimum_free_people < 0:
+        raise HTTPException(status_code=400, detail="Minimum free people cannot be negative")
+    unit = get_unit_or_404(db, unit_id)
+    if month:
+        try:
+            month_bounds(month)
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+        counts = unit_call_member_counts(monthly_unit_assignments(db, month), month)
+        seen: set[str] = set()
+        existing = {item.call_level: item for item in unit.call_minimums}
+        for item in payload.call_minimums:
+            call_level = normalize_call_level(item.call_level)
+            if call_level in seen:
+                raise HTTPException(status_code=400, detail=f"Duplicate call level rule: {call_level}")
+            seen.add(call_level)
+            if item.minimum_free_people < 0:
+                raise HTTPException(status_code=400, detail="Call-wise minimum free people cannot be negative")
+            assigned = counts.get((unit.id, call_level), 0)
+            if item.minimum_free_people > assigned:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"{call_level} minimum free people cannot exceed assigned members in this unit ({assigned})",
+                )
+            row = existing.get(call_level)
+            if row is None:
+                row = UnitCallMinimum(unit=unit, call_level=call_level)
+                db.add(row)
+            row.minimum_free_people = item.minimum_free_people
+        for call_level, row in list(existing.items()):
+            if call_level not in seen:
+                db.delete(row)
+    unit.minimum_free_people = payload.minimum_free_people
+    db.commit()
+    db.refresh(unit)
+    return unit_to_read(unit)
+
+
+@router.post("/unit-management/import-preview")
+async def preview_unit_assignment_upload(
+    month: str,
+    file: UploadFile = File(...),
+    _user: UserAccount = Depends(current_user),
+    db: Session = Depends(get_db),
+) -> UnitAssignmentImportPreviewRead:
+    try:
+        month_bounds(month)
+        content = await file.read()
+        result = preview_unit_assignment_import(db, file.filename or "unitwise-import", content, month)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return UnitAssignmentImportPreviewRead(**result)
+
+
+@router.post("/unit-management/import-apply")
+async def apply_unit_assignment_upload(
+    month: str,
+    replace_existing: bool = False,
+    file: UploadFile = File(...),
+    _user: UserAccount = Depends(current_user),
+    db: Session = Depends(get_db),
+) -> UnitAssignmentImportApplyRead:
+    try:
+        month_bounds(month)
+        content = await file.read()
+        result = apply_unit_assignment_import(
+            db,
+            file.filename or "unitwise-import",
+            content,
+            month,
+            replace_existing=replace_existing,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return UnitAssignmentImportApplyRead(**result)
 
 
 @router.post("/unit-management/assignments")

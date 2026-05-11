@@ -42,6 +42,25 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   return response.json() as Promise<T>;
 }
 
+async function errorFromResponse(response: Response): Promise<Error> {
+  let message = `API request failed: ${response.status}`;
+  let detail: unknown = null;
+  try {
+    const payload = await response.json();
+    detail = payload.detail;
+    if (typeof payload.detail === "string") {
+      message = payload.detail;
+    } else if (payload.detail?.message) {
+      message = payload.detail.message;
+    }
+  } catch {
+    // Keep the status-based fallback when the server does not return JSON.
+  }
+  const error = new Error(message) as Error & { detail?: unknown };
+  error.detail = detail;
+  return error;
+}
+
 export function healthCheck(): Promise<{ status: string }> {
   return request<{ status: string }>("/api/health");
 }
@@ -140,6 +159,9 @@ export interface AnalysisPerson {
   caesar_a: number;
   pac: number;
   shift: number;
+  main_shift: number;
+  rc_shift: number;
+  pb_shift: number;
   rc12hr: number;
   cb_co12hr: number;
   chad: number;
@@ -370,6 +392,49 @@ export interface LeaveImportApplyResult {
   preview: LeaveImportPreview;
 }
 
+export interface UnitAssignmentImportPreview {
+  filename: string;
+  month: string;
+  total_rows: number;
+  matched_rows: number;
+  unresolved_rows: number;
+  invalid_rows: number;
+  sheets: string[];
+  source_formats: string[];
+  parser_warnings: string[];
+  rows: Array<{
+    row_number: number;
+    sheet_name?: string;
+    column_label?: string;
+    raw_person_name: string;
+    cleaned_person_name?: string;
+    person_id: string | null;
+    person_name: string | null;
+    suggested_person_id?: string | null;
+    suggested_person_name?: string | null;
+    match_method?: string | null;
+    match_confidence?: string;
+    raw_unit_label: string;
+    unit_id: string | null;
+    unit_name: string | null;
+    unit_match_method?: string | null;
+    raw_posting_label: string;
+    posting_type: string;
+    preview_status: string;
+    issues: string[];
+  }>;
+}
+
+export interface UnitAssignmentImportApplyResult {
+  filename: string;
+  month: string;
+  created_rows: number;
+  deleted_existing_rows: number;
+  skipped_rows: number;
+  skipped_preview_rows: UnitAssignmentImportPreview["rows"];
+  preview: UnitAssignmentImportPreview;
+}
+
 export interface LeaveRequestPayload {
   person_id: string;
   leave_type: string;
@@ -385,6 +450,7 @@ export interface UnitRead {
   code: string;
   name: string;
   campus: string | null;
+  minimum_free_people: number;
   active_status: string;
   notes: string | null;
 }
@@ -415,6 +481,14 @@ export interface UnitSummary {
   leave_by_call_level: Record<string, number>;
 }
 
+export interface UnitCallMinimum {
+  unit_id: string;
+  call_level: string;
+  assigned_members: number;
+  minimum_free_people: number;
+  max_allowed: number;
+}
+
 export interface UnitValidationIssue {
   severity: "error" | "warning" | "info";
   code: string;
@@ -431,6 +505,7 @@ export interface UnitManagementMonth {
   units: UnitRead[];
   assignments: UnitAssignment[];
   unit_summaries: UnitSummary[];
+  unit_call_minimums: UnitCallMinimum[];
   validation_issues: UnitValidationIssue[];
 }
 
@@ -441,6 +516,11 @@ export interface UnitAssignmentPayload {
   starts_on: string;
   ends_on?: string | null;
   notes?: string | null;
+}
+
+export interface UnitSettingsPayload {
+  minimum_free_people: number;
+  call_minimums?: Array<{ call_level: string; minimum_free_people: number }>;
 }
 
 export interface MemberAudit {
@@ -542,9 +622,33 @@ export interface DutyRule {
   blocks_elective_next_day: boolean;
   active: boolean;
   allowed_call_levels: string[];
+  allowed_cluster_keys: string[];
+  excluded_cluster_keys: string[];
   allowed_designations: string[];
   allowed_units: string[];
   excluded_units: string[];
+}
+
+export interface CallClusterMember {
+  id: string;
+  person_id: string;
+  canonical_name: string;
+  call_level: string | null;
+  effective_from: string;
+  effective_to: string | null;
+  source: string;
+  notes: string | null;
+}
+
+export interface CallCluster {
+  id: string;
+  key: string;
+  name: string;
+  call_level: string;
+  description: string | null;
+  active: boolean;
+  member_count: number;
+  members?: CallClusterMember[];
 }
 
 export interface RotaPhaseOneRules {
@@ -771,6 +875,14 @@ export interface RotaTemplateGeneratePayload {
   replace_existing: boolean;
 }
 
+export interface RotaTemplateClearResult {
+  month: string;
+  cleared_slots: number;
+  cleared_assignments: number;
+  cleared_runs: number;
+  cleared_events: number;
+}
+
 export interface RotaManualAssignmentPayload {
   person_id: string;
   replace_existing: boolean;
@@ -802,6 +914,10 @@ export interface RotaCandidate {
   validation_issues: Array<{ severity: string; code: string; message: string }>;
   counts: {
     total_assignments: number;
+    target_is_weekend?: number;
+    same_day_type?: number;
+    weekday_assignments?: number;
+    weekend_assignments?: number;
     total_24hr: number;
     weekend_24hr: number;
     same_group: number;
@@ -886,6 +1002,16 @@ export interface RotaReviewIssue {
   severity: string;
   code: string;
   message: string;
+  accepted?: boolean;
+  decision?: {
+    id: string;
+    issue_code: string;
+    decision_type: string;
+    note: string;
+    decided_by: string | null;
+    created_at: string;
+    updated_at: string;
+  } | null;
 }
 
 export interface RotaReviewItem {
@@ -896,6 +1022,7 @@ export interface RotaReviewItem {
   assignments: RotaSlotAssignment[];
   candidates: RotaCandidate[];
   recommended_action: string;
+  accepted?: boolean;
 }
 
 export interface RotaPersonWorkload {
@@ -904,8 +1031,11 @@ export interface RotaPersonWorkload {
   call_level: string | null;
   total_assignments: number;
   total_24hr: number;
+  weekday_assignments?: number;
+  weekend_assignments?: number;
   weekend_24hr: number;
   override_assignments: number;
+  group_counts?: Record<string, number>;
   assignments: Array<{
     assignment_id: string;
     slot_id: string;
@@ -914,6 +1044,30 @@ export interface RotaPersonWorkload {
     unit_name: string | null;
     override_reason: string | null;
   }>;
+}
+
+export interface RotaCallLevelFairness {
+  call_level: string;
+  people: number;
+  total_assignments: number;
+  average_assignments: number;
+  total_24hr: number;
+  weekend_24hr: number;
+  over_assigned: Array<{
+    person_id: string;
+    person_name: string;
+    total_assignments: number;
+    total_24hr: number;
+    weekend_24hr: number;
+  }>;
+  under_assigned: Array<{
+    person_id: string;
+    person_name: string;
+    total_assignments: number;
+    total_24hr: number;
+    weekend_24hr: number;
+  }>;
+  group_totals: Record<string, number>;
 }
 
 export interface RotaAssignmentOption {
@@ -960,12 +1114,18 @@ export interface RotaReviewMonth {
     open_slots: number;
     review_items: number;
     hard_blocked_items: number;
+    accepted_review_items?: number;
+    unresolved_warning_items?: number;
     override_assignments: number;
     exchange_requests: number;
     pending_exchange_requests: number;
+    fairness_call_levels?: number;
+    over_assigned_people?: number;
+    under_assigned_people?: number;
   };
   review_items: RotaReviewItem[];
   person_workload: RotaPersonWorkload[];
+  call_level_fairness?: RotaCallLevelFairness[];
   exchange_requests: RotaExchangeRequest[];
   assignment_options: RotaAssignmentOption[];
 }
@@ -1084,7 +1244,7 @@ export async function previewLeaveImport(month: string, file: File): Promise<Lea
     body: formData,
   });
   if (!response.ok) {
-    throw new Error(`API request failed: ${response.status}`);
+    throw await errorFromResponse(response);
   }
   return response.json() as Promise<LeaveImportPreview>;
 }
@@ -1098,7 +1258,7 @@ export async function applyLeaveImport(month: string, file: File): Promise<Leave
     body: formData,
   });
   if (!response.ok) {
-    throw new Error(`API request failed: ${response.status}`);
+    throw await errorFromResponse(response);
   }
   return response.json() as Promise<LeaveImportApplyResult>;
 }
@@ -1136,6 +1296,41 @@ export function getUnitManagementMonth(month: string): Promise<UnitManagementMon
   return request<UnitManagementMonth>(`/api/v1/unit-management/month?month=${encodeURIComponent(month)}`);
 }
 
+export async function previewUnitAssignmentImport(month: string, file: File): Promise<UnitAssignmentImportPreview> {
+  const formData = new FormData();
+  formData.append("file", file);
+  const response = await fetch(`${API_BASE_URL}/api/v1/unit-management/import-preview?month=${encodeURIComponent(month)}`, {
+    method: "POST",
+    headers: authToken ? { Authorization: `Bearer ${authToken}` } : {},
+    body: formData,
+  });
+  if (!response.ok) {
+    throw await errorFromResponse(response);
+  }
+  return response.json() as Promise<UnitAssignmentImportPreview>;
+}
+
+export async function applyUnitAssignmentImport(
+  month: string,
+  file: File,
+  replaceExisting: boolean,
+): Promise<UnitAssignmentImportApplyResult> {
+  const formData = new FormData();
+  formData.append("file", file);
+  const response = await fetch(
+    `${API_BASE_URL}/api/v1/unit-management/import-apply?month=${encodeURIComponent(month)}&replace_existing=${replaceExisting}`,
+    {
+      method: "POST",
+      headers: authToken ? { Authorization: `Bearer ${authToken}` } : {},
+      body: formData,
+    },
+  );
+  if (!response.ok) {
+    throw await errorFromResponse(response);
+  }
+  return response.json() as Promise<UnitAssignmentImportApplyResult>;
+}
+
 export function createUnitAssignment(payload: UnitAssignmentPayload): Promise<UnitAssignment> {
   return request<UnitAssignment>("/api/v1/unit-management/assignments", {
     method: "POST",
@@ -1153,6 +1348,14 @@ export function updateUnitAssignment(id: string, payload: UnitAssignmentPayload)
 export function deleteUnitAssignment(id: string): Promise<{ status: string }> {
   return request<{ status: string }>(`/api/v1/unit-management/assignments/${id}`, {
     method: "DELETE",
+  });
+}
+
+export function updateUnitSettings(id: string, payload: UnitSettingsPayload, month?: string): Promise<UnitRead> {
+  const query = month ? `?month=${encodeURIComponent(month)}` : "";
+  return request<UnitRead>(`/api/v1/unit-management/units/${id}/settings${query}`, {
+    method: "PUT",
+    body: JSON.stringify(payload),
   });
 }
 
@@ -1276,6 +1479,49 @@ export function listUserAccounts(): Promise<UserAccount[]> {
   return request<UserAccount[]>("/api/v1/auth/accounts");
 }
 
+export function getCallClusters(): Promise<CallCluster[]> {
+  return request<CallCluster[]>("/api/v1/admin/call-clusters");
+}
+
+export function createCallCluster(payload: {
+  name: string;
+  call_level: string;
+  description?: string | null;
+  active?: boolean;
+}): Promise<CallCluster> {
+  return request<CallCluster>("/api/v1/admin/call-clusters", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function updateCallCluster(clusterId: string, payload: {
+  key?: string;
+  name: string;
+  call_level: string;
+  description?: string | null;
+  active?: boolean;
+}): Promise<CallCluster> {
+  return request<CallCluster>(`/api/v1/admin/call-clusters/${clusterId}`, {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function getCallClusterMembers(clusterId: string): Promise<CallCluster> {
+  return request<CallCluster>(`/api/v1/admin/call-clusters/${clusterId}/members`);
+}
+
+export function updateCallClusterMembers(
+  clusterId: string,
+  members: Array<{ person_id: string; effective_from: string; effective_to?: string | null; notes?: string | null }>,
+): Promise<CallCluster> {
+  return request<CallCluster>(`/api/v1/admin/call-clusters/${clusterId}/members`, {
+    method: "PUT",
+    body: JSON.stringify({ members }),
+  });
+}
+
 export function forgotPassword(username: string): Promise<{ message: string; reset_token: string | null }> {
   return request<{ message: string; reset_token: string | null }>("/api/v1/auth/forgot-password", {
     method: "POST",
@@ -1341,12 +1587,26 @@ export function getRotaCandidateMonth(month: string): Promise<RotaCandidateMonth
   return request<RotaCandidateMonth>(`/api/v1/rota-candidates/month?month=${encodeURIComponent(month)}&limit_per_slot=5`);
 }
 
+export function getRotaSlotCandidates(slotId: string, limit = 50): Promise<RotaCandidateSlot> {
+  return request<RotaCandidateSlot>(`/api/v1/rota-candidates/slots/${encodeURIComponent(slotId)}?limit=${encodeURIComponent(String(limit))}`);
+}
+
 export function getRotaAutoFillMonth(month: string): Promise<RotaAutoFillMonth> {
   return request<RotaAutoFillMonth>(`/api/v1/rota-auto-fill/month?month=${encodeURIComponent(month)}`);
 }
 
 export function getRotaReviewMonth(month: string): Promise<RotaReviewMonth> {
   return request<RotaReviewMonth>(`/api/v1/rota-review/month?month=${encodeURIComponent(month)}`);
+}
+
+export function acceptRotaReviewIssue(
+  slotId: string,
+  payload: { issue_code: string; note: string },
+): Promise<NonNullable<RotaReviewIssue["decision"]>> {
+  return request<NonNullable<RotaReviewIssue["decision"]>>(`/api/v1/rota-review/slots/${slotId}/decisions`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
 }
 
 export function getRotaPublishMonth(month: string): Promise<RotaPublishMonth> {
@@ -1360,6 +1620,13 @@ export function generateRotaTemplate(
   return request<RotaTemplateMonth>(`/api/v1/rota-template/generate?month=${encodeURIComponent(month)}`, {
     method: "POST",
     body: JSON.stringify(payload),
+  });
+}
+
+export function clearRotaTemplateCache(month: string, options: { clear_assignments?: boolean } = {}): Promise<RotaTemplateClearResult> {
+  const clearAssignments = options.clear_assignments ? "&clear_assignments=true" : "";
+  return request<RotaTemplateClearResult>(`/api/v1/rota-template/cache?month=${encodeURIComponent(month)}${clearAssignments}`, {
+    method: "DELETE",
   });
 }
 
@@ -1379,10 +1646,10 @@ export function clearRotaAssignment(assignmentId: string): Promise<RotaManualAss
   });
 }
 
-export function runRotaAutoFillDraft(month: string): Promise<RotaAutoFillRun> {
+export function runRotaAutoFillDraft(month: string, payload: { strict_call_level?: boolean } = {}): Promise<RotaAutoFillRun> {
   return request<RotaAutoFillRun>(`/api/v1/rota-auto-fill/draft?month=${encodeURIComponent(month)}`, {
     method: "POST",
-    body: "{}",
+    body: JSON.stringify({ strict_call_level: payload.strict_call_level ?? true }),
   });
 }
 
@@ -1437,17 +1704,23 @@ export async function downloadRotaExport(month: string): Promise<{ blob: Blob; f
     headers: authToken ? { Authorization: `Bearer ${authToken}` } : {},
   });
   if (!response.ok) {
-    let message = `API request failed: ${response.status}`;
-    try {
-      const payload = await response.json();
-      if (typeof payload.detail === "string") message = payload.detail;
-    } catch {
-      // Keep status fallback when export errors are not JSON.
-    }
-    throw new Error(message);
+    throw await errorFromResponse(response);
   }
   return {
     blob: await response.blob(),
     filename: filenameFromDisposition(response.headers.get("Content-Disposition"), `final-rota-${month}.xlsx`),
+  };
+}
+
+export async function downloadRotaTemplateEagleEyeExport(month: string): Promise<{ blob: Blob; filename: string }> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/rota-template/eagle-eye-export?month=${encodeURIComponent(month)}`, {
+    headers: authToken ? { Authorization: `Bearer ${authToken}` } : {},
+  });
+  if (!response.ok) {
+    throw await errorFromResponse(response);
+  }
+  return {
+    blob: await response.blob(),
+    filename: filenameFromDisposition(response.headers.get("Content-Disposition"), `eagle-eye-rota-template-${month}.xlsx`),
   };
 }

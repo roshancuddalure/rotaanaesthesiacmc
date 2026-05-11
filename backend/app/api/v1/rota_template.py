@@ -1,6 +1,7 @@
 from datetime import date
 
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, model_validator
 from sqlalchemy.orm import Session
 
@@ -8,7 +9,13 @@ from app.api.v1.auth import current_user
 from app.db.session import get_db
 from app.models import UserAccount
 from app.services.leave import month_bounds
-from app.services.rota_template import TemplateGenerationOptions, generate_empty_template, template_month
+from app.services.rota_template import (
+    TemplateGenerationOptions,
+    clear_template_cache,
+    eagle_eye_export,
+    generate_empty_template,
+    template_month,
+)
 
 router = APIRouter()
 
@@ -37,6 +44,14 @@ class RotaTemplateMonthRead(BaseModel):
     summary: dict[str, object]
     latest_run: dict[str, object] | None
     slots: list[dict[str, object]]
+
+
+class RotaTemplateClearRead(BaseModel):
+    month: str
+    cleared_slots: int
+    cleared_assignments: int = 0
+    cleared_runs: int
+    cleared_events: int
 
 
 @router.get("/rota-template/month")
@@ -77,3 +92,37 @@ def generate_rota_template(
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     return RotaTemplateMonthRead(**result)
+
+
+@router.delete("/rota-template/cache")
+def clear_rota_template_cache(
+    month: str,
+    clear_assignments: bool = False,
+    _user: UserAccount = Depends(current_user),
+    db: Session = Depends(get_db),
+) -> RotaTemplateClearRead:
+    try:
+        month_bounds(month)
+        result = clear_template_cache(db, month, clear_assignments=clear_assignments)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return RotaTemplateClearRead(**result)
+
+
+@router.get("/rota-template/eagle-eye-export")
+def export_rota_template_eagle_eye(
+    month: str,
+    _user: UserAccount = Depends(current_user),
+    db: Session = Depends(get_db),
+) -> StreamingResponse:
+    try:
+        month_bounds(month)
+        filename, payload = eagle_eye_export(db, month)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    headers = {"Content-Disposition": f'attachment; filename="{filename}"'}
+    return StreamingResponse(
+        iter([payload]),
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers=headers,
+    )

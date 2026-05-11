@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+from io import BytesIO
+from typing import Any
 from dataclasses import dataclass
 from datetime import date, datetime, time, timedelta
 from uuid import UUID
 
-from sqlalchemy import select
+import xlsxwriter
+from sqlalchemy import delete, select, update
 from sqlalchemy.orm import Session, selectinload
 
 from app.models import (
@@ -15,9 +18,11 @@ from app.models import (
     PersonPosting,
     RotaTemplateGenerationEvent,
     RotaTemplateGenerationRun,
+    RotaAutoFillEvent,
     Unit,
 )
 from app.services.leave import ACTIVE_LEAVE_STATUSES, date_range, leave_requests_for_month, month_bounds
+from app.services.rota_call_levels import inferred_call_levels_from_duty_type, normalize_call_level
 from app.services.rota_rules import DutyRule, RotaPhaseOneRules, get_phase_one_rules
 from app.services.rota_setup import SCOPE_INCLUDED, monthly_setup
 
@@ -37,6 +42,16 @@ class TemplateGenerationOptions:
     include_weekdays: bool = True
     include_weekends: bool = True
     replace_existing: bool = True
+
+
+@dataclass
+class UnitAllocation:
+    unit: Unit
+    pressure: dict[str, object]
+    score: int
+    hard_blocked: bool
+    warning: bool
+    reason: str
 
 
 def month_dates(month: str, options: TemplateGenerationOptions) -> list[date]:
@@ -143,7 +158,12 @@ def postings_for_month(db: Session, starts_on: date, ends_on: date) -> list[Pers
     return list(db.scalars(statement))
 
 
-def active_unit_member_ids(postings: list[PersonPosting], unit_id: UUID, day: date) -> set[UUID]:
+def active_unit_member_ids(
+    postings: list[PersonPosting],
+    unit_id: UUID,
+    day: date,
+    call_level: str | None = None,
+) -> set[UUID]:
     return {
         posting.person_id
         for posting in postings
@@ -151,6 +171,7 @@ def active_unit_member_ids(postings: list[PersonPosting], unit_id: UUID, day: da
         and posting.starts_on <= day
         and (posting.ends_on is None or posting.ends_on >= day)
         and posting.person.active_status == "active"
+        and (call_level is None or normalize_call_level(posting.posting_type or posting.person.call_level) == call_level)
     }
 
 
@@ -173,6 +194,8 @@ def pressure_for_slot(
     day_leaves: dict[UUID, list[LeaveRequest]],
     rule: DutyRule,
     rules: RotaPhaseOneRules,
+    provisional_unit_day_duties: int = 0,
+    minimum_free_people: int | None = None,
 ) -> dict[str, object]:
     unavailable = {
         person_id
@@ -182,9 +205,12 @@ def pressure_for_slot(
     }
     total = len(unit_member_ids)
     unavailable_count = len(unavailable)
-    available_count = total - unavailable_count
-    unavailable_percent = 100 if total == 0 else round((unavailable_count / total) * 100)
+    available_before_slot = total - unavailable_count - provisional_unit_day_duties
+    available_after_slot = available_before_slot - 1
+    blocked_count = unavailable_count + provisional_unit_day_duties + 1
+    unavailable_percent = 100 if total == 0 else round((blocked_count / total) * 100)
     staffing = rules.unit_staffing_rules
+    minimum = staffing.minimum_available_count if minimum_free_people is None else minimum_free_people
     status = READY
     severity = "info"
     reasons: list[str] = []
@@ -193,11 +219,11 @@ def pressure_for_slot(
         status = "hard_block"
         severity = "error"
         reasons.append("Unit has no active assigned members for this date.")
-    elif staffing.small_unit_uses_absolute_minimum and available_count < staffing.minimum_available_count:
+    elif staffing.small_unit_uses_absolute_minimum and available_after_slot < minimum:
         status = "hard_block"
         severity = "error"
         reasons.append(
-            f"Available members would fall to {available_count}, below minimum {staffing.minimum_available_count}."
+            f"Available members would fall to {available_after_slot}, below unit minimum {minimum}."
         )
     elif unavailable_percent >= staffing.hard_block_unavailable_percent:
         status = "hard_block"
@@ -221,7 +247,11 @@ def pressure_for_slot(
         "reason": " ".join(reasons),
         "assigned_members": total,
         "unavailable_members": unavailable_count,
-        "available_members": available_count,
+        "provisional_unit_day_duties": provisional_unit_day_duties,
+        "minimum_free_people": minimum,
+        "available_members": max(0, available_after_slot),
+        "available_before_slot": max(0, available_before_slot),
+        "available_after_slot": available_after_slot,
         "unavailable_percent": unavailable_percent,
     }
 
@@ -279,6 +309,132 @@ def create_event(
     )
 
 
+def week_key(day: date) -> tuple[int, int]:
+    iso = day.isocalendar()
+    return iso.year, iso.week
+
+
+def unit_minimum_free_people(unit: Unit, rules: RotaPhaseOneRules) -> int:
+    value = getattr(unit, "minimum_free_people", None)
+    if value is None:
+        return rules.unit_staffing_rules.minimum_available_count
+    return max(0, int(value))
+
+
+def required_call_for_rule(rule: DutyRule) -> str | None:
+    allowed = {normalize_call_level(item) for item in rule.allowed_call_levels}
+    allowed.discard("Unassigned")
+    if len(allowed) == 1:
+        return next(iter(allowed))
+    inferred = inferred_call_levels_from_duty_type(rule.key)
+    return next(iter(inferred)) if len(inferred) == 1 else None
+
+
+def unit_minimum_free_people_for_call(unit: Unit, call_level: str | None, rules: RotaPhaseOneRules) -> int:
+    fallback = unit_minimum_free_people(unit, rules)
+    if call_level is None:
+        return fallback
+    for row in getattr(unit, "call_minimums", []):
+        if normalize_call_level(row.call_level) == call_level:
+            return max(0, int(row.minimum_free_people))
+    return fallback
+
+
+def allocation_score(
+    *,
+    unit: Unit,
+    day: date,
+    rule: DutyRule,
+    pressure: dict[str, object],
+    unit_month_counts: dict[UUID, int],
+    unit_duty_counts: dict[tuple[UUID, str], int],
+    unit_week_counts: dict[tuple[UUID, tuple[int, int]], int],
+    unit_weekend_counts: dict[UUID, int],
+    provisional_unit_day_counts: dict[tuple[UUID, date], int],
+) -> int:
+    available_after = int(pressure["available_after_slot"])
+    minimum = int(pressure["minimum_free_people"])
+    near_minimum_penalty = max(0, minimum + 1 - available_after) * 30
+    return (
+        unit_month_counts.get(unit.id, 0) * 100
+        + unit_duty_counts.get((unit.id, rule.key), 0) * 60
+        + unit_week_counts.get((unit.id, week_key(day)), 0) * 25
+        + unit_weekend_counts.get(unit.id, 0) * (20 if day.weekday() >= 5 else 0)
+        + provisional_unit_day_counts.get((unit.id, day), 0) * 80
+        + int(pressure["unavailable_percent"])
+        + near_minimum_penalty
+    )
+
+
+def choose_balanced_unit(
+    *,
+    units: list[Unit],
+    day: date,
+    rule: DutyRule,
+    rules: RotaPhaseOneRules,
+    postings: list[PersonPosting],
+    day_leaves: dict[UUID, list[LeaveRequest]],
+    existing_keys: set[tuple[date, str, str]],
+    unit_month_counts: dict[UUID, int],
+    unit_duty_counts: dict[tuple[UUID, str], int],
+    unit_week_counts: dict[tuple[UUID, tuple[int, int]], int],
+    unit_weekend_counts: dict[UUID, int],
+    provisional_unit_day_counts: dict[tuple[UUID, date], int],
+) -> tuple[UnitAllocation | None, list[UnitAllocation]]:
+    allocations: list[UnitAllocation] = []
+    required_call = required_call_for_rule(rule)
+    for unit in units:
+        if not rule_applies_to_unit(rule, unit):
+            continue
+        label = slot_label(unit)
+        if (day, rule.key, label) in existing_keys:
+            continue
+        pressure = pressure_for_slot(
+            unit_member_ids=active_unit_member_ids(postings, unit.id, day, call_level=required_call),
+            day_leaves=day_leaves,
+            rule=rule,
+            rules=rules,
+            provisional_unit_day_duties=provisional_unit_day_counts.get((unit.id, day), 0),
+            minimum_free_people=unit_minimum_free_people_for_call(unit, required_call, rules),
+        )
+        hard_blocked = pressure["status"] == "hard_block"
+        warning = pressure["status"] == "warning"
+        allocations.append(
+            UnitAllocation(
+                unit=unit,
+                pressure=pressure,
+                score=allocation_score(
+                    unit=unit,
+                    day=day,
+                    rule=rule,
+                    pressure=pressure,
+                    unit_month_counts=unit_month_counts,
+                    unit_duty_counts=unit_duty_counts,
+                    unit_week_counts=unit_week_counts,
+                    unit_weekend_counts=unit_weekend_counts,
+                    provisional_unit_day_counts=provisional_unit_day_counts,
+                ),
+                hard_blocked=hard_blocked,
+                warning=warning,
+                reason=str(pressure["reason"]),
+            )
+        )
+    if not allocations:
+        return None, []
+    safe_allocations = [allocation for allocation in allocations if not allocation.hard_blocked]
+    pool = safe_allocations if safe_allocations else allocations
+    selected = min(
+        pool,
+        key=lambda allocation: (
+            allocation.score,
+            unit_duty_counts.get((allocation.unit.id, rule.key), 0),
+            unit_month_counts.get(allocation.unit.id, 0),
+            allocation.unit.name,
+        ),
+    )
+    return selected, allocations
+
+
 def generate_empty_template(
     db: Session,
     month: str,
@@ -299,6 +455,7 @@ def generate_empty_template(
         raise ValueError("Select at least one active duty rule before generating a template")
     if options.replace_existing:
         remove_existing_template_slots(db, period.id)
+        db.flush()
 
     run = RotaTemplateGenerationRun(
         rota_period=period,
@@ -321,35 +478,54 @@ def generate_empty_template(
     starts_on, ends_on = month_bounds(month)
     postings = postings_for_month(db, starts_on, ends_on)
     leaves = leave_by_day_and_person(db, month)
-    existing_keys = {
-        (slot.duty_date, slot.duty_type, slot.slot_label)
-        for slot in db.scalars(select(DutySlot).where(DutySlot.rota_period_id == period.id))
-    }
+    existing_slots = list(
+        db.scalars(
+            select(DutySlot).where(
+                DutySlot.rota_period_id == period.id,
+                DutySlot.source == PHASE4_SLOT_SOURCE,
+            )
+        )
+    )
+    existing_keys = {(slot.duty_date, slot.duty_type, slot.slot_label) for slot in existing_slots}
+    unit_month_counts: dict[UUID, int] = {}
+    unit_duty_counts: dict[tuple[UUID, str], int] = {}
+    unit_week_counts: dict[tuple[UUID, tuple[int, int]], int] = {}
+    unit_weekend_counts: dict[UUID, int] = {}
+    provisional_unit_day_counts: dict[tuple[UUID, date], int] = {}
+    for slot in existing_slots:
+        if slot.unit_id is None:
+            continue
+        unit_month_counts[slot.unit_id] = unit_month_counts.get(slot.unit_id, 0) + 1
+        unit_duty_counts[(slot.unit_id, slot.duty_type)] = unit_duty_counts.get((slot.unit_id, slot.duty_type), 0) + 1
+        unit_week_counts[(slot.unit_id, week_key(slot.duty_date))] = unit_week_counts.get((slot.unit_id, week_key(slot.duty_date)), 0) + 1
+        if slot.duty_date.weekday() >= 5:
+            unit_weekend_counts[slot.unit_id] = unit_weekend_counts.get(slot.unit_id, 0) + 1
+        provisional_unit_day_counts[(slot.unit_id, slot.duty_date)] = provisional_unit_day_counts.get((slot.unit_id, slot.duty_date), 0) + 1
     created_slots: list[DutySlot] = []
     events: list[RotaTemplateGenerationEvent] = []
 
-    for unit in units:
-        for day in days:
-            unit_members = active_unit_member_ids(postings, unit.id, day)
-            day_leaves = leaves.get(day, {})
-            for rule in duties:
-                if not rule_applies_to_unit(rule, unit):
-                    events.append(
-                        create_event(
-                            run=run,
-                            unit=unit,
-                            day=day,
-                            rule=rule,
-                            action=ACTION_SKIPPED,
-                            severity="info",
-                            reason="Duty rule is not enabled for this unit.",
-                            details={"unit_code": unit.code, "duty_label": rule.label},
-                        )
-                    )
-                    continue
-                label = slot_label(unit)
-                unique_key = (day, rule.key, label)
-                if unique_key in existing_keys:
+    for day in days:
+        day_leaves = leaves.get(day, {})
+        for rule in duties:
+            selected, allocations = choose_balanced_unit(
+                units=units,
+                day=day,
+                rule=rule,
+                rules=rules,
+                postings=postings,
+                day_leaves=day_leaves,
+                existing_keys=existing_keys,
+                unit_month_counts=unit_month_counts,
+                unit_duty_counts=unit_duty_counts,
+                unit_week_counts=unit_week_counts,
+                unit_weekend_counts=unit_weekend_counts,
+                provisional_unit_day_counts=provisional_unit_day_counts,
+            )
+            if selected is None:
+                for unit in units:
+                    reason = "Duty rule is not enabled for this unit."
+                    if rule_applies_to_unit(rule, unit):
+                        reason = "A matching duty slot already exists."
                     events.append(
                         create_event(
                             run=run,
@@ -358,68 +534,112 @@ def generate_empty_template(
                             rule=rule,
                             action=ACTION_SKIPPED,
                             severity="warning",
-                            reason="A matching duty slot already exists.",
-                            details={"slot_label": label},
+                            reason=reason,
+                            details={"unit_code": unit.code, "duty_label": rule.label},
                         )
                     )
-                    continue
-
-                pressure = pressure_for_slot(
-                    unit_member_ids=unit_members,
-                    day_leaves=day_leaves,
-                    rule=rule,
-                    rules=rules,
-                )
-                hard_block = pressure["status"] == "hard_block"
-                warning = pressure["status"] == "warning"
-                if hard_block and rule.is_adjustable and not rule.is_mandatory:
+                continue
+            hard_block = selected.hard_blocked
+            warning = selected.warning
+            if hard_block and rule.is_adjustable and not rule.is_mandatory:
+                for allocation in allocations:
                     events.append(
                         create_event(
                             run=run,
-                            unit=unit,
+                            unit=allocation.unit,
                             day=day,
                             rule=rule,
                             action=ACTION_BLOCKED,
-                            severity="error",
-                            reason=f"Adjustable slot skipped. {pressure['reason']}",
-                            details=pressure,
+                            severity="error" if allocation.hard_blocked else "warning",
+                            reason=f"Adjustable slot skipped. {allocation.reason}",
+                            details={
+                                **allocation.pressure,
+                                "allocation_score": allocation.score,
+                                "selected_unit": str(selected.unit.id),
+                            },
                         )
                     )
-                    continue
+                continue
 
-                starts_at, ends_at = slot_bounds(day, rule)
-                status = NEEDS_REVIEW if hard_block or warning else READY
-                reason = str(pressure["reason"])
-                slot = DutySlot(
-                    rota_period=period,
+            unit = selected.unit
+            label = slot_label(unit)
+            starts_at, ends_at = slot_bounds(day, rule)
+            status = NEEDS_REVIEW if hard_block or warning else READY
+            reason = selected.reason
+            inferred_call_levels = sorted(inferred_call_levels_from_duty_type(rule.key))
+            slot_call_level = (
+                rule.allowed_call_levels[0]
+                if len(rule.allowed_call_levels) == 1
+                else inferred_call_levels[0] if len(inferred_call_levels) == 1 else None
+            )
+            slot = DutySlot(
+                rota_period=period,
+                unit=unit,
+                duty_date=day,
+                duty_type=rule.key,
+                call_level=slot_call_level,
+                slot_label=label,
+                starts_at=starts_at,
+                ends_at=ends_at,
+                is_24hr=rule.is_24hr,
+                max_assignees=1,
+                source=PHASE4_SLOT_SOURCE,
+                template_status=status,
+                template_reason=reason,
+                generation_run=run,
+                notes=f"{rule.label} generated for {unit.name}. {reason}",
+            )
+            db.add(slot)
+            created_slots.append(slot)
+            existing_keys.add((day, rule.key, label))
+            unit_month_counts[unit.id] = unit_month_counts.get(unit.id, 0) + 1
+            unit_duty_counts[(unit.id, rule.key)] = unit_duty_counts.get((unit.id, rule.key), 0) + 1
+            unit_week_counts[(unit.id, week_key(day))] = unit_week_counts.get((unit.id, week_key(day)), 0) + 1
+            if day.weekday() >= 5:
+                unit_weekend_counts[unit.id] = unit_weekend_counts.get(unit.id, 0) + 1
+            provisional_unit_day_counts[(unit.id, day)] = provisional_unit_day_counts.get((unit.id, day), 0) + 1
+            events.append(
+                create_event(
+                    run=run,
                     unit=unit,
-                    duty_date=day,
-                    duty_type=rule.key,
-                    call_level=rule.allowed_call_levels[0] if len(rule.allowed_call_levels) == 1 else None,
-                    slot_label=label,
-                    starts_at=starts_at,
-                    ends_at=ends_at,
-                    is_24hr=rule.is_24hr,
-                    max_assignees=1,
-                    source=PHASE4_SLOT_SOURCE,
-                    template_status=status,
-                    template_reason=reason,
-                    generation_run=run,
-                    notes=f"{rule.label} generated for {unit.name}. {reason}",
+                    day=day,
+                    rule=rule,
+                    action=ACTION_CREATED,
+                    severity=str(selected.pressure["severity"]),
+                    reason=reason,
+                    details={
+                        **selected.pressure,
+                        "template_status": status,
+                        "allocation_mode": "balanced",
+                        "allocation_score": selected.score,
+                        "unit_month_count_after": unit_month_counts[unit.id],
+                        "unit_duty_count_after": unit_duty_counts[(unit.id, rule.key)],
+                    },
                 )
-                db.add(slot)
-                created_slots.append(slot)
-                existing_keys.add(unique_key)
+            )
+            for allocation in allocations:
+                if allocation.unit.id == unit.id:
+                    continue
                 events.append(
                     create_event(
                         run=run,
-                        unit=unit,
+                        unit=allocation.unit,
                         day=day,
                         rule=rule,
-                        action=ACTION_CREATED,
-                        severity=str(pressure["severity"]),
-                        reason=reason,
-                        details={**pressure, "template_status": status},
+                        action=ACTION_SKIPPED,
+                        severity="warning" if allocation.hard_blocked or allocation.warning else "info",
+                        reason=(
+                            allocation.reason
+                            if allocation.hard_blocked
+                            else f"Another unit had a lower balanced allocation score ({selected.score} vs {allocation.score})."
+                        ),
+                        details={
+                            **allocation.pressure,
+                            "allocation_mode": "balanced",
+                            "allocation_score": allocation.score,
+                            "selected_unit": str(unit.id),
+                            "selected_unit_name": unit.name,
+                        },
                     )
                 )
 
@@ -441,13 +661,79 @@ def generate_empty_template(
     return template_month(db, month, run.id)
 
 
+def clear_template_cache(db: Session, month: str, *, clear_assignments: bool = False) -> dict[str, object]:
+    period, _scope = monthly_setup(db, month)
+    slots = list(
+        db.scalars(
+            select(DutySlot)
+            .where(DutySlot.rota_period_id == period.id, DutySlot.source == PHASE4_SLOT_SOURCE)
+            .options(selectinload(DutySlot.assignments))
+        )
+    )
+    assigned_slots = [slot for slot in slots if slot.assignments]
+    if assigned_slots and not clear_assignments:
+        raise ValueError("Generated template slots already have assignments and cannot be cleared")
+
+    assignment_count = sum(len(slot.assignments) for slot in slots)
+    if clear_assignments and assignment_count:
+        slot_ids = [slot.id for slot in slots]
+        assignment_ids = [assignment.id for slot in slots for assignment in slot.assignments]
+        db.execute(
+            update(RotaAutoFillEvent)
+            .where(RotaAutoFillEvent.assignment_id.in_(assignment_ids))
+            .values(assignment_id=None)
+        )
+        db.execute(
+            update(RotaAutoFillEvent)
+            .where(RotaAutoFillEvent.duty_slot_id.in_(slot_ids))
+            .values(duty_slot_id=None)
+        )
+        db.execute(delete(DutyAssignment).where(DutyAssignment.id.in_(assignment_ids)))
+        db.flush()
+
+    slot_count = len(slots)
+    for slot in slots:
+        db.delete(slot)
+    db.flush()
+
+    run_ids = list(
+        db.scalars(
+            select(RotaTemplateGenerationRun.id).where(RotaTemplateGenerationRun.rota_period_id == period.id)
+        )
+    )
+    event_count = 0
+    run_count = 0
+    if run_ids:
+        event_result = db.execute(
+            delete(RotaTemplateGenerationEvent).where(
+                RotaTemplateGenerationEvent.generation_run_id.in_(run_ids)
+            )
+        )
+        run_result = db.execute(
+            delete(RotaTemplateGenerationRun).where(RotaTemplateGenerationRun.id.in_(run_ids))
+        )
+        event_count = event_result.rowcount or 0
+        run_count = run_result.rowcount or 0
+    db.commit()
+    return {
+        "month": month,
+        "cleared_slots": slot_count,
+        "cleared_assignments": assignment_count if clear_assignments else 0,
+        "cleared_runs": run_count,
+        "cleared_events": event_count,
+    }
+
+
 def template_slots_for_period(db: Session, rota_period_id: UUID) -> list[DutySlot]:
     return list(
         db.scalars(
             select(DutySlot)
-            .where(DutySlot.rota_period_id == rota_period_id)
+            .where(
+                DutySlot.rota_period_id == rota_period_id,
+                DutySlot.source == PHASE4_SLOT_SOURCE,
+            )
             .options(
-                selectinload(DutySlot.unit),
+                selectinload(DutySlot.unit).selectinload(Unit.call_minimums),
                 selectinload(DutySlot.assignments).selectinload(DutyAssignment.person),
             )
             .order_by(DutySlot.duty_date, DutySlot.duty_type, DutySlot.slot_label)
@@ -541,6 +827,152 @@ def slot_to_dict(slot: DutySlot) -> dict[str, object]:
         ],
         "notes": slot.notes,
     }
+
+
+def excel_safe_cell(value: Any) -> str | int | float | bool | None:
+    if value is None:
+        return None
+    if isinstance(value, (str, int, float, bool)):
+        return value
+    return str(value)
+
+
+ROMAN_UNIT_NUMBERS = {
+    "I": "1",
+    "II": "2",
+    "III": "3",
+    "IV": "4",
+    "V": "5",
+    "VI": "6",
+    "VII": "7",
+    "VIII": "8",
+    "IX": "9",
+    "X": "10",
+}
+
+EAGLE_EYE_GROUP_LABELS = {
+    "main": "MAIN CALLS",
+    "cb": "CB CALLS",
+    "caesar": "CAESAR CALLS",
+    "rc": "RC CALLS",
+    "schell": "SCHELL",
+    "floating": "FLOATING",
+    "fifth_call": "5TH CALL",
+    "cart": "CART",
+    "pac": "PAC",
+    "shift": "SHIFTS",
+    "chad": "CHAD",
+    "ruhsa": "RUHSA",
+    "paeds": "PAEDS",
+    "neuro": "NEURO",
+}
+
+
+def display_unit_for_eagle_eye(unit: Unit | None) -> str:
+    if unit is None:
+        return ""
+    value = (unit.name or unit.code or "").replace("_", " ").strip()
+    parts = value.split()
+    if len(parts) >= 2 and parts[0].lower() == "unit":
+        suffix = parts[1].upper()
+        if suffix in ROMAN_UNIT_NUMBERS:
+            return f"Unit {ROMAN_UNIT_NUMBERS[suffix]}"
+    if value.upper().startswith("UNIT "):
+        suffix = value.split(maxsplit=1)[1].upper()
+        if suffix in ROMAN_UNIT_NUMBERS:
+            return f"Unit {ROMAN_UNIT_NUMBERS[suffix]}"
+    return value.replace("UNIT", "Unit")
+
+
+def eagle_eye_group_label(rule: DutyRule | None, duty_key: str) -> str:
+    if rule is None:
+        return "OTHER DUTIES"
+    return EAGLE_EYE_GROUP_LABELS.get(rule.group, rule.group.replace("_", " ").upper() or duty_key)
+
+
+def write_eagle_eye_matrix(
+    workbook: xlsxwriter.Workbook,
+    slots: list[DutySlot],
+    rules: RotaPhaseOneRules,
+) -> None:
+    worksheet = workbook.add_worksheet("Eagle Eye")
+    normal_header = workbook.add_format(
+        {"bold": True, "bg_color": "#0F172A", "font_color": "#FFFFFF", "border": 1, "align": "center", "valign": "vcenter", "text_wrap": True}
+    )
+    weekend_header = workbook.add_format(
+        {"bold": True, "bg_color": "#FFE699", "font_color": "#111827", "border": 1, "align": "center", "valign": "vcenter", "text_wrap": True}
+    )
+    duty_format = workbook.add_format({"bold": True, "bg_color": "#F8FAFC", "border": 1})
+    normal_cell = workbook.add_format({"border": 1, "align": "center", "valign": "vcenter", "text_wrap": True})
+    weekend_cell = workbook.add_format({"border": 1, "align": "center", "valign": "vcenter", "text_wrap": True, "bg_color": "#FFF2CC"})
+    group_divider = workbook.add_format(
+        {
+            "bold": True,
+            "bg_color": "#D9EAF7",
+            "font_color": "#0F172A",
+            "border": 1,
+            "align": "left",
+            "valign": "vcenter",
+        }
+    )
+    rule_order = {rule.key: index for index, rule in enumerate(rules.duty_rules)}
+    rule_by_key = {rule.key: rule for rule in rules.duty_rules}
+    dates = sorted({slot.duty_date for slot in slots})
+    duty_keys = sorted(
+        {slot.duty_type for slot in slots},
+        key=lambda key: (rule_order.get(key, 9999), rule_by_key.get(key).label if rule_by_key.get(key) else key),
+    )
+
+    worksheet.write(0, 0, "Duty", normal_header)
+    for col, day in enumerate(dates, start=1):
+        worksheet.write(
+            0,
+            col,
+            f"{day.isoformat()}\n{day.strftime('%A')}",
+            weekend_header if day.weekday() >= 5 else normal_header,
+        )
+
+    units_by_duty_day: dict[tuple[str, date], list[str]] = {}
+    for slot in slots:
+        unit_name = display_unit_for_eagle_eye(slot.unit)
+        if unit_name:
+            units_by_duty_day.setdefault((slot.duty_type, slot.duty_date), []).append(unit_name)
+
+    row = 1
+    previous_group_label: str | None = None
+    for duty_key in duty_keys:
+        rule = rule_by_key.get(duty_key)
+        group_label = eagle_eye_group_label(rule, duty_key)
+        if group_label != previous_group_label:
+            if dates:
+                worksheet.merge_range(row, 0, row, len(dates), group_label, group_divider)
+            else:
+                worksheet.write(row, 0, group_label, group_divider)
+            worksheet.set_row(row, 20)
+            row += 1
+            previous_group_label = group_label
+        worksheet.write(row, 0, rule.label if rule else duty_key, duty_format)
+        for col, day in enumerate(dates, start=1):
+            units = sorted(set(units_by_duty_day.get((duty_key, day), [])))
+            worksheet.write(row, col, ", ".join(units), weekend_cell if day.weekday() >= 5 else normal_cell)
+        row += 1
+
+    worksheet.set_column(0, 0, 24)
+    for col, day in enumerate(dates, start=1):
+        worksheet.set_column(col, col, 13, weekend_cell if day.weekday() >= 5 else normal_cell)
+    worksheet.set_row(0, 34)
+    worksheet.freeze_panes(1, 1)
+
+
+def eagle_eye_export(db: Session, month: str) -> tuple[str, bytes]:
+    period, _scope = monthly_setup(db, month)
+    _rule_version, rules = get_phase_one_rules(db)
+    slots = template_slots_for_period(db, period.id)
+    output = BytesIO()
+    workbook = xlsxwriter.Workbook(output, {"in_memory": True})
+    write_eagle_eye_matrix(workbook, slots, rules)
+    workbook.close()
+    return f"eagle-eye-rota-template-{month}.xlsx", output.getvalue()
 
 
 def run_to_dict(run: RotaTemplateGenerationRun) -> dict[str, object]:

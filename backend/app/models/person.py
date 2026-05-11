@@ -8,6 +8,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.session import Base
 
 if TYPE_CHECKING:
+    from app.models.call_cluster import PersonCallClusterMembership
     from app.models.leave import LeaveRequest
     from app.models.posting import PersonPosting
     from app.models.rota import DutyAssignment
@@ -27,6 +28,9 @@ class Person(Base):
     leave_requests: Mapped[list["LeaveRequest"]] = relationship(back_populates="person")
     duty_assignments: Mapped[list["DutyAssignment"]] = relationship(back_populates="person")
     designations: Mapped[list["PersonDesignation"]] = relationship(back_populates="person")
+    call_cluster_memberships: Mapped[list["PersonCallClusterMembership"]] = relationship(
+        back_populates="person"
+    )
 
 
 class PersonAlias(Base):

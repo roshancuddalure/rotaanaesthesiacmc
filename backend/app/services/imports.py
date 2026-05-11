@@ -104,6 +104,7 @@ class ParsedUnitPosting:
     row_index: int
     column_index: int
     column_label: str
+    raw_date_label: str | None = None
 
 
 @dataclass(frozen=True)
@@ -265,7 +266,7 @@ def is_valid_person_name(value: Any) -> bool:
         return False
     if len(re.findall(r"[A-Za-z]", cleaned)) < 3:
         return False
-    if normalized.startswith(("unit ", "main pac", "rc pac", "main shift", "rc shift")):
+    if normalized.startswith(("unit ", "main pac", "rc pac", "main shift", "rc shift", "pb shift")):
         return False
     return True
 
@@ -330,6 +331,12 @@ def classify_duty_label(value: Any) -> str | None:
     if "pac" in label:
         return "PAC"
     if "shift" in label:
+        if label.startswith("rc") or " rc " in f" {label} " or "ranipet" in label:
+            return "RC_SHIFT"
+        if label.startswith("pb") or " pb " in f" {label} ":
+            return "PB_SHIFT"
+        if label.startswith("main") or " main " in f" {label} ":
+            return "MAIN_SHIFT"
         return "SHIFT"
     if "neuro" in label or "stroke" in label:
         return "NEURO_DEPT"

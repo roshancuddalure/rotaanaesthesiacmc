@@ -10,6 +10,7 @@ from app.models import UserAccount
 from app.services.leave import month_bounds
 from app.services.rota_review import (
     RotaReviewError,
+    accept_review_issue,
     approve_exchange_request,
     create_exchange_request,
     reject_exchange_request,
@@ -27,6 +28,11 @@ class ExchangeRequestPayload(BaseModel):
 
 class ExchangeDecisionPayload(BaseModel):
     decision_reason: str | None = None
+
+
+class ReviewDecisionPayload(BaseModel):
+    issue_code: str
+    note: str
 
 
 class RotaReviewMonthRead(BaseModel):
@@ -59,6 +65,16 @@ class ExchangeRequestRead(BaseModel):
     decided_at: str | None
 
 
+class RotaReviewDecisionRead(BaseModel):
+    id: str
+    issue_code: str
+    decision_type: str
+    note: str
+    decided_by: str | None
+    created_at: str
+    updated_at: str
+
+
 def review_http_error(exc: RotaReviewError) -> HTTPException:
     return HTTPException(status_code=exc.status_code, detail=exc.message)
 
@@ -75,6 +91,26 @@ def get_rota_review_month(
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     return RotaReviewMonthRead(**result)
+
+
+@router.post("/rota-review/slots/{slot_id}/decisions")
+def accept_rota_review_issue(
+    slot_id: UUID,
+    payload: ReviewDecisionPayload,
+    user: UserAccount = Depends(current_user),
+    db: Session = Depends(get_db),
+) -> RotaReviewDecisionRead:
+    try:
+        result = accept_review_issue(
+            db,
+            slot_id=slot_id,
+            issue_code=payload.issue_code,
+            note=payload.note,
+            decided_by=user,
+        )
+    except RotaReviewError as exc:
+        raise review_http_error(exc) from exc
+    return RotaReviewDecisionRead(**result)
 
 
 @router.post("/rota-review/exchanges")

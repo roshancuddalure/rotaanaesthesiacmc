@@ -13,7 +13,9 @@ from app.services.rota_candidates import (
     candidate_context,
     slot_candidates_with_context,
 )
+from app.services.rota_safety import required_call_levels, rule_for_slot
 from app.services.rota_setup import monthly_setup
+from app.services.rota_template import PHASE4_SLOT_SOURCE
 
 AUTO_FILL_ASSIGNMENT_SOURCE = "safe_auto_fill_draft"
 ACTION_ASSIGNED = "assigned"
@@ -24,13 +26,17 @@ ACTION_BLOCKED = "blocked"
 @dataclass
 class AutoFillOptions:
     limit_slots: int | None = None
+    strict_call_level: bool = True
 
 
 def open_slots_for_period(db: Session, rota_period_id: UUID) -> list[DutySlot]:
     return list(
         db.scalars(
             select(DutySlot)
-            .where(DutySlot.rota_period_id == rota_period_id)
+            .where(
+                DutySlot.rota_period_id == rota_period_id,
+                DutySlot.source == PHASE4_SLOT_SOURCE,
+            )
             .options(
                 selectinload(DutySlot.unit),
                 selectinload(DutySlot.assignments).selectinload(DutyAssignment.person),
@@ -44,13 +50,20 @@ def active_slot_assignments(slot: DutySlot) -> list[DutyAssignment]:
     return [assignment for assignment in slot.assignments if active_assignment(assignment)]
 
 
-def safe_candidate(candidates: list[dict[str, object]]) -> dict[str, object] | None:
+def safe_candidate(
+    candidates: list[dict[str, object]],
+    *,
+    required_calls: set[str],
+    strict_call_level: bool,
+) -> dict[str, object] | None:
     for candidate in candidates:
         if (
             candidate["candidate_status"] == CANDIDATE_ELIGIBLE
             and candidate.get("validation_status") == "clear"
             and not candidate.get("requires_override")
         ):
+            if strict_call_level and str(candidate.get("call_level")) not in required_calls:
+                continue
             return candidate
     return None
 
@@ -144,7 +157,32 @@ def run_safe_auto_fill(
         context = candidate_context(db, month)
         candidate_row = slot_candidates_with_context(db, slot=slot, context=context, limit=None)
         candidates = list(candidate_row["candidates"])
-        candidate = safe_candidate(candidates)
+        rule = rule_for_slot(slot, context.rules)
+        required_calls = required_call_levels(slot, rule)
+        if options.strict_call_level and len(required_calls) != 1:
+            skipped += 1
+            review += 1
+            add_event(
+                db,
+                run=run,
+                slot=slot,
+                action=ACTION_SKIPPED,
+                severity="warning",
+                reason="Safe Auto-Fill left this slot open because its required call level is ambiguous.",
+                details={
+                    "slot_id": str(slot.id),
+                    "strict_call_level": True,
+                    "required_call_levels": sorted(required_calls),
+                    "candidate_count": len(candidates),
+                },
+            )
+            continue
+
+        candidate = safe_candidate(
+            candidates,
+            required_calls=required_calls,
+            strict_call_level=options.strict_call_level,
+        )
         if candidate is None:
             skipped += 1
             if candidates:
@@ -164,13 +202,15 @@ def run_safe_auto_fill(
                 reason=first_risky_reason(candidates),
                 details={
                     "slot_id": str(slot.id),
+                    "strict_call_level": options.strict_call_level,
+                    "required_call_levels": sorted(required_calls),
                     "candidate_count": len(candidates),
                     "best_candidate": candidates[0] if candidates else None,
                 },
             )
             continue
 
-        reason = "Auto-filled with the top safe suggestion. " + " ".join(str(item) for item in candidate["reasons"][:2])
+        reason = "Auto-filled with the top safe same-call suggestion. " + " ".join(str(item) for item in candidate["reasons"][:2])
         try:
             assignment_result = assign_person_to_slot(
                 db,
@@ -191,7 +231,7 @@ def run_safe_auto_fill(
                 action=ACTION_SKIPPED,
                 severity="warning",
                 reason=exc.message,
-                details={"candidate": candidate, "validation": exc.validation},
+            details={"candidate": candidate, "validation": exc.validation},
             )
             continue
 
@@ -207,7 +247,12 @@ def run_safe_auto_fill(
             action=ACTION_ASSIGNED,
             severity="info",
             reason=reason,
-            details={"candidate": candidate, "validation": assignment_result.get("validation")},
+            details={
+                "candidate": candidate,
+                "validation": assignment_result.get("validation"),
+                "strict_call_level": options.strict_call_level,
+                "required_call_levels": sorted(required_calls),
+            },
             person_id=str(candidate["person_id"]),
             assignment_id=str(assignment["id"]) if isinstance(assignment, dict) else None,
         )

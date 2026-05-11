@@ -1,6 +1,7 @@
 """SQLAlchemy model exports."""
 
 from app.models.auth import PasswordResetToken, UserAccount, UserSession
+from app.models.call_cluster import CallCluster, PersonCallClusterMembership
 from app.models.leave import LeaveRequest
 from app.models.imports import ImportBatch, ImportSourceRecord, ImportWarning
 from app.models.mappings import AdminMapping
@@ -16,15 +17,17 @@ from app.models.rota import (
     RotaExchangeRequest,
     RotaPeriod,
     RotaPublishApproval,
+    RotaReviewDecision,
     RotaTemplateGenerationEvent,
     RotaTemplateGenerationRun,
 )
 from app.models.rules import RuleSetting, RuleVersion
-from app.models.unit import Unit
+from app.models.unit import Unit, UnitCallMinimum
 
 __all__ = [
     "DutyAssignment",
     "DutySlot",
+    "CallCluster",
     "MonthlyGenerationScope",
     "MonthlyGenerationScopeUnit",
     "AdminMapping",
@@ -35,6 +38,7 @@ __all__ = [
     "LeaveRequest",
     "Person",
     "PersonAlias",
+    "PersonCallClusterMembership",
     "PersonDesignation",
     "UserAccount",
     "UserSession",
@@ -44,9 +48,11 @@ __all__ = [
     "RotaAutoFillRun",
     "RotaExchangeRequest",
     "RotaPublishApproval",
+    "RotaReviewDecision",
     "RotaTemplateGenerationEvent",
     "RotaTemplateGenerationRun",
     "RuleSetting",
     "RuleVersion",
     "Unit",
+    "UnitCallMinimum",
 ]

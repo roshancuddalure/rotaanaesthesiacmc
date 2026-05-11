@@ -5,7 +5,7 @@ from collections import Counter
 from datetime import datetime
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import delete, select
 from sqlalchemy.orm import Session, selectinload
 
 from app.models import MonthlyGenerationScope, MonthlyGenerationScopeUnit, PersonPosting, RotaPeriod, Unit
@@ -95,8 +95,8 @@ def update_scope_units(
     scope.lock_reason = lock_reason.strip() if lock_reason else scope.lock_reason
     scope.updated_at = datetime.utcnow()
 
-    for existing in list(scope.units):
-        db.delete(existing)
+    db.execute(delete(MonthlyGenerationScopeUnit).where(MonthlyGenerationScopeUnit.scope_id == scope.id))
+    db.flush()
     for unit_id in included_unit_ids:
         db.add(MonthlyGenerationScopeUnit(scope=scope, unit_id=unit_id, status=SCOPE_INCLUDED))
     for unit_id in excluded_unit_ids:

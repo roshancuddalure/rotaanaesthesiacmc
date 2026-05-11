@@ -13,6 +13,7 @@ router = APIRouter()
 
 class AutoFillPayload(BaseModel):
     limit_slots: int | None = Field(default=None, ge=1, le=500)
+    strict_call_level: bool = True
 
 
 class AutoFillMonthRead(BaseModel):
@@ -46,7 +47,10 @@ def run_rota_auto_fill_draft(
         result = run_safe_auto_fill(
             db,
             month,
-            AutoFillOptions(limit_slots=payload.limit_slots if payload else None),
+            AutoFillOptions(
+                limit_slots=payload.limit_slots if payload else None,
+                strict_call_level=payload.strict_call_level if payload else True,
+            ),
         )
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc

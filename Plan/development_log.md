@@ -799,6 +799,24 @@ Notes:
 - Browser-level visual QA remains a manual/user-acceptance step because the project does not yet include automated browser screenshot tests.
 - The next real debug pass should use actual monthly leave sheets, actual department member data, and a full month setup through publish/export.
 
+## 2026-05-08 - Call Cluster Eligibility Planning
+
+Goal:
+
+- Convert the rough call-clustering note into an implementable plan for restricting certain duties to admin-defined subgroups inside a call level.
+
+Planned:
+
+- Added `Plan/unit management engine/03_call_cluster_eligibility_plan.md`.
+- Proposed effective-dated call clusters, member memberships, and duty rule cluster restrictions.
+- Planned backend integration with rota safety, candidate suggestions, manual assignment validation, safe auto-fill, review, and export.
+- Planned admin UX for creating clusters, assigning members, and editing duty eligibility without making the rules table too wide.
+- Added Phase 12 to the main rota generator action plan.
+
+Status:
+
+- Implementation is intentionally paused until the rota-board cluster behavior is approved.
+
 ## 2026-05-08 - Rota Generator Phase 9
 
 Goal:
@@ -1810,3 +1828,331 @@ Implemented:
 Verification:
 
 - Frontend `npm run build` passed after Windows/Vite sandbox escalation.
+
+## 2026-05-08 - Rota Generator Phase 12A
+
+Goal:
+
+- Start call-cluster eligibility so admins can define subgroups inside call levels for duties such as Schell or Shift.
+
+Implemented:
+
+- Added `CallCluster` and `PersonCallClusterMembership` models.
+- Added Alembic migration `20260508_0013_call_clusters.py`.
+- Added call cluster service helpers for key normalization, CRUD, membership replacement, and active-date lookup.
+- Added admin APIs:
+  - `GET /api/v1/admin/call-clusters`,
+  - `POST /api/v1/admin/call-clusters`,
+  - `PUT /api/v1/admin/call-clusters/{cluster_id}`,
+  - `GET /api/v1/admin/call-clusters/{cluster_id}/members`,
+  - `PUT /api/v1/admin/call-clusters/{cluster_id}/members`.
+- Extended `DutyRule` with optional `allowed_cluster_keys` and `excluded_cluster_keys`.
+- Added unit-management validation rule `MULTIPLE_UNITS_IN_MONTH` so one person cannot be assigned to more than one unit in the selected month.
+- Added focused backend tests for call clusters and the monthly multi-unit assignment rule.
+
+Verification:
+
+- Backend Ruff passed with `--no-cache`.
+- Full backend test suite passed: `pytest`, 90 tests.
+
+## 2026-05-08 - Unit Management Unitwise Import
+
+Goal:
+
+- Let the rota board upload unitwise Excel or notepad/text lists and automatically create monthly unit assignments after preview.
+
+Implemented:
+
+- Added `backend/app/services/unit_assignment_import.py`.
+- Added unit assignment import APIs:
+  - `POST /api/v1/unit-management/import-preview`,
+  - `POST /api/v1/unit-management/import-apply`.
+- Excel import supports the current unitwise matrix shape:
+  - first row contains unit headers,
+  - first column contains call-level/posting labels,
+  - member cells can contain one or more names.
+- Text import supports notepad-style lists using unit headings and posting lines such as:
+  - `Main OT`,
+  - `3rd calls: Dr Name`.
+- Import preview now reports:
+  - matched rows,
+  - unresolved member/unit rows,
+  - invalid rows,
+  - parser warnings,
+  - suggested member matches when available.
+- Apply imports only safe matched rows.
+- Added an optional `replace_existing` apply mode to replace current month `unit_board` assignments before importing.
+- Added Unit Management frontend import panel with file upload, preview table, replace-current-month checkbox, and apply action.
+- Added focused backend tests for Excel and text unitwise imports.
+
+Verification:
+
+- Backend Ruff passed with `--no-cache`.
+- Focused unit-management tests passed: 4 tests.
+- Full backend test suite passed: `pytest`, 92 tests.
+- Frontend production build passed after Windows/Vite sandbox escalation.
+
+## 2026-05-08 - Clickable Review Resolution UX Pass
+
+Goal:
+
+- Make website review/unresolved/warning surfaces actionable with a popup that shows context, parameters, and admin actions.
+
+Implemented:
+
+- Added a reusable frontend review-action modal.
+- Made major review surfaces clickable:
+  - Analysis preflight issues and manual-review rows,
+  - Leave import unresolved rows and parser warnings,
+  - Unit import unresolved rows and parser warnings,
+  - Unit Management validation issues,
+  - Rota Setup unit readiness warnings,
+  - Rota Template unit-day safety warnings,
+  - Rota Review warning/hard-blocked rows,
+  - Publish checklist blockers and warnings.
+- Each popup shows:
+  - review status,
+  - summary,
+  - relevant parameters such as member/unit/date/duty/sheet/row,
+  - issue details,
+  - admin actions such as opening Members, Mappings, Unit Management, Rota Template day popup, Rota Review, or applying matched import rows.
+
+Verification:
+
+- Focused backend smoke tests passed.
+- Frontend production build passed after Windows/Vite sandbox escalation.
+
+## 2026-05-10 - Call-Wise Unit Minimum Free People Rules
+
+Goal:
+
+- Replace the single unit-level minimum-free rule with a safer call-wise workflow inside Unit Management.
+- Ensure a duty such as Main 1st Call is judged against the 1st Call pool in that unit, not the whole unit.
+
+Implemented:
+
+- Added `unit_call_minimums` schema and Alembic migration.
+- Added Unit Management API support for call-wise minimum-free rows per unit and call level.
+- Added validation so a call-wise minimum cannot exceed the number of assigned people in that unit/call.
+- Updated the Unit Management popup to show:
+  - fallback minimum free people,
+  - call-wise minimum free people,
+  - assigned member count per unit/call,
+  - save-time validation.
+- Updated rota template generation to use the required call level's member pool and call-wise minimum when a duty has one specific required call.
+- Updated rota safety/assignment loading so generated slots and safety checks see the call-wise unit rules.
+- Added tests for Unit Management API validation, rota safety, and template generation behavior.
+
+Verification:
+
+- Frontend TypeScript check passed: `npm exec tsc -- --noEmit`.
+- Focused backend tests passed: `tests/test_unit_management.py`, `tests/test_rota_safety.py`, `tests/test_rota_template.py` with 29 tests.
+- Frontend production build passed after Windows/Vite sandbox escalation.
+
+Debug note:
+
+- The rule only becomes call-specific when the duty resolves to one required call level. If a duty allows multiple call levels, the system falls back to the unit-level minimum because there is no single concerned call pool.
+
+## 2026-05-10 - Eagle Eye Excel Category Divider Rows
+
+Goal:
+
+- Make the Eagle Eye rota-template Excel export easier to scan by separating duty categories such as Main, CB, RC, and Shifts.
+
+Implemented:
+
+- Added highlighted category divider rows to the Eagle Eye worksheet.
+- Divider labels are derived from duty rule groups, so the export follows the same duty grouping used by rota rules.
+- Kept the current matrix layout:
+  - duties as rows,
+  - dates as columns,
+  - day name on the next line in the date cell,
+  - unit names only inside cells,
+  - Saturday/Sunday date columns highlighted yellow.
+- Added regression coverage that opens the generated workbook and verifies Main, RC, and Shift divider rows.
+
+Verification:
+
+- Focused rota-template tests passed: `tests/test_rota_template.py`, 14 tests.
+- Frontend TypeScript check passed: `npm exec tsc -- --noEmit`.
+
+## 2026-05-10 - Local Server Process Cleanup
+
+Debug note:
+
+- Backend restart failed because multiple stale Python/Uvicorn processes were holding `127.0.0.1:8000`.
+- `netstat -ano | Select-String -Pattern ':8000'` was useful for identifying the stuck listeners when `Get-NetTCPConnection` was blocked by permissions.
+- Stopping the stale backend PIDs cleared the port.
+- Starting the backend outside the sandbox/process job was required so the server stayed alive after the command returned.
+- Correct backend health URL is `http://127.0.0.1:8000/api/health`, not `/api/v1/health`.
+- Frontend was restarted on `http://127.0.0.1:5173`.
+
+## 2026-05-10 - Rota Review Phase 1 And 2 Usability Pass
+
+Goal:
+
+- Make Rota Review usable as a board control room without bringing back the long-load timeout.
+
+Implemented:
+
+- Added Rota Review queue filters:
+  - All,
+  - Hard Blockers,
+  - Open Slots,
+  - Warnings,
+  - Overrides.
+- Split the default `All` view into separate sections for hard blockers, open slots, warnings, and overrides.
+- Added a slot-level review popup from each review row.
+- Slot popup shows issues, assigned member, safety counts, and a suggested-members area.
+- Suggestions are loaded on demand per clicked slot using the existing candidate endpoint, instead of calculating candidates for the whole month during review page load.
+- Kept the existing exchange workflow unchanged.
+
+Verification:
+
+- Frontend TypeScript check passed: `npm exec tsc -- --noEmit`.
+- Focused backend Rota Review tests passed: `tests/test_rota_review.py`, 3 tests.
+- Frontend production build passed after Windows/Vite sandbox escalation.
+
+Debug note:
+
+- Month-wide candidate scoring remains intentionally disabled in the main review API for performance. The new detail popup loads candidates only for one selected slot.
+
+## 2026-05-10 - Rota Review Phase 3 Review Decisions
+
+Goal:
+
+- Let the rota board formally accept warning/review items and confirm override assignments with an auditable note.
+
+Implemented:
+
+- Added `rota_review_decisions` schema and Alembic migration.
+- Added Rota Review decision API: `POST /api/v1/rota-review/slots/{slot_id}/decisions`.
+- Supported decision types:
+  - `accepted_warning` for template/safety warnings,
+  - `confirmed_override` for override assignments.
+- Rota Review issues now include decision metadata and accepted status.
+- Rota Review summary now includes:
+  - accepted review items,
+  - unresolved warning items.
+- Publish checklist now uses unresolved warning count when deciding whether warning confirmation is still required.
+- Frontend Rota Review slot popup now includes a Board Decision section with Accept Warning / Confirm Override actions.
+- User guide updated with the review-decision workflow and note-writing guidance.
+- Restarted backend after migration so the new endpoint is active locally.
+
+Verification:
+
+- Alembic upgraded local database from `20260510_0015` to `20260510_0016`.
+- Focused backend tests passed: `tests/test_rota_review.py`, 4 tests.
+- Focused backend review/publish tests passed: `tests/test_rota_review.py tests/test_rota_publish.py`, 6 tests.
+- Frontend TypeScript check passed: `npm exec tsc -- --noEmit`.
+- Frontend production build passed after Windows/Vite sandbox escalation.
+- Backend health check passed at `http://127.0.0.1:8000/api/health`.
+
+Debug note:
+
+- Hard blockers and open slots are intentionally not accepted through this decision API. They must be fixed in source data, assignment, or rules.
+
+## 2026-05-11 - Rota Review Phase 4 Call-Wise Fairness Audit
+
+Goal:
+
+- Add fairness visibility to Rota Review so the board can compare workload within the correct call level before publishing.
+
+Implemented:
+
+- Extended Rota Review backend payload with `call_level_fairness`.
+- Included currently unit-posted members even when they have zero saved rota assignments, so under-assigned people remain visible.
+- Added workload fields:
+  - weekday assignments,
+  - weekend assignments,
+  - duty group counts,
+  - call-level average assignment count.
+- Added call-wise fairness summary:
+  - people per call level,
+  - total assignments,
+  - 24-hour duties,
+  - weekend 24-hour duties,
+  - duty group totals,
+  - high-load flags,
+  - low-load flags.
+- Added Rota Review frontend section `Call-Wise Fairness`.
+- Expanded person-wise workload table with weekday/weekend split.
+
+Verification:
+
+- Focused backend review/publish tests passed: `tests/test_rota_review.py tests/test_rota_publish.py`, 7 tests.
+- Frontend TypeScript check passed: `npm exec tsc -- --noEmit`.
+- Frontend production build passed after Windows/Vite sandbox escalation.
+
+Debug note:
+
+- Fairness is informational at this phase. It does not block publish yet; the board uses it to identify imbalance before assignment changes or exchanges.
+
+## 2026-05-11 - Rota Review Phase 5 Exchange Target Eligibility
+
+Goal:
+
+- Make exchange requests slot-aware so the replacement member list is ranked by the same eligibility engine used for rota suggestions.
+
+Implemented:
+
+- When the board selects a current assignment in Rota Review, the frontend loads candidates for that assignment's duty slot using `/api/v1/rota-candidates/slots/{slot_id}`.
+- The exchange target dropdown now shows slot-specific replacement candidates with:
+  - member name,
+  - call level,
+  - Safe / Needs Review / Blocked status,
+  - first eligibility or workload reason.
+- The form shows a summary count of safe, review, and blocked exchange targets.
+- If candidate loading fails, the form falls back to active members and clearly labels them as not prechecked.
+- If the board selects a Needs Review or Blocked target, the UI asks for confirmation before creating the exchange request.
+- Backend exchange validation remains the final safety authority.
+
+Verification:
+
+- Focused backend review/publish tests passed: `tests/test_rota_review.py tests/test_rota_publish.py`, 7 tests.
+- Frontend TypeScript check passed: `npm exec tsc -- --noEmit`.
+- Frontend production build passed after Windows/Vite sandbox escalation.
+
+Debug note:
+
+- Exchange target eligibility is frontend-assisted, not a substitute for backend validation. The existing exchange API still validates the requested replacement before saving approval state.
+
+## 2026-05-11 - Phase 17 Final Export Audit Pack
+
+Goal:
+
+- Make the final published Excel export carry the same review/audit evidence now visible in Rota Review.
+
+Implemented:
+
+- Added `Publish Readiness` sheet with checklist blockers, warnings, and clear checks.
+- Added `Call Fairness` sheet with:
+  - call level,
+  - people count,
+  - average assignments,
+  - total duties,
+  - 24-hour duties,
+  - weekend 24-hour duties,
+  - duty group totals,
+  - high-load people,
+  - low-load people.
+- Added `Review Decisions` sheet for accepted warnings and confirmed overrides.
+- Expanded `Review Items` sheet with:
+  - issue code,
+  - accepted status,
+  - decision type,
+  - decision note,
+  - decided by,
+  - decision timestamp.
+- Expanded `Duty Counts` sheet with weekday/weekend assignment split and duty group counts.
+- Expanded `Exchange Audit` sheet with validation status, override requirement, and decided timestamp.
+
+Verification:
+
+- Focused backend publish/review tests passed: `tests/test_rota_publish.py tests/test_rota_review.py`, 7 tests.
+- Frontend TypeScript check passed: `npm exec tsc -- --noEmit`.
+- Frontend production build passed after Windows/Vite sandbox escalation.
+
+Debug note:
+
+- The final export still requires a published rota before download. These audit sheets are generated from the current Rota Review and Publish checklist state at export time.

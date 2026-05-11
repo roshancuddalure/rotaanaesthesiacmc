@@ -17,6 +17,7 @@ from app.services.rota_review import (
     EXCHANGE_APPROVED,
     EXCHANGE_PENDING,
     EXCHANGE_SOURCE,
+    accept_review_issue,
     approve_exchange_request,
     create_exchange_request,
     rota_review_month,
@@ -108,10 +109,20 @@ def test_rota_review_dashboard_lists_review_items_and_workload() -> None:
         assert result["assignment_options"][0]["assignment"]["id"] == ids["assignment_id"]
         assert result["person_workload"][0]["person_name"] == "Assigned Member"
         assert result["person_workload"][0]["total_24hr"] == 1
+        fairness = next(row for row in result["call_level_fairness"] if row["call_level"] == "1ST_CALL")
+        assert fairness["people"] == 3
+        assert fairness["total_assignments"] == 1
+        assert fairness["average_assignments"] == 0.33
+        assert fairness["group_totals"] == {"main": 1}
         assert any(
             issue["code"] == "open_slot"
             for item in result["review_items"]
             for issue in item["issues"]
+        )
+        assert all(
+            "available_people" not in item["safety"]
+            for item in result["review_items"]
+            if item["safety"] is not None
         )
 
 
@@ -147,6 +158,38 @@ def test_exchange_request_approval_replaces_assignment_and_keeps_audit() -> None
         assert assignment.person_id == replacement.id
         assert assignment.source == EXCHANGE_SOURCE
         assert audit.applied_assignment_id == assignment.id
+
+
+def test_rota_review_accepts_warning_with_audit_note() -> None:
+    engine = create_engine("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(engine)
+
+    with Session(engine) as session:
+        seed_review_context(session)
+        approver = seed_superadmin(session)
+        before = rota_review_month(session, "2026-05")
+        item = next(
+            row
+            for row in before["review_items"]
+            if any(issue["code"] == "template_review" for issue in row["issues"])
+        )
+
+        decision = accept_review_issue(
+            session,
+            slot_id=UUID(item["slot"]["id"]),
+            issue_code="template_review",
+            note="Board accepted this staffing warning.",
+            decided_by=approver,
+        )
+
+        after = rota_review_month(session, "2026-05")
+        accepted_item = next(row for row in after["review_items"] if row["slot"]["id"] == item["slot"]["id"])
+        template_issue = next(issue for issue in accepted_item["issues"] if issue["code"] == "template_review")
+        assert decision["note"] == "Board accepted this staffing warning."
+        assert template_issue["accepted"] is True
+        assert accepted_item["accepted"] is False
+        assert after["summary"]["accepted_review_items"] == 0
+        assert after["summary"]["unresolved_warning_items"] >= 1
 
 
 @contextmanager

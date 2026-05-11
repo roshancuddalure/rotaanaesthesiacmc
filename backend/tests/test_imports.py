@@ -101,6 +101,9 @@ def test_cleaning_and_classification_helpers() -> None:
     assert classify_duty_label("main_1st_24hr") == "MAIN_1ST_24HR"
     assert classify_duty_label("Cesar call A") == "CAESAR_A_12HR"
     assert classify_duty_label("RC PAC4th call") == "PAC"
+    assert classify_duty_label("Main shift SR") == "MAIN_SHIFT"
+    assert classify_duty_label("RC Shift") == "RC_SHIFT"
+    assert classify_duty_label("PB shift") == "PB_SHIFT"
     assert classify_duty_label("Schell call + Floating consultant") == "SCHELL_AND_FLOATING"
     assert classify_duty_label("RC Co-call") == "RC_CO_12HR"
     assert is_valid_person_name("Dr Example")

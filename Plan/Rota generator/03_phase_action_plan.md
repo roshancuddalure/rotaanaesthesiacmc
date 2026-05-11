@@ -350,3 +350,146 @@ Final acceptance checklist:
 10. Publish checklist has no hard blockers and accepted warnings are intentionally confirmed.
 11. Final Excel export includes rota, duty counts, unit safety, review items, leave conflicts, and audit history.
 12. Board users can understand all user-facing labels and help text without seeing internal code terms.
+
+## Phase 12: Call Cluster Eligibility
+
+Action plan:
+
+1. Add admin-defined call clusters as optional subgroups inside normal call levels.
+2. Allow admins to assign members to one or more effective-dated clusters.
+3. Extend duty rules so a duty can require whole call levels, specific call clusters, or both.
+4. Update safety checks so missing required cluster eligibility is clearly blocked or override-only.
+5. Update candidate suggestions and safe auto-fill so restricted duties only use matching cluster members.
+6. Show cluster badges in Department Members, Unit Management, Rota Template day popups, Review, and Export where useful.
+7. Keep current call-level behavior unchanged when no cluster restrictions are configured.
+
+Acceptance:
+
+- Admins can configure duties like Schell Call or Shift so only selected subgroups inside a call level are eligible.
+- The rota board can see why a member is eligible or blocked for a special duty.
+- Safe auto-fill never assigns a member outside a required cluster.
+- Manual override remains possible but is traceable.
+
+Implementation status:
+
+- Planning completed in `Plan/unit management engine/03_call_cluster_eligibility_plan.md`.
+- Phase 12A backend foundation started after approval.
+- Added call cluster and effective-dated membership schema, migration, service helpers, and admin API endpoints.
+- Extended duty rule JSON with optional allowed/excluded cluster keys while preserving current call-level behavior.
+- Added backend tests for cluster CRUD, member assignment, and effective-date lookup.
+- Next: build the admin UI for managing clusters and showing cluster badges in member/unit workflows.
+
+## Phase 13: Call-Wise Unit Staffing Safety
+
+Action plan:
+
+1. Store minimum free people separately for each unit/call level.
+2. Show those call-wise settings in the Unit Management popup beside assigned member counts.
+3. Block invalid settings where the minimum exceeds assigned members in that unit/call.
+4. Use the specific call pool during template generation when a duty has one required call level.
+5. Keep the old unit-level minimum as a fallback for mixed-call or unclear duties.
+6. Add regression tests for Unit Management validation, rota safety, and template generation.
+
+Acceptance:
+
+- Main 1st Call is evaluated against only 1st Call members in that unit.
+- Main 3rd Call is evaluated against only 3rd Call members in that unit.
+- The board cannot save a minimum-free rule that is impossible for that unit/call pool.
+- Existing fallback behavior still works for duties without a single clear call level.
+
+Implementation status:
+
+- Implemented schema, API, Unit Management UI, template generation logic, safety hydration, and focused tests on 2026-05-10.
+- Detailed implementation log is in `Plan/development_log.md` under `2026-05-10 - Call-Wise Unit Minimum Free People Rules`.
+
+## Phase 14: Rota Review Board Decisions
+
+Action plan:
+
+1. Split Rota Review into workable queues for hard blockers, open slots, warnings, and overrides.
+2. Load heavy candidate suggestions only for the selected slot detail.
+3. Store accepted warnings and confirmed overrides as audit records.
+4. Require a written board note for each accepted warning or confirmed override.
+5. Keep hard blockers and open slots as fix-required items, not accept-in-place items.
+6. Feed unresolved warning counts into Publish & Export.
+
+Acceptance:
+
+- Rota Review remains fast on full months.
+- The board can see what still must be fixed versus what has been accepted.
+- Accepted warnings and confirmed overrides retain who/when/why audit data.
+- Publish can distinguish unresolved warnings from accepted review decisions.
+
+Implementation status:
+
+- Phase 14 queue/filter UI and on-demand slot suggestions implemented on 2026-05-10.
+- Phase 14 review-decision storage, API, UI, migration, guide updates, and tests implemented on 2026-05-10.
+- Detailed implementation logs are in `Plan/development_log.md` under:
+  - `2026-05-10 - Rota Review Phase 1 And 2 Usability Pass`,
+  - `2026-05-10 - Rota Review Phase 3 Review Decisions`.
+
+## Phase 15: Rota Review Call-Wise Fairness
+
+Action plan:
+
+1. Compare people inside their own call level rather than across the whole department.
+2. Include unit-posted members with zero assignments so under-assignment is visible.
+3. Show assignment totals, 24-hour totals, weekend 24-hour totals, and duty-group burden.
+4. Flag unusually high and low assignment loads within each call level.
+5. Keep fairness informational first; do not block publish until the rota board approves the thresholds.
+
+Acceptance:
+
+- Rota Review shows call-wise workload averages.
+- The board can see high-load and low-load people before final publish.
+- Person-wise workload includes weekday/weekend split.
+- Fairness checks remain fast enough for full-month review.
+
+Implementation status:
+
+- Backend fairness summary, frontend Call-Wise Fairness section, workload table expansion, and focused tests implemented on 2026-05-11.
+- Detailed implementation log is in `Plan/development_log.md` under `2026-05-11 - Rota Review Phase 4 Call-Wise Fairness Audit`.
+
+## Phase 16: Rota Review Exchange Target Eligibility
+
+Action plan:
+
+1. Load candidates for the selected exchange assignment's duty slot.
+2. Populate the exchange target list from those slot-specific candidates.
+3. Label each replacement as Safe, Needs Review, or Blocked.
+4. Show a short target summary before request.
+5. Warn the board before creating Needs Review or Blocked exchange requests.
+6. Keep backend exchange validation as the final source of truth.
+
+Acceptance:
+
+- The board no longer chooses exchange targets from an unqualified all-active-member list by default.
+- Replacement choices are tied to the specific duty slot.
+- Risky replacement choices are visible before request.
+- Candidate loading failure has a clear fallback state.
+
+Implementation status:
+
+- Frontend slot-aware exchange target loading, candidate-labelled dropdown, risk confirmation, and documentation completed on 2026-05-11.
+- Detailed implementation log is in `Plan/development_log.md` under `2026-05-11 - Rota Review Phase 5 Exchange Target Eligibility`.
+
+## Phase 17: Final Export Audit Pack
+
+Action plan:
+
+1. Add publish-readiness checklist details into the final Excel export.
+2. Add accepted warning and confirmed override decisions into the export.
+3. Add call-wise fairness summary into the export.
+4. Expand review items with accepted/unaccepted status and decision notes.
+5. Expand exchange audit with validation and override context.
+
+Acceptance:
+
+- The exported workbook can explain not only the final rota, but also what was reviewed, accepted, warned, exchanged, and fairness-checked.
+- Accepted review decisions are visible outside the website.
+- Call-wise fairness is available to the board after publish.
+
+Implementation status:
+
+- Final export audit sheets and expanded columns implemented on 2026-05-11.
+- Detailed implementation log is in `Plan/development_log.md` under `2026-05-11 - Phase 17 Final Export Audit Pack`.

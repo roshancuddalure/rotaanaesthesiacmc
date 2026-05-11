@@ -5,7 +5,7 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
-from app.models import DutyAssignment, DutySlot, Person
+from app.models import DutyAssignment, DutySlot, Person, Unit
 from app.services.leave import month_bounds
 from app.services.rota_rules import RotaPhaseOneRules, get_phase_one_rules
 from app.services.rota_safety import (
@@ -17,12 +17,14 @@ from app.services.rota_safety import (
     leaves_by_day_and_person,
     member_call_level,
     member_contexts_for_day,
+    member_matches_cluster_rules,
     normalize_call_level,
     postings_for_month,
     required_call_levels,
     rule_for_slot,
     slot_safety,
 )
+from app.services.rota_template import PHASE4_SLOT_SOURCE
 
 MANUAL_ASSIGNMENT_SOURCE = "manual_rota_board"
 
@@ -54,7 +56,7 @@ def hydrate_slot(db: Session, slot_id: UUID) -> DutySlot:
         select(DutySlot)
         .where(DutySlot.id == slot_id)
         .options(
-            selectinload(DutySlot.unit),
+            selectinload(DutySlot.unit).selectinload(Unit.call_minimums),
             selectinload(DutySlot.rota_period),
             selectinload(DutySlot.assignments).selectinload(DutyAssignment.person),
         )
@@ -70,7 +72,7 @@ def hydrate_assignment(db: Session, assignment_id: UUID) -> DutyAssignment:
         .where(DutyAssignment.id == assignment_id)
         .options(
             selectinload(DutyAssignment.person),
-            selectinload(DutyAssignment.duty_slot).selectinload(DutySlot.unit),
+            selectinload(DutyAssignment.duty_slot).selectinload(DutySlot.unit).selectinload(Unit.call_minimums),
         )
     ).first()
     if assignment is None:
@@ -149,9 +151,10 @@ def person_month_assignments(
                 DutyAssignment.person_id == person_id,
                 DutySlot.duty_date >= starts_on,
                 DutySlot.duty_date <= ends_on,
+                DutySlot.source == PHASE4_SLOT_SOURCE,
             )
             .options(
-                selectinload(DutyAssignment.duty_slot).selectinload(DutySlot.unit),
+                selectinload(DutyAssignment.duty_slot).selectinload(DutySlot.unit).selectinload(Unit.call_minimums),
             )
         )
         if active_assignment(assignment)
@@ -292,9 +295,17 @@ def validate_assignment(
         if required_calls and not any(member_call_level(context) in required_calls for context in person_contexts):
             validation_issues.append(
                 issue(
-                    "error",
+                    "blocked",
                     "call_level_mismatch",
                     f"This slot requires {', '.join(sorted(required_calls))}; the member is listed as {normalize_call_level(person.call_level)}.",
+                )
+            )
+        if not any(member_matches_cluster_rules(db, context, slot, rule) for context in person_contexts):
+            validation_issues.append(
+                issue(
+                    "blocked",
+                    "call_subgroup_mismatch",
+                    "This member is not in an eligible subgroup for this duty type.",
                 )
             )
 
@@ -383,8 +394,16 @@ def assign_person_to_slot(
 
     validation = validate_assignment(db, slot=slot, person=person, replace_existing=replace_existing)
     if validation["status"] == "blocked":
+        blocked_issue = next(
+            (
+                item
+                for item in validation.get("issues", [])
+                if isinstance(item, dict) and item.get("severity") == "blocked"
+            ),
+            None,
+        )
         raise RotaAssignmentError(
-            "This slot is already filled.",
+            str(blocked_issue.get("message")) if isinstance(blocked_issue, dict) else "This assignment is blocked by rota rules.",
             status_code=409,
             validation=validation,
         )

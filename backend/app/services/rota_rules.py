@@ -8,10 +8,21 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.domain.duty_types import DUTY_TYPES
-from app.models import RuleSetting, RuleVersion
+from app.models import CallCluster, RuleSetting, RuleVersion
+from app.services.rota_call_levels import normalize_call_level
 
 PHASE_ONE_SETTING_KEY = "rota_generator.phase1"
 PHASE_ONE_RULE_VERSION_NAME = "Rota generator default rules"
+VALID_DUTY_KEYS = {duty_type.key for duty_type in DUTY_TYPES}
+VALID_DUTY_GROUPS = {duty_type.group for duty_type in DUTY_TYPES}
+VALID_CALL_LEVELS = {
+    "1ST_CALL",
+    "2ND_CALL",
+    "3RD_CALL",
+    "4TH_CALL",
+    "CO_4TH_CALL",
+    "5TH_CALL",
+}
 
 
 class DutyRule(BaseModel):
@@ -30,6 +41,8 @@ class DutyRule(BaseModel):
     blocks_elective_next_day: bool = False
     active: bool = True
     allowed_call_levels: list[str] = Field(default_factory=list)
+    allowed_cluster_keys: list[str] = Field(default_factory=list)
+    excluded_cluster_keys: list[str] = Field(default_factory=list)
     allowed_designations: list[str] = Field(default_factory=list)
     allowed_units: list[str] = Field(default_factory=list)
     excluded_units: list[str] = Field(default_factory=list)
@@ -159,10 +172,17 @@ def get_phase_one_rules(db: Session) -> tuple[RuleVersion, RotaPhaseOneRules]:
         db.add(setting)
         db.commit()
         return rule_version, rules
-    return rule_version, RotaPhaseOneRules.model_validate(setting.value)
+    rules = RotaPhaseOneRules.model_validate(setting.value)
+    default_rules = default_phase_one_rules()
+    existing_keys = {rule.key for rule in rules.duty_rules}
+    missing_rules = [rule for rule in default_rules.duty_rules if rule.key not in existing_keys]
+    if missing_rules:
+        rules.duty_rules.extend(missing_rules)
+    return rule_version, rules
 
 
 def save_phase_one_rules(db: Session, rules: RotaPhaseOneRules) -> tuple[RuleVersion, RotaPhaseOneRules]:
+    validate_phase_one_rules(db, rules)
     rule_version = get_or_create_phase_one_rule_version(db)
     setting = db.scalar(
         select(RuleSetting).where(
@@ -183,3 +203,26 @@ def save_phase_one_rules(db: Session, rules: RotaPhaseOneRules) -> tuple[RuleVer
     db.commit()
     db.refresh(rule_version)
     return rule_version, rules
+
+
+def validate_phase_one_rules(db: Session, rules: RotaPhaseOneRules) -> None:
+    cluster_keys = set(db.scalars(select(CallCluster.key)))
+    for rule in rules.duty_rules:
+        if rule.key not in VALID_DUTY_KEYS:
+            raise ValueError(f"Unknown duty rule: {rule.key}")
+        if rule.group not in VALID_DUTY_GROUPS:
+            raise ValueError(f"Unknown duty group for {rule.label}: {rule.group}")
+
+        normalized_call_levels = [normalize_call_level(item) for item in rule.allowed_call_levels]
+        invalid_call_levels = sorted({item for item in normalized_call_levels if item not in VALID_CALL_LEVELS})
+        if invalid_call_levels:
+            raise ValueError(f"Unknown allowed call level for {rule.label}: {', '.join(invalid_call_levels)}")
+        rule.allowed_call_levels = normalized_call_levels
+
+        for field_name, values in (
+            ("allowed eligibility group", rule.allowed_cluster_keys),
+            ("excluded eligibility group", rule.excluded_cluster_keys),
+        ):
+            unknown_keys = sorted({value for value in values if value not in cluster_keys})
+            if unknown_keys:
+                raise ValueError(f"Unknown {field_name} for {rule.label}: {', '.join(unknown_keys)}")

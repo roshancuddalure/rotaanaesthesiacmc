@@ -12,6 +12,7 @@ This folder is the project memory for the duty rota software. It should capture 
 - `06_project_operating_principles.md` - evidence-based work rules and logging discipline.
 - `07_phased_roadmap.md` - implementation phases and checklists.
 - `08_new_session_checklist.md` - startup checklist for future sessions.
+- `Website complete user guide.md` - no-brainer end-to-end website usage guide, glossary, workflows, and troubleshooting.
 - `development_log.md` - chronological record of analysis, decisions, and future changes.
 
 ## Reference Files Reviewed

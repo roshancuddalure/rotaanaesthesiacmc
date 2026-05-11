@@ -25,7 +25,8 @@ def create_slot(
     session: Session,
     unit: Unit,
     duty_date: date,
-    call_level: str = "1ST_CALL",
+    call_level: str | None = "1ST_CALL",
+    duty_type: str = "MAIN_1ST_24HR",
 ) -> DutySlot:
     period, _scope = monthly_setup(session, "2026-05")
     starts_at, ends_at = duty_bounds(duty_date)
@@ -33,9 +34,9 @@ def create_slot(
         rota_period=period,
         unit=unit,
         duty_date=duty_date,
-        duty_type="MAIN_1ST_24HR",
+        duty_type=duty_type,
         call_level=call_level,
-        slot_label=f"{unit.code}:{call_level}:{duty_date.isoformat()}",
+        slot_label=f"{unit.code}:{call_level or duty_type}:{duty_date.isoformat()}",
         starts_at=starts_at,
         ends_at=ends_at,
         is_24hr=True,
@@ -98,6 +99,83 @@ def test_safe_auto_fill_assigns_only_clear_slots_and_records_events() -> None:
         events = session.query(RotaAutoFillEvent).all()
         assert {event.action for event in events} == {"assigned", "blocked"}
         assert any(event.duty_slot_id == no_candidate.id for event in events)
+
+
+def test_safe_auto_fill_infers_call_from_duty_type_and_uses_same_call_only() -> None:
+    engine = create_engine("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(engine)
+
+    with Session(engine) as session:
+        unit = Unit(code="UNIT_I", name="Unit I", campus="MAIN")
+        first = Person(canonical_name="First Call Member", call_level="1ST_CALL")
+        second = Person(canonical_name="Second Call Member", call_level="2ND_CALL")
+        session.add_all([unit, first, second])
+        session.flush()
+        for person in [first, second]:
+            session.add(
+                PersonPosting(
+                    person=person,
+                    unit=unit,
+                    posting_type=person.call_level or "",
+                    starts_on=date(2026, 5, 1),
+                    source="unit_board",
+                )
+            )
+        slot = create_slot(
+            session,
+            unit,
+            date(2026, 5, 4),
+            call_level=None,
+            duty_type="MAIN_2ND_24HR",
+        )
+        session.commit()
+
+        result = run_safe_auto_fill(session, "2026-05")
+
+        assert result["assigned_slots"] == 1
+        assignment = session.query(DutyAssignment).one()
+        assert assignment.duty_slot_id == slot.id
+        assert assignment.person_id == second.id
+        event = session.query(RotaAutoFillEvent).one()
+        assert event.person_id == second.id
+        assert event.details["required_call_levels"] == ["2ND_CALL"]
+
+
+def test_safe_auto_fill_leaves_ambiguous_call_slots_open() -> None:
+    engine = create_engine("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(engine)
+
+    with Session(engine) as session:
+        unit = Unit(code="UNIT_I", name="Unit I", campus="MAIN")
+        first = Person(canonical_name="First Call Member", call_level="1ST_CALL")
+        session.add_all([unit, first])
+        session.flush()
+        session.add(
+            PersonPosting(
+                person=first,
+                unit=unit,
+                posting_type="1ST_CALL",
+                starts_on=date(2026, 5, 1),
+                source="unit_board",
+            )
+        )
+        create_slot(
+            session,
+            unit,
+            date(2026, 5, 4),
+            call_level=None,
+            duty_type="PAC",
+        )
+        session.commit()
+
+        result = run_safe_auto_fill(session, "2026-05")
+
+        assert result["assigned_slots"] == 0
+        assert result["review_slots"] == 1
+        assert session.query(DutyAssignment).count() == 0
+        event = session.query(RotaAutoFillEvent).one()
+        assert event.action == "skipped"
+        assert "ambiguous" in event.reason.lower()
 
 
 @contextmanager

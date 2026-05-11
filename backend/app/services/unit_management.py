@@ -6,6 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
 from app.models import LeaveRequest, PersonPosting, Unit
+from app.services.rota_call_levels import normalize_call_level
 from app.services.leave import ACTIVE_LEAVE_STATUSES, count_leave_days, month_bounds
 
 UNIT_BOARD_SOURCE = "unit_board"
@@ -59,9 +60,23 @@ def active_units(db: Session) -> list[Unit]:
         db.scalars(
             select(Unit)
             .where(Unit.active_status == "active")
+            .options(selectinload(Unit.call_minimums))
             .order_by(Unit.name, Unit.code)
         )
     )
+
+
+def unit_call_member_counts(assignments: list[PersonPosting], month: str) -> dict[tuple[UUID, str], int]:
+    starts_on, ends_on = month_bounds(month)
+    people: dict[tuple[UUID, str], set[UUID]] = defaultdict(set)
+    for assignment in assignments:
+        if assignment.unit_id is None:
+            continue
+        if assignment.starts_on > ends_on or (assignment.ends_on is not None and assignment.ends_on < starts_on):
+            continue
+        call_level = normalize_call_level(assignment.posting_type or assignment.person.call_level)
+        people[(assignment.unit_id, call_level)].add(assignment.person_id)
+    return {key: len(value) for key, value in people.items()}
 
 
 def active_leaves_for_month(db: Session, month: str) -> list[LeaveRequest]:
@@ -132,6 +147,7 @@ def validate_unit_month(assignments: list[PersonPosting], month: str) -> list[di
     issues: list[dict[str, object]] = []
     starts_on, ends_on = month_bounds(month)
     by_person: dict[UUID, list[PersonPosting]] = defaultdict(list)
+    units_by_person: dict[UUID, dict[UUID, PersonPosting]] = defaultdict(dict)
 
     for assignment in assignments:
         if assignment.person.active_status != "active":
@@ -155,6 +171,8 @@ def validate_unit_month(assignments: list[PersonPosting], month: str) -> list[di
                     "posting_id": str(assignment.id),
                 }
             )
+        else:
+            units_by_person[assignment.person_id].setdefault(assignment.unit_id, assignment)
         if not assignment.posting_type.strip():
             issues.append(
                 {
@@ -168,6 +186,30 @@ def validate_unit_month(assignments: list[PersonPosting], month: str) -> list[di
             )
         if normalize_posting_type(assignment.posting_type) in PRIMARY_POSTING_TYPES:
             by_person[assignment.person_id].append(assignment)
+
+    for unit_assignments in units_by_person.values():
+        if len(unit_assignments) <= 1:
+            continue
+        first_assignment = next(iter(unit_assignments.values()))
+        unit_names = sorted(
+            {
+                assignment.unit.name if assignment.unit is not None else "No unit"
+                for assignment in unit_assignments.values()
+            }
+        )
+        issues.append(
+            {
+                "severity": "error",
+                "code": "MULTIPLE_UNITS_IN_MONTH",
+                "message": (
+                    f"{first_assignment.person.canonical_name} is assigned to more than one unit "
+                    f"in {month}: {', '.join(unit_names)}."
+                ),
+                "person_id": str(first_assignment.person_id),
+                "unit_id": str(first_assignment.unit_id) if first_assignment.unit_id else None,
+                "posting_id": str(first_assignment.id),
+            }
+        )
 
     for person_assignments in by_person.values():
         relevant = [

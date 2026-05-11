@@ -29,6 +29,7 @@ from app.services.rota_safety import (
     slot_safety,
 )
 from app.services.rota_setup import monthly_setup
+from app.services.rota_template import PHASE4_SLOT_SOURCE
 
 CANDIDATE_ELIGIBLE = "eligible"
 CANDIDATE_REVIEW = "needs_review"
@@ -115,8 +116,14 @@ def active_slots_for_person(assignments: list[DutyAssignment], slot: DutySlot) -
 def duty_counts(slots: list[DutySlot], target_slot: DutySlot, rules: RotaPhaseOneRules) -> dict[str, int]:
     target_group = rule_group_for_slot(target_slot, rules)
     target_campus = campus_for_slot(target_slot)
+    target_is_weekend = target_slot.duty_date.weekday() >= 5
+    same_day_type = sum(1 for slot in slots if (slot.duty_date.weekday() >= 5) == target_is_weekend)
     return {
         "total_assignments": len(slots),
+        "target_is_weekend": int(target_is_weekend),
+        "same_day_type": same_day_type,
+        "weekday_assignments": sum(1 for slot in slots if slot.duty_date.weekday() < 5),
+        "weekend_assignments": sum(1 for slot in slots if slot.duty_date.weekday() >= 5),
         "total_24hr": sum(1 for slot in slots if slot.is_24hr),
         "weekend_24hr": sum(1 for slot in slots if slot.is_24hr and slot.duty_date.weekday() >= 5),
         "same_group": sum(1 for slot in slots if rule_group_for_slot(slot, rules) == target_group),
@@ -164,7 +171,8 @@ def candidate_score(
 ) -> tuple[int, dict[str, int]]:
     status_penalty = {CANDIDATE_ELIGIBLE: 0, CANDIDATE_REVIEW: 35, CANDIDATE_BLOCKED: 1000}[status]
     burden_penalty = (
-        counts["total_assignments"] * 6
+        counts["same_day_type"] * 30
+        + counts["total_assignments"] * 6
         + counts["total_24hr"] * 10
         + counts["weekend_24hr"] * 12
         + counts["same_group"] * 5
@@ -186,6 +194,7 @@ def candidate_score(
     validation_penalty = 20 if validation.get("requires_override") else 0
     parts = {
         "status": status_penalty,
+        "same_day_type": counts["same_day_type"] * 30,
         "burden": burden_penalty,
         "weekend": counts["weekend_24hr"] * 12,
         "rest": rest_penalty,
@@ -221,6 +230,8 @@ def candidate_reasons(
     reasons.append(
         f"Current month load: {counts['total_assignments']} duties, {counts['total_24hr']} 24-hour, {counts['weekend_24hr']} weekend 24-hour."
     )
+    target_day_text = "weekend" if counts["target_is_weekend"] else "weekday"
+    reasons.append(f"Same {target_day_text} load this month: {counts['same_day_type']} duties.")
     reasons.append(f"Same duty group already assigned this month: {counts['same_group']}.")
 
     if rest_gap_hours is None:
@@ -356,7 +367,10 @@ def month_candidate_slots(db: Session, month: str, limit_per_slot: int = 5) -> d
     slots = list(
         db.scalars(
             select(DutySlot)
-            .where(DutySlot.rota_period_id == period.id)
+            .where(
+                DutySlot.rota_period_id == period.id,
+                DutySlot.source == PHASE4_SLOT_SOURCE,
+            )
             .options(
                 selectinload(DutySlot.unit),
                 selectinload(DutySlot.assignments).selectinload(DutyAssignment.person),

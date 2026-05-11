@@ -34,6 +34,7 @@ class RotaPeriod(Base):
     )
     auto_fill_runs: Mapped[list["RotaAutoFillRun"]] = relationship(back_populates="rota_period")
     publish_approvals: Mapped[list["RotaPublishApproval"]] = relationship(back_populates="rota_period")
+    review_decisions: Mapped[list["RotaReviewDecision"]] = relationship(back_populates="rota_period")
 
 
 class DutySlot(Base):
@@ -248,6 +249,29 @@ class RotaExchangeRequest(Base):
     to_person: Mapped["Person | None"] = relationship(foreign_keys=[to_person_id])
     requested_by: Mapped["UserAccount | None"] = relationship(foreign_keys=[requested_by_user_id])
     approved_by: Mapped["UserAccount | None"] = relationship(foreign_keys=[approved_by_user_id])
+
+
+class RotaReviewDecision(Base):
+    __tablename__ = "rota_review_decisions"
+    __table_args__ = (
+        UniqueConstraint("duty_slot_id", "issue_code", name="uq_rota_review_decisions_slot_issue"),
+    )
+
+    id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
+    rota_period_id: Mapped[UUID] = mapped_column(ForeignKey("rota_periods.id"), index=True)
+    duty_slot_id: Mapped[UUID] = mapped_column(ForeignKey("duty_slots.id", ondelete="CASCADE"), index=True)
+    issue_code: Mapped[str] = mapped_column(String(100), index=True)
+    decision_type: Mapped[str] = mapped_column(String(50), default="accepted_warning", index=True)
+    note: Mapped[str] = mapped_column(Text)
+    decided_by_user_id: Mapped[UUID | None] = mapped_column(
+        ForeignKey("user_accounts.id", ondelete="SET NULL"), nullable=True, index=True
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, index=True)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    rota_period: Mapped[RotaPeriod] = relationship(back_populates="review_decisions")
+    duty_slot: Mapped[DutySlot] = relationship()
+    decided_by: Mapped["UserAccount | None"] = relationship()
 
 
 class RotaPublishApproval(Base):

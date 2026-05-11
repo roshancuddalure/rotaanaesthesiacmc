@@ -81,6 +81,27 @@ def test_update_scope_units_and_readiness() -> None:
         assert excluded_row["scope_status"] == "excluded"
 
 
+def test_update_scope_units_can_save_same_scope_again() -> None:
+    engine = create_engine("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(engine)
+
+    with Session(engine) as session:
+        unit = Unit(code="UNIT_I", name="Unit I", campus="MAIN")
+        excluded = Unit(code="UNIT_II", name="Unit II", campus="MAIN")
+        session.add_all([unit, excluded])
+        session.commit()
+        _period, scope = monthly_setup(session, "2026-05")
+        update_scope_units(session, scope, [unit.id], [excluded.id], True, True, "Ready")
+
+        _period, scope = monthly_setup(session, "2026-05")
+        updated = update_scope_units(session, scope, [unit.id], [excluded.id], True, True, "Ready")
+
+        assert [(item.unit_id, item.status) for item in updated.units] == [
+            (unit.id, "included"),
+            (excluded.id, "excluded"),
+        ]
+
+
 def test_clone_previous_scope() -> None:
     engine = create_engine("sqlite+pysqlite:///:memory:")
     Base.metadata.create_all(engine)

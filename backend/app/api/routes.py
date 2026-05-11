@@ -2,6 +2,7 @@ from fastapi import APIRouter
 
 from app.api.v1.analysis import router as analysis_router
 from app.api.v1.auth import router as auth_router
+from app.api.v1.call_clusters import router as call_clusters_router
 from app.api.v1.admin_mappings import router as admin_mappings_router
 from app.api.v1.diagnostics import router as diagnostics_router
 from app.api.v1.health import router as health_router
@@ -23,6 +24,7 @@ from app.api.v1.unit_management import router as unit_management_router
 api_router = APIRouter()
 api_router.include_router(health_router, tags=["health"])
 api_router.include_router(auth_router, prefix="/v1", tags=["auth"])
+api_router.include_router(call_clusters_router, prefix="/v1", tags=["call clusters"])
 api_router.include_router(analysis_router, prefix="/v1", tags=["analysis"])
 api_router.include_router(admin_mappings_router, prefix="/v1", tags=["admin mappings"])
 api_router.include_router(diagnostics_router, prefix="/v1", tags=["diagnostics"])
