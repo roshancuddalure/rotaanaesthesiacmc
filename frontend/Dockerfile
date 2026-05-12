@@ -2,12 +2,12 @@ FROM node:22-slim
 
 WORKDIR /app
 
-COPY package.json tsconfig.json index.html ./
+COPY package.json package-lock.json tsconfig.json index.html ./
 COPY src ./src
 
-RUN npm install
+RUN npm ci
+RUN npm run build
 
-EXPOSE 5173
+EXPOSE 4173
 
-CMD ["npm", "run", "dev"]
-
+CMD ["sh", "-c", "npm run preview -- --host 0.0.0.0 --port ${PORT:-4173}"]
