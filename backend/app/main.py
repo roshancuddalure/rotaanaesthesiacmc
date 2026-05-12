@@ -7,7 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from app.api.routes import api_router
 from app.core.config import settings
 
-STATIC_DIR = Path(__file__).resolve().parents[2] / "static"
+STATIC_DIR = Path(__file__).resolve().parents[1] / "static"
 
 
 def create_app() -> FastAPI:
