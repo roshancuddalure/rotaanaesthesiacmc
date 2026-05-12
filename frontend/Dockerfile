@@ -2,7 +2,7 @@ FROM node:22-slim
 
 WORKDIR /app
 
-COPY package.json package-lock.json tsconfig.json index.html ./
+COPY package.json package-lock.json tsconfig.json vite.config.ts index.html ./
 COPY src ./src
 
 RUN npm ci

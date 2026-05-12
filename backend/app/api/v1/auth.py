@@ -9,7 +9,18 @@ from sqlalchemy.orm import Session
 
 from app.db.session import get_db
 from app.models import UserAccount
-from app.services.auth import ADMIN_ROLES, ROLES, authenticate, create_reset_token, create_session, hash_secret, reset_password, seed_superadmin, user_from_token
+from app.services.auth import (
+    ADMIN_ROLES,
+    ROLES,
+    authenticate,
+    change_password,
+    create_reset_token,
+    create_session,
+    hash_secret,
+    reset_password,
+    seed_superadmin,
+    user_from_token,
+)
 
 router = APIRouter()
 
@@ -53,6 +64,11 @@ class ForgotPasswordResponse(BaseModel):
 
 class ResetPasswordRequest(BaseModel):
     token: str
+    new_password: str
+
+
+class ChangePasswordRequest(BaseModel):
+    current_password: str
     new_password: str
 
 
@@ -158,3 +174,16 @@ def reset_password_endpoint(payload: ResetPasswordRequest, db: Session = Depends
     if not reset_password(db, payload.token, payload.new_password):
         raise HTTPException(status_code=400, detail="Invalid or expired reset token")
     return {"status": "password_reset"}
+
+
+@router.post("/auth/change-password")
+def change_password_endpoint(
+    payload: ChangePasswordRequest,
+    user: UserAccount = Depends(current_user),
+    db: Session = Depends(get_db),
+) -> dict[str, str]:
+    if len(payload.new_password) < 8:
+        raise HTTPException(status_code=400, detail="New password must be at least 8 characters")
+    if not change_password(db, user, payload.current_password, payload.new_password):
+        raise HTTPException(status_code=400, detail="Current password is incorrect")
+    return {"status": "password_changed"}

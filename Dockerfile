@@ -2,7 +2,7 @@ FROM node:22-slim AS frontend-build
 
 WORKDIR /frontend
 
-COPY frontend/package.json frontend/package-lock.json frontend/tsconfig.json frontend/index.html ./
+COPY frontend/package.json frontend/package-lock.json frontend/tsconfig.json frontend/vite.config.ts frontend/index.html ./
 COPY frontend/src ./src
 
 RUN npm ci
@@ -22,7 +22,7 @@ COPY --from=frontend-build /frontend/dist ./static
 RUN pip install --no-cache-dir -e .
 RUN chmod +x /app/docker-entrypoint.sh
 
-EXPOSE 8000
+EXPOSE 8080
 
 ENTRYPOINT ["/app/docker-entrypoint.sh"]
-CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8080}"]

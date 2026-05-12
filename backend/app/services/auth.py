@@ -107,6 +107,14 @@ def reset_password(db: Session, token: str, new_password: str) -> bool:
     return True
 
 
+def change_password(db: Session, user: UserAccount, current_password: str, new_password: str) -> bool:
+    if not verify_secret(current_password, user.password_hash):
+        return False
+    user.password_hash = hash_secret(new_password)
+    db.commit()
+    return True
+
+
 def seed_superadmin(db: Session) -> UserAccount:
     existing = db.scalar(select(UserAccount).where(UserAccount.username == "rotachief"))
     if existing is not None:

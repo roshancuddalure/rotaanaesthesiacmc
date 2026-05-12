@@ -47,6 +47,7 @@ import {
   clearRotaAssignment,
   clearAuthToken,
   cancelLeaveRequest,
+  changePassword,
   clonePreviousRotaSetupScope,
   createCallCluster,
   createMember,
@@ -401,6 +402,47 @@ function closeReviewActionModal() {
   document.querySelector("#review-action-modal")?.remove();
 }
 
+function renderChangePasswordModal(): string {
+  return `
+    <div class="modal-backdrop" id="change-password-modal">
+      <section class="person-modal change-password-modal" role="dialog" aria-modal="true" aria-labelledby="change-password-title">
+        <header class="person-modal-header">
+          <div>
+            <h3 id="change-password-title">Change Password</h3>
+            <p>${escapeHtml(currentUser?.display_name ?? "Signed in user")}</p>
+          </div>
+          <button class="modal-close" data-close-change-password aria-label="Close">x</button>
+        </header>
+        <div class="person-modal-body">
+          <form id="change-password-form" class="change-password-form">
+            <label for="current-password">Current password</label>
+            <input id="current-password" type="password" autocomplete="current-password" />
+            <label for="new-password">New password</label>
+            <input id="new-password" type="password" autocomplete="new-password" />
+            <label for="confirm-password">Confirm new password</label>
+            <input id="confirm-password" type="password" autocomplete="new-password" />
+            <p class="form-message" id="change-password-message"></p>
+            <div class="modal-form-actions">
+              <button class="icon-button" type="button" data-close-change-password>Cancel</button>
+              <button class="primary" type="submit" id="change-password-submit">Save Password</button>
+            </div>
+          </form>
+        </div>
+      </section>
+    </div>
+  `;
+}
+
+function openChangePasswordModal() {
+  document.querySelector("#change-password-modal")?.remove();
+  document.body.insertAdjacentHTML("beforeend", renderChangePasswordModal());
+  document.querySelector<HTMLInputElement>("#current-password")?.focus();
+}
+
+function closeChangePasswordModal() {
+  document.querySelector("#change-password-modal")?.remove();
+}
+
 async function runReviewAction(action: HTMLElement) {
   const kind = action.dataset.reviewActionKind as ReviewAction["kind"] | undefined;
   const target = action.dataset.reviewActionTarget ?? "";
@@ -488,6 +530,7 @@ function renderShell() {
         </div>
         <div class="topbar-actions">
           <span id="api-status" class="status">Checking API...</span>
+          <button class="icon-button" id="change-password">Change Password</button>
           <button class="icon-button" id="sign-out">Sign Out</button>
         </div>
       </header>
@@ -522,6 +565,9 @@ function renderShell() {
     currentUser = null;
     renderLogin();
     showToast("Signed out", "info");
+  });
+  document.getElementById("change-password")?.addEventListener("click", () => {
+    openChangePasswordModal();
   });
 }
 
@@ -6520,6 +6566,38 @@ function bindNavigation() {
 }
 
 function bindViewEvents() {
+  document.addEventListener("submit", async (event) => {
+    const form = event.target as HTMLFormElement;
+    if (form.id !== "change-password-form") return;
+    event.preventDefault();
+    const currentPassword = form.querySelector<HTMLInputElement>("#current-password")?.value ?? "";
+    const newPassword = form.querySelector<HTMLInputElement>("#new-password")?.value ?? "";
+    const confirmPassword = form.querySelector<HTMLInputElement>("#confirm-password")?.value ?? "";
+    const message = form.querySelector<HTMLParagraphElement>("#change-password-message");
+    const btn = form.querySelector<HTMLButtonElement>("#change-password-submit");
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      if (message) message.textContent = "Please complete all password fields.";
+      return;
+    }
+    if (newPassword.length < 8) {
+      if (message) message.textContent = "New password must be at least 8 characters.";
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      if (message) message.textContent = "New password and confirmation do not match.";
+      return;
+    }
+    setButtonLoading(btn, true, "Save Password");
+    try {
+      await changePassword(currentPassword, newPassword);
+      closeChangePasswordModal();
+      showToast("Password changed", "success");
+    } catch (error) {
+      if (message) message.textContent = error instanceof Error ? error.message : "Failed to change password";
+      resetButton(btn);
+    }
+  });
+
   viewRoot?.addEventListener("submit", async (event) => {
     const form = event.target as HTMLFormElement;
     if (form.id === "account-form") {
@@ -7690,6 +7768,9 @@ function bindViewEvents() {
     if (target.matches("[data-close-review-action]") || target.id === "review-action-modal") {
       closeReviewActionModal();
     }
+    if (target.matches("[data-close-change-password]") || target.id === "change-password-modal") {
+      closeChangePasswordModal();
+    }
     if (target.matches("[data-close-person-modal]") || target.id === "analysis-person-modal") {
       closeAnalysisPersonModal();
     }
@@ -7708,6 +7789,7 @@ function bindViewEvents() {
     if (event.key === "Escape") {
       closeRotaReviewSlotModal();
       closeReviewActionModal();
+      closeChangePasswordModal();
       closeAnalysisPersonModal();
       closeLeaveDayModal();
       closeRotaDayModal();

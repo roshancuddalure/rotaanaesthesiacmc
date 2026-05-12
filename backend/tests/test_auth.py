@@ -85,6 +85,49 @@ def test_forgot_and_reset_password() -> None:
         assert response.status_code == 200
 
 
+def test_authenticated_user_can_change_password() -> None:
+    with auth_client() as client:
+        response = client.post(
+            "/api/v1/auth/sign-in",
+            json={"username": "rotachief", "password": "rotateam"},
+        )
+        token = response.json()["token"]
+
+        response = client.post(
+            "/api/v1/auth/change-password",
+            headers={"Authorization": f"Bearer {token}"},
+            json={"current_password": "wrongpass", "new_password": "newpass123"},
+        )
+        assert response.status_code == 400
+
+        response = client.post(
+            "/api/v1/auth/change-password",
+            headers={"Authorization": f"Bearer {token}"},
+            json={"current_password": "rotateam", "new_password": "short"},
+        )
+        assert response.status_code == 400
+
+        response = client.post(
+            "/api/v1/auth/change-password",
+            headers={"Authorization": f"Bearer {token}"},
+            json={"current_password": "rotateam", "new_password": "newpass123"},
+        )
+        assert response.status_code == 200
+        assert response.json()["status"] == "password_changed"
+
+        response = client.post(
+            "/api/v1/auth/sign-in",
+            json={"username": "rotachief", "password": "rotateam"},
+        )
+        assert response.status_code == 401
+
+        response = client.post(
+            "/api/v1/auth/sign-in",
+            json={"username": "rotachief", "password": "newpass123"},
+        )
+        assert response.status_code == 200
+
+
 def test_diagnostics_requires_admin_privilege() -> None:
     with auth_client() as client:
         superadmin_response = client.post(

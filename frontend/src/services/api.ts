@@ -1,4 +1,5 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ?? (import.meta.env.DEV ? "http://localhost:8000" : "");
 
 let authToken = localStorage.getItem("duty_rota_auth_token") ?? "";
 
@@ -1533,6 +1534,13 @@ export function resetPassword(token: string, newPassword: string): Promise<{ sta
   return request<{ status: string }>("/api/v1/auth/reset-password", {
     method: "POST",
     body: JSON.stringify({ token, new_password: newPassword }),
+  });
+}
+
+export function changePassword(currentPassword: string, newPassword: string): Promise<{ status: string }> {
+  return request<{ status: string }>("/api/v1/auth/change-password", {
+    method: "POST",
+    body: JSON.stringify({ current_password: currentPassword, new_password: newPassword }),
   });
 }
 
