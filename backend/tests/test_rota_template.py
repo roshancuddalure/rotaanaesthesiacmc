@@ -22,6 +22,7 @@ from app.services.rota_template import (
     clear_template_cache,
     generate_empty_template,
     template_month,
+    write_call_wise_template_export,
     write_eagle_eye_matrix,
 )
 
@@ -511,6 +512,38 @@ def test_rota_template_eagle_eye_export_downloads_workbook() -> None:
         assert sheet.cell(row=1, column=3).fill.fgColor.rgb in {"FFFFE699", "00FFE699"}
 
 
+def test_rota_template_call_wise_export_downloads_workbook() -> None:
+    with template_client() as client:
+        token = sign_in(client)
+        headers = {"Authorization": f"Bearer {token}"}
+        client.post(
+            "/api/v1/rota-template/generate?month=2026-05",
+            headers=headers,
+            json={
+                "duty_keys": ["MAIN_1ST_24HR"],
+                "starts_on": "2026-05-01",
+                "ends_on": "2026-05-02",
+            },
+        )
+
+        response = client.get("/api/v1/rota-template/call-wise-export?month=2026-05", headers=headers)
+
+        assert response.status_code == 200
+        assert response.headers["content-type"].startswith(
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+        assert "call-wise-rota-template-2026-05.xlsx" in response.headers["content-disposition"]
+        assert response.content.startswith(b"PK")
+        workbook = load_workbook(BytesIO(response.content))
+        sheet = workbook["1st Call"]
+        assert sheet.cell(row=1, column=1).value == "Duty"
+        assert sheet.cell(row=1, column=2).value == "2026-05-01\nFriday"
+        assert sheet.cell(row=1, column=3).value == "2026-05-02\nSaturday"
+        assert sheet.cell(row=2, column=1).value == "Main 1st Call"
+        assert sheet.cell(row=2, column=2).value == "Unit 1"
+        assert sheet.cell(row=1, column=3).fill.fgColor.rgb in {"FFFFE699", "00FFE699"}
+
+
 def test_eagle_eye_export_groups_duties_with_divider_rows() -> None:
     engine = create_engine("sqlite+pysqlite:///:memory:")
     Base.metadata.create_all(engine)
@@ -573,3 +606,54 @@ def test_eagle_eye_export_groups_duties_with_divider_rows() -> None:
     assert sheet.cell(row=2, column=1).fill.fgColor.rgb in {"FFD9EAF7", "00D9EAF7"}
     assert sheet.cell(row=1, column=2).fill.fgColor.rgb in {"FFFFE699", "00FFE699"}
     assert sheet.cell(row=3, column=2).value == "Unit 1"
+
+
+def test_call_wise_export_splits_slots_by_required_person_call_level() -> None:
+    engine = create_engine("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(engine)
+
+    with Session(engine) as session:
+        unit = Unit(code="UNIT_III", name="Unit III", campus="MAIN")
+        period, _scope = monthly_setup(session, "2026-05")
+        starts_at = datetime.combine(date(2026, 5, 2), time(hour=8))
+        slots = [
+            DutySlot(
+                rota_period=period,
+                unit=unit,
+                duty_date=date(2026, 5, 2),
+                duty_type="MAIN_1ST_24HR",
+                slot_label="unit:main-1",
+                starts_at=starts_at,
+                ends_at=starts_at + timedelta(hours=24),
+                is_24hr=True,
+                source="phase4_template",
+            ),
+            DutySlot(
+                rota_period=period,
+                unit=unit,
+                duty_date=date(2026, 5, 2),
+                duty_type="MAIN_3RD_24HR",
+                slot_label="unit:main-3",
+                starts_at=starts_at,
+                ends_at=starts_at + timedelta(hours=24),
+                is_24hr=True,
+                source="phase4_template",
+            ),
+        ]
+        session.add_all([unit, *slots])
+        session.flush()
+
+        output = BytesIO()
+        workbook = xlsxwriter.Workbook(output, {"in_memory": True})
+        write_call_wise_template_export(workbook, slots, default_phase_one_rules())
+        workbook.close()
+
+    workbook = load_workbook(BytesIO(output.getvalue()))
+    assert "1st Call" in workbook.sheetnames
+    assert "3rd Call" in workbook.sheetnames
+    assert workbook["1st Call"].cell(row=2, column=1).value == "Main 1st Call"
+    assert workbook["3rd Call"].cell(row=2, column=1).value == "Main 3rd Call"
+    assert workbook["3rd Call"].cell(row=2, column=2).value == "Unit 3"
+    assert workbook["3rd Call"].cell(row=1, column=2).value == "2026-05-02\nSaturday"
+    assert workbook["3rd Call"].cell(row=1, column=2).fill.fgColor.rgb in {"FFFFE699", "00FFE699"}
+    assert workbook["3rd Call"].cell(row=2, column=2).fill.fgColor.rgb in {"FFFFF2CC", "00FFF2CC"}

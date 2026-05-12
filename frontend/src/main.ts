@@ -55,6 +55,7 @@ import {
   createUserAccount,
   deleteUnitAssignment,
   downloadRotaExport,
+  downloadRotaTemplateCallWiseExport,
   downloadRotaTemplateEagleEyeExport,
   forgotPassword,
   getAnalysisDashboard,
@@ -5284,6 +5285,7 @@ async function renderRotaTemplate() {
           <button class="icon-button danger-button" type="button" id="clear-rota-template-with-assignments" ${assignedSlotCount ? "" : "disabled"}>Clear Duties + Assignments</button>
           <button class="icon-button" type="button" id="run-safe-auto-fill" ${openSlotCount ? "" : "disabled"}>Strict Safe Auto-Fill</button>
           <button class="icon-button" type="button" id="download-eagle-eye-export" ${template.slots.length ? "" : "disabled"}>Export Eagle Eye</button>
+          <button class="icon-button" type="button" id="download-call-wise-template-export" ${template.slots.length ? "" : "disabled"}>Export Call-Wise</button>
         </div>
       </section>
       <section class="panel quality-panel">
@@ -7382,6 +7384,28 @@ function bindViewEvents() {
         resetButton(btn);
       } catch (error) {
         showToast(error instanceof Error ? error.message : "Failed to download eagle eye export", "error");
+        resetButton(btn);
+      }
+      return;
+    }
+
+    if (target.id === "download-call-wise-template-export") {
+      const btn = target.closest<HTMLButtonElement>("#download-call-wise-template-export");
+      setButtonLoading(btn, true, "Export Call-Wise");
+      try {
+        const { blob, filename } = await downloadRotaTemplateCallWiseExport(rotaTemplateMonth);
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+        showToast("Call-wise template Excel export downloaded", "success");
+        resetButton(btn);
+      } catch (error) {
+        showToast(error instanceof Error ? error.message : "Failed to download call-wise export", "error");
         resetButton(btn);
       }
       return;

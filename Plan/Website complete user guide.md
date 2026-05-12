@@ -464,6 +464,8 @@ Important terms:
 - Override reason: written explanation for accepting a warning.
 - Fast load mode: loads the page without expensive suggestions/history.
 - Clear Template Cache: removes generated template slots when safe to do so.
+- Export Eagle Eye: downloads a month-wide Excel view with duties as rows and dates as columns.
+- Export Call-Wise: downloads the Eagle Eye layout split into separate sheets by required person call level, such as 1st Call, 2nd Call, and 3rd Call.
 
 Generate template workflow:
 
@@ -509,6 +511,17 @@ Use only after leave and units are clean.
 2. Confirm warnings are understood.
 3. Click Safe Auto-Fill.
 4. Review what it assigned and what it left open.
+
+Template export workflow:
+
+1. Open Rota Template.
+2. Confirm the correct month is selected.
+3. Use Export Eagle Eye when you want a compact whole-month scan by date.
+4. Use Export Call-Wise when you want the same compact duty-by-date view, but separated by required person call level.
+5. In the call-wise workbook, each sheet uses duties as rows and dates as columns. Cells contain only unit names.
+6. Category divider rows are intentionally not included in call-wise sheets so the export stays compact.
+7. A Main 3rd Call duty appears in the 3rd Call sheet, not in the 1st Call or 4th Call sheet.
+8. If a duty rule allows multiple call levels, that duty can appear in each allowed call-level sheet because any of those person levels may be eligible.
 
 Common difficulties:
 

@@ -890,6 +890,122 @@ def eagle_eye_group_label(rule: DutyRule | None, duty_key: str) -> str:
     return EAGLE_EYE_GROUP_LABELS.get(rule.group, rule.group.replace("_", " ").upper() or duty_key)
 
 
+CALL_WISE_SHEET_LABELS = {
+    "1ST_CALL": "1st Call",
+    "2ND_CALL": "2nd Call",
+    "3RD_CALL": "3rd Call",
+    "4TH_CALL": "4th Call",
+    "CO_4TH_CALL": "Co-4th Call",
+    "5TH_CALL": "5th Call",
+    "Unassigned": "Unassigned",
+}
+
+
+CALL_WISE_ORDER = ["1ST_CALL", "2ND_CALL", "3RD_CALL", "4TH_CALL", "CO_4TH_CALL", "5TH_CALL", "Unassigned"]
+
+
+def call_wise_sheet_name(call_level: str) -> str:
+    return CALL_WISE_SHEET_LABELS.get(call_level, call_level.replace("_", " ").title())[:31]
+
+
+def call_levels_for_export_rule(rule: DutyRule | None, duty_key: str) -> set[str]:
+    if rule and rule.allowed_call_levels:
+        values = {normalize_call_level(item) for item in rule.allowed_call_levels}
+        values.discard("Unassigned")
+        if values:
+            return values
+    inferred = inferred_call_levels_from_duty_type(duty_key)
+    return inferred or {"Unassigned"}
+
+
+def assigned_member_text(slot: DutySlot) -> str:
+    assignments = [
+        assignment
+        for assignment in slot.assignments
+        if assignment.status.lower() in {"assigned", "draft", "confirmed"}
+    ]
+    return ", ".join(sorted(assignment.person.canonical_name for assignment in assignments)) or "Open"
+
+
+def write_call_wise_template_export(
+    workbook: xlsxwriter.Workbook,
+    slots: list[DutySlot],
+    rules: RotaPhaseOneRules,
+) -> None:
+    rule_order = {rule.key: index for index, rule in enumerate(rules.duty_rules)}
+    rule_by_key = {rule.key: rule for rule in rules.duty_rules}
+    slots_by_call: dict[str, list[DutySlot]] = {}
+    for slot in slots:
+        rule = rule_by_key.get(slot.duty_type)
+        for call_level in call_levels_for_export_rule(rule, slot.duty_type):
+            slots_by_call.setdefault(call_level, []).append(slot)
+
+    normal_header = workbook.add_format(
+        {"bold": True, "bg_color": "#0F172A", "font_color": "#FFFFFF", "border": 1, "align": "center", "valign": "vcenter", "text_wrap": True}
+    )
+    weekend_header = workbook.add_format(
+        {"bold": True, "bg_color": "#FFE699", "font_color": "#111827", "border": 1, "align": "center", "valign": "vcenter", "text_wrap": True}
+    )
+    duty_format = workbook.add_format({"bold": True, "bg_color": "#F8FAFC", "border": 1})
+    normal_cell = workbook.add_format({"border": 1, "align": "center", "valign": "vcenter", "text_wrap": True})
+    weekend_cell = workbook.add_format({"border": 1, "align": "center", "valign": "vcenter", "text_wrap": True, "bg_color": "#FFF2CC"})
+    calls = sorted(
+        slots_by_call,
+        key=lambda call: (CALL_WISE_ORDER.index(call) if call in CALL_WISE_ORDER else 99, call),
+    )
+    if not calls:
+        calls = ["Unassigned"]
+        slots_by_call["Unassigned"] = []
+
+    for call_level in calls:
+        worksheet = workbook.add_worksheet(call_wise_sheet_name(call_level))
+        call_slots = sorted(
+            slots_by_call[call_level],
+            key=lambda slot: (
+                slot.duty_date,
+                rule_order.get(slot.duty_type, 9999),
+                rule_by_key.get(slot.duty_type).label if rule_by_key.get(slot.duty_type) else slot.duty_type,
+                display_unit_for_eagle_eye(slot.unit),
+                slot.slot_label,
+            ),
+        )
+        dates = sorted({slot.duty_date for slot in call_slots})
+        duty_keys = sorted(
+            {slot.duty_type for slot in call_slots},
+            key=lambda key: (rule_order.get(key, 9999), rule_by_key.get(key).label if rule_by_key.get(key) else key),
+        )
+
+        worksheet.write(0, 0, "Duty", normal_header)
+        for col, day in enumerate(dates, start=1):
+            worksheet.write(
+                0,
+                col,
+                f"{day.isoformat()}\n{day.strftime('%A')}",
+                weekend_header if day.weekday() >= 5 else normal_header,
+            )
+
+        units_by_duty_day: dict[tuple[str, date], list[str]] = {}
+        for slot in call_slots:
+            unit_name = display_unit_for_eagle_eye(slot.unit)
+            if unit_name:
+                units_by_duty_day.setdefault((slot.duty_type, slot.duty_date), []).append(unit_name)
+
+        for row, duty_key in enumerate(duty_keys, start=1):
+            rule = rule_by_key.get(duty_key)
+            worksheet.write(row, 0, rule.label if rule else duty_key, duty_format)
+            for col, day in enumerate(dates, start=1):
+                units = sorted(set(units_by_duty_day.get((duty_key, day), [])))
+                worksheet.write(row, col, ", ".join(units), weekend_cell if day.weekday() >= 5 else normal_cell)
+
+        if not duty_keys:
+            worksheet.write(1, 0, "No duties", duty_format)
+        worksheet.set_column(0, 0, 24)
+        for col, day in enumerate(dates, start=1):
+            worksheet.set_column(col, col, 13, weekend_cell if day.weekday() >= 5 else normal_cell)
+        worksheet.set_row(0, 34)
+        worksheet.freeze_panes(1, 1)
+
+
 def write_eagle_eye_matrix(
     workbook: xlsxwriter.Workbook,
     slots: list[DutySlot],
@@ -973,6 +1089,17 @@ def eagle_eye_export(db: Session, month: str) -> tuple[str, bytes]:
     write_eagle_eye_matrix(workbook, slots, rules)
     workbook.close()
     return f"eagle-eye-rota-template-{month}.xlsx", output.getvalue()
+
+
+def call_wise_template_export(db: Session, month: str) -> tuple[str, bytes]:
+    period, _scope = monthly_setup(db, month)
+    _rule_version, rules = get_phase_one_rules(db)
+    slots = template_slots_for_period(db, period.id)
+    output = BytesIO()
+    workbook = xlsxwriter.Workbook(output, {"in_memory": True})
+    write_call_wise_template_export(workbook, slots, rules)
+    workbook.close()
+    return f"call-wise-rota-template-{month}.xlsx", output.getvalue()
 
 
 def run_to_dict(run: RotaTemplateGenerationRun) -> dict[str, object]:

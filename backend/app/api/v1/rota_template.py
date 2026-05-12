@@ -11,6 +11,7 @@ from app.models import UserAccount
 from app.services.leave import month_bounds
 from app.services.rota_template import (
     TemplateGenerationOptions,
+    call_wise_template_export,
     clear_template_cache,
     eagle_eye_export,
     generate_empty_template,
@@ -118,6 +119,25 @@ def export_rota_template_eagle_eye(
     try:
         month_bounds(month)
         filename, payload = eagle_eye_export(db, month)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    headers = {"Content-Disposition": f'attachment; filename="{filename}"'}
+    return StreamingResponse(
+        iter([payload]),
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers=headers,
+    )
+
+
+@router.get("/rota-template/call-wise-export")
+def export_rota_template_call_wise(
+    month: str,
+    _user: UserAccount = Depends(current_user),
+    db: Session = Depends(get_db),
+) -> StreamingResponse:
+    try:
+        month_bounds(month)
+        filename, payload = call_wise_template_export(db, month)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     headers = {"Content-Disposition": f'attachment; filename="{filename}"'}

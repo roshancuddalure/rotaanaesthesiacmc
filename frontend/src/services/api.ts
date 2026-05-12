@@ -1724,3 +1724,16 @@ export async function downloadRotaTemplateEagleEyeExport(month: string): Promise
     filename: filenameFromDisposition(response.headers.get("Content-Disposition"), `eagle-eye-rota-template-${month}.xlsx`),
   };
 }
+
+export async function downloadRotaTemplateCallWiseExport(month: string): Promise<{ blob: Blob; filename: string }> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/rota-template/call-wise-export?month=${encodeURIComponent(month)}`, {
+    headers: authToken ? { Authorization: `Bearer ${authToken}` } : {},
+  });
+  if (!response.ok) {
+    throw await errorFromResponse(response);
+  }
+  return {
+    blob: await response.blob(),
+    filename: filenameFromDisposition(response.headers.get("Content-Disposition"), `call-wise-rota-template-${month}.xlsx`),
+  };
+}

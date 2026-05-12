@@ -493,3 +493,26 @@ Implementation status:
 
 - Final export audit sheets and expanded columns implemented on 2026-05-11.
 - Detailed implementation log is in `Plan/development_log.md` under `2026-05-11 - Phase 17 Final Export Audit Pack`.
+
+## Phase 18: Rota Template Call-Wise Export
+
+Action plan:
+
+1. Add a Rota Template Excel export that splits generated slots by required person call level.
+2. Keep all call-level sheets inside one workbook.
+3. Use the rule-level allowed call configuration first, then duty-type inference as fallback.
+4. Keep the workbook compact by using the Eagle Eye duty-by-date matrix inside each call-level sheet.
+5. Expose the export from the Rota Template screen beside Eagle Eye export.
+
+Acceptance:
+
+- The board can download one workbook and inspect 1st Call, 2nd Call, 3rd Call, and other required call duties separately.
+- A duty appears under the call level of the person required to do that duty.
+- Weekend rows are visibly highlighted.
+- Category divider rows are omitted in call-wise sheets to avoid extra blank space.
+- The export is documented in the user guide.
+
+Implementation status:
+
+- Implemented on 2026-05-11.
+- Detailed implementation log is in `Plan/development_log.md` under `2026-05-11 - Rota Template Call-Wise Export`.

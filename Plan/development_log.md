@@ -2156,3 +2156,31 @@ Verification:
 Debug note:
 
 - The final export still requires a published rota before download. These audit sheets are generated from the current Rota Review and Publish checklist state at export time.
+
+## 2026-05-11 - Rota Template Call-Wise Export
+
+Goal:
+
+- Add a Rota Template export option where duties are split by required person call level, with each call level in a separate sheet inside one Excel workbook.
+
+Implemented:
+
+- Reused the Rota Template call-wise export service that groups slots by rota-rule allowed call levels first and duty-type call inference as fallback.
+- Added `GET /api/v1/rota-template/call-wise-export`.
+- Added `downloadRotaTemplateCallWiseExport` to the frontend API client.
+- Added an `Export Call-Wise` button beside `Export Eagle Eye` on the Rota Template screen.
+- The workbook now uses the same compact matrix pattern as Eagle Eye inside each call-level sheet:
+  - rows are duty names,
+  - columns are date/day cells,
+  - body cells contain only unit names.
+- Category divider rows are omitted from call-wise sheets to avoid unnecessary spacing.
+- Weekend date columns are highlighted in yellow.
+- Updated the complete user guide and rota generator phase action plan.
+
+Verification:
+
+- Added backend tests for the API download and for splitting slots into the correct required-call sheets.
+
+Debug note:
+
+- If a duty rule allows multiple call levels, the same duty is listed in each allowed call-level sheet because each of those person levels is valid for that duty.
