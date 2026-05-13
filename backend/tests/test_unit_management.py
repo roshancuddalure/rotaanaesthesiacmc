@@ -1,3 +1,4 @@
+import json
 from collections.abc import Generator
 from contextlib import contextmanager
 from datetime import date
@@ -12,7 +13,7 @@ from sqlalchemy.pool import StaticPool
 from app import models  # noqa: F401
 from app.db.session import Base, get_db
 from app.main import app
-from app.models import Person, PersonPosting, Unit
+from app.models import AdminMapping, Person, PersonPosting, Unit
 from app.services.auth import seed_superadmin
 from app.services.unit_assignment_import import normalize_import_posting, parse_unitwise_excel_upload
 
@@ -31,14 +32,38 @@ def unit_client() -> Generator[TestClient, None, None]:
         seed_superadmin(seed_session)
         sujil = Person(canonical_name="Sujil", call_level="3RD_CALL")
         jeenu = Person(canonical_name="Jeenu Ann Jose", call_level="4TH_CALL")
+        nasreen = Person(canonical_name="Nasreen Begum K", call_level="2ND_CALL")
+        jessica = Person(canonical_name="Jessica Charles", call_level="2ND_CALL")
+        renita = Person(canonical_name="Renita J", call_level="2ND_CALL")
+        sudharsan = Person(canonical_name="Sudharsan T R", call_level="2ND_CALL")
         main = Unit(code="MAIN", name="Main OT", campus="CMC")
         cardiac = Unit(code="CARDIAC", name="Cardiac OT", campus="CMC")
+        unit_five = Unit(code="UNIT_5", name="Unit 5", campus="CMC")
+        unit_one = Unit(code="GENERAL_ALPHA", name="General Unit 1", campus="CMC")
+        unit_two = Unit(code="GENERAL_BETA", name="General Unit 2", campus="CMC")
+        unit_three = Unit(code="GENERAL_GAMMA", name="General Unit 3", campus="CMC")
         seed_session.add_all(
             [
                 sujil,
                 jeenu,
+                nasreen,
+                jessica,
+                renita,
+                sudharsan,
                 main,
                 cardiac,
+                unit_five,
+                unit_one,
+                unit_two,
+                unit_three,
+                AdminMapping(
+                    mapping_type="unit_label",
+                    source_label="UNIT FIVE",
+                    target_key="UNIT_5",
+                    target_label="Unit 5",
+                    status="reviewed",
+                    source="test",
+                ),
                 PersonPosting(
                     person=jeenu,
                     unit=main,
@@ -275,7 +300,7 @@ def test_unit_management_flags_overlapping_primary_assignment_and_allows_update_
         )
         issues = response.json()["validation_issues"]
         assert not any(issue["code"] == "OVERLAPPING_PRIMARY_ASSIGNMENT" for issue in issues)
-        assert any(issue["code"] == "MULTIPLE_UNITS_IN_MONTH" for issue in issues)
+        assert not any(issue["code"] == "MULTIPLE_UNITS_IN_MONTH" for issue in issues)
 
         deleted = client.delete(
             f"/api/v1/unit-management/assignments/{second_id}",
@@ -342,6 +367,7 @@ def test_unit_management_imports_unitwise_excel_preview_and_apply() -> None:
         )
         assert applied.status_code == 200
         assert applied.json()["created_rows"] == 2
+        assert applied.json()["auto_assigned_rows"] == 2
 
         month = client.get("/api/v1/unit-management/month?month=2026-06", headers=headers).json()
         assert len(month["assignments"]) == 2
@@ -349,6 +375,40 @@ def test_unit_management_imports_unitwise_excel_preview_and_apply() -> None:
             "3RD_CALL",
             "4TH_CALL",
         }
+
+        replaced = client.post(
+            "/api/v1/unit-management/import-apply?month=2026-06&replace_existing=true",
+            headers=headers,
+            files={
+                "file": (
+                    "June 2026.xlsx",
+                    unitwise_workbook_bytes(),
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                )
+            },
+        )
+        assert replaced.status_code == 200
+        replaced_body = replaced.json()
+        assert replaced_body["created_rows"] == 2
+        assert replaced_body["auto_assigned_rows"] == 2
+        assert replaced_body["skipped_rows"] == 0
+        assert replaced_body["deleted_existing_rows"] == 2
+
+        duplicate_preview = client.post(
+            "/api/v1/unit-management/import-preview?month=2026-06&replace_existing=true",
+            headers=headers,
+            files={
+                "file": (
+                    "June 2026.xlsx",
+                    unitwise_workbook_bytes(),
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                )
+            },
+        )
+        assert duplicate_preview.status_code == 200
+        duplicate_body = duplicate_preview.json()
+        assert duplicate_body["auto_assignable_rows"] == 2
+        assert duplicate_body["needs_review_rows"] == 0
 
 
 def test_unit_management_imports_notepad_unitwise_list() -> None:
@@ -371,6 +431,354 @@ Cardiac OT
         body = preview.json()
         assert body["matched_rows"] == 2
         assert body["source_formats"] == ["text_unitwise"]
+
+
+def fuzzy_unitwise_workbook_bytes() -> bytes:
+    workbook = Workbook()
+    worksheet = workbook.active
+    worksheet.title = "June"
+    worksheet["A1"] = ""
+    worksheet["B1"] = "UNIT FIVE"
+    worksheet["A2"] = "2nd Call"
+    worksheet["B2"] = "Nazreen Begum"
+    output = BytesIO()
+    workbook.save(output)
+    return output.getvalue()
+
+
+def unresolved_unitwise_workbook_bytes() -> bytes:
+    workbook = Workbook()
+    worksheet = workbook.active
+    worksheet.title = "June"
+    worksheet["A1"] = ""
+    worksheet["B1"] = "Unknown unit label"
+    worksheet["A2"] = "2nd Call"
+    worksheet["B2"] = "Unknown Imported Name"
+    output = BytesIO()
+    workbook.save(output)
+    return output.getvalue()
+
+
+def fuzzy_unit_label_workbook_bytes() -> bytes:
+    workbook = Workbook()
+    worksheet = workbook.active
+    worksheet.title = "June"
+    worksheet["A1"] = ""
+    worksheet["B1"] = "Main O"
+    worksheet["A2"] = "3rd Call"
+    worksheet["B2"] = "Sujil"
+    output = BytesIO()
+    workbook.save(output)
+    return output.getvalue()
+
+
+def numbered_units_workbook_bytes() -> bytes:
+    workbook = Workbook()
+    worksheet = workbook.active
+    worksheet.title = "June"
+    worksheet["A1"] = ""
+    worksheet["B1"] = "UNIT 1"
+    worksheet["C1"] = "UNIT 2"
+    worksheet["D1"] = "UNIT III"
+    worksheet["A2"] = "2nd Call"
+    worksheet["B2"] = "Jassica Charles"
+    worksheet["C2"] = "Renita"
+    worksheet["D2"] = "Sudharshan"
+    output = BytesIO()
+    workbook.save(output)
+    return output.getvalue()
+
+
+def special_posting_workbook_bytes() -> bytes:
+    workbook = Workbook()
+    worksheet = workbook.active
+    worksheet.title = "June"
+    worksheet["A1"] = ""
+    worksheet["B1"] = "Unknown special column"
+    worksheet["A2"] = "Pain Call"
+    worksheet["B2"] = "Dr Sujil"
+    worksheet["A3"] = "SICU Posting"
+    worksheet["B3"] = "Dr Jeenu Ann Jose"
+    output = BytesIO()
+    workbook.save(output)
+    return output.getvalue()
+
+
+def block_posting_workbook_bytes() -> bytes:
+    workbook = Workbook()
+    worksheet = workbook.active
+    worksheet.title = "June"
+    worksheet["A1"] = ""
+    worksheet["B1"] = "Main OT"
+    worksheet["A2"] = "3rd Call"
+    worksheet["B2"] = "Dr Sujil BP 1-15"
+    worksheet["A3"] = "2nd Call"
+    worksheet["B3"] = "block posting 16-30 Dr Nasreen Begum K"
+    output = BytesIO()
+    workbook.save(output)
+    return output.getvalue()
+
+
+def test_unit_management_import_auto_matches_confident_name_and_mapped_unit() -> None:
+    with unit_client() as client:
+        token = sign_in(client)
+        headers = auth_headers(token)
+
+        preview = client.post(
+            "/api/v1/unit-management/import-preview?month=2026-06",
+            headers=headers,
+            files={
+                "file": (
+                    "June 2026.xlsx",
+                    fuzzy_unitwise_workbook_bytes(),
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                )
+            },
+        )
+
+        assert preview.status_code == 200
+        body = preview.json()
+        assert body["matched_rows"] == 1
+        assert body["unresolved_rows"] == 0
+        assert body["rows"][0]["person_name"] == "Nasreen Begum K"
+        assert body["rows"][0]["match_method"] == "fuzzy_auto"
+        assert body["rows"][0]["unit_name"] == "Unit 5"
+        assert body["rows"][0]["unit_match_method"] == "unit_exact"
+
+        applied = client.post(
+            "/api/v1/unit-management/import-apply?month=2026-06&replace_existing=false",
+            headers=headers,
+            files={
+                "file": (
+                    "June 2026.xlsx",
+                    fuzzy_unitwise_workbook_bytes(),
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                )
+            },
+        )
+        assert applied.status_code == 200
+        assert applied.json()["created_rows"] == 1
+
+
+def test_unit_management_import_auto_resolves_numbered_units_and_name_variants() -> None:
+    with unit_client() as client:
+        token = sign_in(client)
+        headers = auth_headers(token)
+
+        preview = client.post(
+            "/api/v1/unit-management/import-preview?month=2026-06",
+            headers=headers,
+            files={
+                "file": (
+                    "June 2026.xlsx",
+                    numbered_units_workbook_bytes(),
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                )
+            },
+        )
+
+        assert preview.status_code == 200
+        body = preview.json()
+        assert body["matched_rows"] == 3
+        assert body["auto_assignable_rows"] == 3
+        assert body["needs_review_rows"] == 0
+        assert {row["person_name"] for row in body["rows"]} == {
+            "Jessica Charles",
+            "Renita J",
+            "Sudharsan T R",
+        }
+        assert {row["unit_name"] for row in body["rows"]} == {
+            "General Unit 1",
+            "General Unit 2",
+            "General Unit 3",
+        }
+        assert all(row["unit_match_method"] == "unit_number_exact" for row in body["rows"])
+        assert all(row["row_action"] == "auto_assign" for row in body["rows"])
+        assert all(row["auto_decision_reason"] == "Ready for auto-assign" for row in body["rows"])
+
+        applied = client.post(
+            "/api/v1/unit-management/import-apply?month=2026-06&replace_existing=true",
+            headers=headers,
+            files={
+                "file": (
+                    "June 2026.xlsx",
+                    numbered_units_workbook_bytes(),
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                )
+            },
+        )
+        assert applied.status_code == 200
+        assert applied.json()["auto_assigned_rows"] == 3
+
+
+def test_unit_management_import_auto_resolves_doubtful_unit_above_threshold_with_review_note() -> None:
+    with unit_client() as client:
+        token = sign_in(client)
+        headers = auth_headers(token)
+
+        preview = client.post(
+            "/api/v1/unit-management/import-preview?month=2026-06",
+            headers=headers,
+            files={
+                "file": (
+                    "June 2026.xlsx",
+                    fuzzy_unit_label_workbook_bytes(),
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                )
+            },
+        )
+
+        assert preview.status_code == 200
+        body = preview.json()
+        assert body["matched_rows"] == 1
+        assert body["auto_resolved_rows"] == 1
+        assert body["review_suggested_rows"] == 1
+        row = body["rows"][0]
+        assert row["preview_status"] == "matched"
+        assert row["unit_name"] == "Main OT"
+        assert row["unit_match_method"] == "unit_fuzzy_auto"
+        assert row["review_suggested"] is True
+        assert any("Unit auto-resolved" in note for note in row["resolution_notes"])
+
+
+def test_unit_management_import_keeps_special_postings_without_unit() -> None:
+    with unit_client() as client:
+        token = sign_in(client)
+        headers = auth_headers(token)
+
+        preview = client.post(
+            "/api/v1/unit-management/import-preview?month=2026-06",
+            headers=headers,
+            files={
+                "file": (
+                    "June 2026.xlsx",
+                    special_posting_workbook_bytes(),
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                )
+            },
+        )
+
+        assert preview.status_code == 200
+        body = preview.json()
+        assert body["matched_rows"] == 2
+        assert body["unresolved_rows"] == 0
+        assert {row["posting_type"] for row in body["rows"]} == {"PAIN", "SICU"}
+        assert all(row["special_posting"] is True for row in body["rows"])
+        assert all(row["unit_id"] is None for row in body["rows"])
+        assert all("Unresolved unit" not in row["issues"] for row in body["rows"])
+
+        applied = client.post(
+            "/api/v1/unit-management/import-apply?month=2026-06&replace_existing=true",
+            headers=headers,
+            files={
+                "file": (
+                    "June 2026.xlsx",
+                    special_posting_workbook_bytes(),
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                )
+            },
+        )
+        assert applied.status_code == 200
+        assert applied.json()["created_rows"] == 2
+
+        month = client.get("/api/v1/unit-management/month?month=2026-06", headers=headers).json()
+        assert {assignment["posting_type"] for assignment in month["assignments"]} == {"PAIN", "SICU"}
+        assert all(assignment["unit"] is None for assignment in month["assignments"])
+        assert month["validation_issues"] == []
+
+
+def test_unit_management_import_parses_block_posting_labels_as_normal_unit_assignment() -> None:
+    with unit_client() as client:
+        token = sign_in(client)
+        headers = auth_headers(token)
+
+        preview = client.post(
+            "/api/v1/unit-management/import-preview?month=2026-06",
+            headers=headers,
+            files={
+                "file": (
+                    "June 2026.xlsx",
+                    block_posting_workbook_bytes(),
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                )
+            },
+        )
+
+        assert preview.status_code == 200
+        body = preview.json()
+        assert body["matched_rows"] == 2
+        assert [row["cleaned_person_name"] for row in body["rows"]] == ["Sujil", "Nasreen Begum K"]
+        assert [(row["starts_on"], row["ends_on"]) for row in body["rows"]] == [
+            ("2026-06-01", "2026-06-15"),
+            ("2026-06-16", "2026-06-30"),
+        ]
+        assert all(row["unit_name"] == "Main OT" for row in body["rows"])
+        assert all(not row["special_posting"] for row in body["rows"])
+
+
+def test_unit_management_import_applies_manual_row_resolutions() -> None:
+    with unit_client() as client:
+        token = sign_in(client)
+        headers = auth_headers(token)
+        sujil_id, main_id, _cardiac_id = seeded_ids(client, token)
+
+        first_preview = client.post(
+            "/api/v1/unit-management/import-preview?month=2026-06",
+            headers=headers,
+            files={
+                "file": (
+                    "June 2026.xlsx",
+                    unresolved_unitwise_workbook_bytes(),
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                )
+            },
+        )
+        assert first_preview.status_code == 200
+        unresolved = first_preview.json()
+        row_key = unresolved["rows"][0]["row_key"]
+        assert unresolved["matched_rows"] == 0
+
+        resolutions = {
+            row_key: {
+                "person_id": sujil_id,
+                "unit_id": main_id,
+                "posting_type": "2ND_CALL",
+            }
+        }
+        preview = client.post(
+            "/api/v1/unit-management/import-preview?month=2026-06",
+            headers=headers,
+            data={"resolutions_json": json.dumps(resolutions)},
+            files={
+                "file": (
+                    "June 2026.xlsx",
+                    unresolved_unitwise_workbook_bytes(),
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                )
+            },
+        )
+        assert preview.status_code == 200
+        body = preview.json()
+        assert body["matched_rows"] == 1
+        assert body["rows"][0]["person_id"] == sujil_id
+        assert body["rows"][0]["unit_id"] == main_id
+        assert body["rows"][0]["match_method"] == "manual_override"
+        assert body["rows"][0]["unit_match_method"] == "unit_manual_override"
+
+        applied = client.post(
+            "/api/v1/unit-management/import-apply?month=2026-06&replace_existing=false",
+            headers=headers,
+            data={"resolutions_json": json.dumps(resolutions)},
+            files={
+                "file": (
+                    "June 2026.xlsx",
+                    unresolved_unitwise_workbook_bytes(),
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                )
+            },
+        )
+        assert applied.status_code == 200
+        assert applied.json()["created_rows"] == 1
 
 
 def split_month_unitwise_workbook_bytes() -> bytes:

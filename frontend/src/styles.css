@@ -1371,6 +1371,19 @@ h3 {
   border-color: var(--color-focus);
 }
 
+.special-unit-card {
+  cursor: default;
+  border-color: var(--color-success);
+  background: color-mix(in srgb, var(--color-success-bg) 42%, var(--color-surface));
+}
+
+.special-unit-card:hover,
+.special-unit-card:focus-visible {
+  border-color: var(--color-success);
+  box-shadow: none;
+  transform: none;
+}
+
 .unit-card header {
   display: flex;
   align-items: flex-start;
@@ -1436,6 +1449,13 @@ h3 {
   padding: 6px 11px;
   overflow-wrap: anywhere;
   transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.unit-member-chip small {
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  margin-left: var(--space-2);
 }
 
 .unit-warning-strip {
@@ -2866,6 +2886,31 @@ h3 {
   outline: none;
   border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgb(37 99 235 / 0.15);
+}
+
+.import-resolver {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin-top: var(--space-2);
+  align-items: center;
+}
+
+.import-resolver select {
+  min-width: 180px;
+  max-width: 260px;
+  border: 1px solid var(--color-input-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+  padding: 7px 9px;
+  font-size: var(--text-sm);
+}
+
+.compact-action {
+  min-height: 34px;
+  padding: 6px 10px;
+  font-size: var(--text-xs);
 }
 
 /* Status toggle pill group */

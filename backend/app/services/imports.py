@@ -198,7 +198,6 @@ NAME_NOISE_WORDS = (
     "SICU",
     "ICU",
     "DRP",
-    "BP",
     "ONLY",
     "POSTING",
     "POSTINGS",
@@ -235,6 +234,13 @@ def clean_person_name(value: Any) -> str:
     cleaned = clean_cell_value(value)
     cleaned = re.sub(r"^(dr|prof|mr|mrs|ms)\.?\s*", "", cleaned, flags=re.IGNORECASE)
     cleaned = re.sub(r"\s*\([^)]*\)\s*", " ", cleaned)
+    cleaned = re.sub(
+        r"\b(?:bp|block(?:\s+posting)?)\s*(?:\d{1,2}\s*(?:st|nd|rd|th)?\s*(?:-|to)\s*\d{1,2}|\d{1,2})?\b",
+        " ",
+        cleaned,
+        flags=re.IGNORECASE,
+    )
+    cleaned = re.sub(r"\b(dr|prof|mr|mrs|ms)\.?\s*", "", cleaned, flags=re.IGNORECASE)
     cleaned = re.sub(
         r"\s*[-–—]?\s*(till|until)\s+[a-z]{3,9}\s+\d{1,2}\b.*$",
         " ",

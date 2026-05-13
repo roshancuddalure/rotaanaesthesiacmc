@@ -34,11 +34,13 @@ import {
   type RotaTemplateMonth,
   type UnitAssignment,
   type UnitAssignmentImportPreview,
+  type UnitImportResolution,
   type UnitCallMinimum,
   type UnitManagementMonth,
   type UnitRead,
   type UserAccount,
   addMemberDesignation,
+  addMemberAlias,
   acceptRotaReviewIssue,
   approveRotaExchange,
   assignRotaSlot,
@@ -51,6 +53,7 @@ import {
   clonePreviousRotaSetupScope,
   createCallCluster,
   createMember,
+  createMapping,
   createLeaveRequest,
   createUnitAssignment,
   createUserAccount,
@@ -189,6 +192,39 @@ function restoreFocus() {
   if (el) el.focus();
 }
 
+type ViewportSnapshot = {
+  scrollX: number;
+  scrollY: number;
+  focusedId: string;
+};
+
+function captureViewport(): ViewportSnapshot {
+  const el = document.activeElement as HTMLElement | null;
+  return {
+    scrollX: window.scrollX,
+    scrollY: window.scrollY,
+    focusedId: el?.id ?? "",
+  };
+}
+
+function restoreViewport(snapshot: ViewportSnapshot): void {
+  window.requestAnimationFrame(() => {
+    window.scrollTo(snapshot.scrollX, snapshot.scrollY);
+    if (snapshot.focusedId) {
+      document.getElementById(snapshot.focusedId)?.focus({ preventScroll: true });
+    }
+  });
+}
+
+async function preserveViewport<T>(work: () => Promise<T> | T): Promise<T> {
+  const snapshot = captureViewport();
+  try {
+    return await work();
+  } finally {
+    restoreViewport(snapshot);
+  }
+}
+
 function confirmAction(message: string): boolean {
   return window.confirm(message);
 }
@@ -245,6 +281,18 @@ let unitManagement: UnitManagementMonth | null = null;
 let unitImportPreview: UnitAssignmentImportPreview | null = null;
 let unitImportFile: File | null = null;
 let unitImportReplaceExisting = true;
+type UnitImportFilter =
+  | "all"
+  | "matched"
+  | "auto_assignable"
+  | "auto_resolved"
+  | "review_suggested"
+  | "needs_review"
+  | "unresolved_member"
+  | "unresolved_unit";
+let unitImportFilter: UnitImportFilter = "all";
+let unitImportSearch = "";
+let unitImportResolutions: Record<string, UnitImportResolution> = {};
 let units: UnitRead[] = [];
 let unitAssignments: UnitAssignment[] = [];
 let unitModalUnitId: string | null = null;
@@ -297,6 +345,17 @@ const DUTY_CALL_LEVELS = [
   { key: "4TH_CALL", label: "4th Call" },
   { key: "CO_4TH_CALL", label: "Co-4th Call" },
   { key: "5TH_CALL", label: "5th Call" },
+];
+
+const UNIT_IMPORT_POSTING_OPTIONS = [
+  ...DUTY_CALL_LEVELS,
+  { key: "CO_1ST_CALL", label: "Co-1st Call" },
+  { key: "PAC", label: "PAC" },
+  { key: "PAIN", label: "Pain" },
+  { key: "SICU", label: "SICU / ICU" },
+  { key: "DRP", label: "DRP" },
+  { key: "NEURO_ICU", label: "Neuro ICU" },
+  { key: "OTHER_SPECIAL", label: "Other special" },
 ];
 
 const DUTY_GROUPS = [
@@ -2920,6 +2979,15 @@ function matchMethodLabel(value: string | null | undefined): string {
     ({
       normalized_exact: "Exact name match",
       ambiguous_exact: "Ambiguous name",
+      fuzzy_auto: "Auto fuzzy name",
+      manual_override: "Manual member",
+      unit_exact: "Exact unit match",
+      unit_ambiguous: "Ambiguous unit",
+      unit_number_exact: "Exact unit number",
+      unit_number_ambiguous: "Ambiguous unit number",
+      unit_fuzzy_auto: "Auto fuzzy unit",
+      unit_fuzzy_candidate: "Possible unit",
+      unit_manual_override: "Manual unit",
     } as Record<string, string>)[value ?? ""] ?? leaveTypeLabel(value ?? "")
   );
 }
@@ -3319,6 +3387,14 @@ const UNIT_POSTING_TYPES = [
   ["OTHER_SPECIAL", "Other Special"],
 ];
 
+const SPECIAL_UNIT_POSTING_CARDS = [
+  ["PAIN", "Pain Calls"],
+  ["SICU", "SICU"],
+  ["DRP", "DRP"],
+];
+
+const SPECIAL_UNIT_POSTING_KEYS = new Set(SPECIAL_UNIT_POSTING_CARDS.map(([value]) => value));
+const REGULAR_UNIT_POSTING_TYPES = UNIT_POSTING_TYPES.filter(([value]) => !SPECIAL_UNIT_POSTING_KEYS.has(value));
 const UNIT_POSTING_ORDER = new Map(UNIT_POSTING_TYPES.map(([value], index) => [value, index]));
 
 function unitPostingRank(value: string): number {
@@ -3382,7 +3458,13 @@ function renderUnitCallMinimumRows(unitId: string): string {
 }
 
 function unitAssignmentsFor(unitId: string): UnitAssignment[] {
-  return sortUnitAssignmentsByHierarchy(unitAssignments.filter((assignment) => assignment.unit?.id === unitId));
+  return sortUnitAssignmentsByHierarchy(
+    unitAssignments.filter((assignment) => assignment.unit?.id === unitId && !SPECIAL_UNIT_POSTING_KEYS.has(assignment.posting_type)),
+  );
+}
+
+function specialUnitAssignmentsFor(postingType: string): UnitAssignment[] {
+  return sortUnitAssignmentsByHierarchy(unitAssignments.filter((assignment) => assignment.posting_type === postingType));
 }
 
 function validationIssuesForUnit(unitId: string) {
@@ -3397,10 +3479,44 @@ function renderUnitAssignmentsByUnit(): string {
   if (!unitManagement.units.length) {
     return `<section class="panel"><p class="empty-state">No active units found. Add units through historical import or admin seed before assigning members.</p></section>`;
   }
-  return unitManagement.units
+  const specialCards = SPECIAL_UNIT_POSTING_CARDS
+    .map(([postingType, label]) => {
+      const assignments = specialUnitAssignmentsFor(postingType);
+      return `
+        <article class="unit-card special-unit-card" aria-label="${escapeHtml(label)} special posting">
+          <header>
+            <div>
+              <h3>${escapeHtml(label)}</h3>
+              <p>Separate posting card</p>
+            </div>
+            <strong>${assignments.length}</strong>
+          </header>
+          <div class="audit-chip-row">
+            <span><strong>${assignments.length}</strong> assigned</span>
+            <span><strong>0</strong> unit load</span>
+          </div>
+          ${
+            assignments.length
+              ? `<div class="unit-chip-row">${assignments
+                  .map(
+                    (assignment) => `
+                      <span class="unit-member-chip">
+                        ${escapeHtml(assignment.person.canonical_name)}
+                        <small>${escapeHtml(assignment.starts_on)}${assignment.ends_on ? ` to ${escapeHtml(assignment.ends_on)}` : ""}</small>
+                      </span>
+                    `,
+                  )
+                  .join("")}</div>`
+              : `<p class="empty-state">No members assigned for this month.</p>`
+          }
+        </article>
+      `;
+    })
+    .join("");
+  const regularCards = unitManagement.units
     .map((unit) => {
       const assignments = unitAssignmentsFor(unit.id);
-      const grouped = UNIT_POSTING_TYPES
+      const grouped = REGULAR_UNIT_POSTING_TYPES
         .map(([postingType, label]) => {
           const people = assignments.filter((assignment) => assignment.posting_type === postingType);
           if (!people.length) return "";
@@ -3450,6 +3566,7 @@ function renderUnitAssignmentsByUnit(): string {
       `;
     })
     .join("");
+  return `${specialCards}${regularCards}`;
 }
 
 function renderUnitAssignmentRows(): string {
@@ -3458,12 +3575,16 @@ function renderUnitAssignmentRows(): string {
       (assignment) => `
         <tr>
           <td><strong>${escapeHtml(assignment.person.canonical_name)}</strong><small>${escapeHtml(assignment.person.call_level ?? "Unassigned")}</small></td>
-          <td>${escapeHtml(assignment.unit?.name ?? "No unit")}</td>
+          <td>${escapeHtml(assignment.unit?.name ?? (SPECIAL_UNIT_POSTING_KEYS.has(assignment.posting_type) ? "Special card" : "No unit"))}</td>
           <td>${escapeHtml(callLevelLabel(assignment.posting_type))}</td>
           <td>${assignment.starts_on}${assignment.ends_on ? ` to ${assignment.ends_on}` : ""}</td>
           <td>${escapeHtml(assignment.notes ?? "")}</td>
           <td>
-            <button class="icon-button" data-open-unit-modal="${assignment.unit?.id ?? ""}">Manage Unit</button>
+            ${
+              assignment.unit?.id
+                ? `<button class="icon-button" data-open-unit-modal="${assignment.unit.id}">Manage Unit</button>`
+                : `<span class="status ok">Special Card</span>`
+            }
           </td>
         </tr>
       `,
@@ -3510,15 +3631,147 @@ function renderUnitValidationIssues(): string {
   `;
 }
 
+function unitImportRowMatchesFilter(row: UnitAssignmentImportPreview["rows"][number]): boolean {
+  if (unitImportFilter === "matched") return row.preview_status === "matched";
+  if (unitImportFilter === "auto_assignable") return Boolean(row.auto_assignable);
+  if (unitImportFilter === "auto_resolved") return Boolean(row.auto_resolved);
+  if (unitImportFilter === "review_suggested") return Boolean(row.review_suggested);
+  if (unitImportFilter === "needs_review") return row.preview_status !== "matched";
+  if (unitImportFilter === "unresolved_member") return row.issues.includes("Unresolved department member");
+  if (unitImportFilter === "unresolved_unit") return row.issues.includes("Unresolved unit");
+  return true;
+}
+
+function filteredUnitImportRows(): UnitAssignmentImportPreview["rows"] {
+  if (!unitImportPreview) return [];
+  const query = unitImportSearch.trim().toLowerCase();
+  return unitImportPreview.rows.filter((row) => {
+    if (!unitImportRowMatchesFilter(row)) return false;
+    if (!query) return true;
+    return [
+      row.raw_person_name,
+      row.cleaned_person_name,
+      row.person_name,
+      row.suggested_person_name,
+      row.raw_unit_label,
+      row.unit_name,
+      row.raw_posting_label,
+      row.posting_type,
+      row.sheet_name,
+      row.auto_decision_reason,
+      ...(row.resolution_notes ?? []),
+      ...(row.auto_assign_blockers ?? []),
+      ...(row.issues ?? []),
+    ].some((value) => String(value ?? "").toLowerCase().includes(query));
+  });
+}
+
+function unitImportRowByKey(rowKey: string): UnitAssignmentImportPreview["rows"][number] | undefined {
+  return unitImportPreview?.rows.find((row) => row.row_key === rowKey);
+}
+
+async function refreshUnitImportPreview(message = "Import preview updated") {
+  if (!unitImportFile) return;
+  unitImportPreview = await previewUnitAssignmentImport(
+    unitMonth,
+    unitImportFile,
+    unitImportReplaceExisting,
+    unitImportResolutions,
+  );
+  showToast(message, "success");
+  await renderUnitManagement();
+}
+
+function unitImportMatchSummary(row: UnitAssignmentImportPreview["rows"][number]): string {
+  const parts = [
+    row.match_method ? matchMethodLabel(row.match_method) : row.match_confidence,
+    row.match_score ? `${Math.round(row.match_score * 100)}% member` : "",
+    row.unit_match_method ? matchMethodLabel(row.unit_match_method) : "",
+    row.unit_match_score ? `${Math.round(row.unit_match_score * 100)}% unit` : "",
+  ].filter(Boolean);
+  return parts.join(" | ");
+}
+
+function unitImportResolutionFor(rowKey: string): UnitImportResolution {
+  return unitImportResolutions[rowKey] ?? {};
+}
+
+function renderUnitImportMemberResolver(row: UnitAssignmentImportPreview["rows"][number]): string {
+  if (row.person_id && !row.issues.includes("Unresolved department member")) return "";
+  const resolution = unitImportResolutionFor(row.row_key);
+  const memberOptions = [
+    `<option value="">Choose member...</option>`,
+    ...members
+      .filter((member) => member.active_status === "active")
+      .map((member) => `<option value="${member.id}" ${resolution.person_id === member.id ? "selected" : ""}>${escapeHtml(member.canonical_name)}</option>`),
+  ].join("");
+  const acceptSuggested = row.suggested_person_id
+    ? `<button type="button" class="icon-button compact-action" data-unit-import-accept-suggested="${escapeHtml(row.row_key)}">Use suggestion</button>`
+    : "";
+  return `
+    <div class="import-resolver">
+      <select data-unit-import-person="${escapeHtml(row.row_key)}" aria-label="Resolve imported member">
+        ${memberOptions}
+      </select>
+      ${acceptSuggested}
+      <button type="button" class="icon-button compact-action" data-unit-import-create-member="${escapeHtml(row.row_key)}">Create member</button>
+      <button type="button" class="icon-button compact-action" data-unit-import-save-alias="${escapeHtml(row.row_key)}" ${resolution.person_id ? "" : "disabled"}>Save alias</button>
+    </div>
+  `;
+}
+
+function renderUnitImportUnitResolver(row: UnitAssignmentImportPreview["rows"][number]): string {
+  if (row.special_posting) return "";
+  if (row.unit_id && !row.issues.includes("Unresolved unit")) return "";
+  const resolution = unitImportResolutionFor(row.row_key);
+  const unitOptions = [
+    `<option value="">Choose unit...</option>`,
+    ...units.map((unit) => `<option value="${unit.id}" ${resolution.unit_id === unit.id ? "selected" : ""}>${escapeHtml(unit.name)}</option>`),
+  ].join("");
+  return `
+    <div class="import-resolver">
+      <select data-unit-import-unit="${escapeHtml(row.row_key)}" aria-label="Resolve imported unit">
+        ${unitOptions}
+      </select>
+      <button type="button" class="icon-button compact-action" data-unit-import-save-unit-map="${escapeHtml(row.row_key)}" ${resolution.unit_id ? "" : "disabled"}>Save unit map</button>
+    </div>
+  `;
+}
+
+function renderUnitImportPostingResolver(row: UnitAssignmentImportPreview["rows"][number]): string {
+  if (row.posting_type) return "";
+  const resolution = unitImportResolutionFor(row.row_key);
+  const optionsHtml = [
+    `<option value="">Choose posting...</option>`,
+    ...UNIT_IMPORT_POSTING_OPTIONS.map((option) => `<option value="${option.key}" ${resolution.posting_type === option.key ? "selected" : ""}>${escapeHtml(option.label)}</option>`),
+  ].join("");
+  return `
+    <div class="import-resolver">
+      <select data-unit-import-posting="${escapeHtml(row.row_key)}" aria-label="Resolve imported posting">
+        ${optionsHtml}
+      </select>
+    </div>
+  `;
+}
+
+function renderUnitImportResolvers(row: UnitAssignmentImportPreview["rows"][number]): string {
+  return [
+    renderUnitImportMemberResolver(row),
+    renderUnitImportUnitResolver(row),
+    renderUnitImportPostingResolver(row),
+  ].filter(Boolean).join("");
+}
+
 function renderUnitImportPreview(): string {
   if (!unitImportPreview) {
     return `<p class="empty">Upload a unitwise XLSX or text file to preview member, unit, and call-level matching.</p>`;
   }
-  const pageRows = paginate(unitImportPreview.rows, UNIT_IMPORT_TABLE_ID, UNIT_IMPORT_PAGE_SIZE);
-  const paginator = renderPaginator(UNIT_IMPORT_TABLE_ID, unitImportPreview.rows.length, UNIT_IMPORT_PAGE_SIZE);
+  const visibleRows = filteredUnitImportRows();
+  const pageRows = paginate(visibleRows, UNIT_IMPORT_TABLE_ID, UNIT_IMPORT_PAGE_SIZE);
+  const paginator = renderPaginator(UNIT_IMPORT_TABLE_ID, visibleRows.length, UNIT_IMPORT_PAGE_SIZE);
   const rows = pageRows.map((row) => {
     const statusCell = row.preview_status === "matched"
-      ? `<span class="status ok">${escapeHtml(previewStatusLabel(row.preview_status))}</span>`
+      ? `<span class="status ${row.review_suggested ? "warning" : "ok"}">${escapeHtml(row.review_suggested ? "Review Suggested" : previewStatusLabel(row.preview_status))}</span>`
       : reviewButton({
           title: "Resolve Unitwise Import Row",
           status: previewStatusLabel(row.preview_status),
@@ -3542,32 +3795,69 @@ function renderUnitImportPreview(): string {
     <tr>
       <td>${row.row_number}</td>
       <td><strong>${escapeHtml(row.raw_person_name)}</strong><small>${escapeHtml(row.person_name ?? row.suggested_person_name ?? "Unresolved")}</small></td>
-      <td><strong>${escapeHtml(row.raw_unit_label)}</strong><small>${escapeHtml(row.unit_name ?? "Unresolved")}</small></td>
+      <td><strong>${escapeHtml(row.raw_unit_label)}</strong><small>${escapeHtml(row.unit_name ?? (row.special_posting ? "Special card" : "Unresolved"))}</small></td>
       <td><strong>${escapeHtml(callLevelLabel(row.posting_type))}</strong><small>${escapeHtml(row.raw_posting_label)}</small></td>
-      <td><small>${escapeHtml(row.sheet_name ?? "")}${row.column_label ? ` / ${escapeHtml(row.column_label)}` : ""}</small><small>${row.match_method ? escapeHtml(matchMethodLabel(row.match_method)) : ""}</small></td>
+      <td><small>${escapeHtml(row.sheet_name ?? "")}${row.column_label ? ` / ${escapeHtml(row.column_label)}` : ""}</small><small>${escapeHtml(unitImportMatchSummary(row))}</small></td>
       <td>${statusCell}</td>
-      <td>${row.issues.map((issue) => `<small>${escapeHtml(issue)}</small>`).join("") || "<small>None</small>"}</td>
+      <td>${
+        [...row.issues, ...(row.resolution_notes ?? []), ...(row.auto_assignable && row.auto_decision_reason ? [row.auto_decision_reason] : [])]
+          .map((issue) => `<small>${escapeHtml(issue)}</small>`)
+          .join("") || "<small>None</small>"
+      }${renderUnitImportResolvers(row)}</td>
     </tr>
   `;
   }).join("");
-  const canApply = unitImportPreview.matched_rows > 0 && unitImportFile;
+  const canApply = (unitImportPreview.auto_assignable_rows ?? unitImportPreview.matched_rows) > 0 && unitImportFile;
+  const filters: Array<{ key: UnitImportFilter; label: string; count: number }> = [
+    { key: "all", label: "All", count: unitImportPreview.rows.length },
+    { key: "matched", label: "Matched", count: unitImportPreview.rows.filter((row) => row.preview_status === "matched").length },
+    { key: "auto_assignable", label: "Auto-Assignable", count: unitImportPreview.rows.filter((row) => row.auto_assignable).length },
+    { key: "auto_resolved", label: "Auto", count: unitImportPreview.rows.filter((row) => row.auto_resolved).length },
+    { key: "review_suggested", label: "Review Suggested", count: unitImportPreview.rows.filter((row) => row.review_suggested).length },
+    { key: "needs_review", label: "Needs Review", count: unitImportPreview.rows.filter((row) => row.preview_status !== "matched").length },
+    { key: "unresolved_member", label: "Member", count: unitImportPreview.rows.filter((row) => row.issues.includes("Unresolved department member")).length },
+    { key: "unresolved_unit", label: "Unit", count: unitImportPreview.rows.filter((row) => row.issues.includes("Unresolved unit")).length },
+  ];
   return `
     <div class="audit-chip-row">
       <span><strong>${unitImportPreview.total_rows}</strong> rows</span>
       <span><strong>${unitImportPreview.matched_rows}</strong> matched</span>
+      <span><strong>${unitImportPreview.auto_assignable_rows ?? unitImportPreview.matched_rows}</strong> auto-assignable</span>
+      <span><strong>${unitImportPreview.needs_review_rows ?? unitImportPreview.rows.filter((row) => row.preview_status !== "matched").length}</strong> need review</span>
+      <span><strong>${unitImportPreview.auto_resolved_rows ?? 0}</strong> auto-resolved</span>
+      <span><strong>${unitImportPreview.review_suggested_rows ?? 0}</strong> review suggested</span>
       <span><strong>${unitImportPreview.unresolved_rows}</strong> unresolved</span>
       <span><strong>${unitImportPreview.invalid_rows}</strong> invalid</span>
       <span><strong>${unitImportPreview.sheets?.length ?? 0}</strong> sheets</span>
     </div>
+    <div class="member-filter-row import-filter-row">
+      <input
+        id="unit-import-search"
+        class="member-search-input"
+        value="${escapeHtml(unitImportSearch)}"
+        placeholder="Search imported member, unit, posting, or issue"
+        aria-label="Search unit import preview"
+      />
+      <div class="segmented unit-import-filters" role="tablist" aria-label="Unit import filters">
+        ${filters.map((filter) => `
+          <button
+            type="button"
+            class="${unitImportFilter === filter.key ? "selected" : ""}"
+            data-unit-import-filter="${filter.key}"
+            aria-selected="${unitImportFilter === filter.key ? "true" : "false"}"
+          >${escapeHtml(filter.label)} <span>${filter.count}</span></button>
+        `).join("")}
+      </div>
+    </div>
     ${unitImportPreview.parser_warnings?.length ? `<div class="issue-list">${unitImportPreview.parser_warnings.map((warning) => `<p>${reviewButton({ title: "Resolve Unitwise Parser Warning", status: "Parser Warning", summary: warning, actions: [{ label: "Open Unit Management", kind: "navigate", target: "units", variant: "primary" }] }, warning, "review-text-button")}</p>`).join("")}</div>` : ""}
     <div class="topbar-actions" style="margin:12px 0;">
-      <button class="primary" id="apply-unit-import" ${canApply ? "" : "disabled"}>Apply Matched Rows</button>
+      <button class="primary" id="apply-unit-import" ${canApply ? "" : "disabled"}>Auto-Assign Ready Rows</button>
     </div>
     ${paginator}
     <div class="table-scroll">
       <table>
         <thead><tr><th>Row</th><th>Member</th><th>Unit</th><th>Posting</th><th>Source</th><th>Status</th><th>Issues</th></tr></thead>
-        <tbody>${rows || `<tr><td colspan="7" class="empty">No preview rows.</td></tr>`}</tbody>
+        <tbody>${rows || `<tr><td colspan="7" class="empty">No preview rows match the current filter.</td></tr>`}</tbody>
       </table>
     </div>
     ${paginator}
@@ -7164,10 +7454,16 @@ function bindViewEvents() {
       setButtonLoading(btn, true, "Preview File");
       try {
         unitImportFile = file;
-        unitImportPreview = await previewUnitAssignmentImport(unitMonth, file);
+        unitImportResolutions = {};
+        unitImportPreview = await previewUnitAssignmentImport(
+          unitMonth,
+          file,
+          unitImportReplaceExisting,
+          unitImportResolutions,
+        );
         setPage(UNIT_IMPORT_TABLE_ID, 0);
         showToast("Unit assignment import preview ready", "success");
-        await renderUnitManagement();
+        await preserveViewport(() => renderUnitManagement());
       } catch (error) {
         showToast(error instanceof Error ? error.message : "Failed to preview unitwise file", "error");
         resetButton(btn);
@@ -7245,7 +7541,7 @@ function bindViewEvents() {
         showToast("Unit assignment added", "success");
         unitModalUnitId = payload.unit_id;
         unitEditingAssignmentId = null;
-        await renderUnitManagement();
+        await preserveViewport(() => renderUnitManagement());
       } catch (error) {
         showToast(error instanceof Error ? error.message : "Failed to save unit assignment", "error");
         resetButton(btn);
@@ -7274,7 +7570,7 @@ function bindViewEvents() {
         await updateUnitAssignment(assignmentId, payload);
         unitModalUnitId = payload.unit_id;
         showToast("Unit assignment updated", "success");
-        await renderUnitManagement();
+        await preserveViewport(() => renderUnitManagement());
       } catch (error) {
         showToast(error instanceof Error ? error.message : "Failed to save unit assignment", "error");
         resetButton(btn);
@@ -7322,10 +7618,107 @@ function bindViewEvents() {
       const [tableId, pageStr] = pageBtn.dataset.setPage.split(":");
       setPage(tableId, parseInt(pageStr, 10));
       if (tableId === UNIT_IMPORT_TABLE_ID) {
-        await renderUnitManagement();
+        await preserveViewport(() => renderUnitManagement());
         return;
       }
       refreshAnalysisTabContent();
+      return;
+    }
+
+    const unitImportFilterButton = target.closest<HTMLButtonElement>("[data-unit-import-filter]");
+    if (unitImportFilterButton?.dataset.unitImportFilter) {
+      unitImportFilter = unitImportFilterButton.dataset.unitImportFilter as UnitImportFilter;
+      setPage(UNIT_IMPORT_TABLE_ID, 0);
+      await renderUnitManagement();
+      return;
+    }
+
+    const acceptSuggested = target.closest<HTMLButtonElement>("[data-unit-import-accept-suggested]");
+    if (acceptSuggested?.dataset.unitImportAcceptSuggested) {
+      const rowKey = acceptSuggested.dataset.unitImportAcceptSuggested;
+      const row = unitImportRowByKey(rowKey);
+      if (!row?.suggested_person_id) return;
+      unitImportResolutions[rowKey] = { ...unitImportResolutionFor(rowKey), person_id: row.suggested_person_id };
+        await preserveViewport(() => refreshUnitImportPreview("Suggested member selected"));
+      return;
+    }
+
+    const createImportMember = target.closest<HTMLButtonElement>("[data-unit-import-create-member]");
+    if (createImportMember?.dataset.unitImportCreateMember) {
+      const rowKey = createImportMember.dataset.unitImportCreateMember;
+      const row = unitImportRowByKey(rowKey);
+      if (!row) return;
+      const name = (row.cleaned_person_name || row.raw_person_name).trim();
+      if (!name) {
+        showToast("No member name found in this row", "warning");
+        return;
+      }
+      if (!confirmAction(`Create a new active department member named "${name}"?`)) return;
+      setButtonLoading(createImportMember, true, "Create member");
+      try {
+        const member = await createMember(name);
+        members = await getMembers();
+        unitImportResolutions[rowKey] = { ...unitImportResolutionFor(rowKey), person_id: member.id };
+        await preserveViewport(() => refreshUnitImportPreview("Member created and selected"));
+      } catch (error) {
+        showToast(error instanceof Error ? error.message : "Failed to create member", "error");
+        resetButton(createImportMember);
+      }
+      return;
+    }
+
+    const saveAlias = target.closest<HTMLButtonElement>("[data-unit-import-save-alias]");
+    if (saveAlias?.dataset.unitImportSaveAlias) {
+      const rowKey = saveAlias.dataset.unitImportSaveAlias;
+      const row = unitImportRowByKey(rowKey);
+      const personId = unitImportResolutionFor(rowKey).person_id || row?.person_id || row?.suggested_person_id;
+      if (!row || !personId) return;
+      setButtonLoading(saveAlias, true, "Save alias");
+      try {
+        await addMemberAlias(personId, row.raw_person_name);
+        members = await getMembers();
+        unitImportResolutions[rowKey] = { ...unitImportResolutionFor(rowKey), person_id: personId };
+        await preserveViewport(() => refreshUnitImportPreview("Alias saved for future imports"));
+      } catch (error) {
+        showToast(error instanceof Error ? error.message : "Failed to save alias", "error");
+        resetButton(saveAlias);
+      }
+      return;
+    }
+
+    const saveUnitMap = target.closest<HTMLButtonElement>("[data-unit-import-save-unit-map]");
+    if (saveUnitMap?.dataset.unitImportSaveUnitMap) {
+      const rowKey = saveUnitMap.dataset.unitImportSaveUnitMap;
+      const row = unitImportRowByKey(rowKey);
+      const unitId = unitImportResolutionFor(rowKey).unit_id || row?.unit_id;
+      const unit = units.find((item) => item.id === unitId);
+      if (!row || !unit) return;
+      setButtonLoading(saveUnitMap, true, "Save unit map");
+      try {
+        const existingMapping = mappings.find(
+          (mapping) => mapping.mapping_type === "unit_label" && mapping.source_label === row.raw_unit_label,
+        );
+        const mappingPayload = {
+          mapping_type: "unit_label",
+          source_label: row.raw_unit_label,
+          target_key: unit.code,
+          target_label: unit.name,
+          status: "reviewed",
+          notes: `Saved from unit import preview for ${unitMonth}`,
+        } as const;
+        if (existingMapping) {
+          await updateMapping({ ...existingMapping, ...mappingPayload });
+        } else {
+          await createMapping(mappingPayload);
+        }
+        if (isAdminUser()) {
+          mappings = await getMappings();
+        }
+        await preserveViewport(() => refreshUnitImportPreview("Unit mapping saved for future imports"));
+      } catch (error) {
+        showToast(error instanceof Error ? error.message : "Failed to save unit mapping", "error");
+        resetButton(saveUnitMap);
+      }
       return;
     }
 
@@ -7438,7 +7831,7 @@ function bindViewEvents() {
           unitEditingAssignmentId = null;
         }
         showToast("Unit assignment removed", "success");
-        await renderUnitManagement();
+        await preserveViewport(() => renderUnitManagement());
       } catch (error) {
         showToast(error instanceof Error ? error.message : "Failed to remove unit assignment", "error");
         resetButton(unitDeleteBtn);
@@ -7448,7 +7841,7 @@ function bindViewEvents() {
 
     if (target.id === "cancel-unit-edit") {
       unitEditingAssignmentId = null;
-      await renderUnitManagement();
+      await preserveViewport(() => renderUnitManagement());
       return;
     }
 
@@ -7493,17 +7886,22 @@ function bindViewEvents() {
         return;
       }
       const action = unitImportReplaceExisting
-        ? "Replace current month unit-board assignments and create matched rows?"
-        : "Create unit assignments for all safely matched preview rows?";
+        ? "Replace current month unit-board assignments and auto-assign ready rows?"
+        : "Auto-assign all ready preview rows and keep doubtful rows for review?";
       if (!confirmAction(action)) return;
-      setButtonLoading(btn, true, "Apply Matched Rows");
+      setButtonLoading(btn, true, "Auto-Assign Ready Rows");
       try {
-        const result = await applyUnitAssignmentImport(unitMonth, unitImportFile, unitImportReplaceExisting);
+        const result = await applyUnitAssignmentImport(
+          unitMonth,
+          unitImportFile,
+          unitImportReplaceExisting,
+          unitImportResolutions,
+        );
         unitImportPreview = result.preview;
         setPage(UNIT_IMPORT_TABLE_ID, 0);
         unitModalUnitId = null;
         showToast(
-          `Imported ${result.created_rows} assignment(s); skipped ${result.skipped_rows}`,
+          `Auto-assigned ${result.auto_assigned_rows ?? result.created_rows} row(s); ${result.skipped_rows} need review`,
           "success",
         );
         await renderUnitManagement();
@@ -8123,10 +8521,31 @@ function bindViewEvents() {
       unitMonth = target.value || unitMonth;
       unitImportPreview = null;
       unitImportFile = null;
+      unitImportFilter = "all";
+      unitImportSearch = "";
+      unitImportResolutions = {};
       setPage(UNIT_IMPORT_TABLE_ID, 0);
       closeUnitModal();
       unitEditingAssignmentId = null;
       await renderUnitManagement();
+      return;
+    }
+    if (target instanceof HTMLSelectElement && target.dataset.unitImportPerson) {
+      const rowKey = target.dataset.unitImportPerson;
+      unitImportResolutions[rowKey] = { ...unitImportResolutionFor(rowKey), person_id: target.value || undefined };
+      await preserveViewport(() => refreshUnitImportPreview(target.value ? "Member selected for import row" : "Member resolution cleared"));
+      return;
+    }
+    if (target instanceof HTMLSelectElement && target.dataset.unitImportUnit) {
+      const rowKey = target.dataset.unitImportUnit;
+      unitImportResolutions[rowKey] = { ...unitImportResolutionFor(rowKey), unit_id: target.value || undefined };
+      await preserveViewport(() => refreshUnitImportPreview(target.value ? "Unit selected for import row" : "Unit resolution cleared"));
+      return;
+    }
+    if (target instanceof HTMLSelectElement && target.dataset.unitImportPosting) {
+      const rowKey = target.dataset.unitImportPosting;
+      unitImportResolutions[rowKey] = { ...unitImportResolutionFor(rowKey), posting_type: target.value || undefined };
+      await preserveViewport(() => refreshUnitImportPreview(target.value ? "Posting selected for import row" : "Posting resolution cleared"));
       return;
     }
     if (target.id === "rota-setup-month") {
@@ -8211,6 +8630,12 @@ function bindViewEvents() {
     }
     if (target.id === "cluster-member-search") {
       filterClusterMembers(target.value);
+      return;
+    }
+    if (target.id === "unit-import-search") {
+      unitImportSearch = target.value;
+      setPage(UNIT_IMPORT_TABLE_ID, 0);
+      void renderUnitManagement();
       return;
     }
     if (target.id !== "member-search") return;

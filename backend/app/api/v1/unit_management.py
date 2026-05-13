@@ -1,7 +1,8 @@
+import json
 from datetime import date
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from pydantic import BaseModel
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
@@ -14,6 +15,7 @@ from app.services.leave import month_bounds
 from app.services.unit_management import (
     UNIT_BOARD_SOURCE,
     active_units,
+    is_special_unit_posting,
     monthly_unit_assignments,
     normalize_posting_type,
     unit_call_member_counts,
@@ -97,6 +99,10 @@ class UnitAssignmentImportPreviewRead(BaseModel):
     month: str
     total_rows: int
     matched_rows: int
+    auto_resolved_rows: int = 0
+    auto_assignable_rows: int = 0
+    needs_review_rows: int = 0
+    review_suggested_rows: int = 0
     unresolved_rows: int
     invalid_rows: int
     sheets: list[str] = []
@@ -109,6 +115,7 @@ class UnitAssignmentImportApplyRead(BaseModel):
     filename: str
     month: str
     created_rows: int
+    auto_assigned_rows: int = 0
     deleted_existing_rows: int
     skipped_rows: int
     skipped_preview_rows: list[dict[str, object]]
@@ -117,7 +124,7 @@ class UnitAssignmentImportApplyRead(BaseModel):
 
 class UnitAssignmentPayload(BaseModel):
     person_id: UUID
-    unit_id: UUID
+    unit_id: UUID | None = None
     posting_type: str
     starts_on: date
     ends_on: date | None = None
@@ -127,6 +134,22 @@ class UnitAssignmentPayload(BaseModel):
 class UnitCallMinimumPayload(BaseModel):
     call_level: str
     minimum_free_people: int
+
+
+def parse_import_resolutions(raw: str | None) -> dict[str, dict[str, object]]:
+    if not raw:
+        return {}
+    try:
+        parsed = json.loads(raw)
+    except json.JSONDecodeError as exc:
+        raise HTTPException(status_code=400, detail="Invalid import resolutions JSON") from exc
+    if not isinstance(parsed, dict):
+        raise HTTPException(status_code=400, detail="Import resolutions must be an object")
+    resolutions: dict[str, dict[str, object]] = {}
+    for key, value in parsed.items():
+        if isinstance(key, str) and isinstance(value, dict):
+            resolutions[key] = value
+    return resolutions
 
 
 class UnitSettingsPayload(BaseModel):
@@ -224,6 +247,14 @@ def validate_payload_dates(payload: UnitAssignmentPayload) -> None:
         raise HTTPException(status_code=400, detail="End date cannot be before start date")
 
 
+def unit_for_assignment_payload(db: Session, payload: UnitAssignmentPayload) -> Unit | None:
+    if is_special_unit_posting(payload.posting_type):
+        return None
+    if payload.unit_id is None:
+        raise HTTPException(status_code=400, detail="Unit is required for this posting type")
+    return get_unit_or_404(db, payload.unit_id)
+
+
 @router.get("/units")
 def list_units(
     _user: UserAccount = Depends(current_user),
@@ -318,14 +349,23 @@ def update_unit_settings(
 @router.post("/unit-management/import-preview")
 async def preview_unit_assignment_upload(
     month: str,
+    replace_existing: bool = False,
     file: UploadFile = File(...),
+    resolutions_json: str | None = Form(None),
     _user: UserAccount = Depends(current_user),
     db: Session = Depends(get_db),
 ) -> UnitAssignmentImportPreviewRead:
     try:
         month_bounds(month)
         content = await file.read()
-        result = preview_unit_assignment_import(db, file.filename or "unitwise-import", content, month)
+        result = preview_unit_assignment_import(
+            db,
+            file.filename or "unitwise-import",
+            content,
+            month,
+            replace_existing=replace_existing,
+            resolutions=parse_import_resolutions(resolutions_json),
+        )
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     return UnitAssignmentImportPreviewRead(**result)
@@ -336,6 +376,7 @@ async def apply_unit_assignment_upload(
     month: str,
     replace_existing: bool = False,
     file: UploadFile = File(...),
+    resolutions_json: str | None = Form(None),
     _user: UserAccount = Depends(current_user),
     db: Session = Depends(get_db),
 ) -> UnitAssignmentImportApplyRead:
@@ -348,6 +389,7 @@ async def apply_unit_assignment_upload(
             content,
             month,
             replace_existing=replace_existing,
+            resolutions=parse_import_resolutions(resolutions_json),
         )
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
@@ -362,10 +404,11 @@ def create_unit_assignment(
 ) -> UnitAssignmentRead:
     validate_payload_dates(payload)
     person = get_person_or_404(db, payload.person_id)
-    unit = get_unit_or_404(db, payload.unit_id)
+    unit = unit_for_assignment_payload(db, payload)
     assignment = PersonPosting(
         person=person,
         unit=unit,
+        unit_id=unit.id if unit else None,
         posting_type=normalize_posting_type(payload.posting_type),
         starts_on=payload.starts_on,
         ends_on=payload.ends_on,
@@ -392,7 +435,8 @@ def update_unit_assignment(
     validate_payload_dates(payload)
     assignment = get_assignment_or_404(db, assignment_id)
     assignment.person = get_person_or_404(db, payload.person_id)
-    assignment.unit = get_unit_or_404(db, payload.unit_id)
+    assignment.unit = unit_for_assignment_payload(db, payload)
+    assignment.unit_id = assignment.unit.id if assignment.unit else None
     assignment.posting_type = normalize_posting_type(payload.posting_type)
     assignment.starts_on = payload.starts_on
     assignment.ends_on = payload.ends_on

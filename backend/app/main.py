@@ -1,13 +1,16 @@
 from pathlib import Path
+import logging
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.api.routes import api_router
 from app.core.config import settings
 
 STATIC_DIR = Path(__file__).resolve().parents[1] / "static"
+logger = logging.getLogger(__name__)
 
 
 def create_app() -> FastAPI:
@@ -27,6 +30,14 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    @app.exception_handler(Exception)
+    async def unhandled_exception_handler(request: Request, exc: Exception) -> JSONResponse:
+        logger.exception("Unhandled API error path=%s method=%s", request.url.path, request.method)
+        return JSONResponse(
+            status_code=500,
+            content={"detail": "Unexpected server error. Check backend logs for the recorded traceback."},
+        )
 
     app.include_router(api_router, prefix="/api")
     if STATIC_DIR.exists():

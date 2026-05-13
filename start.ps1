@@ -9,7 +9,8 @@ $Backend = Join-Path $Root "backend"
 $Frontend = Join-Path $Root "frontend"
 $BackendPython = Join-Path $Backend ".venv\Scripts\python.exe"
 $FrontendNodeModules = Join-Path $Frontend "node_modules"
-$FrontendUrl = "http://localhost:5173"
+$BackendUrl = "http://127.0.0.1:8000"
+$FrontendUrl = "http://127.0.0.1:5173"
 
 function Test-BackendDependencies {
     Set-Location $Backend
@@ -49,6 +50,36 @@ function Start-DutyRotaProcess {
         "-Command",
         "Set-Location '$WorkingDirectory'; `$Host.UI.RawUI.WindowTitle = '$Title'; $Command"
     )
+}
+
+function Test-HttpOk {
+    param([string]$Url)
+
+    try {
+        $Response = Invoke-WebRequest -Uri $Url -UseBasicParsing -TimeoutSec 2
+        return $Response.StatusCode -ge 200 -and $Response.StatusCode -lt 300
+    }
+    catch {
+        return $false
+    }
+}
+
+function Wait-ForHttpOk {
+    param(
+        [string]$Name,
+        [string]$Url,
+        [int]$Attempts = 40
+    )
+
+    for ($Attempt = 1; $Attempt -le $Attempts; $Attempt++) {
+        if (Test-HttpOk $Url) {
+            Write-Host "$Name is ready at $Url" -ForegroundColor Green
+            return
+        }
+        Start-Sleep -Seconds 1
+    }
+
+    throw "$Name did not become ready at $Url. Keep the $Name window open and check its error output."
 }
 
 function Wait-ForDockerDatabase {
@@ -115,20 +146,23 @@ Invoke-NativeCommand "Could not apply database migrations. Check that PostgreSQL
     & $BackendPython -m alembic upgrade head
 }
 
-Write-Host "Launching backend at http://localhost:8000" -ForegroundColor Green
+Write-Host "Launching backend at $BackendUrl" -ForegroundColor Green
 Start-DutyRotaProcess `
     -Title "Duty Rota Backend" `
     -WorkingDirectory $Backend `
-    -Command ".\.venv\Scripts\python.exe -m uvicorn app.main:app --reload"
+    -Command ".\.venv\Scripts\python.exe -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000"
+
+Wait-ForHttpOk -Name "Backend" -Url "$BackendUrl/api/health"
 
 Write-Host "Launching frontend at $FrontendUrl" -ForegroundColor Green
 Start-DutyRotaProcess `
     -Title "Duty Rota Frontend" `
     -WorkingDirectory $Frontend `
-    -Command "npm run dev"
+    -Command "npm run dev -- --host 127.0.0.1 --port 5173"
+
+Wait-ForHttpOk -Name "Frontend" -Url $FrontendUrl
 
 if (-not $SkipBrowser) {
-    Start-Sleep -Seconds 3
     Start-Process $FrontendUrl
 }
 

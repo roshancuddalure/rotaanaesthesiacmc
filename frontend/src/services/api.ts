@@ -14,14 +14,22 @@ export function clearAuthToken() {
 }
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    headers: {
-      "Content-Type": "application/json",
-      ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
-      ...options.headers,
-    },
-    ...options,
-  });
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE_URL}${path}`, {
+      headers: {
+        "Content-Type": "application/json",
+        ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
+        ...options.headers,
+      },
+      ...options,
+    });
+  } catch (error) {
+    console.error("Backend request failed", error);
+    throw new Error(
+      "Backend server is offline. Start Duty Rota with launch.bat and keep the Backend window running.",
+    );
+  }
   if (!response.ok) {
     let message = `API request failed: ${response.status}`;
     let detail: unknown = null;
@@ -46,6 +54,9 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 async function errorFromResponse(response: Response): Promise<Error> {
   let message = `API request failed: ${response.status}`;
   let detail: unknown = null;
+  if (response.status >= 500) {
+    message = "Backend server is offline or crashed. Start Duty Rota with launch.bat and keep the Backend window running.";
+  }
   try {
     const payload = await response.json();
     detail = payload.detail;
@@ -81,6 +92,15 @@ export interface AdminMapping {
   status: string;
   source: string;
   notes: string | null;
+}
+
+export interface AdminMappingPayload {
+  mapping_type: MappingType;
+  source_label: string;
+  target_key?: string | null;
+  target_label?: string | null;
+  status?: string;
+  notes?: string | null;
 }
 
 export interface MappingOptions {
@@ -398,12 +418,17 @@ export interface UnitAssignmentImportPreview {
   month: string;
   total_rows: number;
   matched_rows: number;
+  auto_resolved_rows: number;
+  auto_assignable_rows: number;
+  needs_review_rows: number;
+  review_suggested_rows: number;
   unresolved_rows: number;
   invalid_rows: number;
   sheets: string[];
   source_formats: string[];
   parser_warnings: string[];
   rows: Array<{
+    row_key: string;
     row_number: number;
     sheet_name?: string;
     column_label?: string;
@@ -415,21 +440,39 @@ export interface UnitAssignmentImportPreview {
     suggested_person_name?: string | null;
     match_method?: string | null;
     match_confidence?: string;
+    match_score?: number | null;
     raw_unit_label: string;
     unit_id: string | null;
     unit_name: string | null;
     unit_match_method?: string | null;
+    unit_match_score?: number | null;
     raw_posting_label: string;
     posting_type: string;
+    special_posting?: boolean;
     preview_status: string;
+    auto_assignable?: boolean;
+    row_action?: "auto_assign" | "needs_review";
+    auto_resolved?: boolean;
+    auto_resolved_fields?: string[];
+    review_suggested?: boolean;
+    resolution_notes?: string[];
+    auto_assign_blockers?: string[];
+    auto_decision_reason?: string;
     issues: string[];
   }>;
+}
+
+export interface UnitImportResolution {
+  person_id?: string;
+  unit_id?: string;
+  posting_type?: string;
 }
 
 export interface UnitAssignmentImportApplyResult {
   filename: string;
   month: string;
   created_rows: number;
+  auto_assigned_rows: number;
   deleted_existing_rows: number;
   skipped_rows: number;
   skipped_preview_rows: UnitAssignmentImportPreview["rows"];
@@ -512,7 +555,7 @@ export interface UnitManagementMonth {
 
 export interface UnitAssignmentPayload {
   person_id: string;
-  unit_id: string;
+  unit_id?: string | null;
   posting_type: string;
   starts_on: string;
   ends_on?: string | null;
@@ -1200,6 +1243,13 @@ export function updateMapping(
   });
 }
 
+export function createMapping(payload: AdminMappingPayload): Promise<AdminMapping> {
+  return request<AdminMapping>("/api/v1/admin/mappings", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
 export function getHistoricalImportStatus(): Promise<HistoricalImportStatus> {
   return request<HistoricalImportStatus>("/api/v1/admin/imports/historical/status");
 }
@@ -1297,10 +1347,16 @@ export function getUnitManagementMonth(month: string): Promise<UnitManagementMon
   return request<UnitManagementMonth>(`/api/v1/unit-management/month?month=${encodeURIComponent(month)}`);
 }
 
-export async function previewUnitAssignmentImport(month: string, file: File): Promise<UnitAssignmentImportPreview> {
+export async function previewUnitAssignmentImport(
+  month: string,
+  file: File,
+  replaceExisting = false,
+  resolutions: Record<string, UnitImportResolution> = {},
+): Promise<UnitAssignmentImportPreview> {
   const formData = new FormData();
   formData.append("file", file);
-  const response = await fetch(`${API_BASE_URL}/api/v1/unit-management/import-preview?month=${encodeURIComponent(month)}`, {
+  formData.append("resolutions_json", JSON.stringify(resolutions));
+  const response = await fetch(`${API_BASE_URL}/api/v1/unit-management/import-preview?month=${encodeURIComponent(month)}&replace_existing=${replaceExisting}`, {
     method: "POST",
     headers: authToken ? { Authorization: `Bearer ${authToken}` } : {},
     body: formData,
@@ -1315,9 +1371,11 @@ export async function applyUnitAssignmentImport(
   month: string,
   file: File,
   replaceExisting: boolean,
+  resolutions: Record<string, UnitImportResolution> = {},
 ): Promise<UnitAssignmentImportApplyResult> {
   const formData = new FormData();
   formData.append("file", file);
+  formData.append("resolutions_json", JSON.stringify(resolutions));
   const response = await fetch(
     `${API_BASE_URL}/api/v1/unit-management/import-apply?month=${encodeURIComponent(month)}&replace_existing=${replaceExisting}`,
     {
@@ -1382,6 +1440,13 @@ export function updateMember(member: DepartmentMember): Promise<DepartmentMember
       active_status: member.active_status,
       call_level: member.call_level,
     }),
+  });
+}
+
+export function addMemberAlias(personId: string, alias: string): Promise<DepartmentMember> {
+  return request<DepartmentMember>(`/api/v1/admin/members/${personId}/aliases`, {
+    method: "POST",
+    body: JSON.stringify({ alias, source: "unit_import_resolution" }),
   });
 }
 

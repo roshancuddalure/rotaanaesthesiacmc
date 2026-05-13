@@ -21,9 +21,17 @@ PRIMARY_POSTING_TYPES = {
     "5TH_CALL",
 }
 
+SPECIAL_UNIT_POSTING_TYPES = {"DRP", "SICU", "PAIN"}
+
 
 def normalize_posting_type(value: str) -> str:
     return value.strip().upper().replace(" ", "_").replace("-", "_")
+
+
+def is_special_unit_posting(value: str | None) -> bool:
+    if not value:
+        return False
+    return normalize_posting_type(value) in SPECIAL_UNIT_POSTING_TYPES
 
 
 def overlaps_range(
@@ -162,15 +170,16 @@ def validate_unit_month(assignments: list[PersonPosting], month: str) -> list[di
                 }
             )
         if assignment.unit_id is None:
-            issues.append(
-                {
-                    "severity": "error",
-                    "code": "MISSING_UNIT",
-                    "message": f"{assignment.person.canonical_name} has no unit selected.",
-                    "person_id": str(assignment.person_id),
-                    "posting_id": str(assignment.id),
-                }
-            )
+            if not is_special_unit_posting(assignment.posting_type):
+                issues.append(
+                    {
+                        "severity": "error",
+                        "code": "MISSING_UNIT",
+                        "message": f"{assignment.person.canonical_name} has no unit selected.",
+                        "person_id": str(assignment.person_id),
+                        "posting_id": str(assignment.id),
+                    }
+                )
         else:
             units_by_person[assignment.person_id].setdefault(assignment.unit_id, assignment)
         if not assignment.posting_type.strip():
