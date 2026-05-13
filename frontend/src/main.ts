@@ -100,6 +100,7 @@ import {
   updateLeaveRequest,
   updateCallCluster,
   updateCallClusterMembers,
+  updateCurrentUserProfile,
   updateMapping,
   updateMember,
   updateRotaPhaseOneRules,
@@ -315,9 +316,82 @@ const DUTY_GROUPS = [
   { key: "neuro", label: "Neuro" },
 ];
 
+const DUTY_TEMPLATE_GROUP_ORDER = [
+  "main",
+  "rc",
+  "cb",
+  "caesar",
+  "pac",
+  "shift",
+  "chad",
+  "cart",
+  "schell",
+  "floating",
+  "fifth_call",
+  "ruhsa",
+  "paeds",
+  "neuro",
+];
+
+const DUTY_TEMPLATE_GROUP_LABELS: Record<string, string> = {
+  main: "Main Duties",
+  rc: "RC Duties",
+  cb: "CB Duties",
+  caesar: "Caesar Duties",
+  pac: "PAC Duties",
+  shift: "Shift Duties",
+  chad: "CHAD Duties",
+  cart: "CART Duties",
+  schell: "Schell Duties",
+  floating: "Floating Duties",
+  fifth_call: "5th Call Duties",
+  ruhsa: "RUHSA Duties",
+  paeds: "Paeds Duties",
+  neuro: "Neuro Duties",
+};
+
 function isAdminUser(): boolean {
   return currentUser?.role === "computer_admin" || currentUser?.role === "superadmin";
 }
+
+type NavItem = {
+  view: string;
+  label: string;
+  shortLabel?: string;
+  group: "Workflow" | "Admin Tools";
+  adminOnly?: boolean;
+};
+
+const NAV_ITEMS: NavItem[] = [
+  { view: "overview", label: "Overview", group: "Workflow" },
+  { view: "analysis", label: "Duty Analysis", shortLabel: "Analysis", group: "Workflow" },
+  { view: "members", label: "Department Members", shortLabel: "Members", group: "Workflow" },
+  { view: "leave", label: "Leave", group: "Workflow" },
+  { view: "units", label: "Unit Management", shortLabel: "Units", group: "Workflow" },
+  { view: "rota-setup", label: "Rota Setup", group: "Workflow" },
+  { view: "rota-template", label: "Rota Template", shortLabel: "Rota", group: "Workflow" },
+  { view: "rota-review", label: "Rota Review", group: "Workflow" },
+  { view: "rota-publish", label: "Publish & Export", shortLabel: "Publish", group: "Workflow" },
+  { view: "user-guide", label: "User Guide", group: "Workflow" },
+  { view: "rota-rules", label: "Rota Rules", group: "Admin Tools", adminOnly: true },
+  { view: "call-clusters", label: "Eligibility Groups", group: "Admin Tools", adminOnly: true },
+  { view: "mappings", label: "Mappings", group: "Admin Tools", adminOnly: true },
+  { view: "imports", label: "Historical Import", group: "Admin Tools", adminOnly: true },
+  { view: "accounts", label: "Login Accounts", group: "Admin Tools", adminOnly: true },
+  { view: "diagnostics", label: "Diagnostics", group: "Admin Tools", adminOnly: true },
+];
+
+const MOBILE_PRIMARY_VIEWS = ["overview", "leave", "units", "rota-template"];
+
+function visibleNavItems(): NavItem[] {
+  return NAV_ITEMS.filter((item) => !item.adminOnly || isAdminUser());
+}
+
+function navItemButton(item: NavItem, extraAttributes = ""): string {
+  return `<button data-view="${escapeHtml(item.view)}" ${extraAttributes}>${escapeHtml(item.label)}</button>`;
+}
+
+let activeView = "overview";
 
 type ReviewAction = {
   label: string;
@@ -443,6 +517,97 @@ function closeChangePasswordModal() {
   document.querySelector("#change-password-modal")?.remove();
 }
 
+function renderProfileModal(): string {
+  return `
+    <div class="modal-backdrop" id="profile-modal">
+      <section class="person-modal change-password-modal" role="dialog" aria-modal="true" aria-labelledby="profile-title">
+        <header class="person-modal-header">
+          <div>
+            <h3 id="profile-title">Profile</h3>
+            <p>${escapeHtml(currentUser?.role_label ?? "Rota team member")}</p>
+          </div>
+          <button class="modal-close" data-close-profile aria-label="Close">x</button>
+        </header>
+        <div class="person-modal-body">
+          <form id="profile-form" class="change-password-form">
+            <label for="profile-username">Username</label>
+            <input id="profile-username" value="${escapeHtml(currentUser?.username ?? "")}" readonly />
+            <label for="profile-display-name">Display name</label>
+            <input id="profile-display-name" value="${escapeHtml(currentUser?.display_name ?? "")}" autocomplete="name" />
+            <label for="profile-email">Email</label>
+            <input id="profile-email" type="email" value="${escapeHtml(currentUser?.email ?? "")}" autocomplete="email" />
+            <p class="form-message" id="profile-message"></p>
+            <div class="modal-form-actions">
+              <button class="icon-button" type="button" data-close-profile>Cancel</button>
+              <button class="primary" type="submit" id="profile-submit">Save Profile</button>
+            </div>
+          </form>
+        </div>
+      </section>
+    </div>
+  `;
+}
+
+function openProfileModal() {
+  document.querySelector("#profile-modal")?.remove();
+  document.body.insertAdjacentHTML("beforeend", renderProfileModal());
+  document.querySelector<HTMLInputElement>("#profile-display-name")?.focus();
+}
+
+function closeProfileModal() {
+  document.querySelector("#profile-modal")?.remove();
+}
+
+function renderMobileMoreMenu(): string {
+  const groups = ["Workflow", "Admin Tools"] as const;
+  const primaryViews = new Set(MOBILE_PRIMARY_VIEWS);
+  const sections = groups.map((group) => {
+    const items = visibleNavItems().filter((item) => item.group === group && !primaryViews.has(item.view));
+    if (!items.length) return "";
+    return `
+      <section class="mobile-more-section">
+        <h3>${escapeHtml(group)}</h3>
+        <div class="mobile-more-grid">
+          ${items.map((item) => `
+            <button
+              type="button"
+              data-mobile-more-view="${escapeHtml(item.view)}"
+              class="${item.view === activeView ? "active" : ""}"
+            >${escapeHtml(item.label)}</button>
+          `).join("")}
+        </div>
+      </section>
+    `;
+  }).join("");
+  return `
+    <div class="mobile-more-backdrop" id="mobile-more-menu">
+      <section class="mobile-more-sheet" role="dialog" aria-modal="true" aria-labelledby="mobile-more-title">
+        <header>
+          <div>
+            <h2 id="mobile-more-title">More</h2>
+            <p>${escapeHtml(currentUser?.role_label ?? "Rota team")}</p>
+          </div>
+          <button class="modal-close" type="button" data-close-mobile-more aria-label="Close">x</button>
+        </header>
+        <div class="mobile-more-body">
+          ${sections}
+        </div>
+      </section>
+    </div>
+  `;
+}
+
+function openMobileMoreMenu() {
+  document.querySelector("#mobile-more-menu")?.remove();
+  document.body.insertAdjacentHTML("beforeend", renderMobileMoreMenu());
+  document.getElementById("mobile-more")?.setAttribute("aria-expanded", "true");
+}
+
+function closeMobileMoreMenu() {
+  document.querySelector("#mobile-more-menu")?.remove();
+  document.getElementById("mobile-more")?.setAttribute("aria-expanded", "false");
+}
+
 async function runReviewAction(action: HTMLElement) {
   const kind = action.dataset.reviewActionKind as ReviewAction["kind"] | undefined;
   const target = action.dataset.reviewActionTarget ?? "";
@@ -477,17 +642,23 @@ async function runReviewAction(action: HTMLElement) {
 
 function renderShell() {
   sidebarOpen = false;
-  const adminNav = isAdminUser()
+  activeView = "overview";
+  const workflowNav = visibleNavItems()
+    .filter((item) => item.group === "Workflow")
+    .map((item) => navItemButton(item, item.view === "overview" ? 'class="active" aria-current="page"' : ""))
+    .join("");
+  const adminNavItems = visibleNavItems().filter((item) => item.group === "Admin Tools");
+  const adminNav = adminNavItems.length
     ? `
         <div class="nav-section-label">Admin tools</div>
-        <button data-view="rota-rules">Rota Rules</button>
-        <button data-view="call-clusters">Eligibility Groups</button>
-        <button data-view="mappings">Mappings</button>
-        <button data-view="imports">Historical Import</button>
-        <button data-view="accounts">Login Accounts</button>
-        <button data-view="diagnostics">Diagnostics</button>
+        ${adminNavItems.map((item) => navItemButton(item)).join("")}
       `
     : "";
+  const mobilePrimaryNav = MOBILE_PRIMARY_VIEWS
+    .map((view) => visibleNavItems().find((item) => item.view === view))
+    .filter((item): item is NavItem => Boolean(item))
+    .map((item) => `<button data-view="${escapeHtml(item.view)}" ${item.view === "overview" ? 'class="active" aria-current="page"' : ""}>${escapeHtml(item.shortLabel ?? item.label)}</button>`)
+    .join("");
   app.innerHTML = `
   <a href="#view-root" class="skip-link">Skip to content</a>
   <div class="sidebar-overlay" id="sidebar-overlay"></div>
@@ -504,16 +675,7 @@ function renderShell() {
         </button>
       </div>
       <nav class="nav" aria-label="Main navigation">
-        <button data-view="overview" class="active" aria-current="page">Overview</button>
-        <button data-view="analysis">Duty Analysis</button>
-        <button data-view="members">Department Members</button>
-        <button data-view="leave">Leave</button>
-        <button data-view="units">Unit Management</button>
-        <button data-view="rota-setup">Rota Setup</button>
-        <button data-view="rota-template">Rota Template</button>
-        <button data-view="rota-review">Rota Review</button>
-        <button data-view="rota-publish">Publish & Export</button>
-        <button data-view="user-guide">User Guide</button>
+        ${workflowNav}
         ${adminNav}
       </nav>
     </aside>
@@ -530,6 +692,7 @@ function renderShell() {
         </div>
         <div class="topbar-actions">
           <span id="api-status" class="status">Checking API...</span>
+          <button class="icon-button" id="profile">Profile</button>
           <button class="icon-button" id="change-password">Change Password</button>
           <button class="icon-button" id="sign-out">Sign Out</button>
         </div>
@@ -537,11 +700,8 @@ function renderShell() {
       <div id="view-root"></div>
     </section>
     <nav class="mobile-bottom-nav" aria-label="Mobile section navigation">
-      <button data-view="overview" class="active" aria-current="page">Overview</button>
-      <button data-view="analysis">Analysis</button>
-      <button data-view="members">Members</button>
-      <button data-view="leave">Leave</button>
-      <button data-view="units">Units</button>
+      ${mobilePrimaryNav}
+      <button type="button" id="mobile-more" aria-haspopup="dialog" aria-expanded="false">More</button>
     </nav>
   </main>
 `;
@@ -568,6 +728,12 @@ function renderShell() {
   });
   document.getElementById("change-password")?.addEventListener("click", () => {
     openChangePasswordModal();
+  });
+  document.getElementById("profile")?.addEventListener("click", () => {
+    openProfileModal();
+  });
+  document.getElementById("mobile-more")?.addEventListener("click", () => {
+    openMobileMoreMenu();
   });
 }
 
@@ -4279,17 +4445,59 @@ function latestTemplateDutyKeys(template: RotaTemplateMonth): Set<string> {
   return new Set(template.duty_options.filter((duty) => duty.is_mandatory).map((duty) => duty.key));
 }
 
+function dutyTemplateGroupLabel(group: string): string {
+  return DUTY_TEMPLATE_GROUP_LABELS[group] ?? leaveTypeLabel(group);
+}
+
+function dutyTemplateGroupSort(group: string): number {
+  const index = DUTY_TEMPLATE_GROUP_ORDER.indexOf(group);
+  return index === -1 ? DUTY_TEMPLATE_GROUP_ORDER.length : index;
+}
+
 function renderTemplateDutyOptions(template: RotaTemplateMonth): string {
   const selectedKeys = latestTemplateDutyKeys(template);
-  return template.duty_options.map((duty) => `
-    <label class="template-duty-option">
-      <input type="checkbox" data-template-duty="${escapeHtml(duty.key)}" ${selectedKeys.has(duty.key) ? "checked" : ""} />
-      <span>
-        <strong>${escapeHtml(duty.label)}</strong>
-        <small>${escapeHtml(duty.group)}${duty.is_mandatory ? " / mandatory" : ""}${duty.is_adjustable ? " / adjustable" : ""}</small>
-      </span>
-    </label>
-  `).join("");
+  const groups = new Map<string, RotaTemplateMonth["duty_options"]>();
+  template.duty_options.forEach((duty) => {
+    const entries = groups.get(duty.group) ?? [];
+    entries.push(duty);
+    groups.set(duty.group, entries);
+  });
+  return Array.from(groups.entries())
+    .sort(([groupA], [groupB]) => dutyTemplateGroupSort(groupA) - dutyTemplateGroupSort(groupB) || groupA.localeCompare(groupB))
+    .map(([group, duties]) => {
+      const selectedInGroup = duties.filter((duty) => selectedKeys.has(duty.key)).length;
+      return `
+        <section class="template-duty-section" data-template-duty-section="${escapeHtml(group)}">
+          <header>
+            <div>
+              <h5>${escapeHtml(dutyTemplateGroupLabel(group))}</h5>
+              <span>${selectedInGroup}/${duties.length} selected</span>
+            </div>
+            <div class="template-duty-section-actions">
+              <button type="button" class="ghost-button compact" data-template-duty-select="${escapeHtml(group)}">All</button>
+              <button type="button" class="ghost-button compact" data-template-duty-clear="${escapeHtml(group)}">Clear</button>
+            </div>
+          </header>
+          <div class="template-duty-grid">
+            ${duties.map((duty) => `
+              <label class="template-duty-option">
+                <input
+                  type="checkbox"
+                  data-template-duty="${escapeHtml(duty.key)}"
+                  data-template-duty-group="${escapeHtml(group)}"
+                  ${selectedKeys.has(duty.key) ? "checked" : ""}
+                />
+                <span>
+                  <strong>${escapeHtml(duty.label)}</strong>
+                  <small>${escapeHtml(dutyTemplateGroupLabel(duty.group))}${duty.is_mandatory ? " / mandatory" : ""}${duty.is_adjustable ? " / adjustable" : ""}</small>
+                </span>
+              </label>
+            `).join("")}
+          </div>
+        </section>
+      `;
+    })
+    .join("");
 }
 
 function safetyStatusLabel(status?: string): string {
@@ -5394,7 +5602,7 @@ async function renderRotaTemplate() {
               <h4>Duty Template Editor</h4>
               <span>${selectedDutyCount}/${template.duty_options.length} selected</span>
             </div>
-            <div class="template-duty-grid">${renderTemplateDutyOptions(template)}</div>
+            <div class="template-duty-sections">${renderTemplateDutyOptions(template)}</div>
           </div>
           <div class="template-settings-actions">
             <span>Save these settings by regenerating the empty template for this month.</span>
@@ -6514,53 +6722,71 @@ async function loadMappings() {
   }
 }
 
+function updateNavigationState(selectedView: string) {
+  const mobilePrimaryViews = new Set(MOBILE_PRIMARY_VIEWS);
+  document.querySelectorAll<HTMLButtonElement>("[data-view]").forEach((item) => {
+    const isSelected = item.dataset.view === selectedView;
+    item.classList.toggle("active", isSelected);
+    if (isSelected) {
+      item.setAttribute("aria-current", "page");
+    } else {
+      item.removeAttribute("aria-current");
+    }
+  });
+  const moreButton = document.querySelector<HTMLButtonElement>("#mobile-more");
+  const moreActive = !mobilePrimaryViews.has(selectedView);
+  moreButton?.classList.toggle("active", moreActive);
+  if (moreActive) {
+    moreButton?.setAttribute("aria-current", "page");
+  } else {
+    moreButton?.removeAttribute("aria-current");
+  }
+}
+
+function navigateToView(selectedView: string) {
+  activeView = selectedView;
+  updateNavigationState(selectedView);
+  closeSidebarOnMobile();
+  closeMobileMoreMenu();
+  if (selectedView === "mappings") {
+    renderMappings();
+  } else if (selectedView === "imports") {
+    void renderImports();
+  } else if (selectedView === "analysis") {
+    void renderAnalysis();
+  } else if (selectedView === "members") {
+    void renderMembers();
+  } else if (selectedView === "leave") {
+    void renderLeave();
+  } else if (selectedView === "units") {
+    void renderUnitManagement();
+  } else if (selectedView === "rota-setup") {
+    void renderRotaSetup();
+  } else if (selectedView === "rota-template") {
+    void renderRotaTemplate();
+  } else if (selectedView === "rota-review") {
+    void renderRotaReview();
+  } else if (selectedView === "rota-publish") {
+    void renderRotaPublish();
+  } else if (selectedView === "user-guide") {
+    renderUserGuide();
+  } else if (selectedView === "rota-rules") {
+    void renderRotaRules();
+  } else if (selectedView === "call-clusters") {
+    void renderCallClusters();
+  } else if (selectedView === "accounts") {
+    void renderAccounts();
+  } else if (selectedView === "diagnostics") {
+    void renderDiagnostics();
+  } else {
+    void renderOverview();
+  }
+}
+
 function bindNavigation() {
   document.querySelectorAll<HTMLButtonElement>("[data-view]").forEach((button) => {
     button.addEventListener("click", () => {
-      const selectedView = button.dataset.view ?? "overview";
-      document.querySelectorAll<HTMLButtonElement>("[data-view]").forEach((item) => {
-        const isSelected = item.dataset.view === selectedView;
-        item.classList.toggle("active", isSelected);
-        if (isSelected) {
-          item.setAttribute("aria-current", "page");
-        } else {
-          item.removeAttribute("aria-current");
-        }
-      });
-      closeSidebarOnMobile();
-      if (selectedView === "mappings") {
-        renderMappings();
-      } else if (selectedView === "imports") {
-        void renderImports();
-      } else if (selectedView === "analysis") {
-        void renderAnalysis();
-      } else if (selectedView === "members") {
-        void renderMembers();
-      } else if (selectedView === "leave") {
-        void renderLeave();
-      } else if (selectedView === "units") {
-        void renderUnitManagement();
-      } else if (selectedView === "rota-setup") {
-        void renderRotaSetup();
-      } else if (selectedView === "rota-template") {
-        void renderRotaTemplate();
-      } else if (selectedView === "rota-review") {
-        void renderRotaReview();
-      } else if (selectedView === "rota-publish") {
-        void renderRotaPublish();
-      } else if (selectedView === "user-guide") {
-        renderUserGuide();
-      } else if (selectedView === "rota-rules") {
-        void renderRotaRules();
-      } else if (selectedView === "call-clusters") {
-        void renderCallClusters();
-      } else if (selectedView === "accounts") {
-        void renderAccounts();
-      } else if (selectedView === "diagnostics") {
-        void renderDiagnostics();
-      } else {
-        void renderOverview();
-      }
+      navigateToView(button.dataset.view ?? "overview");
     });
   });
 }
@@ -6568,6 +6794,30 @@ function bindNavigation() {
 function bindViewEvents() {
   document.addEventListener("submit", async (event) => {
     const form = event.target as HTMLFormElement;
+    if (form.id === "profile-form") {
+      event.preventDefault();
+      const displayName = form.querySelector<HTMLInputElement>("#profile-display-name")?.value.trim() ?? "";
+      const email = form.querySelector<HTMLInputElement>("#profile-email")?.value.trim() ?? "";
+      const message = form.querySelector<HTMLParagraphElement>("#profile-message");
+      const btn = form.querySelector<HTMLButtonElement>("#profile-submit");
+      if (!displayName) {
+        if (message) message.textContent = "Display name is required.";
+        return;
+      }
+      setButtonLoading(btn, true, "Save Profile");
+      try {
+        currentUser = await updateCurrentUserProfile({
+          display_name: displayName,
+          email: email || null,
+        });
+        closeProfileModal();
+        showToast("Profile updated", "success");
+      } catch (error) {
+        if (message) message.textContent = error instanceof Error ? error.message : "Failed to update profile";
+        resetButton(btn);
+      }
+      return;
+    }
     if (form.id !== "change-password-form") return;
     event.preventDefault();
     const currentPassword = form.querySelector<HTMLInputElement>("#current-password")?.value ?? "";
@@ -7126,6 +7376,24 @@ function bindViewEvents() {
         if (slot) {
           section.outerHTML = renderCandidateSuggestionSection(slot, candidatesBySlot.get(slot.id));
         }
+      });
+      return;
+    }
+
+    const templateDutySelectBtn = target.closest<HTMLButtonElement>("[data-template-duty-select]");
+    if (templateDutySelectBtn?.dataset.templateDutySelect) {
+      const group = templateDutySelectBtn.dataset.templateDutySelect;
+      document.querySelectorAll<HTMLInputElement>(`[data-template-duty-group="${CSS.escape(group)}"]`).forEach((input) => {
+        input.checked = true;
+      });
+      return;
+    }
+
+    const templateDutyClearBtn = target.closest<HTMLButtonElement>("[data-template-duty-clear]");
+    if (templateDutyClearBtn?.dataset.templateDutyClear) {
+      const group = templateDutyClearBtn.dataset.templateDutyClear;
+      document.querySelectorAll<HTMLInputElement>(`[data-template-duty-group="${CSS.escape(group)}"]`).forEach((input) => {
+        input.checked = false;
       });
       return;
     }
@@ -7720,6 +7988,15 @@ function bindViewEvents() {
 
   document.addEventListener("click", (event) => {
     const target = event.target as HTMLElement;
+    const mobileMoreView = target.closest<HTMLButtonElement>("[data-mobile-more-view]");
+    if (mobileMoreView?.dataset.mobileMoreView) {
+      navigateToView(mobileMoreView.dataset.mobileMoreView);
+      return;
+    }
+    if (target.matches("[data-close-mobile-more]") || target.id === "mobile-more-menu") {
+      closeMobileMoreMenu();
+      return;
+    }
     const reviewActionButton = target.closest<HTMLElement>("[data-review-action-kind]");
     if (reviewActionButton) {
       void runReviewAction(reviewActionButton);
@@ -7771,6 +8048,9 @@ function bindViewEvents() {
     if (target.matches("[data-close-change-password]") || target.id === "change-password-modal") {
       closeChangePasswordModal();
     }
+    if (target.matches("[data-close-profile]") || target.id === "profile-modal") {
+      closeProfileModal();
+    }
     if (target.matches("[data-close-person-modal]") || target.id === "analysis-person-modal") {
       closeAnalysisPersonModal();
     }
@@ -7790,6 +8070,8 @@ function bindViewEvents() {
       closeRotaReviewSlotModal();
       closeReviewActionModal();
       closeChangePasswordModal();
+      closeProfileModal();
+      closeMobileMoreMenu();
       closeAnalysisPersonModal();
       closeLeaveDayModal();
       closeRotaDayModal();

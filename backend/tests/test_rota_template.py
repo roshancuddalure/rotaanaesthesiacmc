@@ -81,7 +81,7 @@ def test_generate_empty_template_preserves_mandatory_and_blocks_adjustable_slots
             session,
             "2026-05",
             TemplateGenerationOptions(
-                duty_keys=["MAIN_1ST_24HR", "PAC"],
+                duty_keys=["MAIN_1ST_24HR", "MAIN_PAC_PG"],
                 starts_on=date(2026, 5, 1),
                 ends_on=date(2026, 5, 1),
             ),
@@ -410,7 +410,7 @@ def test_rota_template_api_generates_and_returns_template_month() -> None:
             "/api/v1/rota-template/generate?month=2026-05",
             headers={"Authorization": f"Bearer {token}"},
             json={
-                "duty_keys": ["MAIN_1ST_24HR", "PAC"],
+                "duty_keys": ["MAIN_1ST_24HR", "MAIN_PAC_PG"],
                 "starts_on": "2026-05-01",
                 "ends_on": "2026-05-01",
             },

@@ -1,5 +1,5 @@
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL ?? (import.meta.env.DEV ? "http://localhost:8000" : "");
+  import.meta.env.VITE_API_BASE_URL ?? "";
 
 let authToken = localStorage.getItem("duty_rota_auth_token") ?? "";
 
@@ -1461,6 +1461,16 @@ export async function signIn(username: string, password: string): Promise<SignIn
 
 export function getCurrentUser(): Promise<UserAccount> {
   return request<UserAccount>("/api/v1/auth/me");
+}
+
+export function updateCurrentUserProfile(payload: {
+  display_name: string;
+  email?: string | null;
+}): Promise<UserAccount> {
+  return request<UserAccount>("/api/v1/auth/me", {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  });
 }
 
 export function createUserAccount(payload: {

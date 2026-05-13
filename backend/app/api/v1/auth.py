@@ -72,6 +72,11 @@ class ChangePasswordRequest(BaseModel):
     new_password: str
 
 
+class ProfileUpdateRequest(BaseModel):
+    display_name: str
+    email: str | None = None
+
+
 def user_to_read(user: UserAccount) -> UserRead:
     return UserRead(
         id=user.id,
@@ -118,6 +123,22 @@ def sign_in(payload: SignInRequest, db: Session = Depends(get_db)) -> SignInResp
 
 @router.get("/auth/me")
 def me(user: UserAccount = Depends(current_user)) -> UserRead:
+    return user_to_read(user)
+
+
+@router.put("/auth/me")
+def update_me(
+    payload: ProfileUpdateRequest,
+    user: UserAccount = Depends(current_user),
+    db: Session = Depends(get_db),
+) -> UserRead:
+    display_name = payload.display_name.strip()
+    if not display_name:
+        raise HTTPException(status_code=400, detail="Display name is required")
+    user.display_name = display_name
+    user.email = payload.email.strip() if payload.email and payload.email.strip() else None
+    db.commit()
+    db.refresh(user)
     return user_to_read(user)
 
 

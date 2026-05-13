@@ -2184,3 +2184,44 @@ Verification:
 Debug note:
 
 - If a duty rule allows multiple call levels, the same duty is listed in each allowed call-level sheet because each of those person levels is valid for that duty.
+
+## 2026-05-12 - Railway Deployment Stabilization And DB Migration
+
+Goal:
+
+- Deploy the Duty Rota web app to Railway from GitHub and migrate the local PostgreSQL data into Railway PostgreSQL.
+
+Implemented and corrected:
+
+- Moved Railway deployment toward a single-service shape using the root `Dockerfile`.
+- Root Dockerfile builds the Vite frontend, copies `dist/` into the backend image, installs FastAPI, runs Alembic migrations, then starts Uvicorn.
+- Added `railway.json` with Dockerfile builder and `/api/health` healthcheck.
+- Fixed backend SQLAlchemy URL handling so Railway `postgresql://...` URLs are normalized for the installed `psycopg` driver.
+- Fixed FastAPI static mount path so `/app/static` is served after the frontend build is copied into the image.
+- Fixed production frontend API behavior so Railway uses same-origin `/api/...` instead of `http://localhost:8000`.
+- Fixed local frontend behavior so Vite dev uses `http://localhost:8000` for API calls while production stays same-origin.
+- Added `.gitignore` entries for `cred/` and `Debug/`.
+- Migrated local PostgreSQL into Railway PostgreSQL with overwrite behavior.
+
+Deployment debugging notes:
+
+- Local Git was confirmed healthy: branch `main`, remote `roshancuddalure/Dutyrotaanaesthesia`, and local `main` tracking `origin/main`.
+- Railway `GitHub Repo not found` was identified as a Railway GitHub App permission/stale-connection issue, not a project-file issue.
+- Railway internal healthcheck `GET /api/health 200 OK` means the app process is alive, but browser Bad Gateway can still happen if the public domain points to the wrong service or port.
+- The active Railway domain changed during troubleshooting; future checks should copy the domain directly from the current service networking settings.
+- Uvicorn logs showed runtime port `8080`, so the root Dockerfile was aligned to expose/default to `8080`.
+- If browser `/api/health` does not create a new log line, the browser is hitting the wrong public domain/service.
+
+Database migration result:
+
+- Local source database: `duty_rota`.
+- Railway target database was intentionally overwritten.
+- Final verification:
+  - 31 tables checked.
+  - 46,238 total rows on Railway.
+  - 24 non-empty tables.
+  - all local and Railway row counts matched.
+
+Reference:
+
+- See `Plan/12_railway_deployment_notes.md` for the durable Railway runbook and troubleshooting checklist.

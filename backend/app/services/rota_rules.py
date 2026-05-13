@@ -9,12 +9,14 @@ from sqlalchemy.orm import Session
 
 from app.domain.duty_types import DUTY_TYPES
 from app.models import CallCluster, RuleSetting, RuleVersion
+from app.services.call_clusters import ensure_default_call_clusters
 from app.services.rota_call_levels import normalize_call_level
 
 PHASE_ONE_SETTING_KEY = "rota_generator.phase1"
 PHASE_ONE_RULE_VERSION_NAME = "Rota generator default rules"
 VALID_DUTY_KEYS = {duty_type.key for duty_type in DUTY_TYPES}
 VALID_DUTY_GROUPS = {duty_type.group for duty_type in DUTY_TYPES}
+DEFAULT_DUTY_ORDER = {duty_type.key: index for index, duty_type in enumerate(DUTY_TYPES)}
 VALID_CALL_LEVELS = {
     "1ST_CALL",
     "2ND_CALL",
@@ -22,6 +24,52 @@ VALID_CALL_LEVELS = {
     "4TH_CALL",
     "CO_4TH_CALL",
     "5TH_CALL",
+}
+
+INACTIVE_PAC_DUTY_KEYS = {"PAC", "MAIN_PAC_SR", "RC_PAC_SR"}
+SYNCED_DUTY_METADATA_KEYS = {"RC_3RD_CALL_A", "RC_3RD_CALL_B"}
+
+PAC_SUBDIVISION_RULES = {
+    "RC_3RD_CALL_A": {
+        "allowed_call_levels": ["3RD_CALL"],
+        "allowed_cluster_keys": ["3rd_call_a"],
+    },
+    "RC_3RD_CALL_B": {
+        "allowed_call_levels": ["3RD_CALL"],
+        "allowed_cluster_keys": ["3rd_call_b"],
+    },
+    "MAIN_PAC_PG": {
+        "allowed_call_levels": ["3RD_CALL"],
+        "allowed_cluster_keys": ["3rd_call_c"],
+    },
+    "MAIN_PAC_SR_A": {
+        "allowed_call_levels": ["3RD_CALL"],
+        "allowed_cluster_keys": ["3rd_call_a"],
+    },
+    "MAIN_PAC_SR_B": {
+        "allowed_call_levels": ["3RD_CALL"],
+        "allowed_cluster_keys": ["3rd_call_b"],
+    },
+    "MAIN_PAC_3RD": {
+        "allowed_call_levels": ["3RD_CALL"],
+    },
+    "MAIN_PAC_SENIOR": {
+        "allowed_call_levels": ["4TH_CALL"],
+    },
+    "RC_PAC_SR_A": {
+        "allowed_call_levels": ["3RD_CALL"],
+        "allowed_cluster_keys": ["3rd_call_a"],
+    },
+    "RC_PAC_SR_B": {
+        "allowed_call_levels": ["3RD_CALL"],
+        "allowed_cluster_keys": ["3rd_call_b"],
+    },
+    "RC_PAC_3RD": {
+        "allowed_call_levels": ["3RD_CALL"],
+    },
+    "RC_PAC_SENIOR": {
+        "allowed_call_levels": ["4TH_CALL"],
+    },
 }
 
 
@@ -110,7 +158,7 @@ def _default_duration_hours(is_24hr: bool, key: str) -> int:
 
 def _default_duty_rule(duty_type: Any) -> DutyRule:
     is_24hr = bool(duty_type.is_24hr)
-    return DutyRule(
+    rule = DutyRule(
         key=duty_type.key,
         label=duty_type.label,
         group=duty_type.group,
@@ -122,6 +170,17 @@ def _default_duty_rule(duty_type: Any) -> DutyRule:
         blocks_elective_same_day=is_24hr or duty_type.group in {"pac", "shift", "caesar"},
         blocks_elective_next_day=is_24hr,
     )
+    if duty_type.key in INACTIVE_PAC_DUTY_KEYS:
+        rule.active = False
+        rule.is_mandatory = False
+        rule.is_adjustable = True
+    if duty_type.key in PAC_SUBDIVISION_RULES:
+        pac_rule = PAC_SUBDIVISION_RULES[duty_type.key]
+        rule.allowed_call_levels = list(pac_rule.get("allowed_call_levels", []))
+        rule.allowed_cluster_keys = list(pac_rule.get("allowed_cluster_keys", []))
+        rule.is_mandatory = False
+        rule.is_adjustable = True
+    return rule
 
 
 def default_phase_one_rules() -> RotaPhaseOneRules:
@@ -153,6 +212,7 @@ def get_or_create_phase_one_rule_version(db: Session) -> RuleVersion:
 
 
 def get_phase_one_rules(db: Session) -> tuple[RuleVersion, RotaPhaseOneRules]:
+    ensure_default_call_clusters(db)
     rule_version = get_or_create_phase_one_rule_version(db)
     setting = db.scalar(
         select(RuleSetting).where(
@@ -174,14 +234,24 @@ def get_phase_one_rules(db: Session) -> tuple[RuleVersion, RotaPhaseOneRules]:
         return rule_version, rules
     rules = RotaPhaseOneRules.model_validate(setting.value)
     default_rules = default_phase_one_rules()
+    default_rules_by_key = default_rules.duty_rules_by_key
     existing_keys = {rule.key for rule in rules.duty_rules}
     missing_rules = [rule for rule in default_rules.duty_rules if rule.key not in existing_keys]
     if missing_rules:
         rules.duty_rules.extend(missing_rules)
+    for rule in rules.duty_rules:
+        if rule.key in INACTIVE_PAC_DUTY_KEYS:
+            rule.active = False
+        if rule.key in SYNCED_DUTY_METADATA_KEYS and rule.key in default_rules_by_key:
+            default_rule = default_rules_by_key[rule.key]
+            rule.label = default_rule.label
+            rule.group = default_rule.group
+    rules.duty_rules.sort(key=lambda rule: DEFAULT_DUTY_ORDER.get(rule.key, len(DEFAULT_DUTY_ORDER)))
     return rule_version, rules
 
 
 def save_phase_one_rules(db: Session, rules: RotaPhaseOneRules) -> tuple[RuleVersion, RotaPhaseOneRules]:
+    ensure_default_call_clusters(db)
     validate_phase_one_rules(db, rules)
     rule_version = get_or_create_phase_one_rule_version(db)
     setting = db.scalar(

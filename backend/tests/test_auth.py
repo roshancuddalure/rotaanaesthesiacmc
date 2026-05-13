@@ -128,6 +128,35 @@ def test_authenticated_user_can_change_password() -> None:
         assert response.status_code == 200
 
 
+def test_authenticated_user_can_update_profile() -> None:
+    with auth_client() as client:
+        response = client.post(
+            "/api/v1/auth/sign-in",
+            json={"username": "rotachief", "password": "rotateam"},
+        )
+        token = response.json()["token"]
+
+        response = client.put(
+            "/api/v1/auth/me",
+            headers={"Authorization": f"Bearer {token}"},
+            json={"display_name": "", "email": "chief@example.com"},
+        )
+        assert response.status_code == 400
+
+        response = client.put(
+            "/api/v1/auth/me",
+            headers={"Authorization": f"Bearer {token}"},
+            json={"display_name": "Updated Chief", "email": "chief@example.com"},
+        )
+        assert response.status_code == 200
+        assert response.json()["display_name"] == "Updated Chief"
+        assert response.json()["email"] == "chief@example.com"
+
+        response = client.get("/api/v1/auth/me", headers={"Authorization": f"Bearer {token}"})
+        assert response.status_code == 200
+        assert response.json()["display_name"] == "Updated Chief"
+
+
 def test_diagnostics_requires_admin_privilege() -> None:
     with auth_client() as client:
         superadmin_response = client.post(

@@ -79,6 +79,64 @@ def create_call_cluster(
     return cluster
 
 
+DEFAULT_CALL_CLUSTERS = (
+    {
+        "key": "3rd_call_a",
+        "name": "3rd Call A",
+        "call_level": "3RD_CALL",
+        "description": "3rd call A subgroup for PAC and duty eligibility.",
+    },
+    {
+        "key": "3rd_call_b",
+        "name": "3rd Call B",
+        "call_level": "3RD_CALL",
+        "description": "3rd call B subgroup for PAC and duty eligibility.",
+    },
+    {
+        "key": "3rd_call_c",
+        "name": "3rd Call C",
+        "call_level": "3RD_CALL",
+        "description": "3rd call C subgroup for PAC PG eligibility.",
+    },
+    {
+        "key": "pac_sr",
+        "name": "PAC SR",
+        "call_level": "3RD_CALL",
+        "description": "Senior 3rd call PAC pool. Use if PAC-specific senior eligibility differs from 3rd Call A/B.",
+    },
+    {
+        "key": "pac_senior",
+        "name": "PAC Senior",
+        "call_level": "4TH_CALL",
+        "description": "4th call PAC senior pool. Use if PAC senior eligibility needs additional restriction.",
+    },
+)
+
+
+def ensure_default_call_clusters(db: Session) -> list[CallCluster]:
+    existing = {cluster.key: cluster for cluster in db.scalars(select(CallCluster))}
+    created_or_existing: list[CallCluster] = []
+    changed = False
+    for item in DEFAULT_CALL_CLUSTERS:
+        cluster = existing.get(item["key"])
+        if cluster is None:
+            cluster = CallCluster(
+                key=item["key"],
+                name=item["name"],
+                call_level=normalize_call_level(item["call_level"]),
+                description=item["description"],
+                active=True,
+            )
+            db.add(cluster)
+            changed = True
+        created_or_existing.append(cluster)
+    if changed:
+        db.commit()
+        for cluster in created_or_existing:
+            db.refresh(cluster)
+    return created_or_existing
+
+
 def update_call_cluster(
     db: Session,
     cluster: CallCluster,
