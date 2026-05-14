@@ -144,6 +144,37 @@ def test_leave_import_preview_matches_canonical_members() -> None:
         assert preview["rows"][1]["preview_status"] == "needs_review"
 
 
+def test_leave_import_preview_does_not_match_archived_or_historical_members() -> None:
+    engine = create_engine("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(engine)
+
+    with Session(engine) as session:
+        session.add_all(
+            [
+                Person(canonical_name="Active Person", active_status="active", call_level="3RD_CALL"),
+                Person(canonical_name="Archived Person", active_status="archived", call_level="3RD_CALL"),
+                Person(canonical_name="Historical Person", active_status="historical", call_level="3RD_CALL"),
+            ]
+        )
+        session.commit()
+        content = (
+            "Name,From,To,Type,Status\n"
+            "Active Person,10/06/2026,10/06/2026,Annual Leave,Approved\n"
+            "Archived Person,11/06/2026,11/06/2026,Annual Leave,Approved\n"
+            "Historical Person,12/06/2026,12/06/2026,Annual Leave,Approved\n"
+        ).encode()
+
+        preview = preview_leave_import(session, "leave.csv", content, "2026-06")
+
+        assert preview["matched_rows"] == 1
+        assert preview["unresolved_rows"] == 2
+        assert preview["rows"][0]["person_name"] == "Active Person"
+        assert preview["rows"][1]["person_id"] is None
+        assert preview["rows"][1]["issues"] == ["Unresolved department member"]
+        assert preview["rows"][2]["person_id"] is None
+        assert preview["rows"][2]["issues"] == ["Unresolved department member"]
+
+
 def test_leave_import_preview_extracts_slot_from_name_cell() -> None:
     engine = create_engine("sqlite+pysqlite:///:memory:")
     Base.metadata.create_all(engine)
@@ -316,6 +347,47 @@ def test_leave_api_create_list_calendar_and_cancel() -> None:
             headers={"Authorization": f"Bearer {token}"},
         )
         assert response.json()["summary"]["total_leave_days"] == 0
+
+
+def test_leave_api_rejects_archived_and_historical_members() -> None:
+    with leave_client() as client:
+        token = sign_in(client)
+        headers = {"Authorization": f"Bearer {token}"}
+        members = client.get("/api/v1/admin/members", headers=headers).json()
+        sujil_id = next(member["id"] for member in members if member["canonical_name"] == "Sujil")
+        jeenu_id = next(member["id"] for member in members if member["canonical_name"] == "Jeenu Ann Jose")
+
+        archived = client.post(f"/api/v1/admin/members/{sujil_id}/archive", headers=headers)
+        assert archived.status_code == 200
+
+        historical_payload = next(member for member in members if member["id"] == jeenu_id)
+        historical_payload["active_status"] = "historical"
+        historical = client.put(
+            f"/api/v1/admin/members/{jeenu_id}",
+            headers=headers,
+            json={
+                "canonical_name": historical_payload["canonical_name"],
+                "active_status": "historical",
+                "call_level": historical_payload["call_level"],
+            },
+        )
+        assert historical.status_code == 200
+
+        for person_id in (sujil_id, jeenu_id):
+            response = client.post(
+                "/api/v1/leave/requests",
+                headers=headers,
+                json={
+                    "person_id": person_id,
+                    "leave_type": "ANNUAL_LEAVE",
+                    "leave_slot": "FULL_DAY",
+                    "starts_on": "2026-06-10",
+                    "ends_on": "2026-06-10",
+                    "status": "approved",
+                },
+            )
+            assert response.status_code == 400
+            assert response.json()["detail"] == "Leave can only be assigned to active members"
 
 
 def test_leave_import_preview_api() -> None:

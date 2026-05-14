@@ -349,7 +349,13 @@ def add_lookup_key(lookup: PersonLookup, key: str, person: Person) -> None:
 
 
 def person_lookup(db: Session) -> PersonLookup:
-    people = list(db.scalars(select(Person).options(selectinload(Person.aliases))))
+    people = list(
+        db.scalars(
+            select(Person)
+            .where(Person.active_status == "active")
+            .options(selectinload(Person.aliases))
+        )
+    )
     lookup: PersonLookup = {}
     for person in people:
         add_lookup_key(lookup, normalize_name(person.canonical_name), person)

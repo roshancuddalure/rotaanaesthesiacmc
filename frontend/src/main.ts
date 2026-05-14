@@ -3030,6 +3030,7 @@ function matchMethodLabel(value: string | null | undefined): string {
 
 function renderLeaveMemberOptions(selected = ""): string {
   return members
+    .filter((member) => member.active_status === "active" || member.id === selected)
     .map(
       (member) =>
         `<option value="${member.id}" ${member.id === selected ? "selected" : ""}>${escapeHtml(member.canonical_name)}</option>`,

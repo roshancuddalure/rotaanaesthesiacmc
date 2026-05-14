@@ -119,6 +119,13 @@ def get_person_or_404(db: Session, person_id: UUID) -> Person:
     return person
 
 
+def get_active_person_or_404(db: Session, person_id: UUID) -> Person:
+    person = get_person_or_404(db, person_id)
+    if person.active_status != "active":
+        raise HTTPException(status_code=400, detail="Leave can only be assigned to active members")
+    return person
+
+
 def get_leave_or_404(db: Session, leave_id: UUID) -> LeaveRequest:
     leave = db.get(LeaveRequest, leave_id, options=[selectinload(LeaveRequest.person)])
     if leave is None:
@@ -151,7 +158,7 @@ def create_leave_request(
     db: Session = Depends(get_db),
 ) -> LeaveRequestRead:
     validate_dates(payload.starts_on, payload.ends_on)
-    person = get_person_or_404(db, payload.person_id)
+    person = get_active_person_or_404(db, payload.person_id)
     leave = LeaveRequest(
         person=person,
         leave_type=payload.leave_type.strip().upper(),
@@ -178,7 +185,7 @@ def update_leave_request(
 ) -> LeaveRequestRead:
     validate_dates(payload.starts_on, payload.ends_on)
     leave = get_leave_or_404(db, leave_id)
-    person = get_person_or_404(db, payload.person_id)
+    person = get_active_person_or_404(db, payload.person_id)
     leave.person = person
     leave.leave_type = payload.leave_type.strip().upper()
     leave.leave_slot = payload.leave_slot.strip().upper()
