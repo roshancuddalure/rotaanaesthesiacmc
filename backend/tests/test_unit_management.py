@@ -13,7 +13,7 @@ from sqlalchemy.pool import StaticPool
 from app import models  # noqa: F401
 from app.db.session import Base, get_db
 from app.main import app
-from app.models import AdminMapping, Person, PersonPosting, Unit
+from app.models import AdminMapping, Person, PersonAlias, PersonPosting, Unit
 from app.services.auth import seed_superadmin
 from app.services.unit_assignment_import import normalize_import_posting, parse_unitwise_excel_upload
 
@@ -36,8 +36,11 @@ def unit_client() -> Generator[TestClient, None, None]:
         jessica = Person(canonical_name="Jessica Charles", call_level="2ND_CALL")
         renita = Person(canonical_name="Renita J", call_level="2ND_CALL")
         sudharsan = Person(canonical_name="Sudharsan T R", call_level="2ND_CALL")
+        calvin = Person(canonical_name="Calvin Lawrence Dalmeida", call_level="2ND_CALL")
+        angelin = Person(canonical_name="Angelin Aniruth", call_level="2ND_CALL")
         main = Unit(code="MAIN", name="Main OT", campus="CMC")
         cardiac = Unit(code="CARDIAC", name="Cardiac OT", campus="CMC")
+        neuro = Unit(code="NEURO_DEPT", name="Dept of Neuroanaesthesia", campus="CMC")
         unit_five = Unit(code="UNIT_5", name="Unit 5", campus="CMC")
         unit_one = Unit(code="GENERAL_ALPHA", name="General Unit 1", campus="CMC")
         unit_two = Unit(code="GENERAL_BETA", name="General Unit 2", campus="CMC")
@@ -50,8 +53,11 @@ def unit_client() -> Generator[TestClient, None, None]:
                 jessica,
                 renita,
                 sudharsan,
+                calvin,
+                angelin,
                 main,
                 cardiac,
+                neuro,
                 unit_five,
                 unit_one,
                 unit_two,
@@ -433,6 +439,44 @@ Cardiac OT
         assert body["source_formats"] == ["text_unitwise"]
 
 
+def test_unit_management_imports_official_text_template_format() -> None:
+    with unit_client() as client:
+        token = sign_in(client)
+        headers = auth_headers(token)
+        content = b"""
+MONTH: 2026-06
+
+[UNIT: UNIT 1]
+2ND_CALL:
+- Jessica Charles
+- Renita J | 2026-06-16 to 2026-06-30
+
+[UNIT: UNIT III]
+2ND_CALL:
+- Sudharshan
+
+[PAIN]
+- Sujil
+- Jeenu Ann Jose | 2026-06-01 to 2026-06-15
+"""
+
+        preview = client.post(
+            "/api/v1/unit-management/import-preview?month=2026-06&replace_existing=true",
+            headers=headers,
+            files={"file": ("unitwise-template.txt", content, "text/plain")},
+        )
+
+        assert preview.status_code == 200
+        body = preview.json()
+        assert body["matched_rows"] == 5
+        assert body["auto_assignable_rows"] == 5
+        pain_rows = [row for row in body["rows"] if row["posting_type"] == "PAIN"]
+        assert {row["person_name"] for row in pain_rows} == {"Sujil", "Jeenu Ann Jose"}
+        assert all(row["special_posting"] is True for row in pain_rows)
+        renita = next(row for row in body["rows"] if row["person_name"] == "Renita J")
+        assert (renita["starts_on"], renita["ends_on"]) == ("2026-06-16", "2026-06-30")
+
+
 def fuzzy_unitwise_workbook_bytes() -> bytes:
     workbook = Workbook()
     worksheet = workbook.active
@@ -489,6 +533,54 @@ def numbered_units_workbook_bytes() -> bytes:
     return output.getvalue()
 
 
+def messy_excel_unitwise_workbook_bytes() -> bytes:
+    workbook = Workbook()
+    worksheet = workbook.active
+    worksheet.title = "Messy June"
+    worksheet["A1"] = "Anaesthesia unitwise allocation"
+    worksheet["A2"] = "Prepared by rota board"
+    worksheet["A4"] = "Posting"
+    worksheet["B4"] = "UNIT 1"
+    worksheet["C4"] = "UNIT III"
+    worksheet["A5"] = "Date"
+    worksheet["B5"] = "1-15"
+    worksheet["C5"] = "16-30"
+    worksheet["A6"] = "2nd Call"
+    worksheet["B6"] = "Jessica Charles & Renita J"
+    worksheet["C6"] = "Sudharshan; Nasreen Begum K"
+    output = BytesIO()
+    workbook.save(output)
+    return output.getvalue()
+
+
+def department_alias_unitwise_workbook_bytes() -> bytes:
+    workbook = Workbook()
+    worksheet = workbook.active
+    worksheet.title = "June"
+    worksheet["A1"] = ""
+    worksheet["B1"] = "NEURO"
+    worksheet["C1"] = "CARDIAC"
+    worksheet["A2"] = "2023 second calls"
+    worksheet["B2"] = "Calwin Lawrence"
+    worksheet["C2"] = "Angeline Anirutha"
+    output = BytesIO()
+    workbook.save(output)
+    return output.getvalue()
+
+
+def manual_learning_workbook_bytes() -> bytes:
+    workbook = Workbook()
+    worksheet = workbook.active
+    worksheet.title = "June"
+    worksheet["A1"] = ""
+    worksheet["B1"] = "Heart Dept"
+    worksheet["A2"] = "2nd Call"
+    worksheet["B2"] = "Cal Law"
+    output = BytesIO()
+    workbook.save(output)
+    return output.getvalue()
+
+
 def special_posting_workbook_bytes() -> bytes:
     workbook = Workbook()
     worksheet = workbook.active
@@ -499,6 +591,22 @@ def special_posting_workbook_bytes() -> bytes:
     worksheet["B2"] = "Dr Sujil"
     worksheet["A3"] = "SICU Posting"
     worksheet["B3"] = "Dr Jeenu Ann Jose"
+    output = BytesIO()
+    workbook.save(output)
+    return output.getvalue()
+
+
+def nested_pain_call_workbook_bytes() -> bytes:
+    workbook = Workbook()
+    worksheet = workbook.active
+    worksheet.title = "June"
+    worksheet["A1"] = ""
+    worksheet["B1"] = "UNIT III"
+    worksheet["A2"] = "Pain Call"
+    worksheet["A3"] = "2025 first calls"
+    worksheet["B3"] = "Sujil, Jeenu Ann Jose"
+    worksheet["A4"] = "1st Call"
+    worksheet["B4"] = "Sujil"
     output = BytesIO()
     workbook.save(output)
     return output.getvalue()
@@ -611,6 +719,132 @@ def test_unit_management_import_auto_resolves_numbered_units_and_name_variants()
         assert applied.json()["auto_assigned_rows"] == 3
 
 
+def test_unit_management_import_structures_messy_excel_with_late_headers_dates_and_separators() -> None:
+    with unit_client() as client:
+        token = sign_in(client)
+        headers = auth_headers(token)
+
+        preview = client.post(
+            "/api/v1/unit-management/import-preview?month=2026-06&replace_existing=true",
+            headers=headers,
+            files={
+                "file": (
+                    "June messy.xlsx",
+                    messy_excel_unitwise_workbook_bytes(),
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                )
+            },
+        )
+
+        assert preview.status_code == 200
+        body = preview.json()
+        assert body["matched_rows"] == 4
+        assert body["auto_assignable_rows"] == 4
+        assert {row["person_name"] for row in body["rows"]} == {
+            "Jessica Charles",
+            "Renita J",
+            "Sudharsan T R",
+            "Nasreen Begum K",
+        }
+        assert {(row["starts_on"], row["ends_on"]) for row in body["rows"]} == {
+            ("2026-06-01", "2026-06-15"),
+            ("2026-06-16", "2026-06-30"),
+        }
+        assert all(row["parser_rule"] == "excel_header_scan" for row in body["rows"])
+        assert all("header row 4" in row["source_context"] for row in body["rows"])
+
+
+def test_unit_management_import_auto_resolves_department_unit_aliases_and_known_name_variants() -> None:
+    with unit_client() as client:
+        token = sign_in(client)
+        headers = auth_headers(token)
+
+        preview = client.post(
+            "/api/v1/unit-management/import-preview?month=2026-06&replace_existing=true",
+            headers=headers,
+            files={
+                "file": (
+                    "June dept.xlsx",
+                    department_alias_unitwise_workbook_bytes(),
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                )
+            },
+        )
+
+        assert preview.status_code == 200
+        body = preview.json()
+        assert body["matched_rows"] == 2
+        assert body["auto_assignable_rows"] == 2
+        assert {row["person_name"] for row in body["rows"]} == {
+            "Calvin Lawrence Dalmeida",
+            "Angelin Aniruth",
+        }
+        assert {row["unit_name"] for row in body["rows"]} == {
+            "Dept of Neuroanaesthesia",
+            "Cardiac OT",
+        }
+        assert all(row["unit_match_method"] == "unit_exact" for row in body["rows"])
+
+
+def test_unit_management_import_learns_alias_and_unit_mapping_from_manual_resolution() -> None:
+    with unit_client() as client:
+        token = sign_in(client)
+        headers = auth_headers(token)
+        members = client.get("/api/v1/admin/members", headers=headers).json()
+        units = client.get("/api/v1/units", headers=headers).json()
+        calvin_id = next(member["id"] for member in members if member["canonical_name"] == "Calvin Lawrence Dalmeida")
+        cardiac_id = next(unit["id"] for unit in units if unit["code"] == "CARDIAC")
+
+        first_preview = client.post(
+            "/api/v1/unit-management/import-preview?month=2026-06&replace_existing=true",
+            headers=headers,
+            files={
+                "file": (
+                    "June learn.xlsx",
+                    manual_learning_workbook_bytes(),
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                )
+            },
+        )
+        assert first_preview.status_code == 200
+        row_key = first_preview.json()["rows"][0]["row_key"]
+        resolutions = {row_key: {"person_id": calvin_id, "unit_id": cardiac_id}}
+
+        applied = client.post(
+            "/api/v1/unit-management/import-apply?month=2026-06&replace_existing=true",
+            headers=headers,
+            data={"resolutions_json": json.dumps(resolutions)},
+            files={
+                "file": (
+                    "June learn.xlsx",
+                    manual_learning_workbook_bytes(),
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                )
+            },
+        )
+
+        assert applied.status_code == 200
+        assert applied.json()["learned_mappings"] == 2
+
+        second_preview = client.post(
+            "/api/v1/unit-management/import-preview?month=2026-07&replace_existing=true",
+            headers=headers,
+            files={
+                "file": (
+                    "July learn.xlsx",
+                    manual_learning_workbook_bytes(),
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                )
+            },
+        )
+
+        assert second_preview.status_code == 200
+        learned_row = second_preview.json()["rows"][0]
+        assert learned_row["person_name"] == "Calvin Lawrence Dalmeida"
+        assert learned_row["unit_name"] == "Cardiac OT"
+        assert learned_row["auto_assignable"] is True
+
+
 def test_unit_management_import_auto_resolves_doubtful_unit_above_threshold_with_review_note() -> None:
     with unit_client() as client:
         token = sign_in(client)
@@ -685,6 +919,52 @@ def test_unit_management_import_keeps_special_postings_without_unit() -> None:
         assert {assignment["posting_type"] for assignment in month["assignments"]} == {"PAIN", "SICU"}
         assert all(assignment["unit"] is None for assignment in month["assignments"])
         assert month["validation_issues"] == []
+
+
+def test_unit_management_import_keeps_nested_pain_child_rows_as_special_split_people() -> None:
+    with unit_client() as client:
+        token = sign_in(client)
+        headers = auth_headers(token)
+
+        preview = client.post(
+            "/api/v1/unit-management/import-preview?month=2026-06&replace_existing=true",
+            headers=headers,
+            files={
+                "file": (
+                    "June 2026.xlsx",
+                    nested_pain_call_workbook_bytes(),
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                )
+            },
+        )
+
+        assert preview.status_code == 200
+        body = preview.json()
+        pain_rows = [row for row in body["rows"] if row["posting_type"] == "PAIN"]
+        normal_rows = [row for row in body["rows"] if row["posting_type"] == "1ST_CALL"]
+        assert len(pain_rows) == 2
+        assert len(normal_rows) == 1
+        assert {row["person_name"] for row in pain_rows} == {"Sujil", "Jeenu Ann Jose"}
+        assert all(row["special_posting"] is True for row in pain_rows)
+        assert all(row["unit_id"] is None for row in pain_rows)
+        assert all(row["raw_posting_label"] == "Pain Call" for row in pain_rows)
+        assert all(row["child_posting_label"] == "2025 first calls" for row in pain_rows)
+        assert all("Person appears more than once" not in " ".join(row["issues"]) for row in body["rows"])
+        assert body["auto_assignable_rows"] == 3
+
+        applied = client.post(
+            "/api/v1/unit-management/import-apply?month=2026-06&replace_existing=true",
+            headers=headers,
+            files={
+                "file": (
+                    "June 2026.xlsx",
+                    nested_pain_call_workbook_bytes(),
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                )
+            },
+        )
+        assert applied.status_code == 200
+        assert applied.json()["auto_assigned_rows"] == 3
 
 
 def test_unit_management_import_parses_block_posting_labels_as_normal_unit_assignment() -> None:
@@ -779,6 +1059,54 @@ def test_unit_management_import_applies_manual_row_resolutions() -> None:
         )
         assert applied.status_code == 200
         assert applied.json()["created_rows"] == 1
+
+
+def test_unit_management_import_correction_can_force_special_posting_and_skip_row() -> None:
+    with unit_client() as client:
+        token = sign_in(client)
+        headers = auth_headers(token)
+
+        first_preview = client.post(
+            "/api/v1/unit-management/import-preview?month=2026-06&replace_existing=true",
+            headers=headers,
+            files={
+                "file": (
+                    "June 2026.xlsx",
+                    numbered_units_workbook_bytes(),
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                )
+            },
+        )
+        assert first_preview.status_code == 200
+        rows = first_preview.json()["rows"]
+        resolutions = {
+            rows[0]["row_key"]: {"posting_type": "PAIN"},
+            rows[1]["row_key"]: {"skip": True},
+        }
+
+        corrected = client.post(
+            "/api/v1/unit-management/import-preview?month=2026-06&replace_existing=true",
+            headers=headers,
+            data={"resolutions_json": json.dumps(resolutions)},
+            files={
+                "file": (
+                    "June 2026.xlsx",
+                    numbered_units_workbook_bytes(),
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                )
+            },
+        )
+
+        assert corrected.status_code == 200
+        body = corrected.json()
+        forced = next(row for row in body["rows"] if row["row_key"] == rows[0]["row_key"])
+        skipped = next(row for row in body["rows"] if row["row_key"] == rows[1]["row_key"])
+        assert forced["posting_type"] == "PAIN"
+        assert forced["special_posting"] is True
+        assert forced["unit_id"] is None
+        assert skipped["skip"] is True
+        assert skipped["auto_assignable"] is False
+        assert "Row excluded by reviewer" in skipped["issues"]
 
 
 def split_month_unitwise_workbook_bytes() -> bytes:
@@ -891,6 +1219,8 @@ def test_unitwise_import_keeps_pain_campus_rows_under_pain_call() -> None:
     worksheet["A4"] = "Ranipet"
     worksheet["B4"] = "Shanmuga, Sampanna"
     worksheet["C4"] = "Mizpah, Jona Samraj"
+    worksheet["A5"] = "2025 first calls"
+    worksheet["B5"] = "Sujil, Jeenu Ann Jose"
     output = BytesIO()
     workbook.save(output)
 
@@ -898,3 +1228,5 @@ def test_unitwise_import_keeps_pain_campus_rows_under_pain_call() -> None:
 
     assert {posting.posting_label for posting in parsed.postings} == {"Pain call"}
     assert {normalize_import_posting(posting.posting_label) for posting in parsed.postings} == {"PAIN"}
+    child_rows = [posting for posting in parsed.postings if posting.child_posting_label == "2025 first calls"]
+    assert [posting.person_name for posting in child_rows] == ["Sujil", "Jeenu Ann Jose"]

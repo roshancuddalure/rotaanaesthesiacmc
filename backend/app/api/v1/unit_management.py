@@ -116,6 +116,7 @@ class UnitAssignmentImportApplyRead(BaseModel):
     month: str
     created_rows: int
     auto_assigned_rows: int = 0
+    learned_mappings: int = 0
     deleted_existing_rows: int
     skipped_rows: int
     skipped_preview_rows: list[dict[str, object]]

@@ -449,6 +449,12 @@ export interface UnitAssignmentImportPreview {
     raw_posting_label: string;
     posting_type: string;
     special_posting?: boolean;
+    skip?: boolean;
+    section_posting_label?: string | null;
+    child_posting_label?: string | null;
+    parser_rule?: string | null;
+    parser_confidence?: string | null;
+    source_context?: string | null;
     preview_status: string;
     auto_assignable?: boolean;
     row_action?: "auto_assign" | "needs_review";
@@ -466,6 +472,7 @@ export interface UnitImportResolution {
   person_id?: string;
   unit_id?: string;
   posting_type?: string;
+  skip?: boolean;
 }
 
 export interface UnitAssignmentImportApplyResult {
@@ -473,6 +480,7 @@ export interface UnitAssignmentImportApplyResult {
   month: string;
   created_rows: number;
   auto_assigned_rows: number;
+  learned_mappings: number;
   deleted_existing_rows: number;
   skipped_rows: number;
   skipped_preview_rows: UnitAssignmentImportPreview["rows"];

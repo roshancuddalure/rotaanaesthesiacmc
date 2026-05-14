@@ -14,7 +14,7 @@ from openpyxl.utils import get_column_letter
 from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
-from app.models import AdminMapping, Person, PersonPosting, Unit
+from app.models import AdminMapping, Person, PersonAlias, PersonPosting, Unit
 from app.services.imports import (
     ParseWarning,
     ParsedUnitPosting,
@@ -122,9 +122,9 @@ def unit_number_from_label(value: str) -> int | None:
     tokens = label.split()
     has_unit_context = any(token in {"unit", "u", "ot"} for token in tokens)
     for token in tokens:
-        if token.isdigit():
+        if token.isdigit() and (has_unit_context or len(tokens) == 1):
             return int(token)
-        if token in UNIT_NUMBER_WORDS:
+        if token in UNIT_NUMBER_WORDS and (has_unit_context or len(tokens) == 1):
             return UNIT_NUMBER_WORDS[token]
         if has_unit_context and token in UNIT_ROMAN_NUMERALS:
             return UNIT_ROMAN_NUMERALS[token]
@@ -137,6 +137,10 @@ def unit_number_from_label(value: str) -> int | None:
 
 def person_tokens(value: str) -> list[str]:
     return [token for token in normalize_label(value).split() if token]
+
+
+def relaxed_person_token(value: str) -> str:
+    return relaxed_name_key(value)
 
 
 def initials_for_tokens(tokens: list[str]) -> str:
@@ -222,16 +226,94 @@ def posting_allows_context_rows(posting_label: str) -> bool:
     return normalize_import_posting(posting_label) in {"PAIN", "PAC"}
 
 
+def is_special_section_label(value: str) -> bool:
+    return is_special_unit_posting(normalize_import_posting(value))
+
+
+def is_special_child_posting_label(value: str) -> bool:
+    label = normalize_label(value)
+    if not label:
+        return False
+    if date_range_label(value):
+        return True
+    if re.search(r"\b20\d{2}\b", label) and "call" in label:
+        return True
+    if "call" in label and any(token in label.split() for token in {"1", "2", "3", "4", "5"}):
+        return True
+    return label in {"main", "main campus", "ranipet", "ranipet campus", "rc"}
+
+
 def date_range_label(value: object) -> str | None:
     cleaned = clean_cell_value(value)
-    if re.search(r"\b\d{1,2}\s*(?:st|nd|rd|th)?\s*(?:-|to)\s*\d{1,2}\b", cleaned, re.IGNORECASE):
+    if re.search(
+        r"\b(?:\d{4}-\d{2}-\d{2}|\d{1,2}\s*(?:st|nd|rd|th)?)\s*(?:-|to)\s*(?:\d{4}-\d{2}-\d{2}|\d{1,2})\b",
+        cleaned,
+        re.IGNORECASE,
+    ):
         return cleaned
     return None
+
+
+def looks_like_unit_header(value: object) -> bool:
+    label = normalize_label(value)
+    if not label:
+        return False
+    if label in {"date", "day", "name", "names", "posting", "call"}:
+        return False
+    if unit_number_from_label(label) is not None:
+        return True
+    if any(token in label.split() for token in {"unit", "main", "cardiac", "neuro", "ranipet", "rc", "ot"}):
+        return True
+    return False
+
+
+def header_row_score(row) -> int:
+    non_empty_after_first = [cell for cell in row[1:] if clean_cell_value(cell.value)]
+    if not non_empty_after_first:
+        return 0
+    score = sum(2 for cell in non_empty_after_first if looks_like_unit_header(cell.value))
+    score += sum(1 for cell in non_empty_after_first if date_range_label(cell.value))
+    first_label = normalize_label(row[0].value if row else "")
+    if first_label in {"unit", "units", "posting", "call", "duty"}:
+        score += 1
+    return score
+
+
+def find_unit_header_row(rows) -> int | None:
+    scored = [
+        (header_row_score(row), index)
+        for index, row in enumerate(rows[: min(len(rows), 12)])
+    ]
+    scored = [(score, index) for score, index in scored if score > 0]
+    if not scored:
+        return None
+    score, index = max(scored, key=lambda item: (item[0], -item[1]))
+    return index if score >= 2 else None
+
+
+def row_has_date_context(row) -> bool:
+    label = normalize_label(row[0].value if row else "")
+    if label in {"date", "day"}:
+        return True
+    return any(date_range_label(cell.value) for cell in row[1:])
 
 
 def infer_row_date_bounds(*, raw_person_name: str, raw_date_label: str | None, month: str) -> tuple[date, date]:
     month_start, month_end = month_bounds(month)
     for source in (raw_person_name, raw_date_label or ""):
+        full_date_match = re.search(
+            r"\b(\d{4}-\d{2}-\d{2})\s*(?:to|-)\s*(\d{4}-\d{2}-\d{2})\b",
+            source,
+            flags=re.IGNORECASE,
+        )
+        if full_date_match:
+            try:
+                start = date.fromisoformat(full_date_match.group(1))
+                end = date.fromisoformat(full_date_match.group(2))
+                if start <= end:
+                    return start, end
+            except ValueError:
+                pass
         match = re.search(
             r"\b(\d{1,2})\s*(?:st|nd|rd|th)?\s*(?:-|to)\s*(\d{1,2})\b",
             source,
@@ -273,9 +355,42 @@ def parse_unitwise_excel_upload(filename: str, content: bytes) -> ParsedUnitwise
                     ParseWarning(source_file, worksheet.title, None, None, "EMPTY_UNITWISE", "No rows found.")
                 )
                 continue
+            header_row_index = find_unit_header_row(rows)
+            if header_row_index is None:
+                header_row_index = next(
+                    (
+                        index
+                        for index, row in enumerate(rows[: min(len(rows), 12)])
+                        if any(clean_cell_value(cell.value) for cell in row[1:])
+                    ),
+                    None,
+                )
+                if header_row_index is None:
+                    warnings.append(
+                        ParseWarning(
+                            source_file,
+                            worksheet.title,
+                            None,
+                            None,
+                            "MISSING_UNIT_HEADER",
+                            "No unit/date header row found in the top rows.",
+                        )
+                    )
+                    continue
+                warnings.append(
+                    ParseWarning(
+                        source_file,
+                        worksheet.title,
+                        header_row_index + 1,
+                        None,
+                        "LOW_CONFIDENCE_HEADER",
+                        "Used first non-empty row as a fallback header.",
+                    )
+                )
+            header_row = rows[header_row_index]
             unit_by_column = {
                 column_index: clean_cell_value(cell.value)
-                for column_index, cell in enumerate(rows[0][1:], start=2)
+                for column_index, cell in enumerate(header_row[1:], start=2)
                 if clean_cell_value(cell.value)
             }
             if not unit_by_column:
@@ -291,19 +406,43 @@ def parse_unitwise_excel_upload(filename: str, content: bytes) -> ParsedUnitwise
                 )
                 continue
             current_posting_label = ""
-            date_label_by_column: dict[int, str] = {}
-            for row in rows[1:]:
+            current_special_section_label: str | None = None
+            date_label_by_column: dict[int, str] = {
+                column_index: label
+                for column_index, label in unit_by_column.items()
+                if date_range_label(label)
+            }
+            parser_rule = (
+                "excel_first_row_headers"
+                if header_row_index == 0
+                else "excel_header_scan"
+            )
+            parser_confidence = "high" if header_row_score(header_row) >= 2 else "low"
+            for row in rows[header_row_index + 1 :]:
                 if not row:
                     continue
                 label = clean_cell_value(row[0].value)
+                if row_has_date_context(row):
+                    for column_index, cell in enumerate(row[1:], start=2):
+                        if date_label := date_range_label(cell.value):
+                            date_label_by_column[column_index] = date_label
+                    if not split_unitwise_names(" ".join(clean_cell_value(cell.value) for cell in row[1:])):
+                        continue
                 label_is_context = bool(
                     current_posting_label
                     and posting_allows_context_rows(current_posting_label)
                     and is_unitwise_context_label(label)
                 )
-                if label and not label_is_context:
+                label_is_special_child = bool(
+                    current_special_section_label
+                    and label
+                    and is_special_child_posting_label(label)
+                    and not is_special_section_label(label)
+                )
+                child_posting_label = label if label_is_special_child else None
+                if label and not label_is_context and not label_is_special_child:
                     current_posting_label = label
-                    date_label_by_column = {}
+                    current_special_section_label = label if is_special_section_label(label) else None
                 if not current_posting_label:
                     continue
                 for column_index, cell in enumerate(row[1:], start=2):
@@ -342,6 +481,21 @@ def parse_unitwise_excel_upload(filename: str, content: bytes) -> ParsedUnitwise
                                 column_index=column_index,
                                 column_label=get_column_letter(column_index),
                                 raw_date_label=raw_date_label,
+                                section_posting_label=current_special_section_label,
+                                child_posting_label=child_posting_label,
+                                parser_rule=parser_rule,
+                                parser_confidence=parser_confidence,
+                                source_context="; ".join(
+                                    part
+                                    for part in (
+                                        f"header row {header_row_index + 1}",
+                                        f"unit/date header {unit_label}",
+                                        f"posting {current_posting_label}",
+                                        f"child {child_posting_label}" if child_posting_label else "",
+                                        f"date {raw_date_label}" if raw_date_label else "",
+                                    )
+                                    if part
+                                ),
                             )
                         )
     finally:
@@ -368,8 +522,20 @@ def line_unit_match(line: str, unit_labels: dict[str, str]) -> str | None:
 
 
 def posting_from_line(line: str) -> tuple[str | None, str]:
+    stripped_line = line.strip().rstrip(":").strip()
+    compacted_line = compact_token(stripped_line)
+    if compacted_line in POSTING_ALIASES:
+        key = POSTING_ALIASES[compacted_line]
+        return key, ""
+    direct_key = stripped_line.upper().replace(" ", "_").replace("-", "_")
+    if direct_key in set(POSTING_ALIASES.values()) | {"OTHER_SPECIAL"}:
+        return direct_key, ""
+    if is_special_unit_posting(direct_key):
+        key = direct_key
+        return key, ""
     patterns = [
         r"\bco\s*4(?:th)?\s*calls?\b",
+        r"\bco\s*1(?:st)?\s*calls?\b",
         r"\b[1-5](?:st|nd|rd|th)?\s*calls?\b",
         r"\bfirst\s*calls?\b",
         r"\bsecond\s*calls?\b",
@@ -395,24 +561,50 @@ def parse_unitwise_text_upload(filename: str, content: bytes, units: list[Unit])
     warnings: list[ParseWarning] = []
     current_unit = ""
     current_posting = ""
+    current_special_section = ""
     for row_number, raw_line in enumerate(text_lines(filename, content), start=1):
         line = clean_cell_value(raw_line)
-        if not line:
+        if not line or line.startswith("#") or normalize_label(line).startswith("month "):
+            continue
+        section_match = re.fullmatch(r"\[([^\]]+)\]", line)
+        if section_match:
+            section = section_match.group(1).strip()
+            if section.casefold().startswith("unit:"):
+                unit_label = section.split(":", 1)[1].strip()
+                detected_unit = line_unit_match(unit_label, unit_labels) or unit_label
+                current_unit = detected_unit
+                current_posting = ""
+                current_special_section = ""
+                continue
+            posting_type = normalize_import_posting(section)
+            if is_special_unit_posting(posting_type):
+                current_unit = ""
+                current_posting = posting_type
+                current_special_section = section
+                continue
+            warnings.append(
+                ParseWarning(filename, "Text", row_number, None, "UNKNOWN_SECTION", f"Unknown section: {line}")
+            )
             continue
         detected_unit = line_unit_match(line, unit_labels)
         if detected_unit and normalize_unit_label(line) in unit_labels:
             current_unit = detected_unit
+            current_special_section = ""
             continue
 
         working_line = line
         if detected_unit:
             current_unit = detected_unit
+            current_special_section = ""
             working_line = re.split(r"[:|,\t-]", line, maxsplit=1)[-1].strip()
         posting_label, remainder = posting_from_line(working_line)
         if posting_label:
             current_posting = posting_label
             working_line = remainder
-        if not current_unit or not current_posting:
+            if is_special_unit_posting(normalize_import_posting(posting_label)):
+                current_unit = ""
+                current_special_section = posting_label
+        if not current_posting or (not current_unit and not is_special_unit_posting(current_posting)):
             warnings.append(
                 ParseWarning(
                     filename,
@@ -426,7 +618,11 @@ def parse_unitwise_text_upload(filename: str, content: bytes, units: list[Unit])
             continue
         if not working_line:
             continue
-        names = split_unitwise_names(working_line)
+        working_line = re.sub(r"^\s*[-*]\s*", "", working_line).strip()
+        if not working_line:
+            continue
+        names_source = working_line.split("|", 1)[0].strip()
+        names = split_unitwise_names(names_source)
         if not names:
             warnings.append(
                 ParseWarning(
@@ -451,6 +647,10 @@ def parse_unitwise_text_upload(filename: str, content: bytes, units: list[Unit])
                     row_index=row_number,
                     column_index=1,
                     column_label="A",
+                    section_posting_label=current_special_section or None,
+                    parser_rule="text_template" if line.startswith("-") or current_special_section else "text_freeform",
+                    parser_confidence="high",
+                    source_context=f"unit {current_unit or 'special card'}; posting {current_posting}",
                 )
             )
     return ParsedUnitwiseUpload(tuple(postings), tuple(warnings), ("Text",), "text_unitwise")
@@ -483,6 +683,18 @@ def unit_lookup(db: Session) -> dict[str, Unit | None]:
             extra_labels.extend(["main", "main campus"])
         if "ranipet" in unit_text or re.search(r"\brc\b", unit_text):
             extra_labels.extend(["ranipet", "ranipet campus", "rc"])
+        if "cardiac" in unit_text:
+            extra_labels.extend(["cardiac", "cardiac anaesthesia", "cardiac anesthesia", "ctvs"])
+        if "neuro" in unit_text:
+            extra_labels.extend(
+                [
+                    "neuro",
+                    "neuro anaesthesia",
+                    "neuro anesthesia",
+                    "neuroanaesthesia",
+                    "neuroanesthesia",
+                ]
+            )
         for label in extra_labels:
             key = normalize_label(label)
             existing = lookup.get(key)
@@ -498,10 +710,11 @@ def unit_lookup(db: Session) -> dict[str, Unit | None]:
     ).all()
     unit_by_code = {unit.code.casefold(): unit for unit in units}
     unit_by_name = {unit.name.casefold(): unit for unit in units}
+    unit_by_id = {str(unit.id).casefold(): unit for unit in units}
     for mapping in mappings:
         target_key = str(mapping.target_key or "").casefold()
         target_label = str(mapping.target_label or "").casefold()
-        unit = unit_by_code.get(target_key) or unit_by_name.get(target_label)
+        unit = unit_by_code.get(target_key) or unit_by_id.get(target_key) or unit_by_name.get(target_label)
         if unit is None:
             continue
         for label in (mapping.source_label, mapping.target_key or "", mapping.target_label or ""):
@@ -587,8 +800,12 @@ def name_variant_similarity(query_name: str, candidate_name: str) -> float:
         score = max(score, person_similarity(relaxed_query, relaxed_candidate))
     query_set = set(query_tokens)
     candidate_set = set(candidate_tokens)
+    relaxed_query_set = {relaxed_person_token(token) for token in query_tokens}
+    relaxed_candidate_set = {relaxed_person_token(token) for token in candidate_tokens}
     if query_set and query_set <= candidate_set:
         score = max(score, min(0.96, 0.86 + 0.03 * len(query_set)))
+    if relaxed_query_set and relaxed_query_set <= relaxed_candidate_set:
+        score = max(score, min(0.96, 0.87 + 0.035 * len(relaxed_query_set)))
     if candidate_set and candidate_set <= query_set:
         score = max(score, min(0.95, 0.84 + 0.02 * len(candidate_set)))
     if len(query_tokens) == 1:
@@ -610,7 +827,10 @@ def ranked_person_candidates(cleaned_name: str, lookup) -> list[tuple[float, Per
     for candidate_key, person in lookup.items():
         if person is None or len(candidate_key) < 3:
             continue
-        score = name_variant_similarity(cleaned_name, candidate_key)
+        score = max(
+            name_variant_similarity(cleaned_name, candidate_key),
+            name_variant_similarity(cleaned_name, person.canonical_name),
+        )
         previous = scores_by_person.get(person.id)
         if previous is None or score > previous[0]:
             scores_by_person[person.id] = (score, person)
@@ -671,6 +891,8 @@ def import_row_key(posting: ParsedUnitPosting) -> str:
             posting.person_name,
             posting.unit_label,
             posting.posting_label,
+            posting.section_posting_label or "",
+            posting.child_posting_label or "",
         ]
     )
 
@@ -692,6 +914,7 @@ def make_preview_row(
     review_suggested = False
     row_key = import_row_key(posting)
     resolution = resolutions.get(row_key, {})
+    skip_row = bool(resolution.get("skip"))
     person, match_method, match_confidence, suggestion, match_score = match_person_for_unit_import(
         posting.person_name,
         person_matches,
@@ -728,10 +951,16 @@ def make_preview_row(
         unit_match_score = None
         resolution_notes.append("Special posting uses its own card and does not need a unit")
     starts_on, ends_on = infer_row_date_bounds(
-        raw_person_name=posting.raw_person_name,
+        raw_person_name=" ".join(
+            value
+            for value in (posting.raw_person_name, posting.child_posting_label or "")
+            if value
+        ),
         raw_date_label=posting.raw_date_label,
         month=month,
     )
+    if skip_row:
+        issues.append("Row excluded by reviewer")
     if match_confidence == "ambiguous":
         issues.append("Ambiguous department member match")
     elif person is None:
@@ -790,8 +1019,14 @@ def make_preview_row(
         "unit_match_method": unit_match_method,
         "unit_match_score": round(unit_match_score, 3) if unit_match_score is not None else None,
         "raw_posting_label": posting.posting_label,
+        "section_posting_label": posting.section_posting_label,
+        "child_posting_label": posting.child_posting_label,
+        "parser_rule": posting.parser_rule,
+        "parser_confidence": posting.parser_confidence,
+        "source_context": posting.source_context,
         "posting_type": posting_type,
         "special_posting": special_posting,
+        "skip": skip_row,
         "starts_on": starts_on.isoformat(),
         "ends_on": ends_on.isoformat(),
         "preview_status": "matched" if not issues else "needs_review",
@@ -806,6 +1041,8 @@ def make_preview_row(
 def mark_duplicate_import_rows(rows: list[dict[str, object]]) -> None:
     seen: dict[str, list[int]] = {}
     for index, row in enumerate(rows):
+        if row.get("skip"):
+            continue
         person_id = row.get("person_id")
         if not person_id:
             continue
@@ -827,6 +1064,8 @@ def mark_duplicate_import_rows(rows: list[dict[str, object]]) -> None:
             row["preview_status"] = "needs_review"
             row["issues"].append("Person appears more than once in this import for overlapping dates")  # type: ignore[union-attr]
             for previous in overlaps:
+                if rows[previous].get("skip"):
+                    continue
                 rows[previous]["preview_status"] = "needs_review"
                 rows[previous]["issues"].append(  # type: ignore[union-attr]
                     "Person appears more than once in this import for overlapping dates"
@@ -960,6 +1199,7 @@ def preview_unit_assignment_import(
 def row_is_safe_to_apply(row: dict[str, object]) -> bool:
     return (
         row.get("preview_status") == "matched"
+        and not row.get("skip")
         and row.get("person_id")
         and (row.get("unit_id") or row.get("special_posting"))
         and row.get("posting_type")
@@ -977,6 +1217,62 @@ def clear_unit_board_month(db: Session, month: str) -> int:
         )
     )
     return result.rowcount or 0
+
+
+def learn_person_alias_from_row(db: Session, row: dict[str, object]) -> bool:
+    if row.get("match_method") != "manual_override" or not row.get("person_id"):
+        return False
+    alias = clean_cell_value(row.get("cleaned_person_name") or row.get("raw_person_name"))
+    if not alias or "," in alias or "/" in alias or ";" in alias:
+        return False
+    existing = db.scalar(select(PersonAlias).where(PersonAlias.alias == alias))
+    if existing is not None:
+        return False
+    db.add(
+        PersonAlias(
+            person_id=UUID(str(row["person_id"])),
+            alias=alias,
+            source="unit_import_learning",
+        )
+    )
+    return True
+
+
+def learn_unit_mapping_from_row(db: Session, row: dict[str, object]) -> bool:
+    if row.get("unit_match_method") != "unit_manual_override" or not row.get("unit_id"):
+        return False
+    source_label = clean_cell_value(row.get("raw_unit_label"))
+    if not source_label:
+        return False
+    existing = db.scalar(
+        select(AdminMapping).where(
+            AdminMapping.mapping_type == "unit_label",
+            AdminMapping.source_label == source_label,
+        )
+    )
+    if existing is not None:
+        return False
+    db.add(
+        AdminMapping(
+            mapping_type="unit_label",
+            source_label=source_label,
+            target_key=str(row.get("unit_id")),
+            target_label=clean_cell_value(row.get("unit_name")),
+            status="reviewed",
+            source="unit_import_learning",
+            notes="Learned from applied unitwise import correction",
+        )
+    )
+    return True
+
+
+def learn_from_applied_import_row(db: Session, row: dict[str, object]) -> int:
+    learned = 0
+    if learn_person_alias_from_row(db, row):
+        learned += 1
+    if learn_unit_mapping_from_row(db, row):
+        learned += 1
+    return learned
 
 
 def apply_unit_assignment_import(
@@ -999,6 +1295,7 @@ def apply_unit_assignment_import(
     starts_on, ends_on = month_bounds(month)
     deleted_rows = clear_unit_board_month(db, month) if replace_existing else 0
     created = 0
+    learned_mappings = 0
     skipped_rows: list[dict[str, object]] = []
     for row in preview["rows"]:
         if not row_is_safe_to_apply(row):
@@ -1017,6 +1314,7 @@ def apply_unit_assignment_import(
             ),
         )
         db.add(assignment)
+        learned_mappings += learn_from_applied_import_row(db, row)
         logger.info(
             "unit_assignment_import.auto_assigned filename=%s month=%s row=%s person_id=%s person=%s "
             "unit_id=%s unit=%s posting=%s dates=%s..%s member_match=%s unit_match=%s review_suggested=%s",
@@ -1050,6 +1348,7 @@ def apply_unit_assignment_import(
         "month": month,
         "created_rows": created,
         "auto_assigned_rows": created,
+        "learned_mappings": learned_mappings,
         "deleted_existing_rows": deleted_rows,
         "skipped_rows": len(skipped_rows),
         "skipped_preview_rows": skipped_rows,

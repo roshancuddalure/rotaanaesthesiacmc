@@ -105,6 +105,11 @@ class ParsedUnitPosting:
     column_index: int
     column_label: str
     raw_date_label: str | None = None
+    section_posting_label: str | None = None
+    child_posting_label: str | None = None
+    parser_rule: str | None = None
+    parser_confidence: str | None = None
+    source_context: str | None = None
 
 
 @dataclass(frozen=True)
@@ -232,6 +237,7 @@ def clean_cell_value(value: Any) -> str:
 
 def clean_person_name(value: Any) -> str:
     cleaned = clean_cell_value(value)
+    cleaned = cleaned.split("|", 1)[0].strip()
     cleaned = re.sub(r"^(dr|prof|mr|mrs|ms)\.?\s*", "", cleaned, flags=re.IGNORECASE)
     cleaned = re.sub(r"\s*\([^)]*\)\s*", " ", cleaned)
     cleaned = re.sub(
@@ -243,6 +249,12 @@ def clean_person_name(value: Any) -> str:
     cleaned = re.sub(r"\b(dr|prof|mr|mrs|ms)\.?\s*", "", cleaned, flags=re.IGNORECASE)
     cleaned = re.sub(
         r"\s*[-–—]?\s*(till|until)\s+[a-z]{3,9}\s+\d{1,2}\b.*$",
+        " ",
+        cleaned,
+        flags=re.IGNORECASE,
+    )
+    cleaned = re.sub(
+        r"\b\d{4}-\d{2}-\d{2}\s*(?:to|-)\s*\d{4}-\d{2}-\d{2}\b",
         " ",
         cleaned,
         flags=re.IGNORECASE,
@@ -278,10 +290,10 @@ def is_valid_person_name(value: Any) -> bool:
 
 
 def split_unitwise_names(value: Any) -> list[str]:
-    cleaned = clean_cell_value(value)
+    cleaned = "" if value is None else str(value).strip()
     if not cleaned:
         return []
-    parts = re.split(r"\s*[,/]\s*", cleaned)
+    parts = re.split(r"\s*(?:[,/;]|\n|\r\n|\r|\s+&\s+|\s+and\s+)\s*", cleaned, flags=re.IGNORECASE)
     names = [clean_person_name(part) for part in parts]
     return [name for name in names if is_valid_person_name(name)]
 

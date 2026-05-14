@@ -293,6 +293,7 @@ type UnitImportFilter =
 let unitImportFilter: UnitImportFilter = "all";
 let unitImportSearch = "";
 let unitImportResolutions: Record<string, UnitImportResolution> = {};
+let unitImportCorrectionRowKey: string | null = null;
 let units: UnitRead[] = [];
 let unitAssignments: UnitAssignment[] = [];
 let unitModalUnitId: string | null = null;
@@ -3658,6 +3659,8 @@ function filteredUnitImportRows(): UnitAssignmentImportPreview["rows"] {
       row.raw_posting_label,
       row.posting_type,
       row.sheet_name,
+      row.parser_rule,
+      row.source_context,
       row.auto_decision_reason,
       ...(row.resolution_notes ?? []),
       ...(row.auto_assign_blockers ?? []),
@@ -3762,6 +3765,77 @@ function renderUnitImportResolvers(row: UnitAssignmentImportPreview["rows"][numb
   ].filter(Boolean).join("");
 }
 
+function renderUnitImportCorrectionModal(): string {
+  if (!unitImportCorrectionRowKey) return "";
+  const row = unitImportRowByKey(unitImportCorrectionRowKey);
+  if (!row) return "";
+  const resolution = unitImportResolutionFor(row.row_key);
+  const selectedPersonId = resolution.person_id ?? row.person_id ?? "";
+  const selectedPosting = resolution.posting_type ?? row.posting_type ?? "";
+  const selectedUnitId = resolution.unit_id ?? row.unit_id ?? "";
+  const selectedIsSpecial = SPECIAL_UNIT_POSTING_KEYS.has(selectedPosting);
+  const memberOptions = [
+    `<option value="">Choose member...</option>`,
+    ...members
+      .filter((member) => member.active_status === "active")
+      .map((member) => `<option value="${member.id}" ${selectedPersonId === member.id ? "selected" : ""}>${escapeHtml(member.canonical_name)}</option>`),
+  ].join("");
+  const unitOptions = [
+    `<option value="">Special card / no unit</option>`,
+    ...units.map((unit) => `<option value="${unit.id}" ${selectedUnitId === unit.id ? "selected" : ""}>${escapeHtml(unit.name)}</option>`),
+  ].join("");
+  const postingOptions = UNIT_IMPORT_POSTING_OPTIONS
+    .map((option) => `<option value="${option.key}" ${selectedPosting === option.key ? "selected" : ""}>${escapeHtml(option.label)}</option>`)
+    .join("");
+  const notes = [
+    row.auto_decision_reason,
+    ...(row.issues ?? []),
+    ...(row.resolution_notes ?? []),
+  ].filter(Boolean);
+  return `
+    <div class="modal-backdrop" id="unit-import-correction-modal">
+      <section class="person-modal unit-import-correction-modal" role="dialog" aria-modal="true" aria-labelledby="unit-import-correction-title">
+        <header class="person-modal-header">
+          <div>
+            <h3 id="unit-import-correction-title">Correct Import Row</h3>
+            <p>${escapeHtml(row.sheet_name ?? "")}${row.column_label ? ` / ${escapeHtml(row.column_label)}` : ""} / row ${row.row_number}</p>
+          </div>
+          <button class="modal-close" data-close-unit-import-correction aria-label="Close">x</button>
+        </header>
+        <form class="person-modal-body leave-form" id="unit-import-correction-form" data-row-key="${escapeHtml(row.row_key)}">
+          <div class="audit-chip-row">
+            <span><strong>${escapeHtml(row.raw_person_name)}</strong> imported</span>
+            <span><strong>${escapeHtml(row.raw_unit_label)}</strong> unit label</span>
+            <span><strong>${escapeHtml(row.child_posting_label ?? row.raw_posting_label)}</strong> posting label</span>
+          </div>
+          <label>
+            <span>Member</span>
+            <select name="person_id">${memberOptions}</select>
+          </label>
+          <label>
+            <span>Posting</span>
+            <select name="posting_type">${postingOptions}</select>
+          </label>
+          <label>
+            <span>Unit</span>
+            <select name="unit_id" ${selectedIsSpecial ? "disabled" : ""}>${unitOptions}</select>
+          </label>
+          <label class="checkbox-row">
+            <input name="skip" type="checkbox" ${resolution.skip || row.skip ? "checked" : ""} />
+            <span>Exclude this row from auto-assign</span>
+          </label>
+          ${notes.length ? `<div class="issue-list">${notes.map((note) => `<p>${escapeHtml(String(note))}</p>`).join("")}</div>` : ""}
+          <div class="topbar-actions">
+            <button class="primary" type="submit">Apply Correction</button>
+            <button class="icon-button" type="button" data-clear-unit-import-correction="${escapeHtml(row.row_key)}">Clear Correction</button>
+            <button class="icon-button" type="button" data-close-unit-import-correction>Cancel</button>
+          </div>
+        </form>
+      </section>
+    </div>
+  `;
+}
+
 function renderUnitImportPreview(): string {
   if (!unitImportPreview) {
     return `<p class="empty">Upload a unitwise XLSX or text file to preview member, unit, and call-level matching.</p>`;
@@ -3797,13 +3871,13 @@ function renderUnitImportPreview(): string {
       <td><strong>${escapeHtml(row.raw_person_name)}</strong><small>${escapeHtml(row.person_name ?? row.suggested_person_name ?? "Unresolved")}</small></td>
       <td><strong>${escapeHtml(row.raw_unit_label)}</strong><small>${escapeHtml(row.unit_name ?? (row.special_posting ? "Special card" : "Unresolved"))}</small></td>
       <td><strong>${escapeHtml(callLevelLabel(row.posting_type))}</strong><small>${escapeHtml(row.raw_posting_label)}</small></td>
-      <td><small>${escapeHtml(row.sheet_name ?? "")}${row.column_label ? ` / ${escapeHtml(row.column_label)}` : ""}</small><small>${escapeHtml(unitImportMatchSummary(row))}</small></td>
+      <td><small>${escapeHtml(row.sheet_name ?? "")}${row.column_label ? ` / ${escapeHtml(row.column_label)}` : ""}</small><small>${escapeHtml(unitImportMatchSummary(row))}</small><small>${escapeHtml(row.parser_rule ?? "")}${row.source_context ? ` / ${escapeHtml(row.source_context)}` : ""}</small></td>
       <td>${statusCell}</td>
       <td>${
         [...row.issues, ...(row.resolution_notes ?? []), ...(row.auto_assignable && row.auto_decision_reason ? [row.auto_decision_reason] : [])]
           .map((issue) => `<small>${escapeHtml(issue)}</small>`)
           .join("") || "<small>None</small>"
-      }${renderUnitImportResolvers(row)}</td>
+      }<div class="import-resolver"><button type="button" class="icon-button compact-action" data-open-unit-import-correction="${escapeHtml(row.row_key)}">Correct</button></div>${renderUnitImportResolvers(row)}</td>
     </tr>
   `;
   }).join("");
@@ -3861,6 +3935,7 @@ function renderUnitImportPreview(): string {
       </table>
     </div>
     ${paginator}
+    ${renderUnitImportCorrectionModal()}
   `;
 }
 
@@ -7548,6 +7623,23 @@ function bindViewEvents() {
       }
       return;
     }
+    if (form.id === "unit-import-correction-form") {
+      event.preventDefault();
+      const rowKey = form.dataset.rowKey;
+      if (!rowKey) return;
+      const postingType = form.querySelector<HTMLSelectElement>("[name='posting_type']")?.value || undefined;
+      const specialPosting = postingType ? SPECIAL_UNIT_POSTING_KEYS.has(postingType) : false;
+      const resolution: UnitImportResolution = {
+        person_id: form.querySelector<HTMLSelectElement>("[name='person_id']")?.value || undefined,
+        posting_type: postingType,
+        unit_id: specialPosting ? undefined : form.querySelector<HTMLSelectElement>("[name='unit_id']")?.value || undefined,
+        skip: form.querySelector<HTMLInputElement>("[name='skip']")?.checked || undefined,
+      };
+      unitImportResolutions[rowKey] = resolution;
+      unitImportCorrectionRowKey = rowKey;
+      await preserveViewport(() => refreshUnitImportPreview("Import row correction applied"));
+      return;
+    }
     if (form.dataset.unitRowForm) {
       event.preventDefault();
       const assignmentId = form.dataset.unitRowForm;
@@ -7630,6 +7722,29 @@ function bindViewEvents() {
       unitImportFilter = unitImportFilterButton.dataset.unitImportFilter as UnitImportFilter;
       setPage(UNIT_IMPORT_TABLE_ID, 0);
       await renderUnitManagement();
+      return;
+    }
+
+    const openImportCorrection = target.closest<HTMLButtonElement>("[data-open-unit-import-correction]");
+    if (openImportCorrection?.dataset.openUnitImportCorrection) {
+      unitImportCorrectionRowKey = openImportCorrection.dataset.openUnitImportCorrection;
+      await preserveViewport(() => renderUnitManagement());
+      return;
+    }
+
+    const closeImportCorrection = target.closest<HTMLElement>("[data-close-unit-import-correction]");
+    if (closeImportCorrection) {
+      unitImportCorrectionRowKey = null;
+      await preserveViewport(() => renderUnitManagement());
+      return;
+    }
+
+    const clearImportCorrection = target.closest<HTMLButtonElement>("[data-clear-unit-import-correction]");
+    if (clearImportCorrection?.dataset.clearUnitImportCorrection) {
+      const rowKey = clearImportCorrection.dataset.clearUnitImportCorrection;
+      delete unitImportResolutions[rowKey];
+      unitImportCorrectionRowKey = null;
+      await preserveViewport(() => refreshUnitImportPreview("Import row correction cleared"));
       return;
     }
 
@@ -7901,7 +8016,7 @@ function bindViewEvents() {
         setPage(UNIT_IMPORT_TABLE_ID, 0);
         unitModalUnitId = null;
         showToast(
-          `Auto-assigned ${result.auto_assigned_rows ?? result.created_rows} row(s); ${result.skipped_rows} need review`,
+          `Auto-assigned ${result.auto_assigned_rows ?? result.created_rows} row(s); learned ${result.learned_mappings ?? 0} mapping(s); ${result.skipped_rows} need review`,
           "success",
         );
         await renderUnitManagement();
@@ -8547,6 +8662,18 @@ function bindViewEvents() {
       unitImportResolutions[rowKey] = { ...unitImportResolutionFor(rowKey), posting_type: target.value || undefined };
       await preserveViewport(() => refreshUnitImportPreview(target.value ? "Posting selected for import row" : "Posting resolution cleared"));
       return;
+    }
+    if (target instanceof HTMLSelectElement && target.name === "posting_type") {
+      const correctionForm = target.closest<HTMLFormElement>("#unit-import-correction-form");
+      if (correctionForm) {
+        const unitSelect = correctionForm.querySelector<HTMLSelectElement>("[name='unit_id']");
+        if (unitSelect) {
+          const specialPosting = SPECIAL_UNIT_POSTING_KEYS.has(target.value);
+          unitSelect.disabled = specialPosting;
+          if (specialPosting) unitSelect.value = "";
+        }
+        return;
+      }
     }
     if (target.id === "rota-setup-month") {
       rotaSetupMonth = target.value || rotaSetupMonth;
