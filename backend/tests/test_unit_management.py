@@ -13,7 +13,7 @@ from sqlalchemy.pool import StaticPool
 from app import models  # noqa: F401
 from app.db.session import Base, get_db
 from app.main import app
-from app.models import AdminMapping, Person, PersonAlias, PersonPosting, Unit
+from app.models import AdminMapping, Person, PersonPosting, Unit
 from app.services.auth import seed_superadmin
 from app.services.unit_assignment_import import normalize_import_posting, parse_unitwise_excel_upload
 

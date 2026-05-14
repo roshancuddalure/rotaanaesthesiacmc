@@ -88,7 +88,6 @@ import {
   getMemberAudit,
   getMembers,
   getUnitManagementMonth,
-  getUnits,
   healthCheck,
   listUserAccounts,
   prefillCallLevels,
@@ -294,6 +293,8 @@ let unitImportFilter: UnitImportFilter = "all";
 let unitImportSearch = "";
 let unitImportResolutions: Record<string, UnitImportResolution> = {};
 let unitImportCorrectionRowKey: string | null = null;
+let unitImportSearchDebounce: ReturnType<typeof window.setTimeout> | null = null;
+let unitManagementLoadedMonth: string | null = null;
 let units: UnitRead[] = [];
 let unitAssignments: UnitAssignment[] = [];
 let unitModalUnitId: string | null = null;
@@ -681,6 +682,7 @@ async function runReviewAction(action: HTMLElement) {
   }
   if (kind === "open-unit") {
     if (month) unitMonth = month;
+    invalidateUnitManagementCache();
     await renderUnitManagement();
     if (target) openUnitModal(target, assignmentId || undefined);
     return;
@@ -3673,6 +3675,33 @@ function unitImportRowByKey(rowKey: string): UnitAssignmentImportPreview["rows"]
   return unitImportPreview?.rows.find((row) => row.row_key === rowKey);
 }
 
+function invalidateUnitManagementCache() {
+  unitManagementLoadedMonth = null;
+}
+
+async function loadUnitManagementData(forceReload = false) {
+  if (!members.length) {
+    members = await getMembers();
+  }
+  if (!forceReload && unitManagement && unitManagementLoadedMonth === unitMonth) {
+    return;
+  }
+  unitManagement = await getUnitManagementMonth(unitMonth);
+  units = unitManagement.units;
+  unitAssignments = unitManagement.assignments;
+  unitManagementLoadedMonth = unitMonth;
+}
+
+function scheduleUnitImportPreviewRender() {
+  if (unitImportSearchDebounce) {
+    window.clearTimeout(unitImportSearchDebounce);
+  }
+  unitImportSearchDebounce = window.setTimeout(() => {
+    unitImportSearchDebounce = null;
+    void renderUnitManagement();
+  }, 180);
+}
+
 async function refreshUnitImportPreview(message = "Import preview updated") {
   if (!unitImportFile) return;
   unitImportPreview = await previewUnitAssignmentImport(
@@ -4170,19 +4199,21 @@ function unitAssignmentPayloadFromForm(form: HTMLFormElement) {
   };
 }
 
-async function renderUnitManagement() {
+async function renderUnitManagement(forceReload = false) {
   setHeader("Unit Management", "Monthly unit assignments");
   if (!viewRoot) return;
-  viewRoot.innerHTML = `<section class="panel"><h3>Loading unit management...</h3></section>`;
+  const hasWarmCache = Boolean(unitManagement && unitManagementLoadedMonth === unitMonth && !forceReload);
+  if (!hasWarmCache) {
+    viewRoot.innerHTML = `<section class="panel"><h3>Loading unit management...</h3></section>`;
+  }
   try {
-    if (!members.length) members = await getMembers();
-    [units, unitManagement] = await Promise.all([getUnits(), getUnitManagementMonth(unitMonth)]);
-    unitAssignments = unitManagement.assignments;
+    await loadUnitManagementData(forceReload);
   } catch (error) {
     showToast(error instanceof Error ? error.message : "Failed to load unit management", "error");
     viewRoot.innerHTML = `<section class="panel"><h3>Unit Management unavailable</h3><p>Unable to load monthly unit assignments.</p></section>`;
     return;
   }
+  if (!unitManagement) return;
   const errors = unitManagement.validation_issues.filter((issue) => issue.severity === "error").length;
   const warnings = unitManagement.validation_issues.filter((issue) => issue.severity === "warning").length;
   const leaveDays = unitManagement.unit_summaries.reduce((sum, item) => sum + item.leave_days, 0);
@@ -7581,11 +7612,8 @@ function bindViewEvents() {
           })),
         }, unitManagement?.month);
         units = units.map((unit) => (unit.id === updated.id ? updated : unit));
-        if (unitManagement) {
-          unitManagement = await getUnitManagementMonth(unitManagement.month);
-          units = unitManagement.units;
-          unitAssignments = unitManagement.assignments;
-        }
+        invalidateUnitManagementCache();
+        await loadUnitManagementData(true);
         showToast("Unit call-wise rules saved", "success");
         openUnitModal(updated.id);
       } catch (error) {
@@ -7616,7 +7644,8 @@ function bindViewEvents() {
         showToast("Unit assignment added", "success");
         unitModalUnitId = payload.unit_id;
         unitEditingAssignmentId = null;
-        await preserveViewport(() => renderUnitManagement());
+        invalidateUnitManagementCache();
+        await preserveViewport(() => renderUnitManagement(true));
       } catch (error) {
         showToast(error instanceof Error ? error.message : "Failed to save unit assignment", "error");
         resetButton(btn);
@@ -7662,7 +7691,8 @@ function bindViewEvents() {
         await updateUnitAssignment(assignmentId, payload);
         unitModalUnitId = payload.unit_id;
         showToast("Unit assignment updated", "success");
-        await preserveViewport(() => renderUnitManagement());
+        invalidateUnitManagementCache();
+        await preserveViewport(() => renderUnitManagement(true));
       } catch (error) {
         showToast(error instanceof Error ? error.message : "Failed to save unit assignment", "error");
         resetButton(btn);
@@ -7946,7 +7976,8 @@ function bindViewEvents() {
           unitEditingAssignmentId = null;
         }
         showToast("Unit assignment removed", "success");
-        await preserveViewport(() => renderUnitManagement());
+        invalidateUnitManagementCache();
+        await preserveViewport(() => renderUnitManagement(true));
       } catch (error) {
         showToast(error instanceof Error ? error.message : "Failed to remove unit assignment", "error");
         resetButton(unitDeleteBtn);
@@ -8019,7 +8050,8 @@ function bindViewEvents() {
           `Auto-assigned ${result.auto_assigned_rows ?? result.created_rows} row(s); learned ${result.learned_mappings ?? 0} mapping(s); ${result.skipped_rows} need review`,
           "success",
         );
-        await renderUnitManagement();
+        invalidateUnitManagementCache();
+        await renderUnitManagement(true);
       } catch (error) {
         showToast(error instanceof Error ? error.message : "Failed to apply unitwise import", "error");
         resetButton(btn);
@@ -8642,7 +8674,8 @@ function bindViewEvents() {
       setPage(UNIT_IMPORT_TABLE_ID, 0);
       closeUnitModal();
       unitEditingAssignmentId = null;
-      await renderUnitManagement();
+      invalidateUnitManagementCache();
+      await renderUnitManagement(true);
       return;
     }
     if (target instanceof HTMLSelectElement && target.dataset.unitImportPerson) {
@@ -8762,7 +8795,7 @@ function bindViewEvents() {
     if (target.id === "unit-import-search") {
       unitImportSearch = target.value;
       setPage(UNIT_IMPORT_TABLE_ID, 0);
-      void renderUnitManagement();
+      scheduleUnitImportPreviewRender();
       return;
     }
     if (target.id !== "member-search") return;

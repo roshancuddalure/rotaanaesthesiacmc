@@ -1,5 +1,7 @@
 import json
+import logging
 from datetime import date
+from time import perf_counter
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
@@ -28,6 +30,7 @@ from app.services.unit_assignment_import import (
 )
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 
 class UnitRead(BaseModel):
@@ -270,15 +273,33 @@ def get_unit_management_month(
     _user: UserAccount = Depends(current_user),
     db: Session = Depends(get_db),
 ) -> UnitManagementMonthRead:
+    started = perf_counter()
     try:
         starts_on, ends_on = month_bounds(month)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
+    units_started = perf_counter()
     units = active_units(db)
+    units_ms = (perf_counter() - units_started) * 1000
+
+    assignments_started = perf_counter()
     assignments = monthly_unit_assignments(db, month)
+    assignments_ms = (perf_counter() - assignments_started) * 1000
+
+    summaries_started = perf_counter()
     summaries = unit_leave_summary(db, month, assignments)
-    return UnitManagementMonthRead(
+
+    minimums_started = perf_counter()
+    call_minimums = unit_call_minimum_rows(units, assignments, month)
+    minimums_ms = (perf_counter() - minimums_started) * 1000
+
+    validation_started = perf_counter()
+    validation_issues = validate_unit_month(assignments, month)
+    validation_ms = (perf_counter() - validation_started) * 1000
+
+    summaries_ms = (perf_counter() - summaries_started) * 1000 - minimums_ms - validation_ms
+    response = UnitManagementMonthRead(
         month=month,
         starts_on=starts_on,
         ends_on=ends_on,
@@ -294,11 +315,23 @@ def get_unit_management_month(
             )
             for unit in units
         ],
-        unit_call_minimums=unit_call_minimum_rows(units, assignments, month),
-        validation_issues=[
-            UnitValidationIssueRead(**issue) for issue in validate_unit_month(assignments, month)
-        ],
+        unit_call_minimums=call_minimums,
+        validation_issues=[UnitValidationIssueRead(**issue) for issue in validation_issues],
     )
+    logger.info(
+        "unit_management.month month=%s units=%s assignments=%s issues=%s timings_ms units=%.1f assignments=%.1f summaries=%.1f minimums=%.1f validation=%.1f total=%.1f",
+        month,
+        len(units),
+        len(assignments),
+        len(validation_issues),
+        units_ms,
+        assignments_ms,
+        summaries_ms,
+        minimums_ms,
+        validation_ms,
+        (perf_counter() - started) * 1000,
+    )
+    return response
 
 
 @router.put("/unit-management/units/{unit_id}/settings")
@@ -356,9 +389,13 @@ async def preview_unit_assignment_upload(
     _user: UserAccount = Depends(current_user),
     db: Session = Depends(get_db),
 ) -> UnitAssignmentImportPreviewRead:
+    started = perf_counter()
     try:
         month_bounds(month)
+        read_started = perf_counter()
         content = await file.read()
+        read_ms = (perf_counter() - read_started) * 1000
+        parse_started = perf_counter()
         result = preview_unit_assignment_import(
             db,
             file.filename or "unitwise-import",
@@ -367,8 +404,18 @@ async def preview_unit_assignment_upload(
             replace_existing=replace_existing,
             resolutions=parse_import_resolutions(resolutions_json),
         )
+        parse_ms = (perf_counter() - parse_started) * 1000
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
+    logger.info(
+        "unit_management.import_preview month=%s filename=%s rows=%s read_ms=%.1f parse_ms=%.1f total_ms=%.1f",
+        month,
+        file.filename or "unitwise-import",
+        result.get("total_rows", 0),
+        read_ms,
+        parse_ms,
+        (perf_counter() - started) * 1000,
+    )
     return UnitAssignmentImportPreviewRead(**result)
 
 
@@ -381,9 +428,13 @@ async def apply_unit_assignment_upload(
     _user: UserAccount = Depends(current_user),
     db: Session = Depends(get_db),
 ) -> UnitAssignmentImportApplyRead:
+    started = perf_counter()
     try:
         month_bounds(month)
+        read_started = perf_counter()
         content = await file.read()
+        read_ms = (perf_counter() - read_started) * 1000
+        apply_started = perf_counter()
         result = apply_unit_assignment_import(
             db,
             file.filename or "unitwise-import",
@@ -392,8 +443,19 @@ async def apply_unit_assignment_upload(
             replace_existing=replace_existing,
             resolutions=parse_import_resolutions(resolutions_json),
         )
+        apply_ms = (perf_counter() - apply_started) * 1000
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
+    logger.info(
+        "unit_management.import_apply month=%s filename=%s created=%s skipped=%s read_ms=%.1f apply_ms=%.1f total_ms=%.1f",
+        month,
+        file.filename or "unitwise-import",
+        result.get("created_rows", 0),
+        result.get("skipped_rows", 0),
+        read_ms,
+        apply_ms,
+        (perf_counter() - started) * 1000,
+    )
     return UnitAssignmentImportApplyRead(**result)
 
 
