@@ -1,10 +1,10 @@
-from datetime import date
+from datetime import date, datetime
 from collections import Counter
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, selectinload
 
@@ -45,6 +45,7 @@ class MemberRead(BaseModel):
     canonical_name: str
     active_status: str
     call_level: str | None
+    archived_at: datetime | None
     aliases: list[AliasRead]
     designations: list[DesignationRead]
 
@@ -151,6 +152,7 @@ def member_to_read(person: Person) -> MemberRead:
         canonical_name=person.canonical_name,
         active_status=person.active_status,
         call_level=person.call_level,
+        archived_at=person.archived_at,
         aliases=[
             AliasRead(id=alias.id, alias=alias.alias, source=alias.source)
             for alias in sorted(person.aliases, key=lambda item: item.alias.casefold())
@@ -187,14 +189,40 @@ def list_members(q: str | None = None, db: Session = Depends(get_db)) -> list[Me
     )
     if q:
         statement = statement.where(Person.canonical_name.ilike(f"%{q}%"))
-    statement = statement.order_by(Person.canonical_name).limit(300)
+    statement = statement.order_by(Person.canonical_name)
     return [member_to_read(person) for person in db.scalars(statement)]
 
 
 @router.post("/admin/members")
 def create_member(payload: MemberCreate, db: Session = Depends(get_db)) -> MemberRead:
+    canonical_name = payload.canonical_name.strip()
+    existing = db.scalar(
+        select(Person)
+        .where(func.lower(Person.canonical_name) == canonical_name.lower())
+        .options(selectinload(Person.aliases), selectinload(Person.designations))
+    )
+    if existing is not None:
+        changed = False
+        if existing.active_status != payload.active_status:
+            existing.active_status = payload.active_status
+            if payload.active_status == "archived":
+                existing.archived_at = existing.archived_at or datetime.utcnow()
+            elif existing.archived_at is not None:
+                existing.archived_at = None
+            changed = True
+        if payload.call_level and existing.call_level != payload.call_level.strip():
+            existing.call_level = payload.call_level.strip()
+            changed = True
+        if changed:
+            db.commit()
+            return member_to_read(get_member_or_404(db, existing.id))
+        raise HTTPException(
+            status_code=409,
+            detail=f'Member already exists as {existing.active_status}: {existing.canonical_name}',
+        )
+
     person = Person(
-        canonical_name=payload.canonical_name.strip(),
+        canonical_name=canonical_name,
         active_status=payload.active_status,
         call_level=payload.call_level.strip() if payload.call_level else None,
     )
@@ -217,12 +245,36 @@ def update_member(
     person = get_member_or_404(db, person_id)
     person.canonical_name = payload.canonical_name.strip()
     person.active_status = payload.active_status
+    if payload.active_status == "archived":
+        person.archived_at = person.archived_at or datetime.utcnow()
+    elif person.archived_at is not None:
+        person.archived_at = None
     person.call_level = payload.call_level.strip() if payload.call_level else None
     try:
         db.commit()
     except IntegrityError as exc:
         db.rollback()
         raise HTTPException(status_code=409, detail="Canonical name already exists") from exc
+    return member_to_read(get_member_or_404(db, person_id))
+
+
+@router.post("/admin/members/{person_id}/archive")
+def archive_member(person_id: UUID, db: Session = Depends(get_db)) -> MemberRead:
+    person = get_member_or_404(db, person_id)
+    if person.active_status != "archived":
+        person.active_status = "archived"
+        person.archived_at = datetime.utcnow()
+        db.commit()
+    return member_to_read(get_member_or_404(db, person_id))
+
+
+@router.post("/admin/members/{person_id}/restore")
+def restore_member(person_id: UUID, db: Session = Depends(get_db)) -> MemberRead:
+    person = get_member_or_404(db, person_id)
+    if person.active_status == "archived":
+        person.active_status = "active"
+        person.archived_at = None
+        db.commit()
     return member_to_read(get_member_or_404(db, person_id))
 
 

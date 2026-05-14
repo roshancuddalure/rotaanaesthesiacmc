@@ -21,6 +21,7 @@ class Person(Base):
     canonical_name: Mapped[str] = mapped_column(String(255), unique=True, index=True)
     active_status: Mapped[str] = mapped_column(String(50), default="active")
     call_level: Mapped[str | None] = mapped_column(String(100), nullable=True, index=True)
+    archived_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True, index=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
     aliases: Mapped[list["PersonAlias"]] = relationship(back_populates="person")

@@ -1,10 +1,13 @@
 from datetime import date, datetime, timedelta
 
+from fastapi.testclient import TestClient
 from sqlalchemy import create_engine, select
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.pool import StaticPool
 
 from app import models  # noqa: F401
-from app.db.session import Base
+from app.db.session import Base, get_db
+from app.main import app
 from app.models import DutyAssignment, DutySlot, Person, PersonAlias, PersonDesignation, RotaPeriod
 from app.services.members import (
     auto_merge_duplicate_candidates,
@@ -154,3 +157,96 @@ def test_name_cleanup_preserves_real_name_with_noise_suffix() -> None:
         person = session.scalars(select(Person)).one()
         assert person.canonical_name == "Kiruthiga"
         assert person.aliases[0].alias == "Kiruthiga - Till sept 27"
+
+
+def test_member_api_lists_full_roster_and_reactivates_existing_historical_member() -> None:
+    engine = create_engine(
+        "sqlite+pysqlite:///:memory:",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
+    Base.metadata.create_all(engine)
+    testing_session = sessionmaker(bind=engine)
+
+    with testing_session() as session:
+        session.add_all(
+            [Person(canonical_name=f"Member {index:03d}") for index in range(305)]
+            + [Person(canonical_name="Zed Historical", active_status="historical")]
+        )
+        session.commit()
+
+    def override_get_db():
+        with testing_session() as session:
+            yield session
+
+    app.dependency_overrides[get_db] = override_get_db
+    try:
+        client = TestClient(app)
+
+        listed = client.get("/api/v1/admin/members")
+        assert listed.status_code == 200
+        assert len(listed.json()) == 306
+        assert any(member["canonical_name"] == "Zed Historical" for member in listed.json())
+
+        revived = client.post(
+            "/api/v1/admin/members",
+            json={"canonical_name": "zed historical", "active_status": "active"},
+        )
+        assert revived.status_code == 200
+        assert revived.json()["canonical_name"] == "Zed Historical"
+        assert revived.json()["active_status"] == "active"
+
+        duplicate = client.post(
+            "/api/v1/admin/members",
+            json={"canonical_name": "Zed Historical", "active_status": "active"},
+        )
+        assert duplicate.status_code == 409
+        assert duplicate.json()["detail"] == "Member already exists as active: Zed Historical"
+    finally:
+        app.dependency_overrides.clear()
+
+
+def test_member_api_archives_and_restores_member_with_timestamp() -> None:
+    engine = create_engine(
+        "sqlite+pysqlite:///:memory:",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
+    Base.metadata.create_all(engine)
+    testing_session = sessionmaker(bind=engine)
+
+    with testing_session() as session:
+        person = Person(canonical_name="Archive Candidate", active_status="active")
+        session.add(person)
+        session.commit()
+        person_id = str(person.id)
+
+    def override_get_db():
+        with testing_session() as session:
+            yield session
+
+    app.dependency_overrides[get_db] = override_get_db
+    try:
+        client = TestClient(app)
+
+        archived = client.post(f"/api/v1/admin/members/{person_id}/archive")
+        assert archived.status_code == 200
+        archived_payload = archived.json()
+        assert archived_payload["active_status"] == "archived"
+        assert archived_payload["archived_at"] is not None
+
+        listed = client.get("/api/v1/admin/members")
+        assert listed.status_code == 200
+        assert any(
+            member["canonical_name"] == "Archive Candidate"
+            and member["active_status"] == "archived"
+            for member in listed.json()
+        )
+
+        restored = client.post(f"/api/v1/admin/members/{person_id}/restore")
+        assert restored.status_code == 200
+        restored_payload = restored.json()
+        assert restored_payload["active_status"] == "active"
+        assert restored_payload["archived_at"] is None
+    finally:
+        app.dependency_overrides.clear()

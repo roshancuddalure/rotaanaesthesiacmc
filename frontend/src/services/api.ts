@@ -287,6 +287,7 @@ export interface DepartmentMember {
   canonical_name: string;
   active_status: string;
   call_level: string | null;
+  archived_at: string | null;
   aliases: Array<{ id: string; alias: string; source: string }>;
   designations: Array<{
     id: string;
@@ -1448,6 +1449,20 @@ export function updateMember(member: DepartmentMember): Promise<DepartmentMember
       active_status: member.active_status,
       call_level: member.call_level,
     }),
+  });
+}
+
+export function archiveMember(personId: string): Promise<DepartmentMember> {
+  return request<DepartmentMember>(`/api/v1/admin/members/${personId}/archive`, {
+    method: "POST",
+    body: "{}",
+  });
+}
+
+export function restoreMember(personId: string): Promise<DepartmentMember> {
+  return request<DepartmentMember>(`/api/v1/admin/members/${personId}/restore`, {
+    method: "POST",
+    body: "{}",
   });
 }
 

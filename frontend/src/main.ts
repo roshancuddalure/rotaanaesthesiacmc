@@ -39,6 +39,7 @@ import {
   type UnitManagementMonth,
   type UnitRead,
   type UserAccount,
+  archiveMember,
   addMemberDesignation,
   addMemberAlias,
   acceptRotaReviewIssue,
@@ -95,6 +96,7 @@ import {
   previewUnitAssignmentImport,
   resetPassword,
   reconcileTrustedRoster,
+  restoreMember,
   runHistoricalImport,
   runRotaAutoFillDraft,
   scanHistoricalMappings,
@@ -264,7 +266,7 @@ let members: DepartmentMember[] = [];
 let invalidMembers: InvalidMembersResult = { count: 0, people: [] };
 let memberAudit: MemberAudit | null = null;
 let memberSearch = "";
-let memberStatusFilter: "all" | "active" | "historical" = "active";
+let memberStatusFilter: "all" | "active" | "historical" | "archived" = "active";
 let memberPositionFilter = "all";
 let memberCallLevelFilter = "all";
 let memberSort = "name";
@@ -2704,6 +2706,16 @@ function memberCallLevel(member: DepartmentMember): string {
   return member.call_level || "Unassigned";
 }
 
+function formatArchivedAt(value: string | null): string {
+  return value ? new Date(value).toLocaleString() : "Not archived";
+}
+
+function memberStatusClass(member: DepartmentMember): string {
+  if (member.active_status === "active") return "active";
+  if (member.active_status === "archived") return "archived";
+  return "inactive";
+}
+
 function callLevelLabel(value: string | null): string {
   return {
     "": "Unassigned",
@@ -2785,7 +2797,7 @@ function ariaSort(key: string): string {
 function renderMemberRows(rows: DepartmentMember[]): string {
   return rows
     .map((member) => {
-      const statusClass = member.active_status === "active" ? "active" : "inactive";
+      const statusClass = memberStatusClass(member);
       const position = memberPosition(member);
       const callLevel = callLevelLabel(normalizeCallLevel(member.call_level));
       const callLevelCell = isAdminUser()
@@ -2795,14 +2807,23 @@ function renderMemberRows(rows: DepartmentMember[]): string {
             </select>
           `
         : `<span class="call-level-readonly">${callLevel}</span>`;
+      const archiveAction = !isAdminUser()
+        ? ""
+        : member.active_status === "archived"
+          ? `<button class="icon-button compact-action" type="button" data-restore-member="${member.id}" aria-label="Restore ${member.canonical_name}">Restore</button>`
+          : `<button class="icon-button compact-action danger-button" type="button" data-archive-member="${member.id}" aria-label="Archive ${member.canonical_name}">Archive</button>`;
+      const archiveText = member.active_status === "archived"
+        ? `<small>Archived ${escapeHtml(formatArchivedAt(member.archived_at))}</small>`
+        : `<small>Not archived</small>`;
       return `
         <tr>
           <td class="member-name-cell">
             <strong>${member.canonical_name}</strong>
             <small>${position}</small>
           </td>
-          <td><span class="status-dot ${statusClass}">${member.active_status}</span></td>
+          <td><span class="status-dot ${statusClass}">${member.active_status}</span>${archiveText}</td>
           <td>${callLevelCell}</td>
+          <td>${archiveAction}</td>
         </tr>
       `;
     })
@@ -2862,7 +2883,7 @@ function updateMemberResults() {
   const tbody = document.querySelector<HTMLTableSectionElement>("#member-table-body");
   if (visibleCount) visibleCount.textContent = String(rows.length);
   if (tbody) {
-    tbody.innerHTML = renderMemberRows(rows) || `<tr><td colspan="3" class="empty">No members found.</td></tr>`;
+    tbody.innerHTML = renderMemberRows(rows) || `<tr><td colspan="4" class="empty">No members found.</td></tr>`;
   }
   updateMemberCards(rows);
   restoreFocus();
@@ -2872,7 +2893,7 @@ function renderMemberCards(rows: DepartmentMember[]): string {
   return rows
     .map(
       (member) => {
-        const statusClass = member.active_status === "active" ? "active" : "inactive";
+        const statusClass = memberStatusClass(member);
         const callLevel = callLevelLabel(normalizeCallLevel(member.call_level));
         const callLevelControl = isAdminUser()
           ? `
@@ -2881,14 +2902,26 @@ function renderMemberCards(rows: DepartmentMember[]): string {
               </select>
             `
           : `<small>${callLevel}</small>`;
+        const archiveAction = !isAdminUser()
+          ? ""
+          : member.active_status === "archived"
+            ? `<button class="icon-button compact-action" type="button" data-restore-member="${member.id}">Restore</button>`
+            : `<button class="icon-button compact-action danger-button" type="button" data-archive-member="${member.id}">Archive</button>`;
+        const archiveText = member.active_status === "archived"
+          ? `<small>Archived ${escapeHtml(formatArchivedAt(member.archived_at))}</small>`
+          : "";
         return `
         <article class="member-card">
           <div>
             <strong>${member.canonical_name}</strong>
             <small><span class="status-dot ${statusClass}">${member.active_status}</span></small>
             <small>${memberPosition(member)}</small>
+            ${archiveText}
           </div>
-          ${callLevelControl}
+          <div class="member-card-actions">
+            ${callLevelControl}
+            ${archiveAction}
+          </div>
         </article>
       `;
       },
@@ -4294,7 +4327,8 @@ function renderMembersView() {
   if (!viewRoot) return;
   const rows = filteredMembers();
   const activeMembers = members.filter((member) => member.active_status === "active").length;
-  const historicalMembers = members.length - activeMembers;
+  const archivedMembers = members.filter((member) => member.active_status === "archived").length;
+  const historicalMembers = members.filter((member) => member.active_status === "historical").length;
   const callLevelOrder: [string, string][] = [
     ["1ST_CALL", "1st"],
     ["2ND_CALL", "2nd"],
@@ -4349,6 +4383,7 @@ function renderMembersView() {
         <span><strong>${members.length}</strong> total</span>
         <span><strong>${activeMembers}</strong> active</span>
         <span><strong>${historicalMembers}</strong> historical</span>
+        <span><strong>${archivedMembers}</strong> archived</span>
       </div>
       <div class="call-level-chip-row">
         ${callLevelCounts.map(({ key, label, count }) => `
@@ -4368,6 +4403,7 @@ function renderMembersView() {
             <button class="status-toggle ${memberStatusFilter === "active" ? "active" : ""}" data-member-status="active">Active</button>
             <button class="status-toggle ${memberStatusFilter === "all" ? "active" : ""}" data-member-status="all">All</button>
             <button class="status-toggle ${memberStatusFilter === "historical" ? "active" : ""}" data-member-status="historical">Historical</button>
+            <button class="status-toggle ${memberStatusFilter === "archived" ? "active" : ""}" data-member-status="archived">Archived</button>
           </div>
           <label for="member-search" class="visually-hidden">Search members</label>
           <input id="member-search" class="member-search-input" placeholder="Search members or positions" value="${memberSearch}" aria-label="Search members or positions" />
@@ -4390,15 +4426,17 @@ function renderMembersView() {
           <col class="member-col-name" />
           <col class="member-col-status" />
           <col class="member-col-call" />
+          <col class="member-col-action" />
         </colgroup>
         <thead>
           <tr>
             <th><button class="table-sort" data-member-sort="name" ${ariaSort("name")}>Member${sortIndicator("name")}</button></th>
             <th><button class="table-sort" data-member-sort="status" ${ariaSort("status")}>Status${sortIndicator("status")}</button></th>
             <th><button class="table-sort" data-member-sort="call_level" ${ariaSort("call_level")}>Call Level${sortIndicator("call_level")}</button></th>
+            <th>Archive</th>
           </tr>
         </thead>
-        <tbody id="member-table-body">${renderMemberRows(rows) || `<tr><td colspan="3" class="empty">No members found.</td></tr>`}</tbody>
+        <tbody id="member-table-body">${renderMemberRows(rows) || `<tr><td colspan="4" class="empty">No members found.</td></tr>`}</tbody>
       </table>
     </section>
     <section class="member-card-list" id="member-card-list">
@@ -8377,10 +8415,44 @@ function bindViewEvents() {
 
     const statusToggle = target.closest<HTMLButtonElement>("[data-member-status]");
     if (statusToggle?.dataset.memberStatus) {
-      memberStatusFilter = statusToggle.dataset.memberStatus as "all" | "active" | "historical";
+      memberStatusFilter = statusToggle.dataset.memberStatus as "all" | "active" | "historical" | "archived";
       saveFocus();
       renderMembersView();
       restoreFocus();
+      return;
+    }
+
+    const archiveButton = target.closest<HTMLButtonElement>("[data-archive-member]");
+    if (archiveButton?.dataset.archiveMember) {
+      const member = members.find((item) => item.id === archiveButton.dataset.archiveMember);
+      if (!member) return;
+      if (!confirmAction(`Archive ${member.canonical_name}? They will move out of the active list but their history will be kept.`)) return;
+      setButtonLoading(archiveButton, true, "Archive");
+      try {
+        await archiveMember(member.id);
+        showToast(`${member.canonical_name} archived`, "success");
+        await renderMembers();
+      } catch (error) {
+        showToast(error instanceof Error ? error.message : "Failed to archive member", "error");
+        resetButton(archiveButton);
+      }
+      return;
+    }
+
+    const restoreButton = target.closest<HTMLButtonElement>("[data-restore-member]");
+    if (restoreButton?.dataset.restoreMember) {
+      const member = members.find((item) => item.id === restoreButton.dataset.restoreMember);
+      if (!member) return;
+      if (!confirmAction(`Restore ${member.canonical_name} to the active department list?`)) return;
+      setButtonLoading(restoreButton, true, "Restore");
+      try {
+        await restoreMember(member.id);
+        showToast(`${member.canonical_name} restored`, "success");
+        await renderMembers();
+      } catch (error) {
+        showToast(error instanceof Error ? error.message : "Failed to restore member", "error");
+        resetButton(restoreButton);
+      }
       return;
     }
 

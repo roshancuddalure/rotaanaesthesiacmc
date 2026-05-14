@@ -3144,15 +3144,19 @@ table:not(.member-table):not(.accounts-table) {
 }
 
 .member-col-name {
-  width: 50%;
+  width: 42%;
 }
 
 .member-col-status {
-  width: 18%;
+  width: 22%;
 }
 
 .member-col-call {
-  width: 32%;
+  width: 24%;
+}
+
+.member-col-action {
+  width: 12%;
 }
 
 th,
@@ -3267,6 +3271,10 @@ td small {
   background: var(--color-text-muted);
 }
 
+.status-dot.archived::before {
+  background: var(--color-warning);
+}
+
 .status-dot.warning::before {
   background: var(--color-warning);
 }
@@ -3333,6 +3341,12 @@ td select {
   margin-top: var(--space-1);
   color: var(--color-text-muted);
   text-transform: capitalize;
+}
+
+.member-card-actions {
+  display: grid;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
 }
 
 /* ============================================================
