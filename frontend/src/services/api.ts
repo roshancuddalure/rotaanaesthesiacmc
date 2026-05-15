@@ -844,6 +844,80 @@ export interface RotaTemplateMonth {
   }>;
 }
 
+export interface RotaTemplateAllocationStatistics {
+  month: string;
+  rota_period: {
+    id: string;
+    name: string;
+    starts_on: string;
+    ends_on: string;
+    status: string;
+  };
+  summary: {
+    total_slots: number;
+    ready_slots: number;
+    needs_review_slots: number;
+    unresolved_slots: number;
+    included_units: number;
+    units_used: number;
+    blocked_or_skipped_events: number;
+  };
+  duty_keys: Array<{ key: string; label: string }>;
+  unit_tallies: Array<{
+    unit_id: string | null;
+    unit_name: string;
+    unit_code: string | null;
+    campus: string | null;
+    is_unresolved: boolean;
+    total_slots: number;
+    ready_slots: number;
+    needs_review_slots: number;
+    unresolved_slots: number;
+    weekday_slots: number;
+    saturday_slots: number;
+    sunday_slots: number;
+    weekend_slots: number;
+    twenty_four_hour_slots: number;
+    non_24hr_slots: number;
+  }>;
+  unit_duty_matrix: Array<{
+    unit_id: string | null;
+    unit_name: string;
+    is_unresolved: boolean;
+    counts: Record<string, number>;
+    total_slots: number;
+  }>;
+  date_distribution: Array<{
+    date: string;
+    day_name: string;
+    total_slots: number;
+    ready_slots: number;
+    needs_review_slots: number;
+    unresolved_slots: number;
+    unit_counts: Record<string, number>;
+  }>;
+  call_level_distribution: Array<{
+    unit_id: string | null;
+    unit_name: string;
+    is_unresolved: boolean;
+    counts: Record<string, number>;
+    total_slots: number;
+  }>;
+  blocked_or_skipped_events: Array<{
+    id: string;
+    unit_id: string | null;
+    unit_name: string | null;
+    unit_code: string | null;
+    duty_date: string | null;
+    duty_type: string | null;
+    action: string;
+    severity: string;
+    reason: string;
+    details: Record<string, unknown>;
+    created_at: string;
+  }>;
+}
+
 export interface RotaSlotAssignment {
   id: string;
   person_id: string;
@@ -1683,6 +1757,10 @@ export function clonePreviousRotaSetupScope(month: string): Promise<RotaSetupMon
 
 export function getRotaTemplateMonth(month: string): Promise<RotaTemplateMonth> {
   return request<RotaTemplateMonth>(`/api/v1/rota-template/month?month=${encodeURIComponent(month)}`);
+}
+
+export function getRotaTemplateAllocationStatistics(month: string): Promise<RotaTemplateAllocationStatistics> {
+  return request<RotaTemplateAllocationStatistics>(`/api/v1/rota-template/allocation-statistics?month=${encodeURIComponent(month)}`);
 }
 
 export function getRotaSafetyMonth(month: string): Promise<RotaSafetyMonth> {

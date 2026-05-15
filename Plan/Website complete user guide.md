@@ -466,6 +466,7 @@ Important terms:
 - Clear Template Cache: removes generated template slots when safe to do so.
 - Export Eagle Eye: downloads a month-wide Excel view with duties as rows and dates as columns.
 - Export Call-Wise: downloads the Eagle Eye layout split into separate sheets by required person call level, such as 1st Call, 2nd Call, and 3rd Call.
+- Allocation Statistics: shows unit-wise, date-wise, duty-wise, call-level-wise, and blocked/skipped allocation tallies for the generated template.
 
 Generate template workflow:
 
@@ -483,6 +484,17 @@ Review calendar workflow:
 3. Review duty groups.
 4. Under each duty group, slots are ordered call-wise.
 5. Check unit, duty, required call, safety, assigned member, suggestions, and manual assignment.
+
+Allocation statistics workflow:
+
+1. Open Rota Template after generating the month.
+2. Switch the overview mode to Statistics.
+3. Check Unit-Wise Slot Tally to compare total, weekday, Saturday, Sunday, weekend, 24-hour, ready, review, and unresolved slots per unit.
+4. Check Duty Type Matrix to confirm a specific duty type is not repeatedly allocated to the same unit.
+5. Check Date-Wise Distribution to see how many slots each unit received on each date.
+6. Check Call-Level Distribution to review how required call levels were spread across units.
+7. Check Blocked, Skipped, and Unresolved Decisions to understand why the engine did not allocate some duties automatically.
+8. Use this section during validation to show that the generator balanced unit availability, leave pressure, weekend distribution, and post-duty availability rather than allocating randomly.
 
 Manual assignment workflow:
 
@@ -528,6 +540,7 @@ Common difficulties:
 - Page feels slow: turn on Fast load mode.
 - No generated slots: generate template or lock scope first.
 - No suggestions: unit staffing or leave may block all candidates.
+- Statistics show unresolved slots: open the blocked/skipped decision table and review the per-unit reasons before assigning manually.
 - Hard blocked slot: check Leave, Unit Management, and Rota Rules.
 - Assignment rejected: selected person violates safety rules.
 - Need override reason: system requires a written justification.

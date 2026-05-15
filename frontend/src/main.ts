@@ -31,6 +31,7 @@ import {
   type RotaSafetyMonth,
   type RotaSetupMonth,
   type RotaSlotAssignment,
+  type RotaTemplateAllocationStatistics,
   type RotaTemplateMonth,
   type UnitAssignment,
   type UnitAssignmentImportPreview,
@@ -84,6 +85,7 @@ import {
   getRotaReviewMonth,
   getRotaSafetyMonth,
   getRotaSetupMonth,
+  getRotaTemplateAllocationStatistics,
   getRotaTemplateMonth,
   getHistoricalImportStatus,
   getMemberAudit,
@@ -306,15 +308,16 @@ let rotaSetupMonth = new Date().toISOString().slice(0, 7);
 let rotaSetup: RotaSetupMonth | null = null;
 let rotaTemplateMonth = new Date().toISOString().slice(0, 7);
 let rotaTemplate: RotaTemplateMonth | null = null;
+let rotaTemplateStats: RotaTemplateAllocationStatistics | null = null;
 let rotaSafety: RotaSafetyMonth | null = null;
 let rotaCandidates: RotaCandidateMonth | null = null;
 let rotaAutoFill: RotaAutoFillMonth | null = null;
 let rotaTemplateFastMode = localStorage.getItem("duty_rota_template_fast_mode") === "1";
-type RotaTemplateOverviewMode = "calendar" | "short" | "detailed";
+type RotaTemplateOverviewMode = "calendar" | "short" | "statistics" | "detailed";
 let rotaTemplateOverviewMode = (
   localStorage.getItem("duty_rota_template_overview_mode") as RotaTemplateOverviewMode | null
 ) ?? "calendar";
-if (!["calendar", "short", "detailed"].includes(rotaTemplateOverviewMode)) {
+if (!["calendar", "short", "statistics", "detailed"].includes(rotaTemplateOverviewMode)) {
   rotaTemplateOverviewMode = "calendar";
 }
 type RotaDayModalViewMode = "full" | "compact" | "eagle";
@@ -5431,10 +5434,150 @@ function renderRotaTemplateDistribution(template: RotaTemplateMonth): string {
   `;
 }
 
+function renderAllocationUnitRows(stats: RotaTemplateAllocationStatistics): string {
+  return stats.unit_tallies
+    .filter((row) => row.total_slots > 0 || !row.is_unresolved)
+    .map((row) => `
+      <tr>
+        <td>${escapeHtml(row.unit_name)}</td>
+        <td>${row.total_slots}</td>
+        <td>${row.weekday_slots}</td>
+        <td>${row.saturday_slots}</td>
+        <td>${row.sunday_slots}</td>
+        <td>${row.weekend_slots}</td>
+        <td>${row.twenty_four_hour_slots}</td>
+        <td>${row.ready_slots}</td>
+        <td>${row.needs_review_slots}</td>
+        <td>${row.unresolved_slots}</td>
+      </tr>
+    `)
+    .join("");
+}
+
+function renderAllocationDutyMatrixRows(stats: RotaTemplateAllocationStatistics): string {
+  if (!stats.duty_keys.length) return "";
+  return stats.unit_duty_matrix
+    .filter((row) => row.total_slots > 0 || !row.is_unresolved)
+    .map((row) => `
+      <tr>
+        <td>${escapeHtml(row.unit_name)}</td>
+        ${stats.duty_keys.map((duty) => `<td>${row.counts[duty.key] ?? 0}</td>`).join("")}
+        <td>${row.total_slots}</td>
+      </tr>
+    `)
+    .join("");
+}
+
+function renderAllocationDateRows(stats: RotaTemplateAllocationStatistics): string {
+  const unitRows = stats.unit_tallies.filter((row) => row.total_slots > 0 || !row.is_unresolved);
+  return stats.date_distribution
+    .map((row) => `
+      <tr>
+        <td>${escapeHtml(row.date)}</td>
+        <td>${escapeHtml(row.day_name)}</td>
+        <td>${row.total_slots}</td>
+        ${unitRows.map((unit) => {
+          const key = unit.unit_id ?? "unresolved";
+          return `<td>${row.unit_counts[key] ?? 0}</td>`;
+        }).join("")}
+        <td>${row.needs_review_slots}</td>
+        <td>${row.unresolved_slots}</td>
+      </tr>
+    `)
+    .join("");
+}
+
+function renderAllocationCallLevelRows(stats: RotaTemplateAllocationStatistics): string {
+  const callLevels = Array.from(new Set(stats.call_level_distribution.flatMap((row) => Object.keys(row.counts))))
+    .sort((a, b) => rotaCallRank(a, a) - rotaCallRank(b, b) || a.localeCompare(b));
+  if (!callLevels.length) return "";
+  return stats.call_level_distribution
+    .filter((row) => row.total_slots > 0 || !row.is_unresolved)
+    .map((row) => `
+      <tr>
+        <td>${escapeHtml(row.unit_name)}</td>
+        ${callLevels.map((call) => `<td>${row.counts[call] ?? 0}</td>`).join("")}
+        <td>${row.total_slots}</td>
+      </tr>
+    `)
+    .join("");
+}
+
+function renderAllocationEventRows(stats: RotaTemplateAllocationStatistics): string {
+  return stats.blocked_or_skipped_events.slice(0, 100).map((event) => `
+    <tr>
+      <td>${escapeHtml(event.duty_date ?? "")}</td>
+      <td>${escapeHtml(event.unit_name || event.unit_code || "Unresolved")}</td>
+      <td>${escapeHtml(leaveTypeLabel(event.duty_type ?? ""))}</td>
+      <td>${escapeHtml(leaveTypeLabel(event.action))}</td>
+      <td>${escapeHtml(event.reason)}</td>
+    </tr>
+  `).join("");
+}
+
+function renderRotaAllocationStatistics(stats: RotaTemplateAllocationStatistics | null): string {
+  if (!stats) {
+    return `
+      <section class="panel table-panel">
+        <h3>Allocation Statistics</h3>
+        <p class="empty-state">Slot allocation statistics could not be loaded.</p>
+      </section>
+    `;
+  }
+  const dateUnitRows = stats.unit_tallies.filter((row) => row.total_slots > 0 || !row.is_unresolved);
+  const callLevels = Array.from(new Set(stats.call_level_distribution.flatMap((row) => Object.keys(row.counts))))
+    .sort((a, b) => rotaCallRank(a, a) - rotaCallRank(b, b) || a.localeCompare(b));
+  return `
+    <section class="summary-grid four-col">
+      ${metricCard(stats.summary.total_slots, "Generated slots")}
+      ${metricCard(stats.summary.units_used, "Units used")}
+      ${metricCard(stats.summary.unresolved_slots, "Unresolved slots")}
+      ${metricCard(stats.summary.blocked_or_skipped_events, "Blocked/skipped decisions")}
+    </section>
+    <section class="panel table-panel">
+      <h3>Unit-Wise Slot Tally</h3>
+      <table>
+        <thead><tr><th>Unit</th><th>Total</th><th>Weekday</th><th>Saturday</th><th>Sunday</th><th>Weekend</th><th>24hr</th><th>Ready</th><th>Review</th><th>Unresolved</th></tr></thead>
+        <tbody>${renderAllocationUnitRows(stats) || `<tr><td colspan="10" class="empty">No generated slots yet.</td></tr>`}</tbody>
+      </table>
+    </section>
+    <section class="panel table-panel">
+      <h3>Duty Type Matrix</h3>
+      <table>
+        <thead><tr><th>Unit</th>${stats.duty_keys.map((duty) => `<th>${escapeHtml(duty.label)}</th>`).join("")}<th>Total</th></tr></thead>
+        <tbody>${renderAllocationDutyMatrixRows(stats) || `<tr><td colspan="${stats.duty_keys.length + 2}" class="empty">No duty matrix yet.</td></tr>`}</tbody>
+      </table>
+    </section>
+    <section class="panel table-panel">
+      <h3>Date-Wise Distribution</h3>
+      <table>
+        <thead><tr><th>Date</th><th>Day</th><th>Total</th>${dateUnitRows.map((unit) => `<th>${escapeHtml(unit.unit_name)}</th>`).join("")}<th>Review</th><th>Unresolved</th></tr></thead>
+        <tbody>${renderAllocationDateRows(stats) || `<tr><td colspan="${dateUnitRows.length + 5}" class="empty">No date distribution yet.</td></tr>`}</tbody>
+      </table>
+    </section>
+    <section class="panel table-panel">
+      <h3>Call-Level Distribution</h3>
+      <table>
+        <thead><tr><th>Unit</th>${callLevels.map((call) => `<th>${escapeHtml(callLevelLabel(call))}</th>`).join("")}<th>Total</th></tr></thead>
+        <tbody>${renderAllocationCallLevelRows(stats) || `<tr><td colspan="${callLevels.length + 2}" class="empty">No call-level distribution yet.</td></tr>`}</tbody>
+      </table>
+    </section>
+    <section class="panel table-panel">
+      <h3>Blocked, Skipped, and Unresolved Decisions</h3>
+      <table>
+        <thead><tr><th>Date</th><th>Unit</th><th>Duty</th><th>Action</th><th>Reason</th></tr></thead>
+        <tbody>${renderAllocationEventRows(stats) || `<tr><td colspan="5" class="empty">No blocked or skipped decisions recorded.</td></tr>`}</tbody>
+      </table>
+      ${stats.blocked_or_skipped_events.length > 100 ? `<p class="empty">Showing first 100 of ${stats.blocked_or_skipped_events.length} decisions.</p>` : ""}
+    </section>
+  `;
+}
+
 function renderRotaTemplateOverviewControls(): string {
   const modes: Array<{ key: RotaTemplateOverviewMode; label: string }> = [
     { key: "calendar", label: "Calendar" },
     { key: "short", label: "Short" },
+    { key: "statistics", label: "Statistics" },
     { key: "detailed", label: "Detailed" },
   ];
   return `
@@ -5489,6 +5632,7 @@ function renderRotaTemplateOverview(
   template: RotaTemplateMonth,
   safety: RotaSafetyMonth,
   autoFill: RotaAutoFillMonth | null,
+  stats: RotaTemplateAllocationStatistics | null,
 ): string {
   const counts = rotaTemplateUnitCounts(template);
   const mostLoaded = counts[0];
@@ -5559,6 +5703,7 @@ function renderRotaTemplateOverview(
     </section>
     ${rotaTemplateOverviewMode === "calendar" ? calendarPanel : ""}
     ${rotaTemplateOverviewMode === "short" ? shortPanel : ""}
+    ${rotaTemplateOverviewMode === "statistics" ? renderRotaAllocationStatistics(stats) : ""}
     ${rotaTemplateOverviewMode === "detailed" ? detailedPanels : ""}
   `;
 }
@@ -5916,7 +6061,19 @@ async function renderRotaTemplate() {
       rotaSafety = emptyRotaSafety(templateResult);
       rotaCandidates = emptyRotaCandidates(rotaTemplateMonth);
       rotaAutoFill = null;
+      try {
+        rotaTemplateStats = await withTimeout(getRotaTemplateAllocationStatistics(rotaTemplateMonth), 12000, "Allocation statistics");
+      } catch (error) {
+        rotaTemplateStats = null;
+        showToast(error instanceof Error ? error.message : "Allocation statistics could not load", "warning");
+      }
     } else {
+      try {
+        rotaTemplateStats = await withTimeout(getRotaTemplateAllocationStatistics(rotaTemplateMonth), 12000, "Allocation statistics");
+      } catch (error) {
+        rotaTemplateStats = null;
+        showToast(error instanceof Error ? error.message : "Allocation statistics could not load", "warning");
+      }
       try {
         rotaSafety = await withTimeout(getRotaSafetyMonth(rotaTemplateMonth), 12000, "Rota safety check");
       } catch (error) {
@@ -5946,6 +6103,7 @@ async function renderRotaTemplate() {
   const safety = rotaSafety;
   const candidates = rotaCandidates;
   const autoFill = rotaAutoFill;
+  const stats = rotaTemplateStats;
   const locked = template.scope.is_locked;
   const latest = template.latest_run;
   const includedUnitNames = template.scope.included_units.map((unit) => unit.name).join(", ");
@@ -6046,7 +6204,7 @@ async function renderRotaTemplate() {
         </div>
       </details>
     </form>
-    ${renderRotaTemplateOverview(template, safety, autoFill)}
+    ${renderRotaTemplateOverview(template, safety, autoFill, stats)}
   `;
 }
 
@@ -6968,6 +7126,7 @@ function renderUserGuide() {
       ${guideSteps([
         "Open Rota Template and confirm the month shown on screen is the month you want.",
         "Generate the empty template only after Phase 1 is complete.",
+        "Switch to Statistics to confirm unit-wise, date-wise, weekend, duty-type, and call-level slot distribution.",
         "Open one day at a time and review duties in fixed duty order.",
         "Under each duty, assign slots call-wise so the day is easy to read and audit.",
         "Prefer candidates without leave, unit mismatch, recent-duty, or workload warnings.",
@@ -7044,8 +7203,8 @@ function renderUserGuide() {
       </article>
       <article class="panel">
         <h3>Rota Template</h3>
-        <p>The main work area for daily duties. Open a day, review slots under each duty, and assign people in call-wise order.</p>
-        ${guideBullets(["Look at Main, CB, RC, PAC, and other duty groups separately.", "Use candidates as guidance; lower priority score means the system prefers that person first.", "Override only with a clear reason.", "Fast mode is useful when a heavy month loads slowly."])}
+        <p>The main work area for daily duties. Open a day, review slots under each duty, check allocation statistics, and assign people in call-wise order.</p>
+        ${guideBullets(["Look at Main, CB, RC, PAC, and other duty groups separately.", "Use Statistics to confirm the split by unit, day, Saturday, Sunday, duty type, and call level.", "Use candidates as guidance; lower priority score means the system prefers that person first.", "Override only with a clear reason.", "Fast mode is useful when a heavy month loads slowly."])}
       </article>
       <article class="panel">
         <h3>Rota Review</h3>

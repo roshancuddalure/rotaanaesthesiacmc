@@ -11,6 +11,7 @@ from app.models import UserAccount
 from app.services.leave import month_bounds
 from app.services.rota_template import (
     TemplateGenerationOptions,
+    allocation_statistics,
     call_wise_template_export,
     clear_template_cache,
     eagle_eye_export,
@@ -55,6 +56,18 @@ class RotaTemplateClearRead(BaseModel):
     cleared_events: int
 
 
+class RotaTemplateAllocationStatisticsRead(BaseModel):
+    month: str
+    rota_period: dict[str, object]
+    summary: dict[str, object]
+    duty_keys: list[dict[str, object]]
+    unit_tallies: list[dict[str, object]]
+    unit_duty_matrix: list[dict[str, object]]
+    date_distribution: list[dict[str, object]]
+    call_level_distribution: list[dict[str, object]]
+    blocked_or_skipped_events: list[dict[str, object]]
+
+
 @router.get("/rota-template/month")
 def get_rota_template_month(
     month: str,
@@ -67,6 +80,20 @@ def get_rota_template_month(
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     return RotaTemplateMonthRead(**result)
+
+
+@router.get("/rota-template/allocation-statistics")
+def get_rota_template_allocation_statistics(
+    month: str,
+    _user: UserAccount = Depends(current_user),
+    db: Session = Depends(get_db),
+) -> RotaTemplateAllocationStatisticsRead:
+    try:
+        month_bounds(month)
+        result = allocation_statistics(db, month)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return RotaTemplateAllocationStatisticsRead(**result)
 
 
 @router.post("/rota-template/generate")

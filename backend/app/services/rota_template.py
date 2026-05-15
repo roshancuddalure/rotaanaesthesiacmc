@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import Counter
 from io import BytesIO
 from typing import Any
 from dataclasses import dataclass
@@ -29,6 +30,7 @@ from app.services.rota_setup import SCOPE_INCLUDED, monthly_setup
 PHASE4_SLOT_SOURCE = "phase4_template"
 READY = "ready"
 NEEDS_REVIEW = "needs_review"
+UNRESOLVED = "unresolved"
 ACTION_CREATED = "created"
 ACTION_SKIPPED = "skipped"
 ACTION_BLOCKED = "blocked"
@@ -195,6 +197,7 @@ def pressure_for_slot(
     rule: DutyRule,
     rules: RotaPhaseOneRules,
     provisional_unit_day_duties: int = 0,
+    provisional_post_24hr_duties: int = 0,
     minimum_free_people: int | None = None,
 ) -> dict[str, object]:
     unavailable = {
@@ -205,9 +208,11 @@ def pressure_for_slot(
     }
     total = len(unit_member_ids)
     unavailable_count = len(unavailable)
-    available_before_slot = total - unavailable_count - provisional_unit_day_duties
+    available_before_slot = (
+        total - unavailable_count - provisional_unit_day_duties - provisional_post_24hr_duties
+    )
     available_after_slot = available_before_slot - 1
-    blocked_count = unavailable_count + provisional_unit_day_duties + 1
+    blocked_count = unavailable_count + provisional_unit_day_duties + provisional_post_24hr_duties + 1
     unavailable_percent = 100 if total == 0 else round((blocked_count / total) * 100)
     staffing = rules.unit_staffing_rules
     minimum = staffing.minimum_available_count if minimum_free_people is None else minimum_free_people
@@ -248,6 +253,7 @@ def pressure_for_slot(
         "assigned_members": total,
         "unavailable_members": unavailable_count,
         "provisional_unit_day_duties": provisional_unit_day_duties,
+        "provisional_post_24hr_duties": provisional_post_24hr_duties,
         "minimum_free_people": minimum,
         "available_members": max(0, available_after_slot),
         "available_before_slot": max(0, available_before_slot),
@@ -340,6 +346,21 @@ def unit_minimum_free_people_for_call(unit: Unit, call_level: str | None, rules:
     return fallback
 
 
+def post_24hr_rest_count(
+    counts: dict[tuple[UUID, date, str | None], int],
+    unit_id: UUID,
+    day: date,
+    call_level: str | None,
+) -> int:
+    if call_level is not None:
+        return counts.get((unit_id, day, call_level), 0)
+    return sum(
+        count
+        for (count_unit_id, count_day, _count_call), count in counts.items()
+        if count_unit_id == unit_id and count_day == day
+    )
+
+
 def allocation_score(
     *,
     unit: Unit,
@@ -379,7 +400,9 @@ def choose_balanced_unit(
     unit_duty_counts: dict[tuple[UUID, str], int],
     unit_week_counts: dict[tuple[UUID, tuple[int, int]], int],
     unit_weekend_counts: dict[UUID, int],
+    unit_weekend_day_counts: dict[tuple[UUID, int], int],
     provisional_unit_day_counts: dict[tuple[UUID, date], int],
+    provisional_post_24hr_counts: dict[tuple[UUID, date, str | None], int],
 ) -> tuple[UnitAllocation | None, list[UnitAllocation]]:
     allocations: list[UnitAllocation] = []
     required_call = required_call_for_rule(rule)
@@ -395,6 +418,12 @@ def choose_balanced_unit(
             rule=rule,
             rules=rules,
             provisional_unit_day_duties=provisional_unit_day_counts.get((unit.id, day), 0),
+            provisional_post_24hr_duties=post_24hr_rest_count(
+                provisional_post_24hr_counts,
+                unit.id,
+                day,
+                required_call,
+            ),
             minimum_free_people=unit_minimum_free_people_for_call(unit, required_call, rules),
         )
         hard_blocked = pressure["status"] == "hard_block"
@@ -423,9 +452,12 @@ def choose_balanced_unit(
         return None, []
     safe_allocations = [allocation for allocation in allocations if not allocation.hard_blocked]
     pool = safe_allocations if safe_allocations else allocations
+    is_weekend = day.weekday() >= 5
     selected = min(
         pool,
         key=lambda allocation: (
+            unit_weekend_day_counts.get((allocation.unit.id, day.weekday()), 0) if is_weekend else 0,
+            unit_weekend_counts.get(allocation.unit.id, 0) if is_weekend else 0,
             allocation.score,
             unit_duty_counts.get((allocation.unit.id, rule.key), 0),
             unit_month_counts.get(allocation.unit.id, 0),
@@ -491,16 +523,38 @@ def generate_empty_template(
     unit_duty_counts: dict[tuple[UUID, str], int] = {}
     unit_week_counts: dict[tuple[UUID, tuple[int, int]], int] = {}
     unit_weekend_counts: dict[UUID, int] = {}
+    unit_weekend_day_counts: dict[tuple[UUID, int], int] = {}
     provisional_unit_day_counts: dict[tuple[UUID, date], int] = {}
+    provisional_post_24hr_counts: dict[tuple[UUID, date, str | None], int] = {}
     for slot in existing_slots:
         if slot.unit_id is None:
             continue
         unit_month_counts[slot.unit_id] = unit_month_counts.get(slot.unit_id, 0) + 1
-        unit_duty_counts[(slot.unit_id, slot.duty_type)] = unit_duty_counts.get((slot.unit_id, slot.duty_type), 0) + 1
-        unit_week_counts[(slot.unit_id, week_key(slot.duty_date))] = unit_week_counts.get((slot.unit_id, week_key(slot.duty_date)), 0) + 1
+        unit_duty_counts[(slot.unit_id, slot.duty_type)] = (
+            unit_duty_counts.get((slot.unit_id, slot.duty_type), 0) + 1
+        )
+        unit_week_counts[(slot.unit_id, week_key(slot.duty_date))] = (
+            unit_week_counts.get((slot.unit_id, week_key(slot.duty_date)), 0) + 1
+        )
         if slot.duty_date.weekday() >= 5:
             unit_weekend_counts[slot.unit_id] = unit_weekend_counts.get(slot.unit_id, 0) + 1
-        provisional_unit_day_counts[(slot.unit_id, slot.duty_date)] = provisional_unit_day_counts.get((slot.unit_id, slot.duty_date), 0) + 1
+            weekend_day_key = (slot.unit_id, slot.duty_date.weekday())
+            unit_weekend_day_counts[weekend_day_key] = (
+                unit_weekend_day_counts.get(weekend_day_key, 0) + 1
+            )
+        provisional_key = (slot.unit_id, slot.duty_date)
+        provisional_unit_day_counts[provisional_key] = (
+            provisional_unit_day_counts.get(provisional_key, 0) + 1
+        )
+        if slot.is_24hr:
+            rest_key = (
+                slot.unit_id,
+                slot.duty_date + timedelta(days=1),
+                normalize_call_level(slot.call_level) if slot.call_level else None,
+            )
+            provisional_post_24hr_counts[rest_key] = (
+                provisional_post_24hr_counts.get(rest_key, 0) + 1
+            )
     created_slots: list[DutySlot] = []
     events: list[RotaTemplateGenerationEvent] = []
 
@@ -519,7 +573,9 @@ def generate_empty_template(
                 unit_duty_counts=unit_duty_counts,
                 unit_week_counts=unit_week_counts,
                 unit_weekend_counts=unit_weekend_counts,
+                unit_weekend_day_counts=unit_weekend_day_counts,
                 provisional_unit_day_counts=provisional_unit_day_counts,
+                provisional_post_24hr_counts=provisional_post_24hr_counts,
             )
             if selected is None:
                 for unit in units:
@@ -541,7 +597,75 @@ def generate_empty_template(
                 continue
             hard_block = selected.hard_blocked
             warning = selected.warning
-            if hard_block and rule.is_adjustable and not rule.is_mandatory:
+            if hard_block:
+                if rule.is_adjustable and not rule.is_mandatory:
+                    for allocation in allocations:
+                        events.append(
+                            create_event(
+                                run=run,
+                                unit=allocation.unit,
+                                day=day,
+                                rule=rule,
+                                action=ACTION_BLOCKED,
+                                severity="error" if allocation.hard_blocked else "warning",
+                                reason=f"Adjustable slot skipped. {allocation.reason}",
+                                details={
+                                    **allocation.pressure,
+                                    "allocation_score": allocation.score,
+                                    "selected_unit": str(selected.unit.id),
+                                },
+                            )
+                        )
+                    continue
+
+                unresolved_label = "unresolved"
+                if (day, rule.key, unresolved_label) in existing_keys:
+                    events.append(
+                        create_event(
+                            run=run,
+                            unit=selected.unit,
+                            day=day,
+                            rule=rule,
+                            action=ACTION_SKIPPED,
+                            severity="warning",
+                            reason="An unresolved slot already exists for this date and duty.",
+                            details={"slot_label": unresolved_label, "duty_label": rule.label},
+                        )
+                    )
+                    continue
+
+                starts_at, ends_at = slot_bounds(day, rule)
+                inferred_call_levels = sorted(inferred_call_levels_from_duty_type(rule.key))
+                slot_call_level = (
+                    rule.allowed_call_levels[0]
+                    if len(rule.allowed_call_levels) == 1
+                    else inferred_call_levels[0] if len(inferred_call_levels) == 1 else None
+                )
+                reason = (
+                    "No safe unit allocation found. All candidate units are hard blocked "
+                    "after leave, same-day duties, and previous-day 24-hour post-duty "
+                    "availability were considered."
+                )
+                slot = DutySlot(
+                    rota_period=period,
+                    unit=None,
+                    duty_date=day,
+                    duty_type=rule.key,
+                    call_level=slot_call_level,
+                    slot_label=unresolved_label,
+                    starts_at=starts_at,
+                    ends_at=ends_at,
+                    is_24hr=rule.is_24hr,
+                    max_assignees=1,
+                    source=PHASE4_SLOT_SOURCE,
+                    template_status=UNRESOLVED,
+                    template_reason=reason,
+                    generation_run=run,
+                    notes=f"{rule.label} requires manual unit allocation. {reason}",
+                )
+                db.add(slot)
+                created_slots.append(slot)
+                existing_keys.add((day, rule.key, unresolved_label))
                 for allocation in allocations:
                     events.append(
                         create_event(
@@ -550,12 +674,12 @@ def generate_empty_template(
                             day=day,
                             rule=rule,
                             action=ACTION_BLOCKED,
-                            severity="error" if allocation.hard_blocked else "warning",
-                            reason=f"Adjustable slot skipped. {allocation.reason}",
+                            severity="error",
+                            reason=f"Mandatory slot left unresolved. {allocation.reason}",
                             details={
                                 **allocation.pressure,
+                                "template_status": UNRESOLVED,
                                 "allocation_score": allocation.score,
-                                "selected_unit": str(selected.unit.id),
                             },
                         )
                     )
@@ -593,11 +717,31 @@ def generate_empty_template(
             created_slots.append(slot)
             existing_keys.add((day, rule.key, label))
             unit_month_counts[unit.id] = unit_month_counts.get(unit.id, 0) + 1
-            unit_duty_counts[(unit.id, rule.key)] = unit_duty_counts.get((unit.id, rule.key), 0) + 1
-            unit_week_counts[(unit.id, week_key(day))] = unit_week_counts.get((unit.id, week_key(day)), 0) + 1
+            unit_duty_counts[(unit.id, rule.key)] = (
+                unit_duty_counts.get((unit.id, rule.key), 0) + 1
+            )
+            unit_week_counts[(unit.id, week_key(day))] = (
+                unit_week_counts.get((unit.id, week_key(day)), 0) + 1
+            )
             if day.weekday() >= 5:
                 unit_weekend_counts[unit.id] = unit_weekend_counts.get(unit.id, 0) + 1
-            provisional_unit_day_counts[(unit.id, day)] = provisional_unit_day_counts.get((unit.id, day), 0) + 1
+                weekend_day_key = (unit.id, day.weekday())
+                unit_weekend_day_counts[weekend_day_key] = (
+                    unit_weekend_day_counts.get(weekend_day_key, 0) + 1
+                )
+            provisional_key = (unit.id, day)
+            provisional_unit_day_counts[provisional_key] = (
+                provisional_unit_day_counts.get(provisional_key, 0) + 1
+            )
+            if slot.is_24hr:
+                rest_key = (
+                    unit.id,
+                    day + timedelta(days=1),
+                    normalize_call_level(slot.call_level) if slot.call_level else None,
+                )
+                provisional_post_24hr_counts[rest_key] = (
+                    provisional_post_24hr_counts.get(rest_key, 0) + 1
+                )
             events.append(
                 create_event(
                     run=run,
@@ -612,6 +756,16 @@ def generate_empty_template(
                         "template_status": status,
                         "allocation_mode": "balanced",
                         "allocation_score": selected.score,
+                        "weekend_day_count_after": (
+                            unit_weekend_day_counts.get((unit.id, day.weekday()), 0)
+                            if day.weekday() >= 5
+                            else None
+                        ),
+                        "weekend_total_count_after": (
+                            unit_weekend_counts.get(unit.id, 0)
+                            if day.weekday() >= 5
+                            else None
+                        ),
                         "unit_month_count_after": unit_month_counts[unit.id],
                         "unit_duty_count_after": unit_duty_counts[(unit.id, rule.key)],
                     },
@@ -627,16 +781,34 @@ def generate_empty_template(
                         day=day,
                         rule=rule,
                         action=ACTION_SKIPPED,
-                        severity="warning" if allocation.hard_blocked or allocation.warning else "info",
+                        severity=(
+                            "warning" if allocation.hard_blocked or allocation.warning else "info"
+                        ),
                         reason=(
                             allocation.reason
                             if allocation.hard_blocked
-                            else f"Another unit had a lower balanced allocation score ({selected.score} vs {allocation.score})."
+                            else (
+                                "Another unit had a lower balanced allocation score "
+                                f"({selected.score} vs {allocation.score})."
+                            )
                         ),
                         details={
                             **allocation.pressure,
                             "allocation_mode": "balanced",
                             "allocation_score": allocation.score,
+                            "weekend_day_count": (
+                                unit_weekend_day_counts.get(
+                                    (allocation.unit.id, day.weekday()),
+                                    0,
+                                )
+                                if day.weekday() >= 5
+                                else None
+                            ),
+                            "weekend_total_count": (
+                                unit_weekend_counts.get(allocation.unit.id, 0)
+                                if day.weekday() >= 5
+                                else None
+                            ),
                             "selected_unit": str(unit.id),
                             "selected_unit_name": unit.name,
                         },
@@ -647,12 +819,14 @@ def generate_empty_template(
         db.add(event)
     run.created_slots = len(created_slots)
     run.needs_review_slots = sum(1 for slot in created_slots if slot.template_status == NEEDS_REVIEW)
+    unresolved_slots = sum(1 for slot in created_slots if slot.template_status == UNRESOLVED)
     run.skipped_slots = sum(1 for event in events if event.action == ACTION_SKIPPED)
     run.blocked_slots = sum(1 for event in events if event.action == ACTION_BLOCKED)
     run.summary = {
         **run.summary,
         "created_slots": run.created_slots,
         "needs_review_slots": run.needs_review_slots,
+        "unresolved_slots": unresolved_slots,
         "skipped_slots": run.skipped_slots,
         "blocked_slots": run.blocked_slots,
     }
@@ -792,6 +966,198 @@ def template_month(db: Session, month: str, run_id: UUID | None = None) -> dict[
         },
         "latest_run": run_to_dict(run) if run else None,
         "slots": [slot_to_dict(slot) for slot in slots],
+    }
+
+
+def slot_unit_key(slot: DutySlot) -> tuple[str, str, str | None, bool]:
+    if slot.unit_id is None:
+        return "unresolved", "Unresolved", None, True
+    label = slot.unit.name if slot.unit else str(slot.unit_id)
+    return str(slot.unit_id), label, slot.unit.campus if slot.unit else None, False
+
+
+def allocation_statistics(db: Session, month: str) -> dict[str, object]:
+    period, scope = monthly_setup(db, month)
+    _rule_version, rules = get_phase_one_rules(db)
+    run = latest_generation_run(db, period.id)
+    slots = template_slots_for_period(db, period.id)
+    included_units = included_scope_units(scope)
+    rule_by_key = rules.duty_rules_by_key
+
+    unit_rows: dict[str, dict[str, object]] = {
+        str(unit.id): {
+            "unit_id": str(unit.id),
+            "unit_name": unit.name,
+            "unit_code": unit.code,
+            "campus": unit.campus,
+            "is_unresolved": False,
+            "total_slots": 0,
+            "ready_slots": 0,
+            "needs_review_slots": 0,
+            "unresolved_slots": 0,
+            "weekday_slots": 0,
+            "saturday_slots": 0,
+            "sunday_slots": 0,
+            "weekend_slots": 0,
+            "twenty_four_hour_slots": 0,
+            "non_24hr_slots": 0,
+        }
+        for unit in included_units
+    }
+    unit_rows["unresolved"] = {
+        "unit_id": None,
+        "unit_name": "Unresolved",
+        "unit_code": None,
+        "campus": None,
+        "is_unresolved": True,
+        "total_slots": 0,
+        "ready_slots": 0,
+        "needs_review_slots": 0,
+        "unresolved_slots": 0,
+        "weekday_slots": 0,
+        "saturday_slots": 0,
+        "sunday_slots": 0,
+        "weekend_slots": 0,
+        "twenty_four_hour_slots": 0,
+        "non_24hr_slots": 0,
+    }
+
+    duty_keys = sorted(
+        {slot.duty_type for slot in slots},
+        key=lambda key: (
+            {rule.key: index for index, rule in enumerate(rules.duty_rules)}.get(key, 9999),
+            key,
+        ),
+    )
+    unit_duty_counts: dict[str, Counter[str]] = {unit_key: Counter() for unit_key in unit_rows}
+    call_level_counts: dict[str, Counter[str]] = {unit_key: Counter() for unit_key in unit_rows}
+    date_rows: dict[date, dict[str, object]] = {}
+
+    for slot in slots:
+        unit_key, unit_name, _campus, _is_unresolved = slot_unit_key(slot)
+        if unit_key not in unit_rows:
+            unit_rows[unit_key] = {
+                "unit_id": str(slot.unit_id) if slot.unit_id else None,
+                "unit_name": unit_name,
+                "unit_code": slot.unit.code if slot.unit else None,
+                "campus": slot.unit.campus if slot.unit else None,
+                "is_unresolved": slot.unit_id is None,
+                "total_slots": 0,
+                "ready_slots": 0,
+                "needs_review_slots": 0,
+                "unresolved_slots": 0,
+                "weekday_slots": 0,
+                "saturday_slots": 0,
+                "sunday_slots": 0,
+                "weekend_slots": 0,
+                "twenty_four_hour_slots": 0,
+                "non_24hr_slots": 0,
+            }
+            unit_duty_counts[unit_key] = Counter()
+            call_level_counts[unit_key] = Counter()
+
+        row = unit_rows[unit_key]
+        row["total_slots"] = int(row["total_slots"]) + 1
+        if slot.template_status == READY:
+            row["ready_slots"] = int(row["ready_slots"]) + 1
+        elif slot.template_status == NEEDS_REVIEW:
+            row["needs_review_slots"] = int(row["needs_review_slots"]) + 1
+        elif slot.template_status == UNRESOLVED:
+            row["unresolved_slots"] = int(row["unresolved_slots"]) + 1
+        if slot.duty_date.weekday() == 5:
+            row["saturday_slots"] = int(row["saturday_slots"]) + 1
+            row["weekend_slots"] = int(row["weekend_slots"]) + 1
+        elif slot.duty_date.weekday() == 6:
+            row["sunday_slots"] = int(row["sunday_slots"]) + 1
+            row["weekend_slots"] = int(row["weekend_slots"]) + 1
+        else:
+            row["weekday_slots"] = int(row["weekday_slots"]) + 1
+        if slot.is_24hr:
+            row["twenty_four_hour_slots"] = int(row["twenty_four_hour_slots"]) + 1
+        else:
+            row["non_24hr_slots"] = int(row["non_24hr_slots"]) + 1
+
+        unit_duty_counts[unit_key][slot.duty_type] += 1
+        call_level = slot.call_level or next(iter(call_levels_for_export_rule(rule_by_key.get(slot.duty_type), slot.duty_type)))
+        call_level_counts[unit_key][call_level] += 1
+
+        date_row = date_rows.setdefault(
+            slot.duty_date,
+            {
+                "date": slot.duty_date.isoformat(),
+                "day_name": slot.duty_date.strftime("%A"),
+                "total_slots": 0,
+                "ready_slots": 0,
+                "needs_review_slots": 0,
+                "unresolved_slots": 0,
+                "unit_counts": {},
+            },
+        )
+        date_row["total_slots"] = int(date_row["total_slots"]) + 1
+        if slot.template_status == READY:
+            date_row["ready_slots"] = int(date_row["ready_slots"]) + 1
+        elif slot.template_status == NEEDS_REVIEW:
+            date_row["needs_review_slots"] = int(date_row["needs_review_slots"]) + 1
+        elif slot.template_status == UNRESOLVED:
+            date_row["unresolved_slots"] = int(date_row["unresolved_slots"]) + 1
+        unit_counts = date_row["unit_counts"]
+        if isinstance(unit_counts, dict):
+            unit_counts[unit_key] = int(unit_counts.get(unit_key, 0)) + 1
+
+    event_rows = []
+    if run:
+        for event in sorted(run.events, key=lambda item: item.created_at):
+            if event.action in {ACTION_BLOCKED, ACTION_SKIPPED} or str(event.details.get("template_status")) == UNRESOLVED:
+                event_rows.append(event_to_dict(event))
+
+    return {
+        "month": month,
+        "rota_period": {
+            "id": str(period.id),
+            "name": period.name,
+            "starts_on": period.starts_on.isoformat(),
+            "ends_on": period.ends_on.isoformat(),
+            "status": period.status,
+        },
+        "summary": {
+            "total_slots": len(slots),
+            "ready_slots": sum(1 for slot in slots if slot.template_status == READY),
+            "needs_review_slots": sum(1 for slot in slots if slot.template_status == NEEDS_REVIEW),
+            "unresolved_slots": sum(1 for slot in slots if slot.template_status == UNRESOLVED),
+            "included_units": len(included_units),
+            "units_used": sum(1 for row in unit_rows.values() if int(row["total_slots"]) > 0 and not row["is_unresolved"]),
+            "blocked_or_skipped_events": len(event_rows),
+        },
+        "duty_keys": [
+            {"key": key, "label": rule_by_key[key].label if key in rule_by_key else key}
+            for key in duty_keys
+        ],
+        "unit_tallies": sorted(
+            unit_rows.values(),
+            key=lambda row: (bool(row["is_unresolved"]), str(row["unit_name"])),
+        ),
+        "unit_duty_matrix": [
+            {
+                "unit_id": None if unit_key == "unresolved" else unit_key,
+                "unit_name": str(unit_rows[unit_key]["unit_name"]),
+                "is_unresolved": bool(unit_rows[unit_key]["is_unresolved"]),
+                "counts": {key: unit_duty_counts.get(unit_key, Counter()).get(key, 0) for key in duty_keys},
+                "total_slots": int(unit_rows[unit_key]["total_slots"]),
+            }
+            for unit_key in sorted(unit_rows, key=lambda key: (key == "unresolved", str(unit_rows[key]["unit_name"])))
+        ],
+        "date_distribution": [date_rows[key] for key in sorted(date_rows)],
+        "call_level_distribution": [
+            {
+                "unit_id": None if unit_key == "unresolved" else unit_key,
+                "unit_name": str(unit_rows[unit_key]["unit_name"]),
+                "is_unresolved": bool(unit_rows[unit_key]["is_unresolved"]),
+                "counts": dict(call_level_counts.get(unit_key, Counter())),
+                "total_slots": int(unit_rows[unit_key]["total_slots"]),
+            }
+            for unit_key in sorted(unit_rows, key=lambda key: (key == "unresolved", str(unit_rows[key]["unit_name"])))
+        ],
+        "blocked_or_skipped_events": event_rows[:200],
     }
 
 

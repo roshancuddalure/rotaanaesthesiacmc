@@ -19,6 +19,7 @@ from app.services.rota_setup import monthly_setup, update_scope_units
 from app.services.rota_rules import default_phase_one_rules
 from app.services.rota_template import (
     TemplateGenerationOptions,
+    allocation_statistics,
     clear_template_cache,
     generate_empty_template,
     template_month,
@@ -31,16 +32,34 @@ def seed_template_context(session: Session) -> tuple[Unit, Unit, Person]:
     included = Unit(code="UNIT_I", name="Unit I", campus="MAIN")
     excluded = Unit(code="UNIT_II", name="Unit II", campus="MAIN")
     person = Person(canonical_name="Template Member", call_level="1ST_CALL")
-    session.add_all([included, excluded, person])
+    cover_one = Person(canonical_name="Template Cover One", call_level="1ST_CALL")
+    cover_two = Person(canonical_name="Template Cover Two", call_level="1ST_CALL")
+    session.add_all([included, excluded, person, cover_one, cover_two])
     session.flush()
-    session.add(
-        PersonPosting(
-            person=person,
-            unit=included,
-            posting_type="1ST_CALL",
-            starts_on=date(2026, 5, 1),
-            source="unit_board",
-        )
+    session.add_all(
+        [
+            PersonPosting(
+                person=person,
+                unit=included,
+                posting_type="1ST_CALL",
+                starts_on=date(2026, 5, 1),
+                source="unit_board",
+            ),
+            PersonPosting(
+                person=cover_one,
+                unit=included,
+                posting_type="1ST_CALL",
+                starts_on=date(2026, 5, 1),
+                source="unit_board",
+            ),
+            PersonPosting(
+                person=cover_two,
+                unit=included,
+                posting_type="1ST_CALL",
+                starts_on=date(2026, 5, 1),
+                source="unit_board",
+            ),
+        ]
     )
     session.add(
         LeaveRequest(
@@ -89,12 +108,13 @@ def test_generate_empty_template_preserves_mandatory_and_blocks_adjustable_slots
 
         slots = session.query(DutySlot).all()
         assert result["latest_run"]["created_slots"] == 1
-        assert result["latest_run"]["needs_review_slots"] == 1
-        assert result["latest_run"]["blocked_slots"] == 1
+        assert result["latest_run"]["needs_review_slots"] == 0
+        assert result["latest_run"]["summary"]["unresolved_slots"] == 1
+        assert result["latest_run"]["blocked_slots"] == 2
         assert len(slots) == 1
-        assert slots[0].unit_id == included.id
+        assert slots[0].unit_id is None
         assert slots[0].duty_type == "MAIN_1ST_24HR"
-        assert slots[0].template_status == "needs_review"
+        assert slots[0].template_status == "unresolved"
         assert excluded.id not in {slot.unit_id for slot in slots}
 
 
@@ -127,17 +147,37 @@ def test_generate_empty_template_balances_duties_across_units() -> None:
         unit_a = Unit(code="UNIT_A", name="Unit A", campus="MAIN", minimum_free_people=0)
         unit_b = Unit(code="UNIT_B", name="Unit B", campus="MAIN", minimum_free_people=0)
         people = [
-            Person(canonical_name="A First", call_level="1ST_CALL"),
-            Person(canonical_name="B First", call_level="1ST_CALL"),
+            *[
+                Person(canonical_name=f"A First {index}", call_level="1ST_CALL")
+                for index in range(3)
+            ],
+            *[
+                Person(canonical_name=f"B First {index}", call_level="1ST_CALL")
+                for index in range(3)
+            ],
         ]
         session.add_all([unit_a, unit_b, *people])
         session.flush()
-        session.add_all(
-            [
-                PersonPosting(person=people[0], unit=unit_a, posting_type="1ST_CALL", starts_on=date(2026, 5, 1), source="unit_board"),
-                PersonPosting(person=people[1], unit=unit_b, posting_type="1ST_CALL", starts_on=date(2026, 5, 1), source="unit_board"),
-            ]
-        )
+        for person in people[:3]:
+            session.add(
+                PersonPosting(
+                    person=person,
+                    unit=unit_a,
+                    posting_type="1ST_CALL",
+                    starts_on=date(2026, 5, 1),
+                    source="unit_board",
+                )
+            )
+        for person in people[3:]:
+            session.add(
+                PersonPosting(
+                    person=person,
+                    unit=unit_b,
+                    posting_type="1ST_CALL",
+                    starts_on=date(2026, 5, 1),
+                    source="unit_board",
+                )
+            )
         session.commit()
         _period, scope = monthly_setup(session, "2026-05")
         update_scope_units(session, scope, [unit_a.id, unit_b.id], [], True, True, "Balance test")
@@ -160,6 +200,281 @@ def test_generate_empty_template_balances_duties_across_units() -> None:
         assert counts == {"UNIT_A": 2, "UNIT_B": 2}
 
 
+def test_generate_empty_template_balances_saturdays_and_sundays_across_units() -> None:
+    engine = create_engine("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(engine)
+
+    with Session(engine) as session:
+        units = [
+            Unit(code="UNIT_A", name="Unit A", campus="MAIN", minimum_free_people=0),
+            Unit(code="UNIT_B", name="Unit B", campus="MAIN", minimum_free_people=0),
+            Unit(code="UNIT_C", name="Unit C", campus="MAIN", minimum_free_people=0),
+        ]
+        people = [
+            Person(canonical_name=f"{unit_code} First {index}", call_level="1ST_CALL")
+            for unit_code in ["A", "B", "C"]
+            for index in range(3)
+        ]
+        session.add_all([*units, *people])
+        session.flush()
+        for unit_index, unit in enumerate(units):
+            for person in people[unit_index * 3 : unit_index * 3 + 3]:
+                session.add(
+                    PersonPosting(
+                        person=person,
+                        unit=unit,
+                        posting_type="1ST_CALL",
+                        starts_on=date(2026, 5, 1),
+                        source="unit_board",
+                    )
+                )
+        session.commit()
+        _period, scope = monthly_setup(session, "2026-05")
+        update_scope_units(
+            session,
+            scope,
+            [unit.id for unit in units],
+            [],
+            True,
+            True,
+            "Weekend balance test",
+        )
+
+        result = generate_empty_template(
+            session,
+            "2026-05",
+            TemplateGenerationOptions(
+                duty_keys=["MAIN_1ST_24HR"],
+                starts_on=date(2026, 5, 2),
+                ends_on=date(2026, 5, 17),
+                include_weekdays=False,
+                include_weekends=True,
+            ),
+        )
+
+        saturday_counts = {
+            unit.code: session.query(DutySlot)
+            .filter(
+                DutySlot.unit_id == unit.id,
+                DutySlot.duty_date.in_(
+                    [date(2026, 5, 2), date(2026, 5, 9), date(2026, 5, 16)]
+                ),
+            )
+            .count()
+            for unit in units
+        }
+        sunday_counts = {
+            unit.code: session.query(DutySlot)
+            .filter(
+                DutySlot.unit_id == unit.id,
+                DutySlot.duty_date.in_(
+                    [date(2026, 5, 3), date(2026, 5, 10), date(2026, 5, 17)]
+                ),
+            )
+            .count()
+            for unit in units
+        }
+
+        assert result["latest_run"]["created_slots"] == 6
+        assert saturday_counts == {"UNIT_A": 1, "UNIT_B": 1, "UNIT_C": 1}
+        assert sunday_counts == {"UNIT_A": 1, "UNIT_B": 1, "UNIT_C": 1}
+
+
+def test_generate_empty_template_counts_previous_24hr_duty_as_next_day_unavailable() -> None:
+    engine = create_engine("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(engine)
+
+    with Session(engine) as session:
+        unit_a = Unit(code="UNIT_A", name="Unit A", campus="MAIN", minimum_free_people=0)
+        unit_b = Unit(code="UNIT_B", name="Unit B", campus="MAIN", minimum_free_people=0)
+        people = [
+            Person(canonical_name=f"A First {index}", call_level="1ST_CALL")
+            for index in range(3)
+        ] + [
+            Person(canonical_name=f"B First {index}", call_level="1ST_CALL")
+            for index in range(3)
+        ]
+        session.add_all([unit_a, unit_b, *people])
+        session.flush()
+        for person in people[:3]:
+            session.add(
+                PersonPosting(
+                    person=person,
+                    unit=unit_a,
+                    posting_type="1ST_CALL",
+                    starts_on=date(2026, 5, 1),
+                    source="unit_board",
+                )
+            )
+        for person in people[3:]:
+            session.add(
+                PersonPosting(
+                    person=person,
+                    unit=unit_b,
+                    posting_type="1ST_CALL",
+                    starts_on=date(2026, 5, 1),
+                    source="unit_board",
+                )
+            )
+        session.commit()
+        _period, scope = monthly_setup(session, "2026-05")
+        update_scope_units(
+            session,
+            scope,
+            [unit_a.id, unit_b.id],
+            [],
+            True,
+            True,
+            "Post duty balance test",
+        )
+
+        generate_empty_template(
+            session,
+            "2026-05",
+            TemplateGenerationOptions(
+                duty_keys=["MAIN_1ST_24HR"],
+                starts_on=date(2026, 5, 1),
+                ends_on=date(2026, 5, 2),
+            ),
+        )
+
+        slots = session.query(DutySlot).order_by(DutySlot.duty_date).all()
+        may_1, may_2 = slots
+
+        assert may_1.unit_id == unit_a.id
+        assert may_2.unit_id == unit_b.id
+        assert may_2.template_status == "needs_review"
+
+
+def test_generate_empty_template_leaves_mandatory_slot_unresolved_when_all_units_hard_blocked() -> None:
+    engine = create_engine("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(engine)
+
+    with Session(engine) as session:
+        units = [
+            Unit(code="UNIT_A", name="Unit A", campus="MAIN", minimum_free_people=1),
+            Unit(code="UNIT_B", name="Unit B", campus="MAIN", minimum_free_people=1),
+        ]
+        people = [
+            Person(canonical_name="A First", call_level="1ST_CALL"),
+            Person(canonical_name="B First", call_level="1ST_CALL"),
+        ]
+        session.add_all([*units, *people])
+        session.flush()
+        for unit, person in zip(units, people, strict=True):
+            session.add(
+                PersonPosting(
+                    person=person,
+                    unit=unit,
+                    posting_type="1ST_CALL",
+                    starts_on=date(2026, 5, 1),
+                    source="unit_board",
+                )
+            )
+        session.commit()
+        _period, scope = monthly_setup(session, "2026-05")
+        update_scope_units(
+            session,
+            scope,
+            [unit.id for unit in units],
+            [],
+            True,
+            True,
+            "Unresolved mandatory slot test",
+        )
+
+        result = generate_empty_template(
+            session,
+            "2026-05",
+                TemplateGenerationOptions(
+                    duty_keys=["MAIN_1ST_24HR"],
+                    starts_on=date(2026, 5, 2),
+                    ends_on=date(2026, 5, 2),
+                ),
+            )
+
+        slot = session.query(DutySlot).one()
+
+        assert result["latest_run"]["summary"]["unresolved_slots"] == 1
+        assert result["latest_run"]["blocked_slots"] == 2
+        assert slot.unit_id is None
+        assert slot.slot_label == "unresolved"
+        assert slot.template_status == "unresolved"
+        assert "No safe unit allocation found" in str(slot.template_reason)
+
+
+def test_allocation_statistics_summarizes_units_dates_and_blocked_events() -> None:
+    engine = create_engine("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(engine)
+
+    with Session(engine) as session:
+        units = [
+            Unit(code="UNIT_A", name="Unit A", campus="MAIN", minimum_free_people=0),
+            Unit(code="UNIT_B", name="Unit B", campus="MAIN", minimum_free_people=0),
+        ]
+        people = [
+            Person(canonical_name=f"A First {index}", call_level="1ST_CALL")
+            for index in range(3)
+        ] + [
+            Person(canonical_name=f"B First {index}", call_level="1ST_CALL")
+            for index in range(3)
+        ]
+        session.add_all([*units, *people])
+        session.flush()
+        for person in people[:3]:
+            session.add(
+                PersonPosting(
+                    person=person,
+                    unit=units[0],
+                    posting_type="1ST_CALL",
+                    starts_on=date(2026, 5, 1),
+                    source="unit_board",
+                )
+            )
+        for person in people[3:]:
+            session.add(
+                PersonPosting(
+                    person=person,
+                    unit=units[1],
+                    posting_type="1ST_CALL",
+                    starts_on=date(2026, 5, 1),
+                    source="unit_board",
+                )
+            )
+        session.commit()
+        _period, scope = monthly_setup(session, "2026-05")
+        update_scope_units(
+            session,
+            scope,
+            [unit.id for unit in units],
+            [],
+            True,
+            True,
+            "Statistics test",
+        )
+
+        generate_empty_template(
+            session,
+            "2026-05",
+            TemplateGenerationOptions(
+                duty_keys=["MAIN_1ST_24HR"],
+                starts_on=date(2026, 5, 2),
+                ends_on=date(2026, 5, 3),
+            ),
+        )
+
+        stats = allocation_statistics(session, "2026-05")
+
+        assert stats["summary"]["total_slots"] == 2
+        assert stats["summary"]["included_units"] == 2
+        assert stats["unit_tallies"][0]["weekend_slots"] == 1
+        assert stats["unit_tallies"][1]["weekend_slots"] == 1
+        assert [row["total_slots"] for row in stats["date_distribution"]] == [1, 1]
+        matrix = {row["unit_name"]: row["counts"]["MAIN_1ST_24HR"] for row in stats["unit_duty_matrix"]}
+        assert matrix == {"Unit A": 1, "Unit B": 1, "Unresolved": 0}
+        assert stats["blocked_or_skipped_events"]
+
+
 def test_generate_empty_template_uses_unit_minimum_free_people() -> None:
     engine = create_engine("sqlite+pysqlite:///:memory:")
     Base.metadata.create_all(engine)
@@ -168,13 +483,25 @@ def test_generate_empty_template_uses_unit_minimum_free_people() -> None:
         strict = Unit(code="STRICT", name="Strict Unit", campus="MAIN", minimum_free_people=1)
         flexible = Unit(code="FLEX", name="Flexible Unit", campus="MAIN", minimum_free_people=0)
         strict_person = Person(canonical_name="Strict First", call_level="1ST_CALL")
-        flexible_person = Person(canonical_name="Flexible First", call_level="1ST_CALL")
-        session.add_all([strict, flexible, strict_person, flexible_person])
+        flexible_people = [
+            Person(canonical_name=f"Flexible First {index}", call_level="1ST_CALL")
+            for index in range(3)
+        ]
+        session.add_all([strict, flexible, strict_person, *flexible_people])
         session.flush()
         session.add_all(
             [
                 PersonPosting(person=strict_person, unit=strict, posting_type="1ST_CALL", starts_on=date(2026, 5, 1), source="unit_board"),
-                PersonPosting(person=flexible_person, unit=flexible, posting_type="1ST_CALL", starts_on=date(2026, 5, 1), source="unit_board"),
+                *[
+                    PersonPosting(
+                        person=person,
+                        unit=flexible,
+                        posting_type="1ST_CALL",
+                        starts_on=date(2026, 5, 1),
+                        source="unit_board",
+                    )
+                    for person in flexible_people
+                ],
             ]
         )
         session.commit()
@@ -186,8 +513,8 @@ def test_generate_empty_template_uses_unit_minimum_free_people() -> None:
             "2026-05",
             TemplateGenerationOptions(
                 duty_keys=["MAIN_1ST_24HR"],
-                starts_on=date(2026, 5, 1),
-                ends_on=date(2026, 5, 1),
+                starts_on=date(2026, 5, 2),
+                ends_on=date(2026, 5, 2),
             ),
         )
 
@@ -204,14 +531,26 @@ def test_generate_empty_template_uses_call_wise_unit_minimum_free_people() -> No
         flexible = Unit(code="FLEX", name="Flexible Unit", campus="MAIN", minimum_free_people=0)
         strict_first = Person(canonical_name="Strict First", call_level="1ST_CALL")
         strict_third = Person(canonical_name="Strict Third", call_level="3RD_CALL")
-        flexible_first = Person(canonical_name="Flexible First", call_level="1ST_CALL")
-        session.add_all([strict, flexible, strict_first, strict_third, flexible_first])
+        flexible_firsts = [
+            Person(canonical_name=f"Flexible First {index}", call_level="1ST_CALL")
+            for index in range(3)
+        ]
+        session.add_all([strict, flexible, strict_first, strict_third, *flexible_firsts])
         session.flush()
         session.add_all(
             [
                 PersonPosting(person=strict_first, unit=strict, posting_type="1ST_CALL", starts_on=date(2026, 5, 1), source="unit_board"),
                 PersonPosting(person=strict_third, unit=strict, posting_type="3RD_CALL", starts_on=date(2026, 5, 1), source="unit_board"),
-                PersonPosting(person=flexible_first, unit=flexible, posting_type="1ST_CALL", starts_on=date(2026, 5, 1), source="unit_board"),
+                *[
+                    PersonPosting(
+                        person=person,
+                        unit=flexible,
+                        posting_type="1ST_CALL",
+                        starts_on=date(2026, 5, 1),
+                        source="unit_board",
+                    )
+                    for person in flexible_firsts
+                ],
                 UnitCallMinimum(unit=strict, call_level="1ST_CALL", minimum_free_people=1),
             ]
         )
@@ -224,8 +563,8 @@ def test_generate_empty_template_uses_call_wise_unit_minimum_free_people() -> No
             "2026-05",
             TemplateGenerationOptions(
                 duty_keys=["MAIN_1ST_24HR"],
-                starts_on=date(2026, 5, 1),
-                ends_on=date(2026, 5, 1),
+                starts_on=date(2026, 5, 2),
+                ends_on=date(2026, 5, 2),
             ),
         )
 
@@ -260,8 +599,8 @@ def test_template_month_excludes_historical_import_slots() -> None:
             "2026-05",
             TemplateGenerationOptions(
                 duty_keys=["MAIN_1ST_24HR"],
-                starts_on=date(2026, 5, 1),
-                ends_on=date(2026, 5, 1),
+                starts_on=date(2026, 5, 2),
+                ends_on=date(2026, 5, 2),
             ),
         )
 
@@ -298,8 +637,8 @@ def test_clear_template_cache_removes_generated_slots_and_runs_only() -> None:
             "2026-05",
             TemplateGenerationOptions(
                 duty_keys=["MAIN_1ST_24HR"],
-                starts_on=date(2026, 5, 1),
-                ends_on=date(2026, 5, 1),
+                starts_on=date(2026, 5, 2),
+                ends_on=date(2026, 5, 2),
             ),
         )
 
@@ -419,9 +758,36 @@ def test_rota_template_api_generates_and_returns_template_month() -> None:
         assert response.status_code == 200
         payload = response.json()
         assert payload["latest_run"]["created_slots"] == 1
-        assert payload["latest_run"]["blocked_slots"] == 1
-        assert payload["summary"]["needs_review_slots"] == 1
-        assert payload["slots"][0]["unit_code"] == "UNIT_I"
+        assert payload["latest_run"]["blocked_slots"] == 2
+        assert payload["summary"]["status_counts"]["unresolved"] == 1
+        assert payload["slots"][0]["unit_code"] is None
+
+
+def test_rota_template_api_returns_allocation_statistics() -> None:
+    with template_client() as client:
+        token = sign_in(client)
+        headers = {"Authorization": f"Bearer {token}"}
+        client.post(
+            "/api/v1/rota-template/generate?month=2026-05",
+            headers=headers,
+            json={
+                "duty_keys": ["MAIN_1ST_24HR"],
+                "starts_on": "2026-05-02",
+                "ends_on": "2026-05-02",
+            },
+        )
+
+        response = client.get(
+            "/api/v1/rota-template/allocation-statistics?month=2026-05",
+            headers=headers,
+        )
+
+        assert response.status_code == 200
+        payload = response.json()
+        assert payload["summary"]["total_slots"] == 1
+        assert payload["unit_tallies"]
+        assert payload["unit_duty_matrix"]
+        assert payload["date_distribution"][0]["date"] == "2026-05-02"
 
 
 def test_rota_template_api_clears_cache() -> None:
@@ -540,7 +906,8 @@ def test_rota_template_call_wise_export_downloads_workbook() -> None:
         assert sheet.cell(row=1, column=2).value == "2026-05-01\nFriday"
         assert sheet.cell(row=1, column=3).value == "2026-05-02\nSaturday"
         assert sheet.cell(row=2, column=1).value == "Main 1st Call"
-        assert sheet.cell(row=2, column=2).value == "Unit 1"
+        assert sheet.cell(row=2, column=2).value is None
+        assert sheet.cell(row=2, column=3).value == "Unit 1"
         assert sheet.cell(row=1, column=3).fill.fgColor.rgb in {"FFFFE699", "00FFE699"}
 
 
