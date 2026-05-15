@@ -33,6 +33,7 @@ NEEDS_REVIEW = "needs_review"
 UNRESOLVED = "unresolved"
 ACTION_CREATED = "created"
 ACTION_FORCED = "forced_allocation"
+ACTION_SHUFFLED = "vertical_shuffle"
 ACTION_SKIPPED = "skipped"
 ACTION_BLOCKED = "blocked"
 FORCED_ALLOCATION_MODE = "forced_minimal_damage"
@@ -413,6 +414,272 @@ def forced_damage_score(allocation: UnitAllocation) -> tuple[int, int, int, int,
         unavailable_percent,
         allocation.score,
     )
+
+
+def template_pattern_score(slots: list[DutySlot], rules_by_key: dict[str, DutyRule]) -> int:
+    score = 0
+    by_day_group_unit: dict[tuple[date, str, UUID], int] = {}
+    by_duty_unit: dict[tuple[str, UUID], list[date]] = {}
+
+    for slot in slots:
+        if slot.unit_id is None:
+            continue
+        rule = rules_by_key.get(slot.duty_type)
+        group = rule.group if rule is not None else slot.duty_type
+        by_day_group_unit[(slot.duty_date, group, slot.unit_id)] = (
+            by_day_group_unit.get((slot.duty_date, group, slot.unit_id), 0) + 1
+        )
+        by_duty_unit.setdefault((slot.duty_type, slot.unit_id), []).append(slot.duty_date)
+
+    for count in by_day_group_unit.values():
+        if count > 1:
+            score += (count * (count - 1) // 2) * 100
+
+    for dates in by_duty_unit.values():
+        ordered_dates = sorted(set(dates))
+        for index, current in enumerate(ordered_dates):
+            for later in ordered_dates[index + 1 :]:
+                gap = (later - current).days
+                if gap == 1:
+                    score += 40
+                elif gap <= 3:
+                    score += 10
+                else:
+                    break
+    return score
+
+
+def slot_pressure_in_layout(
+    *,
+    slot: DutySlot,
+    unit: Unit,
+    all_slots: list[DutySlot],
+    rules: RotaPhaseOneRules,
+    rules_by_key: dict[str, DutyRule],
+    postings: list[PersonPosting],
+    leaves: dict[date, dict[UUID, list[LeaveRequest]]],
+    proposed_units: dict[UUID, Unit] | None = None,
+) -> dict[str, object] | None:
+    rule = rules_by_key.get(slot.duty_type)
+    if rule is None or not rule_applies_to_unit(rule, unit):
+        return None
+    required_call = normalize_call_level(slot.call_level) if slot.call_level else required_call_for_rule(rule)
+    same_day_count = 0
+    previous_24hr_count = 0
+    for other in all_slots:
+        if other.id == slot.id:
+            continue
+        other_unit = proposed_units.get(other.id, other.unit) if proposed_units is not None else other.unit
+        if other_unit is None or other_unit.id != unit.id:
+            continue
+        if other.duty_date == slot.duty_date:
+            same_day_count += 1
+        if other.is_24hr and other.duty_date + timedelta(days=1) == slot.duty_date:
+            other_call = normalize_call_level(other.call_level) if other.call_level else None
+            if required_call is None or other_call == required_call:
+                previous_24hr_count += 1
+    return pressure_for_slot(
+        unit_member_ids=active_unit_member_ids(postings, unit.id, slot.duty_date, call_level=required_call),
+        day_leaves=leaves.get(slot.duty_date, {}),
+        rule=rule,
+        rules=rules,
+        provisional_unit_day_duties=same_day_count,
+        provisional_post_24hr_duties=previous_24hr_count,
+        minimum_free_people=unit_minimum_free_people_for_call(unit, required_call, rules),
+    )
+
+
+def optimize_template_slot_layout(
+    *,
+    run: RotaTemplateGenerationRun,
+    created_slots: list[DutySlot],
+    existing_slots: list[DutySlot],
+    units: list[Unit],
+    rules: RotaPhaseOneRules,
+    postings: list[PersonPosting],
+    leaves: dict[date, dict[UUID, list[LeaveRequest]]],
+) -> tuple[int, list[RotaTemplateGenerationEvent]]:
+    rules_by_key = rules.duty_rules_by_key
+    units_by_id = {unit.id: unit for unit in units}
+    all_slots = [*existing_slots, *created_slots]
+    movable_slots = [
+        slot
+        for slot in created_slots
+        if slot.unit_id is not None and not is_forced_allocation_slot(slot)
+    ]
+    if len(movable_slots) < 2:
+        return 0, []
+
+    applied = 0
+    events: list[RotaTemplateGenerationEvent] = []
+    max_swaps = min(200, len(movable_slots) * 2)
+    current_score = template_pattern_score(all_slots, rules_by_key)
+
+    for _ in range(max_swaps):
+        best_swap: tuple[int, DutySlot, DutySlot, dict[str, object], dict[str, object]] | None = None
+        for index, first in enumerate(movable_slots):
+            first_unit = units_by_id.get(first.unit_id)
+            if first_unit is None:
+                continue
+            for second in movable_slots[index + 1 :]:
+                if first.duty_type != second.duty_type or first.duty_date == second.duty_date:
+                    continue
+                second_unit = units_by_id.get(second.unit_id)
+                if second_unit is None or first_unit.id == second_unit.id:
+                    continue
+
+                before_first = slot_pressure_in_layout(
+                    slot=first,
+                    unit=first_unit,
+                    all_slots=all_slots,
+                    rules=rules,
+                    rules_by_key=rules_by_key,
+                    postings=postings,
+                    leaves=leaves,
+                )
+                before_second = slot_pressure_in_layout(
+                    slot=second,
+                    unit=second_unit,
+                    all_slots=all_slots,
+                    rules=rules,
+                    rules_by_key=rules_by_key,
+                    postings=postings,
+                    leaves=leaves,
+                )
+                proposed_units = {first.id: second_unit, second.id: first_unit}
+                after_first = slot_pressure_in_layout(
+                    slot=first,
+                    unit=second_unit,
+                    all_slots=all_slots,
+                    rules=rules,
+                    rules_by_key=rules_by_key,
+                    postings=postings,
+                    leaves=leaves,
+                    proposed_units=proposed_units,
+                )
+                after_second = slot_pressure_in_layout(
+                    slot=second,
+                    unit=first_unit,
+                    all_slots=all_slots,
+                    rules=rules,
+                    rules_by_key=rules_by_key,
+                    postings=postings,
+                    leaves=leaves,
+                    proposed_units=proposed_units,
+                )
+                if any(
+                    item is None
+                    for item in [before_first, before_second, after_first, after_second]
+                ):
+                    continue
+                first_new_label = slot_label(second_unit)
+                second_new_label = slot_label(first_unit)
+                if any(
+                    other.id != first.id
+                    and other.duty_date == first.duty_date
+                    and other.duty_type == first.duty_type
+                    and other.slot_label == first_new_label
+                    for other in all_slots
+                ):
+                    continue
+                if any(
+                    other.id != second.id
+                    and other.duty_date == second.duty_date
+                    and other.duty_type == second.duty_type
+                    and other.slot_label == second_new_label
+                    for other in all_slots
+                ):
+                    continue
+                if after_first["status"] == "hard_block" or after_second["status"] == "hard_block":
+                    continue
+                if int(after_first["available_after_slot"]) < int(before_first["available_after_slot"]):
+                    continue
+                if int(after_second["available_after_slot"]) < int(before_second["available_after_slot"]):
+                    continue
+                if int(after_first["unavailable_percent"]) > int(before_first["unavailable_percent"]):
+                    continue
+                if int(after_second["unavailable_percent"]) > int(before_second["unavailable_percent"]):
+                    continue
+
+                original_first_unit = first.unit
+                original_second_unit = second.unit
+                first.unit = second_unit
+                first.unit_id = second_unit.id
+                second.unit = first_unit
+                second.unit_id = first_unit.id
+                candidate_score = template_pattern_score(all_slots, rules_by_key)
+                first.unit = original_first_unit
+                first.unit_id = first_unit.id
+                second.unit = original_second_unit
+                second.unit_id = second_unit.id
+
+                improvement = current_score - candidate_score
+                if improvement <= 0:
+                    continue
+                if best_swap is None or improvement > best_swap[0]:
+                    best_swap = (improvement, first, second, after_first, after_second)
+
+        if best_swap is None:
+            break
+
+        improvement, first, second, after_first, after_second = best_swap
+        first_unit = units_by_id[first.unit_id]
+        second_unit = units_by_id[second.unit_id]
+        first.unit = second_unit
+        first.unit_id = second_unit.id
+        first.slot_label = slot_label(second_unit)
+        second.unit = first_unit
+        second.unit_id = first_unit.id
+        second.slot_label = slot_label(first_unit)
+        note = (
+            f"Vertical shuffle swapped with {second.duty_date.isoformat()} "
+            f"{second.duty_type} to reduce same-unit clustering."
+        )
+        first.notes = f"{first.notes or ''} {note}".strip()
+        second.notes = (
+            f"{second.notes or ''} Vertical shuffle swapped with {first.duty_date.isoformat()} "
+            f"{first.duty_type} to reduce same-unit clustering."
+        ).strip()
+        events.append(
+            create_event(
+                run=run,
+                unit=second_unit,
+                day=first.duty_date,
+                rule=rules_by_key[first.duty_type],
+                action=ACTION_SHUFFLED,
+                severity="info",
+                reason="Conservative vertical shuffle applied without reducing available-member safety.",
+                details={
+                    "swapped_with_date": second.duty_date.isoformat(),
+                    "swapped_with_unit": str(first_unit.id),
+                    "pattern_score_improvement": improvement,
+                    "available_after_slot": after_first["available_after_slot"],
+                    "unavailable_percent": after_first["unavailable_percent"],
+                },
+            )
+        )
+        events.append(
+            create_event(
+                run=run,
+                unit=first_unit,
+                day=second.duty_date,
+                rule=rules_by_key[second.duty_type],
+                action=ACTION_SHUFFLED,
+                severity="info",
+                reason="Conservative vertical shuffle applied without reducing available-member safety.",
+                details={
+                    "swapped_with_date": first.duty_date.isoformat(),
+                    "swapped_with_unit": str(second_unit.id),
+                    "pattern_score_improvement": improvement,
+                    "available_after_slot": after_second["available_after_slot"],
+                    "unavailable_percent": after_second["unavailable_percent"],
+                },
+            )
+        )
+        applied += 1
+        current_score -= improvement
+
+    return applied, events
 
 
 def choose_balanced_unit(
@@ -818,6 +1085,19 @@ def generate_empty_template(
 
     for event in events:
         db.add(event)
+    db.flush()
+    vertical_shuffle_swaps, shuffle_events = optimize_template_slot_layout(
+        run=run,
+        created_slots=created_slots,
+        existing_slots=existing_slots,
+        units=units,
+        rules=rules,
+        postings=postings,
+        leaves=leaves,
+    )
+    for event in shuffle_events:
+        db.add(event)
+    events.extend(shuffle_events)
     run.created_slots = len(created_slots)
     run.needs_review_slots = sum(1 for slot in created_slots if slot.template_status == NEEDS_REVIEW)
     unresolved_slots = sum(1 for slot in created_slots if slot.template_status == UNRESOLVED)
@@ -832,6 +1112,7 @@ def generate_empty_template(
         "forced_review_slots": forced_slots,
         "skipped_slots": run.skipped_slots,
         "blocked_slots": run.blocked_slots,
+        "vertical_shuffle_swaps": vertical_shuffle_swaps,
     }
     db.commit()
     db.refresh(run)

@@ -1,3 +1,4 @@
+from collections import Counter
 from collections.abc import Generator
 from contextlib import contextmanager
 from datetime import date, datetime, time, timedelta
@@ -23,6 +24,7 @@ from app.services.rota_template import (
     call_wise_template_export,
     clear_template_cache,
     generate_empty_template,
+    optimize_template_slot_layout,
     template_month,
     write_call_wise_template_export,
     write_eagle_eye_matrix,
@@ -201,6 +203,126 @@ def test_generate_empty_template_balances_duties_across_units() -> None:
         }
         assert result["latest_run"]["created_slots"] == 4
         assert counts == {"UNIT_A": 2, "UNIT_B": 2}
+
+
+def test_vertical_shuffle_reduces_same_day_group_duplicates_without_changing_counts() -> None:
+    engine = create_engine("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(engine)
+
+    with Session(engine) as session:
+        unit_a = Unit(code="UNIT_A", name="Unit A", campus="MAIN", minimum_free_people=0)
+        unit_b = Unit(code="UNIT_B", name="Unit B", campus="MAIN", minimum_free_people=0)
+        people = [
+            *[Person(canonical_name=f"A Caesar {index}", call_level="1ST_CALL") for index in range(4)],
+            *[Person(canonical_name=f"B Caesar {index}", call_level="1ST_CALL") for index in range(4)],
+        ]
+        session.add_all([unit_a, unit_b, *people])
+        session.flush()
+        for person in people[:4]:
+            session.add(
+                PersonPosting(
+                    person=person,
+                    unit=unit_a,
+                    posting_type="1ST_CALL",
+                    starts_on=date(2026, 5, 1),
+                    source="unit_board",
+                )
+            )
+        for person in people[4:]:
+            session.add(
+                PersonPosting(
+                    person=person,
+                    unit=unit_b,
+                    posting_type="1ST_CALL",
+                    starts_on=date(2026, 5, 1),
+                    source="unit_board",
+                )
+            )
+        period, _scope = monthly_setup(session, "2026-05")
+        rules = default_phase_one_rules()
+        run = models.RotaTemplateGenerationRun(
+            rota_period=period,
+            status="completed",
+            included_units=2,
+            summary={"month": "2026-05"},
+        )
+        session.add(run)
+        starts_at = datetime.combine(date(2026, 5, 1), time(hour=8))
+        day_two_starts_at = starts_at + timedelta(days=1)
+        slots = [
+            DutySlot(
+                rota_period=period,
+                generation_run=run,
+                unit=unit_a,
+                duty_date=date(2026, 5, 1),
+                duty_type="CAESAR_A_12HR",
+                slot_label="UNIT_A:primary",
+                starts_at=starts_at,
+                ends_at=starts_at + timedelta(hours=12),
+                source="phase4_template",
+            ),
+            DutySlot(
+                rota_period=period,
+                generation_run=run,
+                unit=unit_a,
+                duty_date=date(2026, 5, 1),
+                duty_type="CAESAR_B_24HR",
+                slot_label="UNIT_A:primary",
+                starts_at=starts_at,
+                ends_at=starts_at + timedelta(hours=24),
+                is_24hr=True,
+                source="phase4_template",
+            ),
+            DutySlot(
+                rota_period=period,
+                generation_run=run,
+                unit=unit_b,
+                duty_date=date(2026, 5, 2),
+                duty_type="CAESAR_A_12HR",
+                slot_label="UNIT_B:primary",
+                starts_at=day_two_starts_at,
+                ends_at=day_two_starts_at + timedelta(hours=12),
+                source="phase4_template",
+            ),
+            DutySlot(
+                rota_period=period,
+                generation_run=run,
+                unit=unit_b,
+                duty_date=date(2026, 5, 2),
+                duty_type="CAESAR_B_24HR",
+                slot_label="UNIT_B:primary",
+                starts_at=day_two_starts_at,
+                ends_at=day_two_starts_at + timedelta(hours=24),
+                is_24hr=True,
+                source="phase4_template",
+            ),
+        ]
+        session.add_all(slots)
+        session.flush()
+        before_counts = Counter((slot.duty_type, slot.unit_id) for slot in slots)
+
+        swaps, events = optimize_template_slot_layout(
+            run=run,
+            created_slots=slots,
+            existing_slots=[],
+            units=[unit_a, unit_b],
+            rules=rules,
+            postings=list(session.query(PersonPosting).all()),
+            leaves={},
+        )
+        after_counts = Counter((slot.duty_type, slot.unit_id) for slot in slots)
+        day_one_units = {
+            slot.duty_type: slot.unit_id for slot in slots if slot.duty_date == date(2026, 5, 1)
+        }
+        day_two_units = {
+            slot.duty_type: slot.unit_id for slot in slots if slot.duty_date == date(2026, 5, 2)
+        }
+
+        assert swaps == 1
+        assert len(events) == 2
+        assert before_counts == after_counts
+        assert day_one_units["CAESAR_A_12HR"] != day_one_units["CAESAR_B_24HR"]
+        assert day_two_units["CAESAR_A_12HR"] != day_two_units["CAESAR_B_24HR"]
 
 
 def test_generate_empty_template_balances_saturdays_and_sundays_across_units() -> None:

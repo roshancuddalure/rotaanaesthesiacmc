@@ -9,7 +9,8 @@ Purpose: Department validation document describing the implemented algorithm pre
 The current rota system works in two separate stages.
 
 1. Template generation creates empty duty slots for a selected month. It does not assign people. It selects the unit for each duty/date using a balancing and staffing-pressure algorithm, creates one slot per selected duty/date, and marks each slot as `ready` or `needs_review`.
-2. Person assignment fills those slots later. Assignment may be manual by the rota board or automatic through Safe Auto-Fill. Both routes use the same validation checks: unit posting, call level, duty subgroup, leave, same-day duty conflict, previous-day 24-hour rest block, unit staffing safety, and monthly duty-count limits.
+2. A conservative post-generation layout shuffle may swap units between matching duty types to reduce same-unit clustering, such as a unit appearing in multiple duties from the same duty family on the same day. This shuffle preserves exact unit duty counts for each duty type and is accepted only when available-member safety is not reduced.
+3. Person assignment fills those slots later. Assignment may be manual by the rota board or automatic through Safe Auto-Fill. Both routes use the same validation checks: unit posting, call level, duty subgroup, leave, same-day duty conflict, previous-day 24-hour rest block, unit staffing safety, and monthly duty-count limits.
 
 The design is intentionally conservative. Mandatory clinical duty slots are preserved even if staffing pressure is high, but they are marked for review. Adjustable/non-mandatory slots are skipped when the selected allocation is hard blocked. Safe Auto-Fill only fills slots when the candidate is clearly eligible, validation is clear, no override is needed, and the required call level is unambiguous.
 
@@ -323,7 +324,27 @@ Cluster-specific unit display:
 - Duties without a specific 3rd-call cluster keep the normal unit label.
 - The label is included in the template API and Excel exports so the board can see the subgroup requirement while reviewing and assigning.
 
-### 5.8 Template Generation Audit Trail
+### 5.8 Conservative Layout Shuffle
+
+After the first-pass slots are created, the system runs a conservative layout polish pass. This pass does not create or remove slots. It only considers swapping the units between two generated, non-forced slots with the same exact duty type.
+
+The shuffle score penalizes:
+
+- the same unit appearing more than once in the same duty group on the same date;
+- the same unit receiving the same duty type on adjacent dates;
+- the same unit receiving the same duty type again within a short three-day window.
+
+A proposed swap is rejected unless all of the following are true:
+
+- both slots still satisfy the duty rule for the proposed unit;
+- neither resulting slot becomes hard blocked;
+- neither resulting slot has fewer `available_after_slot` members than before the swap;
+- neither resulting slot has a higher unavailable percentage than before the swap;
+- the swap does not create a duplicate generated slot key for the same period/date/duty/unit label.
+
+Because the two swapped slots have the same exact duty type, the pass preserves per-unit duty counts for that duty type and monthly totals. Accepted swaps are recorded as `vertical_shuffle` generation events and included in the run summary as `vertical_shuffle_swaps`.
+
+### 5.9 Template Generation Audit Trail
 
 Every generation creates a `RotaTemplateGenerationRun`.
 
