@@ -797,6 +797,7 @@ export interface RotaTemplateMonth {
     total_slots: number;
     ready_slots: number;
     needs_review_slots: number;
+    forced_review_slots: number;
     status_counts: Record<string, number>;
   };
   latest_run: null | {
@@ -828,6 +829,8 @@ export interface RotaTemplateMonth {
     unit_id: string | null;
     unit_name: string | null;
     unit_code: string | null;
+    unit_assignment_label: string | null;
+    unit_cluster_suffix: string | null;
     duty_date: string;
     duty_type: string;
     call_level: string | null;
@@ -838,6 +841,7 @@ export interface RotaTemplateMonth {
     max_assignees: number;
     source: string;
     template_status: string;
+    is_forced_allocation: boolean;
     template_reason: string | null;
     assignments: RotaSlotAssignment[];
     notes: string | null;
@@ -857,6 +861,7 @@ export interface RotaTemplateAllocationStatistics {
     total_slots: number;
     ready_slots: number;
     needs_review_slots: number;
+    forced_review_slots: number;
     unresolved_slots: number;
     included_units: number;
     units_used: number;
@@ -872,6 +877,7 @@ export interface RotaTemplateAllocationStatistics {
     total_slots: number;
     ready_slots: number;
     needs_review_slots: number;
+    forced_review_slots: number;
     unresolved_slots: number;
     weekday_slots: number;
     saturday_slots: number;
@@ -893,6 +899,7 @@ export interface RotaTemplateAllocationStatistics {
     total_slots: number;
     ready_slots: number;
     needs_review_slots: number;
+    forced_review_slots: number;
     unresolved_slots: number;
     unit_counts: Record<string, number>;
   }>;

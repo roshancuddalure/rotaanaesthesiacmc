@@ -32,8 +32,15 @@ READY = "ready"
 NEEDS_REVIEW = "needs_review"
 UNRESOLVED = "unresolved"
 ACTION_CREATED = "created"
+ACTION_FORCED = "forced_allocation"
 ACTION_SKIPPED = "skipped"
 ACTION_BLOCKED = "blocked"
+FORCED_ALLOCATION_MODE = "forced_minimal_damage"
+FORCED_ALLOCATION_REASON_PREFIX = "Forced minimal-damage allocation"
+
+
+def is_forced_allocation_slot(slot: DutySlot) -> bool:
+    return str(slot.template_reason or "").startswith(FORCED_ALLOCATION_REASON_PREFIX)
 
 
 @dataclass
@@ -387,6 +394,27 @@ def allocation_score(
     )
 
 
+def forced_damage_score(allocation: UnitAllocation) -> tuple[int, int, int, int, int, int, int]:
+    pressure = allocation.pressure
+    assigned_members = int(pressure["assigned_members"])
+    available_after = int(pressure["available_after_slot"])
+    minimum = int(pressure["minimum_free_people"])
+    shortage = max(0, minimum - available_after)
+    unavailable_members = int(pressure["unavailable_members"])
+    post_24hr_duties = int(pressure["provisional_post_24hr_duties"])
+    same_day_duties = int(pressure["provisional_unit_day_duties"])
+    unavailable_percent = int(pressure["unavailable_percent"])
+    return (
+        1 if assigned_members == 0 else 0,
+        shortage,
+        unavailable_members + post_24hr_duties,
+        same_day_duties,
+        post_24hr_duties,
+        unavailable_percent,
+        allocation.score,
+    )
+
+
 def choose_balanced_unit(
     *,
     units: list[Unit],
@@ -401,6 +429,7 @@ def choose_balanced_unit(
     unit_week_counts: dict[tuple[UUID, tuple[int, int]], int],
     unit_weekend_counts: dict[UUID, int],
     unit_weekend_day_counts: dict[tuple[UUID, int], int],
+    unit_forced_counts: dict[UUID, int],
     provisional_unit_day_counts: dict[tuple[UUID, date], int],
     provisional_post_24hr_counts: dict[tuple[UUID, date, str | None], int],
 ) -> tuple[UnitAllocation | None, list[UnitAllocation]]:
@@ -451,16 +480,31 @@ def choose_balanced_unit(
     if not allocations:
         return None, []
     safe_allocations = [allocation for allocation in allocations if not allocation.hard_blocked]
-    pool = safe_allocations if safe_allocations else allocations
     is_weekend = day.weekday() >= 5
+    if safe_allocations:
+        selected = min(
+            safe_allocations,
+            key=lambda allocation: (
+                unit_weekend_day_counts.get((allocation.unit.id, day.weekday()), 0) if is_weekend else 0,
+                unit_weekend_counts.get(allocation.unit.id, 0) if is_weekend else 0,
+                allocation.score,
+                unit_duty_counts.get((allocation.unit.id, rule.key), 0),
+                unit_month_counts.get(allocation.unit.id, 0),
+                allocation.unit.name,
+            ),
+        )
+        return selected, allocations
+
     selected = min(
-        pool,
+        allocations,
         key=lambda allocation: (
+            forced_damage_score(allocation)[0],
             unit_weekend_day_counts.get((allocation.unit.id, day.weekday()), 0) if is_weekend else 0,
             unit_weekend_counts.get(allocation.unit.id, 0) if is_weekend else 0,
-            allocation.score,
+            unit_forced_counts.get(allocation.unit.id, 0),
             unit_duty_counts.get((allocation.unit.id, rule.key), 0),
             unit_month_counts.get(allocation.unit.id, 0),
+            forced_damage_score(allocation)[1:],
             allocation.unit.name,
         ),
     )
@@ -524,11 +568,14 @@ def generate_empty_template(
     unit_week_counts: dict[tuple[UUID, tuple[int, int]], int] = {}
     unit_weekend_counts: dict[UUID, int] = {}
     unit_weekend_day_counts: dict[tuple[UUID, int], int] = {}
+    unit_forced_counts: dict[UUID, int] = {}
     provisional_unit_day_counts: dict[tuple[UUID, date], int] = {}
     provisional_post_24hr_counts: dict[tuple[UUID, date, str | None], int] = {}
     for slot in existing_slots:
         if slot.unit_id is None:
             continue
+        if is_forced_allocation_slot(slot):
+            unit_forced_counts[slot.unit_id] = unit_forced_counts.get(slot.unit_id, 0) + 1
         unit_month_counts[slot.unit_id] = unit_month_counts.get(slot.unit_id, 0) + 1
         unit_duty_counts[(slot.unit_id, slot.duty_type)] = (
             unit_duty_counts.get((slot.unit_id, slot.duty_type), 0) + 1
@@ -574,6 +621,7 @@ def generate_empty_template(
                 unit_week_counts=unit_week_counts,
                 unit_weekend_counts=unit_weekend_counts,
                 unit_weekend_day_counts=unit_weekend_day_counts,
+                unit_forced_counts=unit_forced_counts,
                 provisional_unit_day_counts=provisional_unit_day_counts,
                 provisional_post_24hr_counts=provisional_post_24hr_counts,
             )
@@ -597,99 +645,18 @@ def generate_empty_template(
                 continue
             hard_block = selected.hard_blocked
             warning = selected.warning
-            if hard_block:
-                if rule.is_adjustable and not rule.is_mandatory:
-                    for allocation in allocations:
-                        events.append(
-                            create_event(
-                                run=run,
-                                unit=allocation.unit,
-                                day=day,
-                                rule=rule,
-                                action=ACTION_BLOCKED,
-                                severity="error" if allocation.hard_blocked else "warning",
-                                reason=f"Adjustable slot skipped. {allocation.reason}",
-                                details={
-                                    **allocation.pressure,
-                                    "allocation_score": allocation.score,
-                                    "selected_unit": str(selected.unit.id),
-                                },
-                            )
-                        )
-                    continue
-
-                unresolved_label = "unresolved"
-                if (day, rule.key, unresolved_label) in existing_keys:
-                    events.append(
-                        create_event(
-                            run=run,
-                            unit=selected.unit,
-                            day=day,
-                            rule=rule,
-                            action=ACTION_SKIPPED,
-                            severity="warning",
-                            reason="An unresolved slot already exists for this date and duty.",
-                            details={"slot_label": unresolved_label, "duty_label": rule.label},
-                        )
-                    )
-                    continue
-
-                starts_at, ends_at = slot_bounds(day, rule)
-                inferred_call_levels = sorted(inferred_call_levels_from_duty_type(rule.key))
-                slot_call_level = (
-                    rule.allowed_call_levels[0]
-                    if len(rule.allowed_call_levels) == 1
-                    else inferred_call_levels[0] if len(inferred_call_levels) == 1 else None
-                )
-                reason = (
-                    "No safe unit allocation found. All candidate units are hard blocked "
-                    "after leave, same-day duties, and previous-day 24-hour post-duty "
-                    "availability were considered."
-                )
-                slot = DutySlot(
-                    rota_period=period,
-                    unit=None,
-                    duty_date=day,
-                    duty_type=rule.key,
-                    call_level=slot_call_level,
-                    slot_label=unresolved_label,
-                    starts_at=starts_at,
-                    ends_at=ends_at,
-                    is_24hr=rule.is_24hr,
-                    max_assignees=1,
-                    source=PHASE4_SLOT_SOURCE,
-                    template_status=UNRESOLVED,
-                    template_reason=reason,
-                    generation_run=run,
-                    notes=f"{rule.label} requires manual unit allocation. {reason}",
-                )
-                db.add(slot)
-                created_slots.append(slot)
-                existing_keys.add((day, rule.key, unresolved_label))
-                for allocation in allocations:
-                    events.append(
-                        create_event(
-                            run=run,
-                            unit=allocation.unit,
-                            day=day,
-                            rule=rule,
-                            action=ACTION_BLOCKED,
-                            severity="error",
-                            reason=f"Mandatory slot left unresolved. {allocation.reason}",
-                            details={
-                                **allocation.pressure,
-                                "template_status": UNRESOLVED,
-                                "allocation_score": allocation.score,
-                            },
-                        )
-                    )
-                continue
+            forced_allocation = hard_block
 
             unit = selected.unit
             label = slot_label(unit)
             starts_at, ends_at = slot_bounds(day, rule)
             status = NEEDS_REVIEW if hard_block or warning else READY
-            reason = selected.reason
+            reason = (
+                f"{FORCED_ALLOCATION_REASON_PREFIX}: all candidate units were hard blocked; "
+                f"{unit.name} was selected as the least damaging and fairest unit. {selected.reason}"
+                if forced_allocation
+                else selected.reason
+            )
             inferred_call_levels = sorted(inferred_call_levels_from_duty_type(rule.key))
             slot_call_level = (
                 rule.allowed_call_levels[0]
@@ -711,7 +678,11 @@ def generate_empty_template(
                 template_status=status,
                 template_reason=reason,
                 generation_run=run,
-                notes=f"{rule.label} generated for {unit.name}. {reason}",
+                notes=(
+                    f"{rule.label} forced to {unit.name}. {reason}"
+                    if forced_allocation
+                    else f"{rule.label} generated for {unit.name}. {reason}"
+                ),
             )
             db.add(slot)
             created_slots.append(slot)
@@ -729,6 +700,8 @@ def generate_empty_template(
                 unit_weekend_day_counts[weekend_day_key] = (
                     unit_weekend_day_counts.get(weekend_day_key, 0) + 1
                 )
+            if forced_allocation:
+                unit_forced_counts[unit.id] = unit_forced_counts.get(unit.id, 0) + 1
             provisional_key = (unit.id, day)
             provisional_unit_day_counts[provisional_key] = (
                 provisional_unit_day_counts.get(provisional_key, 0) + 1
@@ -748,14 +721,16 @@ def generate_empty_template(
                     unit=unit,
                     day=day,
                     rule=rule,
-                    action=ACTION_CREATED,
-                    severity=str(selected.pressure["severity"]),
+                    action=ACTION_FORCED if forced_allocation else ACTION_CREATED,
+                    severity="warning" if forced_allocation else str(selected.pressure["severity"]),
                     reason=reason,
                     details={
                         **selected.pressure,
                         "template_status": status,
-                        "allocation_mode": "balanced",
+                        "allocation_mode": FORCED_ALLOCATION_MODE if forced_allocation else "balanced",
                         "allocation_score": selected.score,
+                        "forced_damage_score": list(forced_damage_score(selected)) if forced_allocation else None,
+                        "forced_count_after": unit_forced_counts.get(unit.id, 0),
                         "weekend_day_count_after": (
                             unit_weekend_day_counts.get((unit.id, day.weekday()), 0)
                             if day.weekday() >= 5
@@ -771,6 +746,32 @@ def generate_empty_template(
                     },
                 )
             )
+            if forced_allocation:
+                for allocation in allocations:
+                    events.append(
+                        create_event(
+                            run=run,
+                            unit=allocation.unit,
+                            day=day,
+                            rule=rule,
+                            action=ACTION_BLOCKED,
+                            severity="error",
+                            reason=(
+                                "Forced allocation audit: this unit was hard blocked before "
+                                f"least-damage fallback was applied. {allocation.reason}"
+                            ),
+                            details={
+                                **allocation.pressure,
+                                "template_status": status,
+                                "allocation_mode": FORCED_ALLOCATION_MODE,
+                                "allocation_score": allocation.score,
+                                "forced_damage_score": list(forced_damage_score(allocation)),
+                                "selected_unit": str(unit.id),
+                                "selected_unit_name": unit.name,
+                            },
+                        )
+                    )
+                continue
             for allocation in allocations:
                 if allocation.unit.id == unit.id:
                     continue
@@ -820,6 +821,7 @@ def generate_empty_template(
     run.created_slots = len(created_slots)
     run.needs_review_slots = sum(1 for slot in created_slots if slot.template_status == NEEDS_REVIEW)
     unresolved_slots = sum(1 for slot in created_slots if slot.template_status == UNRESOLVED)
+    forced_slots = sum(1 for slot in created_slots if is_forced_allocation_slot(slot))
     run.skipped_slots = sum(1 for event in events if event.action == ACTION_SKIPPED)
     run.blocked_slots = sum(1 for event in events if event.action == ACTION_BLOCKED)
     run.summary = {
@@ -827,6 +829,7 @@ def generate_empty_template(
         "created_slots": run.created_slots,
         "needs_review_slots": run.needs_review_slots,
         "unresolved_slots": unresolved_slots,
+        "forced_review_slots": forced_slots,
         "skipped_slots": run.skipped_slots,
         "blocked_slots": run.blocked_slots,
     }
@@ -962,10 +965,11 @@ def template_month(db: Session, month: str, run_id: UUID | None = None) -> dict[
             "total_slots": len(slots),
             "ready_slots": status_counts.get(READY, 0),
             "needs_review_slots": status_counts.get(NEEDS_REVIEW, 0),
+            "forced_review_slots": sum(1 for slot in slots if is_forced_allocation_slot(slot)),
             "status_counts": status_counts,
         },
         "latest_run": run_to_dict(run) if run else None,
-        "slots": [slot_to_dict(slot) for slot in slots],
+        "slots": [slot_to_dict(slot, rules.duty_rules_by_key.get(slot.duty_type)) for slot in slots],
     }
 
 
@@ -994,6 +998,7 @@ def allocation_statistics(db: Session, month: str) -> dict[str, object]:
             "total_slots": 0,
             "ready_slots": 0,
             "needs_review_slots": 0,
+            "forced_review_slots": 0,
             "unresolved_slots": 0,
             "weekday_slots": 0,
             "saturday_slots": 0,
@@ -1013,6 +1018,7 @@ def allocation_statistics(db: Session, month: str) -> dict[str, object]:
         "total_slots": 0,
         "ready_slots": 0,
         "needs_review_slots": 0,
+        "forced_review_slots": 0,
         "unresolved_slots": 0,
         "weekday_slots": 0,
         "saturday_slots": 0,
@@ -1045,6 +1051,7 @@ def allocation_statistics(db: Session, month: str) -> dict[str, object]:
                 "total_slots": 0,
                 "ready_slots": 0,
                 "needs_review_slots": 0,
+                "forced_review_slots": 0,
                 "unresolved_slots": 0,
                 "weekday_slots": 0,
                 "saturday_slots": 0,
@@ -1058,10 +1065,13 @@ def allocation_statistics(db: Session, month: str) -> dict[str, object]:
 
         row = unit_rows[unit_key]
         row["total_slots"] = int(row["total_slots"]) + 1
+        forced_slot = is_forced_allocation_slot(slot)
         if slot.template_status == READY:
             row["ready_slots"] = int(row["ready_slots"]) + 1
         elif slot.template_status == NEEDS_REVIEW:
             row["needs_review_slots"] = int(row["needs_review_slots"]) + 1
+            if forced_slot:
+                row["forced_review_slots"] = int(row["forced_review_slots"]) + 1
         elif slot.template_status == UNRESOLVED:
             row["unresolved_slots"] = int(row["unresolved_slots"]) + 1
         if slot.duty_date.weekday() == 5:
@@ -1089,6 +1099,7 @@ def allocation_statistics(db: Session, month: str) -> dict[str, object]:
                 "total_slots": 0,
                 "ready_slots": 0,
                 "needs_review_slots": 0,
+                "forced_review_slots": 0,
                 "unresolved_slots": 0,
                 "unit_counts": {},
             },
@@ -1098,6 +1109,8 @@ def allocation_statistics(db: Session, month: str) -> dict[str, object]:
             date_row["ready_slots"] = int(date_row["ready_slots"]) + 1
         elif slot.template_status == NEEDS_REVIEW:
             date_row["needs_review_slots"] = int(date_row["needs_review_slots"]) + 1
+            if forced_slot:
+                date_row["forced_review_slots"] = int(date_row["forced_review_slots"]) + 1
         elif slot.template_status == UNRESOLVED:
             date_row["unresolved_slots"] = int(date_row["unresolved_slots"]) + 1
         unit_counts = date_row["unit_counts"]
@@ -1107,7 +1120,7 @@ def allocation_statistics(db: Session, month: str) -> dict[str, object]:
     event_rows = []
     if run:
         for event in sorted(run.events, key=lambda item: item.created_at):
-            if event.action in {ACTION_BLOCKED, ACTION_SKIPPED} or str(event.details.get("template_status")) == UNRESOLVED:
+            if event.action in {ACTION_BLOCKED, ACTION_SKIPPED, ACTION_FORCED} or str(event.details.get("template_status")) == UNRESOLVED:
                 event_rows.append(event_to_dict(event))
 
     return {
@@ -1123,6 +1136,7 @@ def allocation_statistics(db: Session, month: str) -> dict[str, object]:
             "total_slots": len(slots),
             "ready_slots": sum(1 for slot in slots if slot.template_status == READY),
             "needs_review_slots": sum(1 for slot in slots if slot.template_status == NEEDS_REVIEW),
+            "forced_review_slots": sum(1 for slot in slots if is_forced_allocation_slot(slot)),
             "unresolved_slots": sum(1 for slot in slots if slot.template_status == UNRESOLVED),
             "included_units": len(included_units),
             "units_used": sum(1 for row in unit_rows.values() if int(row["total_slots"]) > 0 and not row["is_unresolved"]),
@@ -1161,12 +1175,15 @@ def allocation_statistics(db: Session, month: str) -> dict[str, object]:
     }
 
 
-def slot_to_dict(slot: DutySlot) -> dict[str, object]:
+def slot_to_dict(slot: DutySlot, rule: DutyRule | None = None) -> dict[str, object]:
+    unit_assignment_label = display_unit_for_slot(slot.unit, rule)
     return {
         "id": str(slot.id),
         "unit_id": str(slot.unit_id) if slot.unit_id else None,
         "unit_name": slot.unit.name if slot.unit else None,
         "unit_code": slot.unit.code if slot.unit else None,
+        "unit_assignment_label": unit_assignment_label or None,
+        "unit_cluster_suffix": cluster_suffix_for_rule(rule),
         "duty_date": slot.duty_date.isoformat(),
         "duty_type": slot.duty_type,
         "call_level": slot.call_level,
@@ -1177,6 +1194,7 @@ def slot_to_dict(slot: DutySlot) -> dict[str, object]:
         "max_assignees": slot.max_assignees,
         "source": slot.source,
         "template_status": slot.template_status,
+        "is_forced_allocation": is_forced_allocation_slot(slot),
         "template_reason": slot.template_reason,
         "assignments": [
             {
@@ -1248,6 +1266,27 @@ def display_unit_for_eagle_eye(unit: Unit | None) -> str:
         if suffix in ROMAN_UNIT_NUMBERS:
             return f"Unit {ROMAN_UNIT_NUMBERS[suffix]}"
     return value.replace("UNIT", "Unit")
+
+
+CLUSTER_UNIT_SUFFIXES = {
+    "3rd_call_a": "3A",
+    "3rd_call_b": "3B",
+    "3rd_call_c": "3C",
+}
+
+
+def cluster_suffix_for_rule(rule: DutyRule | None) -> str | None:
+    if rule is None or len(rule.allowed_cluster_keys) != 1:
+        return None
+    return CLUSTER_UNIT_SUFFIXES.get(rule.allowed_cluster_keys[0])
+
+
+def display_unit_for_slot(unit: Unit | None, rule: DutyRule | None = None) -> str:
+    unit_label = display_unit_for_eagle_eye(unit)
+    suffix = cluster_suffix_for_rule(rule)
+    if unit_label and suffix:
+        return f"{unit_label} ({suffix})"
+    return unit_label
 
 
 def eagle_eye_group_label(rule: DutyRule | None, duty_key: str) -> str:
@@ -1331,7 +1370,7 @@ def write_call_wise_template_export(
                 slot.duty_date,
                 rule_order.get(slot.duty_type, 9999),
                 rule_by_key.get(slot.duty_type).label if rule_by_key.get(slot.duty_type) else slot.duty_type,
-                display_unit_for_eagle_eye(slot.unit),
+                display_unit_for_slot(slot.unit, rule_by_key.get(slot.duty_type)),
                 slot.slot_label,
             ),
         )
@@ -1352,7 +1391,7 @@ def write_call_wise_template_export(
 
         units_by_duty_day: dict[tuple[str, date], list[str]] = {}
         for slot in call_slots:
-            unit_name = display_unit_for_eagle_eye(slot.unit)
+            unit_name = display_unit_for_slot(slot.unit, rule_by_key.get(slot.duty_type))
             if unit_name:
                 units_by_duty_day.setdefault((slot.duty_type, slot.duty_date), []).append(unit_name)
 
@@ -1416,7 +1455,7 @@ def write_eagle_eye_matrix(
 
     units_by_duty_day: dict[tuple[str, date], list[str]] = {}
     for slot in slots:
-        unit_name = display_unit_for_eagle_eye(slot.unit)
+        unit_name = display_unit_for_slot(slot.unit, rule_by_key.get(slot.duty_type))
         if unit_name:
             units_by_duty_day.setdefault((slot.duty_type, slot.duty_date), []).append(unit_name)
 

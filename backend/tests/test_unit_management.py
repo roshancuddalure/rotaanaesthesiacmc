@@ -171,6 +171,37 @@ def test_unit_management_month_lists_assignment_and_leave_summary() -> None:
         assert main_summary["leave_by_call_level"] == {"3RD_CALL": 3}
 
 
+def test_special_unit_postings_can_be_created_without_unit() -> None:
+    with unit_client() as client:
+        token = sign_in(client)
+        headers = auth_headers(token)
+        sujil_id, _main_id, _cardiac_id = seeded_ids(client, token)
+
+        response = client.post(
+            "/api/v1/unit-management/assignments",
+            headers=headers,
+            json={
+                "person_id": sujil_id,
+                "unit_id": None,
+                "posting_type": "PAIN",
+                "starts_on": "2026-06-01",
+                "ends_on": "2026-06-30",
+                "notes": "Pain call posting",
+            },
+        )
+
+        assert response.status_code == 200
+        created = response.json()
+        assert created["unit"] is None
+        assert created["posting_type"] == "PAIN"
+
+        month = client.get("/api/v1/unit-management/month?month=2026-06", headers=headers).json()
+        pain_assignment = next(row for row in month["assignments"] if row["id"] == created["id"])
+        assert pain_assignment["unit"] is None
+        assert pain_assignment["posting_type"] == "PAIN"
+        assert all(issue["code"] != "MISSING_UNIT" for issue in month["validation_issues"])
+
+
 def test_unit_management_updates_unit_minimum_free_people() -> None:
     with unit_client() as client:
         token = sign_in(client)

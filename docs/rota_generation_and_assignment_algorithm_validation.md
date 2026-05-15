@@ -247,7 +247,19 @@ Non-weekend selection tie-break order:
 3. lower month count;
 4. unit name alphabetically.
 
-Hard-blocked units are avoided if at least one non-hard-blocked unit exists. If all candidate units are hard blocked, the algorithm still chooses the lowest scoring hard-blocked unit, then applies the mandatory/adjustable duty rule described below.
+Hard-blocked units are avoided if at least one non-hard-blocked unit exists. If all candidate units are hard blocked, the algorithm switches to forced minimal-damage allocation. That fallback still chooses a unit so the generated rota template and Excel exports do not contain empty duty cells, but the slot is marked `needs_review` and is counted separately as a forced review slot.
+
+Forced minimal-damage allocation ranking:
+
+1. prefer units with active members in the required call level over units with no active members in that call level;
+2. on weekends, prefer the unit with fewer slots on that specific weekend day type, Saturday or Sunday;
+3. prefer the unit with fewer total weekend slots;
+4. prefer the unit with fewer forced allocations already created in the current run;
+5. prefer the unit with fewer slots for the same duty type;
+6. prefer the unit with fewer total monthly slots;
+7. then use least-damage pressure scoring: smaller shortage below minimum free people, fewer leave/post-duty unavailable members, fewer same-day unit duties, lower previous-day 24-hour post-duty burden, lower unavailable percentage, and lower ordinary allocation score.
+
+This means the fallback is not random. It first keeps the forced burden evenly divided, then chooses the least damaging option within those fairness constraints.
 
 Previous-day post-duty rule:
 
@@ -260,16 +272,16 @@ Previous-day post-duty rule:
 For each date and selected duty rule:
 
 - If no applicable unit can be selected, no slot is created and skipped events are recorded.
-- If all applicable unit allocations are hard blocked and the duty is adjustable and not mandatory, no slot is created. Blocked generation events are recorded.
-- If all applicable unit allocations are hard blocked and the duty is mandatory, the system creates an unresolved slot without assigning it to a unit.
+- If all applicable unit allocations are hard blocked, the system creates a forced minimal-damage slot against the fairest least-damaging unit.
 - Otherwise, the slot is created against the selected unit.
 
-Mandatory slots are therefore preserved for board visibility, but the engine does not force them onto a hard-blocked unit.
+The engine therefore avoids empty cells in the generated rota template. Forced allocations are not treated as fully safe; they are marked for board review and audited with the pressure details for every candidate unit.
 
 Created slots store:
 
 - rota period;
 - unit;
+- unit assignment display label, including cluster suffix when applicable;
 - duty date;
 - duty type;
 - inferred or configured call level;
@@ -278,7 +290,7 @@ Created slots store:
 - 24-hour flag;
 - max assignees, currently `1`;
 - source `phase4_template`;
-- template status, either `ready`, `needs_review`, or `unresolved`;
+- template status, usually `ready` or `needs_review`;
 - template reason;
 - generation run id;
 - explanatory notes.
@@ -287,17 +299,29 @@ Slot status:
 
 - `ready` if selected unit pressure is safe;
 - `needs_review` if selected unit pressure is warning;
-- `unresolved` if no safe unit allocation was found for a mandatory slot.
+- `needs_review` if all units were hard blocked and forced minimal-damage allocation was required.
 
 After each created slot, the unit month/week/weekend/duty/day counters are updated immediately, so later decisions in the same run account for earlier allocations.
 
-Unresolved slot behavior:
+Forced review slot behavior:
 
-- `unit_id` is left empty.
-- `slot_label` is set to `unresolved`.
-- `template_reason` states that no safe unit allocation was found.
+- `unit_id` is set to the chosen least-damaging unit.
+- `slot_label` is the normal unit slot label.
+- `template_status` is `needs_review`.
+- `template_reason` starts with `Forced minimal-damage allocation`.
+- The selected forced slot is counted under forced review slots in allocation statistics.
 - Per-unit blocked events are stored with each unit's availability/pressure details.
-- The rota board must manually review and decide how to handle the duty.
+- The rota board should review these slots first before final assignment.
+
+Cluster-specific unit display:
+
+- If a duty rule is restricted to exactly one known 3rd-call cluster, the generated slot exposes a unit assignment label with the cluster in brackets.
+- `3rd_call_a` is displayed as `(3A)`.
+- `3rd_call_b` is displayed as `(3B)`.
+- `3rd_call_c` is displayed as `(3C)`.
+- Example: Unit I assigned to RC 3rd Call A is displayed as `Unit 1 (3A)`.
+- Duties without a specific 3rd-call cluster keep the normal unit label.
+- The label is included in the template API and Excel exports so the board can see the subgroup requirement while reviewing and assigning.
 
 ### 5.8 Template Generation Audit Trail
 
@@ -581,7 +605,7 @@ The statistics view summarizes generated slots and generation decisions in five 
 
 1. Unit-Wise Slot Tally
 
-This table shows each unit's total slots, weekday slots, Saturday slots, Sunday slots, total weekend slots, 24-hour slots, ready slots, needs-review slots, and unresolved slots. It is used to check whether one unit has received a disproportionate share of the template.
+This table shows each unit's total slots, weekday slots, Saturday slots, Sunday slots, total weekend slots, 24-hour slots, ready slots, needs-review slots, forced review slots, and unresolved slots. It is used to check whether one unit has received a disproportionate share of the template and whether forced fallback duties were divided across units.
 
 2. Duty Type Matrix
 
@@ -589,15 +613,15 @@ This table shows units as rows and duty types as columns. It is used to check wh
 
 3. Date-Wise Distribution
 
-This table shows each date, day name, total generated slots, per-unit slot count, needs-review count, and unresolved count. It is used to check whether the engine reduced allocations to units with leave, same-day duty pressure, or previous-day 24-hour post-duty pressure.
+This table shows each date, day name, total generated slots, per-unit slot count, needs-review count, forced review count, and unresolved count. It is used to check whether the engine reduced allocations to units with leave, same-day duty pressure, or previous-day 24-hour post-duty pressure.
 
 4. Call-Level Distribution
 
 This table shows how generated slots are divided by required call level for each unit. It is used to check whether 1st call, 2nd call, 3rd call, 4th call, and other call-linked duties were distributed appropriately.
 
-5. Blocked, Skipped, and Unresolved Decisions
+5. Blocked, Skipped, and Forced Decisions
 
-This table shows date, unit, duty, action, and reason for allocation decisions that did not become a normal ready slot. It includes skipped units, skipped adjustable duties, blocked allocations, and unresolved mandatory duties. This is the main evidence table when the rota board needs to explain why the engine did not allocate a duty automatically.
+This table shows date, unit, duty, action, and reason for allocation decisions that did not become a normal ready slot. It includes skipped units, blocked allocations, and forced minimal-damage allocations. This is the main evidence table when the rota board needs to explain why the engine selected a review-required unit instead of leaving the duty empty.
 
 The allocation statistics are generated from saved `DutySlot` rows and the latest `RotaTemplateGenerationEvent` audit trail. They are therefore not a separate calculation that can disagree with the generated template; they summarize the actual generated slots and recorded decisions.
 
@@ -626,8 +650,7 @@ It does the following:
 - uses configurable duty rules and default department duty dictionary;
 - checks leave pressure and unit/call-level minimum staffing while generating slots;
 - balances generated slots across units using month, duty, week, weekend, same-day, leave-pressure, and minimum-staffing penalties;
-- preserves mandatory duties with review flags when unsafe;
-- skips adjustable non-mandatory duties when the selected allocation is hard blocked;
+- uses forced minimal-damage allocation when every unit is hard blocked, so generated duty sheets stay complete while those slots remain clearly marked for review;
 - validates person assignment using unit posting, call level, subgroup eligibility, leave, same-day duty, previous-day 24-hour rest, unit safety, and monthly duty limits;
 - ranks candidate suggestions with transparent scoring and explanation text;
 - auto-fills only safe, clear, single-call-level slots;

@@ -1372,16 +1372,13 @@ h3 {
 }
 
 .special-unit-card {
-  cursor: default;
   border-color: var(--color-success);
   background: color-mix(in srgb, var(--color-success-bg) 42%, var(--color-surface));
 }
 
 .special-unit-card:hover,
 .special-unit-card:focus-visible {
-  border-color: var(--color-success);
-  box-shadow: none;
-  transform: none;
+  border-color: var(--color-focus);
 }
 
 .unit-card header {
@@ -1605,6 +1602,10 @@ h3 {
   border-radius: var(--radius-sm);
   background: var(--color-bg);
   padding: var(--space-3);
+}
+
+.special-assignment-editor {
+  grid-template-columns: minmax(180px, 1.2fr) repeat(2, minmax(125px, 0.8fr)) minmax(180px, 1fr) auto;
 }
 
 .unit-assignment-highlight {

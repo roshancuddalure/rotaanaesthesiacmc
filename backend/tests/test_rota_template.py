@@ -20,6 +20,7 @@ from app.services.rota_rules import default_phase_one_rules
 from app.services.rota_template import (
     TemplateGenerationOptions,
     allocation_statistics,
+    call_wise_template_export,
     clear_template_cache,
     generate_empty_template,
     template_month,
@@ -88,7 +89,7 @@ def lock_month_scope(session: Session, included: Unit, excluded: Unit) -> None:
     )
 
 
-def test_generate_empty_template_preserves_mandatory_and_blocks_adjustable_slots() -> None:
+def test_generate_empty_template_forces_hard_blocked_slots_for_review() -> None:
     engine = create_engine("sqlite+pysqlite:///:memory:")
     Base.metadata.create_all(engine)
 
@@ -107,14 +108,16 @@ def test_generate_empty_template_preserves_mandatory_and_blocks_adjustable_slots
         )
 
         slots = session.query(DutySlot).all()
-        assert result["latest_run"]["created_slots"] == 1
-        assert result["latest_run"]["needs_review_slots"] == 0
-        assert result["latest_run"]["summary"]["unresolved_slots"] == 1
+        assert result["latest_run"]["created_slots"] == 2
+        assert result["latest_run"]["needs_review_slots"] == 2
+        assert result["latest_run"]["summary"]["unresolved_slots"] == 0
+        assert result["latest_run"]["summary"]["forced_review_slots"] == 2
         assert result["latest_run"]["blocked_slots"] == 2
-        assert len(slots) == 1
-        assert slots[0].unit_id is None
-        assert slots[0].duty_type == "MAIN_1ST_24HR"
-        assert slots[0].template_status == "unresolved"
+        assert len(slots) == 2
+        assert {slot.unit_id for slot in slots} == {included.id}
+        assert {slot.duty_type for slot in slots} == {"MAIN_1ST_24HR", "MAIN_PAC_PG"}
+        assert {slot.template_status for slot in slots} == {"needs_review"}
+        assert all(str(slot.template_reason).startswith("Forced minimal-damage allocation") for slot in slots)
         assert excluded.id not in {slot.unit_id for slot in slots}
 
 
@@ -346,7 +349,7 @@ def test_generate_empty_template_counts_previous_24hr_duty_as_next_day_unavailab
         assert may_2.template_status == "needs_review"
 
 
-def test_generate_empty_template_leaves_mandatory_slot_unresolved_when_all_units_hard_blocked() -> None:
+def test_generate_empty_template_forces_and_balances_when_all_units_hard_blocked() -> None:
     engine = create_engine("sqlite+pysqlite:///:memory:")
     Base.metadata.create_all(engine)
 
@@ -388,19 +391,21 @@ def test_generate_empty_template_leaves_mandatory_slot_unresolved_when_all_units
             "2026-05",
                 TemplateGenerationOptions(
                     duty_keys=["MAIN_1ST_24HR"],
-                    starts_on=date(2026, 5, 2),
+                    starts_on=date(2026, 5, 1),
                     ends_on=date(2026, 5, 2),
                 ),
             )
 
-        slot = session.query(DutySlot).one()
+        slots = session.query(DutySlot).order_by(DutySlot.duty_date).all()
 
-        assert result["latest_run"]["summary"]["unresolved_slots"] == 1
-        assert result["latest_run"]["blocked_slots"] == 2
-        assert slot.unit_id is None
-        assert slot.slot_label == "unresolved"
-        assert slot.template_status == "unresolved"
-        assert "No safe unit allocation found" in str(slot.template_reason)
+        assert result["latest_run"]["created_slots"] == 2
+        assert result["latest_run"]["summary"]["unresolved_slots"] == 0
+        assert result["latest_run"]["summary"]["forced_review_slots"] == 2
+        assert result["latest_run"]["blocked_slots"] == 4
+        assert [slot.unit_id for slot in slots] == [units[0].id, units[1].id]
+        assert {slot.slot_label for slot in slots} == {"UNIT_A:primary", "UNIT_B:primary"}
+        assert {slot.template_status for slot in slots} == {"needs_review"}
+        assert all("least damaging and fairest unit" in str(slot.template_reason) for slot in slots)
 
 
 def test_allocation_statistics_summarizes_units_dates_and_blocked_events() -> None:
@@ -473,6 +478,64 @@ def test_allocation_statistics_summarizes_units_dates_and_blocked_events() -> No
         matrix = {row["unit_name"]: row["counts"]["MAIN_1ST_24HR"] for row in stats["unit_duty_matrix"]}
         assert matrix == {"Unit A": 1, "Unit B": 1, "Unresolved": 0}
         assert stats["blocked_or_skipped_events"]
+
+
+def test_cluster_specific_duties_show_cluster_suffix_in_unit_assignment_label() -> None:
+    engine = create_engine("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(engine)
+
+    with Session(engine) as session:
+        unit = Unit(code="UNIT_I", name="Unit I", campus="MAIN", minimum_free_people=0)
+        people = [
+            Person(canonical_name=f"Third Call {index}", call_level="3RD_CALL")
+            for index in range(8)
+        ]
+        session.add_all([unit, *people])
+        session.flush()
+        for person in people:
+            session.add(
+                PersonPosting(
+                    person=person,
+                    unit=unit,
+                    posting_type="3RD_CALL",
+                    starts_on=date(2026, 5, 1),
+                    source="unit_board",
+                )
+            )
+        session.commit()
+        _period, scope = monthly_setup(session, "2026-05")
+        update_scope_units(session, scope, [unit.id], [], True, True, "Cluster suffix test")
+
+        result = generate_empty_template(
+            session,
+            "2026-05",
+            TemplateGenerationOptions(
+                duty_keys=["RC_3RD_CALL_A", "RC_3RD_CALL_B", "MAIN_PAC_PG"],
+                starts_on=date(2026, 5, 2),
+                ends_on=date(2026, 5, 2),
+            ),
+        )
+
+        labels = {
+            slot["duty_type"]: slot["unit_assignment_label"]
+            for slot in result["slots"]
+        }
+
+        assert labels["RC_3RD_CALL_A"] == "Unit 1 (3A)"
+        assert labels["RC_3RD_CALL_B"] == "Unit 1 (3B)"
+        assert labels["MAIN_PAC_PG"] == "Unit 1 (3C)"
+
+        filename, payload = call_wise_template_export(session, "2026-05")
+        workbook = load_workbook(BytesIO(payload))
+
+        assert filename == "call-wise-rota-template-2026-05.xlsx"
+        sheet_values = [
+            workbook["3rd Call"].cell(row=row, column=2).value
+            for row in range(2, 5)
+        ]
+        assert "Unit 1 (3A)" in sheet_values
+        assert "Unit 1 (3B)" in sheet_values
+        assert "Unit 1 (3C)" in sheet_values
 
 
 def test_generate_empty_template_uses_unit_minimum_free_people() -> None:
@@ -757,10 +820,13 @@ def test_rota_template_api_generates_and_returns_template_month() -> None:
 
         assert response.status_code == 200
         payload = response.json()
-        assert payload["latest_run"]["created_slots"] == 1
+        assert payload["latest_run"]["created_slots"] == 2
         assert payload["latest_run"]["blocked_slots"] == 2
-        assert payload["summary"]["status_counts"]["unresolved"] == 1
-        assert payload["slots"][0]["unit_code"] is None
+        assert payload["summary"]["status_counts"]["needs_review"] == 2
+        assert payload["summary"]["forced_review_slots"] == 2
+        assert payload["summary"]["status_counts"].get("unresolved", 0) == 0
+        assert {slot["unit_code"] for slot in payload["slots"]} == {"UNIT_I"}
+        assert all(slot["is_forced_allocation"] for slot in payload["slots"])
 
 
 def test_rota_template_api_returns_allocation_statistics() -> None:
@@ -906,7 +972,8 @@ def test_rota_template_call_wise_export_downloads_workbook() -> None:
         assert sheet.cell(row=1, column=2).value == "2026-05-01\nFriday"
         assert sheet.cell(row=1, column=3).value == "2026-05-02\nSaturday"
         assert sheet.cell(row=2, column=1).value == "Main 1st Call"
-        assert sheet.cell(row=2, column=2).value is None
+        assert sheet.cell(row=2, column=2).value == "Unit 1"
+        assert sheet.cell(row=2, column=3).value == "Unit 1"
         assert sheet.cell(row=2, column=3).value == "Unit 1"
         assert sheet.cell(row=1, column=3).fill.fgColor.rgb in {"FFFFE699", "00FFE699"}
 

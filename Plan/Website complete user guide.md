@@ -375,6 +375,17 @@ Manual unit assignment workflow:
 6. Add notes if needed.
 7. Click Add Assignment.
 
+Special posting card workflow:
+
+1. Choose the month.
+2. Click Pain Calls, SICU, or DRP.
+3. Select the member.
+4. Enter start and end dates.
+5. Add notes if needed.
+6. Click Add Assignment.
+
+Pain Calls, SICU, and DRP are handled as special assignment cards. They do not need a normal unit to be selected, and they are saved with the special posting type instead of a unit load. Use these cards when the person is posted to that special work area for the month or part of the month.
+
 Unitwise import workflow:
 
 1. Choose the month.
@@ -457,6 +468,7 @@ Important terms:
 - Needs review: slot requires board attention.
 - Hard blocked: rules say assignment is unsafe unless data or rules change.
 - Safety checked: slot has been checked against leave, unit, rest, and staffing rules.
+- Cluster suffix: labels such as `(3A)`, `(3B)`, or `(3C)` beside a unit mean the duty is restricted to that specific 3rd-call eligibility subgroup.
 - Safe suggestion: candidate the system considers safe.
 - Review suggestion: candidate may be possible but needs human decision.
 - Blocked suggestion: candidate should not normally be used.
@@ -484,17 +496,25 @@ Review calendar workflow:
 3. Review duty groups.
 4. Under each duty group, slots are ordered call-wise.
 5. Check unit, duty, required call, safety, assigned member, suggestions, and manual assignment.
+6. If a unit is shown as `Unit 1 (3A)`, `Unit 1 (3B)`, or `Unit 1 (3C)`, assign only from the matching 3rd-call subgroup unless a validated board decision says otherwise.
 
 Allocation statistics workflow:
 
 1. Open Rota Template after generating the month.
 2. Switch the overview mode to Statistics.
-3. Check Unit-Wise Slot Tally to compare total, weekday, Saturday, Sunday, weekend, 24-hour, ready, review, and unresolved slots per unit.
+3. Check Unit-Wise Slot Tally to compare total, weekday, Saturday, Sunday, weekend, 24-hour, ready, review, forced, and unresolved slots per unit.
 4. Check Duty Type Matrix to confirm a specific duty type is not repeatedly allocated to the same unit.
 5. Check Date-Wise Distribution to see how many slots each unit received on each date.
 6. Check Call-Level Distribution to review how required call levels were spread across units.
-7. Check Blocked, Skipped, and Unresolved Decisions to understand why the engine did not allocate some duties automatically.
+7. Check Blocked, Skipped, and Forced Decisions to understand why the engine had to place some duties as forced review slots.
 8. Use this section during validation to show that the generator balanced unit availability, leave pressure, weekend distribution, and post-duty availability rather than allocating randomly.
+
+Forced review slots:
+
+- A forced review slot means every eligible unit was hard blocked for that duty/date.
+- The engine still fills the cell with the fairest least-damaging unit so the generated Excel sheet has no empty duty cells.
+- These slots are not treated as safe. Review them before assigning people.
+- The Statistics tab shows the forced count per unit and per date, so the board can confirm these difficult slots were divided fairly.
 
 Manual assignment workflow:
 
@@ -540,7 +560,8 @@ Common difficulties:
 - Page feels slow: turn on Fast load mode.
 - No generated slots: generate template or lock scope first.
 - No suggestions: unit staffing or leave may block all candidates.
-- Statistics show unresolved slots: open the blocked/skipped decision table and review the per-unit reasons before assigning manually.
+- Statistics show forced slots: open the blocked/skipped/forced decision table and review the per-unit reasons before assigning manually.
+- Statistics show unresolved slots: regenerate the template after checking unit scope and duty rules, because normal hard-blocked duties should now become forced review slots instead of empty cells.
 - Hard blocked slot: check Leave, Unit Management, and Rota Rules.
 - Assignment rejected: selected person violates safety rules.
 - Need override reason: system requires a written justification.

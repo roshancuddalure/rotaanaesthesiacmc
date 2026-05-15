@@ -302,6 +302,7 @@ let unitManagementLoadedMonth: string | null = null;
 let units: UnitRead[] = [];
 let unitAssignments: UnitAssignment[] = [];
 let unitModalUnitId: string | null = null;
+let unitModalSpecialPostingType: string | null = null;
 let unitEditingAssignmentId: string | null = null;
 let rotaPhaseOneRules: RotaPhaseOneRules | null = null;
 let rotaSetupMonth = new Date().toISOString().slice(0, 7);
@@ -2995,8 +2996,12 @@ function displayUnitName(value: string | null): string {
   return displayUnitText(value);
 }
 
-function displayRotaUnitLabel(slot: Pick<RotaTemplateMonth["slots"][number], "unit_name" | "unit_code">): string {
-  return displayUnitText(slot.unit_name || slot.unit_code, "Unit");
+function displayRotaUnitLabel(slot: {
+  unit_name: string | null;
+  unit_code: string | null;
+  unit_assignment_label?: string | null;
+}): string {
+  return slot.unit_assignment_label || displayUnitText(slot.unit_name || slot.unit_code, "Unit");
 }
 
 function displayPostingLabel(value: string | null): string {
@@ -3461,6 +3466,10 @@ function renderUnitPostingTypeOptions(selected = ""): string {
     .join("");
 }
 
+function specialUnitPostingLabel(postingType: string): string {
+  return SPECIAL_UNIT_POSTING_CARDS.find(([value]) => value === postingType)?.[1] ?? callLevelLabel(postingType);
+}
+
 function unitSummary(unitId: string) {
   return unitManagement?.unit_summaries.find((summary) => summary.unit_id === unitId) ?? null;
 }
@@ -3514,6 +3523,11 @@ function validationIssuesForUnit(unitId: string) {
   );
 }
 
+function validationIssuesForSpecialPosting(postingType: string) {
+  const assignmentIds = new Set(specialUnitAssignmentsFor(postingType).map((assignment) => assignment.id));
+  return (unitManagement?.validation_issues ?? []).filter((issue) => (issue.posting_id ? assignmentIds.has(issue.posting_id) : false));
+}
+
 function renderUnitAssignmentsByUnit(): string {
   if (!unitManagement) return "";
   if (!unitManagement.units.length) {
@@ -3523,11 +3537,17 @@ function renderUnitAssignmentsByUnit(): string {
     .map(([postingType, label]) => {
       const assignments = specialUnitAssignmentsFor(postingType);
       return `
-        <article class="unit-card special-unit-card" aria-label="${escapeHtml(label)} special posting">
+        <article
+          class="unit-card special-unit-card"
+          role="button"
+          tabindex="0"
+          data-open-special-unit-modal="${escapeHtml(postingType)}"
+          aria-label="Manage ${escapeHtml(label)} special posting"
+        >
           <header>
             <div>
               <h3>${escapeHtml(label)}</h3>
-              <p>Separate posting card</p>
+              <p>Special assignment card</p>
             </div>
             <strong>${assignments.length}</strong>
           </header>
@@ -3623,7 +3643,9 @@ function renderUnitAssignmentRows(): string {
             ${
               assignment.unit?.id
                 ? `<button class="icon-button" data-open-unit-modal="${assignment.unit.id}">Manage Unit</button>`
-                : `<span class="status ok">Special Card</span>`
+                : SPECIAL_UNIT_POSTING_KEYS.has(assignment.posting_type)
+                  ? `<button class="icon-button" data-open-special-unit-modal="${escapeHtml(assignment.posting_type)}">Manage Special Card</button>`
+                  : `<span class="status ok">Special Card</span>`
             }
           </td>
         </tr>
@@ -4046,6 +4068,47 @@ function renderUnitIssueDetails(unitId: string): string {
   `;
 }
 
+function renderSpecialPostingIssueDetails(postingType: string): string {
+  const issues = validationIssuesForSpecialPosting(postingType);
+  if (!issues.length) {
+    return `
+      <details class="unit-modal-validation">
+        <summary>Validation <span>Clear</span></summary>
+        <p>No issues found for this special posting.</p>
+      </details>
+    `;
+  }
+  return `
+    <details class="unit-modal-validation">
+      <summary>Validation <span>${issues.length}</span></summary>
+      <div class="validation-list">
+        ${issues
+          .map((issue) => {
+            const issueAction = issue.posting_id
+              ? `<button class="review-text-button" type="button" data-scroll-unit-assignment="${escapeHtml(issue.posting_id)}">${escapeHtml(issue.message)}</button>`
+              : reviewButton({
+                  title: "Resolve Special Posting Validation Item",
+                  status: issue.severity.toUpperCase(),
+                  summary: issue.message,
+                  parameters: { code: issue.code, person_id: issue.person_id, unit_id: issue.unit_id, assignment_id: issue.posting_id },
+                  actions: [
+                    { label: "Open Unit Management", kind: "navigate", target: "units", variant: "primary" },
+                    { label: "Open Members", kind: "navigate", target: "members" },
+                  ],
+                }, issue.message, "review-text-button");
+            return `
+              <div class="validation-row ${issue.severity}">
+                <strong>${escapeHtml(issue.severity.toUpperCase())}</strong>
+                <span>${issueAction}</span>
+              </div>
+            `;
+          })
+          .join("")}
+      </div>
+    </details>
+  `;
+}
+
 function renderUnitAssignmentEditors(unitId: string): string {
   const assignments = unitAssignmentsFor(unitId);
   if (!assignments.length) {
@@ -4066,6 +4129,43 @@ function renderUnitAssignmentEditors(unitId: string): string {
           <label>
             <span>Posting</span>
             <select name="posting_type" required>${renderUnitPostingTypeOptions(assignment.posting_type)}</select>
+          </label>
+          <label>
+            <span>Starts</span>
+            <input name="starts_on" type="date" value="${assignment.starts_on}" required />
+          </label>
+          <label>
+            <span>Ends</span>
+            <input name="ends_on" type="date" value="${assignment.ends_on ?? ""}" />
+          </label>
+          <label class="unit-editor-notes">
+            <span>Notes</span>
+            <input name="notes" value="${escapeHtml(assignment.notes ?? "")}" placeholder="Optional note" />
+          </label>
+          <div class="unit-editor-actions">
+            <button class="primary" type="submit">Save</button>
+            <button class="icon-button" type="button" data-delete-unit-assignment="${assignment.id}">Remove</button>
+          </div>
+        </form>
+      `,
+    )
+    .join("");
+}
+
+function renderSpecialPostingAssignmentEditors(postingType: string): string {
+  const assignments = specialUnitAssignmentsFor(postingType);
+  if (!assignments.length) {
+    return `<p class="empty-state">No members assigned yet. Add the first member below.</p>`;
+  }
+  return assignments
+    .map(
+      (assignment) => `
+        <form class="unit-assignment-editor special-assignment-editor" data-unit-row-form="${assignment.id}">
+          <input name="unit_id" type="hidden" value="" />
+          <input name="posting_type" type="hidden" value="${escapeHtml(postingType)}" />
+          <label>
+            <span>Member</span>
+            <select name="person_id" required>${renderLeaveMemberOptions(assignment.person.id)}</select>
           </label>
           <label>
             <span>Starts</span>
@@ -4194,6 +4294,7 @@ function openUnitModal(unitId: string, focusAssignmentId?: string) {
   const unit = units.find((item) => item.id === unitId);
   if (!unit || !viewRoot) return;
   unitModalUnitId = unitId;
+  unitModalSpecialPostingType = null;
   unitEditingAssignmentId = null;
   viewRoot.insertAdjacentHTML("beforeend", renderUnitModal(unit));
   if (focusAssignmentId) {
@@ -4201,38 +4302,90 @@ function openUnitModal(unitId: string, focusAssignmentId?: string) {
   }
 }
 
+function renderSpecialPostingModal(postingType: string): string {
+  if (!unitManagement) return "";
+  const label = specialUnitPostingLabel(postingType);
+  const assignments = specialUnitAssignmentsFor(postingType);
+  return `
+    <div class="modal-backdrop" id="unit-management-modal">
+      <section class="person-modal unit-modal" role="dialog" aria-modal="true" aria-labelledby="unit-modal-title">
+        <header class="person-modal-header">
+          <div>
+            <h3 id="unit-modal-title">${escapeHtml(label)}</h3>
+            <p>${escapeHtml(unitManagement.month)} special assignment workspace</p>
+          </div>
+          <div class="unit-modal-header-actions">
+            <button class="modal-close" data-close-unit-modal aria-label="Close">x</button>
+          </div>
+        </header>
+        <div class="person-modal-body unit-modal-body">
+          <div class="audit-chip-row">
+            <span><strong>${assignments.length}</strong> assigned</span>
+            <span><strong>0</strong> unit load</span>
+            <span><strong>${escapeHtml(callLevelLabel(postingType))}</strong> posting type</span>
+          </div>
+          ${renderSpecialPostingIssueDetails(postingType)}
+          <h4>Assigned Members</h4>
+          <div class="unit-editor-list">${renderSpecialPostingAssignmentEditors(postingType)}</div>
+          <h4>Add Member</h4>
+          <form class="leave-form unit-modal-form" id="unit-assignment-form" data-special-posting-type="${escapeHtml(postingType)}">
+            <input id="unit-select" type="hidden" value="" />
+            <input id="unit-posting-type" type="hidden" value="${escapeHtml(postingType)}" />
+            <label>
+              <span>Member</span>
+              <select id="unit-person" required>${renderLeaveMemberOptions()}</select>
+            </label>
+            <label>
+              <span>Starts</span>
+              <input id="unit-start" type="date" value="${unitManagement.starts_on}" required />
+            </label>
+            <label>
+              <span>Ends</span>
+              <input id="unit-end" type="date" value="${unitManagement.ends_on}" />
+            </label>
+            <label class="leave-notes">
+              <span>Notes</span>
+              <input id="unit-notes" placeholder="Optional note" />
+            </label>
+            <button class="primary" type="submit">Add Assignment</button>
+          </form>
+        </div>
+      </section>
+    </div>
+  `;
+}
+
+function openSpecialPostingModal(postingType: string, focusAssignmentId?: string) {
+  document.querySelector("#unit-management-modal")?.remove();
+  if (!SPECIAL_UNIT_POSTING_KEYS.has(postingType) || !viewRoot) return;
+  unitModalUnitId = null;
+  unitModalSpecialPostingType = postingType;
+  unitEditingAssignmentId = null;
+  viewRoot.insertAdjacentHTML("beforeend", renderSpecialPostingModal(postingType));
+  if (focusAssignmentId) {
+    window.setTimeout(() => scrollUnitAssignmentIntoView(focusAssignmentId), 80);
+  }
+}
+
 function closeUnitModal() {
   unitModalUnitId = null;
+  unitModalSpecialPostingType = null;
   unitEditingAssignmentId = null;
   document.querySelector("#unit-management-modal")?.remove();
 }
 
+function unitFormValue(form: HTMLFormElement, selector: string): string {
+  return form.querySelector<HTMLInputElement | HTMLSelectElement>(selector)?.value ?? "";
+}
+
 function unitAssignmentPayloadFromForm(form: HTMLFormElement) {
   return {
-    person_id:
-      form.querySelector<HTMLSelectElement>("[name='person_id']")?.value ??
-      form.querySelector<HTMLSelectElement>("#unit-person")?.value ??
-      "",
-    unit_id:
-      form.querySelector<HTMLSelectElement>("[name='unit_id']")?.value ??
-      form.querySelector<HTMLSelectElement>("#unit-select")?.value ??
-      "",
-    posting_type:
-      form.querySelector<HTMLSelectElement>("[name='posting_type']")?.value ??
-      form.querySelector<HTMLSelectElement>("#unit-posting-type")?.value ??
-      "",
-    starts_on:
-      form.querySelector<HTMLInputElement>("[name='starts_on']")?.value ??
-      form.querySelector<HTMLInputElement>("#unit-start")?.value ??
-      "",
-    ends_on:
-      form.querySelector<HTMLInputElement>("[name='ends_on']")?.value ??
-      form.querySelector<HTMLInputElement>("#unit-end")?.value ??
-      "",
-    notes:
-      form.querySelector<HTMLInputElement>("[name='notes']")?.value ??
-      form.querySelector<HTMLInputElement>("#unit-notes")?.value ??
-      "",
+    person_id: unitFormValue(form, "[name='person_id']") || unitFormValue(form, "#unit-person"),
+    unit_id: unitFormValue(form, "[name='unit_id']") || unitFormValue(form, "#unit-select"),
+    posting_type: unitFormValue(form, "[name='posting_type']") || unitFormValue(form, "#unit-posting-type"),
+    starts_on: unitFormValue(form, "[name='starts_on']") || unitFormValue(form, "#unit-start"),
+    ends_on: unitFormValue(form, "[name='ends_on']") || unitFormValue(form, "#unit-end"),
+    notes: unitFormValue(form, "[name='notes']") || unitFormValue(form, "#unit-notes"),
   };
 }
 
@@ -4298,7 +4451,9 @@ async function renderUnitManagement(forceReload = false) {
       </table>
     </section>
   `;
-  if (unitModalUnitId) {
+  if (unitModalSpecialPostingType) {
+    openSpecialPostingModal(unitModalSpecialPostingType);
+  } else if (unitModalUnitId) {
     openUnitModal(unitModalUnitId);
   }
 }
@@ -5448,6 +5603,7 @@ function renderAllocationUnitRows(stats: RotaTemplateAllocationStatistics): stri
         <td>${row.twenty_four_hour_slots}</td>
         <td>${row.ready_slots}</td>
         <td>${row.needs_review_slots}</td>
+        <td>${row.forced_review_slots}</td>
         <td>${row.unresolved_slots}</td>
       </tr>
     `)
@@ -5481,6 +5637,7 @@ function renderAllocationDateRows(stats: RotaTemplateAllocationStatistics): stri
           return `<td>${row.unit_counts[key] ?? 0}</td>`;
         }).join("")}
         <td>${row.needs_review_slots}</td>
+        <td>${row.forced_review_slots}</td>
         <td>${row.unresolved_slots}</td>
       </tr>
     `)
@@ -5531,14 +5688,14 @@ function renderRotaAllocationStatistics(stats: RotaTemplateAllocationStatistics 
     <section class="summary-grid four-col">
       ${metricCard(stats.summary.total_slots, "Generated slots")}
       ${metricCard(stats.summary.units_used, "Units used")}
+      ${metricCard(stats.summary.forced_review_slots, "Forced review slots")}
       ${metricCard(stats.summary.unresolved_slots, "Unresolved slots")}
-      ${metricCard(stats.summary.blocked_or_skipped_events, "Blocked/skipped decisions")}
     </section>
     <section class="panel table-panel">
       <h3>Unit-Wise Slot Tally</h3>
       <table>
-        <thead><tr><th>Unit</th><th>Total</th><th>Weekday</th><th>Saturday</th><th>Sunday</th><th>Weekend</th><th>24hr</th><th>Ready</th><th>Review</th><th>Unresolved</th></tr></thead>
-        <tbody>${renderAllocationUnitRows(stats) || `<tr><td colspan="10" class="empty">No generated slots yet.</td></tr>`}</tbody>
+        <thead><tr><th>Unit</th><th>Total</th><th>Weekday</th><th>Saturday</th><th>Sunday</th><th>Weekend</th><th>24hr</th><th>Ready</th><th>Review</th><th>Forced</th><th>Unresolved</th></tr></thead>
+        <tbody>${renderAllocationUnitRows(stats) || `<tr><td colspan="11" class="empty">No generated slots yet.</td></tr>`}</tbody>
       </table>
     </section>
     <section class="panel table-panel">
@@ -5551,8 +5708,8 @@ function renderRotaAllocationStatistics(stats: RotaTemplateAllocationStatistics 
     <section class="panel table-panel">
       <h3>Date-Wise Distribution</h3>
       <table>
-        <thead><tr><th>Date</th><th>Day</th><th>Total</th>${dateUnitRows.map((unit) => `<th>${escapeHtml(unit.unit_name)}</th>`).join("")}<th>Review</th><th>Unresolved</th></tr></thead>
-        <tbody>${renderAllocationDateRows(stats) || `<tr><td colspan="${dateUnitRows.length + 5}" class="empty">No date distribution yet.</td></tr>`}</tbody>
+        <thead><tr><th>Date</th><th>Day</th><th>Total</th>${dateUnitRows.map((unit) => `<th>${escapeHtml(unit.unit_name)}</th>`).join("")}<th>Review</th><th>Forced</th><th>Unresolved</th></tr></thead>
+        <tbody>${renderAllocationDateRows(stats) || `<tr><td colspan="${dateUnitRows.length + 6}" class="empty">No date distribution yet.</td></tr>`}</tbody>
       </table>
     </section>
     <section class="panel table-panel">
@@ -5563,7 +5720,7 @@ function renderRotaAllocationStatistics(stats: RotaTemplateAllocationStatistics 
       </table>
     </section>
     <section class="panel table-panel">
-      <h3>Blocked, Skipped, and Unresolved Decisions</h3>
+      <h3>Blocked, Skipped, and Forced Decisions</h3>
       <table>
         <thead><tr><th>Date</th><th>Unit</th><th>Duty</th><th>Action</th><th>Reason</th></tr></thead>
         <tbody>${renderAllocationEventRows(stats) || `<tr><td colspan="5" class="empty">No blocked or skipped decisions recorded.</td></tr>`}</tbody>
@@ -6116,6 +6273,7 @@ async function renderRotaTemplate() {
   const selectedDutyCount = selectedDutyKeys.size;
   const selectedMandatoryCount = template.duty_options.filter((duty) => selectedDutyKeys.has(duty.key) && duty.is_mandatory).length;
   const selectedAdjustableCount = template.duty_options.filter((duty) => selectedDutyKeys.has(duty.key) && duty.is_adjustable).length;
+  const forcedReviewCount = template.summary.forced_review_slots ?? Number(latest?.summary?.forced_review_slots ?? 0);
 
   viewRoot.innerHTML = `
     <form id="rota-template-form">
@@ -6147,7 +6305,7 @@ async function renderRotaTemplate() {
         ${metricCard(template.summary.total_slots, "Template slots")}
         ${metricCard(template.summary.ready_slots, "Ready slots")}
         ${metricCard(template.summary.needs_review_slots, "Need review")}
-        ${metricCard(latest?.blocked_slots ?? 0, "Blocked/skipped")}
+        ${metricCard(forcedReviewCount, "Forced review")}
       </section>
       <section class="summary-grid four-col">
         ${metricCard(safety.summary.total_slots, "Safety checked")}
@@ -7127,6 +7285,7 @@ function renderUserGuide() {
         "Open Rota Template and confirm the month shown on screen is the month you want.",
         "Generate the empty template only after Phase 1 is complete.",
         "Switch to Statistics to confirm unit-wise, date-wise, weekend, duty-type, and call-level slot distribution.",
+        "Read cluster labels beside units: Unit 1 (3A), Unit 1 (3B), or Unit 1 (3C) means that slot is restricted to that 3rd-call subgroup.",
         "Open one day at a time and review duties in fixed duty order.",
         "Under each duty, assign slots call-wise so the day is easy to read and audit.",
         "Prefer candidates without leave, unit mismatch, recent-duty, or workload warnings.",
@@ -7204,7 +7363,7 @@ function renderUserGuide() {
       <article class="panel">
         <h3>Rota Template</h3>
         <p>The main work area for daily duties. Open a day, review slots under each duty, check allocation statistics, and assign people in call-wise order.</p>
-        ${guideBullets(["Look at Main, CB, RC, PAC, and other duty groups separately.", "Use Statistics to confirm the split by unit, day, Saturday, Sunday, duty type, and call level.", "Use candidates as guidance; lower priority score means the system prefers that person first.", "Override only with a clear reason.", "Fast mode is useful when a heavy month loads slowly."])}
+        ${guideBullets(["Look at Main, CB, RC, PAC, and other duty groups separately.", "Unit labels with (3A), (3B), or (3C) are restricted to that matching 3rd-call eligibility subgroup.", "Use Statistics to confirm the split by unit, day, Saturday, Sunday, duty type, call level, and forced review slots.", "Forced review means every unit was hard blocked, so the engine filled the least damaging unit instead of leaving the duty empty.", "Use candidates as guidance; lower priority score means the system prefers that person first.", "Override only with a clear reason.", "Fast mode is useful when a heavy month loads slowly."])}
       </article>
       <article class="panel">
         <h3>Rota Review</h3>
@@ -7244,6 +7403,7 @@ function renderUserGuide() {
         <div><strong>Needs Review</strong><span>A suggested member may be usable, but the board must review a warning such as pending leave, staffing pressure, or another soft concern.</span></div>
         <div><strong>Blocked</strong><span>A suggested member has a hard conflict such as approved leave, same-day duty, post-24hr rest block, or a validation error. Do not use unless the system allows an override and the board records a reason.</span></div>
         <div><strong>Hard blocked</strong><span>A slot or review item has a serious rule conflict. It normally stops final publish until fixed. Examples include no eligible members, too few available members, hard safety thresholds, wrong call level, or wrong eligibility subgroup.</span></div>
+        <div><strong>Forced review slot</strong><span>A generated template slot where all units were hard blocked, but the engine still filled the fairest least-damaging unit so the rota sheet has no empty duty cell.</span></div>
         <div><strong>Warning</strong><span>A softer problem that needs review but may be accepted with judgment.</span></div>
         <div><strong>Override</strong><span>A deliberate decision to keep an assignment despite a rule concern. The reason should be clear enough for another board member to understand later.</span></div>
         <div><strong>Safe Auto-Fill</strong><span>Automatic draft assignment that avoids known unsafe choices where possible.</span></div>
@@ -7279,7 +7439,7 @@ function renderUserGuide() {
       <article class="panel">
         <h3>Do Not Do</h3>
         ${guideBullets([
-          "Do not publish with unresolved hard blocks.",
+          "Do not publish with unresolved hard blocks or unreviewed forced slots.",
           "Do not import files into the wrong month.",
           "Do not clear generated draft duties casually.",
           "Do not change rota rules mid-month without board agreement.",
@@ -7824,15 +7984,16 @@ function bindViewEvents() {
       event.preventDefault();
       const btn = form.querySelector<HTMLButtonElement>("button[type='submit']");
       const formValues = unitAssignmentPayloadFromForm(form);
-      if (!formValues.person_id || !formValues.unit_id || !formValues.posting_type || !formValues.starts_on) {
-        showToast("Member, unit, posting, and start date are required", "warning");
+      const isSpecialPosting = SPECIAL_UNIT_POSTING_KEYS.has(formValues.posting_type);
+      if (!formValues.person_id || !formValues.posting_type || !formValues.starts_on || (!isSpecialPosting && !formValues.unit_id)) {
+        showToast(isSpecialPosting ? "Member, posting, and start date are required" : "Member, unit, posting, and start date are required", "warning");
         return;
       }
       setButtonLoading(btn, true, "Add Assignment");
       try {
         const payload = {
           person_id: formValues.person_id,
-          unit_id: formValues.unit_id,
+          unit_id: isSpecialPosting ? null : formValues.unit_id,
           posting_type: formValues.posting_type,
           starts_on: formValues.starts_on,
           ends_on: formValues.ends_on || null,
@@ -7841,6 +8002,7 @@ function bindViewEvents() {
         await createUnitAssignment(payload);
         showToast("Unit assignment added", "success");
         unitModalUnitId = payload.unit_id;
+        unitModalSpecialPostingType = isSpecialPosting ? payload.posting_type : null;
         unitEditingAssignmentId = null;
         invalidateUnitManagementCache();
         await preserveViewport(() => renderUnitManagement(true));
@@ -7872,15 +8034,16 @@ function bindViewEvents() {
       const assignmentId = form.dataset.unitRowForm;
       const btn = form.querySelector<HTMLButtonElement>("button[type='submit']");
       const formValues = unitAssignmentPayloadFromForm(form);
-      if (!formValues.person_id || !formValues.unit_id || !formValues.posting_type || !formValues.starts_on) {
-        showToast("Member, unit, posting, and start date are required", "warning");
+      const isSpecialPosting = SPECIAL_UNIT_POSTING_KEYS.has(formValues.posting_type);
+      if (!formValues.person_id || !formValues.posting_type || !formValues.starts_on || (!isSpecialPosting && !formValues.unit_id)) {
+        showToast(isSpecialPosting ? "Member, posting, and start date are required" : "Member, unit, posting, and start date are required", "warning");
         return;
       }
       setButtonLoading(btn, true, "Save");
       try {
         const payload = {
           person_id: formValues.person_id,
-          unit_id: formValues.unit_id,
+          unit_id: isSpecialPosting ? null : formValues.unit_id,
           posting_type: formValues.posting_type,
           starts_on: formValues.starts_on,
           ends_on: formValues.ends_on || null,
@@ -7888,6 +8051,7 @@ function bindViewEvents() {
         };
         await updateUnitAssignment(assignmentId, payload);
         unitModalUnitId = payload.unit_id;
+        unitModalSpecialPostingType = isSpecialPosting ? payload.posting_type : null;
         showToast("Unit assignment updated", "success");
         invalidateUnitManagementCache();
         await preserveViewport(() => renderUnitManagement(true));
@@ -8152,6 +8316,12 @@ function bindViewEvents() {
       return;
     }
 
+    const specialUnitOpenBtn = target.closest<HTMLElement>("[data-open-special-unit-modal]");
+    if (specialUnitOpenBtn?.dataset.openSpecialUnitModal) {
+      openSpecialPostingModal(specialUnitOpenBtn.dataset.openSpecialUnitModal);
+      return;
+    }
+
     const unitNavBtn = target.closest<HTMLButtonElement>("[data-unit-modal-nav]");
     if (unitNavBtn?.dataset.unitModalNav) {
       openUnitModal(unitNavBtn.dataset.unitModalNav);
@@ -8244,6 +8414,7 @@ function bindViewEvents() {
         unitImportPreview = result.preview;
         setPage(UNIT_IMPORT_TABLE_ID, 0);
         unitModalUnitId = null;
+        unitModalSpecialPostingType = null;
         showToast(
           `Auto-assigned ${result.auto_assigned_rows ?? result.created_rows} row(s); learned ${result.learned_mappings ?? 0} mapping(s); ${result.skipped_rows} need review`,
           "success",
@@ -8860,6 +9031,11 @@ function bindViewEvents() {
     if (unitOpener?.dataset.openUnitModal && (event.key === "Enter" || event.key === " ")) {
       event.preventDefault();
       openUnitModal(unitOpener.dataset.openUnitModal);
+    }
+    const specialUnitOpener = target.closest<HTMLElement>("[data-open-special-unit-modal]");
+    if (specialUnitOpener?.dataset.openSpecialUnitModal && (event.key === "Enter" || event.key === " ")) {
+      event.preventDefault();
+      openSpecialPostingModal(specialUnitOpener.dataset.openSpecialUnitModal);
     }
     const rotaDayOpener = target.closest<HTMLElement>("[data-rota-day]");
     if (rotaDayOpener?.dataset.rotaDay && (event.key === "Enter" || event.key === " ")) {
