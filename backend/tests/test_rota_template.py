@@ -23,6 +23,7 @@ from app.services.rota_template import (
     allocation_statistics,
     call_wise_template_export,
     clear_template_cache,
+    duty_rules_for_day,
     generate_empty_template,
     optimize_template_slot_layout,
     template_month,
@@ -203,6 +204,263 @@ def test_generate_empty_template_balances_duties_across_units() -> None:
         }
         assert result["latest_run"]["created_slots"] == 4
         assert counts == {"UNIT_A": 2, "UNIT_B": 2}
+
+
+def test_generate_empty_template_balances_duty_families_and_call_buckets() -> None:
+    engine = create_engine("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(engine)
+
+    with Session(engine) as session:
+        units = [
+            Unit(code="UNIT_A", name="Unit A", campus="MAIN", minimum_free_people=0),
+            Unit(code="UNIT_B", name="Unit B", campus="MAIN", minimum_free_people=0),
+            Unit(code="UNIT_C", name="Unit C", campus="MAIN", minimum_free_people=0),
+        ]
+        session.add_all(units)
+        session.flush()
+        for unit in units:
+            for call_level in ["1ST_CALL", "2ND_CALL", "3RD_CALL", "4TH_CALL"]:
+                for index in range(8):
+                    person = Person(
+                        canonical_name=f"{unit.code} {call_level} {index}",
+                        call_level=call_level,
+                    )
+                    session.add(person)
+                    session.flush()
+                    session.add(
+                        PersonPosting(
+                            person=person,
+                            unit=unit,
+                            posting_type=call_level,
+                            starts_on=date(2026, 5, 1),
+                            source="unit_board",
+                        )
+                    )
+        session.commit()
+        _period, scope = monthly_setup(session, "2026-05")
+        update_scope_units(
+            session,
+            scope,
+            [unit.id for unit in units],
+            [],
+            True,
+            True,
+            "Duty family distribution test",
+        )
+
+        duties = [
+            "MAIN_1ST_24HR",
+            "MAIN_2ND_24HR",
+            "MAIN_3RD_24HR",
+            "CB_1ST_24HR",
+            "CB_3RD_24HR",
+            "CB_4TH_24HR",
+            "RC_1ST_A_24HR",
+            "RC_2ND_24HR",
+            "RC_3RD_24HR",
+            "RC_4TH_24HR",
+        ]
+        generate_empty_template(
+            session,
+            "2026-05",
+            TemplateGenerationOptions(
+                duty_keys=duties,
+                starts_on=date(2026, 5, 1),
+                ends_on=date(2026, 5, 6),
+            ),
+        )
+
+        stats = allocation_statistics(session, "2026-05")
+        group_rows = [
+            row for row in stats["unit_group_matrix"] if not row["is_unresolved"]
+        ]
+        group_call_rows = [
+            row for row in stats["unit_group_call_matrix"] if not row["is_unresolved"]
+        ]
+
+        assert {row["total_slots"] for row in group_rows} == {20}
+        for group in ["main", "cb", "rc"]:
+            values = [row["counts"].get(group, 0) for row in group_rows]
+            assert min(values) > 0
+            assert max(values) - min(values) <= 2
+
+        group_call_keys = [bucket["key"] for bucket in stats["group_call_buckets"]]
+        assert {"main:1ST_CALL", "cb:1ST_CALL", "rc:1ST_CALL"}.issubset(group_call_keys)
+        for key in group_call_keys:
+            values = [row["counts"].get(key, 0) for row in group_call_rows]
+            assert max(values) - min(values) <= 2
+
+
+def test_duty_rules_rotate_family_order_by_day() -> None:
+    rules = default_phase_one_rules()
+    rules_by_key = rules.duty_rules_by_key
+    duties = [
+        rules_by_key["MAIN_1ST_24HR"],
+        rules_by_key["CB_1ST_24HR"],
+        rules_by_key["RC_1ST_A_24HR"],
+        rules_by_key["CHAD"],
+        rules_by_key["RUHSA"],
+    ]
+
+    first_day = date(2026, 5, 1)
+    first_order = [rule.group for rule in duty_rules_for_day(duties, first_day, first_day)]
+    second_order = [rule.group for rule in duty_rules_for_day(duties, first_day + timedelta(days=1), first_day)]
+    fourth_order = [rule.group for rule in duty_rules_for_day(duties, first_day + timedelta(days=3), first_day)]
+
+    assert first_order == ["main", "cb", "rc", "chad", "ruhsa"]
+    assert second_order == ["cb", "rc", "chad", "ruhsa", "main"]
+    assert fourth_order == ["chad", "ruhsa", "main", "cb", "rc"]
+
+
+def test_allocation_statistics_includes_generation_diagnostics() -> None:
+    engine = create_engine("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(engine)
+
+    with Session(engine) as session:
+        small = Unit(code="SMALL", name="Small Unit", campus="MAIN", minimum_free_people=0)
+        large = Unit(code="LARGE", name="Large Unit", campus="MAIN", minimum_free_people=0)
+        session.add_all([small, large])
+        session.flush()
+        for index in range(5):
+            person = Person(canonical_name=f"Small First {index}", call_level="1ST_CALL")
+            session.add(person)
+            session.flush()
+            session.add(
+                PersonPosting(
+                    person=person,
+                    unit=small,
+                    posting_type="1ST_CALL",
+                    starts_on=date(2026, 5, 1),
+                    source="unit_board",
+                )
+            )
+        for index in range(10):
+            person = Person(canonical_name=f"Large First {index}", call_level="1ST_CALL")
+            session.add(person)
+            session.flush()
+            session.add(
+                PersonPosting(
+                    person=person,
+                    unit=large,
+                    posting_type="1ST_CALL",
+                    starts_on=date(2026, 5, 1),
+                    source="unit_board",
+                )
+            )
+        session.commit()
+        _period, scope = monthly_setup(session, "2026-05")
+        update_scope_units(
+            session,
+            scope,
+            [small.id, large.id],
+            [],
+            True,
+            True,
+            "Diagnostics test",
+        )
+
+        generate_empty_template(
+            session,
+            "2026-05",
+            TemplateGenerationOptions(
+                duty_keys=["MAIN_1ST_24HR", "CHAD"],
+                starts_on=date(2026, 5, 1),
+                ends_on=date(2026, 5, 4),
+            ),
+        )
+
+        stats = allocation_statistics(session, "2026-05")
+        diagnostics = {
+            row["unit_name"]: row
+            for row in stats["unit_generation_diagnostics"]
+            if not row["is_unresolved"]
+        }
+
+        assert diagnostics["Small Unit"]["active_people"] == 5
+        assert diagnostics["Large Unit"]["active_people"] == 10
+        assert "1ST_CALL" in diagnostics["Small Unit"]["active_call_counts"]
+        assert diagnostics["Small Unit"]["created_events"] > 0
+        assert stats["blocked_or_skipped_events"]
+        first_event = stats["blocked_or_skipped_events"][0]
+        assert "duty_group" in first_event["details"]
+        assert "group_target_deficit" in first_event["details"]
+
+
+def test_template_generation_supports_unit_people_and_hybrid_fairness_policies() -> None:
+    engine = create_engine("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(engine)
+
+    with Session(engine) as session:
+        large = Unit(code="LARGE", name="Large Unit", campus="MAIN", minimum_free_people=0)
+        small = Unit(code="SMALL", name="Small Unit", campus="MAIN", minimum_free_people=0)
+        session.add_all([large, small])
+        session.flush()
+        for index in range(20):
+            person = Person(canonical_name=f"Large General {index}", call_level="1ST_CALL")
+            session.add(person)
+            session.flush()
+            session.add(
+                PersonPosting(
+                    person=person,
+                    unit=large,
+                    posting_type="1ST_CALL",
+                    starts_on=date(2026, 5, 1),
+                    source="unit_board",
+                )
+            )
+        for index in range(5):
+            person = Person(canonical_name=f"Small General {index}", call_level="1ST_CALL")
+            session.add(person)
+            session.flush()
+            session.add(
+                PersonPosting(
+                    person=person,
+                    unit=small,
+                    posting_type="1ST_CALL",
+                    starts_on=date(2026, 5, 1),
+                    source="unit_board",
+                )
+            )
+        session.commit()
+        _period, scope = monthly_setup(session, "2026-05")
+        update_scope_units(
+            session,
+            scope,
+            [large.id, small.id],
+            [],
+            True,
+            True,
+            "Fairness policy test",
+        )
+
+        def generated_counts(policy: str) -> dict[str, int]:
+            generate_empty_template(
+                session,
+                "2026-05",
+                TemplateGenerationOptions(
+                    duty_keys=["CART"],
+                    starts_on=date(2026, 5, 1),
+                    ends_on=date(2026, 5, 25),
+                    allocation_fairness_policy=policy,
+                ),
+            )
+            return {
+                unit.code: session.query(DutySlot)
+                .filter(DutySlot.unit_id == unit.id, DutySlot.source == "phase4_template")
+                .count()
+                for unit in [large, small]
+            }
+
+        equal_unit = generated_counts("equal_unit")
+        equal_people = generated_counts("equal_people")
+        hybrid = generated_counts("hybrid")
+        stats = allocation_statistics(session, "2026-05")
+
+        assert abs(equal_unit["LARGE"] - equal_unit["SMALL"]) <= 1
+        assert equal_people["LARGE"] > hybrid["LARGE"] > equal_unit["LARGE"]
+        assert equal_people["SMALL"] < hybrid["SMALL"] < equal_unit["SMALL"]
+        assert stats["unit_target_tallies"]
+        assert {row["allocation_fairness_policy"] for row in stats["unit_target_tallies"]} == {"hybrid"}
 
 
 def test_vertical_shuffle_reduces_same_day_group_duplicates_without_changing_counts() -> None:
@@ -599,6 +857,13 @@ def test_allocation_statistics_summarizes_units_dates_and_blocked_events() -> No
         assert [row["total_slots"] for row in stats["date_distribution"]] == [1, 1]
         matrix = {row["unit_name"]: row["counts"]["MAIN_1ST_24HR"] for row in stats["unit_duty_matrix"]}
         assert matrix == {"Unit A": 1, "Unit B": 1, "Unresolved": 0}
+        group_matrix = {row["unit_name"]: row["counts"].get("main", 0) for row in stats["unit_group_matrix"]}
+        assert group_matrix == {"Unit A": 1, "Unit B": 1, "Unresolved": 0}
+        group_call_matrix = {
+            row["unit_name"]: row["counts"].get("main:1ST_CALL", 0)
+            for row in stats["unit_group_call_matrix"]
+        }
+        assert group_call_matrix == {"Unit A": 1, "Unit B": 1, "Unresolved": 0}
         assert stats["blocked_or_skipped_events"]
 
 

@@ -2225,3 +2225,176 @@ Database migration result:
 Reference:
 
 - See `Plan/12_railway_deployment_notes.md` for the durable Railway runbook and troubleshooting checklist.
+
+## 2026-05-26 - Unit Slot Allocation Policy Audit
+
+Goal:
+
+- Audit the current rota unit-slot allocation algorithm before deeper person-specific duty allocation work.
+
+Completed:
+
+- Reviewed the implemented template generation, safety, candidate, assignment, auto-fill, rule, model, and test paths.
+- Added `docs/unit_slot_allocation_policy_audit.md` as the focused policy audit and future reference.
+- Clarified that `docs/rota_generation_and_assignment_algorithm_validation.md` remains the detailed implementation validation guide, while the new audit is the decision-oriented policy guide.
+- Corrected the validation guide where it implied adjustable hard-blocked duties are skipped. The current implementation stores and displays `is_adjustable`, but still creates forced review slots for selected duties when all candidate units are hard blocked.
+- Recorded policy gaps that need board/admin decisions before person-specific allocation is expanded:
+  - pending leave treatment,
+  - monthly posting call-level precedence,
+  - adjustable duty unsafe-slot behavior,
+  - symmetric 24-hour rest validation,
+  - designation eligibility enforcement,
+  - excluded-unit safety behavior,
+  - posting source authority,
+  - hard-coded allocation weights.
+
+Verification:
+
+- Documentation-only change. No backend or frontend tests were required.
+
+## 2026-05-26 - Duty Family Distribution Fairness Plan
+
+Goal:
+
+- Investigate tester feedback that total duties are equal across units, but Main/CB/RC and call-level duty families are unevenly distributed.
+
+Finding:
+
+- The current unit allocation score balances total monthly unit count and exact duty-type count, but does not balance broader duty families such as Main, CB, RC, or duty family plus call level.
+- This allows the generated template to look fair by total slot count while one unit receives mostly Main/OR calls and another receives mostly CB or RC calls.
+- The vertical shuffle pass cannot fully solve this because it only swaps units between slots with the same exact duty type.
+
+Documentation:
+
+- Added `docs/unit_duty_family_distribution_plan.md` with root cause, fairness policy, proposed counters, score changes, diagnostics, tests, and board decisions needed.
+
+Verification:
+
+- Documentation-only planning change. No backend or frontend tests were required.
+
+## 2026-05-26 - Rota Allocation Research Pass
+
+Goal:
+
+- Research existing duty/shift allocation ideas before implementing the unit duty-family fairness fix.
+
+Sources reviewed:
+
+- Google OR-Tools employee scheduling guide.
+- Timefold fairness and load-balancing documentation.
+- Nurse rostering fairness working paper.
+- Physician scheduling fairness manuscript.
+- International Nurse Rostering Competition summaries.
+- Practical Operations Research/Stack Overflow/Reddit scheduling discussions.
+
+Findings:
+
+- Mature rostering systems separate hard safety/eligibility constraints from soft fairness objectives.
+- Fairness is not a single total count; it is usually measured across meaningful categories such as shift type, weekend, night, hours, skill, and undesirable duties.
+- Target deviation and max-load/lexicographic fairness are better than only raw weighted totals.
+- Two-stage scheduling fits our architecture: first allocate broad unit slots, then assign people.
+- Full solvers such as OR-Tools/Timefold are useful future options, but the immediate Main/CB/RC imbalance can be addressed inside the current deterministic allocator with grouped fairness buckets.
+
+Documentation:
+
+- Added `docs/rota_allocation_research_principles.md`.
+- Updated `docs/unit_duty_family_distribution_plan.md` to include the research-backed recommendation for lexicographic group-call overage.
+
+Verification:
+
+- Documentation-only change. No backend or frontend tests were required.
+
+## 2026-05-26 - Unit Duty Family Fairness Implementation
+
+Goal:
+
+- Fix the tested issue where total duties were balanced across units but duty families such as Main/OR, CB, and RC could still concentrate unevenly.
+
+Implemented:
+
+- Added shared duty-family and required-call bucket helpers in `backend/app/services/rota_template.py`.
+- Added generation counters for:
+  - unit duty group,
+  - unit required call level,
+  - unit duty group plus call level,
+  - same-week duty group,
+  - weekend duty group.
+- Updated unit selection to compare grouped fairness overage before the ordinary total-count allocation score.
+- Kept hard-block safety behavior unchanged: hard-blocked units are still avoided when any non-hard-blocked unit exists.
+- Expanded allocation statistics with:
+  - `duty_groups`,
+  - `group_call_buckets`,
+  - `unit_group_matrix`,
+  - `unit_group_call_matrix`.
+- Added frontend Statistics tables for Duty Family Matrix and Duty Family + Call Matrix.
+- Added regression coverage proving total slots, Main/CB/RC groups, and group-call buckets remain balanced in a multi-unit, multi-duty scenario.
+- Updated the website guide, algorithm validation doc, and duty-family distribution plan.
+
+Verification:
+
+- Focused backend rota template tests passed: `python -m pytest tests/test_rota_template.py -q`, 24 tests.
+- Ruff passed on touched backend files with `--no-cache`.
+- Frontend TypeScript check passed: `npm exec tsc -- --noEmit`.
+
+Debug note:
+
+- Running the bare `.venv\Scripts\pytest` executable returned no output in this shell, but `python -m pytest` worked normally.
+- Ruff's normal cache path was permission-blocked, so the no-cache mode was used for verification.
+
+## 2026-05-26 - Target-Aware Unit Allocation And Reasoning Plan
+
+Goal:
+
+- Address the May 2026 Duty Family Matrix imbalance where UNIT VI had far fewer total slots and zero CHAD/RUHSA despite grouped fairness being present.
+- Start the enterprise reasoning-system plan so future allocation decisions can be explained from saved audit data.
+
+Investigation:
+
+- Latest May 2026 generation run had 837 slots across six units.
+- UNIT VI had 97 total slots versus a 139.5 average.
+- UNIT VI had only 11 distinct active people in May 2026, while other included units had 25 to 50.
+- UNIT VI produced many hard-block and warning skip events, especially for RC/PAC families and late-order CHAD/RUHSA duties.
+- CHAD and RUHSA were late in the selected duty order, so smaller units could be consumed by earlier families before those duties were evaluated.
+
+Implemented:
+
+- Added duty-family order rotation by date in template generation.
+- Added target-deficit priority before overage checks for total slots, duty family, duty family plus call level, exact duty, and call bucket.
+- Preserved hard-block safety behavior: hard-blocked units are still avoided when any safe candidate exists.
+- Added event-level fairness context to generation events, including duty group, call bucket, group-call bucket, target deficits, overage values, and starvation-rescue flag.
+- Added Allocation Statistics Generation Diagnostics with active people, active call counts, created/forced/blocked/skipped event totals, and top blocked families.
+- Added frontend diagnostics table in the Rota Template Statistics view.
+- Added regression tests for daily duty-family order rotation and statistics diagnostics.
+- Added `docs/rota_reasoning_system_plan.md`.
+- Updated the unit-duty family plan, imbalance incident report, website guide, algorithm validation doc, and planning index.
+
+Verification:
+
+- Focused backend rota template tests passed: `python -m pytest tests/test_rota_template.py -q`, 26 tests.
+- Ruff passed on touched backend files with `--no-cache`.
+
+## 2026-05-26 - Unit Slot Fairness Policy Modes
+
+Goal:
+
+- Make unit-slot fairness configurable instead of hard-coding strict unit equalization.
+
+Implemented:
+
+- Added three generation policy modes:
+  - `equal_unit`: equal target share per included unit.
+  - `equal_people`: target share follows eligible active people and call-level pool size.
+  - `hybrid`: default blend of unit participation and eligible-person capacity.
+- Added backend weighted target math for total slots, duty family, duty family plus call level, exact duty, and call bucket.
+- Added API payload field `allocation_fairness_policy`.
+- Added a Fairness Policy selector to Rota Template Generation Settings.
+- Added Allocation Statistics Target vs Actual table.
+- Added `unit_target_tallies` to allocation statistics.
+- Added regression coverage proving Equal Unit, Equal People, and Hybrid produce different expected allocation patterns.
+- Added `docs/unit_slot_fairness_policy_modes.md` and updated the algorithm validation, reasoning-system plan, duty-family plan, website guide, and planning index.
+
+Verification:
+
+- Focused backend rota template tests passed: `python -m pytest tests/test_rota_template.py -q`, 27 tests.
+- Ruff passed on touched backend files with `--no-cache`.
+- Frontend TypeScript check passed: `npm exec tsc -- --noEmit`.

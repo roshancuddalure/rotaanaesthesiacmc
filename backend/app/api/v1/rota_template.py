@@ -29,11 +29,16 @@ class TemplateGeneratePayload(BaseModel):
     include_weekdays: bool = True
     include_weekends: bool = True
     replace_existing: bool = True
+    allocation_fairness_policy: str = "hybrid"
 
     @model_validator(mode="after")
     def validate_dates(self) -> "TemplateGeneratePayload":
         if self.starts_on and self.ends_on and self.ends_on < self.starts_on:
             raise ValueError("Template end date cannot be before start date")
+        normalized_policy = self.allocation_fairness_policy.strip().lower().replace("-", "_").replace(" ", "_")
+        if normalized_policy not in {"equal_unit", "equal_people", "hybrid"}:
+            raise ValueError("Allocation fairness policy must be equal_unit, equal_people, or hybrid")
+        self.allocation_fairness_policy = normalized_policy
         return self
 
 
@@ -61,8 +66,14 @@ class RotaTemplateAllocationStatisticsRead(BaseModel):
     rota_period: dict[str, object]
     summary: dict[str, object]
     duty_keys: list[dict[str, object]]
+    duty_groups: list[dict[str, object]]
+    group_call_buckets: list[dict[str, object]]
     unit_tallies: list[dict[str, object]]
     unit_duty_matrix: list[dict[str, object]]
+    unit_group_matrix: list[dict[str, object]]
+    unit_group_call_matrix: list[dict[str, object]]
+    unit_target_tallies: list[dict[str, object]]
+    unit_generation_diagnostics: list[dict[str, object]]
     date_distribution: list[dict[str, object]]
     call_level_distribution: list[dict[str, object]]
     blocked_or_skipped_events: list[dict[str, object]]
@@ -115,6 +126,7 @@ def generate_rota_template(
                 include_weekdays=payload.include_weekdays,
                 include_weekends=payload.include_weekends,
                 replace_existing=payload.replace_existing,
+                allocation_fairness_policy=payload.allocation_fairness_policy,
             ),
         )
     except ValueError as exc:

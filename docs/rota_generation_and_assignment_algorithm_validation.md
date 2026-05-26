@@ -12,7 +12,7 @@ The current rota system works in two separate stages.
 2. A conservative post-generation layout shuffle may swap units between matching duty types to reduce same-unit clustering, such as a unit appearing in multiple duties from the same duty family on the same day. This shuffle preserves exact unit duty counts for each duty type and is accepted only when available-member safety is not reduced.
 3. Person assignment fills those slots later. Assignment may be manual by the rota board or automatic through Safe Auto-Fill. Both routes use the same validation checks: unit posting, call level, duty subgroup, leave, same-day duty conflict, previous-day 24-hour rest block, unit staffing safety, and monthly duty-count limits.
 
-The design is intentionally conservative. Mandatory clinical duty slots are preserved even if staffing pressure is high, but they are marked for review. Adjustable/non-mandatory slots are skipped when the selected allocation is hard blocked. Safe Auto-Fill only fills slots when the candidate is clearly eligible, validation is clear, no override is needed, and the required call level is unambiguous.
+The design is intentionally conservative. Selected duty slots are preserved whenever an applicable unit exists, even if every candidate unit is hard blocked; those forced slots are marked for review. The current `is_adjustable` flag is stored and displayed, but does not yet change hard-block behavior during template generation. Safe Auto-Fill only fills slots when the candidate is clearly eligible, validation is clear, no override is needed, and the required call level is unambiguous.
 
 ## 2. Main Code Paths Reviewed
 
@@ -179,6 +179,14 @@ The pressure status is:
 
 For each date and duty rule, the system scores all applicable candidate units and selects the unit with the lowest score. For Saturday and Sunday slots, the system now applies weekend equal-division keys before the ordinary allocation score.
 
+Selected duty rules are also rotated by duty family for each date. The original configured order is preserved inside each family, but the family that is considered first changes by date. This prevents late-order families from always losing smaller units after earlier families have consumed same-day capacity.
+
+The generator supports three fairness policies:
+
+- `equal_unit`: every included unit has the same target share.
+- `equal_people`: target share follows eligible active people in the unit or required call bucket.
+- `hybrid`: target share blends unit participation and eligible-people capacity. This is the default.
+
 Step-by-step, a unit is assessed using these variables:
 
 1. `rule_applies_to_unit`: whether the duty rule is allowed for that unit and not explicitly excluded.
@@ -198,6 +206,16 @@ Step-by-step, a unit is assessed using these variables:
 15. `unit_weekend_day_count`: how many same-day weekend slots the unit already has, counted separately for Saturday and Sunday.
 16. `provisional_unit_day_count`: another same-day unit-use penalty used inside the allocation score.
 17. `near_minimum_penalty`: extra penalty if the proposed slot would leave the unit close to or below its free-person minimum.
+18. `unit_group_count`: how many slots from the same duty family, such as `main`, `cb`, or `rc`, the unit already has.
+19. `unit_call_count`: how many slots for the same required call level the unit already has.
+20. `unit_group_call_count`: how many slots for the same duty family plus call level, such as `main:1ST_CALL` or `rc:3RD_CALL`, the unit already has.
+21. `unit_week_group_count`: how many slots from the same duty family the unit already has in the same ISO week.
+22. `unit_weekend_group_count`: how many weekend slots from the same duty family the unit already has.
+23. `target_deficit`: how far the unit is below the expected fair-share target for total slots, duty family, duty family plus call level, exact duty, or call bucket.
+24. `bucket_overage`: how far the unit would exceed the expected fair-share floor after receiving the proposed slot.
+25. `starvation_rescue_candidate`: whether the unit has zero or materially low count in a duty-family bucket that already exists for comparable candidates.
+26. `allocation_fairness_policy`: whether targets are being calculated by equal unit, equal people, or hybrid mode.
+27. `unit_total_target_weight` and `unit_bucket_target_weight`: the unit's target weights for total-slot and call/duty-family calculations.
 
 Score formula:
 
@@ -223,10 +241,20 @@ Weekend selection rule:
 For Saturday/Sunday slots, choose by:
 1. lower same weekend-day count for that unit;
 2. lower total weekend count for that unit;
-3. lower ordinary allocation score;
-4. lower same-duty count;
-5. lower month count;
-6. unit name alphabetically.
+3. higher total target deficit;
+4. higher duty-family plus call-level target deficit;
+5. higher duty-family target deficit;
+6. higher exact-duty target deficit;
+7. higher call-level target deficit;
+8. lower total monthly overage;
+9. lower duty-family plus call-level overage;
+10. lower duty-family overage;
+11. lower exact-duty overage;
+12. lower call-level overage;
+13. lower weekend duty-family count;
+14. lower same-week duty-family count;
+15. lower ordinary allocation score;
+16. unit name alphabetically.
 ```
 
 This means Saturdays are balanced against Saturdays, Sundays are balanced against Sundays, and total weekend burden is then balanced across units. The ordinary safety/balance score is still used after these weekend fairness keys. If all lower-weekend-count units are hard blocked and another unit is safe, the engine still prefers safe allocations because hard-blocked units are removed from the preferred pool when any safe allocation exists.
@@ -243,10 +271,27 @@ Interpretation:
 
 Non-weekend selection tie-break order:
 
-1. lower allocation score;
-2. lower same-duty count;
-3. lower month count;
-4. unit name alphabetically.
+1. higher total target deficit;
+2. higher duty-family plus call-level target deficit;
+3. higher duty-family target deficit;
+4. higher exact-duty target deficit;
+5. higher call-level target deficit;
+6. lower total monthly overage;
+7. lower duty-family plus call-level overage;
+8. lower duty-family overage;
+9. lower exact-duty overage;
+10. lower call-level overage;
+11. lower same-week duty-family count;
+12. lower ordinary allocation score;
+13. unit name alphabetically.
+
+Duty-family fairness:
+
+- Duty group and duty group plus required call level are now treated as first-class fairness buckets.
+- This prevents the template from looking fair by total duty count while one unit receives mostly Main/OR calls and another receives mostly CB or RC calls.
+- The target-deficit calculation actively prefers safe under-target units before the overage calculation penalizes over-target units.
+- The overage calculation compares the proposed unit's bucket count after assignment against the current expected fair share for that bucket across comparable candidate units.
+- Under Equal People and Hybrid policy, expected share is weighted by eligible active people rather than simply divided by unit count.
 
 Hard-blocked units are avoided if at least one non-hard-blocked unit exists. If all candidate units are hard blocked, the algorithm switches to forced minimal-damage allocation. That fallback still chooses a unit so the generated rota template and Excel exports do not contain empty duty cells, but the slot is marked `needs_review` and is counted separately as a forced review slot.
 
@@ -366,7 +411,7 @@ Generation events are recorded for:
 - created slots;
 - skipped units where another unit was selected;
 - skipped entries due to duplicate existing slots or rule not applying;
-- blocked adjustable slots.
+- blocked candidate-unit decisions during forced allocation review.
 
 Each event stores date, duty, unit, action, severity, reason, and detailed pressure/score values.
 
@@ -622,7 +667,7 @@ This gives traceability for what rule version was used, what was created, what w
 
 The Rota Template screen includes an Allocation Statistics view for validating the generated empty template before people are assigned.
 
-The statistics view summarizes generated slots and generation decisions in five ways.
+The statistics view summarizes generated slots and generation decisions in eight ways.
 
 1. Unit-Wise Slot Tally
 
@@ -636,13 +681,29 @@ This table shows units as rows and duty types as columns. It is used to check wh
 
 This table shows each date, day name, total generated slots, per-unit slot count, needs-review count, forced review count, and unresolved count. It is used to check whether the engine reduced allocations to units with leave, same-day duty pressure, or previous-day 24-hour post-duty pressure.
 
-4. Call-Level Distribution
+4. Duty Family Matrix
+
+This table shows units as rows and duty groups as columns. It is used to check whether Main, CB, RC, PAC, shift, and other duty families are spread across units rather than concentrated.
+
+5. Duty Family Plus Call-Level Matrix
+
+This table shows buckets such as `main:1ST_CALL`, `cb:1ST_CALL`, and `rc:3RD_CALL`. It is the main validation table for confirming that each unit receives a fair mix of duty families at their own call levels.
+
+6. Call-Level Distribution
 
 This table shows how generated slots are divided by required call level for each unit. It is used to check whether 1st call, 2nd call, 3rd call, 4th call, and other call-linked duties were distributed appropriately.
 
-5. Blocked, Skipped, and Forced Decisions
+7. Blocked, Skipped, and Forced Decisions
 
 This table shows date, unit, duty, action, and reason for allocation decisions that did not become a normal ready slot. It includes skipped units, blocked allocations, and forced minimal-damage allocations. This is the main evidence table when the rota board needs to explain why the engine selected a review-required unit instead of leaving the duty empty.
+
+8. Generation Diagnostics
+
+This table shows each unit's active people, created generation events, forced events, hard-blocked events, warning skips, info skips, and top blocked duty families. It is used to explain why a unit may have fewer total slots or zero slots in a specific family even after fairness rules are active.
+
+9. Target vs Actual
+
+This table shows each unit's target slots, actual slots, and difference under the selected fairness policy. It is required for Equal People and Hybrid validation because raw unit totals are expected to differ when units have different active manpower.
 
 The allocation statistics are generated from saved `DutySlot` rows and the latest `RotaTemplateGenerationEvent` audit trail. They are therefore not a separate calculation that can disagree with the generated template; they summarize the actual generated slots and recorded decisions.
 

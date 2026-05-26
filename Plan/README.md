@@ -15,6 +15,12 @@ This folder is the project memory for the duty rota software. It should capture 
 - `12_railway_deployment_notes.md` - Railway deployment runbook, migration notes, and troubleshooting history.
 - `Website complete user guide.md` - no-brainer end-to-end website usage guide, glossary, workflows, and troubleshooting.
 - `development_log.md` - chronological record of analysis, decisions, and future changes.
+- `../docs/unit_slot_allocation_policy_audit.md` - current audit of unit-slot allocation factors, policy gaps, and decisions needed before deeper person-level allocation.
+- `../docs/unit_duty_family_distribution_plan.md` - focused plan for fixing Main/CB/RC and call-level duty-family distribution fairness.
+- `../docs/rota_allocation_research_principles.md` - research-backed rostering principles from papers, solver docs, and practical scheduling discussions.
+- `../docs/unit_slot_imbalance_incident_report_2026_05.md` - May 2026 imbalance investigation explaining why UNIT VI received fewer slots and zero CHAD/RUHSA.
+- `../docs/unit_slot_fairness_policy_modes.md` - Equal Unit, Equal People, and Hybrid unit-slot allocation policy definitions.
+- `../docs/rota_reasoning_system_plan.md` - plan for enterprise-grade allocation explanations, matrix-cell reasoning, and person-assignment traces.
 
 ## Reference Files Reviewed
 

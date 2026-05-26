@@ -5624,6 +5624,84 @@ function renderAllocationDutyMatrixRows(stats: RotaTemplateAllocationStatistics)
     .join("");
 }
 
+function renderAllocationGroupMatrixRows(stats: RotaTemplateAllocationStatistics): string {
+  if (!stats.duty_groups.length) return "";
+  return stats.unit_group_matrix
+    .filter((row) => row.total_slots > 0 || !row.is_unresolved)
+    .map((row) => `
+      <tr>
+        <td>${escapeHtml(row.unit_name)}</td>
+        ${stats.duty_groups.map((group) => `<td>${row.counts[group.key] ?? 0}</td>`).join("")}
+        <td>${row.total_slots}</td>
+      </tr>
+    `)
+    .join("");
+}
+
+function renderAllocationGroupCallMatrixRows(stats: RotaTemplateAllocationStatistics): string {
+  if (!stats.group_call_buckets.length) return "";
+  return stats.unit_group_call_matrix
+    .filter((row) => row.total_slots > 0 || !row.is_unresolved)
+    .map((row) => `
+      <tr>
+        <td>${escapeHtml(row.unit_name)}</td>
+        ${stats.group_call_buckets.map((bucket) => `<td>${row.counts[bucket.key] ?? 0}</td>`).join("")}
+        <td>${row.total_slots}</td>
+      </tr>
+    `)
+    .join("");
+}
+
+function renderGroupCountSummary(counts: Record<string, number>): string {
+  const entries = Object.entries(counts)
+    .filter(([, count]) => count > 0)
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .slice(0, 4);
+  if (!entries.length) return "";
+  return entries.map(([group, count]) => `${escapeHtml(leaveTypeLabel(group))}: ${count}`).join("<br>");
+}
+
+function fairnessPolicyLabel(policy: string): string {
+  if (policy === "equal_unit") return "Equal Unit";
+  if (policy === "equal_people") return "Equal People";
+  if (policy === "hybrid") return "Hybrid";
+  return leaveTypeLabel(policy);
+}
+
+function renderAllocationTargetRows(stats: RotaTemplateAllocationStatistics): string {
+  return stats.unit_target_tallies
+    .filter((row) => !row.is_unresolved)
+    .map((row) => `
+      <tr>
+        <td>${escapeHtml(row.unit_name)}</td>
+        <td>${escapeHtml(fairnessPolicyLabel(row.allocation_fairness_policy))}</td>
+        <td>${row.active_people}</td>
+        <td>${row.target_slots}</td>
+        <td>${row.actual_slots}</td>
+        <td>${row.difference > 0 ? "+" : ""}${row.difference}</td>
+      </tr>
+    `)
+    .join("");
+}
+
+function renderAllocationDiagnosticRows(stats: RotaTemplateAllocationStatistics): string {
+  return stats.unit_generation_diagnostics
+    .filter((row) => !row.is_unresolved)
+    .map((row) => `
+      <tr>
+        <td>${escapeHtml(row.unit_name)}</td>
+        <td>${row.active_people}</td>
+        <td>${row.created_events}</td>
+        <td>${row.forced_events}</td>
+        <td>${row.blocked_events}</td>
+        <td>${row.skipped_warning_events}</td>
+        <td>${row.skipped_info_events}</td>
+        <td>${renderGroupCountSummary(row.blocked_by_group) || `<span class="empty">None</span>`}</td>
+      </tr>
+    `)
+    .join("");
+}
+
 function renderAllocationDateRows(stats: RotaTemplateAllocationStatistics): string {
   const unitRows = stats.unit_tallies.filter((row) => row.total_slots > 0 || !row.is_unresolved);
   return stats.date_distribution
@@ -5703,6 +5781,34 @@ function renderRotaAllocationStatistics(stats: RotaTemplateAllocationStatistics 
       <table>
         <thead><tr><th>Unit</th>${stats.duty_keys.map((duty) => `<th>${escapeHtml(duty.label)}</th>`).join("")}<th>Total</th></tr></thead>
         <tbody>${renderAllocationDutyMatrixRows(stats) || `<tr><td colspan="${stats.duty_keys.length + 2}" class="empty">No duty matrix yet.</td></tr>`}</tbody>
+      </table>
+    </section>
+    <section class="panel table-panel">
+      <h3>Duty Family Matrix</h3>
+      <table>
+        <thead><tr><th>Unit</th>${stats.duty_groups.map((group) => `<th>${escapeHtml(group.label)}</th>`).join("")}<th>Total</th></tr></thead>
+        <tbody>${renderAllocationGroupMatrixRows(stats) || `<tr><td colspan="${stats.duty_groups.length + 2}" class="empty">No duty-family matrix yet.</td></tr>`}</tbody>
+      </table>
+    </section>
+    <section class="panel table-panel">
+      <h3>Duty Family + Call Matrix</h3>
+      <table>
+        <thead><tr><th>Unit</th>${stats.group_call_buckets.map((bucket) => `<th>${escapeHtml(bucket.label)}</th>`).join("")}<th>Total</th></tr></thead>
+        <tbody>${renderAllocationGroupCallMatrixRows(stats) || `<tr><td colspan="${stats.group_call_buckets.length + 2}" class="empty">No duty-family call matrix yet.</td></tr>`}</tbody>
+      </table>
+    </section>
+    <section class="panel table-panel">
+      <h3>Target vs Actual</h3>
+      <table>
+        <thead><tr><th>Unit</th><th>Policy</th><th>Active people</th><th>Target slots</th><th>Actual slots</th><th>Difference</th></tr></thead>
+        <tbody>${renderAllocationTargetRows(stats) || `<tr><td colspan="6" class="empty">No target tally yet.</td></tr>`}</tbody>
+      </table>
+    </section>
+    <section class="panel table-panel">
+      <h3>Generation Diagnostics</h3>
+      <table>
+        <thead><tr><th>Unit</th><th>Active people</th><th>Created</th><th>Forced</th><th>Blocked</th><th>Warning skips</th><th>Info skips</th><th>Top blocked families</th></tr></thead>
+        <tbody>${renderAllocationDiagnosticRows(stats) || `<tr><td colspan="8" class="empty">No generation diagnostics yet.</td></tr>`}</tbody>
       </table>
     </section>
     <section class="panel table-panel">
@@ -6274,6 +6380,7 @@ async function renderRotaTemplate() {
   const selectedMandatoryCount = template.duty_options.filter((duty) => selectedDutyKeys.has(duty.key) && duty.is_mandatory).length;
   const selectedAdjustableCount = template.duty_options.filter((duty) => selectedDutyKeys.has(duty.key) && duty.is_adjustable).length;
   const forcedReviewCount = template.summary.forced_review_slots ?? Number(latest?.summary?.forced_review_slots ?? 0);
+  const selectedFairnessPolicy = String(latest?.summary?.allocation_fairness_policy ?? "hybrid");
 
   viewRoot.innerHTML = `
     <form id="rota-template-form">
@@ -6341,6 +6448,13 @@ async function renderRotaTemplate() {
             <div class="form-grid">
               <label>Start date<input id="template-start" type="date" value="${template.rota_period.starts_on}" /></label>
               <label>End date<input id="template-end" type="date" value="${template.rota_period.ends_on}" /></label>
+              <label>Fairness policy
+                <select id="template-fairness-policy">
+                  <option value="hybrid" ${selectedFairnessPolicy === "hybrid" ? "selected" : ""}>Hybrid</option>
+                  <option value="equal_unit" ${selectedFairnessPolicy === "equal_unit" ? "selected" : ""}>Equal Unit</option>
+                  <option value="equal_people" ${selectedFairnessPolicy === "equal_people" ? "selected" : ""}>Equal People</option>
+                </select>
+              </label>
             </div>
             <div class="settings-check-row">
               <label class="checkbox-line"><input id="template-weekdays" type="checkbox" checked /> Include weekdays</label>
@@ -7770,6 +7884,7 @@ function bindViewEvents() {
           include_weekdays: Boolean(form.querySelector<HTMLInputElement>("#template-weekdays")?.checked),
           include_weekends: Boolean(form.querySelector<HTMLInputElement>("#template-weekends")?.checked),
           replace_existing: Boolean(form.querySelector<HTMLInputElement>("#template-replace")?.checked),
+          allocation_fairness_policy: (form.querySelector<HTMLSelectElement>("#template-fairness-policy")?.value as "equal_unit" | "equal_people" | "hybrid") || "hybrid",
         });
         showToast(`Generated ${rotaTemplate.latest_run?.created_slots ?? 0} empty slot(s)`, "success");
         rejectedRotaCandidates.clear();

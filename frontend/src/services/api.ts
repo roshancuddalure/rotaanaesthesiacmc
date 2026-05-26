@@ -868,6 +868,8 @@ export interface RotaTemplateAllocationStatistics {
     blocked_or_skipped_events: number;
   };
   duty_keys: Array<{ key: string; label: string }>;
+  duty_groups: Array<{ key: string; label: string }>;
+  group_call_buckets: Array<{ key: string; group: string; call_level: string; label: string }>;
   unit_tallies: Array<{
     unit_id: string | null;
     unit_name: string;
@@ -892,6 +894,45 @@ export interface RotaTemplateAllocationStatistics {
     is_unresolved: boolean;
     counts: Record<string, number>;
     total_slots: number;
+  }>;
+  unit_group_matrix: Array<{
+    unit_id: string | null;
+    unit_name: string;
+    is_unresolved: boolean;
+    counts: Record<string, number>;
+    total_slots: number;
+  }>;
+  unit_group_call_matrix: Array<{
+    unit_id: string | null;
+    unit_name: string;
+    is_unresolved: boolean;
+    counts: Record<string, number>;
+    total_slots: number;
+  }>;
+  unit_target_tallies: Array<{
+    unit_id: string | null;
+    unit_name: string;
+    is_unresolved: boolean;
+    allocation_fairness_policy: string;
+    active_people: number;
+    target_weight: number;
+    target_slots: number;
+    actual_slots: number;
+    difference: number;
+  }>;
+  unit_generation_diagnostics: Array<{
+    unit_id: string | null;
+    unit_name: string;
+    is_unresolved: boolean;
+    active_people: number;
+    active_call_counts: Record<string, number>;
+    created_events: number;
+    forced_events: number;
+    blocked_events: number;
+    skipped_warning_events: number;
+    skipped_info_events: number;
+    blocked_by_group: Record<string, number>;
+    skipped_by_group: Record<string, number>;
   }>;
   date_distribution: Array<{
     date: string;
@@ -1007,6 +1048,7 @@ export interface RotaTemplateGeneratePayload {
   include_weekdays: boolean;
   include_weekends: boolean;
   replace_existing: boolean;
+  allocation_fairness_policy: "equal_unit" | "equal_people" | "hybrid";
 }
 
 export interface RotaTemplateClearResult {

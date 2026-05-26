@@ -38,6 +38,14 @@ ACTION_SKIPPED = "skipped"
 ACTION_BLOCKED = "blocked"
 FORCED_ALLOCATION_MODE = "forced_minimal_damage"
 FORCED_ALLOCATION_REASON_PREFIX = "Forced minimal-damage allocation"
+FAIRNESS_EQUAL_UNIT = "equal_unit"
+FAIRNESS_EQUAL_PEOPLE = "equal_people"
+FAIRNESS_HYBRID = "hybrid"
+ALLOCATION_FAIRNESS_POLICIES = {
+    FAIRNESS_EQUAL_UNIT,
+    FAIRNESS_EQUAL_PEOPLE,
+    FAIRNESS_HYBRID,
+}
 
 
 def is_forced_allocation_slot(slot: DutySlot) -> bool:
@@ -52,6 +60,7 @@ class TemplateGenerationOptions:
     include_weekdays: bool = True
     include_weekends: bool = True
     replace_existing: bool = True
+    allocation_fairness_policy: str = FAIRNESS_HYBRID
 
 
 @dataclass
@@ -62,6 +71,19 @@ class UnitAllocation:
     hard_blocked: bool
     warning: bool
     reason: str
+    fairness: dict[str, object]
+
+
+def normalize_allocation_fairness_policy(value: str | None) -> str:
+    if not value:
+        return FAIRNESS_HYBRID
+    normalized = value.strip().lower().replace("-", "_").replace(" ", "_")
+    if normalized not in ALLOCATION_FAIRNESS_POLICIES:
+        raise ValueError(
+            "Allocation fairness policy must be one of: "
+            + ", ".join(sorted(ALLOCATION_FAIRNESS_POLICIES))
+        )
+    return normalized
 
 
 def month_dates(month: str, options: TemplateGenerationOptions) -> list[date]:
@@ -92,6 +114,25 @@ def selected_duty_rules(rules: RotaPhaseOneRules, options: TemplateGenerationOpt
     if unknown:
         raise ValueError(f"Unknown or inactive duty rule(s): {', '.join(sorted(unknown))}")
     return [rule for rule in active_rules if rule.key in requested]
+
+
+def duty_rules_for_day(duties: list[DutyRule], day: date, first_day: date) -> list[DutyRule]:
+    group_order: list[str] = []
+    for rule in duties:
+        if rule.group not in group_order:
+            group_order.append(rule.group)
+    if len(group_order) <= 1:
+        return duties
+    offset = (day - first_day).days % len(group_order)
+    rotated_groups = group_order[offset:] + group_order[:offset]
+    group_rank = {group: index for index, group in enumerate(rotated_groups)}
+    return [
+        rule
+        for _index, rule in sorted(
+            enumerate(duties),
+            key=lambda item: (group_rank.get(item[1].group, len(group_rank)), item[0]),
+        )
+    ]
 
 
 def included_scope_units(scope: MonthlyGenerationScope) -> list[Unit]:
@@ -182,6 +223,32 @@ def active_unit_member_ids(
         and (posting.ends_on is None or posting.ends_on >= day)
         and posting.person.active_status == "active"
         and (call_level is None or normalize_call_level(posting.posting_type or posting.person.call_level) == call_level)
+    }
+
+
+def allocation_target_weights(
+    *,
+    policy: str,
+    unit_ids: list[UUID],
+    capacity_counts: dict[UUID, int],
+) -> dict[UUID, int]:
+    if not unit_ids:
+        return {}
+    policy = normalize_allocation_fairness_policy(policy)
+    if policy == FAIRNESS_EQUAL_UNIT:
+        return {unit_id: 1 for unit_id in unit_ids}
+
+    total_capacity = sum(max(0, capacity_counts.get(unit_id, 0)) for unit_id in unit_ids)
+    if total_capacity <= 0:
+        return {unit_id: 1 for unit_id in unit_ids}
+
+    if policy == FAIRNESS_EQUAL_PEOPLE:
+        return {unit_id: max(0, capacity_counts.get(unit_id, 0)) for unit_id in unit_ids}
+
+    unit_count = len(unit_ids)
+    return {
+        unit_id: total_capacity + unit_count * max(0, capacity_counts.get(unit_id, 0))
+        for unit_id in unit_ids
     }
 
 
@@ -352,6 +419,116 @@ def unit_minimum_free_people_for_call(unit: Unit, call_level: str | None, rules:
         if normalize_call_level(row.call_level) == call_level:
             return max(0, int(row.minimum_free_people))
     return fallback
+
+
+def duty_group_for_rule(rule: DutyRule | None, duty_key: str) -> str:
+    return rule.group if rule is not None else duty_key
+
+
+def required_call_bucket_for_rule(rule: DutyRule | None, duty_key: str) -> str:
+    if rule is not None:
+        required_call = required_call_for_rule(rule)
+        if required_call is not None:
+            return required_call
+    inferred = inferred_call_levels_from_duty_type(duty_key)
+    return next(iter(inferred)) if len(inferred) == 1 else "Unassigned"
+
+
+def required_call_bucket_for_slot(slot: DutySlot, rule: DutyRule | None) -> str:
+    if slot.call_level:
+        normalized = normalize_call_level(slot.call_level)
+        if normalized != "Unassigned":
+            return normalized
+    return required_call_bucket_for_rule(rule, slot.duty_type)
+
+
+def group_call_bucket(group: str, call_level: str) -> str:
+    return f"{group}:{call_level}"
+
+
+def overage_after_assignment(
+    *,
+    current_count: int,
+    total_bucket_count: int,
+    candidate_units: int,
+) -> int:
+    if candidate_units <= 0:
+        return 0
+    expected_floor_after = (total_bucket_count + 1) // candidate_units
+    return max(0, current_count + 1 - expected_floor_after)
+
+
+def target_deficit_before_assignment(
+    *,
+    current_count: int,
+    total_bucket_count: int,
+    candidate_units: int,
+) -> int:
+    if candidate_units <= 0:
+        return 0
+    expected_ceiling_after = (total_bucket_count + candidate_units) // candidate_units
+    return max(0, expected_ceiling_after - current_count)
+
+
+def weighted_expected_floor_after_assignment(
+    *,
+    total_bucket_count: int,
+    unit_weight: int,
+    total_weight: int,
+) -> int:
+    if unit_weight <= 0 or total_weight <= 0:
+        return 0
+    return ((total_bucket_count + 1) * unit_weight) // total_weight
+
+
+def weighted_expected_ceiling_after_assignment(
+    *,
+    total_bucket_count: int,
+    unit_weight: int,
+    total_weight: int,
+) -> int:
+    if unit_weight <= 0 or total_weight <= 0:
+        return 0
+    numerator = (total_bucket_count + 1) * unit_weight
+    return (numerator + total_weight - 1) // total_weight
+
+
+def weighted_overage_after_assignment(
+    *,
+    current_count: int,
+    total_bucket_count: int,
+    unit_weight: int,
+    total_weight: int,
+) -> int:
+    expected_floor_after = weighted_expected_floor_after_assignment(
+        total_bucket_count=total_bucket_count,
+        unit_weight=unit_weight,
+        total_weight=total_weight,
+    )
+    return max(0, current_count + 1 - expected_floor_after)
+
+
+def weighted_target_deficit_before_assignment(
+    *,
+    current_count: int,
+    total_bucket_count: int,
+    unit_weight: int,
+    total_weight: int,
+) -> int:
+    expected_ceiling_after = weighted_expected_ceiling_after_assignment(
+        total_bucket_count=total_bucket_count,
+        unit_weight=unit_weight,
+        total_weight=total_weight,
+    )
+    return max(0, expected_ceiling_after - current_count)
+
+
+def count_for_unit_bucket(counter: dict[tuple[UUID, str], int], unit_id: UUID, bucket: str) -> int:
+    return counter.get((unit_id, bucket), 0)
+
+
+def total_for_bucket(counter: dict[tuple[UUID, str], int], bucket: str) -> int:
+    return sum(count for (_unit_id, key), count in counter.items() if key == bucket)
 
 
 def post_24hr_rest_count(
@@ -693,23 +870,43 @@ def choose_balanced_unit(
     existing_keys: set[tuple[date, str, str]],
     unit_month_counts: dict[UUID, int],
     unit_duty_counts: dict[tuple[UUID, str], int],
+    unit_group_counts: dict[tuple[UUID, str], int],
+    unit_call_counts: dict[tuple[UUID, str], int],
+    unit_group_call_counts: dict[tuple[UUID, str], int],
     unit_week_counts: dict[tuple[UUID, tuple[int, int]], int],
+    unit_week_group_counts: dict[tuple[UUID, tuple[int, int], str], int],
     unit_weekend_counts: dict[UUID, int],
     unit_weekend_day_counts: dict[tuple[UUID, int], int],
+    unit_weekend_group_counts: dict[tuple[UUID, str], int],
     unit_forced_counts: dict[UUID, int],
     provisional_unit_day_counts: dict[tuple[UUID, date], int],
     provisional_post_24hr_counts: dict[tuple[UUID, date, str | None], int],
+    allocation_fairness_policy: str,
 ) -> tuple[UnitAllocation | None, list[UnitAllocation]]:
     allocations: list[UnitAllocation] = []
+    allocation_fairness_policy = normalize_allocation_fairness_policy(allocation_fairness_policy)
     required_call = required_call_for_rule(rule)
+    group = duty_group_for_rule(rule, rule.key)
+    call_bucket = required_call or required_call_bucket_for_rule(rule, rule.key)
+    group_call = group_call_bucket(group, call_bucket)
+    unit_total_active_counts: dict[UUID, int] = {}
+    unit_bucket_active_counts: dict[UUID, int] = {}
     for unit in units:
         if not rule_applies_to_unit(rule, unit):
             continue
         label = slot_label(unit)
         if (day, rule.key, label) in existing_keys:
             continue
+        total_member_ids = active_unit_member_ids(postings, unit.id, day)
+        bucket_member_ids = (
+            active_unit_member_ids(postings, unit.id, day, call_level=required_call)
+            if required_call
+            else total_member_ids
+        )
+        unit_total_active_counts[unit.id] = len(total_member_ids)
+        unit_bucket_active_counts[unit.id] = len(bucket_member_ids)
         pressure = pressure_for_slot(
-            unit_member_ids=active_unit_member_ids(postings, unit.id, day, call_level=required_call),
+            unit_member_ids=bucket_member_ids,
             day_leaves=day_leaves,
             rule=rule,
             rules=rules,
@@ -742,21 +939,168 @@ def choose_balanced_unit(
                 hard_blocked=hard_blocked,
                 warning=warning,
                 reason=str(pressure["reason"]),
+                fairness={},
             )
         )
     if not allocations:
         return None, []
     safe_allocations = [allocation for allocation in allocations if not allocation.hard_blocked]
     is_weekend = day.weekday() >= 5
+    comparison_allocations = safe_allocations if safe_allocations else allocations
+    comparison_unit_ids = [allocation.unit.id for allocation in comparison_allocations]
+    comparison_units = len(comparison_unit_ids)
+    total_target_weights = allocation_target_weights(
+        policy=allocation_fairness_policy,
+        unit_ids=comparison_unit_ids,
+        capacity_counts=unit_total_active_counts,
+    )
+    bucket_target_weights = allocation_target_weights(
+        policy=allocation_fairness_policy,
+        unit_ids=comparison_unit_ids,
+        capacity_counts=unit_bucket_active_counts,
+    )
+    total_target_weight = sum(total_target_weights.values())
+    bucket_target_weight = sum(bucket_target_weights.values())
+    total_group_count = total_for_bucket(unit_group_counts, group)
+    total_call_count = total_for_bucket(unit_call_counts, call_bucket)
+    total_group_call_count = total_for_bucket(unit_group_call_counts, group_call)
+    total_duty_count = total_for_bucket(unit_duty_counts, rule.key)
+    total_month_count = sum(unit_month_counts.values())
+
+    def fairness_snapshot(allocation: UnitAllocation) -> dict[str, object]:
+        unit_id = allocation.unit.id
+        unit_group_call_count = count_for_unit_bucket(unit_group_call_counts, unit_id, group_call)
+        unit_group_count = count_for_unit_bucket(unit_group_counts, unit_id, group)
+        unit_duty_count = count_for_unit_bucket(unit_duty_counts, unit_id, rule.key)
+        unit_call_count = count_for_unit_bucket(unit_call_counts, unit_id, call_bucket)
+        unit_total_count = unit_month_counts.get(unit_id, 0)
+        unit_total_weight = total_target_weights.get(unit_id, 0)
+        unit_bucket_weight = bucket_target_weights.get(unit_id, 0)
+        group_call_overage = weighted_overage_after_assignment(
+            current_count=unit_group_call_count,
+            total_bucket_count=total_group_call_count,
+            unit_weight=unit_bucket_weight,
+            total_weight=bucket_target_weight,
+        )
+        group_overage = weighted_overage_after_assignment(
+            current_count=unit_group_count,
+            total_bucket_count=total_group_count,
+            unit_weight=unit_bucket_weight,
+            total_weight=bucket_target_weight,
+        )
+        exact_duty_overage = weighted_overage_after_assignment(
+            current_count=unit_duty_count,
+            total_bucket_count=total_duty_count,
+            unit_weight=unit_bucket_weight,
+            total_weight=bucket_target_weight,
+        )
+        call_overage = weighted_overage_after_assignment(
+            current_count=unit_call_count,
+            total_bucket_count=total_call_count,
+            unit_weight=unit_bucket_weight,
+            total_weight=bucket_target_weight,
+        )
+        total_overage = weighted_overage_after_assignment(
+            current_count=unit_total_count,
+            total_bucket_count=total_month_count,
+            unit_weight=unit_total_weight,
+            total_weight=total_target_weight,
+        )
+        group_call_deficit = weighted_target_deficit_before_assignment(
+            current_count=unit_group_call_count,
+            total_bucket_count=total_group_call_count,
+            unit_weight=unit_bucket_weight,
+            total_weight=bucket_target_weight,
+        )
+        group_deficit = weighted_target_deficit_before_assignment(
+            current_count=unit_group_count,
+            total_bucket_count=total_group_count,
+            unit_weight=unit_bucket_weight,
+            total_weight=bucket_target_weight,
+        )
+        exact_duty_deficit = weighted_target_deficit_before_assignment(
+            current_count=unit_duty_count,
+            total_bucket_count=total_duty_count,
+            unit_weight=unit_bucket_weight,
+            total_weight=bucket_target_weight,
+        )
+        call_deficit = weighted_target_deficit_before_assignment(
+            current_count=unit_call_count,
+            total_bucket_count=total_call_count,
+            unit_weight=unit_bucket_weight,
+            total_weight=bucket_target_weight,
+        )
+        total_deficit = weighted_target_deficit_before_assignment(
+            current_count=unit_total_count,
+            total_bucket_count=total_month_count,
+            unit_weight=unit_total_weight,
+            total_weight=total_target_weight,
+        )
+        week_group_count = unit_week_group_counts.get((unit_id, week_key(day), group), 0)
+        weekend_group_count = unit_weekend_group_counts.get((unit_id, group), 0) if is_weekend else 0
+        return {
+            "duty_group": group,
+            "call_bucket": call_bucket,
+            "group_call_bucket": group_call,
+            "comparison_units": comparison_units,
+            "allocation_fairness_policy": allocation_fairness_policy,
+            "unit_total_active_people": unit_total_active_counts.get(unit_id, 0),
+            "unit_bucket_active_people": unit_bucket_active_counts.get(unit_id, 0),
+            "unit_total_target_weight": unit_total_weight,
+            "unit_bucket_target_weight": unit_bucket_weight,
+            "total_target_weight": total_target_weight,
+            "bucket_target_weight": bucket_target_weight,
+            "unit_group_call_count": unit_group_call_count,
+            "unit_group_count": unit_group_count,
+            "unit_duty_count": unit_duty_count,
+            "unit_call_count": unit_call_count,
+            "unit_total_count": unit_total_count,
+            "group_call_target_deficit": group_call_deficit,
+            "group_target_deficit": group_deficit,
+            "exact_duty_target_deficit": exact_duty_deficit,
+            "call_target_deficit": call_deficit,
+            "total_target_deficit": total_deficit,
+            "group_call_overage": group_call_overage,
+            "group_overage": group_overage,
+            "exact_duty_overage": exact_duty_overage,
+            "call_overage": call_overage,
+            "total_overage": total_overage,
+            "week_group_count": week_group_count,
+            "weekend_group_count": weekend_group_count,
+            "starvation_rescue_candidate": bool(
+                (unit_group_count == 0 and total_group_count >= comparison_units)
+                or (unit_group_call_count == 0 and total_group_call_count >= comparison_units)
+            ),
+        }
+
+    for allocation in allocations:
+        allocation.fairness = fairness_snapshot(allocation)
+
+    def fairness_key(allocation: UnitAllocation) -> tuple[int, int, int, int, int, int, int, int, int, int, int, int, int]:
+        fairness = allocation.fairness
+        return (
+            -int(fairness["total_target_deficit"]),
+            -int(fairness["group_call_target_deficit"]),
+            -int(fairness["group_target_deficit"]),
+            -int(fairness["exact_duty_target_deficit"]),
+            -int(fairness["call_target_deficit"]),
+            int(fairness["total_overage"]),
+            int(fairness["group_call_overage"]),
+            int(fairness["group_overage"]),
+            int(fairness["exact_duty_overage"]),
+            int(fairness["call_overage"]),
+            int(fairness["weekend_group_count"]),
+            int(fairness["week_group_count"]),
+            allocation.score,
+        )
+
     if safe_allocations:
         selected = min(
             safe_allocations,
             key=lambda allocation: (
                 unit_weekend_day_counts.get((allocation.unit.id, day.weekday()), 0) if is_weekend else 0,
                 unit_weekend_counts.get(allocation.unit.id, 0) if is_weekend else 0,
-                allocation.score,
-                unit_duty_counts.get((allocation.unit.id, rule.key), 0),
-                unit_month_counts.get(allocation.unit.id, 0),
+                *fairness_key(allocation),
                 allocation.unit.name,
             ),
         )
@@ -769,8 +1113,7 @@ def choose_balanced_unit(
             unit_weekend_day_counts.get((allocation.unit.id, day.weekday()), 0) if is_weekend else 0,
             unit_weekend_counts.get(allocation.unit.id, 0) if is_weekend else 0,
             unit_forced_counts.get(allocation.unit.id, 0),
-            unit_duty_counts.get((allocation.unit.id, rule.key), 0),
-            unit_month_counts.get(allocation.unit.id, 0),
+            *fairness_key(allocation),
             forced_damage_score(allocation)[1:],
             allocation.unit.name,
         ),
@@ -784,6 +1127,9 @@ def generate_empty_template(
     options: TemplateGenerationOptions | None = None,
 ) -> dict[str, object]:
     options = options or TemplateGenerationOptions()
+    options.allocation_fairness_policy = normalize_allocation_fairness_policy(
+        options.allocation_fairness_policy
+    )
     period, scope = monthly_setup(db, month)
     if not scope.is_locked:
         raise ValueError("Monthly unit scope must be locked before template generation")
@@ -813,6 +1159,8 @@ def generate_empty_template(
             "include_weekdays": options.include_weekdays,
             "include_weekends": options.include_weekends,
             "replace_existing": options.replace_existing,
+            "duty_ordering": "rotated_by_family_per_day",
+            "allocation_fairness_policy": options.allocation_fairness_policy,
         },
     )
     db.add(run)
@@ -832,29 +1180,53 @@ def generate_empty_template(
     existing_keys = {(slot.duty_date, slot.duty_type, slot.slot_label) for slot in existing_slots}
     unit_month_counts: dict[UUID, int] = {}
     unit_duty_counts: dict[tuple[UUID, str], int] = {}
+    unit_group_counts: dict[tuple[UUID, str], int] = {}
+    unit_call_counts: dict[tuple[UUID, str], int] = {}
+    unit_group_call_counts: dict[tuple[UUID, str], int] = {}
     unit_week_counts: dict[tuple[UUID, tuple[int, int]], int] = {}
+    unit_week_group_counts: dict[tuple[UUID, tuple[int, int], str], int] = {}
     unit_weekend_counts: dict[UUID, int] = {}
     unit_weekend_day_counts: dict[tuple[UUID, int], int] = {}
+    unit_weekend_group_counts: dict[tuple[UUID, str], int] = {}
     unit_forced_counts: dict[UUID, int] = {}
     provisional_unit_day_counts: dict[tuple[UUID, date], int] = {}
     provisional_post_24hr_counts: dict[tuple[UUID, date, str | None], int] = {}
     for slot in existing_slots:
         if slot.unit_id is None:
             continue
+        slot_rule = rules.duty_rules_by_key.get(slot.duty_type)
+        slot_group = duty_group_for_rule(slot_rule, slot.duty_type)
+        slot_call = required_call_bucket_for_slot(slot, slot_rule)
+        slot_group_call = group_call_bucket(slot_group, slot_call)
         if is_forced_allocation_slot(slot):
             unit_forced_counts[slot.unit_id] = unit_forced_counts.get(slot.unit_id, 0) + 1
         unit_month_counts[slot.unit_id] = unit_month_counts.get(slot.unit_id, 0) + 1
         unit_duty_counts[(slot.unit_id, slot.duty_type)] = (
             unit_duty_counts.get((slot.unit_id, slot.duty_type), 0) + 1
         )
+        unit_group_counts[(slot.unit_id, slot_group)] = (
+            unit_group_counts.get((slot.unit_id, slot_group), 0) + 1
+        )
+        unit_call_counts[(slot.unit_id, slot_call)] = (
+            unit_call_counts.get((slot.unit_id, slot_call), 0) + 1
+        )
+        unit_group_call_counts[(slot.unit_id, slot_group_call)] = (
+            unit_group_call_counts.get((slot.unit_id, slot_group_call), 0) + 1
+        )
         unit_week_counts[(slot.unit_id, week_key(slot.duty_date))] = (
             unit_week_counts.get((slot.unit_id, week_key(slot.duty_date)), 0) + 1
+        )
+        unit_week_group_counts[(slot.unit_id, week_key(slot.duty_date), slot_group)] = (
+            unit_week_group_counts.get((slot.unit_id, week_key(slot.duty_date), slot_group), 0) + 1
         )
         if slot.duty_date.weekday() >= 5:
             unit_weekend_counts[slot.unit_id] = unit_weekend_counts.get(slot.unit_id, 0) + 1
             weekend_day_key = (slot.unit_id, slot.duty_date.weekday())
             unit_weekend_day_counts[weekend_day_key] = (
                 unit_weekend_day_counts.get(weekend_day_key, 0) + 1
+            )
+            unit_weekend_group_counts[(slot.unit_id, slot_group)] = (
+                unit_weekend_group_counts.get((slot.unit_id, slot_group), 0) + 1
             )
         provisional_key = (slot.unit_id, slot.duty_date)
         provisional_unit_day_counts[provisional_key] = (
@@ -874,7 +1246,7 @@ def generate_empty_template(
 
     for day in days:
         day_leaves = leaves.get(day, {})
-        for rule in duties:
+        for rule in duty_rules_for_day(duties, day, days[0]):
             selected, allocations = choose_balanced_unit(
                 units=units,
                 day=day,
@@ -885,12 +1257,18 @@ def generate_empty_template(
                 existing_keys=existing_keys,
                 unit_month_counts=unit_month_counts,
                 unit_duty_counts=unit_duty_counts,
+                unit_group_counts=unit_group_counts,
+                unit_call_counts=unit_call_counts,
+                unit_group_call_counts=unit_group_call_counts,
                 unit_week_counts=unit_week_counts,
+                unit_week_group_counts=unit_week_group_counts,
                 unit_weekend_counts=unit_weekend_counts,
                 unit_weekend_day_counts=unit_weekend_day_counts,
+                unit_weekend_group_counts=unit_weekend_group_counts,
                 unit_forced_counts=unit_forced_counts,
                 provisional_unit_day_counts=provisional_unit_day_counts,
                 provisional_post_24hr_counts=provisional_post_24hr_counts,
+                allocation_fairness_policy=options.allocation_fairness_policy,
             )
             if selected is None:
                 for unit in units:
@@ -930,6 +1308,9 @@ def generate_empty_template(
                 if len(rule.allowed_call_levels) == 1
                 else inferred_call_levels[0] if len(inferred_call_levels) == 1 else None
             )
+            slot_group = duty_group_for_rule(rule, rule.key)
+            slot_call = normalize_call_level(slot_call_level) if slot_call_level else required_call_bucket_for_rule(rule, rule.key)
+            slot_group_call = group_call_bucket(slot_group, slot_call)
             slot = DutySlot(
                 rota_period=period,
                 unit=unit,
@@ -958,14 +1339,29 @@ def generate_empty_template(
             unit_duty_counts[(unit.id, rule.key)] = (
                 unit_duty_counts.get((unit.id, rule.key), 0) + 1
             )
+            unit_group_counts[(unit.id, slot_group)] = (
+                unit_group_counts.get((unit.id, slot_group), 0) + 1
+            )
+            unit_call_counts[(unit.id, slot_call)] = (
+                unit_call_counts.get((unit.id, slot_call), 0) + 1
+            )
+            unit_group_call_counts[(unit.id, slot_group_call)] = (
+                unit_group_call_counts.get((unit.id, slot_group_call), 0) + 1
+            )
             unit_week_counts[(unit.id, week_key(day))] = (
                 unit_week_counts.get((unit.id, week_key(day)), 0) + 1
+            )
+            unit_week_group_counts[(unit.id, week_key(day), slot_group)] = (
+                unit_week_group_counts.get((unit.id, week_key(day), slot_group), 0) + 1
             )
             if day.weekday() >= 5:
                 unit_weekend_counts[unit.id] = unit_weekend_counts.get(unit.id, 0) + 1
                 weekend_day_key = (unit.id, day.weekday())
                 unit_weekend_day_counts[weekend_day_key] = (
                     unit_weekend_day_counts.get(weekend_day_key, 0) + 1
+                )
+                unit_weekend_group_counts[(unit.id, slot_group)] = (
+                    unit_weekend_group_counts.get((unit.id, slot_group), 0) + 1
                 )
             if forced_allocation:
                 unit_forced_counts[unit.id] = unit_forced_counts.get(unit.id, 0) + 1
@@ -993,6 +1389,7 @@ def generate_empty_template(
                     reason=reason,
                     details={
                         **selected.pressure,
+                        **selected.fairness,
                         "template_status": status,
                         "allocation_mode": FORCED_ALLOCATION_MODE if forced_allocation else "balanced",
                         "allocation_score": selected.score,
@@ -1010,6 +1407,9 @@ def generate_empty_template(
                         ),
                         "unit_month_count_after": unit_month_counts[unit.id],
                         "unit_duty_count_after": unit_duty_counts[(unit.id, rule.key)],
+                        "unit_group_count_after": unit_group_counts[(unit.id, slot_group)],
+                        "unit_call_count_after": unit_call_counts[(unit.id, slot_call)],
+                        "unit_group_call_count_after": unit_group_call_counts[(unit.id, slot_group_call)],
                     },
                 )
             )
@@ -1029,6 +1429,7 @@ def generate_empty_template(
                             ),
                             details={
                                 **allocation.pressure,
+                                **allocation.fairness,
                                 "template_status": status,
                                 "allocation_mode": FORCED_ALLOCATION_MODE,
                                 "allocation_score": allocation.score,
@@ -1062,6 +1463,7 @@ def generate_empty_template(
                         ),
                         details={
                             **allocation.pressure,
+                            **allocation.fairness,
                             "allocation_mode": "balanced",
                             "allocation_score": allocation.score,
                             "weekend_day_count": (
@@ -1317,8 +1719,23 @@ def allocation_statistics(db: Session, month: str) -> dict[str, object]:
         ),
     )
     unit_duty_counts: dict[str, Counter[str]] = {unit_key: Counter() for unit_key in unit_rows}
+    unit_group_counts: dict[str, Counter[str]] = {unit_key: Counter() for unit_key in unit_rows}
+    unit_group_call_counts: dict[str, Counter[str]] = {unit_key: Counter() for unit_key in unit_rows}
     call_level_counts: dict[str, Counter[str]] = {unit_key: Counter() for unit_key in unit_rows}
+    active_people_by_unit: dict[str, set[UUID]] = {unit_key: set() for unit_key in unit_rows}
+    active_call_counts_by_unit: dict[str, Counter[str]] = {unit_key: Counter() for unit_key in unit_rows}
     date_rows: dict[date, dict[str, object]] = {}
+    duty_group_labels: dict[str, str] = {}
+    group_call_labels: dict[str, dict[str, str]] = {}
+
+    for posting in postings_for_month(db, period.starts_on, period.ends_on):
+        if posting.unit_id is None or posting.person.active_status != "active":
+            continue
+        unit_key = str(posting.unit_id)
+        if unit_key not in active_people_by_unit:
+            continue
+        active_people_by_unit[unit_key].add(posting.person_id)
+        active_call_counts_by_unit[unit_key][normalize_call_level(posting.posting_type)] += 1
 
     for slot in slots:
         unit_key, unit_name, _campus, _is_unresolved = slot_unit_key(slot)
@@ -1342,7 +1759,11 @@ def allocation_statistics(db: Session, month: str) -> dict[str, object]:
                 "non_24hr_slots": 0,
             }
             unit_duty_counts[unit_key] = Counter()
+            unit_group_counts[unit_key] = Counter()
+            unit_group_call_counts[unit_key] = Counter()
             call_level_counts[unit_key] = Counter()
+            active_people_by_unit[unit_key] = set()
+            active_call_counts_by_unit[unit_key] = Counter()
 
         row = unit_rows[unit_key]
         row["total_slots"] = int(row["total_slots"]) + 1
@@ -1369,7 +1790,22 @@ def allocation_statistics(db: Session, month: str) -> dict[str, object]:
             row["non_24hr_slots"] = int(row["non_24hr_slots"]) + 1
 
         unit_duty_counts[unit_key][slot.duty_type] += 1
-        call_level = slot.call_level or next(iter(call_levels_for_export_rule(rule_by_key.get(slot.duty_type), slot.duty_type)))
+        rule = rule_by_key.get(slot.duty_type)
+        group = duty_group_for_rule(rule, slot.duty_type)
+        call_level = required_call_bucket_for_slot(slot, rule)
+        group_call = group_call_bucket(group, call_level)
+        duty_group_labels.setdefault(group, group.replace("_", " ").title())
+        group_call_labels.setdefault(
+            group_call,
+            {
+                "key": group_call,
+                "group": group,
+                "call_level": call_level,
+                "label": f"{duty_group_labels[group]} / {CALL_WISE_SHEET_LABELS.get(call_level, call_level.replace('_', ' ').title())}",
+            },
+        )
+        unit_group_counts[unit_key][group] += 1
+        unit_group_call_counts[unit_key][group_call] += 1
         call_level_counts[unit_key][call_level] += 1
 
         date_row = date_rows.setdefault(
@@ -1398,11 +1834,76 @@ def allocation_statistics(db: Session, month: str) -> dict[str, object]:
         if isinstance(unit_counts, dict):
             unit_counts[unit_key] = int(unit_counts.get(unit_key, 0)) + 1
 
+    unit_event_diagnostics: dict[str, dict[str, object]] = {
+        unit_key: {
+            "unit_id": None if unit_key == "unresolved" else unit_key,
+            "unit_name": str(row["unit_name"]),
+            "is_unresolved": bool(row["is_unresolved"]),
+            "active_people": len(active_people_by_unit.get(unit_key, set())),
+            "active_call_counts": dict(active_call_counts_by_unit.get(unit_key, Counter())),
+            "created_events": 0,
+            "forced_events": 0,
+            "blocked_events": 0,
+            "skipped_warning_events": 0,
+            "skipped_info_events": 0,
+            "blocked_by_group": {},
+            "skipped_by_group": {},
+        }
+        for unit_key, row in unit_rows.items()
+    }
     event_rows = []
     if run:
         for event in sorted(run.events, key=lambda item: item.created_at):
+            unit_key = str(event.unit_id) if event.unit_id else "unresolved"
+            if unit_key in unit_event_diagnostics:
+                diagnostic = unit_event_diagnostics[unit_key]
+                duty_group = "unknown"
+                if event.duty_type:
+                    duty_group = duty_group_for_rule(rule_by_key.get(event.duty_type), event.duty_type)
+                if event.action == ACTION_CREATED:
+                    diagnostic["created_events"] = int(diagnostic["created_events"]) + 1
+                elif event.action == ACTION_FORCED:
+                    diagnostic["forced_events"] = int(diagnostic["forced_events"]) + 1
+                elif event.action == ACTION_BLOCKED:
+                    diagnostic["blocked_events"] = int(diagnostic["blocked_events"]) + 1
+                    blocked_by_group = diagnostic["blocked_by_group"]
+                    if isinstance(blocked_by_group, dict):
+                        blocked_by_group[duty_group] = int(blocked_by_group.get(duty_group, 0)) + 1
+                elif event.action == ACTION_SKIPPED:
+                    if event.severity == "warning":
+                        diagnostic["skipped_warning_events"] = int(diagnostic["skipped_warning_events"]) + 1
+                    else:
+                        diagnostic["skipped_info_events"] = int(diagnostic["skipped_info_events"]) + 1
+                    skipped_by_group = diagnostic["skipped_by_group"]
+                    if isinstance(skipped_by_group, dict):
+                        skipped_by_group[duty_group] = int(skipped_by_group.get(duty_group, 0)) + 1
             if event.action in {ACTION_BLOCKED, ACTION_SKIPPED, ACTION_FORCED} or str(event.details.get("template_status")) == UNRESOLVED:
                 event_rows.append(event_to_dict(event))
+
+    raw_allocation_policy = (run.summary or {}).get("allocation_fairness_policy") if run else None
+    allocation_policy = normalize_allocation_fairness_policy(
+        raw_allocation_policy if isinstance(raw_allocation_policy, str) else None
+    )
+    target_unit_keys = [
+        key for key, row in unit_rows.items() if not bool(row["is_unresolved"])
+    ]
+    target_unit_ids = [UUID(key) for key in target_unit_keys]
+    active_people_counts = {
+        UUID(key): len(active_people_by_unit.get(key, set()))
+        for key in target_unit_keys
+    }
+    total_target_weights = allocation_target_weights(
+        policy=allocation_policy,
+        unit_ids=target_unit_ids,
+        capacity_counts=active_people_counts,
+    )
+    total_weight = sum(total_target_weights.values())
+    total_slots = len(slots)
+
+    def target_slots_for_unit(unit_key: str) -> float:
+        if total_weight <= 0 or unit_key == "unresolved":
+            return 0.0
+        return round(total_slots * total_target_weights.get(UUID(unit_key), 0) / total_weight, 1)
 
     return {
         "month": month,
@@ -1427,6 +1928,21 @@ def allocation_statistics(db: Session, month: str) -> dict[str, object]:
             {"key": key, "label": rule_by_key[key].label if key in rule_by_key else key}
             for key in duty_keys
         ],
+        "duty_groups": [
+            {"key": key, "label": duty_group_labels[key]}
+            for key in sorted(duty_group_labels)
+        ],
+        "group_call_buckets": [
+            group_call_labels[key]
+            for key in sorted(
+                group_call_labels,
+                key=lambda item: (
+                    str(group_call_labels[item]["group"]),
+                    rota_call_sort_key(str(group_call_labels[item]["call_level"])),
+                    item,
+                ),
+            )
+        ],
         "unit_tallies": sorted(
             unit_rows.values(),
             key=lambda row: (bool(row["is_unresolved"]), str(row["unit_name"])),
@@ -1440,6 +1956,44 @@ def allocation_statistics(db: Session, month: str) -> dict[str, object]:
                 "total_slots": int(unit_rows[unit_key]["total_slots"]),
             }
             for unit_key in sorted(unit_rows, key=lambda key: (key == "unresolved", str(unit_rows[key]["unit_name"])))
+        ],
+        "unit_group_matrix": [
+            {
+                "unit_id": None if unit_key == "unresolved" else unit_key,
+                "unit_name": str(unit_rows[unit_key]["unit_name"]),
+                "is_unresolved": bool(unit_rows[unit_key]["is_unresolved"]),
+                "counts": {key: unit_group_counts.get(unit_key, Counter()).get(key, 0) for key in sorted(duty_group_labels)},
+                "total_slots": int(unit_rows[unit_key]["total_slots"]),
+            }
+            for unit_key in sorted(unit_rows, key=lambda key: (key == "unresolved", str(unit_rows[key]["unit_name"])))
+        ],
+        "unit_group_call_matrix": [
+            {
+                "unit_id": None if unit_key == "unresolved" else unit_key,
+                "unit_name": str(unit_rows[unit_key]["unit_name"]),
+                "is_unresolved": bool(unit_rows[unit_key]["is_unresolved"]),
+                "counts": {key: unit_group_call_counts.get(unit_key, Counter()).get(key, 0) for key in sorted(group_call_labels)},
+                "total_slots": int(unit_rows[unit_key]["total_slots"]),
+            }
+            for unit_key in sorted(unit_rows, key=lambda key: (key == "unresolved", str(unit_rows[key]["unit_name"])))
+        ],
+        "unit_target_tallies": [
+            {
+                "unit_id": None if unit_key == "unresolved" else unit_key,
+                "unit_name": str(unit_rows[unit_key]["unit_name"]),
+                "is_unresolved": bool(unit_rows[unit_key]["is_unresolved"]),
+                "allocation_fairness_policy": allocation_policy,
+                "active_people": len(active_people_by_unit.get(unit_key, set())),
+                "target_weight": 0 if unit_key == "unresolved" else total_target_weights.get(UUID(unit_key), 0),
+                "target_slots": target_slots_for_unit(unit_key),
+                "actual_slots": int(unit_rows[unit_key]["total_slots"]),
+                "difference": round(int(unit_rows[unit_key]["total_slots"]) - target_slots_for_unit(unit_key), 1),
+            }
+            for unit_key in sorted(unit_rows, key=lambda key: (key == "unresolved", str(unit_rows[key]["unit_name"])))
+        ],
+        "unit_generation_diagnostics": [
+            unit_event_diagnostics[unit_key]
+            for unit_key in sorted(unit_event_diagnostics, key=lambda key: (key == "unresolved", str(unit_event_diagnostics[key]["unit_name"])))
         ],
         "date_distribution": [date_rows[key] for key in sorted(date_rows)],
         "call_level_distribution": [
@@ -1588,6 +2142,10 @@ CALL_WISE_SHEET_LABELS = {
 
 
 CALL_WISE_ORDER = ["1ST_CALL", "2ND_CALL", "3RD_CALL", "4TH_CALL", "CO_4TH_CALL", "5TH_CALL", "Unassigned"]
+
+
+def rota_call_sort_key(call_level: str) -> int:
+    return CALL_WISE_ORDER.index(call_level) if call_level in CALL_WISE_ORDER else 99
 
 
 def call_wise_sheet_name(call_level: str) -> str:

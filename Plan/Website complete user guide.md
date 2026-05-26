@@ -478,7 +478,7 @@ Important terms:
 - Clear Template Cache: removes generated template slots when safe to do so.
 - Export Eagle Eye: downloads a month-wide Excel view with duties as rows and dates as columns.
 - Export Call-Wise: downloads the Eagle Eye layout split into separate sheets by required person call level, such as 1st Call, 2nd Call, and 3rd Call.
-- Allocation Statistics: shows unit-wise, date-wise, duty-wise, call-level-wise, and blocked/skipped allocation tallies for the generated template.
+- Allocation Statistics: shows unit-wise, date-wise, duty-wise, duty-family, duty-family plus call-level, call-level-wise, and blocked/skipped allocation tallies for the generated template.
 
 Generate template workflow:
 
@@ -504,10 +504,20 @@ Allocation statistics workflow:
 2. Switch the overview mode to Statistics.
 3. Check Unit-Wise Slot Tally to compare total, weekday, Saturday, Sunday, weekend, 24-hour, ready, review, forced, and unresolved slots per unit.
 4. Check Duty Type Matrix to confirm a specific duty type is not repeatedly allocated to the same unit.
-5. Check Date-Wise Distribution to see how many slots each unit received on each date.
-6. Check Call-Level Distribution to review how required call levels were spread across units.
-7. Check Blocked, Skipped, and Forced Decisions to understand why the engine had to place some duties as forced review slots.
-8. Use this section during validation to show that the generator balanced unit availability, leave pressure, weekend distribution, and post-duty availability rather than allocating randomly.
+5. Check Duty Family Matrix to confirm Main, CB, RC, PAC, shift, and other duty groups are not concentrated into separate units.
+6. Check Duty Family + Call Matrix to confirm buckets such as Main 1st, CB 1st, RC 1st, and RC 3rd are spread across units.
+7. Check Target vs Actual to confirm whether the selected fairness policy produced the expected target share.
+8. Check Generation Diagnostics to compare active people, created slots, forced slots, hard blocks, warning skips, and top blocked duty families per unit.
+9. Check Date-Wise Distribution to see how many slots each unit received on each date.
+10. Check Call-Level Distribution to review how required call levels were spread across units.
+11. Check Blocked, Skipped, and Forced Decisions to understand why the engine had to place some duties as forced review slots.
+12. Use this section during validation to show that the generator balanced unit availability, leave pressure, weekend distribution, post-duty availability, and duty-family mix rather than allocating randomly.
+
+Fairness policy options:
+
+- `Hybrid`: default. Blends unit participation and eligible-person capacity.
+- `Equal Unit`: each included unit gets the same target share.
+- `Equal People`: each unit's target follows active eligible people and call-level pool size.
 
 Forced review slots:
 
