@@ -1,4 +1,5 @@
 from __future__ import annotations
+from app.services.member_profiles import call_level_on
 
 from collections import Counter
 from io import BytesIO
@@ -222,7 +223,7 @@ def active_unit_member_ids(
         and posting.starts_on <= day
         and (posting.ends_on is None or posting.ends_on >= day)
         and posting.person.active_status == "active"
-        and (call_level is None or normalize_call_level(posting.posting_type or posting.person.call_level) == call_level)
+        and (call_level is None or normalize_call_level(call_level_on(posting.person, day) or posting.posting_type) == call_level)
     }
 
 
@@ -2036,7 +2037,7 @@ def slot_to_dict(slot: DutySlot, rule: DutyRule | None = None) -> dict[str, obje
                 "id": str(assignment.id),
                 "person_id": str(assignment.person_id),
                 "person_name": assignment.person.canonical_name,
-                "call_level": assignment.person.call_level,
+                "call_level": call_level_on(assignment.person, slot.duty_date),
                 "status": assignment.status,
                 "source": assignment.source,
                 "override_reason": assignment.override_reason,

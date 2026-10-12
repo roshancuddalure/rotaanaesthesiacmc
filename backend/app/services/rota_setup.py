@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session, selectinload
 
 from app.models import MonthlyGenerationScope, MonthlyGenerationScopeUnit, PersonPosting, RotaPeriod, Unit
 from app.services.leave import month_bounds
+from app.services.member_profiles import call_level_on
 from app.services.unit_management import monthly_unit_assignments, unit_leave_summary, validate_unit_month
 
 SCOPE_INCLUDED = "included"
@@ -137,7 +138,7 @@ def unit_readiness(db: Session, month: str, scope: MonthlyGenerationScope) -> li
     results: list[dict[str, object]] = []
     for unit in units:
         unit_assignments = assignments_by_unit.get(unit.id, [])
-        call_counts = Counter(assignment.posting_type for assignment in unit_assignments)
+        call_counts = Counter(call_level_on(assignment.person, max(month_bounds(month)[0], assignment.starts_on)) or assignment.posting_type for assignment in unit_assignments)
         unit_issues = [
             issue
             for issue in issues

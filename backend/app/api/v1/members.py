@@ -17,10 +17,12 @@ from app.services.members import (
     invalid_members,
     merge_people,
     normalize_dirty_member_names,
+    ensure_person_alias,
 )
 from app.services.roster_reconciliation import reconcile_department_roster
 from app.services.department_roster_reset import reset_department_members_from_roster
 from app.services.unitwise_call_levels import prefill_call_levels_from_unitwise
+from app.services.member_profiles import call_level_on, local_today, record_call_change
 
 router = APIRouter()
 
@@ -151,7 +153,7 @@ def member_to_read(person: Person) -> MemberRead:
         id=person.id,
         canonical_name=person.canonical_name,
         active_status=person.active_status,
-        call_level=person.call_level,
+        call_level=call_level_on(person),
         archived_at=person.archived_at,
         aliases=[
             AliasRead(id=alias.id, alias=alias.alias, source=alias.source)
@@ -211,7 +213,12 @@ def create_member(payload: MemberCreate, db: Session = Depends(get_db)) -> Membe
                 existing.archived_at = None
             changed = True
         if payload.call_level and existing.call_level != payload.call_level.strip():
-            existing.call_level = payload.call_level.strip()
+            try:
+                record_call_change(db, existing, payload.call_level.strip(), local_today(),
+                                   "Call level updated through member creation", "member_management")
+            except ValueError as exc:
+                db.rollback()
+                raise HTTPException(status_code=409, detail=str(exc)) from exc
             changed = True
         if changed:
             db.commit()
@@ -243,13 +250,21 @@ def update_member(
     db: Session = Depends(get_db),
 ) -> MemberRead:
     person = get_member_or_404(db, person_id)
+    if payload.canonical_name.strip() != person.canonical_name:
+        ensure_person_alias(db, person, person.canonical_name, source="member_rename")
     person.canonical_name = payload.canonical_name.strip()
     person.active_status = payload.active_status
     if payload.active_status == "archived":
         person.archived_at = person.archived_at or datetime.utcnow()
     elif person.archived_at is not None:
         person.archived_at = None
-    person.call_level = payload.call_level.strip() if payload.call_level else None
+    new_call = payload.call_level.strip() if payload.call_level else None
+    if new_call != call_level_on(person):
+        try:
+            record_call_change(db, person, new_call, local_today(), "Call level updated through member management", "member_management")
+        except ValueError as exc:
+            db.rollback()
+            raise HTTPException(status_code=409, detail=str(exc)) from exc
     try:
         db.commit()
     except IntegrityError as exc:
@@ -356,8 +371,9 @@ def audit_members(db: Session = Depends(get_db)) -> MemberAuditRead:
     for person in people:
         if person.active_status == "active":
             active_members += 1
-        if person.call_level:
-            call_levels[person.call_level] += 1
+        current_call = call_level_on(person)
+        if current_call:
+            call_levels[current_call] += 1
         else:
             missing_call_levels += 1
         aliases += len(person.aliases)
@@ -411,7 +427,11 @@ def reset_from_trusted_roster(db: Session = Depends(get_db)) -> DepartmentRoster
 
 @router.post("/admin/members/prefill-call-levels")
 def prefill_call_levels(db: Session = Depends(get_db)) -> CallLevelPrefillRead:
-    return CallLevelPrefillRead(**prefill_call_levels_from_unitwise(db).__dict__)
+    try:
+        return CallLevelPrefillRead(**prefill_call_levels_from_unitwise(db).__dict__)
+    except ValueError as exc:
+        db.rollback()
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
 
 
 @router.post("/admin/members/merge")

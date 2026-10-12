@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 from app.models import PasswordResetToken, UserAccount, UserSession
 
 ROLES = {
+    "hod": "Head of Department",
     "rota_board_member": "Rota board member",
     "computer_admin": "Computer admin",
     "superadmin": "Superadmin",

@@ -1,11 +1,85 @@
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ?? "";
 
+export interface MemberProfile {
+  member: DepartmentMember; today: string; current_call_level: string | null; can_manage: boolean;
+  call_history: { id: string; from: string | null; to: string | null; effective_from: string;
+    reason: string; source: string; scheduled: boolean; recorded_at: string; author: string }[];
+  comments: { id: string; author: string; role: string; body: string; recorded_at: string }[];
+  postings: { unit: string | null; type: string; starts_on: string; ends_on: string | null }[];
+  leaves: { type: string; from: string; to: string; status: string }[];
+  statistics: { official_duties: number; hours24: number; weekend_duties: number };
+  imports: { file: string; sheet: string | null; row: number | null; recorded_at: string }[];
+}
+export function getMemberProfile(id: string): Promise<MemberProfile> {
+  return request(`/api/v1/members/${id}/profile`);
+}
+export function addMemberCallChange(id: string, call_level: string | null, effective_from: string, reason: string): Promise<MemberProfile> {
+  return request(`/api/v1/members/${id}/call-changes`, { method: "POST", body: JSON.stringify({ call_level, effective_from, reason }) });
+}
+export function addMemberComment(id: string, body: string): Promise<MemberProfile> {
+  return request(`/api/v1/members/${id}/comments`, { method: "POST", body: JSON.stringify({ body }) });
+}
+
+export interface HistoryFairnessPolicy {
+  enabled: boolean; lookback_months: number; total_weight: number;
+  hours24_weight: number; weekend_weight: number; group_weight: number;
+}
+export interface PastDutyOptions {
+  month: string; sheet: string; layout: string; header_row: number;
+  mapping: Record<string, number>; resolutions: Record<string, Record<string, string>>;
+  confirm_corrections: boolean; confirm_warnings: boolean;
+}
+export interface PastDutyPreview {
+  preview_hash: string; month: string; sheet: string; counts: Record<string, number>;
+  warnings: { row: number | null; code: string; message: string }[];
+  rows: { key: string; row: number; column: number; raw: Record<string, string>;
+    normalized: Record<string, unknown>; action: string; errors: string[];
+    person_candidates: { id: string; name: string }[];
+    conflicts: { id: string; name: string; slot: string; source: string }[];
+    target_assignment: string | null;
+  }[];
+}
+export interface PastDutyStatus {
+  coverage: { month: string; assignments: number; members: number; days_with_records: number; latest_duty_date: string; coverage: string }[];
+  history: { id: string; filename: string; month: string; sheet: string; actor: string; at: string | null; counts: Record<string, number> }[];
+  policy: HistoryFairnessPolicy; today: string; duty_types: { key: string; label: string }[];
+}
+export function getPastDutyStatus(): Promise<PastDutyStatus> { return request("/api/v1/admin/past-duties/status"); }
+export function saveHistoryFairness(policy: HistoryFairnessPolicy, effective_from: string): Promise<unknown> {
+  return request("/api/v1/admin/past-duties/policy", { method: "PUT", body: JSON.stringify({ policy, effective_from }) });
+}
+export interface PastDutyHistoryDetail {
+  filename: string;
+  rows: { row: number; column: number; action: string; raw: Record<string, string>;
+    normalized: Record<string, unknown>; before: { name: string; status: string } | null; errors: string[] }[];
+}
+export function getPastDutyHistory(id: string): Promise<PastDutyHistoryDetail> {
+  return request(`/api/v1/admin/past-duties/history/${encodeURIComponent(id)}`);
+}
+export async function pastDutyUpload<T>(action: string, file: File, options: PastDutyOptions, hash = ""): Promise<T> {
+  const body = new FormData(); body.append("file", file); body.append("header_row", String(options.header_row));
+  body.append("options", JSON.stringify(options)); body.append("preview_hash", hash);
+  const response = await fetch(`${API_BASE_URL}/api/v1/admin/past-duties/${action}`, {
+    method: "POST", headers: { Authorization: `Bearer ${authToken}` }, body,
+  });
+  if (!response.ok) throw await errorFromResponse(response);
+  return response.json() as Promise<T>;
+}
+export async function downloadPastDutyTemplate(): Promise<Blob> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/admin/past-duties/template`, {
+    headers: { Authorization: `Bearer ${authToken}` },
+  });
+  if (!response.ok) throw await errorFromResponse(response);
+  return response.blob();
+}
+
 export interface MemberImportOptions {
   sheet: string;
   header_row: number;
   mapping: Record<string, number>;
   resolutions: Record<string, string>;
+  confirm_call_changes?: boolean;
 }
 
 export interface MemberWorkbookInspection {
@@ -47,12 +121,40 @@ export async function memberWorkbookRequest<T>(
   return response.json() as Promise<T>;
 }
 
-export async function downloadMemberImportTemplate(): Promise<Blob> {
-  const response = await fetch(`${API_BASE_URL}/api/v1/admin/members/import/template`, {
+export async function downloadMemberImportTemplate(format: "csv" | "xlsx" = "xlsx"): Promise<Blob> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/admin/members/import/template?format=${format}`, {
     headers: { Authorization: `Bearer ${authToken}` },
   });
   if (!response.ok) throw await errorFromResponse(response);
   return response.blob();
+}
+
+export interface MemberImportHistory {
+  id: string;
+  filename: string;
+  status: string;
+  completed_at: string | null;
+  actor: string;
+  counts: Record<string, number>;
+  sheet: string | null;
+  call_changes_confirmed: boolean;
+}
+
+export interface MemberImportHistoryDetail {
+  batch: MemberImportHistory;
+  rows: {
+    row: number; sheet: string; action: string;
+    raw: Record<string, string>; normalized: Record<string, unknown>;
+    changes: Record<string, unknown>; errors: string[]; member_id: string | null;
+  }[];
+}
+
+export function getMemberImportHistory(): Promise<MemberImportHistory[]> {
+  return request("/api/v1/admin/members/import/history");
+}
+
+export function getMemberImportHistoryDetail(id: string): Promise<MemberImportHistoryDetail> {
+  return request(`/api/v1/admin/members/import/history/${encodeURIComponent(id)}`);
 }
 
 let authToken = localStorage.getItem("duty_rota_auth_token") ?? "";
@@ -574,6 +676,7 @@ export interface UnitAssignment {
   person: UnitPerson;
   unit: UnitRead | null;
   posting_type: string;
+  effective_call_level?: string | null;
   starts_on: string;
   ends_on: string | null;
   source: string;

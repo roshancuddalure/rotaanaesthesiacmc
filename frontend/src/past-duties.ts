@@ -1,0 +1,141 @@
+import {
+  getMembers, getPastDutyStatus, getPastDutyHistory, pastDutyUpload, downloadPastDutyTemplate, saveHistoryFairness,
+  type PastDutyOptions, type PastDutyPreview, type PastDutyStatus, type MemberWorkbookInspection, type DepartmentMember,
+  type HistoryFairnessPolicy,
+} from "./services/api";
+
+const escape = (v: unknown) => String(v ?? "").replace(/[&<>"']/g,
+  c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
+function values(data: Record<string, unknown>) {
+  return Object.entries(data).filter(([field, v]) => field !== "person_id" && v != null && v !== "").map(([field, v]) =>
+    `<div>${escape(field.replace(/_/g, " "))}: ${escape(v)}</div>`).join("");
+}
+
+export async function mountPastDuties(host: HTMLElement) {
+  host.innerHTML = '<section class="panel"><p role="status">Loading past duties…</p></section>';
+  let status: PastDutyStatus;
+  let members: DepartmentMember[];
+  try { [status, members] = await Promise.all([getPastDutyStatus(), getMembers()]); }
+  catch (error) { host.innerHTML = `<section class="panel">${escape(error instanceof Error ? error.message : error)}</section>`; return; }
+  if (!host.isConnected) return;
+  let file: File | undefined;
+  let inspection: MemberWorkbookInspection | undefined;
+  let preview: PastDutyPreview | undefined;
+  let reviewed = false;
+  let busy = false;
+  let message = "";
+  let historyHtml = "";
+  let filter = "all";
+  let policy: HistoryFairnessPolicy = { ...status.policy };
+  let effectiveFrom = `${status.today.slice(0, 7)}-01`;
+  const previousMonth = new Date(`${status.today.slice(0, 7)}-01T12:00:00`);
+  previousMonth.setMonth(previousMonth.getMonth() - 1);
+  let options: PastDutyOptions = { month: `${previousMonth.getFullYear()}-${String(previousMonth.getMonth()+1).padStart(2,"0")}`,
+    sheet: "", layout: "table", header_row: 1, mapping: {}, resolutions: {}, confirm_corrections: false, confirm_warnings: false };
+
+  function render() {
+    const sheet = inspection?.sheets.find(s => s.name === options.sheet);
+    const canApply = preview && reviewed && !preview.counts.needs_review && preview.rows.length &&
+      (!preview.counts.correct || options.confirm_corrections) && (!preview.warnings.length || options.confirm_warnings);
+    host.innerHTML = `<section class="panel member-import"><h3>Upload Past Duties</h3>
+      <p>Completed duties update statistics and future person-allocation scoring. Existing member call levels stay unchanged.</p>
+      <p>Table layout: one assignment per row, with date, name, and duty type. Department matrix: date row, weekday row, then duty labels and names, as in the existing departmental rotas.</p>
+      <fieldset ${busy ? "disabled" : ""}><button type="button" data-past="template">Download Duty Template</button>
+        <label>Workbook <input data-past="file" type="file" accept=".xls,.xlsx" /></label><span>${escape(file?.name ?? "No file selected")}</span>
+        <label>Month <input type="month" data-past="month" value="${options.month}" max="${status.today.slice(0,7)}" /></label>
+        <label>Layout <select data-past="layout"><option value="table" ${options.layout === "table" ? "selected" : ""}>Assignment table</option><option value="matrix" ${options.layout === "matrix" ? "selected" : ""}>Departmental matrix</option></select></label>
+        <label>${options.layout === "matrix" ? "Date row" : "Header row"} <input type="number" data-past="header" min="1" max="100" value="${options.header_row}" /></label>
+        <button type="button" data-past="inspect" ${file ? "" : "disabled"}>Read Worksheets</button>
+        ${inspection ? `<label>Worksheet <select data-past="sheet">${inspection.sheets.map(s => `<option value="${escape(s.name)}" ${options.sheet === s.name ? "selected" : ""}>${escape(s.name)}</option>`).join("")}</select></label>
+        ${options.layout === "table" ? `<div class="member-import-mapping">${inspection.fields.map(field => `<label>${escape(field.replace(/_/g," "))}<select data-past-field="${field}"><option value="">Ignore</option>${sheet?.headers.map((h,i) => `<option value="${i}" ${options.mapping[field] === i ? "selected" : ""}>${i+1}: ${escape(h)}</option>`).join("")}</select></label>`).join("")}</div>` : ""}
+        <button type="button" data-past="preview" class="primary">Preview Past Duties</button>` : ""}
+        ${preview ? `<p>${Object.entries(preview.counts).map(([a,c]) => `${c} ${escape(a.replace(/_/g," "))}`).join(" · ")}</p>
+        <p>Confirmed month: ${escape(preview.month)}; worksheet: ${escape(preview.sheet)}. Review dates and standard start/end times before applying. Times use local hospital time.</p>
+        ${!reviewed ? "<p>Selections changed. Preview again before applying.</p>" : ""}
+        <label>Review rows <select data-past="filter">${["all","needs_review","correct","create","unchanged","skip"].map(a => `<option value="${a}" ${filter === a ? "selected" : ""}>${escape(a.replace(/_/g," "))}</option>`).join("")}</select></label>
+        <div class="member-import-table"><table><thead><tr><th>Source row / original</th><th>Normalized duty</th><th>Outcome</th><th>Resolve</th></tr></thead><tbody>${preview.rows.filter(r => filter === "all" || r.action === filter).map(row => {
+          const resolution = options.resolutions[row.key] ?? {};
+          return `<tr><td>${row.row}:${row.column}${values(row.raw)}</td><td>${values(row.normalized)}</td>
+          <td><strong>${escape(row.action)}</strong>${row.conflicts.map(c => `<p>Recorded: ${escape(c.name)} (${escape(c.slot)})</p>`).join("")}${row.errors.map(e => `<p>${escape(e)}</p>`).join("")}</td>
+          <td><label>Member <select data-past-row="${row.key}" data-resolution="person_id"><option value="">Automatic matching</option>${members.map(p => `<option value="${p.id}" ${resolution.person_id === p.id ? "selected" : ""}>${escape(p.canonical_name)} (${escape(p.active_status)})</option>`).join("")}</select></label>
+          <label>Duty type <select data-past-row="${row.key}" data-resolution="duty_type"><option value="">Automatic mapping</option>${status.duty_types.map(d => `<option value="${d.key}" ${resolution.duty_type === d.key ? "selected" : ""}>${escape(d.label)}</option>`).join("")}</select></label>
+          <label>Action <select data-past-row="${row.key}" data-resolution="action"><option value="">Automatic / review</option><option value="skip" ${resolution.action === "skip" ? "selected" : ""}>Skip</option><option value="additional" ${resolution.action === "additional" ? "selected" : ""}>Additional parallel duty (needs distinct slot in file)</option></select></label>
+          ${row.conflicts.length ? `<label>Replace recorded member <select data-past-row="${row.key}" data-resolution="replace_assignment_id"><option value="">Do not replace</option>${row.conflicts.map(c => `<option value="${c.id}" ${resolution.replace_assignment_id === c.id ? "selected" : ""}>${escape(c.name)} (${escape(c.slot)})</option>`).join("")}</select></label>` : ""}</td></tr>`;
+        }).join("")}</tbody></table></div>
+        ${preview.warnings.length ? `<div>${preview.warnings.map(w => `<p>Row ${w.row ?? "?"}: ${escape(w.message)}</p>`).join("")}</div><label class="member-import-confirm"><input type="checkbox" data-past="confirm-warnings" ${options.confirm_warnings ? "checked" : ""} />I reviewed the parser warnings and skipped source cells.</label>` : ""}
+        ${preview.counts.correct ? `<label class="member-import-confirm"><input type="checkbox" data-past="confirm-corrections" ${options.confirm_corrections ? "checked" : ""} />I approve ${preview.counts.correct} recorded member corrections. Prior assignments remain in the audit history and no longer count in statistics.</label>` : ""}
+        <button type="button" class="primary" data-past="apply" ${canApply ? "" : "disabled"}>Apply Reviewed Past Duties</button>` : ""}
+      </fieldset><p role="status">${busy ? "Working…" : escape(message)}</p></section>
+      <section class="panel"><h3>Recorded History Coverage</h3><p>These are observed records, not proof of a complete roster. Missing dates and members are not assigned zero workload. Fairness uses each member's observed months within the configured window.</p>
+        <div class="member-import-table"><table><thead><tr><th>Month</th><th>Duties</th><th>Members</th><th>Days recorded</th><th>Latest duty</th></tr></thead><tbody>${status.coverage.map(c => `<tr><td>${escape(c.month)}</td><td>${c.assignments}</td><td>${c.members}</td><td>${c.days_with_records}</td><td>${escape(c.latest_duty_date)}</td></tr>`).join("") || '<tr><td colspan="5">No approved past duties recorded yet.</td></tr>'}</tbody></table></div></section>
+      <section class="panel member-import"><h3>Historical Fairness Settings</h3><p>History adds a ranking penalty for above-average observed burden among active peers at the same current call level. Unknown history is neutral. Safety and leave rules remain authoritative.</p>
+      <fieldset ${busy ? "disabled" : ""}><label class="member-import-confirm"><input type="checkbox" data-policy="enabled" ${policy.enabled ? "checked" : ""} />Use historical fairness</label>
+      <label>Effective from <input type="date" data-past="effective-from" value="${effectiveFrom}" /></label>
+      ${(["lookback_months", "total_weight", "hours24_weight", "weekend_weight", "group_weight"] as const).map(field => `<label>${escape(field.replace(/_/g," "))}<input type="number" data-policy="${field}" value="${policy[field]}" min="${field === "lookback_months" ? 1 : 0}" max="${field === "lookback_months" ? 36 : 100}" step="${field === "lookback_months" ? 1 : .5}" /></label>`).join("")}
+      <button type="button" data-past="save-policy">Save Fairness Settings</button></fieldset></section>
+      <section class="panel"><h3>Past-Duty Import History</h3><div class="member-import-table"><table><thead><tr><th>File / month</th><th>Account / imported</th><th>Outcome</th><th>Review</th></tr></thead><tbody>${status.history.map(h => `<tr><td>${escape(h.filename)}<small>${escape(h.month)} / ${escape(h.sheet)}</small></td><td>${escape(h.actor)}<small>${escape(h.at ? new Date(h.at).toLocaleString("en-IN", {timeZone:"Asia/Calcutta"}) : "")}</small></td><td>${Object.entries(h.counts).map(([a,c]) => `${c} ${escape(a)}`).join(" · ")}</td><td><button data-past-batch="${h.id}" ${busy ? "disabled" : ""}>View Rows</button></td></tr>`).join("") || '<tr><td colspan="4">No uploads yet.</td></tr>'}</tbody></table></div>${historyHtml}</section>`;
+  }
+  host.onchange = event => {
+    const target = event.target as HTMLInputElement;
+    if (target.dataset.policy) {
+      if (target.dataset.policy === "enabled") policy.enabled = target.checked;
+      else policy = { ...policy, [target.dataset.policy]: Number(target.value) };
+      return;
+    }
+    if (target.dataset.past === "effective-from") { effectiveFrom = target.value; return; }
+    if (target.dataset.past === "filter") { filter = target.value; render(); return; }
+    if (target.dataset.past === "confirm-warnings") { options.confirm_warnings = target.checked; render(); return; }
+    if (target.dataset.past === "confirm-corrections") { options.confirm_corrections = target.checked; render(); return; }
+    reviewed = false; options.confirm_corrections = false; options.confirm_warnings = false;
+    if (target.dataset.pastRow) {
+      const row = options.resolutions[target.dataset.pastRow] ??= {};
+      row[target.dataset.resolution!] = target.value;
+    } else if (target.dataset.pastField) {
+      if (target.value === "") delete options.mapping[target.dataset.pastField];
+      else options.mapping[target.dataset.pastField] = Number(target.value);
+      preview = undefined; options.resolutions = {};
+    } else if (target.dataset.past === "file") {
+      file = target.files?.[0]; inspection = undefined; preview = undefined; options.resolutions = {};
+    } else if (target.dataset.past === "header") {
+      options.header_row = Number(target.value); inspection = undefined; preview = undefined; options.resolutions = {};
+    } else if (target.dataset.past === "sheet") {
+      options.sheet = target.value; options.mapping = { ...inspection?.sheets.find(s => s.name === options.sheet)?.mapping };
+      preview = undefined; options.resolutions = {};
+    } else if (target.dataset.past === "month") { options.month = target.value; preview = undefined; options.resolutions = {}; }
+    else if (target.dataset.past === "layout") { options.layout = target.value; preview = undefined; options.resolutions = {}; }
+    render();
+  };
+  host.onclick = async event => {
+    const target = (event.target as HTMLElement).closest<HTMLElement>("[data-past], [data-past-batch]");
+    const action = target?.dataset.past;
+    if (busy || !target || (action && !["template","inspect","preview","apply","save-policy"].includes(action))) return;
+    busy = true; message = ""; render();
+    try {
+      if (target.dataset.pastBatch) {
+        const batch = await getPastDutyHistory(target.dataset.pastBatch);
+        historyHtml = `<h4>${escape(batch.filename)}</h4><div class="member-import-table"><table><thead><tr><th>Source</th><th>Original</th><th>Normalized</th><th>Outcome / prior member</th></tr></thead><tbody>${batch.rows.map(r => `<tr><td>${r.row}:${r.column}</td><td>${values(r.raw)}</td><td>${values(r.normalized)}</td><td>${escape(r.action)}${r.before ? `<p>Previous: ${escape(r.before.name)} (${escape(r.before.status)})</p>` : ""}</td></tr>`).join("")}</tbody></table></div>`;
+      } else if (action === "template") {
+        const blob = await downloadPastDutyTemplate(); const url = URL.createObjectURL(blob);
+        const link = document.createElement("a"); link.href = url; link.download = "past-duties-template.xlsx"; link.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      } else if (action === "save-policy") {
+        await saveHistoryFairness(policy, effectiveFrom); reviewed = false;
+        message = `Fairness settings saved, effective ${effectiveFrom}. Candidate suggestions use the version effective at the target month's start.`;
+      } else if (file && action === "inspect") {
+        inspection = await pastDutyUpload<MemberWorkbookInspection>("inspect", file, options);
+        options.sheet = inspection.sheets[0]?.name ?? ""; options.mapping = { ...inspection.sheets[0]?.mapping };
+        preview = undefined; options.resolutions = {}; reviewed = false;
+      } else if (file && action === "preview") {
+        preview = await pastDutyUpload<PastDutyPreview>("preview", file, options);
+        reviewed = true; options.confirm_corrections = false; options.confirm_warnings = false;
+      } else if (file && action === "apply" && reviewed && preview) {
+        const result = await pastDutyUpload<{counts: Record<string,number>}>("apply", file, options, preview.preview_hash);
+        reviewed = false; preview = undefined;
+        message = `Recorded ${result.counts.create} new duties, ${result.counts.correct} corrections, ${result.counts.unchanged} unchanged. Statistics and future candidate scoring now use the saved records.`;
+        status = await getPastDutyStatus();
+      }
+    } catch (error) { message = error instanceof Error ? error.message : "Past-duty operation failed."; if (action === "apply") reviewed = false; }
+    finally { busy = false; if (host.isConnected) render(); }
+  };
+  render();
+}

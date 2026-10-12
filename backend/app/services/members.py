@@ -15,6 +15,7 @@ from app.models import (
     PersonPosting,
 )
 from app.services.imports import clean_person_name, is_valid_person_name
+from app.models import PersonCallChange, PersonComment
 
 
 @dataclass(frozen=True)
@@ -181,6 +182,15 @@ def merge_people(db: Session, target_id: UUID, source_ids: list[UUID]) -> Person
         move_postings(db, source, target)
         move_leave_requests(db, source, target)
         move_designations(db, source, target)
+        for model in (PersonCallChange, PersonComment):
+            for record in db.scalars(select(model).where(model.person_id == source.id)):
+                if model is PersonCallChange:
+                    record.source = f"merged:{record.source}"[:100]
+                    with db.no_autoflush:
+                        if record in source.call_changes:
+                            source.call_changes.remove(record)
+                        target.call_changes.append(record)
+                record.person_id = target.id
         db.delete(source)
 
     try:
@@ -225,6 +235,9 @@ def delete_invalid_members(db: Session) -> int:
     normalize_dirty_member_names(db)
     people = invalid_members(db)
     for person in people:
+        for model in (PersonCallChange, PersonComment):
+            for record in db.scalars(select(model).where(model.person_id == person.id)):
+                db.delete(record)
         for assignment in db.scalars(
             select(DutyAssignment).where(DutyAssignment.person_id == person.id)
         ):

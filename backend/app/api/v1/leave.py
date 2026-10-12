@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session, selectinload
 
 from app.api.v1.auth import current_user
 from app.db.session import get_db
+from app.services.member_profiles import call_level_on
 from app.models import LeaveRequest, Person, UserAccount
 from app.services.leave import leave_day_entries, leave_pressure, leave_requests_for_month, leave_summary, month_bounds
 from app.services.leave_import import apply_leave_import, preview_leave_import
@@ -98,7 +99,7 @@ def leave_to_read(leave: LeaveRequest) -> LeaveRequestRead:
             id=leave.person.id,
             canonical_name=leave.person.canonical_name,
             active_status=leave.person.active_status,
-            call_level=leave.person.call_level,
+            call_level=call_level_on(leave.person, leave.starts_on),
         ),
         leave_type=leave.leave_type,
         leave_slot=leave.leave_slot,

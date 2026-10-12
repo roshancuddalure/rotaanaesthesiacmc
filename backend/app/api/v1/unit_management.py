@@ -13,6 +13,7 @@ from app.api.v1.auth import current_user
 from app.db.session import get_db
 from app.models import Person, PersonPosting, Unit, UnitCallMinimum, UserAccount
 from app.services.rota_call_levels import normalize_call_level
+from app.services.member_profiles import call_level_on
 from app.services.leave import month_bounds
 from app.services.unit_management import (
     UNIT_BOARD_SOURCE,
@@ -63,6 +64,7 @@ class UnitAssignmentRead(BaseModel):
     person: UnitPersonRead
     unit: UnitRead | None
     posting_type: str
+    effective_call_level: str | None = None
     starts_on: date
     ends_on: date | None
     source: str
@@ -208,16 +210,17 @@ def person_to_unit_read(person: Person) -> UnitPersonRead:
         id=person.id,
         canonical_name=person.canonical_name,
         active_status=person.active_status,
-        call_level=person.call_level,
+        call_level=call_level_on(person),
     )
 
 
-def assignment_to_read(assignment: PersonPosting) -> UnitAssignmentRead:
+def assignment_to_read(assignment: PersonPosting, day: date | None = None) -> UnitAssignmentRead:
     return UnitAssignmentRead(
         id=assignment.id,
         person=person_to_unit_read(assignment.person),
         unit=unit_to_read(assignment.unit) if assignment.unit else None,
         posting_type=assignment.posting_type,
+        effective_call_level=call_level_on(assignment.person, day),
         starts_on=assignment.starts_on,
         ends_on=assignment.ends_on,
         source=assignment.source,
@@ -304,7 +307,7 @@ def get_unit_management_month(
         starts_on=starts_on,
         ends_on=ends_on,
         units=[unit_to_read(unit) for unit in units],
-        assignments=[assignment_to_read(assignment) for assignment in assignments],
+        assignments=[assignment_to_read(assignment, max(starts_on, assignment.starts_on)) for assignment in assignments],
         unit_summaries=[
             UnitSummaryRead(
                 unit_id=unit.id,

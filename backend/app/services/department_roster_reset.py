@@ -25,6 +25,7 @@ from app.models import (
     Unit,
 )
 from app.services.imports import is_valid_person_name, normalize_label
+from app.models import PersonCallChange, PersonComment
 from app.services.roster_reconciliation import DEFAULT_ROSTER_PATH, clean_roster_name
 
 CURRENT_SHEETS = ("ANAESTHESIA", "CARDIAC ANAESTHESIA", "NEURO ANAESTHESIA")
@@ -164,6 +165,8 @@ def extract_clean_roster_members(path: Path = DEFAULT_ROSTER_PATH) -> list[Clean
 def clear_operational_data(db: Session) -> dict[str, int]:
     deleted_counts: dict[str, int] = {}
     models = (
+        PersonCallChange,
+        PersonComment,
         DutyAssignment,
         DutySlot,
         PersonPosting,

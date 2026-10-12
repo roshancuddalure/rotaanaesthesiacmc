@@ -2418,3 +2418,84 @@ Verification:
 - Focused member/import/roster backend suite passed: `python -m pytest tests/test_member_import.py tests/test_members.py tests/test_roster_reconciliation.py tests/test_department_roster_reset.py -q` (25 tests).
 - Frontend production build passed: `npm run build`.
 - Ruff passed for the new backend importer, routes, and tests with `--no-cache`.
+
+## 2026-10-12 - CSV Imports and Organized Member Management
+
+User approved the follow-up plan for a single synchronized member master list, CSV name/call uploads, existing-record duplicate checks, reviewed call changes, and visible import history.
+
+Implemented:
+
+- CSV uses the same normalization, preview, alias matching, duplicate checks, stale-preview protection, and transactional apply service as Excel. Accepts UTF-8/BOM CSV and comma, semicolon, or tab delimiters with column mapping. Added a minimal name/call-level CSV template.
+- Import preview now uses readable field/value and before/after displays with outcome filtering. Existing call-level updates require a checkbox and server-side confirmation before apply.
+- Added authenticated member-only import history/list and batch detail endpoints. Records include file hashes, sheet, account, call-change approval, source rows, and recorded changes; history uses existing import tables without a migration.
+- Organized Members into list, import/review, and history sections. Added alias search, inactive status filtering, Co 4th display, and preservation of existing unusual call-level choices.
+- Fixed manual call-level edits to refresh list/counts/audit together and avoid retaining a failed update locally. Successful uploads refresh list, filters, audit, and history together. Absent members and blank call cells remain unchanged.
+- Added cross-format reupload, call approval, prior alias/archived matching, CSV validation/delimiter, history access and record tests, plus UI controller checks for review approval, refresh, and history rendering.
+- Updated the user guide and recorded the approved behavior in confirmed decisions.
+
+Verification:
+
+- Focused member/import/roster tests passed (32 tests).
+- Frontend production build and 2 UI controller tests passed (`npm run build`, `npm test`).
+- Ruff and whitespace checks passed. Browser interaction was not tested; UI controller tests use host/API doubles.
+
+## 2026-10-12 - Uploaded Past Duties and Historical Fairness
+
+User approved the past-duty upload plan and the configurable six-month default history window.
+
+Implemented:
+
+- Added an admin Past Duties page with `.xls`/`.xlsx` upload, worksheet/month/header selection, standard-table template/column mapping, and reuse of the departmental matrix parser.
+- Added safe preview/apply with master-member/alias resolution, duty-type review, existing published/uploaded record comparison, unchanged reuploads, explicit member corrections and parser-warning acknowledgement, transaction rollback, stale-preview checks, and batch/source-row history.
+- Completed uploads feed official historical statistics. Superseded assignments no longer count; duplicate normalized records are counted once. Corrections retain prior member details in the import audit trail.
+- Added observed history coverage and effective-dated fairness policies: six-month default, enable switch, adjustable total/24-hour/weekend/category weights. Candidate ranking and safe auto-fill use observed-month rates compared with observed active peers at the same call level; missing data remains neutral. Explanations expose the historical penalty and policy.
+- Added cross-month overlap and minimum-rest checks using completed history and generated duties; preserved leave/eligibility/safety precedence. Current member call levels are not changed by importing past duties.
+- Added `xlrd` as a backend dependency and launcher dependency check, plus a real binary `.xls` fixture. No new history-import database migration was necessary.
+- Retained the legacy server-folder rebuild in a disclosure; uploaded history has its own source and audit batches.
+
+Verification:
+
+- New past-duty tests cover `.xls`, table/matrix imports, reuploads, statistics/corrections, unknown names, date/draft checks, rollback/stale previews, rank changes, safe auto-fill selection, disabled policies, month-boundary rest, and authenticated endpoints.
+- Frontend build and controller checks passed, including explicit correction approval and refreshed coverage/history.
+
+## 2026-10-12 - Member Profiles, Dated Call Changes, and HOD Role
+
+User requested synchronized member profiles with promotion history and Admin/HOD comments and explicitly chose a separate HOD login role.
+
+Implemented:
+
+- Added profile cards accessible from member names on desktop/mobile, with current member details, dated call timeline and reasons/approval references, designation history, aliases, official-duty totals, postings, recent leave, import source rows, and attributed comments.
+- Added the HOD account role without granting computer-admin import/diagnostic privileges. HOD, computer admins, and superadmins can record call changes and comments; board members can view the general profile but cannot read protected comments or mutate timelines.
+- Added effective-dated call changes with from/to level, author/source, recording timestamp, and reason. Future promotions stay scheduled. Existing levels remain a baseline with unknown previous dates; changes are added in date order.
+- Updated call-level resolution in daily eligibility, capacity, candidate peer comparison, unit/leave displays, readiness summaries, and analysis. Explicit timelines supersede inferred promotion history where recorded. Unit monthly summaries use the first overlapping date; per-day rota checks use each actual duty date.
+- Member CSV/Excel and trusted prefill call updates create timeline records. Profile changes refresh member data; names/status/aliases remain attached to one member ID, and renames retain previous names as aliases. Merge/cleanup/reset workflows handle the new profile records; merged source timelines remain traceable without replacing the target's active timeline.
+- Added migration `20261012_0018` for call changes and comments. Applied successfully to the local PostgreSQL database. Other deployments should run `alembic upgrade head` on upgrade.
+- Added permission/privacy, effective-date synchronization, CSV call history/stale preview, HOD authentication, merge/cleanup, and profile UI tests. Updated user guide, confirmed decisions, and roadmap.
+
+Verification:
+
+- Broad member/import/profile/allocation/unit/leave/auth/statistics regression suite passed (144 tests). Added a focused baseline-date case so existing call levels can have their first known effective date recorded without inventing the previous level.
+- Production frontend build passed. Four UI controller tests passed, including HOD promotion date/reason and attribution; these use host/API doubles, not browser automation.
+- Ruff and whitespace checks passed; local database upgrade completed.
+
+## 2026-10-12 - Resume and Complete Past-Duty Review
+
+User asked to continue the approved past-duty implementation after member-profile work. Reviewed the existing upload, statistics, fairness, and rest-check integration without replacing the completed member work.
+
+- Closed a duplicate-prevention gap within a first upload: different people claiming the same duty/date now require distinct parallel slot labels and explicit Additional review. Skips are excluded from this comparison, and reuploads of already reviewed parallel records remain unchanged.
+- Prevented silent reuse of an inactive saved slot when uploaded times differ from the stored slot times.
+- Added slot labels, source, period identity, times, and 24-hour classification to the preview fingerprint, so saved-slot edits invalidate the review.
+- Added three regression cases covering unreviewed/reviewed parallel duties and their reuploads, inactive-slot time conflicts, and slot metadata changes after preview. Updated roadmap and usage guide.
+
+Verification: 36 focused past-duty/candidate/auto-fill/assignment/safety/statistics tests passed; all four UI controller tests passed; Ruff and whitespace checks passed. No real past-duty data was uploaded during this verification.
+
+## 2026-10-12 - Sync Local Data to Supplied Public Database
+
+User requested comparing the May backup, committed code, and connected public DB. The user then explicitly selected the current local database including newer records as the source.
+
+- Read the supplied connection URL without exposing credentials. Captured local/public recovery exports and compared schemas, counts, IDs, and unique business keys. All original May historical domain records were present locally, alongside newer slots, postings, leave, and member updates.
+- Prepared and validated a merge preserving public-only data, login credentials, sessions, and the October draft. Source sessions/reset tokens were excluded. Source foreign keys/structured IDs were remapped to public identities for matching records.
+- Captured a fresh pre-merge snapshot under locks because public members/accounts changed during the audit. Applied and verified 49,340 inserts and 9 member/configuration updates in one transaction, with constraints enabled and no data deletion.
+- Corrected the schema/deployment mismatch introduced by the local pending migration: confirmed new profile tables were empty, reversed that migration on public, and verified committed `c20da67` Alembic startup at revision `20260514_0017`. Local remains at `20261012_0018`; pending application features were not published.
+- Read-back verified selected local records, protected passwords/account roles, and all three public sessions. Executed statistics using an isolated checkout of committed code: 14,448 duties, 17 historical months, 8,139 counted 24-hour duties, 2,355 weekend 24-hour duties.
+- Added `docs/database_sync_2026_10_12.md` with final counts, verification, and private recovery artifact locations. No website HTTP URL was supplied; the provided URL was a database connection.

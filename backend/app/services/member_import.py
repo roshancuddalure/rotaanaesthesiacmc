@@ -1,23 +1,37 @@
 """Reviewed, non-destructive department member workbook imports."""
 
 import hashlib
+import csv
 import json
 import re
 from datetime import date, datetime
 from difflib import SequenceMatcher
-from io import BytesIO
+from io import BytesIO, StringIO
 from xml.etree.ElementTree import ParseError
 from zipfile import BadZipFile, ZipFile
 from uuid import UUID
 
-from openpyxl import load_workbook
+from openpyxl import Workbook, load_workbook
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
-from app.models import ImportBatch, ImportSourceRecord, Person, PersonAlias, PersonDesignation
+from app.models import (
+    ImportBatch,
+    ImportSourceRecord,
+    Person,
+    PersonAlias,
+    PersonDesignation,
+    PersonCallChange,
+)
 from app.services.members import normalize_member_name
 from app.services.roster_reconciliation import normalize_designation
 from app.services.imports import is_valid_person_name
+from app.services.member_profiles import (
+    call_level_on,
+    local_today,
+    record_call_change,
+    sync_current_call_levels,
+)
 
 FIELDS = (
     "name",
@@ -29,9 +43,9 @@ FIELDS = (
     "effective_to",
 )
 HEADER_ALIASES = {
-    "name": {"name", "member name", "doctor name", "canonical name"},
+    "name": {"name", "member name", "doctor name", "canonical name", "names"},
     "designation": {"designation", "position"},
-    "call_level": {"call level", "call"},
+    "call_level": {"call level", "call", "call levels"},
     "status": {"status", "active status"},
     "aliases": {"aliases", "alias"},
     "effective_from": {"effective from", "start date"},
@@ -46,10 +60,37 @@ def cell_text(value):
 
 
 def open_member_workbook(filename: str, content: bytes):
-    if not filename.lower().endswith(".xlsx"):
-        raise ValueError("Use an .xlsx workbook. Save older Excel files as .xlsx first.")
     if len(content) > 5 * 1024 * 1024:
-        raise ValueError("Workbook must be no larger than 5 MB.")
+        raise ValueError("File must be no larger than 5 MB.")
+    if filename.lower().endswith(".csv"):
+        try:
+            decoded = content.decode("utf-8-sig")
+        except UnicodeDecodeError as exc:
+            raise ValueError("Save the CSV using UTF-8 encoding.") from exc
+        if "\x00" in decoded:
+            raise ValueError("Invalid CSV text.")
+        try:
+            dialect = csv.Sniffer().sniff(decoded[:8192], delimiters=",;\t")
+        except csv.Error:
+            dialect = csv.excel
+        workbook = Workbook()
+        sheet = workbook.active
+        sheet.title = "CSV"
+        try:
+            for index, row in enumerate(csv.reader(StringIO(decoded), dialect, strict=True), 1):
+                if index > 5100:
+                    raise ValueError("Import at most 5000 data rows and 100 header rows.")
+                if len(row) > 50:
+                    raise ValueError("CSV files may contain at most 50 columns.")
+                sheet.append(row)
+            if not sheet.max_row or not decoded.strip():
+                raise ValueError("CSV file is empty.")
+        except (csv.Error, ValueError) as exc:
+            workbook.close()
+            raise ValueError(f"Cannot read CSV: {exc}") from exc
+        return workbook
+    if not filename.lower().endswith(".xlsx"):
+        raise ValueError("Use a .csv or .xlsx file. Save older Excel files as .xlsx first.")
     try:
         with ZipFile(BytesIO(content)) as archive:
             if sum(item.file_size for item in archive.infolist()) > 50 * 1024 * 1024:
@@ -92,6 +133,7 @@ def inspect_member_workbook(filename: str, content: bytes, header_row: int = 1):
 
 
 def member_state(db: Session):
+    sync_current_call_levels(db)
     people = list(
         db.scalars(
             select(Person).options(selectinload(Person.aliases), selectinload(Person.designations))
@@ -105,6 +147,14 @@ def member_state(db: Session):
             "call": p.call_level,
             "archived": str(p.archived_at),
             "aliases": sorted(a.alias for a in p.aliases),
+            "call_history": [
+                (str(c.id), str(c.effective_from), c.to_call_level, c.source)
+                for c in db.scalars(
+                    select(PersonCallChange)
+                    .where(PersonCallChange.person_id == p.id)
+                    .order_by(PersonCallChange.id)
+                )
+            ],
             "designations": sorted(
                 (d.designation, str(d.effective_from), str(d.effective_to)) for d in p.designations
             ),
@@ -142,7 +192,7 @@ def preview_member_import(db: Session, filename: str, content: bytes, options: d
         for name in [person.canonical_name] + [a.alias for a in person.aliases]:
             keys.setdefault(normalize_member_name(name), set()).add(str(person.id))
     resolutions = options.get("resolutions", {})
-    rows, seen_names, seen_targets, seen_aliases = [], set(), set(), set()
+    rows, seen_names, seen_targets, seen_aliases = [], set(), set(), {}
     workbook = open_member_workbook(filename, content)
     try:
         sheet = workbook[sheet_name]
@@ -197,6 +247,7 @@ def preview_member_import(db: Session, filename: str, content: bytes, options: d
             if normalized["status"] not in {None, "active", "inactive", "historical", "archived"}:
                 errors.append("Status must be active, inactive, historical, or archived.")
             call = raw.get("call_level", "").lower().replace("_", " ").replace("-", " ")
+            call = re.sub(r"\s+", " ", call).strip()
             if call:
                 call_map = {
                     variant: f"{ordinal}_CALL"
@@ -276,11 +327,11 @@ def preview_member_import(db: Session, filename: str, content: bytes, options: d
                 owners = keys.get(alias_key, set())
                 if owners - ({target} if target else set()):
                     errors.append(f"Alias belongs to another member: {alias}")
-                if alias_key in seen_aliases:
+                if alias_key in seen_aliases and seen_aliases[alias_key] != index:
                     errors.append(f"Alias repeated across workbook rows: {alias}")
                 if alias_key in seen_names and alias_key != key:
                     errors.append(f"Alias conflicts with another workbook member: {alias}")
-                seen_aliases.add(alias_key)
+                seen_aliases[alias_key] = index
             changes = {}
             person = by_id.get(target)
             if person:
@@ -357,6 +408,9 @@ def apply_member_import(
         raise ValueError("File, selections, or members changed. Preview again before importing.")
     if preview["counts"]["needs_review"]:
         raise ValueError("Resolve or skip all rows needing review before importing.")
+    if any("call_level" in row["changes"] for row in preview["rows"] if row["action"] == "update"):
+        if options.get("confirm_call_changes") is not True:
+            raise ValueError("Confirm the reviewed call-level changes before importing.")
     batch = ImportBatch(
         source_filename=filename[:255],
         import_kind="department_members",
@@ -366,6 +420,9 @@ def apply_member_import(
             "actor_id": actor_id,
             "counts": preview["counts"],
             "preview_hash": preview_hash,
+            "file_sha256": hashlib.sha256(content).hexdigest(),
+            "sheet": preview["sheet"],
+            "call_changes_confirmed": options.get("confirm_call_changes") is True,
         },
     )
     db.add(batch)
@@ -390,7 +447,18 @@ def apply_member_import(
                     else None
                 )
                 if data["call_level"]:
-                    person.call_level = data["call_level"]
+                    if data["call_level"] != call_level_on(person):
+                        record_call_change(
+                            db,
+                            person,
+                            data["call_level"],
+                            local_today(),
+                            f"Reviewed upload: {filename}, row {row['row']}",
+                            "member_excel_import",
+                            actor_id=UUID(actor_id)
+                            if re.fullmatch(r"[0-9a-fA-F-]{36}", actor_id)
+                            else None,
+                        )
                 for alias in data["aliases"]:
                     if alias != person.canonical_name and alias not in {
                         a.alias for a in person.aliases

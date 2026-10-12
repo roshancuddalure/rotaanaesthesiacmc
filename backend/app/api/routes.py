@@ -10,6 +10,8 @@ from app.api.v1.historical_imports import router as historical_imports_router
 from app.api.v1.leave import router as leave_router
 from app.api.v1.members import router as members_router
 from app.api.v1.member_import import router as member_import_router
+from app.api.v1.past_duties import router as past_duties_router
+from app.api.v1.member_profiles import router as member_profiles_router
 from app.api.v1.metadata import router as metadata_router
 from app.api.v1.rota_assignments import router as rota_assignments_router
 from app.api.v1.rota_auto_fill import router as rota_auto_fill_router
@@ -33,6 +35,8 @@ api_router.include_router(historical_imports_router, prefix="/v1", tags=["histor
 api_router.include_router(leave_router, prefix="/v1", tags=["leave"])
 api_router.include_router(members_router, prefix="/v1", tags=["members"])
 api_router.include_router(member_import_router, prefix="/v1", tags=["member imports"])
+api_router.include_router(past_duties_router, prefix="/v1", tags=["past duties"])
+api_router.include_router(member_profiles_router, prefix="/v1", tags=["member profiles"])
 api_router.include_router(metadata_router, prefix="/v1", tags=["metadata"])
 api_router.include_router(rota_assignments_router, prefix="/v1", tags=["rota assignments"])
 api_router.include_router(rota_auto_fill_router, prefix="/v1", tags=["rota auto fill"])

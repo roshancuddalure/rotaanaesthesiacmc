@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session, selectinload
 
 from app.models import CallCluster, Person, PersonCallClusterMembership
 from app.services.rota_call_levels import normalize_call_level as normalize_rota_call_level
+from app.services.member_profiles import call_level_on
 
 
 @dataclass(frozen=True)
@@ -174,7 +175,7 @@ def replace_cluster_members(
     wrong_call_people = [
         person.canonical_name
         for person in people.values()
-        if normalize_rota_call_level(person.call_level) != cluster.call_level
+        if normalize_rota_call_level(call_level_on(person)) != cluster.call_level
     ]
     if wrong_call_people:
         raise ValueError(

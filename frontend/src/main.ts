@@ -1,5 +1,8 @@
 import "./styles.css";
 import { mountMemberImport, resetMemberImport } from "./member-import";
+import { mountMemberImportHistory } from "./member-import-history";
+import { mountPastDuties } from "./past-duties";
+import { openMemberProfile } from "./member-profile";
 import {
   type AdminMapping,
   type AnalysisDashboard,
@@ -269,7 +272,7 @@ let members: DepartmentMember[] = [];
 let invalidMembers: InvalidMembersResult = { count: 0, people: [] };
 let memberAudit: MemberAudit | null = null;
 let memberSearch = "";
-let memberStatusFilter: "all" | "active" | "historical" | "archived" = "active";
+let memberStatusFilter: "all" | "active" | "historical" | "archived" | "inactive" = "active";
 let memberPositionFilter = "all";
 let memberCallLevelFilter = "all";
 let memberSort = "name";
@@ -444,7 +447,7 @@ const NAV_ITEMS: NavItem[] = [
   { view: "rota-rules", label: "Rota Rules", group: "Admin Tools", adminOnly: true },
   { view: "call-clusters", label: "Eligibility Groups", group: "Admin Tools", adminOnly: true },
   { view: "mappings", label: "Mappings", group: "Admin Tools", adminOnly: true },
-  { view: "imports", label: "Historical Import", group: "Admin Tools", adminOnly: true },
+  { view: "imports", label: "Past Duties", group: "Admin Tools", adminOnly: true },
   { view: "accounts", label: "Login Accounts", group: "Admin Tools", adminOnly: true },
   { view: "diagnostics", label: "Diagnostics", group: "Admin Tools", adminOnly: true },
 ];
@@ -2660,7 +2663,7 @@ function renderMappings() {
 }
 
 async function renderImports() {
-  setHeader("Imports", "Historical data import");
+  setHeader("Past Duties", "Upload, review, and use completed duties");
   if (!viewRoot) return;
   if (!isAdminUser()) {
     await renderOverview();
@@ -2676,6 +2679,7 @@ async function renderImports() {
     return;
   }
   viewRoot.innerHTML = `
+    <div id="past-duties-host"></div>
     <section class="summary-grid">
       ${metricCard(status.people, "People")}
       ${metricCard(status.duty_assignments, "Duty assignments")}
@@ -2686,7 +2690,7 @@ async function renderImports() {
       ${metricCard(status.import_batches, "Import batches")}
       ${metricCard(status.import_warnings, "Import warnings")}
     </section>
-    <section class="panel action-panel">
+    <details class="panel"><summary>Legacy server-folder historical rebuild</summary><section class="action-panel">
       <div>
         <h3>Historical Import</h3>
         <p>Uses the current admin mappings to normalize rota and unitwise Excel files into the database.</p>
@@ -2697,7 +2701,10 @@ async function renderImports() {
       <h3>Last Import Result</h3>
       <pre id="import-result">No import has been run from this screen yet.</pre>
     </section>
+    </details>
   `;
+  const pastHost = document.getElementById("past-duties-host");
+  if (pastHost) await mountPastDuties(pastHost);
 }
 
 function latestDesignation(member: DepartmentMember) {
@@ -2768,7 +2775,7 @@ function filteredMembers(): DepartmentMember[] {
     .filter((member) => {
       const position = memberPosition(member);
       const callLevel = callLevelLabel(normalizeCallLevel(member.call_level));
-      const haystack = `${member.canonical_name} ${position} ${callLevel} ${member.active_status}`.toLocaleLowerCase();
+      const haystack = `${member.canonical_name} ${member.aliases.map(alias => alias.alias).join(" ")} ${position} ${callLevel} ${member.active_status}`.toLocaleLowerCase();
       const matchesSearch = !search || haystack.includes(search);
       const matchesPosition = memberPositionFilter === "all" || position === memberPositionFilter;
       const matchesCallLevel = memberCallLevelFilter === "all" || callLevel === memberCallLevelFilter;
@@ -2808,9 +2815,7 @@ function renderMemberRows(rows: DepartmentMember[]): string {
       const callLevel = callLevelLabel(normalizeCallLevel(member.call_level));
       const callLevelCell = isAdminUser()
         ? `
-            <select class="call-level-select" data-call-level="${member.id}" id="call-level-${member.id}" aria-label="Call level for ${member.canonical_name}">
-              ${renderCallLevelChoices(member.call_level)}
-            </select>
+              <button type="button" class="icon-button" data-member-profile="${member.id}">${escapeHtml(callLevel)} · Change</button>
           `
         : `<span class="call-level-readonly">${callLevel}</span>`;
       const archiveAction = !isAdminUser()
@@ -2824,7 +2829,7 @@ function renderMemberRows(rows: DepartmentMember[]): string {
       return `
         <tr>
           <td class="member-name-cell">
-            <strong>${member.canonical_name}</strong>
+            <button type="button" class="member-profile-link" data-member-profile="${member.id}">${escapeHtml(member.canonical_name)}</button>
             <small>${position}</small>
           </td>
           <td><span class="status-dot ${statusClass}">${member.active_status}</span>${archiveText}</td>
@@ -2851,9 +2856,13 @@ function renderCallLevelChoices(selected: string | null): string {
     ["1ST_CALL", "1st Call"],
     ["2ND_CALL", "2nd Call"],
     ["3RD_CALL", "3rd Call"],
+    ["CO_4TH_CALL", "Co 4th Call"],
     ["4TH_CALL", "4th Call"],
     ["5TH_CALL", "5th Call"],
   ];
+  if (selected && !levels.some(([value]) => value === normalized)) {
+    levels.push([selected, callLevelLabel(selected)]);
+  }
   return levels
     .map(([value, label]) => `<option value="${value}" ${normalized === (value || null) ? "selected" : ""}>${label}</option>`)
     .join("");
@@ -2903,9 +2912,7 @@ function renderMemberCards(rows: DepartmentMember[]): string {
         const callLevel = callLevelLabel(normalizeCallLevel(member.call_level));
         const callLevelControl = isAdminUser()
           ? `
-              <select class="call-level-select" data-call-level="${member.id}" aria-label="Call level for ${member.canonical_name}">
-                ${renderCallLevelChoices(member.call_level)}
-              </select>
+              <button type="button" class="icon-button" data-member-profile="${member.id}">${escapeHtml(callLevel)} · Change</button>
             `
           : `<small>${callLevel}</small>`;
         const archiveAction = !isAdminUser()
@@ -2919,7 +2926,7 @@ function renderMemberCards(rows: DepartmentMember[]): string {
         return `
         <article class="member-card">
           <div>
-            <strong>${member.canonical_name}</strong>
+            <button type="button" class="member-profile-link" data-member-profile="${member.id}">${escapeHtml(member.canonical_name)}</button>
             <small><span class="status-dot ${statusClass}">${member.active_status}</span></small>
             <small>${memberPosition(member)}</small>
             ${archiveText}
@@ -3450,7 +3457,7 @@ function unitPostingRank(value: string): number {
 
 function sortUnitAssignmentsByHierarchy(assignments: UnitAssignment[]): UnitAssignment[] {
   return [...assignments].sort((a, b) => {
-    const rankDiff = unitPostingRank(a.posting_type) - unitPostingRank(b.posting_type);
+    const rankDiff = unitPostingRank(a.effective_call_level ?? a.posting_type) - unitPostingRank(b.effective_call_level ?? b.posting_type);
     if (rankDiff !== 0) return rankDiff;
     return a.person.canonical_name.localeCompare(b.person.canonical_name);
   });
@@ -3638,7 +3645,7 @@ function renderUnitAssignmentRows(): string {
         <tr>
           <td><strong>${escapeHtml(assignment.person.canonical_name)}</strong><small>${escapeHtml(assignment.person.call_level ?? "Unassigned")}</small></td>
           <td>${escapeHtml(assignment.unit?.name ?? (SPECIAL_UNIT_POSTING_KEYS.has(assignment.posting_type) ? "Special card" : "No unit"))}</td>
-          <td>${escapeHtml(callLevelLabel(assignment.posting_type))}</td>
+          <td>${escapeHtml(callLevelLabel(assignment.effective_call_level ?? assignment.posting_type))}<small>Posting: ${escapeHtml(assignment.posting_type)}</small></td>
           <td>${assignment.starts_on}${assignment.ends_on ? ` to ${assignment.ends_on}` : ""}</td>
           <td>${escapeHtml(assignment.notes ?? "")}</td>
           <td>
@@ -4490,10 +4497,12 @@ function renderMembersView() {
   const activeMembers = members.filter((member) => member.active_status === "active").length;
   const archivedMembers = members.filter((member) => member.active_status === "archived").length;
   const historicalMembers = members.filter((member) => member.active_status === "historical").length;
+  const inactiveMembers = members.filter((member) => member.active_status === "inactive").length;
   const callLevelOrder: [string, string][] = [
     ["1ST_CALL", "1st"],
     ["2ND_CALL", "2nd"],
     ["3RD_CALL", "3rd"],
+    ["CO_4TH_CALL", "Co 4th"],
     ["4TH_CALL", "4th"],
     ["5TH_CALL", "5th"],
   ];
@@ -4535,7 +4544,7 @@ function renderMembersView() {
       <div class="roster-command-header">
         <div>
           <h3>Department Members</h3>
-          <p>Search the department list by name, position, or call level.</p>
+          <p>One master list for names, aliases, and call levels. Search by name, position, or call level.</p>
         </div>
         <span class="audit-badge">${rows.length} shown</span>
       </div>
@@ -4544,6 +4553,7 @@ function renderMembersView() {
         <span><strong>${members.length}</strong> total</span>
         <span><strong>${activeMembers}</strong> active</span>
         <span><strong>${historicalMembers}</strong> historical</span>
+        <span><strong>${inactiveMembers}</strong> inactive</span>
         <span><strong>${archivedMembers}</strong> archived</span>
       </div>
       <div class="call-level-chip-row">
@@ -4565,6 +4575,7 @@ function renderMembersView() {
             <button class="status-toggle ${memberStatusFilter === "all" ? "active" : ""}" data-member-status="all">All</button>
             <button class="status-toggle ${memberStatusFilter === "historical" ? "active" : ""}" data-member-status="historical">Historical</button>
             <button class="status-toggle ${memberStatusFilter === "archived" ? "active" : ""}" data-member-status="archived">Archived</button>
+            <button class="status-toggle ${memberStatusFilter === "inactive" ? "active" : ""}" data-member-status="inactive">Inactive</button>
           </div>
           <label for="member-search" class="visually-hidden">Search members</label>
           <input id="member-search" class="member-search-input" placeholder="Search members or positions" value="${memberSearch}" aria-label="Search members or positions" />
@@ -4577,12 +4588,14 @@ function renderMembersView() {
         ${adminTools}
       </div>
     </section>
-    ${isAdminUser() ? '<div id="member-import-host"></div>' : ""}
+    ${isAdminUser() ? `<nav class="member-section-nav" aria-label="Member management sections">
+      <a href="#member-list">Member List</a><a href="#member-import-host">Import and Review</a>
+      <a href="#member-history-host">Import History</a></nav>` : ""}
     <details class="panel disclosure-panel">
       <summary>Position Mix</summary>
       <div class="category-grid">${renderPositionBreakdown()}</div>
     </details>
-    <section class="panel table-panel">
+    <section class="panel table-panel" id="member-list">
       <table class="member-table">
         <colgroup>
           <col class="member-col-name" />
@@ -4604,9 +4617,12 @@ function renderMembersView() {
     <section class="member-card-list" id="member-card-list">
       ${renderMemberCards(rows)}
     </section>
+    ${isAdminUser() ? '<div id="member-import-host"></div><div id="member-history-host"></div>' : ""}
   `;
   const importHost = document.getElementById("member-import-host");
   if (importHost) mountMemberImport(importHost, renderMembers);
+  const historyHost = document.getElementById("member-history-host");
+  if (historyHost) void mountMemberImportHistory(historyHost);
 }
 
 function parseNumberOrNull(value: string): number | null {
@@ -7230,7 +7246,7 @@ async function renderAccounts() {
     <section class="panel action-panel">
       <div>
         <h3>Create Account</h3>
-        <p>Roles: rota board member, computer admin, or superadmin.</p>
+        <p>Roles: rota board member, HOD, computer admin, or superadmin.</p>
       </div>
       <form class="inline-form" id="account-form">
         <label for="account-username" class="visually-hidden">Username</label>
@@ -7242,6 +7258,7 @@ async function renderAccounts() {
         <label for="account-role" class="visually-hidden">Role</label>
         <select id="account-role" aria-label="Role">
           <option value="rota_board_member">Rota board member</option>
+          <option value="hod">Head of Department</option>
           <option value="computer_admin">Computer admin</option>
           <option value="superadmin">Superadmin</option>
         </select>
@@ -8185,6 +8202,20 @@ function bindViewEvents() {
 
   viewRoot?.addEventListener("click", async (event) => {
     const target = event.target as HTMLElement;
+    const profileButton = target.closest<HTMLButtonElement>("[data-member-profile]");
+    if (profileButton?.dataset.memberProfile) {
+      await openMemberProfile(profileButton.dataset.memberProfile, currentUser?.role ?? "rota_board_member", renderMembers);
+      return;
+    }
+    const memberSection = target.closest<HTMLAnchorElement>(".member-section-nav a");
+    if (memberSection) {
+      event.preventDefault();
+      const section = document.querySelector<HTMLElement>(memberSection.getAttribute("href")!);
+      const disclosure = section?.querySelector<HTMLDetailsElement>("details");
+      if (disclosure) disclosure.open = true;
+      section?.scrollIntoView({ block: "start" });
+      return;
+    }
     const reviewAction = target.closest<HTMLElement>("[data-open-review-action]");
     if (reviewAction?.dataset.openReviewAction) {
       openReviewActionModal(reviewAction.dataset.openReviewAction);
@@ -8866,7 +8897,7 @@ function bindViewEvents() {
 
     const statusToggle = target.closest<HTMLButtonElement>("[data-member-status]");
     if (statusToggle?.dataset.memberStatus) {
-      memberStatusFilter = statusToggle.dataset.memberStatus as "all" | "active" | "historical" | "archived";
+      memberStatusFilter = statusToggle.dataset.memberStatus as typeof memberStatusFilter;
       saveFocus();
       renderMembersView();
       restoreFocus();
@@ -9276,16 +9307,15 @@ function bindViewEvents() {
       if (!isAdminUser()) return;
       const member = members.find((item) => item.id === target.dataset.callLevel);
       if (!member) return;
-      member.call_level = target.value || null;
       saveFocus();
       try {
-        await updateMember(member);
-        memberAudit = await getMemberAudit();
+        await updateMember({ ...member, call_level: target.value || null });
+        await renderMembers();
         showToast("Call level updated", "success");
       } catch (error) {
         showToast(error instanceof Error ? error.message : "Update failed", "error");
+        renderMembersView();
       }
-      updateMemberResults();
       restoreFocus();
       return;
     }

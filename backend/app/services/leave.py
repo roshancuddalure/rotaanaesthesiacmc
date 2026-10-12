@@ -64,7 +64,8 @@ def posting_context_for_month(db: Session, person_id: UUID, day: date) -> tuple[
 
 
 def person_call_level(person: Person) -> str:
-    return person.call_level or "Unassigned"
+    from app.services.member_profiles import call_level_on
+    return call_level_on(person) or "Unassigned"
 
 
 def leave_day_entries(db: Session, leaves: list[LeaveRequest], month: str) -> dict[str, list[dict[str, object]]]:
