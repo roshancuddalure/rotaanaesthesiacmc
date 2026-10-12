@@ -1092,3 +1092,24 @@ For each month, assign one person to own each responsibility:
 - Approval owner: publish and final Excel export.
 
 This prevents one person from accidentally mixing data cleanup, rota assignment, and final approval without review.
+
+## Upload Department Members from Excel
+
+Computer admins and superadmins can open **Department Members → Import Members from Excel**.
+
+1. Download the Excel template, or use an existing `.xlsx` workbook with a header row and one member per row.
+2. Select your workbook. Set the header row if it is not row 1, then click **Read Worksheets**.
+3. Choose the worksheet and map its columns. Only **name** is required. Optional columns are designation, call level, status, aliases, effective-from date, and effective-to date.
+4. Click **Preview Normalized Members**. Review the original values, normalized details, matched member, and proposed changes.
+5. For uncertain matches, select a suggested existing member, explicitly create a new member, or skip the row. Correct invalid values in Excel and upload again, or skip those rows. Preview again after changing selections.
+6. Click **Apply Reviewed Import** once every review item is resolved or skipped.
+
+Names have titles and extra spaces cleaned. Existing canonical names are preserved when matching by names or aliases. A spelling manually matched to a member becomes an alias for later uploads. Similar names require review; members are never automatically merged.
+
+Use `1st call` through `5th call` (or `first` through `fifth`) for call levels. Supported statuses are `active`, `inactive`, `historical`, and `archived`. Separate aliases with semicolons. Designations require an effective-from date; dates may be Excel date cells or `YYYY-MM-DD`. Formula cells must be replaced with values.
+
+Blank optional cells preserve existing values. New members default to active status. Importing the same data again does not duplicate members, aliases, or designation entries. Existing duties, leave, and unit postings remain linked to the same member. Unit assignments continue through Unit Management.
+
+Each import records its source filename, worksheet, Excel row, original and normalized values, changes, and importing account. Imports are transactional: a write failure rolls back the entire batch. If member data changes after preview, preview again before applying.
+
+Limits: `.xlsx` only, 5 MB compressed size, 50 MB expanded size, 5000 data rows, and the first 50 columns. Import one worksheet at a time. The first version uses the currently supported member fields; it does not add phone numbers, email addresses, or employee IDs.

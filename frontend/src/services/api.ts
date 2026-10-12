@@ -1,6 +1,60 @@
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ?? "";
 
+export interface MemberImportOptions {
+  sheet: string;
+  header_row: number;
+  mapping: Record<string, number>;
+  resolutions: Record<string, string>;
+}
+
+export interface MemberWorkbookInspection {
+  sheets: { name: string; headers: string[]; mapping: Record<string, number> }[];
+  fields: string[];
+  header_row: number;
+}
+
+export interface MemberImportPreview {
+  preview_hash: string;
+  counts: Record<string, number>;
+  sheet: string;
+  rows: {
+    row: number;
+    raw: Record<string, string>;
+    normalized: Record<string, unknown>;
+    action: string;
+    target_id: string | null;
+    target_name: string | null;
+    changes: Record<string, unknown>;
+    errors: string[];
+    candidates: { id: string; name: string }[];
+  }[];
+}
+
+export async function memberWorkbookRequest<T>(
+  action: "inspect" | "preview" | "apply", file: File,
+  options: MemberImportOptions, previewHash = "",
+): Promise<T> {
+  const body = new FormData();
+  body.append("file", file);
+  body.append("header_row", String(options.header_row));
+  body.append("options", JSON.stringify(options));
+  body.append("preview_hash", previewHash);
+  const response = await fetch(`${API_BASE_URL}/api/v1/admin/members/import/${action}`, {
+    method: "POST", headers: { Authorization: `Bearer ${authToken}` }, body,
+  });
+  if (!response.ok) throw await errorFromResponse(response);
+  return response.json() as Promise<T>;
+}
+
+export async function downloadMemberImportTemplate(): Promise<Blob> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/admin/members/import/template`, {
+    headers: { Authorization: `Bearer ${authToken}` },
+  });
+  if (!response.ok) throw await errorFromResponse(response);
+  return response.blob();
+}
+
 let authToken = localStorage.getItem("duty_rota_auth_token") ?? "";
 
 export function setAuthToken(token: string) {

@@ -2398,3 +2398,23 @@ Verification:
 - Focused backend rota template tests passed: `python -m pytest tests/test_rota_template.py -q`, 27 tests.
 - Ruff passed on touched backend files with `--no-cache`.
 - Frontend TypeScript check passed: `npm exec tsc -- --noEmit`.
+
+## 2026-10-12 - Reviewed Excel Upload for Department Members
+
+User approved implementing the proposed member Excel import workflow after the code review confirmed that Members only supported a fixed server-side trusted-roster reconciliation.
+
+Implemented:
+
+- Added an admin-only Members import panel with a downloadable `.xlsx` template, header-row and worksheet selection, column mapping, normalized preview, row resolutions, and explicit apply.
+- Added authenticated inspect, template, preview, and apply endpoints under `/api/v1/admin/members/import`.
+- Normalizes names, recognized call levels, designations, statuses, aliases, and effective dates. Preserves canonical names on matches and retains resolved spelling variants as aliases.
+- Requires review for fuzzy/ambiguous matches and invalid or duplicate rows. Existing blank optional values remain unchanged; existing assignments, leave, postings, and designation history remain intact.
+- Revalidates the preview against current member data before applying, and commits all changes and source traceability together using existing import tables. No database migration or new dependency is required.
+- Rejects formulas, unsupported formats, oversized files, excessive rows, and invalid mappings. Initial scope is supported member fields, one worksheet per import, with designation dates provided explicitly rather than inferred from the workbook.
+- Added usage instructions to the website guide. The existing trusted-roster workflow remains available.
+
+Verification:
+
+- Focused member/import/roster backend suite passed: `python -m pytest tests/test_member_import.py tests/test_members.py tests/test_roster_reconciliation.py tests/test_department_roster_reset.py -q` (25 tests).
+- Frontend production build passed: `npm run build`.
+- Ruff passed for the new backend importer, routes, and tests with `--no-cache`.

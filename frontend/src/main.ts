@@ -1,4 +1,5 @@
 import "./styles.css";
+import { mountMemberImport, resetMemberImport } from "./member-import";
 import {
   type AdminMapping,
   type AnalysisDashboard,
@@ -790,6 +791,7 @@ function renderShell() {
   });
   document.getElementById("sign-out")?.addEventListener("click", () => {
     clearAuthToken();
+    resetMemberImport();
     currentUser = null;
     renderLogin();
     showToast("Signed out", "info");
@@ -4575,6 +4577,7 @@ function renderMembersView() {
         ${adminTools}
       </div>
     </section>
+    ${isAdminUser() ? '<div id="member-import-host"></div>' : ""}
     <details class="panel disclosure-panel">
       <summary>Position Mix</summary>
       <div class="category-grid">${renderPositionBreakdown()}</div>
@@ -4602,6 +4605,8 @@ function renderMembersView() {
       ${renderMemberCards(rows)}
     </section>
   `;
+  const importHost = document.getElementById("member-import-host");
+  if (importHost) mountMemberImport(importHost, renderMembers);
 }
 
 function parseNumberOrNull(value: string): number | null {
@@ -8990,6 +8995,7 @@ function bindViewEvents() {
 
     if (target.id === "sign-out") {
       clearAuthToken();
+      resetMemberImport();
       currentUser = null;
       renderLogin();
       showToast("Signed out", "info");
