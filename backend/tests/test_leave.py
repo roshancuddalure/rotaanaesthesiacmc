@@ -5,6 +5,7 @@ from io import BytesIO
 
 import pandas as pd
 from fastapi.testclient import TestClient
+from tests.reviewed_client import ReviewedImportClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import StaticPool
@@ -44,7 +45,7 @@ def leave_client() -> Generator[TestClient, None, None]:
 
     app.dependency_overrides[get_db] = override_get_db
     try:
-        yield TestClient(app)
+        yield ReviewedImportClient(app)
     finally:
         app.dependency_overrides.clear()
 

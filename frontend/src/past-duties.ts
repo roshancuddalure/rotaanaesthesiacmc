@@ -1,5 +1,5 @@
 import {
-  getMembers, getPastDutyStatus, getPastDutyHistory, pastDutyUpload, downloadPastDutyTemplate, saveHistoryFairness,
+  getMembers, getPastDutyStatus, getPastDutyHistory, pastDutyUpload, downloadPastDutyTemplate, saveHistoryFairness, downloadPreviewIssues,
   type PastDutyOptions, type PastDutyPreview, type PastDutyStatus, type MemberWorkbookInspection, type DepartmentMember,
   type HistoryFairnessPolicy,
 } from "./services/api";
@@ -53,6 +53,7 @@ export async function mountPastDuties(host: HTMLElement) {
         <p>Confirmed month: ${escape(preview.month)}; worksheet: ${escape(preview.sheet)}. Review dates and standard start/end times before applying. Times use local hospital time.</p>
         ${!reviewed ? "<p>Selections changed. Preview again before applying.</p>" : ""}
         <label>Review rows <select data-past="filter">${["all","needs_review","correct","create","unchanged","skip"].map(a => `<option value="${a}" ${filter === a ? "selected" : ""}>${escape(a.replace(/_/g," "))}</option>`).join("")}</select></label>
+        <button type="button" data-past="rejected">Download Rejected Rows CSV</button>
         <div class="member-import-table"><table><thead><tr><th>Source row / original</th><th>Normalized duty</th><th>Outcome</th><th>Resolve</th></tr></thead><tbody>${preview.rows.filter(r => filter === "all" || r.action === filter).map(row => {
           const resolution = options.resolutions[row.key] ?? {};
           return `<tr><td>${row.row}:${row.column}${values(row.raw)}</td><td>${values(row.normalized)}</td>
@@ -108,12 +109,14 @@ export async function mountPastDuties(host: HTMLElement) {
   host.onclick = async event => {
     const target = (event.target as HTMLElement).closest<HTMLElement>("[data-past], [data-past-batch]");
     const action = target?.dataset.past;
-    if (busy || !target || (action && !["template","inspect","preview","apply","save-policy"].includes(action))) return;
+    if (busy || !target || (action && !["template","inspect","preview","apply","save-policy","rejected"].includes(action))) return;
     busy = true; message = ""; render();
     try {
       if (target.dataset.pastBatch) {
         const batch = await getPastDutyHistory(target.dataset.pastBatch);
         historyHtml = `<h4>${escape(batch.filename)}</h4><div class="member-import-table"><table><thead><tr><th>Source</th><th>Original</th><th>Normalized</th><th>Outcome / prior member</th></tr></thead><tbody>${batch.rows.map(r => `<tr><td>${r.row}:${r.column}</td><td>${values(r.raw)}</td><td>${values(r.normalized)}</td><td>${escape(r.action)}${r.before ? `<p>Previous: ${escape(r.before.name)} (${escape(r.before.status)})</p>` : ""}</td></tr>`).join("")}</tbody></table></div>`;
+      } else if (action === "rejected" && preview) {
+        downloadPreviewIssues(preview.rows,"past_duty_rejected_rows.csv");
       } else if (action === "template") {
         const blob = await downloadPastDutyTemplate(); const url = URL.createObjectURL(blob);
         const link = document.createElement("a"); link.href = url; link.download = "past-duties-template.xlsx"; link.click();
@@ -129,9 +132,9 @@ export async function mountPastDuties(host: HTMLElement) {
         preview = await pastDutyUpload<PastDutyPreview>("preview", file, options);
         reviewed = true; options.confirm_corrections = false; options.confirm_warnings = false;
       } else if (file && action === "apply" && reviewed && preview) {
-        const result = await pastDutyUpload<{counts: Record<string,number>}>("apply", file, options, preview.preview_hash);
+        const result = await pastDutyUpload<{counts: Record<string,number>; replayed?: boolean}>("apply", file, options, preview.preview_hash);
         reviewed = false; preview = undefined;
-        message = `Recorded ${result.counts.create} new duties, ${result.counts.correct} corrections, ${result.counts.unchanged} unchanged. Statistics and future candidate scoring now use the saved records.`;
+        message = result.replayed ? "This reviewed batch was already applied. No additional duties or corrections were recorded." : `Recorded ${result.counts.create} new duties, ${result.counts.correct} corrections, ${result.counts.unchanged} unchanged. Statistics and future candidate scoring now use the saved records.`;
         status = await getPastDutyStatus();
       }
     } catch (error) { message = error instanceof Error ? error.message : "Past-duty operation failed."; if (action === "apply") reviewed = false; }

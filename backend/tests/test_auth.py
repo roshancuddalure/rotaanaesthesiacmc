@@ -70,6 +70,10 @@ def test_forgot_and_reset_password() -> None:
     with auth_client() as client:
         response = client.post("/api/v1/auth/forgot-password", json={"username": "rotachief"})
         assert response.status_code == 200
+        assert "reset_token" not in response.json()
+        signed_in = client.post("/api/v1/auth/sign-in", json={"username": "rotachief", "password": "rotateam"}).json()
+        response = client.post(f"/api/v1/auth/accounts/{signed_in['user']['id']}/recovery-code", headers={"Authorization": f"Bearer {signed_in['token']}"})
+        assert response.status_code == 200
         token = response.json()["reset_token"]
 
         response = client.post(

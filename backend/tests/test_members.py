@@ -8,6 +8,8 @@ from sqlalchemy.pool import StaticPool
 from app import models  # noqa: F401
 from app.db.session import Base, get_db
 from app.main import app
+from app.api.v1.auth import current_user
+from types import SimpleNamespace
 from app.models import DutyAssignment, DutySlot, Person, PersonAlias, PersonDesignation, RotaPeriod
 from app.services.members import (
     auto_merge_duplicate_candidates,
@@ -159,7 +161,7 @@ def test_name_cleanup_preserves_real_name_with_noise_suffix() -> None:
         assert person.aliases[0].alias == "Kiruthiga - Till sept 27"
 
 
-def test_member_api_lists_full_roster_and_reactivates_existing_historical_member() -> None:
+def test_member_api_lists_full_roster_and_requires_explicit_restore() -> None:
     engine = create_engine(
         "sqlite+pysqlite:///:memory:",
         connect_args={"check_same_thread": False},
@@ -180,6 +182,7 @@ def test_member_api_lists_full_roster_and_reactivates_existing_historical_member
             yield session
 
     app.dependency_overrides[get_db] = override_get_db
+    app.dependency_overrides[current_user] = lambda: SimpleNamespace(role="superadmin")
     try:
         client = TestClient(app)
 
@@ -192,9 +195,11 @@ def test_member_api_lists_full_roster_and_reactivates_existing_historical_member
             "/api/v1/admin/members",
             json={"canonical_name": "zed historical", "active_status": "active"},
         )
-        assert revived.status_code == 200
-        assert revived.json()["canonical_name"] == "Zed Historical"
-        assert revived.json()["active_status"] == "active"
+        assert revived.status_code == 409
+        person_id = next(m["id"] for m in listed.json() if m["canonical_name"] == "Zed Historical")
+        restored = client.post(f"/api/v1/admin/members/{person_id}/restore")
+        assert restored.status_code == 200
+        assert restored.json()["active_status"] == "active"
 
         duplicate = client.post(
             "/api/v1/admin/members",
@@ -226,6 +231,7 @@ def test_member_api_archives_and_restores_member_with_timestamp() -> None:
             yield session
 
     app.dependency_overrides[get_db] = override_get_db
+    app.dependency_overrides[current_user] = lambda: SimpleNamespace(role="superadmin")
     try:
         client = TestClient(app)
 

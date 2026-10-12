@@ -1,5 +1,5 @@
 import {
-  downloadMemberImportTemplate, memberWorkbookRequest,
+  downloadMemberImportTemplate, memberWorkbookRequest, downloadPreviewIssues,
   type MemberImportOptions, type MemberImportPreview, type MemberWorkbookInspection,
 } from "./services/api";
 
@@ -66,6 +66,7 @@ export function mountMemberImport(host: HTMLElement, refresh: () => Promise<void
         ${!reviewed ? "<p>Selections changed. Preview again to review the updated result.</p>" : ""}
         <label>Review rows <select data-mi="filter">${["all", "needs_review", "update", "create", "unchanged", "skip"].map(action =>
           `<option value="${action}" ${reviewFilter === action ? "selected" : ""}>${escape(action.replace(/_/g, " "))}</option>`).join("")}</select></label>
+        <button type="button" data-mi="rejected">Download Rejected Rows CSV</button>
         <div class="member-import-table"><table><thead><tr><th>File row / original</th><th>Normalized details</th><th>Action / changes</th><th>Resolve</th></tr></thead>
         <tbody>${visibleRows.map(row => `<tr><td>${row.row}${details(row.raw)}</td>
           <td>${details(row.normalized)}</td>
@@ -119,7 +120,8 @@ export function mountMemberImport(host: HTMLElement, refresh: () => Promise<void
     if (!action || ["file", "sheet", "header", "filter", "confirm-calls"].includes(action) || busy) return;
     busy = true; message = ""; render();
     try {
-      if (action === "template" || action === "csv-template") {
+      if (action === "rejected" && preview) downloadPreviewIssues(preview.rows, "member_rejected_rows.csv");
+      else if (action === "template" || action === "csv-template") {
         const format = action === "csv-template" ? "csv" : "xlsx";
         const blob = await downloadMemberImportTemplate(format);
         const url = URL.createObjectURL(blob);
@@ -137,8 +139,8 @@ export function mountMemberImport(host: HTMLElement, refresh: () => Promise<void
         options.confirm_call_changes = false;
         reviewed = true;
       } else if (file && action === "apply" && preview && reviewed) {
-        const result = await memberWorkbookRequest<{ counts: Record<string, number> }>("apply", file, options, preview.preview_hash);
-        message = `Imported ${result.counts.create} new members and updated ${result.counts.update}. ${result.counts.unchanged} unchanged; ${result.counts.skip} skipped. Master list and counts refreshed.`;
+        const result = await memberWorkbookRequest<{ counts: Record<string, number>; replayed?: boolean }>("apply", file, options, preview.preview_hash);
+        message = result.replayed ? "This reviewed batch was already applied. No additional members were created or changed." : `Imported ${result.counts.create} new members and updated ${result.counts.update}. ${result.counts.unchanged} unchanged; ${result.counts.skip} skipped. Master list and counts refreshed.`;
         reviewed = false; preview = undefined;
         busy = false;
         await refresh();

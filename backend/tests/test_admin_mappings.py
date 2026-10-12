@@ -12,6 +12,8 @@ from app import models  # noqa: F401
 from app.api.v1 import admin_mappings
 from app.db.session import Base, get_db
 from app.main import app
+from app.api.v1.auth import current_user
+from types import SimpleNamespace
 
 
 def create_rota_workbook(path: Path) -> None:
@@ -52,6 +54,7 @@ def client_with_database() -> Generator[TestClient, None, None]:
             yield session
 
     app.dependency_overrides[get_db] = override_get_db
+    app.dependency_overrides[current_user] = lambda: SimpleNamespace(role="superadmin")
     try:
         yield TestClient(app)
     finally:

@@ -4,7 +4,7 @@ import hmac
 import secrets
 from datetime import datetime, timedelta
 
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 
 from app.models import PasswordResetToken, UserAccount, UserSession
@@ -16,6 +16,20 @@ ROLES = {
     "superadmin": "Superadmin",
 }
 ADMIN_ROLES = {"computer_admin", "superadmin"}
+
+
+def validate_password(password: str) -> str:
+    if len(password) < 8 or len(password) > 128:
+        raise ValueError("Password must contain between 8 and 128 characters")
+    if not password.strip():
+        raise ValueError("Password cannot consist only of spaces")
+    return password
+
+
+def revoke_user_sessions(db: Session, user_id) -> None:
+    now = datetime.utcnow()
+    db.execute(update(UserSession).where(UserSession.user_id == user_id, UserSession.revoked_at.is_(None)).values(revoked_at=now))
+    db.execute(update(PasswordResetToken).where(PasswordResetToken.user_id == user_id, PasswordResetToken.used_at.is_(None)).values(used_at=now))
 
 
 def hash_secret(secret: str, salt: bytes | None = None) -> str:
@@ -81,6 +95,7 @@ def user_from_token(db: Session, token: str) -> UserAccount | None:
 
 
 def create_reset_token(db: Session, user: UserAccount) -> str:
+    db.execute(update(PasswordResetToken).where(PasswordResetToken.user_id == user.id, PasswordResetToken.used_at.is_(None)).values(used_at=datetime.utcnow()))
     token = secrets.token_urlsafe(24)
     reset = PasswordResetToken(
         user=user,
@@ -93,6 +108,7 @@ def create_reset_token(db: Session, user: UserAccount) -> str:
 
 
 def reset_password(db: Session, token: str, new_password: str) -> bool:
+    validate_password(new_password)
     reset = db.scalar(
         select(PasswordResetToken).where(
             PasswordResetToken.token_hash == token_hash(token),
@@ -103,12 +119,13 @@ def reset_password(db: Session, token: str, new_password: str) -> bool:
     if reset is None:
         return False
     reset.user.password_hash = hash_secret(new_password)
-    reset.used_at = datetime.utcnow()
+    revoke_user_sessions(db, reset.user_id)
     db.commit()
     return True
 
 
 def change_password(db: Session, user: UserAccount, current_password: str, new_password: str) -> bool:
+    validate_password(new_password)
     if not verify_secret(current_password, user.password_hash):
         return False
     user.password_hash = hash_secret(new_password)

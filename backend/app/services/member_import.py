@@ -24,8 +24,10 @@ from app.models import (
     PersonCallChange,
 )
 from app.services.members import normalize_member_name
+from app.domain.member_validation import normalize_member_display_name, normalize_member_call, normalize_member_status
 from app.services.roster_reconciliation import normalize_designation
 from app.services.imports import is_valid_person_name
+from app.services.reviewed_import import acquire_import_lock, replayed_result, attach_result
 from app.services.member_profiles import (
     call_level_on,
     local_today,
@@ -223,10 +225,11 @@ def preview_member_import(db: Session, filename: str, content: bytes, options: d
                 )
                 continue
             errors = []
-            name = re.sub(r"^(?:dr|prof|mr|mrs|ms)(?:\.\s*|\s+)", "", raw["name"], flags=re.I)
-            name = re.sub(r"\s+", " ", name).strip()
-            if not is_valid_person_name(name) or len(name) > 255 or any(c.isdigit() for c in name):
-                errors.append("Invalid member name or spreadsheet heading.")
+            name = raw["name"]
+            try:
+                name = normalize_member_display_name(name)
+            except ValueError as exc:
+                errors.append(str(exc))
             if any(v.startswith("=") for v in raw.values()):
                 errors.append("Formula cells are not supported; paste values first.")
             normalized = {
@@ -244,32 +247,12 @@ def preview_member_import(db: Session, filename: str, content: bytes, options: d
             }
             if raw["name"] != name and raw["name"] not in normalized["aliases"]:
                 normalized["aliases"].append(raw["name"])
-            if normalized["status"] not in {None, "active", "inactive", "historical", "archived"}:
-                errors.append("Status must be active, inactive, historical, or archived.")
-            call = raw.get("call_level", "").lower().replace("_", " ").replace("-", " ")
-            call = re.sub(r"\s+", " ", call).strip()
-            if call:
-                call_map = {
-                    variant: f"{ordinal}_CALL"
-                    for ordinal, word, number in [
-                        ("1ST", "first", "1"),
-                        ("2ND", "second", "2"),
-                        ("3RD", "third", "3"),
-                        ("4TH", "fourth", "4"),
-                        ("5TH", "fifth", "5"),
-                    ]
-                    for variant in (
-                        ordinal.lower(),
-                        ordinal.lower() + " call",
-                        word,
-                        word + " call",
-                        number,
-                    )
-                }
-                call_map.update({"co 4th call": "CO_4TH_CALL", "co4th": "CO_4TH_CALL"})
-                normalized["call_level"] = call_map.get(call)
-                if not normalized["call_level"]:
-                    errors.append("Unrecognized call level.")
+            try:
+                if normalized["status"]:
+                    normalized["status"] = normalize_member_status(normalized["status"])
+                normalized["call_level"] = normalize_member_call(raw.get("call_level"))
+            except ValueError as exc:
+                errors.append(str(exc))
             for field in ("effective_from", "effective_to"):
                 if normalized[field]:
                     try:
@@ -391,7 +374,8 @@ def preview_member_import(db: Session, filename: str, content: bytes, options: d
         workbook.close()
     # Include the entire member state so a concurrent edit invalidates the review.
     digest = hashlib.sha256(
-        json.dumps([rows, snapshot, sheet_name, header_row], sort_keys=True).encode()
+        json.dumps([rows, snapshot, sheet_name, header_row, filename, hashlib.sha256(content).hexdigest(),
+                    {key:value for key,value in options.items() if key != "confirm_call_changes"}], sort_keys=True).encode()
     ).hexdigest()
     counts = {
         action: sum(r["action"] == action for r in rows)
@@ -403,6 +387,10 @@ def preview_member_import(db: Session, filename: str, content: bytes, options: d
 def apply_member_import(
     db: Session, filename: str, content: bytes, options: dict, preview_hash: str, actor_id: str
 ):
+    acquire_import_lock(db)
+    replay = replayed_result(db, "department_members", preview_hash, actor_id, filename, content, options)
+    if replay is not None:
+        return replay
     preview = preview_member_import(db, filename, content, options)
     if preview["preview_hash"] != preview_hash:
         raise ValueError("File, selections, or members changed. Preview again before importing.")
@@ -501,8 +489,11 @@ def apply_member_import(
                     ),
                 )
             )
+        db.flush()
+        result = {"batch_id": str(batch.id), "counts": preview["counts"], "replayed": False}
+        attach_result(batch, result, filename, content, options)
         db.commit()
     except Exception:
         db.rollback()
         raise
-    return {"batch_id": str(batch.id), "counts": preview["counts"]}
+    return result

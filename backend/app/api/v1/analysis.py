@@ -2,9 +2,10 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
+from app.api.v1.auth import current_user
 from app.services.analysis import analyze_dashboard, analyze_preflight, analysis_manual_review
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(current_user)])
 
 
 @router.get("/analysis/dashboard")

@@ -491,6 +491,8 @@ def preview_past_duties(db: Session, filename: str, content: bytes, options: dic
                 [(str(p.id), p.status) for p in periods],
                 options.get("month"),
                 options.get("sheet"),
+                filename,
+                {key:value for key,value in options.items() if key not in {"confirm_corrections","confirm_warnings"}},
                 hashlib.sha256(content).hexdigest(),
             ],
             sort_keys=True,
@@ -512,6 +514,11 @@ def preview_past_duties(db: Session, filename: str, content: bytes, options: dic
 def apply_past_duties(
     db: Session, filename: str, content: bytes, options: dict, preview_hash: str, actor_id: str
 ):
+    from app.services.reviewed_import import acquire_import_lock, replayed_result, attach_result
+    acquire_import_lock(db)
+    replay = replayed_result(db, PAST_SOURCE, preview_hash, actor_id, filename, content, options)
+    if replay is not None:
+        return replay
     preview = preview_past_duties(db, filename, content, options)
     if preview_hash != preview["preview_hash"]:
         raise ValueError("File, selections, or saved duties changed. Preview again.")
@@ -646,8 +653,11 @@ def apply_past_duties(
                     ),
                 )
             )
+        db.flush()
+        result = {"batch_id": str(batch.id), "counts": preview["counts"], "month": preview["month"], "replayed": False}
+        attach_result(batch, result, filename, content, options)
         db.commit()
     except Exception:
         db.rollback()
         raise
-    return {"batch_id": str(batch.id), "counts": preview["counts"], "month": preview["month"]}
+    return result

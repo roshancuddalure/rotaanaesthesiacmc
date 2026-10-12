@@ -1,3 +1,7 @@
+import { notifyDataChange } from "../data-sync";
+import { formatApiError, networkRecoveryMessage } from "../api-errors";
+export { downloadPreviewIssues } from "../import-report";
+
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ?? "";
 
@@ -64,7 +68,7 @@ export async function pastDutyUpload<T>(action: string, file: File, options: Pas
     method: "POST", headers: { Authorization: `Bearer ${authToken}` }, body,
   });
   if (!response.ok) throw await errorFromResponse(response);
-  return response.json() as Promise<T>;
+  return readMutationResult<T>(response, `/api/v1/admin/past-duties/${action}`, "POST");
 }
 export async function downloadPastDutyTemplate(): Promise<Blob> {
   const response = await fetch(`${API_BASE_URL}/api/v1/admin/past-duties/template`, {
@@ -118,7 +122,7 @@ export async function memberWorkbookRequest<T>(
     method: "POST", headers: { Authorization: `Bearer ${authToken}` }, body,
   });
   if (!response.ok) throw await errorFromResponse(response);
-  return response.json() as Promise<T>;
+  return readMutationResult<T>(response, `/api/v1/admin/members/import/${action}`, "POST");
 }
 
 export async function downloadMemberImportTemplate(format: "csv" | "xlsx" = "xlsx"): Promise<Blob> {
@@ -157,6 +161,31 @@ export function getMemberImportHistoryDetail(id: string): Promise<MemberImportHi
   return request(`/api/v1/admin/members/import/history/${encodeURIComponent(id)}`);
 }
 
+export type WorkflowImportKind = "members" | "past" | "leave" | "units";
+export interface WorkflowImportHistory {
+  items: {id: string; filename: string; month: string | null; status: string; at: string | null; actor: string; counts: Record<string, number>}[];
+  offset: number; has_more: boolean;
+}
+export interface WorkflowImportRows {
+  filename: string; offset: number; has_more: boolean;
+  rows: {sheet: string | null; row: number | null; raw: unknown; normalized: unknown; outcome: unknown; record_id: string | null}[];
+}
+export function getWorkflowImportHistory(kind: WorkflowImportKind, month?: string, offset=0): Promise<WorkflowImportHistory> {
+  return request(`/api/v1/imports/${kind}/history?offset=${offset}${month ? `&month=${encodeURIComponent(month)}` : ""}`);
+}
+export function getWorkflowImportRows(kind: WorkflowImportKind, id: string, offset=0): Promise<WorkflowImportRows> {
+  return request(`/api/v1/imports/${kind}/history/${encodeURIComponent(id)}?offset=${offset}`);
+}
+export async function downloadRejectedImportRows(kind: WorkflowImportKind, id: string): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/imports/${kind}/history/${encodeURIComponent(id)}/rejected.csv`, {
+    headers: authToken ? {Authorization: `Bearer ${authToken}`} : {},
+  });
+  if (!response.ok) throw await errorFromResponse(response);
+  const url=URL.createObjectURL(await response.blob());
+  const link=document.createElement("a");link.href=url;link.download=`rejected_${kind}_${id}.csv`;
+  link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+
 let authToken = localStorage.getItem("duty_rota_auth_token") ?? "";
 
 export function setAuthToken(token: string) {
@@ -171,20 +200,17 @@ export function clearAuthToken() {
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   let response: Response;
+  const headers = new Headers(options.headers);
+  if (!headers.has("Content-Type")) headers.set("Content-Type", "application/json");
+  if (authToken) headers.set("Authorization", `Bearer ${authToken}`);
   try {
     response = await fetch(`${API_BASE_URL}${path}`, {
-      headers: {
-        "Content-Type": "application/json",
-        ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
-        ...options.headers,
-      },
       ...options,
+      headers,
     });
   } catch (error) {
     console.error("Backend request failed", error);
-    throw new Error(
-      "Backend server is offline. Start Duty Rota with launch.bat and keep the Backend window running.",
-    );
+    throw new Error(networkRecoveryMessage(Boolean(import.meta.env.DEV)));
   }
   if (!response.ok) {
     let message = `API request failed: ${response.status}`;
@@ -192,11 +218,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     try {
       const payload = await response.json();
       detail = payload.detail;
-      if (typeof payload.detail === "string") {
-        message = payload.detail;
-      } else if (payload.detail?.message) {
-        message = payload.detail.message;
-      }
+      message = formatApiError(detail, message);
     } catch {
       // Keep the status-based fallback when the server does not return JSON.
     }
@@ -204,23 +226,25 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     error.detail = detail;
     throw error;
   }
-  return response.json() as Promise<T>;
+  return readMutationResult<T>(response, path, options.method ?? "GET");
+}
+
+async function readMutationResult<T>(response: Response, path: string, method: string): Promise<T> {
+  const result = await response.json() as T;
+  if (!(result && typeof result === "object" && "replayed" in result && result.replayed)) notifyDataChange(path, method);
+  return result;
 }
 
 async function errorFromResponse(response: Response): Promise<Error> {
   let message = `API request failed: ${response.status}`;
   let detail: unknown = null;
   if (response.status >= 500) {
-    message = "Backend server is offline or crashed. Start Duty Rota with launch.bat and keep the Backend window running.";
+    message = "The server could not complete this request. Retry, or contact your department administrator if it continues.";
   }
   try {
     const payload = await response.json();
     detail = payload.detail;
-    if (typeof payload.detail === "string") {
-      message = payload.detail;
-    } else if (payload.detail?.message) {
-      message = payload.detail.message;
-    }
+    message = formatApiError(detail, message);
   } catch {
     // Keep the status-based fallback when the server does not return JSON.
   }
@@ -528,6 +552,7 @@ export interface LeavePressure {
 }
 
 export interface LeaveImportPreview {
+  preview_hash: string;
   filename: string;
   month: string;
   total_rows: number;
@@ -562,6 +587,8 @@ export interface LeaveImportPreview {
 }
 
 export interface LeaveImportApplyResult {
+  batch_id?: string;
+  replayed?: boolean;
   filename: string;
   month: string;
   created_rows: number;
@@ -571,6 +598,7 @@ export interface LeaveImportApplyResult {
 }
 
 export interface UnitAssignmentImportPreview {
+  preview_hash: string;
   filename: string;
   month: string;
   total_rows: number;
@@ -633,6 +661,8 @@ export interface UnitImportResolution {
 }
 
 export interface UnitAssignmentImportApplyResult {
+  batch_id?: string;
+  replayed?: boolean;
   filename: string;
   month: string;
   created_rows: number;
@@ -1589,9 +1619,10 @@ export async function previewLeaveImport(month: string, file: File): Promise<Lea
   return response.json() as Promise<LeaveImportPreview>;
 }
 
-export async function applyLeaveImport(month: string, file: File): Promise<LeaveImportApplyResult> {
+export async function applyLeaveImport(month: string, file: File, previewHash: string): Promise<LeaveImportApplyResult> {
   const formData = new FormData();
   formData.append("file", file);
+  formData.append("preview_hash", previewHash);
   const response = await fetch(`${API_BASE_URL}/api/v1/leave/import-apply?month=${encodeURIComponent(month)}`, {
     method: "POST",
     headers: authToken ? { Authorization: `Bearer ${authToken}` } : {},
@@ -1600,7 +1631,7 @@ export async function applyLeaveImport(month: string, file: File): Promise<Leave
   if (!response.ok) {
     throw await errorFromResponse(response);
   }
-  return response.json() as Promise<LeaveImportApplyResult>;
+  return readMutationResult<LeaveImportApplyResult>(response, "/api/v1/leave/import-apply", "POST");
 }
 
 export function getLeaveRequests(month: string): Promise<LeaveRequest[]> {
@@ -1661,9 +1692,11 @@ export async function applyUnitAssignmentImport(
   file: File,
   replaceExisting: boolean,
   resolutions: Record<string, UnitImportResolution> = {},
+  previewHash = "",
 ): Promise<UnitAssignmentImportApplyResult> {
   const formData = new FormData();
   formData.append("file", file);
+  formData.append("preview_hash", previewHash);
   formData.append("resolutions_json", JSON.stringify(resolutions));
   const response = await fetch(
     `${API_BASE_URL}/api/v1/unit-management/import-apply?month=${encodeURIComponent(month)}&replace_existing=${replaceExisting}`,
@@ -1676,7 +1709,7 @@ export async function applyUnitAssignmentImport(
   if (!response.ok) {
     throw await errorFromResponse(response);
   }
-  return response.json() as Promise<UnitAssignmentImportApplyResult>;
+  return readMutationResult<UnitAssignmentImportApplyResult>(response, "/api/v1/unit-management/import-apply", "POST");
 }
 
 export function createUnitAssignment(payload: UnitAssignmentPayload): Promise<UnitAssignment> {
@@ -1901,11 +1934,15 @@ export function updateCallClusterMembers(
   });
 }
 
-export function forgotPassword(username: string): Promise<{ message: string; reset_token: string | null }> {
-  return request<{ message: string; reset_token: string | null }>("/api/v1/auth/forgot-password", {
+export function forgotPassword(username: string): Promise<{ message: string }> {
+  return request<{ message: string }>("/api/v1/auth/forgot-password", {
     method: "POST",
     body: JSON.stringify({ username }),
   });
+}
+
+export function issueAccountRecoveryCode(id: string): Promise<{reset_token: string; expires_in_minutes: number}> {
+  return request(`/api/v1/auth/accounts/${encodeURIComponent(id)}/recovery-code`, { method: "POST" });
 }
 
 export function resetPassword(token: string, newPassword: string): Promise<{ status: string }> {

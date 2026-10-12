@@ -3,12 +3,13 @@ from collections import Counter
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, selectinload
 
 from app.db.session import get_db
+from app.api.v1.auth import current_user, require_admin
 from app.models import Person, PersonAlias, PersonDesignation
 from app.services.members import (
     delete_invalid_members,
@@ -23,8 +24,9 @@ from app.services.roster_reconciliation import reconcile_department_roster
 from app.services.department_roster_reset import reset_department_members_from_roster
 from app.services.unitwise_call_levels import prefill_call_levels_from_unitwise
 from app.services.member_profiles import call_level_on, local_today, record_call_change
+from app.domain.member_validation import normalize_member_display_name, normalize_member_call, normalize_member_status
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(current_user)])
 
 
 class AliasRead(BaseModel):
@@ -57,11 +59,13 @@ class MemberCreate(BaseModel):
     active_status: str = "active"
     call_level: str | None = None
 
+    _name = field_validator("canonical_name")(normalize_member_display_name)
+    _status = field_validator("active_status")(normalize_member_status)
+    _call = field_validator("call_level")(normalize_member_call)
 
-class MemberUpdate(BaseModel):
-    canonical_name: str
-    active_status: str = "active"
-    call_level: str | None = None
+
+class MemberUpdate(MemberCreate):
+    pass
 
 
 class AliasCreate(BaseModel):
@@ -195,7 +199,7 @@ def list_members(q: str | None = None, db: Session = Depends(get_db)) -> list[Me
     return [member_to_read(person) for person in db.scalars(statement)]
 
 
-@router.post("/admin/members")
+@router.post("/admin/members", dependencies=[Depends(require_admin)])
 def create_member(payload: MemberCreate, db: Session = Depends(get_db)) -> MemberRead:
     canonical_name = payload.canonical_name.strip()
     existing = db.scalar(
@@ -204,25 +208,6 @@ def create_member(payload: MemberCreate, db: Session = Depends(get_db)) -> Membe
         .options(selectinload(Person.aliases), selectinload(Person.designations))
     )
     if existing is not None:
-        changed = False
-        if existing.active_status != payload.active_status:
-            existing.active_status = payload.active_status
-            if payload.active_status == "archived":
-                existing.archived_at = existing.archived_at or datetime.utcnow()
-            elif existing.archived_at is not None:
-                existing.archived_at = None
-            changed = True
-        if payload.call_level and existing.call_level != payload.call_level.strip():
-            try:
-                record_call_change(db, existing, payload.call_level.strip(), local_today(),
-                                   "Call level updated through member creation", "member_management")
-            except ValueError as exc:
-                db.rollback()
-                raise HTTPException(status_code=409, detail=str(exc)) from exc
-            changed = True
-        if changed:
-            db.commit()
-            return member_to_read(get_member_or_404(db, existing.id))
         raise HTTPException(
             status_code=409,
             detail=f'Member already exists as {existing.active_status}: {existing.canonical_name}',
@@ -232,6 +217,7 @@ def create_member(payload: MemberCreate, db: Session = Depends(get_db)) -> Membe
         canonical_name=canonical_name,
         active_status=payload.active_status,
         call_level=payload.call_level.strip() if payload.call_level else None,
+        archived_at=datetime.utcnow() if payload.active_status == "archived" else None,
     )
     db.add(person)
     try:
@@ -243,7 +229,7 @@ def create_member(payload: MemberCreate, db: Session = Depends(get_db)) -> Membe
     return member_to_read(get_member_or_404(db, person.id))
 
 
-@router.put("/admin/members/{person_id}")
+@router.put("/admin/members/{person_id}", dependencies=[Depends(require_admin)])
 def update_member(
     person_id: UUID,
     payload: MemberUpdate,
@@ -273,7 +259,7 @@ def update_member(
     return member_to_read(get_member_or_404(db, person_id))
 
 
-@router.post("/admin/members/{person_id}/archive")
+@router.post("/admin/members/{person_id}/archive", dependencies=[Depends(require_admin)])
 def archive_member(person_id: UUID, db: Session = Depends(get_db)) -> MemberRead:
     person = get_member_or_404(db, person_id)
     if person.active_status != "archived":
@@ -283,17 +269,17 @@ def archive_member(person_id: UUID, db: Session = Depends(get_db)) -> MemberRead
     return member_to_read(get_member_or_404(db, person_id))
 
 
-@router.post("/admin/members/{person_id}/restore")
+@router.post("/admin/members/{person_id}/restore", dependencies=[Depends(require_admin)])
 def restore_member(person_id: UUID, db: Session = Depends(get_db)) -> MemberRead:
     person = get_member_or_404(db, person_id)
-    if person.active_status == "archived":
+    if person.active_status in {"archived", "historical", "inactive"}:
         person.active_status = "active"
         person.archived_at = None
         db.commit()
     return member_to_read(get_member_or_404(db, person_id))
 
 
-@router.post("/admin/members/{person_id}/aliases")
+@router.post("/admin/members/{person_id}/aliases", dependencies=[Depends(require_admin)])
 def add_alias(person_id: UUID, payload: AliasCreate, db: Session = Depends(get_db)) -> MemberRead:
     person = get_member_or_404(db, person_id)
     db.add(PersonAlias(person=person, alias=payload.alias.strip(), source=payload.source))
@@ -305,7 +291,7 @@ def add_alias(person_id: UUID, payload: AliasCreate, db: Session = Depends(get_d
     return member_to_read(get_member_or_404(db, person_id))
 
 
-@router.post("/admin/members/{person_id}/designations")
+@router.post("/admin/members/{person_id}/designations", dependencies=[Depends(require_admin)])
 def add_designation(
     person_id: UUID,
     payload: DesignationCreate,
@@ -403,29 +389,29 @@ def audit_members(db: Session = Depends(get_db)) -> MemberAuditRead:
     )
 
 
-@router.post("/admin/members/cleanup-invalid")
+@router.post("/admin/members/cleanup-invalid", dependencies=[Depends(require_admin)])
 def cleanup_invalid_members(db: Session = Depends(get_db)) -> CleanupResult:
     normalized = normalize_dirty_member_names(db)
     deleted = delete_invalid_members(db)
     return CleanupResult(normalized=normalized, deleted=deleted)
 
 
-@router.post("/admin/members/auto-merge-duplicates")
+@router.post("/admin/members/auto-merge-duplicates", dependencies=[Depends(require_admin)])
 def auto_merge_duplicates(db: Session = Depends(get_db)) -> AutoMergeResultRead:
     return AutoMergeResultRead(**auto_merge_duplicate_candidates(db).__dict__)
 
 
-@router.post("/admin/members/reconcile-trusted-roster")
+@router.post("/admin/members/reconcile-trusted-roster", dependencies=[Depends(require_admin)])
 def reconcile_trusted_roster(db: Session = Depends(get_db)) -> RosterReconciliationRead:
     return RosterReconciliationRead(**reconcile_department_roster(db).__dict__)
 
 
-@router.post("/admin/members/reset-from-trusted-roster")
+@router.post("/admin/members/reset-from-trusted-roster", dependencies=[Depends(require_admin)])
 def reset_from_trusted_roster(db: Session = Depends(get_db)) -> DepartmentRosterResetRead:
     return DepartmentRosterResetRead(**reset_department_members_from_roster(db).__dict__)
 
 
-@router.post("/admin/members/prefill-call-levels")
+@router.post("/admin/members/prefill-call-levels", dependencies=[Depends(require_admin)])
 def prefill_call_levels(db: Session = Depends(get_db)) -> CallLevelPrefillRead:
     try:
         return CallLevelPrefillRead(**prefill_call_levels_from_unitwise(db).__dict__)
@@ -434,7 +420,7 @@ def prefill_call_levels(db: Session = Depends(get_db)) -> CallLevelPrefillRead:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
 
 
-@router.post("/admin/members/merge")
+@router.post("/admin/members/merge", dependencies=[Depends(require_admin)])
 def merge_members(payload: MergeRequest, db: Session = Depends(get_db)) -> MemberRead:
     try:
         person = merge_people(db, payload.target_person_id, payload.source_person_ids)

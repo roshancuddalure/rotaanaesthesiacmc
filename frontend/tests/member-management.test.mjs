@@ -6,6 +6,7 @@ import ts from "typescript";
 // Exercise the UI controllers with a small host and API doubles; no browser dependency.
 const dataModule = source => `data:text/javascript;base64,${Buffer.from(source).toString("base64")}`;
 const apiModule = dataModule(`
+  export const downloadPreviewIssues = (...args) => globalThis.reportApi?.download(...args);
   export const memberWorkbookRequest = (...args) => globalThis.memberApi.request(...args);
   export const downloadMemberImportTemplate = (...args) => globalThis.memberApi.template(...args);
   export const getMemberImportHistory = (...args) => globalThis.memberApi.history(...args);
@@ -147,6 +148,14 @@ test("past-duty corrections need approval and update visible coverage after appl
   await clickPast("inspect");
   await clickPast("preview");
   assert.equal(canApplyPast(), false);
+  const exported=[];
+  globalThis.reportApi={download:(rows,filename)=>exported.push({rows,filename})};
+  await clickPast("rejected");
+  assert.equal(exported.length,1);
+  assert.equal(exported[0].filename,"past_duty_rejected_rows.csv");
+  assert.deepEqual(exported[0].rows,preview.rows);
+  assert.equal(canApplyPast(), false);
+  delete globalThis.reportApi;
   change(host, { past: "confirm-corrections" }, { checked: true });
   assert.equal(canApplyPast(), true);
   change(host, { past: "filter" }, { value: "correct" });

@@ -79,6 +79,13 @@ def update_scope_units(
     lock_scope: bool,
     lock_reason: str | None = None,
 ) -> MonthlyGenerationScope:
+    if scope.is_locked and lock_scope:
+        current_included = {item.unit_id for item in scope.units if item.status == SCOPE_INCLUDED}
+        current_excluded = {item.unit_id for item in scope.units if item.status == SCOPE_EXCLUDED}
+        if (set(included_unit_ids) != current_included or set(excluded_unit_ids) != current_excluded
+                or include_excluded_units_in_safety != scope.include_excluded_units_in_safety):
+            raise ValueError("Unlock the scope with a reason before changing locked settings")
+        return scope
     if scope.is_locked and not lock_scope:
         if not lock_reason or not lock_reason.strip():
             raise ValueError("Unlocking the generation scope requires a reason")

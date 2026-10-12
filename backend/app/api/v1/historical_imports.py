@@ -3,12 +3,11 @@ from pydantic import BaseModel
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from app.api.v1.admin_mappings import HISTORICAL_DIR
 from app.db.session import get_db
+from app.api.v1.auth import require_admin
 from app.models import DutyAssignment, DutySlot, ImportBatch, ImportWarning, Person, PersonPosting, Unit
-from app.services.historical_analysis_dry_run import rebuild_and_import_historical_analysis
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(require_admin)])
 
 
 class HistoricalImportStatus(BaseModel):
@@ -36,6 +35,4 @@ def get_historical_import_status(db: Session = Depends(get_db)) -> HistoricalImp
 
 @router.post("/admin/imports/historical/run")
 def run_historical_import(db: Session = Depends(get_db)) -> dict[str, object]:
-    if not HISTORICAL_DIR.exists():
-        raise HTTPException(status_code=404, detail="Historical source folder was not found")
-    return rebuild_and_import_historical_analysis(db, historical_dir=HISTORICAL_DIR)
+    raise HTTPException(status_code=410, detail="Server-folder rebuild is retired. Use Past Duties to upload, preview and apply reviewed historical records.")

@@ -9,6 +9,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
+from app.api.v1.auth import require_admin
 from app.domain.duty_types import DUTY_TYPES
 from app.models.mappings import AdminMapping
 from app.services.imports import (
@@ -18,7 +19,7 @@ from app.services.imports import (
     normalize_label,
 )
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(require_admin)])
 
 REPO_DIR = Path(__file__).resolve().parents[4]
 HISTORICAL_DIR = REPO_DIR / "data" / "source" / "historical"

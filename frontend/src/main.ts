@@ -1,5 +1,7 @@
 import "./styles.css";
 import { mountMemberImport, resetMemberImport } from "./member-import";
+import { onDataChange } from "./data-sync";
+import { mountWorkflowImportHistory } from "./workflow-import-history";
 import { mountMemberImportHistory } from "./member-import-history";
 import { mountPastDuties } from "./past-duties";
 import { openMemberProfile } from "./member-profile";
@@ -68,6 +70,8 @@ import {
   downloadRotaTemplateCallWiseExport,
   downloadRotaTemplateEagleEyeExport,
   forgotPassword,
+  issueAccountRecoveryCode,
+  downloadPreviewIssues,
   getAnalysisDashboard,
   getAnalysisManualReview,
   getAnalysisPreflight,
@@ -287,7 +291,7 @@ let unitMonth = new Date().toISOString().slice(0, 7);
 let unitManagement: UnitManagementMonth | null = null;
 let unitImportPreview: UnitAssignmentImportPreview | null = null;
 let unitImportFile: File | null = null;
-let unitImportReplaceExisting = true;
+let unitImportReplaceExisting = false;
 type UnitImportFilter =
   | "all"
   | "matched"
@@ -349,6 +353,27 @@ let currentUser: UserAccount | null = null;
 let accounts: UserAccount[] = [];
 let callClusters: CallCluster[] = [];
 let activeCallCluster: CallCluster | null = null;
+
+onDataChange(() => {
+  analysis = null;
+  analysisManualReview = null;
+  analysisPreflight = null;
+  members = [];
+  memberAudit = null;
+  invalidateUnitManagementCache();
+  rotaSetup = null;
+  rotaPhaseOneRules = null;
+  rotaTemplate = null;
+  rotaTemplateStats = null;
+  rotaSafety = null;
+  rotaCandidates = null;
+  rotaAutoFill = null;
+  rotaReview = null;
+  rotaPublish = null;
+  reviewCandidateSlots.clear();
+  failedExchangeCandidateSlots.clear();
+  rejectedRotaCandidates.clear();
+});
 
 const DUTY_CALL_LEVELS = [
   { key: "1ST_CALL", label: "1st Call" },
@@ -883,14 +908,14 @@ function renderForgotForm() {
     <form id="forgot-form">
       <label for="forgot-username">Username</label>
       <input id="forgot-username" autocomplete="username" placeholder="Enter username" />
-      <button class="primary full-width" type="submit" id="forgot-submit">Create Reset Token</button>
+      <button class="primary full-width" type="submit" id="forgot-submit">Recovery Instructions</button>
       <p class="form-message" id="forgot-message"></p>
     </form>
-    <form id="reset-form" style="display:none;margin-top:12px;">
-      <label for="reset-token">Reset Token</label>
-      <input id="reset-token" readonly />
+    <form id="reset-form" style="margin-top:12px;">
+      <label for="reset-token">Recovery code from your administrator</label>
+      <input id="reset-token" autocomplete="off" required />
       <label for="reset-password">New Password</label>
-      <input id="reset-password" type="password" autocomplete="new-password" placeholder="Enter new password" />
+      <input id="reset-password" type="password" autocomplete="new-password" minlength="8" maxlength="128" required placeholder="8–128 characters" />
       <button class="primary full-width" type="submit" id="reset-submit">Reset Password</button>
     </form>
   `;
@@ -903,20 +928,15 @@ function renderForgotForm() {
       if (message) message.textContent = "Please enter a username.";
       return;
     }
-    setButtonLoading(btn, true, "Create Reset Token");
+    setButtonLoading(btn, true, "Recovery Instructions");
     try {
       const result = await forgotPassword(username);
       const message = root.querySelector<HTMLParagraphElement>("#forgot-message");
-      const token = root.querySelector<HTMLInputElement>("#reset-token");
-      const section = root.querySelector<HTMLFormElement>("#reset-form");
       if (message) message.textContent = result.message;
-      if (token && result.reset_token) token.value = result.reset_token;
-      if (section) section.style.display = "grid";
-      showToast("Reset token generated", "success");
     } catch (error) {
       const message = root.querySelector<HTMLParagraphElement>("#forgot-message");
       if (message) message.textContent = error instanceof Error ? error.message : "Failed to create token";
-      showToast("Failed to create reset token", "error");
+      showToast("Unable to load recovery instructions", "error");
     } finally {
       resetButton(btn);
     }
@@ -1007,7 +1027,7 @@ async function renderOverview() {
   if (!viewRoot) return;
   viewRoot.innerHTML = `<section class="panel"><h3>Loading overview...</h3></section>`;
   try {
-    analysis = analysis ?? await getAnalysisDashboard();
+    analysis = await getAnalysisDashboard();
   } catch (error) {
     viewRoot.innerHTML = `
       <section class="panel">
@@ -2537,8 +2557,8 @@ function renderDutyTarget(mapping: AdminMapping): string {
     `<option value="">Needs review</option>`,
     ...options.duty_types.map(
       (dutyType) => `
-        <option value="${dutyType.key}" ${mapping.target_key === dutyType.key ? "selected" : ""}>
-          ${dutyType.label}
+        <option value="${escapeHtml(dutyType.key)}" ${mapping.target_key === dutyType.key ? "selected" : ""}>
+          ${escapeHtml(dutyType.label)}
         </option>
       `,
     ),
@@ -2551,7 +2571,7 @@ function renderTextTarget(mapping: AdminMapping): string {
     <input
       data-field="target_key"
       data-id="${mapping.id}"
-      value="${mapping.target_key ?? ""}"
+      value="${escapeHtml(mapping.target_key ?? "")}"
       placeholder="Target key"
     />
   `;
@@ -2572,7 +2592,7 @@ function renderMappings() {
       (mapping) => `
         <tr data-mapping-row="${mapping.id}">
           <td>
-            <strong>${mapping.source_label}</strong>
+            <strong>${escapeHtml(mapping.source_label)}</strong>
             <small>${mappingTypeLabel(mapping.mapping_type)}</small>
           </td>
           <td>
@@ -2582,20 +2602,20 @@ function renderMappings() {
             <input
               data-field="target_label"
               data-id="${mapping.id}"
-              value="${mapping.target_label ?? targetLabelForKey(mapping.target_key) ?? ""}"
+              value="${escapeHtml(mapping.target_label ?? targetLabelForKey(mapping.target_key) ?? "")}"
               placeholder="Display label"
-              aria-label="Target label for ${mapping.source_label}"
+              aria-label="Target label for ${escapeHtml(mapping.source_label)}"
             />
           </td>
           <td>
-            <select data-field="status" data-id="${mapping.id}" aria-label="Status for ${mapping.source_label}">
+            <select data-field="status" data-id="${mapping.id}" aria-label="Status for ${escapeHtml(mapping.source_label)}">
               <option value="needs_review" ${mapping.status === "needs_review" ? "selected" : ""}>Needs review</option>
               <option value="suggested" ${mapping.status === "suggested" ? "selected" : ""}>Suggested</option>
               <option value="reviewed" ${mapping.status === "reviewed" ? "selected" : ""}>Reviewed</option>
             </select>
           </td>
           <td>
-            <input data-field="notes" data-id="${mapping.id}" value="${mapping.notes ?? ""}" placeholder="Notes" aria-label="Notes for ${mapping.source_label}" />
+            <input data-field="notes" data-id="${mapping.id}" value="${escapeHtml(mapping.notes ?? "")}" placeholder="Notes" aria-label="Notes for ${escapeHtml(mapping.source_label)}" />
           </td>
           <td>
             <button class="icon-button" data-save="${mapping.id}" title="Save mapping">Save</button>
@@ -2609,7 +2629,7 @@ function renderMappings() {
     <article class="data-card">
       <div class="data-card-row">
         <span class="data-card-label">Source</span>
-        <span class="data-card-value">${mapping.source_label}</span>
+        <span class="data-card-value">${escapeHtml(mapping.source_label)}</span>
       </div>
       <div class="data-card-row">
         <span class="data-card-label">Type</span>
@@ -2617,11 +2637,11 @@ function renderMappings() {
       </div>
       <div class="data-card-row">
         <span class="data-card-label">Target</span>
-        <span class="data-card-value">${mapping.target_label ?? targetLabelForKey(mapping.target_key) ?? "—"}</span>
+        <span class="data-card-value">${escapeHtml(mapping.target_label ?? targetLabelForKey(mapping.target_key) ?? "—")}</span>
       </div>
       <div class="data-card-row">
         <span class="data-card-label">Status</span>
-        <span class="data-card-value">${mapping.status}</span>
+        <span class="data-card-value">${escapeHtml(mapping.status)}</span>
       </div>
       <div class="data-card-row">
         <button class="icon-button" data-save="${mapping.id}">Save</button>
@@ -2633,7 +2653,7 @@ function renderMappings() {
     <section class="toolbar">
       ${renderMappingFilters()}
       <label for="mapping-search" class="visually-hidden">Search mappings</label>
-      <input id="mapping-search" placeholder="Search source label…" value="${mappingSearch}" style="min-width:200px;" aria-label="Search mappings" />
+      <input id="mapping-search" placeholder="Search source label…" value="${escapeHtml(mappingSearch)}" style="min-width:200px;" aria-label="Search mappings" />
       <button class="primary" id="scan-mappings">Scan Historical Files</button>
     </section>
     <section class="panel table-panel hide-mobile">
@@ -2690,18 +2710,7 @@ async function renderImports() {
       ${metricCard(status.import_batches, "Import batches")}
       ${metricCard(status.import_warnings, "Import warnings")}
     </section>
-    <details class="panel"><summary>Legacy server-folder historical rebuild</summary><section class="action-panel">
-      <div>
-        <h3>Historical Import</h3>
-        <p>Uses the current admin mappings to normalize rota and unitwise Excel files into the database.</p>
-      </div>
-      <button class="primary" id="run-historical-import">Run Historical Import</button>
-    </section>
-    <section class="panel wide">
-      <h3>Last Import Result</h3>
-      <pre id="import-result">No import has been run from this screen yet.</pre>
-    </section>
-    </details>
+    <section class="panel"><p>Use the upload and review workflow above for historical duties. The legacy server-folder rebuild has been retired.</p></section>
   `;
   const pastHost = document.getElementById("past-duties-host");
   if (pastHost) await mountPastDuties(pastHost);
@@ -3262,7 +3271,7 @@ function renderLeaveImportPreview(): string {
     </tr>
   `;
   }).join("");
-  const canApply = leaveImportPreview.matched_rows > 0 && leaveImportFile;
+  const canApply = leaveImportPreview.matched_rows > 0 && leaveImportFile && leaveImportPreview.preview_hash;
   return `
     <div class="audit-chip-row">
       <span><strong>${leaveImportPreview.total_rows}</strong> rows</span>
@@ -3274,6 +3283,7 @@ function renderLeaveImportPreview(): string {
     ${leaveImportPreview.parser_warnings?.length ? `<div class="issue-list">${leaveImportPreview.parser_warnings.map((warning) => `<p>${reviewButton({ title: "Resolve Leave Parser Warning", status: "Parser Warning", summary: warning, actions: [{ label: "Open Leave", kind: "navigate", target: "leave", variant: "primary" }] }, warning, "review-text-button")}</p>`).join("")}</div>` : ""}
     <div class="topbar-actions" style="margin:12px 0;">
       <button class="primary" id="apply-leave-import" ${canApply ? "" : "disabled"}>Apply Matched Rows</button>
+      <button class="icon-button" type="button" data-preview-rejections="leave">Download Rejected Rows CSV</button>
     </div>
     <div class="table-scroll">
       <table>
@@ -3423,7 +3433,9 @@ async function renderLeave() {
     <section class="card-list">
       ${renderLeaveCards() || `<p class="empty">No leave recorded for this month.</p>`}
     </section>
+    <div id="leave-history-host"></div>
   `;
+  void mountWorkflowImportHistory(document.getElementById("leave-history-host")!, "leave", leaveMonth);
 }
 
 const UNIT_POSTING_TYPES = [
@@ -3978,7 +3990,7 @@ function renderUnitImportPreview(): string {
     </tr>
   `;
   }).join("");
-  const canApply = (unitImportPreview.auto_assignable_rows ?? unitImportPreview.matched_rows) > 0 && unitImportFile;
+  const canApply = (unitImportPreview.auto_assignable_rows ?? unitImportPreview.matched_rows) > 0 && unitImportFile && unitImportPreview.preview_hash;
   const filters: Array<{ key: UnitImportFilter; label: string; count: number }> = [
     { key: "all", label: "All", count: unitImportPreview.rows.length },
     { key: "matched", label: "Matched", count: unitImportPreview.rows.filter((row) => row.preview_status === "matched").length },
@@ -4023,6 +4035,7 @@ function renderUnitImportPreview(): string {
     ${unitImportPreview.parser_warnings?.length ? `<div class="issue-list">${unitImportPreview.parser_warnings.map((warning) => `<p>${reviewButton({ title: "Resolve Unitwise Parser Warning", status: "Parser Warning", summary: warning, actions: [{ label: "Open Unit Management", kind: "navigate", target: "units", variant: "primary" }] }, warning, "review-text-button")}</p>`).join("")}</div>` : ""}
     <div class="topbar-actions" style="margin:12px 0;">
       <button class="primary" id="apply-unit-import" ${canApply ? "" : "disabled"}>Auto-Assign Ready Rows</button>
+      <button class="icon-button" type="button" data-preview-rejections="units">Download Rejected Rows CSV</button>
     </div>
     ${paginator}
     <div class="table-scroll">
@@ -4459,7 +4472,9 @@ async function renderUnitManagement(forceReload = false) {
         <tbody>${renderUnitAssignmentRows() || `<tr><td colspan="6" class="empty">No unit assignments for this month.</td></tr>`}</tbody>
       </table>
     </section>
+    <div id="unit-history-host"></div>
   `;
+  void mountWorkflowImportHistory(document.getElementById("unit-history-host")!, "units", unitMonth);
   if (unitModalSpecialPostingType) {
     openSpecialPostingModal(unitModalSpecialPostingType);
   } else if (unitModalUnitId) {
@@ -4857,7 +4872,7 @@ async function renderCallClusters() {
   try {
     [callClusters, members] = await Promise.all([
       getCallClusters(),
-      members.length ? Promise.resolve(members) : getMembers(),
+      getMembers(),
     ]);
     if (activeCallCluster?.id) {
       activeCallCluster = await getCallClusterMembers(activeCallCluster.id);
@@ -7236,10 +7251,10 @@ async function renderAccounts() {
   }
   const accountCards = accounts.map((account) => `
     <article class="data-card">
-      <div class="data-card-row"><span class="data-card-label">Username</span><span class="data-card-value">${account.username}</span></div>
-      <div class="data-card-row"><span class="data-card-label">Name</span><span class="data-card-value">${account.display_name}</span></div>
-      <div class="data-card-row"><span class="data-card-label">Role</span><span class="data-card-value">${account.role_label}</span></div>
-      <div class="data-card-row"><span class="data-card-label">Status</span><span class="data-card-value">${account.active_status}</span></div>
+      <div class="data-card-row"><span class="data-card-label">Username</span><span class="data-card-value">${escapeHtml(account.username)}</span></div>
+      <div class="data-card-row"><span class="data-card-label">Name</span><span class="data-card-value">${escapeHtml(account.display_name)}</span></div>
+      <div class="data-card-row"><span class="data-card-label">Role</span><span class="data-card-value">${escapeHtml(account.role_label)}</span></div>
+      <div class="data-card-row"><span class="data-card-label">Status</span><span class="data-card-value">${escapeHtml(account.active_status)}</span></div><div class="data-card-row">${account.active_status === "active" && (account.role !== "superadmin" || currentUser?.role === "superadmin") ? `<button type="button" class="icon-button" data-account-recovery="${account.id}">Issue Recovery Code</button>` : ""}</div>
     </article>
   `).join("");
   viewRoot.innerHTML = `
@@ -7254,22 +7269,22 @@ async function renderAccounts() {
         <label for="account-display" class="visually-hidden">Display name</label>
         <input id="account-display" placeholder="Display name" aria-label="Display name" />
         <label for="account-password" class="visually-hidden">Password</label>
-        <input id="account-password" type="password" placeholder="Password" aria-label="Password" />
+        <input id="account-password" type="password" minlength="8" maxlength="128" autocomplete="new-password" required placeholder="Password (8–128 characters)" aria-label="Password" />
         <label for="account-role" class="visually-hidden">Role</label>
         <select id="account-role" aria-label="Role">
           <option value="rota_board_member">Rota board member</option>
           <option value="hod">Head of Department</option>
           <option value="computer_admin">Computer admin</option>
-          <option value="superadmin">Superadmin</option>
+          ${currentUser.role === "superadmin" ? '<option value="superadmin">Superadmin</option>' : ""}
         </select>
         <button class="primary" type="submit" id="create-account">Create</button>
       </form>
     </section>
     <section class="panel table-panel hide-mobile">
       <table class="accounts-table">
-        <thead><tr><th>Username</th><th>Name</th><th>Role</th><th>Status</th></tr></thead>
+        <thead><tr><th>Username</th><th>Name</th><th>Role</th><th>Status</th><th>Recovery</th></tr></thead>
         <tbody>
-          ${accounts.map((account) => `<tr><td>${account.username}</td><td>${account.display_name}</td><td>${account.role_label}</td><td>${account.active_status}</td></tr>`).join("") || `<tr><td colspan="4" class="empty">No accounts found.</td></tr>`}
+          ${accounts.map((account) => `<tr><td>${escapeHtml(account.username)}</td><td>${escapeHtml(account.display_name)}</td><td>${escapeHtml(account.role_label)}</td><td>${escapeHtml(account.active_status)}</td><td>${account.active_status === "active" && (account.role !== "superadmin" || currentUser?.role === "superadmin") ? `<button type="button" class="icon-button" data-account-recovery="${account.id}">Issue Recovery Code</button>` : ""}</td></tr>`).join("") || `<tr><td colspan="5" class="empty">No accounts found.</td></tr>`}
         </tbody>
       </table>
     </section>
@@ -7299,7 +7314,7 @@ async function renderDiagnostics() {
           <h3 style="margin:0;">Diagnostics Payload</h3>
           <button class="icon-button" id="copy-diagnostics">Copy JSON</button>
         </div>
-        <pre id="diagnostics-pre">${JSON.stringify(diagnostics, null, 2)}</pre>
+        <pre id="diagnostics-pre" tabindex="0" aria-label="Diagnostics JSON">${escapeHtml(JSON.stringify(diagnostics, null, 2))}</pre>
       </section>
     `;
   } catch (error) {
@@ -7639,7 +7654,7 @@ function navigateToView(selectedView: string) {
   closeSidebarOnMobile();
   closeMobileMoreMenu();
   if (selectedView === "mappings") {
-    renderMappings();
+    void loadMappings().then(() => { if (activeView === "mappings") renderMappings(); });
   } else if (selectedView === "imports") {
     void renderImports();
   } else if (selectedView === "analysis") {
@@ -7649,7 +7664,7 @@ function navigateToView(selectedView: string) {
   } else if (selectedView === "leave") {
     void renderLeave();
   } else if (selectedView === "units") {
-    void renderUnitManagement();
+    void renderUnitManagement(true);
   } else if (selectedView === "rota-setup") {
     void renderRotaSetup();
   } else if (selectedView === "rota-template") {
@@ -8047,7 +8062,7 @@ function bindViewEvents() {
       event.preventDefault();
       const btn = form.querySelector<HTMLButtonElement>("button[type='submit']");
       const file = form.querySelector<HTMLInputElement>("#unit-import-file")?.files?.[0];
-      unitImportReplaceExisting = form.querySelector<HTMLInputElement>("#unit-import-replace")?.checked ?? true;
+      unitImportReplaceExisting = form.querySelector<HTMLInputElement>("#unit-import-replace")?.checked ?? false;
       if (!file) {
         showToast("Choose a unitwise XLSX or text file first", "warning");
         return;
@@ -8202,6 +8217,25 @@ function bindViewEvents() {
 
   viewRoot?.addEventListener("click", async (event) => {
     const target = event.target as HTMLElement;
+    const rejectedRowsButton = target.closest<HTMLButtonElement>("[data-preview-rejections]");
+    if (rejectedRowsButton) {
+      const preview = rejectedRowsButton.dataset.previewRejections === "leave" ? leaveImportPreview : unitImportPreview;
+      if (preview) downloadPreviewIssues(preview.rows, `${rejectedRowsButton.dataset.previewRejections}_rejected_rows.csv`);
+      return;
+    }
+    const recoveryButton = target.closest<HTMLButtonElement>("[data-account-recovery]");
+    if (recoveryButton?.dataset.accountRecovery) {
+      if (!isAdminUser()) return;
+      const account = accounts.find(item => item.id === recoveryButton.dataset.accountRecovery);
+      if (!account || !window.confirm(`Issue a recovery code for ${account.username}? Verify the person's identity before sharing the code.`)) return;
+      recoveryButton.disabled = true;
+      try {
+        const result = await issueAccountRecoveryCode(account.id);
+        window.prompt(`Recovery code for ${account.username}. Expires in ${result.expires_in_minutes} minutes. Share directly after verifying identity.`, result.reset_token);
+      } catch (error) { showToast(error instanceof Error ? error.message : "Recovery failed", "error"); }
+      finally { recoveryButton.disabled = false; }
+      return;
+    }
     const profileButton = target.closest<HTMLButtonElement>("[data-member-profile]");
     if (profileButton?.dataset.memberProfile) {
       await openMemberProfile(profileButton.dataset.memberProfile, currentUser?.role ?? "rota_board_member", renderMembers);
@@ -8533,9 +8567,9 @@ function bindViewEvents() {
       if (!confirmAction("Create leave records for all safely matched preview rows?")) return;
       setButtonLoading(btn, true, "Apply Matched Rows");
       try {
-        const result = await applyLeaveImport(leaveMonth, leaveImportFile);
+        const result = await applyLeaveImport(leaveMonth, leaveImportFile, leaveImportPreview?.preview_hash ?? "");
         leaveImportPreview = result.preview;
-        showToast(`Imported ${result.created_rows} leave row(s); skipped ${result.skipped_rows}`, "success");
+        showToast(result.replayed ? "This reviewed leave batch was already applied; no additional records created." : `Imported ${result.created_rows} leave row(s); skipped ${result.skipped_rows}`, "success");
         await renderLeave();
       } catch (error) {
         showToast(error instanceof Error ? error.message : "Failed to apply leave import", "error");
@@ -8561,13 +8595,14 @@ function bindViewEvents() {
           unitImportFile,
           unitImportReplaceExisting,
           unitImportResolutions,
+          unitImportPreview?.preview_hash ?? "",
         );
         unitImportPreview = result.preview;
         setPage(UNIT_IMPORT_TABLE_ID, 0);
         unitModalUnitId = null;
         unitModalSpecialPostingType = null;
         showToast(
-          `Auto-assigned ${result.auto_assigned_rows ?? result.created_rows} row(s); learned ${result.learned_mappings ?? 0} mapping(s); ${result.skipped_rows} need review`,
+          result.replayed ? "This reviewed unit batch was already applied; no additional postings created." : `Auto-assigned ${result.auto_assigned_rows ?? result.created_rows} row(s); learned ${result.learned_mappings ?? 0} mapping(s); ${result.skipped_rows} need review`,
           "success",
         );
         invalidateUnitManagementCache();
