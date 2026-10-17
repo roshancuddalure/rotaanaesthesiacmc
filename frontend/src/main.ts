@@ -1,3 +1,29 @@
+/**
+ * Duty Rota single-page app (framework-free TypeScript + Vite).
+ *
+ * Architecture in one paragraph: all UI lives in this file. Module-level `let` variables hold
+ * the state for every screen (selected month, loaded API payloads, filters, modal ids). Each
+ * screen has an async `renderXxx()` that fetches what it needs through `./services/api` and
+ * rebuilds `#view-root` with `innerHTML` template strings. User actions are handled by a few
+ * delegated listeners registered in `bindViewEvents()` (submit / click / change / input on
+ * `viewRoot`, plus some on `document`), which dispatch on element ids and `data-*` attributes.
+ *
+ * Map of the file (search for the function names):
+ * - UX helpers: toast, sidebar, focus/viewport preservation, `confirmAction`.
+ * - Global state block (after `const app = appRoot`).
+ * - Navigation: `NAV_ITEMS`, `navigateToView()` (no URL routing; refresh returns to Overview).
+ * - Shell & auth: `renderShell`, `renderLogin`, `renderSignInForm`, `renderForgotForm`.
+ * - Screens: renderOverview, renderAnalysis (+ tab renderers), renderMembers, renderLeave,
+ *   renderUnitManagement (+ unit import), renderRotaRules, renderCallClusters,
+ *   renderRotaSetup, renderRotaTemplate (+ day modal, statistics), renderRotaReview,
+ *   renderRotaPublish, renderAccounts, renderDiagnostics, renderUserGuide, renderMappings,
+ *   renderImports.
+ * - Event wiring: `bindViewEvents()` (very large, grouped by form id / data attribute).
+ * - Startup: `boot()` -> `bootApp()`.
+ *
+ * Rule for contributors: every server-provided string interpolated into HTML must go through
+ * `escapeHtml()` - several places currently do not (handbook S5).
+ */
 import "./styles.css";
 import {
   type AdminMapping,
@@ -257,6 +283,8 @@ if (!appRoot) {
 
 const app = appRoot;
 
+/* ---- Global UI state (one block per screen). Months are "YYYY-MM" strings; note that
+   `new Date().toISOString()` is UTC, so in IST the default month flips 5.5h late (handbook D4). ---- */
 let mappings: AdminMapping[] = [];
 let options: MappingOptions = { duty_types: [], mapping_types: [] };
 let activeMappingType: MappingType | "all" = "all";
@@ -417,6 +445,7 @@ const DUTY_TEMPLATE_GROUP_LABELS: Record<string, string> = {
   neuro: "Neuro Duties",
 };
 
+/** UI-only gate for admin navigation. The backend does not enforce admin on every admin route (handbook S3). */
 function isAdminUser(): boolean {
   return currentUser?.role === "computer_admin" || currentUser?.role === "superadmin";
 }
@@ -871,6 +900,10 @@ function renderSignInForm() {
   });
 }
 
+/**
+ * Forgot/reset password form. SECURITY (handbook S2): it auto-fills the reset token returned by
+ * the API, which lets anyone reset any account they know the username of.
+ */
 function renderForgotForm() {
   const root = document.querySelector<HTMLDivElement>("#auth-root");
   if (!root) return;
@@ -1161,6 +1194,7 @@ function categoryLabel(key: string): string {
   );
 }
 
+/** Escape text for safe use inside `innerHTML` templates and attribute values. */
 function escapeHtml(value: string): string {
   return value
     .replace(/&/g, "&amp;")
@@ -2552,6 +2586,7 @@ function renderTextTarget(mapping: AdminMapping): string {
   `;
 }
 
+// KNOWN ISSUE (handbook S5): mapping source_label / notes are interpolated without escapeHtml().
 function renderMappings() {
   setHeader("Mappings", "Admin mapping control");
   if (!viewRoot) return;
@@ -2798,6 +2833,8 @@ function ariaSort(key: string): string {
   return `aria-sort="${memberSortDirection === "asc" ? "ascending" : "descending"}"`;
 }
 
+// KNOWN ISSUE (handbook S5): canonical_name is interpolated without escapeHtml() here and in
+// renderMemberCards(); member names can be created via an unauthenticated API (S3).
 function renderMemberRows(rows: DepartmentMember[]): string {
   return rows
     .map((member) => {
@@ -7199,6 +7236,7 @@ async function renderRotaPublish() {
   `;
 }
 
+// KNOWN ISSUE (handbook S5): username / display_name are interpolated without escapeHtml().
 async function renderAccounts() {
   setHeader("Accounts", "Rota team login accounts");
   if (!viewRoot) return;
@@ -7611,6 +7649,7 @@ function updateNavigationState(selectedView: string) {
   }
 }
 
+/** Switch screens by name (`data-view` value). State is in memory only - no URL/history routing (handbook U4). */
 function navigateToView(selectedView: string) {
   activeView = selectedView;
   updateNavigationState(selectedView);
@@ -7659,6 +7698,12 @@ function bindNavigation() {
   });
 }
 
+/**
+ * Registers all delegated event handlers. Listeners on `viewRoot` are recreated with each new
+ * shell, but the `document` listeners are added again every time `bootApp()` runs (i.e. on each
+ * sign-in without a page reload), so they fire more than once after sign-out/sign-in
+ * (handbook U2).
+ */
 function bindViewEvents() {
   document.addEventListener("submit", async (event) => {
     const form = event.target as HTMLFormElement;
@@ -9327,6 +9372,7 @@ function bindViewEvents() {
   });
 }
 
+/** Build the signed-in shell, load the first screen and wire events (called at startup and after sign-in). */
 async function bootApp() {
   renderShell();
   refreshShellRefs();
@@ -9354,6 +9400,7 @@ async function bootApp() {
   bindViewEvents();
 }
 
+/** Entry point: try the stored token; fall back to the login screen. */
 async function boot() {
   try {
     currentUser = await getCurrentUser();

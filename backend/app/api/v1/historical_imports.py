@@ -1,3 +1,12 @@
+"""Historical import status counts and the "rebuild + import" trigger for Jan 2025 - May 2026 data.
+
+``POST /admin/imports/historical/run`` re-parses every workbook, writes CSV/markdown
+artefacts to ``Plan/Data/analysis_rebuild`` and replaces previously imported historical
+slots/assignments/postings in the database (see ``historical_analysis_dry_run``).
+
+SECURITY (handbook S3): endpoints are unauthenticated.
+"""
+
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy import func, select

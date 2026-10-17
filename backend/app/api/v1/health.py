@@ -1,3 +1,5 @@
+"""Liveness probe used by Railway (``railway.json`` healthcheckPath) and ``start.ps1``."""
+
 from fastapi import APIRouter
 
 router = APIRouter()

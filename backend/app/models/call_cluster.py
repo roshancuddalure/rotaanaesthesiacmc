@@ -1,3 +1,9 @@
+"""Eligibility groups ("call clusters") and dated person memberships.
+
+A cluster belongs to exactly one call level; members must have that call level. Duty
+rules reference clusters by ``key``.
+"""
+
 from datetime import date, datetime
 from typing import TYPE_CHECKING
 from uuid import UUID, uuid4

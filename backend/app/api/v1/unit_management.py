@@ -1,3 +1,11 @@
+"""Unit Management board: which member is posted to which unit, at which call level, per month.
+
+Postings created here use ``source="unit_board"`` and are the authoritative unit
+membership for rota generation. Also exposes unit-level and call-level "minimum free
+people" settings, and the unitwise spreadsheet import (preview with manual resolutions,
+then apply).
+"""
+
 import json
 import logging
 from datetime import date
@@ -342,6 +350,11 @@ def update_unit_settings(
     _user: UserAccount = Depends(current_user),
     db: Session = Depends(get_db),
 ) -> UnitRead:
+    """Save the unit-level minimum and (only when ``month`` is given) the call-level minimums.
+
+    Call-level minimums are validated against that month's board counts; without ``month``
+    the ``call_minimums`` payload is silently ignored (handbook B17).
+    """
     if payload.minimum_free_people < 0:
         raise HTTPException(status_code=400, detail="Minimum free people cannot be negative")
     unit = get_unit_or_404(db, unit_id)

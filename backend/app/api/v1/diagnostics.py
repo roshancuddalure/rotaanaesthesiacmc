@@ -1,3 +1,5 @@
+"""Admin-only diagnostics summary: table counts, mapping/warning status breakdowns and invalid-name counts."""
+
 from datetime import datetime
 
 from fastapi import APIRouter, Depends

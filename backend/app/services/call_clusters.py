@@ -1,3 +1,9 @@
+"""Eligibility group (call cluster) CRUD, default cluster seeding and membership lookup.
+
+``ensure_default_call_clusters`` seeds 3rd Call A/B/C, PAC SR and PAC Senior on first use
+(it is called from rule reads, so GET requests can write to the database).
+"""
+
 import re
 from dataclasses import dataclass
 from datetime import date, datetime

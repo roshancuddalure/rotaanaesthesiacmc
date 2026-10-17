@@ -1,3 +1,14 @@
+"""FastAPI application factory and ASGI entrypoint (`uvicorn app.main:app`).
+
+Wires together:
+- CORS for the Vite dev server origins plus ``settings.frontend_origin``.
+- A catch-all exception handler that logs the traceback and returns a generic 500.
+- All REST routes under ``/api`` (see ``app.api.routes``).
+- In the single-container deployment (root ``Dockerfile`` / Railway) the built Vite
+  frontend is copied to ``backend/static`` and served from ``/`` by ``StaticFiles``.
+  Locally the frontend runs separately on :5173 and proxies ``/api`` to :8000.
+"""
+
 from pathlib import Path
 import logging
 

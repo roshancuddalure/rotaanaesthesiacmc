@@ -1,3 +1,12 @@
+"""Duty analysis dashboard computed from the database.
+
+Only periods whose status is in ``ANALYSIS_PERIOD_STATUSES`` (historical, approved,
+published, finalized) are included, so draft months do not affect totals. Produces
+per-person totals (24h, weekend, duty categories, CART/Schell, 5th call, shifts/PAC),
+monthly/day-of-week stats, postings and inferred promotions. ``analyze_preflight`` lists
+data-quality blockers; ``analysis_manual_review`` reads the dry-run CSV artefacts.
+"""
+
 from collections import Counter
 import csv
 from dataclasses import dataclass, field
@@ -224,6 +233,12 @@ def build_promotions(person: PersonAnalysis, months: list[str]) -> None:
 
 
 def analyze_dashboard(db: Session) -> dict[str, object]:
+    """Compute the whole analysis dashboard payload (all tabs) in one pass over every assignment.
+
+    Call levels per person/month come from postings, falling back to the duty type
+    (``DUTY_TYPE_CALL_LEVEL``), and are forced to be non-decreasing over time
+    (``enforce_monotonic_call_levels``) to derive promotions.
+    """
     periods = db.scalars(
         select(RotaPeriod)
         .where(RotaPeriod.status.in_(ANALYSIS_PERIOD_STATUSES))

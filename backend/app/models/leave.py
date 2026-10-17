@@ -1,3 +1,10 @@
+"""``LeaveRequest``: dated leave for a member.
+
+``leave_slot`` is FULL_DAY / AM / PM / NIGHT. ``status`` is free text; the services treat
+``approved`` as blocking and ``requested`` / ``imported_pending_review`` as warnings.
+Anything else (including ``cancelled``) is ignored by rota checks.
+"""
+
 from datetime import date, datetime
 from typing import TYPE_CHECKING
 from uuid import UUID, uuid4

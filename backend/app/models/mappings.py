@@ -1,3 +1,9 @@
+"""``AdminMapping``: admin-reviewed translation from a raw spreadsheet label to a system key.
+
+``mapping_type`` is ``duty_label`` (target = duty type key), ``unit_label`` (target = unit
+code, or a unit UUID when learned from a unitwise import correction) or ``posting_label``.
+"""
+
 from datetime import datetime
 from uuid import UUID, uuid4
 

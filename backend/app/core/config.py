@@ -1,3 +1,10 @@
+"""Runtime settings loaded from environment variables / ``.env`` files (pydantic-settings).
+
+Lookup order for ``.env``: repo root, ``backend/``, then the current working directory.
+``sqlalchemy_database_url`` rewrites Railway/Heroku style ``postgres://`` URLs to the
+``postgresql+psycopg://`` driver form that SQLAlchemy needs.
+"""
+
 from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict

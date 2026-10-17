@@ -1,3 +1,12 @@
+"""Manual assignment validation and persistence (also used by auto-fill and exchanges).
+
+``validate_assignment`` returns ``clear`` / ``needs_override`` / ``blocked``:
+- blocked: slot already full (without replace), call-level mismatch, subgroup mismatch.
+- needs_override: inactive member, not posted to the unit, safety blockers, unit staffing
+  warnings, monthly count limits.
+Assignments that need an override must carry an ``override_reason``.
+"""
+
 from __future__ import annotations
 
 from uuid import UUID
@@ -243,6 +252,11 @@ def validate_assignment(
     person: Person,
     replace_existing: bool,
 ) -> dict[str, object]:
+    """Validate putting ``person`` on ``slot``; see the module docstring for the status rules.
+
+    Reloads the whole month's postings, leave and assignments on every call - this is why
+    candidate ranking and auto-fill are slow (handbook P1).
+    """
     month = slot_month(slot)
     starts_on, ends_on = month_bounds(month)
     _rule_version, rules = get_phase_one_rules(db)
@@ -374,6 +388,11 @@ def assign_person_to_slot(
     override_reason: str | None = None,
     source: str = MANUAL_ASSIGNMENT_SOURCE,
 ) -> dict[str, object]:
+    """Validate and save an assignment (``replace_existing`` removes the slot's current holders).
+
+    KNOWN ISSUES: works on published months too (handbook B1); the acting user is not stored
+    on ``DutyAssignment`` so manual changes are not attributable (handbook S6).
+    """
     slot = hydrate_slot(db, slot_id)
     person = db.get(Person, person_id)
     if person is None:

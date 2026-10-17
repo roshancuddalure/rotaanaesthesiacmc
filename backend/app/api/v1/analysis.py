@@ -1,3 +1,9 @@
+"""Duty analysis dashboard endpoints (historical + published months).
+
+SECURITY (handbook S3): endpoints are unauthenticated and expose per-person duty data.
+``/analysis/manual-review`` reads CSV artefacts from ``Plan/Data/analysis_rebuild`` on disk.
+"""
+
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 

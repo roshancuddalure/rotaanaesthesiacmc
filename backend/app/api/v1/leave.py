@@ -1,3 +1,10 @@
+"""Leave requests: monthly listing, manual create/update/cancel, calendar and pressure views,
+and spreadsheet import (preview first, then apply only the rows that matched cleanly).
+
+Only ``approved`` leave hard-blocks duties; ``requested`` and ``imported_pending_review``
+are shown as warnings (see ``app.services.leave``). Any signed-in user may edit leave.
+"""
+
 from datetime import date
 from uuid import UUID
 
@@ -44,6 +51,9 @@ class LeaveRequestCreate(BaseModel):
     status: str = "approved"
     notes: str | None = None
 
+    # Values are free text (no allowed-value list). Only status "approved" blocks duties, so a
+    # typo such as "aproved" silently creates non-blocking leave (handbook B13). The endpoint
+    # lower-cases status again after this validator upper-cases it.
     @field_validator("leave_type", "leave_slot", "status")
     @classmethod
     def normalize_code(cls, value: str) -> str:

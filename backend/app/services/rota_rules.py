@@ -1,3 +1,17 @@
+"""Rota generator rule model (pydantic) and persistence.
+
+``RotaPhaseOneRules`` = per-duty ``DutyRule`` entries (timing, 24h flag, mandatory,
+eligibility by call level / cluster / unit) + monthly count limits + rest rules + unit
+staffing thresholds. Defaults are derived from ``app.domain.duty_types`` and merged with
+the saved JSON on every read, so new duty types appear automatically.
+
+Which settings are actually enforced (see handbook B2):
+- ``duty_count_limits``          -> manual/auto assignment validation (needs override).
+- ``unit_staffing_rules``        -> template allocation + slot safety.
+- ``minimum_gap_after_24hr_hours`` -> candidate scoring text/penalty only.
+- ``post_24hr_blocks_next_day_elective`` -> not read anywhere yet.
+"""
+
 from __future__ import annotations
 
 from datetime import date
@@ -212,6 +226,9 @@ def get_or_create_phase_one_rule_version(db: Session) -> RuleVersion:
 
 
 def get_phase_one_rules(db: Session) -> tuple[RuleVersion, RotaPhaseOneRules]:
+    """Load the saved rules merged with current defaults (new duty types are appended, legacy
+    PAC keys forced inactive). Creates the rule version, default rules and default clusters on
+    first call, so this "read" can write to the database."""
     ensure_default_call_clusters(db)
     rule_version = get_or_create_phase_one_rule_version(db)
     setting = db.scalar(
@@ -251,6 +268,7 @@ def get_phase_one_rules(db: Session) -> tuple[RuleVersion, RotaPhaseOneRules]:
 
 
 def save_phase_one_rules(db: Session, rules: RotaPhaseOneRules) -> tuple[RuleVersion, RotaPhaseOneRules]:
+    """Validate and overwrite the single rule setting in place (no history kept - handbook B11)."""
     ensure_default_call_clusters(db)
     validate_phase_one_rules(db, rules)
     rule_version = get_or_create_phase_one_rule_version(db)

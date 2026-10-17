@@ -1,3 +1,5 @@
+"""Static domain metadata (call levels and duty types) for the frontend. Unauthenticated, read-only."""
+
 from fastapi import APIRouter
 
 from app.domain.call_levels import CALL_LEVELS

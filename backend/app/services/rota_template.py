@@ -1,3 +1,24 @@
+"""Phase 4 template generation: create the month's duty slots and allocate each to a unit.
+
+Algorithm (``generate_empty_template``):
+1. Requires a locked scope; loads rules, included units, postings and leave.
+2. For each day, duty families are rotated so no family is always processed first.
+3. For each (day, duty) ``choose_balanced_unit`` scores every included unit:
+   - staffing pressure (``pressure_for_slot``): leave, other same-day slots already given
+     to the unit, previous-day 24h slots, against the unit/call minimum and % thresholds;
+   - fairness targets per unit (total, duty family, family+call, exact duty, call bucket),
+     weighted by the selected policy (equal_unit / equal_people / hybrid);
+   - weekend spread and weekly clustering.
+   The best non-hard-blocked unit wins; if every unit is hard-blocked the least-damaging
+   unit is chosen and the slot is marked as a "forced allocation" needing review.
+4. ``optimize_template_slot_layout`` then performs conservative pairwise "vertical
+   shuffle" swaps that reduce same-unit clustering without worsening safety.
+5. Every decision is logged as a ``RotaTemplateGenerationEvent``.
+
+People are NOT assigned here - that is manual assignment / auto-fill.
+Also contains allocation statistics and the Eagle Eye / call-wise Excel exports.
+"""
+
 from __future__ import annotations
 
 from collections import Counter
@@ -117,6 +138,8 @@ def selected_duty_rules(rules: RotaPhaseOneRules, options: TemplateGenerationOpt
 
 
 def duty_rules_for_day(duties: list[DutyRule], day: date, first_day: date) -> list[DutyRule]:
+    """Rotate duty-family processing order by day so late families (e.g. CHAD/RUHSA) are not
+    always allocated after earlier families have used up small units."""
     group_order: list[str] = []
     for rule in duties:
         if rule.group not in group_order:
@@ -168,6 +191,12 @@ def parse_rule_time(value: str) -> time:
 
 
 def slot_bounds(day: date, rule: DutyRule) -> tuple[datetime, datetime]:
+    """Slot start/end datetimes from the rule's start time and duration (or end time).
+
+    KNOWN ISSUE (handbook B9): default rules for non-24h, non-12h duties (PAC, shifts, CHAD,
+    RUHSA, ...) have ``duration_hours=0`` and start == end == 08:00, so they fall through to
+    the "end <= start -> next day" branch and become 24-hour windows.
+    """
     starts_at = datetime.combine(day, parse_rule_time(rule.start_time))
     if rule.duration_hours > 0:
         return starts_at, starts_at + timedelta(hours=rule.duration_hours)
@@ -232,6 +261,12 @@ def allocation_target_weights(
     unit_ids: list[UUID],
     capacity_counts: dict[UUID, int],
 ) -> dict[UUID, int]:
+    """Relative target share per unit for the chosen fairness policy.
+
+    equal_unit: every unit weight 1. equal_people: weight = active eligible people.
+    hybrid: ``total_capacity + unit_count * capacity`` - roughly half equal-share, half
+    proportional to people.
+    """
     if not unit_ids:
         return {}
     policy = normalize_allocation_fairness_policy(policy)
@@ -275,6 +310,13 @@ def pressure_for_slot(
     provisional_post_24hr_duties: int = 0,
     minimum_free_people: int | None = None,
 ) -> dict[str, object]:
+    """Unit staffing pressure if this slot were given to the unit.
+
+    Unavailable = members on overlapping leave + slots the unit already holds that day +
+    members resting after a previous-day 24h slot (counts are per slot, not per person).
+    ``hard_block`` if no members, if fewer than ``minimum`` remain after this slot, or if the
+    unavailable percentage reaches the hard threshold; ``warning`` at the warning threshold.
+    """
     unavailable = {
         person_id
         for person_id in unit_member_ids
@@ -676,6 +718,12 @@ def optimize_template_slot_layout(
     postings: list[PersonPosting],
     leaves: dict[date, dict[UUID, list[LeaveRequest]]],
 ) -> tuple[int, list[RotaTemplateGenerationEvent]]:
+    """Greedy "vertical shuffle": repeatedly apply the best swap of units between two slots of
+    the same duty on different days that lowers ``template_pattern_score`` (same-unit
+    clustering) without making either slot's staffing worse. Forced slots are never moved.
+
+    Cost is roughly O(swaps x slots^2 x slots) - acceptable for one month (handbook P3).
+    """
     rules_by_key = rules.duty_rules_by_key
     units_by_id = {unit.id: unit for unit in units}
     all_slots = [*existing_slots, *created_slots]
@@ -883,6 +931,16 @@ def choose_balanced_unit(
     provisional_post_24hr_counts: dict[tuple[UUID, date, str | None], int],
     allocation_fairness_policy: str,
 ) -> tuple[UnitAllocation | None, list[UnitAllocation]]:
+    """Pick the unit that should own one (day, duty) slot.
+
+    Every applicable unit gets a pressure assessment and a fairness snapshot. Selection is
+    lexicographic: weekend spread first (on weekends), then the largest target deficits
+    (total -> family+call -> family -> exact duty -> call), then the smallest overages, then
+    week/weekend clustering, then the legacy ``allocation_score``. Hard-blocked units are only
+    used when every unit is hard-blocked ("forced minimal-damage allocation").
+
+    Returns ``(selected, all_candidates)``; ``selected`` is None when no unit applies.
+    """
     allocations: list[UnitAllocation] = []
     allocation_fairness_policy = normalize_allocation_fairness_policy(allocation_fairness_policy)
     required_call = required_call_for_rule(rule)
@@ -1126,6 +1184,12 @@ def generate_empty_template(
     month: str,
     options: TemplateGenerationOptions | None = None,
 ) -> dict[str, object]:
+    """Create (and unit-allocate) the month's template slots; see the module docstring.
+
+    KNOWN ISSUES: there is no check that the period is already published (handbook B1);
+    with ``replace_existing=False`` a second run can add another slot for the same day and
+    duty in a different unit, because existing slots are matched per unit label (B7).
+    """
     options = options or TemplateGenerationOptions()
     options.allocation_fairness_policy = normalize_allocation_fairness_policy(
         options.allocation_fairness_policy
@@ -1522,6 +1586,8 @@ def generate_empty_template(
 
 
 def clear_template_cache(db: Session, month: str, *, clear_assignments: bool = False) -> dict[str, object]:
+    """Delete the month's generated slots and generation history (and, if requested, their
+    assignments). Not blocked for published months (handbook B1)."""
     period, _scope = monthly_setup(db, month)
     slots = list(
         db.scalars(

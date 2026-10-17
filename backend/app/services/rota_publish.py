@@ -1,3 +1,10 @@
+"""Publish checklist, publish action and the final rota Excel export.
+
+Blockers: scope not locked, no slots, open slots, hard-blocked items, pending exchanges.
+Warnings (unaccepted review items, overrides) require ``confirm_warnings``.
+Note (handbook B1): publishing does not lock the month or snapshot the rota.
+"""
+
 from __future__ import annotations
 
 from io import BytesIO
@@ -145,6 +152,11 @@ def publish_rota_month(
     confirm_warnings: bool,
     approval_note: str,
 ) -> dict[str, object]:
+    """Record a publish approval after the checklist passes.
+
+    KNOWN ISSUES (handbook B1, B11): only the checklist is stored - not the assignments or the
+    rule set - and nothing prevents later edits, regeneration or clearing of a published month.
+    """
     note = approval_note.strip()
     if not note:
         raise RotaPublishError("Approval note is required")
@@ -380,6 +392,11 @@ def fairness_rows(review: dict[str, object]) -> list[list[Any]]:
 
 
 def final_rota_export(db: Session, month: str) -> tuple[str, bytes]:
+    """Build the final Excel workbook (summary, rota, counts, fairness, safety, review, exchanges).
+
+    Generated from the live tables at download time, so it can differ from what was approved
+    if the month changed after publishing (handbook B1).
+    """
     checklist = rota_publish_checklist(db, month)
     if checklist["latest_publish"] is None:
         raise RotaPublishError("Publish the rota before downloading the final export", status_code=409)

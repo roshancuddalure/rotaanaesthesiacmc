@@ -1,3 +1,7 @@
+"""Per-slot staffing safety for a month: who in the slot's unit is eligible, available,
+warning-flagged or hard-blocked (leave, same-day duty, post-24h rest).
+"""
+
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session

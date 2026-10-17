@@ -1,3 +1,10 @@
+"""Publish checklist, publish action (records a ``RotaPublishApproval``) and final Excel export.
+
+Any signed-in user may publish (handbook S6). Publishing sets ``RotaPeriod.status`` to
+``published`` but does not freeze the data (handbook B1); the export is rebuilt from
+live tables each time it is downloaded.
+"""
+
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel

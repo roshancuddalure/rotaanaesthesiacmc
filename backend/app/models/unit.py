@@ -1,3 +1,9 @@
+"""Hospital units (``Unit``) and per-call-level minimum staffing (``UnitCallMinimum``).
+
+``minimum_free_people`` is how many eligible members must remain free after a duty is
+taken from the unit; ``UnitCallMinimum`` overrides it for a single call level.
+"""
+
 from datetime import datetime
 from typing import TYPE_CHECKING
 from uuid import UUID, uuid4

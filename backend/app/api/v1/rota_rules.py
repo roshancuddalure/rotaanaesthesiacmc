@@ -1,3 +1,7 @@
+"""Admin-only read/update of the rota generator rule set (duty dictionary, monthly limits,
+rest rules and unit staffing thresholds). Stored as one JSON ``RuleSetting`` row.
+"""
+
 from datetime import date, datetime
 from uuid import UUID
 

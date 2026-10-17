@@ -1,3 +1,17 @@
+"""Shared spreadsheet parsing primitives for historical rota and unitwise workbooks.
+
+- Name cleaning/validation (``clean_person_name``, ``is_valid_person_name``) used across
+  importers and member cleanup.
+- ``classify_duty_label``: heuristic mapping of free-text duty row labels to duty keys,
+  including date-dependent rules (labels changed meaning in Nov 2025).
+- ``parse_rota_workbook``: first sheet, row 1 = dates, row 2 = weekdays, column A = duty
+  label, cells = names; parsing stops at a "consultant"/"professor" row.
+- ``parse_unitwise_workbook``: row 1 = unit headers, column A = posting label sections.
+
+Note (handbook B15): ``NON_PERSON_LABELS`` contains real first names and any name token
+that is a month abbreviation (e.g. "May", "Jan") is rejected as a non-person.
+"""
+
 import re
 from dataclasses import dataclass
 from datetime import date, datetime, time, timedelta
@@ -193,6 +207,8 @@ NON_PERSON_LABELS = {
     "1st year new pgs",
     "professor",
     "consultant",
+    # The three names below are real first names treated as non-person values, presumably to
+    # drop ambiguous single-name cells in historical sheets (handbook B15).
     "aadil",
     "harish",
     "prabhu",
@@ -272,6 +288,12 @@ def is_blank_assignment_value(value: Any) -> bool:
 
 
 def is_valid_person_name(value: Any) -> bool:
+    """Heuristic filter for spreadsheet cells that look like a person's name.
+
+    Rejects blanks/placeholders, known non-person labels, numeric/date fragments, fewer than
+    three letters, unit/shift headings and ANY name token equal to a month name or
+    abbreviation (so a doctor named e.g. "May" or "Jan" is rejected - handbook B15).
+    """
     cleaned = clean_person_name(value)
     normalized = normalize_label(cleaned)
     if not cleaned or normalized in IGNORED_PERSON_VALUES or normalized in NON_PERSON_LABELS:
@@ -333,6 +355,12 @@ def normalize_classification_label(value: Any) -> str:
 
 
 def classify_duty_label(value: Any) -> str | None:
+    """Map a free-text rota row label to a duty-type key (exact label/key first, then keyword
+    heuristics for PAC, shifts, CB/RC/Main call numbers, Caesar, Schell, Floating, ...).
+
+    May return the pseudo-key ``SCHELL_AND_FLOATING`` (split into two duties by the parser)
+    or ``None`` when unknown.
+    """
     cleaned = clean_cell_value(value)
     if not cleaned:
         return None
@@ -652,6 +680,11 @@ def iter_excel_source_cells(path: Path, sheet_name: str | None = None) -> list[S
 
 
 def parse_rota_workbook(path: Path) -> ParsedRotaWorkbook:
+    """Parse a historical monthly rota workbook (layout described in the module docstring).
+
+    Month/year come from the file name. Before Nov 2025 some "co" labels meant 12-hour
+    co-calls, and "Main 1st/2nd" rows below the Schell row are PAC rows - both are remapped.
+    """
     require_supported_excel(path)
     month = reconstruct_month_from_path(path)
     if month is None:

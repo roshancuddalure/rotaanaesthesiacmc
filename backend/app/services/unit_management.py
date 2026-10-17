@@ -1,3 +1,10 @@
+"""Unit board queries and validation.
+
+``monthly_unit_assignments`` returns only ``unit_board`` postings (the board's view).
+``validate_unit_month`` reports inactive members, missing units/posting types, members in
+more than one unit in a month and overlapping primary postings.
+"""
+
 from collections import Counter, defaultdict
 from datetime import date
 from uuid import UUID

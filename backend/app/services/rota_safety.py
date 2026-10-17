@@ -1,3 +1,16 @@
+"""Slot-level staffing safety and per-person blockers.
+
+For each slot: eligible = active members posted to the slot's unit on that date, filtered
+by required call level and cluster rules. Each eligible person is classified as available,
+warning (pending leave) or hard-blocked (approved leave, another same-day blocking duty,
+or a 24h duty on the previous day). The slot is ``safe`` / ``needs_review`` /
+``hard_blocked`` using the unit minimum and percentage thresholds from the rules.
+
+Known limitations (handbook B2, B5, P2): the rest check only looks at the previous
+calendar day within the same month, all posting sources are considered (not only the
+unit board), and cluster rules are queried per person per slot.
+"""
+
 from __future__ import annotations
 
 from collections import Counter
@@ -38,6 +51,8 @@ def rule_for_slot(slot: DutySlot, rules: RotaPhaseOneRules) -> DutyRule | None:
 
 
 def required_call_levels(slot: DutySlot, rule: DutyRule | None) -> set[str]:
+    """Call levels allowed to take ``slot``: the slot's own call level, else the rule's
+    ``allowed_call_levels``, else levels inferred from the duty key (e.g. ``*_3RD_*``)."""
     if slot.call_level:
         normalized = normalize_call_level(slot.call_level)
         if normalized != "Unassigned":
@@ -71,6 +86,10 @@ def unit_minimum_for_required_calls(
 
 
 def member_matches_cluster_rules(db: Session | None, context: MemberContext, slot: DutySlot, rule: DutyRule | None) -> bool:
+    """Check the duty rule's allowed/excluded eligibility groups for this member on the slot date.
+
+    Runs one query per call (per member per slot) - a hot spot during auto-fill (handbook P2).
+    """
     if rule is None:
         return True
     if db is None:
@@ -86,6 +105,8 @@ def member_matches_cluster_rules(db: Session | None, context: MemberContext, slo
 
 
 def slot_leave_blocks(leave: LeaveRequest, slot: DutySlot) -> bool:
+    """Does this leave overlap the slot? Any partial-day leave blocks a 24h duty; for shorter
+    duties AM/PM/NIGHT are compared with the slot start hour; unknown slot values block."""
     leave_slot = leave.leave_slot.upper()
     if slot.is_24hr:
         return leave_slot in {"FULL_DAY", "AM", "PM", "NIGHT"}
@@ -102,6 +123,8 @@ def slot_leave_blocks(leave: LeaveRequest, slot: DutySlot) -> bool:
 
 
 def postings_for_month(db: Session, starts_on: date, ends_on: date) -> list[PersonPosting]:
+    # KNOWN ISSUE (handbook B5): no `source` filter, so historical-import postings are mixed
+    # with Unit Management (`unit_board`) postings for months covered by historical data.
     return list(
         db.scalars(
             select(PersonPosting)
@@ -187,6 +210,15 @@ def assignment_indexes(
     assignments: list[DutyAssignment],
     rules: RotaPhaseOneRules,
 ) -> tuple[dict[date, dict[UUID, list[DutyAssignment]]], dict[date, dict[UUID, list[DutyAssignment]]]]:
+    """Index active assignments as (date -> person -> assignments) for blocker lookups.
+
+    Returns ``(same_day, previous_day)``. ``previous_day[d]`` lists people whose 24h duty on
+    ``d - 1`` rests them on ``d``.
+
+    KNOWN ISSUE (handbook B2): the rest rule only looks backwards one calendar day. A 24h duty
+    already saved on ``d + 1`` does not block assigning ``d``, the previous month's last day is
+    not loaded, and ``rest_rules.minimum_gap_after_24hr_hours`` is not applied here.
+    """
     same_day: dict[date, dict[UUID, list[DutyAssignment]]] = {}
     previous_day: dict[date, dict[UUID, list[DutyAssignment]]] = {}
     for assignment in assignments:
@@ -210,6 +242,11 @@ def safety_status(
     rules: RotaPhaseOneRules,
     minimum_available_count: int | None = None,
 ) -> tuple[str, list[str]]:
+    """Classify a slot as safe / needs_review / hard_blocked with human-readable reasons.
+
+    Order of checks: nobody eligible -> below absolute unit minimum -> hard-block percentage
+    -> warning percentage -> any pending-leave warnings -> combined warning percentage.
+    """
     staffing = rules.unit_staffing_rules
     minimum = staffing.minimum_available_count if minimum_available_count is None else minimum_available_count
     hard_percent = 100 if eligible_members == 0 else round((hard_blocked_members / eligible_members) * 100)
@@ -305,6 +342,9 @@ def slot_safety(
     same_day_assignments: dict[date, dict[UUID, list[DutyAssignment]]],
     previous_day_assignments: dict[date, dict[UUID, list[DutyAssignment]]],
 ) -> dict[str, object]:
+    """Full safety picture for one slot: eligible members split into available / warning /
+    hard-blocked people, plus the overall slot status. Used by the safety view, manual
+    assignment validation, candidate ranking and auto-fill."""
     rule = rule_for_slot(slot, rules)
     day_contexts = member_contexts_for_day(postings, slot.duty_date)
     unit_contexts = [context for context in day_contexts if context.unit_id == slot.unit_id]

@@ -1,3 +1,10 @@
+"""Aggregates every v1 router into ``api_router`` (mounted at ``/api`` in ``app.main``).
+
+All business routes live under ``/api/v1``; only the health check is at ``/api/health``.
+Authentication is NOT applied at router level - each endpoint must declare
+``Depends(current_user)`` or ``Depends(require_admin)`` itself (see handbook issue S3).
+"""
+
 from fastapi import APIRouter
 
 from app.api.v1.analysis import router as analysis_router

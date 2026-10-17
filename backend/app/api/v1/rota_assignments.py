@@ -1,3 +1,9 @@
+"""Manual person-to-slot assignment and clearing.
+
+An assignment with warnings/errors needs an ``override_reason``; a ``blocked`` validation
+(slot full without replace, call-level or subgroup mismatch) cannot be overridden.
+"""
+
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException

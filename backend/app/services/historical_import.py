@@ -1,3 +1,9 @@
+"""LEGACY first-generation historical importer (mapping-driven).
+
+Not called by any API route any more - ``historical_analysis_dry_run`` replaced it. Kept
+because ``tests/test_historical_import.py`` exercises it.
+"""
+
 from calendar import monthrange
 from dataclasses import dataclass
 from datetime import date

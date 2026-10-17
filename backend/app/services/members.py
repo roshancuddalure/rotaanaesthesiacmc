@@ -1,3 +1,11 @@
+"""Member deduplication and cleanup: duplicate detection by compact name/alias keys,
+automatic and manual merges (moving assignments, postings, leave, designations and
+aliases to the target), invalid-name cleanup and deletion.
+
+Note (handbook B4): merges/deletes do not move or remove call-cluster memberships or
+review/exchange references, so they fail on PostgreSQL for members referenced there.
+"""
+
 import re
 from dataclasses import dataclass
 from uuid import UUID
@@ -164,6 +172,13 @@ def move_designations(db: Session, source: Person, target: Person) -> None:
 
 
 def merge_people(db: Session, target_id: UUID, source_ids: list[UUID]) -> Person:
+    """Fold each source person into ``target`` (aliases, assignments, postings, leave,
+    designations) and delete the source. Commits.
+
+    KNOWN ISSUE (handbook B4): call-cluster memberships are not moved, so deleting a source who
+    belongs to an eligibility group fails on PostgreSQL. Exchange requests/auto-fill events
+    pointing at the source are set to NULL by the database rather than re-pointed.
+    """
     target = db.get(Person, target_id)
     if target is None:
         raise ValueError("Target person not found")

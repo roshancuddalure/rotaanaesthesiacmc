@@ -1,3 +1,11 @@
+"""Department member (Person) administration: CRUD, aliases, designations, archive/restore,
+duplicate detection, merges, invalid-name cleanup and trusted-roster reconciliation/reset.
+
+SECURITY (handbook S3): none of these endpoints require authentication, including the
+destructive ones (merge, cleanup, ``reset-from-trusted-roster`` which wipes operational
+data). Add ``Depends(require_admin)`` before exposing the service publicly.
+"""
+
 from datetime import date, datetime
 from collections import Counter
 from uuid import UUID
@@ -404,6 +412,10 @@ def reconcile_trusted_roster(db: Session = Depends(get_db)) -> RosterReconciliat
     return RosterReconciliationRead(**reconcile_department_roster(db).__dict__)
 
 
+# KNOWN ISSUE (handbook S3, B4): destructive and unauthenticated. Deletes members, units,
+# periods, slots, assignments, leave, mappings, import history and rule settings, then
+# recreates members from the roster workbook. Fails with a foreign-key error on
+# PostgreSQL once call clusters / generation scopes / runs / approvals exist.
 @router.post("/admin/members/reset-from-trusted-roster")
 def reset_from_trusted_roster(db: Session = Depends(get_db)) -> DepartmentRosterResetRead:
     return DepartmentRosterResetRead(**reset_department_members_from_roster(db).__dict__)
@@ -416,6 +428,7 @@ def prefill_call_levels(db: Session = Depends(get_db)) -> CallLevelPrefillRead:
 
 @router.post("/admin/members/merge")
 def merge_members(payload: MergeRequest, db: Session = Depends(get_db)) -> MemberRead:
+    """Merge ``source_person_ids`` into ``target_person_id`` (moves history, keeps old names as aliases)."""
     try:
         person = merge_people(db, payload.target_person_id, payload.source_person_ids)
     except ValueError as exc:

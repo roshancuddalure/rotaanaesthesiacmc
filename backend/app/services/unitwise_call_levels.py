@@ -1,3 +1,7 @@
+"""Prefill ``Person.call_level`` from section labels in a unitwise workbook
+(hard-coded to ``data/source/historical/unitwise/May 2026.xlsx``; handbook B16).
+"""
+
 import re
 from dataclasses import dataclass
 from difflib import SequenceMatcher

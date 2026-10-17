@@ -1,3 +1,11 @@
+"""``PersonPosting``: a member's posting to a unit (or special posting) for a date range.
+
+``source`` distinguishes the authoritative Unit Management board (``unit_board``) from
+historical imports (``historical_import`` / ``historical_analysis_import``). ``posting_type``
+usually holds the call level for that posting (e.g. ``3RD_CALL``) or a special posting
+such as ``DRP``/``SICU``/``PAIN`` (no unit).
+"""
+
 from datetime import date, datetime
 from typing import TYPE_CHECKING
 from uuid import UUID, uuid4

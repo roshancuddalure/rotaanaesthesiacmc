@@ -1,3 +1,15 @@
+"""Unitwise posting import (Excel grid or pasted text) into the Unit Management board.
+
+Pipeline: parse the sheet (unit columns x posting-label rows, with date-range context) ->
+match each name to a member (alias/compact/variant scoring with auto-match thresholds) and
+each column label to a unit -> preview rows with statuses and suggested candidates -> the
+user can supply per-row ``resolutions`` -> apply inserts safe rows as ``unit_board``
+postings and "learns" aliases/unit mappings from manual corrections.
+
+Note (handbook B6): ``replace_existing`` deletes every board posting that overlaps the
+month, including multi-month postings that also cover other months.
+"""
+
 from __future__ import annotations
 
 import io
@@ -1208,6 +1220,8 @@ def row_is_safe_to_apply(row: dict[str, object]) -> bool:
 
 
 def clear_unit_board_month(db: Session, month: str) -> int:
+    # KNOWN ISSUE (handbook B6): deletes whole postings that merely overlap the month, so a
+    # posting spanning several months is removed for the other months too.
     starts_on, ends_on = month_bounds(month)
     result = db.execute(
         delete(PersonPosting).where(

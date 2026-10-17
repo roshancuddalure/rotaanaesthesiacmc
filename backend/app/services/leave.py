@@ -1,3 +1,11 @@
+"""Leave queries and aggregations shared by the leave views, unit management and rota safety.
+
+Defines the status semantics used everywhere:
+- ``ACTIVE_LEAVE_STATUSES``   - shown on calendars and considered by safety checks.
+- ``BLOCKING_LEAVE_STATUSES`` - hard-blocks a duty (only ``approved``).
+Also hosts ``month_bounds`` which every month-scoped endpoint uses to validate ``YYYY-MM``.
+"""
+
 from calendar import monthrange
 from collections import Counter, defaultdict
 from datetime import date

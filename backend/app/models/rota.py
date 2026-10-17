@@ -1,3 +1,19 @@
+"""Rota domain tables.
+
+Lifecycle of a month:
+1. ``RotaPeriod`` (one per month; ``status`` draft -> published; ``historical`` for imported months).
+2. ``MonthlyGenerationScope`` + ``MonthlyGenerationScopeUnit``: which units take part.
+3. ``RotaTemplateGenerationRun`` creates ``DutySlot`` rows (``source="phase4_template"``),
+   each already allocated to a unit, with ``RotaTemplateGenerationEvent`` audit rows.
+4. ``DutyAssignment`` links a person to a slot (manual, auto-fill or exchange); auto-fill
+   runs are audited in ``RotaAutoFillRun`` / ``RotaAutoFillEvent``.
+5. ``RotaReviewDecision`` records accepted warnings; ``RotaExchangeRequest`` records swaps.
+6. ``RotaPublishApproval`` records who published and the checklist at that moment.
+
+Historical imports reuse ``DutySlot``/``DutyAssignment`` with ``source`` set to
+``historical_import`` or ``historical_analysis_import``.
+"""
+
 from datetime import date, datetime
 from typing import TYPE_CHECKING
 from uuid import UUID, uuid4

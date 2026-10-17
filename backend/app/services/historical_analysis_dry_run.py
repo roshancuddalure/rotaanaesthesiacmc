@@ -1,3 +1,19 @@
+"""Current historical import pipeline ("analysis rebuild"), also runnable as a CLI:
+``python -m app.services.historical_analysis_dry_run [--apply-alias-suggestions | --import-matched-history]``.
+
+1. ``run_dry_run`` parses every rota + unitwise workbook in ``data/source/historical``,
+   resolves names to canonical members (``CanonicalNameResolver``: saved aliases,
+   compact exact, unique first name, ordered token variants, first+last, first+initial,
+   plus ``MANUAL_ALIAS_OVERRIDES``), and writes CSV/JSON/markdown artefacts to
+   ``Plan/Data/analysis_rebuild`` (matched/skipped names, tallies, comparisons with the
+   reference HTML report, alias suggestions).
+2. ``import_matched_history_into_session`` purges earlier historical imports and loads
+   the matched CSVs as ``historical`` rota periods, slots, assignments and postings.
+
+Deployment note (handbook D1): all paths are relative to the repository checkout and do
+not exist in the Docker image. Period naming note: handbook B3.
+"""
+
 import argparse
 import csv
 import json
@@ -36,6 +52,8 @@ except Exception:  # pragma: no cover - allows offline roster-file dry runs.
     SessionLocal = None  # type: ignore[assignment]
 
 
+# Repository root, derived from this file's location. Inside the Docker image this resolves to
+# "/" and none of the data folders below exist (handbook D1).
 REPO_DIR = Path(__file__).resolve().parents[3]
 DEFAULT_HISTORICAL_DIR = REPO_DIR / "data" / "source" / "historical"
 DEFAULT_OUTPUT_DIR = REPO_DIR / "Plan" / "Data" / "analysis_rebuild"
@@ -1368,6 +1386,13 @@ class CanonicalNameResolver:
                 self.by_first_last_initial[(tokens[0], tokens[-1][0])].append(member)
 
     def resolve(self, value: str) -> NameResolution:
+        """Resolve a raw cell value to a canonical member.
+
+        Tried in order: saved alias (unless ambiguous), compact exact match, unique first name
+        (4+ letters), ordered token variant (prefix/suffix token matching, ties -> ambiguous),
+        unique first+last, unique first+last-initial. Status is matched / ambiguous /
+        unmatched / invalid.
+        """
         cleaned = clean_person_name(value)
         if not cleaned or not is_valid_person_name(cleaned):
             return NameResolution("invalid", None, cleaned, 0.0, "not_person_like")
@@ -2269,6 +2294,9 @@ def apply_alias_suggestions(path: Path = DEFAULT_ALIAS_SUGGESTIONS) -> AliasAppl
 
 
 def get_or_create_analysis_period(db, year: int, month: int, counters: Counter[str]) -> RotaPeriod:
+    # KNOWN ISSUE (handbook B3): looks up by name "YYYY-MM" while Rota Setup looks up by dates
+    # and names its periods "Month YYYY"; this can create a second period for the same month,
+    # and it forces an existing period's status back to "historical" (even if published).
     name = f"{year:04d}-{month:02d}"
     period = db.scalar(select(RotaPeriod).where(RotaPeriod.name == name))
     if period is not None:
@@ -2638,6 +2666,10 @@ def rebuild_and_import_historical_analysis(
     output_dir: Path = DEFAULT_OUTPUT_DIR,
     reference_html: Path = DEFAULT_REFERENCE_HTML,
 ) -> dict[str, object]:
+    """API entrypoint: dry run (writes artefacts to ``output_dir``) then replace-import into ``db``.
+
+    Note: the dry run reads members/aliases through its own ``SessionLocal`` session, not ``db``.
+    """
     dry_run_summary = run_dry_run(historical_dir, output_dir, reference_html)
     import_summary = import_matched_history_into_session(
         db,

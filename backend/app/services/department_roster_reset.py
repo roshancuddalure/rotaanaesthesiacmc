@@ -1,3 +1,12 @@
+"""DESTRUCTIVE: wipe operational data and recreate members from the trusted roster.
+
+``clear_operational_data`` deletes assignments, slots, postings, leave, designations,
+aliases, people, units, periods, mappings, import history and rule settings.
+Note (handbook B4): it does not delete newer dependent tables (call clusters memberships,
+scopes, generation/auto-fill runs, approvals, unit call minimums), so on PostgreSQL it
+fails with a foreign-key error once those features have been used.
+"""
+
 import re
 from dataclasses import dataclass
 from datetime import date
@@ -162,6 +171,11 @@ def extract_clean_roster_members(path: Path = DEFAULT_ROSTER_PATH) -> list[Clean
 
 
 def clear_operational_data(db: Session) -> dict[str, int]:
+    # KNOWN ISSUE (handbook B4): tables added after this function was written are missing
+    # (person_call_cluster_memberships, monthly_generation_scope(_units), rota_template_generation_*,
+    # rota_auto_fill_*, rota_exchange_requests, rota_review_decisions, rota_publish_approvals,
+    # unit_call_minimums). Their foreign keys have no ON DELETE CASCADE, so PostgreSQL rejects
+    # the deletes below once those features have been used. (SQLite tests do not enforce FKs.)
     deleted_counts: dict[str, int] = {}
     models = (
         DutyAssignment,

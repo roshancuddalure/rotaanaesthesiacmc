@@ -1,3 +1,9 @@
+"""Eligibility groups ("call clusters", e.g. 3rd Call A/B/C) and their dated memberships.
+
+Duty rules can restrict a duty to members of given clusters (``allowed_cluster_keys``) or
+exclude clusters (``excluded_cluster_keys``). Admin-only.
+"""
+
 from datetime import date
 from uuid import UUID
 

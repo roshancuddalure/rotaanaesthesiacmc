@@ -1,3 +1,11 @@
+"""Master duty-type dictionary. Every ``DutySlot.duty_type`` should be one of these keys.
+
+``MAIN_24HR_KEYS`` are the duties counted as "main 24-hour duties" in analysis
+(``counts_in_main_24hr``); ``is_24hr`` marks duties that span 24 hours. The ``group`` is the
+duty family (main, cb, rc, pac, ...) used for fairness balancing and export grouping.
+Changing keys here requires matching changes in rules, parsers and the frontend.
+"""
+
 from pydantic import BaseModel
 
 

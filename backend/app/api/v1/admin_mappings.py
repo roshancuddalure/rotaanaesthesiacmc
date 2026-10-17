@@ -1,3 +1,12 @@
+"""Admin-editable label mappings (duty labels, unit labels, posting labels) used by the
+historical Excel importers, plus a scanner that seeds suggested mappings from the files in
+``data/source/historical``.
+
+SECURITY (handbook S3): endpoints are unauthenticated.
+DEPLOYMENT (handbook D1): ``HISTORICAL_DIR`` is derived from this file's location and does
+not exist inside the Docker image, so the scan only works on a developer machine.
+"""
+
 from pathlib import Path
 from typing import Literal
 from uuid import UUID

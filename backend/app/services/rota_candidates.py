@@ -1,3 +1,14 @@
+"""Candidate ranking for a slot.
+
+Pool = the slot-safety lists (available, warning, blocked). Each candidate is fully
+validated, then scored (lower is better) from status, monthly burden (total, 24h,
+weekend 24h, same weekday/weekend type, same family, same campus), fairness vs the month
+average, rest gap to the nearest saved duty, slot safety and override need.
+
+Performance (handbook P1): each candidate triggers a full ``validate_assignment`` which
+re-queries the month's postings, leave and assignments.
+"""
+
 from __future__ import annotations
 
 from collections import defaultdict
@@ -169,6 +180,14 @@ def candidate_score(
     validation: dict[str, object],
     rules: RotaPhaseOneRules,
 ) -> tuple[int, dict[str, int]]:
+    """Penalty score for a candidate (lower = better) and its components for display.
+
+    Weights: status (eligible 0 / review 35 / blocked 1000), same weekday-or-weekend type x30,
+    total duties x6, 24h x10, weekend 24h x12, same family x5, same campus x2, above-average
+    load x7 per duty, rest gap below the rule 80 (or within +12h 15), slot staffing 10/25,
+    override needed 20. Note the "burden" part already includes same_day_type and weekend,
+    so those are counted twice in the total.
+    """
     status_penalty = {CANDIDATE_ELIGIBLE: 0, CANDIDATE_REVIEW: 35, CANDIDATE_BLOCKED: 1000}[status]
     burden_penalty = (
         counts["same_day_type"] * 30

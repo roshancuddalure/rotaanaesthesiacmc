@@ -1,3 +1,9 @@
+"""Canonical call-level vocabulary (seniority ladder) exposed via ``/api/v1/metadata``.
+
+``rank`` orders the ladder (Co-1st=0 ... 5th=6); special postings use rank -1. Services
+mostly work with the normalised keys from ``app.services.rota_call_levels`` instead.
+"""
+
 from pydantic import BaseModel
 
 

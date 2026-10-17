@@ -1,3 +1,9 @@
+"""Login accounts, bearer-token sessions and password reset tokens.
+
+Tokens are never stored in plain text: ``token_hash`` holds the SHA-256 of the token.
+Passwords use PBKDF2-SHA256 (see ``app.services.auth.hash_secret``).
+"""
+
 from datetime import datetime
 from uuid import UUID, uuid4
 

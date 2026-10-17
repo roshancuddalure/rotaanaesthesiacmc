@@ -1,3 +1,7 @@
+"""Rota review workspace: issue list per slot, workload/fairness tables, warning acceptance
+decisions, and the exchange (swap) request -> approve/reject workflow.
+"""
+
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException

@@ -1,3 +1,9 @@
+"""Reconcile database members against the trusted department roster workbook
+(``Plan/Data/ANAESTHESIA department doctors(namelist).xlsx``): rename to roster spelling,
+merge safe matches, add aliases and roster designations, and create missing members.
+Path/sheet names are hard-coded to the March 2026 workbook (handbook B16, D1).
+"""
+
 import re
 from dataclasses import dataclass, field
 from datetime import date

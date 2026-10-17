@@ -1,3 +1,9 @@
+"""Monthly rota setup: get/create the RotaPeriod for a month and choose which units are
+included in generation (the "generation scope"), lock it, or clone last month's scope.
+
+Template generation refuses to run until the scope is locked.
+"""
+
 from datetime import date
 from uuid import UUID
 

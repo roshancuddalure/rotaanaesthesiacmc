@@ -1,3 +1,8 @@
+""""Safe auto-fill": assign the top clean candidate to each open slot and record an audit run.
+
+Synchronous and slow on a full month (handbook P1); ``limit_slots`` caps the work.
+"""
+
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session

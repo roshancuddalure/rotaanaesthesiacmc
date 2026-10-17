@@ -1,3 +1,11 @@
+"""Rota template (Phase 4) endpoints: generate the month's empty duty slots and allocate each
+slot to a unit, view slots/statistics, clear the month, and download Excel exports
+("Eagle Eye" matrix and call-wise sheets).
+
+Note: no check prevents regenerating or clearing a month that is already published
+(handbook B1).
+"""
+
 from datetime import date
 
 from fastapi import APIRouter, Depends, HTTPException

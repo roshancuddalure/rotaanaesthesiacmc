@@ -1,3 +1,14 @@
+/**
+ * Typed client for the FastAPI backend (`/api/...`).
+ *
+ * - All JSON calls go through `request()`; multipart uploads and Excel downloads use `fetch`
+ *   directly so the browser can set the multipart boundary / read the blob.
+ * - Interfaces in this file mirror the backend response shapes by hand. When a backend response
+ *   changes, update the matching interface here (there is no code generation).
+ * - The bearer token lives in `localStorage` ("duty_rota_auth_token"); any script injected
+ *   into the page can read it, which is why HTML escaping in main.ts matters (handbook S5).
+ * - `VITE_API_BASE_URL` is empty for same-origin deployments (Railway, Vite dev proxy).
+ */
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ?? "";
 
@@ -13,6 +24,13 @@ export function clearAuthToken() {
   localStorage.removeItem("duty_rota_auth_token");
 }
 
+/**
+ * JSON request helper: adds the bearer token, throws `Error` with the backend `detail`
+ * message (and `error.detail` for structured validation payloads).
+ * Notes: `...options` is spread after `headers`, so passing `options.headers` replaces the
+ * defaults instead of merging. A 401 (expired 12h session) is surfaced as a normal error;
+ * nothing redirects to the login screen (handbook U1).
+ */
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   let response: Response;
   try {
@@ -51,6 +69,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   return response.json() as Promise<T>;
 }
 
+/** Error builder for upload/download calls. Any 5xx defaults to an "offline or crashed" message (handbook U3). */
 async function errorFromResponse(response: Response): Promise<Error> {
   let message = `API request failed: ${response.status}`;
   let detail: unknown = null;
@@ -1744,6 +1763,7 @@ export function updateCallClusterMembers(
   });
 }
 
+// SECURITY (handbook S2): the backend returns the reset token itself; see auth.py.
 export function forgotPassword(username: string): Promise<{ message: string; reset_token: string | null }> {
   return request<{ message: string; reset_token: string | null }>("/api/v1/auth/forgot-password", {
     method: "POST",

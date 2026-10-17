@@ -1,3 +1,10 @@
+"""Call-level normalisation helpers.
+
+``normalize_call_level`` maps free-text labels ("3rd call SR/APs", "co-4th", ...) to the
+canonical keys 1ST_CALL..5TH_CALL / CO_4TH_CALL, or returns the input unchanged, or
+"Unassigned" for empty input. Note: Co-1st is folded into 1ST_CALL (handbook B14).
+"""
+
 from __future__ import annotations
 
 

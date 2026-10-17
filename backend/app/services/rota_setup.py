@@ -1,3 +1,10 @@
+"""Rota period + monthly generation scope management, and per-unit readiness for the setup screen.
+
+Note (handbook B3): periods are looked up by start/end date but historical imports create
+their own period named ``YYYY-MM`` for the same dates, so months covered by historical data
+reuse the historical period.
+"""
+
 from __future__ import annotations
 
 import calendar
@@ -23,6 +30,13 @@ def month_label(month: str) -> str:
 
 
 def get_or_create_rota_period(db: Session, month: str) -> RotaPeriod:
+    """Return the RotaPeriod for ``YYYY-MM`` (named e.g. "May 2026"), creating a draft if missing.
+
+    KNOWN ISSUE (handbook B3): lookup is by dates, but the historical importer creates periods
+    named "YYYY-MM" for the same dates. For months covered by historical data this returns the
+    historical period (or an arbitrary one of two), so drafts mix with historical analysis.
+    Also note: called from GET endpoints, so reads can insert rows.
+    """
     starts_on, ends_on = month_bounds(month)
     name = month_label(month)
     period = db.scalar(select(RotaPeriod).where(RotaPeriod.starts_on == starts_on, RotaPeriod.ends_on == ends_on))
@@ -78,6 +92,7 @@ def update_scope_units(
     lock_scope: bool,
     lock_reason: str | None = None,
 ) -> MonthlyGenerationScope:
+    """Replace the scope's unit list and lock state. Unlocking a locked scope needs a reason."""
     if scope.is_locked and not lock_scope:
         if not lock_reason or not lock_reason.strip():
             raise ValueError("Unlocking the generation scope requires a reason")
@@ -107,6 +122,11 @@ def update_scope_units(
 
 
 def clone_previous_scope(db: Session, month: str) -> MonthlyGenerationScope:
+    """Copy last month's included/excluded units into this month.
+
+    KNOWN ISSUE (handbook B10): always passes ``lock_scope=False`` with an automatic reason, so
+    cloning silently unlocks an already locked scope.
+    """
     period, scope = monthly_setup(db, month)
     previous_period, previous_scope = monthly_setup(db, previous_month(month))
     included = [item.unit_id for item in previous_scope.units if item.status == SCOPE_INCLUDED]

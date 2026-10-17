@@ -1,3 +1,12 @@
+"""Department members (``Person``), their alternative spellings (``PersonAlias``) and dated
+designation history (``PersonDesignation``).
+
+``active_status`` values in use: ``active``, ``archived`` (manually archived) and
+``historical`` (created by the historical importer for people not on the current roster).
+``call_level`` is the member's current default call level; unit-board postings can override
+it per month.
+"""
+
 from datetime import date, datetime
 from typing import TYPE_CHECKING
 from uuid import UUID, uuid4

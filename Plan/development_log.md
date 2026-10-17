@@ -2398,3 +2398,28 @@ Verification:
 - Focused backend rota template tests passed: `python -m pytest tests/test_rota_template.py -q`, 27 tests.
 - Ruff passed on touched backend files with `--no-cache`.
 - Frontend TypeScript check passed: `npm exec tsc -- --noEmit`.
+
+## 2026-10-17 - Full Project Inspection And Developer Handbook
+
+Goal:
+
+- Re-establish a complete understanding of the architecture for handover, document the code inline, and record bugs/risks from both developer and rota-board perspectives. No functional code changes.
+
+Delivered:
+
+- `docs/DEVELOPER_HANDBOOK.md`: architecture, setup, domain glossary, data model, end-to-end monthly workflow, algorithms (unit allocation, safety, validation, candidate scoring, auto-fill, publish), imports, analysis, auth, full API table (85 routes with auth level), frontend guide, testing, deployment, how-to recipes.
+- `docs/INSPECTION_REPORT_2026-10.md`: issue register (S1-S8 security, B1-B20 logic/data, P1-P5 performance, D1-D6 deployment/maintainability, U1-U5 UX) with locations, impact, fixes and a remediation roadmap.
+- Inline documentation: module docstrings for all 61 backend modules that lacked one, docstrings on core functions, and `KNOWN ISSUE (handbook <ID>)` comments at each bug site; file headers and notes in `frontend/src/main.ts` and `frontend/src/services/api.ts`.
+
+Most urgent findings:
+
+- The GitHub repository is public and contains credential screenshots and a database dump (S1).
+- Forgot-password returns the reset token, allowing account takeover (S2).
+- 32 endpoints have no authentication, including destructive member/import/roster-reset routes (S3).
+- Published months are not locked (B1); the 24-hour rest rule is only enforced backwards one day (B2, reproduced).
+
+Verification:
+
+- Backend: `python -m pytest -q -p no:cacheprovider` - 157 passed before and after the documentation changes.
+- Frontend: `npx tsc --noEmit` passed before and after.
+- All changed Python files are AST-identical to HEAD ignoring docstrings; both changed TypeScript files transpile to identical JavaScript with comments removed.

@@ -1,3 +1,12 @@
+"""Leave spreadsheet import (xlsx/xls/csv) with preview.
+
+Accepts either a tabular sheet (name/start/end/type/slot/status columns, header row
+auto-detected) or a "wide calendar" sheet (one column per day). Names are matched to
+members by canonical name/aliases; half-day markers in the name cell (AM/PM/...) become
+``leave_slot``. Apply re-runs the preview and inserts only rows that matched cleanly with
+no issues; everything else is returned as skipped for manual entry.
+"""
+
 from __future__ import annotations
 
 import io

@@ -1,3 +1,18 @@
+"""Login accounts, bearer-token sessions and password flows.
+
+Auth model: ``POST /auth/sign-in`` returns an opaque random token; the client sends it as
+``Authorization: Bearer <token>``. Only the SHA-256 hash of the token is stored
+(``user_sessions``), sessions last 12 hours, and there is no server-side sign-out.
+
+Dependencies exported for other routers:
+- ``current_user``  - any active account (rota board member, computer admin, superadmin).
+- ``require_admin`` - computer admin or superadmin.
+
+SECURITY (handbook S2, S4): ``/auth/forgot-password`` returns the reset token directly in
+the response, and ``/auth/seed-superadmin`` is unauthenticated and seeds a hard-coded
+password. Both were development conveniences and must not stay in production.
+"""
+
 from typing import Annotated
 from uuid import UUID
 
@@ -93,6 +108,7 @@ def current_user(
     authorization: Annotated[str | None, Header()] = None,
     db: Session = Depends(get_db),
 ) -> UserAccount:
+    """FastAPI dependency: resolve the ``Authorization: Bearer <token>`` header to an active account (401 otherwise)."""
     if not authorization or not authorization.startswith("Bearer "):
         raise HTTPException(status_code=401, detail="Missing authentication token")
     user = user_from_token(db, authorization.removeprefix("Bearer ").strip())
@@ -102,11 +118,14 @@ def current_user(
 
 
 def require_admin(user: UserAccount = Depends(current_user)) -> UserAccount:
+    """FastAPI dependency: like ``current_user`` but also requires computer admin or superadmin (403 otherwise)."""
     if user.role not in ADMIN_ROLES:
         raise HTTPException(status_code=403, detail="Computer admin privilege required")
     return user
 
 
+# KNOWN ISSUE (handbook S4): unauthenticated; seeds `rotachief` with a hard-coded password
+# if that username does not exist. Remove or protect before production use.
 @router.post("/auth/seed-superadmin")
 def seed_superadmin_endpoint(db: Session = Depends(get_db)) -> UserRead:
     return user_to_read(seed_superadmin(db))
@@ -148,6 +167,8 @@ def create_account(
     _admin: UserAccount = Depends(require_admin),
     db: Session = Depends(get_db),
 ) -> UserRead:
+    # KNOWN ISSUE (handbook S6/S7): any admin (including computer_admin) can create a
+    # superadmin, and no password strength rule is applied here.
     if payload.role not in ROLES:
         raise HTTPException(status_code=400, detail="Unknown role")
     user = UserAccount(
@@ -180,6 +201,9 @@ def forgot_password(
     payload: ForgotPasswordRequest,
     db: Session = Depends(get_db),
 ) -> ForgotPasswordResponse:
+    # KNOWN ISSUE (handbook S2, CRITICAL): the reset token is returned to the caller and the
+    # login page auto-fills it, so anyone who knows a username can reset that password.
+    # The token must be delivered out-of-band (email/SMS/admin) instead.
     user = db.scalar(select(UserAccount).where(UserAccount.username == payload.username.strip()))
     if user is None:
         return ForgotPasswordResponse(message="If the account exists, a reset token was created.")

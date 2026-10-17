@@ -1,3 +1,8 @@
+"""Versioned rule storage. In practice a single ``RuleVersion`` ("Rota generator default
+rules") holds one JSON ``RuleSetting`` (``rota_generator.phase1``) that is overwritten
+in place on save - there is no real version history yet (handbook B11).
+"""
+
 from datetime import date, datetime
 from uuid import UUID, uuid4
 

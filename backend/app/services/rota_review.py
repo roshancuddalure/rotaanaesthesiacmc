@@ -1,3 +1,13 @@
+"""Rota review aggregation, warning acceptance and exchange (swap) requests.
+
+Review items per slot: open slot, template review, safety review/hard block, override
+assignment. Warnings can be accepted with a note (``RotaReviewDecision``); hard blocks and
+open slots cannot. Exchanges are validated at request time and re-validated on approval.
+
+Note (handbook B8): approval replaces whoever currently holds the slot, without checking
+that it is still the assignment the request was made against.
+"""
+
 from __future__ import annotations
 
 from collections import defaultdict
@@ -266,6 +276,8 @@ def person_workload_rows(
             },
         )
         slot = assignment.duty_slot
+        # Family = first token of the duty key, not the rule's `group` (e.g. MAIN_PAC_* counts
+        # as "main" here but "pac" elsewhere) - handbook B18.
         duty_group = slot.duty_type.split("_", 1)[0].lower()
         group_counts = row["group_counts"]
         assert isinstance(group_counts, dict)
@@ -424,6 +436,7 @@ def exchange_requests_for_period(db: Session, rota_period_id: UUID) -> list[Rota
 
 
 def rota_review_month(db: Session, month: str) -> dict[str, object]:
+    """Everything the Rota Review screen and the publish checklist need for one month."""
     starts_on, ends_on = month_bounds(month)
     period, scope = monthly_setup(db, month)
     slots = template_slots_for_period(db, period.id)
@@ -603,6 +616,12 @@ def approve_exchange_request(
     approved_by: UserAccount,
     decision_reason: str | None = None,
 ) -> dict[str, object]:
+    """Apply an exchange: re-validate and put ``to_person`` on the slot (replacing the holder).
+
+    KNOWN ISSUE (handbook B8): does not check that ``from_assignment_id`` is still the slot's
+    active assignment, so a stale request replaces whoever holds the slot now; the requester
+    may also approve their own request.
+    """
     exchange = hydrate_exchange_request(db, exchange_id)
     if exchange.status in {EXCHANGE_APPROVED, EXCHANGE_REJECTED}:
         raise RotaReviewError("Exchange request is already closed", status_code=409)

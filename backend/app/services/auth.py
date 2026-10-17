@@ -1,3 +1,9 @@
+"""Password hashing, session tokens, reset tokens and the default superadmin seed.
+
+SECURITY (handbook S4): ``seed_superadmin`` creates ``rotachief`` with a hard-coded
+password. Rotate it on every deployment and remove the seed route.
+"""
+
 import base64
 import hashlib
 import hmac

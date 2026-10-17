@@ -1,3 +1,7 @@
+"""Ranked person suggestions for a slot (or for every slot in a month). Read-only scoring;
+see ``app.services.rota_candidates`` for the scoring model.
+"""
+
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query

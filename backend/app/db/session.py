@@ -1,3 +1,11 @@
+"""SQLAlchemy engine, session factory and the declarative ``Base`` for all models.
+
+``get_db`` is the FastAPI dependency that yields one session per request. Services
+call ``db.commit()`` themselves; nothing here commits or rolls back automatically, so
+an exception that escapes a service leaves the transaction uncommitted and it is
+discarded when the session closes.
+"""
+
 from collections.abc import Generator
 
 from sqlalchemy import create_engine

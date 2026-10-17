@@ -87,6 +87,11 @@ Planned local command:
 docker compose up --build
 ```
 
+## Developer Documentation
+
+- `docs/DEVELOPER_HANDBOOK.md` - architecture, workflows, algorithms, API reference, operations (start here).
+- `docs/INSPECTION_REPORT_2026-10.md` - known issues and risks (IDs such as S1, B2 are referenced in code comments).
+
 ## Evidence Rule
 
 Before changing architecture or domain behavior, read:

@@ -1,3 +1,11 @@
+"""Safe auto-fill: greedily walk open slots in date order and assign the top candidate only if
+it is ``eligible``, validation is ``clear`` and (in strict mode) the call level matches the
+slot's single required call level. Everything else is left open with an audit event.
+
+Known issues: the run is created as ``completed`` before work starts and commits per slot,
+so an exception mid-run leaves partial assignments (handbook B12); performance P1.
+"""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -118,6 +126,13 @@ def run_safe_auto_fill(
     month: str,
     options: AutoFillOptions | None = None,
 ) -> dict[str, object]:
+    """Run one safe auto-fill pass over the month's generated slots (date order, greedy).
+
+    KNOWN ISSUES: the candidate context is rebuilt for every slot and every candidate is fully
+    validated, so a full month can take minutes (handbook P1). The run row is committed as
+    ``completed`` before any work and each assignment commits separately, so a crash leaves
+    partial assignments with zero counts on the run (handbook B12). No publish check (B1).
+    """
     options = options or AutoFillOptions()
     period, _scope = monthly_setup(db, month)
     slots = open_slots_for_period(db, period.id)

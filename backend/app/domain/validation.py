@@ -1,3 +1,9 @@
+"""Generic 24-hour spacing validator.
+
+NOTE: currently unused by the application (only ``tests/test_validation.py`` calls it).
+Live rest checks are in ``app.services.rota_safety`` (see handbook B2).
+"""
+
 from datetime import datetime, timedelta
 from pydantic import BaseModel
 
