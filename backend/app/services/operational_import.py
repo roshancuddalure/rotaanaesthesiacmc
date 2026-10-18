@@ -29,7 +29,14 @@ from app.models import (
     Unit,
 )
 from app.services.leave import month_bounds
-from app.services.normalization import display_text, label_key, member_key, member_lookup, resolve_member, unit_key
+from app.services.normalization import (
+    display_text,
+    label_key,
+    member_key,
+    member_lookup,
+    resolve_member,
+    unit_key,
+)
 from app.services.reference_catalog import resolve_value
 from app.services.reference_registry import audit, lock_namespace
 
@@ -111,6 +118,17 @@ def read_rows(
     if not isinstance(mapping, dict):
         raise ValueError("Column mapping must be an object")
     tables = tabular_records(filename, content)
+    if (
+        kind == "units"
+        and not mapping
+        and tables
+        and any(
+            re.search(r"\bunit\s+\d+\b", unit_key(header))
+            for _, records in tables
+            for header in next((r for r in records if any(v.strip() for v in r)), [])
+        )
+    ):
+        return legacy_rows(db, kind, filename, content, month)
     if kind == "units" and not mapping and filename.lower().endswith(".csv"):
         first_line = content.decode("utf-8-sig").lstrip().splitlines()[0] if content.strip() else ""
         if first_line.upper().startswith(("MONTH:", "[UNIT:", "[PAIN]", "[SICU]", "[DRP]")):
@@ -150,17 +168,27 @@ def tabular_records(filename: str, content: bytes) -> list[tuple[str, list[list[
                     for row in sheet.iter_rows(values_only=True)
                 ]
                 first = next((r for r in records if any(v.strip() for v in r)), [])
-                if first and (any(label_key(h) in HEADER_MAP for h in first) or
-                              len(first) >= 2 and all(v.strip() for v in first)):
+                if first and (
+                    any(label_key(h) in HEADER_MAP for h in first)
+                    or len(first) >= 2
+                    and all(v.strip() for v in first)
+                ):
                     tables.append((sheet.title, records))
             return tables
         finally:
             workbook.close()
     if filename.lower().endswith(".xls"):
         import pandas as pd
+
         frames = pd.read_excel(io.BytesIO(content), sheet_name=None, header=None)
-        return [(name, [[str(v) if not pd.isna(v) else "" for v in row] for row in frame.values.tolist()])
-                for name, frame in frames.items() if not frame.empty]
+        return [
+            (
+                name,
+                [[str(v) if not pd.isna(v) else "" for v in row] for row in frame.values.tolist()],
+            )
+            for name, frame in frames.items()
+            if not frame.empty
+        ]
     return []
 
 
@@ -290,11 +318,17 @@ def normalize_rows(
         )
         errors = list(row.get("parse_issues", []))
         try:
+            match_day = parse_date(
+                str(values.get("starts_on") or month_start), settings.get("date_format", "auto")
+            )
+        except ValueError:
+            match_day = month_start
+        try:
             person = resolve_member(
                 db,
                 str(values.get("member_name") or ""),
                 UUID(str(person_id)) if person_id else None,
-                as_of=month_start,
+                as_of=match_day,
                 lookup=identity_lookup,
             )
         except ValueError:
@@ -320,6 +354,8 @@ def normalize_rows(
                 raise ValueError("End date precedes start date")
             if start > month_end or end < month_start:
                 raise ValueError("Date range is outside the selected month")
+            if mode == "replace_month":
+                start, end = max(start, month_start), min(end, month_end)
             after.update(starts_on=str(start), ends_on=str(end))
         except ValueError as exc:
             errors.append(str(exc))
@@ -368,7 +404,13 @@ def normalize_rows(
                 for r in existing
                 if str(r.person_id) == after["person_id"]
                 and str(r.starts_on) == after["starts_on"]
-                and (kind == "units" or r.leave_slot == after.get("leave_slot"))
+                and (
+                    r.leave_slot == after.get("leave_slot")
+                    if kind == "leave"
+                    else r.posting_type == after.get("posting_type")
+                    or r.posting_type not in {"PAIN", "SICU", "DRP"}
+                    and after.get("posting_type") not in {"PAIN", "SICU", "DRP"}
+                )
             ]
             if len(targets) > 1 and mode == "update_matching":
                 errors.append("Multiple existing records match; edit the records individually")
@@ -393,10 +435,12 @@ def normalize_rows(
                 if record is target or str(record.person_id) != after["person_id"]:
                     continue
                 if record.starts_on <= end and (record.ends_on is None or record.ends_on >= start):
-                    if (
-                        kind == "units"
-                        and record.posting_type not in {"PAIN", "SICU", "DRP"}
-                        and after.get("posting_type") not in {"PAIN", "SICU", "DRP"}
+                    if kind == "units" and (
+                        record.posting_type == after.get("posting_type")
+                        or (
+                            record.posting_type not in {"PAIN", "SICU", "DRP"}
+                            and after.get("posting_type") not in {"PAIN", "SICU", "DRP"}
+                        )
                     ):
                         if mode != "replace_month" or record.source != "unit_board":
                             errors.append("Overlapping primary posting exists")
@@ -414,7 +458,7 @@ def normalize_rows(
                                 and record.source in {"import", "normalized_import"}
                             ):
                                 errors.append("Overlapping leave exists for the same session")
-            if kind == "leave":
+            if kind == "leave" and after.get("status") not in {"cancelled", "rejected"}:
                 conflicts = list(
                     db.scalars(
                         select(DutyAssignment)
@@ -426,6 +470,14 @@ def normalize_rows(
                         )
                     )
                 )
+                from app.services.rota_safety import slot_leave_blocks
+
+                proposal = LeaveRequest(leave_slot=after.get("leave_slot", "FULL_DAY"))
+                conflicts = [
+                    assignment
+                    for assignment in conflicts
+                    if slot_leave_blocks(proposal, assignment.duty_slot)
+                ]
                 if conflicts:
                     warnings.append(f"{len(conflicts)} existing duties overlap this leave range")
         result.append(
@@ -447,7 +499,11 @@ def normalize_rows(
                         "field": field,
                         "original": row["values"].get(field, ""),
                         "proposed": proposed,
-                        "reason": "Operator correction"
+                        "reason": "Scoped to the selected replacement month"
+                        if mode == "replace_month"
+                        and field in {"starts_on", "ends_on"}
+                        and str(values.get(field) or "") != str(proposed)
+                        else "Operator correction"
                         if field in corrections.get(row["key"], {})
                         else "Approved label or alias"
                         if field in {"posting_type", "leave_type", "leave_slot", "status"}
@@ -497,9 +553,9 @@ def normalize_rows(
                 continue
             if a["starts_on"] > b["ends_on"] or b["starts_on"] > a["ends_on"]:
                 continue
-            conflict = (
-                kind == "units"
-                and a.get("posting_type") not in {"PAIN", "SICU", "DRP"}
+            conflict = kind == "units" and (
+                a.get("posting_type") == b.get("posting_type")
+                or a.get("posting_type") not in {"PAIN", "SICU", "DRP"}
                 and b.get("posting_type") not in {"PAIN", "SICU", "DRP"}
             )
             if kind == "leave":
@@ -542,12 +598,17 @@ def apply_batch(
         raise HTTPException(409, "Reference or operational records changed; preview again")
     selected = [r for r in batch.rows if r["key"] not in excluded]
     from app.services.auth import ADMIN_ROLES
-    if operator.role not in ADMIN_ROLES and any(r["remember_person_alias"] or r["remember_unit_alias"] for r in selected):
+
+    if operator.role not in ADMIN_ROLES and any(
+        r["remember_person_alias"] or r["remember_unit_alias"] for r in selected
+    ):
         raise HTTPException(403, "Only an administrator can approve reusable identity aliases")
     if not selected:
         raise HTTPException(422, "Select at least one row")
     if any(r["issues"] for r in selected):
         raise HTTPException(422, "Resolve or exclude every invalid row")
+    if batch.mode == "replace_month" and not acknowledge_warnings:
+        raise HTTPException(422, "Acknowledge the reviewed replacement scope before applying")
     if any(r["warnings"] for r in selected) and not acknowledge_warnings:
         raise HTTPException(422, "Review and acknowledge the affected duties before applying leave")
     kind = batch.kind
@@ -605,12 +666,12 @@ def apply_batch(
         retained_manual = retained_target is not None and retained_target.source not in (
             {"unit_board"} if kind == "units" else {"import", "normalized_import"}
         )
-        if row["action"] == "unchanged" and (batch.mode != "replace_month" or retained_manual):
-            result["unchanged"] += 1
-            continue
+        unchanged = row["action"] == "unchanged" and (
+            batch.mode != "replace_month" or retained_manual
+        )
         record = (
-            db.get(model, UUID(row["target_id"]))
-            if row["target_id"] and batch.mode == "update_matching"
+            retained_target
+            if row["target_id"] and (batch.mode == "update_matching" or unchanged)
             else None
         )
         before = record_values(record, kind) if record else None
@@ -685,7 +746,7 @@ def apply_batch(
                 },
             )
         )
-        result["updated" if before else "created"] += 1
+        result["unchanged" if unchanged else "updated" if before else "created"] += 1
     batch.result = result
     db.commit()
     return result

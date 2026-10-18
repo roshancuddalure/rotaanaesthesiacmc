@@ -105,6 +105,43 @@ type Unit = {
   call_minimums?: [string, number][];
 };
 
+async function openReferenceHistory(query: string) {
+  const dialog = workspaceDialog("Reference activity", "mw-import");
+  const close = () => {
+    dialog.close();
+    dialog.remove();
+  };
+  dialog.addEventListener("cancel", (event) => {
+    event.preventDefault();
+    close();
+  });
+  dialog.innerHTML = '<p role="status">Loading activity…</p>';
+  try {
+    const rows = await request<Record<string, any>[]>(
+      `/api/v1/normalization/activity?${query}`,
+    );
+    dialog.innerHTML = `<header class="mw-header"><h2>Reference activity</h2><button type="button" data-close aria-label="Close activity">×</button></header><div class="mw-content">${
+      rows
+        .map(
+          (row) =>
+            `<article class="mw-history"><strong>${esc(row.action.replace(/_/g, " "))}</strong><p>${esc(row.operator)} · ${esc(new Date(row.created_at).toLocaleString())}</p><dl>${Object.entries(
+              row.details.after || row.details.before || {},
+            )
+              .filter(([key]) => !["id", "revision", "usage"].includes(key))
+              .map(
+                ([key, value]) =>
+                  `<dt>${esc(key.replace(/_/g, " "))}</dt><dd>${esc(typeof value === "object" ? JSON.stringify(value) : value)}</dd>`,
+              )
+              .join("")}</dl></article>`,
+        )
+        .join("") || "<p>No activity recorded for this reference yet.</p>"
+    }</div>`;
+  } catch (error) {
+    dialog.innerHTML = `<p role="alert">${esc((error as Error).message)}</p><button data-close>Close</button>`;
+  }
+  dialog.querySelector<HTMLButtonElement>("[data-close]")!.onclick = close;
+}
+
 export async function openUnitRegistry(
   saved: (unit?: Unit) => void,
   initialId?: string,
@@ -142,10 +179,15 @@ export async function openUnitRegistry(
   selected = units.find((u) => u.id === initialId);
 
   function render() {
-    dialog.innerHTML = `<header class="mw-header"><div><h2>Department units</h2><p>Create units, maintain names and aliases, and preserve their history.</p></div><button data-close type="button" aria-label="Close unit management">×</button></header><div class="mw-content"><div class="registry-actions"><label>Find a unit<input type="search" data-search placeholder="Name, code, campus or alias"></label><label>Member count month<input type="month" data-unit-month value="${month}"></label><label>Show units<select data-unit-status><option value="all">All</option><option value="active" ${statusFilter === "active" ? "selected" : ""}>Active</option><option value="archived" ${statusFilter === "archived" ? "selected" : ""}>Archived</option></select></label><button type="button" data-new>Add Unit</button></div><div class="registry-unit-list">${units.map((u) => `<button type="button" data-select-unit="${u.id}" data-unit-state="${u.active_status}" data-unit-search="${esc([u.name, u.code, u.campus, ...u.aliases].join(" ").toLowerCase())}"><strong>${esc(u.name)}</strong> · ${esc(u.campus || "Campus not specified")} · ${esc(u.code)} · ${esc(u.active_status)} ? ${u.usage.selected_members ?? 0} members in ${month}</button>`).join("") || "<p>No units yet. Add your first department unit below.</p>"}</div><hr><h3>${selected ? `Edit ${esc(selected.name)}` : "Add a unit"}</h3>${selected ? `<p>${selected.usage.postings} postings · ${selected.usage.duties} duty slots linked. ${selected.usage.future_postings} current/upcoming postings and ${selected.usage.future_duties} future duty slots.</p>` : ""}<form id="registry-unit-form"><label>Unit name<input name="name" required maxlength="255" value="${esc(selected?.name)}" placeholder="For example: Unit IV"></label><label>Campus<input name="campus" maxlength="100" value="${esc(selected?.campus)}" placeholder="For example: Main or Ranipet"></label><label>Unique unit code<input name="code" maxlength="50" value="${esc(selected?.code)}" placeholder="Suggested from name and campus"></label><label>Minimum free people<input name="minimum_free_people" type="number" min="0" required value="${selected?.minimum_free_people ?? 1}"></label><details><summary>Call-wise staffing minimums</summary>${["1ST_CALL", "2ND_CALL", "3RD_CALL", "CO_4TH_CALL", "4TH_CALL", "5TH_CALL"].map((level) => `<label>${level.replace(/_/g, " ")}<input type="number" min="0" data-call-minimum="${level}" value="${selected?.call_minimums?.find(([key]) => key === level)?.[1] ?? 0}"></label>`).join("")}</details><label>Alternative labels (one per line)<textarea name="aliases" rows="4" placeholder="Use campus-qualified aliases where numbered units could be confused">${esc(selected?.aliases.join("\n"))}</textarea></label><label>Notes<textarea name="notes" rows="3">${esc(selected?.notes)}</textarea></label><label>Membership<select name="active_status"><option value="active" ${selected?.active_status !== "archived" ? "selected" : ""}>Active</option><option value="archived" ${selected?.active_status === "archived" ? "selected" : ""}>Archived</option></select></label><p>Renaming keeps the previous unit label as an alias. Archiving preserves postings and duty history.</p><p class="mw-error" role="alert" data-error></p><div class="mw-footer"><span data-dirty>Saved details</span><button type="button" data-close>Cancel</button><button class="primary" type="submit">${selected ? "Save unit" : "Create unit"}</button></div></form></div>`;
+    dialog.innerHTML = `<header class="mw-header"><div><h2>Department units</h2><p>Create units, maintain names and aliases, and preserve their history.</p></div><button data-close type="button" aria-label="Close unit management">×</button></header><div class="mw-content"><div class="registry-actions"><label>Find a unit<input type="search" data-search placeholder="Name, code, campus or alias"></label><label>Member count month<input type="month" data-unit-month value="${month}"></label><label>Show units<select data-unit-status><option value="all">All</option><option value="active" ${statusFilter === "active" ? "selected" : ""}>Active</option><option value="archived" ${statusFilter === "archived" ? "selected" : ""}>Archived</option></select></label><button type="button" data-new>Add Unit</button></div><div class="registry-unit-list">${units.map((u) => `<button type="button" data-select-unit="${u.id}" data-unit-state="${u.active_status}" data-unit-search="${esc([u.name, u.code, u.campus, ...u.aliases].join(" ").toLowerCase())}"><strong>${esc(u.name)}</strong> · ${esc(u.campus || "Campus not specified")} · ${esc(u.code)} · ${esc(u.active_status)} &middot; ${u.usage.selected_members ?? 0} members in ${month}</button>`).join("") || "<p>No units yet. Add your first department unit below.</p>"}</div><hr><h3>${selected ? `Edit ${esc(selected.name)}` : "Add a unit"}</h3>${selected ? `<p>${selected.usage.postings} postings · ${selected.usage.duties} duty slots linked. ${selected.usage.future_postings} current/upcoming postings and ${selected.usage.future_duties} future duty slots.</p><button type="button" data-unit-history>View unit activity</button>` : ""}<form id="registry-unit-form"><label>Unit name<input name="name" required maxlength="255" value="${esc(selected?.name)}" placeholder="For example: Unit IV"></label><label>Campus<input name="campus" maxlength="100" value="${esc(selected?.campus)}" placeholder="For example: Main or Ranipet"></label><label>Unique unit code<input name="code" maxlength="50" value="${esc(selected?.code)}" placeholder="Suggested from name and campus"></label><label>Minimum free people<input name="minimum_free_people" type="number" min="0" required value="${selected?.minimum_free_people ?? 1}"></label><details><summary>Call-wise staffing minimums</summary>${["1ST_CALL", "2ND_CALL", "3RD_CALL", "CO_4TH_CALL", "4TH_CALL", "5TH_CALL"].map((level) => `<label>${level.replace(/_/g, " ")}<input type="number" min="0" data-call-minimum="${level}" placeholder="Use fallback minimum" value="${selected?.call_minimums?.find(([key]) => key === level)?.[1] ?? ""}"></label>`).join("")}</details><label>Alternative labels (one per line)<textarea name="aliases" rows="4" placeholder="Use campus-qualified aliases where numbered units could be confused">${esc(selected?.aliases.join("\n"))}</textarea></label><label>Notes<textarea name="notes" rows="3">${esc(selected?.notes)}</textarea></label><label>Membership<select name="active_status"><option value="active" ${selected?.active_status !== "archived" ? "selected" : ""}>Active</option><option value="archived" ${selected?.active_status === "archived" ? "selected" : ""}>Archived</option></select></label><p>Renaming keeps the previous unit label as an alias. Archiving preserves postings and duty history.</p><p class="mw-error" role="alert" data-error></p><div class="mw-footer"><span data-dirty>Saved details</span><button type="button" data-close>Cancel</button><button class="primary" type="submit">${selected ? "Save unit" : "Create unit"}</button></div></form></div>`;
     dialog
       .querySelectorAll<HTMLButtonElement>("[data-close]")
       .forEach((b) => (b.onclick = close));
+    dialog
+      .querySelector<HTMLButtonElement>("[data-unit-history]")
+      ?.addEventListener("click", () => {
+        if (selected) void openReferenceHistory(`entity_id=${selected.id}`);
+      });
     dialog.querySelector<HTMLButtonElement>("[data-new]")!.onclick = () => {
       if (dirty && !confirm("Discard edits and create another unit?")) return;
       selected = undefined;
@@ -252,10 +294,12 @@ export async function openUnitRegistry(
         revision: selected?.revision,
         call_minimums: Array.from(
           form.querySelectorAll<HTMLInputElement>("[data-call-minimum]"),
-        ).map((input) => ({
-          call_level: input.dataset.callMinimum,
-          minimum_free_people: Number(input.value),
-        })),
+        )
+          .filter((input) => input.value !== "")
+          .map((input) => ({
+            call_level: input.dataset.callMinimum,
+            minimum_free_people: Number(input.value),
+          })),
       };
       if (
         selected &&
@@ -273,16 +317,20 @@ export async function openUnitRegistry(
           `/api/v1/normalization/units${selected ? `/${selected.id}` : ""}`,
           { method: selected ? "PUT" : "POST", body: JSON.stringify(payload) },
         );
+        selected = result;
+        dirty = false;
+        if (createNew) {
+          busy = false;
+          close();
+          saved(result);
+          return;
+        }
         units = await request<Unit[]>(
           `/api/v1/normalization/units?month=${month}`,
         );
         selected = result;
         dirty = false;
         render();
-        if (createNew) {
-          busy = false;
-          close();
-        }
         saved(result);
       } catch (error) {
         form.querySelector("[data-error]")!.textContent = (
@@ -308,13 +356,16 @@ type Reference = {
   behavior: Record<string, unknown>;
   usage: { records: number };
 };
-export async function openReferenceCatalog(saved: () => void) {
+export async function openReferenceCatalog(
+  saved: () => void,
+  initialKind = "leave_type",
+) {
   const dialog = workspaceDialog(
     "Reference labels and mappings",
     "mw-import reference-workspace",
   );
   const opener = document.activeElement as HTMLElement | null;
-  let kind = "leave_type",
+  let kind = initialKind,
     items: Reference[] = [],
     selected: Reference | undefined,
     dirty = false,
@@ -362,7 +413,7 @@ export async function openReferenceCatalog(saved: () => void) {
       .join(
         "",
       )}</select></label><label>Find a label<input type="search" data-search></label><div class="registry-actions"><button type="button" data-new>Add ${kind.replace(/_/g, " ")}</button><button type="button" data-add-mapping>Add Mapping</button></div><div class="registry-unit-list">${items.map((i) => `<button type="button" data-key="${esc(i.key)}" data-label-search="${esc([i.key, i.label, ...i.aliases].join(" ").toLowerCase())}">${esc(i.label)} · ${i.active ? "Active" : "Archived"} · ${i.usage.records} linked records</button>`).join("") || "<p>No values yet. Add the first value above.</p>"}</div><form><h3>${selected ? `Edit ${esc(selected.label)}` : "Add a reference value"}</h3><label>Stable key<input name="key" required pattern="[A-Za-z0-9_]+" value="${esc(selected?.key)}" ${selected ? "readonly" : ""} placeholder="For example: STUDY_LEAVE"></label><label>Display label<input name="label" required maxlength="255" value="${esc(selected?.label)}"></label><label>Imported spellings / aliases (one per line)<textarea name="aliases" rows="4" placeholder="For example: study leave&#10;Study LV">${esc(selected?.aliases.join("\n"))}</textarea></label>${
-      ["leave_status", "posting_type"].includes(kind)
+      ["leave_status", "leave_slot", "posting_type"].includes(kind)
         ? `<label>Operational meaning<select name="maps_to" required><option value="">Choose a supported meaning</option>${items
             .filter((i) => i.behavior.maps_to === i.key)
             .map(
@@ -371,7 +422,7 @@ export async function openReferenceCatalog(saved: () => void) {
             )
             .join(
               "",
-            )}</select></label><p>${kind === "leave_status" ? "Approved blocks availability; pending warns; cancelled and rejected do not block." : "A label uses the selected posting's unit and eligibility rules. Genuinely new duty behavior requires duty-rule configuration."}</p>`
+            )}</select></label><p>${kind === "leave_status" ? "Approved blocks availability; pending warns; cancelled and rejected do not block." : kind === "leave_slot" ? "Map the imported session to a supported time window; custom sessions conservatively block duties until clarified." : "A label uses the selected posting's unit and eligibility rules. Genuinely new duty behavior requires duty-rule configuration."}</p>`
         : ""
     }${
       kind === "duty_type"
@@ -395,7 +446,7 @@ export async function openReferenceCatalog(saved: () => void) {
               "",
             )}<p>Duration controls the 24-hour flag. Eligibility, unit staffing, approved leave and rest checks apply when duties are assigned.</p></fieldset>`
         : ""
-    }<label>Status<select name="active"><option value="true" ${selected?.active !== false ? "selected" : ""}>Active</option><option value="false" ${selected?.active === false ? "selected" : ""}>Archived</option></select></label>${selected ? `<p>${selected.usage.records} records use this reference. Renaming keeps the previous label as an alias; historical records remain linked.</p>` : ""}<p role="alert" class="mw-error" data-error></p><footer class="mw-footer"><button type="button" data-close>Cancel</button><button type="submit" class="primary">Save reference</button></footer></form></div>`;
+    }<label>Status<select name="active"><option value="true" ${selected?.active !== false ? "selected" : ""}>Active</option><option value="false" ${selected?.active === false ? "selected" : ""}>Archived</option></select></label>${selected ? `<p>${selected.usage.records} records use this reference. Renaming keeps the previous label as an alias; historical records remain linked.</p><button type="button" data-reference-history>View reference activity</button>` : ""}<p role="alert" class="mw-error" data-error></p><footer class="mw-footer"><button type="button" data-close>Cancel</button><button type="submit" class="primary">Save reference</button></footer></form></div>`;
     dialog
       .querySelectorAll<HTMLButtonElement>("[data-close]")
       .forEach((b) => (b.onclick = close));
@@ -422,6 +473,14 @@ export async function openReferenceCatalog(saved: () => void) {
           render();
         }),
     );
+    dialog
+      .querySelector<HTMLButtonElement>("[data-reference-history]")
+      ?.addEventListener("click", () => {
+        if (selected)
+          void openReferenceHistory(
+            `kind=${kind}&key=${encodeURIComponent(selected.key)}`,
+          );
+      });
     dialog.querySelector<HTMLButtonElement>("[data-new]")!.onclick = () => {
       if (dirty && !confirm("Discard edits?")) return;
       selected = undefined;

@@ -214,7 +214,7 @@ def slot_bounds(day: date, rule: DutyRule) -> tuple[datetime, datetime]:
 def leave_blocks_rule(leave_slot: str, rule: DutyRule) -> bool:
     slot = leave_slot.upper()
     if rule.is_24hr:
-        return slot in {"FULL_DAY", "AM", "PM", "NIGHT"}
+        return True
     start_hour = parse_rule_time(rule.start_time).hour
     if slot == "FULL_DAY":
         return True

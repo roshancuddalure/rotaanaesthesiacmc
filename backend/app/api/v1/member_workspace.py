@@ -109,7 +109,7 @@ def profile(person_id: UUID, db: Session = Depends(get_db)) -> dict:
 def section(person_id: UUID, section: str, db: Session = Depends(get_db)) -> dict:
     person = get_member_or_404(db, person_id)
     if section == "postings":
-        rows = [{"id": str(p.id), "unit": p.unit.name if p.unit else "Special posting",
+        rows = [{"id": str(p.id), "unit": f"{p.unit.campus or ''} {p.unit.name}".strip() if p.unit else "Special posting",
                  "posting_type": p.posting_type, "starts_on": str(p.starts_on),
                  "ends_on": str(p.ends_on) if p.ends_on else None, "source": p.source}
                 for p in sorted(person.postings, key=lambda p: p.starts_on, reverse=True)]
@@ -159,6 +159,8 @@ def section(person_id: UUID, section: str, db: Session = Depends(get_db)) -> dic
 @router.put("/{person_id}")
 def save_profile(person_id: UUID, payload: ProfileSave, db: Session = Depends(get_db),
                  operator: UserAccount = Depends(require_admin)):
+    from app.services.reference_registry import lock_namespace
+    lock_namespace(db,"normalization-edit")
     db.scalar(select(Person).where(Person.id == person_id).with_for_update())
     person = get_member_or_404(db, person_id)
     if revision(person) != payload.revision:

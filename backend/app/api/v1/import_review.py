@@ -2,6 +2,8 @@
 
 import hashlib
 import json
+from zipfile import BadZipFile
+from openpyxl.utils.exceptions import InvalidFileException
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
@@ -38,14 +40,19 @@ class ReviewApply(BaseModel):
 async def columns(file: UploadFile = File(...)):
     try:
         tables = tabular_records(file.filename or "upload", await file.read(5 * 1024 * 1024 + 1))
-        headers = list(dict.fromkeys(h for _, records in tables
-                                    for h in next((r for r in records if any(v.strip() for v in r)), [])))
+        headers = list(
+            dict.fromkeys(
+                h
+                for _, records in tables
+                for h in next((r for r in records if any(v.strip() for v in r)), [])
+            )
+        )
         return {
             "headers": headers,
             "fields": list(FIELDS),
             "suggested": {h: HEADER_MAP.get(label_key(h), "") for h in headers},
         }
-    except (ValueError, TypeError) as exc:
+    except (ValueError, TypeError, BadZipFile, InvalidFileException) as exc:
         raise HTTPException(422, str(exc)) from exc
 
 
@@ -71,6 +78,16 @@ async def preview(
         for field in ["mapping", "corrections", "repeated"]:
             if not isinstance(settings.get(field, {}), dict):
                 raise ValueError(f"{field} must be an object")
+        if not isinstance(settings.get("excluded", []), list) or any(
+            not isinstance(key, str) for key in settings.get("excluded", [])
+        ):
+            raise ValueError("Excluded rows must be a list of source row keys")
+        for correction in settings.get("corrections", {}).values():
+            if not isinstance(correction, dict):
+                raise ValueError("Each row correction must be an object")
+            for flag in ["remember_person_alias", "remember_unit_alias"]:
+                if flag in correction and not isinstance(correction[flag], bool):
+                    raise ValueError("Reusable alias choices must be explicit true/false values")
         if settings.get("date_format", "auto") not in {"auto", "DMY", "MDY"}:
             raise ValueError("Choose a supported date format")
         settings["mode"] = mode
@@ -95,7 +112,7 @@ async def preview(
                 in ({"unit_board"} if kind == "units" else {"import", "normalized_import"})
             ]
         settings["replacement_scope"] = replace
-    except (ValueError, TypeError, AttributeError) as exc:
+    except (ValueError, TypeError, AttributeError, BadZipFile, InvalidFileException) as exc:
         raise HTTPException(422, str(exc)) from exc
     batch = ImportReviewBatch(
         operator_id=operator.id,

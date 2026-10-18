@@ -129,8 +129,8 @@ def activity(
         records = [
             r
             for r in records
-            if (not kind or r.details.get("after", {}).get("kind") == kind)
-            and (not key or r.details.get("after", {}).get("key") == key)
+            if (not kind or (r.details.get("after") or {}).get("kind") == kind)
+            and (not key or (r.details.get("after") or {}).get("key") == key)
         ]
     return [
         {

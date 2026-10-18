@@ -101,6 +101,8 @@ def record_activity(db: Session, person: Person, operator: UserAccount, action: 
 
 
 def ensure_unique_name(db: Session, name: str, person: Person | None = None) -> None:
+    from app.services.reference_registry import lock_namespace
+    lock_namespace(db,"member-identity")
     from app.services.normalization import member_key
     key = member_key(name)
     # Serialize case-insensitive name/alias claims across concurrent member edits.
@@ -136,6 +138,7 @@ def replace_designations(person: Person, items: list[dict], db: Session) -> None
     for item in items:
         item_id = str(item.get("id") or "")
         designation = existing.get(item_id)
+        old_label = designation.designation if designation else None
         if item_id and not designation:
             raise HTTPException(409, "Designation no longer exists; reload the profile")
         if designation is None:
@@ -143,7 +146,9 @@ def replace_designations(person: Person, items: list[dict], db: Session) -> None
             db.add(designation)
         else:
             retained.add(item_id)
-        designation.designation = item["designation"].strip()
+        from app.services.reference_catalog import canonical_label
+        with db.no_autoflush:
+            designation.designation = old_label if old_label == item["designation"] else canonical_label(db,"designation",item["designation"])
         designation.effective_from = date.fromisoformat(str(item["effective_from"]))
         designation.effective_to = date.fromisoformat(str(item["effective_to"])) if item.get("effective_to") else None
         designation.notes = item.get("notes") or None

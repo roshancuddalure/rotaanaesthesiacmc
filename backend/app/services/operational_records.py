@@ -86,7 +86,9 @@ def inspect_record(db, kind, values, identity=None):
         if record.id == identity:
             continue
         if kind == "units":
-            conflict = posting not in SPECIAL and record.posting_type not in SPECIAL
+            conflict = posting == record.posting_type or (
+                posting not in SPECIAL and record.posting_type not in SPECIAL
+            )
         else:
             slots = {after["leave_slot"], record.leave_slot}
             conflict = (
@@ -110,9 +112,13 @@ def inspect_record(db, kind, values, identity=None):
                 DutySlot.duty_date <= end,
             )
         )
+        from app.services.rota_safety import slot_leave_blocks
+
+        proposal = LeaveRequest(leave_slot=after["leave_slot"])
         duties = [
             {"id": str(a.id), "date": str(a.duty_slot.duty_date), "duty": a.duty_slot.slot_label}
             for a in assignments
+            if slot_leave_blocks(proposal, a.duty_slot)
         ]
     token = hashlib.sha256(
         json.dumps(

@@ -113,7 +113,7 @@ def slot_leave_blocks(leave: LeaveRequest, slot: DutySlot) -> bool:
     duties AM/PM/NIGHT are compared with the slot start hour; unknown slot values block."""
     leave_slot = leave.leave_slot.upper()
     if slot.is_24hr:
-        return leave_slot in {"FULL_DAY", "AM", "PM", "NIGHT"}
+        return True
     start_hour = slot.starts_at.hour
     if leave_slot == "FULL_DAY":
         return True

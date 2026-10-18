@@ -3970,7 +3970,7 @@ function renderPostingEditorCards(assignments: UnitAssignment[]): string {
   if (!assignments.length) return '<p class="empty-state">No members assigned yet. Add the first posting below.</p>';
   return assignments.map(assignment => `<article class="mw-history" data-unit-row-form="${assignment.id}">
     <button type="button" class="member-profile-link" data-open-member="${assignment.person.id}" data-profile-tab="postings">${escapeHtml(assignment.person.canonical_name)}</button>
-    <p>${escapeHtml(assignment.posting_type)} ? ${assignment.starts_on} to ${assignment.ends_on || "Ongoing"}</p>
+    <p>${escapeHtml(assignment.posting_type)} &middot; ${assignment.starts_on} to ${assignment.ends_on || "Ongoing"}</p>
     <p>${escapeHtml(assignment.notes || "")}</p><div class="registry-actions">
     <button type="button" class="primary" data-edit-operational-record="${assignment.id}" data-record-kind="units">Edit posting</button>
     <button type="button" data-delete-unit-assignment="${assignment.id}">Remove posting</button></div></article>`).join("");

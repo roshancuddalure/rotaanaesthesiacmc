@@ -38,6 +38,7 @@ def audit(
 
 def lock_namespace(db: Session, namespace: str) -> None:
     if db.get_bind().dialect.name == "postgresql":
+        db.execute(text("SELECT pg_advisory_xact_lock(hashtext('normalization-context'))"))
         db.execute(
             text("SELECT pg_advisory_xact_lock(hashtext(:namespace))"), {"namespace": namespace}
         )
@@ -126,6 +127,10 @@ def save_unit(
         raise HTTPException(409, "This unit changed. Reload it before saving.")
     name = display_text(values["name"])
     campus = display_text(values.get("campus") or "") or None
+    if campus and (not unit or campus != unit.campus):
+        from app.services.reference_catalog import canonical_label
+
+        campus = canonical_label(db, "campus", campus)
     code = (values.get("code") or suggested_unit_code(name, campus)).strip().upper()
     if not name or len(name) > 255:
         raise HTTPException(422, "Enter a unit name (maximum 255 characters)")
@@ -155,7 +160,7 @@ def save_unit(
             )
     aliases = {display_text(a) for a in values.get("aliases", []) if display_text(a)}
     # A rename retains the previous label as an explicit alias.
-    if unit and unit.name != name:
+    if unit and (unit.name != name or unit.campus != campus):
         aliases.add(unit.name if not unit.campus else f"{unit.campus} {unit.name}")
     owned = unit_aliases(db, unit) if unit else []
     for alias in sorted(aliases):

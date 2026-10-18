@@ -276,7 +276,7 @@ def test_unit_management_updates_and_validates_call_wise_minimums() -> None:
         assert "cannot exceed assigned members" in blocked.json()["detail"]
 
 
-def test_unit_management_flags_overlapping_primary_assignment_and_allows_update_delete() -> None:
+def test_unit_management_rejects_overlapping_primary_assignment_and_allows_special_update_delete() -> None:
     with unit_client() as client:
         token = sign_in(client)
         sujil_id, main_id, cardiac_id = seeded_ids(client, token)
@@ -305,16 +305,15 @@ def test_unit_management_flags_overlapping_primary_assignment_and_allows_update_
                 "ends_on": "2026-06-20",
             },
         )
+        assert second.status_code == 409
+        assert "Overlapping" in second.json()["detail"]
+        # A distinct special posting may coexist with the primary unit assignment.
+        second = client.post(
+            "/api/v1/unit-management/assignments", headers=auth_headers(token),
+            json={"person_id":sujil_id,"posting_type":"PAIN","starts_on":"2026-06-15","ends_on":"2026-06-20"},
+        )
         assert second.status_code == 200
         second_id = second.json()["id"]
-
-        response = client.get(
-            "/api/v1/unit-management/month?month=2026-06",
-            headers=auth_headers(token),
-        )
-        issues = response.json()["validation_issues"]
-        assert any(issue["code"] == "OVERLAPPING_PRIMARY_ASSIGNMENT" for issue in issues)
-        assert any(issue["code"] == "MULTIPLE_UNITS_IN_MONTH" for issue in issues)
 
         updated = client.put(
             f"/api/v1/unit-management/assignments/{second_id}",

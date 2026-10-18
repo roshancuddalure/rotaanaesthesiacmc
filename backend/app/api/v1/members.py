@@ -226,6 +226,8 @@ def list_members(q: str | None = None, db: Session = Depends(get_db)) -> list[Me
 @router.post("/admin/members", dependencies=[Depends(require_admin)])
 def create_member(payload: MemberCreate, db: Session = Depends(get_db),
                   operator: UserAccount = Depends(require_admin)) -> MemberRead:
+    from app.services.reference_registry import lock_namespace
+    lock_namespace(db,"normalization-edit")
     canonical_name = payload.canonical_name.strip()
     existing = db.scalar(
         select(Person)
@@ -262,6 +264,8 @@ def update_member(
     db: Session = Depends(get_db),
     operator: UserAccount = Depends(require_admin),
 ) -> MemberRead:
+    from app.services.reference_registry import lock_namespace
+    lock_namespace(db,"normalization-edit")
     db.scalar(select(Person).where(Person.id == person_id).with_for_update())
     person = get_member_or_404(db, person_id)
     if payload.revision is not None and payload.revision != revision(person):
@@ -292,6 +296,8 @@ def update_member(
 @router.post("/admin/members/{person_id}/archive", dependencies=[Depends(require_admin)])
 def archive_member(person_id: UUID, db: Session = Depends(get_db),
                    operator: UserAccount = Depends(require_admin)) -> MemberRead:
+    from app.services.reference_registry import lock_namespace
+    lock_namespace(db,"normalization-edit")
     person = get_member_or_404(db, person_id)
     if person.active_status != "archived":
         before = snapshot(person)
@@ -305,6 +311,8 @@ def archive_member(person_id: UUID, db: Session = Depends(get_db),
 @router.post("/admin/members/{person_id}/restore", dependencies=[Depends(require_admin)])
 def restore_member(person_id: UUID, db: Session = Depends(get_db),
                    operator: UserAccount = Depends(require_admin)) -> MemberRead:
+    from app.services.reference_registry import lock_namespace
+    lock_namespace(db,"normalization-edit")
     person = get_member_or_404(db, person_id)
     if person.active_status == "archived":
         before = snapshot(person)
@@ -318,6 +326,8 @@ def restore_member(person_id: UUID, db: Session = Depends(get_db),
 @router.post("/admin/members/{person_id}/aliases", dependencies=[Depends(require_admin)])
 def add_alias(person_id: UUID, payload: AliasCreate, db: Session = Depends(get_db),
               operator: UserAccount = Depends(require_admin)) -> MemberRead:
+    from app.services.reference_registry import lock_namespace
+    lock_namespace(db,"normalization-edit")
     person = get_member_or_404(db, person_id)
     alias = payload.alias.strip()
     if not alias or len(alias) > 255:
@@ -341,6 +351,8 @@ def add_designation(
     db: Session = Depends(get_db),
     operator: UserAccount = Depends(require_admin),
 ) -> MemberRead:
+    from app.services.reference_registry import lock_namespace
+    lock_namespace(db,"normalization-edit")
     person = get_member_or_404(db, person_id)
     before = snapshot(person)
     try:
@@ -349,10 +361,11 @@ def add_designation(
             "effective_to": d.effective_to} for d in person.designations], payload.model_dump()])
     except ValueError as exc:
         raise HTTPException(422, str(exc)) from exc
+    from app.services.reference_catalog import canonical_label
     db.add(
         PersonDesignation(
             person=person,
-            designation=payload.designation.strip(),
+            designation=canonical_label(db,"designation",payload.designation),
             effective_from=payload.effective_from,
             effective_to=payload.effective_to,
             source="manual",

@@ -151,6 +151,7 @@ export async function openRecordEditor(
           draft.person_id = m.id;
           dirty = true;
           render();
+          dialog.querySelector<HTMLSelectElement>("[name=person_id]")?.focus();
         });
       });
     dialog
@@ -164,6 +165,9 @@ export async function openRecordEditor(
               draft.unit_id = unit.id;
               dirty = true;
               render();
+              dialog
+                .querySelector<HTMLSelectElement>("[name=unit_id]")
+                ?.focus();
             }
           },
           undefined,

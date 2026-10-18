@@ -254,7 +254,7 @@ def clean_cell_value(value: Any) -> str:
 def clean_person_name(value: Any) -> str:
     cleaned = clean_cell_value(value)
     cleaned = cleaned.split("|", 1)[0].strip()
-    cleaned = re.sub(r"^(dr|prof|mr|mrs|ms)\.?\s*", "", cleaned, flags=re.IGNORECASE)
+    cleaned = re.sub(r"^(?:dr|prof|mr|mrs|ms)(?:\.\s*|\s+)", "", cleaned, flags=re.IGNORECASE)
     cleaned = re.sub(r"\s*\([^)]*\)\s*", " ", cleaned)
     cleaned = re.sub(
         r"\b(?:bp|block(?:\s+posting)?)\s*(?:\d{1,2}\s*(?:st|nd|rd|th)?\s*(?:-|to)\s*\d{1,2}|\d{1,2})?\b",
@@ -262,7 +262,7 @@ def clean_person_name(value: Any) -> str:
         cleaned,
         flags=re.IGNORECASE,
     )
-    cleaned = re.sub(r"\b(dr|prof|mr|mrs|ms)\.?\s*", "", cleaned, flags=re.IGNORECASE)
+    cleaned = re.sub(r"\b(?:dr|prof|mr|mrs|ms)(?:\.\s*|\s+)", "", cleaned, flags=re.IGNORECASE)
     cleaned = re.sub(
         r"\s*[-–—]?\s*(till|until)\s+[a-z]{3,9}\s+\d{1,2}\b.*$",
         " ",
@@ -295,7 +295,8 @@ def is_valid_person_name(value: Any) -> bool:
     abbreviation (so a doctor named e.g. "May" or "Jan" is rejected - handbook B15).
     """
     cleaned = clean_person_name(value)
-    normalized = normalize_label(cleaned)
+    from app.services.normalization import label_key
+    normalized = normalize_label(cleaned) or label_key(cleaned)
     if not cleaned or normalized in IGNORED_PERSON_VALUES or normalized in NON_PERSON_LABELS:
         return False
     if re.fullmatch(r"[\d\W_]+", cleaned):
@@ -304,7 +305,8 @@ def is_valid_person_name(value: Any) -> bool:
         return False
     if re.search(r"\b\d{1,2}\s*(st|nd|rd|th)?\s*(to|-)\s*\d{1,2}\b", cleaned, re.IGNORECASE):
         return False
-    if len(re.findall(r"[A-Za-z]", cleaned)) < 3:
+    letters = [character for character in cleaned if character.isalpha()]
+    if not letters or (all(character.isascii() for character in letters) and len(letters) < 3):
         return False
     if normalized.startswith(("unit ", "main pac", "rc pac", "main shift", "rc shift", "pb shift")):
         return False

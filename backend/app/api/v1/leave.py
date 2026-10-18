@@ -15,7 +15,7 @@ from sqlalchemy.orm import Session, selectinload
 from app.api.v1.auth import current_user
 from app.db.session import get_db
 from app.services.reference_catalog import resolve_value
-from app.services.reference_registry import audit
+from app.services.reference_registry import audit, lock_namespace
 from app.models import LeaveRequest, MemberActivity, Person, UserAccount
 from app.services.leave import (
     leave_day_entries,
@@ -58,6 +58,7 @@ class LeaveRequestCreate(BaseModel):
     ends_on: date
     status: str = "approved"
     notes: str | None = None
+    acknowledge_duties: bool = False
 
     # Values are free text (no allowed-value list). Only status "approved" blocks duties, so a
     # typo such as "aproved" silently creates non-blocking leave (handbook B13). The endpoint
@@ -79,6 +80,7 @@ class LeaveRequestUpdate(BaseModel):
     ends_on: date
     status: str
     notes: str | None = None
+    acknowledge_duties: bool = False
 
 
 class LeaveCalendarRead(BaseModel):
@@ -186,6 +188,12 @@ def create_leave_request(
     _user: UserAccount = Depends(current_user),
     db: Session = Depends(get_db),
 ) -> LeaveRequestRead:
+    from app.services.operational_records import inspect_record
+    lock_namespace(db,"operational-import")
+    get_active_person_or_404(db,payload.person_id)
+    review = inspect_record(db,"leave",payload.model_dump(mode="json"))
+    if review["duties"] and not payload.acknowledge_duties:
+        raise HTTPException(409, {"message":"Review affected duties before saving leave", "duties":review["duties"]})
     validate_dates(payload.starts_on, payload.ends_on)
     normalized = validated_leave_values(db, payload)
     person = get_active_person_or_404(db, payload.person_id)
@@ -201,6 +209,11 @@ def create_leave_request(
         notes=payload.notes.strip() if payload.notes else None,
     )
     db.add(leave)
+    db.flush()
+    details = {"before":None,"after":review["after"],"affected_duties":review["duties"]}
+    audit(db,_user,"leave_created",leave.id,details)
+    db.add(MemberActivity(person_id=person.id,operator_id=_user.id,operator_name=_user.display_name or _user.username,
+                          action="leave_created",details=details))
     db.commit()
     db.refresh(leave)
     return leave_to_read(get_leave_or_404(db, leave.id))
@@ -213,6 +226,12 @@ def update_leave_request(
     _user: UserAccount = Depends(current_user),
     db: Session = Depends(get_db),
 ) -> LeaveRequestRead:
+    from app.services.operational_records import inspect_record
+    lock_namespace(db,"operational-import")
+    get_active_person_or_404(db,payload.person_id)
+    review = inspect_record(db,"leave",payload.model_dump(mode="json"),leave_id)
+    if review["duties"] and not payload.acknowledge_duties:
+        raise HTTPException(409, {"message":"Review affected duties before saving leave", "duties":review["duties"]})
     validate_dates(payload.starts_on, payload.ends_on)
     normalized = validated_leave_values(db, payload)
     leave = get_leave_or_404(db, leave_id)
@@ -225,6 +244,10 @@ def update_leave_request(
     leave.status = normalized["status"]
     leave.raw_person_name = person.canonical_name
     leave.notes = payload.notes.strip() if payload.notes else None
+    details = {"before":review["before"],"after":review["after"],"affected_duties":review["duties"]}
+    audit(db,_user,"leave_updated",leave.id,details)
+    db.add(MemberActivity(person_id=person.id,operator_id=_user.id,operator_name=_user.display_name or _user.username,
+                          action="leave_updated",details=details))
     db.commit()
     return leave_to_read(get_leave_or_404(db, leave.id))
 
@@ -235,6 +258,8 @@ def cancel_leave_request(
     _user: UserAccount = Depends(current_user),
     db: Session = Depends(get_db),
 ) -> LeaveRequestRead:
+    from app.services.reference_registry import lock_namespace
+    lock_namespace(db,"normalization-edit")
     leave = get_leave_or_404(db, leave_id)
     before = {
         "status": leave.status,

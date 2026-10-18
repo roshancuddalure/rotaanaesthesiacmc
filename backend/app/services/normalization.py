@@ -59,8 +59,12 @@ def unit_key(value: str) -> str:
 
 
 def member_lookup(db: Session, *, active_only: bool = True) -> dict[str, Person | None]:
-    query = select(Person).options(selectinload(Person.aliases), selectinload(Person.designations),
-                                   selectinload(Person.postings).selectinload(PersonPosting.unit))
+    query = select(Person).options(
+        selectinload(Person.aliases),
+        selectinload(Person.designations),
+        selectinload(Person.call_level_changes),
+        selectinload(Person.postings).selectinload(PersonPosting.unit),
+    )
     if active_only:
         query = query.where(Person.active_status == "active")
     lookup: dict[str, Person | None] = {}
@@ -91,14 +95,26 @@ def member_candidates(
 
 
 def resolve_member(
-    db: Session, name: str, person_id: UUID | None = None, *, active_only: bool = True,
-    as_of: date | None = None, lookup: dict[str, Person | None] | None = None
+    db: Session,
+    name: str,
+    person_id: UUID | None = None,
+    *,
+    active_only: bool = True,
+    as_of: date | None = None,
+    lookup: dict[str, Person | None] | None = None,
 ) -> dict:
     if lookup is None:
         lookup = member_lookup(db, active_only=False)
     person = db.get(Person, person_id) if person_id else lookup.get(member_key(name))
     ambiguous = not person_id and member_key(name) in lookup and person is None
     ranked = member_candidates(name, lookup)
+    if ambiguous:
+        for candidate in db.scalars(select(Person).options(selectinload(Person.aliases))):
+            if member_key(name) in {
+                member_key(v)
+                for v in [candidate.canonical_name, *(a.alias for a in candidate.aliases)]
+            }:
+                ranked.insert(0, (1.0, candidate))
     if person and person not in [p for _, p in ranked]:
         ranked.insert(0, (1.0, person))
     candidates = []
@@ -119,12 +135,28 @@ def resolve_member(
                 if p.unit and p.starts_on <= today and (p.ends_on is None or p.ends_on >= today)
             }
         )
+        from app.services.member_profile import default_call_level_on
+
+        active_primary = sorted(
+            (
+                p
+                for p in candidate.postings
+                if p.unit and p.starts_on <= today and (p.ends_on is None or p.ends_on >= today)
+            ),
+            key=lambda p: p.starts_on,
+        )
+        effective_call = (
+            active_primary[-1].posting_type
+            if active_primary
+            else default_call_level_on(candidate, today)
+        )
         candidates.append(
             {
                 "id": str(candidate.id),
                 "name": candidate.canonical_name,
                 "status": candidate.active_status,
-                "call_level": candidate.call_level,
+                "call_level": effective_call,
+                "default_call_level": candidate.call_level,
                 "designation": positions[-1].designation if positions else None,
                 "units": units,
                 "score": round(score, 3),

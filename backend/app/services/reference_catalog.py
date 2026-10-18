@@ -94,6 +94,8 @@ def base_behavior(kind: str, key: str) -> dict:
         }
     if kind == "posting_type":
         return {"maps_to": key, "requires_unit": key not in {"PAIN", "SICU", "DRP"}}
+    if kind == "leave_slot":
+        return {"maps_to": key}
     return {}
 
 
@@ -176,6 +178,26 @@ def resolve_value(db: Session, kind: str, raw: str) -> tuple[str, str]:
     return str(item["behavior"].get("maps_to") or item["key"]), "Approved reference label or alias"
 
 
+def canonical_label(db: Session, kind: str, raw: str) -> str:
+    """Explicit text creation stays available; known aliases use their canonical display label."""
+    from app.services.normalization import display_text
+
+    value = display_text(raw)
+    key = label_key(value)
+    matches = [
+        i
+        for i in catalog(db, kind)
+        if key in {label_key(v) for v in [i["key"], i["label"], *i["aliases"]]}
+    ]
+    if len(matches) > 1:
+        raise HTTPException(409, "This label is ambiguous; choose its reference definition")
+    if matches and not matches[0]["active"]:
+        raise HTTPException(
+            422, "This reference is archived; choose or restore an active definition"
+        )
+    return matches[0]["label"] if matches else value
+
+
 def reference_usage(db: Session, kind: str, item: dict) -> dict:
     keys = {label_key(v) for v in [item["key"], item["label"], *item["aliases"]]}
     column = {
@@ -242,11 +264,13 @@ def save_reference(db: Session, operator, kind: str, key: str, values: dict) -> 
         except ValueError as exc:
             raise HTTPException(422, "Duty start/end times must agree with its duration") from exc
         behavior = rule.model_dump(mode="json")
-    if kind == "leave_status":
+    if kind in {"leave_status", "leave_slot"}:
         target = behavior.get("maps_to")
-        if target not in DEFAULTS["leave_status"]:
-            raise HTTPException(422, "Choose the supported approval state this label represents")
-        if key in DEFAULTS["leave_status"] and target != key:
+        if target not in DEFAULTS[kind]:
+            raise HTTPException(
+                422, "Choose the supported approval state or leave session this label represents"
+            )
+        if key in DEFAULTS[kind] and target != key:
             raise HTTPException(
                 422, "A built-in approval state cannot change meaning; add a separate label"
             )
@@ -269,6 +293,17 @@ def save_reference(db: Session, operator, kind: str, key: str, values: dict) -> 
     value.version = (previous["version"] if previous else 0) + 1
     value.updated_at = datetime.utcnow()
     if kind == "duty_type":
+        for mapping in list(
+            db.scalars(
+                select(AdminMapping).where(
+                    AdminMapping.mapping_type == "duty_label",
+                    AdminMapping.target_key == key,
+                    AdminMapping.source == "reference_registry",
+                )
+            )
+        ):
+            if mapping.source_label not in aliases:
+                db.delete(mapping)
         for alias in aliases:
             matches = list(
                 db.scalars(select(AdminMapping).where(AdminMapping.mapping_type == "duty_label"))

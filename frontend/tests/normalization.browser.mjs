@@ -69,11 +69,21 @@ try {
           ...unit,
           ...payload,
           id: "33333333-3333-3333-3333-333333333333",
+          call_minimums: (payload.call_minimums || []).map((row) => [
+            row.call_level,
+            row.minimum_free_people,
+          ]),
         };
         units.push(json);
       } else if (path.endsWith("/suggest-code")) json = { code: "MAIN_UNIT_5" };
       else if (path.includes("/catalog/"))
-        json = refs[path.split("/").at(-1)] || [];
+        json = (refs[path.split("/").at(-1)] || []).map((item) => ({
+          ...item,
+          aliases: [],
+          version: 0,
+          behavior: { maps_to: item.key },
+          usage: { records: 0 },
+        }));
       else if (path.endsWith("/preview") && path.includes("/records/")) {
         const payload = req.postDataJSON();
         json = {
@@ -208,18 +218,22 @@ try {
       await openOperationalImport("leave", "2026-10", () => {}, true);
     });
     const importer = page.locator("dialog.operational-import");
-    await importer
-      .locator("input[type=file]")
-      .setInputFiles({
-        name: "leave.csv",
-        mimeType: "text/csv",
-        buffer: Buffer.from("Employee,Beginning\nAsha AJ,2026-10-03\n"),
-      });
+    await importer.locator("input[type=file]").setInputFiles({
+      name: "leave.csv",
+      mimeType: "text/csv",
+      buffer: Buffer.from("Employee,Beginning\nAsha AJ,2026-10-03\n"),
+    });
     await importer.locator('[data-map="0"]').waitFor({ state: "attached" });
     await importer
       .getByRole("button", { name: "Preview and normalize", exact: true })
       .click();
     await importer.locator("[data-review-row]").first().waitFor();
+    await importer.locator("[data-include]").first().uncheck();
+    assert.match(
+      await importer.locator("[data-review-counts]").innerText(),
+      /25 ready.*1 excluded/,
+    );
+    await importer.locator("[data-include]").first().check();
     await importer
       .locator("[data-row][data-field=starts_on]")
       .first()
@@ -238,9 +252,173 @@ try {
       "Paging must preserve stale-review protection",
     );
     await importer
+      .getByRole("button", { name: "Manage labels and mappings", exact: true })
+      .click();
+    await page
+      .locator("dialog.reference-workspace")
+      .getByRole("heading", {
+        name: "Reference labels and mappings",
+        exact: true,
+      })
+      .waitFor();
+    await page
+      .getByRole("button", { name: "Close reference management", exact: true })
+      .click();
+    assert.equal(
+      await importer.locator("[data-apply]").isDisabled(),
+      true,
+      "Nested reference management must retain the pending review state",
+    );
+    await importer
       .getByRole("button", { name: "Refresh normalized preview", exact: true })
       .click();
     await importer.locator("[data-apply]:not([disabled])").waitFor();
+    await importer.locator("[data-apply]").click();
+    await importer
+      .getByRole("heading", { name: "Import complete", exact: true })
+      .waitFor();
+    const [report] = await Promise.all([
+      page.waitForEvent("download"),
+      importer.locator("[data-download-completed-report]").click(),
+    ]);
+    assert.equal(report.suggestedFilename(), "leave-normalization-report.csv");
+    assert.deepEqual(errors, []);
+    workflows++;
+    await page.close();
+  }
+  for (const width of [1280, 390]) {
+    const page = await browser.newPage({ viewport: { width, height: 850 } });
+    const errors = [];
+    page.on("pageerror", (e) => errors.push(e.message));
+    await page.route("**/api/**", (route) => {
+      const path = new URL(route.request().url()).pathname;
+      let json = [];
+      if (path.endsWith("/auth/me"))
+        json = {
+          id: "operator",
+          username: "test",
+          display_name: "Test Operator",
+          role: "computer_admin",
+          active_status: "active",
+        };
+      else if (path.endsWith("/analysis/dashboard"))
+        return route.fulfill({
+          status: 503,
+          json: { detail: "Analysis unavailable in navigation fixture" },
+        });
+      else if (path.endsWith("/health")) json = { status: "ok" };
+      else if (path.endsWith("/mappings/options"))
+        json = { duty_types: [], mapping_types: [] };
+      else if (path.endsWith("/members")) json = [member];
+      else if (path.endsWith("/normalization/units")) json = [unit];
+      else if (path.includes("/normalization/catalog/"))
+        json = (refs[path.split("/").at(-1)] || []).map((i) => ({
+          ...i,
+          aliases: [],
+          version: 0,
+          behavior: { maps_to: i.key },
+          usage: { records: 0 },
+        }));
+      else if (path.endsWith("/unit-management/month"))
+        json = {
+          month: "2026-10",
+          starts_on: "2026-10-01",
+          ends_on: "2026-10-31",
+          units: [unit],
+          assignments: [],
+          unit_summaries: [],
+          unit_call_minimums: [],
+          validation_issues: [],
+        };
+      else if (path.endsWith("/leave/calendar"))
+        json = {
+          month: "2026-10",
+          summary: {
+            month: "2026-10",
+            starts_on: "2026-10-01",
+            ends_on: "2026-10-31",
+            total_requests: 0,
+            people_on_leave: 0,
+            total_leave_days: 0,
+            call_level_counts: {},
+            unit_counts: {},
+          },
+          days: {},
+        };
+      else if (path.endsWith("/leave/pressure"))
+        json = { days: [], call_level_totals: {}, unit_totals: {} };
+      return route.fulfill({ json });
+    });
+    await page.goto(base);
+    await page
+      .locator('[data-view="units"]')
+      .first()
+      .evaluate((button) => button.click());
+    await page.locator("[data-add-department-unit]").click();
+    await page.locator("dialog.reference-workspace [name=name]").waitFor();
+    await page
+      .locator("dialog.reference-workspace [data-close]")
+      .first()
+      .click();
+    await page.locator('[data-open-normalized-import="units"]').click();
+    await page
+      .getByRole("heading", {
+        name: "Import unitwise assignments",
+        exact: true,
+      })
+      .waitFor();
+    await page
+      .getByRole("button", { name: "Close import review", exact: true })
+      .click();
+    await page.locator('[data-add-operational-record="units"]').click();
+    await page
+      .getByRole("heading", { name: "Add posting", exact: true })
+      .waitFor();
+    await page
+      .getByRole("button", { name: "Close editor", exact: true })
+      .click();
+    await page
+      .locator('[data-view="leave"]')
+      .first()
+      .evaluate((button) => button.click());
+    await page.locator('[data-add-operational-record="leave"]').click();
+    await page
+      .getByRole("heading", { name: "Add leave", exact: true })
+      .waitFor();
+    await page
+      .getByRole("button", { name: "Close editor", exact: true })
+      .click();
+    await page.locator('[data-open-normalized-import="leave"]').click();
+    await page
+      .locator("dialog")
+      .getByRole("heading", { name: "Import leave", exact: true })
+      .waitFor();
+    await page
+      .getByRole("button", { name: "Close import review", exact: true })
+      .click();
+    await page
+      .locator('[data-view="mappings"]')
+      .first()
+      .evaluate((button) => button.click());
+    await page.locator("[data-create-import-mapping]").click();
+    await page
+      .getByRole("heading", { name: "Add Mapping", exact: true })
+      .waitFor();
+    await page
+      .getByRole("button", { name: "Close mapping creation", exact: true })
+      .click();
+    await page.locator("[data-manage-reference-catalog]").click();
+    await page
+      .getByRole("heading", {
+        name: "Reference labels and mappings",
+        exact: true,
+      })
+      .waitFor();
+    await page.locator("dialog [data-kind]").selectOption("duty_type");
+    await page.locator("dialog [name=duration_hours]").waitFor();
+    await page
+      .getByRole("button", { name: "Close reference management", exact: true })
+      .click();
     assert.deepEqual(errors, []);
     workflows++;
     await page.close();

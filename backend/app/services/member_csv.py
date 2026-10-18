@@ -4,7 +4,6 @@ import csv
 import io
 from collections import Counter
 from datetime import date, datetime, timedelta
-from difflib import SequenceMatcher
 from uuid import UUID
 
 from fastapi import HTTPException
@@ -12,7 +11,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
 from app.models import MemberImportPreview, Person, PersonDesignation, UserAccount
-from app.services.normalization import member_key, member_lookup
+from app.services.normalization import member_candidates, member_key, member_lookup
 from app.services.member_profile import (
     ensure_unique_name, record_activity, revision, snapshot, validate_designations, validate_identity,
 )
@@ -88,6 +87,14 @@ def build_preview(db: Session, rows: list[dict], mode: str) -> list[dict]:
     used_ids: set[str] = set()
     for row in rows:
         values = row["values"]
+        if values.get("designation"):
+            from app.services.reference_catalog import canonical_label
+            try:
+                values = {**values, "designation":canonical_label(db,"designation",values["designation"])}
+                row = {**row,"original_values":row.get("original_values",row["values"]),"values":values}
+            except HTTPException:
+                # Existing preview error handling reports archived/conflicting labels below.
+                pass
         name = values.get("canonical_name", "")
         key = name_key(name)
         errors = [row["parse_error"]] if row.get("parse_error") else []
@@ -116,6 +123,8 @@ def build_preview(db: Session, rows: list[dict], mode: str) -> list[dict]:
             name = validate_identity(name, status, call_level)
             ensure_unique_name(db, name, person)
             if values.get("designation"):
+                from app.services.reference_catalog import canonical_label
+                canonical_label(db,"designation",values["designation"])
                 start = date.fromisoformat(values.get("designation_effective_from", ""))
                 proposed = [{"designation": d.designation, "effective_from": d.effective_from,
                              "effective_to": d.effective_to} for d in person.designations] if person else []
@@ -147,13 +156,21 @@ def build_preview(db: Session, rows: list[dict], mode: str) -> list[dict]:
         if person and person.active_status != "active" and status == "active":
             errors.append("Reactivate this member explicitly in their profile before importing")
         if not person and not errors and values.get("_confirm_distinct") != "yes":
-            suggestions = [{"id": str(p.id), "name": p.canonical_name} for p in people
-                           if SequenceMatcher(None, key, name_key(p.canonical_name)).ratio() >= .85][:5]
+            today = date.today()
+            suggestions = [{"id": str(p.id), "name": p.canonical_name, "status":p.active_status,
+                            "call_level":p.call_level, "designation":next((d.designation for d in sorted(p.designations,key=lambda d:d.effective_from,reverse=True)
+                                if d.effective_from<=today and (d.effective_to is None or d.effective_to>=today)),None),
+                            "units":sorted({f"{a.unit.campus or ''} {a.unit.name}".strip() for a in p.postings
+                                            if a.unit and a.starts_on<=today and (a.ends_on is None or a.ends_on>=today)})}
+                           for score,p in member_candidates(name,names) if score >= .85]
         if person and before == after and not values.get("designation"):
             action = "unchanged"
         result.append({**row, "action": "invalid" if errors else "needs_review" if suggestions else action,
                        "errors": errors, "suggestions": suggestions, "before": before, "after": after,
                        "designation_change": designation_change,
+                       "normalizations":[{"field":field,"original":row.get("original_values",values).get(field,""),
+                           "proposed":proposed,"reason":"Validated member value; blank update fields preserve existing values"}
+                           for field,proposed in after.items()],
                        "person_id": str(person.id) if person else None,
                        "revision": revision(person) if person else None})
     return result
@@ -161,6 +178,8 @@ def build_preview(db: Session, rows: list[dict], mode: str) -> list[dict]:
 
 def apply_preview(db: Session, preview: MemberImportPreview, operator: UserAccount,
                   excluded: list[int]) -> dict:
+    from app.services.reference_registry import lock_namespace
+    lock_namespace(db,"member-import")
     if preview.operator_id != operator.id:
         raise HTTPException(403, "This preview belongs to another operator")
     if preview.result is not None:

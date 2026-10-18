@@ -1,6 +1,6 @@
 import { request, type DepartmentMember } from "./services/api";
-import { workspaceDialog } from "./member-workspace";
-import { openUnitRegistry } from "./reference-workspace";
+import { workspaceDialog, openMemberWorkspace } from "./member-workspace";
+import { openUnitRegistry, openReferenceCatalog } from "./reference-workspace";
 
 type Row = Record<string, any>;
 type Preview = {
@@ -32,7 +32,11 @@ export async function createMemberInline(
   let memberDraftDirty = false;
   let lookupSequence = 0;
   const close = () => {
-    if (busy || memberDraftDirty && !confirm("Discard this new member draft?")) return;
+    if (
+      busy ||
+      (memberDraftDirty && !confirm("Discard this new member draft?"))
+    )
+      return;
     dialog.close();
     dialog.remove();
   };
@@ -43,20 +47,68 @@ export async function createMemberInline(
   });
   async function checkExisting() {
     const current = ++lookupSequence;
-    const nameInput=dialog.querySelector<HTMLInputElement>("[name=canonical_name]")!;
+    const nameInput = dialog.querySelector<HTMLInputElement>(
+      "[name=canonical_name]",
+    )!;
     if (!nameInput.value.trim()) return;
     try {
-      const result=await request<Row>("/api/v1/normalization/members/resolve",{method:"POST",body:JSON.stringify({name:nameInput.value})});
-      if(current!==lookupSequence || !dialog.open)return;
-      const root=dialog.querySelector<HTMLElement>("[data-existing-members]")!;
-      root.innerHTML=result.candidates.length?`<h3>Check existing members</h3>${result.candidates.map((c:Row)=>`<article class="mw-history"><strong>${esc(c.name)}</strong><p>${esc(c.status)} ? ${esc(c.call_level || "Unassigned")} ? ${esc(c.designation || "No current designation")}</p>${c.status === "active" ? `<button type="button" data-use-existing="${c.id}">Use this member</button>` : `<button type="button" data-review-existing="${c.id}">Review / restore member</button>`}</article>`).join("")}`:"<p>No matching identities found.</p>";
-      root.querySelectorAll<HTMLButtonElement>("[data-use-existing]").forEach(button=>button.onclick=async()=>{const members=await request<DepartmentMember[]>("/api/v1/admin/members");const member=members.find(m=>m.id===button.dataset.useExisting);if(member){memberDraftDirty=false;close();done(member);}});
-      root.querySelectorAll<HTMLButtonElement>("[data-review-existing]").forEach(button=>button.onclick=async()=>{const {openMemberWorkspace}=await import("./member-workspace");await openMemberWorkspace(button.dataset.reviewExisting!,true,()=>{void checkExisting();},[],"details","active");});
-    } catch(error) {if(dialog.open)dialog.querySelector("[data-error]")!.textContent=(error as Error).message;}
+      const result = await request<Row>(
+        "/api/v1/normalization/members/resolve",
+        { method: "POST", body: JSON.stringify({ name: nameInput.value }) },
+      );
+      if (current !== lookupSequence || !dialog.open) return;
+      const root = dialog.querySelector<HTMLElement>(
+        "[data-existing-members]",
+      )!;
+      root.innerHTML = result.candidates.length
+        ? `<h3>Check existing members</h3>${result.candidates.map((c: Row) => `<article class="mw-history"><strong>${esc(c.name)}</strong><p>${esc(c.status)} &rarr; ${esc(c.call_level || "Unassigned")} &rarr; ${esc(c.designation || "No current designation")}</p>${c.status === "active" ? `<button type="button" data-use-existing="${c.id}">Use this member</button>` : `<button type="button" data-review-existing="${c.id}">Review / restore member</button>`}</article>`).join("")}`
+        : "<p>No matching identities found.</p>";
+      root.querySelectorAll<HTMLButtonElement>("[data-use-existing]").forEach(
+        (button) =>
+          (button.onclick = async () => {
+            const members = await request<DepartmentMember[]>(
+              "/api/v1/admin/members",
+            );
+            const member = members.find(
+              (m) => m.id === button.dataset.useExisting,
+            );
+            if (member) {
+              memberDraftDirty = false;
+              close();
+              done(member);
+            }
+          }),
+      );
+      root
+        .querySelectorAll<HTMLButtonElement>("[data-review-existing]")
+        .forEach(
+          (button) =>
+            (button.onclick = async () => {
+              await openMemberWorkspace(
+                button.dataset.reviewExisting!,
+                true,
+                () => {
+                  void checkExisting();
+                },
+                [],
+                "details",
+                "active",
+              );
+            }),
+        );
+    } catch (error) {
+      if (dialog.open)
+        dialog.querySelector("[data-error]")!.textContent = (
+          error as Error
+        ).message;
+    }
   }
-  dialog.querySelector<HTMLFormElement>("form")!.oninput=()=>{memberDraftDirty=true;};
-  dialog.querySelector<HTMLInputElement>("[name=canonical_name]")!.onblur=()=>void checkExisting();
-  if(name)void checkExisting();
+  dialog.querySelector<HTMLFormElement>("form")!.oninput = () => {
+    memberDraftDirty = true;
+  };
+  dialog.querySelector<HTMLInputElement>("[name=canonical_name]")!.onblur =
+    () => void checkExisting();
+  if (name) void checkExisting();
   dialog.querySelector<HTMLFormElement>("form")!.onsubmit = async (e) => {
     e.preventDefault();
     if (busy) return;
@@ -116,7 +168,7 @@ export async function openOperationalImport(
   const excluded = new Set<string>();
   let page = 0;
   const title = kind === "units" ? "Unitwise assignments" : "Leave";
-  dialog.innerHTML = `<header class="mw-header"><div><h2>Import ${title.toLowerCase()}</h2><p>Upload → Map → Normalize → Resolve → Review → Apply</p></div><button data-close type="button" aria-label="Close import review">×</button></header><div class="mw-content"><a href="/templates/${kind === "units" ? "unitwise-assignments" : "leave-records"}.csv" download>Download ${kind === "units" ? "unitwise" : "leave"} CSV template</a><details class="mw-csv-help"><summary>CSV examples</summary><p>Use one row per dated record. Replace the illustrative member and unit names with your department records.</p><pre>${kind === "units" ? "member_name,unit_name,posting_type,starts_on,ends_on\nDr Example Member,Main Unit IV,2ND_CALL,2026-10-01,2026-10-31" : "member_name,starts_on,ends_on,leave_type,leave_slot,status\nDr Example Member,2026-10-03,2026-10-04,CL,FULL_DAY,approved"}</pre></details><form data-settings><label>Month<input type="month" name="month" required value="${esc(month)}"></label><label>File (up to 5 MB and 5,000 rows)<input type="file" required accept="${kind === "units" ? ".csv,.xlsx,.xlsm,.txt" : ".csv,.xlsx,.xls"}"></label><label>Operation<select name="mode"><option value="append">Append new records</option><option value="update_matching">Update matching member/date records</option><option value="replace_month">Replace imported records in this month</option></select></label><label>Dates in this file<select name="date_format"><option value="auto">ISO / detect unambiguous dates</option><option value="DMY">Day / month / year</option><option value="MDY">Month / day / year</option></select></label><p>Ambiguous dates need an explicit format. Blank unitwise dates use the selected month. Leave needs a start date. Replacement preserves records outside the month${kind === "leave" ? " and manually entered leave" : ""}.</p><div data-mapping></div><button class="primary" type="submit">Preview and normalize</button></form><p data-message role="status"></p><section data-review></section></div>`;
+  dialog.innerHTML = `<header class="mw-header"><div><h2>Import ${title.toLowerCase()}</h2><p>Upload → Map → Normalize → Resolve → Review → Apply</p></div><button data-close type="button" aria-label="Close import review">×</button></header><div class="mw-content"><a href="/templates/${kind === "units" ? "unitwise-assignments" : "leave-records"}.csv" download>Download ${kind === "units" ? "unitwise" : "leave"} CSV template</a>${admin ? `<button type="button" data-manage-import-references>Manage labels and mappings</button>` : ""}<details class="mw-csv-help"><summary>CSV examples</summary><p>Use one row per dated record. Replace the illustrative member and unit names with your department records.</p><pre>${kind === "units" ? "member_name,unit_name,posting_type,starts_on,ends_on\nDr Example Member,Main Unit IV,2ND_CALL,2026-10-01,2026-10-31" : "member_name,starts_on,ends_on,leave_type,leave_slot,status\nDr Example Member,2026-10-03,2026-10-04,CL,FULL_DAY,approved"}</pre></details><form data-settings><label>Month<input type="month" name="month" required value="${esc(month)}"></label><label>File (up to 5 MB and 5,000 rows)<input type="file" required accept="${kind === "units" ? ".csv,.xlsx,.xlsm,.txt" : ".csv,.xlsx,.xls"}"></label><label>Operation<select name="mode"><option value="append">Append new records</option><option value="update_matching">Update matching member/date records</option><option value="replace_month">Replace imported records in this month</option></select></label><label>Dates in this file<select name="date_format"><option value="auto">ISO / detect unambiguous dates</option><option value="DMY">Day / month / year</option><option value="MDY">Month / day / year</option></select></label><p>Ambiguous dates need an explicit format. Blank unitwise dates use the selected month. Leave needs a start date. Replacement preserves records outside the month${kind === "leave" ? " and manually entered leave" : ""}.</p><div data-mapping></div><button class="primary" type="submit">Preview and normalize</button></form><p data-message role="status"></p><section data-review></section></div>`;
   const close = () => {
     if (
       busy ||
@@ -134,6 +186,16 @@ export async function openOperationalImport(
     close();
   });
   const message = dialog.querySelector<HTMLElement>("[data-message]")!;
+  dialog
+    .querySelector<HTMLButtonElement>("[data-manage-import-references]")
+    ?.addEventListener("click", () => {
+      void openReferenceCatalog(
+        () => {
+          dirtyPreview();
+        },
+        kind === "units" ? "posting_type" : "leave_type",
+      );
+    });
   async function loadOptions() {
     [members, units] = await Promise.all([
       request<DepartmentMember[]>("/api/v1/admin/members"),
@@ -191,7 +253,14 @@ export async function openOperationalImport(
         );
       if (file !== inspectedFile || !dialog.open) return;
       columns = result;
-      Object.assign(mapping, columns!.suggested);
+      Object.assign(
+        mapping,
+        Object.fromEntries(
+          Object.entries(columns!.suggested).filter(([, field]) =>
+            Boolean(field),
+          ),
+        ),
+      );
       renderMapping();
       message.textContent = columns!.headers.length
         ? "Check column mappings, then preview the records."
@@ -240,7 +309,10 @@ export async function openOperationalImport(
             ? result.detail
             : "Unable to preview this file",
         );
-      if (submittedVersion !== draftVersion || !dialog.open) throw new Error("Inputs changed while the preview was loading. Refresh the preview.");
+      if (submittedVersion !== draftVersion || !dialog.open)
+        throw new Error(
+          "Inputs changed while the preview was loading. Refresh the preview.",
+        );
       preview = result;
       finished = false;
       previewDirty = false;
@@ -266,8 +338,7 @@ export async function openOperationalImport(
       (select) =>
         (select.onchange = () => {
           const header = headerInfo.headers[Number(select.dataset.map)];
-          if (select.value) mapping[header] = select.value;
-          else delete mapping[header];
+          mapping[header] = select.value;
           dirtyPreview();
         }),
     );
@@ -276,10 +347,31 @@ export async function openOperationalImport(
     if (!preview) return;
     const root = dialog.querySelector<HTMLElement>("[data-review]")!;
     const shown = preview.rows.slice(page * 25, (page + 1) * 25);
-    root.innerHTML = `<h3>Resolve and review</h3><p>${preview.rows.filter((r) => !r.issues.length).length} ready · ${preview.rows.filter((r) => r.issues.length).length} need review · ${excluded.size} excluded</p>${preview.mode === "replace_month" ? `<details><summary>${preview.replacement_scope.length} existing records affected by replacement</summary>${preview.replacement_scope.map((r) => `<p>${esc(members.find((m) => m.id === r.person_id)?.canonical_name || r.person_id)} · ${esc(r.starts_on)} to ${esc(r.ends_on || "Ongoing")}</p>`).join("")}</details>` : ""}${shown
+    const reviewCounts = () =>
+      `${preview!.rows.filter((row) => !excluded.has(row.key) && !row.issues.length).length} ready - ${preview!.rows.filter((row) => !excluded.has(row.key) && row.issues.length).length} need review - ${excluded.size} excluded`;
+    const matchState = (row: Row) =>
+      excluded.has(row.key)
+        ? "Excluded"
+        : row.person_match.state === "ambiguous" ||
+            row.unit_match?.state === "ambiguous"
+          ? "Ambiguous"
+          : row.issues.some((issue: string) =>
+                /duplicate|repeated|already exists/i.test(issue),
+              )
+            ? "Duplicate"
+            : row.issues.some((issue: string) =>
+                  /invalid|ambiguous date|end date|outside.*month/i.test(issue),
+                )
+              ? "Invalid"
+              : row.issues.length
+                ? "Needs review"
+                : row.action === "create"
+                  ? "Matched - new record"
+                  : "Matched";
+    root.innerHTML = `<h3>Resolve and review</h3><p data-review-counts>${reviewCounts()}</p>${preview.mode === "replace_month" ? `<details><summary>${preview.replacement_scope.length} existing records affected by replacement</summary>${preview.replacement_scope.map((r) => `<p>${esc(members.find((m) => m.id === r.person_id)?.canonical_name || r.person_id)} · ${esc(r.starts_on)} to ${esc(r.ends_on || "Ongoing")}</p>`).join("")}</details>` : ""}${shown
       .map((row) => {
         const value = { ...row.values, ...corrections[row.key] };
-        return `<article class="mw-history" data-review-row="${esc(row.key)}"><label><input type="checkbox" data-include="${esc(row.key)}" ${excluded.has(row.key) ? "" : "checked"}> Include ${esc(row.source.sheet)} row ${esc(row.source.row)}</label><strong>${esc(row.action.replace(/_/g, " "))}</strong><p>${row.issues.map(esc).join(" · ")}</p><p>${row.warnings.map(esc).join(" · ")}</p><p>Original name: ${esc(row.values.member_name)} · ${esc(row.person_match.reason)}</p><label>Find member<input type="search" data-find-member="${esc(row.key)}" placeholder="Name, call level or designation"></label><label>Member<select data-row="${esc(row.key)}" data-field="person_id"><option value="">Select member</option>${members
+        return `<article class="mw-history" data-review-row="${esc(row.key)}"><label><input type="checkbox" data-include="${esc(row.key)}" ${excluded.has(row.key) ? "" : "checked"}> Include ${esc(row.source.sheet)} row ${esc(row.source.row)}</label><strong>${esc(matchState(row))}</strong><small>${esc(row.action.replace(/_/g, " "))}</small><p>${row.issues.map(esc).join(" · ")}</p><p>${row.warnings.map(esc).join(" · ")}</p><p>Original name: ${esc(row.values.member_name)} · ${esc(row.person_match.reason)}</p><label>Find member<input type="search" data-find-member="${esc(row.key)}" placeholder="Name, call level or designation"></label><label>Member<select data-row="${esc(row.key)}" data-field="person_id"><option value="">Select member</option>${members
           .filter((m) => m.active_status === "active")
           .map(
             (m) =>
@@ -287,7 +379,7 @@ export async function openOperationalImport(
           )
           .join(
             "",
-          )}</select></label>${row.person_match.candidates?.length ? `<p>Possible matches: ${row.person_match.candidates.map((c: Row) => `${esc(c.name)} (${esc(c.status)}, ${esc(c.designation || "No designation")}, ${esc(c.units?.join(", ") || "No units")})`).join("; ")}</p>` : ""}${admin ? `<button type="button" data-create-member="${esc(row.key)}">Create member</button>` : ""}<label><input type="checkbox" data-row="${esc(row.key)}" data-field="remember_person_alias" ${value.remember_person_alias ? "checked" : ""}> Remember this spelling as an approved alias</label><button type="button" data-repeat-member="${esc(row.key)}">Use this member for repeated occurrences of this name</button>${
+          )}</select></label>${row.person_match.candidates?.length ? `<p>Possible matches: ${row.person_match.candidates.map((c: Row) => `${esc(c.name)} (${esc(c.status)}, ${esc(c.designation || "No designation")}, ${esc(c.units?.join(", ") || "No units")})`).join("; ")}</p><div class="registry-actions">${row.person_match.candidates.map((c: Row) => `<button type="button" data-review-candidate="${esc(c.id)}">${c.status === "active" ? "Review" : "Review / restore"} ${esc(c.name)}</button>`).join("")}</div>` : ""}${admin ? `<button type="button" data-create-member="${esc(row.key)}">Create member</button>` : ""}<label><input type="checkbox" data-row="${esc(row.key)}" data-field="remember_person_alias" ${admin ? "" : "disabled"} ${value.remember_person_alias ? "checked" : ""}> Remember this spelling as an approved alias${admin ? "" : " (administrator only)"}</label><button type="button" data-repeat-member="${esc(row.key)}">Use this member for repeated occurrences of this name</button>${
           kind === "units"
             ? `<label>Find unit<input type="search" data-find-unit="${esc(row.key)}" placeholder="Unit name or campus"></label><label>Unit<select data-row="${esc(row.key)}" data-field="unit_id"><option value="">No unit / select unit</option>${units
                 .filter((u) => u.active_status === "active")
@@ -297,20 +389,63 @@ export async function openOperationalImport(
                 )
                 .join(
                   "",
-                )}</select></label>${admin ? `<button type="button" data-create-unit="${esc(row.key)}">Create unit</button>` : ""}<label>Posting / call type<input data-row="${esc(row.key)}" data-field="posting_type" value="${esc(value.posting_type)}"></label><label><input type="checkbox" data-row="${esc(row.key)}" data-field="remember_unit_alias" ${value.remember_unit_alias ? "checked" : ""}> Remember this unit label</label><button type="button" data-repeat-unit="${esc(row.key)}">Use this unit for repeated labels</button>`
+                )}</select></label>${admin ? `<button type="button" data-create-unit="${esc(row.key)}">Create unit</button>` : ""}<label>Posting / call type<input data-row="${esc(row.key)}" data-field="posting_type" value="${esc(value.posting_type)}"></label><label><input type="checkbox" data-row="${esc(row.key)}" data-field="remember_unit_alias" ${admin ? "" : "disabled"} ${value.remember_unit_alias ? "checked" : ""}> Remember this unit label${admin ? "" : " (administrator only)"}</label><button type="button" data-repeat-unit="${esc(row.key)}">Use this unit for repeated labels</button>`
             : `${["leave_type", "leave_slot", "status"].map((field) => `<label>${esc(field.replace(/_/g, " "))}<input data-row="${esc(row.key)}" data-field="${field}" value="${esc(value[field])}"></label>`).join("")}`
-        }<label>Start date<input data-row="${esc(row.key)}" data-field="starts_on" value="${esc(value.starts_on)}" placeholder="YYYY-MM-DD"></label><label>End date<input data-row="${esc(row.key)}" data-field="ends_on" value="${esc(value.ends_on)}" placeholder="YYYY-MM-DD"></label><details><summary>Original and proposed changes</summary><dl><dt>Member</dt><dd>${esc(row.values.member_name)} ? ${esc(row.person_match.canonical_name || "Needs selection")}<small>${esc(row.person_match.reason)}</small></dd>${row.unit_match ? `<dt>Unit</dt><dd>${esc(row.values.unit_name)} ? ${esc(row.unit_match.name || "Needs selection")}</dd>` : ""}${(row.normalizations || []).map((change: Row) => `<dt>${esc(change.field.replace(/_/g, " "))}</dt><dd>${esc(change.original || "Blank")} ? ${esc(change.proposed || "Blank")}<small>${esc(change.reason)}</small></dd>`).join("")}</dl></details></article>`;
+        }<label>Start date<input data-row="${esc(row.key)}" data-field="starts_on" value="${esc(value.starts_on)}" placeholder="YYYY-MM-DD"></label><label>End date<input data-row="${esc(row.key)}" data-field="ends_on" value="${esc(value.ends_on)}" placeholder="YYYY-MM-DD"></label><details><summary>Original and proposed changes</summary><dl><dt>Member</dt><dd>${esc(row.values.member_name)} &rarr; ${esc(row.person_match.canonical_name || "Needs selection")}<small>${esc(row.person_match.reason)}</small></dd>${row.unit_match ? `<dt>Unit</dt><dd>${esc(row.values.unit_name)} &rarr; ${esc(row.unit_match.name || "Needs selection")}</dd>` : ""}${(row.normalizations || []).map((change: Row) => `<dt>${esc(change.field.replace(/_/g, " "))}</dt><dd>${esc(change.original || "Blank")} &rarr; ${esc(change.proposed || "Blank")}<small>${esc(change.reason)}</small></dd>`).join("")}</dl></details></article>`;
       })
       .join(
         "",
       )}<div class="registry-actions"><button type="button" data-page="-1" ${page === 0 ? "disabled" : ""}>Previous rows</button><span>Page ${page + 1} of ${Math.ceil(preview.rows.length / 25)}</span><button type="button" data-page="1" ${(page + 1) * 25 >= preview.rows.length ? "disabled" : ""}>Next rows</button></div><label><input type="checkbox" data-acknowledge> I reviewed the affected duties and replacement scope</label><div class="registry-actions"><button type="button" data-refresh>Refresh normalized preview</button><button type="button" data-report>Download row report</button><button type="button" class="primary" data-apply ${previewDirty ? "disabled" : ""}>Apply reviewed rows</button></div>`;
-    root.querySelectorAll<HTMLInputElement>("[data-find-member], [data-find-unit]").forEach(input=>input.oninput=()=>{
-      const key=input.dataset.findMember || input.dataset.findUnit!;
-      const field=input.dataset.findMember ? "person_id" : "unit_id";
-      const select=Array.from(root.querySelectorAll<HTMLSelectElement>("select[data-row]")).find(el=>el.dataset.row===key && el.dataset.field===field);
-      const query=input.value.toLowerCase();
-      if(select)Array.from(select.options).forEach(option=>option.hidden=Boolean(option.value && !option.selected && !option.text.toLowerCase().includes(query)));
-    });
+    root.querySelectorAll<HTMLButtonElement>("[data-review-candidate]").forEach(
+      (button) =>
+        (button.onclick = () => {
+          const candidate = members.find(
+            (member) => member.id === button.dataset.reviewCandidate,
+          );
+          void openMemberWorkspace(
+            button.dataset.reviewCandidate!,
+            admin,
+            (member) => {
+              members = members.map((existing) =>
+                existing.id === member.id ? member : existing,
+              );
+              renderReview();
+              dirtyPreview();
+            },
+            [],
+            "details",
+            candidate?.active_status !== "active" && admin
+              ? "active"
+              : undefined,
+          );
+        }),
+    );
+    root
+      .querySelectorAll<HTMLInputElement>(
+        "[data-find-member], [data-find-unit]",
+      )
+      .forEach(
+        (input) =>
+          (input.oninput = () => {
+            const key = input.dataset.findMember || input.dataset.findUnit!;
+            const field = input.dataset.findMember ? "person_id" : "unit_id";
+            const select = Array.from(
+              root.querySelectorAll<HTMLSelectElement>("select[data-row]"),
+            ).find(
+              (el) => el.dataset.row === key && el.dataset.field === field,
+            );
+            const query = input.value.toLowerCase();
+            if (select)
+              Array.from(select.options).forEach(
+                (option) =>
+                  (option.hidden = Boolean(
+                    option.value &&
+                    !option.selected &&
+                    !option.text.toLowerCase().includes(query),
+                  )),
+              );
+          }),
+      );
     root
       .querySelectorAll<HTMLInputElement | HTMLSelectElement>("[data-row]")
       .forEach(
@@ -328,6 +463,8 @@ export async function openOperationalImport(
         (input.onchange = () => {
           if (input.checked) excluded.delete(input.dataset.include!);
           else excluded.add(input.dataset.include!);
+          root.querySelector("[data-review-counts]")!.textContent =
+            reviewCounts();
           dirtyPreview();
         }),
     );

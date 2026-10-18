@@ -1,3 +1,4 @@
+import { openReferenceCatalog } from "./reference-workspace";
 import { openRecordEditor } from "./record-workspace";
 import { request, type DepartmentMember } from "./services/api";
 
@@ -258,7 +259,7 @@ export async function openMemberWorkspace(
       .map(([day, count]) => `<dt>${esc(day)}</dt><dd>${esc(count)}</dd>`)
       .join(
         "",
-      )}</dl></details><details><summary>Monthly call levels and units</summary>${dutyMonths.map((month) => `<p>${esc(month)} ? ${esc(callLabel(calls[month]))} ? ${esc(units[month] || "Unit not recorded")}</p>`).join("")}${promotions.map((change) => `<p>${esc(change.month)}: ${esc(callLabel(change.from))} to ${esc(callLabel(change.to))}</p>`).join("")}</details><details><summary>Special postings</summary>${[
+      )}</dl></details><details><summary>Monthly call levels and units</summary>${dutyMonths.map((month) => `<p>${esc(month)} &middot; ${esc(callLabel(calls[month]))} &middot; ${esc(units[month] || "Unit not recorded")}</p>`).join("")}${promotions.map((change) => `<p>${esc(change.month)}: ${esc(callLabel(change.from))} to ${esc(callLabel(change.to))}</p>`).join("")}</details><details><summary>Special postings</summary>${[
       "pain_months",
       "sicu_months",
       "drp_months",
@@ -360,7 +361,7 @@ export async function openMemberWorkspace(
                   .filter(([key]) => key !== "id")
                   .map(
                     ([key, value]) =>
-                      `<div><dt>${esc(key.replace(/_/g, " "))}</dt><dd>${typeof value === "object" && value !== null ? `<pre>${esc(JSON.stringify(value, null, 2))}</pre>` : esc(key === "call_level" || key === "posting_type" ? callLabel(value) : typeof value === "boolean" ? (value ? "Yes" : "No") : (value ?? "Ongoing"))}</dd></div>`,
+                      `<div><dt>${esc(key.replace(/_/g, " "))}</dt><dd>${typeof value === "object" && value !== null ? `<pre>${esc(JSON.stringify(value, null, 2))}</pre>` : esc(key === "call_level" || key === "posting_type" ? callLabel(value) : ["type", "slot", "source", "status"].includes(key) ? statusLabel(value) : typeof value === "boolean" ? (value ? "Yes" : "No") : (value ?? "Ongoing"))}</dd></div>`,
                   )
                   .join(
                     "",
@@ -384,7 +385,7 @@ export async function openMemberWorkspace(
     if (tab === "details")
       return `<label>Member ID<input readonly data-member-id value="${esc(member.id)}"></label><button type="button" data-copy-member-id>Copy member ID</button><label>Member name<input data-field="canonical_name" required maxlength="255" value="${esc(draft.canonical_name)}" ${!editing ? "readonly" : ""}></label>${editing ? `<label><input type="checkbox" data-preserve-name ${preservePreviousName ? "checked" : ""}> Keep the previous name as an alias when renaming</label>` : ""}<label>Membership status<select data-field="active_status" ${!editing ? "disabled" : ""}>${["active", "historical", "archived"].map((s) => `<option ${draft.active_status === s ? "selected" : ""}>${s}</option>`).join("")}</select></label><label>Base default call level<select data-field="call_level" ${!editing ? "disabled" : ""}><option value="">Unassigned</option>${[...new Set([...levels, ...(draft.call_level ? [draft.call_level] : [])])].map((s) => `<option value="${esc(s)}" ${draft.call_level === s ? "selected" : ""}>${esc(callLabel(s))}</option>`).join("")}</select></label><p>Changing status preserves historical records. Future duties and memberships remain linked and need review.</p>`;
     if (tab === "roles")
-      return `<h3>Designation history</h3>${editing ? designationEditor() : member.designations.map((d) => `<article class="mw-history"><strong>${esc(d.designation)}</strong><span class="mw-period-badge">${periodLabel(d.effective_from, d.effective_to)}</span><p>${esc(d.effective_from)} → ${esc(d.effective_to || "Ongoing")} · ${esc(d.source)}</p><p>${esc(d.notes)}</p></article>`).join("") || "<p>No designation recorded.</p>"}${scheduledCalls()}<h3>Eligibility groups</h3><p>Groups restrict particular duties within a call level. Membership does not override approved leave, posting dates or rest requirements.</p>${history()}`;
+      return `${admin ? `<button type="button" data-manage-profile-references>Manage designations and aliases</button>` : ""}<h3>Designation history</h3>${editing ? designationEditor() : member.designations.map((d) => `<article class="mw-history"><strong>${esc(d.designation)}</strong><span class="mw-period-badge">${periodLabel(d.effective_from, d.effective_to)}</span><p>${esc(d.effective_from)} → ${esc(d.effective_to || "Ongoing")} · ${esc(d.source)}</p><p>${esc(d.notes)}</p></article>`).join("") || "<p>No designation recorded.</p>"}${scheduledCalls()}<h3>Eligibility groups</h3><p>Groups restrict particular duties within a call level. Membership does not override approved leave, posting dates or rest requirements.</p>${history()}`;
     if (tab === "names")
       return `<p>Aliases connect imported spellings to this member. Previous names are preserved by default when renaming.</p>${editing ? `${draft.aliases.map((a, i) => `<div class="mw-alias-row"><span>${esc(a.alias)}</span><button type="button" data-remove-alias="${i}" aria-label="Remove alias ${esc(a.alias)}">Remove</button></div>`).join("")}<label>Aliases (one per line)<textarea data-aliases rows="7">${esc(draft.aliases.map((a) => a.alias).join("\n"))}</textarea></label>` : member.aliases.map((a) => `<article class="mw-history"><strong>${esc(a.alias)}</strong><small>${esc(a.source)}</small></article>`).join("") || "<p>No aliases recorded.</p>"}<h3>Possible duplicates</h3>${cache.duplicates ? (cache.duplicates.length ? cache.duplicates.map((r) => `<article class="mw-history"><strong>${esc(r.name)}</strong><p>${esc(statusLabel(r.status))} \u00b7 ${esc(callLabel(r.call_level))}</p><p>${esc(r.duties)} duties \u00b7 ${esc(r.postings)} postings \u00b7 ${esc(r.leave)} leave records \u00b7 ${esc(r.memberships)} memberships</p><p>Positions: ${esc((r.designations as string[]).join(", "))}</p>${r.member ? `<details><summary>Compare profile details</summary><p>Surviving member: ${esc(member.canonical_name)} \u00b7 ${esc(statusLabel(member.active_status))} \u00b7 ${esc(callLabel(member.call_level))}</p><p>Surviving aliases: ${esc(member.aliases.map((a) => a.alias).join(", ") || "None")}</p><p>Other member aliases: ${esc((r.member as DepartmentMember).aliases.map((a) => a.alias).join(", ") || "None")}</p><h4>Other member's designation history</h4>${(r.member as DepartmentMember).designations.map((d) => `<p>${esc(d.designation)} \u00b7 ${esc(d.effective_from)} to ${esc(d.effective_to || "Ongoing")} \u00b7 ${esc(d.notes)}</p>`).join("") || "<p>No positions recorded.</p>"}<h4>Other member's dated call levels</h4>${((r.member as DepartmentMember).call_level_changes || []).map((c) => `<p>${esc(callLabel(c.call_level))} from ${esc(c.effective_from)}</p>`).join("") || "<p>No dated changes.</p>"}</details>` : ""}${admin ? `<button type="button" data-merge-source="${esc(r.id)}">Merge into ${esc(member.canonical_name)}</button>` : ""}</article>`).join("") : "<p>No duplicate candidates found.</p>") : errors.duplicates ? `<p role="alert">${esc(errors.duplicates)}</p><button type="button" data-retry-duplicates>Retry duplicate check</button>` : "<p>Checking duplicate identities\u2026</p>"}`;
     if (tab === "postings")
@@ -502,6 +503,11 @@ export async function openMemberWorkspace(
             render();
           }),
       );
+    dialog
+      .querySelector<HTMLButtonElement>("[data-manage-profile-references]")
+      ?.addEventListener("click", () => {
+        void openReferenceCatalog(() => {}, "designation");
+      });
     dialog
       .querySelector<HTMLInputElement>("[data-duty-from]")
       ?.addEventListener("change", (e) => {
@@ -901,7 +907,7 @@ export async function openMemberWorkspace(
 
 export function openMemberCsvImport(done: () => void) {
   const dialog = workspaceDialog("Import department members", "mw-import");
-  dialog.innerHTML = `<header class="mw-header"><div><h2>Import department members</h2><p>Download the template, fill your member list, then preview changes.</p></div><button type="button" data-close aria-label="Close import">×</button></header><div class="mw-content"><a class="primary" href="/templates/department-members.csv" download>Download CSV template</a><p>Only canonical_name is required for new members. Optional: member_id, active_status, call_level, designation, designation_effective_from. Use YYYY-MM-DD dates. A designation requires an effective date. Blank update fields preserve existing values. To intentionally clear an existing default call level, enter __CLEAR__ in that cell. New members default to Active and Unassigned. Supported call levels: 1ST_CALL, 2ND_CALL, 3RD_CALL, CO_4TH_CALL, 4TH_CALL, 5TH_CALL, PAIN, SICU, DRP, NEURO_ICU.</p><details class="mw-csv-help"><summary>See CSV examples</summary><p>Replace these illustrative names with your members. Leave member_id blank for new members.</p><h3>Name-only list</h3><pre>canonical_name
+  dialog.innerHTML = `<header class="mw-header"><div><h2>Import department members</h2><p>Upload &rarr; Map &rarr; Normalize &rarr; Resolve &rarr; Review &rarr; Apply</p><p>Download the template, fill your member list, then preview changes.</p></div><button type="button" data-close aria-label="Close import">×</button></header><div class="mw-content"><a class="primary" href="/templates/department-members.csv" download>Download CSV template</a><p>Only canonical_name is required for new members. Optional: member_id, active_status, call_level, designation, designation_effective_from. Use YYYY-MM-DD dates. A designation requires an effective date. Blank update fields preserve existing values. To intentionally clear an existing default call level, enter __CLEAR__ in that cell. New members default to Active and Unassigned. Supported call levels: 1ST_CALL, 2ND_CALL, 3RD_CALL, CO_4TH_CALL, 4TH_CALL, 5TH_CALL, PAIN, SICU, DRP, NEURO_ICU.</p><details class="mw-csv-help"><summary>See CSV examples</summary><p>Replace these illustrative names with your members. Leave member_id blank for new members.</p><h3>Name-only list</h3><pre>canonical_name
 Dr Example Member</pre><h3>Full profile row</h3><pre>member_id,canonical_name,active_status,call_level,designation,designation_effective_from
 ,Dr Example Member,active,2ND_CALL,Resident,2026-10-01</pre><p>For updates, copy the member ID from the profile. Dates use YYYY-MM-DD. Keep one member per row.</p></details><form id="csv-form"><label>CSV UTF-8 file (up to 2 MB and 5,000 members)<input type="file" accept=".csv,text/csv" required></label><label>Import mode<select name="mode"><option value="create_only">Create new members only</option><option value="update_existing">Update existing members only</option></select></label><div id="csv-column-mapping"></div><button class="primary" type="submit">Preview import</button></form><p role="status" id="csv-message"></p><div id="csv-preview"></div></div>`;
   let file: File | undefined;
@@ -974,11 +980,40 @@ Dr Example Member</pre><h3>Full profile row</h3><pre>member_id,canonical_name,ac
     root.innerHTML = `<h3>Review changes</h3><p>${["create", "update", "unchanged", "needs_review", "invalid"].map((action) => `${preview!.rows.filter((r) => r.action === action).length} ${action.replace(/_/g, " ")}`).join(" / ")}</p><p>Correct values below, then refresh preview. Exclude rows you do not want to apply. Possible duplicate matches require a member ID or exclusion.</p>${preview!.rows
       .map((row) => {
         const values = row.values as Row;
-        return `<article class="mw-history"><label><input type="checkbox" data-include="${row.row_number}" ${["invalid", "needs_review"].includes(String(row.action)) ? "" : "checked"}> Include row ${row.row_number}</label><strong>${esc(row.action)}</strong>${["member_id", "canonical_name", "active_status", "call_level", "designation", "designation_effective_from"].map((key) => `<label>${esc(key.replace(/_/g, " "))}<input data-row="${row.row_number}" data-key="${key}" value="${esc(values[key])}"></label>`).join("")}<p>${esc((row.errors as string[]).join(" · "))}</p>${(row.suggestions as Row[]).map((s) => `<p>Possible match: ${esc(s.name)} · ID ${esc(s.id)}</p>`).join("")}${(row.suggestions as Row[]).length ? `<label><input type="checkbox" data-distinct-row="${row.row_number}" ${values._confirm_distinct === "yes" ? "checked" : ""}> I reviewed the matches; create a separate member</label>` : ""}<details><summary>Before → After</summary><pre>${esc(JSON.stringify({ before: row.before, after: row.after, designation_change: row.designation_change }, null, 2))}</pre></details></article>`;
+        return `<article class="mw-history"><label><input type="checkbox" data-include="${row.row_number}" ${["invalid", "needs_review"].includes(String(row.action)) ? "" : "checked"}> Include row ${row.row_number}</label><strong>${esc(row.action)}</strong>${["member_id", "canonical_name", "active_status", "call_level", "designation", "designation_effective_from"].map((key) => `<label>${esc(key.replace(/_/g, " "))}<input data-row="${row.row_number}" data-key="${key}" value="${esc(values[key])}"></label>`).join("")}<p>${esc((row.errors as string[]).join(" · "))}</p>${(row.suggestions as Row[]).map((suggestion) => `<article class="mw-history"><strong>Possible match: ${esc(suggestion.name)}</strong><p>${esc(suggestion.status || "")} &middot; ${esc(suggestion.call_level || "Unassigned")} &middot; ${esc(suggestion.designation || "No current designation")}</p><p>${esc(((suggestion.units || []) as string[]).join(", "))}</p><button type="button" data-csv-use-member="${esc(suggestion.id)}" data-csv-member-row="${row.row_number}">Select existing member</button><button type="button" data-csv-review-member="${esc(suggestion.id)}">Review member profile</button></article>`).join("")}${(row.suggestions as Row[]).length ? `<label><input type="checkbox" data-distinct-row="${row.row_number}" ${values._confirm_distinct === "yes" ? "checked" : ""}> I reviewed the matches; create a separate member</label>` : ""}<details><summary>Before → After</summary><pre>${esc(JSON.stringify({ before: row.before, after: row.after, designation_change: row.designation_change }, null, 2))}</pre></details></article>`;
       })
       .join(
         "",
       )}<button type="button" data-refresh>Refresh preview after corrections</button><button type="button" data-report>Download row report</button><button class="primary" type="button" data-apply>Apply selected rows</button>`;
+    root.querySelectorAll<HTMLButtonElement>("[data-csv-use-member]").forEach(
+      (button) =>
+        (button.onclick = () => {
+          const row = button.dataset.csvMemberRow!;
+          (corrections[row] ??= {}).member_id = button.dataset.csvUseMember;
+          const input = root.querySelector<HTMLInputElement>(
+            `[data-row="${row}"][data-key="member_id"]`,
+          );
+          if (input) input.value = button.dataset.csvUseMember!;
+          root.querySelector<HTMLButtonElement>("[data-apply]")!.disabled =
+            true;
+          dialog.querySelector("#csv-message")!.textContent =
+            "Member selected. Choose Update existing members if appropriate, then refresh the preview.";
+        }),
+    );
+    root
+      .querySelectorAll<HTMLButtonElement>("[data-csv-review-member]")
+      .forEach(
+        (button) =>
+          (button.onclick = () => {
+            void openMemberWorkspace(
+              button.dataset.csvReviewMember!,
+              true,
+              () => {},
+              [],
+              "details",
+            );
+          }),
+      );
     root.querySelectorAll<HTMLInputElement>("[data-row]").forEach(
       (input) =>
         (input.oninput = () => {

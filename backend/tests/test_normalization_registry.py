@@ -40,6 +40,11 @@ def registry():
 
 
 def test_identity_keys_preserve_unicode_and_titles_only_at_boundary():
+    from app.services.imports import clean_person_name, is_valid_person_name
+
+    assert clean_person_name("Drew Smith") == "Drew Smith"
+    assert clean_person_name("Mridula Kumar") == "Mridula Kumar"
+    assert is_valid_person_name("ரவி")
     assert member_key(" Dr.  Asha A. J. ") == member_key("Asha AJ")
     assert member_key("Drew") == "drew"
     assert member_key("ரவி") != ""
@@ -65,7 +70,9 @@ def test_alias_collision_is_ambiguous(registry):
         b = Person(canonical_name="Asha AJ")
         db.add_all([a, b])
         db.commit()
-        assert resolve_member(db, "Dr. Asha AJ")["state"] == "ambiguous"
+        result = resolve_member(db, "Dr. Asha AJ")
+        assert result["state"] == "ambiguous"
+        assert len(result["candidates"]) == 2
 
 
 def test_unit_create_alias_rename_archive_restore_and_stale_edit(registry):
@@ -103,3 +110,25 @@ def test_unit_creation_requires_admin(registry):
     user.role = "rota_board_member"
     assert client.get("/api/v1/normalization/units").status_code == 200
     assert client.post("/api/v1/normalization/units", json={"name": "Forbidden"}).status_code == 403
+
+
+def test_same_number_across_campuses_stays_ambiguous_and_aliases_have_one_owner(registry):
+    client, sessions, _ = registry
+    main = client.post(
+        "/api/v1/normalization/units",
+        json={"name": "Unit IV", "campus": "Main", "aliases": ["Main U4"]},
+    )
+    other = client.post("/api/v1/normalization/units", json={"name": "Unit 4", "campus": "Ranipet"})
+    assert main.status_code == other.status_code == 200
+    from app.services.operational_import import resolve_unit
+
+    with sessions() as db:
+        assert resolve_unit(db, "Unit 4")["state"] == "ambiguous"
+        assert resolve_unit(db, "Main U04")["unit_id"] == main.json()["id"]
+    assert (
+        client.put(
+            f"/api/v1/normalization/units/{other.json()['id']}",
+            json={**other.json(), "aliases": ["Main U4"]},
+        ).status_code
+        == 409
+    )

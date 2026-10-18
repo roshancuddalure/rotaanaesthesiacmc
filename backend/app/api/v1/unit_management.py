@@ -19,7 +19,8 @@ from sqlalchemy.orm import Session
 
 from app.api.v1.auth import current_user
 from app.db.session import get_db
-from app.models import Person, PersonPosting, Unit, UnitCallMinimum, UserAccount
+from app.models import MemberActivity, Person, PersonPosting, Unit, UnitCallMinimum, UserAccount
+from app.services.reference_registry import audit, lock_namespace
 from app.services.rota_call_levels import normalize_call_level
 from app.services.leave import month_bounds
 from app.services.unit_management import (
@@ -350,6 +351,8 @@ def update_unit_settings(
     _user: UserAccount = Depends(current_user),
     db: Session = Depends(get_db),
 ) -> UnitRead:
+    from app.services.reference_registry import lock_namespace
+    lock_namespace(db,"normalization-edit")
     """Save the unit-level minimum and (only when ``month`` is given) the call-level minimums.
 
     Call-level minimums are validated against that month's board counts; without ``month``
@@ -478,6 +481,11 @@ def create_unit_assignment(
     _user: UserAccount = Depends(current_user),
     db: Session = Depends(get_db),
 ) -> UnitAssignmentRead:
+    from app.services.operational_records import inspect_record
+    lock_namespace(db,"operational-import")
+    review = inspect_record(db,"units",payload.model_dump(mode="json"))
+    payload.posting_type = review["after"]["posting_type"]
+    payload.unit_id = UUID(review["after"]["unit_id"]) if review["after"]["unit_id"] else None
     validate_payload_dates(payload)
     person = get_person_or_404(db, payload.person_id)
     unit = unit_for_assignment_payload(db, payload)
@@ -492,6 +500,11 @@ def create_unit_assignment(
         notes=payload.notes.strip() if payload.notes else None,
     )
     db.add(assignment)
+    db.flush()
+    details = {"before":None,"after":review["after"]}
+    audit(db,_user,"posting_created",assignment.id,details)
+    db.add(MemberActivity(person_id=person.id,operator_id=_user.id,operator_name=_user.display_name or _user.username,
+                          action="posting_created",details=details))
     try:
         db.commit()
     except IntegrityError as exc:
@@ -508,6 +521,11 @@ def update_unit_assignment(
     _user: UserAccount = Depends(current_user),
     db: Session = Depends(get_db),
 ) -> UnitAssignmentRead:
+    from app.services.operational_records import inspect_record
+    lock_namespace(db,"operational-import")
+    review = inspect_record(db,"units",payload.model_dump(mode="json"),assignment_id)
+    payload.posting_type = review["after"]["posting_type"]
+    payload.unit_id = UUID(review["after"]["unit_id"]) if review["after"]["unit_id"] else None
     validate_payload_dates(payload)
     assignment = get_assignment_or_404(db, assignment_id)
     assignment.person = get_person_or_404(db, payload.person_id)
@@ -517,6 +535,11 @@ def update_unit_assignment(
     assignment.starts_on = payload.starts_on
     assignment.ends_on = payload.ends_on
     assignment.notes = payload.notes.strip() if payload.notes else None
+    db.flush()
+    details = {"before":review["before"],"after":review["after"]}
+    audit(db,_user,"posting_updated",assignment.id,details)
+    db.add(MemberActivity(person_id=assignment.person_id,operator_id=_user.id,operator_name=_user.display_name or _user.username,
+                          action="posting_updated",details=details))
     db.commit()
     return assignment_to_read(get_assignment_or_404(db, assignment.id))
 
@@ -527,7 +550,14 @@ def delete_unit_assignment(
     _user: UserAccount = Depends(current_user),
     db: Session = Depends(get_db),
 ) -> dict[str, str]:
+    from app.services.reference_registry import lock_namespace
+    lock_namespace(db,"normalization-edit")
     assignment = get_assignment_or_404(db, assignment_id)
+    from app.services.operational_import import record_values
+    details = {"before":record_values(assignment,"units"),"after":None}
+    audit(db,_user,"posting_removed",assignment.id,details)
+    db.add(MemberActivity(person_id=assignment.person_id,operator_id=_user.id,operator_name=_user.display_name or _user.username,
+                          action="posting_removed",details=details))
     db.delete(assignment)
     db.commit()
     return {"status": "deleted"}

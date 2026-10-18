@@ -2,13 +2,22 @@
 
 import io
 import json
-from datetime import date
-from uuid import UUID
+from datetime import date, datetime
+from uuid import UUID, uuid4
 
 from openpyxl import Workbook
 from sqlalchemy import select
 
-from app.models import LeaveRequest, MemberActivity, Person, PersonAlias, PersonPosting, Unit
+from app.models import (
+    DutyAssignment,
+    DutySlot,
+    LeaveRequest,
+    MemberActivity,
+    Person,
+    PersonAlias,
+    PersonPosting,
+    Unit,
+)
 from test_normalization_registry import registry as registry
 
 
@@ -337,6 +346,36 @@ def test_new_duty_requires_operational_settings_and_reaches_generator_metadata(r
         assert rule.duration_hours == 8
         assert rule.allowed_call_levels == ["3RD_CALL"]
         assert rule.blocks_elective_same_day
+        from app.services.rota_setup import monthly_setup, update_scope_units
+        from app.services.rota_template import TemplateGenerationOptions, generate_empty_template
+        from app.services.rota_safety import required_call_levels
+
+        unit = Unit(name="Clinic unit", code="CLINIC_UNIT", minimum_free_people=0)
+        person = Person(canonical_name="Clinic Member", call_level="3RD_CALL")
+        db.add_all([unit, person])
+        db.flush()
+        db.add(
+            PersonPosting(
+                person=person,
+                unit=unit,
+                posting_type="3RD_CALL",
+                starts_on=date(2026, 10, 1),
+                source="unit_board",
+            )
+        )
+        db.commit()
+        _, scope = monthly_setup(db, "2026-10")
+        update_scope_units(db, scope, [unit.id], [], True, True, "Clinic setup")
+        generate_empty_template(
+            db,
+            "2026-10",
+            TemplateGenerationOptions(
+                duty_keys=[key], starts_on=date(2026, 10, 1), ends_on=date(2026, 10, 1)
+            ),
+        )
+        slot = db.scalar(select(DutySlot).where(DutySlot.duty_type == key))
+        assert (slot.ends_at - slot.starts_at).total_seconds() == 8 * 3600
+        assert required_call_levels(slot, rule) == {"3RD_CALL"}
 
 
 def test_historical_name_heuristics_are_review_suggestions_not_automatic_choices():
@@ -349,3 +388,219 @@ def test_historical_name_heuristics_are_review_suggestions_not_automatic_choices
     suggestion = resolver.resolve("Asha")
     assert suggestion.status != "matched"
     assert "Review suggested member" in suggestion.reason
+
+
+def test_manual_and_import_leave_previews_show_session_aware_duty_impact(registry):
+    client, sessions, _ = registry
+    person_id, _ = seed(sessions)
+    with sessions() as db:
+        slot = DutySlot(
+            duty_date=date(2026, 10, 5),
+            duty_type="MAIN_SHIFT",
+            slot_label="Morning shift",
+            starts_at=datetime(2026, 10, 5, 8),
+            ends_at=datetime(2026, 10, 5, 12),
+            is_24hr=False,
+        )
+        db.add(slot)
+        db.flush()
+        db.add(DutyAssignment(duty_slot=slot, person_id=UUID(person_id)))
+        db.commit()
+    values = {
+        "person_id": person_id,
+        "starts_on": "2026-10-05",
+        "ends_on": "2026-10-05",
+        "leave_type": "CL",
+        "leave_slot": "AM",
+        "status": "approved",
+    }
+    review = client.post(
+        "/api/v1/normalization/records/leave/preview", json={"values": values}
+    ).json()
+    assert len(review["duties"]) == 1
+    review = client.post(
+        "/api/v1/normalization/records/leave/preview",
+        json={"values": {**values, "leave_slot": "PM"}},
+    ).json()
+    assert not review["duties"]
+    result = preview(
+        client, "member_name,starts_on,leave_slot,status\nAsha AJ,2026-10-05,AM,approved\n"
+    ).json()
+    assert result["rows"][0]["warnings"]
+    assert client.post(f"/api/v1/import-review/{result['id']}/apply", json={}).status_code == 422
+
+
+def test_excluding_overlapping_row_then_refreshing_allows_the_remaining_row(registry):
+    client, sessions, _ = registry
+    seed(sessions)
+    content = "member_name,starts_on,ends_on\nAsha AJ,2026-10-04,2026-10-06\nAsha AJ,2026-10-05,2026-10-07\n"
+    result = preview(client, content, settings={"excluded": ["CSV:3"]}).json()
+    assert not result["rows"][0]["issues"]
+    response = client.post(
+        f"/api/v1/import-review/{result['id']}/apply", json={"excluded": ["CSV:3"]}
+    )
+    assert response.status_code == 200, response.text
+    assert response.json()["created"] == 1
+
+
+def test_approved_custom_session_uses_supported_behavior_and_blocks_24hour_duty(registry):
+    client, _, _ = registry
+    payload = {
+        "label": "Forenoon session",
+        "aliases": ["FN SESSION"],
+        "behavior": {"maps_to": "AM"},
+    }
+    assert (
+        client.put(
+            "/api/v1/normalization/catalog/leave_slot/FORENOON_SESSION", json=payload
+        ).status_code
+        == 200
+    )
+    from app.services.rota_safety import slot_leave_blocks
+    from app.services.rota_template import leave_blocks_rule
+    from app.services.rota_rules import DutyRule
+
+    rule = DutyRule(key="TEST", label="Test", group="main", duration_hours=24, is_24hr=True)
+    slot = DutySlot(is_24hr=True)
+    assert slot_leave_blocks(LeaveRequest(leave_slot="CUSTOM"), slot)
+    assert leave_blocks_rule("CUSTOM", rule)
+
+
+def test_primary_and_distinct_special_posting_can_share_a_start_date(registry):
+    client, sessions, _ = registry
+    person_id, unit_id = seed(sessions)
+    with sessions() as db:
+        db.add(
+            PersonPosting(
+                person_id=UUID(person_id),
+                unit_id=UUID(unit_id),
+                posting_type="2ND_CALL",
+                starts_on=date(2026, 10, 1),
+                ends_on=date(2026, 10, 31),
+                source="unit_board",
+            )
+        )
+        db.commit()
+    result = preview(client, "member_name,posting_type\nAsha AJ,PAIN\n", kind="units").json()
+    assert not result["rows"][0]["issues"]
+    response = client.post(f"/api/v1/import-review/{result['id']}/apply", json={})
+    assert response.status_code == 200, response.text
+
+
+def test_cross_month_replacement_input_is_scoped_without_duplicating_outside_records(registry):
+    client, sessions, _ = registry
+    person_id, _ = seed(sessions)
+    with sessions() as db:
+        db.add(
+            LeaveRequest(
+                person_id=UUID(person_id),
+                starts_on=date(2026, 9, 1),
+                ends_on=date(2026, 11, 30),
+                leave_type="CASUAL_LEAVE",
+                leave_slot="FULL_DAY",
+                status="approved",
+                source="import",
+            )
+        )
+        db.commit()
+    result = preview(
+        client,
+        "member_name,starts_on,ends_on,leave_type,status\nAsha AJ,2026-09-01,2026-11-30,CL,approved\n",
+        mode="replace_month",
+    ).json()
+    assert result["rows"][0]["after"]["starts_on"] == "2026-10-01"
+    assert result["rows"][0]["after"]["ends_on"] == "2026-10-31"
+    assert client.post(f"/api/v1/import-review/{result['id']}/apply", json={}).status_code == 422
+    response = client.post(
+        f"/api/v1/import-review/{result['id']}/apply", json={"acknowledge_warnings": True}
+    )
+    assert response.status_code == 200, response.text
+    with sessions() as db:
+        ranges = [
+            (r.starts_on, r.ends_on)
+            for r in db.scalars(select(LeaveRequest).order_by(LeaveRequest.starts_on))
+        ]
+        assert ranges == [
+            (date(2026, 9, 1), date(2026, 9, 30)),
+            (date(2026, 10, 1), date(2026, 10, 31)),
+            (date(2026, 11, 1), date(2026, 11, 30)),
+        ]
+
+
+def test_identity_metadata_uses_the_row_date_and_keeps_base_call_separate(registry):
+    client, sessions, _ = registry
+    person_id, unit_id = seed(sessions)
+    with sessions() as db:
+        db.add(
+            PersonPosting(
+                person_id=UUID(person_id),
+                unit_id=UUID(unit_id),
+                posting_type="3RD_CALL",
+                starts_on=date(2026, 10, 16),
+                ends_on=date(2026, 10, 31),
+                source="unit_board",
+            )
+        )
+        db.commit()
+    early = preview(client, "member_name,starts_on\nAsha AJ,2026-10-03\n").json()["rows"][0][
+        "person_match"
+    ]["candidates"][0]
+    late = preview(client, "member_name,starts_on\nAsha AJ,2026-10-20\n").json()["rows"][0][
+        "person_match"
+    ]["candidates"][0]
+    assert early["call_level"] == "2ND_CALL" and early["units"] == []
+    assert late["call_level"] == "3RD_CALL" and late["default_call_level"] == "2ND_CALL"
+    assert late["units"] == ["Main Unit IV"]
+
+
+def test_explicit_alias_learning_also_works_for_an_unchanged_operational_row(registry):
+    client, sessions, _ = registry
+    person_id, _ = seed(sessions)
+    with sessions() as db:
+        db.add(
+            LeaveRequest(
+                person_id=UUID(person_id),
+                starts_on=date(2026, 10, 5),
+                ends_on=date(2026, 10, 5),
+                leave_type="CASUAL_LEAVE",
+                leave_slot="AM",
+                status="approved",
+                source="manual",
+            )
+        )
+        db.commit()
+    result = preview(
+        client,
+        "member_name,starts_on,leave_type,leave_slot,status\nAsha Jay,2026-10-05,CL,AM,approved\n",
+        settings={
+            "corrections": {"CSV:2": {"person_id": person_id, "remember_person_alias": True}}
+        },
+    ).json()
+    assert result["rows"][0]["action"] == "unchanged"
+    response = client.post(f"/api/v1/import-review/{result['id']}/apply", json={})
+    assert response.status_code == 200, response.text
+    assert response.json()["unchanged"] == 1
+    with sessions() as db:
+        assert db.scalar(select(PersonAlias)).alias == "Asha Jay"
+        assert len(list(db.scalars(select(LeaveRequest)))) == 1
+
+
+def test_review_belongs_to_its_operator_and_reusable_aliases_require_admin(registry):
+    client, sessions, operator = registry
+    person_id, _ = seed(sessions)
+    result = preview(
+        client,
+        "member_name,starts_on\nAsha Jay,2026-10-05\n",
+        settings={
+            "corrections": {"CSV:2": {"person_id": person_id, "remember_person_alias": True}}
+        },
+    ).json()
+    original_id = operator.id
+    operator.id = uuid4()
+    assert client.post(f"/api/v1/import-review/{result['id']}/apply", json={}).status_code == 403
+    operator.id = original_id
+    operator.role = "rota_board_member"
+    assert client.post(f"/api/v1/import-review/{result['id']}/apply", json={}).status_code == 403
+    with sessions() as db:
+        assert not list(db.scalars(select(LeaveRequest)))
+        assert not list(db.scalars(select(PersonAlias)))
