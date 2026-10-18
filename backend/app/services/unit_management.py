@@ -12,6 +12,7 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
+from app.services.member_profile import default_call_level_on
 from app.models import LeaveRequest, PersonPosting, Unit
 from app.services.rota_call_levels import normalize_call_level
 from app.services.leave import ACTIVE_LEAVE_STATUSES, count_leave_days, month_bounds
@@ -89,7 +90,7 @@ def unit_call_member_counts(assignments: list[PersonPosting], month: str) -> dic
             continue
         if assignment.starts_on > ends_on or (assignment.ends_on is not None and assignment.ends_on < starts_on):
             continue
-        call_level = normalize_call_level(assignment.posting_type or assignment.person.call_level)
+        call_level = normalize_call_level(assignment.posting_type or default_call_level_on(assignment.person, assignment.starts_on))
         people[(assignment.unit_id, call_level)].add(assignment.person_id)
     return {key: len(value) for key, value in people.items()}
 

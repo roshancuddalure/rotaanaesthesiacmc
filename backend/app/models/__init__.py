@@ -6,6 +6,7 @@ from app.models.leave import LeaveRequest
 from app.models.imports import ImportBatch, ImportSourceRecord, ImportWarning
 from app.models.mappings import AdminMapping
 from app.models.person import Person, PersonAlias, PersonDesignation
+from app.models.member_workspace import MemberActivity, MemberImportPreview, MemberCallLevelChange, LegacyPersonCallChange, LegacyPersonComment
 from app.models.posting import PersonPosting
 from app.models.rota import (
     DutyAssignment,
@@ -25,6 +26,11 @@ from app.models.rules import RuleSetting, RuleVersion
 from app.models.unit import Unit, UnitCallMinimum
 
 __all__ = [
+    "MemberActivity",
+    "MemberCallLevelChange",
+    "LegacyPersonCallChange",
+    "LegacyPersonComment",
+    "MemberImportPreview",
     "DutyAssignment",
     "DutySlot",
     "CallCluster",

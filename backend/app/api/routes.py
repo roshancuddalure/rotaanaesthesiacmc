@@ -16,6 +16,7 @@ from app.api.v1.health import router as health_router
 from app.api.v1.historical_imports import router as historical_imports_router
 from app.api.v1.leave import router as leave_router
 from app.api.v1.members import router as members_router
+from app.api.v1.member_workspace import router as member_workspace_router
 from app.api.v1.metadata import router as metadata_router
 from app.api.v1.rota_assignments import router as rota_assignments_router
 from app.api.v1.rota_auto_fill import router as rota_auto_fill_router
@@ -38,6 +39,7 @@ api_router.include_router(diagnostics_router, prefix="/v1", tags=["diagnostics"]
 api_router.include_router(historical_imports_router, prefix="/v1", tags=["historical imports"])
 api_router.include_router(leave_router, prefix="/v1", tags=["leave"])
 api_router.include_router(members_router, prefix="/v1", tags=["members"])
+api_router.include_router(member_workspace_router, prefix="/v1", tags=["member workspace"])
 api_router.include_router(metadata_router, prefix="/v1", tags=["metadata"])
 api_router.include_router(rota_assignments_router, prefix="/v1", tags=["rota assignments"])
 api_router.include_router(rota_auto_fill_router, prefix="/v1", tags=["rota auto fill"])

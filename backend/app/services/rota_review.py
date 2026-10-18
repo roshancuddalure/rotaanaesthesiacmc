@@ -17,6 +17,7 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
+from app.services.member_profile import default_call_level_on
 from app.models import DutyAssignment, DutySlot, Person, PersonPosting, RotaExchangeRequest, RotaReviewDecision, UserAccount
 from app.services.leave import month_bounds
 from app.services.rota_assignment import (
@@ -245,7 +246,7 @@ def person_workload_rows(
             {
                 "person_id": str(posting.person_id),
                 "person_name": posting.person.canonical_name,
-                "call_level": normalize_call_level(posting.posting_type or posting.person.call_level),
+                "call_level": normalize_call_level(posting.posting_type or default_call_level_on(posting.person, posting.starts_on)),
                 "total_assignments": 0,
                 "total_24hr": 0,
                 "weekday_assignments": 0,

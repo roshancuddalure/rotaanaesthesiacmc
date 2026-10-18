@@ -76,11 +76,11 @@ Checklist:
 - [x] Create FastAPI JSON endpoints.
 - [x] Add admin-only authentication placeholder or simple login.
 - [x] Add dashboard shell/navigation.
-- [ ] Add people list and person profile.
+- [x] Add people list and person profile.
 - [x] Add department members management foundation.
 - [x] Add name deduplication review foundation.
 - [x] Add trusted roster reconciliation.
-- [ ] Add alias review screen.
+- [x] Add alias review screen.
 - [ ] Add import center and import status screen.
 - [ ] Add validation issues screen.
 

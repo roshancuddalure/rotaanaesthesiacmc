@@ -1,4 +1,6 @@
 from datetime import date, datetime, timedelta
+from uuid import uuid4
+from app.models import UserAccount
 
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine, select
@@ -7,6 +9,7 @@ from sqlalchemy.pool import StaticPool
 
 from app import models  # noqa: F401
 from app.db.session import Base, get_db
+from app.api.v1.auth import current_user, require_admin
 from app.main import app
 from app.models import DutyAssignment, DutySlot, Person, PersonAlias, PersonDesignation, RotaPeriod
 from app.services.members import (
@@ -159,7 +162,7 @@ def test_name_cleanup_preserves_real_name_with_noise_suffix() -> None:
         assert person.aliases[0].alias == "Kiruthiga - Till sept 27"
 
 
-def test_member_api_lists_full_roster_and_reactivates_existing_historical_member() -> None:
+def test_member_api_lists_full_roster_and_rejects_implicit_reactivation() -> None:
     engine = create_engine(
         "sqlite+pysqlite:///:memory:",
         connect_args={"check_same_thread": False},
@@ -180,6 +183,8 @@ def test_member_api_lists_full_roster_and_reactivates_existing_historical_member
             yield session
 
     app.dependency_overrides[get_db] = override_get_db
+    app.dependency_overrides[current_user] = lambda: None
+    app.dependency_overrides[require_admin] = lambda: UserAccount(id=uuid4(),username="test",display_name="Test admin",role="computer_admin")
     try:
         client = TestClient(app)
 
@@ -192,16 +197,15 @@ def test_member_api_lists_full_roster_and_reactivates_existing_historical_member
             "/api/v1/admin/members",
             json={"canonical_name": "zed historical", "active_status": "active"},
         )
-        assert revived.status_code == 200
-        assert revived.json()["canonical_name"] == "Zed Historical"
-        assert revived.json()["active_status"] == "active"
+        assert revived.status_code == 409
+        assert revived.json()["detail"] == "Member already exists as historical: Zed Historical"
 
         duplicate = client.post(
             "/api/v1/admin/members",
             json={"canonical_name": "Zed Historical", "active_status": "active"},
         )
         assert duplicate.status_code == 409
-        assert duplicate.json()["detail"] == "Member already exists as active: Zed Historical"
+        assert duplicate.json()["detail"] == "Member already exists as historical: Zed Historical"
     finally:
         app.dependency_overrides.clear()
 
@@ -226,6 +230,8 @@ def test_member_api_archives_and_restores_member_with_timestamp() -> None:
             yield session
 
     app.dependency_overrides[get_db] = override_get_db
+    app.dependency_overrides[current_user] = lambda: None
+    app.dependency_overrides[require_admin] = lambda: UserAccount(id=uuid4(),username="test",display_name="Test admin",role="computer_admin")
     try:
         client = TestClient(app)
 

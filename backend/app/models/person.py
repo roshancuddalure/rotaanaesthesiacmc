@@ -21,6 +21,7 @@ if TYPE_CHECKING:
     from app.models.leave import LeaveRequest
     from app.models.posting import PersonPosting
     from app.models.rota import DutyAssignment
+    from app.models.member_workspace import MemberCallLevelChange
 
 
 class Person(Base):
@@ -32,6 +33,10 @@ class Person(Base):
     call_level: Mapped[str | None] = mapped_column(String(100), nullable=True, index=True)
     archived_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True, index=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+    call_level_changes: Mapped[list["MemberCallLevelChange"]] = relationship(
+        back_populates="person", cascade="all, delete-orphan"
+    )
 
     aliases: Mapped[list["PersonAlias"]] = relationship(back_populates="person")
     postings: Mapped[list["PersonPosting"]] = relationship(back_populates="person")

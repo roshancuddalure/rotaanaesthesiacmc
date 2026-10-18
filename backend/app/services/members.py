@@ -2,15 +2,16 @@
 automatic and manual merges (moving assignments, postings, leave, designations and
 aliases to the target), invalid-name cleanup and deletion.
 
-Note (handbook B4): merges/deletes do not move or remove call-cluster memberships or
-review/exchange references, so they fail on PostgreSQL for members referenced there.
+Merges preserve all person references, including eligibility and exchange history.
+The separate legacy invalid-name deletion path still needs relationship review before
+being used on members with operational history.
 """
 
 import re
 from dataclasses import dataclass
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, selectinload
 
@@ -21,6 +22,8 @@ from app.models import (
     PersonAlias,
     PersonDesignation,
     PersonPosting,
+    RotaExchangeRequest, RotaAutoFillEvent, MemberActivity,
+    LegacyPersonCallChange, LegacyPersonComment,
 )
 from app.services.imports import clean_person_name, is_valid_person_name
 
@@ -53,7 +56,7 @@ def compact_name_key(name: str) -> str:
 def duplicate_candidates(db: Session) -> list[DuplicateCandidate]:
     people = db.scalars(
         select(Person)
-        .options(selectinload(Person.aliases), selectinload(Person.designations))
+        .options(selectinload(Person.aliases), selectinload(Person.designations), selectinload(Person.call_level_changes))
         .order_by(Person.canonical_name)
     ).all()
     grouped: dict[str, list[Person]] = {}
@@ -168,22 +171,29 @@ def move_designations(db: Session, source: Person, target: Person) -> None:
     for designation in db.scalars(
         select(PersonDesignation).where(PersonDesignation.person_id == source.id)
     ):
-        designation.person = target
+        existing = next((d for d in target.designations
+                         if d.designation == designation.designation
+                         and d.effective_from == designation.effective_from), None)
+        if existing:
+            if existing.effective_to != designation.effective_to or existing.notes != designation.notes:
+                raise ValueError("Designation histories conflict; correct their dates or notes before merging")
+            source.designations.remove(designation)
+            db.delete(designation)
+        else:
+            designation.person = target
 
 
-def merge_people(db: Session, target_id: UUID, source_ids: list[UUID]) -> Person:
-    """Fold each source person into ``target`` (aliases, assignments, postings, leave,
-    designations) and delete the source. Commits.
-
-    KNOWN ISSUE (handbook B4): call-cluster memberships are not moved, so deleting a source who
-    belongs to an eligibility group fails on PostgreSQL. Exchange requests/auto-fill events
-    pointing at the source are set to NULL by the database rather than re-pointed.
-    """
+def merge_people(db: Session, target_id: UUID, source_ids: list[UUID], *, commit: bool = True) -> Person:
+    """Merge identities and preserve every person reference in one transaction."""
     target = db.get(Person, target_id)
     if target is None:
         raise ValueError("Target person not found")
 
-    sources = [person for person in (db.get(Person, source_id) for source_id in source_ids) if person]
+    if target_id in source_ids:
+        raise ValueError("The surviving member cannot also be a source")
+    sources = [db.get(Person, source_id) for source_id in set(source_ids)]
+    if not sources or any(person is None for person in sources):
+        raise ValueError("Select existing source members")
     for source in sources:
         if source.id == target.id:
             continue
@@ -196,10 +206,40 @@ def merge_people(db: Session, target_id: UUID, source_ids: list[UUID]) -> Person
         move_postings(db, source, target)
         move_leave_requests(db, source, target)
         move_designations(db, source, target)
+        for change in list(source.call_level_changes):
+            existing_change = next((c for c in target.call_level_changes if c.effective_from == change.effective_from), None)
+            if existing_change and existing_change.call_level != change.call_level:
+                raise ValueError("Dated call-level changes conflict; resolve them before merging")
+            if existing_change:
+                source.call_level_changes.remove(change)
+                db.delete(change)
+            else:
+                change.person = target
+        for membership in list(source.call_cluster_memberships):
+            duplicate = next((m for m in target.call_cluster_memberships
+                              if m.cluster_id == membership.cluster_id and m.effective_from == membership.effective_from), None)
+            if duplicate:
+                # Preserve the wider eligibility interval and both notes.
+                duplicate.effective_to = (None if duplicate.effective_to is None or membership.effective_to is None
+                                          else max(duplicate.effective_to, membership.effective_to))
+                duplicate.notes = "\n".join(filter(None, [duplicate.notes, membership.notes])) or None
+                source.call_cluster_memberships.remove(membership)
+                db.delete(membership)
+            else:
+                membership.person = target
+        for model, field in [(RotaExchangeRequest, "from_person_id"),
+                             (RotaExchangeRequest, "to_person_id"),
+                             (RotaAutoFillEvent, "person_id"), (MemberActivity, "person_id"),
+                             (LegacyPersonCallChange, "person_id"), (LegacyPersonComment, "person_id")]:
+            db.execute(update(model).where(getattr(model, field) == source.id).values({field: target.id}))
+        db.flush()
         db.delete(source)
 
     try:
-        db.commit()
+        if commit:
+            db.commit()
+        else:
+            db.flush()
     except IntegrityError:
         db.rollback()
         raise
@@ -210,7 +250,7 @@ def merge_people(db: Session, target_id: UUID, source_ids: list[UUID]) -> Person
 def invalid_members(db: Session) -> list[Person]:
     people = db.scalars(
         select(Person)
-        .options(selectinload(Person.aliases), selectinload(Person.designations))
+        .options(selectinload(Person.aliases), selectinload(Person.designations), selectinload(Person.call_level_changes))
         .order_by(Person.canonical_name)
     ).all()
     return [person for person in people if not is_valid_person_name(person.canonical_name)]

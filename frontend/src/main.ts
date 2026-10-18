@@ -1,3 +1,4 @@
+import { openMemberWorkspace, openMemberCsvImport } from "./member-workspace";
 /**
  * Duty Rota single-page app (framework-free TypeScript + Vite).
  *
@@ -98,6 +99,7 @@ import {
   getCurrentUser,
   getDiagnosticsSummary,
   getInvalidMembers,
+  getDedupeCandidates,
   getLeaveCalendar,
   getLeavePressure,
   getLeaveRequests,
@@ -1302,20 +1304,6 @@ function analysisCallLevelLabel(key: string): string {
   );
 }
 
-function renderPersonMetric(label: string, value: number): string {
-  return `<article class="person-metric"><strong>${value}</strong><span>${statLabel(label, `Count for ${label} in the selected historical period.`)}</span></article>`;
-}
-
-function renderPersonMetricGroup(title: string, metrics: Array<[string, number]>): string {
-  const cards = metrics.map(([label, value]) => renderPersonMetric(label, value)).join("");
-  return `
-    <section class="person-metric-section">
-      <h4>${title}</h4>
-      <div class="person-metric-grid">${cards}</div>
-    </section>
-  `;
-}
-
 function renderMiniRank(people: AnalysisPerson[], key: keyof AnalysisPerson): string {
   if (!people.length) return `<p class="empty-state">No data</p>`;
   return people
@@ -2200,149 +2188,12 @@ function renderAnalysisPromotionsTab(): string {
 }
 
 // ── Person Modal ──────────────────────────────────────────────────────────────
-function renderAnalysisPersonModal(person: AnalysisPerson): string {
-  if (!analysis) return "";
-  const allLevels = Object.values(person.call_levels);
-  const uniqueLevels = Array.from(new Set(allLevels)).map(analysisCallLevelLabel);
-  const units = Array.from(new Set(Object.values(person.units).filter(Boolean)));
-  const popupSubtitle = [uniqueLevels.join(" -> "), units.join(", ")].filter(Boolean).join(" | ");
-
-  const dutyLoadMetrics: Array<[string, number]> = [
-    ["Total 24hr", person.total_24hr],
-    ["Weekend 24hr", person.total_weekend_24hr],
-    ["Weekday 24hr", person.total_weekday_24hr],
-    ["5th Call", person.fifth_call],
-    ["5th Wknd", person.fifth_call_weekend],
-  ];
-  const campusMetrics: Array<[string, number]> = [
-    ["Main Calls", person.main_24hr],
-    ["CB Calls", person.cb_24hr],
-    ["RC Calls", person.rc_24hr],
-    ["RC 12hr", person.rc12hr],
-  ];
-  const specialMetrics: Array<[string, number]> = [
-    ["Schell", person.schell],
-    ["Floating", person.floating],
-    ["Caesar A", person.caesar_a],
-    ["Caesar B", person.caesar_b],
-    ["CART", person.cart],
-    ["PAC", person.pac],
-    ["Shifts", person.shift + person.main_shift + person.rc_shift + person.pb_shift],
-    ["Main Shift", person.main_shift],
-    ["RC Shift", person.rc_shift],
-    ["PB Shift", person.pb_shift],
-  ];
-
-  const dayCards = analysis.days
-    .map((day) => {
-      const isWeekendDay = day === "Saturday" || day === "Sunday";
-      return `
-        <article class="person-day ${isWeekendDay ? "weekend-day" : ""}">
-          <span>${day.slice(0, 3)}</span>
-          <strong>${person.day_breakdown[day] ?? 0}</strong>
-        </article>
-      `;
-    })
-    .join("");
-
-  const monthCards = analysis.months
-    .map((month) => {
-      const value = person.monthly_24hr[month] ?? 0;
-      const callLevel = person.call_levels[month];
-      return `
-        <article class="person-month ${value ? "has-duty" : ""}">
-          <span>${analysis!.month_labels[month]}</span>
-          <strong>${value}</strong>
-          ${callLevel ? `<em>${analysisCallLevelLabel(callLevel).replace(/\s+/g, "\u00a0")}</em>` : ""}
-        </article>
-      `;
-    })
-    .join("");
-
-  const fifthCallSection =
-    person.fifth_call > 0
-      ? `
-      <h4>5th Call by Month</h4>
-      <div class="person-month-grid">
-        ${analysis.months
-          .map((month) => {
-            const value = person.fifth_call_monthly[month] ?? 0;
-            return `
-              <article class="person-month ${value ? "has-duty fifth-call-month" : ""}">
-                <span>${analysis!.month_labels[month]}</span>
-                <strong>${value}</strong>
-              </article>
-            `;
-          })
-          .join("")}
-      </div>
-    `
-      : "";
-
-  const postingBadges = [
-    ...person.pain_months.map((m) => `<span class="posting-badge pain-badge">Pain ${analysis!.month_labels[m] ?? m}</span>`),
-    ...person.sicu_months.map((m) => `<span class="posting-badge sicu-badge">SICU ${analysis!.month_labels[m] ?? m}</span>`),
-    ...person.drp_months.map((m) => `<span class="posting-badge drp-badge">DRP ${analysis!.month_labels[m] ?? m}</span>`),
-    ...person.neuro_icu_months.map((m) => `<span class="posting-badge neuro-badge">Neuro ICU ${analysis!.month_labels[m] ?? m}</span>`),
-  ].join("");
-
-  const promotionSection = person.promotions.length
-    ? `
-      <h4>Call Level Changes</h4>
-      <div class="promotion-list">
-        ${person.promotions
-          .map(
-            (pr) => `
-              <div class="promotion-row">
-                <span>${analysis!.month_labels[pr.month] ?? pr.month}</span>
-                <strong>${analysisCallLevelLabel(pr.from)} → ${analysisCallLevelLabel(pr.to)}</strong>
-              </div>
-            `,
-          )
-          .join("")}
-      </div>
-    `
-    : "";
-
-  return `
-    <div class="modal-backdrop" id="analysis-person-modal">
-      <section class="person-modal" role="dialog" aria-modal="true" aria-labelledby="person-modal-title">
-        <header class="person-modal-header">
-          <div>
-            <h3 id="person-modal-title">${escapeHtml(person.name)}</h3>
-            <p>${escapeHtml(popupSubtitle || `${person.months_active.length} active months`)}</p>
-          </div>
-          <button class="modal-close" data-close-person-modal aria-label="Close">x</button>
-        </header>
-        <div class="person-modal-body">
-          ${renderPersonMetricGroup("Duty Load", dutyLoadMetrics)}
-          ${renderPersonMetricGroup("Campus Calls", campusMetrics)}
-          ${renderPersonMetricGroup("Special Duties", specialMetrics)}
-          ${postingBadges ? `<h4>Special Postings</h4><div class="posting-badges">${postingBadges}</div>` : ""}
-          <h4>24hr Duties by Day of Week</h4>
-          <div class="person-day-grid">${dayCards}</div>
-          <h4>Monthly 24hr Duty Count</h4>
-          <div class="person-month-grid">${monthCards}</div>
-          ${fifthCallSection}
-          ${promotionSection}
-        </div>
-      </section>
-    </div>
-  `;
-}
-
 function openAnalysisPersonModal(name: string) {
-  if (!analysis) return;
-  const existing = document.querySelector("#analysis-person-modal");
-  existing?.remove();
-  const person = analysis.people.find((item) => item.name === name);
-  if (!person) return;
-  document.body.insertAdjacentHTML("beforeend", renderAnalysisPersonModal(person));
+  const person = analysis?.people.find(item => item.name === name);
+  if (!person?.person_id) return;
+  void openMemberWorkspace(person.person_id, isAdminUser(), onMemberWorkspaceChanged, analysis?.people.map(p => p.person_id) ?? [], "duties");
 }
 
-function closeAnalysisPersonModal() {
-  document.querySelector("#analysis-person-modal")?.remove();
-}
 
 // ── Preflight & Manual Review ─────────────────────────────────────────────────
 function renderAnalysisPreflight(preflight: AnalysisPreflight): string {
@@ -2733,8 +2584,23 @@ async function renderImports() {
   `;
 }
 
+function onMemberWorkspaceChanged(saved: DepartmentMember) {
+  const index = members.findIndex(m => m.id === saved.id);
+  if (index >= 0) members[index] = saved;
+  void (async () => {
+    try {
+      members = await getMembers();
+      if (isAdminUser()) memberAudit = await getMemberAudit();
+      if (activeView === "members") await preserveViewport(() => renderMembersView());
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : "Unable to refresh the member list", "warning");
+    }
+  })();
+}
+
 function latestDesignation(member: DepartmentMember) {
-  return member.designations[member.designations.length - 1] ?? null;
+  const today = new Date().toLocaleDateString("en-CA");
+  return member.designations.filter(d => d.effective_from <= today && (!d.effective_to || d.effective_to >= today)).slice(-1)[0] ?? null;
 }
 
 function memberPosition(member: DepartmentMember): string {
@@ -2800,8 +2666,8 @@ function filteredMembers(): DepartmentMember[] {
   return [...members]
     .filter((member) => {
       const position = memberPosition(member);
-      const callLevel = callLevelLabel(normalizeCallLevel(member.call_level));
-      const haystack = `${member.canonical_name} ${position} ${callLevel} ${member.active_status}`.toLocaleLowerCase();
+      const callLevel = callLevelLabel(normalizeCallLevel(member.effective_call_level ?? member.call_level));
+      const haystack = `${member.canonical_name} ${member.aliases.map(a => a.alias).join(" ")} ${position} ${callLevel} ${member.active_status}`.toLocaleLowerCase();
       const matchesSearch = !search || haystack.includes(search);
       const matchesPosition = memberPositionFilter === "all" || position === memberPositionFilter;
       const matchesCallLevel = memberCallLevelFilter === "all" || callLevel === memberCallLevelFilter;
@@ -2840,29 +2706,25 @@ function renderMemberRows(rows: DepartmentMember[]): string {
     .map((member) => {
       const statusClass = memberStatusClass(member);
       const position = memberPosition(member);
-      const callLevel = callLevelLabel(normalizeCallLevel(member.call_level));
+      const callLevel = callLevelLabel(normalizeCallLevel(member.effective_call_level ?? member.call_level));
       const callLevelCell = isAdminUser()
-        ? `
-            <select class="call-level-select" data-call-level="${member.id}" id="call-level-${member.id}" aria-label="Call level for ${member.canonical_name}">
-              ${renderCallLevelChoices(member.call_level)}
-            </select>
-          `
-        : `<span class="call-level-readonly">${callLevel}</span>`;
+        ? `<button type="button" class="icon-button compact-action" data-open-member="${member.id}" data-profile-tab="roles" aria-label="Review call level for ${escapeHtml(member.canonical_name)}">${escapeHtml(callLevel)}</button>`
+        : `<span class="call-level-readonly">${escapeHtml(callLevel)}</span>`;
       const archiveAction = !isAdminUser()
         ? ""
         : member.active_status === "archived"
-          ? `<button class="icon-button compact-action" type="button" data-restore-member="${member.id}" aria-label="Restore ${member.canonical_name}">Restore</button>`
-          : `<button class="icon-button compact-action danger-button" type="button" data-archive-member="${member.id}" aria-label="Archive ${member.canonical_name}">Archive</button>`;
+          ? `<button class="icon-button compact-action" type="button" data-restore-member="${member.id}" aria-label="Restore ${escapeHtml(member.canonical_name)}">Restore</button>`
+          : `<button class="icon-button compact-action danger-button" type="button" data-archive-member="${member.id}" aria-label="Archive ${escapeHtml(member.canonical_name)}">Archive</button>`;
       const archiveText = member.active_status === "archived"
         ? `<small>Archived ${escapeHtml(formatArchivedAt(member.archived_at))}</small>`
         : `<small>Not archived</small>`;
       return `
         <tr>
           <td class="member-name-cell">
-            <strong>${member.canonical_name}</strong>
-            <small>${position}</small>
+            <button class="member-profile-link" type="button" data-open-member="${member.id}">${escapeHtml(member.canonical_name)}</button>
+            <small>${escapeHtml(position)}</small>
           </td>
-          <td><span class="status-dot ${statusClass}">${member.active_status}</span>${archiveText}</td>
+          <td><span class="status-dot ${statusClass}">${escapeHtml(member.active_status)}</span>${archiveText}</td>
           <td>${callLevelCell}</td>
           <td>${archiveAction}</td>
         </tr>
@@ -2875,7 +2737,7 @@ function renderPositionOptions(): string {
   const positions = Array.from(new Set(members.map(memberPosition))).sort();
   return [
     `<option value="all">All positions</option>`,
-    ...positions.map((position) => `<option value="${position}" ${memberPositionFilter === position ? "selected" : ""}>${position}</option>`),
+    ...positions.map((position) => `<option value="${escapeHtml(position)}" ${memberPositionFilter === position ? "selected" : ""}>${escapeHtml(position)}</option>`),
   ].join("");
 }
 
@@ -2895,7 +2757,7 @@ function renderCallLevelChoices(selected: string | null): string {
 }
 
 function callLevelOptions(): string[] {
-  return Array.from(new Set(members.map((member) => callLevelLabel(normalizeCallLevel(member.call_level))))).sort();
+  return Array.from(new Set(members.map((member) => callLevelLabel(normalizeCallLevel(member.effective_call_level ?? member.call_level))))).sort();
 }
 
 function renderCallLevelFilterOptions(): string {
@@ -2913,7 +2775,7 @@ function renderPositionBreakdown(): string {
   }, {});
   return Object.entries(counts)
     .sort((a, b) => b[1] - a[1])
-    .map(([position, count]) => `<div class="category-pill"><span>${position}</span><strong>${count}</strong></div>`)
+    .map(([position, count]) => `<div class="category-pill"><span>${escapeHtml(position)}</span><strong>${count}</strong></div>`)
     .join("");
 }
 
@@ -2935,14 +2797,10 @@ function renderMemberCards(rows: DepartmentMember[]): string {
     .map(
       (member) => {
         const statusClass = memberStatusClass(member);
-        const callLevel = callLevelLabel(normalizeCallLevel(member.call_level));
+        const callLevel = callLevelLabel(normalizeCallLevel(member.effective_call_level ?? member.call_level));
         const callLevelControl = isAdminUser()
-          ? `
-              <select class="call-level-select" data-call-level="${member.id}" aria-label="Call level for ${member.canonical_name}">
-                ${renderCallLevelChoices(member.call_level)}
-              </select>
-            `
-          : `<small>${callLevel}</small>`;
+          ? `<button type="button" class="icon-button compact-action" data-open-member="${member.id}" data-profile-tab="roles" aria-label="Review call level for ${escapeHtml(member.canonical_name)}">${escapeHtml(callLevel)}</button>`
+          : `<small>${escapeHtml(callLevel)}</small>`;
         const archiveAction = !isAdminUser()
           ? ""
           : member.active_status === "archived"
@@ -2954,9 +2812,9 @@ function renderMemberCards(rows: DepartmentMember[]): string {
         return `
         <article class="member-card">
           <div>
-            <strong>${member.canonical_name}</strong>
-            <small><span class="status-dot ${statusClass}">${member.active_status}</span></small>
-            <small>${memberPosition(member)}</small>
+            <button class="member-profile-link" type="button" data-open-member="${member.id}">${escapeHtml(member.canonical_name)}</button>
+            <small><span class="status-dot ${statusClass}">${escapeHtml(member.active_status)}</span></small>
+            <small>${escapeHtml(memberPosition(member))}</small>
             ${archiveText}
           </div>
           <div class="member-card-actions">
@@ -3223,7 +3081,7 @@ function renderLeaveRows(): string {
     .map(
       (leave) => `
         <tr>
-          <td><strong>${escapeHtml(leave.person.canonical_name)}</strong><small>${escapeHtml(callLevelLabel(normalizeCallLevel(leave.person.call_level)))}</small></td>
+          <td><button type="button" class="member-profile-link" data-open-member="${leave.person.id}" data-profile-tab="leave">${escapeHtml(leave.person.canonical_name)}</button><small>${escapeHtml(callLevelLabel(normalizeCallLevel(leave.person.call_level)))}</small></td>
           <td>${leave.starts_on}${leave.starts_on !== leave.ends_on ? ` to ${leave.ends_on}` : ""}</td>
           <td>${escapeHtml(leaveTypeLabel(leave.leave_slot))}</td>
           <td>${escapeHtml(leaveTypeLabel(leave.leave_type))}</td>
@@ -3241,7 +3099,7 @@ function renderLeaveCards(): string {
     .map(
       (leave) => `
         <article class="data-card">
-          <div class="data-card-title">${escapeHtml(leave.person.canonical_name)}</div>
+          <button type="button" class="member-profile-link data-card-title" data-open-member="${leave.person.id}" data-profile-tab="leave">${escapeHtml(leave.person.canonical_name)}</button>
           <div class="data-card-row"><span class="data-card-label">Dates</span><span class="data-card-value">${leave.starts_on}${leave.starts_on !== leave.ends_on ? ` to ${leave.ends_on}` : ""}</span></div>
           <div class="data-card-row"><span class="data-card-label">Slot</span><span class="data-card-value">${escapeHtml(leaveTypeLabel(leave.leave_slot))}</span></div>
           <div class="data-card-row"><span class="data-card-label">Type</span><span class="data-card-value">${escapeHtml(leaveTypeLabel(leave.leave_type))}</span></div>
@@ -3598,7 +3456,7 @@ function renderUnitAssignmentsByUnit(): string {
                   .map(
                     (assignment) => `
                       <span class="unit-member-chip">
-                        ${escapeHtml(assignment.person.canonical_name)}
+                        <button type="button" class="member-profile-link" data-open-member="${assignment.person.id}" data-profile-tab="postings">${escapeHtml(assignment.person.canonical_name)}</button>
                         <small>${escapeHtml(assignment.starts_on)}${assignment.ends_on ? ` to ${escapeHtml(assignment.ends_on)}` : ""}</small>
                       </span>
                     `,
@@ -3625,7 +3483,7 @@ function renderUnitAssignmentsByUnit(): string {
                   .map(
                     (assignment) => `
                       <span class="unit-member-chip">
-                        ${escapeHtml(assignment.person.canonical_name)}
+                        <button type="button" class="member-profile-link" data-open-member="${assignment.person.id}" data-profile-tab="postings">${escapeHtml(assignment.person.canonical_name)}</button>
                       </span>
                     `,
                   )
@@ -3671,7 +3529,7 @@ function renderUnitAssignmentRows(): string {
     .map(
       (assignment) => `
         <tr>
-          <td><strong>${escapeHtml(assignment.person.canonical_name)}</strong><small>${escapeHtml(assignment.person.call_level ?? "Unassigned")}</small></td>
+          <td><button type="button" class="member-profile-link" data-open-member="${assignment.person.id}" data-profile-tab="postings">${escapeHtml(assignment.person.canonical_name)}</button><small>${escapeHtml(assignment.person.call_level ?? "Unassigned")}</small></td>
           <td>${escapeHtml(assignment.unit?.name ?? (SPECIAL_UNIT_POSTING_KEYS.has(assignment.posting_type) ? "Special card" : "No unit"))}</td>
           <td>${escapeHtml(callLevelLabel(assignment.posting_type))}</td>
           <td>${assignment.starts_on}${assignment.ends_on ? ` to ${assignment.ends_on}` : ""}</td>
@@ -4535,32 +4393,31 @@ function renderMembersView() {
   const callLevelCounts = callLevelOrder.map(([key, label]) => ({
     key,
     label,
-    count: members.filter((m) => normalizeCallLevel(m.call_level) === key).length,
+    count: members.filter((m) => normalizeCallLevel(m.effective_call_level ?? m.call_level) === key).length,
   }));
-  const unassignedCount = members.filter((m) => !m.call_level).length;
+  const unassignedCount = members.filter((m) => !(m.effective_call_level ?? m.call_level)).length;
   const adminTools = isAdminUser() && memberAudit
     ? `
-        <details class="member-tools">
-          <summary>Admin tools</summary>
+        <div class="member-tools">
           <div class="member-tool-row">
             <form class="inline-form" id="create-member-form" style="display:contents;">
               <label for="new-member-name" class="visually-hidden">New member name</label>
               <input id="new-member-name" placeholder="New member name" aria-label="New member name" />
               <button class="primary" type="submit" id="create-member">Create Member</button>
             </form>
-            <button class="icon-button" id="cleanup-members">Clean Invalid Names</button>
+            <button class="primary" type="button" id="import-member-csv">Import CSV</button><a class="icon-button" href="/templates/department-members.csv" download>Download CSV template</a></div><details><summary>Advanced member tools</summary><div class="member-tool-row"><button class="icon-button" id="cleanup-members">Clean Invalid Names</button>
             <button class="icon-button" id="prefill-call-levels">Prefill Call Levels</button>
             <button class="icon-button" id="reconcile-roster">Reconcile Trusted Roster</button>
           </div>
-        </details>
+        </details></div>
       `
     : "";
   const adminAudit = isAdminUser() && memberAudit
     ? `
         <div class="audit-chip-row admin-only-inline">
-          <span><strong>${memberAudit.invalid_members}</strong> invalid</span>
-          <span><strong>${memberAudit.duplicate_groups}</strong> duplicates</span>
-          <span><strong>${memberAudit.missing_call_levels}</strong> unassigned calls</span>
+          <button type="button" class="icon-button" data-member-quality="invalid" ${memberAudit.invalid_members ? "" : "disabled"}><strong>${memberAudit.invalid_members}</strong> invalid names</button>
+          <button type="button" class="icon-button" data-member-quality="duplicates" ${memberAudit.duplicate_groups ? "" : "disabled"}><strong>${memberAudit.duplicate_groups}</strong> duplicate groups</button>
+          <button type="button" class="icon-button" data-member-quality="calls" ${memberAudit.missing_call_levels ? "" : "disabled"}><strong>${memberAudit.missing_call_levels}</strong> unassigned calls</button><button type="button" class="icon-button" data-member-quality="positions" ${memberAudit.missing_designations ? "" : "disabled"}><strong>${memberAudit.missing_designations}</strong> missing positions</button>
         </div>
       `
     : "";
@@ -4602,7 +4459,7 @@ function renderMembersView() {
             <button class="status-toggle ${memberStatusFilter === "archived" ? "active" : ""}" data-member-status="archived">Archived</button>
           </div>
           <label for="member-search" class="visually-hidden">Search members</label>
-          <input id="member-search" class="member-search-input" placeholder="Search members or positions" value="${memberSearch}" aria-label="Search members or positions" />
+          <input id="member-search" class="member-search-input" placeholder="Search members or positions" value="${escapeHtml(memberSearch)}" aria-label="Search members or positions" />
           <label for="member-position-filter" class="visually-hidden">Filter by position</label>
           <select id="member-position-filter" aria-label="Filter by position">${renderPositionOptions()}</select>
           <label for="member-call-filter" class="visually-hidden">Filter by call level</label>
@@ -4901,7 +4758,7 @@ async function renderCallClusters() {
     .filter((member) => member.active_status === "active")
     .sort((a, b) => a.canonical_name.localeCompare(b.canonical_name))
     .map((member) => {
-      const memberCall = normalizeCallLevel(member.call_level);
+      const memberCall = normalizeCallLevel(member.effective_call_level ?? member.call_level);
       const wrongCall = Boolean(activeCallCluster && memberCall !== activeClusterCall);
       const searchText = `${member.canonical_name} ${callLevelLabel(memberCall)} ${member.call_level ?? ""}`;
       return `
@@ -8225,6 +8082,23 @@ function bindViewEvents() {
 
   viewRoot?.addEventListener("click", async (event) => {
     const target = event.target as HTMLElement;
+    const qualityButton = target.closest<HTMLButtonElement>("[data-member-quality]");
+    if (qualityButton?.dataset.memberQuality) {
+      const kind = qualityButton.dataset.memberQuality;
+      try {
+        const candidate = kind === "duplicates" ? (await getDedupeCandidates())[0]?.people[0]
+          : kind === "invalid" ? invalidMembers.people[0]
+          : members.find(m => kind === "positions" ? !latestDesignation(m) : !(m.effective_call_level ?? m.call_level));
+        if (candidate) void openMemberWorkspace(candidate.id, isAdminUser(), onMemberWorkspaceChanged, filteredMembers().map(m => m.id), kind === "duplicates" ? "names" : kind === "positions" ? "roles" : "details");
+      } catch (error) { showToast(error instanceof Error ? error.message : "Unable to open member review", "error"); }
+      return;
+    }
+    const profileButton = target.closest<HTMLButtonElement>("[data-open-member]");
+    if (profileButton?.dataset.openMember) {
+      void openMemberWorkspace(profileButton.dataset.openMember, isAdminUser(), onMemberWorkspaceChanged, filteredMembers().map(m => m.id), profileButton.dataset.profileTab || "overview");
+      return;
+    }
+
     const reviewAction = target.closest<HTMLElement>("[data-open-review-action]");
     if (reviewAction?.dataset.openReviewAction) {
       openReviewActionModal(reviewAction.dataset.openReviewAction);
@@ -8913,37 +8787,14 @@ function bindViewEvents() {
       return;
     }
 
-    const archiveButton = target.closest<HTMLButtonElement>("[data-archive-member]");
-    if (archiveButton?.dataset.archiveMember) {
-      const member = members.find((item) => item.id === archiveButton.dataset.archiveMember);
-      if (!member) return;
-      if (!confirmAction(`Archive ${member.canonical_name}? They will move out of the active list but their history will be kept.`)) return;
-      setButtonLoading(archiveButton, true, "Archive");
-      try {
-        await archiveMember(member.id);
-        showToast(`${member.canonical_name} archived`, "success");
-        await renderMembers();
-      } catch (error) {
-        showToast(error instanceof Error ? error.message : "Failed to archive member", "error");
-        resetButton(archiveButton);
-      }
+    if (target.closest("#import-member-csv")) {
+      openMemberCsvImport(() => { void renderMembers(); });
       return;
     }
-
-    const restoreButton = target.closest<HTMLButtonElement>("[data-restore-member]");
-    if (restoreButton?.dataset.restoreMember) {
-      const member = members.find((item) => item.id === restoreButton.dataset.restoreMember);
-      if (!member) return;
-      if (!confirmAction(`Restore ${member.canonical_name} to the active department list?`)) return;
-      setButtonLoading(restoreButton, true, "Restore");
-      try {
-        await restoreMember(member.id);
-        showToast(`${member.canonical_name} restored`, "success");
-        await renderMembers();
-      } catch (error) {
-        showToast(error instanceof Error ? error.message : "Failed to restore member", "error");
-        resetButton(restoreButton);
-      }
+    const statusAction = target.closest<HTMLButtonElement>("[data-archive-member], [data-restore-member]");
+    if (statusAction) {
+      const id = statusAction.dataset.archiveMember || statusAction.dataset.restoreMember;
+      if (id) void openMemberWorkspace(id, isAdminUser(), onMemberWorkspaceChanged, filteredMembers().map(m => m.id), "details", statusAction.dataset.archiveMember ? "archived" : "active");
       return;
     }
 
@@ -9096,6 +8947,12 @@ function bindViewEvents() {
 
   document.addEventListener("click", (event) => {
     const target = event.target as HTMLElement;
+    const memberLink = target.closest<HTMLButtonElement>("[data-open-member]");
+    if (memberLink?.dataset.openMember && !viewRoot?.contains(memberLink)) {
+      void openMemberWorkspace(memberLink.dataset.openMember, isAdminUser(), onMemberWorkspaceChanged, [], memberLink.dataset.profileTab || "overview");
+      return;
+    }
+
     const mobileMoreView = target.closest<HTMLButtonElement>("[data-mobile-more-view]");
     if (mobileMoreView?.dataset.mobileMoreView) {
       navigateToView(mobileMoreView.dataset.mobileMoreView);
@@ -9159,9 +9016,6 @@ function bindViewEvents() {
     if (target.matches("[data-close-profile]") || target.id === "profile-modal") {
       closeProfileModal();
     }
-    if (target.matches("[data-close-person-modal]") || target.id === "analysis-person-modal") {
-      closeAnalysisPersonModal();
-    }
     if (target.matches("[data-close-leave-day-modal]") || target.id === "leave-day-modal") {
       closeLeaveDayModal();
     }
@@ -9180,13 +9034,13 @@ function bindViewEvents() {
       closeChangePasswordModal();
       closeProfileModal();
       closeMobileMoreMenu();
-      closeAnalysisPersonModal();
       closeLeaveDayModal();
       closeRotaDayModal();
       closeUnitModal();
       if (sidebarOpen) toggleSidebar(false);
     }
     const target = event.target as HTMLElement;
+    if (target.closest("[data-open-member]")) return;
     const unitOpener = target.closest<HTMLElement>("[data-open-unit-modal]");
     if (unitOpener?.dataset.openUnitModal && (event.key === "Enter" || event.key === " ")) {
       event.preventDefault();
@@ -9315,10 +9169,11 @@ function bindViewEvents() {
       if (!isAdminUser()) return;
       const member = members.find((item) => item.id === target.dataset.callLevel);
       if (!member) return;
-      member.call_level = target.value || null;
+      const proposed = { ...member, call_level: target.value || null };
       saveFocus();
       try {
-        await updateMember(member);
+        const saved = await updateMember(proposed);
+        Object.assign(member, saved);
         memberAudit = await getMemberAudit();
         showToast("Call level updated", "success");
       } catch (error) {

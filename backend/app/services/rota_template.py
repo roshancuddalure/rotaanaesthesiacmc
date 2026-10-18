@@ -32,6 +32,7 @@ import xlsxwriter
 from sqlalchemy import delete, select, update
 from sqlalchemy.orm import Session, selectinload
 
+from app.services.member_profile import default_call_level_on
 from app.models import (
     DutyAssignment,
     DutySlot,
@@ -251,7 +252,7 @@ def active_unit_member_ids(
         and posting.starts_on <= day
         and (posting.ends_on is None or posting.ends_on >= day)
         and posting.person.active_status == "active"
-        and (call_level is None or normalize_call_level(posting.posting_type or posting.person.call_level) == call_level)
+        and (call_level is None or normalize_call_level(posting.posting_type or default_call_level_on(posting.person, day)) == call_level)
     }
 
 

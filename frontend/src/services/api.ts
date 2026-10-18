@@ -31,7 +31,7 @@ export function clearAuthToken() {
  * defaults instead of merging. A 401 (expired 12h session) is surfaced as a normal error;
  * nothing redirects to the login screen (handbook U1).
  */
-async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+export async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   let response: Response;
   try {
     response = await fetch(`${API_BASE_URL}${path}`, {
@@ -183,6 +183,7 @@ export interface HistoricalAnalysisImportResult {
 }
 
 export interface AnalysisPerson {
+  person_id: string;
   name: string;
   total_24hr: number;
   total_weekend_24hr: number;
@@ -302,6 +303,9 @@ export interface AnalysisManualReview {
 }
 
 export interface DepartmentMember {
+  call_level_changes?: Array<{id?:string; call_level:string; effective_from:string; notes?:string | null}>;
+  effective_call_level?: string | null;
+  revision: string;
   id: string;
   canonical_name: string;
   active_status: string;
@@ -1587,6 +1591,7 @@ export function updateMember(member: DepartmentMember): Promise<DepartmentMember
   return request<DepartmentMember>(`/api/v1/admin/members/${member.id}`, {
     method: "PUT",
     body: JSON.stringify({
+      revision: member.revision,
       canonical_name: member.canonical_name,
       active_status: member.active_status,
       call_level: member.call_level,

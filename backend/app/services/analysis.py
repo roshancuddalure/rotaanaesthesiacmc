@@ -66,6 +66,7 @@ ANALYSIS_REBUILD_DIR = REPO_DIR / "Plan" / "Data" / "analysis_rebuild"
 @dataclass
 class PersonAnalysis:
     name: str
+    person_id: str | None = None
     total_24hr: int = 0
     total_weekend_24hr: int = 0
     total_weekday_24hr: int = 0
@@ -273,7 +274,7 @@ def analyze_dashboard(db: Session) -> dict[str, object]:
         if month not in month_stats:
             continue
         name = assignment.person.canonical_name
-        person = people.setdefault(name, PersonAnalysis(name=name))
+        person = people.setdefault(name, PersonAnalysis(name=name, person_id=str(assignment.person_id)))
         person.monthly_24hr.setdefault(month, 0)
         person.fifth_call_monthly.setdefault(month, 0)
         person.months_active.add(month)
@@ -331,7 +332,7 @@ def analyze_dashboard(db: Session) -> dict[str, object]:
         if month not in month_stats:
             continue
         name = posting.person.canonical_name
-        person = people.setdefault(name, PersonAnalysis(name=name))
+        person = people.setdefault(name, PersonAnalysis(name=name, person_id=str(posting.person_id)))
         person.months_active.add(month)
         if posting.unit is not None:
             person.units[month] = posting.unit.name
@@ -359,6 +360,7 @@ def analyze_dashboard(db: Session) -> dict[str, object]:
         person_rows.append(
             {
                 "name": person.name,
+                "person_id": person.person_id,
                 "total_24hr": person.total_24hr,
                 "total_weekend_24hr": person.total_weekend_24hr,
                 "total_weekday_24hr": person.total_weekday_24hr,

@@ -1,5 +1,26 @@
 # Development Log
 
+## 2026-10-17 - Department Member Workspace
+
+User approved implementing the full 65-item profile/UI/CSV plan. Scope and verification
+are tracked in `docs/member_workspace_implementation.md`.
+
+- Added native modal workspace with eight tabs, mobile horizontal navigation, explicit
+  draft editing, persistent save/cancel, unsaved exit protection, linked records and
+  independently loaded/retried sections.
+- Added atomic revision-checked profile saves, alias continuity, current designation
+  date selection, designation interval validation, dated default call levels, activity
+  records and authenticated/admin member permissions.
+- Added CSV template download, mapping, UTF-8/quoted CSV parsing, separate create/update
+  modes, corrections, duplicate review, frozen apply, stale checks, retry-safe results,
+  row reports and affected profile links.
+- Merges preserve eligibility, exchange/auto-fill/activity references and dated changes.
+- Recovered the missing `20261012_0018` predecessor from the existing PostgreSQL schema and applied new revision `20261017_0019` without rewriting the database stamp or resetting personnel. Existing history tables are preserved.
+- Verification: frontend production build passes; eight browser workflows pass across desktop and mobile widths, including actual app navigation, guarded edits, concurrent-edit comparison, CSV corrections/downloads and retry. Local PostgreSQL reads returned 200 for all profile sections and 312-member listing. Final backend suite: 178 passed; latest affected profile/template suite: 48 passed; Ruff passed.
+- The requirement ledger maps all 65 approved items to source and verification. Physical-phone keyboard testing remains a stated limitation; Chromium mobile/reflow checks and rendered desktop/mobile inspection were completed.
+
+Unrelated existing handbook PDF/artifacts are preserved.
+
 ## 2026-05-05
 
 Initial planning session started.

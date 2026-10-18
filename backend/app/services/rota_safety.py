@@ -21,6 +21,7 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.orm import Session, object_session, selectinload
 
+from app.services.member_profile import default_call_level_on
 from app.models import DutyAssignment, DutySlot, LeaveRequest, Person, PersonPosting, Unit
 from app.services.leave import ACTIVE_LEAVE_STATUSES, BLOCKING_LEAVE_STATUSES, date_range, leave_requests_for_month, month_bounds
 from app.services.call_clusters import active_cluster_keys_for_person
@@ -40,10 +41,13 @@ class MemberContext:
     person: Person
     unit_id: UUID
     posting_type: str
+    day: date | None = None
 
 
 def member_call_level(member: MemberContext) -> str:
-    return normalize_call_level(member.person.call_level or member.posting_type)
+    posted = normalize_call_level(member.posting_type)
+    return posted if posted != "Unassigned" else normalize_call_level(
+        default_call_level_on(member.person, member.day or date.today()))
 
 
 def rule_for_slot(slot: DutySlot, rules: RotaPhaseOneRules) -> DutyRule | None:
@@ -156,6 +160,7 @@ def member_contexts_for_day(postings: list[PersonPosting], day: date) -> list[Me
                 person=posting.person,
                 unit_id=posting.unit_id,
                 posting_type=posting.posting_type,
+                day=day,
             )
         )
     return contexts
