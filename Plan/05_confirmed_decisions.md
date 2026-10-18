@@ -166,3 +166,12 @@ The user approved an organized member master list with CSV and Excel import/revi
 - Missing historical coverage must not be treated as zero workload; rest checks must include recorded duties across month boundaries.
 - User requested per-person profiles with call-promotion dates/reasons and Admin/HOD comments, synchronized through the department member master record.
 - User explicitly chose a separate HOD login role. HOD users may maintain profile call changes and comments; import/software-admin privileges remain separate.
+
+
+## 2026-10-19 - Staged Performance and Optional Local GPU
+
+The user approved implementing the staged performance plan based on `to do/oct2026.txt`
+and requested testing of the complete plan before reporting completion. Local GPU use
+is optional and enabled per browser by an admin. The server remains authoritative for
+rota safety and saving; proposals require review and never publish automatically.
+The implementation and measured evidence are in `../docs/staged_compute_implementation.md`.

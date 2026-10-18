@@ -5,23 +5,32 @@ validated, then scored (lower is better) from status, monthly burden (total, 24h
 weekend 24h, same weekday/weekend type, same family, same campus), fairness vs the month
 average, rest gap to the nearest saved duty, slot safety and override need.
 
-Performance (handbook P1): each candidate triggers a full ``validate_assignment`` which
-re-queries the month's postings, leave and assignments.
+Candidate validation shares the month snapshot and each slot's safety calculation.
+An uncached reference path remains available for parity and performance checks.
 """
 
 from __future__ import annotations
 
 from collections import defaultdict
 from dataclasses import dataclass
+from datetime import datetime, time, timedelta
+from types import SimpleNamespace
 from math import floor
-from uuid import UUID
+from time import perf_counter
+from uuid import UUID, uuid4
 
-from sqlalchemy import select
+from sqlalchemy import or_, select
 from sqlalchemy.orm import Session, selectinload
 
-from app.models import DutyAssignment, DutySlot, Person
+from app.models import DutyAssignment, DutySlot, Person, RotaPeriod
 from app.services.leave import month_bounds
-from app.services.history_fairness import historical_score, history_context, nearby_duties, unique_assignments
+from app.services.history_fairness import (
+    OFFICIAL_STATUSES,
+    historical_score,
+    history_context,
+    nearby_duties,
+    unique_assignments,
+)
 from app.services.rota_assignment import (
     active_assignment,
     campus_for_slot,
@@ -63,16 +72,22 @@ class CandidateContext:
     assignments_by_person: dict[UUID, list[DutyAssignment]]
     average_assignments: float
     history: dict
+    nearby_assignments: dict
+    people: dict
+    timings: dict
 
 
 def candidate_context(db: Session, month: str) -> CandidateContext:
+    began = perf_counter()
     starts_on, ends_on = month_bounds(month)
     _rule_version, rules = get_phase_one_rules(db)
     postings = postings_for_month(db, starts_on, ends_on)
     leaves = leaves_by_day_and_person(db, month)
     assignments = assignments_for_month(db, starts_on, ends_on)
-    assignments = unique_assignments(assignments)
-    same_day_assignments, previous_day_assignments = assignment_indexes(assignments_for_safety(db, starts_on, ends_on), rules)
+    assignments = unique_assignments(a for a in assignments if active_assignment(a))
+    same_day_assignments, previous_day_assignments = assignment_indexes(
+        assignments_for_safety(db, starts_on, ends_on), rules
+    )
     assignments_by_person: dict[UUID, list[DutyAssignment]] = defaultdict(list)
     for assignment in assignments:
         if active_assignment(assignment):
@@ -82,7 +97,21 @@ def candidate_context(db: Session, month: str) -> CandidateContext:
         if assignments_by_person
         else 0.0
     )
-    return CandidateContext(
+    buffer = timedelta(hours=rules.rest_rules.minimum_gap_after_24hr_hours + 48)
+    nearby = defaultdict(list)
+    for assignment in db.scalars(
+        select(DutyAssignment)
+        .join(DutyAssignment.duty_slot)
+        .outerjoin(DutySlot.rota_period)
+        .where(
+            DutySlot.ends_at >= datetime.combine(starts_on, time.min) - buffer,
+            DutySlot.starts_at <= datetime.combine(ends_on, time.max) + buffer,
+            or_(DutySlot.source == PHASE4_SLOT_SOURCE, RotaPeriod.status.in_(OFFICIAL_STATUSES)),
+        )
+        .options(selectinload(DutyAssignment.duty_slot))
+    ):
+        nearby[assignment.person_id].append(assignment)
+    result = CandidateContext(
         month=month,
         starts_on=starts_on,
         ends_on=ends_on,
@@ -95,7 +124,34 @@ def candidate_context(db: Session, month: str) -> CandidateContext:
         assignments_by_person=assignments_by_person,
         average_assignments=average,
         history=history_context(db, starts_on),
+        nearby_assignments=nearby,
+        people={p.person_id: p.person for p in postings},
+        timings={"load_ms": 0.0, "validation_ms": 0.0, "scoring_ms": 0.0, "safety_ms": 0.0},
     )
+    result.timings["load_ms"] = (perf_counter() - began) * 1000
+    return result
+
+
+def add_provisional_assignment(context: CandidateContext, slot: DutySlot, person_id: UUID):
+    """Update all dependent indexes without writing an operational assignment."""
+    assignment = SimpleNamespace(
+        id=uuid4(), person_id=person_id, duty_slot_id=slot.id, duty_slot=slot, status="assigned"
+    )
+    context.assignments.append(assignment)
+    context.assignments_by_person[person_id].append(assignment)
+    context.nearby_assignments[person_id].append(assignment)
+    same, previous = assignment_indexes([assignment], context.rules)
+    for index, additions in [
+        (context.same_day_assignments, same),
+        (context.previous_day_assignments, previous),
+    ]:
+        for day, people in additions.items():
+            for person, items in people.items():
+                index.setdefault(day, {}).setdefault(person, []).extend(items)
+    context.average_assignments = sum(
+        len(items) for items in context.assignments_by_person.values()
+    ) / max(1, len(context.assignments_by_person))
+    return assignment
 
 
 def candidate_pool_from_safety(safety: dict[str, object]) -> list[tuple[dict[str, object], str]]:
@@ -129,7 +185,9 @@ def active_slots_for_person(assignments: list[DutyAssignment], slot: DutySlot) -
     ]
 
 
-def duty_counts(slots: list[DutySlot], target_slot: DutySlot, rules: RotaPhaseOneRules) -> dict[str, int]:
+def duty_counts(
+    slots: list[DutySlot], target_slot: DutySlot, rules: RotaPhaseOneRules
+) -> dict[str, int]:
     target_group = rule_group_for_slot(target_slot, rules)
     target_campus = campus_for_slot(target_slot)
     target_is_weekend = target_slot.duty_date.weekday() >= 5
@@ -143,7 +201,9 @@ def duty_counts(slots: list[DutySlot], target_slot: DutySlot, rules: RotaPhaseOn
         "total_24hr": sum(1 for slot in slots if slot.is_24hr),
         "weekend_24hr": sum(1 for slot in slots if slot.is_24hr and slot.duty_date.weekday() >= 5),
         "same_group": sum(1 for slot in slots if rule_group_for_slot(slot, rules) == target_group),
-        "same_campus": sum(1 for slot in slots if target_campus and campus_for_slot(slot) == target_campus),
+        "same_campus": sum(
+            1 for slot in slots if target_campus and campus_for_slot(slot) == target_campus
+        ),
     }
 
 
@@ -163,14 +223,15 @@ def validation_status_for_pool(pool_status: str, validation: dict[str, object]) 
     issue_rows = [
         issue
         for issue in validation.get("issues", [])
-        if isinstance(issue, dict)
-        and issue.get("code") not in {"unit_safety_review"}
+        if isinstance(issue, dict) and issue.get("code") not in {"unit_safety_review"}
     ]
     if any(issue.get("severity") in {"blocked", "error"} for issue in issue_rows):
         return CANDIDATE_BLOCKED
     if pool_status == CANDIDATE_BLOCKED:
         return CANDIDATE_BLOCKED
-    if pool_status == CANDIDATE_REVIEW or any(issue.get("severity") == "warning" for issue in issue_rows):
+    if pool_status == CANDIDATE_REVIEW or any(
+        issue.get("severity") == "warning" for issue in issue_rows
+    ):
         return CANDIDATE_REVIEW
     return CANDIDATE_ELIGIBLE
 
@@ -243,9 +304,13 @@ def candidate_reasons(
     if status == CANDIDATE_ELIGIBLE:
         reasons.append("No person-specific leave or rest blocker was found.")
     elif status == CANDIDATE_REVIEW:
-        reasons.append("This candidate can be considered, but needs board review before assignment.")
+        reasons.append(
+            "This candidate can be considered, but needs board review before assignment."
+        )
     else:
-        reasons.append("This candidate has a hard blocker and should not be used without a deliberate override.")
+        reasons.append(
+            "This candidate has a hard blocker and should not be used without a deliberate override."
+        )
 
     for blocker in safety_row.get("blockers", []):
         if isinstance(blocker, dict) and blocker.get("label"):
@@ -269,7 +334,9 @@ def candidate_reasons(
     if counts["total_assignments"] <= average_assignments:
         reasons.append("Duty load is at or below the current assigned-member average.")
     else:
-        reasons.append("Duty load is above the current assigned-member average, so fairness score is lower.")
+        reasons.append(
+            "Duty load is above the current assigned-member average, so fairness score is lower."
+        )
 
     for row in validation.get("issues", []):
         if isinstance(row, dict) and row.get("message"):
@@ -286,20 +353,41 @@ def candidate_to_dict(
     safety_row: dict[str, object],
     pool_status: str,
     context: CandidateContext,
+    safety=None,
+    optimized: bool = True,
 ) -> dict[str, object] | None:
     person_id = UUID(str(safety_row["person_id"]))
-    person = db.get(Person, person_id)
+    person = context.people.get(person_id) or db.get(Person, person_id)
     if person is None:
         return None
     replace_existing = any(active_assignment(assignment) for assignment in slot.assignments)
-    validation = validate_assignment(db, slot=slot, person=person, replace_existing=replace_existing)
+    validation_began = perf_counter()
+    validation = validate_assignment(
+        db,
+        slot=slot,
+        person=person,
+        replace_existing=replace_existing,
+        context=context if optimized else None,
+        safety=safety if optimized else None,
+    )
+    context.timings["validation_ms"] += (perf_counter() - validation_began) * 1000
+    scoring_began = perf_counter()
     status = validation_status_for_pool(pool_status, validation)
     person_slots = active_slots_for_person(
         context.assignments_by_person.get(person_id, []),
         slot,
     )
     counts = duty_counts(person_slots, slot, context.rules)
-    rest_gap_hours = nearest_rest_gap_hours(nearby_duties(db, slot, person_id, context.rules.rest_rules.minimum_gap_after_24hr_hours), slot)
+    rest_gap_hours = nearest_rest_gap_hours(
+        nearby_duties(
+            db,
+            slot,
+            person_id,
+            context.rules.rest_rules.minimum_gap_after_24hr_hours,
+            assignments=context.nearby_assignments.get(person_id, []) if optimized else None,
+        ),
+        slot,
+    )
     score, score_parts = candidate_score(
         status=status,
         counts=counts,
@@ -312,6 +400,7 @@ def candidate_to_dict(
     historical = historical_score(context.history, person_id, slot)
     score_parts["historical_fairness"] = historical["penalty"]
     score += historical["penalty"]
+    context.timings["scoring_ms"] += (perf_counter() - scoring_began) * 1000
     return {
         "person_id": str(person.id),
         "person_name": person.canonical_name,
@@ -326,7 +415,8 @@ def candidate_to_dict(
         "counts": counts,
         "history": historical,
         "rest_gap_hours": None if rest_gap_hours is None else round(rest_gap_hours, 1),
-        "reasons": [historical["reason"]] + candidate_reasons(
+        "reasons": [historical["reason"]]
+        + candidate_reasons(
             status=status,
             safety_row=safety_row,
             counts=counts,
@@ -344,7 +434,9 @@ def slot_candidates_with_context(
     slot: DutySlot,
     context: CandidateContext,
     limit: int | None = None,
+    optimized: bool = True,
 ) -> dict[str, object]:
+    safety_began = perf_counter()
     safety = slot_safety(
         slot=slot,
         rules=context.rules,
@@ -353,6 +445,7 @@ def slot_candidates_with_context(
         same_day_assignments=context.same_day_assignments,
         previous_day_assignments=context.previous_day_assignments,
     )
+    context.timings["safety_ms"] += (perf_counter() - safety_began) * 1000
     candidates = [
         candidate
         for safety_row, status in candidate_pool_from_safety(safety)
@@ -363,12 +456,21 @@ def slot_candidates_with_context(
                 safety_row=safety_row,
                 pool_status=status,
                 context=context,
+                safety=safety,
+                optimized=optimized,
             )
         )
         is not None
     ]
     status_order = {CANDIDATE_ELIGIBLE: 0, CANDIDATE_REVIEW: 1, CANDIDATE_BLOCKED: 2}
-    candidates.sort(key=lambda item: (status_order[str(item["candidate_status"])], int(item["rank_score"]), str(item["person_name"])))
+    candidates.sort(
+        key=lambda item: (
+            status_order[str(item["candidate_status"])],
+            int(item["rank_score"]),
+            str(item["person_name"]),
+            str(item["person_id"]),
+        )
+    )
     if limit is not None:
         candidates = candidates[:limit]
     return {
@@ -416,9 +518,15 @@ def month_candidate_slots(db: Session, month: str, limit_per_slot: int = 5) -> d
         "summary": {
             "slots_checked": len(rows),
             "slots_with_candidates": sum(1 for row in rows if row["candidates"]),
-            "eligible_candidates": sum(1 for item in all_candidates if item["candidate_status"] == CANDIDATE_ELIGIBLE),
-            "needs_review_candidates": sum(1 for item in all_candidates if item["candidate_status"] == CANDIDATE_REVIEW),
-            "blocked_candidates": sum(1 for item in all_candidates if item["candidate_status"] == CANDIDATE_BLOCKED),
+            "eligible_candidates": sum(
+                1 for item in all_candidates if item["candidate_status"] == CANDIDATE_ELIGIBLE
+            ),
+            "needs_review_candidates": sum(
+                1 for item in all_candidates if item["candidate_status"] == CANDIDATE_REVIEW
+            ),
+            "blocked_candidates": sum(
+                1 for item in all_candidates if item["candidate_status"] == CANDIDATE_BLOCKED
+            ),
         },
         "slots": rows,
     }

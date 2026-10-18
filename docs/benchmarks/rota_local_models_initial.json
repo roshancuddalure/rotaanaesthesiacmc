@@ -1,0 +1,186 @@
+{
+  "synthetic_only": true,
+  "models": [
+    {
+      "model": "qwen2.5:1.5b",
+      "port": 11436,
+      "cases": [
+        {
+          "case": "fairness",
+          "passed": true,
+          "elapsed_ms": 1822.03,
+          "response": {
+            "mode": "balanced",
+            "explanation": "To balance weekend duties fairly and preserve existing assignments, configure a rule that limits the total hours worked on weekends to a maximum of 24 hours per month, ensuring a minimum gap of 24 hours between shifts.",
+            "proposed_rules": [],
+            "needs_review": true,
+            "model": "qwen2.5:1.5b",
+            "local_only": true
+          }
+        },
+        {
+          "case": "repair",
+          "passed": false,
+          "elapsed_ms": 1423.57,
+          "response": {
+            "mode": "repair",
+            "explanation": "The user requests finding replacements for someone with unexpected leave while minimizing changes to other assignments, indicating a need for flexibility and minimizing disruption.",
+            "proposed_rules": [
+              "Allow unexpected leave for the affected individual.",
+              "Replace the affected individual with a suitable replacement from the available pool.",
+              "Ensure the replacement meets the required qualifications and availability."
+            ],
+            "needs_review": true,
+            "model": "qwen2.5:1.5b",
+            "local_only": true
+          }
+        },
+        {
+          "case": "preferences",
+          "passed": false,
+          "elapsed_ms": 855.02,
+          "response": {
+            "mode": "preferences",
+            "explanation": "The request prioritizes honoring recorded personal requests while respecting existing constraints and policies.",
+            "proposed_rules": [
+              "allow_recorded_personal_requests"
+            ],
+            "needs_review": true,
+            "model": "qwen2.5:1.5b",
+            "local_only": true
+          }
+        },
+        {
+          "case": "new_rule",
+          "passed": false,
+          "elapsed_ms": 1045.97,
+          "response": {
+            "mode": "preferences",
+            "explanation": "The request proposes a maximum of 8 twenty-four-hour duties per member per month, which requires administrator review.",
+            "proposed_rules": [
+              "max_24hr_per_month = 8"
+            ],
+            "needs_review": true,
+            "model": "qwen2.5:1.5b",
+            "local_only": true
+          }
+        }
+      ],
+      "runtime": {
+        "models": [
+          {
+            "name": "qwen2.5:1.5b",
+            "model": "qwen2.5:1.5b",
+            "size": 1166236712,
+            "digest": "65ec06548149b04c096a120e4a6da9d4017ea809c91734ea5631e89f96ddc57b",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "1.5B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-19T01:15:14.5139075+05:30",
+            "size_vram": 1166236712,
+            "context_length": 4096
+          }
+        ]
+      }
+    },
+    {
+      "model": "gemma3:4b",
+      "port": 11434,
+      "cases": [
+        {
+          "case": "fairness",
+          "passed": false,
+          "elapsed_ms": 47948.02,
+          "response": {
+            "mode": "balanced",
+            "explanation": "I will prioritize fairness while maintaining current assignments, ensuring a balanced approach.",
+            "proposed_rules": [
+              "Review weekend duty assignments to ensure equitable distribution.",
+              "Maintain existing staff assignments unless policy dictates otherwise."
+            ],
+            "needs_review": true,
+            "model": "gemma3:4b",
+            "local_only": true
+          }
+        },
+        {
+          "case": "repair",
+          "passed": false,
+          "elapsed_ms": 31378.66,
+          "response": {
+            "mode": "repair",
+            "explanation": "I will prioritize fixing the issue by finding replacements while maintaining existing schedules.",
+            "proposed_rules": [
+              "Assess the impact of the unexpected leave on existing rota coverage.",
+              "Identify potential replacements based on skill set, availability, and current workload.",
+              "Prioritize replacements who minimize disruption to other team members' schedules and preferences where possible."
+            ],
+            "needs_review": true,
+            "model": "gemma3:4b",
+            "local_only": true
+          }
+        },
+        {
+          "case": "preferences",
+          "passed": false,
+          "elapsed_ms": 15224.77,
+          "response": {
+            "mode": "repair",
+            "explanation": "I will prioritize fixing issues and fulfilling requests, ensuring a helpful response.",
+            "proposed_rules": [
+              "Honor recorded personal requests wherever safe coverage permits."
+            ],
+            "needs_review": true,
+            "model": "gemma3:4b",
+            "local_only": true
+          }
+        },
+        {
+          "case": "new_rule",
+          "passed": false,
+          "elapsed_ms": 16136.86,
+          "response": {
+            "mode": "repair",
+            "explanation": "I will modify existing rules based on user requests, prioritizing accurate updates and policy adjustments.",
+            "proposed_rules": [
+              "max_24hr_per_month_8"
+            ],
+            "needs_review": true,
+            "model": "gemma3:4b",
+            "local_only": true
+          }
+        }
+      ],
+      "runtime": {
+        "models": [
+          {
+            "name": "gemma3:4b",
+            "model": "gemma3:4b",
+            "size": 3472422337,
+            "digest": "a2af6cc3eb7fa8be8504abaf9b04e88f17a119ec3f04a3addf55f92841195f5a",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "gemma3",
+              "families": [
+                "gemma3"
+              ],
+              "parameter_size": "4.3B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-19T01:17:05.2147477+05:30",
+            "size_vram": 1597788651,
+            "context_length": 4096
+          }
+        ]
+      }
+    }
+  ]
+}

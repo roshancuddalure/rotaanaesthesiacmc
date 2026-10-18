@@ -207,13 +207,24 @@ export async function openOperationalImport(
   } catch (error) {
     message.textContent = (error as Error).message;
   }
+  // The apply button sits below a long row list, so mirror status next to it.
+  function say(text: string) {
+    message.textContent = text;
+    const status = dialog.querySelector<HTMLElement>("[data-apply-status]");
+    if (status) {
+      status.textContent = text;
+      status.scrollIntoView({ block: "nearest" });
+    }
+  }
   function dirtyPreview() {
     draftVersion++;
     previewDirty = true;
     dialog
       .querySelector<HTMLButtonElement>("[data-apply]")
-      ?.setAttribute("disabled", "");
-    message.textContent = "Changes need a refreshed preview before applying.";
+      ?.setAttribute("aria-disabled", "true");
+    say(
+      "Changes need a refreshed preview before applying. Click “Refresh normalized preview”.",
+    );
   }
   dialog.querySelector<HTMLFormElement>("[data-settings]")!.onchange =
     dirtyPreview;
@@ -395,7 +406,7 @@ export async function openOperationalImport(
       })
       .join(
         "",
-      )}<div class="registry-actions"><button type="button" data-page="-1" ${page === 0 ? "disabled" : ""}>Previous rows</button><span>Page ${page + 1} of ${Math.ceil(preview.rows.length / 25)}</span><button type="button" data-page="1" ${(page + 1) * 25 >= preview.rows.length ? "disabled" : ""}>Next rows</button></div><label><input type="checkbox" data-acknowledge> I reviewed the affected duties and replacement scope</label><div class="registry-actions"><button type="button" data-refresh>Refresh normalized preview</button><button type="button" data-report>Download row report</button><button type="button" class="primary" data-apply ${previewDirty ? "disabled" : ""}>Apply reviewed rows</button></div>`;
+      )}<div class="registry-actions"><button type="button" data-page="-1" ${page === 0 ? "disabled" : ""}>Previous rows</button><span>Page ${page + 1} of ${Math.ceil(preview.rows.length / 25)}</span><button type="button" data-page="1" ${(page + 1) * 25 >= preview.rows.length ? "disabled" : ""}>Next rows</button></div><label><input type="checkbox" data-acknowledge> I reviewed the affected duties and replacement scope</label><div class="registry-actions"><button type="button" data-refresh>Refresh normalized preview</button><button type="button" data-report>Download row report</button><button type="button" class="primary" data-apply ${previewDirty ? 'aria-disabled="true"' : ""}>Apply reviewed rows</button></div><p data-apply-status role="status" aria-live="polite"></p>`;
     root.querySelectorAll<HTMLButtonElement>("[data-review-candidate]").forEach(
       (button) =>
         (button.onclick = () => {
@@ -525,7 +536,7 @@ export async function openOperationalImport(
               (corrections[key] || {})[member ? "person_id" : "unit_id"] ||
               row.after[member ? "person_id" : "unit_id"];
             if (!selected) {
-              message.textContent = "Select a member or unit first.";
+              say("Select a member or unit first.");
               return;
             }
             if (
@@ -593,22 +604,37 @@ export async function openOperationalImport(
       .querySelector("[data-report]")!
       .addEventListener("click", downloadReport);
     root.querySelector("[data-apply]")!.addEventListener("click", async () => {
-      if (busy || previewDirty) return;
+      if (busy) return say("An import action is still running…");
+      if (previewDirty)
+        return say(
+          "Changes need a refreshed preview before applying. Click “Refresh normalized preview”.",
+        );
       const acknowledge = (
         root.querySelector("[data-acknowledge]") as HTMLInputElement
       ).checked;
-      if (preview!.mode === "replace_month" && !acknowledge) {
-        message.textContent =
-          "Review and acknowledge the replacement scope first.";
-        return;
-      }
+      const selected = preview!.rows.filter((r) => !excluded.has(r.key));
+      const blocked = selected.filter((r) => r.issues.length);
+      if (!selected.length) return say("Select at least one row to apply.");
+      if (blocked.length)
+        return say(
+          `${blocked.length} included row(s) still need review (e.g. row ${blocked[0].source.row}: ${blocked[0].issues[0]}). Fix them or untick “Include”, then refresh the preview.`,
+        );
+      if (preview!.mode === "replace_month" && !acknowledge)
+        return say(
+          "Tick “I reviewed the affected duties and replacement scope” first.",
+        );
+      if (selected.some((r) => r.warnings.length) && !acknowledge)
+        return say(
+          "Some rows affect existing duties. Tick “I reviewed the affected duties and replacement scope” first.",
+        );
       if (
         !confirm(
-          `Apply ${preview!.rows.length - excluded.size} reviewed rows for ${preview!.month}?`,
+          `Apply ${selected.length} reviewed rows for ${preview!.month}?`,
         )
       )
         return;
       busy = true;
+      say("Applying reviewed rows…");
       try {
         const result = await request<Row>(
           `/api/v1/import-review/${preview!.id}/apply`,
@@ -627,7 +653,7 @@ export async function openOperationalImport(
           .addEventListener("click", downloadReport);
         updated();
       } catch (error) {
-        message.textContent = (error as Error).message;
+        say((error as Error).message);
       } finally {
         busy = false;
       }

@@ -9,6 +9,7 @@ from fastapi import APIRouter
 
 from app.api.v1.analysis import router as analysis_router
 from app.api.v1.auth import router as auth_router
+from app.api.v1.rota_compute import router as rota_compute_router
 from app.api.v1.call_clusters import router as call_clusters_router
 from app.api.v1.admin_mappings import router as admin_mappings_router
 from app.api.v1.diagnostics import router as diagnostics_router
@@ -35,7 +36,11 @@ from app.api.v1.rota_setup import router as rota_setup_router
 from app.api.v1.rota_template import router as rota_template_router
 from app.api.v1.unit_management import router as unit_management_router
 
+from app.api.v1.rota_intelligence import router as rota_intelligence_router
+
 api_router = APIRouter()
+api_router.include_router(rota_intelligence_router, prefix='/v1', tags=['intelligent rota'])
+api_router.include_router(rota_compute_router, prefix="/v1", tags=["reviewed rota compute"])
 api_router.include_router(health_router, tags=["health"])
 api_router.include_router(import_history_router, prefix="/v1", tags=["import history"])
 api_router.include_router(auth_router, prefix="/v1", tags=["auth"])

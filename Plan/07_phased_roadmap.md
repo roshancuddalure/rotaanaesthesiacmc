@@ -137,6 +137,9 @@ Checklist:
 - [ ] Score candidates by duty count, weekend burden, spacing, leave, unit/campus rules, and call level.
 - [ ] Show why each candidate is suggested or blocked.
 - [ ] Allow admin to accept, reject, or override suggestions.
+- [x] Cache monthly candidate/validation data and verify parity with the uncached reference.
+- [x] Add resumable reviewed generation proposals, progress, cancellation and atomic apply.
+- [x] Add an opt-in browser GPU scoring pilot with exact parity and measured server fallback.
 - [ ] Later evaluate OR-Tools if full optimization is needed.
 
 Deliverable:

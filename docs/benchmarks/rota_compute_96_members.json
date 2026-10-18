@@ -1,0 +1,49 @@
+{
+  "fixture": {
+    "members": 96,
+    "slots": 62,
+    "month": "2026-05",
+    "database": "disposable SQLite",
+    "baseline": "uncached validation/context, atomic writes in both paths"
+  },
+  "template_generation": {
+    "elapsed_ms": 665.22,
+    "sql_queries": 145,
+    "generated_slots": 31,
+    "month": "2026-05",
+    "duty_keys": [
+      "MAIN_1ST_24HR"
+    ]
+  },
+  "reference": {
+    "elapsed_ms": 72324.16,
+    "sql_queries": 69174,
+    "sql_ms": 2342.21,
+    "assigned": 62,
+    "unresolved": 0,
+    "stages": {
+      "load_ms": 1969.52,
+      "validation_ms": 65662.04,
+      "scoring_ms": 2661.63,
+      "safety_ms": 73.58,
+      "save_ms": 1600.36
+    }
+  },
+  "optimized": {
+    "elapsed_ms": 2660.73,
+    "sql_queries": 604,
+    "sql_ms": 17.4,
+    "assigned": 62,
+    "unresolved": 0,
+    "stages": {
+      "load_ms": 91.61,
+      "validation_ms": 1772.39,
+      "scoring_ms": 132.02,
+      "safety_ms": 69.31,
+      "save_ms": 377.38
+    }
+  },
+  "identical_assignments": true,
+  "speedup": 27.18,
+  "query_reduction_percent": 99.13
+}

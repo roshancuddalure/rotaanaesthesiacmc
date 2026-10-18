@@ -2544,3 +2544,44 @@ User requested comparing the May backup, committed code, and connected public DB
 - Corrected the schema/deployment mismatch introduced by the local pending migration: confirmed new profile tables were empty, reversed that migration on public, and verified committed `c20da67` Alembic startup at revision `20260514_0017`. Local remains at `20261012_0018`; pending application features were not published.
 - Read-back verified selected local records, protected passwords/account roles, and all three public sessions. Executed statistics using an isolated checkout of committed code: 14,448 duties, 17 historical months, 8,139 counted 24-hour duties, 2,355 weekend 24-hour duties.
 - Added `docs/database_sync_2026_10_12.md` with final counts, verification, and private recovery artifact locations. No website HTTP URL was supplied; the provided URL was a database connection.
+
+
+## 2026-10-19 - Staged Rota Performance and Browser GPU Pilot
+
+User approved the seven-stage performance plan for `Plan/to do/oct2026.txt`, including
+implementation and testing. Preserved the current scoring weights and safety policy.
+
+Delivered shared indexed candidate/validation context, one safety calculation per
+slot, cached nearby duties/group membership and incremental provisional assignment
+indexes. Fixed cancelled duplicate duties hiding active duties in cached context.
+The compatibility auto-fill now writes atomically and records running/completed/failed.
+
+Added durable, revisioned proposal jobs with bounded steps, progress, cancellation,
+resume, expiry, duplicate-run prevention and explicit review/apply. PostgreSQL final
+snapshot locks, stale-data checks and complete schedule validation precede atomic
+assignment/audit writes. Existing assignments and published months are protected.
+
+Added Admin Compute Settings, per-browser opt-in/modes/reset, a real numeric WGSL
+worker, exact integer CPU/GPU parity and tie-breaking, device/overflow/timeout checks,
+server fallback, and three-run-per-engine comparison including cold startup and full
+server validation. Automatic requires current-data parity and a 20% median timing
+advantage. The tested Intel GPU was slower for the small HTTP fixture, so the server
+was correctly selected. No names, member UUIDs, account tokens or comments enter the worker.
+
+The isolated 96-member, 62-slot full-month benchmark produced identical assignments:
+72.324 s uncached versus 2.661 s optimized, 69,174 versus 604 queries (99.13% fewer).
+One configured daily duty's full-month template generation took 0.665 s. These are
+synthetic fixture timings, not production latency guarantees. JSON evidence and
+commands are linked from `docs/staged_compute_implementation.md`.
+
+Applied additive local migration 20261018_0021. Before/after operational counts stayed
+312 members, 8 units, 14,448 duty assignments; no live proposal was generated or applied.
+Final verification totals are recorded in the implementation audit after completion.
+
+
+Final verification: 323 backend tests passed with zero skips, including six real
+PostgreSQL concurrency cases and migration downgrade/re-upgrade preservation. Eight
+frontend unit tests and 33 browser workflows passed; production build, Ruff and
+whitespace checks passed. The browser worker executed real exact-integer kernels on
+an Intel hardware adapter, without enabling special browser GPU flags. Test resources
+were cleaned up. Details and raw benchmark/verification JSON are in the implementation audit.

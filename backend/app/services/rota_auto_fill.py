@@ -2,24 +2,30 @@
 it is ``eligible``, validation is ``clear`` and (in strict mode) the call level matches the
 slot's single required call level. Everything else is left open with an audit event.
 
-Known issues: the run is created as ``completed`` before work starts and commits per slot,
-so an exception mid-run leaves partial assignments (handbook B12); performance P1.
+Runs use a shared monthly context and commit operational assignments atomically.
+The browser uses the separate reviewed compute-job workflow before applying drafts.
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass
+from time import perf_counter
 from uuid import UUID
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
 from app.models import DutyAssignment, DutySlot, RotaAutoFillEvent, RotaAutoFillRun
-from app.services.rota_assignment import RotaAssignmentError, active_assignment, assign_person_to_slot
+from app.services.rota_assignment import (
+    RotaAssignmentError,
+    active_assignment,
+    assign_person_to_slot,
+)
 from app.services.rota_candidates import (
     CANDIDATE_ELIGIBLE,
     candidate_context,
     slot_candidates_with_context,
+    add_provisional_assignment,
 )
 from app.services.rota_safety import required_call_levels, rule_for_slot
 from app.services.rota_setup import monthly_setup
@@ -35,6 +41,9 @@ ACTION_BLOCKED = "blocked"
 class AutoFillOptions:
     limit_slots: int | None = None
     strict_call_level: bool = True
+    use_cached_context: bool = (
+        True  # Reference path retained for reproducible performance/parity checks.
+    )
 
 
 def open_slots_for_period(db: Session, rota_period_id: UUID) -> list[DutySlot]:
@@ -121,38 +130,46 @@ def add_event(
     return event
 
 
-def run_safe_auto_fill(
+def _run_safe_auto_fill(
     db: Session,
     month: str,
     options: AutoFillOptions | None = None,
 ) -> dict[str, object]:
     """Run one safe auto-fill pass over the month's generated slots (date order, greedy).
 
-    KNOWN ISSUES: the candidate context is rebuilt for every slot and every candidate is fully
-    validated, so a full month can take minutes (handbook P1). The run row is committed as
-    ``completed`` before any work and each assignment commits separately, so a crash leaves
-    partial assignments with zero counts on the run (handbook B12). No publish check (B1).
+    Uses cached validation by default. The uncached path is a benchmark reference.
     """
     options = options or AutoFillOptions()
     period, _scope = monthly_setup(db, month)
+    if period.status.lower() != "draft":
+        raise ValueError("Only an unpublished draft month can be auto-filled")
     slots = open_slots_for_period(db, period.id)
     if options.limit_slots is not None:
         slots = slots[: options.limit_slots]
 
     run = RotaAutoFillRun(
         rota_period=period,
-        status="completed",
+        status="running",
         total_slots=len(slots),
         summary={"month": month, "mode": "safe_auto_fill_draft"},
     )
     db.add(run)
     db.commit()
     db.refresh(run)
+    db.info["auto_fill_run"] = run.id
+    context = candidate_context(db, month) if options.use_cached_context else None
 
     assigned = 0
     skipped = 0
     review = 0
     blocked = 0
+    save_ms = 0.0
+    performance = {
+        "load_ms": context.timings["load_ms"] if context else 0,
+        "validation_ms": 0,
+        "scoring_ms": 0,
+        "safety_ms": 0,
+    }
 
     for slot in slots:
         slot = db.merge(slot)
@@ -165,12 +182,21 @@ def run_safe_auto_fill(
                 action=ACTION_SKIPPED,
                 severity="info",
                 reason="Slot already has an assignment, so auto-fill left it unchanged.",
-                details={"slot_id": str(slot.id), "existing_assignments": len(active_slot_assignments(slot))},
+                details={
+                    "slot_id": str(slot.id),
+                    "existing_assignments": len(active_slot_assignments(slot)),
+                },
             )
             continue
 
-        context = candidate_context(db, month)
-        candidate_row = slot_candidates_with_context(db, slot=slot, context=context, limit=None)
+        if not options.use_cached_context:
+            context = candidate_context(db, month)
+        candidate_row = slot_candidates_with_context(
+            db, slot=slot, context=context, limit=None, optimized=options.use_cached_context
+        )
+        if not options.use_cached_context:
+            for key, elapsed in context.timings.items():
+                performance[key] += elapsed
         candidates = list(candidate_row["candidates"])
         rule = rule_for_slot(slot, context.rules)
         required_calls = required_call_levels(slot, rule)
@@ -212,7 +238,9 @@ def run_safe_auto_fill(
                 db,
                 run=run,
                 slot=slot,
-                action=ACTION_BLOCKED if not candidates or str(candidates[0].get("candidate_status")) == "blocked" else ACTION_SKIPPED,
+                action=ACTION_BLOCKED
+                if not candidates or str(candidates[0].get("candidate_status")) == "blocked"
+                else ACTION_SKIPPED,
                 severity="warning" if candidates else "error",
                 reason=first_risky_reason(candidates),
                 details={
@@ -225,13 +253,18 @@ def run_safe_auto_fill(
             )
             continue
 
-        reason = "Auto-filled with the top safe same-call suggestion. " + " ".join(str(item) for item in candidate["reasons"][:2])
+        reason = "Auto-filled with the top safe same-call suggestion. " + " ".join(
+            str(item) for item in candidate["reasons"][:2]
+        )
+        save_began = perf_counter()
         try:
             assignment_result = assign_person_to_slot(
                 db,
                 slot_id=slot.id,
                 person_id=UUID(str(candidate["person_id"])),
                 source=AUTO_FILL_ASSIGNMENT_SOURCE,
+                commit=False,
+                context=context if options.use_cached_context else None,
             )
         except RotaAssignmentError as exc:
             skipped += 1
@@ -246,11 +279,13 @@ def run_safe_auto_fill(
                 action=ACTION_SKIPPED,
                 severity="warning",
                 reason=exc.message,
-            details={"candidate": candidate, "validation": exc.validation},
+                details={"candidate": candidate, "validation": exc.validation},
             )
             continue
 
+        save_ms += (perf_counter() - save_began) * 1000
         assigned += 1
+        add_provisional_assignment(context, slot, UUID(str(candidate["person_id"])))
         slot = db.get(DutySlot, slot.id, options=[selectinload(DutySlot.unit)])
         if slot is None:
             continue
@@ -273,11 +308,16 @@ def run_safe_auto_fill(
         )
 
     run.assigned_slots = assigned
+    run.status = "completed"
     run.skipped_slots = skipped
     run.review_slots = review
     run.blocked_slots = blocked
+    if options.use_cached_context:
+        performance = context.timings
+    performance["save_ms"] = save_ms
     run.summary = {
         **run.summary,
+        "performance": {k: round(v, 2) for k, v in performance.items()},
         "assigned_slots": assigned,
         "skipped_slots": skipped,
         "review_slots": review,
@@ -287,12 +327,30 @@ def run_safe_auto_fill(
     return auto_fill_run_to_dict(hydrate_auto_fill_run(db, run.id))
 
 
+def run_safe_auto_fill(db: Session, month: str, options: AutoFillOptions | None = None):
+    """Compatibility entry point; operational writes succeed or roll back together."""
+    try:
+        return _run_safe_auto_fill(db, month, options)
+    except Exception:
+        run_id = db.info.get("auto_fill_run")
+        db.rollback()
+        if run_id and (run := db.get(RotaAutoFillRun, run_id)):
+            run.status = "failed"
+            run.summary = {**run.summary, "error": "Run failed; proposed assignments rolled back."}
+            db.commit()
+        raise
+    finally:
+        db.info.pop("auto_fill_run", None)
+
+
 def hydrate_auto_fill_run(db: Session, run_id: UUID) -> RotaAutoFillRun:
     run = db.scalars(
         select(RotaAutoFillRun)
         .where(RotaAutoFillRun.id == run_id)
         .options(
-            selectinload(RotaAutoFillRun.events).selectinload(RotaAutoFillEvent.duty_slot).selectinload(DutySlot.unit),
+            selectinload(RotaAutoFillRun.events)
+            .selectinload(RotaAutoFillEvent.duty_slot)
+            .selectinload(DutySlot.unit),
             selectinload(RotaAutoFillRun.events).selectinload(RotaAutoFillEvent.person),
             selectinload(RotaAutoFillRun.events).selectinload(RotaAutoFillEvent.assignment),
         )
@@ -305,7 +363,9 @@ def latest_auto_fill_run(db: Session, rota_period_id: UUID) -> RotaAutoFillRun |
         select(RotaAutoFillRun)
         .where(RotaAutoFillRun.rota_period_id == rota_period_id)
         .options(
-            selectinload(RotaAutoFillRun.events).selectinload(RotaAutoFillEvent.duty_slot).selectinload(DutySlot.unit),
+            selectinload(RotaAutoFillRun.events)
+            .selectinload(RotaAutoFillEvent.duty_slot)
+            .selectinload(DutySlot.unit),
             selectinload(RotaAutoFillRun.events).selectinload(RotaAutoFillEvent.person),
             selectinload(RotaAutoFillRun.events).selectinload(RotaAutoFillEvent.assignment),
         )
@@ -348,9 +408,15 @@ def auto_fill_event_to_dict(event: RotaAutoFillEvent) -> dict[str, object]:
         "assignment_id": str(event.assignment_id) if event.assignment_id else None,
         "person_id": str(event.person_id) if event.person_id else None,
         "person_name": event.person.canonical_name if event.person else None,
-        "unit_name": event.duty_slot.unit.name if event.duty_slot and event.duty_slot.unit else details.get("unit_name"),
-        "unit_code": event.duty_slot.unit.code if event.duty_slot and event.duty_slot.unit else details.get("unit_code"),
-        "duty_date": event.duty_slot.duty_date.isoformat() if event.duty_slot else details.get("duty_date"),
+        "unit_name": event.duty_slot.unit.name
+        if event.duty_slot and event.duty_slot.unit
+        else details.get("unit_name"),
+        "unit_code": event.duty_slot.unit.code
+        if event.duty_slot and event.duty_slot.unit
+        else details.get("unit_code"),
+        "duty_date": event.duty_slot.duty_date.isoformat()
+        if event.duty_slot
+        else details.get("duty_date"),
         "duty_type": event.duty_slot.duty_type if event.duty_slot else details.get("duty_type"),
         "action": event.action,
         "severity": event.severity,

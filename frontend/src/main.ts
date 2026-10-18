@@ -1,3 +1,5 @@
+import { openRotaCompute, renderComputeSettings } from "./rota-compute";
+import { openIntelligentRota } from './rota-intelligence';
 import { openRecordEditor } from "./record-workspace";
 import { openOperationalImport } from "./operational-import";
 import { openUnitRegistry, openReferenceCatalog, openMappingCreator } from "./reference-workspace";
@@ -139,7 +141,6 @@ import {
   reconcileTrustedRoster,
   restoreMember,
   runHistoricalImport,
-  runRotaAutoFillDraft,
   scanHistoricalMappings,
   signIn,
   updateLeaveRequest,
@@ -509,6 +510,7 @@ const NAV_ITEMS: NavItem[] = [
   { view: "imports", label: "Past Duties", group: "Admin Tools", adminOnly: true },
   { view: "accounts", label: "Login Accounts", group: "Admin Tools", adminOnly: true },
   { view: "diagnostics", label: "Diagnostics", group: "Admin Tools", adminOnly: true },
+  { view: "compute-settings", label: "Compute Settings", group: "Admin Tools", adminOnly: true },
 ];
 
 const MOBILE_PRIMARY_VIEWS = ["overview", "leave", "units", "rota-template"];
@@ -6168,7 +6170,8 @@ async function renderRotaTemplate() {
           <button class="primary" type="submit" id="generate-rota-template" ${locked ? "" : "disabled"}>Generate Template</button>
           <button class="icon-button" type="button" id="clear-rota-template-cache" ${template.slots.length ? "" : "disabled"}>Clear Draft Duties</button>
           <button class="icon-button danger-button" type="button" id="clear-rota-template-with-assignments" ${assignedSlotCount ? "" : "disabled"}>Clear Duties + Assignments</button>
-          <button class="icon-button" type="button" id="run-safe-auto-fill" ${openSlotCount ? "" : "disabled"}>Strict Safe Auto-Fill</button>
+          <button class="icon-button" type="button" id="run-safe-auto-fill" ${openSlotCount ? "" : "disabled"}>Generate &amp; review draft</button>
+          <button class="icon-button primary" type="button" id="run-intelligent-rota">Intelligent generator</button>
           <button class="icon-button" type="button" id="download-eagle-eye-export" ${template.slots.length ? "" : "disabled"}>Export Eagle Eye</button>
           <button class="icon-button" type="button" id="download-call-wise-template-export" ${template.slots.length ? "" : "disabled"}>Export Call-Wise</button>
         </div>
@@ -7424,6 +7427,8 @@ function navigateToView(selectedView: string) {
     void renderCallClusters();
   } else if (selectedView === "accounts") {
     void renderAccounts();
+  } else if (selectedView === "compute-settings" && isAdminUser()) {
+    if (viewRoot) { const host = document.createElement("section"); viewRoot.replaceChildren(host); void renderComputeSettings(host); }
   } else if (selectedView === "diagnostics") {
     void renderDiagnostics();
   } else {
@@ -8409,20 +8414,17 @@ function bindViewEvents() {
       return;
     }
 
+    if (target.id === 'run-intelligent-rota') {
+      void openIntelligentRota(rotaTemplateMonth, isAdminUser(), () => {
+        rejectedRotaCandidates.clear(); closeRotaDayModal(); void renderRotaTemplate();
+      });
+      return;
+    }
+
     if (target.id === "run-safe-auto-fill") {
-      const btn = target.closest<HTMLButtonElement>("#run-safe-auto-fill");
-      if (!confirmAction("Run strict safe auto-fill for open slots? Only clear same-call suggestions will be assigned; ambiguous slots will stay open.")) return;
-      setButtonLoading(btn, true, "Safe Auto-Fill");
-      try {
-        const result = await runRotaAutoFillDraft(rotaTemplateMonth, { strict_call_level: true });
-        rejectedRotaCandidates.clear();
-        showToast(`Auto-filled ${result.assigned_slots} slot(s); left ${result.skipped_slots} open`, "success");
-        closeRotaDayModal();
-        await renderRotaTemplate();
-      } catch (error) {
-        showToast(error instanceof Error ? error.message : "Safe auto-fill failed", "error");
-        resetButton(btn);
-      }
+      void openRotaCompute(rotaTemplateMonth, isAdminUser(), () => {
+        rejectedRotaCandidates.clear(); closeRotaDayModal(); void renderRotaTemplate();
+      });
       return;
     }
 

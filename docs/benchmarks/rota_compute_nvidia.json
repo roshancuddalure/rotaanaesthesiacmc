@@ -1,0 +1,111 @@
+{
+  "date": "2026-10-18T18:51:53.050Z",
+  "runs": [
+    {
+      "mode": "default",
+      "args": [],
+      "browser": "153.0.8010.12",
+      "adapter": {
+        "vendor": "intel",
+        "architecture": "gen-9",
+        "device": "",
+        "description": "",
+        "isFallbackAdapter": false
+      },
+      "deviceTest": {
+        "supported": true,
+        "software": false,
+        "adapter": "intel",
+        "test_ms": 267.19999998807907,
+        "rows": 512,
+        "parity": true
+      },
+      "batches": [
+        {
+          "rows": 1,
+          "parity": true,
+          "winner_parity": true,
+          "gpu_ms": 2.199999988079071
+        },
+        {
+          "rows": 64,
+          "parity": true,
+          "winner_parity": true,
+          "gpu_ms": 3.4000000059604645
+        },
+        {
+          "rows": 513,
+          "parity": true,
+          "winner_parity": true,
+          "gpu_ms": 3.5999999940395355
+        },
+        {
+          "rows": 10000,
+          "parity": true,
+          "winner_parity": true,
+          "gpu_ms": 6.5999999940395355
+        },
+        {
+          "rows": 100000,
+          "parity": true,
+          "winner_parity": true,
+          "gpu_ms": 39.29999998211861
+        }
+      ]
+    },
+    {
+      "mode": "high-performance",
+      "args": [
+        "--force-high-performance-gpu"
+      ],
+      "browser": "153.0.8010.12",
+      "adapter": {
+        "vendor": "nvidia",
+        "architecture": "turing",
+        "device": "",
+        "description": "",
+        "isFallbackAdapter": false
+      },
+      "deviceTest": {
+        "supported": true,
+        "software": false,
+        "adapter": "nvidia",
+        "test_ms": 144.30000001192093,
+        "rows": 512,
+        "parity": true
+      },
+      "batches": [
+        {
+          "rows": 1,
+          "parity": true,
+          "winner_parity": true,
+          "gpu_ms": 1.4000000059604645
+        },
+        {
+          "rows": 64,
+          "parity": true,
+          "winner_parity": true,
+          "gpu_ms": 0.699999988079071
+        },
+        {
+          "rows": 513,
+          "parity": true,
+          "winner_parity": true,
+          "gpu_ms": 3.0999999940395355
+        },
+        {
+          "rows": 10000,
+          "parity": true,
+          "winner_parity": true,
+          "gpu_ms": 7.200000017881393
+        },
+        {
+          "rows": 100000,
+          "parity": true,
+          "winner_parity": true,
+          "gpu_ms": 30.899999976158142
+        }
+      ]
+    }
+  ]
+}

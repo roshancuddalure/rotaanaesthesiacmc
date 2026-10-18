@@ -82,7 +82,9 @@ def hydrate_assignment(db: Session, assignment_id: UUID) -> DutyAssignment:
         .where(DutyAssignment.id == assignment_id)
         .options(
             selectinload(DutyAssignment.person),
-            selectinload(DutyAssignment.duty_slot).selectinload(DutySlot.unit).selectinload(Unit.call_minimums),
+            selectinload(DutyAssignment.duty_slot)
+            .selectinload(DutySlot.unit)
+            .selectinload(Unit.call_minimums),
         )
     ).first()
     if assignment is None:
@@ -162,10 +164,14 @@ def person_month_assignments(
                 DutyAssignment.person_id == person_id,
                 DutySlot.duty_date >= starts_on,
                 DutySlot.duty_date <= ends_on,
-                or_(DutySlot.source == PHASE4_SLOT_SOURCE, RotaPeriod.status.in_(OFFICIAL_STATUSES)),
+                or_(
+                    DutySlot.source == PHASE4_SLOT_SOURCE, RotaPeriod.status.in_(OFFICIAL_STATUSES)
+                ),
             )
             .options(
-                selectinload(DutyAssignment.duty_slot).selectinload(DutySlot.unit).selectinload(Unit.call_minimums),
+                selectinload(DutyAssignment.duty_slot)
+                .selectinload(DutySlot.unit)
+                .selectinload(Unit.call_minimums),
             )
         )
         if active_assignment(assignment)
@@ -188,11 +194,16 @@ def duty_count_issues(
     person: Person,
     rules: RotaPhaseOneRules,
     replace_existing: bool,
+    context=None,
 ) -> list[dict[str, str]]:
     limits = rules.duty_count_limits
     assignments = [
         assignment
-        for assignment in unique_assignments(person_month_assignments(db, person.id, slot_month(slot)))
+        for assignment in unique_assignments(
+            context.assignments_by_person.get(person.id, [])
+            if context is not None
+            else person_month_assignments(db, person.id, slot_month(slot))
+        )
         if not (replace_existing and assignment.duty_slot_id == slot.id)
     ]
     month_issues: list[dict[str, str]] = []
@@ -213,7 +224,10 @@ def duty_count_issues(
         for duty_slot in prospective_slots
         if duty_slot.is_24hr and duty_slot.duty_date.weekday() >= 5
     )
-    if limits.max_weekend_24hr_per_month is not None and weekend_24hr > limits.max_weekend_24hr_per_month:
+    if (
+        limits.max_weekend_24hr_per_month is not None
+        and weekend_24hr > limits.max_weekend_24hr_per_month
+    ):
         month_issues.append(
             issue(
                 "error",
@@ -223,7 +237,9 @@ def duty_count_issues(
         )
 
     slot_group = rule_group_for_slot(slot, rules)
-    same_group = sum(1 for duty_slot in prospective_slots if rule_group_for_slot(duty_slot, rules) == slot_group)
+    same_group = sum(
+        1 for duty_slot in prospective_slots if rule_group_for_slot(duty_slot, rules) == slot_group
+    )
     if limits.max_same_group_per_month is not None and same_group > limits.max_same_group_per_month:
         month_issues.append(
             issue(
@@ -235,8 +251,13 @@ def duty_count_issues(
 
     slot_campus = campus_for_slot(slot)
     if slot_campus:
-        same_campus = sum(1 for duty_slot in prospective_slots if campus_for_slot(duty_slot) == slot_campus)
-        if limits.max_same_campus_per_month is not None and same_campus > limits.max_same_campus_per_month:
+        same_campus = sum(
+            1 for duty_slot in prospective_slots if campus_for_slot(duty_slot) == slot_campus
+        )
+        if (
+            limits.max_same_campus_per_month is not None
+            and same_campus > limits.max_same_campus_per_month
+        ):
             month_issues.append(
                 issue(
                     "error",
@@ -253,6 +274,8 @@ def validate_assignment(
     slot: DutySlot,
     person: Person,
     replace_existing: bool,
+    context=None,
+    safety=None,
 ) -> dict[str, object]:
     """Validate putting ``person`` on ``slot``; see the module docstring for the status rules.
 
@@ -261,34 +284,71 @@ def validate_assignment(
     """
     month = slot_month(slot)
     starts_on, ends_on = month_bounds(month)
-    _rule_version, rules = get_phase_one_rules(db)
-    postings = postings_for_month(db, starts_on, ends_on)
-    leaves = leaves_by_day_and_person(db, month)
-    assignments = assignments_for_safety(db, starts_on, ends_on)
-    same_day_assignments, previous_day_assignments = assignment_indexes(assignments, rules)
-    safety = slot_safety(
-        slot=slot,
-        rules=rules,
-        postings=postings,
-        leaves=leaves,
-        same_day_assignments=same_day_assignments,
-        previous_day_assignments=previous_day_assignments,
+    if context is None:
+        _rule_version, rules = get_phase_one_rules(db)
+        postings = postings_for_month(db, starts_on, ends_on)
+        leaves = leaves_by_day_and_person(db, month)
+        assignments = assignments_for_safety(db, starts_on, ends_on)
+        same_day_assignments, previous_day_assignments = assignment_indexes(assignments, rules)
+    else:
+        rules, postings, leaves = context.rules, context.postings, context.leaves
+        same_day_assignments, previous_day_assignments = (
+            context.same_day_assignments,
+            context.previous_day_assignments,
+        )
+    safety = (
+        safety
+        if safety is not None
+        else slot_safety(
+            slot=slot,
+            rules=rules,
+            postings=postings,
+            leaves=leaves,
+            same_day_assignments=same_day_assignments,
+            previous_day_assignments=previous_day_assignments,
+        )
     )
     validation_issues: list[dict[str, str]] = []
-    for other in nearby_duties(db, slot, person.id, rules.rest_rules.minimum_gap_after_24hr_hours):
+    for other in nearby_duties(
+        db,
+        slot,
+        person.id,
+        rules.rest_rules.minimum_gap_after_24hr_hours,
+        assignments=context.nearby_assignments.get(person.id, []) if context is not None else None,
+    ):
         if other.starts_at < slot.ends_at and other.ends_at > slot.starts_at:
-            validation_issues.append(issue("blocked", "duty_overlap", f"Overlaps a recorded duty on {other.duty_date}."))
+            validation_issues.append(
+                issue("blocked", "duty_overlap", f"Overlaps a recorded duty on {other.duty_date}.")
+            )
         elif other.is_24hr and other.ends_at <= slot.starts_at:
             gap = (slot.starts_at - other.ends_at).total_seconds() / 3600
             if gap < rules.rest_rules.minimum_gap_after_24hr_hours:
-                validation_issues.append(issue("blocked", "rest_after_24hr", f"Only {gap:g} hours after the recorded 24-hour duty on {other.duty_date}; requires {rules.rest_rules.minimum_gap_after_24hr_hours}."))
+                validation_issues.append(
+                    issue(
+                        "blocked",
+                        "rest_after_24hr",
+                        f"Only {gap:g} hours after the recorded 24-hour duty on {other.duty_date}; requires {rules.rest_rules.minimum_gap_after_24hr_hours}.",
+                    )
+                )
         elif slot.is_24hr and slot.ends_at <= other.starts_at:
             gap = (other.starts_at - slot.ends_at).total_seconds() / 3600
             if gap < rules.rest_rules.minimum_gap_after_24hr_hours:
-                validation_issues.append(issue("blocked", "rest_before_recorded_duty", f"Only {gap:g} hours before the recorded duty on {other.duty_date}; requires {rules.rest_rules.minimum_gap_after_24hr_hours}."))
-    active_slot_assignments = [assignment for assignment in slot.assignments if active_assignment(assignment)]
+                validation_issues.append(
+                    issue(
+                        "blocked",
+                        "rest_before_recorded_duty",
+                        f"Only {gap:g} hours before the recorded duty on {other.duty_date}; requires {rules.rest_rules.minimum_gap_after_24hr_hours}.",
+                    )
+                )
+    active_slot_assignments = [
+        assignment for assignment in slot.assignments if active_assignment(assignment)
+    ]
 
-    if active_slot_assignments and not replace_existing and len(active_slot_assignments) >= slot.max_assignees:
+    if (
+        active_slot_assignments
+        and not replace_existing
+        and len(active_slot_assignments) >= slot.max_assignees
+    ):
         validation_issues.append(
             issue(
                 "blocked",
@@ -319,7 +379,9 @@ def validate_assignment(
         )
     else:
         required_calls = required_call_levels(slot, rule)
-        if required_calls and not any(member_call_level(context) in required_calls for context in person_contexts):
+        if required_calls and not any(
+            member_call_level(context) in required_calls for context in person_contexts
+        ):
             validation_issues.append(
                 issue(
                     "blocked",
@@ -327,7 +389,9 @@ def validate_assignment(
                     f"This slot requires {', '.join(sorted(required_calls))}; the member is listed as {normalize_call_level(person.call_level)}.",
                 )
             )
-        if not any(member_matches_cluster_rules(db, context, slot, rule) for context in person_contexts):
+        if not any(
+            member_matches_cluster_rules(db, context, slot, rule) for context in person_contexts
+        ):
             validation_issues.append(
                 issue(
                     "blocked",
@@ -364,7 +428,11 @@ def validate_assignment(
         )
     elif safety["safety_status"] == SAFETY_HARD_BLOCK:
         validation_issues.append(
-            issue("error", "unit_safety_hard_block", "This slot is currently hard blocked by staffing safety rules.")
+            issue(
+                "error",
+                "unit_safety_hard_block",
+                "This slot is currently hard blocked by staffing safety rules.",
+            )
         )
 
     validation_issues.extend(
@@ -374,6 +442,7 @@ def validate_assignment(
             person=person,
             rules=rules,
             replace_existing=replace_existing,
+            context=context,
         )
     )
 
@@ -400,6 +469,8 @@ def assign_person_to_slot(
     replace_existing: bool = False,
     override_reason: str | None = None,
     source: str = MANUAL_ASSIGNMENT_SOURCE,
+    commit: bool = True,
+    context=None,
 ) -> dict[str, object]:
     """Validate and save an assignment (``replace_existing`` removes the slot's current holders).
 
@@ -411,7 +482,9 @@ def assign_person_to_slot(
     if person is None:
         raise RotaAssignmentError("Department member not found", status_code=404)
 
-    active_slot_assignments = [assignment for assignment in slot.assignments if active_assignment(assignment)]
+    active_slot_assignments = [
+        assignment for assignment in slot.assignments if active_assignment(assignment)
+    ]
     existing_for_person = next(
         (assignment for assignment in active_slot_assignments if assignment.person_id == person.id),
         None,
@@ -424,7 +497,9 @@ def assign_person_to_slot(
             "slot_safety": slot_safety_for_assignment(db, slot),
         }
 
-    validation = validate_assignment(db, slot=slot, person=person, replace_existing=replace_existing)
+    validation = validate_assignment(
+        db, slot=slot, person=person, replace_existing=replace_existing, context=context
+    )
     if validation["status"] == "blocked":
         blocked_issue = next(
             (
@@ -435,7 +510,9 @@ def assign_person_to_slot(
             None,
         )
         raise RotaAssignmentError(
-            str(blocked_issue.get("message")) if isinstance(blocked_issue, dict) else "This assignment is blocked by rota rules.",
+            str(blocked_issue.get("message"))
+            if isinstance(blocked_issue, dict)
+            else "This assignment is blocked by rota rules.",
             status_code=409,
             validation=validation,
         )
@@ -461,7 +538,16 @@ def assign_person_to_slot(
         override_reason=clean_override,
     )
     db.add(assignment)
-    db.commit()
+    if commit:
+        db.commit()
+    else:
+        db.flush()
+        return {
+            "status": "assigned",
+            "assignment": assignment_to_dict(assignment),
+            "validation": validation,
+            "slot_safety": validation["slot_safety"],
+        }
     db.refresh(assignment)
     assignment = hydrate_assignment(db, assignment.id)
     slot = hydrate_slot(db, slot.id)

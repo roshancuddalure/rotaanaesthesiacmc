@@ -177,9 +177,21 @@ def historical_score(context: dict, person_id: UUID, target_slot: DutySlot):
     }
 
 
-def nearby_duties(db: Session, slot: DutySlot, person_id: UUID, minimum_rest: int):
+def nearby_duties(
+    db: Session, slot: DutySlot, person_id: UUID, minimum_rest: int, assignments=None
+):
     start = slot.starts_at - timedelta(hours=minimum_rest + 48)
     end = slot.ends_at + timedelta(hours=minimum_rest + 48)
+    if assignments is not None:
+        return [
+            a.duty_slot
+            for a in unique_assignments(a for a in assignments if a.status in ACTIVE_STATUSES)
+            if a.person_id == person_id
+            and a.duty_slot_id != slot.id
+            and a.status in ACTIVE_STATUSES
+            and a.duty_slot.ends_at >= start
+            and a.duty_slot.starts_at <= end
+        ]
     assignments = db.scalars(
         select(DutyAssignment)
         .join(DutyAssignment.duty_slot)

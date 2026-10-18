@@ -19,6 +19,9 @@ test("committed mutations invalidate dependents; previews and auth leave drafts 
     sync.notifyDataChange("/api/v1/admin/members/import/preview", "POST");
     sync.notifyDataChange("/api/v1/unit-management/import-preview?month=2026-10", "POST");
     sync.notifyDataChange("/api/v1/auth/sign-in", "POST");
+    sync.notifyDataChange("/api/v1/rota-compute/jobs", "POST");
+    sync.notifyDataChange("/api/v1/rota-compute/jobs/job/step", "POST");
+    sync.notifyDataChange("/api/v1/rota-compute/jobs/job/validate", "POST");
     assert.deepEqual(notices,[]);
     sync.notifyDataChange("/api/v1/members/person/call-changes", "POST");
     sync.notifyDataChange("/api/v1/admin/past-duties/apply", "POST");

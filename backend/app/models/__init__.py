@@ -1,6 +1,8 @@
 """SQLAlchemy model exports."""
 
 from app.models.auth import PasswordResetToken, UserAccount, UserSession
+from app.models.compute import RotaComputeJob
+from app.models.intelligence import RotaTeachingExample, RotaLearningVersion
 from app.models.call_cluster import CallCluster, PersonCallClusterMembership
 from app.models.leave import LeaveRequest
 from app.models.imports import ImportBatch, ImportSourceRecord, ImportWarning
@@ -28,6 +30,7 @@ from app.models.rules import RuleSetting, RuleVersion
 from app.models.unit import Unit, UnitCallMinimum
 
 __all__ = [
+    "RotaComputeJob",
     "ReferenceValue",
     "NormalizationEvent",
     "ImportReviewBatch",

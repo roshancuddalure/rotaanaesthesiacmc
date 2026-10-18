@@ -1,0 +1,38 @@
+{
+  "verified_on": "2026-10-19",
+  "backend": {
+    "command": "backend/.venv/Scripts/python.exe tools/test_compute_postgres.py --full",
+    "passed": 323,
+    "failed": 0,
+    "skipped": 0,
+    "elapsed_seconds": 345.48,
+    "postgresql_concurrency_tests": 6
+  },
+  "frontend": {
+    "unit_tests": 8,
+    "compute_browser_workflows": 14,
+    "normalization_browser_workflows": 11,
+    "member_browser_workflows": 8,
+    "production_build": "passed",
+    "total_browser_workflows": 33
+  },
+  "checks": {
+    "ruff": "passed",
+    "whitespace": "passed",
+    "migration_upgrade_downgrade_reupgrade": "passed",
+    "local_migration_head": "20261018_0021",
+    "cross_tab_apply_cancel_race": "passed"
+  },
+  "local_operational_counts_preserved": {
+    "members": 312,
+    "units": 8,
+    "duty_assignments": 14448,
+    "live_compute_jobs": 0
+  },
+  "gpu_test": {
+    "adapter": "intel",
+    "software": false,
+    "exact_parity": true,
+    "automatic_selected": "server"
+  }
+}

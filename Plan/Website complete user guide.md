@@ -1150,3 +1150,23 @@ Admins can also edit names/status, add aliases, and add dated designations from 
 **Admin and HOD Comments** retain the author, role, and recording time. They are visible to computer admins, superadmins, and HOD accounts; rota-board accounts can view the general profile but cannot access these comments or edit the promotion timeline. Comments are append-only; add a follow-up to correct one. A superadmin can create a login with the **Head of Department** role under Login Accounts. The HOD role grants profile/promotion/comment access without granting import or software-admin privileges.
 
 The profile tables are added by migration `20261012_0018`. The local database was upgraded during implementation; other deployments must run `alembic upgrade head` when upgrading the app.
+
+
+## Reviewed Generation and Local Compute
+
+In Rota Template, choose **Generate & review draft**. Follow progress, review each
+proposal and unresolved slot, expand the workload comparison, and download the report
+if needed. Confirm review and choose **Apply reviewed draft** to save assignments.
+This does not publish the rota. Close and reopen to continue an interrupted proposal;
+Cancel proposal discards its proposed choices without changing existing assignments.
+
+Admins can open **Compute Settings** to test the current device, enable browser GPU
+use, choose Server/Automatic/Prefer local GPU, or reset the device preference. The
+preference affects this browser only. GPU use starts off. Automatic stays on the
+server until three runs per engine show identical results and sufficient end-to-end
+benefit on the same rota data. A GPU fault or unavailable API falls back to the server.
+Keep the page open while it computes. A stale-data message means the rota or rules
+changed: cancel the old proposal and generate a fresh one.
+
+See `../docs/staged_compute_implementation.md` for the complete verification record,
+measured benchmark, supported-device limits and deployment flags.

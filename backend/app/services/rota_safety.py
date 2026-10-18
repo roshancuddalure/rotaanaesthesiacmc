@@ -18,13 +18,28 @@ from dataclasses import dataclass
 from datetime import date, timedelta
 from uuid import UUID
 
-from sqlalchemy import or_, select
+from sqlalchemy import inspect, or_, select
 from sqlalchemy.orm import Session, object_session, selectinload
 
-from app.models import DutyAssignment, DutySlot, LeaveRequest, Person, PersonPosting, RotaPeriod, Unit
+from app.models import (
+    DutyAssignment,
+    DutySlot,
+    LeaveRequest,
+    Person,
+    PersonPosting,
+    RotaPeriod,
+    Unit,
+    PersonCallClusterMembership,
+)
 from app.services.history_fairness import OFFICIAL_STATUSES, unique_assignments
 from app.services.member_profiles import call_level_on
-from app.services.leave import ACTIVE_LEAVE_STATUSES, BLOCKING_LEAVE_STATUSES, date_range, leave_requests_for_month, month_bounds
+from app.services.leave import (
+    ACTIVE_LEAVE_STATUSES,
+    BLOCKING_LEAVE_STATUSES,
+    date_range,
+    leave_requests_for_month,
+    month_bounds,
+)
 from app.services.call_clusters import active_cluster_keys_for_person
 from app.services.rota_call_levels import inferred_call_levels_from_duty_type, normalize_call_level
 from app.services.rota_rules import DutyRule, RotaPhaseOneRules, get_phase_one_rules
@@ -48,10 +63,14 @@ class MemberContext:
 def member_call_level(member: MemberContext) -> str:
     day = member.day or date.today()
     has_timeline = any(c.effective_from <= day for c in member.person.call_level_changes) or any(
-        c.effective_from <= day and not c.source.startswith("merged:") for c in member.person.call_changes)
-    return normalize_call_level(call_level_on(member.person, day) if has_timeline
-                                else member.posting_type or call_level_on(member.person, day))
-
+        c.effective_from <= day and not c.source.startswith("merged:")
+        for c in member.person.call_changes
+    )
+    return normalize_call_level(
+        call_level_on(member.person, day)
+        if has_timeline
+        else member.posting_type or call_level_on(member.person, day)
+    )
 
 
 def rule_for_slot(slot: DutySlot, rules: RotaPhaseOneRules) -> DutyRule | None:
@@ -93,7 +112,9 @@ def unit_minimum_for_required_calls(
     return max(0, fallback)
 
 
-def member_matches_cluster_rules(db: Session | None, context: MemberContext, slot: DutySlot, rule: DutyRule | None) -> bool:
+def member_matches_cluster_rules(
+    db: Session | None, context: MemberContext, slot: DutySlot, rule: DutyRule | None
+) -> bool:
     """Check the duty rule's allowed/excluded eligibility groups for this member on the slot date.
 
     Runs one query per call (per member per slot) - a hot spot during auto-fill (handbook P2).
@@ -102,7 +123,16 @@ def member_matches_cluster_rules(db: Session | None, context: MemberContext, slo
         return True
     if db is None:
         return not rule.allowed_cluster_keys
-    active_keys = active_cluster_keys_for_person(db, context.person.id, slot.duty_date)
+    if "call_cluster_memberships" not in inspect(context.person).unloaded:
+        active_keys = {
+            m.cluster.key
+            for m in context.person.call_cluster_memberships
+            if m.cluster.active
+            and m.effective_from <= slot.duty_date
+            and (m.effective_to is None or m.effective_to >= slot.duty_date)
+        }
+    else:
+        active_keys = active_cluster_keys_for_person(db, context.person.id, slot.duty_date)
     allowed = set(rule.allowed_cluster_keys)
     excluded = set(rule.excluded_cluster_keys)
     if allowed and not active_keys.intersection(allowed):
@@ -140,7 +170,13 @@ def postings_for_month(db: Session, starts_on: date, ends_on: date) -> list[Pers
                 PersonPosting.starts_on <= ends_on,
                 (PersonPosting.ends_on.is_(None)) | (PersonPosting.ends_on >= starts_on),
             )
-            .options(selectinload(PersonPosting.person), selectinload(PersonPosting.unit))
+            .options(
+                selectinload(PersonPosting.person).selectinload(Person.call_level_changes),
+                selectinload(PersonPosting.person)
+                .selectinload(Person.call_cluster_memberships)
+                .selectinload(PersonCallClusterMembership.cluster),
+                selectinload(PersonPosting.unit).selectinload(Unit.call_minimums),
+            )
         )
     )
 
@@ -192,11 +228,15 @@ def assignments_for_month(db: Session, starts_on: date, ends_on: date) -> list[D
             .where(
                 DutySlot.duty_date >= starts_on,
                 DutySlot.duty_date <= ends_on,
-                or_(DutySlot.source == PHASE4_SLOT_SOURCE, RotaPeriod.status.in_(OFFICIAL_STATUSES)),
+                or_(
+                    DutySlot.source == PHASE4_SLOT_SOURCE, RotaPeriod.status.in_(OFFICIAL_STATUSES)
+                ),
             )
             .options(
                 selectinload(DutyAssignment.person),
-                selectinload(DutyAssignment.duty_slot).selectinload(DutySlot.unit).selectinload(Unit.call_minimums),
+                selectinload(DutyAssignment.duty_slot)
+                .selectinload(DutySlot.unit)
+                .selectinload(Unit.call_minimums),
             )
         )
     )
@@ -204,7 +244,11 @@ def assignments_for_month(db: Session, starts_on: date, ends_on: date) -> list[D
 
 def assignments_for_safety(db: Session, starts_on: date, ends_on: date) -> list[DutyAssignment]:
     # A preceding 24-hour duty can block the first day of the next month.
-    return unique_assignments(assignments_for_month(db, starts_on - timedelta(days=8), ends_on))
+    return unique_assignments(
+        a
+        for a in assignments_for_month(db, starts_on - timedelta(days=8), ends_on)
+        if a.status.lower() in ACTIVE_ASSIGNMENT_STATUSES
+    )
 
 
 def duty_blocks_same_day(slot: DutySlot, rules: RotaPhaseOneRules) -> bool:
@@ -224,7 +268,9 @@ def previous_day_24hr_blocks(slot: DutySlot, rules: RotaPhaseOneRules) -> bool:
 def assignment_indexes(
     assignments: list[DutyAssignment],
     rules: RotaPhaseOneRules,
-) -> tuple[dict[date, dict[UUID, list[DutyAssignment]]], dict[date, dict[UUID, list[DutyAssignment]]]]:
+) -> tuple[
+    dict[date, dict[UUID, list[DutyAssignment]]], dict[date, dict[UUID, list[DutyAssignment]]]
+]:
     """Index active assignments as (date -> person -> assignments) for blocker lookups.
 
     Returns ``(same_day, previous_day)``. ``previous_day[d]`` lists people whose 24h duty on
@@ -241,10 +287,14 @@ def assignment_indexes(
             continue
         slot = assignment.duty_slot
         if duty_blocks_same_day(slot, rules):
-            same_day.setdefault(slot.duty_date, {}).setdefault(assignment.person_id, []).append(assignment)
+            same_day.setdefault(slot.duty_date, {}).setdefault(assignment.person_id, []).append(
+                assignment
+            )
         if previous_day_24hr_blocks(slot, rules):
             blocked_day = slot.duty_date + timedelta(days=1)
-            previous_day.setdefault(blocked_day, {}).setdefault(assignment.person_id, []).append(assignment)
+            previous_day.setdefault(blocked_day, {}).setdefault(assignment.person_id, []).append(
+                assignment
+            )
     return same_day, previous_day
 
 
@@ -263,15 +313,27 @@ def safety_status(
     -> warning percentage -> any pending-leave warnings -> combined warning percentage.
     """
     staffing = rules.unit_staffing_rules
-    minimum = staffing.minimum_available_count if minimum_available_count is None else minimum_available_count
-    hard_percent = 100 if eligible_members == 0 else round((hard_blocked_members / eligible_members) * 100)
-    warning_percent = 100 if eligible_members == 0 else round(((hard_blocked_members + warning_members) / eligible_members) * 100)
+    minimum = (
+        staffing.minimum_available_count
+        if minimum_available_count is None
+        else minimum_available_count
+    )
+    hard_percent = (
+        100 if eligible_members == 0 else round((hard_blocked_members / eligible_members) * 100)
+    )
+    warning_percent = (
+        100
+        if eligible_members == 0
+        else round(((hard_blocked_members + warning_members) / eligible_members) * 100)
+    )
     reasons: list[str] = []
     status = SAFETY_SAFE
 
     if eligible_members == 0:
         status = SAFETY_HARD_BLOCK
-        reasons.append("No eligible active members are assigned to this unit/call level for this date.")
+        reasons.append(
+            "No eligible active members are assigned to this unit/call level for this date."
+        )
     elif staffing.small_unit_uses_absolute_minimum and available_members < minimum:
         status = SAFETY_HARD_BLOCK
         reasons.append(
@@ -289,7 +351,9 @@ def safety_status(
         )
     elif warning_members > 0:
         status = SAFETY_WARNING
-        reasons.append(f"{warning_members} member(s) have requested or imported leave needing review.")
+        reasons.append(
+            f"{warning_members} member(s) have requested or imported leave needing review."
+        )
     elif warning_percent >= staffing.warning_unavailable_percent:
         status = SAFETY_WARNING
         reasons.append(
@@ -316,7 +380,9 @@ def person_blockers(
             continue
         entry = {
             "type": "leave",
-            "label": "Approved leave" if leave.status.lower() in BLOCKING_LEAVE_STATUSES else "Leave pending review",
+            "label": "Approved leave"
+            if leave.status.lower() in BLOCKING_LEAVE_STATUSES
+            else "Leave pending review",
             "leave_type": leave.leave_type,
             "leave_slot": leave.leave_slot,
             "status": leave.status,
@@ -455,7 +521,9 @@ def unit_day_safety_rows(slot_rows: list[dict[str, object]]) -> list[dict[str, o
     for row in slot_rows:
         grouped.setdefault((row["unit_id"], row["duty_date"]), []).append(row)
     results = []
-    for (_unit_id, _day), rows in sorted(grouped.items(), key=lambda item: (str(item[0][1]), str(item[0][0]))):
+    for (_unit_id, _day), rows in sorted(
+        grouped.items(), key=lambda item: (str(item[0][1]), str(item[0][0]))
+    ):
         worst = SAFETY_SAFE
         if any(row["safety_status"] == SAFETY_HARD_BLOCK for row in rows):
             worst = SAFETY_HARD_BLOCK
@@ -470,9 +538,15 @@ def unit_day_safety_rows(slot_rows: list[dict[str, object]]) -> list[dict[str, o
                 "safety_status": worst,
                 "slots": len(rows),
                 "safe_slots": sum(1 for row in rows if row["safety_status"] == SAFETY_SAFE),
-                "needs_review_slots": sum(1 for row in rows if row["safety_status"] == SAFETY_WARNING),
-                "hard_blocked_slots": sum(1 for row in rows if row["safety_status"] == SAFETY_HARD_BLOCK),
-                "minimum_available_members": min((int(row["available_members"]) for row in rows), default=0),
+                "needs_review_slots": sum(
+                    1 for row in rows if row["safety_status"] == SAFETY_WARNING
+                ),
+                "hard_blocked_slots": sum(
+                    1 for row in rows if row["safety_status"] == SAFETY_HARD_BLOCK
+                ),
+                "minimum_available_members": min(
+                    (int(row["available_members"]) for row in rows), default=0
+                ),
             }
         )
     return results

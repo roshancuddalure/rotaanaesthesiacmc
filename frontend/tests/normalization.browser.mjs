@@ -242,13 +242,13 @@ try {
       .locator("[data-row][data-field=starts_on]")
       .first()
       .dispatchEvent("change");
-    assert.equal(await importer.locator("[data-apply]").isDisabled(), true);
+    assert.equal(await importer.locator("[data-apply]").getAttribute("aria-disabled"), "true");
     await importer
       .getByRole("button", { name: "Next rows", exact: true })
       .click();
     assert.equal(
-      await importer.locator("[data-apply]").isDisabled(),
-      true,
+      await importer.locator("[data-apply]").getAttribute("aria-disabled"),
+      "true",
       "Paging must preserve stale-review protection",
     );
     await importer
@@ -265,14 +265,14 @@ try {
       .getByRole("button", { name: "Close reference management", exact: true })
       .click();
     assert.equal(
-      await importer.locator("[data-apply]").isDisabled(),
-      true,
+      await importer.locator("[data-apply]").getAttribute("aria-disabled"),
+      "true",
       "Nested reference management must retain the pending review state",
     );
     await importer
       .getByRole("button", { name: "Refresh normalized preview", exact: true })
       .click();
-    await importer.locator("[data-apply]:not([disabled])").waitFor();
+    await importer.locator("[data-apply]:not([aria-disabled])").waitFor();
     await importer.locator("[data-apply]").click();
     await importer
       .getByRole("heading", { name: "Import complete", exact: true })
