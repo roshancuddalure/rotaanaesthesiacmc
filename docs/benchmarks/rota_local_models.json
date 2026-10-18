@@ -8,61 +8,68 @@
         {
           "case": "fairness",
           "passed": true,
-          "elapsed_ms": 1822.03,
+          "elapsed_ms": 22147.15,
           "response": {
             "mode": "balanced",
-            "explanation": "To balance weekend duties fairly and preserve existing assignments, configure a rule that limits the total hours worked on weekends to a maximum of 24 hours per month, ensuring a minimum gap of 24 hours between shifts.",
-            "proposed_rules": [],
+            "explanation": "The request aims to balance weekend duties fairly while preserving existing assignments. No new constraints or limits are introduced, focusing on maintaining the current schedule without altering it. The mode 'balanced' ensures fairness across the schedule without creating additional constraints or ",
+            "proposed_rules": [
+              "Ensure even distribution of weekend duties across the roster."
+            ],
             "needs_review": true,
             "model": "qwen2.5:1.5b",
-            "local_only": true
+            "local_only": true,
+            "grounding_check": "passed",
+            "attempts": 2
           }
         },
         {
           "case": "repair",
-          "passed": false,
-          "elapsed_ms": 1423.57,
+          "passed": true,
+          "elapsed_ms": 1617.85,
           "response": {
             "mode": "repair",
-            "explanation": "The user requests finding replacements for someone with unexpected leave while minimizing changes to other assignments, indicating a need for flexibility and minimizing disruption.",
+            "explanation": "The user requests finding replacements for someone with unexpected leave while minimizing changes to other assignments, indicating a need for flexibility and minimal disruption in the schedule.",
             "proposed_rules": [
-              "Allow unexpected leave for the affected individual.",
-              "Replace the affected individual with a suitable replacement from the available pool.",
-              "Ensure the replacement meets the required qualifications and availability."
+              "Allow for unexpected leave without altering other assignments.",
+              "Ensure replacements are found within the constraints of the current schedule."
             ],
             "needs_review": true,
             "model": "qwen2.5:1.5b",
-            "local_only": true
+            "local_only": true,
+            "grounding_check": "passed",
+            "attempts": 1
           }
         },
         {
           "case": "preferences",
-          "passed": false,
-          "elapsed_ms": 855.02,
+          "passed": true,
+          "elapsed_ms": 941.3,
           "response": {
             "mode": "preferences",
             "explanation": "The request prioritizes honoring recorded personal requests while respecting existing constraints and policies.",
-            "proposed_rules": [
-              "allow_recorded_personal_requests"
-            ],
+            "proposed_rules": [],
             "needs_review": true,
             "model": "qwen2.5:1.5b",
-            "local_only": true
+            "local_only": true,
+            "grounding_check": "passed",
+            "attempts": 1
           }
         },
         {
           "case": "new_rule",
-          "passed": false,
-          "elapsed_ms": 1045.97,
+          "passed": true,
+          "elapsed_ms": 1215.1,
           "response": {
             "mode": "preferences",
-            "explanation": "The request proposes a maximum of 8 twenty-four-hour duties per member per month, which requires administrator review.",
+            "explanation": "The request proposes a maximum of 8 twenty-four-hour duties per month, which is within the current constraints and does not require policy review.",
             "proposed_rules": [
-              "max_24hr_per_month = 8"
+              "max_24hr_per_month: 8"
             ],
             "needs_review": true,
             "model": "qwen2.5:1.5b",
-            "local_only": true
+            "local_only": true,
+            "grounding_check": "passed",
+            "attempts": 1
           }
         }
       ],
@@ -83,7 +90,7 @@
               "parameter_size": "1.5B",
               "quantization_level": "Q4_K_M"
             },
-            "expires_at": "2026-10-19T01:15:14.5139075+05:30",
+            "expires_at": "2026-10-19T01:21:35.8108678+05:30",
             "size_vram": 1166236712,
             "context_length": 4096
           }
@@ -96,8 +103,8 @@
       "cases": [
         {
           "case": "fairness",
-          "passed": false,
-          "elapsed_ms": 47948.02,
+          "passed": true,
+          "elapsed_ms": 40797.76,
           "response": {
             "mode": "balanced",
             "explanation": "I will prioritize fairness while maintaining current assignments, ensuring a balanced approach.",
@@ -107,13 +114,15 @@
             ],
             "needs_review": true,
             "model": "gemma3:4b",
-            "local_only": true
+            "local_only": true,
+            "grounding_check": "passed",
+            "attempts": 1
           }
         },
         {
           "case": "repair",
-          "passed": false,
-          "elapsed_ms": 31378.66,
+          "passed": true,
+          "elapsed_ms": 20785.18,
           "response": {
             "mode": "repair",
             "explanation": "I will prioritize fixing the issue by finding replacements while maintaining existing schedules.",
@@ -124,13 +133,15 @@
             ],
             "needs_review": true,
             "model": "gemma3:4b",
-            "local_only": true
+            "local_only": true,
+            "grounding_check": "passed",
+            "attempts": 1
           }
         },
         {
           "case": "preferences",
           "passed": false,
-          "elapsed_ms": 15224.77,
+          "elapsed_ms": 11062.58,
           "response": {
             "mode": "repair",
             "explanation": "I will prioritize fixing issues and fulfilling requests, ensuring a helpful response.",
@@ -139,22 +150,26 @@
             ],
             "needs_review": true,
             "model": "gemma3:4b",
-            "local_only": true
+            "local_only": true,
+            "grounding_check": "passed",
+            "attempts": 1
           }
         },
         {
           "case": "new_rule",
           "passed": false,
-          "elapsed_ms": 16136.86,
+          "elapsed_ms": 23369.92,
           "response": {
-            "mode": "repair",
-            "explanation": "I will modify existing rules based on user requests, prioritizing accurate updates and policy adjustments.",
+            "mode": "balanced",
+            "explanation": "This mode prioritizes fairness by considering all available information for a balanced response.",
             "proposed_rules": [
-              "max_24hr_per_month_8"
+              "No limits may be invented. New policies require review."
             ],
             "needs_review": true,
             "model": "gemma3:4b",
-            "local_only": true
+            "local_only": true,
+            "grounding_check": "passed",
+            "attempts": 2
           }
         }
       ],
@@ -175,7 +190,7 @@
               "parameter_size": "4.3B",
               "quantization_level": "Q4_K_M"
             },
-            "expires_at": "2026-10-19T01:17:05.2147477+05:30",
+            "expires_at": "2026-10-19T01:23:11.8454619+05:30",
             "size_vram": 1597788651,
             "context_length": 4096
           }

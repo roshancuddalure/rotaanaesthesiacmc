@@ -1,0 +1,80 @@
+{
+  "fixture": {
+    "members": 96,
+    "slots": 62,
+    "database": "disposable SQLite",
+    "month": "2026-05"
+  },
+  "greedy": {
+    "assigned": 62,
+    "uncovered": 0,
+    "maximum_duties": 1,
+    "maximum_weekends": 1,
+    "status": "greedy",
+    "operational_writes": 62,
+    "elapsed_ms": 3346.71
+  },
+  "whole_month": {
+    "assigned": 62,
+    "uncovered": 0,
+    "maximum_duties": 1,
+    "maximum_weekends": 1,
+    "status": "optimal",
+    "objectives": [
+      {
+        "name": "required_coverage",
+        "value": -62,
+        "proven": true,
+        "proof": "independent_lower_bound"
+      },
+      {
+        "name": "coverage",
+        "value": -62,
+        "proven": true,
+        "proof": "independent_lower_bound"
+      },
+      {
+        "name": "weekend_burden",
+        "value": 60,
+        "proven": true,
+        "proof": "independent_lower_bound"
+      },
+      {
+        "name": "night_burden",
+        "value": 186,
+        "proven": true,
+        "proof": "independent_lower_bound"
+      },
+      {
+        "name": "holiday_burden",
+        "value": 0,
+        "proven": true,
+        "proof": "independent_lower_bound"
+      },
+      {
+        "name": "workload",
+        "value": 186,
+        "proven": true,
+        "proof": "independent_lower_bound"
+      },
+      {
+        "name": "spacing_history",
+        "value": 0,
+        "proven": true,
+        "proof": "independent_lower_bound"
+      },
+      {
+        "name": "preferences",
+        "value": 0,
+        "proven": true,
+        "proof": "independent_lower_bound"
+      }
+    ],
+    "cuts": 0,
+    "warnings": [
+      "No holiday dates configured; holiday balancing was not evaluated."
+    ],
+    "operational_writes": 0,
+    "elapsed_ms": 10331.76
+  }
+}

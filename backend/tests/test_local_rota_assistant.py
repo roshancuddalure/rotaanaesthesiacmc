@@ -86,13 +86,34 @@ def test_companion_unavailable_has_no_cloud_fallback():
 
 def test_companion_rejects_invented_numerical_policy_even_in_valid_json():
     class Response:
-        def __enter__(self): return self
-        def __exit__(self,*_): pass
-        def read(self): return json.dumps({'message':{'content':json.dumps({'mode':'balanced',
-            'explanation':'Maximum 24 duties per month.','proposed_rules':[],'needs_review':True})}}).encode()
-    with patch('urllib.request.urlopen',return_value=Response()) as request, client() as c:
-        response=c.post('/suggest',headers={'Origin':'https://rota.example','X-Rota-Pairing':'test-token'},
-                        json={'instruction':'Balance duties fairly'})
-        assert response.status_code==502
-        assert request.call_count==2
-        assert 'no policy or assignments changed' in response.json()['detail']
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_):
+            pass
+
+        def read(self):
+            return json.dumps(
+                {
+                    "message": {
+                        "content": json.dumps(
+                            {
+                                "mode": "balanced",
+                                "explanation": "Maximum 24 duties per month.",
+                                "proposed_rules": [],
+                                "needs_review": True,
+                            }
+                        )
+                    }
+                }
+            ).encode()
+
+    with patch("urllib.request.urlopen", return_value=Response()) as request, client() as c:
+        response = c.post(
+            "/suggest",
+            headers={"Origin": "https://rota.example", "X-Rota-Pairing": "test-token"},
+            json={"instruction": "Balance duties fairly"},
+        )
+        assert response.status_code == 502
+        assert request.call_count == 2
+        assert "no policy or assignments changed" in response.json()["detail"]

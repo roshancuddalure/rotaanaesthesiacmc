@@ -10,7 +10,11 @@ import json
 import re
 from pathlib import Path
 import secrets
+import os
+import shutil
+import subprocess
 import sys
+import time
 import urllib.request
 import urllib.error
 
@@ -144,7 +148,7 @@ def create_companion(origin, token, model="gemma3:4b", ollama_port=11434):
                 ).model_dump()
                 text = result["explanation"] + " " + " ".join(result["proposed_rules"])
                 # Field identifiers may contain 24hr; those digits are not policy values.
-                text = re.sub(r"\b[a-zA-Z_]+\d+[a-zA-Z_]+\b", "", text)
+                text = re.sub(r'\b(?:max_24hr_per_month|max_weekend_24hr_per_month|minimum_gap_after_24hr_hours)\b', '', text)
                 if set(re.findall(r"\d+", text)) - requested_numbers:
                     raise ValueError("Unsupported numerical policy claim")
             except (ValueError, KeyError):
@@ -176,11 +180,87 @@ def create_companion(origin, token, model="gemma3:4b", ollama_port=11434):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--origin", required=True)
-    parser.add_argument("--model", default="gemma3:4b")
-    parser.add_argument("--ollama-port", type=int, default=11434)
+    parser.add_argument("--model", default="qwen2.5:1.5b")
+    parser.add_argument("--ollama-port", type=int)
+    parser.add_argument(
+        "--model-directory",
+        type=Path,
+        help="Use isolated local model storage and start a runtime if needed",
+    )
+    parser.add_argument(
+        "--prepare-model",
+        action="store_true",
+        help="Explicitly download the selected model if missing",
+    )
     args = parser.parse_args()
+    port = args.ollama_port or (11436 if args.model_directory else 11434)
+    runtime = None
+    log = None
+    if args.model_directory:
+        args.model_directory.mkdir(parents=True, exist_ok=True)
+        try:
+            with urllib.request.urlopen(f"http://127.0.0.1:{port}/api/tags", timeout=2):
+                pass
+        except OSError:
+            executable = shutil.which("ollama")
+            if not executable:
+                sys.exit("Install Ollama locally before starting the assistant.")
+            log = (args.model_directory / "companion-runtime.log").open(
+                "a", encoding="utf-8"
+            )
+            runtime = subprocess.Popen(
+                [executable, "serve"],
+                env={
+                    **os.environ,
+                    "OLLAMA_HOST": f"127.0.0.1:{port}",
+                    "OLLAMA_MODELS": str(args.model_directory.resolve()),
+                    "OLLAMA_NO_CLOUD": "1",
+                },
+                stdout=log,
+                stderr=subprocess.STDOUT,
+                creationflags=subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0,
+            )
+            deadline = time.monotonic() + 20
+            while time.monotonic() < deadline:
+                try:
+                    with urllib.request.urlopen(
+                        f"http://127.0.0.1:{port}/api/tags", timeout=1
+                    ):
+                        break
+                except OSError:
+                    time.sleep(0.2)
+            else:
+                runtime.terminate()
+                sys.exit(
+                    "The isolated local runtime could not start. Regular planning remains available."
+                )
+    if args.prepare_model:
+        directory = args.model_directory or Path.home() / ".ollama/models"
+        if shutil.disk_usage(directory).free < 2 * 1024**3:
+            if runtime:
+                runtime.terminate()
+            sys.exit(
+                "Model preparation needs at least 2 GiB free. Choose a model directory on another drive."
+            )
+        req = urllib.request.Request(
+            f"http://127.0.0.1:{port}/api/pull",
+            data=json.dumps({"model": args.model, "stream": False}).encode(),
+            headers={"Content-Type": "application/json"},
+        )
+        with urllib.request.urlopen(req, timeout=900) as response:
+            json.load(response)
     pairing = secrets.token_urlsafe(32)
-    app = create_companion(args.origin, pairing, args.model, args.ollama_port)
+    app = create_companion(args.origin, pairing, args.model, port)
     print("Local rota assistant: http://127.0.0.1:11435", flush=True)
     print("Pairing token: " + pairing, flush=True)
-    uvicorn.run(app, host="127.0.0.1", port=11435, access_log=False)
+    try:
+        uvicorn.run(app, host="127.0.0.1", port=11435, access_log=False)
+    finally:
+        if runtime:
+            runtime.terminate()
+            try:
+                runtime.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                runtime.kill()
+        if log:
+            log.close()

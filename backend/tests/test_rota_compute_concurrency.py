@@ -54,52 +54,78 @@ def test_postgres_parallel_job_creation_preserves_single_active_job(postgres_cli
 
 def test_postgres_intelligent_repair_double_apply_preserves_history(postgres_client):
     from app.services import rota_intelligence as intelligence
+
     _, factory, _ = postgres_client
     user_id = seed(factory)
     with factory() as db:
-        slot = compute.open_slots_for_period(db,compute.monthly_setup(db,'2026-05')[0].id)[0]
-        person = db.scalar(select(Person).where(Person.canonical_name=='Blocked Member'))
-        old = DutyAssignment(duty_slot=slot,person=person,status='assigned')
+        slot = compute.open_slots_for_period(db, compute.monthly_setup(db, "2026-05")[0].id)[0]
+        person = db.scalar(select(Person).where(Person.canonical_name == "Blocked Member"))
+        old = DutyAssignment(duty_slot=slot, person=person, status="assigned")
         db.add(old)
         db.commit()
-        original_id=old.id
-        response=intelligence.start(db,'2026-05',db.get(UserAccount,user_id),{
-            'mode':'repair','seconds':3,'repair_slots':[str(slot.id)],'locked_slots':[],'preferences':[]})
-        job=db.get(RotaComputeJob,UUID(response['id']))
-        compute.advance(db,job,job.revision)
-        job_id,revision=job.id,job.revision
+        original_id = old.id
+        response = intelligence.start(
+            db,
+            "2026-05",
+            db.get(UserAccount, user_id),
+            {
+                "mode": "repair",
+                "seconds": 3,
+                "repair_slots": [str(slot.id)],
+                "locked_slots": [],
+                "preferences": [],
+            },
+        )
+        job = db.get(RotaComputeJob, UUID(response["id"]))
+        compute.advance(db, job, job.revision)
+        job_id, revision = job.id, job.revision
+
     def apply():
         with factory() as db:
-            user=db.get(UserAccount,user_id)
-            return compute.apply_job(db,compute.owned_job(db,job_id,user),revision,user)
-    results=simultaneous([apply,apply])
-    assert all(r['status']=='applied' for r in results)
+            user = db.get(UserAccount, user_id)
+            return compute.apply_job(db, compute.owned_job(db, job_id, user), revision, user)
+
+    results = simultaneous([apply, apply])
+    assert all(r["status"] == "applied" for r in results)
     with factory() as db:
-        assert db.get(DutyAssignment,original_id).status=='cancelled'
-        assert db.query(DutyAssignment).filter_by(status='assigned').count()==1
-        assert db.query(DutyAssignment).count()==2
+        assert db.get(DutyAssignment, original_id).status == "cancelled"
+        assert db.query(DutyAssignment).filter_by(status="assigned").count() == 1
+        assert db.query(DutyAssignment).count() == 2
 
 
 def test_postgres_learning_activation_has_one_active_version(postgres_client):
     from app.models import RotaLearningVersion
     from app.services import rota_intelligence as intelligence
-    _,factory,_=postgres_client
-    user_id=seed(factory)
+
+    _, factory, _ = postgres_client
+    user_id = seed(factory)
     with factory() as db:
-        compute.candidate_context(db,'2026-05')
-        snapshot=compute.context_hash(db)
-        versions=[RotaLearningVersion(operator_id=user_id,data={
-            'weights':intelligence.DEFAULT_WEIGHTS,'training_examples':[],
-            'evaluation':{'passed':True,'results':[{'context_hash':snapshot}]}}) for _ in range(2)]
+        compute.candidate_context(db, "2026-05")
+        snapshot = compute.context_hash(db)
+        versions = [
+            RotaLearningVersion(
+                operator_id=user_id,
+                data={
+                    "weights": intelligence.DEFAULT_WEIGHTS,
+                    "training_examples": [],
+                    "evaluation": {"passed": True, "results": [{"context_hash": snapshot}]},
+                },
+            )
+            for _ in range(2)
+        ]
         db.add_all(versions)
         db.commit()
-        ids=[v.id for v in versions]
+        ids = [v.id for v in versions]
+
     def activate(index):
         with factory() as db:
-            intelligence.activate(db,db.get(RotaLearningVersion,ids[index]),db.get(UserAccount,user_id))
-    simultaneous([lambda:activate(0),lambda:activate(1)])
+            intelligence.activate(
+                db, db.get(RotaLearningVersion, ids[index]), db.get(UserAccount, user_id)
+            )
+
+    simultaneous([lambda: activate(0), lambda: activate(1)])
     with factory() as db:
-        assert db.query(RotaLearningVersion).filter_by(status='active').count()==1
+        assert db.query(RotaLearningVersion).filter_by(status="active").count() == 1
 
 
 def test_postgres_double_apply_is_idempotent_and_transactional(postgres_client):

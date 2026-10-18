@@ -22,6 +22,9 @@ test("committed mutations invalidate dependents; previews and auth leave drafts 
     sync.notifyDataChange("/api/v1/rota-compute/jobs", "POST");
     sync.notifyDataChange("/api/v1/rota-compute/jobs/job/step", "POST");
     sync.notifyDataChange("/api/v1/rota-compute/jobs/job/validate", "POST");
+    sync.notifyDataChange('/api/v1/rota-intelligence/jobs','POST');
+    sync.notifyDataChange('/api/v1/rota-intelligence/jobs/job/select','POST');
+    sync.notifyDataChange('/api/v1/rota-intelligence/jobs/job/examples','POST');
     assert.deepEqual(notices,[]);
     sync.notifyDataChange("/api/v1/members/person/call-changes", "POST");
     sync.notifyDataChange("/api/v1/admin/past-duties/apply", "POST");

@@ -180,6 +180,9 @@ def historical_examples(
     enabled()
     admin(user)
     from app.services.history_fairness import recorded_assignments, unique_assignments
+    from app.services.reference_registry import lock_namespace
+
+    lock_namespace(db, "rota-teaching-history")
 
     try:
         start, end = month_bounds(payload.month)
@@ -300,6 +303,7 @@ def teaching(db: Session = Depends(get_db), user: UserAccount = Depends(current_
             "reason": r.data["reason"],
             "note": r.data["note"],
             "decision": r.data["decision"],
+            "preferred_person_name": r.data.get("preferred_person_name"),
             "historical_policy_unknown": r.data.get("historical_policy_unknown", False),
         }
         for r in db.scalars(query)
@@ -324,6 +328,21 @@ def approve(
             "Review the original historical policy and availability before approving this reference",
         )
     service.approve_example(db, row, user)
+    return {"id": str(row.id), "status": row.status}
+
+
+@router.post("/teaching/{example_id}/reject")
+def reject_example(
+    example_id: UUID, db: Session = Depends(get_db), user: UserAccount = Depends(current_user)
+):
+    enabled()
+    admin(user)
+    row = db.get(RotaTeachingExample, example_id)
+    if row is None:
+        raise HTTPException(404, "Example not found")
+    row.status = "rejected"
+    row.data = {**row.data, "rejected_by": str(user.id)}
+    db.commit()
     return {"id": str(row.id), "status": row.status}
 
 

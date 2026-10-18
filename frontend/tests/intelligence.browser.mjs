@@ -54,7 +54,7 @@ try {
   assert.deepEqual(errors,[]);report.workflows.push(`review_apply_${width}`);await page.close();
   if(width===1280) {
    const setup=await(await fetch(server+'/api/v1/rota-intelligence/setup?month=2026-05')).json();
-   const slot=setup.slots.find(s=>s.assigned.length===1);
+   const slot=setup.slots.find(s=>s.assigned.length===1 && s.date==='2026-05-04');
    await fetch(server+'/__fixture/leave',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({person_id:slot.assigned[0].id,date:slot.date})});
    const repair=await open(390);
    await repair.page.locator('[data-mode]').selectOption('repair');
@@ -62,6 +62,7 @@ try {
    await repair.page.locator(`[data-repair="${slot.id}"]`).check();
    await repair.page.getByRole('button',{name:'Generate intelligent draft',exact:true}).click();
    await repair.page.getByText('Draft ready for review. No assignments have been saved.').waitFor();
+   await repair.page.getByText(`Before: ${slot.assigned[0].name}`,{exact:true}).waitFor();
    assert.equal((await fixture()).cancelled_assignments,0);
    await repair.page.locator('[data-confirm]').check();
    await repair.page.locator('[data-apply]').click();
@@ -82,13 +83,26 @@ try {
  await resumed.page.getByText('Proposal cancelled; assignments unchanged.').waitFor();
  assert.equal((await fixture()).assignments,0);
  report.workflows.push('resume_completed_and_cancel');await resumed.page.close();
+ await reset();
+ const integrated=await open(1280);
+ await integrated.page.locator('[data-close]').click();
+ await integrated.page.addInitScript(()=>localStorage.setItem('duty_rota_auth_token','disposable'));
+ await integrated.page.goto(base);
+ await integrated.page.getByRole('heading',{name:'Duty workload at a glance',exact:true}).waitFor();
+ await integrated.page.locator('[data-view="rota-template"]').first().evaluate(b=>b.click());
+ await integrated.page.locator('#rota-template-month').fill('2026-05');
+ await integrated.page.locator('#rota-template-month').dispatchEvent('change');
+ await integrated.page.locator('#run-intelligent-rota').click();
+ await integrated.page.getByRole('heading',{name:'Intelligent rota generator',exact:true}).waitFor();
+ assert.deepEqual(integrated.errors,[]);report.workflows.push('main_template_entry');await integrated.page.close();
  if(process.env.ASSISTANT_TEST_TOKEN) {
   await reset();const {page,errors,instruction}=await open(390);
   await page.locator('[data-tab=assistant]').click();
   await page.locator('[data-local-enabled]').check();
   await page.locator('[data-local-token]').fill(process.env.ASSISTANT_TEST_TOKEN);
   await page.locator('[data-instruction]').fill('Balance weekend duties fairly. Preserve existing assignments.');
-  await page.getByRole('button',{name:'Ask local assistant'}).click();
+  const [modelResponse]=await Promise.all([page.waitForResponse(r=>r.url().includes('11435/suggest')&&r.request().method()==='POST'),page.getByRole('button',{name:'Ask local assistant'}).click()]);
+  const modelResult=await modelResponse.json();
   await page.getByText('Local suggestion received. Review before using.').waitFor({timeout:100000});
   assert.equal(instruction(),'Balance weekend duties fairly. Preserve existing assignments.');
   assert.equal((await fixture()).assignments,0);
@@ -97,7 +111,10 @@ try {
   await page.locator('[data-use-suggestion]').click();
   assert.equal(await page.locator('[data-mode]').inputValue(),'balanced');
   assert.deepEqual(errors,[]);
-  report.local_model={passed:true,local_only:true,response:text};report.workflows.push('real_browser_local_model_pairing_and_suggestion');
+  const runtime=await(await fetch('http://127.0.0.1:11436/api/ps')).json();
+  assert.equal(modelResult.model,'qwen2.5:1.5b');assert.equal(modelResult.grounding_check,'passed');
+  assert.ok(runtime.models.some(m=>m.model==='qwen2.5:1.5b'&&m.size_vram>0));
+  report.local_model={passed:true,local_only:true,response:text,model_result:modelResult,runtime};report.workflows.push('real_browser_local_model_pairing_and_suggestion');
   await page.close();
  }
  await writeFile('../docs/benchmarks/rota_intelligence_browser.json',JSON.stringify(report,null,2)+'\n');

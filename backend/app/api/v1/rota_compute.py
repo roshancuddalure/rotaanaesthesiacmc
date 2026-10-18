@@ -96,8 +96,10 @@ def step(
 ):
     enabled()
     job = service.owned_job(db, job_id, user)
-    if job.state.get('intelligence') and not settings.rota_intelligence_enabled:
-        raise HTTPException(503, 'Intelligent planning is disabled; the proposal can still be cancelled')
+    if job.state.get("intelligence") and not settings.rota_intelligence_enabled:
+        raise HTTPException(
+            503, "Intelligent planning is disabled; the proposal can still be cancelled"
+        )
     try:
         return service.advance(
             db,
@@ -139,7 +141,12 @@ def apply(
     user: UserAccount = Depends(current_user),
 ):
     enabled()
-    return service.apply_job(db, service.owned_job(db, job_id, user), payload.revision, user)
+    job = service.owned_job(db, job_id, user)
+    if job.state.get("intelligence") and not settings.rota_intelligence_enabled:
+        raise HTTPException(
+            503, "Intelligent planning is disabled; the proposal can still be cancelled"
+        )
+    return service.apply_job(db, job, payload.revision, user)
 
 
 @router.post("/jobs/{job_id}/validate")
@@ -150,6 +157,9 @@ def validate(
     user: UserAccount = Depends(current_user),
 ):
     enabled()
-    return service.apply_job(
-        db, service.owned_job(db, job_id, user), payload.revision, user, dry_run=True
-    )
+    job = service.owned_job(db, job_id, user)
+    if job.state.get("intelligence") and not settings.rota_intelligence_enabled:
+        raise HTTPException(
+            503, "Intelligent planning is disabled; the proposal can still be cancelled"
+        )
+    return service.apply_job(db, job, payload.revision, user, dry_run=True)

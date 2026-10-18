@@ -114,13 +114,15 @@ def burden_comparison(state):
     before = state.get("baseline_loads", [])
     after = copy.deepcopy(before)
     people = {p["person_id"]: p for p in after}
-    for sid, original in state.get('intelligence', {}).get('originals', {}).items():
-        if original['person_id'] in people:
-            decision = next((d for d in state.get('decisions', []) if d['slot_id'] == sid), {})
-            person = people[original['person_id']]
-            person['total'] -= 1
-            person['hours24'] -= int(decision.get('is_24hr', False))
-            person['weekend24'] -= int(decision.get('is_24hr', False) and decision.get('weekend', False))
+    for sid, original in state.get("intelligence", {}).get("originals", {}).items():
+        if original["person_id"] in people:
+            decision = next((d for d in state.get("decisions", []) if d["slot_id"] == sid), {})
+            person = people[original["person_id"]]
+            person["total"] -= 1
+            person["hours24"] -= int(decision.get("is_24hr", False))
+            person["weekend24"] -= int(
+                decision.get("is_24hr", False) and decision.get("weekend", False)
+            )
     for d in state.get("decisions", []):
         if d.get("person_id") in people:
             person = people[d["person_id"]]
@@ -283,6 +285,7 @@ def decision_for(
 def advance(db, job, revision, selection=None, token=None, fallback=False, batch=8):
     if job.state.get("intelligence"):
         from app.services.rota_intelligence import advance as intelligent_advance
+
         return intelligent_advance(db, job, revision)
     if revision < job.revision:
         return serialize(job)  # Retry after a lost response: do not execute another step.
@@ -425,23 +428,38 @@ def apply_job(db, job, revision, operator=None, dry_run=False):
     # Revalidate every proposal against the current schedule, including prior proposed choices.
     # Save nothing operational until all decisions have passed.
     slots = {str(s.id): s for s in open_slots_for_period(db, period.id)}
-    intelligence = job.state.get('intelligence', {})
-    originals = intelligence.get('originals', {})
+    intelligence = job.state.get("intelligence", {})
+    originals = intelligence.get("originals", {})
     if originals:
         from app.services.rota_optimizer import without_slots
+
         context = without_slots(context, originals)
         for sid, original in originals.items():
             active = active_slot_assignments(slots[sid])
-            if len(active) != 1 or str(active[0].id) != original['assignment_id'] or str(active[0].person_id) != original['person_id']:
-                raise HTTPException(409, 'An original assignment changed. Generate a fresh proposal.')
+            if (
+                len(active) != 1
+                or str(active[0].id) != original["assignment_id"]
+                or str(active[0].person_id) != original["person_id"]
+            ):
+                raise HTTPException(
+                    409, "An original assignment changed. Generate a fresh proposal."
+                )
     proposals = [d for d in job.state["decisions"] if d.get("person_id")]
     for d in proposals:
         slot = slots.get(d["slot_id"])
         person = context.people.get(UUID(d["person_id"]))
-        if slot is None or person is None or (active_slot_assignments(slot) and str(slot.id) not in originals):
+        if (
+            slot is None
+            or person is None
+            or (active_slot_assignments(slot) and str(slot.id) not in originals)
+        ):
             raise HTTPException(409, "An assignment changed. Generate a fresh proposal.")
         validation = validate_assignment(
-            db, slot=slot, person=person, replace_existing=str(slot.id) in originals, context=context
+            db,
+            slot=slot,
+            person=person,
+            replace_existing=str(slot.id) in originals,
+            context=context,
         )
         if validation["status"] != "clear":
             raise HTTPException(409, "The complete proposal no longer passes safety validation.")
@@ -456,23 +474,41 @@ def apply_job(db, job, revision, operator=None, dry_run=False):
         )
         if validation["status"] != "clear":
             raise HTTPException(409, "The complete proposal no longer passes safety validation.")
+    if intelligence:
+        from app.services.rota_optimizer import validate_plan, without_slots
+
+        base = without_slots(candidate_context(db, job.month), originals)
+        if validate_plan(db, base, slots, {d["slot_id"]: d["person_id"] for d in proposals}):
+            raise HTTPException(
+                409,
+                "This proposal would introduce a conflict in a preserved duty. Generate a fresh draft.",
+            )
     if dry_run:
         return {
             **serialize(job),
             "validated": True,
             "validation_ms": round((perf_counter() - started) * 1000, 2),
         }
-    changed_originals = {d['slot_id'] for d in job.state['decisions'] if d['slot_id'] in originals
-                         and d.get('person_id') != originals[d['slot_id']]['person_id']}
+    changed_originals = {
+        d["slot_id"]
+        for d in job.state["decisions"]
+        if d["slot_id"] in originals and d.get("person_id") != originals[d["slot_id"]]["person_id"]
+    }
     for sid in changed_originals:
-        old = db.get(DutyAssignment, UUID(originals[sid]['assignment_id']))
-        old.status = 'cancelled'
-        db.add(MemberActivity(person_id=old.person_id, operator_id=job.operator_id,
-                              operator_name=job.state.get('operator_name', 'Reviewed repair'),
-                              action='rota_compute_replaced', details={'job_id': str(job.id), 'slot_id': sid}))
+        old = db.get(DutyAssignment, UUID(originals[sid]["assignment_id"]))
+        old.status = "cancelled"
+        db.add(
+            MemberActivity(
+                person_id=old.person_id,
+                operator_id=job.operator_id,
+                operator_name=job.state.get("operator_name", "Reviewed repair"),
+                action="rota_compute_replaced",
+                details={"job_id": str(job.id), "slot_id": sid},
+            )
+        )
     saved = 0
     for d in proposals:
-        if d['slot_id'] in originals and d['slot_id'] not in changed_originals:
+        if d["slot_id"] in originals and d["slot_id"] not in changed_originals:
             continue
         saved += 1
         db.add(

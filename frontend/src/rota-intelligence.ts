@@ -34,8 +34,17 @@ export async function openIntelligentRota(month:string, admin:boolean, onApplied
     dialog.querySelector('button')!.onclick=()=>dialog.close();return;}
   const people=(selected='')=>setup.people.map(p=>`<option value="${esc(p.id)}" ${p.id===selected?'selected':''}>${esc(p.name)}</option>`).join('');
   const slots=()=>setup.slots.map(s=>`<option value="${esc(s.id)}">${esc(s.date)} · ${esc(s.label)}</option>`).join('');
+  const proposal=(d:Decision)=>{
+    const existing=setup.slots.find(s=>s.id===d.slot_id)?.assigned || [];
+    const before=d.original?(existing.find(p=>p.id===d.original!.person_id)?.name || setup.people.find(p=>p.id===d.original!.person_id)?.name || 'Previous member'):'';
+    const after=d.person_name || (d.action==='preserved'?(existing.map(p=>p.name).join(', ') || 'Locked'):d.action);
+    return `${before?`<small>Before: ${esc(before)}</small>`:''}${esc(after)}${d.action==='unchanged'?'<small>Unchanged</small>':''}`;
+  };
   function render() {
     if(closed)return;
+    const active=dialog.contains(document.activeElement)?document.activeElement:null;
+    const focusAttribute=active?.getAttributeNames().find(name=>name.startsWith('data-'));
+    const focusValue=focusAttribute?active?.getAttribute(focusAttribute):null;
     const existingForm=dialog.querySelector<HTMLFormElement>('[data-teaching-form]');
     if(existingForm)teachingDraft=Object.fromEntries(new FormData(existingForm));
     const report=job?.intelligence?.alternatives[job.intelligence.selected];
@@ -61,7 +70,7 @@ export async function openIntelligentRota(month:string, admin:boolean, onApplied
         ${job.burden?`<details><summary>Monthly workload comparison</summary><p>${job.burden.members} active posted members. Counts include preserved assignments.</p><dl>${[['total','All duties'],['hours24','24-hour duties'],['weekend24','Weekend 24-hour duties']].map(([key,label])=>`<dt>${label}</dt><dd>Before: ${job!.burden.before[key].min}–${job!.burden.before[key].max}; proposed: ${job!.burden.after[key].min}–${job!.burden.after[key].max}. Mean ${job!.burden.before[key].mean} → ${job!.burden.after[key].mean}.</dd>`).join('')}</dl></details>`:''}
         ${report?`<label>Alternative<select data-alternative>${job.intelligence!.alternatives.map((a,i)=>`<option value="${i}" ${job!.intelligence!.selected===i?'selected':''}>${i+1}: ${a.uncovered} uncovered, ${a.changed} changes, ${esc(a.status)}</option>`).join('')}</select></label>
           <details><summary>Optimization evidence</summary><p>Optimal describes this configured model and candidate set; uncovered duties still need review.</p><pre>${esc(JSON.stringify(report.objectives,null,2))}</pre></details>`:''}
-        <div class="table-scroll"><table><thead><tr><th>Duty</th><th>Proposal</th><th>Reason / teach</th></tr></thead><tbody>${job.decisions.map(d=>`<tr><td data-label="Duty">${esc(d.date)}<small>${esc(d.duty)}</small></td><td data-label="Proposal">${esc(d.person_name || d.action)}</td><td data-label="Reason / teach">${d.person_id?`<p>Eligible choice in the validated whole-month plan.</p><details><summary>Why this choice?</summary><p>${esc(d.reason)}</p></details><button data-teach-slot="${d.slot_id}">Teach this decision</button>`:esc(d.reason)}</td></tr>`).join('')}</tbody></table></div>
+        <div class="table-scroll"><table><thead><tr><th>Duty</th><th>Proposal</th><th>Reason / teach</th></tr></thead><tbody>${job.decisions.map(d=>`<tr><td data-label="Duty">${esc(d.date)}<small>${esc(d.duty)}</small></td><td data-label="Proposal">${proposal(d)}</td><td data-label="Reason / teach">${d.person_id?`<p>Eligible choice in the validated whole-month plan.</p><details><summary>Why this choice?</summary><p>${esc(d.reason)}</p></details><button data-teach-slot="${d.slot_id}">Teach this decision</button>`:esc(d.reason)}</td></tr>`).join('')}</tbody></table></div>
         ${job.status==='completed'?`<button data-more ${busy || job.intelligence!.alternatives.length>=3?'disabled':''}>Find another alternative</button><label><input type="checkbox" data-confirm> I reviewed changes and uncovered duties</label><button class="primary" data-apply disabled>Apply reviewed draft</button>`:''}
         ${['queued','running','completed'].includes(job.status)?'<button data-cancel>Cancel proposal</button>':''}<button data-download>Download evidence</button>`}`:''}
       ${tab==='teaching'?`<p>Examples start unverified. Administrators approve reusable lessons; one-time exceptions never become policy automatically.</p>
@@ -70,11 +79,11 @@ export async function openIntelligentRota(month:string, admin:boolean, onApplied
         <label>Preferred member (for a different choice)<select name="preferred_person_id"><option value="">Choose when needed</option>${people()}</select></label>
         <label>Reason<select name="reason">${['burden','spacing','history','coverage','preference','other'].map(r=>`<option>${r}</option>`).join('')}</select></label><label>Explanation<textarea name="note" maxlength="1000"></textarea></label><button ${!job || busy?'disabled':''}>Save teaching example</button></form>
         <button data-load-teaching>Refresh examples</button>${admin?`<button data-history-months>Choose historical examples</button>${historicalMonths.length?`<label>Historical month<select data-history-month>${historicalMonths.map(m=>`<option>${m}</option>`).join('')}</select></label><button data-prepare-history>Prepare unverified references</button>`:''}`:''}
-        ${teaching.map(t=>`<article class="panel"><p>${esc(t.month)} · ${esc(t.kind)} · ${esc(t.reason)} · ${esc(t.status)}</p><p>${esc(t.decision?.person_name)} · ${esc(t.decision?.date)} · ${esc(t.decision?.duty)}</p><p>${esc(t.note)}</p>${admin&&t.status==='unverified'?`${t.historical_policy_unknown?`<label><input type="checkbox" data-verify-history="${t.id}"> I checked the original policy and availability</label>`:''}<button data-approve-example="${t.id}">Approve reviewed example</button>`:''}</article>`).join('')}`:''}
+        ${teaching.map(t=>`<article class="panel"><p>${esc(t.month)} · ${esc(t.kind)} · ${esc(t.reason)} · ${esc(t.status)}</p><p>${esc(t.decision?.person_name)} · ${esc(t.decision?.date)} · ${esc(t.decision?.duty)}</p>${t.preferred_person_name?`<p>Preferred instead: ${esc(t.preferred_person_name)}</p>`:''}<p>${esc(t.note)}</p>${admin&&t.status==='unverified'?`${t.historical_policy_unknown?`<label><input type="checkbox" data-verify-history="${t.id}"> I checked the original policy and availability</label>`:''}<button data-approve-example="${t.id}">Approve reviewed example</button>`:''}${admin&&['unverified','approved'].includes(t.status)?`<button data-reject-example="${t.id}">Exclude from future training</button>`:''}</article>`).join('')}`:''}
       ${tab==='assistant'?`<p>The optional assistant runs on this computer. It suggests settings and policies; it cannot assign members or approve exceptions. Generation works without it.</p>
         <label><input type="checkbox" data-local-enabled ${enabled?'checked':''}> Allow requests to my paired local assistant</label>
         <label>Local pairing token<input type="password" data-local-token value="${esc(token)}" autocomplete="off"></label>
-        <details><summary>Start the local assistant</summary><p>Run the companion on this computer with this website's exact origin, then enter its temporary pairing token. Allow this site's local-network / loopback permission when the browser asks.</p><code>backend\\.venv\\Scripts\\python.exe tools/local_rota_assistant.py --origin ${esc(location.origin)}</code><p>Initial model download requires internet if the model is not already installed. Processing uses the installed local model; no cloud fallback.</p></details>
+        <details><summary>Start the local assistant</summary><p>Run the companion on this computer with this website's exact origin, then enter its temporary pairing token. Allow this site's local-network / loopback permission when the browser asks.</p><code>.\\tools\\start-local-rota-assistant.ps1 -WebsiteOrigin ${esc(location.origin)}</code><p>The launcher uses an isolated local model directory. For first-time setup only, add -PrepareModel to download the model. Processing uses the installed model; no cloud fallback.</p></details>
         <label>Your instruction<textarea data-instruction maxlength="2000">${esc(instruction)}</textarea></label><button data-ask ${busy||!enabled||!token?'disabled':''}>Ask local assistant</button>
         ${suggestion?`<article class="panel"><p>${esc(suggestion.explanation)}</p><p>Suggested mode: ${esc(suggestion.mode)}. Proposed rules require separate policy review.</p><ul>${suggestion.proposed_rules.map((r:string)=>`<li>${esc(r)}</li>`).join('')}</ul><button data-use-suggestion>Use suggested planning mode</button></article>`:''}`:''}
       ${tab==='learning'&&admin?`<p>Candidate weights use approved examples only. Held-out months must pass comparison before activation; previous versions remain available for rollback.</p><button data-load-learning>Refresh versions</button><button data-propose-learning>Prepare candidate version</button>
@@ -85,6 +94,8 @@ export async function openIntelligentRota(month:string, admin:boolean, onApplied
     if(form)for(const [name,value] of Object.entries(teachingDraft)){
       const field=form.elements.namedItem(name) as HTMLInputElement | null;if(field)field.value=String(value);
     }
+    if(busy)dialog.querySelectorAll<HTMLButtonElement>('button:not([data-close]):not([data-tab])').forEach(b=>{b.disabled=true;});
+    if(focusAttribute)dialog.querySelector<HTMLElement>(`[${focusAttribute}${focusValue?`="${CSS.escape(focusValue)}"`:''}]`)?.focus({preventScroll:true});
   }
   async function run() {
     while(!closed && job && ['queued','running'].includes(job.status)) job=await compute<Job>(`jobs/${job.id}/step`,{revision:job.revision});
@@ -138,6 +149,7 @@ export async function openIntelligentRota(month:string, admin:boolean, onApplied
       else if(b.matches('[data-history-months]'))historicalMonths=await api('history-months');
       else if(b.matches('[data-prepare-history]')){const result=await api('teaching/history',{month:historyMonth});notice=`${result.prepared} historical references prepared, all unverified.`;teaching=await api('teaching');}
       else if(b.dataset.approveExample){await api(`teaching/${b.dataset.approveExample}/approve`,{historical_context_verified:historicalVerified});teaching=await api('teaching');}
+      else if(b.dataset.rejectExample){await api(`teaching/${b.dataset.rejectExample}/reject`,{});teaching=await api('teaching');}
       else if(b.matches('[data-load-learning]'))versions=await api('learning');
       else if(b.matches('[data-propose-learning]')){await api('learning',{});versions=await api('learning');}
       else if(b.dataset.evaluate){await api(`learning/${b.dataset.evaluate}/evaluate`,{months:heldout.split(',').map(s=>s.trim()).filter(Boolean)});versions=await api('learning');}

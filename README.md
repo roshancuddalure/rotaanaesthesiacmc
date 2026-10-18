@@ -89,6 +89,7 @@ docker compose up --build
 
 ## Developer Documentation
 
+- `docs/rota_intelligence_implementation.md` - whole-month optimization, reviewed repairs, teaching, preference learning and the local AI companion.
 - `docs/staged_compute_implementation.md` - reviewed generation, device GPU controls, performance evidence and verification commands.
 - `docs/DEVELOPER_HANDBOOK.md` - architecture, workflows, algorithms, API reference, operations (start here).
 - `docs/INSPECTION_REPORT_2026-10.md` - known issues and risks (IDs such as S1, B2 are referenced in code comments).

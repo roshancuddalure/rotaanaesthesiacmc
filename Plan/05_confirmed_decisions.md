@@ -175,3 +175,17 @@ and requested testing of the complete plan before reporting completion. Local GP
 is optional and enabled per browser by an admin. The server remains authoritative for
 rota safety and saving; proposals require review and never publish automatically.
 The implementation and measured evidence are in `../docs/staged_compute_implementation.md`.
+
+## 2026-10-19 - Intelligent Rota Generation
+
+The user approved implementing and testing the seven-stage intelligence plan with
+recommended defaults, without preparing a manual questionnaire or training files.
+Use whole-month optimization plus independent validation; preserve saved duties
+unless explicitly selected for repair. Local language-model inference is optional
+and cannot approve exceptions, assign members or publish. Teaching examples require
+review; exceptions are excluded from reusable learning. Learned preference versions
+require held-out evaluation and administrator activation, with explicit rollback.
+Preserve the existing six-month historical policy rather than overwriting it with
+a proposed default. Do not invent holiday dates or clinical duty/rest limits.
+
+Implementation: `../docs/rota_intelligence_implementation.md`.

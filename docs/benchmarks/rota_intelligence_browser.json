@@ -1,14 +1,49 @@
 {
   "workflows": [
     "review_apply_1280",
+    "mobile_repair_after_approved_leave",
     "review_apply_390",
     "review_apply_320",
     "resume_completed_and_cancel",
+    "main_template_entry",
     "real_browser_local_model_pairing_and_suggestion"
   ],
   "local_model": {
     "passed": true,
     "local_only": true,
-    "response": "To balance weekend duties fairly, we propose the following rules for human review: 1. Ensure that the total number of 24-hour shifts does not exceed the maximum allowed for the month (24 hours). 2. Maintain the existing assignment pattern to preserve the current roster. 3. Avoid scheduling the same group of people on consecutive weekends to prevent fatigue. 4. Ensure that the minimum gap between 24-hour shifts is 24 hours, and that elective shifts are not scheduled on the same day as a 24-hr\n\nSuggested mode: balanced. Proposed rules require separate policy review.\n\nReview the total number of 24-hour shifts to ensure they do not exceed the maximum allowed for the month.\nPreserve the existing assignment pattern to maintain the current roster.\nAvoid scheduling the same group of people on consecutive weekends to prevent fatigue.\nUse suggested planning mode"
+    "response": "To balance weekend duties fairly and preserve existing assignments, the administrator should review and adjust the proposed policies to ensure a balanced distribution of weekend responsibilities across staff members, while maintaining the current staff assignments.\n\nSuggested mode: balanced. Proposed rules require separate policy review.\n\nUse suggested planning mode",
+    "model_result": {
+      "mode": "balanced",
+      "explanation": "To balance weekend duties fairly and preserve existing assignments, the administrator should review and adjust the proposed policies to ensure a balanced distribution of weekend responsibilities across staff members, while maintaining the current staff assignments.",
+      "proposed_rules": [],
+      "needs_review": true,
+      "model": "qwen2.5:1.5b",
+      "local_only": true,
+      "grounding_check": "passed",
+      "attempts": 1
+    },
+    "runtime": {
+      "models": [
+        {
+          "name": "qwen2.5:1.5b",
+          "model": "qwen2.5:1.5b",
+          "size": 1166236712,
+          "digest": "65ec06548149b04c096a120e4a6da9d4017ea809c91734ea5631e89f96ddc57b",
+          "details": {
+            "parent_model": "",
+            "format": "gguf",
+            "family": "qwen2",
+            "families": [
+              "qwen2"
+            ],
+            "parameter_size": "1.5B",
+            "quantization_level": "Q4_K_M"
+          },
+          "expires_at": "2026-10-19T01:43:04.5028794+05:30",
+          "size_vram": 1166236712,
+          "context_length": 4096
+        }
+      ]
+    }
   }
 }

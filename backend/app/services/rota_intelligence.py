@@ -10,7 +10,8 @@ from sqlalchemy import select
 
 from app.models import RotaTeachingExample, RotaLearningVersion, RuleSetting, RuleVersion
 from app.services import rota_compute as compute
-from app.services.rota_candidates import candidate_context
+from app.services.rota_candidates import candidate_context, add_provisional_assignment
+from app.services.rota_assignment import validate_assignment
 from app.services.rota_optimizer import solve_month, without_slots, validate_plan
 from app.services.reference_registry import lock_namespace
 
@@ -50,6 +51,46 @@ def active_learning(db):
     return version
 
 
+def input_snapshot(context):
+    """Freeze scheduling evidence without leave reasons or private profile notes."""
+    return {
+        "rules": context.rules.model_dump(),
+        "availability": {
+            "postings": [
+                {
+                    "person_id": str(p.person_id),
+                    "unit_id": str(p.unit_id),
+                    "posting_type": p.posting_type,
+                    "starts_on": str(p.starts_on),
+                    "ends_on": str(p.ends_on),
+                }
+                for p in context.postings
+            ],
+            "leave_days": {
+                str(day): {
+                    str(person): [
+                        {"slot": leave.leave_slot, "status": leave.status} for leave in leaves
+                    ]
+                    for person, leaves in people.items()
+                }
+                for day, people in context.leaves.items()
+            },
+            "recorded_duties": [
+                {
+                    "person_id": str(a.person_id),
+                    "slot_id": str(a.duty_slot_id),
+                    "starts_at": str(a.duty_slot.starts_at),
+                    "ends_at": str(a.duty_slot.ends_at),
+                    "is_24hr": a.duty_slot.is_24hr,
+                    "status": a.status,
+                }
+                for rows in context.nearby_assignments.values()
+                for a in rows
+            ],
+        },
+    }
+
+
 def start(db, month, user, options):
     if options["mode"] not in {"balanced", "repair", "preferences"}:
         raise HTTPException(422, "Unknown planning mode")
@@ -66,7 +107,8 @@ def start(db, month, user, options):
     if any(len(compute.active_slot_assignments(slots[s])) != 1 for s in repair):
         raise HTTPException(422, "Repair requires exactly one current assignment per selected slot")
     requested = options.get("preferences", [])
-    people = candidate_context(db, month).people
+    context = candidate_context(db, month)
+    people = context.people
     if any(p["slot_id"] not in slots or UUID(p["person_id"]) not in people for p in requested):
         raise HTTPException(422, "Preferences must reference this month and posted members")
     result = compute.create_job(db, month, user)
@@ -81,6 +123,7 @@ def start(db, month, user, options):
             "selected": None,
             "learning_version": str(learning.id) if learning else None,
             "weights": learning.data["weights"] if learning else DEFAULT_WEIGHTS,
+            "input_snapshot": input_snapshot(context),
             "originals": {
                 s: {
                     "assignment_id": str(compute.active_slot_assignments(slots[s])[0].id),
@@ -138,19 +181,52 @@ def advance(db, job, revision):
         minimum_required=minimum_required,
     )
     decisions = []
+    final_context = without_slots(base, [])
+    for sid, person in result["choices"].items():
+        add_provisional_assignment(final_context, all_slots[sid], UUID(person))
+    preserved_conflicts = []
     for sid, slot in all_slots.items():
         if sid not in slots:
             decision = compute.decision_for(slot, reason="Locked or existing assignment preserved.")
             decision["action"] = "preserved"
+            active = compute.active_slot_assignments(slot)
+            if not active:
+                decision["action"] = "unresolved"
+                decision["reason"] = (
+                    "This unfilled duty is locked. Unlock it to include it in generation."
+                )
+            for assignment in active:
+                check = validate_assignment(
+                    db,
+                    slot=slot,
+                    person=assignment.person,
+                    replace_existing=True,
+                    context=final_context,
+                )
+                if check["status"] != "clear":
+                    messages = " ".join(i["message"] for i in check["issues"])
+                    decision["reason"] += " Existing saved assignment needs review: " + messages
+                    preserved_conflicts.append({"slot_id": sid, "issues": check["issues"]})
         else:
             person = result["choices"].get(sid)
             candidate = result["candidates"][sid].get(person)
-            rejected_messages = list(dict.fromkeys(
-                issue['message'] for item in result['rejected'][sid] for issue in item['issues']
-                if issue.get('message')))
-            unresolved_reason = (' '.join(rejected_messages[:3]) if rejected_messages else
-                ('Eligible members conflict with other duties in this plan. Compare alternatives or review availability.'
-                 if result['candidates'][sid] else 'No clear eligible member is posted to the required unit and call level for this date.'))
+            rejected_messages = list(
+                dict.fromkeys(
+                    issue["message"]
+                    for item in result["rejected"][sid]
+                    for issue in item["issues"]
+                    if issue.get("message")
+                )
+            )
+            unresolved_reason = (
+                " ".join(rejected_messages[:3])
+                if rejected_messages
+                else (
+                    "Eligible members conflict with other duties in this plan. Compare alternatives or review availability."
+                    if result["candidates"][sid]
+                    else "No clear eligible member is posted to the required unit and call level for this date."
+                )
+            )
             decision = compute.decision_for(
                 slot,
                 candidate,
@@ -165,6 +241,12 @@ def advance(db, job, revision):
         decisions.append(decision)
     report = {k: v for k, v in result.items() if k not in {"candidates", "rejected"}}
     report["decisions"] = decisions
+    report["uncovered"] = sum(d["action"] == "unresolved" for d in decisions)
+    report["preserved_conflicts"] = preserved_conflicts
+    if preserved_conflicts:
+        report["warnings"].append(
+            f"{len(preserved_conflicts)} preserved assignment(s) need review. They were not changed automatically."
+        )
     report["rejected"] = result["rejected"]
     report["changed"] = sum(
         d.get("original") is not None and d["person_id"] != d["original"]["person_id"]
@@ -218,6 +300,7 @@ def add_example(db, job, user, payload):
         raise HTTPException(422, "Choose a proposed assignment")
     alternative = payload.get("preferred_person_id") if payload["kind"] == "prefer" else None
     preferred_features = None
+    preferred_name = None
     if alternative:
         period, _ = compute.writable_period(db, job.month)
         slot = next(
@@ -240,6 +323,7 @@ def add_example(db, job, user, payload):
         if not candidate:
             raise HTTPException(422, "Preferred member is not a clear eligible candidate")
         preferred_features = candidate["score_parts"]
+        preferred_name = candidate["person_name"]
         choices = {
             d["slot_id"]: d["person_id"] for d in job.state["decisions"] if d.get("person_id")
         }
@@ -249,7 +333,9 @@ def add_example(db, job, user, payload):
             raise HTTPException(
                 422, "This preference conflicts with the complete proposal; repair the draft first"
             )
-    context = candidate_context(db, job.month)
+    source = job.state.get("intelligence", {}).get("input_snapshot") or input_snapshot(
+        candidate_context(db, job.month)
+    )
     example = RotaTeachingExample(
         job_id=job.id,
         operator_id=user.id,
@@ -258,37 +344,16 @@ def add_example(db, job, user, payload):
             **payload,
             "preferred_person_id": alternative,
             "preferred_features": preferred_features,
+            "preferred_person_name": preferred_name,
             "month": job.month,
             "decision": decision,
             "context_hash": job.context_hash,
-            "rule_snapshot": candidate_context(db, job.month).rules.model_dump(),
-            "availability_snapshot": {
-                "postings": [
-                    {
-                        "person_id": str(p.person_id),
-                        "unit_id": str(p.unit_id),
-                        "starts_on": str(p.starts_on),
-                        "ends_on": str(p.ends_on),
-                    }
-                    for p in context.postings
-                ],
-                "leave_days": {
-                    str(day): {
-                        str(person): [
-                            {"slot": leave.leave_slot, "status": leave.status} for leave in leaves
-                        ]
-                        for person, leaves in people.items()
-                    }
-                    for day, people in context.leaves.items()
-                },
-                "prior_assignments": [
-                    {"person_id": str(a.person_id), "slot_id": str(a.duty_slot_id)}
-                    for a in context.assignments
-                ],
-            },
+            "rule_snapshot": source["rules"],
+            "availability_snapshot": source["availability"],
             "job_snapshot": {
-                "decisions": job.state["decisions"],
-                "intelligence": job.state.get("intelligence"),
+                "revision": job.revision,
+                "selected_alternative": job.state.get("intelligence", {}).get("selected"),
+                "context_hash": job.context_hash,
             },
         },
     )
@@ -365,6 +430,11 @@ def learning_candidate(db, user):
 
 def evaluate(db, version, user, months):
     training = set(version.data["training_examples"])
+    training_rows = [r for r in db.scalars(select(RotaTeachingExample)) if str(r.id) in training]
+    if len(training_rows) != len(training) or any(r.status != "approved" for r in training_rows):
+        raise HTTPException(
+            409, "Training examples changed approval status; prepare a fresh candidate version"
+        )
     training_months = {
         r.data["month"] for r in db.scalars(select(RotaTeachingExample)) if str(r.id) in training
     }
@@ -402,9 +472,11 @@ def evaluate(db, version, user, months):
         def metrics(result):
             objective = {x["name"]: x["value"] for x in result["objectives"]}
             return [
+                objective.get("required_coverage", 10**9),
                 result["uncovered"],
                 objective.get("weekend_burden", 10**9),
                 objective.get("night_burden", 10**9),
+                objective.get("holiday_burden", 10**9),
                 objective.get("workload", 10**9),
             ]
 
@@ -444,6 +516,18 @@ def activate(db, version, user, rollback=False):
     evaluation = version.data.get("evaluation")
     if not rollback and (not evaluation or not evaluation.get("passed")):
         raise HTTPException(409, "Held-out evaluation must pass before activation")
+    if not rollback:
+        source = set(version.data.get("training_examples", []))
+        approved = {
+            str(r.id)
+            for r in db.scalars(
+                select(RotaTeachingExample).where(RotaTeachingExample.status == "approved")
+            )
+        }
+        if not source <= approved:
+            raise HTTPException(
+                409, "Training examples changed approval status; prepare a fresh candidate version"
+            )
     if not rollback and any(
         r["context_hash"] != compute.context_hash(db) for r in evaluation["results"]
     ):

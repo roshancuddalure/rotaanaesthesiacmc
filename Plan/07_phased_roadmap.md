@@ -140,7 +140,9 @@ Checklist:
 - [x] Cache monthly candidate/validation data and verify parity with the uncached reference.
 - [x] Add resumable reviewed generation proposals, progress, cancellation and atomic apply.
 - [x] Add an opt-in browser GPU scoring pilot with exact parity and measured server fallback.
-- [ ] Later evaluate OR-Tools if full optimization is needed.
+- [x] Add whole-month OR-Tools optimization with independent validation and reviewed repairs.
+- [x] Add reviewed teaching examples, held-out preference evaluation, activation and rollback.
+- [x] Add an optional paired local-model assistant with NVIDIA execution verification.
 
 Deliverable:
 

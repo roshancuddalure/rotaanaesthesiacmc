@@ -11,8 +11,7 @@ from app.services import rota_compute as compute, rota_intelligence as intellige
 from app.services.rota_optimizer import solve_month
 from app.services.rota_candidates import candidate_context
 from tests.test_rota_auto_fill import create_slot
-
-pytest_plugins = ["tests.test_rota_compute"]
+from tests.test_rota_compute import compute_db as compute_db
 
 
 def options(**kw):
@@ -203,6 +202,45 @@ def test_fit_pairwise_weights_and_deduplicate_feedback(compute_db):
     assert version.data["weights"]["burden"] > version.data["weights"]["history"] * 2
 
 
+def test_global_search_improves_concentrated_incumbent_and_spaces_duties(compute_db, monkeypatch):
+    from collections import Counter
+    import app.services.rota_optimizer as optimizer
+
+    db, _ = compute_db
+    period, _ = compute.monthly_setup(db, "2026-05")
+    slots = [s for s in compute.open_slots_for_period(db, period.id) if s.call_level == "1ST_CALL"]
+    slots.append(create_slot(db, slots[0].unit, date(2026, 5, 6)))
+    db.commit()
+    context = candidate_context(db, "2026-05")
+    people = list(context.people)[:2]
+
+    # Deliberately supply a concentrated warm start; the global search must improve it.
+    def candidates(_db, *, slot, context):
+        return {
+            "candidates": [
+                {
+                    "person_id": str(p),
+                    "candidate_status": "eligible",
+                    "validation_status": "clear",
+                    "requires_override": False,
+                    "score_parts": {},
+                }
+                for p in people
+            ]
+        }
+
+    monkeypatch.setattr(optimizer, "slot_candidates_with_context", candidates)
+    monkeypatch.setattr(optimizer, "validate_plan", lambda *args: [])
+    result = optimizer.solve_month(db, context, {str(s.id): s for s in slots}, seconds=3)
+    counts = Counter(result["choices"].values())
+    assert sorted(counts.values()) == [1, 2]
+    assert result["status"] == "optimal"
+    paired = [
+        s.duty_date for s in slots if result["choices"][str(s.id)] == counts.most_common(1)[0][0]
+    ]
+    assert abs((paired[1] - paired[0]).days) == 4
+
+
 def test_heldout_evaluation_activation_and_rollback(compute_db):
     from datetime import datetime, timedelta
     from app.models import DutySlot
@@ -335,3 +373,161 @@ def test_calendar_is_explicit_versioned_and_invalidates_proposals(compute_db):
     with pytest.raises(HTTPException):
         compute.apply_job(db, job, job.revision)
     assert db.query(DutyAssignment).count() == 0
+
+
+def test_new_choices_cannot_break_staffing_of_preserved_duty(compute_db):
+    db, _ = compute_db
+    period, _ = compute.monthly_setup(db, "2026-05")
+    target = next(
+        s for s in compute.open_slots_for_period(db, period.id) if s.duty_date == date(2026, 5, 4)
+    )
+    old = create_slot(db, target.unit, date(2026, 5, 5))
+    target.unit.minimum_free_people = 4
+    person = db.scalar(select(Person).where(Person.canonical_name == "Safe Member"))
+    db.add(DutyAssignment(duty_slot=old, person=person, status="assigned"))
+    db.commit()
+    context = candidate_context(db, "2026-05")
+    context.rules.unit_staffing_rules.minimum_available_count = 4
+    result = solve_month(db, context, {str(target.id): target}, seconds=3)
+    assert result["choices"] == {} and result["cuts"] > 0
+    assert db.query(DutyAssignment).count() == 1
+
+
+def test_new_choices_protect_next_month_staffing(compute_db, monkeypatch):
+    from datetime import datetime, timedelta
+    from app.models import DutySlot
+    import app.services.rota_optimizer as optimizer
+
+    db, _ = compute_db
+    period, _ = compute.monthly_setup(db, "2026-05")
+    source = compute.open_slots_for_period(db, period.id)[0]
+    target = create_slot(db, source.unit, date(2026, 5, 31))
+    june, _ = compute.monthly_setup(db, "2026-06")
+    old = DutySlot(
+        rota_period=june,
+        unit=source.unit,
+        duty_date=date(2026, 6, 1),
+        duty_type=source.duty_type,
+        call_level="1ST_CALL",
+        slot_label="Preserve June coverage",
+        starts_at=datetime(2026, 6, 1, 8),
+        ends_at=datetime(2026, 6, 2, 8),
+        is_24hr=True,
+        source="phase4_template",
+    )
+    source.unit.minimum_free_people = 4
+    db.add(old)
+    person = db.scalar(select(Person).where(Person.canonical_name == "Safe Member"))
+    db.add(DutyAssignment(duty_slot=old, person=person, status="assigned"))
+    db.commit()
+
+    def context_for_month(session, month):
+        context = candidate_context(session, month)
+        context.rules.unit_staffing_rules.minimum_available_count = 4
+        return context
+
+    monkeypatch.setattr(optimizer, "candidate_context", context_for_month)
+    context = context_for_month(db, "2026-05")
+    result = optimizer.solve_month(db, context, {str(target.id): target}, seconds=3)
+    assert result["choices"] == {} and result["cuts"] > 0
+    assert db.query(DutyAssignment).count() == 1
+
+
+def test_locked_unfilled_duties_remain_visible_as_uncovered(compute_db):
+    db, user = compute_db
+    target = compute.open_slots_for_period(db, compute.monthly_setup(db, "2026-05")[0].id)[0]
+    job = complete(db, user, locked_slots=[str(target.id)])
+    decision = next(d for d in job.state["decisions"] if d["slot_id"] == str(target.id))
+    assert decision["action"] == "unresolved" and "locked" in decision["reason"]
+    assert job.state["intelligence"]["alternatives"][0]["uncovered"] >= 1
+
+
+def test_apply_independently_rejects_damage_to_a_preserved_duty(compute_db):
+    db, user = compute_db
+    period, _ = compute.monthly_setup(db, "2026-05")
+    target = next(
+        s for s in compute.open_slots_for_period(db, period.id) if s.duty_date == date(2026, 5, 4)
+    )
+    old = create_slot(db, target.unit, date(2026, 5, 5))
+    target.unit.minimum_free_people = 4
+    person = db.scalar(select(Person).where(Person.canonical_name == "Safe Member"))
+    db.add(DutyAssignment(duty_slot=old, person=person, status="assigned"))
+    db.commit()
+    job = complete(db, user)
+    candidate = db.scalar(select(Person).where(Person.canonical_name == "Spare One"))
+    state = {**job.state, "decisions": [dict(d) for d in job.state["decisions"]]}
+    decision = next(d for d in state["decisions"] if d["slot_id"] == str(target.id))
+    decision.update(
+        person_id=str(candidate.id), person_name=candidate.canonical_name, action="proposed"
+    )
+    job.state = state
+    db.commit()
+    with pytest.raises(HTTPException, match="preserved duty"):
+        compute.apply_job(db, job, job.revision, dry_run=True)
+    assert db.query(DutyAssignment).count() == 1
+
+
+def test_feedback_after_apply_keeps_original_frozen_inputs(compute_db):
+    db, user = compute_db
+    job = complete(db, user)
+    decision = next(d for d in job.state["decisions"] if d.get("person_id"))
+    assert job.state["intelligence"]["input_snapshot"]["availability"]["recorded_duties"] == []
+    compute.apply_job(db, job, job.revision)
+    result = intelligence.add_example(
+        db,
+        job,
+        user,
+        {
+            "slot_id": decision["slot_id"],
+            "kind": "accept",
+            "preferred_person_id": None,
+            "reason": "burden",
+            "note": "Approved after applying draft",
+        },
+    )
+    row = db.get(RotaTeachingExample, UUID(result["id"]))
+    assert row.data["availability_snapshot"]["recorded_duties"] == []
+    assert db.query(DutyAssignment).count() == 2
+
+
+def test_historical_examples_require_explicit_context_review_and_can_be_excluded(compute_db):
+    from fastapi.testclient import TestClient
+    from app.main import create_app
+    from app.api.v1.auth import current_user
+    from app.db.session import get_db
+
+    db, user = compute_db
+    job = complete(db, user)
+    compute.apply_job(db, job, job.revision)
+    period, _ = compute.monthly_setup(db, "2026-05")
+    period.status = "historical"
+    db.commit()
+    app = create_app()
+
+    def database():
+        yield db
+
+    app.dependency_overrides[get_db] = database
+    app.dependency_overrides[current_user] = lambda: user
+    with TestClient(app) as client:
+        assert "2026-05" in client.get("/api/v1/rota-intelligence/history-months").json()
+        result = client.post(
+            "/api/v1/rota-intelligence/teaching/history", json={"month": "2026-05"}
+        )
+        assert result.status_code == 200 and result.json()["prepared"] == 2
+        assert (
+            client.post(
+                "/api/v1/rota-intelligence/teaching/history", json={"month": "2026-05"}
+            ).json()["prepared"]
+            == 0
+        )
+        row = client.get("/api/v1/rota-intelligence/teaching").json()[0]
+        assert row["historical_policy_unknown"] and row["status"] == "unverified"
+        path = f"/api/v1/rota-intelligence/teaching/{row['id']}"
+        assert client.post(path + "/approve", json={}).status_code == 409
+        assert (
+            client.post(path + "/approve", json={"historical_context_verified": True}).status_code
+            == 200
+        )
+        assert client.post(path + "/reject", json={}).status_code == 200
+        assert intelligence.learning_candidate(db, user).data["training_examples"] == []

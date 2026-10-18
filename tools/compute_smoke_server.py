@@ -69,22 +69,33 @@ def inspect_fixture():
     with Session(engine) as db:
         return {
             "assignments": db.query(DutyAssignment).count(),
-            "active_assignments":db.query(DutyAssignment).filter_by(status='assigned').count(),
-            "cancelled_assignments":db.query(DutyAssignment).filter_by(status='cancelled').count(),
+            "active_assignments": db.query(DutyAssignment)
+            .filter_by(status="assigned")
+            .count(),
+            "cancelled_assignments": db.query(DutyAssignment)
+            .filter_by(status="cancelled")
+            .count(),
             "jobs": [
                 {"id": str(j.id), "status": j.status} for j in db.query(RotaComputeJob)
             ],
         }
 
 
-@app.post('/__fixture/leave')
-def add_fixture_leave(payload:dict):
+@app.post("/__fixture/leave")
+def add_fixture_leave(payload: dict):
     with Session(engine) as db:
-        db.add(LeaveRequest(person_id=UUID(payload['person_id']),leave_type='CASUAL_LEAVE',
-            leave_slot='FULL_DAY',starts_on=date.fromisoformat(payload['date']),
-            ends_on=date.fromisoformat(payload['date']),status='approved'))
+        db.add(
+            LeaveRequest(
+                person_id=UUID(payload["person_id"]),
+                leave_type="CASUAL_LEAVE",
+                leave_slot="FULL_DAY",
+                starts_on=date.fromisoformat(payload["date"]),
+                ends_on=date.fromisoformat(payload["date"]),
+                status="approved",
+            )
+        )
         db.commit()
-    return {'added':True}
+    return {"added": True}
 
 
 if __name__ == "__main__":
