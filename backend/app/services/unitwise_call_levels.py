@@ -9,6 +9,7 @@ from pathlib import Path
 
 from openpyxl import load_workbook
 from sqlalchemy import select
+from app.services.member_profiles import call_level_on, local_today, record_call_change
 from sqlalchemy.orm import Session
 
 from app.models import Person
@@ -148,6 +149,7 @@ def prefill_call_levels_from_unitwise(
     examples: list[str] = []
 
     cleared = 0
+    before = {person.id: call_level_on(person) for person in people}
     for person in people:
         if person.call_level:
             person.call_level = None
@@ -166,6 +168,11 @@ def prefill_call_levels_from_unitwise(
         if len(examples) < 20:
             examples.append(f"{entry.raw_name} -> {person.canonical_name}: {person.call_level}")
 
+    for person in people:
+        final_level = person.call_level
+        person.call_level = before[person.id]
+        if final_level != before[person.id]:
+            record_call_change(db, person, final_level, local_today(), "Prefilled from trusted unitwise roster", "unitwise_prefill")
     db.commit()
     return CallLevelPrefillResult(
         matched=matched,

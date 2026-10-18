@@ -148,3 +148,21 @@ Implication:
 - Previous imported spellings must be preserved as aliases.
 - Conservative exact/near-exact matching is preferred over risky broad fuzzy merges.
 - Invalid spreadsheet artifacts should still be handled by the invalid-member cleanup pass.
+
+## 2026-10-12 - Unified Member Management and CSV Imports
+
+The user approved an organized member master list with CSV and Excel import/review and visible import history.
+
+- Uploaded names and call levels must be compared with all existing members and aliases, including previous uploads, to prevent duplicate creation.
+- Similar or ambiguous names require manual review rather than automatic merges.
+- Existing call-level changes require explicit review and approval when applying an import.
+- Blank optional values preserve the existing record. Members absent from an uploaded file remain unchanged.
+- Duties, leave, postings, canonical names on matches, and aliases remain linked to the existing member.
+- Applying an import refreshes member data, filters, call-level counts, audit indicators, and import history together.
+
+## 2026-10-12 - Past Duties and Member Profiles
+
+- User approved `.xls`/`.xlsx` completed-duty uploads, reviewed normalization/conflicts, duplicate prevention, statistics updates, and configurable historical fairness with an initial six-month lookback.
+- Missing historical coverage must not be treated as zero workload; rest checks must include recorded duties across month boundaries.
+- User requested per-person profiles with call-promotion dates/reasons and Admin/HOD comments, synchronized through the department member master record.
+- User explicitly chose a separate HOD login role. HOD users may maintain profile call changes and comments; import/software-admin privileges remain separate.

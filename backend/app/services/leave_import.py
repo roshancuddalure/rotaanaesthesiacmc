@@ -25,6 +25,7 @@ from sqlalchemy.orm import Session, selectinload
 from app.models import LeaveRequest, Person
 from app.services.leave import month_bounds
 from app.services.normalization import member_key, member_lookup, member_candidates
+from app.services.upload_limits import validate_tabular_upload
 
 NAME_COLUMNS = {
     "name",
@@ -389,6 +390,15 @@ def pick_column(columns: list[str], candidates: set[str]) -> str | None:
 def parse_date_value(value: Any) -> date | None:
     if value is None or str(value).strip() == "" or str(value).lower() == "nan":
         return None
+    if isinstance(value, datetime):
+        return value.date()
+    if isinstance(value, date):
+        return value
+    if re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(value).strip()):
+        try:
+            return date.fromisoformat(str(value).strip())
+        except ValueError:
+            return None
     parsed = pd.to_datetime(value, dayfirst=True, errors="coerce")
     if pd.isna(parsed):
         return None
@@ -403,6 +413,7 @@ def normalize_status(value: Any) -> str:
 
 
 def read_leave_tables(filename: str, content: bytes) -> list[tuple[str, pd.DataFrame, str]]:
+    validate_tabular_upload(filename, content)
     lowered = filename.lower()
     if lowered.endswith(".csv"):
         last_error: Exception | None = None
@@ -757,10 +768,11 @@ def row_is_safe_to_apply(row: dict[str, object]) -> bool:
     )
 
 
-def apply_leave_import(db: Session, filename: str, content: bytes, month: str) -> dict[str, object]:
+def apply_leave_import(db: Session, filename: str, content: bytes, month: str, *, commit: bool = True) -> dict[str, object]:
     preview = preview_leave_import(db, filename, content, month)
     created = 0
     skipped_rows: list[dict[str, object]] = []
+    applied = []
     for row in preview["rows"]:
         if not row_is_safe_to_apply(row):
             skipped_rows.append(row)
@@ -785,8 +797,13 @@ def apply_leave_import(db: Session, filename: str, content: bytes, month: str) -
             ).strip(),
         )
         db.add(leave)
+        applied.append((row, leave))
         created += 1
-    db.commit()
+    db.flush()
+    for row, leave in applied:
+        row["record_id"] = str(leave.id)
+    if commit:
+        db.commit()
     return {
         "filename": filename,
         "month": month,

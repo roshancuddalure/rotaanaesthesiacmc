@@ -18,11 +18,12 @@ from dataclasses import dataclass
 from datetime import date, timedelta
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import or_, select
 from sqlalchemy.orm import Session, object_session, selectinload
 
-from app.services.member_profile import default_call_level_on
-from app.models import DutyAssignment, DutySlot, LeaveRequest, Person, PersonPosting, Unit
+from app.models import DutyAssignment, DutySlot, LeaveRequest, Person, PersonPosting, RotaPeriod, Unit
+from app.services.history_fairness import OFFICIAL_STATUSES, unique_assignments
+from app.services.member_profiles import call_level_on
 from app.services.leave import ACTIVE_LEAVE_STATUSES, BLOCKING_LEAVE_STATUSES, date_range, leave_requests_for_month, month_bounds
 from app.services.call_clusters import active_cluster_keys_for_person
 from app.services.rota_call_levels import inferred_call_levels_from_duty_type, normalize_call_level
@@ -45,9 +46,12 @@ class MemberContext:
 
 
 def member_call_level(member: MemberContext) -> str:
-    posted = normalize_call_level(member.posting_type)
-    return posted if posted != "Unassigned" else normalize_call_level(
-        default_call_level_on(member.person, member.day or date.today()))
+    day = member.day or date.today()
+    has_timeline = any(c.effective_from <= day for c in member.person.call_level_changes) or any(
+        c.effective_from <= day and not c.source.startswith("merged:") for c in member.person.call_changes)
+    return normalize_call_level(call_level_on(member.person, day) if has_timeline
+                                else member.posting_type or call_level_on(member.person, day))
+
 
 
 def rule_for_slot(slot: DutySlot, rules: RotaPhaseOneRules) -> DutyRule | None:
@@ -184,10 +188,11 @@ def assignments_for_month(db: Session, starts_on: date, ends_on: date) -> list[D
         db.scalars(
             select(DutyAssignment)
             .join(DutyAssignment.duty_slot)
+            .outerjoin(DutySlot.rota_period)
             .where(
                 DutySlot.duty_date >= starts_on,
                 DutySlot.duty_date <= ends_on,
-                DutySlot.source == PHASE4_SLOT_SOURCE,
+                or_(DutySlot.source == PHASE4_SLOT_SOURCE, RotaPeriod.status.in_(OFFICIAL_STATUSES)),
             )
             .options(
                 selectinload(DutyAssignment.person),
@@ -195,6 +200,11 @@ def assignments_for_month(db: Session, starts_on: date, ends_on: date) -> list[D
             )
         )
     )
+
+
+def assignments_for_safety(db: Session, starts_on: date, ends_on: date) -> list[DutyAssignment]:
+    # A preceding 24-hour duty can block the first day of the next month.
+    return unique_assignments(assignments_for_month(db, starts_on - timedelta(days=8), ends_on))
 
 
 def duty_blocks_same_day(slot: DutySlot, rules: RotaPhaseOneRules) -> bool:
@@ -475,7 +485,7 @@ def month_safety(db: Session, month: str) -> dict[str, object]:
     slots = slots_for_month(db, period.id)
     postings = postings_for_month(db, starts_on, ends_on)
     leaves = leaves_by_day_and_person(db, month)
-    assignments = assignments_for_month(db, starts_on, ends_on)
+    assignments = assignments_for_safety(db, starts_on, ends_on)
     same_day_assignments, previous_day_assignments = assignment_indexes(assignments, rules)
     rows = [
         slot_safety(

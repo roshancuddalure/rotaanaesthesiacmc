@@ -5,6 +5,7 @@ from datetime import date
 from io import BytesIO
 
 from fastapi.testclient import TestClient
+from tests.reviewed_client import ReviewedImportClient
 from openpyxl import Workbook
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
@@ -88,7 +89,7 @@ def unit_client() -> Generator[TestClient, None, None]:
 
     app.dependency_overrides[get_db] = override_get_db
     try:
-        yield TestClient(app)
+        yield ReviewedImportClient(app)
     finally:
         app.dependency_overrides.clear()
 
@@ -736,8 +737,8 @@ def test_unit_management_import_keeps_numbered_unit_name_variants_for_review() -
                 )
             },
         )
-        assert applied.status_code == 200
-        assert applied.json()["auto_assigned_rows"] == 0
+        assert applied.status_code == 400, applied.text
+        assert "Existing postings were preserved" in applied.json()["detail"]
 
 
 def test_unit_management_import_structures_messy_excel_with_late_headers_dates_and_separators() -> None:

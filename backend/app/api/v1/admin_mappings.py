@@ -32,7 +32,7 @@ from app.services.imports import (
     normalize_label,
 )
 
-router = APIRouter(dependencies=[Depends(current_user)])
+router = APIRouter(dependencies=[Depends(require_admin)])
 
 REPO_DIR = Path(__file__).resolve().parents[4]
 HISTORICAL_DIR = REPO_DIR / "data" / "source" / "historical"

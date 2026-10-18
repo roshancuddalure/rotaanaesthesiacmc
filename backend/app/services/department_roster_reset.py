@@ -34,6 +34,7 @@ from app.models import (
     Unit,
 )
 from app.services.imports import is_valid_person_name, normalize_label
+from app.models import PersonCallChange, PersonComment
 from app.services.roster_reconciliation import DEFAULT_ROSTER_PATH, clean_roster_name
 
 CURRENT_SHEETS = ("ANAESTHESIA", "CARDIAC ANAESTHESIA", "NEURO ANAESTHESIA")
@@ -178,6 +179,8 @@ def clear_operational_data(db: Session) -> dict[str, int]:
     # the deletes below once those features have been used. (SQLite tests do not enforce FKs.)
     deleted_counts: dict[str, int] = {}
     models = (
+        PersonCallChange,
+        PersonComment,
         DutyAssignment,
         DutySlot,
         PersonPosting,

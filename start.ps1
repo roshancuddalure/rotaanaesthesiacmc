@@ -14,7 +14,7 @@ $FrontendUrl = "http://127.0.0.1:5173"
 
 function Test-BackendDependencies {
     Set-Location $Backend
-    & $BackendPython -c "import importlib.util; missing = [name for name in ('alembic', 'fastapi', 'openpyxl', 'pandas', 'psycopg', 'pytest', 'sqlalchemy', 'uvicorn') if importlib.util.find_spec(name) is None]; raise SystemExit(1 if missing else 0)" *> $null
+    & $BackendPython -c "import importlib.util; missing = [name for name in ('alembic', 'fastapi', 'openpyxl', 'xlrd', 'pandas', 'psycopg', 'pytest', 'sqlalchemy', 'uvicorn') if importlib.util.find_spec(name) is None]; raise SystemExit(1 if missing else 0)" *> $null
     return $LASTEXITCODE -eq 0
 }
 

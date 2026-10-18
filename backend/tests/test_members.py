@@ -162,7 +162,7 @@ def test_name_cleanup_preserves_real_name_with_noise_suffix() -> None:
         assert person.aliases[0].alias == "Kiruthiga - Till sept 27"
 
 
-def test_member_api_lists_full_roster_and_rejects_implicit_reactivation() -> None:
+def test_member_api_lists_full_roster_and_requires_explicit_restore() -> None:
     engine = create_engine(
         "sqlite+pysqlite:///:memory:",
         connect_args={"check_same_thread": False},
@@ -198,14 +198,17 @@ def test_member_api_lists_full_roster_and_rejects_implicit_reactivation() -> Non
             json={"canonical_name": "zed historical", "active_status": "active"},
         )
         assert revived.status_code == 409
-        assert revived.json()["detail"] == "Member already exists as historical: Zed Historical"
+        person_id = next(m["id"] for m in listed.json() if m["canonical_name"] == "Zed Historical")
+        restored = client.post(f"/api/v1/admin/members/{person_id}/restore")
+        assert restored.status_code == 200
+        assert restored.json()["active_status"] == "active"
 
         duplicate = client.post(
             "/api/v1/admin/members",
             json={"canonical_name": "Zed Historical", "active_status": "active"},
         )
         assert duplicate.status_code == 409
-        assert duplicate.json()["detail"] == "Member already exists as historical: Zed Historical"
+        assert duplicate.json()["detail"] == "Member already exists as active: Zed Historical"
     finally:
         app.dependency_overrides.clear()
 

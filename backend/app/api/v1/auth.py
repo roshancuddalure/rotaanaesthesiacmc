@@ -8,9 +8,8 @@ Dependencies exported for other routers:
 - ``current_user``  - any active account (rota board member, computer admin, superadmin).
 - ``require_admin`` - computer admin or superadmin.
 
-SECURITY (handbook S2, S4): ``/auth/forgot-password`` returns the reset token directly in
-the response, and ``/auth/seed-superadmin`` is unauthenticated and seeds a hard-coded
-password. Both were development conveniences and must not stay in production.
+Password recovery codes are issued only by an authorized administrator; the public
+forgot-password response contains guidance without exposing a reset token.
 """
 
 from typing import Annotated
@@ -33,8 +32,9 @@ from app.services.auth import (
     create_session,
     hash_secret,
     reset_password,
-    seed_superadmin,
     user_from_token,
+    validate_password,
+    permissions_for_role,
 )
 
 router = APIRouter()
@@ -48,6 +48,7 @@ class UserRead(BaseModel):
     role: str
     role_label: str
     active_status: str
+    permissions: list[str]
 
 
 class AccountCreate(BaseModel):
@@ -74,7 +75,11 @@ class ForgotPasswordRequest(BaseModel):
 
 class ForgotPasswordResponse(BaseModel):
     message: str
-    reset_token: str | None = None
+
+
+class RecoveryCodeResponse(BaseModel):
+    reset_token: str
+    expires_in_minutes: int = 30
 
 
 class ResetPasswordRequest(BaseModel):
@@ -101,6 +106,7 @@ def user_to_read(user: UserAccount) -> UserRead:
         role=user.role,
         role_label=ROLES.get(user.role, user.role),
         active_status=user.active_status,
+        permissions=permissions_for_role(user.role),
     )
 
 
@@ -112,7 +118,7 @@ def current_user(
     if not authorization or not authorization.startswith("Bearer "):
         raise HTTPException(status_code=401, detail="Missing authentication token")
     user = user_from_token(db, authorization.removeprefix("Bearer ").strip())
-    if user is None:
+    if user is None or user.role not in ROLES:
         raise HTTPException(status_code=401, detail="Invalid or expired authentication token")
     return user
 
@@ -124,11 +130,21 @@ def require_admin(user: UserAccount = Depends(current_user)) -> UserAccount:
     return user
 
 
-# KNOWN ISSUE (handbook S4): unauthenticated; seeds `rotachief` with a hard-coded password
-# if that username does not exist. Remove or protect before production use.
-@router.post("/auth/seed-superadmin")
-def seed_superadmin_endpoint(db: Session = Depends(get_db)) -> UserRead:
-    return user_to_read(seed_superadmin(db))
+def require_superadmin(user: UserAccount = Depends(current_user)) -> UserAccount:
+    if user.role != "superadmin":
+        raise HTTPException(status_code=403, detail="Superadmin privilege required")
+    return user
+
+
+def require_publisher(user: UserAccount = Depends(current_user)) -> UserAccount:
+    if "publish_rota" not in permissions_for_role(user.role):
+        raise HTTPException(status_code=403, detail="Publishing requires a rota board member, HOD or superadmin")
+    return user
+
+
+@router.get("/auth/permissions")
+def permission_matrix(user: UserAccount = Depends(current_user)):
+    return {"current": permissions_for_role(user.role), "roles": {role: permissions_for_role(role) for role in ROLES}}
 
 
 @router.post("/auth/sign-in")
@@ -167,10 +183,16 @@ def create_account(
     _admin: UserAccount = Depends(require_admin),
     db: Session = Depends(get_db),
 ) -> UserRead:
-    # KNOWN ISSUE (handbook S6/S7): any admin (including computer_admin) can create a
-    # superadmin, and no password strength rule is applied here.
     if payload.role not in ROLES:
         raise HTTPException(status_code=400, detail="Unknown role")
+    if payload.role == "superadmin" and _admin.role != "superadmin":
+        raise HTTPException(status_code=403, detail="Only a superadmin can grant superadmin access")
+    if not payload.username.strip() or not payload.display_name.strip():
+        raise HTTPException(status_code=400, detail="Username and display name are required")
+    try:
+        validate_password(payload.password)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
     user = UserAccount(
         username=payload.username.strip(),
         display_name=payload.display_name.strip(),
@@ -199,24 +221,31 @@ def list_accounts(
 @router.post("/auth/forgot-password")
 def forgot_password(
     payload: ForgotPasswordRequest,
-    db: Session = Depends(get_db),
 ) -> ForgotPasswordResponse:
-    # KNOWN ISSUE (handbook S2, CRITICAL): the reset token is returned to the caller and the
-    # login page auto-fills it, so anyone who knows a username can reset that password.
-    # The token must be delivered out-of-band (email/SMS/admin) instead.
-    user = db.scalar(select(UserAccount).where(UserAccount.username == payload.username.strip()))
-    if user is None:
-        return ForgotPasswordResponse(message="If the account exists, a reset token was created.")
-    token = create_reset_token(db, user)
     return ForgotPasswordResponse(
-        message="Reset token created. In production this should be delivered by email/SMS.",
-        reset_token=token,
+        message="Contact your department administrator to verify your identity and obtain a recovery code. Enter that code below to reset your password.",
     )
+
+
+@router.post("/auth/accounts/{user_id}/recovery-code")
+def issue_recovery_code(user_id: UUID, actor: UserAccount = Depends(require_admin), db: Session = Depends(get_db)) -> RecoveryCodeResponse:
+    user = db.get(UserAccount, user_id)
+    if user is None:
+        raise HTTPException(status_code=404, detail="Account not found")
+    if user.active_status != "active":
+        raise HTTPException(status_code=409, detail="Reactivate the account before issuing recovery")
+    if user.role == "superadmin" and actor.role != "superadmin":
+        raise HTTPException(status_code=403, detail="Superadmin recovery requires a superadmin")
+    return RecoveryCodeResponse(reset_token=create_reset_token(db, user))
 
 
 @router.post("/auth/reset-password")
 def reset_password_endpoint(payload: ResetPasswordRequest, db: Session = Depends(get_db)) -> dict[str, str]:
-    if not reset_password(db, payload.token, payload.new_password):
+    try:
+        changed = reset_password(db, payload.token, payload.new_password)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    if not changed:
         raise HTTPException(status_code=400, detail="Invalid or expired reset token")
     return {"status": "password_reset"}
 
@@ -227,8 +256,10 @@ def change_password_endpoint(
     user: UserAccount = Depends(current_user),
     db: Session = Depends(get_db),
 ) -> dict[str, str]:
-    if len(payload.new_password) < 8:
-        raise HTTPException(status_code=400, detail="New password must be at least 8 characters")
-    if not change_password(db, user, payload.current_password, payload.new_password):
+    try:
+        changed = change_password(db, user, payload.current_password, payload.new_password)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    if not changed:
         raise HTTPException(status_code=400, detail="Current password is incorrect")
     return {"status": "password_changed"}

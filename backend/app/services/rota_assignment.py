@@ -11,10 +11,11 @@ from __future__ import annotations
 
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import or_, select
 from sqlalchemy.orm import Session, selectinload
 
-from app.models import DutyAssignment, DutySlot, Person, Unit
+from app.models import DutyAssignment, DutySlot, Person, RotaPeriod, Unit
+from app.services.history_fairness import OFFICIAL_STATUSES, nearby_duties, unique_assignments
 from app.services.leave import month_bounds
 from app.services.rota_rules import RotaPhaseOneRules, get_phase_one_rules
 from app.services.rota_safety import (
@@ -22,7 +23,7 @@ from app.services.rota_safety import (
     SAFETY_HARD_BLOCK,
     SAFETY_WARNING,
     assignment_indexes,
-    assignments_for_month,
+    assignments_for_safety,
     leaves_by_day_and_person,
     member_call_level,
     member_contexts_for_day,
@@ -109,7 +110,7 @@ def slot_safety_for_assignment(db: Session, slot: DutySlot) -> dict[str, object]
     _rule_version, rules = get_phase_one_rules(db)
     postings = postings_for_month(db, starts_on, ends_on)
     leaves = leaves_by_day_and_person(db, month)
-    assignments = assignments_for_month(db, starts_on, ends_on)
+    assignments = assignments_for_safety(db, starts_on, ends_on)
     same_day_assignments, previous_day_assignments = assignment_indexes(assignments, rules)
     return slot_safety(
         slot=slot,
@@ -156,11 +157,12 @@ def person_month_assignments(
         for assignment in db.scalars(
             select(DutyAssignment)
             .join(DutyAssignment.duty_slot)
+            .outerjoin(DutySlot.rota_period)
             .where(
                 DutyAssignment.person_id == person_id,
                 DutySlot.duty_date >= starts_on,
                 DutySlot.duty_date <= ends_on,
-                DutySlot.source == PHASE4_SLOT_SOURCE,
+                or_(DutySlot.source == PHASE4_SLOT_SOURCE, RotaPeriod.status.in_(OFFICIAL_STATUSES)),
             )
             .options(
                 selectinload(DutyAssignment.duty_slot).selectinload(DutySlot.unit).selectinload(Unit.call_minimums),
@@ -190,7 +192,7 @@ def duty_count_issues(
     limits = rules.duty_count_limits
     assignments = [
         assignment
-        for assignment in person_month_assignments(db, person.id, slot_month(slot))
+        for assignment in unique_assignments(person_month_assignments(db, person.id, slot_month(slot)))
         if not (replace_existing and assignment.duty_slot_id == slot.id)
     ]
     month_issues: list[dict[str, str]] = []
@@ -262,7 +264,7 @@ def validate_assignment(
     _rule_version, rules = get_phase_one_rules(db)
     postings = postings_for_month(db, starts_on, ends_on)
     leaves = leaves_by_day_and_person(db, month)
-    assignments = assignments_for_month(db, starts_on, ends_on)
+    assignments = assignments_for_safety(db, starts_on, ends_on)
     same_day_assignments, previous_day_assignments = assignment_indexes(assignments, rules)
     safety = slot_safety(
         slot=slot,
@@ -273,6 +275,17 @@ def validate_assignment(
         previous_day_assignments=previous_day_assignments,
     )
     validation_issues: list[dict[str, str]] = []
+    for other in nearby_duties(db, slot, person.id, rules.rest_rules.minimum_gap_after_24hr_hours):
+        if other.starts_at < slot.ends_at and other.ends_at > slot.starts_at:
+            validation_issues.append(issue("blocked", "duty_overlap", f"Overlaps a recorded duty on {other.duty_date}."))
+        elif other.is_24hr and other.ends_at <= slot.starts_at:
+            gap = (slot.starts_at - other.ends_at).total_seconds() / 3600
+            if gap < rules.rest_rules.minimum_gap_after_24hr_hours:
+                validation_issues.append(issue("blocked", "rest_after_24hr", f"Only {gap:g} hours after the recorded 24-hour duty on {other.duty_date}; requires {rules.rest_rules.minimum_gap_after_24hr_hours}."))
+        elif slot.is_24hr and slot.ends_at <= other.starts_at:
+            gap = (other.starts_at - slot.ends_at).total_seconds() / 3600
+            if gap < rules.rest_rules.minimum_gap_after_24hr_hours:
+                validation_issues.append(issue("blocked", "rest_before_recorded_duty", f"Only {gap:g} hours before the recorded duty on {other.duty_date}; requires {rules.rest_rules.minimum_gap_after_24hr_hours}."))
     active_slot_assignments = [assignment for assignment in slot.assignments if active_assignment(assignment)]
 
     if active_slot_assignments and not replace_existing and len(active_slot_assignments) >= slot.max_assignees:

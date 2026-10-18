@@ -1,9 +1,4 @@
-"""Restore the missing migration for existing profile history tables.
-
-The local database is already stamped with this revision. Definitions were recovered
-from its inspected schema; no stamp rewrite or removal of existing tables is needed.
-Fresh installations create the same history tables before the workspace migration.
-"""
+"""Member call-level timeline and attributed Admin/HOD comments."""
 
 from alembic import op
 import sqlalchemy as sa
@@ -14,21 +9,23 @@ branch_labels = None
 depends_on = None
 
 
-def upgrade() -> None:
+def upgrade():
     op.create_table(
         "person_call_changes",
         sa.Column("id", sa.Uuid(), primary_key=True),
         sa.Column("person_id", sa.Uuid(), sa.ForeignKey("persons.id"), nullable=False),
-        sa.Column("from_call_level", sa.String(100), nullable=True),
-        sa.Column("to_call_level", sa.String(100), nullable=True),
+        sa.Column("from_call_level", sa.String(100)),
+        sa.Column("to_call_level", sa.String(100)),
         sa.Column("effective_from", sa.Date(), nullable=False),
         sa.Column("reason", sa.Text(), nullable=False),
         sa.Column("source", sa.String(100), nullable=False),
-        sa.Column("actor_id", sa.Uuid(), sa.ForeignKey("user_accounts.id"), nullable=True),
+        sa.Column("actor_id", sa.Uuid(), sa.ForeignKey("user_accounts.id")),
         sa.Column("created_at", sa.DateTime(), nullable=False),
     )
     op.create_index("ix_person_call_changes_person_id", "person_call_changes", ["person_id"])
-    op.create_index("ix_person_call_changes_effective_from", "person_call_changes", ["effective_from"])
+    op.create_index(
+        "ix_person_call_changes_effective_from", "person_call_changes", ["effective_from"]
+    )
     op.create_table(
         "person_comments",
         sa.Column("id", sa.Uuid(), primary_key=True),
@@ -42,6 +39,6 @@ def upgrade() -> None:
     op.create_index("ix_person_comments_person_id", "person_comments", ["person_id"])
 
 
-def downgrade() -> None:
+def downgrade():
     op.drop_table("person_comments")
     op.drop_table("person_call_changes")

@@ -22,6 +22,9 @@ from app.db.session import get_db
 from app.models import MemberActivity, Person, PersonPosting, Unit, UnitCallMinimum, UserAccount
 from app.services.reference_registry import audit, lock_namespace
 from app.services.rota_call_levels import normalize_call_level
+from app.services.member_profiles import call_level_on
+from app.services.upload_limits import read_bounded_upload
+from app.services.reviewed_import import acquire_import_lock, reviewed_hash, verify_reviewed_hash, StalePreviewError, replayed_result, record_workflow_batch
 from app.services.leave import month_bounds
 from app.services.unit_management import (
     UNIT_BOARD_SOURCE,
@@ -72,6 +75,7 @@ class UnitAssignmentRead(BaseModel):
     person: UnitPersonRead
     unit: UnitRead | None
     posting_type: str
+    effective_call_level: str | None = None
     starts_on: date
     ends_on: date | None
     source: str
@@ -107,6 +111,7 @@ class UnitManagementMonthRead(BaseModel):
 
 
 class UnitAssignmentImportPreviewRead(BaseModel):
+    preview_hash: str = ""
     filename: str
     month: str
     total_rows: int
@@ -124,6 +129,8 @@ class UnitAssignmentImportPreviewRead(BaseModel):
 
 
 class UnitAssignmentImportApplyRead(BaseModel):
+    batch_id: UUID | None = None
+    replayed: bool = False
     filename: str
     month: str
     created_rows: int
@@ -217,16 +224,17 @@ def person_to_unit_read(person: Person) -> UnitPersonRead:
         id=person.id,
         canonical_name=person.canonical_name,
         active_status=person.active_status,
-        call_level=person.call_level,
+        call_level=call_level_on(person),
     )
 
 
-def assignment_to_read(assignment: PersonPosting) -> UnitAssignmentRead:
+def assignment_to_read(assignment: PersonPosting, day: date | None = None) -> UnitAssignmentRead:
     return UnitAssignmentRead(
         id=assignment.id,
         person=person_to_unit_read(assignment.person),
         unit=unit_to_read(assignment.unit) if assignment.unit else None,
         posting_type=assignment.posting_type,
+        effective_call_level=call_level_on(assignment.person, day),
         starts_on=assignment.starts_on,
         ends_on=assignment.ends_on,
         source=assignment.source,
@@ -313,7 +321,7 @@ def get_unit_management_month(
         starts_on=starts_on,
         ends_on=ends_on,
         units=[unit_to_read(unit) for unit in units],
-        assignments=[assignment_to_read(assignment) for assignment in assignments],
+        assignments=[assignment_to_read(assignment, max(starts_on, assignment.starts_on)) for assignment in assignments],
         unit_summaries=[
             UnitSummaryRead(
                 unit_id=unit.id,
@@ -409,7 +417,7 @@ async def preview_unit_assignment_upload(
     try:
         month_bounds(month)
         read_started = perf_counter()
-        content = await file.read()
+        content = await read_bounded_upload(file)
         read_ms = (perf_counter() - read_started) * 1000
         parse_started = perf_counter()
         result = preview_unit_assignment_import(
@@ -421,6 +429,8 @@ async def preview_unit_assignment_upload(
             resolutions=parse_import_resolutions(resolutions_json),
         )
         parse_ms = (perf_counter() - parse_started) * 1000
+        result["preview_hash"] = reviewed_hash(db, "units", file.filename or "unitwise-import", content, month,
+                                              {"replace_existing": replace_existing, "resolutions": parse_import_resolutions(resolutions_json)}, result["rows"])
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     logger.info(
@@ -441,6 +451,7 @@ async def apply_unit_assignment_upload(
     replace_existing: bool = False,
     file: UploadFile = File(...),
     resolutions_json: str | None = Form(None),
+    preview_hash: str = Form(""),
     _user: UserAccount = Depends(current_user),
     db: Session = Depends(get_db),
 ) -> UnitAssignmentImportApplyRead:
@@ -448,9 +459,19 @@ async def apply_unit_assignment_upload(
     try:
         month_bounds(month)
         read_started = perf_counter()
-        content = await file.read()
+        content = await read_bounded_upload(file)
         read_ms = (perf_counter() - read_started) * 1000
         apply_started = perf_counter()
+        acquire_import_lock(db)
+        resolutions = parse_import_resolutions(resolutions_json)
+        request_options = {"month": month, "replace_existing": replace_existing, "resolutions": resolutions}
+        existing = replayed_result(db, "unit_upload", preview_hash, str(_user.id), file.filename or "unitwise-import", content, request_options)
+        if existing is not None:
+            return UnitAssignmentImportApplyRead(**existing)
+        preview = preview_unit_assignment_import(db, file.filename or "unitwise-import", content, month,
+                                                 replace_existing=replace_existing, resolutions=resolutions)
+        verify_reviewed_hash(preview_hash, reviewed_hash(db, "units", file.filename or "unitwise-import", content, month,
+                                                      {"replace_existing": replace_existing, "resolutions": resolutions}, preview["rows"]))
         result = apply_unit_assignment_import(
             db,
             file.filename or "unitwise-import",
@@ -458,8 +479,14 @@ async def apply_unit_assignment_upload(
             month,
             replace_existing=replace_existing,
             resolutions=parse_import_resolutions(resolutions_json),
+            commit=False,
         )
         apply_ms = (perf_counter() - apply_started) * 1000
+        record_workflow_batch(db, "unit_upload", file.filename or "unitwise-import", content, month,
+                              request_options, str(_user.id), preview_hash, result)
+        db.commit()
+    except StalePreviewError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     logger.info(

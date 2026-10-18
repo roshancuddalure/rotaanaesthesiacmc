@@ -8,6 +8,7 @@ from app.models.mappings import AdminMapping
 from app.models.normalization import ReferenceValue, NormalizationEvent, ImportReviewBatch
 from app.models.person import Person, PersonAlias, PersonDesignation
 from app.models.member_workspace import MemberActivity, MemberImportPreview, MemberCallLevelChange, LegacyPersonCallChange, LegacyPersonComment
+from app.models.member_profile import PersonCallChange, PersonComment
 from app.models.posting import PersonPosting
 from app.models.rota import (
     DutyAssignment,
@@ -35,6 +36,8 @@ __all__ = [
     "LegacyPersonCallChange",
     "LegacyPersonComment",
     "MemberImportPreview",
+    "PersonCallChange",
+    "PersonComment",
     "DutyAssignment",
     "DutySlot",
     "CallCluster",

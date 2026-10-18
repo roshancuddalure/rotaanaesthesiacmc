@@ -21,6 +21,7 @@ from sqlalchemy.orm import Session, selectinload
 
 from app.models import DutyAssignment, DutySlot, Person
 from app.services.leave import month_bounds
+from app.services.history_fairness import historical_score, history_context, nearby_duties, unique_assignments
 from app.services.rota_assignment import (
     active_assignment,
     campus_for_slot,
@@ -35,6 +36,7 @@ from app.services.rota_safety import (
     SAFETY_WARNING,
     assignment_indexes,
     assignments_for_month,
+    assignments_for_safety,
     leaves_by_day_and_person,
     postings_for_month,
     slot_safety,
@@ -60,6 +62,7 @@ class CandidateContext:
     previous_day_assignments: dict
     assignments_by_person: dict[UUID, list[DutyAssignment]]
     average_assignments: float
+    history: dict
 
 
 def candidate_context(db: Session, month: str) -> CandidateContext:
@@ -68,7 +71,8 @@ def candidate_context(db: Session, month: str) -> CandidateContext:
     postings = postings_for_month(db, starts_on, ends_on)
     leaves = leaves_by_day_and_person(db, month)
     assignments = assignments_for_month(db, starts_on, ends_on)
-    same_day_assignments, previous_day_assignments = assignment_indexes(assignments, rules)
+    assignments = unique_assignments(assignments)
+    same_day_assignments, previous_day_assignments = assignment_indexes(assignments_for_safety(db, starts_on, ends_on), rules)
     assignments_by_person: dict[UUID, list[DutyAssignment]] = defaultdict(list)
     for assignment in assignments:
         if active_assignment(assignment):
@@ -90,6 +94,7 @@ def candidate_context(db: Session, month: str) -> CandidateContext:
         previous_day_assignments=previous_day_assignments,
         assignments_by_person=assignments_by_person,
         average_assignments=average,
+        history=history_context(db, starts_on),
     )
 
 
@@ -294,7 +299,7 @@ def candidate_to_dict(
         slot,
     )
     counts = duty_counts(person_slots, slot, context.rules)
-    rest_gap_hours = nearest_rest_gap_hours(person_slots, slot)
+    rest_gap_hours = nearest_rest_gap_hours(nearby_duties(db, slot, person_id, context.rules.rest_rules.minimum_gap_after_24hr_hours), slot)
     score, score_parts = candidate_score(
         status=status,
         counts=counts,
@@ -304,6 +309,9 @@ def candidate_to_dict(
         validation=validation,
         rules=context.rules,
     )
+    historical = historical_score(context.history, person_id, slot)
+    score_parts["historical_fairness"] = historical["penalty"]
+    score += historical["penalty"]
     return {
         "person_id": str(person.id),
         "person_name": person.canonical_name,
@@ -316,8 +324,9 @@ def candidate_to_dict(
         "validation_status": validation.get("status"),
         "validation_issues": validation.get("issues", []),
         "counts": counts,
+        "history": historical,
         "rest_gap_hours": None if rest_gap_hours is None else round(rest_gap_hours, 1),
-        "reasons": candidate_reasons(
+        "reasons": [historical["reason"]] + candidate_reasons(
             status=status,
             safety_row=safety_row,
             counts=counts,

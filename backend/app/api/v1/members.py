@@ -9,7 +9,7 @@ from collections import Counter
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel, model_validator
+from pydantic import BaseModel, model_validator, field_validator
 from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, selectinload
@@ -29,6 +29,8 @@ from app.services.members import (
 from app.services.roster_reconciliation import reconcile_department_roster
 from app.services.department_roster_reset import reset_department_members_from_roster
 from app.services.unitwise_call_levels import prefill_call_levels_from_unitwise
+from app.services.member_profiles import call_level_on, local_today, record_call_change
+from app.domain.member_validation import normalize_member_display_name, normalize_member_call, normalize_member_status
 
 router = APIRouter(dependencies=[Depends(current_user)])
 
@@ -66,6 +68,10 @@ class MemberCreate(BaseModel):
     active_status: str = "active"
     call_level: str | None = None
 
+    _name = field_validator("canonical_name")(normalize_member_display_name)
+    _status = field_validator("active_status")(normalize_member_status)
+    _call = field_validator("call_level")(normalize_member_call)
+
     @model_validator(mode="after")
     def validate_fields(self):
         self.canonical_name = validate_identity(self.canonical_name, self.active_status, self.call_level)
@@ -78,6 +84,10 @@ class MemberUpdate(BaseModel):
     canonical_name: str
     active_status: str = "active"
     call_level: str | None = None
+
+    _name = field_validator("canonical_name")(normalize_member_display_name)
+    _status = field_validator("active_status")(normalize_member_status)
+    _call = field_validator("call_level")(normalize_member_call)
 
     @model_validator(mode="after")
     def validate_fields(self):
@@ -245,6 +255,7 @@ def create_member(payload: MemberCreate, db: Session = Depends(get_db),
         canonical_name=canonical_name,
         active_status=payload.active_status,
         call_level=payload.call_level.strip() if payload.call_level else None,
+        archived_at=datetime.utcnow() if payload.active_status == "archived" else None,
     )
     db.add(person)
     try:
@@ -283,7 +294,13 @@ def update_member(
         person.archived_at = person.archived_at or datetime.utcnow()
     elif person.archived_at is not None:
         person.archived_at = None
-    person.call_level = payload.call_level.strip() if payload.call_level else None
+    new_call = payload.call_level.strip() if payload.call_level else None
+    if new_call != call_level_on(person):
+        try:
+            record_call_change(db, person, new_call, local_today(), "Call level updated through member management", "member_management")
+        except ValueError as exc:
+            db.rollback()
+            raise HTTPException(status_code=409, detail=str(exc)) from exc
     try:
         record_activity(db, person, operator, "member_updated", before)
         db.commit()
@@ -314,7 +331,7 @@ def restore_member(person_id: UUID, db: Session = Depends(get_db),
     from app.services.reference_registry import lock_namespace
     lock_namespace(db,"normalization-edit")
     person = get_member_or_404(db, person_id)
-    if person.active_status == "archived":
+    if person.active_status in {"archived", "historical", "inactive"}:
         before = snapshot(person)
         person.active_status = "active"
         person.archived_at = None

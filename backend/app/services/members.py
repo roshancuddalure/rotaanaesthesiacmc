@@ -8,6 +8,7 @@ being used on members with operational history.
 """
 
 import re
+import unicodedata
 from dataclasses import dataclass
 from uuid import UUID
 
@@ -23,9 +24,10 @@ from app.models import (
     PersonDesignation,
     PersonPosting,
     RotaExchangeRequest, RotaAutoFillEvent, MemberActivity,
-    LegacyPersonCallChange, LegacyPersonComment,
+    LegacyPersonComment,
 )
 from app.services.imports import clean_person_name, is_valid_person_name
+from app.models import PersonCallChange, PersonComment
 
 
 @dataclass(frozen=True)
@@ -42,15 +44,26 @@ class AutoMergeResult:
 
 
 def normalize_member_name(name: str) -> str:
-    cleaned = name.casefold()
+    cleaned = unicodedata.normalize("NFKC", name).casefold()
     cleaned = re.sub(r"\b(dr|prof|mr|mrs|ms)\b\.?", " ", cleaned)
-    cleaned = re.sub(r"[^a-z0-9]+", " ", cleaned)
+    cleaned = re.sub(r"[^\w]+", " ", cleaned).replace("_", " ")
     tokens = [token for token in cleaned.split() if token]
     return " ".join(tokens)
 
 
 def compact_name_key(name: str) -> str:
     return normalize_member_name(name).replace(" ", "")
+
+
+def identity_conflict(db: Session, name: str, exclude_id: UUID | None = None) -> Person | None:
+    key = compact_name_key(name)
+    if not key:
+        return None
+    people = db.scalars(select(Person).options(selectinload(Person.aliases)).order_by(Person.created_at, Person.id))
+    for person in people:
+        if person.id != exclude_id and key in {compact_name_key(person.canonical_name), *[compact_name_key(a.alias) for a in person.aliases]}:
+            return person
+    return None
 
 
 def duplicate_candidates(db: Session) -> list[DuplicateCandidate]:
@@ -230,9 +243,18 @@ def merge_people(db: Session, target_id: UUID, source_ids: list[UUID], *, commit
         for model, field in [(RotaExchangeRequest, "from_person_id"),
                              (RotaExchangeRequest, "to_person_id"),
                              (RotaAutoFillEvent, "person_id"), (MemberActivity, "person_id"),
-                             (LegacyPersonCallChange, "person_id"), (LegacyPersonComment, "person_id")]:
+                             (LegacyPersonComment, "person_id")]:
             db.execute(update(model).where(getattr(model, field) == source.id).values({field: target.id}))
         db.flush()
+        for model in (PersonCallChange, PersonComment):
+            for record in db.scalars(select(model).where(model.person_id == source.id)):
+                if model is PersonCallChange:
+                    record.source = f"merged:{record.source}"[:100]
+                    with db.no_autoflush:
+                        if record in source.call_changes:
+                            source.call_changes.remove(record)
+                        target.call_changes.append(record)
+                record.person_id = target.id
         db.delete(source)
 
     try:
@@ -280,6 +302,9 @@ def delete_invalid_members(db: Session) -> int:
     normalize_dirty_member_names(db)
     people = invalid_members(db)
     for person in people:
+        for model in (PersonCallChange, PersonComment):
+            for record in db.scalars(select(model).where(model.person_id == person.id)):
+                db.delete(record)
         for assignment in db.scalars(
             select(DutyAssignment).where(DutyAssignment.person_id == person.id)
         ):

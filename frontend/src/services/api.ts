@@ -9,8 +9,193 @@
  *   into the page can read it, which is why HTML escaping in main.ts matters (handbook S5).
  * - `VITE_API_BASE_URL` is empty for same-origin deployments (Railway, Vite dev proxy).
  */
+import { notifyDataChange } from "../data-sync";
+import { formatApiError, networkRecoveryMessage } from "../api-errors";
+export { downloadPreviewIssues } from "../import-report";
+
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ?? "";
+
+export interface MemberProfile {
+  member: DepartmentMember; today: string; current_call_level: string | null; can_manage: boolean;
+  call_history: { id: string; from: string | null; to: string | null; effective_from: string;
+    reason: string; source: string; scheduled: boolean; recorded_at: string; author: string }[];
+  comments: { id: string; author: string; role: string; body: string; recorded_at: string }[];
+  postings: { unit: string | null; type: string; starts_on: string; ends_on: string | null }[];
+  leaves: { type: string; from: string; to: string; status: string }[];
+  statistics: { official_duties: number; hours24: number; weekend_duties: number };
+  imports: { file: string; sheet: string | null; row: number | null; recorded_at: string }[];
+}
+export function getMemberProfile(id: string): Promise<MemberProfile> {
+  return request(`/api/v1/members/${id}/profile`);
+}
+export function addMemberCallChange(id: string, call_level: string | null, effective_from: string, reason: string): Promise<MemberProfile> {
+  return request(`/api/v1/members/${id}/call-changes`, { method: "POST", body: JSON.stringify({ call_level, effective_from, reason }) });
+}
+export function addMemberComment(id: string, body: string): Promise<MemberProfile> {
+  return request(`/api/v1/members/${id}/comments`, { method: "POST", body: JSON.stringify({ body }) });
+}
+
+export interface HistoryFairnessPolicy {
+  enabled: boolean; lookback_months: number; total_weight: number;
+  hours24_weight: number; weekend_weight: number; group_weight: number;
+}
+export interface PastDutyOptions {
+  month: string; sheet: string; layout: string; header_row: number;
+  mapping: Record<string, number>; resolutions: Record<string, Record<string, string>>;
+  confirm_corrections: boolean; confirm_warnings: boolean;
+}
+export interface PastDutyPreview {
+  preview_hash: string; month: string; sheet: string; counts: Record<string, number>;
+  warnings: { row: number | null; code: string; message: string }[];
+  rows: { key: string; row: number; column: number; raw: Record<string, string>;
+    normalized: Record<string, unknown>; action: string; errors: string[];
+    person_candidates: { id: string; name: string }[];
+    conflicts: { id: string; name: string; slot: string; source: string }[];
+    target_assignment: string | null;
+  }[];
+}
+export interface PastDutyStatus {
+  coverage: { month: string; assignments: number; members: number; days_with_records: number; latest_duty_date: string; coverage: string }[];
+  history: { id: string; filename: string; month: string; sheet: string; actor: string; at: string | null; counts: Record<string, number> }[];
+  policy: HistoryFairnessPolicy; today: string; duty_types: { key: string; label: string }[];
+}
+export function getPastDutyStatus(): Promise<PastDutyStatus> { return request("/api/v1/admin/past-duties/status"); }
+export function saveHistoryFairness(policy: HistoryFairnessPolicy, effective_from: string): Promise<unknown> {
+  return request("/api/v1/admin/past-duties/policy", { method: "PUT", body: JSON.stringify({ policy, effective_from }) });
+}
+export interface PastDutyHistoryDetail {
+  filename: string;
+  rows: { row: number; column: number; action: string; raw: Record<string, string>;
+    normalized: Record<string, unknown>; before: { name: string; status: string } | null; errors: string[] }[];
+}
+export function getPastDutyHistory(id: string): Promise<PastDutyHistoryDetail> {
+  return request(`/api/v1/admin/past-duties/history/${encodeURIComponent(id)}`);
+}
+export async function pastDutyUpload<T>(action: string, file: File, options: PastDutyOptions, hash = ""): Promise<T> {
+  const body = new FormData(); body.append("file", file); body.append("header_row", String(options.header_row));
+  body.append("options", JSON.stringify(options)); body.append("preview_hash", hash);
+  const response = await fetch(`${API_BASE_URL}/api/v1/admin/past-duties/${action}`, {
+    method: "POST", headers: { Authorization: `Bearer ${authToken}` }, body,
+  });
+  if (!response.ok) throw await errorFromResponse(response);
+  return readMutationResult<T>(response, `/api/v1/admin/past-duties/${action}`, "POST");
+}
+export async function downloadPastDutyTemplate(): Promise<Blob> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/admin/past-duties/template`, {
+    headers: { Authorization: `Bearer ${authToken}` },
+  });
+  if (!response.ok) throw await errorFromResponse(response);
+  return response.blob();
+}
+
+export interface MemberImportOptions {
+  sheet: string;
+  header_row: number;
+  mapping: Record<string, number>;
+  resolutions: Record<string, string>;
+  confirm_call_changes?: boolean;
+}
+
+export interface MemberWorkbookInspection {
+  sheets: { name: string; headers: string[]; mapping: Record<string, number> }[];
+  fields: string[];
+  header_row: number;
+}
+
+export interface MemberImportPreview {
+  preview_hash: string;
+  counts: Record<string, number>;
+  sheet: string;
+  rows: {
+    row: number;
+    raw: Record<string, string>;
+    normalized: Record<string, unknown>;
+    action: string;
+    target_id: string | null;
+    target_name: string | null;
+    changes: Record<string, unknown>;
+    errors: string[];
+    candidates: { id: string; name: string }[];
+  }[];
+}
+
+export async function memberWorkbookRequest<T>(
+  action: "inspect" | "preview" | "apply", file: File,
+  options: MemberImportOptions, previewHash = "",
+): Promise<T> {
+  const body = new FormData();
+  body.append("file", file);
+  body.append("header_row", String(options.header_row));
+  body.append("options", JSON.stringify(options));
+  body.append("preview_hash", previewHash);
+  const response = await fetch(`${API_BASE_URL}/api/v1/admin/members/import/${action}`, {
+    method: "POST", headers: { Authorization: `Bearer ${authToken}` }, body,
+  });
+  if (!response.ok) throw await errorFromResponse(response);
+  return readMutationResult<T>(response, `/api/v1/admin/members/import/${action}`, "POST");
+}
+
+export async function downloadMemberImportTemplate(format: "csv" | "xlsx" = "xlsx"): Promise<Blob> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/admin/members/import/template?format=${format}`, {
+    headers: { Authorization: `Bearer ${authToken}` },
+  });
+  if (!response.ok) throw await errorFromResponse(response);
+  return response.blob();
+}
+
+export interface MemberImportHistory {
+  id: string;
+  filename: string;
+  status: string;
+  completed_at: string | null;
+  actor: string;
+  counts: Record<string, number>;
+  sheet: string | null;
+  call_changes_confirmed: boolean;
+}
+
+export interface MemberImportHistoryDetail {
+  batch: MemberImportHistory;
+  rows: {
+    row: number; sheet: string; action: string;
+    raw: Record<string, string>; normalized: Record<string, unknown>;
+    changes: Record<string, unknown>; errors: string[]; member_id: string | null;
+  }[];
+}
+
+export function getMemberImportHistory(): Promise<MemberImportHistory[]> {
+  return request("/api/v1/admin/members/import/history");
+}
+
+export function getMemberImportHistoryDetail(id: string): Promise<MemberImportHistoryDetail> {
+  return request(`/api/v1/admin/members/import/history/${encodeURIComponent(id)}`);
+}
+
+export type WorkflowImportKind = "members" | "past" | "leave" | "units";
+export interface WorkflowImportHistory {
+  items: {id: string; filename: string; month: string | null; status: string; at: string | null; actor: string; counts: Record<string, number>}[];
+  offset: number; has_more: boolean;
+}
+export interface WorkflowImportRows {
+  filename: string; offset: number; has_more: boolean;
+  rows: {sheet: string | null; row: number | null; raw: unknown; normalized: unknown; outcome: unknown; record_id: string | null}[];
+}
+export function getWorkflowImportHistory(kind: WorkflowImportKind, month?: string, offset=0): Promise<WorkflowImportHistory> {
+  return request(`/api/v1/imports/${kind}/history?offset=${offset}${month ? `&month=${encodeURIComponent(month)}` : ""}`);
+}
+export function getWorkflowImportRows(kind: WorkflowImportKind, id: string, offset=0): Promise<WorkflowImportRows> {
+  return request(`/api/v1/imports/${kind}/history/${encodeURIComponent(id)}?offset=${offset}`);
+}
+export async function downloadRejectedImportRows(kind: WorkflowImportKind, id: string): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/imports/${kind}/history/${encodeURIComponent(id)}/rejected.csv`, {
+    headers: authToken ? {Authorization: `Bearer ${authToken}`} : {},
+  });
+  if (!response.ok) throw await errorFromResponse(response);
+  const url=URL.createObjectURL(await response.blob());
+  const link=document.createElement("a");link.href=url;link.download=`rejected_${kind}_${id}.csv`;
+  link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
 
 let authToken = localStorage.getItem("duty_rota_auth_token") ?? "";
 
@@ -33,20 +218,17 @@ export function clearAuthToken() {
  */
 export async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   let response: Response;
+  const headers = new Headers(options.headers);
+  if (!headers.has("Content-Type")) headers.set("Content-Type", "application/json");
+  if (authToken) headers.set("Authorization", `Bearer ${authToken}`);
   try {
     response = await fetch(`${API_BASE_URL}${path}`, {
-      headers: {
-        "Content-Type": "application/json",
-        ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
-        ...options.headers,
-      },
       ...options,
+      headers,
     });
   } catch (error) {
     console.error("Backend request failed", error);
-    throw new Error(
-      "Backend server is offline. Start Duty Rota with launch.bat and keep the Backend window running.",
-    );
+    throw new Error(networkRecoveryMessage(Boolean(import.meta.env.DEV)));
   }
   if (!response.ok) {
     let message = `API request failed: ${response.status}`;
@@ -54,11 +236,7 @@ export async function request<T>(path: string, options: RequestInit = {}): Promi
     try {
       const payload = await response.json();
       detail = payload.detail;
-      if (typeof payload.detail === "string") {
-        message = payload.detail;
-      } else if (payload.detail?.message) {
-        message = payload.detail.message;
-      }
+      message = formatApiError(detail, message);
     } catch {
       // Keep the status-based fallback when the server does not return JSON.
     }
@@ -66,7 +244,13 @@ export async function request<T>(path: string, options: RequestInit = {}): Promi
     error.detail = detail;
     throw error;
   }
-  return response.json() as Promise<T>;
+  return readMutationResult<T>(response, path, options.method ?? "GET");
+}
+
+async function readMutationResult<T>(response: Response, path: string, method: string): Promise<T> {
+  const result = await response.json() as T;
+  if (!(result && typeof result === "object" && "replayed" in result && result.replayed)) notifyDataChange(path, method);
+  return result;
 }
 
 /** Error builder for upload/download calls. Any 5xx defaults to an "offline or crashed" message (handbook U3). */
@@ -74,16 +258,12 @@ async function errorFromResponse(response: Response): Promise<Error> {
   let message = `API request failed: ${response.status}`;
   let detail: unknown = null;
   if (response.status >= 500) {
-    message = "Backend server is offline or crashed. Start Duty Rota with launch.bat and keep the Backend window running.";
+    message = "The server could not complete this request. Retry, or contact your department administrator if it continues.";
   }
   try {
     const payload = await response.json();
     detail = payload.detail;
-    if (typeof payload.detail === "string") {
-      message = payload.detail;
-    } else if (payload.detail?.message) {
-      message = payload.detail.message;
-    }
+    message = formatApiError(detail, message);
   } catch {
     // Keep the status-based fallback when the server does not return JSON.
   }
@@ -395,6 +575,7 @@ export interface LeavePressure {
 }
 
 export interface LeaveImportPreview {
+  preview_hash: string;
   filename: string;
   month: string;
   total_rows: number;
@@ -429,6 +610,8 @@ export interface LeaveImportPreview {
 }
 
 export interface LeaveImportApplyResult {
+  batch_id?: string;
+  replayed?: boolean;
   filename: string;
   month: string;
   created_rows: number;
@@ -438,6 +621,7 @@ export interface LeaveImportApplyResult {
 }
 
 export interface UnitAssignmentImportPreview {
+  preview_hash: string;
   filename: string;
   month: string;
   total_rows: number;
@@ -500,6 +684,8 @@ export interface UnitImportResolution {
 }
 
 export interface UnitAssignmentImportApplyResult {
+  batch_id?: string;
+  replayed?: boolean;
   filename: string;
   month: string;
   created_rows: number;
@@ -543,6 +729,7 @@ export interface UnitAssignment {
   person: UnitPerson;
   unit: UnitRead | null;
   posting_type: string;
+  effective_call_level?: string | null;
   starts_on: string;
   ends_on: string | null;
   source: string;
@@ -657,6 +844,7 @@ export interface CallLevelPrefillResult {
 }
 
 export interface UserAccount {
+  permissions?: string[];
   id: string;
   username: string;
   display_name: string;
@@ -1455,9 +1643,10 @@ export async function previewLeaveImport(month: string, file: File): Promise<Lea
   return response.json() as Promise<LeaveImportPreview>;
 }
 
-export async function applyLeaveImport(month: string, file: File): Promise<LeaveImportApplyResult> {
+export async function applyLeaveImport(month: string, file: File, previewHash: string): Promise<LeaveImportApplyResult> {
   const formData = new FormData();
   formData.append("file", file);
+  formData.append("preview_hash", previewHash);
   const response = await fetch(`${API_BASE_URL}/api/v1/leave/import-apply?month=${encodeURIComponent(month)}`, {
     method: "POST",
     headers: authToken ? { Authorization: `Bearer ${authToken}` } : {},
@@ -1466,7 +1655,7 @@ export async function applyLeaveImport(month: string, file: File): Promise<Leave
   if (!response.ok) {
     throw await errorFromResponse(response);
   }
-  return response.json() as Promise<LeaveImportApplyResult>;
+  return readMutationResult<LeaveImportApplyResult>(response, "/api/v1/leave/import-apply", "POST");
 }
 
 export function getLeaveRequests(month: string): Promise<LeaveRequest[]> {
@@ -1527,9 +1716,11 @@ export async function applyUnitAssignmentImport(
   file: File,
   replaceExisting: boolean,
   resolutions: Record<string, UnitImportResolution> = {},
+  previewHash = "",
 ): Promise<UnitAssignmentImportApplyResult> {
   const formData = new FormData();
   formData.append("file", file);
+  formData.append("preview_hash", previewHash);
   formData.append("resolutions_json", JSON.stringify(resolutions));
   const response = await fetch(
     `${API_BASE_URL}/api/v1/unit-management/import-apply?month=${encodeURIComponent(month)}&replace_existing=${replaceExisting}`,
@@ -1542,7 +1733,7 @@ export async function applyUnitAssignmentImport(
   if (!response.ok) {
     throw await errorFromResponse(response);
   }
-  return response.json() as Promise<UnitAssignmentImportApplyResult>;
+  return readMutationResult<UnitAssignmentImportApplyResult>(response, "/api/v1/unit-management/import-apply", "POST");
 }
 
 export function createUnitAssignment(payload: UnitAssignmentPayload): Promise<UnitAssignment> {
@@ -1768,12 +1959,15 @@ export function updateCallClusterMembers(
   });
 }
 
-// SECURITY (handbook S2): the backend returns the reset token itself; see auth.py.
-export function forgotPassword(username: string): Promise<{ message: string; reset_token: string | null }> {
-  return request<{ message: string; reset_token: string | null }>("/api/v1/auth/forgot-password", {
+export function forgotPassword(username: string): Promise<{ message: string }> {
+  return request<{ message: string }>("/api/v1/auth/forgot-password", {
     method: "POST",
     body: JSON.stringify({ username }),
   });
+}
+
+export function issueAccountRecoveryCode(id: string): Promise<{reset_token: string; expires_in_minutes: number}> {
+  return request(`/api/v1/auth/accounts/${encodeURIComponent(id)}/recovery-code`, { method: "POST" });
 }
 
 export function resetPassword(token: string, newPassword: string): Promise<{ status: string }> {

@@ -13,10 +13,14 @@ from app.api.v1.call_clusters import router as call_clusters_router
 from app.api.v1.admin_mappings import router as admin_mappings_router
 from app.api.v1.diagnostics import router as diagnostics_router
 from app.api.v1.health import router as health_router
+from app.api.v1.import_history import router as import_history_router
 from app.api.v1.historical_imports import router as historical_imports_router
 from app.api.v1.leave import router as leave_router
 from app.api.v1.members import router as members_router
 from app.api.v1.member_workspace import router as member_workspace_router
+from app.api.v1.member_import import router as member_import_router
+from app.api.v1.past_duties import router as past_duties_router
+from app.api.v1.member_profiles import router as member_profiles_router
 from app.api.v1.metadata import router as metadata_router
 from app.api.v1.normalization import router as normalization_router
 from app.api.v1.import_review import router as import_review_router
@@ -33,6 +37,7 @@ from app.api.v1.unit_management import router as unit_management_router
 
 api_router = APIRouter()
 api_router.include_router(health_router, tags=["health"])
+api_router.include_router(import_history_router, prefix="/v1", tags=["import history"])
 api_router.include_router(auth_router, prefix="/v1", tags=["auth"])
 api_router.include_router(call_clusters_router, prefix="/v1", tags=["call clusters"])
 api_router.include_router(analysis_router, prefix="/v1", tags=["analysis"])
@@ -42,6 +47,9 @@ api_router.include_router(historical_imports_router, prefix="/v1", tags=["histor
 api_router.include_router(leave_router, prefix="/v1", tags=["leave"])
 api_router.include_router(members_router, prefix="/v1", tags=["members"])
 api_router.include_router(member_workspace_router, prefix="/v1", tags=["member workspace"])
+api_router.include_router(member_import_router, prefix="/v1", tags=["member imports"])
+api_router.include_router(past_duties_router, prefix="/v1", tags=["past duties"])
+api_router.include_router(member_profiles_router, prefix="/v1", tags=["member profiles"])
 api_router.include_router(metadata_router, prefix="/v1", tags=["metadata"])
 api_router.include_router(normalization_router, prefix="/v1", tags=["normalization"])
 api_router.include_router(import_review_router, prefix="/v1", tags=["import review"])

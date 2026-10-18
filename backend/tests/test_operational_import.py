@@ -18,7 +18,7 @@ from app.models import (
     PersonPosting,
     Unit,
 )
-from test_normalization_registry import registry as registry
+from tests.test_normalization_registry import registry as registry
 
 
 def seed(sessions):

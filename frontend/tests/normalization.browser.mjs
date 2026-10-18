@@ -309,6 +309,7 @@ try {
       else if (path.endsWith("/health")) json = { status: "ok" };
       else if (path.endsWith("/mappings/options"))
         json = { duty_types: [], mapping_types: [] };
+      else if (path.includes("/imports/") && path.endsWith("/history")) json = { items: [], total: 0, offset: 0 };
       else if (path.endsWith("/members")) json = [member];
       else if (path.endsWith("/normalization/units")) json = [unit];
       else if (path.includes("/normalization/catalog/"))

@@ -93,3 +93,17 @@ Primary acceptance coverage: `backend/tests/test_normalization_registry.py`,
 
 Similar people are never merged automatically. Historical names and relationships are preserved.
 New operational labels must map to a supported meaning or supply the required scheduling configuration.
+
+
+## Repository merge verification ? 18 October 2026
+
+Merged the divergent local and origin/main histories while retaining the approved
+60-item implementation and the remote authentication, reviewed-import, past-duty,
+and HOD profile features. Consolidated duplicate profile ORM mappings and migration
+revision 20261012_0018. Shared call resolution and stale-review checks cover both
+workspace schedules and HOD call history; member merges preserve both histories.
+
+Validation after reconciliation: 301 backend tests passed, 2 PostgreSQL concurrency
+tests skipped; 8 frontend unit tests and 19 desktop/mobile browser workflows passed.
+Production frontend build, affected Python import checks, whitespace checks, and a
+single Alembic head (20261018_0020) were verified.

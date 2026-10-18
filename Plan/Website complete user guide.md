@@ -1092,3 +1092,61 @@ For each month, assign one person to own each responsibility:
 - Approval owner: publish and final Excel export.
 
 This prevents one person from accidentally mixing data cleanup, rota assignment, and final approval without review.
+
+## Manage Department Members and Upload CSV or Excel
+
+Computer admins and superadmins can use the **Member List**, **Import and Review**, and **Import History** links in Department Members. The list searches canonical names and saved aliases, with status, position, and call-level filters. Manual call-level edits and completed imports refresh the master list, call counts, and audit indicators together.
+
+1. Download the simple CSV template (`name,call_level`) or the Excel template, or use your own `.csv` / `.xlsx` file with a header row and one member per row. Save CSV files using UTF-8 encoding; comma, semicolon, and tab delimiters are supported.
+2. Select your file. Set the header row if it is not row 1, then click **Read File and Columns**.
+3. Choose the worksheet and map its columns. Only **name** is required. Optional columns are designation, call level, status, aliases, effective-from date, and effective-to date.
+4. Click **Preview Normalized Members**. Review the original values, normalized details, matched member, and proposed changes.
+5. Use **Review rows** to focus on updates, new members, or review items. For uncertain matches, select a suggested existing member, explicitly create a new member, or skip the row. Correct invalid values in your file and upload again, or skip those rows. Preview again after changing selections.
+6. If existing call levels change, review the old and new levels and tick the explicit approval checkbox. Click **Apply Reviewed Import** once every review item is resolved or skipped.
+
+Names have titles and extra spaces cleaned. Existing canonical names are preserved when matching by names or aliases. A spelling manually matched to a member becomes an alias for later uploads. Similar names require review; members are never automatically merged.
+
+Use `1st call` through `5th call` (or `first` through `fifth`) for call levels. Supported statuses are `active`, `inactive`, `historical`, and `archived`. Separate aliases with semicolons. Designations require an effective-from date; dates may be Excel date cells or `YYYY-MM-DD`. Formula cells must be replaced with values.
+
+Blank optional cells preserve existing values. New members default to active status. Importing the same data again does not duplicate members, aliases, or designation entries. Existing duties, leave, and unit postings remain linked to the same member. Unit assignments continue through Unit Management.
+
+Every CSV and Excel row is checked against all existing members and aliases, including earlier uploads and historical or archived records. Duplicate rows and ambiguous matches require review. Missing members in an uploaded file remain unchanged; importing is not a roster replacement.
+
+Each import records its source filename, worksheet, file row, original and normalized values, changes, and importing account. **Import History** displays the latest 30 member import batches; use **View Rows** to review the recorded source values and before/after changes. Re-uploading an unchanged file may be recorded as an unchanged import without duplicating members. Imports are transactional: a write failure rolls back the entire batch. If member data changes after preview, preview again before applying.
+
+Limits: `.csv` or `.xlsx`, 5 MB file size, 50 MB expanded size for Excel, 5000 data rows, and the first 50 columns (CSV files with more columns are rejected). Import one worksheet at a time. The supported fields do not include phone numbers, email addresses, or employee IDs.
+
+## Past Duties for Statistics and Future Allocation
+
+Computer admins and superadmins can open **Admin Tools → Past Duties** to upload completed `.xls` or `.xlsx` rotas. Files are limited to 5 MB. Import one selected month and worksheet at a time.
+
+1. Download the standard assignment-table template, or choose the departmental matrix layout used by the existing parser. The table requires `date`, `name`, and `duty_type`; optional columns are `starts_at`, `ends_at`, `campus`, and `slot`.
+2. Select the completed-duty month, worksheet, layout, and header/date row. For the departmental matrix, the first selected row is dates, the next is weekdays, then duty labels and names.
+3. Read the worksheets, map columns for a table, and preview. Check normalized member names, duty types, dates, and local hospital start/end times. If times are blank, the standard duty windows are shown explicitly in preview.
+4. Resolve names using the existing member master list and resolve unknown duty labels. Missing former staff should be added as historical members first; this workflow does not change members' current call levels or create people automatically.
+5. Resolve duplicate rows, skipped values, and conflicts with previously uploaded or published duties. Reuploads are unchanged when the member, date, duty, and times match. A different member for an existing duty requires a selected correction and explicit approval. Additional parallel duties require a distinct slot label and deliberate selection. Different recorded times require manual/source correction rather than being silently overwritten.
+6. Preview again after changing resolutions. Acknowledge parser warnings and approve any member corrections, then apply. Prior corrected assignments remain in the audit trail as superseded and stop contributing to statistics. An unfinished draft month must be finalized/published before completed duties can be imported into it.
+
+**Recorded History Coverage** shows observed months, duties, members, and days with records. These counts are not proof of a complete roster. **Past-Duty Import History → View Rows** shows source values, normalized records, and prior members for corrections. Future/today duties cannot be marked completed by this workflow.
+
+Parallel assignments to different people for the same duty/date must also be reviewed within a brand-new upload. Give each parallel row a distinct `slot` label, then select **Additional** for subsequent rows and preview again. Otherwise skip the duplicate. This check applies before any records are saved, as well as against earlier uploads. Reusing an inactive saved slot cannot silently override the start/end times you reviewed. Changes to saved slot metadata after preview require a fresh preview.
+
+**Historical Fairness Settings** defaults to a six-month lookback. It adds configurable penalties for above-average total, 24-hour, weekend, and same-category burden among observed active peers at the same call level. Each person's rates use their observed months; missing data is neutral rather than zero-duty credit. Settings are saved with an effective date and selected using the target month's first day. Candidate explanations and saved auto-fill events show the historical score contribution. Existing leave/eligibility rules remain authoritative, and recorded duties participate in overlap/rest checks across month boundaries even when historical fairness is disabled.
+
+The older server-folder historical rebuild remains under a disclosure section. New uploaded past-duty batches use their own source and are retained independently of that rebuild. Legacy `.xls` support uses `xlrd`, installed through backend dependencies and checked by the launcher.
+
+## Member Profiles, Promotions, and HOD Comments
+
+Click a person's name in **Department Members** to open their profile card on desktop or mobile. The same member ID connects aliases, imports, postings, leave, duties, and statistics.
+
+The profile shows current status and call level, official-duty totals, dated call-level changes, designation history, aliases, unit postings, recent leave, and member-import source rows. Earlier promotion dates are not invented for existing members; their existing call level is the baseline until dates are recorded.
+
+If the member already holds a call level and its start date has just been confirmed, the first timeline entry may keep the same level and record the known effective date with its supporting reason. This appears as **Baseline recorded**, rather than inventing a previous promotion level.
+
+Admins and HOD users can record a call-level change with its **effective-from date** and **reason/approval reference**. A future change stays scheduled. Add changes in effective-date order; the system rejects a backdated change when a later entry already exists. Current-day CSV/Excel call changes and the trusted prefill workflow also record history. Changes do not rewrite completed duties, but daily rota eligibility and capacity use the call level effective on the duty date. Unit summary counts use the start of the selected month/assignment; daily eligibility remains date-specific for mid-month promotions. Analysis uses recorded promotion history where available instead of inferring it solely from old duty labels.
+
+Admins can also edit names/status, add aliases, and add dated designations from the profile. Renames preserve the former name as an alias. Data refreshes from the member master record rather than creating a second person in another section.
+
+**Admin and HOD Comments** retain the author, role, and recording time. They are visible to computer admins, superadmins, and HOD accounts; rota-board accounts can view the general profile but cannot access these comments or edit the promotion timeline. Comments are append-only; add a follow-up to correct one. A superadmin can create a login with the **Head of Department** role under Login Accounts. The HOD role grants profile/promotion/comment access without granting import or software-admin privileges.
+
+The profile tables are added by migration `20261012_0018`. The local database was upgraded during implementation; other deployments must run `alembic upgrade head` when upgrading the app.

@@ -20,6 +20,9 @@ from sqlalchemy.orm import Session, selectinload
 from app.domain.duty_types import DUTY_TYPES, MAIN_24HR_KEYS
 from app.models import AdminMapping, DutyAssignment, DutySlot, PersonPosting, RotaPeriod
 from app.services.members import duplicate_candidates, invalid_members
+from app.services.history_fairness import ACTIVE_STATUSES, unique_assignments
+from app.models import PersonCallChange, Person
+from app.services.member_profiles import call_level_on
 
 ANALYSIS_PERIOD_STATUSES = {"historical", "approved", "published", "finalized"}
 EXCLUDED_FROM_24HR_TOTAL = {"FIFTH_CALL", "CART"}
@@ -272,7 +275,9 @@ def analyze_dashboard(db: Session) -> dict[str, object]:
             selectinload(DutyAssignment.duty_slot).selectinload(DutySlot.rota_period),
         )
     ).all()
-    for assignment in assignments:
+    for assignment in unique_assignments(assignments):
+        if assignment.status not in ACTIVE_STATUSES:
+            continue
         slot = assignment.duty_slot
         if not is_analysis_period(slot.rota_period):
             continue
@@ -362,13 +367,26 @@ def analyze_dashboard(db: Session) -> dict[str, object]:
         if bucket is not None:
             getattr(person, bucket).add(month)
 
+    explicit_people = {person.canonical_name: person for person in db.scalars(select(Person).where(
+        Person.id.in_(select(PersonCallChange.person_id).where(~PersonCallChange.source.startswith("merged:"))))) }
     for person in people.values():
         # Fill call levels for months with no posting record using duty-type inference
         for month, inferred in person.inferred_call_levels.items():
             if month not in person.call_levels:
                 person.call_levels[month] = inferred
         # Enforce monotonic progression — call levels only go up, never down
-        enforce_monotonic_call_levels(person, months)
+        if person.name in explicit_people:
+            master = explicit_people[person.name]
+            first_change = db.scalar(select(PersonCallChange.effective_from).where(
+                PersonCallChange.person_id == master.id, ~PersonCallChange.source.startswith("merged:"))
+                .order_by(PersonCallChange.effective_from).limit(1))
+            for period in periods:
+                if period.ends_on >= first_change:
+                    level = call_level_on(master, period.ends_on)
+                    if level:
+                        person.call_levels[month_key(period.starts_on)] = level
+        else:
+            enforce_monotonic_call_levels(person, months)
         for month in months:
             person.monthly_24hr.setdefault(month, 0)
             person.fifth_call_monthly.setdefault(month, 0)

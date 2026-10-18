@@ -17,7 +17,7 @@ import logging
 import re
 import unicodedata
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, timedelta
 from difflib import SequenceMatcher
 from uuid import UUID
 
@@ -39,6 +39,7 @@ from app.services.leave import month_bounds
 from app.services.leave_import import match_person, person_lookup
 from app.services.leave_import import normalize_name as normalize_person_name
 from app.services.unit_management import UNIT_BOARD_SOURCE, is_special_unit_posting, normalize_posting_type
+from app.services.upload_limits import validate_tabular_upload
 
 logger = logging.getLogger(__name__)
 
@@ -353,6 +354,7 @@ def ranges_overlap(first_start: str, first_end: str, second_start: str, second_e
 
 
 def parse_unitwise_excel_upload(filename: str, content: bytes) -> ParsedUnitwiseUpload:
+    validate_tabular_upload(filename, content)
     workbook = load_workbook(io.BytesIO(content), data_only=True)
     postings: list[ParsedUnitPosting] = []
     warnings: list[ParseWarning] = []
@@ -564,6 +566,7 @@ def posting_from_line(line: str) -> tuple[str | None, str]:
 
 
 def parse_unitwise_text_upload(filename: str, content: bytes, units: list[Unit]) -> ParsedUnitwiseUpload:
+    validate_tabular_upload(filename, content)
     unit_labels: dict[str, str] = {}
     for unit in units:
         for label in (unit.name, unit.code):
@@ -1226,14 +1229,29 @@ def clear_unit_board_month(db: Session, month: str) -> int:
     # KNOWN ISSUE (handbook B6): deletes whole postings that merely overlap the month, so a
     # posting spanning several months is removed for the other months too.
     starts_on, ends_on = month_bounds(month)
-    result = db.execute(
-        delete(PersonPosting).where(
+    postings = list(db.scalars(
+        select(PersonPosting).where(
             PersonPosting.source == UNIT_BOARD_SOURCE,
             PersonPosting.starts_on <= ends_on,
             (PersonPosting.ends_on.is_(None)) | (PersonPosting.ends_on >= starts_on),
         )
-    )
-    return result.rowcount or 0
+    ))
+    for posting in postings:
+        before = posting.starts_on < starts_on
+        after = posting.ends_on is None or posting.ends_on > ends_on
+        if before and after:
+            db.add(PersonPosting(person_id=posting.person_id, unit_id=posting.unit_id,
+                                 posting_type=posting.posting_type, starts_on=ends_on + timedelta(days=1),
+                                 ends_on=posting.ends_on, source=posting.source, notes=posting.notes))
+            posting.ends_on = starts_on - timedelta(days=1)
+        elif before:
+            posting.ends_on = starts_on - timedelta(days=1)
+        elif after:
+            posting.starts_on = ends_on + timedelta(days=1)
+        else:
+            db.delete(posting)
+    db.flush()
+    return len(postings)
 
 
 def learn_person_alias_from_row(db: Session, row: dict[str, object]) -> bool:
@@ -1300,6 +1318,7 @@ def apply_unit_assignment_import(
     *,
     replace_existing: bool = False,
     resolutions: dict[str, dict[str, object]] | None = None,
+    commit: bool = True,
 ) -> dict[str, object]:
     preview = preview_unit_assignment_import(
         db,
@@ -1310,10 +1329,13 @@ def apply_unit_assignment_import(
         resolutions=resolutions,
     )
     starts_on, ends_on = month_bounds(month)
+    if replace_existing and not any(row_is_safe_to_apply(row) for row in preview["rows"]):
+        raise ValueError("Replacement requires at least one valid reviewed assignment. Existing postings were preserved.")
     deleted_rows = clear_unit_board_month(db, month) if replace_existing else 0
     created = 0
     learned_mappings = 0
     skipped_rows: list[dict[str, object]] = []
+    applied = []
     for row in preview["rows"]:
         if not row_is_safe_to_apply(row):
             skipped_rows.append(row)
@@ -1331,6 +1353,7 @@ def apply_unit_assignment_import(
             ),
         )
         db.add(assignment)
+        applied.append((row, assignment))
         learned_mappings += learn_from_applied_import_row(db, row)
         logger.info(
             "unit_assignment_import.auto_assigned filename=%s month=%s row=%s person_id=%s person=%s "
@@ -1350,7 +1373,11 @@ def apply_unit_assignment_import(
             row.get("review_suggested"),
         )
         created += 1
-    db.commit()
+    db.flush()
+    for row, assignment in applied:
+        row["record_id"] = str(assignment.id)
+    if commit:
+        db.commit()
     logger.info(
         "unit_assignment_import.apply filename=%s month=%s created=%s skipped=%s deleted_existing=%s replace=%s",
         filename,

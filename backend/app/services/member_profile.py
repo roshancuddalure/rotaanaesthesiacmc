@@ -11,7 +11,7 @@ from sqlalchemy.orm import Session, selectinload
 
 from app.models import MemberActivity, Person, PersonAlias, PersonDesignation, UserAccount
 
-STATUSES = {"active", "historical", "archived"}
+STATUSES = {"active", "inactive", "historical", "archived"}
 CALL_LEVELS = {
     "1ST_CALL", "2ND_CALL", "3RD_CALL", "CO_4TH_CALL", "4TH_CALL", "5TH_CALL",
     "1ST_CALL_PG_2025", "2ND_CALL_SR", "2ND_CALL_PG_2022", "2ND_CALL_PG_2023",
@@ -69,6 +69,9 @@ def snapshot(person: Person) -> dict:
         "canonical_name": person.canonical_name,
         "active_status": person.active_status,
         "call_level": person.call_level,
+        "profile_call_changes": sorted((str(c.id), c.from_call_level, c.to_call_level,
+                                        str(c.effective_from), c.reason, c.source)
+                                       for c in person.call_changes),
         "call_level_changes": sorted((str(c.id), c.call_level, str(c.effective_from), c.notes)
                                      for c in person.call_level_changes),
         "archived_at": person.archived_at.isoformat() if person.archived_at else None,
@@ -86,8 +89,9 @@ def revision(person: Person) -> str:
 
 
 def default_call_level_on(person: Person, day: date) -> str | None:
-    changes = [c for c in person.call_level_changes if c.effective_from <= day]
-    return max(changes, key=lambda c: c.effective_from).call_level if changes else person.call_level
+    from app.services.member_profiles import call_level_on
+    return call_level_on(person, day)
+
 
 
 def record_activity(db: Session, person: Person, operator: UserAccount, action: str,

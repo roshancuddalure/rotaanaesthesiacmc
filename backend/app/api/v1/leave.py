@@ -8,12 +8,13 @@ are shown as warnings (see ``app.services.leave``). Any signed-in user may edit 
 from datetime import date
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from pydantic import BaseModel, field_validator
 from sqlalchemy.orm import Session, selectinload
 
 from app.api.v1.auth import current_user
 from app.db.session import get_db
+from app.services.member_profiles import call_level_on
 from app.services.reference_catalog import resolve_value
 from app.services.reference_registry import audit, lock_namespace
 from app.models import LeaveRequest, MemberActivity, Person, UserAccount
@@ -25,6 +26,8 @@ from app.services.leave import (
     month_bounds,
 )
 from app.services.leave_import import apply_leave_import, preview_leave_import
+from app.services.upload_limits import read_bounded_upload
+from app.services.reviewed_import import acquire_import_lock, reviewed_hash, verify_reviewed_hash, StalePreviewError, replayed_result, record_workflow_batch
 
 router = APIRouter()
 
@@ -90,6 +93,7 @@ class LeaveCalendarRead(BaseModel):
 
 
 class LeaveImportPreviewRead(BaseModel):
+    preview_hash: str = ""
     filename: str
     month: str
     total_rows: int
@@ -103,6 +107,8 @@ class LeaveImportPreviewRead(BaseModel):
 
 
 class LeaveImportApplyRead(BaseModel):
+    batch_id: UUID | None = None
+    replayed: bool = False
     filename: str
     month: str
     created_rows: int
@@ -118,7 +124,7 @@ def leave_to_read(leave: LeaveRequest) -> LeaveRequestRead:
             id=leave.person.id,
             canonical_name=leave.person.canonical_name,
             active_status=leave.person.active_status,
-            call_level=leave.person.call_level,
+            call_level=call_level_on(leave.person, leave.starts_on),
         ),
         leave_type=leave.leave_type,
         leave_slot=leave.leave_slot,
@@ -326,8 +332,9 @@ async def preview_leave_upload(
 ) -> LeaveImportPreviewRead:
     try:
         month_bounds(month)
-        content = await file.read()
+        content = await read_bounded_upload(file)
         result = preview_leave_import(db, file.filename or "leave-import", content, month)
+        result["preview_hash"] = reviewed_hash(db, "leave", file.filename or "leave-import", content, month, {}, result["rows"])
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     return LeaveImportPreviewRead(**result)
@@ -337,13 +344,25 @@ async def preview_leave_upload(
 async def apply_leave_upload(
     month: str,
     file: UploadFile = File(...),
+    preview_hash: str = Form(""),
     _user: UserAccount = Depends(current_user),
     db: Session = Depends(get_db),
 ) -> LeaveImportApplyRead:
     try:
         month_bounds(month)
-        content = await file.read()
-        result = apply_leave_import(db, file.filename or "leave-import", content, month)
+        content = await read_bounded_upload(file)
+        acquire_import_lock(db)
+        existing = replayed_result(db, "leave_upload", preview_hash, str(_user.id), file.filename or "leave-import", content, {"month": month})
+        if existing is not None:
+            return LeaveImportApplyRead(**existing)
+        preview = preview_leave_import(db, file.filename or "leave-import", content, month)
+        verify_reviewed_hash(preview_hash, reviewed_hash(db, "leave", file.filename or "leave-import", content, month, {}, preview["rows"]))
+        result = apply_leave_import(db, file.filename or "leave-import", content, month, commit=False)
+        record_workflow_batch(db, "leave_upload", file.filename or "leave-import", content, month,
+                              {"month": month}, str(_user.id), preview_hash, result)
+        db.commit()
+    except StalePreviewError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     return LeaveImportApplyRead(**result)

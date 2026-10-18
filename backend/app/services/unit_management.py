@@ -12,9 +12,9 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
-from app.services.member_profile import default_call_level_on
 from app.models import LeaveRequest, PersonPosting, Unit
 from app.services.rota_call_levels import normalize_call_level
+from app.services.member_profiles import call_level_on
 from app.services.leave import ACTIVE_LEAVE_STATUSES, count_leave_days, month_bounds
 
 UNIT_BOARD_SOURCE = "unit_board"
@@ -90,7 +90,7 @@ def unit_call_member_counts(assignments: list[PersonPosting], month: str) -> dic
             continue
         if assignment.starts_on > ends_on or (assignment.ends_on is not None and assignment.ends_on < starts_on):
             continue
-        call_level = normalize_call_level(assignment.posting_type or default_call_level_on(assignment.person, assignment.starts_on))
+        call_level = normalize_call_level(call_level_on(assignment.person, max(starts_on, assignment.starts_on)) or assignment.posting_type)
         people[(assignment.unit_id, call_level)].add(assignment.person_id)
     return {key: len(value) for key, value in people.items()}
 
@@ -150,7 +150,7 @@ def unit_leave_summary(
         for unit_id in person_to_units.get(leave.person_id, set()):
             leave_people_by_unit[unit_id].add(leave.person_id)
             summaries[unit_id]["leave_days"] = int(summaries[unit_id]["leave_days"]) + days
-            call_level = leave.person.call_level or "Unassigned"
+            call_level = call_level_on(leave.person, leave.starts_on) or "Unassigned"
             summaries[unit_id]["leave_by_call_level"][call_level] += days  # type: ignore[index]
 
     for unit_id, people in leave_people_by_unit.items():

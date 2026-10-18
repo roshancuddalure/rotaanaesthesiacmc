@@ -61,6 +61,8 @@ Checklist:
 - [x] Store import batches and source traceability.
 - [ ] Produce import validation report.
 - [x] Seed historical records.
+- [x] Add reviewed past-duty `.xls`/`.xlsx` uploads with duplicates, corrections, and source history.
+- [x] Feed completed history into configurable person fairness and month-boundary rest checks.
 
 Deliverable:
 
@@ -76,7 +78,7 @@ Checklist:
 - [x] Create FastAPI JSON endpoints.
 - [x] Add admin-only authentication placeholder or simple login.
 - [x] Add dashboard shell/navigation.
-- [x] Add people list and person profile.
+- [x] Add people list and person profile with dated call changes and Admin/HOD comments.
 - [x] Add department members management foundation.
 - [x] Add name deduplication review foundation.
 - [x] Add trusted roster reconciliation.
