@@ -1,6 +1,7 @@
 from collections.abc import Generator
 from contextlib import contextmanager
 from pathlib import Path
+from uuid import uuid4
 
 from fastapi.testclient import TestClient
 from openpyxl import Workbook
@@ -12,6 +13,8 @@ from app import models  # noqa: F401
 from app.api.v1 import admin_mappings
 from app.db.session import Base, get_db
 from app.main import app
+from app.api.v1.auth import current_user
+from app.models import UserAccount
 
 
 def create_rota_workbook(path: Path) -> None:
@@ -52,6 +55,7 @@ def client_with_database() -> Generator[TestClient, None, None]:
             yield session
 
     app.dependency_overrides[get_db] = override_get_db
+    app.dependency_overrides[current_user] = lambda: UserAccount(id=uuid4(), username="mapping-admin", role="computer_admin")
     try:
         yield TestClient(app)
     finally:

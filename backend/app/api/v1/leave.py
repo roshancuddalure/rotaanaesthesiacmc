@@ -14,8 +14,16 @@ from sqlalchemy.orm import Session, selectinload
 
 from app.api.v1.auth import current_user
 from app.db.session import get_db
-from app.models import LeaveRequest, Person, UserAccount
-from app.services.leave import leave_day_entries, leave_pressure, leave_requests_for_month, leave_summary, month_bounds
+from app.services.reference_catalog import resolve_value
+from app.services.reference_registry import audit
+from app.models import LeaveRequest, MemberActivity, Person, UserAccount
+from app.services.leave import (
+    leave_day_entries,
+    leave_pressure,
+    leave_requests_for_month,
+    leave_summary,
+    month_bounds,
+)
 from app.services.leave_import import apply_leave_import, preview_leave_import
 
 router = APIRouter()
@@ -148,6 +156,17 @@ def validate_dates(starts_on: date, ends_on: date) -> None:
         raise HTTPException(status_code=400, detail="Leave end date cannot be before start date")
 
 
+def validated_leave_values(db: Session, payload) -> dict:
+    try:
+        return {
+            "leave_type": resolve_value(db, "leave_type", payload.leave_type)[0],
+            "leave_slot": resolve_value(db, "leave_slot", payload.leave_slot)[0],
+            "status": resolve_value(db, "leave_status", payload.status)[0],
+        }
+    except ValueError as exc:
+        raise HTTPException(422, str(exc)) from exc
+
+
 @router.get("/leave/requests")
 def list_leave_requests(
     month: str,
@@ -168,14 +187,15 @@ def create_leave_request(
     db: Session = Depends(get_db),
 ) -> LeaveRequestRead:
     validate_dates(payload.starts_on, payload.ends_on)
+    normalized = validated_leave_values(db, payload)
     person = get_active_person_or_404(db, payload.person_id)
     leave = LeaveRequest(
         person=person,
-        leave_type=payload.leave_type.strip().upper(),
-        leave_slot=payload.leave_slot.strip().upper(),
+        leave_type=normalized["leave_type"],
+        leave_slot=normalized["leave_slot"],
         starts_on=payload.starts_on,
         ends_on=payload.ends_on,
-        status=payload.status.strip().lower(),
+        status=normalized["status"],
         source="manual",
         raw_person_name=person.canonical_name,
         notes=payload.notes.strip() if payload.notes else None,
@@ -194,14 +214,15 @@ def update_leave_request(
     db: Session = Depends(get_db),
 ) -> LeaveRequestRead:
     validate_dates(payload.starts_on, payload.ends_on)
+    normalized = validated_leave_values(db, payload)
     leave = get_leave_or_404(db, leave_id)
     person = get_active_person_or_404(db, payload.person_id)
     leave.person = person
-    leave.leave_type = payload.leave_type.strip().upper()
-    leave.leave_slot = payload.leave_slot.strip().upper()
+    leave.leave_type = normalized["leave_type"]
+    leave.leave_slot = normalized["leave_slot"]
     leave.starts_on = payload.starts_on
     leave.ends_on = payload.ends_on
-    leave.status = payload.status.strip().lower()
+    leave.status = normalized["status"]
     leave.raw_person_name = person.canonical_name
     leave.notes = payload.notes.strip() if payload.notes else None
     db.commit()
@@ -215,7 +236,27 @@ def cancel_leave_request(
     db: Session = Depends(get_db),
 ) -> LeaveRequestRead:
     leave = get_leave_or_404(db, leave_id)
+    before = {
+        "status": leave.status,
+        "starts_on": str(leave.starts_on),
+        "ends_on": str(leave.ends_on),
+    }
     leave.status = "cancelled"
+    details = {
+        "before": before,
+        "after": {"status": "cancelled"},
+        "availability": "This leave no longer blocks availability. Existing duty assignments remain unchanged.",
+    }
+    audit(db, _user, "leave_cancelled", leave.id, details)
+    db.add(
+        MemberActivity(
+            person_id=leave.person_id,
+            operator_id=_user.id,
+            operator_name=_user.display_name or _user.username,
+            action="leave_cancelled",
+            details=details,
+        )
+    )
     db.commit()
     return leave_to_read(get_leave_or_404(db, leave.id))
 

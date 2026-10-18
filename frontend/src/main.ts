@@ -1,3 +1,6 @@
+import { openRecordEditor } from "./record-workspace";
+import { openOperationalImport } from "./operational-import";
+import { openUnitRegistry, openReferenceCatalog, openMappingCreator } from "./reference-workspace";
 import { openMemberWorkspace, openMemberCsvImport } from "./member-workspace";
 /**
  * Duty Rota single-page app (framework-free TypeScript + Vite).
@@ -2515,7 +2518,7 @@ function renderMappings() {
       ${renderMappingFilters()}
       <label for="mapping-search" class="visually-hidden">Search mappings</label>
       <input id="mapping-search" placeholder="Search source label…" value="${mappingSearch}" style="min-width:200px;" aria-label="Search mappings" />
-      <button class="primary" id="scan-mappings">Scan Historical Files</button>
+      <button type="button" class="primary" data-create-import-mapping>Add Mapping</button><button type="button" data-manage-reference-catalog>Manage reference labels</button><button class="primary" id="scan-mappings">Scan Historical Files</button>
     </section>
     <section class="panel table-panel hide-mobile">
       <table>
@@ -2532,7 +2535,7 @@ function renderMappings() {
         <tbody>
           ${
             rows ||
-            `<tr><td colspan="6" class="empty">No mappings yet. Scan historical files first.</td></tr>`
+            `<tr><td colspan="6" class="empty">No mappings yet. Add a mapping or scan historical files.</td></tr>`
           }
         </tbody>
       </table>
@@ -3087,7 +3090,7 @@ function renderLeaveRows(): string {
           <td>${escapeHtml(leaveTypeLabel(leave.leave_type))}</td>
           <td><span class="status-dot ${leave.status === "approved" ? "active" : "inactive"}">${escapeHtml(leaveStatusLabel(leave.status))}</span></td>
           <td class="num">${leave.days}</td>
-          <td><button class="icon-button" data-cancel-leave="${leave.id}" ${leave.status === "cancelled" ? "disabled" : ""}>Cancel</button></td>
+          <td><button type="button" class="icon-button" data-edit-operational-record="${leave.id}" data-record-kind="leave">Edit leave</button><button class="icon-button" data-cancel-leave="${leave.id}" ${leave.status === "cancelled" ? "disabled" : ""}>Cancel</button></td>
         </tr>
       `,
     )
@@ -3104,7 +3107,7 @@ function renderLeaveCards(): string {
           <div class="data-card-row"><span class="data-card-label">Slot</span><span class="data-card-value">${escapeHtml(leaveTypeLabel(leave.leave_slot))}</span></div>
           <div class="data-card-row"><span class="data-card-label">Type</span><span class="data-card-value">${escapeHtml(leaveTypeLabel(leave.leave_type))}</span></div>
           <div class="data-card-row"><span class="data-card-label">Status</span><span class="data-card-value">${escapeHtml(leaveStatusLabel(leave.status))}</span></div>
-          <div class="data-card-row"><button class="icon-button" data-cancel-leave="${leave.id}" ${leave.status === "cancelled" ? "disabled" : ""}>Cancel</button></div>
+          <div class="data-card-row"><button type="button" class="icon-button" data-edit-operational-record="${leave.id}" data-record-kind="leave">Edit leave</button><button class="icon-button" data-cancel-leave="${leave.id}" ${leave.status === "cancelled" ? "disabled" : ""}>Cancel</button></div>
         </article>
       `,
     )
@@ -3236,65 +3239,16 @@ async function renderLeave() {
     </section>
     ${renderLeavePressurePanel()}
     <section class="panel leave-form-panel">
-      <h3>Import Preview</h3>
-      <form class="leave-form" id="leave-import-form">
-        <label class="leave-notes">
-          <span>CSV / XLSX file</span>
-          <input id="leave-import-file" type="file" accept=".csv,.xls,.xlsx" />
-        </label>
-        <button class="primary" type="submit">Preview File</button>
-      </form>
-      ${renderLeaveImportPreview()}
+      <h3>Import leave</h3>
+      <p>Map columns, resolve member names, review dates and conflicts, then apply.</p>
+      <button type="button" class="primary" data-open-normalized-import="leave">Import leave CSV / spreadsheet</button>
+      <a href="/templates/leave-records.csv" download>Download CSV template</a>
     </section>
     <section class="panel leave-form-panel">
-      <h3>Add Leave</h3>
-      <form class="leave-form" id="leave-form">
-        <label>
-          <span>Member</span>
-          <select id="leave-person" required>${renderLeaveMemberOptions()}</select>
-        </label>
-        <label>
-          <span>Starts</span>
-          <input id="leave-start" type="date" value="${summary.starts_on}" required />
-        </label>
-        <label>
-          <span>Ends</span>
-          <input id="leave-end" type="date" value="${summary.starts_on}" required />
-        </label>
-        <label>
-          <span>Slot</span>
-          <select id="leave-slot">
-            <option value="FULL_DAY">Full day</option>
-            <option value="AM">AM</option>
-            <option value="PM">PM</option>
-            <option value="NIGHT">Night</option>
-            <option value="CUSTOM">Custom</option>
-          </select>
-        </label>
-        <label>
-          <span>Type</span>
-          <select id="leave-type">
-            <option value="ANNUAL_LEAVE">Annual leave</option>
-            <option value="ACADEMIC_LEAVE">Academic leave</option>
-            <option value="CONFERENCE">Conference</option>
-            <option value="EXAM">Exam</option>
-            <option value="SICK_LEAVE">Sick leave</option>
-            <option value="OTHER">Other</option>
-          </select>
-        </label>
-        <label>
-          <span>Status</span>
-          <select id="leave-status">
-            <option value="approved">Approved</option>
-            <option value="requested">Requested</option>
-          </select>
-        </label>
-        <label class="leave-notes">
-          <span>Notes</span>
-          <input id="leave-notes" placeholder="Optional note" />
-        </label>
-        <button class="primary" type="submit">Add Leave</button>
-      </form>
+      <h3>Manage leave</h3>
+      <p>Create leave, review affected duties, or edit a record below.</p>
+      <button type="button" class="primary" data-add-operational-record="leave">Add Leave</button>
+      ${isAdminUser() ? '<button type="button" data-manage-reference-catalog>Manage labels and mappings</button>' : ''}
     </section>
     <section class="panel">
       <h3>Month Calendar</h3>
@@ -4005,83 +3959,21 @@ function renderSpecialPostingIssueDetails(postingType: string): string {
 }
 
 function renderUnitAssignmentEditors(unitId: string): string {
-  const assignments = unitAssignmentsFor(unitId);
-  if (!assignments.length) {
-    return `<p class="empty-state">No members assigned yet. Add the first member below.</p>`;
-  }
-  return assignments
-    .map(
-      (assignment) => `
-        <form class="unit-assignment-editor" data-unit-row-form="${assignment.id}">
-          <label>
-            <span>Member</span>
-            <select name="person_id" required>${renderLeaveMemberOptions(assignment.person.id)}</select>
-          </label>
-          <label>
-            <span>Unit</span>
-            <select name="unit_id" required>${renderUnitOptions(assignment.unit?.id ?? unitId)}</select>
-          </label>
-          <label>
-            <span>Posting</span>
-            <select name="posting_type" required>${renderUnitPostingTypeOptions(assignment.posting_type)}</select>
-          </label>
-          <label>
-            <span>Starts</span>
-            <input name="starts_on" type="date" value="${assignment.starts_on}" required />
-          </label>
-          <label>
-            <span>Ends</span>
-            <input name="ends_on" type="date" value="${assignment.ends_on ?? ""}" />
-          </label>
-          <label class="unit-editor-notes">
-            <span>Notes</span>
-            <input name="notes" value="${escapeHtml(assignment.notes ?? "")}" placeholder="Optional note" />
-          </label>
-          <div class="unit-editor-actions">
-            <button class="primary" type="submit">Save</button>
-            <button class="icon-button" type="button" data-delete-unit-assignment="${assignment.id}">Remove</button>
-          </div>
-        </form>
-      `,
-    )
-    .join("");
+  return renderPostingEditorCards(unitAssignmentsFor(unitId));
 }
 
 function renderSpecialPostingAssignmentEditors(postingType: string): string {
-  const assignments = specialUnitAssignmentsFor(postingType);
-  if (!assignments.length) {
-    return `<p class="empty-state">No members assigned yet. Add the first member below.</p>`;
-  }
-  return assignments
-    .map(
-      (assignment) => `
-        <form class="unit-assignment-editor special-assignment-editor" data-unit-row-form="${assignment.id}">
-          <input name="unit_id" type="hidden" value="" />
-          <input name="posting_type" type="hidden" value="${escapeHtml(postingType)}" />
-          <label>
-            <span>Member</span>
-            <select name="person_id" required>${renderLeaveMemberOptions(assignment.person.id)}</select>
-          </label>
-          <label>
-            <span>Starts</span>
-            <input name="starts_on" type="date" value="${assignment.starts_on}" required />
-          </label>
-          <label>
-            <span>Ends</span>
-            <input name="ends_on" type="date" value="${assignment.ends_on ?? ""}" />
-          </label>
-          <label class="unit-editor-notes">
-            <span>Notes</span>
-            <input name="notes" value="${escapeHtml(assignment.notes ?? "")}" placeholder="Optional note" />
-          </label>
-          <div class="unit-editor-actions">
-            <button class="primary" type="submit">Save</button>
-            <button class="icon-button" type="button" data-delete-unit-assignment="${assignment.id}">Remove</button>
-          </div>
-        </form>
-      `,
-    )
-    .join("");
+  return renderPostingEditorCards(specialUnitAssignmentsFor(postingType));
+}
+
+function renderPostingEditorCards(assignments: UnitAssignment[]): string {
+  if (!assignments.length) return '<p class="empty-state">No members assigned yet. Add the first posting below.</p>';
+  return assignments.map(assignment => `<article class="mw-history" data-unit-row-form="${assignment.id}">
+    <button type="button" class="member-profile-link" data-open-member="${assignment.person.id}" data-profile-tab="postings">${escapeHtml(assignment.person.canonical_name)}</button>
+    <p>${escapeHtml(assignment.posting_type)} ? ${assignment.starts_on} to ${assignment.ends_on || "Ongoing"}</p>
+    <p>${escapeHtml(assignment.notes || "")}</p><div class="registry-actions">
+    <button type="button" class="primary" data-edit-operational-record="${assignment.id}" data-record-kind="units">Edit posting</button>
+    <button type="button" data-delete-unit-assignment="${assignment.id}">Remove posting</button></div></article>`).join("");
 }
 
 function adjacentUnitId(unitId: string, direction: -1 | 1): string | null {
@@ -4090,6 +3982,7 @@ function adjacentUnitId(unitId: string, direction: -1 | 1): string | null {
   const nextIndex = currentIndex + direction;
   return units[nextIndex]?.id ?? null;
 }
+
 
 function scrollUnitAssignmentIntoView(assignmentId: string) {
   const modal = document.querySelector<HTMLElement>("#unit-management-modal .person-modal");
@@ -4150,34 +4043,7 @@ function renderUnitModal(unit: UnitRead): string {
           ${renderUnitIssueDetails(unit.id)}
           <h4>Assigned Members</h4>
           <div class="unit-editor-list">${renderUnitAssignmentEditors(unit.id)}</div>
-          <h4>Add Member</h4>
-          <form class="leave-form unit-modal-form" id="unit-assignment-form" data-modal-unit-id="${unit.id}">
-            <label>
-              <span>Member</span>
-              <select id="unit-person" required>${renderLeaveMemberOptions()}</select>
-            </label>
-            <label>
-              <span>Unit</span>
-              <select id="unit-select" required>${renderUnitOptions(unit.id)}</select>
-            </label>
-            <label>
-              <span>Call level / posting</span>
-              <select id="unit-posting-type" required>${renderUnitPostingTypeOptions()}</select>
-            </label>
-            <label>
-              <span>Starts</span>
-              <input id="unit-start" type="date" value="${unitManagement.starts_on}" required />
-            </label>
-            <label>
-              <span>Ends</span>
-              <input id="unit-end" type="date" value="${unitManagement.ends_on}" />
-            </label>
-            <label class="leave-notes">
-              <span>Notes</span>
-              <input id="unit-notes" placeholder="Optional note" />
-            </label>
-            <button class="primary" type="submit">Add Assignment</button>
-          </form>
+          <button type="button" class="primary" data-add-operational-record="units" data-initial-unit="${unit.id}">Add member posting</button>
         </div>
       </section>
     </div>
@@ -4222,28 +4088,7 @@ function renderSpecialPostingModal(postingType: string): string {
           ${renderSpecialPostingIssueDetails(postingType)}
           <h4>Assigned Members</h4>
           <div class="unit-editor-list">${renderSpecialPostingAssignmentEditors(postingType)}</div>
-          <h4>Add Member</h4>
-          <form class="leave-form unit-modal-form" id="unit-assignment-form" data-special-posting-type="${escapeHtml(postingType)}">
-            <input id="unit-select" type="hidden" value="" />
-            <input id="unit-posting-type" type="hidden" value="${escapeHtml(postingType)}" />
-            <label>
-              <span>Member</span>
-              <select id="unit-person" required>${renderLeaveMemberOptions()}</select>
-            </label>
-            <label>
-              <span>Starts</span>
-              <input id="unit-start" type="date" value="${unitManagement.starts_on}" required />
-            </label>
-            <label>
-              <span>Ends</span>
-              <input id="unit-end" type="date" value="${unitManagement.ends_on}" />
-            </label>
-            <label class="leave-notes">
-              <span>Notes</span>
-              <input id="unit-notes" placeholder="Optional note" />
-            </label>
-            <button class="primary" type="submit">Add Assignment</button>
-          </form>
+          <button type="button" class="primary" data-add-operational-record="units" data-initial-posting="${escapeHtml(postingType)}">Add member posting</button>
         </div>
       </section>
     </div>
@@ -4324,19 +4169,11 @@ async function renderUnitManagement(forceReload = false) {
     </section>
     ${renderUnitValidationIssues()}
     <section class="panel leave-form-panel">
-      <h3>Import Unitwise Assignments</h3>
-      <form class="leave-form" id="unit-import-form">
-        <label class="leave-notes">
-          <span>XLSX / text file</span>
-          <input id="unit-import-file" type="file" accept=".xlsx,.xlsm,.txt,.csv" />
-        </label>
-        <label class="checkbox-row">
-          <input id="unit-import-replace" type="checkbox" ${unitImportReplaceExisting ? "checked" : ""} />
-          <span>Replace current month unit-board assignments</span>
-        </label>
-        <button class="primary" type="submit">Preview File</button>
-      </form>
-      ${renderUnitImportPreview()}
+      <div class="registry-actions">${isAdminUser() ? `<button class="primary" type="button" data-add-department-unit>Add Unit</button><button class="icon-button" type="button" data-manage-department-units>Manage Units</button>` : ""}</div>
+      <div class="registry-actions"><button type="button" class="primary" data-add-operational-record="units">Add Posting</button>${isAdminUser() ? `<button type="button" data-manage-reference-catalog>Manage labels and mappings</button>` : ""}</div><h3>Import Unitwise Assignments</h3>
+      <p>Map columns, resolve names and units, and review changes before applying.</p>
+      <button type="button" class="primary" data-open-normalized-import="units">Import unitwise CSV / spreadsheet</button>
+      <a href="/templates/unitwise-assignments.csv" download>Download CSV template</a>
     </section>
     <section class="unit-card-grid">${renderUnitAssignmentsByUnit()}</section>
     <section class="panel table-panel hide-mobile" style="margin-top:16px">
@@ -8082,6 +7919,35 @@ function bindViewEvents() {
 
   viewRoot?.addEventListener("click", async (event) => {
     const target = event.target as HTMLElement;
+    if (target.closest("[data-create-import-mapping]")) {
+      void openMappingCreator(() => { void loadMappings().then(renderMappings); }); return;
+    }
+    if (target.closest("[data-manage-reference-catalog]")) {
+      void openReferenceCatalog(() => { invalidateUnitManagementCache(); }); return;
+    }
+    const recordButton = target.closest<HTMLElement>("[data-add-operational-record], [data-edit-operational-record]");
+    if (recordButton) {
+      const kind = (recordButton.dataset.addOperationalRecord || recordButton.dataset.recordKind) as "units" | "leave";
+      void openRecordEditor(kind, undefined, recordButton.dataset.editOperationalRecord, isAdminUser(), () => {
+        invalidateUnitManagementCache();
+        if (kind === "leave") void renderLeave(); else void renderUnitManagement(true);
+      }, kind === "units" ? {unit_id: recordButton.dataset.initialUnit || "", posting_type: recordButton.dataset.initialPosting || "2ND_CALL", starts_on:unitManagement?.starts_on || `${unitMonth}-01`, ends_on:unitManagement?.ends_on || ""} : undefined); return;
+    }
+    const operationalImport = target.closest<HTMLElement>("[data-open-normalized-import]");
+    if (operationalImport) {
+      const kind = operationalImport.dataset.openNormalizedImport as "units" | "leave";
+      void openOperationalImport(kind, kind === "units" ? unitMonth : leaveMonth, () => {
+        invalidateUnitManagementCache();
+        if (kind === "units") void renderUnitManagement(true);
+        else void renderLeave();
+      }, isAdminUser());
+      return;
+    }
+    if (target.closest("[data-add-department-unit], [data-manage-department-units]")) {
+      void openUnitRegistry(() => { invalidateUnitManagementCache(); void renderUnitManagement(true); }, undefined, Boolean(target.closest("[data-add-department-unit]")));
+      return;
+    }
+
     const qualityButton = target.closest<HTMLButtonElement>("[data-member-quality]");
     if (qualityButton?.dataset.memberQuality) {
       const kind = qualityButton.dataset.memberQuality;

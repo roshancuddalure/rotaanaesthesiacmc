@@ -499,13 +499,14 @@ MONTH: 2026-06
 
         assert preview.status_code == 200
         body = preview.json()
-        assert body["matched_rows"] == 5
-        assert body["auto_assignable_rows"] == 5
+        assert body["matched_rows"] == 4
+        assert body["auto_assignable_rows"] == 4
         pain_rows = [row for row in body["rows"] if row["posting_type"] == "PAIN"]
         assert {row["person_name"] for row in pain_rows} == {"Sujil", "Jeenu Ann Jose"}
         assert all(row["special_posting"] is True for row in pain_rows)
         renita = next(row for row in body["rows"] if row["person_name"] == "Renita J")
         assert (renita["starts_on"], renita["ends_on"]) == ("2026-06-16", "2026-06-30")
+
 
 
 def fuzzy_unitwise_workbook_bytes() -> bytes:
@@ -658,7 +659,7 @@ def block_posting_workbook_bytes() -> bytes:
     return output.getvalue()
 
 
-def test_unit_management_import_auto_matches_confident_name_and_mapped_unit() -> None:
+def test_unit_management_import_suggests_similar_name_without_automatic_selection() -> None:
     with unit_client() as client:
         token = sign_in(client)
         headers = auth_headers(token)
@@ -677,10 +678,10 @@ def test_unit_management_import_auto_matches_confident_name_and_mapped_unit() ->
 
         assert preview.status_code == 200
         body = preview.json()
-        assert body["matched_rows"] == 1
-        assert body["unresolved_rows"] == 0
-        assert body["rows"][0]["person_name"] == "Nasreen Begum K"
-        assert body["rows"][0]["match_method"] == "fuzzy_auto"
+        assert body["matched_rows"] == 0
+        assert body["unresolved_rows"] == 1
+        assert body["rows"][0]["person_name"] is None
+        assert body["rows"][0]["suggested_person_name"] == "Nasreen Begum K"
         assert body["rows"][0]["unit_name"] == "Unit 5"
         assert body["rows"][0]["unit_match_method"] == "unit_exact"
 
@@ -696,10 +697,10 @@ def test_unit_management_import_auto_matches_confident_name_and_mapped_unit() ->
             },
         )
         assert applied.status_code == 200
-        assert applied.json()["created_rows"] == 1
+        assert applied.json()["created_rows"] == 0
 
 
-def test_unit_management_import_auto_resolves_numbered_units_and_name_variants() -> None:
+def test_unit_management_import_keeps_numbered_unit_name_variants_for_review() -> None:
     with unit_client() as client:
         token = sign_in(client)
         headers = auth_headers(token)
@@ -718,22 +719,12 @@ def test_unit_management_import_auto_resolves_numbered_units_and_name_variants()
 
         assert preview.status_code == 200
         body = preview.json()
-        assert body["matched_rows"] == 3
-        assert body["auto_assignable_rows"] == 3
-        assert body["needs_review_rows"] == 0
-        assert {row["person_name"] for row in body["rows"]} == {
-            "Jessica Charles",
-            "Renita J",
-            "Sudharsan T R",
-        }
-        assert {row["unit_name"] for row in body["rows"]} == {
-            "General Unit 1",
-            "General Unit 2",
-            "General Unit 3",
-        }
-        assert all(row["unit_match_method"] == "unit_number_exact" for row in body["rows"])
-        assert all(row["row_action"] == "auto_assign" for row in body["rows"])
-        assert all(row["auto_decision_reason"] == "Ready for auto-assign" for row in body["rows"])
+        assert body["matched_rows"] == 0
+        assert body["needs_review_rows"] == 3
+        assert len(body["rows"]) == 3
+        assert all(row["person_id"] is None for row in body["rows"])
+        assert all(row["suggested_person_name"] for row in body["rows"])
+        assert all(row["row_action"] == "needs_review" for row in body["rows"])
 
         applied = client.post(
             "/api/v1/unit-management/import-apply?month=2026-06&replace_existing=true",
@@ -747,7 +738,7 @@ def test_unit_management_import_auto_resolves_numbered_units_and_name_variants()
             },
         )
         assert applied.status_code == 200
-        assert applied.json()["auto_assigned_rows"] == 3
+        assert applied.json()["auto_assigned_rows"] == 0
 
 
 def test_unit_management_import_structures_messy_excel_with_late_headers_dates_and_separators() -> None:
@@ -769,12 +760,12 @@ def test_unit_management_import_structures_messy_excel_with_late_headers_dates_a
 
         assert preview.status_code == 200
         body = preview.json()
-        assert body["matched_rows"] == 4
-        assert body["auto_assignable_rows"] == 4
+        assert body["matched_rows"] == 3
+        assert body["auto_assignable_rows"] == 3
         assert {row["person_name"] for row in body["rows"]} == {
             "Jessica Charles",
             "Renita J",
-            "Sudharsan T R",
+            None,
             "Nasreen Begum K",
         }
         assert {(row["starts_on"], row["ends_on"]) for row in body["rows"]} == {
@@ -785,7 +776,7 @@ def test_unit_management_import_structures_messy_excel_with_late_headers_dates_a
         assert all("header row 4" in row["source_context"] for row in body["rows"])
 
 
-def test_unit_management_import_auto_resolves_department_unit_aliases_and_known_name_variants() -> None:
+def test_unit_management_import_matches_unit_aliases_but_reviews_similar_member_names() -> None:
     with unit_client() as client:
         token = sign_in(client)
         headers = auth_headers(token)
@@ -804,12 +795,10 @@ def test_unit_management_import_auto_resolves_department_unit_aliases_and_known_
 
         assert preview.status_code == 200
         body = preview.json()
-        assert body["matched_rows"] == 2
-        assert body["auto_assignable_rows"] == 2
-        assert {row["person_name"] for row in body["rows"]} == {
-            "Calvin Lawrence Dalmeida",
-            "Angelin Aniruth",
-        }
+        assert body["matched_rows"] == 0
+        assert body["auto_assignable_rows"] == 0
+        assert all(row["person_id"] is None for row in body["rows"])
+        assert all(row["suggested_person_name"] for row in body["rows"])
         assert {row["unit_name"] for row in body["rows"]} == {
             "Dept of Neuroanaesthesia",
             "Cardiac OT",
@@ -839,7 +828,7 @@ def test_unit_management_import_learns_alias_and_unit_mapping_from_manual_resolu
         )
         assert first_preview.status_code == 200
         row_key = first_preview.json()["rows"][0]["row_key"]
-        resolutions = {row_key: {"person_id": calvin_id, "unit_id": cardiac_id}}
+        resolutions = {row_key: {"person_id": calvin_id, "unit_id": cardiac_id, "remember_person_alias": True, "remember_unit_alias": True}}
 
         applied = client.post(
             "/api/v1/unit-management/import-apply?month=2026-06&replace_existing=true",
@@ -895,15 +884,13 @@ def test_unit_management_import_auto_resolves_doubtful_unit_above_threshold_with
 
         assert preview.status_code == 200
         body = preview.json()
-        assert body["matched_rows"] == 1
-        assert body["auto_resolved_rows"] == 1
-        assert body["review_suggested_rows"] == 1
+        assert body["matched_rows"] == 0
+        assert body["auto_resolved_rows"] == 0
         row = body["rows"][0]
-        assert row["preview_status"] == "matched"
-        assert row["unit_name"] == "Main OT"
-        assert row["unit_match_method"] == "unit_fuzzy_auto"
-        assert row["review_suggested"] is True
-        assert any("Unit auto-resolved" in note for note in row["resolution_notes"])
+        assert row["preview_status"] == "needs_review"
+        assert row["unit_id"] is None
+        assert row["unit_match_method"] == "unit_fuzzy_candidate"
+        assert "Unresolved unit" in row["issues"]
 
 
 def test_unit_management_import_keeps_special_postings_without_unit() -> None:

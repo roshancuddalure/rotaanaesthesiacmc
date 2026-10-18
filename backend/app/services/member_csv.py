@@ -12,6 +12,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
 from app.models import MemberImportPreview, Person, PersonDesignation, UserAccount
+from app.services.normalization import member_key, member_lookup
 from app.services.member_profile import (
     ensure_unique_name, record_activity, revision, snapshot, validate_designations, validate_identity,
 )
@@ -26,7 +27,7 @@ HEADER_ALIASES = {
 
 
 def name_key(value: str) -> str:
-    return " ".join(value.casefold().split())
+    return member_key(value)
 
 
 def parse_file(content: bytes, mapping: dict[str, str] | None = None) -> tuple[list[str], list[dict]]:
@@ -81,12 +82,7 @@ def build_preview(db: Session, rows: list[dict], mode: str) -> list[dict]:
     people = list(db.scalars(select(Person).options(
         selectinload(Person.aliases), selectinload(Person.designations), selectinload(Person.call_level_changes))))
     by_id = {str(p.id): p for p in people}
-    names: dict[str, list[Person]] = {}
-    for person in people:
-        for label in {person.canonical_name, *(a.alias for a in person.aliases)}:
-            key = name_key(label)
-            if person not in names.setdefault(key, []):
-                names[key].append(person)
+    names = member_lookup(db, active_only=False)
     counts = Counter(name_key(r["values"].get("canonical_name", "")) for r in rows)
     result = []
     used_ids: set[str] = set()
@@ -95,7 +91,7 @@ def build_preview(db: Session, rows: list[dict], mode: str) -> list[dict]:
         name = values.get("canonical_name", "")
         key = name_key(name)
         errors = [row["parse_error"]] if row.get("parse_error") else []
-        matches = names.get(key, [])
+        owner = names.get(key)
         person = None
         if values.get("member_id"):
             try:
@@ -104,9 +100,9 @@ def build_preview(db: Session, rows: list[dict], mode: str) -> list[dict]:
                     errors.append("Member ID was not found")
             except ValueError:
                 errors.append("Member ID is not a valid UUID")
-        elif len(matches) == 1:
-            person = matches[0]
-        elif len(matches) > 1:
+        elif owner is not None:
+            person = owner
+        elif key in names:
             errors.append("Ambiguous name or alias; supply the member ID")
         if counts[key] > 1:
             errors.append("Repeated member name in this file; keep one row per member")

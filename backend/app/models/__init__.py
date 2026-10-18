@@ -5,6 +5,7 @@ from app.models.call_cluster import CallCluster, PersonCallClusterMembership
 from app.models.leave import LeaveRequest
 from app.models.imports import ImportBatch, ImportSourceRecord, ImportWarning
 from app.models.mappings import AdminMapping
+from app.models.normalization import ReferenceValue, NormalizationEvent, ImportReviewBatch
 from app.models.person import Person, PersonAlias, PersonDesignation
 from app.models.member_workspace import MemberActivity, MemberImportPreview, MemberCallLevelChange, LegacyPersonCallChange, LegacyPersonComment
 from app.models.posting import PersonPosting
@@ -26,6 +27,9 @@ from app.models.rules import RuleSetting, RuleVersion
 from app.models.unit import Unit, UnitCallMinimum
 
 __all__ = [
+    "ReferenceValue",
+    "NormalizationEvent",
+    "ImportReviewBatch",
     "MemberActivity",
     "MemberCallLevelChange",
     "LegacyPersonCallChange",

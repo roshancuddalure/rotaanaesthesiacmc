@@ -18,6 +18,8 @@ from app.api.v1.leave import router as leave_router
 from app.api.v1.members import router as members_router
 from app.api.v1.member_workspace import router as member_workspace_router
 from app.api.v1.metadata import router as metadata_router
+from app.api.v1.normalization import router as normalization_router
+from app.api.v1.import_review import router as import_review_router
 from app.api.v1.rota_assignments import router as rota_assignments_router
 from app.api.v1.rota_auto_fill import router as rota_auto_fill_router
 from app.api.v1.rota_candidates import router as rota_candidates_router
@@ -41,6 +43,8 @@ api_router.include_router(leave_router, prefix="/v1", tags=["leave"])
 api_router.include_router(members_router, prefix="/v1", tags=["members"])
 api_router.include_router(member_workspace_router, prefix="/v1", tags=["member workspace"])
 api_router.include_router(metadata_router, prefix="/v1", tags=["metadata"])
+api_router.include_router(normalization_router, prefix="/v1", tags=["normalization"])
+api_router.include_router(import_review_router, prefix="/v1", tags=["import review"])
 api_router.include_router(rota_assignments_router, prefix="/v1", tags=["rota assignments"])
 api_router.include_router(rota_auto_fill_router, prefix="/v1", tags=["rota auto fill"])
 api_router.include_router(rota_candidates_router, prefix="/v1", tags=["rota candidates"])

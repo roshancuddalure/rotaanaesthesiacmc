@@ -123,8 +123,8 @@ def compact_token(value: str) -> str:
 
 
 def normalize_unit_label(value: str) -> str:
-    normalized = normalize_label(value)
-    return re.sub(r"\b(unit|ot|campus|main|department|dept)\b", "", normalized).strip()
+    from app.services.normalization import unit_key
+    return unit_key(value)
 
 
 def unit_number_from_label(value: str) -> int | None:
@@ -682,10 +682,10 @@ def unit_lookup(db: Session) -> dict[str, Unit | None]:
     units = list(db.scalars(select(Unit).where(Unit.active_status == "active")))
     lookup: dict[str, Unit | None] = {}
     for unit in units:
-        for label in (unit.code, unit.name):
+        for label in (unit.code, unit.name, f"{unit.campus or ''} {unit.name}".strip()):
             for key in {normalize_label(label), normalize_unit_label(label)}:
                 existing = lookup.get(key)
-                if existing is not None and existing.id != unit.id:
+                if key in lookup and (existing is None or existing.id != unit.id):
                     lookup[key] = None
                 elif key:
                     lookup[key] = unit
@@ -710,7 +710,7 @@ def unit_lookup(db: Session) -> dict[str, Unit | None]:
         for label in extra_labels:
             key = normalize_label(label)
             existing = lookup.get(key)
-            if existing is not None and existing.id != unit.id:
+            if key in lookup and (existing is None or existing.id != unit.id):
                 lookup[key] = None
             else:
                 lookup[key] = unit
@@ -718,6 +718,7 @@ def unit_lookup(db: Session) -> dict[str, Unit | None]:
         select(AdminMapping).where(
             AdminMapping.mapping_type == "unit_label",
             AdminMapping.target_key.is_not(None),
+            AdminMapping.status == "reviewed",
         )
     ).all()
     unit_by_code = {unit.code.casefold(): unit for unit in units}
@@ -732,7 +733,7 @@ def unit_lookup(db: Session) -> dict[str, Unit | None]:
         for label in (mapping.source_label, mapping.target_key or "", mapping.target_label or ""):
             for key in {normalize_label(label), normalize_unit_label(label)}:
                 existing = lookup.get(key)
-                if existing is not None and existing.id != unit.id:
+                if key in lookup and (existing is None or existing.id != unit.id):
                     lookup[key] = None
                 elif key:
                     lookup[key] = unit
@@ -741,6 +742,8 @@ def unit_lookup(db: Session) -> dict[str, Unit | None]:
 
 def ranked_unit_candidates(raw_label: str, lookup: dict[str, Unit | None]) -> list[tuple[float, Unit]]:
     keys = {normalize_label(raw_label), normalize_unit_label(raw_label)}
+    if not any(keys):
+        return []
     scores_by_unit: dict[UUID, tuple[float, Unit]] = {}
     for candidate_key, unit in lookup.items():
         if unit is None or len(candidate_key) < 2:
@@ -753,6 +756,9 @@ def ranked_unit_candidates(raw_label: str, lookup: dict[str, Unit | None]) -> li
 
 
 def match_numbered_unit(raw_label: str, lookup: dict[str, Unit | None]) -> tuple[Unit | None, str | None, float | None]:
+    # Number-only fallbacks must never discard a supplied campus or other qualifiers.
+    if not re.fullmatch(r"(?:unit\s*)?\d{1,2}", normalize_unit_label(raw_label)):
+        return None, None, None
     raw_number = unit_number_from_label(raw_label)
     if raw_number is None:
         return None, None, None
@@ -784,10 +790,7 @@ def match_unit(raw_label: str, lookup: dict[str, Unit | None]) -> tuple[Unit | N
     ranked = ranked_unit_candidates(raw_label, lookup)
     if not ranked:
         return None, None, None
-    best_score, best_unit = ranked[0]
-    second_score = ranked[1][0] if len(ranked) > 1 else 0.0
-    if best_score >= UNIT_AUTO_MATCH_THRESHOLD and best_score - second_score >= UNIT_AUTO_MATCH_GAP:
-        return best_unit, "unit_fuzzy_auto", best_score
+    best_score, _best_unit = ranked[0]
     return None, "unit_fuzzy_candidate", best_score
 
 
@@ -860,9 +863,7 @@ def match_person_for_unit_import(
     if not ranked:
         return None, None, "low", suggestion, None
     best_score, best_person = ranked[0]
-    second_score = ranked[1][0] if len(ranked) > 1 else 0.0
-    if best_score >= MEMBER_AUTO_MATCH_THRESHOLD and best_score - second_score >= MEMBER_AUTO_MATCH_GAP:
-        return best_person, "fuzzy_auto", "high", None, best_score
+    suggestion = best_person if best_score >= .65 else suggestion
     return None, None, "suggestion" if suggestion else "low", suggestion, best_score
 
 
@@ -1013,6 +1014,8 @@ def make_preview_row(
             issues.append("Existing matching unit assignment already recorded")
     return {
         "row_key": row_key,
+        "remember_person_alias": bool(resolution.get("remember_person_alias")),
+        "remember_unit_alias": bool(resolution.get("remember_unit_alias")),
         "row_number": posting.row_index,
         "sheet_name": posting.sheet_name,
         "column_label": posting.column_label,
@@ -1282,9 +1285,9 @@ def learn_unit_mapping_from_row(db: Session, row: dict[str, object]) -> bool:
 
 def learn_from_applied_import_row(db: Session, row: dict[str, object]) -> int:
     learned = 0
-    if learn_person_alias_from_row(db, row):
+    if row.get("remember_person_alias") and learn_person_alias_from_row(db, row):
         learned += 1
-    if learn_unit_mapping_from_row(db, row):
+    if row.get("remember_unit_alias") and learn_unit_mapping_from_row(db, row):
         learned += 1
     return learned
 

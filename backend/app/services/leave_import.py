@@ -24,6 +24,7 @@ from sqlalchemy.orm import Session, selectinload
 
 from app.models import LeaveRequest, Person
 from app.services.leave import month_bounds
+from app.services.normalization import member_key, member_lookup, member_candidates
 
 NAME_COLUMNS = {
     "name",
@@ -223,9 +224,7 @@ PersonLookup = dict[str, Person | None]
 
 
 def normalize_name(value: str) -> str:
-    decomposed = unicodedata.normalize("NFKD", str(value))
-    ascii_text = "".join(character for character in decomposed if not unicodedata.combining(character))
-    return re.sub(r"[^a-z0-9]+", "", ascii_text.lower())
+    return member_key(value)
 
 
 def compact_token(value: Any) -> str:
@@ -252,7 +251,7 @@ def normalize_slot(value: Any) -> str:
     key = compact_token(value)
     if not key or key == "NAN":
         return "FULL_DAY"
-    return SLOT_ALIASES.get(key, "FULL_DAY")
+    return SLOT_ALIASES.get(key, key)
 
 
 def normalize_leave_type(value: Any) -> str:
@@ -358,43 +357,12 @@ def add_lookup_key(lookup: PersonLookup, key: str, person: Person) -> None:
 
 
 def person_lookup(db: Session) -> PersonLookup:
-    people = list(
-        db.scalars(
-            select(Person)
-            .where(Person.active_status == "active")
-            .options(selectinload(Person.aliases))
-        )
-    )
-    lookup: PersonLookup = {}
-    for person in people:
-        add_lookup_key(lookup, normalize_name(person.canonical_name), person)
-        add_lookup_key(lookup, normalize_name(strip_titles(person.canonical_name)), person)
-        for alias in person.aliases:
-            add_lookup_key(lookup, normalize_name(alias.alias), person)
-            add_lookup_key(lookup, normalize_name(strip_titles(alias.alias)), person)
-    return lookup
+    return member_lookup(db)
 
 
 def suggest_person(cleaned_name: str, lookup: PersonLookup) -> Person | None:
-    key = normalize_name(cleaned_name)
-    if not key:
-        return None
-    scores_by_person: dict[UUID, tuple[float, Person]] = {}
-    for candidate_key, person in lookup.items():
-        if person is None or len(candidate_key) < 3:
-            continue
-        score = SequenceMatcher(None, key, candidate_key).ratio()
-        previous = scores_by_person.get(person.id)
-        if previous is None or score > previous[0]:
-            scores_by_person[person.id] = (score, person)
-    ranked = sorted(scores_by_person.values(), key=lambda item: item[0], reverse=True)
-    if not ranked:
-        return None
-    best_score, best_person = ranked[0]
-    second_score = ranked[1][0] if len(ranked) > 1 else 0.0
-    if best_score >= 0.9 and best_score - second_score >= 0.04:
-        return best_person
-    return None
+    ranked = member_candidates(cleaned_name, lookup)
+    return ranked[0][1] if ranked and ranked[0][0] >= .9 else None
 
 
 def match_person(cleaned_name: str, lookup: PersonLookup) -> tuple[Person | None, str | None, str, Person | None]:
@@ -874,6 +842,14 @@ def preview_leave_import(db: Session, filename: str, content: bytes, month: str)
         rows.extend(parsed)
         source_formats.update(str(row["source_format"]) for row in parsed)
 
+    from app.services.reference_catalog import resolve_value
+    for row in rows:
+        for field in ["leave_type","leave_slot","status"]:
+            try:
+                row[field] = resolve_value(db,"leave_status" if field=="status" else field,str(row[field]))[0]
+            except ValueError as exc:
+                row["issues"].append(str(exc))
+                row["preview_status"] = "needs_review"
     mark_duplicates(rows)
     mark_existing_duplicates(db, rows, month)
     matched = sum(1 for row in rows if row["preview_status"] == "matched")

@@ -22,7 +22,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.domain.duty_types import DUTY_TYPES
-from app.models import CallCluster, RuleSetting, RuleVersion
+from app.models import CallCluster, ReferenceValue, RuleSetting, RuleVersion
 from app.services.call_clusters import ensure_default_call_clusters
 from app.services.rota_call_levels import normalize_call_level
 
@@ -248,14 +248,21 @@ def get_phase_one_rules(db: Session) -> tuple[RuleVersion, RotaPhaseOneRules]:
         )
         db.add(setting)
         db.commit()
-        return rule_version, rules
-    rules = RotaPhaseOneRules.model_validate(setting.value)
+    else:
+        rules = RotaPhaseOneRules.model_validate(setting.value)
     default_rules = default_phase_one_rules()
     default_rules_by_key = default_rules.duty_rules_by_key
     existing_keys = {rule.key for rule in rules.duty_rules}
     missing_rules = [rule for rule in default_rules.duty_rules if rule.key not in existing_keys]
     if missing_rules:
         rules.duty_rules.extend(missing_rules)
+    registered = list(db.scalars(select(ReferenceValue).where(ReferenceValue.kind == "duty_type")))
+    for value in registered:
+        configured = DutyRule.model_validate(
+            {**value.behavior, "key": value.key, "label": value.label, "active": value.active}
+        )
+        rules.duty_rules = [r for r in rules.duty_rules if r.key != value.key]
+        rules.duty_rules.append(configured)
     for rule in rules.duty_rules:
         if rule.key in INACTIVE_PAC_DUTY_KEYS:
             rule.active = False
@@ -263,11 +270,15 @@ def get_phase_one_rules(db: Session) -> tuple[RuleVersion, RotaPhaseOneRules]:
             default_rule = default_rules_by_key[rule.key]
             rule.label = default_rule.label
             rule.group = default_rule.group
-    rules.duty_rules.sort(key=lambda rule: DEFAULT_DUTY_ORDER.get(rule.key, len(DEFAULT_DUTY_ORDER)))
+    rules.duty_rules.sort(
+        key=lambda rule: DEFAULT_DUTY_ORDER.get(rule.key, len(DEFAULT_DUTY_ORDER))
+    )
     return rule_version, rules
 
 
-def save_phase_one_rules(db: Session, rules: RotaPhaseOneRules) -> tuple[RuleVersion, RotaPhaseOneRules]:
+def save_phase_one_rules(
+    db: Session, rules: RotaPhaseOneRules
+) -> tuple[RuleVersion, RotaPhaseOneRules]:
     """Validate and overwrite the single rule setting in place (no history kept - handbook B11)."""
     ensure_default_call_clusters(db)
     validate_phase_one_rules(db, rules)
@@ -288,6 +299,19 @@ def save_phase_one_rules(db: Session, rules: RotaPhaseOneRules) -> tuple[RuleVer
         )
         db.add(setting)
     setting.value = rules.model_dump(mode="json")
+    registered = {
+        r.key: r
+        for r in db.scalars(select(ReferenceValue).where(ReferenceValue.kind == "duty_type"))
+    }
+    for rule in rules.duty_rules:
+        if rule.key in registered:
+            value = registered[rule.key]
+            value.behavior, value.label, value.active = (
+                rule.model_dump(mode="json"),
+                rule.label,
+                rule.active,
+            )
+            value.version += 1
     db.commit()
     db.refresh(rule_version)
     return rule_version, rules
@@ -295,16 +319,23 @@ def save_phase_one_rules(db: Session, rules: RotaPhaseOneRules) -> tuple[RuleVer
 
 def validate_phase_one_rules(db: Session, rules: RotaPhaseOneRules) -> None:
     cluster_keys = set(db.scalars(select(CallCluster.key)))
+    registered_keys = set(
+        db.scalars(select(ReferenceValue.key).where(ReferenceValue.kind == "duty_type"))
+    )
     for rule in rules.duty_rules:
-        if rule.key not in VALID_DUTY_KEYS:
+        if rule.key not in VALID_DUTY_KEYS | registered_keys:
             raise ValueError(f"Unknown duty rule: {rule.key}")
         if rule.group not in VALID_DUTY_GROUPS:
             raise ValueError(f"Unknown duty group for {rule.label}: {rule.group}")
 
         normalized_call_levels = [normalize_call_level(item) for item in rule.allowed_call_levels]
-        invalid_call_levels = sorted({item for item in normalized_call_levels if item not in VALID_CALL_LEVELS})
+        invalid_call_levels = sorted(
+            {item for item in normalized_call_levels if item not in VALID_CALL_LEVELS}
+        )
         if invalid_call_levels:
-            raise ValueError(f"Unknown allowed call level for {rule.label}: {', '.join(invalid_call_levels)}")
+            raise ValueError(
+                f"Unknown allowed call level for {rule.label}: {', '.join(invalid_call_levels)}"
+            )
         rule.allowed_call_levels = normalized_call_levels
 
         for field_name, values in (
@@ -313,4 +344,6 @@ def validate_phase_one_rules(db: Session, rules: RotaPhaseOneRules) -> None:
         ):
             unknown_keys = sorted({value for value in values if value not in cluster_keys})
             if unknown_keys:
-                raise ValueError(f"Unknown {field_name} for {rule.label}: {', '.join(unknown_keys)}")
+                raise ValueError(
+                    f"Unknown {field_name} for {rule.label}: {', '.join(unknown_keys)}"
+                )

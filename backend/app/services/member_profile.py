@@ -6,7 +6,7 @@ from datetime import date
 from typing import Callable, TypeVar
 
 from fastapi import HTTPException
-from sqlalchemy import func, select, text
+from sqlalchemy import select, text
 from sqlalchemy.orm import Session, selectinload
 
 from app.models import MemberActivity, Person, PersonAlias, PersonDesignation, UserAccount
@@ -101,16 +101,16 @@ def record_activity(db: Session, person: Person, operator: UserAccount, action: 
 
 
 def ensure_unique_name(db: Session, name: str, person: Person | None = None) -> None:
+    from app.services.normalization import member_key
+    key = member_key(name)
     # Serialize case-insensitive name/alias claims across concurrent member edits.
     # The existing database has case-sensitive uniqueness constraints.
     if db.get_bind().dialect.name == "postgresql":
         db.execute(text("SELECT pg_advisory_xact_lock(hashtext(:identity))"),
-                   {"identity": "member-name:" + name.casefold()})
-    existing = db.scalar(select(Person).where(func.lower(Person.canonical_name) == name.lower()))
-    alias = db.scalar(select(PersonAlias).where(func.lower(PersonAlias.alias) == name.lower()))
-    if (existing and (not person or existing.id != person.id)) or (
-        alias and (not person or alias.person_id != person.id)
-    ):
+                   {"identity": "member-name:" + key})
+    owners = {p.id for p in db.scalars(select(Person)) if member_key(p.canonical_name) == key}
+    owners.update(a.person_id for a in db.scalars(select(PersonAlias)) if member_key(a.alias) == key)
+    if owners - ({person.id} if person else set()):
         raise HTTPException(409, f'Name or alias "{name}" already belongs to another member')
 
 

@@ -1,0 +1,499 @@
+import { request, type DepartmentMember } from "./services/api";
+import { workspaceDialog } from "./member-workspace";
+import { openUnitRegistry } from "./reference-workspace";
+
+type Row = Record<string, any>;
+type Preview = {
+  id: string;
+  kind: string;
+  month: string;
+  mode: string;
+  headers: string[];
+  fields: string[];
+  rows: Row[];
+  replacement_scope: Row[];
+};
+const esc = (value: unknown) =>
+  String(value ?? "").replace(
+    /[&<>"']/g,
+    (c) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[
+        c
+      ]!,
+  );
+
+export async function createMemberInline(
+  name: string,
+  done: (member: DepartmentMember) => void,
+) {
+  const dialog = workspaceDialog("Create department member", "mw-import");
+  dialog.innerHTML = `<header class="mw-header"><h2>Create department member</h2><button type="button" data-close aria-label="Close member creation">×</button></header><form class="mw-content"><p>Check the suggested existing members before creating a new identity. This creates the member; the import still requires review and apply.</p><label>Full member name<input name="canonical_name" required maxlength="255" value="${esc(name)}"></label><section data-existing-members aria-live="polite"></section><label>Default call level<select name="call_level"><option value="">Unassigned</option>${["1ST_CALL", "2ND_CALL", "3RD_CALL", "CO_4TH_CALL", "4TH_CALL", "5TH_CALL"].map((key) => `<option>${key}</option>`).join("")}</select></label><p data-error class="mw-error" role="alert"></p><button class="primary" type="submit">Create member</button></form>`;
+  let busy = false;
+  let memberDraftDirty = false;
+  let lookupSequence = 0;
+  const close = () => {
+    if (busy || memberDraftDirty && !confirm("Discard this new member draft?")) return;
+    dialog.close();
+    dialog.remove();
+  };
+  dialog.querySelector("[data-close]")!.addEventListener("click", close);
+  dialog.addEventListener("cancel", (e) => {
+    e.preventDefault();
+    close();
+  });
+  async function checkExisting() {
+    const current = ++lookupSequence;
+    const nameInput=dialog.querySelector<HTMLInputElement>("[name=canonical_name]")!;
+    if (!nameInput.value.trim()) return;
+    try {
+      const result=await request<Row>("/api/v1/normalization/members/resolve",{method:"POST",body:JSON.stringify({name:nameInput.value})});
+      if(current!==lookupSequence || !dialog.open)return;
+      const root=dialog.querySelector<HTMLElement>("[data-existing-members]")!;
+      root.innerHTML=result.candidates.length?`<h3>Check existing members</h3>${result.candidates.map((c:Row)=>`<article class="mw-history"><strong>${esc(c.name)}</strong><p>${esc(c.status)} ? ${esc(c.call_level || "Unassigned")} ? ${esc(c.designation || "No current designation")}</p>${c.status === "active" ? `<button type="button" data-use-existing="${c.id}">Use this member</button>` : `<button type="button" data-review-existing="${c.id}">Review / restore member</button>`}</article>`).join("")}`:"<p>No matching identities found.</p>";
+      root.querySelectorAll<HTMLButtonElement>("[data-use-existing]").forEach(button=>button.onclick=async()=>{const members=await request<DepartmentMember[]>("/api/v1/admin/members");const member=members.find(m=>m.id===button.dataset.useExisting);if(member){memberDraftDirty=false;close();done(member);}});
+      root.querySelectorAll<HTMLButtonElement>("[data-review-existing]").forEach(button=>button.onclick=async()=>{const {openMemberWorkspace}=await import("./member-workspace");await openMemberWorkspace(button.dataset.reviewExisting!,true,()=>{void checkExisting();},[],"details","active");});
+    } catch(error) {if(dialog.open)dialog.querySelector("[data-error]")!.textContent=(error as Error).message;}
+  }
+  dialog.querySelector<HTMLFormElement>("form")!.oninput=()=>{memberDraftDirty=true;};
+  dialog.querySelector<HTMLInputElement>("[name=canonical_name]")!.onblur=()=>void checkExisting();
+  if(name)void checkExisting();
+  dialog.querySelector<HTMLFormElement>("form")!.onsubmit = async (e) => {
+    e.preventDefault();
+    if (busy) return;
+    busy = true;
+    const values = Object.fromEntries(
+      new FormData(e.target as HTMLFormElement),
+    );
+    try {
+      const member = await request<DepartmentMember>("/api/v1/admin/members", {
+        method: "POST",
+        body: JSON.stringify({
+          ...values,
+          call_level: values.call_level || null,
+        }),
+      });
+      busy = false;
+      memberDraftDirty = false;
+      close();
+      done(member);
+    } catch (error) {
+      dialog.querySelector("[data-error]")!.textContent = (
+        error as Error
+      ).message;
+    } finally {
+      busy = false;
+    }
+  };
+}
+
+export async function openOperationalImport(
+  kind: "units" | "leave",
+  month: string,
+  updated: () => void,
+  admin: boolean,
+) {
+  const dialog = workspaceDialog(
+    kind === "units" ? "Import unitwise assignments" : "Import leave",
+    "mw-import operational-import",
+  );
+  let members: DepartmentMember[] = [];
+  let units: Row[] = [];
+  let preview: Preview | undefined;
+  let file: File | undefined;
+  let busy = false;
+  let finished = false;
+  let previewDirty = true;
+  let draftVersion = 0;
+  let columns:
+    | { headers: string[]; fields: string[]; suggested: Record<string, string> }
+    | undefined;
+  const corrections: Record<string, Row> = {};
+  const mapping: Record<string, string> = {};
+  const repeated: Record<string, Record<string, string>> = {
+    members: {},
+    units: {},
+  };
+  const excluded = new Set<string>();
+  let page = 0;
+  const title = kind === "units" ? "Unitwise assignments" : "Leave";
+  dialog.innerHTML = `<header class="mw-header"><div><h2>Import ${title.toLowerCase()}</h2><p>Upload → Map → Normalize → Resolve → Review → Apply</p></div><button data-close type="button" aria-label="Close import review">×</button></header><div class="mw-content"><a href="/templates/${kind === "units" ? "unitwise-assignments" : "leave-records"}.csv" download>Download ${kind === "units" ? "unitwise" : "leave"} CSV template</a><details class="mw-csv-help"><summary>CSV examples</summary><p>Use one row per dated record. Replace the illustrative member and unit names with your department records.</p><pre>${kind === "units" ? "member_name,unit_name,posting_type,starts_on,ends_on\nDr Example Member,Main Unit IV,2ND_CALL,2026-10-01,2026-10-31" : "member_name,starts_on,ends_on,leave_type,leave_slot,status\nDr Example Member,2026-10-03,2026-10-04,CL,FULL_DAY,approved"}</pre></details><form data-settings><label>Month<input type="month" name="month" required value="${esc(month)}"></label><label>File (up to 5 MB and 5,000 rows)<input type="file" required accept="${kind === "units" ? ".csv,.xlsx,.xlsm,.txt" : ".csv,.xlsx,.xls"}"></label><label>Operation<select name="mode"><option value="append">Append new records</option><option value="update_matching">Update matching member/date records</option><option value="replace_month">Replace imported records in this month</option></select></label><label>Dates in this file<select name="date_format"><option value="auto">ISO / detect unambiguous dates</option><option value="DMY">Day / month / year</option><option value="MDY">Month / day / year</option></select></label><p>Ambiguous dates need an explicit format. Blank unitwise dates use the selected month. Leave needs a start date. Replacement preserves records outside the month${kind === "leave" ? " and manually entered leave" : ""}.</p><div data-mapping></div><button class="primary" type="submit">Preview and normalize</button></form><p data-message role="status"></p><section data-review></section></div>`;
+  const close = () => {
+    if (
+      busy ||
+      (preview &&
+        !finished &&
+        !confirm("Close this review? No import changes have been applied."))
+    )
+      return;
+    dialog.close();
+    dialog.remove();
+  };
+  dialog.querySelector("[data-close]")!.addEventListener("click", close);
+  dialog.addEventListener("cancel", (e) => {
+    e.preventDefault();
+    close();
+  });
+  const message = dialog.querySelector<HTMLElement>("[data-message]")!;
+  async function loadOptions() {
+    [members, units] = await Promise.all([
+      request<DepartmentMember[]>("/api/v1/admin/members"),
+      request<Row[]>("/api/v1/normalization/units"),
+    ]);
+  }
+  try {
+    await loadOptions();
+  } catch (error) {
+    message.textContent = (error as Error).message;
+  }
+  function dirtyPreview() {
+    draftVersion++;
+    previewDirty = true;
+    dialog
+      .querySelector<HTMLButtonElement>("[data-apply]")
+      ?.setAttribute("disabled", "");
+    message.textContent = "Changes need a refreshed preview before applying.";
+  }
+  dialog.querySelector<HTMLFormElement>("[data-settings]")!.onchange =
+    dirtyPreview;
+  const fileInput = dialog.querySelector<HTMLInputElement>("input[type=file]")!;
+  fileInput.onchange = async () => {
+    file = fileInput.files?.[0];
+    preview = undefined;
+    columns = undefined;
+    previewDirty = true;
+    Object.keys(corrections).forEach((k) => delete corrections[k]);
+    Object.keys(mapping).forEach((k) => delete mapping[k]);
+    excluded.clear();
+    page = 0;
+    dialog.querySelector("[data-review]")!.innerHTML = "";
+    dialog.querySelector("[data-mapping]")!.innerHTML = "";
+    if (!file) return;
+    const inspectedFile = file;
+    const upload = new FormData();
+    upload.append("file", file);
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL ?? ""}/api/v1/import-review/columns`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("duty_rota_auth_token") || ""}`,
+          },
+          body: upload,
+        },
+      );
+      const result = await response.json();
+      if (!response.ok)
+        throw new Error(
+          typeof result.detail === "string"
+            ? result.detail
+            : "Unable to inspect file columns",
+        );
+      if (file !== inspectedFile || !dialog.open) return;
+      columns = result;
+      Object.assign(mapping, columns!.suggested);
+      renderMapping();
+      message.textContent = columns!.headers.length
+        ? "Check column mappings, then preview the records."
+        : "Section-style file: preview to review extracted records.";
+    } catch (error) {
+      message.textContent = (error as Error).message;
+    }
+  };
+  async function runPreview() {
+    if (!file || busy) return;
+    busy = true;
+    const submittedVersion = draftVersion;
+    message.textContent = "Parsing and normalizing records…";
+    const values = new FormData(
+      dialog.querySelector<HTMLFormElement>("[data-settings]")!,
+    );
+    const data = new FormData();
+    data.append("file", file);
+    data.append("month", String(values.get("month")));
+    data.append("mode", String(values.get("mode")));
+    data.append(
+      "settings_json",
+      JSON.stringify({
+        date_format: values.get("date_format"),
+        mapping,
+        corrections,
+        repeated,
+        excluded: [...excluded],
+      }),
+    );
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL ?? ""}/api/v1/import-review/${kind}/preview`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("duty_rota_auth_token") || ""}`,
+          },
+          body: data,
+        },
+      );
+      const result = await response.json();
+      if (!response.ok)
+        throw new Error(
+          typeof result.detail === "string"
+            ? result.detail
+            : "Unable to preview this file",
+        );
+      if (submittedVersion !== draftVersion || !dialog.open) throw new Error("Inputs changed while the preview was loading. Refresh the preview.");
+      preview = result;
+      finished = false;
+      previewDirty = false;
+      renderReview();
+      renderMapping();
+      message.textContent = `${preview!.rows.length} rows normalized. Nothing has been applied.`;
+    } catch (error) {
+      message.textContent = (error as Error).message;
+    } finally {
+      busy = false;
+    }
+  }
+  dialog.querySelector<HTMLFormElement>("[data-settings]")!.onsubmit = (e) => {
+    e.preventDefault();
+    void runPreview();
+  };
+  function renderMapping() {
+    const headerInfo = columns || preview;
+    if (!headerInfo?.headers.length) return;
+    const root = dialog.querySelector("[data-mapping]")!;
+    root.innerHTML = `<details open><summary>Map columns</summary><p>Change a column mapping and preview again.</p>${headerInfo.headers.map((header, index) => `<label>${esc(header)}<select data-map="${index}"><option value="">Automatic / ignore unknown</option>${headerInfo.fields.map((field) => `<option value="${field}" ${mapping[header] === field ? "selected" : ""}>${esc(field.replace(/_/g, " "))}</option>`).join("")}</select></label>`).join("")}</details>`;
+    root.querySelectorAll<HTMLSelectElement>("[data-map]").forEach(
+      (select) =>
+        (select.onchange = () => {
+          const header = headerInfo.headers[Number(select.dataset.map)];
+          if (select.value) mapping[header] = select.value;
+          else delete mapping[header];
+          dirtyPreview();
+        }),
+    );
+  }
+  function renderReview() {
+    if (!preview) return;
+    const root = dialog.querySelector<HTMLElement>("[data-review]")!;
+    const shown = preview.rows.slice(page * 25, (page + 1) * 25);
+    root.innerHTML = `<h3>Resolve and review</h3><p>${preview.rows.filter((r) => !r.issues.length).length} ready · ${preview.rows.filter((r) => r.issues.length).length} need review · ${excluded.size} excluded</p>${preview.mode === "replace_month" ? `<details><summary>${preview.replacement_scope.length} existing records affected by replacement</summary>${preview.replacement_scope.map((r) => `<p>${esc(members.find((m) => m.id === r.person_id)?.canonical_name || r.person_id)} · ${esc(r.starts_on)} to ${esc(r.ends_on || "Ongoing")}</p>`).join("")}</details>` : ""}${shown
+      .map((row) => {
+        const value = { ...row.values, ...corrections[row.key] };
+        return `<article class="mw-history" data-review-row="${esc(row.key)}"><label><input type="checkbox" data-include="${esc(row.key)}" ${excluded.has(row.key) ? "" : "checked"}> Include ${esc(row.source.sheet)} row ${esc(row.source.row)}</label><strong>${esc(row.action.replace(/_/g, " "))}</strong><p>${row.issues.map(esc).join(" · ")}</p><p>${row.warnings.map(esc).join(" · ")}</p><p>Original name: ${esc(row.values.member_name)} · ${esc(row.person_match.reason)}</p><label>Find member<input type="search" data-find-member="${esc(row.key)}" placeholder="Name, call level or designation"></label><label>Member<select data-row="${esc(row.key)}" data-field="person_id"><option value="">Select member</option>${members
+          .filter((m) => m.active_status === "active")
+          .map(
+            (m) =>
+              `<option value="${m.id}" ${m.id === (value.person_id || row.after.person_id) ? "selected" : ""}>${esc(m.canonical_name)} · ${esc(m.call_level || "Unassigned")} · ${esc(m.designations.slice(-1)[0]?.designation || "Position missing")}</option>`,
+          )
+          .join(
+            "",
+          )}</select></label>${row.person_match.candidates?.length ? `<p>Possible matches: ${row.person_match.candidates.map((c: Row) => `${esc(c.name)} (${esc(c.status)}, ${esc(c.designation || "No designation")}, ${esc(c.units?.join(", ") || "No units")})`).join("; ")}</p>` : ""}${admin ? `<button type="button" data-create-member="${esc(row.key)}">Create member</button>` : ""}<label><input type="checkbox" data-row="${esc(row.key)}" data-field="remember_person_alias" ${value.remember_person_alias ? "checked" : ""}> Remember this spelling as an approved alias</label><button type="button" data-repeat-member="${esc(row.key)}">Use this member for repeated occurrences of this name</button>${
+          kind === "units"
+            ? `<label>Find unit<input type="search" data-find-unit="${esc(row.key)}" placeholder="Unit name or campus"></label><label>Unit<select data-row="${esc(row.key)}" data-field="unit_id"><option value="">No unit / select unit</option>${units
+                .filter((u) => u.active_status === "active")
+                .map(
+                  (u) =>
+                    `<option value="${u.id}" ${u.id === (value.unit_id || row.after.unit_id) ? "selected" : ""}>${esc(u.name)} · ${esc(u.campus || "Campus not specified")}</option>`,
+                )
+                .join(
+                  "",
+                )}</select></label>${admin ? `<button type="button" data-create-unit="${esc(row.key)}">Create unit</button>` : ""}<label>Posting / call type<input data-row="${esc(row.key)}" data-field="posting_type" value="${esc(value.posting_type)}"></label><label><input type="checkbox" data-row="${esc(row.key)}" data-field="remember_unit_alias" ${value.remember_unit_alias ? "checked" : ""}> Remember this unit label</label><button type="button" data-repeat-unit="${esc(row.key)}">Use this unit for repeated labels</button>`
+            : `${["leave_type", "leave_slot", "status"].map((field) => `<label>${esc(field.replace(/_/g, " "))}<input data-row="${esc(row.key)}" data-field="${field}" value="${esc(value[field])}"></label>`).join("")}`
+        }<label>Start date<input data-row="${esc(row.key)}" data-field="starts_on" value="${esc(value.starts_on)}" placeholder="YYYY-MM-DD"></label><label>End date<input data-row="${esc(row.key)}" data-field="ends_on" value="${esc(value.ends_on)}" placeholder="YYYY-MM-DD"></label><details><summary>Original and proposed changes</summary><dl><dt>Member</dt><dd>${esc(row.values.member_name)} ? ${esc(row.person_match.canonical_name || "Needs selection")}<small>${esc(row.person_match.reason)}</small></dd>${row.unit_match ? `<dt>Unit</dt><dd>${esc(row.values.unit_name)} ? ${esc(row.unit_match.name || "Needs selection")}</dd>` : ""}${(row.normalizations || []).map((change: Row) => `<dt>${esc(change.field.replace(/_/g, " "))}</dt><dd>${esc(change.original || "Blank")} ? ${esc(change.proposed || "Blank")}<small>${esc(change.reason)}</small></dd>`).join("")}</dl></details></article>`;
+      })
+      .join(
+        "",
+      )}<div class="registry-actions"><button type="button" data-page="-1" ${page === 0 ? "disabled" : ""}>Previous rows</button><span>Page ${page + 1} of ${Math.ceil(preview.rows.length / 25)}</span><button type="button" data-page="1" ${(page + 1) * 25 >= preview.rows.length ? "disabled" : ""}>Next rows</button></div><label><input type="checkbox" data-acknowledge> I reviewed the affected duties and replacement scope</label><div class="registry-actions"><button type="button" data-refresh>Refresh normalized preview</button><button type="button" data-report>Download row report</button><button type="button" class="primary" data-apply ${previewDirty ? "disabled" : ""}>Apply reviewed rows</button></div>`;
+    root.querySelectorAll<HTMLInputElement>("[data-find-member], [data-find-unit]").forEach(input=>input.oninput=()=>{
+      const key=input.dataset.findMember || input.dataset.findUnit!;
+      const field=input.dataset.findMember ? "person_id" : "unit_id";
+      const select=Array.from(root.querySelectorAll<HTMLSelectElement>("select[data-row]")).find(el=>el.dataset.row===key && el.dataset.field===field);
+      const query=input.value.toLowerCase();
+      if(select)Array.from(select.options).forEach(option=>option.hidden=Boolean(option.value && !option.selected && !option.text.toLowerCase().includes(query)));
+    });
+    root
+      .querySelectorAll<HTMLInputElement | HTMLSelectElement>("[data-row]")
+      .forEach(
+        (input) =>
+          (input.onchange = () => {
+            (corrections[input.dataset.row!] ??= {})[input.dataset.field!] =
+              input instanceof HTMLInputElement && input.type === "checkbox"
+                ? input.checked
+                : input.value;
+            dirtyPreview();
+          }),
+      );
+    root.querySelectorAll<HTMLInputElement>("[data-include]").forEach(
+      (input) =>
+        (input.onchange = () => {
+          if (input.checked) excluded.delete(input.dataset.include!);
+          else excluded.add(input.dataset.include!);
+          dirtyPreview();
+        }),
+    );
+    root.querySelectorAll<HTMLButtonElement>("[data-page]").forEach(
+      (b) =>
+        (b.onclick = () => {
+          page += Number(b.dataset.page);
+          renderReview();
+        }),
+    );
+    root
+      .querySelector("[data-refresh]")!
+      .addEventListener("click", () => void runPreview());
+    root.querySelectorAll<HTMLButtonElement>("[data-create-member]").forEach(
+      (button) =>
+        (button.onclick = () => {
+          const row = preview!.rows.find(
+            (r) => r.key === button.dataset.createMember,
+          )!;
+          void createMemberInline(row.values.member_name, (member) => {
+            members.push(member);
+            (corrections[row.key] ??= {}).person_id = member.id;
+            renderReview();
+            dirtyPreview();
+          });
+        }),
+    );
+    root.querySelectorAll<HTMLButtonElement>("[data-create-unit]").forEach(
+      (button) =>
+        (button.onclick = () => {
+          const key = button.dataset.createUnit!;
+          void openUnitRegistry(
+            (unit) => {
+              if (!unit) return;
+              void loadOptions().then(() => {
+                (corrections[key] ??= {}).unit_id = unit.id;
+                renderReview();
+                dirtyPreview();
+              });
+            },
+            undefined,
+            true,
+          );
+        }),
+    );
+    root
+      .querySelectorAll<HTMLButtonElement>(
+        "[data-repeat-member],[data-repeat-unit]",
+      )
+      .forEach(
+        (button) =>
+          (button.onclick = () => {
+            const member = Boolean(button.dataset.repeatMember);
+            const key =
+              button.dataset.repeatMember || button.dataset.repeatUnit!;
+            const row = preview!.rows.find((r) => r.key === key)!;
+            const selected =
+              (corrections[key] || {})[member ? "person_id" : "unit_id"] ||
+              row.after[member ? "person_id" : "unit_id"];
+            if (!selected) {
+              message.textContent = "Select a member or unit first.";
+              return;
+            }
+            if (
+              !confirm(
+                "Apply this selection to repeated occurrences of the same raw label in this file?",
+              )
+            )
+              return;
+            const raw = member ? row.values.member_name : row.values.unit_name;
+            preview!.rows
+              .filter(
+                (r) =>
+                  (member ? r.values.member_name : r.values.unit_name) === raw,
+              )
+              .forEach(
+                (r) =>
+                  ((corrections[r.key] ??= {})[
+                    member ? "person_id" : "unit_id"
+                  ] = selected),
+              );
+            dirtyPreview();
+          }),
+      );
+    const downloadReport = () => {
+      const cell = (v: unknown) =>
+        `"${String(v ?? "")
+          .replace(/^[\s]*[=+@-]|^[\t\r\n]/, "'$&")
+          .replace(/"/g, '""')}"`;
+      const content = [
+        [
+          "sheet",
+          "row",
+          "name",
+          "action",
+          "issues",
+          "warnings",
+          "original_values",
+          "proposed_values",
+          "excluded",
+        ],
+        ...preview!.rows.map((r) => [
+          r.source.sheet,
+          r.source.row,
+          r.values.member_name,
+          r.action,
+          r.issues.join("; "),
+          r.warnings.join("; "),
+          JSON.stringify(r.original),
+          JSON.stringify(r.after),
+          excluded.has(r.key) ? "Yes" : "No",
+        ]),
+      ]
+        .map((r) => r.map(cell).join(","))
+        .join("\r\n");
+      const url = URL.createObjectURL(
+        new Blob(["\ufeff", content], { type: "text/csv;charset=utf-8" }),
+      );
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${kind}-normalization-report.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    };
+    root
+      .querySelector("[data-report]")!
+      .addEventListener("click", downloadReport);
+    root.querySelector("[data-apply]")!.addEventListener("click", async () => {
+      if (busy || previewDirty) return;
+      const acknowledge = (
+        root.querySelector("[data-acknowledge]") as HTMLInputElement
+      ).checked;
+      if (preview!.mode === "replace_month" && !acknowledge) {
+        message.textContent =
+          "Review and acknowledge the replacement scope first.";
+        return;
+      }
+      if (
+        !confirm(
+          `Apply ${preview!.rows.length - excluded.size} reviewed rows for ${preview!.month}?`,
+        )
+      )
+        return;
+      busy = true;
+      try {
+        const result = await request<Row>(
+          `/api/v1/import-review/${preview!.id}/apply`,
+          {
+            method: "POST",
+            body: JSON.stringify({
+              excluded: [...excluded],
+              acknowledge_warnings: acknowledge,
+            }),
+          },
+        );
+        finished = true;
+        root.innerHTML = `<h3>Import complete</h3><p>${result.created} created · ${result.updated} updated · ${result.unchanged} unchanged · ${result.excluded} excluded · ${result.removed} previous records replaced</p><p>Batch ${esc(result.batch_id)}</p><button type="button" data-download-completed-report>Download applied / excluded row report</button>`;
+        root
+          .querySelector("[data-download-completed-report]")!
+          .addEventListener("click", downloadReport);
+        updated();
+      } catch (error) {
+        message.textContent = (error as Error).message;
+      } finally {
+        busy = false;
+      }
+    });
+  }
+}

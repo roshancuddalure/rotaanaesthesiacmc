@@ -18,6 +18,11 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
+from app.api.v1.auth import current_user, require_admin
+from app.models import UserAccount, Unit
+from app.services.normalization import display_text, label_key, unit_key
+from app.services.reference_catalog import catalog
+from app.services.reference_registry import audit, lock_namespace
 from app.domain.duty_types import DUTY_TYPES
 from app.models.mappings import AdminMapping
 from app.services.imports import (
@@ -27,7 +32,7 @@ from app.services.imports import (
     normalize_label,
 )
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(current_user)])
 
 REPO_DIR = Path(__file__).resolve().parents[4]
 HISTORICAL_DIR = REPO_DIR / "data" / "source" / "historical"
@@ -88,6 +93,35 @@ def mapping_to_read(mapping: AdminMapping) -> AdminMappingRead:
 
 def default_status(target_key: str | None) -> str:
     return "suggested" if target_key else "needs_review"
+
+
+def validate_mapping(db, kind, source, target, status, identity=None):
+    lock_namespace(db, "mapping:" + kind)
+    if not display_text(source) or len(source) > 255:
+        raise HTTPException(422, "Enter an imported label (maximum 255 characters)")
+    if status not in {"reviewed", "suggested", "needs_review"}:
+        raise HTTPException(422, "Choose a supported mapping review state")
+    if status == "reviewed":
+        if kind == "unit_label":
+            targets = {str(u.id) for u in db.scalars(select(Unit))} | {
+                u.code for u in db.scalars(select(Unit))
+            }
+        else:
+            targets = {
+                i["key"]
+                for i in catalog(db, "duty_type" if kind == "duty_label" else "posting_type")
+                if i["active"]
+            }
+        if target not in targets:
+            raise HTTPException(
+                422, "Select an existing active destination; create its definition first"
+            )
+    normalize = unit_key if kind == "unit_label" else label_key
+    for existing in db.scalars(select(AdminMapping).where(AdminMapping.mapping_type == kind)):
+        if existing.id != identity and normalize(existing.source_label) == normalize(source):
+            raise HTTPException(
+                409, "An equivalent imported label already has a mapping; edit it instead"
+            )
 
 
 def collect_rota_duty_labels() -> set[str]:
@@ -166,11 +200,12 @@ def seed_mapping(
 
 
 @router.get("/admin/mappings/options")
-def get_mapping_options() -> MappingOptions:
+def get_mapping_options(db: Session = Depends(get_db)) -> MappingOptions:
     return MappingOptions(
         duty_types=[
-            {"key": duty_type.key, "label": duty_type.label}
-            for duty_type in sorted(DUTY_TYPES, key=lambda duty: duty.label)
+            {"key": item["key"], "label": item["label"]}
+            for item in catalog(db, "duty_type")
+            if item["active"]
         ],
         mapping_types=["duty_label", "unit_label", "posting_label"],
     )
@@ -193,7 +228,15 @@ def list_mappings(
 
 
 @router.post("/admin/mappings")
-def create_mapping(payload: AdminMappingCreate, db: Session = Depends(get_db)) -> AdminMappingRead:
+def create_mapping(
+    payload: AdminMappingCreate,
+    db: Session = Depends(get_db),
+    operator: UserAccount = Depends(require_admin),
+) -> AdminMappingRead:
+    payload.source_label = display_text(payload.source_label)
+    validate_mapping(
+        db, payload.mapping_type, payload.source_label, payload.target_key, payload.status
+    )
     existing = db.scalar(
         select(AdminMapping).where(
             AdminMapping.mapping_type == payload.mapping_type,
@@ -212,6 +255,14 @@ def create_mapping(payload: AdminMappingCreate, db: Session = Depends(get_db)) -
         notes=payload.notes,
     )
     db.add(mapping)
+    db.flush()
+    audit(
+        db,
+        operator,
+        "mapping_created",
+        mapping.id,
+        {"after": mapping_to_read(mapping).model_dump(mode="json")},
+    )
     db.commit()
     db.refresh(mapping)
     return mapping_to_read(mapping)
@@ -222,22 +273,42 @@ def update_mapping(
     mapping_id: UUID,
     payload: AdminMappingUpdate,
     db: Session = Depends(get_db),
+    operator: UserAccount = Depends(require_admin),
 ) -> AdminMappingRead:
     mapping = db.get(AdminMapping, mapping_id)
     if mapping is None:
         raise HTTPException(status_code=404, detail="Mapping not found")
 
+    validate_mapping(
+        db,
+        mapping.mapping_type,
+        mapping.source_label,
+        payload.target_key,
+        payload.status,
+        mapping.id,
+    )
+    before = mapping_to_read(mapping).model_dump(mode="json")
+
     mapping.target_key = payload.target_key
     mapping.target_label = payload.target_label
     mapping.status = payload.status
     mapping.notes = payload.notes
+    audit(
+        db,
+        operator,
+        "mapping_updated",
+        mapping.id,
+        {"before": before, "after": mapping_to_read(mapping).model_dump(mode="json")},
+    )
     db.commit()
     db.refresh(mapping)
     return mapping_to_read(mapping)
 
 
 @router.post("/admin/mappings/scan-historical")
-def scan_historical_mappings(db: Session = Depends(get_db)) -> MappingScanResult:
+def scan_historical_mappings(
+    db: Session = Depends(get_db), operator: UserAccount = Depends(require_admin)
+) -> MappingScanResult:
     if not HISTORICAL_DIR.exists():
         raise HTTPException(status_code=404, detail="Historical source folder was not found")
 
@@ -267,5 +338,6 @@ def scan_historical_mappings(db: Session = Depends(get_db)) -> MappingScanResult
         else:
             existing += 1
 
+    audit(db, operator, "mapping_scan", None, {"created": created, "existing": existing})
     db.commit()
     return MappingScanResult(created=created, existing=existing, total=created + existing)

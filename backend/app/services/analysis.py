@@ -234,6 +234,12 @@ def build_promotions(person: PersonAnalysis, months: list[str]) -> None:
 
 
 def analyze_dashboard(db: Session) -> dict[str, object]:
+    from app.models import ReferenceValue
+
+    configured = {
+        r.key: r.behavior
+        for r in db.scalars(select(ReferenceValue).where(ReferenceValue.kind == "duty_type"))
+    }
     """Compute the whole analysis dashboard payload (all tabs) in one pass over every assignment.
 
     Call levels per person/month come from postings, falling back to the duty type
@@ -274,7 +280,9 @@ def analyze_dashboard(db: Session) -> dict[str, object]:
         if month not in month_stats:
             continue
         name = assignment.person.canonical_name
-        person = people.setdefault(name, PersonAnalysis(name=name, person_id=str(assignment.person_id)))
+        person = people.setdefault(
+            name, PersonAnalysis(name=name, person_id=str(assignment.person_id))
+        )
         person.monthly_24hr.setdefault(month, 0)
         person.fifth_call_monthly.setdefault(month, 0)
         person.months_active.add(month)
@@ -292,10 +300,19 @@ def analyze_dashboard(db: Session) -> dict[str, object]:
         inferred_level = DUTY_TYPE_CALL_LEVEL.get(duty_type)
         if inferred_level is not None:
             existing = person.inferred_call_levels.get(month)  # type: ignore[attr-defined]
-            if existing is None or CALL_LEVEL_RANKS.get(inferred_level, -1) > CALL_LEVEL_RANKS.get(existing, -1):
+            if existing is None or CALL_LEVEL_RANKS.get(inferred_level, -1) > CALL_LEVEL_RANKS.get(
+                existing, -1
+            ):
                 person.inferred_call_levels[month] = inferred_level  # type: ignore[attr-defined]
 
         category = duty_category_key(duty_type)
+        if duty_type in configured:
+            definition = configured[duty_type]
+            category = (
+                {"main": "main_24hr", "cb": "cb_24hr", "rc": "rc_24hr"}.get(definition["group"])
+                if definition["counts_in_main_24hr"]
+                else None
+            )
         if category is not None:
             setattr(person, category, getattr(person, category) + 1)
 
@@ -332,7 +349,9 @@ def analyze_dashboard(db: Session) -> dict[str, object]:
         if month not in month_stats:
             continue
         name = posting.person.canonical_name
-        person = people.setdefault(name, PersonAnalysis(name=name, person_id=str(posting.person_id)))
+        person = people.setdefault(
+            name, PersonAnalysis(name=name, person_id=str(posting.person_id))
+        )
         person.months_active.add(month)
         if posting.unit is not None:
             person.units[month] = posting.unit.name
@@ -435,9 +454,7 @@ def analyze_dashboard(db: Session) -> dict[str, object]:
             "total_records": total_records,
             "total_24hr": total_24hr,
             "total_weekend_24hr": total_weekend,
-            "weekend_percent": round((total_weekend / total_24hr) * 100, 1)
-            if total_24hr
-            else 0,
+            "weekend_percent": round((total_weekend / total_24hr) * 100, 1) if total_24hr else 0,
             "months": len(months),
             "avg_24hr_per_active_person": round(total_24hr / active_people, 1)
             if active_people
@@ -475,7 +492,14 @@ def analyze_preflight(db: Session) -> dict[str, object]:
         .options(selectinload(DutySlot.rota_period))
         .where(DutySlot.rota_period_id.in_(period_ids) if period_ids else False)
     ).all()
-    unknown_duty_types = sorted({slot.duty_type for slot in slots if slot.duty_type not in KNOWN_DUTY_TYPES})
+    from app.models import ReferenceValue
+
+    registered = set(
+        db.scalars(select(ReferenceValue.key).where(ReferenceValue.kind == "duty_type"))
+    )
+    unknown_duty_types = sorted(
+        {slot.duty_type for slot in slots if slot.duty_type not in KNOWN_DUTY_TYPES | registered}
+    )
     empty_periods = []
     for period in periods:
         has_assignment = db.scalar(
@@ -522,7 +546,9 @@ def analyze_preflight(db: Session) -> dict[str, object]:
                 }
                 for candidate in duplicate_groups[:10]
             ],
-            "unresolved_duty_mappings": [mapping.source_label for mapping in unresolved_mappings[:20]],
+            "unresolved_duty_mappings": [
+                mapping.source_label for mapping in unresolved_mappings[:20]
+            ],
             "unknown_duty_types": unknown_duty_types[:20],
             "empty_periods": empty_periods[:20],
         },
@@ -568,8 +594,12 @@ def analysis_manual_review(limit: int = 300) -> dict[str, object]:
                 comparison_rows.append(row)
                 comparison_totals["dry_run_24hr"] += int(row.get("dry_run_24hr") or 0)
                 comparison_totals["reference_24hr"] += int(row.get("reference_24hr") or 0)
-                comparison_totals["dry_run_weekend_24hr"] += int(row.get("dry_run_weekend_24hr") or 0)
-                comparison_totals["reference_weekend_24hr"] += int(row.get("reference_weekend_24hr") or 0)
+                comparison_totals["dry_run_weekend_24hr"] += int(
+                    row.get("dry_run_weekend_24hr") or 0
+                )
+                comparison_totals["reference_weekend_24hr"] += int(
+                    row.get("reference_weekend_24hr") or 0
+                )
 
     top_skipped = [
         {
@@ -590,7 +620,8 @@ def analysis_manual_review(limit: int = 300) -> dict[str, object]:
             "warning_counts": dict(warning_counter),
             "current_main_24hr": comparison_totals["dry_run_24hr"],
             "reference_main_24hr": comparison_totals["reference_24hr"],
-            "main_24hr_gap": comparison_totals["dry_run_24hr"] - comparison_totals["reference_24hr"],
+            "main_24hr_gap": comparison_totals["dry_run_24hr"]
+            - comparison_totals["reference_24hr"],
             "current_weekend_24hr": comparison_totals["dry_run_weekend_24hr"],
             "reference_weekend_24hr": comparison_totals["reference_weekend_24hr"],
             "weekend_24hr_gap": comparison_totals["dry_run_weekend_24hr"]

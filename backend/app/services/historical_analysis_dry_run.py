@@ -1198,10 +1198,8 @@ class HistoricalAnalysisImportSummary:
 
 
 def compact_name(value: str) -> str:
-    cleaned = clean_person_name(value)
-    cleaned = re.sub(r"\b(dr|prof|mr|mrs|ms)\b\.?", " ", cleaned, flags=re.IGNORECASE)
-    cleaned = re.sub(r"[^a-z0-9]+", "", cleaned.casefold())
-    return cleaned
+    from app.services.normalization import member_key
+    return member_key(clean_person_name(value))
 
 
 def tokenise_name(value: str) -> tuple[str, ...]:
@@ -1386,6 +1384,13 @@ class CanonicalNameResolver:
                 self.by_first_last_initial[(tokens[0], tokens[-1][0])].append(member)
 
     def resolve(self, value: str) -> NameResolution:
+        candidate = self._resolve_candidate(value)
+        if candidate.status == "matched" and candidate.reason not in {"saved_alias", "compact_exact"}:
+            return NameResolution("unmatched", None, candidate.cleaned_name, candidate.confidence,
+                                  f"Review suggested member: {candidate.canonical_name} ({candidate.reason})")
+        return candidate
+
+    def _resolve_candidate(self, value: str) -> NameResolution:
         """Resolve a raw cell value to a canonical member.
 
         Tried in order: saved alias (unless ambiguous), compact exact match, unique first name

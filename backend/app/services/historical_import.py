@@ -62,7 +62,12 @@ def load_mapping_lookup(db: Session, mapping_type: str) -> dict[str, AdminMappin
 
 
 def get_or_create_person(db: Session, name: str, summary: dict[str, int]) -> Person:
-    person = db.scalar(select(Person).where(Person.canonical_name == name))
+    from app.services.normalization import member_key, member_lookup
+    lookup = member_lookup(db, active_only=False)
+    key = member_key(name)
+    if key in lookup and lookup[key] is None:
+        raise ValueError(f'Ambiguous historical member "{name}"; resolve the identity before import')
+    person = lookup.get(key)
     if person is not None:
         return person
 
