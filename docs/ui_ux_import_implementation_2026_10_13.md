@@ -49,4 +49,14 @@ Integrated checkpoint: **239 backend tests passed**, with the disposable Postgre
 
 ## Remaining scope
 
+## Batch 3 — workbook bounds and permission inventory
+
+Completed A084: shared bounds now cover CSV/TXT, XLS, XLSX and XLSM paths before heavyweight parsing. Limits include 5 MB uploads, 50 MB ZIP expansion, 10 sheets, worksheet dimensions, 250000 aggregate cells/range size, XML node/string counts and cell/text length. Sparse oversized rectangles are rejected even when the declared dimension is absent. Validation: **79 parser/import tests passed**, including the legacy XLS fixture and normal departmental layouts.
+
+Completed A011/A202: a generated [permission matrix and 104-action API inventory](permissions_matrix.md) now documents every declared gate and conditional privilege restriction. Auth responses expose current permissions. Final publication requires board/HOD/superadmin; computer admins can review/export but cannot approve publication. Validation: 50 auth/publication/integrity tests, an OpenAPI inventory/gate parity check, production build, and browser checks for all four roles including the actual computer-admin HTTP 403.
+
+Current milestone: **31/250 completed and tested; 219 approved and queued.** Local checkpoint `ae77c04` contains the first 28 actions; subsequent changes are in the working tree until their next tested checkpoint. The active goal continues with the remaining priority-one controls.
+
+## Remaining scope
+
 Every item outside the completed set remains approved and queued, including larger profile-history correction, account editing/auditing, unit-master editing, import history/reversal, allocation previews, publication revisioning, historical coverage policy, analysis drilldowns and accessibility work. Partial prerequisites do not count as completed items.

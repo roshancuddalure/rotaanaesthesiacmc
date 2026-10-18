@@ -15,6 +15,7 @@ from sqlalchemy.orm import Session, selectinload
 
 from app.models import LeaveRequest, Person
 from app.services.leave import month_bounds
+from app.services.upload_limits import validate_tabular_upload
 
 NAME_COLUMNS = {
     "name",
@@ -435,6 +436,7 @@ def normalize_status(value: Any) -> str:
 
 
 def read_leave_tables(filename: str, content: bytes) -> list[tuple[str, pd.DataFrame, str]]:
+    validate_tabular_upload(filename, content)
     lowered = filename.lower()
     if lowered.endswith(".csv"):
         last_error: Exception | None = None

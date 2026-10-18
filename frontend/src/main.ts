@@ -7172,6 +7172,9 @@ async function renderRotaPublish() {
     return;
   }
   const publish = rotaPublish;
+  const canApprove = currentUser?.permissions
+    ? currentUser.permissions.includes("publish_rota")
+    : ["rota_board_member", "hod", "superadmin"].includes(currentUser?.role ?? "");
   viewRoot.innerHTML = `
     <section class="panel action-panel">
       <div>
@@ -7216,13 +7219,14 @@ async function renderRotaPublish() {
     </section>
     <section class="panel">
       <h3>Publish Approval</h3>
+      ${!canApprove ? '<p>You can review this checklist and download published exports. Final approval requires a rota board member, HOD or superadmin account.</p>' : ""}
       <form class="publish-form" id="rota-publish-form">
         <label class="checkbox-line">
-          <input id="publish-confirm-warnings" type="checkbox" ${publish.requires_warning_confirmation ? "" : "checked"} />
+          <input id="publish-confirm-warnings" type="checkbox" ${publish.requires_warning_confirmation ? "" : "checked"} ${canApprove ? "" : "disabled"} />
           Confirm remaining warnings and override assignments
         </label>
-        <label>Approval note<textarea id="publish-approval-note" rows="3" placeholder="Record who approved this rota and any board note"></textarea></label>
-        <button class="primary" type="submit" ${publish.can_publish ? "" : "disabled"}>Publish Final Rota</button>
+        <label>Approval note<textarea id="publish-approval-note" rows="3" placeholder="Record who approved this rota and any board note" ${canApprove ? "" : "disabled"}></textarea></label>
+        <button class="primary" type="submit" ${publish.can_publish && canApprove ? "" : "disabled"}>Publish Final Rota</button>
       </form>
     </section>
     <section class="panel action-panel">

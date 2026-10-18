@@ -821,6 +821,7 @@ export interface CallLevelPrefillResult {
 }
 
 export interface UserAccount {
+  permissions?: string[];
   id: string;
   username: string;
   display_name: string;

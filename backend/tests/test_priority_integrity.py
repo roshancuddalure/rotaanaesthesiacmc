@@ -333,3 +333,56 @@ def test_history_links_source_rows_and_exports_rejections(secured_client):
     assert client.get('/api/v1/imports/members/history',headers=hod_headers).status_code==403
     assert client.get('/api/v1/imports/past/history',headers=hod_headers).status_code==403
     assert client.get('/api/v1/imports/units/history',headers=hod_headers).status_code==200
+
+
+@pytest.mark.parametrize('role',['superadmin','computer_admin','hod','rota_board_member'])
+def test_explicit_permissions_and_publication_approval(secured_client,role):
+    client,_=secured_client
+    account=login(client,role);headers={'Authorization':f"Bearer {account['token']}"}
+    matrix=client.get('/api/v1/auth/permissions',headers=headers)
+    assert matrix.status_code==200
+    permissions=matrix.json()['current']
+    assert permissions==account['user']['permissions']
+    assert 'view_workflow' in permissions
+    assert ('manage_members' in permissions)==(role in {'computer_admin','superadmin'})
+    assert ('manage_member_profiles' in permissions)==(role in {'hod','computer_admin','superadmin'})
+    assert ('grant_superadmin' in permissions)==(role=='superadmin')
+    response=client.post('/api/v1/rota-publish/publish?month=2026-10',headers=headers,json={'approval_note':'Test permission','confirm_warnings':False})
+    if role=='computer_admin':
+        assert response.status_code==403
+        assert 'publish_rota' not in permissions
+    else:
+        assert 'publish_rota' in permissions
+        assert response.status_code not in {401,403}  # Business checklist still blocks this empty rota.
+
+
+def test_every_api_action_has_a_documented_gate():
+    import importlib.util
+    from pathlib import Path
+    path=Path(__file__).resolve().parents[2]/'tools/permissions_manifest.py'
+    spec=importlib.util.spec_from_file_location('permission_manifest',path)
+    manifest=importlib.util.module_from_spec(spec);spec.loader.exec_module(manifest)
+    rows=manifest.route_inventory()
+    documented={(r['path'],r['method']) for r in rows}
+    actual={(path,method.upper()) for path,operations in app.openapi()['paths'].items()
+            for method in operations if method.upper() in {'GET','POST','PUT','DELETE','PATCH'}}
+    assert documented==actual
+    public={('/api/health','GET'),('/api/v1/metadata','GET'),('/api/v1/auth/sign-in','POST'),
+            ('/api/v1/auth/forgot-password','POST'),('/api/v1/auth/reset-password','POST')}
+    assert {(r['path'],r['method']) for r in rows if not r['gates']}==public
+
+
+def test_normalized_names_and_aliases_share_one_identity(secured_client):
+    client,_=secured_client
+    token=login(client,'superadmin')['token'];headers={'Authorization':f'Bearer {token}'}
+    first=client.post('/api/v1/admin/members',headers=headers,json={'canonical_name':'José Kumar'}).json()
+    assert client.post('/api/v1/admin/members',headers=headers,json={'canonical_name':'JOSE\u0301   KUMAR'}).status_code==409
+    alias=client.post(f"/api/v1/admin/members/{first['id']}/aliases",headers=headers,json={'alias':'Jose K'})
+    assert alias.status_code==200
+    assert client.post('/api/v1/admin/members',headers=headers,json={'canonical_name':'Dr. Jose K'}).status_code==409
+    second=client.post('/api/v1/admin/members',headers=headers,json={'canonical_name':'Other Doctor'}).json()
+    assert client.post(f"/api/v1/admin/members/{second['id']}/aliases",headers=headers,json={'alias':'JOSE K'}).status_code==409
+    assert client.put(f"/api/v1/admin/members/{second['id']}",headers=headers,json={'canonical_name':'Jose K'}).status_code==409
+    rows=client.get('/api/v1/admin/members',headers=headers).json()
+    assert len(rows)==2
+    assert next(p for p in rows if p['id']==second['id'])['canonical_name']=='Other Doctor'

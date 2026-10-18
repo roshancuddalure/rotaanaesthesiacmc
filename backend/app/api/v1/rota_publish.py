@@ -3,7 +3,7 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
-from app.api.v1.auth import current_user
+from app.api.v1.auth import current_user, require_publisher
 from app.db.session import get_db
 from app.models import UserAccount
 from app.services.leave import month_bounds
@@ -57,7 +57,7 @@ def get_rota_publish_month(
 def publish_rota(
     month: str,
     payload: PublishPayload,
-    user: UserAccount = Depends(current_user),
+    user: UserAccount = Depends(require_publisher),
     db: Session = Depends(get_db),
 ) -> RotaPublishMonthRead:
     try:

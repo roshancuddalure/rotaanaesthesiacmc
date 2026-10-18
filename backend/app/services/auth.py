@@ -16,6 +16,22 @@ ROLES = {
     "superadmin": "Superadmin",
 }
 ADMIN_ROLES = {"computer_admin", "superadmin"}
+WORKFLOW_PERMISSIONS = {"view_workflow", "account_self", "manage_leave", "manage_unit_postings",
+                        "manage_scope", "generate_template", "assign_duties", "review_rota",
+                        "request_exchange", "approve_exchange", "download_exports"}
+ROLE_PERMISSIONS = {role: set(WORKFLOW_PERMISSIONS) for role in ROLES}
+for role in ADMIN_ROLES:
+    ROLE_PERMISSIONS[role].update({"manage_members", "configure_rules", "manage_groups", "manage_mappings",
+                                   "import_members", "import_past_duties", "manage_accounts", "diagnostics"})
+for role in {"hod", *ADMIN_ROLES}:
+    ROLE_PERMISSIONS[role].add("manage_member_profiles")
+for role in {"rota_board_member", "hod", "superadmin"}:
+    ROLE_PERMISSIONS[role].add("publish_rota")
+ROLE_PERMISSIONS["superadmin"].add("grant_superadmin")
+
+
+def permissions_for_role(role: str) -> list[str]:
+    return sorted(ROLE_PERMISSIONS.get(role, set()))
 
 
 def validate_password(password: str) -> str:
@@ -74,7 +90,7 @@ def create_session(db: Session, user: UserAccount) -> tuple[str, UserSession]:
 
 def authenticate(db: Session, username: str, password: str) -> UserAccount | None:
     user = db.scalar(select(UserAccount).where(UserAccount.username == username.strip()))
-    if user is None or user.active_status != "active":
+    if user is None or user.active_status != "active" or user.role not in ROLES:
         return None
     if not verify_secret(password, user.password_hash):
         return None

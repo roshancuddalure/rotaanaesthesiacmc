@@ -27,6 +27,7 @@ from app.services.leave import month_bounds
 from app.services.leave_import import match_person, person_lookup
 from app.services.leave_import import normalize_name as normalize_person_name
 from app.services.unit_management import UNIT_BOARD_SOURCE, is_special_unit_posting, normalize_posting_type
+from app.services.upload_limits import validate_tabular_upload
 
 logger = logging.getLogger(__name__)
 
@@ -341,6 +342,7 @@ def ranges_overlap(first_start: str, first_end: str, second_start: str, second_e
 
 
 def parse_unitwise_excel_upload(filename: str, content: bytes) -> ParsedUnitwiseUpload:
+    validate_tabular_upload(filename, content)
     workbook = load_workbook(io.BytesIO(content), data_only=True)
     postings: list[ParsedUnitPosting] = []
     warnings: list[ParseWarning] = []
@@ -552,6 +554,7 @@ def posting_from_line(line: str) -> tuple[str | None, str]:
 
 
 def parse_unitwise_text_upload(filename: str, content: bytes, units: list[Unit]) -> ParsedUnitwiseUpload:
+    validate_tabular_upload(filename, content)
     unit_labels: dict[str, str] = {}
     for unit in units:
         for label in (unit.name, unit.code):

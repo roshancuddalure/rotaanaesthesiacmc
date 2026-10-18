@@ -23,11 +23,12 @@ from app.models import (
     PersonDesignation,
     PersonCallChange,
 )
-from app.services.members import normalize_member_name
+from app.services.members import normalize_member_name, compact_name_key
 from app.domain.member_validation import normalize_member_display_name, normalize_member_call, normalize_member_status
 from app.services.roster_reconciliation import normalize_designation
 from app.services.imports import is_valid_person_name
 from app.services.reviewed_import import acquire_import_lock, replayed_result, attach_result
+from app.services.upload_limits import validate_tabular_upload
 from app.services.member_profiles import (
     call_level_on,
     local_today,
@@ -62,6 +63,7 @@ def cell_text(value):
 
 
 def open_member_workbook(filename: str, content: bytes):
+    validate_tabular_upload(filename, content)
     if len(content) > 5 * 1024 * 1024:
         raise ValueError("File must be no larger than 5 MB.")
     if filename.lower().endswith(".csv"):
@@ -192,7 +194,7 @@ def preview_member_import(db: Session, filename: str, content: bytes, options: d
     keys = {}
     for person in people:
         for name in [person.canonical_name] + [a.alias for a in person.aliases]:
-            keys.setdefault(normalize_member_name(name), set()).add(str(person.id))
+            keys.setdefault(compact_name_key(name), set()).add(str(person.id))
     resolutions = options.get("resolutions", {})
     rows, seen_names, seen_targets, seen_aliases = [], set(), set(), {}
     workbook = open_member_workbook(filename, content)
@@ -275,7 +277,7 @@ def preview_member_import(db: Session, filename: str, content: bytes, options: d
                 errors.append("Designation exceeds 100 characters.")
             if any(len(a) > 255 or not is_valid_person_name(a) for a in normalized["aliases"]):
                 errors.append("Invalid alias or alias exceeds 255 characters.")
-            key = normalize_member_name(name)
+            key = compact_name_key(name)
             if key in seen_names or key in seen_aliases:
                 errors.append("Duplicate name in this worksheet; consolidate these rows.")
             seen_names.add(key)
@@ -306,7 +308,7 @@ def preview_member_import(db: Session, filename: str, content: bytes, options: d
                 if name != by_id[target].canonical_name and name not in normalized["aliases"]:
                     normalized["aliases"].append(name)
             for alias in normalized["aliases"]:
-                alias_key = normalize_member_name(alias)
+                alias_key = compact_name_key(alias)
                 owners = keys.get(alias_key, set())
                 if owners - ({target} if target else set()):
                     errors.append(f"Alias belongs to another member: {alias}")

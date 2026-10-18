@@ -1,4 +1,5 @@
 import re
+import unicodedata
 from dataclasses import dataclass
 from uuid import UUID
 
@@ -32,15 +33,26 @@ class AutoMergeResult:
 
 
 def normalize_member_name(name: str) -> str:
-    cleaned = name.casefold()
+    cleaned = unicodedata.normalize("NFKC", name).casefold()
     cleaned = re.sub(r"\b(dr|prof|mr|mrs|ms)\b\.?", " ", cleaned)
-    cleaned = re.sub(r"[^a-z0-9]+", " ", cleaned)
+    cleaned = re.sub(r"[^\w]+", " ", cleaned).replace("_", " ")
     tokens = [token for token in cleaned.split() if token]
     return " ".join(tokens)
 
 
 def compact_name_key(name: str) -> str:
     return normalize_member_name(name).replace(" ", "")
+
+
+def identity_conflict(db: Session, name: str, exclude_id: UUID | None = None) -> Person | None:
+    key = compact_name_key(name)
+    if not key:
+        return None
+    people = db.scalars(select(Person).options(selectinload(Person.aliases)).order_by(Person.created_at, Person.id))
+    for person in people:
+        if person.id != exclude_id and key in {compact_name_key(person.canonical_name), *[compact_name_key(a.alias) for a in person.aliases]}:
+            return person
+    return None
 
 
 def duplicate_candidates(db: Session) -> list[DuplicateCandidate]:

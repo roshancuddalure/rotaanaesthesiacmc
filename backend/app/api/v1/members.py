@@ -19,12 +19,14 @@ from app.services.members import (
     merge_people,
     normalize_dirty_member_names,
     ensure_person_alias,
+    identity_conflict,
 )
 from app.services.roster_reconciliation import reconcile_department_roster
 from app.services.department_roster_reset import reset_department_members_from_roster
 from app.services.unitwise_call_levels import prefill_call_levels_from_unitwise
 from app.services.member_profiles import call_level_on, local_today, record_call_change
 from app.domain.member_validation import normalize_member_display_name, normalize_member_call, normalize_member_status
+from app.services.reviewed_import import acquire_import_lock
 
 router = APIRouter(dependencies=[Depends(current_user)])
 
@@ -201,12 +203,9 @@ def list_members(q: str | None = None, db: Session = Depends(get_db)) -> list[Me
 
 @router.post("/admin/members", dependencies=[Depends(require_admin)])
 def create_member(payload: MemberCreate, db: Session = Depends(get_db)) -> MemberRead:
+    acquire_import_lock(db)
     canonical_name = payload.canonical_name.strip()
-    existing = db.scalar(
-        select(Person)
-        .where(func.lower(Person.canonical_name) == canonical_name.lower())
-        .options(selectinload(Person.aliases), selectinload(Person.designations))
-    )
+    existing = identity_conflict(db, canonical_name)
     if existing is not None:
         raise HTTPException(
             status_code=409,
@@ -235,7 +234,11 @@ def update_member(
     payload: MemberUpdate,
     db: Session = Depends(get_db),
 ) -> MemberRead:
+    acquire_import_lock(db)
     person = get_member_or_404(db, person_id)
+    conflict = identity_conflict(db, payload.canonical_name, exclude_id=person.id)
+    if conflict:
+        raise HTTPException(status_code=409, detail=f"Name belongs to another member or saved alias: {conflict.canonical_name}")
     if payload.canonical_name.strip() != person.canonical_name:
         ensure_person_alias(db, person, person.canonical_name, source="member_rename")
     person.canonical_name = payload.canonical_name.strip()
@@ -281,7 +284,13 @@ def restore_member(person_id: UUID, db: Session = Depends(get_db)) -> MemberRead
 
 @router.post("/admin/members/{person_id}/aliases", dependencies=[Depends(require_admin)])
 def add_alias(person_id: UUID, payload: AliasCreate, db: Session = Depends(get_db)) -> MemberRead:
+    acquire_import_lock(db)
     person = get_member_or_404(db, person_id)
+    if not payload.alias.strip() or len(payload.alias) > 255:
+        raise HTTPException(status_code=400, detail="Alias is required and must be at most 255 characters")
+    conflict = identity_conflict(db, payload.alias, exclude_id=person.id)
+    if conflict:
+        raise HTTPException(status_code=409, detail=f"Alias belongs to another member: {conflict.canonical_name}")
     db.add(PersonAlias(person=person, alias=payload.alias.strip(), source=payload.source))
     try:
         db.commit()

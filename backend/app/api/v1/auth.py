@@ -20,6 +20,7 @@ from app.services.auth import (
     reset_password,
     user_from_token,
     validate_password,
+    permissions_for_role,
 )
 
 router = APIRouter()
@@ -33,6 +34,7 @@ class UserRead(BaseModel):
     role: str
     role_label: str
     active_status: str
+    permissions: list[str]
 
 
 class AccountCreate(BaseModel):
@@ -90,6 +92,7 @@ def user_to_read(user: UserAccount) -> UserRead:
         role=user.role,
         role_label=ROLES.get(user.role, user.role),
         active_status=user.active_status,
+        permissions=permissions_for_role(user.role),
     )
 
 
@@ -100,7 +103,7 @@ def current_user(
     if not authorization or not authorization.startswith("Bearer "):
         raise HTTPException(status_code=401, detail="Missing authentication token")
     user = user_from_token(db, authorization.removeprefix("Bearer ").strip())
-    if user is None:
+    if user is None or user.role not in ROLES:
         raise HTTPException(status_code=401, detail="Invalid or expired authentication token")
     return user
 
@@ -115,6 +118,17 @@ def require_superadmin(user: UserAccount = Depends(current_user)) -> UserAccount
     if user.role != "superadmin":
         raise HTTPException(status_code=403, detail="Superadmin privilege required")
     return user
+
+
+def require_publisher(user: UserAccount = Depends(current_user)) -> UserAccount:
+    if "publish_rota" not in permissions_for_role(user.role):
+        raise HTTPException(status_code=403, detail="Publishing requires a rota board member, HOD or superadmin")
+    return user
+
+
+@router.get("/auth/permissions")
+def permission_matrix(user: UserAccount = Depends(current_user)):
+    return {"current": permissions_for_role(user.role), "roles": {role: permissions_for_role(role) for role in ROLES}}
 
 
 @router.post("/auth/sign-in")

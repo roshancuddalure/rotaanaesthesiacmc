@@ -36,6 +36,9 @@ DUTIES = {d.key: d for d in DUTY_TYPES}
 
 
 def open_past_workbook(filename: str, content: bytes):
+    from app.services.upload_limits import validate_tabular_upload
+    if filename.lower().endswith('.xls'):
+        validate_tabular_upload(filename, content)
     if len(content) > 5 * 1024 * 1024:
         raise ValueError("File must be no larger than 5 MB.")
     if filename.lower().endswith(".xls"):
