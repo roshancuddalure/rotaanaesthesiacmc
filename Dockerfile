@@ -4,6 +4,8 @@ WORKDIR /frontend
 
 COPY frontend/package.json frontend/package-lock.json frontend/tsconfig.json frontend/vite.config.ts frontend/index.html ./
 COPY frontend/src ./src
+# Static assets such as the downloadable CSV templates live in public/.
+COPY frontend/public ./public
 
 RUN npm ci
 RUN npm run build
