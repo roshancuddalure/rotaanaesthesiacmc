@@ -15,6 +15,10 @@ from app.services.normalization import member_candidates, member_key, member_loo
 from app.services.member_profile import (
     ensure_unique_name, record_activity, revision, snapshot, validate_designations, validate_identity,
 )
+from app.services.member_profiles import call_level_on, local_today, record_call_change
+
+# The uploaded file is the full current roster: create, update and list absentees.
+ROSTER_SYNC = "roster_sync"
 
 HEADERS = ["member_id", "canonical_name", "active_status", "call_level", "designation",
            "designation_effective_from"]
@@ -75,9 +79,38 @@ def parse_file(content: bytes, mapping: dict[str, str] | None = None) -> tuple[l
     return raw_headers, rows
 
 
+def current_designation(person: Person, today: date | None = None) -> PersonDesignation | None:
+    today = today or local_today()
+    return next((d for d in sorted(person.designations, key=lambda d: d.effective_from, reverse=True)
+                 if d.effective_from <= today and (d.effective_to is None or d.effective_to >= today)), None)
+
+
+def roster_missing(db: Session, rows: list[dict]) -> list[dict]:
+    """Active members not matched by any row of a roster file."""
+    present = {r["person_id"] for r in rows if r.get("person_id")}
+    possible = {}
+    for r in rows:
+        for suggestion in r.get("suggestions", []):
+            possible.setdefault(suggestion["id"], r["row_number"])
+    people = db.scalars(select(Person).where(Person.active_status == "active").options(
+        selectinload(Person.designations), selectinload(Person.call_changes),
+        selectinload(Person.call_level_changes)).order_by(Person.canonical_name))
+    missing = []
+    for person in people:
+        if str(person.id) in present:
+            continue
+        designation = current_designation(person)
+        missing.append({"id": str(person.id), "canonical_name": person.canonical_name,
+                        "call_level": call_level_on(person),
+                        "designation": designation.designation if designation else None,
+                        "possible_row": possible.get(str(person.id))})
+    return missing
+
+
 def build_preview(db: Session, rows: list[dict], mode: str) -> list[dict]:
-    if mode not in {"create_only", "update_existing"}:
-        raise ValueError("Choose create_only or update_existing")
+    if mode not in {"create_only", "update_existing", ROSTER_SYNC}:
+        raise ValueError("Choose create_only, update_existing or roster_sync")
+    roster = mode == ROSTER_SYNC
     people = list(db.scalars(select(Person).options(
         selectinload(Person.aliases), selectinload(Person.designations), selectinload(Person.call_level_changes))))
     by_id = {str(p.id): p for p in people}
@@ -118,28 +151,42 @@ def build_preview(db: Session, rows: list[dict], mode: str) -> list[dict]:
                 errors.append("Another row targets this member; keep one row per member")
             used_ids.add(str(person.id))
         status = values.get("active_status") or (person.active_status if person else "active")
-        call_level = None if values.get("call_level") == "__CLEAR__" else values.get("call_level") or (person.call_level if person else None)
+        # Roster sync compares with the level in effect today, which call history can override.
+        current_call = (call_level_on(person) if roster else person.call_level) if person else None
+        call_level = None if values.get("call_level") == "__CLEAR__" else values.get("call_level") or current_call
+        designation_pending = bool(values.get("designation"))
         try:
             name = validate_identity(name, status, call_level)
             ensure_unique_name(db, name, person)
-            if values.get("designation"):
+            current = current_designation(person) if person else None
+            if roster and current and values.get("designation") == current.designation:
+                designation_pending = False
+            if designation_pending:
                 from app.services.reference_catalog import canonical_label
                 canonical_label(db,"designation",values["designation"])
+                if roster and not values.get("designation_effective_from"):
+                    values = {**values, "designation_effective_from": local_today().isoformat()}
+                    row = {**row, "original_values": row.get("original_values", row["values"]), "values": values}
                 start = date.fromisoformat(values.get("designation_effective_from", ""))
                 proposed = [{"designation": d.designation, "effective_from": d.effective_from,
                              "effective_to": d.effective_to} for d in person.designations] if person else []
+                if roster:
+                    # A new position ends the previous open one the day before it starts.
+                    proposed = [{**d, "effective_to": start - timedelta(days=1)}
+                                if d["effective_from"] < start and (d["effective_to"] is None or d["effective_to"] >= start)
+                                else d for d in proposed]
                 identical = any(d["designation"] == values["designation"] and d["effective_from"] == start for d in proposed)
                 if not identical:
                     validate_designations([*proposed, {"designation": values["designation"], "effective_from": start}])
-            elif values.get("designation_effective_from"):
+            elif values.get("designation_effective_from") and not values.get("designation"):
                 errors.append("A designation is required with its effective date")
         except (ValueError, HTTPException) as exc:
             errors.append(str(exc.detail) if isinstance(exc, HTTPException) else str(exc))
         before = {"canonical_name": person.canonical_name, "active_status": person.active_status,
-                  "call_level": person.call_level} if person else None
+                  "call_level": current_call} if person else None
         after = {"canonical_name": name, "active_status": status, "call_level": call_level}
         designation_change = None
-        if values.get("designation"):
+        if designation_pending:
             designation_change = {
                 "before": [{"designation": d.designation, "effective_from": str(d.effective_from),
                             "effective_to": str(d.effective_to) if d.effective_to else None}
@@ -153,7 +200,11 @@ def build_preview(db: Session, rows: list[dict], mode: str) -> list[dict]:
             errors.append(f"Member already exists as {person.active_status}; use update-existing mode")
         if mode == "update_existing" and not person:
             errors.append("No existing member matched; use create-only mode for new members")
-        if person and person.active_status != "active" and status == "active":
+        if roster and person and person.active_status != "active":
+            if values.get("active_status") != "active":
+                errors.append(f"Matched member is {person.active_status}; enter active in active_status "
+                              "to restore them, or exclude the row")
+        elif person and person.active_status != "active" and status == "active":
             errors.append("Reactivate this member explicitly in their profile before importing")
         if not person and not errors and values.get("_confirm_distinct") != "yes":
             today = date.today()
@@ -163,7 +214,7 @@ def build_preview(db: Session, rows: list[dict], mode: str) -> list[dict]:
                             "units":sorted({f"{a.unit.campus or ''} {a.unit.name}".strip() for a in p.postings
                                             if a.unit and a.starts_on<=today and (a.ends_on is None or a.ends_on>=today)})}
                            for score,p in member_candidates(name,names) if score >= .85]
-        if person and before == after and not values.get("designation"):
+        if person and before == after and not designation_pending:
             action = "unchanged"
         result.append({**row, "action": "invalid" if errors else "needs_review" if suggestions else action,
                        "errors": errors, "suggestions": suggestions, "before": before, "after": after,
@@ -177,7 +228,7 @@ def build_preview(db: Session, rows: list[dict], mode: str) -> list[dict]:
 
 
 def apply_preview(db: Session, preview: MemberImportPreview, operator: UserAccount,
-                  excluded: list[int]) -> dict:
+                  excluded: list[int], archive_ids: list[str] | None = None) -> dict:
     from app.services.reference_registry import lock_namespace
     lock_namespace(db,"member-import")
     if preview.operator_id != operator.id:
@@ -186,8 +237,12 @@ def apply_preview(db: Session, preview: MemberImportPreview, operator: UserAccou
         return preview.result
     if preview.created_at < datetime.utcnow() - timedelta(hours=2):
         raise HTTPException(409, "Preview expired; preview the file again")
+    roster = preview.mode == ROSTER_SYNC
+    archive_ids = sorted({str(i) for i in archive_ids or []})
+    if archive_ids and not roster:
+        raise HTTPException(422, "Only a full-roster sync can archive members missing from the file")
     selected = [r for r in preview.rows if r["row_number"] not in excluded]
-    if not selected:
+    if not selected and not archive_ids:
         raise HTTPException(422, "Select at least one row")
     if any(r["action"] in {"invalid", "needs_review"} for r in selected):
         raise HTTPException(422, "Correct or exclude all invalid and review rows before applying")
@@ -199,7 +254,11 @@ def apply_preview(db: Session, preview: MemberImportPreview, operator: UserAccou
     for old, new in zip(selected, fresh):
         if old["revision"] != new["revision"] or old["action"] != new["action"] or old["after"] != new["after"]:
             raise HTTPException(409, "Members changed since preview; review the file again")
-    result = {"batch_id": str(preview.id), "created": 0, "updated": 0, "unchanged": 0,
+    if archive_ids:
+        allowed = {m["id"] for m in roster_missing(db, preview.rows)}
+        if not set(archive_ids) <= allowed:
+            raise HTTPException(409, "Members changed since preview; review the file again")
+    result = {"batch_id": str(preview.id), "created": 0, "updated": 0, "unchanged": 0, "archived": 0,
               "excluded": len(preview.rows) - len(selected), "members": []}
     for row in selected:
         if row["action"] == "unchanged":
@@ -212,20 +271,39 @@ def apply_preview(db: Session, preview: MemberImportPreview, operator: UserAccou
         else:
             old_name = person.canonical_name
             for field, value in row["after"].items():
-                setattr(person, field, value)
+                if not (roster and field == "call_level"):
+                    setattr(person, field, value)
+            if roster and row["before"]["call_level"] != row["after"]["call_level"]:
+                try:
+                    record_call_change(db, person, row["after"]["call_level"], local_today(),
+                                       "Department roster CSV import", source="roster_csv", actor_id=operator.id)
+                except ValueError as exc:
+                    raise HTTPException(409, f"{person.canonical_name}: {exc}") from exc
             if old_name != person.canonical_name:
                 from app.models import PersonAlias
                 if not any(a.alias.casefold() == old_name.casefold() for a in person.aliases):
                     person.aliases.append(PersonAlias(alias=old_name, source="member_csv_rename"))
         person.archived_at = (person.archived_at or datetime.utcnow()) if person.active_status == "archived" else None
         values = row["values"]
-        if values.get("designation"):
+        if row.get("designation_change"):
             start = date.fromisoformat(values["designation_effective_from"])
             if not any(d.designation == values["designation"] and d.effective_from == start for d in person.designations):
+                if roster:
+                    for d in person.designations:
+                        if d.effective_from < start and (d.effective_to is None or d.effective_to >= start):
+                            d.effective_to = start - timedelta(days=1)
                 person.designations.append(PersonDesignation(designation=values["designation"],
                     effective_from=start, source="member_csv"))
-        record_activity(db, person, operator, "csv_import", before, str(preview.id))
+        record_activity(db, person, operator, "roster_import" if roster else "csv_import", before, str(preview.id))
         result["created" if row["action"] == "create" else "updated"] += 1
+        result["members"].append({"id": str(person.id), "canonical_name": person.canonical_name})
+    for person_id in archive_ids:
+        person = db.get(Person, UUID(person_id))
+        before = snapshot(person)
+        person.active_status = "archived"
+        person.archived_at = datetime.utcnow()
+        record_activity(db, person, operator, "roster_archived", before, str(preview.id))
+        result["archived"] += 1
         result["members"].append({"id": str(person.id), "canonical_name": person.canonical_name})
     preview.result = result
     db.commit()

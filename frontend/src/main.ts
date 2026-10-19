@@ -4276,7 +4276,7 @@ function renderMembersView() {
               <input id="new-member-name" placeholder="New member name" aria-label="New member name" />
               <button class="primary" type="submit" id="create-member">Create Member</button>
             </form>
-            <button class="primary" type="button" id="import-member-csv">Import CSV</button><a class="icon-button" href="/templates/department-members.csv" download>Download CSV template</a></div><details><summary>Advanced member tools</summary><div class="member-tool-row"><button class="icon-button" id="cleanup-members">Clean Invalid Names</button>
+            <button class="primary" type="button" id="import-member-csv">Import CSV</button><a class="icon-button" href="/templates/department-members.csv" download>Download CSV template</a><a class="icon-button" href="/templates/department-members-example.csv" download>Download example CSV</a></div><details><summary>Advanced member tools</summary><div class="member-tool-row"><button class="icon-button" id="cleanup-members">Clean Invalid Names</button>
             <button class="icon-button" id="prefill-call-levels">Prefill Call Levels</button>
             <button class="icon-button" id="reconcile-roster">Reconcile Trusted Roster</button>
           </div>

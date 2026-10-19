@@ -16,7 +16,7 @@ from app.api.v1.auth import current_user, require_admin
 from app.api.v1.members import get_member_or_404, member_to_read
 from app.db.session import get_db
 from app.models import MemberActivity, MemberImportPreview, MemberCallLevelChange, Person, PersonAlias, UserAccount
-from app.services.member_csv import apply_preview, build_preview, parse_file
+from app.services.member_csv import ROSTER_SYNC, apply_preview, build_preview, parse_file, roster_missing
 from app.services.member_profile import (
     ensure_unique_name, record_activity, replace_designations, revision, snapshot, validate_identity,
 )
@@ -51,6 +51,7 @@ class ProfileSave(BaseModel):
 
 class ApplyRequest(BaseModel):
     excluded: list[int] = []
+    archive_missing: list[UUID] = []
 
 
 class MergeProfileRequest(BaseModel):
@@ -241,7 +242,8 @@ async def preview_csv(file: UploadFile = File(...), mode: str = Form("create_onl
                                   mode=mode, rows=result)
     db.add(preview)
     db.commit()
-    return {"id": str(preview.id), "headers": headers, "rows": result}
+    missing = roster_missing(db, result) if mode == ROSTER_SYNC else []
+    return {"id": str(preview.id), "mode": mode, "headers": headers, "rows": result, "missing": missing}
 
 
 @router.post("/csv/{preview_id}/apply")
@@ -251,7 +253,7 @@ def apply_csv(preview_id: UUID, payload: ApplyRequest, db: Session = Depends(get
     if preview is None:
         raise HTTPException(404, "Preview not found")
     try:
-        return apply_preview(db, preview, operator, payload.excluded)
+        return apply_preview(db, preview, operator, payload.excluded, [str(i) for i in payload.archive_missing])
     except IntegrityError as exc:
         db.rollback()
         raise HTTPException(409, "Members changed since preview; review the file again") from exc

@@ -1,6 +1,6 @@
 """Behavioural coverage for the profile and department CSV workflows."""
 
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 import pytest
 from fastapi.testclient import TestClient
@@ -323,3 +323,59 @@ def test_bulk_member_operations_capture_before_after_and_operator(workspace):
         assert activity.operator_name == user.display_name
         assert activity.details["before"]["call_level"] is None
         assert activity.details["after"]["call_level"] == "3RD_CALL"
+
+
+def test_roster_sync_updates_records_history_and_archives_selected_absentees(workspace):
+    client, sessions, _ = workspace
+    from datetime import date
+    from app.models import PersonCallChange, PersonDesignation
+    stays = add_person(sessions, "Roster Stays")
+    leaves = add_person(sessions, "Roster Leaves")
+    kept = add_person(sessions, "Roster Kept Absent")
+    with sessions() as db:
+        db.add(PersonDesignation(person_id=UUID(stays), designation="Resident", effective_from=date(2025, 1, 1)))
+        db.add(PersonCallChange(person_id=UUID(stays), from_call_level=None, to_call_level="1ST_CALL",
+                                effective_from=date(2025, 1, 1), reason="seed", source="profile"))
+        db.commit()
+    text = ("canonical_name,call_level,designation\n"
+            "Roster Stays,2ND_CALL,Senior Resident\n"
+            "Roster Newcomer,1ST_CALL,\n")
+    data = preview(client, text, mode="roster_sync").json()
+    actions = {r["values"]["canonical_name"]: r["action"] for r in data["rows"]}
+    assert actions == {"Roster Stays": "update", "Roster Newcomer": "create"}
+    stay_row = next(r for r in data["rows"] if r["person_id"] == stays)
+    assert stay_row["before"]["call_level"] == "1ST_CALL"  # effective level, not the stored default
+    assert {m["id"] for m in data["missing"]} == {leaves, kept}
+
+    endpoint = f'/api/v1/admin/member-workspace/csv/{data["id"]}/apply'
+    applied = client.post(endpoint, json={"archive_missing": [leaves]})
+    assert applied.status_code == 200, applied.text
+    assert (applied.json()["created"], applied.json()["updated"], applied.json()["archived"]) == (1, 1, 1)
+    with sessions() as db:
+        person = db.get(Person, UUID(stays))
+        from app.services.member_profiles import call_level_on
+        assert call_level_on(person) == "2ND_CALL"
+        assert any(c.source == "roster_csv" for c in person.call_changes)
+        designations = sorted(person.designations, key=lambda d: d.effective_from)
+        assert designations[0].effective_to is not None and designations[-1].designation == "Senior Resident"
+        assert db.get(Person, UUID(leaves)).active_status == "archived"
+        assert db.get(Person, UUID(kept)).active_status == "active"
+        logged = {(str(a.person_id), a.action) for a in db.scalars(select(MemberActivity))}
+        assert (stays, "roster_import") in logged and (leaves, "roster_archived") in logged
+
+
+def test_roster_sync_rejects_archiving_outside_the_missing_list_and_archived_matches(workspace):
+    client, sessions, _ = workspace
+    present = add_person(sessions, "Roster Present")
+    add_person(sessions, "Roster Former", status="archived")
+    data = preview(client, "canonical_name\nRoster Present\nRoster Former\n", mode="roster_sync").json()
+    former = next(r for r in data["rows"] if r["values"]["canonical_name"] == "Roster Former")
+    assert former["action"] == "invalid" and "restore" in former["errors"][0]
+    endpoint = f'/api/v1/admin/member-workspace/csv/{data["id"]}/apply'
+    response = client.post(endpoint, json={"excluded": [former["row_number"]], "archive_missing": [present]})
+    assert response.status_code == 409
+    restored = preview(client, "canonical_name,active_status\nRoster Former,active\n", mode="roster_sync").json()
+    assert restored["rows"][0]["action"] == "update"
+    only_create = preview(client, "canonical_name\nSomeone New\n").json()
+    assert client.post(f'/api/v1/admin/member-workspace/csv/{only_create["id"]}/apply',
+                       json={"archive_missing": [present]}).status_code == 422

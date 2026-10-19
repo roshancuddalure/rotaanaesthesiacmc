@@ -907,11 +907,15 @@ export async function openMemberWorkspace(
 
 export function openMemberCsvImport(done: () => void) {
   const dialog = workspaceDialog("Import department members", "mw-import");
-  dialog.innerHTML = `<header class="mw-header"><div><h2>Import department members</h2><p>Upload &rarr; Map &rarr; Normalize &rarr; Resolve &rarr; Review &rarr; Apply</p><p>Download the template, fill your member list, then preview changes.</p></div><button type="button" data-close aria-label="Close import">×</button></header><div class="mw-content"><a class="primary" href="/templates/department-members.csv" download>Download CSV template</a><p>Only canonical_name is required for new members. Optional: member_id, active_status, call_level, designation, designation_effective_from. Use YYYY-MM-DD dates. A designation requires an effective date. Blank update fields preserve existing values. To intentionally clear an existing default call level, enter __CLEAR__ in that cell. New members default to Active and Unassigned. Supported call levels: 1ST_CALL, 2ND_CALL, 3RD_CALL, CO_4TH_CALL, 4TH_CALL, 5TH_CALL, PAIN, SICU, DRP, NEURO_ICU.</p><details class="mw-csv-help"><summary>See CSV examples</summary><p>Replace these illustrative names with your members. Leave member_id blank for new members.</p><h3>Name-only list</h3><pre>canonical_name
-Dr Example Member</pre><h3>Full profile row</h3><pre>member_id,canonical_name,active_status,call_level,designation,designation_effective_from
-,Dr Example Member,active,2ND_CALL,Resident,2026-10-01</pre><p>For updates, copy the member ID from the profile. Dates use YYYY-MM-DD. Keep one member per row.</p></details><form id="csv-form"><label>CSV UTF-8 file (up to 2 MB and 5,000 members)<input type="file" accept=".csv,text/csv" required></label><label>Import mode<select name="mode"><option value="create_only">Create new members only</option><option value="update_existing">Update existing members only</option></select></label><div id="csv-column-mapping"></div><button class="primary" type="submit">Preview import</button></form><p role="status" id="csv-message"></p><div id="csv-preview"></div></div>`;
+  dialog.innerHTML = `<header class="mw-header"><div><h2>Import department members</h2><p>Upload &rarr; Map &rarr; Normalize &rarr; Resolve &rarr; Review &rarr; Apply</p><p>Download the template, fill your member list, then preview changes.</p></div><button type="button" data-close aria-label="Close import">×</button></header><div class="mw-content"><div class="registry-actions"><a class="primary" href="/templates/department-members.csv" download>Download blank CSV template</a><a class="icon-button" href="/templates/department-members-example.csv" download>Download example CSV (filled)</a></div><p>Only canonical_name is required. Blank cells keep the member's current value. New members default to Active and Unassigned.</p><details class="mw-csv-help" open><summary>CSV format and example</summary><p>One member per row. Open the example in Excel, replace the example rows with your members, then save as <strong>CSV UTF-8</strong>.</p><pre>member_id,canonical_name,active_status,call_level,designation,designation_effective_from
+,Dr Example Member One,active,1ST_CALL,SENIOR RESIDENT,2026-10-01
+,Dr Example Member Two,active,2ND_CALL,SENIOR RESIDENT (DM TRAINEE),2026-10-01
+,Dr Example Member Three,active,3RD_CALL,ASSISTANT PROFESSOR,
+,Dr Example Member Four,,4TH_CALL,ASSOCIATE PROFESSOR,
+,Dr Example Member Five,,5TH_CALL,PROFESSOR,
+,Dr Example Member Six,,,,</pre><table class="mw-csv-columns"><thead><tr><th>Column</th><th>What to enter</th></tr></thead><tbody><tr><td>member_id</td><td>Optional. Leave blank; names are matched automatically. Paste the ID from a profile only to force a match.</td></tr><tr><td>canonical_name</td><td><strong>Required.</strong> Full name, e.g. Dr Example Member One. Saved aliases and close spellings are matched.</td></tr><tr><td>active_status</td><td>Optional: active, inactive or archived. Use active to restore an archived member.</td></tr><tr><td>call_level</td><td>Optional: 1ST_CALL, 2ND_CALL, 3RD_CALL, CO_4TH_CALL, 4TH_CALL, 5TH_CALL, PAIN, SICU, DRP, NEURO_ICU. Enter __CLEAR__ to remove a default call level.</td></tr><tr><td>designation</td><td>Optional position, e.g. SENIOR RESIDENT, ASSISTANT PROFESSOR, PROFESSOR.</td></tr><tr><td>designation_effective_from</td><td>Optional start date of the position as YYYY-MM-DD. In roster sync a blank date means today; other modes require it.</td></tr></tbody></table><p>A plain list with only a canonical_name column (or just one name per line) also works.</p></details><form id="csv-form"><label>CSV UTF-8 file (up to 2 MB and 5,000 members)<input type="file" accept=".csv,text/csv" required></label><label>Import mode<select name="mode"><option value="roster_sync">Sync full department roster (create, update, list missing)</option><option value="create_only">Create new members only</option><option value="update_existing">Update existing members only</option></select></label><p>Roster sync treats the file as the complete current list: it adds new names, updates call levels, positions and status of matched members, and lists active members missing from the file so you can choose who to archive.</p><div id="csv-column-mapping"></div><button class="primary" type="submit">Preview import</button></form><p role="status" id="csv-message"></p><div id="csv-preview"></div></div>`;
   let file: File | undefined;
-  let preview: { id: string; headers: string[]; rows: Row[] } | undefined;
+  let preview: { id: string; mode?: string; headers: string[]; rows: Row[]; missing?: Row[] } | undefined;
   let applied = false;
   let busy = false;
   const corrections: Record<string, Row> = {};
@@ -975,16 +979,51 @@ Dr Example Member</pre><h3>Full profile row</h3><pre>member_id,canonical_name,ac
       busy = false;
     }
   }
+  function changeSummary(row: Row): string {
+    const before = (row.before || {}) as Row;
+    const after = (row.after || {}) as Row;
+    const lines = ["canonical_name", "active_status", "call_level"]
+      .filter((key) => row.before && before[key] !== after[key])
+      .map((key) => `<li>${esc(key.replace(/_/g, " "))}: ${esc(before[key] || "Unassigned")} &rarr; <strong>${esc(after[key] || "Unassigned")}</strong></li>`);
+    const designation = row.designation_change as Row | null;
+    if (designation)
+      lines.push(`<li>position: <strong>${esc((designation.add as Row).designation)}</strong> from ${esc((designation.add as Row).effective_from)}</li>`);
+    return lines.length ? `<ul>${lines.join("")}</ul>` : "";
+  }
+  function renderRosterPreview(root: HTMLElement) {
+    const rows = preview!.rows;
+    const fresh = rows.filter((r) => !r.person_id);
+    const matched = rows.filter((r) => r.person_id);
+    const missing = preview!.missing || [];
+    const changed = matched.filter((r) => r.action === "update").length;
+    const section = (title: string, hint: string, items: Row[]) =>
+      `<section class="mw-roster-list"><h4>${esc(title)} (${items.length})</h4><p>${esc(hint)}</p>${items.length ? items.map(rowHtml).join("") : "<p>None.</p>"}</section>`;
+    root.innerHTML = `<h3>Compare roster with department members</h3><p>${fresh.length} new in file / ${matched.length} matched (${changed} with changes) / ${missing.length} existing members missing from file</p><p>Correct values below, then refresh preview. Every applied change is recorded in that member's profile activity. Call-level changes take effect today and are added to call history; a new position ends the previous one the day before.</p>${section(
+      "New in file",
+      "These names did not match any existing member or alias. Check possible matches before creating new members.",
+      fresh,
+    )}${section(
+      "Matched existing members",
+      "Blank cells keep the current value. Rows marked unchanged need no update.",
+      matched,
+    )}<section class="mw-roster-list"><h4>Existing but missing from file (${missing.length})</h4><p>These active members are not in the uploaded roster. Tick the ones to archive; unticked members stay active. Archiving keeps their duties, leave and history.</p>${missing.length ? `<div class="registry-actions"><button type="button" data-archive-all>Tick all</button><button type="button" data-archive-none>Untick all</button></div>${missing.map((m) => `<article class="mw-history"><label><input type="checkbox" data-archive="${esc(m.id)}"> Archive <strong>${esc(m.canonical_name)}</strong></label><p>${esc(m.call_level || "Unassigned")} &middot; ${esc(m.designation || "No current designation")}</p>${m.possible_row ? `<p class="mw-error">Possibly file row ${esc(m.possible_row)} (spelling differs) &mdash; resolve that row before archiving.</p>` : ""}<button type="button" data-csv-review-member="${esc(m.id)}">Review member profile</button></article>`).join("")}` : "<p>None. Every active member is in the file.</p>"}</section>${actions()}`;
+  }
+  function actions() {
+    return `<button type="button" data-refresh>Refresh preview after corrections</button><button type="button" data-report>Download row report</button><button class="primary" type="button" data-apply>${preview!.mode === "roster_sync" ? "Apply roster changes" : "Apply selected rows"}</button><p role="status" data-apply-status aria-live="polite"></p>`;
+  }
+  function rowHtml(row: Row): string {
+    const values = row.values as Row;
+    return `<article class="mw-history"><label><input type="checkbox" data-include="${row.row_number}" ${["invalid", "needs_review"].includes(String(row.action)) ? "" : "checked"}> Include row ${row.row_number}</label><strong>${esc(String(row.action).replace(/_/g, " "))}</strong>${changeSummary(row)}${["member_id", "canonical_name", "active_status", "call_level", "designation", "designation_effective_from"].map((key) => `<label>${esc(key.replace(/_/g, " "))}<input data-row="${row.row_number}" data-key="${key}" value="${esc(values[key])}"></label>`).join("")}<p>${esc((row.errors as string[]).join(" · "))}</p>${(row.suggestions as Row[]).map((suggestion) => `<article class="mw-history"><strong>Possible match: ${esc(suggestion.name)}</strong><p>${esc(suggestion.status || "")} &middot; ${esc(suggestion.call_level || "Unassigned")} &middot; ${esc(suggestion.designation || "No current designation")}</p><p>${esc(((suggestion.units || []) as string[]).join(", "))}</p><button type="button" data-csv-use-member="${esc(suggestion.id)}" data-csv-member-row="${row.row_number}">Select existing member</button><button type="button" data-csv-review-member="${esc(suggestion.id)}">Review member profile</button></article>`).join("")}${(row.suggestions as Row[]).length ? `<label><input type="checkbox" data-distinct-row="${row.row_number}" ${values._confirm_distinct === "yes" ? "checked" : ""}> I reviewed the matches; create a separate member</label>` : ""}<details><summary>Before → After</summary><pre>${esc(JSON.stringify({ before: row.before, after: row.after, designation_change: row.designation_change }, null, 2))}</pre></details></article>`;
+  }
   function renderPreview() {
     const root = dialog.querySelector<HTMLElement>("#csv-preview")!;
-    root.innerHTML = `<h3>Review changes</h3><p>${["create", "update", "unchanged", "needs_review", "invalid"].map((action) => `${preview!.rows.filter((r) => r.action === action).length} ${action.replace(/_/g, " ")}`).join(" / ")}</p><p>Correct values below, then refresh preview. Exclude rows you do not want to apply. Possible duplicate matches require a member ID or exclusion.</p>${preview!.rows
-      .map((row) => {
-        const values = row.values as Row;
-        return `<article class="mw-history"><label><input type="checkbox" data-include="${row.row_number}" ${["invalid", "needs_review"].includes(String(row.action)) ? "" : "checked"}> Include row ${row.row_number}</label><strong>${esc(row.action)}</strong>${["member_id", "canonical_name", "active_status", "call_level", "designation", "designation_effective_from"].map((key) => `<label>${esc(key.replace(/_/g, " "))}<input data-row="${row.row_number}" data-key="${key}" value="${esc(values[key])}"></label>`).join("")}<p>${esc((row.errors as string[]).join(" · "))}</p>${(row.suggestions as Row[]).map((suggestion) => `<article class="mw-history"><strong>Possible match: ${esc(suggestion.name)}</strong><p>${esc(suggestion.status || "")} &middot; ${esc(suggestion.call_level || "Unassigned")} &middot; ${esc(suggestion.designation || "No current designation")}</p><p>${esc(((suggestion.units || []) as string[]).join(", "))}</p><button type="button" data-csv-use-member="${esc(suggestion.id)}" data-csv-member-row="${row.row_number}">Select existing member</button><button type="button" data-csv-review-member="${esc(suggestion.id)}">Review member profile</button></article>`).join("")}${(row.suggestions as Row[]).length ? `<label><input type="checkbox" data-distinct-row="${row.row_number}" ${values._confirm_distinct === "yes" ? "checked" : ""}> I reviewed the matches; create a separate member</label>` : ""}<details><summary>Before → After</summary><pre>${esc(JSON.stringify({ before: row.before, after: row.after, designation_change: row.designation_change }, null, 2))}</pre></details></article>`;
-      })
-      .join(
-        "",
-      )}<button type="button" data-refresh>Refresh preview after corrections</button><button type="button" data-report>Download row report</button><button class="primary" type="button" data-apply>Apply selected rows</button>`;
+    if (preview!.mode === "roster_sync") renderRosterPreview(root);
+    else
+      root.innerHTML = `<h3>Review changes</h3><p>${["create", "update", "unchanged", "needs_review", "invalid"].map((action) => `${preview!.rows.filter((r) => r.action === action).length} ${action.replace(/_/g, " ")}`).join(" / ")}</p><p>Correct values below, then refresh preview. Exclude rows you do not want to apply. Possible duplicate matches require a member ID or exclusion.</p>${preview!.rows.map(rowHtml).join("")}${actions()}`;
+    root.querySelector("[data-archive-all]")?.addEventListener("click", () =>
+      root.querySelectorAll<HTMLInputElement>("[data-archive]").forEach((i) => (i.checked = true)));
+    root.querySelector("[data-archive-none]")?.addEventListener("click", () =>
+      root.querySelectorAll<HTMLInputElement>("[data-archive]").forEach((i) => (i.checked = false)));
     root.querySelectorAll<HTMLButtonElement>("[data-csv-use-member]").forEach(
       (button) =>
         (button.onclick = () => {
@@ -1068,15 +1107,40 @@ Dr Example Member</pre><h3>Full profile row</h3><pre>member_id,canonical_name,ac
         ),
       ].map((i) => Number(i.dataset.include));
       const count = preview!.rows.length - excluded.length;
-      if (!count || !confirm(`Apply ${count} selected member rows?`)) return;
+      const archive = [
+        ...root.querySelectorAll<HTMLInputElement>("[data-archive]:checked"),
+      ].map((i) => i.dataset.archive!);
+      const status = root.querySelector<HTMLElement>("[data-apply-status]")!;
+      const blocked = preview!.rows.filter(
+        (r) =>
+          !excluded.includes(Number(r.row_number)) &&
+          ["invalid", "needs_review"].includes(String(r.action)),
+      );
+      if (blocked.length) {
+        status.textContent = `Resolve or untick ${blocked.length} row(s) that need review (first: row ${blocked[0].row_number}), then refresh the preview.`;
+        return;
+      }
+      if (!count && !archive.length) {
+        status.textContent = "Select at least one row or member to archive.";
+        return;
+      }
+      if (
+        !confirm(
+          `Apply ${count} member row(s)${archive.length ? ` and archive ${archive.length} member(s) missing from the file` : ""}?`,
+        )
+      )
+        return;
       busy = true;
       try {
         const result = await request<Row>(
           `/api/v1/admin/member-workspace/csv/${preview!.id}/apply`,
-          { method: "POST", body: JSON.stringify({ excluded }) },
+          {
+            method: "POST",
+            body: JSON.stringify({ excluded, archive_missing: archive }),
+          },
         );
         applied = true;
-        root.innerHTML = `<h3>Import complete</h3><p>${esc(result.created)} created · ${esc(result.updated)} updated · ${esc(result.unchanged)} unchanged · ${esc(result.excluded)} excluded</p><p>Batch ${esc(result.batch_id)}</p>${(result.members as Row[]).map((m) => `<button type="button" data-result-member="${esc(m.id)}">Open ${esc(m.canonical_name)}</button>`).join("")}`;
+        root.innerHTML = `<h3>Import complete</h3><p>${esc(result.created)} created · ${esc(result.updated)} updated · ${esc(result.unchanged)} unchanged · ${esc(result.archived ?? 0)} archived · ${esc(result.excluded)} excluded</p><p>Each change is recorded in the member's profile activity.</p><p>Batch ${esc(result.batch_id)}</p>${(result.members as Row[]).map((m) => `<button type="button" data-result-member="${esc(m.id)}">Open ${esc(m.canonical_name)}</button>`).join("")}`;
         root
           .querySelectorAll<HTMLButtonElement>("[data-result-member]")
           .forEach(
@@ -1091,9 +1155,8 @@ Dr Example Member</pre><h3>Full profile row</h3><pre>member_id,canonical_name,ac
           );
         done();
       } catch (error) {
-        dialog.querySelector("#csv-message")!.textContent = (
-          error as Error
-        ).message;
+        dialog.querySelector("#csv-message")!.textContent = status.textContent =
+          (error as Error).message;
       } finally {
         busy = false;
       }
