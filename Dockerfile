@@ -11,6 +11,7 @@ RUN npm ci
 RUN npm run build
 
 FROM python:3.12-slim
+ENV APP_ENV=production
 
 WORKDIR /app
 

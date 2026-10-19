@@ -240,8 +240,9 @@ export async function request<T>(path: string, options: RequestInit = {}): Promi
     } catch {
       // Keep the status-based fallback when the server does not return JSON.
     }
-    const error = new Error(message) as Error & { detail?: unknown };
+    const error = new Error(message) as Error & { detail?: unknown; status?: number };
     error.detail = detail;
+    error.status = response.status;
     throw error;
   }
   return readMutationResult<T>(response, path, options.method ?? "GET");

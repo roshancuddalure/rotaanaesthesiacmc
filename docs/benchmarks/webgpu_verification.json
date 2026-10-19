@@ -1,0 +1,58 @@
+{
+  "verified_at": "2026-10-19T21:21:39.981466+00:00",
+  "base_commit": "a99eb3072391141b826a97acc19b8f5924280cdb",
+  "scope": "Approved browser WebGPU diagnostics and recovery upgrade; concurrent member-resolution work excluded",
+  "full_backend": {
+    "passed": 382,
+    "failed": 0,
+    "seconds": 253.76,
+    "postgres_concurrency_and_migration_preservation": true,
+    "test_databases_remaining": 0
+  },
+  "final_compute_security_backend": {
+    "passed": 51,
+    "failed": 0,
+    "seconds": 76.42
+  },
+  "frontend_unit": {
+    "passed": 52,
+    "failed": 0
+  },
+  "existing_compute_browser_workflows": 14,
+  "hardware_runs": [
+    {
+      "mode": "default",
+      "vendor": "intel",
+      "browser": "156.0.8078.4",
+      "largest_batch": 100000,
+      "boundary_parity": true,
+      "repeated_batches": 30
+    },
+    {
+      "mode": "nvidia",
+      "vendor": "nvidia",
+      "browser": "156.0.8078.4",
+      "largest_batch": 100000,
+      "boundary_parity": true,
+      "repeated_batches": 30
+    }
+  ],
+  "worker_fault_cases": 20,
+  "integrated_recovery_workflows": 8,
+  "production_browser_workflows": 3,
+  "standalone_preview": {
+    "gpu_parity": true,
+    "worker_csp": true
+  },
+  "typescript_and_build": "passed",
+  "ruff": "passed",
+  "dependency_audit_vulnerabilities": 0,
+  "operational_assignment_writes": 0,
+  "permanent_gpu_setting_changes": false,
+  "limitations": [
+    "Physical adapter selection remains controlled by browser/OS",
+    "NVIDIA test uses isolated high-performance browser launch",
+    "Admission limiter is per process; aggregate multi-worker limits require deployment edge/shared store"
+  ],
+  "pushed": false
+}

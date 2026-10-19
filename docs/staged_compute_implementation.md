@@ -1,5 +1,7 @@
 # Staged rota performance and optional browser GPU
 
+20 October 2026 update: [adapter diagnostics, three-layer security and bounded recovery](webgpu_reliability.md).
+
 Scope: the requirements in `Plan/to do/oct2026.txt` and the seven-stage implementation
 plan approved in chat. Status: implemented and verified on 19 October 2026.
 

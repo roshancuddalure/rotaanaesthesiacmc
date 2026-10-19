@@ -7,6 +7,8 @@ The separate legacy invalid-name deletion path still needs relationship review b
 being used on members with operational history.
 """
 
+import hashlib
+import json
 import re
 import unicodedata
 from dataclasses import dataclass
@@ -27,6 +29,7 @@ from app.models import (
     LegacyPersonComment,
 )
 from app.services.imports import clean_person_name, is_valid_person_name
+from app.services.normalization import member_key
 from app.models import PersonCallChange, PersonComment
 
 
@@ -34,6 +37,9 @@ from app.models import PersonCallChange, PersonComment
 class DuplicateCandidate:
     normalized_name: str
     people: list[Person]
+    # "canonical": identical canonical-name key (may be merged after preview + confirm);
+    # "alias": only an alias is shared (listed for review, never merged automatically).
+    match: str = "alias"
 
 
 @dataclass(frozen=True)
@@ -41,6 +47,33 @@ class AutoMergeResult:
     merged_groups: int
     merged_people: int
     remaining_groups: int
+
+
+class StalePreviewError(Exception):
+    """The data changed between the preview and the confirmation; preview again."""
+
+
+class AliasOwnedError(ValueError):
+    """An alias already belongs to another member and was not moved."""
+
+
+def preview_token(changes: object) -> str:
+    """A stable hash of the proposed changes; the confirmation must echo it back."""
+    encoded = json.dumps(changes, sort_keys=True, default=str, separators=(",", ":"))
+    return hashlib.sha256(encoded.encode("utf-8")).hexdigest()[:32]
+
+
+def check_preview_token(expected: str, supplied: str | None, what: str) -> None:
+    if not supplied:
+        raise StalePreviewError(f"Preview the {what} first, then confirm with its preview token")
+    if supplied != expected:
+        raise StalePreviewError(
+            f"Members changed since the {what} preview was made. Preview again and review the new list before confirming"
+        )
+
+
+def person_brief(person: Person) -> dict:
+    return {"id": str(person.id), "name": person.canonical_name, "status": person.active_status}
 
 
 def normalize_member_name(name: str) -> str:
@@ -56,12 +89,13 @@ def compact_name_key(name: str) -> str:
 
 
 def identity_conflict(db: Session, name: str, exclude_id: UUID | None = None) -> Person | None:
-    key = compact_name_key(name)
+    """The member (other than ``exclude_id``) whose name or alias has the same ``member_key``."""
+    key = member_key(name)
     if not key:
         return None
     people = db.scalars(select(Person).options(selectinload(Person.aliases)).order_by(Person.created_at, Person.id))
     for person in people:
-        if person.id != exclude_id and key in {compact_name_key(person.canonical_name), *[compact_name_key(a.alias) for a in person.aliases]}:
+        if person.id != exclude_id and key in {member_key(person.canonical_name), *[member_key(a.alias) for a in person.aliases]}:
             return person
     return None
 
@@ -73,24 +107,32 @@ def duplicate_candidates(db: Session) -> list[DuplicateCandidate]:
         .order_by(Person.canonical_name)
     ).all()
     grouped: dict[str, list[Person]] = {}
+    canonical_groups: dict[str, set[UUID]] = {}
     for person in people:
-        keys = {compact_name_key(person.canonical_name)}
-        keys.update(compact_name_key(alias.alias) for alias in person.aliases)
+        canonical = member_key(person.canonical_name)
+        if canonical:
+            canonical_groups.setdefault(canonical, set()).add(person.id)
+        keys = {canonical}
+        keys.update(member_key(alias.alias) for alias in person.aliases)
         for key in keys:
             if key:
                 grouped.setdefault(key, []).append(person)
 
     candidates: list[DuplicateCandidate] = []
-    seen_groups: set[tuple[UUID, ...]] = set()
-    for key, group in grouped.items():
-        unique = sorted({person.id: person for person in group}.values(), key=lambda item: item.canonical_name)
+    seen_groups: set[tuple[str, ...]] = set()
+    # Canonical groups first so a group that is both is labelled as mergeable.
+    for key, group in sorted(grouped.items(), key=lambda kv: (len(canonical_groups.get(kv[0], ())) < 2, kv[0])):
+        unique = sorted({person.id: person for person in group}.values(),
+                        key=lambda item: (item.canonical_name, str(item.id)))
         if len(unique) < 2:
             continue
-        signature = tuple(person.id for person in unique)
+        signature = tuple(sorted(str(person.id) for person in unique))
         if signature in seen_groups:
             continue
         seen_groups.add(signature)
-        candidates.append(DuplicateCandidate(normalized_name=key, people=unique))
+        exact = canonical_groups.get(key, set()) == {person.id for person in unique}
+        candidates.append(DuplicateCandidate(normalized_name=key, people=unique,
+                                             match="canonical" if exact else "alias"))
 
     return sorted(candidates, key=lambda candidate: (-len(candidate.people), candidate.normalized_name))
 
@@ -108,46 +150,74 @@ def select_merge_target(people: list[Person]) -> Person:
     return sorted(people, key=target_score, reverse=True)[0]
 
 
-def auto_merge_duplicate_candidates(db: Session, max_passes: int = 10) -> AutoMergeResult:
-    merged_groups = 0
+def plan_auto_merge(db: Session) -> dict:
+    """Preview of the automatic merge: only members whose canonical names have the same
+    ``member_key`` are proposed. Groups that only share an alias are listed for review."""
+    people = db.scalars(
+        select(Person)
+        .options(selectinload(Person.aliases), selectinload(Person.designations))
+        .order_by(Person.canonical_name, Person.id)
+    ).all()
+    by_key: dict[str, list[Person]] = {}
+    for person in people:
+        key = member_key(person.canonical_name)
+        if key:
+            by_key.setdefault(key, []).append(person)
+    groups = []
+    for key in sorted(by_key):
+        group = by_key[key]
+        if len(group) < 2:
+            continue
+        target = select_merge_target(group)
+        sources = sorted((p for p in group if p.id != target.id), key=lambda p: (p.canonical_name, str(p.id)))
+        warnings = [f"{p.canonical_name} is {p.active_status}" for p in group if p.active_status != "active"]
+        groups.append({"key": key, "target": person_brief(target),
+                       "sources": [person_brief(p) for p in sources], "warnings": warnings})
+    needs_review = [
+        {"key": candidate.normalized_name, "people": [person_brief(p) for p in candidate.people],
+         "reason": f"Only the alias '{candidate.normalized_name}' is shared; merge by hand if they are the same person"}
+        for candidate in duplicate_candidates(db) if candidate.match != "canonical"
+    ]
+    return {"groups": groups, "needs_review": needs_review, "preview_token": preview_token(groups)}
+
+
+def auto_merge_duplicate_candidates(db: Session, preview_token: str | None = None) -> AutoMergeResult:
+    """Merge the groups shown by ``plan_auto_merge``; ``preview_token`` must match that preview."""
+    plan = plan_auto_merge(db)
+    check_preview_token(plan["preview_token"], preview_token, "duplicate merge")
     merged_people = 0
-
-    for _ in range(max_passes):
-        candidates = duplicate_candidates(db)
-        if not candidates:
-            break
-        merged_this_pass = False
-        for candidate in candidates:
-            current_people = [
-                person
-                for person in (db.get(Person, person.id) for person in candidate.people)
-                if person is not None
-            ]
-            if len(current_people) < 2:
-                continue
-            target = select_merge_target(current_people)
-            source_ids = [person.id for person in current_people if person.id != target.id]
-            merge_people(db, target.id, source_ids)
-            merged_groups += 1
-            merged_people += len(source_ids)
-            merged_this_pass = True
-        if not merged_this_pass:
-            break
-
+    for group in plan["groups"]:
+        source_ids = [UUID(source["id"]) for source in group["sources"]]
+        merge_people(db, UUID(group["target"]["id"]), source_ids, commit=False)
+        merged_people += len(source_ids)
+    try:
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        raise
     return AutoMergeResult(
-        merged_groups=merged_groups,
+        merged_groups=len(plan["groups"]),
         merged_people=merged_people,
         remaining_groups=len(duplicate_candidates(db)),
     )
 
 
-def ensure_person_alias(db: Session, person: Person, alias: str, source: str = "dedupe") -> None:
+def ensure_person_alias(db: Session, person: Person, alias: str, source: str = "dedupe", *,
+                        reassign: bool = False) -> None:
+    """Give ``person`` the alias. An alias owned by another member is moved only when
+    ``reassign`` is True (merges); otherwise ``AliasOwnedError`` explains the clash."""
     alias = alias.strip()
     if not alias or alias == person.canonical_name:
         return
     existing = db.scalar(select(PersonAlias).where(PersonAlias.alias == alias))
     if existing is not None:
         if existing.person_id != person.id:
+            if not reassign:
+                owner = existing.person
+                owner_name = owner.canonical_name if owner is not None else "another member"
+                raise AliasOwnedError(
+                    f'Alias "{alias}" already belongs to {owner_name}; it was not moved to {person.canonical_name}'
+                )
             existing.person = person
         return
     db.add(PersonAlias(person=person, alias=alias, source=source))
@@ -210,9 +280,10 @@ def merge_people(db: Session, target_id: UUID, source_ids: list[UUID], *, commit
     for source in sources:
         if source.id == target.id:
             continue
-        ensure_person_alias(db, target, source.canonical_name, source="dedupe_merge")
+        # Merges keep their existing semantics: the source's names move to the target.
+        ensure_person_alias(db, target, source.canonical_name, source="dedupe_merge", reassign=True)
         for alias in list(source.aliases):
-            ensure_person_alias(db, target, alias.alias, source=alias.source)
+            ensure_person_alias(db, target, alias.alias, source=alias.source, reassign=True)
             if alias.person is not target:
                 db.delete(alias)
         move_assignments(db, source, target)
@@ -278,24 +349,61 @@ def invalid_members(db: Session) -> list[Person]:
     return [person for person in people if not is_valid_person_name(person.canonical_name)]
 
 
-def normalize_dirty_member_names(db: Session) -> int:
-    normalized = 0
-    people = db.scalars(select(Person).order_by(Person.canonical_name)).all()
+def plan_dirty_member_names(db: Session) -> dict:
+    """Preview of name cleanup. A cleaned name that another member already uses (as a name
+    or alias), or that two dirty names share, is reported as a collision and never merged."""
+    people = db.scalars(select(Person).options(selectinload(Person.aliases))
+                        .order_by(Person.canonical_name, Person.id)).all()
+    owners: dict[str, set[UUID]] = {}
+    for person in people:
+        for name in (person.canonical_name, *[a.alias for a in person.aliases]):
+            key = member_key(name)
+            if key:
+                owners.setdefault(key, set()).add(person.id)
+    by_id = {person.id: person for person in people}
+    proposed: list[tuple[Person, str]] = []
     for person in people:
         cleaned = clean_person_name(person.canonical_name)
         if cleaned == person.canonical_name or not is_valid_person_name(cleaned):
             continue
-        target = db.scalar(select(Person).where(Person.canonical_name == cleaned))
-        if target is not None and target.id != person.id:
-            merge_people(db, target.id, [person.id])
+        proposed.append((person, cleaned))
+    cleaned_counts: dict[str, int] = {}
+    for _, cleaned in proposed:
+        cleaned_counts[member_key(cleaned)] = cleaned_counts.get(member_key(cleaned), 0) + 1
+    renames, collisions = [], []
+    for person, cleaned in proposed:
+        key = member_key(cleaned)
+        others = sorted((by_id[i] for i in owners.get(key, set()) - {person.id}),
+                        key=lambda p: (p.canonical_name, str(p.id)))
+        row = {"person_id": str(person.id), "current_name": person.canonical_name, "cleaned_name": cleaned}
+        if others:
+            collisions.append({**row, "colliding_with": [person_brief(p) for p in others],
+                               "reason": f'Cleaning "{person.canonical_name}" gives "{cleaned}", which '
+                                         f'{", ".join(p.canonical_name for p in others)} already uses; '
+                                         "not renamed or merged - merge by hand if they are the same person"})
+        elif cleaned_counts[key] > 1:
+            collisions.append({**row, "colliding_with": [],
+                               "reason": f'Several members clean to "{cleaned}"; not renamed - rename them by hand'})
         else:
-            existing_alias = db.scalar(select(PersonAlias).where(PersonAlias.alias == person.canonical_name))
-            if existing_alias is None:
-                db.add(PersonAlias(person=person, alias=person.canonical_name, source="name_cleanup"))
-            person.canonical_name = cleaned
-        normalized += 1
+            renames.append(row)
+    return {"renames": renames, "collisions": collisions}
+
+
+def normalize_dirty_member_names(db: Session, token: str | None = None) -> int:
+    """Rename members whose names carry noise (dates, codes) to the cleaned name, keeping the
+    old name as an alias. Collisions are skipped, never merged. With ``token`` the plan must
+    still match the reviewed preview (``preview_token(plan_dirty_member_names(db))``)."""
+    plan = plan_dirty_member_names(db)
+    if token is not None:
+        check_preview_token(preview_token(plan), token, "name cleanup")
+    for row in plan["renames"]:
+        person = db.get(Person, UUID(row["person_id"]))
+        existing_alias = db.scalar(select(PersonAlias).where(PersonAlias.alias == person.canonical_name))
+        if existing_alias is None:
+            db.add(PersonAlias(person=person, alias=person.canonical_name, source="name_cleanup"))
+        person.canonical_name = row["cleaned_name"]
     db.commit()
-    return normalized
+    return len(plan["renames"])
 
 
 def delete_invalid_members(db: Session) -> int:

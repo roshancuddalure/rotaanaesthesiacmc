@@ -4,6 +4,7 @@ import csv
 import hashlib
 import io
 import json
+from collections import defaultdict
 import re
 from datetime import date, datetime, timedelta
 from uuid import UUID
@@ -30,11 +31,11 @@ from app.models import (
     Unit,
 )
 from app.services.leave import month_bounds
+from app.services.member_resolver import MemberIndex
 from app.services.normalization import (
     display_text,
     label_key,
     member_key,
-    member_lookup,
     resolve_member,
     unit_key,
 )
@@ -312,7 +313,7 @@ def normalize_rows(
     mode = settings.get("mode", "append")
     existing = list(db.scalars(select(PersonPosting if kind == "units" else LeaveRequest)))
     result = []
-    identity_lookup = member_lookup(db, active_only=False)
+    index = MemberIndex.load(db)
     for row in rows:
         values = {**row["values"], **corrections.get(row["key"], {})}
         person_id = values.get("person_id") or repeated.get("members", {}).get(
@@ -325,23 +326,36 @@ def normalize_rows(
             )
         except ValueError:
             match_day = month_start
+        # The posting's call level is the context that tells shared short names apart
+        # (for example "Sam" on 1st call vs 4th call); leave rows carry no call level.
+        call_level = None
+        if kind == "units":
+            try:
+                call_level = resolve_value(db, "posting_type", str(values.get("posting_type") or ""))[0]
+            except ValueError:
+                call_level = None
+        member_name = str(values.get("member_name") or "")
         try:
             person = resolve_member(
                 db,
-                str(values.get("member_name") or ""),
+                member_name,
                 UUID(str(person_id)) if person_id else None,
                 as_of=match_day,
-                lookup=identity_lookup,
+                index=index,
+                call_level=call_level,
             )
         except ValueError:
             person = {
                 "person_id": None,
                 "candidates": [],
                 "state": "needs_review",
-                "reason": "Invalid member ID",
+                "status": "needs_review",
+                "warnings": [],
+                "reason": f"Member ID {person_id} does not exist; choose the member again",
             }
         if not person["person_id"]:
-            errors.append("Select an active department member")
+            name = member_name.strip() or "(blank name)"
+            errors.append(f"Choose the department member for '{name}': {person['reason']}")
         after = {"person_id": person["person_id"], "notes": str(values.get("notes") or "")}
         try:
             start = parse_date(
@@ -427,7 +441,7 @@ def normalize_rows(
             )
         if mode == "update_matching" and not target:
             errors.append("No unique existing record matches this row")
-        warnings = []
+        warnings = list(person.get("warnings", []))
         if after.get("person_id") and after.get("starts_on") and after.get("ends_on"):
             start, end = (
                 date.fromisoformat(after["starts_on"]),
@@ -518,6 +532,21 @@ def normalize_rows(
                 ],
             }
         )
+    # File-level identity checks (same rules as member_resolver.resolve_rows): one written
+    # name landing on several members, or several spellings landing on one member and day.
+    by_name, by_person_day = defaultdict(set), defaultdict(set)
+    for row in result:
+        pid = row["after"].get("person_id")
+        if pid:
+            by_name[row["person_match"].get("comparison_key")].add(pid)
+            by_person_day[(pid, row["after"].get("starts_on"))].add(row["person_match"].get("comparison_key"))
+    for row in result:
+        pid, match = row["after"].get("person_id"), row["person_match"]
+        if pid and len(by_name[match.get("comparison_key")]) > 1:
+            row["warnings"].append(
+                f"'{match.get('raw')}' is matched to {len(by_name[match.get('comparison_key')])} different members in this file")
+        if pid and len(by_person_day[(pid, row["after"].get("starts_on"))]) > 1:
+            row["warnings"].append(f"{match.get('canonical_name')} appears under different spellings on the same day")
     seen = {}
     excluded = set(settings.get("excluded", []))
     for row in result:

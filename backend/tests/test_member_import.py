@@ -115,14 +115,24 @@ def test_csv_matches_saved_aliases_and_checks_archived_members(db):
     db.add(person)
     db.commit()
     csv_data = b'name,call_level,aliases\nArjun K,4th call,"Arjun K;Dr. Arjun K"\n'
-    preview, _ = apply_preview(db, csv_data, filename="members.csv")
+    # An archived member is never targeted silently; the reviewer must choose them.
+    preview = preview_member_import(db, "members.csv", csv_data, {})
+    assert preview["counts"]["needs_review"] == 1
+    assert preview["rows"][0]["candidates"][0]["id"] == str(person.id)
+    assert preview["rows"][0]["resolution_status"] == "needs_review"
+    preview, _ = apply_preview(
+        db, csv_data, {"resolutions": {"2": str(person.id)}}, filename="members.csv"
+    )
     assert preview["counts"]["update"] == 1
     assert person.active_status == "archived"
     assert person.call_level == "4TH_CALL"
     assert len(db.scalars(select(Person)).all()) == 1
     dupes = b"name,call_level\nArjun Kumar,4th\nDr. Arjun Kumar,5th\n"
-    preview = preview_member_import(db, "members.csv", dupes, {})
+    preview = preview_member_import(
+        db, "members.csv", dupes, {"resolutions": {"2": str(person.id)}}
+    )
     assert preview["counts"]["needs_review"] == 1
+    assert any("Duplicate name" in e for e in preview["rows"][1]["errors"])
 
 
 @pytest.mark.parametrize(
@@ -219,7 +229,8 @@ def test_alias_match_preserves_name_blank_fields_and_assignments(db):
     db.add_all([person, assignment, leave, posting])
     db.commit()
     content = workbook_bytes([["Arjun K", "Professor", "", "", "", "2026-10-01"]])
-    preview, _ = apply_preview(db, content)
+    assert preview_member_import(db, "members.xlsx", content, {})["counts"]["needs_review"] == 1
+    preview, _ = apply_preview(db, content, {"resolutions": {"2": str(person.id)}})
     assert preview["counts"]["update"] == 1
     assert person.canonical_name == "Arjun Kumar"
     assert person.call_level == "3RD_CALL"

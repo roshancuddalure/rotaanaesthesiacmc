@@ -1,0 +1,355 @@
+{
+  "date": "2026-10-19T21:14:54.262Z",
+  "hardware": [
+    {
+      "mode": "default",
+      "browser": "156.0.8078.4",
+      "test": {
+        "supported": true,
+        "software": false,
+        "adapter": "intel",
+        "vendor": "intel",
+        "architecture": "gen-9",
+        "description": "",
+        "device": "",
+        "signature": "[2,\"high-performance\",\"intel\",\"gen-9\",\"\",\"\",false,268435456,134217728,65535]",
+        "preference": "high-performance",
+        "version": 2,
+        "parity": true,
+        "test_ms": 646.4000000059605
+      },
+      "batches": [
+        {
+          "rows": 1,
+          "gpu_ms": 8.299999997019768,
+          "parity": true
+        },
+        {
+          "rows": 63,
+          "gpu_ms": 15.299999997019768,
+          "parity": true
+        },
+        {
+          "rows": 64,
+          "gpu_ms": 11.800000011920929,
+          "parity": true
+        },
+        {
+          "rows": 65,
+          "gpu_ms": 7.9000000059604645,
+          "parity": true
+        },
+        {
+          "rows": 513,
+          "gpu_ms": 16.400000005960464,
+          "parity": true
+        },
+        {
+          "rows": 10000,
+          "gpu_ms": 41.599999994039536,
+          "parity": true
+        },
+        {
+          "rows": 100000,
+          "gpu_ms": 228.09999999403954,
+          "parity": true
+        }
+      ],
+      "integer_boundary": true,
+      "repeated_batches": 30,
+      "preferences": [
+        {
+          "requested": "default",
+          "actual": "intel",
+          "parity": true
+        },
+        {
+          "requested": "high-performance",
+          "actual": "intel",
+          "parity": true
+        },
+        {
+          "requested": "low-power",
+          "actual": "intel",
+          "parity": true
+        }
+      ]
+    },
+    {
+      "mode": "nvidia",
+      "browser": "156.0.8078.4",
+      "test": {
+        "supported": true,
+        "software": false,
+        "adapter": "nvidia",
+        "vendor": "nvidia",
+        "architecture": "turing",
+        "description": "",
+        "device": "",
+        "signature": "[2,\"high-performance\",\"nvidia\",\"turing\",\"\",\"\",false,268435456,134217728,65535]",
+        "preference": "high-performance",
+        "version": 2,
+        "parity": true,
+        "test_ms": 1430.2000000029802
+      },
+      "batches": [
+        {
+          "rows": 1,
+          "gpu_ms": 6.899999991059303,
+          "parity": true
+        },
+        {
+          "rows": 63,
+          "gpu_ms": 4.700000002980232,
+          "parity": true
+        },
+        {
+          "rows": 64,
+          "gpu_ms": 3.9000000059604645,
+          "parity": true
+        },
+        {
+          "rows": 65,
+          "gpu_ms": 7,
+          "parity": true
+        },
+        {
+          "rows": 513,
+          "gpu_ms": 4.4000000059604645,
+          "parity": true
+        },
+        {
+          "rows": 10000,
+          "gpu_ms": 26.80000001192093,
+          "parity": true
+        },
+        {
+          "rows": 100000,
+          "gpu_ms": 129.29999999701977,
+          "parity": true
+        }
+      ],
+      "integer_boundary": true,
+      "repeated_batches": 30,
+      "preferences": [
+        {
+          "requested": "default",
+          "actual": "nvidia",
+          "parity": true
+        },
+        {
+          "requested": "high-performance",
+          "actual": "nvidia",
+          "parity": true
+        },
+        {
+          "requested": "low-power",
+          "actual": "nvidia",
+          "parity": true
+        }
+      ]
+    }
+  ],
+  "injected": [
+    {
+      "kind": "insecure",
+      "error": "insecure",
+      "created": 0,
+      "destroyed": 0,
+      "unmapped": 0,
+      "popped": 0,
+      "adapters": 0
+    },
+    {
+      "kind": "unavailable",
+      "error": "unavailable",
+      "created": 0,
+      "destroyed": 0,
+      "unmapped": 0,
+      "popped": 0,
+      "adapters": 0
+    },
+    {
+      "kind": "no-adapter",
+      "error": "no-adapter",
+      "created": 0,
+      "destroyed": 0,
+      "unmapped": 0,
+      "popped": 0,
+      "adapters": 1
+    },
+    {
+      "kind": "adapter-error",
+      "error": "gpu-error",
+      "created": 0,
+      "destroyed": 0,
+      "unmapped": 0,
+      "popped": 0,
+      "adapters": 1
+    },
+    {
+      "kind": "device-request",
+      "error": "gpu-error",
+      "created": 0,
+      "destroyed": 0,
+      "unmapped": 0,
+      "popped": 0,
+      "adapters": 1
+    },
+    {
+      "kind": "pipeline",
+      "error": "gpu-error",
+      "created": 0,
+      "destroyed": 0,
+      "unmapped": 0,
+      "popped": 0,
+      "adapters": 1
+    },
+    {
+      "kind": "limits",
+      "error": "limits",
+      "created": 0,
+      "destroyed": 0,
+      "unmapped": 0,
+      "popped": 1,
+      "adapters": 1
+    },
+    {
+      "kind": "allocation",
+      "error": "gpu-error",
+      "created": 2,
+      "destroyed": 2,
+      "unmapped": 0,
+      "popped": 4,
+      "adapters": 1
+    },
+    {
+      "kind": "mapping",
+      "error": "gpu-error",
+      "created": 3,
+      "destroyed": 3,
+      "unmapped": 0,
+      "popped": 4,
+      "adapters": 1
+    },
+    {
+      "kind": "submit",
+      "error": "gpu-error",
+      "created": 3,
+      "destroyed": 3,
+      "unmapped": 0,
+      "popped": 4,
+      "adapters": 1
+    },
+    {
+      "kind": "scope-error",
+      "error": "gpu-error",
+      "created": 3,
+      "destroyed": 3,
+      "unmapped": 1,
+      "popped": 4,
+      "adapters": 1
+    },
+    {
+      "kind": "parity",
+      "error": "parity",
+      "created": 3,
+      "destroyed": 3,
+      "unmapped": 1,
+      "popped": 4,
+      "adapters": 1
+    },
+    {
+      "kind": "software",
+      "error": null,
+      "created": 3,
+      "destroyed": 3,
+      "unmapped": 1,
+      "popped": 4,
+      "adapters": 1
+    },
+    {
+      "kind": "success",
+      "error": null,
+      "created": 3,
+      "destroyed": 3,
+      "unmapped": 1,
+      "popped": 4,
+      "adapters": 1
+    },
+    {
+      "kind": "malformed-request",
+      "error": "protocol"
+    },
+    {
+      "kind": "malformed-request",
+      "error": "protocol"
+    },
+    {
+      "kind": "malformed-request",
+      "error": "protocol"
+    },
+    {
+      "kind": "malformed-request",
+      "error": "protocol"
+    },
+    {
+      "kind": "malformed-request",
+      "error": "invalid-input"
+    },
+    {
+      "kind": "overlap",
+      "bounded": true
+    }
+  ],
+  "workflows": [
+    {
+      "kind": "one-loss",
+      "workers": 3,
+      "engine": "local_gpu",
+      "assignments": 0
+    },
+    {
+      "kind": "repeated-loss",
+      "workers": 3,
+      "engine": "server",
+      "assignments": 0
+    },
+    {
+      "kind": "malformed-result",
+      "workers": 2,
+      "engine": "server",
+      "assignments": 0
+    },
+    {
+      "kind": "backend-rejection",
+      "workers": 2,
+      "engine": "server",
+      "assignments": 0
+    },
+    {
+      "kind": "network-loss",
+      "workers": 2,
+      "engine": "local_gpu",
+      "assignments": 0
+    },
+    {
+      "kind": "rate-limited",
+      "workers": 2,
+      "engine": "local_gpu",
+      "assignments": 0
+    },
+    {
+      "kind": "score-timeout",
+      "workers": 2,
+      "engine": "server",
+      "assignments": 0
+    },
+    {
+      "kind": "worker-crash",
+      "workers": 3,
+      "engine": "server",
+      "assignments": 0
+    }
+  ]
+}

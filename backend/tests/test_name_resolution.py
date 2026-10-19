@@ -68,7 +68,8 @@ def test_jeenu_cart_resolves_to_jeenu_ann_jose() -> None:
     assert resolution.canonical_name == "Jeenu Ann Jose"
 
 
-def test_joanna_is_separate_historical_person() -> None:
+def test_joanna_is_joanna_emmanuel() -> None:
+    # Owner decision 2026-10-20 (docs/member_resolution_audit.md): "Joanna" is Joanna Emmanuel.
     resolution = manual_name_resolution(
         rota_assignment("Joanna", "Main 1st Call", "MAIN_1ST_24HR"),
         "2026-04",
@@ -76,7 +77,7 @@ def test_joanna_is_separate_historical_person() -> None:
 
     assert resolution is not None
     assert resolution.status == "matched"
-    assert resolution.canonical_name == "Joanna"
+    assert resolution.canonical_name == "Joanna Emmanuel"
 
 
 def test_angelin_anirudha_variant_maps_to_angelin_aniruth() -> None:

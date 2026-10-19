@@ -1,0 +1,136 @@
+GOAL: (A) Add a safe, admin-only "Clear all members" action to Department Members, and
+(B) make every import that names a member (unit postings, leave, member CSV/workbook, past
+duties) resolve names to the correct canonical department member through ONE shared,
+tested resolver, with clear review steps and error handling. Work in phases, stop for my
+approval after each phase, and prove each phase with tests.
+
+CONTEXT (verified in the code; confirm before relying on it):
+- Several independent matchers exist today, and imports use different ones:
+  - backend/app/services/normalization.py: member_key, member_lookup, member_candidates,
+    resolve_member. Used by operational_import.py (unit/leave review import) and member_csv.py.
+  - backend/app/services/leave_import.py: person_lookup, match_person. Also used by
+    unit_assignment_import.py (older unit import).
+  - backend/app/services/unitwise_call_levels.py: its own match_person.
+  - backend/app/services/members.py: normalize_member_name, compact_name_key.
+    Used by member_import.py (workbook import).
+  - backend/app/services/historical_import.py: its own lookups.
+- Name rules and known aliases: Plan/Alias/Alias_Resolution_Summary.md is authoritative.
+  Read it, and the other files in Plan/Alias, before changing matching.
+- Members link to duties, leave, postings, call-level history, aliases and activity
+  records (member_activity). Profile changes are recorded via member_profile.record_activity.
+- Known issue IDs from docs/INSPECTION_REPORT_2026-10.md and docs/DEVELOPER_HANDBOOK.md
+  (for example S3 and S5) are referenced in code comments. Keep that convention.
+- Test tooling: backend pytest; frontend `npm test`; browser suites (test:normalization,
+  members, compute, intelligence, navigation, keyboard, ux-audit) need MEMBER_TEST_BROWSER
+  set to a full Chromium build. tools/ux_audit_server.py serves the API on a database copy
+  (duty_rota_ux_audit) and never the working database. Upload tests must not proxy
+  through Playwright's route.fetch, because Chrome drops file bodies.
+
+PHASE 0: Investigate and report (no behaviour changes)
+1. For every entry point that turns a typed name into a member, write down: the function,
+   which matcher it uses, its normalisation steps (case, punctuation, "Dr"/titles, initials,
+   word order, spacing), how it uses aliases, how it treats archived/historical members,
+   its fuzzy thresholds, and what it does on ties.
+2. Build a "golden" test set (backend/tests/fixtures/member_resolution_cases.csv):
+   - every alias case from Plan/Alias, each labelled with its expected canonical member
+     or "needs review";
+   - at least 150 real name spellings from the leave, unit and past-duty files, taken from
+     a copy of the department database (never the working database).
+   - Columns: raw_name, context (unit, call level, date if known), expected_member,
+     expected_outcome.
+3. Run every current matcher against the golden set. Report the accuracy of each, and every
+   case where matchers disagree or pick a wrong member. Classify each failure: wrong member
+   chosen, missed match, ambiguous match chosen without review, archived member chosen.
+4. Write docs/member_resolution_audit.md with the findings, then STOP for my approval.
+
+PHASE 1: One resolver
+1. Create one service (for example backend/app/services/member_resolver.py) used by ALL
+   entry points above. Delete or redirect the duplicates; don't leave parallel logic behind.
+2. Resolution order, each step recorded on the result:
+   exact canonical name → approved alias → normalised key (titles, punctuation, spacing,
+   initials and word order handled as the alias rules say) → context hints (unit, call
+   level, active on the date) → fuzzy candidates.
+3. Return a typed result, never a bare Person:
+   { status: matched | needs_review | not_found | ambiguous | conflict,
+     person_id, method, score, candidates[≤5 with reasons], warnings[] }.
+4. Hard rules:
+   - never auto-assign an ambiguous or fuzzy-only match;
+   - never auto-assign an archived or historical member without explicit confirmation;
+   - ties always mean needs_review;
+   - two raw names in one file resolving to the same member in a conflicting way is a
+     conflict, not a silent merge;
+   - one raw name resolving to different members in one file is an error.
+5. Aliases are learned only when an admin approves a row, and the alias records which
+   import batch it came from.
+6. Results must be identical regardless of database row order (sort ties deterministically).
+7. Keep API request/response shapes backwards compatible. Add fields; don't rename them.
+
+PHASE 2: Error handling and review UI
+1. Back end: named errors (for example MemberResolutionError subclasses) mapped to clear
+   HTTP 4xx messages that say which row, which raw name and why. No 500s for bad input.
+   An import never half-applies: everything is applied in one transaction, or nothing is.
+2. Every import's review screen shows, per row: raw name → proposed member (with position,
+   call level, unit and status), the method ("exact", "alias", "fuzzy 0.91", "context"),
+   and the alternatives.
+   Actions on each row: pick a member, create a new member, skip, and "remember this
+   spelling" (admin only).
+   Rows marked needs_review/ambiguous/conflict block Apply until resolved or excluded,
+   and the message saying why sits next to the Apply button.
+3. Use the existing UI kit: frontend/src/ui.ts and the design-system section at the end of
+   styles.css. Keep the shared import steps (Upload → Map columns → Review rows → Apply).
+
+PHASE 3: Clear all members (admin only)
+1. Meaning: "clear" = ARCHIVE every active member, not hard delete. Duties, leave, postings
+   and history must keep their links. Ask me before adding any hard delete. If you think
+   one is needed, propose it limited to members with zero linked records.
+2. Back end: POST /api/v1/admin/members/archive-all.
+   - Enforce require_admin on the server; the UI check is not enough.
+   - The request must carry a preview token from GET .../archive-all/preview, which returns
+     counts (members, linked duties, future duties, leave, postings).
+   - Reject the request if the data changed since the preview (409).
+   - Record one member_activity entry per member, all sharing one batch id.
+   - Run it in one transaction.
+3. Undo: POST .../archive-all/{batch_id}/restore restores exactly the members that batch
+   archived and no others. Show it on the result screen and in import history.
+4. UI: under the "More" menu on Department Members, never as a main button.
+   - The confirmation window shows the preview counts, warns about future duties, and
+     requires typing the phrase ARCHIVE ALL MEMBERS before the danger button enables.
+   - The button shows loading and error states; the result message offers Undo.
+   - Hide it entirely for non-admins.
+
+PHASE 4: Tests (all must pass before each phase is called done)
+- Resolver unit tests: 100% of the golden set gives the expected outcome. Zero wrong
+  members auto-assigned. Every fuzzy or ambiguous case ends as needs_review.
+- Shared-behaviour tests: the same golden set through every import entry point (unit,
+  leave, member CSV, workbook, past duties) gives identical results.
+- Property tests: case, spacing, punctuation and title variations of a canonical name all
+  resolve to the same member; shuffling the database order changes nothing.
+- Error tests: empty file, missing name column, duplicate rows, conflicting rows, unknown
+  units, archived matches, and a concurrent change between preview and apply, each giving
+  a clear 4xx and no partial writes.
+- Archive-all tests: non-admin gets 403; missing or stale token gets 409; archived count
+  equals active count; linked records keep their links; restore puts back exactly that
+  batch; activity is recorded.
+- Browser tests (extend test:members and test:normalization): the review rows show method
+  and alternatives; Apply is blocked with an on-screen reason until rows are resolved; the
+  archive-all confirmation needs the typed phrase, works by keyboard, and Undo works.
+- Run the whole suite every phase:
+  - backend pytest;
+  - npx tsc --noEmit, npm test and vite build;
+  - all browser suites;
+  - npm run test:ux-audit -- <phase> --strict, which must keep 0 findings in light and dark.
+- Before and after: the Phase 0 accuracy report compared with the final one, as a table.
+
+DONE WHEN:
+1. Every member-naming import uses the single resolver, and no duplicate matcher remains.
+2. The golden set passes 100% with zero wrong auto-assignments, through every entry point.
+3. Every import failure gives a clear, row-specific message, and nothing is half-applied.
+4. Archive-all is admin-only on the server, needs preview, typed confirmation and a token,
+   is undoable by batch, and keeps every link intact.
+5. All existing and new tests pass, and the UX audit keeps 0 findings.
+6. docs/member_resolution_audit.md holds the findings, the before/after accuracy table and
+   how to rerun the checks.
+7. No rota-rule changes and no breaking API changes; known-issue IDs stay referenced in
+   comments.
+After each phase, report what changed, the test results and any open questions, then wait
+for my approval.

@@ -1,10 +1,11 @@
 """Unitwise posting import (Excel grid or pasted text) into the Unit Management board.
 
 Pipeline: parse the sheet (unit columns x posting-label rows, with date-range context) ->
-match each name to a member (alias/compact/variant scoring with auto-match thresholds) and
-each column label to a unit -> preview rows with statuses and suggested candidates -> the
-user can supply per-row ``resolutions`` -> apply inserts safe rows as ``unit_board``
-postings and "learns" aliases/unit mappings from manual corrections.
+resolve each name through the shared member resolver (``member_resolver.MemberIndex``, with
+the row's call level, start date and special posting as context; similar names are only
+suggestions) and match each column label to a unit -> preview rows with statuses and
+suggested candidates -> the user can supply per-row ``resolutions`` -> apply inserts safe
+rows as ``unit_board`` postings and "learns" aliases/unit mappings from manual corrections.
 
 Note (handbook B6): ``replace_existing`` deletes every board posting that overlaps the
 month, including multi-month postings that also cover other months.
@@ -23,10 +24,10 @@ from uuid import UUID
 
 from openpyxl import load_workbook
 from openpyxl.utils import get_column_letter
-from sqlalchemy import delete, select
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.models import AdminMapping, Person, PersonAlias, PersonPosting, Unit
+from app.models import AdminMapping, PersonAlias, PersonPosting, Unit
 from app.services.imports import (
     ParseWarning,
     ParsedUnitPosting,
@@ -36,8 +37,8 @@ from app.services.imports import (
     split_unitwise_names,
 )
 from app.services.leave import month_bounds
-from app.services.leave_import import match_person, person_lookup
-from app.services.leave_import import normalize_name as normalize_person_name
+from app.services.leave_import import member_resolution_fields
+from app.services.member_resolver import MemberIndex, Resolution, ResolutionContext, resolve_rows
 from app.services.unit_management import UNIT_BOARD_SOURCE, is_special_unit_posting, normalize_posting_type
 from app.services.upload_limits import validate_tabular_upload
 
@@ -74,8 +75,6 @@ POSTING_ALIASES = {
     "NEUROICUPOSTING": "NEURO_ICU",
     "RESERVE": "OTHER_SPECIAL",
 }
-MEMBER_AUTO_MATCH_THRESHOLD = 0.88
-MEMBER_AUTO_MATCH_GAP = 0.04
 UNIT_AUTO_MATCH_THRESHOLD = 0.80
 UNIT_AUTO_MATCH_GAP = 0.04
 UNIT_REVIEW_SUGGESTED_THRESHOLD = 0.92
@@ -146,25 +145,6 @@ def unit_number_from_label(value: str) -> int | None:
     if compact_match:
         return int(compact_match.group(1))
     return None
-
-
-def person_tokens(value: str) -> list[str]:
-    return [token for token in normalize_label(value).split() if token]
-
-
-def relaxed_person_token(value: str) -> str:
-    return relaxed_name_key(value)
-
-
-def initials_for_tokens(tokens: list[str]) -> str:
-    return "".join(token[0] for token in tokens if token)
-
-
-def relaxed_name_key(value: str) -> str:
-    key = normalize_person_name(value)
-    key = re.sub(r"([bcdfgjklmnpqrstvwxyz])h", r"\1", key)
-    key = key.replace("w", "v")
-    return key
 
 
 def normalize_import_posting(value: str) -> str:
@@ -797,79 +777,6 @@ def match_unit(raw_label: str, lookup: dict[str, Unit | None]) -> tuple[Unit | N
     return None, "unit_fuzzy_candidate", best_score
 
 
-def person_similarity(query_key: str, candidate_key: str) -> float:
-    ratio = SequenceMatcher(None, query_key, candidate_key).ratio()
-    if query_key in candidate_key or candidate_key in query_key:
-        ratio = max(ratio, min(len(query_key), len(candidate_key)) / max(len(query_key), len(candidate_key)))
-    return ratio
-
-
-def name_variant_similarity(query_name: str, candidate_name: str) -> float:
-    query_tokens = person_tokens(query_name)
-    candidate_tokens = person_tokens(candidate_name)
-    if not query_tokens or not candidate_tokens:
-        return 0.0
-    query_key = normalize_person_name(query_name)
-    candidate_key = normalize_person_name(candidate_name)
-    score = person_similarity(query_key, candidate_key)
-    relaxed_query = relaxed_name_key(query_name)
-    relaxed_candidate = relaxed_name_key(candidate_name)
-    if relaxed_query != query_key or relaxed_candidate != candidate_key:
-        score = max(score, person_similarity(relaxed_query, relaxed_candidate))
-    query_set = set(query_tokens)
-    candidate_set = set(candidate_tokens)
-    relaxed_query_set = {relaxed_person_token(token) for token in query_tokens}
-    relaxed_candidate_set = {relaxed_person_token(token) for token in candidate_tokens}
-    if query_set and query_set <= candidate_set:
-        score = max(score, min(0.96, 0.86 + 0.03 * len(query_set)))
-    if relaxed_query_set and relaxed_query_set <= relaxed_candidate_set:
-        score = max(score, min(0.96, 0.87 + 0.035 * len(relaxed_query_set)))
-    if candidate_set and candidate_set <= query_set:
-        score = max(score, min(0.95, 0.84 + 0.02 * len(candidate_set)))
-    if len(query_tokens) == 1:
-        first_candidate = candidate_tokens[0]
-        first_score = SequenceMatcher(None, query_tokens[0], first_candidate).ratio()
-        if first_score >= 0.88:
-            score = max(score, min(0.96, first_score + 0.04))
-        if len(query_tokens[0]) >= 4 and (first_candidate.startswith(query_tokens[0]) or candidate_key.startswith(query_key)):
-            score = max(score, 0.93)
-    query_initials = initials_for_tokens(query_tokens)
-    candidate_initials = initials_for_tokens(candidate_tokens)
-    if len(query_tokens) > 1 and query_initials == candidate_initials:
-        score = max(score, 0.91)
-    return score
-
-
-def ranked_person_candidates(cleaned_name: str, lookup) -> list[tuple[float, Person]]:
-    scores_by_person: dict[UUID, tuple[float, Person]] = {}
-    for candidate_key, person in lookup.items():
-        if person is None or len(candidate_key) < 3:
-            continue
-        score = max(
-            name_variant_similarity(cleaned_name, candidate_key),
-            name_variant_similarity(cleaned_name, person.canonical_name),
-        )
-        previous = scores_by_person.get(person.id)
-        if previous is None or score > previous[0]:
-            scores_by_person[person.id] = (score, person)
-    return sorted(scores_by_person.values(), key=lambda item: item[0], reverse=True)
-
-
-def match_person_for_unit_import(
-    cleaned_name: str,
-    lookup,
-) -> tuple[Person | None, str | None, str, Person | None, float | None]:
-    person, match_method, match_confidence, suggestion = match_person(cleaned_name, lookup)
-    if person is not None or match_confidence == "ambiguous":
-        return person, match_method, match_confidence, suggestion, 1.0 if person is not None else None
-    ranked = ranked_person_candidates(cleaned_name, lookup)
-    if not ranked:
-        return None, None, "low", suggestion, None
-    best_score, best_person = ranked[0]
-    suggestion = best_person if best_score >= .65 else suggestion
-    return None, None, "suggestion" if suggestion else "low", suggestion, best_score
-
-
 def existing_unit_board_keys(db: Session, month: str) -> set[tuple[str, str, str]]:
     starts_on, ends_on = month_bounds(month)
     postings = db.scalars(
@@ -913,12 +820,65 @@ def import_row_key(posting: ParsedUnitPosting) -> str:
     )
 
 
+def row_posting_context(
+    posting: ParsedUnitPosting, resolution: dict[str, object], month: str
+) -> tuple[str, bool, date, date]:
+    """(posting_type, special_posting, starts_on, ends_on) for an import row."""
+    posting_type = normalize_import_posting(posting.posting_label)
+    if resolved_posting_type := resolution.get("posting_type"):
+        posting_type = normalize_import_posting(str(resolved_posting_type))
+    starts_on, ends_on = infer_row_date_bounds(
+        raw_person_name=" ".join(
+            value
+            for value in (posting.raw_person_name, posting.child_posting_label or "")
+            if value
+        ),
+        raw_date_label=posting.raw_date_label,
+        month=month,
+    )
+    return posting_type, is_special_unit_posting(posting_type), starts_on, ends_on
+
+
+def manual_person_id(index: MemberIndex, resolution: dict[str, object]) -> tuple[str | None, bool]:
+    """(member id chosen by the reviewer, whether a chosen id was invalid)."""
+    person_id = resolution.get("person_id")
+    if not person_id:
+        return None, False
+    try:
+        return (str(person_id), False) if UUID(str(person_id)) in index.by_id else (None, True)
+    except ValueError:
+        return None, True
+
+
+def resolve_import_members(
+    index: MemberIndex,
+    postings: list[ParsedUnitPosting],
+    resolutions: dict[str, dict[str, object]],
+    month: str,
+) -> list[Resolution]:
+    """Resolve every row's member at once, with the row's call level, date and special posting."""
+    rows = []
+    for posting in postings:
+        resolution = resolutions.get(import_row_key(posting), {})
+        posting_type, special_posting, starts_on, _ends_on = row_posting_context(posting, resolution, month)
+        rows.append(
+            {
+                "raw_name": posting.person_name,
+                "person_id": manual_person_id(index, resolution)[0],
+                "call_level": posting_type,
+                "on": starts_on,
+                "duty_area": posting_type if special_posting else None,
+            }
+        )
+    return resolve_rows(index, rows, purpose="live")
+
+
 def make_preview_row(
     posting: ParsedUnitPosting,
     *,
-    person_matches,
+    member: Resolution,
+    index: MemberIndex,
     units: dict[str, Unit | None],
-    people_by_id: dict[str, Person],
     units_by_id: dict[str, Unit],
     existing_keys: set[tuple[str, str, str]],
     month: str,
@@ -931,23 +891,37 @@ def make_preview_row(
     row_key = import_row_key(posting)
     resolution = resolutions.get(row_key, {})
     skip_row = bool(resolution.get("skip"))
-    person, match_method, match_confidence, suggestion, match_score = match_person_for_unit_import(
-        posting.person_name,
-        person_matches,
-    )
+    posting_type, special_posting, starts_on, ends_on = row_posting_context(posting, resolution, month)
+    manual_id, manual_id_invalid = manual_person_id(index, resolution)
+    member_fields = member_resolution_fields(member)
+    member_issues = member_fields.pop("member_issues")
+    auto_resolution_status = member.status
+    alias_learnable = False
+    if manual_id_invalid:
+        issues.append("Selected department member was not found")
+    if manual_id and member.matched:
+        # Kept for the response and for alias learning: what the name alone resolved to.
+        by_name = index.resolve(
+            posting.person_name,
+            ResolutionContext.build(posting_type, starts_on, posting_type if special_posting else None),
+            purpose="live",
+        )
+        auto_resolution_status = by_name.status
+        # Only teach a name the resolver did not know. A name that is shared, needs a call
+        # level or already belongs to a member must stay a per-row decision (or a rule).
+        alias_learnable = by_name.status == "not_found" or by_name.only_similar
+        member_fields["match_method"] = "manual_override"
+        member_issues = []
+        chosen = index.by_id[UUID(manual_id)]
+        if chosen.active_status != "active":
+            # Unit postings are live work: only current members can be posted.
+            member_issues.append(f"Selected department member is {chosen.active_status}")
+        resolution_notes.append(f"Member manually resolved to {member.canonical_name}")
+    elif member.matched and member.method == "context":
+        review_suggested = True
+        resolution_notes.append(f"Member resolved by call level: {member.reason}")
+    resolution_notes.extend(str(warning) for warning in member.warnings)
     unit, unit_match_method, unit_match_score = match_unit(posting.unit_label, units)
-    posting_type = normalize_import_posting(posting.posting_label)
-    if person_id := resolution.get("person_id"):
-        resolved_person = people_by_id.get(str(person_id))
-        if resolved_person is None:
-            issues.append("Selected department member was not found")
-        else:
-            person = resolved_person
-            suggestion = None
-            match_method = "manual_override"
-            match_confidence = "high"
-            match_score = 1.0
-            resolution_notes.append(f"Member manually resolved to {person.canonical_name}")
     if unit_id := resolution.get("unit_id"):
         resolved_unit = units_by_id.get(str(unit_id))
         if resolved_unit is None:
@@ -957,47 +931,27 @@ def make_preview_row(
             unit_match_method = "unit_manual_override"
             unit_match_score = 1.0
             resolution_notes.append(f"Unit manually resolved to {unit.name}")
-    if resolved_posting_type := resolution.get("posting_type"):
-        posting_type = normalize_import_posting(str(resolved_posting_type))
+    if resolution.get("posting_type"):
         resolution_notes.append(f"Posting manually resolved to {posting_type}")
-    special_posting = is_special_unit_posting(posting_type)
     if special_posting:
         unit = None
         unit_match_method = "special_posting_no_unit"
         unit_match_score = None
         resolution_notes.append("Special posting uses its own card and does not need a unit")
-    starts_on, ends_on = infer_row_date_bounds(
-        raw_person_name=" ".join(
-            value
-            for value in (posting.raw_person_name, posting.child_posting_label or "")
-            if value
-        ),
-        raw_date_label=posting.raw_date_label,
-        month=month,
-    )
     if skip_row:
         issues.append("Row excluded by reviewer")
-    if match_confidence == "ambiguous":
-        issues.append("Ambiguous department member match")
-    elif person is None:
-        issues.append("Unresolved department member")
-        if suggestion is not None:
-            issues.append(f"Suggested match: {suggestion.canonical_name}")
+    issues.extend(member_issues)
     if unit_match_method in {"unit_ambiguous", "unit_number_ambiguous"} and not special_posting:
         issues.append("Ambiguous unit match")
     elif unit is None and not special_posting:
         issues.append("Unresolved unit")
     if not posting_type:
         issues.append("Missing posting/call level")
-    if person is not None:
-        if match_method in {"normalized_exact", "manual_override"}:
-            auto_resolved_fields.append("member")
-        elif match_method == "fuzzy_auto":
-            auto_resolved_fields.append("member")
-            review_suggested = True
-            resolution_notes.append(
-                f"Member auto-resolved by fuzzy match at {round((match_score or 0) * 100)}%"
-            )
+    person_id = member_fields["person_id"]
+    if person_id is not None:
+        # Fuzzy similarity never reaches here: the resolver only assigns exact names, approved
+        # aliases, reviewed rules, call-level context or a reviewer's choice.
+        auto_resolved_fields.append("member")
     if special_posting:
         auto_resolved_fields.append("unit")
     elif unit is not None:
@@ -1011,8 +965,8 @@ def make_preview_row(
             resolution_notes.append(
                 f"Unit auto-resolved by fuzzy match at {round((unit_match_score or 0) * 100)}%"
             )
-    if person is not None and (unit is not None or special_posting):
-        key = (str(person.id), str(unit.id) if unit else "", posting_type)
+    if person_id is not None and (unit is not None or special_posting):
+        key = (str(person_id), str(unit.id) if unit else "", posting_type)
         if key in existing_keys:
             issues.append("Existing matching unit assignment already recorded")
     return {
@@ -1024,13 +978,9 @@ def make_preview_row(
         "column_label": posting.column_label,
         "raw_person_name": posting.raw_person_name,
         "cleaned_person_name": posting.person_name,
-        "person_id": str(person.id) if person else None,
-        "person_name": person.canonical_name if person else None,
-        "suggested_person_id": str(suggestion.id) if suggestion else None,
-        "suggested_person_name": suggestion.canonical_name if suggestion else None,
-        "match_method": match_method,
-        "match_confidence": match_confidence,
-        "match_score": round(match_score, 3) if match_score is not None else None,
+        **member_fields,
+        "auto_resolution_status": auto_resolution_status,
+        "member_alias_learnable": alias_learnable,
         "raw_unit_label": posting.unit_label,
         "unit_id": str(unit.id) if unit else None,
         "unit_name": unit.name if unit else None,
@@ -1102,26 +1052,25 @@ def preview_unit_assignment_import(
 ) -> dict[str, object]:
     month_bounds(month)
     parsed = read_unitwise_upload(db, filename, content)
-    person_matches = person_lookup(db)
-    active_people = list(db.scalars(select(Person).where(Person.active_status == "active")))
+    index = MemberIndex.load(db)
     active_units = list(db.scalars(select(Unit).where(Unit.active_status == "active")))
-    people_by_id = {str(person.id): person for person in active_people}
     units_by_id = {str(unit.id): unit for unit in active_units}
     units = unit_lookup(db)
     existing_keys = set() if replace_existing else existing_unit_board_keys(db, month)
     resolution_lookup = resolutions or {}
+    members = resolve_import_members(index, list(parsed.postings), resolution_lookup, month)
     rows = [
         make_preview_row(
             posting,
-            person_matches=person_matches,
+            member=member,
+            index=index,
             units=units,
-            people_by_id=people_by_id,
             units_by_id=units_by_id,
             existing_keys=existing_keys,
             month=month,
             resolutions=resolution_lookup,
         )
-        for posting in parsed.postings
+        for posting, member in zip(parsed.postings, members)
     ]
     mark_duplicate_import_rows(rows)
     for row in rows:
@@ -1256,6 +1205,8 @@ def clear_unit_board_month(db: Session, month: str) -> int:
 
 def learn_person_alias_from_row(db: Session, row: dict[str, object]) -> bool:
     if row.get("match_method") != "manual_override" or not row.get("person_id"):
+        return False
+    if not row.get("member_alias_learnable"):
         return False
     alias = clean_cell_value(row.get("cleaned_person_name") or row.get("raw_person_name"))
     if not alias or "," in alias or "/" in alias or ";" in alias:

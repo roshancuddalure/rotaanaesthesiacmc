@@ -7,7 +7,7 @@ from app.models.call_cluster import CallCluster, PersonCallClusterMembership
 from app.models.leave import LeaveRequest
 from app.models.imports import ImportBatch, ImportSourceRecord, ImportWarning
 from app.models.mappings import AdminMapping
-from app.models.normalization import ReferenceValue, NormalizationEvent, ImportReviewBatch
+from app.models.normalization import ReferenceValue, NormalizationEvent, ImportReviewBatch, MemberResolutionRule
 from app.models.person import Person, PersonAlias, PersonDesignation
 from app.models.member_workspace import MemberActivity, MemberImportPreview, MemberCallLevelChange, LegacyPersonCallChange, LegacyPersonComment
 from app.models.member_profile import PersonCallChange, PersonComment
@@ -34,6 +34,7 @@ __all__ = [
     "ReferenceValue",
     "NormalizationEvent",
     "ImportReviewBatch",
+    "MemberResolutionRule",
     "MemberActivity",
     "MemberCallLevelChange",
     "LegacyPersonCallChange",

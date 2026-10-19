@@ -1,6 +1,7 @@
 import { request } from "./services/api";
 import { workspaceDialog } from "./member-workspace";
-import { ComputeWorker, preference, savePreference, resetPreference, selectedEngine } from "./compute-device";
+import { ComputeWorker, RecoveringCompute, preference, savePreference, resetPreference, prepareEngine, rememberTest, invalidateDevice, diagnostics } from "./compute-device";
+import { COMPUTE_VERSION } from "./compute-protocol";
 
 type Engine = "server" | "local_gpu";
 type Decision = { slot_id: string; date: string; duty: string; unit: string; action: string;
@@ -14,8 +15,8 @@ interface Capabilities { enabled: boolean; browser_gpu: boolean; context_hash: s
 const escape = (value: unknown) => String(value ?? "").replace(/[&<>"']/g,
   c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 const post = <T>(path: string, data = {}) => request<T>(`/api/v1/rota-compute/${path}`,
-  { method: "POST", body: JSON.stringify(data) });
-const capabilities = (month?: string) => request<Capabilities>(`/api/v1/rota-compute/capabilities${month ? `?month=${encodeURIComponent(month)}` : ""}`);
+  { method: "POST", body: JSON.stringify(data), signal: AbortSignal.timeout(30000) });
+const capabilities = (month?: string) => request<Capabilities>(`/api/v1/rota-compute/capabilities${month ? `?month=${encodeURIComponent(month)}` : ""}`, { signal: AbortSignal.timeout(10000) });
 const start = (month: string, engine: Engine) => post<Job>("jobs", { month, engine });
 const step = (job: Job, extra: object = {}) => post<Job>(`jobs/${job.id}/step`, { revision: job.revision, ...extra });
 
@@ -41,14 +42,32 @@ export async function renderComputeSettings(host: HTMLElement) {
       <option value="server" ${p.mode === "server" ? "selected" : ""}>Server</option>
       <option value="auto" ${p.mode === "auto" ? "selected" : ""}>Automatic — use measured results</option>
       <option value="local_gpu" ${p.mode === "local_gpu" ? "selected" : ""}>Prefer local GPU — pilot</option></select></label>
+      <label>GPU power preference<select data-compute-power ${busy ? "disabled" : ""}>
+        <option value="default" ${p.power === "default" ? "selected" : ""}>Browser default</option>
+        <option value="high-performance" ${p.power === "high-performance" ? "selected" : ""}>Prefer performance</option>
+        <option value="low-power" ${p.power === "low-power" ? "selected" : ""}>Prefer power saving</option>
+      </select></label>
+      <p>This is a browser hint. WebGPU cannot list every installed GPU or select NVIDIA by name.
+      Chrome on Windows may ignore this preference and keep using its assigned GPU.</p>
+      <details><summary>NVIDIA or another GPU is missing</summary>
+        <p>Check graphics acceleration in browser settings, then open chrome://gpu (or edge://gpu) to inspect the browser-selected GPU.
+        Set the browser's graphics preference to High performance in Windows Settings → System → Display → Graphics, restart the browser and retest.
+        Chrome also documents chrome://flags/#force-high-performance-gpu as a browser-wide option requiring a restart.
+        Do not bypass driver blocklists or enable unsafe WebGPU flags.</p>
+        <p>These settings are controlled by you and the browser. This page cannot switch Windows GPU settings or combine multiple GPUs.</p>
+      </details>
       <p>Automatic uses the server unless an exact-result comparison on this device proves local execution
       is at least 20% faster, including network, transfer and validation time. Three runs per engine include cold GPU startup and full schedule validation. Results expire after seven days or when rota data changes.</p>
       <div class="registry-actions"><button type="button" data-compute-test ${busy || !caps.browser_gpu || !caps.enabled ? "disabled" : ""}>Test Device</button>
       <button type="button" data-compute-reset ${busy ? "disabled" : ""}>Reset device settings</button></div>
-      ${p.test ? `<p>Adapter: ${escape(p.test.adapter)}. Exact score check: ${p.test.parity ? "passed" : "failed"}.
-      ${p.test.software ? "Software adapter detected; automatic mode will use the server." : "Hardware adapter available."}</p>` : ""}
+      ${p.test ? `<div class="compute-diagnostics"><p>Browser-selected GPU: ${escape(p.test.adapter)}. Exact score check: ${p.test.parity ? "passed" : "failed"}.
+      ${p.test.software ? "Fallback adapter detected; rota generation will use the server." : "Browser reports a hardware adapter."}</p>
+      <dl><dt>Vendor</dt><dd>${escape(p.test.vendor || "Information unavailable")}</dd><dt>Architecture</dt><dd>${escape(p.test.architecture || "Information unavailable")}</dd>
+      <dt>Device</dt><dd>${escape(p.test.device || "Information unavailable")}</dd><dt>Description</dt><dd>${escape(p.test.description || "Information unavailable")}</dd></dl>
+      <p>Browser privacy settings may hide details. The current GPU is checked again before local generation.</p></div>` : "<p>No current device test. Test Device to check browser GPU availability.</p>"}
+      <button type="button" data-compute-diagnostics>Download GPU diagnostics</button>
       <label>Draft month for comparison<input type="month" data-compute-month value="${month}" ${busy ? "disabled" : ""}></label>
-      <button type="button" data-compute-compare ${busy || !p.enabled || !p.test?.supported || !caps.enabled || !caps.browser_gpu ? "disabled" : ""}>Compare engines on this month</button>
+      <button type="button" data-compute-compare ${busy || !p.enabled || !p.test?.supported || p.test.software || !caps.enabled || !caps.browser_gpu ? "disabled" : ""}>Compare engines on this month</button>
       <p>Comparison creates and cancels six proposals. It never applies assignments or publishes a rota.</p>
       ${p.proof ? `<p>Last comparison: server ${(p.proof.server_ms / 1000).toFixed(2)} s;
       local ${(p.proof.local_ms / 1000).toFixed(2)} s; matching decisions: ${p.proof.parity ? "yes" : "no"}.</p>` : ""}
@@ -59,22 +78,33 @@ export async function renderComputeSettings(host: HTMLElement) {
     const input = event.target as HTMLInputElement;
     const p = preference();
     if (input.matches("[data-compute-month]")) { month = input.value; return; }
-    if (input.matches("[data-compute-enable]")) { p.enabled = input.checked; savePreference(p); render(); }
-    if (input.matches("[data-compute-mode]")) { p.mode = input.value as typeof p.mode; savePreference(p); render(); }
+    if (input.matches("[data-compute-power]")) {
+      invalidateDevice(); const next = preference(); next.power = input.value as typeof next.power;
+      try { savePreference(next); status = "Power preference changed. Test the device and compare engines again."; }
+      catch (error) { status = error instanceof Error ? error.message : "Unable to save settings"; }
+      render(); return;
+    }
+    try {
+      if (input.matches("[data-compute-enable]")) { p.enabled = input.checked; savePreference(p); render(); }
+      if (input.matches("[data-compute-mode]")) { p.mode = input.value as typeof p.mode; savePreference(p); render(); }
+    } catch (error) { status = error instanceof Error ? error.message : "Unable to save settings"; render(); }
   };
   host.onclick = async event => {
     const button = (event.target as HTMLElement).closest<HTMLButtonElement>("button");
     if (!button || busy) return;
+    if (button.matches("[data-compute-diagnostics]")) {
+      const url = URL.createObjectURL(new Blob([JSON.stringify(diagnostics(), null, 2)], { type: "application/json" }));
+      const link = document.createElement("a"); link.href = url; link.download = "rota-gpu-diagnostics.json"; link.click();
+      window.setTimeout(() => URL.revokeObjectURL(url), 1000); return;
+    }
     if (button.matches("[data-compute-reset]")) { resetPreference(); status = "Device settings reset. GPU computation is off."; render(); return; }
     if (!button.matches("[data-compute-test], [data-compute-compare]")) return;
     const month = host.querySelector<HTMLInputElement>("[data-compute-month]")!.value;
     busy = true; status = "Testing…"; render();
-    testWorker = new ComputeWorker();
     try {
+      testWorker = new ComputeWorker();
       const test = await testWorker.call("test");
-      const p = preference();
-      if (p.test?.adapter !== test.adapter) delete p.proof;
-      p.test = test; savePreference(p);
+      rememberTest(test);
       if (button.matches("[data-compute-compare]")) {
         const reports: { job: Job; elapsed: number; engine: Engine }[] = [];
         for (const engine of ["server", "local_gpu", "local_gpu", "server", "server", "local_gpu"] as Engine[]) {
@@ -86,6 +116,7 @@ export async function renderComputeSettings(host: HTMLElement) {
             while (["queued", "running"].includes(job.status)) {
               if (!host.isConnected) throw new Error("Comparison stopped after leaving settings. Proposals were cancelled.");
               const result = job.frame ? await testWorker.call("score", job.frame) : undefined;
+              if (result && result.signature !== test.signature) throw new Error("Browser-selected GPU changed. Retest before comparing engines.");
               job = await step(job, result ? { selection: result.winner, token: job.frame!.token } : {});
               const message = host.querySelector("[data-compute-status]");
               if (message) message.textContent = `Comparing ${engine === "server" ? "server" : "local GPU"}: ${job.processed} of ${job.total} slots`;
@@ -103,14 +134,18 @@ export async function renderComputeSettings(host: HTMLElement) {
         const latest = preference();
         latest.proof = { server_ms: median("server"), local_ms: median("local_gpu"),
           month, context_hash: reports[0].job.context_hash,
-          parity: same, at: Date.now(), version: 1, adapter: test.adapter };
+          parity: same, at: Date.now(), version: COMPUTE_VERSION, adapter: test.adapter, signature: test.signature, browser: navigator.userAgent };
         savePreference(latest);
         status = same ? "Comparison complete. Automatic mode will use the measured faster path when the threshold is met."
           : "Results differed. Automatic mode will use the server.";
       } else status = "Device test passed. This confirms exact scoring support; it does not promise a faster rota run.";
-    } catch (error) { status = error instanceof Error ? error.message : "Device test failed"; }
-    finally { testWorker.close(); busy = false; render(); }
+    } catch (error) { invalidateDevice(); status = `${error instanceof Error ? error.message : "Device test failed"} Server computation remains available.`; }
+    finally { testWorker?.close(); busy = false; render(); }
   };
+  const observer = new MutationObserver(() => {
+    if (!host.isConnected || !host.querySelector(".compute-settings")) { testWorker?.close(); observer.disconnect(); }
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
 }
 
 export async function openRotaCompute(month: string, admin: boolean, onApplied: () => void) {
@@ -118,17 +153,19 @@ export async function openRotaCompute(month: string, admin: boolean, onApplied: 
   let job: Job | undefined;
   let running = false;
   let closed = false;
-  let worker: ComputeWorker | undefined;
+  let worker: RecoveringCompute | undefined;
   let notice = "";
   let elapsed = 0;
+  let actionBusy = false;
+  const lifetime = new AbortController();
   let caps: Capabilities;
   dialog.innerHTML = '<p class="mw-content" role="status">Loading compute options…</p>';
   dialog.showModal();
-  dialog.addEventListener("close", () => { closed = true; running = false; worker?.close(); dialog.remove(); });
+  dialog.addEventListener("close", () => { closed = true; running = false; lifetime.abort(); worker?.close(); dialog.remove(); });
   try {
     caps = await capabilities(month);
     if (!caps.enabled) throw new Error("Reviewed compute is disabled by the administrator.");
-    const recent = await request<Job[]>(`/api/v1/rota-compute/jobs?month=${encodeURIComponent(month)}`);
+    const recent = await request<Job[]>(`/api/v1/rota-compute/jobs?month=${encodeURIComponent(month)}`, { signal: AbortSignal.timeout(10000) });
     job = recent.find(j => ["queued", "running", "completed"].includes(j.status));
   } catch (error) { dialog.innerHTML = `<div class="mw-content"><p role="alert">${escape(error instanceof Error ? error.message : error)}</p><button data-close>Close</button></div>`;
     dialog.querySelector("button")!.addEventListener("click", () => dialog.close()); return; }
@@ -168,8 +205,8 @@ export async function openRotaCompute(month: string, admin: boolean, onApplied: 
         let extra: object = {};
         if (job.frame) {
           try {
-            worker ||= new ComputeWorker();
-            const result = await worker.call("score", job.frame);
+            worker ||= new RecoveringCompute(message => { notice = message; render(); });
+            const result = await worker.score(job.frame);
             extra = { selection: result.winner, token: job.frame.token };
           } catch (error) {
             if (!running || closed) break;
@@ -178,7 +215,22 @@ export async function openRotaCompute(month: string, admin: boolean, onApplied: 
           }
         }
         if (!running || closed) break;
-        const next = await step(job, extra);
+        let next: Job;
+        try { next = await step(job, extra); }
+        catch (error) {
+          const status = (error as { status?: number })?.status;
+          if (status === 422 && "selection" in extra) {
+            invalidateDevice(); worker?.close(); worker = undefined;
+            notice = "Server rejected the GPU result. Continuing with server scoring.";
+            next = await step(job, { fallback: true });
+          } else if (status === undefined || status >= 500) {
+            // A response may be lost after the server commits a step. Recover its
+            // revision first; retry only once, with the same idempotent revision.
+            const current = await request<Job>(`/api/v1/rota-compute/jobs/${job.id}`, { signal: AbortSignal.timeout(10000) });
+            if (!running || closed) break;
+            next = current.revision !== job.revision || !["queued", "running"].includes(current.status) ? current : await step(current, extra);
+          } else throw error;
+        }
         if (!running || closed) break;
         job = next; elapsed = performance.now() - began; render();
       }
@@ -186,9 +238,11 @@ export async function openRotaCompute(month: string, admin: boolean, onApplied: 
         await post(`jobs/${job.id}/validate`, { revision: job.revision });
         elapsed = performance.now() - began;
         notice = `Draft ready for review. No assignments have been applied. ${job.fallback_reason || ""}`;
+      } else if (!closed && running && !["queued", "running"].includes(job.status)) {
+        notice = job.error || `Proposal ${job.status}. Existing assignments were preserved.`;
       }
     } catch (error) { notice = `${error instanceof Error ? error.message : "Computation interrupted"}. You can retry or resume this proposal.`;
-      try { job = await request<Job>(`/api/v1/rota-compute/jobs/${job.id}`); } catch { /* Preserve last known progress. */ }
+      try { job = await request<Job>(`/api/v1/rota-compute/jobs/${job.id}`, { signal: AbortSignal.timeout(10000) }); } catch { /* Preserve last known progress. */ }
     } finally { running = false; worker?.close(); worker = undefined; render(); }
   }
   dialog.onchange = () => { const apply = dialog.querySelector<HTMLButtonElement>("[data-apply]");
@@ -201,12 +255,17 @@ export async function openRotaCompute(month: string, admin: boolean, onApplied: 
       const url = URL.createObjectURL(new Blob([JSON.stringify({ ...job, session_elapsed_ms: elapsed }, null, 2)], { type: "application/json" }));
       const link = document.createElement("a"); link.href = url; link.download = `rota-compute-${month}.json`; link.click(); URL.revokeObjectURL(url); return;
     }
+    if (actionBusy) return;
+    actionBusy = true;
     button.disabled = true;
     try {
       if (button.matches("[data-generate]")) {
-        job = await start(month, selectedEngine(admin, caps.browser_gpu, { month, hash: caps.context_hash })); notice = ""; await run();
-      } else if (button.matches("[data-resume]")) await run();
-      else if (button.matches("[data-server-fallback]")) { job = await step(job!, { fallback: true }); await run(); }
+        notice = "Checking compute device…"; render();
+        const engine = await prepareEngine(admin, caps.browser_gpu, { month, hash: caps.context_hash }, lifetime.signal);
+        if (closed) return;
+        job = await start(month, engine); notice = engine === "server" && preference().mode !== "server" ? "Using server computation after device checks." : ""; actionBusy = false; await run();
+      } else if (button.matches("[data-resume]")) { actionBusy = false; await run(); }
+      else if (button.matches("[data-server-fallback]")) { job = await step(job!, { fallback: true }); actionBusy = false; await run(); }
       else if (button.matches("[data-cancel]")) {
         running = false; worker?.close();
         job = await post<Job>(`jobs/${job!.id}/cancel`);
@@ -217,7 +276,7 @@ export async function openRotaCompute(month: string, admin: boolean, onApplied: 
         notice = `${job.result?.assigned ?? 0} assignments applied to the draft. The rota has not been published.`; onApplied();
       }
     } catch (error) { notice = error instanceof Error ? error.message : "Unable to complete this action"; }
-    finally { render(); }
+    finally { actionBusy = false; render(); }
   };
   render();
 }

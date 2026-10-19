@@ -1,19 +1,23 @@
 """Prefill ``Person.call_level`` from section labels in a unitwise workbook
 (hard-coded to ``data/source/historical/unitwise/May 2026.xlsx``; handbook B16).
+
+Names resolve through the shared ``MemberIndex`` (purpose "history"); fuzzy similarity never
+assigns. ``preview_call_level_prefill`` changes nothing; ``prefill_call_levels_from_unitwise``
+applies only the confirmed matched rows of that preview and needs its ``preview_token``.
 """
 
 import re
-from dataclasses import dataclass
-from difflib import SequenceMatcher
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from openpyxl import load_workbook
-from sqlalchemy import select
-from app.services.member_profiles import call_level_on, local_today, record_call_change
 from sqlalchemy.orm import Session
 
 from app.models import Person
 from app.services.department_roster_reset import clean_key
+from app.services.member_profiles import call_level_on, local_today, record_call_change
+from app.services.member_resolver import MemberIndex, ResolutionContext
+from app.services.members import check_preview_token, preview_token
 from app.services.roster_reconciliation import clean_roster_name
 
 DEFAULT_UNITWISE_CALL_LEVEL_PATH = (
@@ -46,13 +50,18 @@ class UnitwiseCallLevelEntry:
     call_level: str
 
 
-@dataclass(frozen=True)
+@dataclass
 class CallLevelPrefillResult:
     matched: int
     unmatched: int
     cleared: int
     unmatched_names: list[str]
     examples: list[str]
+    mode: str = "preview"
+    preview_token: str = ""
+    changes: int = 0
+    needs_review: int = 0
+    rows: list[dict] = field(default_factory=list)
 
 
 def strip_unitwise_suffixes(value: object) -> str:
@@ -104,80 +113,105 @@ def extract_unitwise_call_levels(
     return list(deduped.values())
 
 
-def person_match_score(query: str, person: Person) -> float:
-    query_key = clean_key(query)
-    person_key = clean_key(person.canonical_name)
-    query_tokens = [token.casefold() for token in re.findall(r"[A-Za-z0-9]+", query)]
-    person_tokens = [token.casefold() for token in re.findall(r"[A-Za-z0-9]+", person.canonical_name)]
-    if len(query_tokens) >= 2 and len(query_tokens[-1]) <= 2:
-        wanted_initial = query_tokens[-1][0]
-        if not any(token.startswith(wanted_initial) for token in person_tokens[1:]):
-            return 0.0
-    if query_key == person_key:
-        return 1.0
-    if len(query_key) >= 5 and person_key.startswith(query_key):
-        return 0.96
-
-    query_token_set = set(query_tokens)
-    person_token_set = set(person_tokens)
-    if query_token_set and query_token_set <= person_token_set:
-        return 0.95
-    return SequenceMatcher(None, query_key, person_key).ratio()
 
 
-def match_person(query: str, people: list[Person]) -> Person | None:
-    scored = sorted(
-        ((person_match_score(query, person), person) for person in people),
-        key=lambda item: item[0],
-        reverse=True,
+def match_person(query: str, people: "list[Person] | MemberIndex", call_level: str | None = None) -> Person | None:
+    """The member this unitwise name certainly means, or None (needs review / not found)."""
+    index = people if isinstance(people, MemberIndex) else MemberIndex(people, [])
+    result = index.resolve(query, ResolutionContext.build(call_level), purpose="history")
+    if not result.matched:
+        return None
+    return next(p for p in index.people if str(p.id) == result.person_id)
+
+
+def _plan(db: Session, path: Path) -> tuple[list[dict], list[dict], dict[str, Person]]:
+    index = MemberIndex.load(db)
+    people = {str(person.id): person for person in index.people}
+    rows: list[dict] = []
+    for entry in extract_unitwise_call_levels(path):
+        res = index.resolve(entry.cleaned_name, ResolutionContext.build(entry.call_level), purpose="history")
+        if not res.matched and entry.raw_name != entry.cleaned_name:
+            # Fall back to the cell as written (exact / alias / rule only).
+            raw = index.resolve(entry.raw_name, ResolutionContext.build(entry.call_level), purpose="history")
+            if raw.matched:
+                res = raw
+        person = people.get(res.person_id) if res.matched else None
+        rows.append({
+            "raw_name": entry.raw_name,
+            "cleaned_name": entry.cleaned_name,
+            "new_call_level": entry.call_level,
+            "status": res.status,
+            "method": res.method,
+            "reason": res.reason,
+            "person_id": res.person_id,
+            "canonical_name": res.canonical_name,
+            "current_call_level": call_level_on(person) if person else None,
+            "candidates": [c.__dict__ for c in res.candidates],
+            "warnings": list(res.warnings),
+            "action": "review",
+        })
+    levels_by_person: dict[str, set[str]] = {}
+    for row in rows:
+        if row["status"] == "matched":
+            levels_by_person.setdefault(row["person_id"], set()).add(row["new_call_level"])
+    for row in rows:
+        if row["status"] != "matched":
+            row["reason"] = row["reason"] or "Not matched to a member"
+            continue
+        levels = levels_by_person[row["person_id"]]
+        if len(levels) > 1:
+            row.update(status="conflict", action="review",
+                       reason=f"{row['canonical_name']} is listed under several call levels "
+                              f"({', '.join(sorted(levels))}); set the level by hand")
+        elif row["current_call_level"] == row["new_call_level"]:
+            row["action"] = "unchanged"
+        else:
+            row["action"] = "set"
+    changes, seen = [], set()
+    for row in rows:
+        if row["action"] == "set" and row["person_id"] not in seen:
+            seen.add(row["person_id"])
+            changes.append({"person_id": row["person_id"], "name": row["canonical_name"],
+                            "from": row["current_call_level"], "to": row["new_call_level"]})
+    changes.sort(key=lambda c: (c["name"].casefold(), c["person_id"]))
+    return rows, changes, people
+
+
+def _result(rows: list[dict], changes: list[dict], mode: str) -> CallLevelPrefillResult:
+    review = [row for row in rows if row["action"] == "review"]
+    return CallLevelPrefillResult(
+        matched=sum(1 for row in rows if row["action"] in {"set", "unchanged"}),
+        unmatched=len(review),
+        cleared=0,
+        unmatched_names=[row["raw_name"] for row in review][:50],
+        examples=[f"{c['name']}: {c['from'] or 'none'} -> {c['to']}" for c in changes[:20]],
+        mode=mode,
+        preview_token=preview_token(changes),
+        changes=len(changes),
+        needs_review=len(review),
+        rows=rows,
     )
-    if not scored or scored[0][0] < 0.88:
-        return None
-    if len(scored) > 1 and scored[0][0] == scored[1][0]:
-        return None
-    return scored[0][1]
+
+
+def preview_call_level_prefill(db: Session, path: Path = DEFAULT_UNITWISE_CALL_LEVEL_PATH) -> CallLevelPrefillResult:
+    """What a prefill would change. Makes no database changes."""
+    rows, changes, _ = _plan(db, path)
+    return _result(rows, changes, "preview")
 
 
 def prefill_call_levels_from_unitwise(
     db: Session,
     path: Path = DEFAULT_UNITWISE_CALL_LEVEL_PATH,
+    token: str | None = None,
 ) -> CallLevelPrefillResult:
-    people = db.scalars(select(Person).order_by(Person.canonical_name)).all()
-    entries = extract_unitwise_call_levels(path)
-    matched = 0
-    unmatched_names: list[str] = []
-    examples: list[str] = []
+    """Apply the confirmed changes of ``preview_call_level_prefill``.
 
-    cleared = 0
-    before = {person.id: call_level_on(person) for person in people}
-    for person in people:
-        if person.call_level:
-            person.call_level = None
-            cleared += 1
-
-    for entry in entries:
-        person = match_person(entry.cleaned_name, people)
-        if person is None:
-            unmatched_names.append(entry.raw_name)
-            continue
-        if person.call_level and person.call_level != entry.call_level:
-            person.call_level = f"{person.call_level}; {entry.call_level}"
-        else:
-            person.call_level = entry.call_level
-        matched += 1
-        if len(examples) < 20:
-            examples.append(f"{entry.raw_name} -> {person.canonical_name}: {person.call_level}")
-
-    for person in people:
-        final_level = person.call_level
-        person.call_level = before[person.id]
-        if final_level != before[person.id]:
-            record_call_change(db, person, final_level, local_today(), "Prefilled from trusted unitwise roster", "unitwise_prefill")
+    Only rows the resolver matched with certainty change a level; other members keep theirs.
+    Raises ``StalePreviewError`` when ``token`` does not match the current preview."""
+    rows, changes, people = _plan(db, path)
+    check_preview_token(preview_token(changes), token, "call-level prefill")
+    for change in changes:
+        record_call_change(db, people[change["person_id"]], change["to"], local_today(),
+                           "Prefilled from trusted unitwise roster", "unitwise_prefill")
     db.commit()
-    return CallLevelPrefillResult(
-        matched=matched,
-        unmatched=len(unmatched_names),
-        cleared=cleared,
-        unmatched_names=unmatched_names[:50],
-        examples=examples,
-    )
+    return _result(rows, changes, "applied")

@@ -9,6 +9,8 @@ from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
 
+from uuid import UUID
+
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -62,14 +64,14 @@ def load_mapping_lookup(db: Session, mapping_type: str) -> dict[str, AdminMappin
 
 
 def get_or_create_person(db: Session, name: str, summary: dict[str, int]) -> Person:
-    from app.services.normalization import member_key, member_lookup
-    lookup = member_lookup(db, active_only=False)
-    key = member_key(name)
-    if key in lookup and lookup[key] is None:
+    from app.services.member_resolver import MemberIndex
+
+    index = MemberIndex.load(db)
+    result = index.resolve(name, purpose="history")
+    if result.matched:
+        return index.by_id[UUID(result.person_id)]
+    if result.status in {"ambiguous", "needs_review"} and not result.only_similar:
         raise ValueError(f'Ambiguous historical member "{name}"; resolve the identity before import')
-    person = lookup.get(key)
-    if person is not None:
-        return person
 
     person = Person(canonical_name=name)
     db.add(person)

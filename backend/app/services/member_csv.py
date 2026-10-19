@@ -11,7 +11,8 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
 from app.models import MemberImportPreview, Person, PersonDesignation, UserAccount
-from app.services.normalization import member_candidates, member_key, member_lookup
+from app.services.member_resolver import MemberIndex
+from app.services.normalization import member_key
 from app.services.member_profile import (
     ensure_unique_name, record_activity, revision, snapshot, validate_designations, validate_identity,
 )
@@ -114,7 +115,7 @@ def build_preview(db: Session, rows: list[dict], mode: str) -> list[dict]:
     people = list(db.scalars(select(Person).options(
         selectinload(Person.aliases), selectinload(Person.designations), selectinload(Person.call_level_changes))))
     by_id = {str(p.id): p for p in people}
-    names = member_lookup(db, active_only=False)
+    index = MemberIndex.load(db)
     counts = Counter(name_key(r["values"].get("canonical_name", "")) for r in rows)
     result = []
     used_ids: set[str] = set()
@@ -131,7 +132,13 @@ def build_preview(db: Session, rows: list[dict], mode: str) -> list[dict]:
         name = values.get("canonical_name", "")
         key = name_key(name)
         errors = [row["parse_error"]] if row.get("parse_error") else []
-        owner = names.get(key)
+        # Exact name, approved alias or rule only; historical members can be updated, and a
+        # match on an archived member is surfaced so the checks below can explain it.
+        match = index.resolve(name, purpose="history")
+        owner = by_id.get(match.person_id) if match.matched else None
+        if (not owner and match.candidates and match.warnings
+                and any("confirm before assigning" in w for w in match.warnings)):
+            owner = by_id.get(match.candidates[0].person_id)
         person = None
         if values.get("member_id"):
             try:
@@ -142,8 +149,8 @@ def build_preview(db: Session, rows: list[dict], mode: str) -> list[dict]:
                 errors.append("Member ID is not a valid UUID")
         elif owner is not None:
             person = owner
-        elif key in names:
-            errors.append("Ambiguous name or alias; supply the member ID")
+        elif match.status in {"ambiguous", "needs_review"} and not match.only_similar:
+            errors.append(f"'{name}' could be {', '.join(c.name for c in match.candidates[:3])}; supply the member ID")
         if counts[key] > 1:
             errors.append("Repeated member name in this file; keep one row per member")
         if person:
@@ -208,12 +215,15 @@ def build_preview(db: Session, rows: list[dict], mode: str) -> list[dict]:
             errors.append("Reactivate this member explicitly in their profile before importing")
         if not person and not errors and values.get("_confirm_distinct") != "yes":
             today = date.today()
+            # Duplicate prevention: a new member that resembles an existing one needs review;
+            # the admin can still confirm it is a different person (_confirm_distinct).
+            possible = [by_id[c.person_id] for c in index.near_duplicates(name) if c.person_id in by_id]
             suggestions = [{"id": str(p.id), "name": p.canonical_name, "status":p.active_status,
                             "call_level":p.call_level, "designation":next((d.designation for d in sorted(p.designations,key=lambda d:d.effective_from,reverse=True)
                                 if d.effective_from<=today and (d.effective_to is None or d.effective_to>=today)),None),
                             "units":sorted({f"{a.unit.campus or ''} {a.unit.name}".strip() for a in p.postings
                                             if a.unit and a.starts_on<=today and (a.ends_on is None or a.ends_on>=today)})}
-                           for score,p in member_candidates(name,names) if score >= .85]
+                           for p in possible]
         if person and before == after and not designation_pending:
             action = "unchanged"
         result.append({**row, "action": "invalid" if errors else "needs_review" if suggestions else action,

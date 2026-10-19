@@ -2,9 +2,10 @@
 
 Accepts either a tabular sheet (name/start/end/type/slot/status columns, header row
 auto-detected) or a "wide calendar" sheet (one column per day). Names are matched to
-members by canonical name/aliases; half-day markers in the name cell (AM/PM/...) become
-``leave_slot``. Apply re-runs the preview and inserts only rows that matched cleanly with
-no issues; everything else is returned as skipped for manual entry.
+members through the shared resolver (``member_resolver.MemberIndex``, purpose "live", dated by
+the leave start); half-day markers in the name cell (AM/PM/...) become ``leave_slot``. Apply
+re-runs the preview and inserts only rows that matched cleanly with no issues; everything
+else is returned as skipped for manual entry.
 """
 
 from __future__ import annotations
@@ -13,18 +14,19 @@ import io
 import re
 import unicodedata
 from datetime import date, datetime
-from difflib import SequenceMatcher
+from dataclasses import asdict
 from typing import Any
 from uuid import UUID
 
 from openpyxl import load_workbook
 import pandas as pd
 from sqlalchemy import select
-from sqlalchemy.orm import Session, selectinload
+from sqlalchemy.orm import Session
 
-from app.models import LeaveRequest, Person
+from app.models import LeaveRequest
 from app.services.leave import month_bounds
-from app.services.normalization import member_key, member_lookup, member_candidates
+from app.services.member_resolver import MemberIndex, Resolution, ResolutionContext, resolve_rows
+from app.services.normalization import member_key
 from app.services.upload_limits import validate_tabular_upload
 
 NAME_COLUMNS = {
@@ -221,9 +223,6 @@ TRAILING_NOISE_PATTERN = re.compile(
     re.IGNORECASE,
 )
 
-PersonLookup = dict[str, Person | None]
-
-
 def normalize_name(value: str) -> str:
     return member_key(value)
 
@@ -264,7 +263,14 @@ def normalize_leave_type(value: Any) -> str:
 
 
 def leading_marker_removed(value: str) -> str:
-    return re.sub(r"^\s*(?:[#*-]\s*)?(?:\d+|[ivxlcdm]+|[a-z])[\.)\]:-]\s+", "", value, flags=re.IGNORECASE)
+    # A single letter followed by a dot is a name initial ("A. Ramesh"), not a list marker;
+    # "a)" / "b:" style single-letter markers and numbered/roman markers are still removed.
+    return re.sub(
+        r"^\s*(?:[#*-]\s*)?(?:\d+[\.)\]:-]|[ivxlcdm]{2,}[\.)\]:-]|[a-z][)\]:-])\s+",
+        "",
+        value,
+        flags=re.IGNORECASE,
+    )
 
 
 def annotation_is_noise(value: str) -> bool:
@@ -330,11 +336,66 @@ def clean_person_text(value: Any) -> str:
     return strip_titles(cleaned)
 
 
-def extract_name_and_slot(raw_name: str, fallback_slot: str = "FULL_DAY") -> tuple[str, str]:
-    cleaned, slot = extract_slot_annotations(clean_cell_text(raw_name), fallback_slot)
+def bracket_slot(value: str, fallback_slot: str) -> str:
+    slot = normalize_slot(fallback_slot)
+    for match in re.finditer(r"\(([^)]*)\)|\[([^\]]*)\]", value):
+        parsed_slot = slot_from_token(match.group(1) or match.group(2) or "")
+        if parsed_slot:
+            slot = parsed_slot
+    return slot
+
+
+def lightly_cleaned(value: str) -> str:
+    """Remove only what can never be part of a name: list markers, noise brackets, titles."""
+    cleaned = clean_cell_text(value).replace("\u2013", "-").replace("\u2014", "-")
+    cleaned = remove_bracketed_noise(leading_marker_removed(cleaned))
+    cleaned = re.sub(r"\s+", " ", cleaned).strip(" -/:,;")
+    return strip_titles(cleaned)
+
+
+def names_member_exactly(name: str, index: MemberIndex, context: ResolutionContext | None) -> bool:
+    """True when ``name`` is itself a member's name, alias or reviewed name form.
+
+    Checked before slot/leave codes are stripped so "Lakshmi SH" stays "Lakshmi SH" when a
+    member is called that. Only exact forms are consulted (no fuzzy work here).
+    """
+    key = member_key(name)
+    if not key or not (index.exact_owners(key) or key in index.rules):
+        return False
+    resolution = index.resolve(name, context, purpose="live")
+    if resolution.matched:
+        return True
+    # A match the live safety rules turned into a review (historical member, a form that
+    # needs a call level) still means the written text is a member's name.
+    return resolution.status == "needs_review" and (resolution.method is not None or bool(index.rules.get(key)))
+
+
+def extract_name_and_slot(
+    raw_name: str,
+    fallback_slot: str = "FULL_DAY",
+    *,
+    index: MemberIndex | None = None,
+    context: ResolutionContext | None = None,
+) -> tuple[str, str]:
+    """Split a name cell into (member name, leave slot).
+
+    Trailing tokens such as SH/AN/N/EL/CL/OD are slot or leave codes only when the text
+    with them is not a member's name: with ``index``, each less-stripped form is tried
+    first and kept if it names a member exactly.
+    """
+    base = clean_cell_text(raw_name)
+    stages: list[tuple[str, str]] = [(lightly_cleaned(base), bracket_slot(base, fallback_slot))]
+    cleaned, slot = extract_slot_annotations(base, fallback_slot)
+    stages.append((lightly_cleaned(cleaned), slot))
     cleaned = clean_person_text(cleaned)
+    stages.append((cleaned, slot))
     cleaned, slot = extract_slot_annotations(cleaned, slot)
+    stages.append((lightly_cleaned(cleaned), slot))
     cleaned = clean_person_text(cleaned)
+    if index is not None:
+        for name, stage_slot in stages:
+            if name and name != cleaned and names_member_exactly(name, index, context):
+                return name, stage_slot
     return cleaned, slot
 
 
@@ -345,36 +406,45 @@ def normalize_header(value: str) -> str:
     return cleaned
 
 
-def add_lookup_key(lookup: PersonLookup, key: str, person: Person) -> None:
-    if not key:
-        return
-    existing = lookup.get(key)
-    if existing is None and key in lookup:
-        return
-    if existing is not None and existing.id != person.id:
-        lookup[key] = None
-        return
-    lookup[key] = person
+def member_resolution_fields(resolution: Resolution, *, check_name: bool = True) -> dict[str, object]:
+    """Preview-row member fields from a resolver result (shared by the leave and unit imports).
 
-
-def person_lookup(db: Session) -> PersonLookup:
-    return member_lookup(db)
-
-
-def suggest_person(cleaned_name: str, lookup: PersonLookup) -> Person | None:
-    ranked = member_candidates(cleaned_name, lookup)
-    return ranked[0][1] if ranked and ranked[0][0] >= .9 else None
-
-
-def match_person(cleaned_name: str, lookup: PersonLookup) -> tuple[Person | None, str | None, str, Person | None]:
-    key = normalize_name(cleaned_name)
-    if key in lookup:
-        person = lookup[key]
-        if person is None:
-            return None, "ambiguous_exact", "ambiguous", None
-        return person, "normalized_exact", "high", None
-    suggestion = suggest_person(cleaned_name, lookup)
-    return None, None, "suggestion" if suggestion else "low", suggestion
+    Matched rows get the person; anything else leaves the person empty, offers the first
+    candidate as the suggestion and explains why in ``member_issues``. Fuzzy candidates are
+    only ever suggestions.
+    """
+    issues: list[str] = []
+    suggestion = resolution.candidates[0] if resolution.candidates and not resolution.matched else None
+    if resolution.matched:
+        confidence = "medium" if resolution.method == "context" else "high"
+    elif resolution.status in {"ambiguous", "conflict"}:
+        confidence = "ambiguous"
+    else:
+        confidence = "suggestion" if suggestion else "low"
+    if check_name and not resolution.matched:
+        issues.append(
+            "Ambiguous department member match" if confidence == "ambiguous" else "Unresolved department member"
+        )
+        if resolution.reason:
+            issues.append(resolution.reason)
+        if suggestion is not None:
+            issues.append(f"Suggested match: {suggestion.name}")
+    return {
+        "person_id": resolution.person_id if resolution.matched else None,
+        "person_name": resolution.canonical_name if resolution.matched else None,
+        "suggested_person_id": suggestion.person_id if suggestion else None,
+        "suggested_person_name": suggestion.name if suggestion else None,
+        "match_method": resolution.method if resolution.matched else (
+            "ambiguous_exact" if confidence == "ambiguous" else None
+        ),
+        "match_confidence": confidence,
+        "match_score": round(resolution.score, 3) if resolution.score is not None else None,
+        "resolution_status": resolution.status,
+        "resolution_reason": resolution.reason,
+        "candidates": [asdict(candidate) for candidate in resolution.candidates],
+        "resolution_warnings": list(resolution.warnings),
+        "member_issues": issues,
+    }
 
 
 def pick_column(columns: list[str], candidates: set[str]) -> str | None:
@@ -533,13 +603,15 @@ def make_preview_row(
     notes: str,
     month_start: date,
     month_end: date,
-    lookup: PersonLookup,
+    index: MemberIndex,
     sheet_name: str,
     source_format: str,
     confidence: str,
 ) -> dict[str, object]:
     issues: list[str] = []
-    cleaned_name, parsed_slot = extract_name_and_slot(raw_name, leave_slot)
+    cleaned_name, parsed_slot = extract_name_and_slot(
+        raw_name, leave_slot, index=index, context=ResolutionContext.build(on=starts)
+    )
     if not cleaned_name:
         issues.append("Missing person name")
     if starts is None:
@@ -550,36 +622,48 @@ def make_preview_row(
         issues.append("End date before start date")
     if starts and ends and (starts > month_end or ends < month_start):
         issues.append("Leave is outside selected month")
-    person, match_method, match_confidence, suggestion = match_person(cleaned_name, lookup)
-    if match_confidence == "ambiguous":
-        issues.append("Ambiguous department member match")
-    elif cleaned_name and person is None:
-        issues.append("Unresolved department member")
-        if suggestion is not None:
-            issues.append(f"Suggested match: {suggestion.canonical_name}")
-    preview_status = "matched" if person and not issues else "needs_review"
+    # Member fields are filled by apply_member_resolutions once the whole file is parsed.
     return {
         "row_number": row_number,
         "sheet_name": sheet_name,
         "source_format": source_format,
         "confidence": confidence,
-        "match_confidence": match_confidence,
+        "match_confidence": "low",
         "raw_person_name": raw_name,
         "cleaned_person_name": cleaned_name,
-        "person_id": str(person.id) if person else None,
-        "person_name": person.canonical_name if person else None,
-        "suggested_person_id": str(suggestion.id) if suggestion else None,
-        "suggested_person_name": suggestion.canonical_name if suggestion else None,
-        "match_method": match_method,
+        "person_id": None,
+        "person_name": None,
+        "suggested_person_id": None,
+        "suggested_person_name": None,
+        "match_method": None,
         "starts_on": starts.isoformat() if starts else None,
         "ends_on": ends.isoformat() if ends else None,
         "leave_type": leave_type,
         "leave_slot": parsed_slot,
         "status": status_value,
         "notes": notes,
-        "preview_status": preview_status,
+        "preview_status": "needs_review",
         "issues": issues,
     }
+
+
+def apply_member_resolutions(index: MemberIndex, rows: list[dict[str, object]]) -> None:
+    """Resolve every row's member in one pass so file-level warnings are seen."""
+    results = resolve_rows(
+        index,
+        [
+            {"raw_name": str(row.get("cleaned_person_name") or ""), "on": parse_iso_date(row.get("starts_on"))}
+            for row in rows
+        ],
+        purpose="live",
+    )
+    for row, resolution in zip(rows, results):
+        fields = member_resolution_fields(resolution, check_name=bool(row.get("cleaned_person_name")))
+        member_issues = fields.pop("member_issues")
+        fields.pop("match_score")
+        row.update(fields)
+        row["issues"] = [*row["issues"], *member_issues]  # type: ignore[misc]
+        row["preview_status"] = "matched" if row["person_id"] and not row["issues"] else "needs_review"
 
 
 def parse_table_rows(
@@ -587,7 +671,7 @@ def parse_table_rows(
     *,
     month_start: date,
     month_end: date,
-    lookup: PersonLookup,
+    index: MemberIndex,
     sheet_name: str,
     source_format: str,
     row_offset: int,
@@ -606,7 +690,7 @@ def parse_table_rows(
     notes_col = pick_column(columns, NOTES_COLUMNS)
     rows: list[dict[str, object]] = []
 
-    for index, row in frame.iterrows():
+    for frame_index, row in frame.iterrows():
         raw_name = clean_cell_text(row.get(name_col, ""))
         if is_noise_name(raw_name):
             continue
@@ -614,7 +698,7 @@ def parse_table_rows(
         ends = parse_date_value(row.get(end_col)) if end_col else starts
         rows.append(
             make_preview_row(
-                row_number=int(index) + row_offset,
+                row_number=int(frame_index) + row_offset,
                 raw_name=raw_name,
                 starts=starts,
                 ends=ends,
@@ -624,7 +708,7 @@ def parse_table_rows(
                 notes=clean_cell_text(row.get(notes_col, "")) if notes_col else "",
                 month_start=month_start,
                 month_end=month_end,
-                lookup=lookup,
+                index=index,
                 sheet_name=sheet_name,
                 source_format=source_format,
                 confidence="high",
@@ -638,7 +722,7 @@ def parse_wide_calendar_rows(
     *,
     month_start: date,
     month_end: date,
-    lookup: PersonLookup,
+    index: MemberIndex,
     sheet_name: str,
 ) -> list[dict[str, object]]:
     header_row, dates_by_column = date_columns(raw_frame, month_start, month_end)
@@ -650,7 +734,9 @@ def parse_wide_calendar_rows(
         for column_index, day in dates_by_column.items():
             raw_cell = clean_cell_text(row.iloc[column_index])
             for raw_name in split_names(raw_cell):
-                cleaned_name, parsed_slot = extract_name_and_slot(raw_name)
+                cleaned_name, parsed_slot = extract_name_and_slot(
+                    raw_name, index=index, context=ResolutionContext.build(on=day)
+                )
                 if is_noise_name(raw_name) or is_noise_name(cleaned_name):
                     continue
                 daily_entries.append((raw_name, cleaned_name, parsed_slot, row_index + 1, day))
@@ -686,7 +772,7 @@ def parse_wide_calendar_rows(
                     notes=f"Parsed from date-column leave calendar sheet {sheet_name}",
                     month_start=month_start,
                     month_end=month_end,
-                    lookup=lookup,
+                    index=index,
                     sheet_name=sheet_name,
                     source_format="wide_calendar",
                     confidence="medium",
@@ -816,7 +902,7 @@ def apply_leave_import(db: Session, filename: str, content: bytes, month: str, *
 
 def preview_leave_import(db: Session, filename: str, content: bytes, month: str) -> dict[str, object]:
     starts_on, ends_on = month_bounds(month)
-    lookup = person_lookup(db)
+    index = MemberIndex.load(db)
     rows: list[dict[str, object]] = []
     parser_warnings: list[str] = []
     sheets: list[str] = []
@@ -829,7 +915,7 @@ def preview_leave_import(db: Session, filename: str, content: bytes, month: str)
                 frame.dropna(how="all"),
                 month_start=starts_on,
                 month_end=ends_on,
-                lookup=lookup,
+                index=index,
                 sheet_name=sheet_name,
                 source_format="table",
                 row_offset=2,
@@ -841,7 +927,7 @@ def preview_leave_import(db: Session, filename: str, content: bytes, month: str)
                     table_from_header(frame, header_row),
                     month_start=starts_on,
                     month_end=ends_on,
-                    lookup=lookup,
+                    index=index,
                     sheet_name=sheet_name,
                     source_format="table_detected_header",
                     row_offset=header_row + 2,
@@ -851,7 +937,7 @@ def preview_leave_import(db: Session, filename: str, content: bytes, month: str)
                     frame,
                     month_start=starts_on,
                     month_end=ends_on,
-                    lookup=lookup,
+                    index=index,
                     sheet_name=sheet_name,
                 )
         if not parsed:
@@ -859,6 +945,7 @@ def preview_leave_import(db: Session, filename: str, content: bytes, month: str)
         rows.extend(parsed)
         source_formats.update(str(row["source_format"]) for row in parsed)
 
+    apply_member_resolutions(index, rows)
     from app.services.reference_catalog import resolve_value
     for row in rows:
         for field in ["leave_type","leave_slot","status"]:

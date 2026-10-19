@@ -170,10 +170,13 @@ def test_leave_import_preview_does_not_match_archived_or_historical_members() ->
         assert preview["matched_rows"] == 1
         assert preview["unresolved_rows"] == 2
         assert preview["rows"][0]["person_name"] == "Active Person"
-        assert preview["rows"][1]["person_id"] is None
-        assert preview["rows"][1]["issues"] == ["Unresolved department member"]
-        assert preview["rows"][2]["person_id"] is None
-        assert preview["rows"][2]["issues"] == ["Unresolved department member"]
+        for row, status in ((preview["rows"][1], "archived"), (preview["rows"][2], "historical")):
+            assert row["person_id"] is None
+            assert row["issues"][0] == "Unresolved department member"
+            assert row["resolution_status"] == "needs_review"
+            assert status in row["resolution_reason"]
+            # Offered for review, never assigned.
+            assert row["suggested_person_name"] == row["cleaned_person_name"]
 
 
 def test_leave_import_preview_extracts_slot_from_name_cell() -> None:
@@ -190,7 +193,8 @@ def test_leave_import_preview_extracts_slot_from_name_cell() -> None:
         assert preview["matched_rows"] == 1
         assert preview["rows"][0]["cleaned_person_name"] == "Sujil"
         assert preview["rows"][0]["leave_slot"] == "AM"
-        assert preview["rows"][0]["match_method"] == "normalized_exact"
+        assert preview["rows"][0]["match_method"] == "canonical_exact"
+        assert preview["rows"][0]["resolution_status"] == "matched"
 
 
 def test_leave_import_preview_cleans_annotations_and_skips_noise_rows() -> None:

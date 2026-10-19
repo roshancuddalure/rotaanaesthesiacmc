@@ -8,7 +8,9 @@ from datetime import date, datetime
 from collections import Counter
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException
+from dataclasses import asdict
+
+from fastapi import APIRouter, Body, Depends, HTTPException
 from pydantic import BaseModel, model_validator, field_validator
 from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
@@ -19,16 +21,22 @@ from app.api.v1.auth import current_user, require_admin
 from app.services.member_profile import validate_identity, revision, record_activity, snapshot, ensure_unique_name, validate_designations, audited_member_operation, default_call_level_on
 from app.models import Person, PersonAlias, PersonDesignation, UserAccount
 from app.services.members import (
+    StalePreviewError,
+    check_preview_token,
     delete_invalid_members,
     auto_merge_duplicate_candidates,
     duplicate_candidates,
     invalid_members,
     merge_people,
     normalize_dirty_member_names,
+    person_brief,
+    plan_auto_merge,
+    plan_dirty_member_names,
+    preview_token,
 )
-from app.services.roster_reconciliation import reconcile_department_roster
+from app.services.roster_reconciliation import preview_roster_reconciliation, reconcile_department_roster
 from app.services.department_roster_reset import reset_department_members_from_roster
-from app.services.unitwise_call_levels import prefill_call_levels_from_unitwise
+from app.services.unitwise_call_levels import preview_call_level_prefill, prefill_call_levels_from_unitwise
 from app.services.member_profiles import call_level_on, local_today, record_call_change
 from app.domain.member_validation import normalize_member_display_name, normalize_member_call, normalize_member_status
 
@@ -67,6 +75,8 @@ class MemberCreate(BaseModel):
     canonical_name: str
     active_status: str = "active"
     call_level: str | None = None
+    # Admin override: create the member even though the name is close to an existing one.
+    confirm_distinct: bool = False
 
     _name = field_validator("canonical_name")(normalize_member_display_name)
     _status = field_validator("active_status")(normalize_member_status)
@@ -123,15 +133,30 @@ class InvalidMembersRead(BaseModel):
     people: list[MemberRead]
 
 
+class ConfirmRequest(BaseModel):
+    """Body for the preview/confirm admin tools. Empty (or confirm=false) = preview only."""
+    confirm: bool = False
+    preview_token: str | None = None
+
+
 class CleanupResult(BaseModel):
     normalized: int = 0
     deleted: int
+    mode: str = "applied"
+    preview_token: str = ""
+    renames: list[dict] = []
+    collisions: list[dict] = []
+    to_delete: list[dict] = []
 
 
 class AutoMergeResultRead(BaseModel):
     merged_groups: int
     merged_people: int
     remaining_groups: int
+    mode: str = "applied"
+    preview_token: str = ""
+    groups: list[dict] = []
+    needs_review: list[dict] = []
 
 
 class RosterReconciliationRead(BaseModel):
@@ -144,6 +169,10 @@ class RosterReconciliationRead(BaseModel):
     designations_created: int
     unmatched_database_people: int
     examples: list[str]
+    mode: str = "applied"
+    preview_token: str = ""
+    needs_review: int = 0
+    rows: list[dict] = []
 
 
 class DepartmentRosterResetRead(BaseModel):
@@ -162,6 +191,11 @@ class CallLevelPrefillRead(BaseModel):
     cleared: int
     unmatched_names: list[str]
     examples: list[str]
+    mode: str = "applied"
+    preview_token: str = ""
+    changes: int = 0
+    needs_review: int = 0
+    rows: list[dict] = []
 
 
 class MemberAuditRead(BaseModel):
@@ -251,6 +285,17 @@ def create_member(payload: MemberCreate, db: Session = Depends(get_db),
         )
 
     ensure_unique_name(db, canonical_name)
+    if not payload.confirm_distinct:
+        from app.services.member_resolver import MemberIndex
+        near = MemberIndex.load(db).near_duplicates(canonical_name)
+        if near:
+            listed = ", ".join(f"{c.name} ({c.status})" for c in near)
+            raise HTTPException(status_code=409, detail={
+                "code": "near_duplicate",
+                "message": f'"{canonical_name}" looks like an existing member: {listed}. '
+                           "If this is a different person, confirm that it is distinct to create it anyway.",
+                "existing": [asdict(c) for c in near],
+            })
     person = Person(
         canonical_name=canonical_name,
         active_status=payload.active_status,
@@ -473,25 +518,86 @@ def audit_members(db: Session = Depends(get_db)) -> MemberAuditRead:
     )
 
 
+def _confirm_token(payload: ConfirmRequest | None) -> str | None:
+    """None for a preview; the token for a confirmation (422 when it is missing)."""
+    if payload is None or not payload.confirm:
+        return None
+    if not payload.preview_token:
+        raise HTTPException(status_code=422, detail="Confirming needs the preview_token from the preview; preview first")
+    return payload.preview_token
+
+
+def _apply_errors(action):
+    """Run an apply step, turning expected failures into clear 4xx responses."""
+    try:
+        return action()
+    except StalePreviewError as exc:
+        raise HTTPException(status_code=409, detail={"code": "stale_preview", "message": str(exc)}) from exc
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=f"Source workbook not found: {exc.filename or exc}") from exc
+    except IntegrityError as exc:
+        raise HTTPException(status_code=409, detail="The change would create a duplicate name or alias; preview again") from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+
+
+def _cleanup_plan(db: Session) -> dict:
+    names = plan_dirty_member_names(db)
+    to_delete = [person_brief(p) for p in invalid_members(db)]
+    return {**names, "to_delete": to_delete, "preview_token": preview_token({**names, "to_delete": to_delete})}
+
+
 @router.post("/admin/members/cleanup-invalid", dependencies=[Depends(require_admin)])
-def cleanup_invalid_members(db: Session = Depends(get_db), operator: UserAccount = Depends(require_admin)) -> CleanupResult:
+def cleanup_invalid_members(payload: ConfirmRequest | None = Body(default=None), db: Session = Depends(get_db),
+                            operator: UserAccount = Depends(require_admin)) -> CleanupResult:
+    """Preview (no body / confirm=false) or apply (confirm + preview_token) the name cleanup.
+
+    Cleaned names that collide with another member are reported, never merged."""
+    token = _confirm_token(payload)
+    plan = _cleanup_plan(db)
+    if token is None:
+        return CleanupResult(normalized=len(plan["renames"]), deleted=len(plan["to_delete"]), mode="preview",
+                             preview_token=plan["preview_token"], renames=plan["renames"],
+                             collisions=plan["collisions"], to_delete=plan["to_delete"])
+
     def operation():
+        check_preview_token(plan["preview_token"], token, "name cleanup")
         normalized = normalize_dirty_member_names(db)
         deleted = delete_invalid_members(db)
-        return CleanupResult(normalized=normalized, deleted=deleted)
-    return audited_member_operation(db, operator, "invalid_names_cleaned", operation)
+        return CleanupResult(normalized=normalized, deleted=deleted, preview_token=plan["preview_token"],
+                             renames=plan["renames"], collisions=plan["collisions"], to_delete=plan["to_delete"])
+    return _apply_errors(lambda: audited_member_operation(db, operator, "invalid_names_cleaned", operation))
 
 
 @router.post("/admin/members/auto-merge-duplicates", dependencies=[Depends(require_admin)])
-def auto_merge_duplicates(db: Session = Depends(get_db), operator: UserAccount = Depends(require_admin)) -> AutoMergeResultRead:
-    return audited_member_operation(db, operator, "duplicates_merged",
-        lambda: AutoMergeResultRead(**auto_merge_duplicate_candidates(db).__dict__))
+def auto_merge_duplicates(payload: ConfirmRequest | None = Body(default=None), db: Session = Depends(get_db),
+                          operator: UserAccount = Depends(require_admin)) -> AutoMergeResultRead:
+    """Preview, or apply with confirm + preview_token, merges of members whose canonical
+    names are identical. Groups that only share an alias are listed, never merged."""
+    token = _confirm_token(payload)
+    plan = plan_auto_merge(db)
+    if token is None:
+        return AutoMergeResultRead(merged_groups=len(plan["groups"]),
+                                   merged_people=sum(len(g["sources"]) for g in plan["groups"]),
+                                   remaining_groups=len(duplicate_candidates(db)), mode="preview",
+                                   preview_token=plan["preview_token"], groups=plan["groups"],
+                                   needs_review=plan["needs_review"])
+    return _apply_errors(lambda: audited_member_operation(db, operator, "duplicates_merged",
+        lambda: AutoMergeResultRead(**auto_merge_duplicate_candidates(db, token).__dict__,
+                                    preview_token=plan["preview_token"], groups=plan["groups"],
+                                    needs_review=plan["needs_review"])))
 
 
 @router.post("/admin/members/reconcile-trusted-roster", dependencies=[Depends(require_admin)])
-def reconcile_trusted_roster(db: Session = Depends(get_db), operator: UserAccount = Depends(require_admin)) -> RosterReconciliationRead:
-    return audited_member_operation(db, operator, "roster_reconciled",
-        lambda: RosterReconciliationRead(**reconcile_department_roster(db).__dict__))
+def reconcile_trusted_roster(payload: ConfirmRequest | None = Body(default=None), db: Session = Depends(get_db),
+                             operator: UserAccount = Depends(require_admin)) -> RosterReconciliationRead:
+    """Preview, or apply with confirm + preview_token. Only certain matches are renamed or
+    merged; similar names are listed as needs_review with candidates."""
+    token = _confirm_token(payload)
+    if token is None:
+        return _apply_errors(lambda: RosterReconciliationRead(**preview_roster_reconciliation(db).__dict__))
+    return _apply_errors(lambda: audited_member_operation(db, operator, "roster_reconciled",
+        lambda: RosterReconciliationRead(**reconcile_department_roster(db, token=token).__dict__)))
 
 
 # Existing admin-only roster reset deletes members, units,
@@ -505,9 +611,15 @@ def reset_from_trusted_roster(db: Session = Depends(get_db), operator: UserAccou
 
 
 @router.post("/admin/members/prefill-call-levels", dependencies=[Depends(require_admin)])
-def prefill_call_levels(db: Session = Depends(get_db), operator: UserAccount = Depends(require_admin)) -> CallLevelPrefillRead:
-    return audited_member_operation(db, operator, "call_levels_prefilled",
-        lambda: CallLevelPrefillRead(**prefill_call_levels_from_unitwise(db).__dict__))
+def prefill_call_levels(payload: ConfirmRequest | None = Body(default=None), db: Session = Depends(get_db),
+                        operator: UserAccount = Depends(require_admin)) -> CallLevelPrefillRead:
+    """Preview, or apply with confirm + preview_token. Only rows the resolver matched with
+    certainty change a level; review rows and all other members are left unchanged."""
+    token = _confirm_token(payload)
+    if token is None:
+        return _apply_errors(lambda: CallLevelPrefillRead(**preview_call_level_prefill(db).__dict__))
+    return _apply_errors(lambda: audited_member_operation(db, operator, "call_levels_prefilled",
+        lambda: CallLevelPrefillRead(**prefill_call_levels_from_unitwise(db, token=token).__dict__)))
 
 
 @router.post("/admin/members/merge", dependencies=[Depends(require_admin)])

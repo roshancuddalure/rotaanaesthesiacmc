@@ -1,13 +1,18 @@
 """Reconcile database members against the trusted department roster workbook
 (``Plan/Data/ANAESTHESIA department doctors(namelist).xlsx``): rename to roster spelling,
-merge safe matches, add aliases and roster designations, and create missing members.
-Path/sheet names are hard-coded to the March 2026 workbook (handbook B16, D1).
+merge members whose canonical names are identical, add aliases and roster designations,
+and create missing members. Path/sheet names are hard-coded to the March 2026 workbook
+(handbook B16, D1).
+
+Names resolve through the shared ``MemberIndex``. Only certain matches (exact name, approved
+alias, reviewed rule) are renamed or merged; similar names appear in the preview as
+needs_review with candidates and are never merged. ``preview_roster_reconciliation`` changes
+nothing; ``reconcile_department_roster`` applies the preview and needs its token.
 """
 
 import re
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 from datetime import date
-from difflib import SequenceMatcher
 from pathlib import Path
 from uuid import UUID
 
@@ -16,9 +21,17 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, selectinload
 
-from app.models import Person, PersonDesignation
+from app.models import Person, PersonAlias, PersonDesignation
 from app.services.imports import clean_cell_value, is_valid_person_name, normalize_label
-from app.services.members import compact_name_key, ensure_person_alias, merge_people
+from app.services.members import (
+    check_preview_token,
+    compact_name_key,
+    merge_people,
+    person_brief,
+    preview_token,
+    select_merge_target,
+)
+from app.services.normalization import member_key
 
 DEFAULT_ROSTER_PATH = (
     Path(__file__).resolve().parents[3]
@@ -80,6 +93,10 @@ class RosterReconciliationResult:
     designations_created: int = 0
     unmatched_database_people: int = 0
     examples: list[str] = field(default_factory=list)
+    mode: str = "preview"
+    preview_token: str = ""
+    needs_review: int = 0
+    rows: list[dict] = field(default_factory=list)
 
 
 def display_name(value: str) -> str:
@@ -94,7 +111,8 @@ def display_name(value: str) -> str:
 
 def clean_roster_name(value: object) -> str:
     cleaned = clean_cell_value(value)
-    cleaned = re.sub(r"^(dr|prof|mr|mrs|ms)\.?\s*", "", cleaned, flags=re.IGNORECASE)
+    # Word boundary: never strip "Prof" from a label such as "PROFESSORS-2".
+    cleaned = re.sub(r"^(dr|prof|mr|mrs|ms)\b\.?\s*", "", cleaned, flags=re.IGNORECASE)
     cleaned = re.sub(r"\([^)]*\)", " ", cleaned)
     cleaned = STATUS_SUFFIX_RE.sub(" ", cleaned)
     cleaned = cleaned.replace(".", " ")
@@ -166,148 +184,204 @@ def extract_department_roster(path: Path = DEFAULT_ROSTER_PATH) -> list[RosterEn
     return sorted(entries.values(), key=lambda entry: entry.canonical_name.casefold())
 
 
-def person_keys(person: Person) -> set[str]:
-    keys = {compact_name_key(clean_roster_name(person.canonical_name))}
-    keys.update(compact_name_key(clean_roster_name(alias.alias)) for alias in person.aliases)
-    return {key for key in keys if key}
+ROSTER_DESIGNATION_FROM = date(2026, 3, 1)
 
 
-def safely_matches(roster_key: str, person_key: str) -> bool:
-    if roster_key == person_key:
-        return True
-    if min(len(roster_key), len(person_key)) >= 7 and abs(len(roster_key) - len(person_key)) <= 3:
-        if roster_key.startswith(person_key) or person_key.startswith(roster_key):
-            return True
-    return SequenceMatcher(None, roster_key, person_key).ratio() >= 0.94
+def plan_roster_reconciliation(db: Session, entries: list[RosterEntry]) -> tuple[list[dict], list[dict]]:
+    """Rows for the preview and the ordered list of changes (what the token covers)."""
+    from app.services.member_resolver import MemberIndex
+
+    index = MemberIndex.load(db)
+    by_id = {str(person.id): person for person in index.people}
+    alias_owner = {alias.alias: str(alias.person_id) for alias in db.scalars(select(PersonAlias))}
+    name_owner = {person.canonical_name: str(person.id) for person in index.people}
+    rows: list[dict] = []
+    for entry in entries:
+        row = {"raw_name": entry.raw_name, "roster_name": entry.canonical_name, "sheet": entry.sheet_name,
+               "designation": entry.designation, "status": "not_found", "action": "review", "method": None,
+               "person_id": None, "current_name": None, "merge_from": [], "reason": "",
+               "candidates": [], "warnings": []}
+        key = member_key(entry.canonical_name)
+        same_name = sorted((by_id[str(i)] for i in index.canonical.get(key, set())),
+                           key=lambda p: (p.canonical_name, str(p.id)))
+        if len(same_name) > 1:
+            # Identical canonical names: the same person entered more than once.
+            target = next((p for p in same_name if p.canonical_name == entry.canonical_name), None)
+            target = target or select_merge_target(same_name)
+            row.update(status="matched", method="canonical_exact", person_id=str(target.id),
+                       current_name=target.canonical_name,
+                       merge_from=[person_brief(p) for p in same_name if p.id != target.id],
+                       reason=f"{len(same_name)} members have the name '{entry.canonical_name}'; they will be merged")
+            row["warnings"] += [f"{p.canonical_name} is {p.active_status}"
+                                for p in same_name if p.active_status != "active"]
+        else:
+            res = index.resolve(entry.canonical_name, purpose="history")
+            if not res.matched and member_key(entry.raw_name) != key:
+                raw = index.resolve(entry.raw_name, purpose="history")
+                if raw.matched:
+                    res = raw
+            row.update(status=res.status, method=res.method, reason=res.reason, warnings=list(res.warnings),
+                       candidates=[asdict(c) for c in res.candidates])
+            if res.matched:
+                row.update(person_id=res.person_id, current_name=by_id[res.person_id].canonical_name)
+            elif res.status == "not_found":
+                near = index.near_duplicates(entry.canonical_name)
+                if near:
+                    row.update(status="needs_review", candidates=[asdict(c) for c in near],
+                               reason=f"'{entry.canonical_name}' is close to an existing member; not created")
+                else:
+                    row.update(action="create", reason="Not in the member list; will be created")
+        rows.append(row)
+
+    # One member must not take two roster names.
+    claimed: dict[str, list[dict]] = {}
+    for row in rows:
+        if row["status"] == "matched":
+            for person_id in [row["person_id"], *[s["id"] for s in row["merge_from"]]]:
+                claimed.setdefault(person_id, []).append(row)
+    for person_id, owned in claimed.items():
+        if len(owned) > 1:
+            for row in owned:
+                row.update(status="conflict", merge_from=[],
+                           reason=f"{by_id[person_id].canonical_name} matches several roster names "
+                                  f"({', '.join(r['roster_name'] for r in owned)}); resolve by hand")
+
+    changes: list[dict] = []
+    for row in rows:
+        if row["status"] == "matched":
+            target_id = row["person_id"]
+            merged_ids = {s["id"] for s in row["merge_from"]}
+            renaming = row["current_name"] != row["roster_name"]
+            taken_by = name_owner.get(row["roster_name"])
+            if renaming and taken_by and taken_by != target_id and taken_by not in merged_ids:
+                row.update(status="conflict", merge_from=[],
+                           reason=f"'{row['roster_name']}' is already the name of {by_id[taken_by].canonical_name}")
+                continue
+            for source in row["merge_from"]:
+                changes.append({"op": "merge", "target": target_id, "source": source["id"],
+                                "source_name": source["name"]})
+            if renaming:
+                changes.append({"op": "rename", "person": target_id, "from": row["current_name"],
+                                "to": row["roster_name"]})
+            row["action"] = "merge" if row["merge_from"] else ("rename" if renaming else "keep")
+            alias = row["raw_name"].strip()
+            owner = alias_owner.get(alias)
+            if alias and alias != row["roster_name"]:
+                if owner and owner != target_id and owner not in merged_ids:
+                    row["warnings"].append(f'Alias "{alias}" belongs to {by_id[owner].canonical_name}; not moved')
+                elif owner is None:
+                    changes.append({"op": "alias", "person": target_id, "alias": alias})
+            if row["designation"]:
+                changes.append({"op": "designation", "person": target_id, "designation": row["designation"]})
+        elif row["action"] == "create":
+            alias = row["raw_name"].strip()
+            owner = alias_owner.get(alias)
+            if owner:
+                row["warnings"].append(f'Alias "{alias}" belongs to {by_id[owner].canonical_name}; not moved')
+            changes.append({"op": "create", "name": row["roster_name"],
+                            "alias": alias if alias != row["roster_name"] and not owner else None,
+                            "designation": row["designation"]})
+    return rows, changes
 
 
-def find_matching_people(roster_key: str, people: list[Person]) -> list[Person]:
-    matches: list[Person] = []
-    for person in people:
-        keys = person_keys(person)
-        if any(safely_matches(roster_key, key) for key in keys):
-            matches.append(person)
-    return matches
-
-
-def alias_count(person: Person) -> int:
-    return len(person.aliases)
-
-
-def ensure_alias_counted(
-    db: Session,
-    person: Person,
-    alias: str,
-    result: RosterReconciliationResult,
-    source: str,
-) -> None:
-    before = alias_count(person)
-    ensure_person_alias(db, person, alias, source=source)
+def _add_designation(db: Session, person: Person, designation: str | None,
+                     result: RosterReconciliationResult) -> None:
+    if not designation:
+        return
+    exists = db.scalar(select(PersonDesignation).where(
+        PersonDesignation.person_id == person.id,
+        PersonDesignation.designation == designation,
+        PersonDesignation.effective_from == ROSTER_DESIGNATION_FROM,
+    ))
+    if exists is not None:
+        return
+    db.add(PersonDesignation(person=person, designation=designation, effective_from=ROSTER_DESIGNATION_FROM,
+                             source="trusted_roster",
+                             notes="Imported from ANAESTHESIA department doctors(namelist).xlsx"))
     db.flush()
-    db.refresh(person, attribute_names=["aliases"])
-    if alias_count(person) > before:
+    result.designations_created += 1
+
+
+def _add_alias(db: Session, person: Person, alias: str, source: str, result: RosterReconciliationResult) -> None:
+    if alias and alias != person.canonical_name and             db.scalar(select(PersonAlias).where(PersonAlias.alias == alias)) is None:
+        db.add(PersonAlias(person=person, alias=alias, source=source))
+        db.flush()
         result.aliases_created += 1
 
 
-def rename_to_roster_name(
-    db: Session,
-    person: Person,
-    canonical_name: str,
-    result: RosterReconciliationResult,
-) -> Person:
-    if person.canonical_name == canonical_name:
-        return person
-    existing = db.scalar(select(Person).where(Person.canonical_name == canonical_name))
-    if existing is not None and existing.id != person.id:
-        merge_people(db, existing.id, [person.id])
-        result.merged_people += 1
-        return existing
-    ensure_alias_counted(db, person, person.canonical_name, result, "roster_previous_name")
-    person.canonical_name = canonical_name
-    result.renamed_people += 1
-    return person
+def _apply(db: Session, changes: list[dict], result: RosterReconciliationResult) -> set[UUID]:
+    touched: set[UUID] = set()
+    for change in changes:
+        op = change["op"]
+        if op == "merge":
+            merge_people(db, UUID(change["target"]), [UUID(change["source"])], commit=False)
+            result.merged_people += 1
+        elif op == "rename":
+            person = db.get(Person, UUID(change["person"]))
+            old_name = person.canonical_name
+            person.canonical_name = change["to"]
+            db.flush()
+            _add_alias(db, person, old_name, "roster_previous_name", result)
+            result.renamed_people += 1
+        elif op == "alias":
+            _add_alias(db, db.get(Person, UUID(change["person"])), change["alias"], "trusted_roster", result)
+        elif op == "designation":
+            _add_designation(db, db.get(Person, UUID(change["person"])), change["designation"], result)
+        elif op == "create":
+            person = Person(canonical_name=change["name"], active_status="active")
+            db.add(person)
+            db.flush()
+            if change["alias"]:
+                _add_alias(db, person, change["alias"], "trusted_roster", result)
+            _add_designation(db, person, change["designation"], result)
+            result.created_people += 1
+            touched.add(person.id)
+    return touched
 
 
-def add_roster_designation(
-    db: Session,
-    person: Person,
-    designation: str | None,
-    result: RosterReconciliationResult,
-) -> None:
-    if not designation:
-        return
-    exists = db.scalar(
-        select(PersonDesignation).where(
-            PersonDesignation.person_id == person.id,
-            PersonDesignation.designation == designation,
-            PersonDesignation.effective_from == date(2026, 3, 1),
-        )
-    )
-    if exists is not None:
-        return
-    db.add(
-        PersonDesignation(
-            person=person,
-            designation=designation,
-            effective_from=date(2026, 3, 1),
-            source="trusted_roster",
-            notes="Imported from ANAESTHESIA department doctors(namelist).xlsx",
-        )
-    )
-    result.designations_created += 1
+def _summary(rows: list[dict], changes: list[dict], mode: str) -> RosterReconciliationResult:
+    review = [row for row in rows if row["status"] != "matched" and row["action"] != "create"]
+    result = RosterReconciliationResult(
+        roster_entries=len(rows), matched_people=sum(1 for row in rows if row["status"] == "matched"),
+        mode=mode, preview_token=preview_token(changes), needs_review=len(review), rows=rows)
+    if mode == "preview":
+        result.created_people = sum(1 for c in changes if c["op"] == "create")
+        result.renamed_people = sum(1 for c in changes if c["op"] == "rename")
+        result.merged_people = sum(1 for c in changes if c["op"] == "merge")
+        result.aliases_created = sum(1 for c in changes if c["op"] == "alias")
+        result.designations_created = sum(1 for c in changes if c["op"] == "designation")
+    result.examples = [f"{row['raw_name']} -> {row['roster_name']} ({row['action']})"
+                       for row in rows if row["action"] in {"rename", "merge", "create"}][:10]
+    return result
+
+
+def _unmatched(db: Session, matched: set[str]) -> int:
+    return sum(1 for person_id in db.scalars(select(Person.id)) if str(person_id) not in matched)
+
+
+def preview_roster_reconciliation(db: Session, path: Path = DEFAULT_ROSTER_PATH) -> RosterReconciliationResult:
+    """What reconciliation would change. Makes no database changes."""
+    rows, changes = plan_roster_reconciliation(db, extract_department_roster(path))
+    result = _summary(rows, changes, "preview")
+    result.unmatched_database_people = _unmatched(db, {r["person_id"] for r in rows if r["status"] == "matched"})
+    return result
 
 
 def reconcile_department_roster(
     db: Session,
     path: Path = DEFAULT_ROSTER_PATH,
+    token: str | None = None,
 ) -> RosterReconciliationResult:
-    entries = extract_department_roster(path)
-    result = RosterReconciliationResult(roster_entries=len(entries))
-
-    matched_ids: set[UUID] = set()
-
-    for entry in entries:
-        people = db.scalars(
-            select(Person)
-            .options(selectinload(Person.aliases), selectinload(Person.designations))
-            .order_by(Person.canonical_name)
-        ).all()
-        roster_key = compact_name_key(entry.canonical_name)
-        matches = find_matching_people(roster_key, people)
-        if matches:
-            target = next((person for person in matches if person.canonical_name == entry.canonical_name), matches[0])
-            target = db.get(Person, target.id)
-            if target is None:
-                continue
-            target = rename_to_roster_name(db, target, entry.canonical_name, result)
-            for source in matches:
-                if source.id == target.id:
-                    continue
-                if db.get(Person, source.id) is None or db.get(Person, target.id) is None:
-                    continue
-                merge_people(db, target.id, [source.id])
-                result.merged_people += 1
-            matched_ids.add(target.id)
-            result.matched_people += 1
-        else:
-            target = Person(canonical_name=entry.canonical_name, active_status="active")
-            db.add(target)
-            db.flush()
-            db.refresh(target, attribute_names=["aliases", "designations"])
-            matched_ids.add(target.id)
-            result.created_people += 1
-
-        ensure_alias_counted(db, target, entry.raw_name, result, "trusted_roster")
-        add_roster_designation(db, target, entry.designation, result)
-        if len(result.examples) < 10:
-            result.examples.append(f"{entry.raw_name} -> {entry.canonical_name}")
-
+    """Apply the reviewed preview. Raises ``StalePreviewError`` if ``token`` is stale."""
+    rows, changes = plan_roster_reconciliation(db, extract_department_roster(path))
+    check_preview_token(preview_token(changes), token, "roster reconciliation")
+    result = _summary(rows, changes, "applied")
     try:
+        created = _apply(db, changes, result)
         db.commit()
     except IntegrityError:
         db.rollback()
         raise
-
-    all_people = db.scalars(select(Person)).all()
-    result.unmatched_database_people = sum(1 for person in all_people if person.id not in matched_ids)
+    matched = {r["person_id"] for r in rows if r["status"] == "matched"} | {str(i) for i in created}
+    result.unmatched_database_people = _unmatched(db, matched)
     return result

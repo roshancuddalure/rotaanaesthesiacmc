@@ -5,7 +5,7 @@ import { chromium } from "playwright";
 const base = process.env.MEMBER_TEST_URL || "http://127.0.0.1:5178";
 const api = process.env.COMPUTE_TEST_API || "http://127.0.0.1:8019";
 const browser = await chromium.launch({ headless: true,
-  ...(process.env.MEMBER_TEST_BROWSER ? { executablePath: process.env.MEMBER_TEST_BROWSER } : {}) });
+  executablePath: process.env.MEMBER_TEST_BROWSER || chromium.executablePath() });
 let passed = 0;
 const report = {};
 const reset = () => fetch(`${api}/__fixture/reset`, { method: "POST" });
@@ -55,9 +55,12 @@ try {
     const m = await import("/src/compute-device.ts");
     m.resetPreference();
     if (m.selectedEngine(true, true, { month: "2026-05", hash: "same" }) !== "server") throw Error("Must default to server");
-    const p = { enabled: true, mode: "auto", test: { supported: true, software: false, adapter: "test", parity: true },
-      proof: { server_ms: 1000, local_ms: 700, parity: true, at: Date.now(), version: 1, adapter: "test", month: "2026-05", context_hash: "same" } };
+    const worker = new m.ComputeWorker(); const test = await worker.call("test"); worker.close();
+    const p = { enabled: true, mode: "auto", power: "high-performance", test: { ...test, software: false },
+      proof: { server_ms: 1000, local_ms: 700, parity: true, at: Date.now(), version: 2, adapter: test.adapter, signature: test.signature,
+        browser: navigator.userAgent, month: "2026-05", context_hash: "same" } };
     m.savePreference(p);
+    m.rememberTest(p.test);
     if (m.selectedEngine(true, true, { month: "2026-05", hash: "same" }) !== "local_gpu" || m.selectedEngine(false, true) !== "server") throw Error("Mode gating failed");
     p.proof.at -= 8 * 86400000; m.savePreference(p);
     if (m.selectedEngine(true, true, { month: "2026-05", hash: "same" }) !== "server") throw Error("Expired benchmark accepted");
@@ -171,7 +174,7 @@ try {
   await integrated.page.goto(base);
   await integrated.page.getByRole("heading", { name: "Duty workload at a glance", exact: true }).waitFor();
   await integrated.page.locator('[data-view="compute-settings"]').first().evaluate(button => button.click());
-  await integrated.page.getByRole("heading", { name: "Compute Settings", exact: true }).waitFor();
+  await integrated.page.locator(".compute-settings h2").waitFor();
   await integrated.page.locator('[data-view="rota-template"]').first().evaluate(button => button.click());
   await integrated.page.locator("#working-month").fill("2026-05");
   await integrated.page.locator("#working-month").dispatchEvent("change");
@@ -207,7 +210,7 @@ try {
   });
   await unsupported.page.locator("[data-generate]").click();
   await unsupported.page.getByText("Draft ready for review.", { exact: false }).waitFor();
-  await unsupported.page.getByText("Browser computation unavailable; continued on the server.", { exact: false }).waitFor();
+  assert.equal((await (await fetch(`${api}/api/v1/rota-compute/jobs?month=2026-05`)).json())[0].engine, "server");
   assert.equal((await fixture()).assignments, 0); passed++;
   await unsupported.page.close();
   // A worker that never answers must time out, release its resources and fall back.
@@ -234,7 +237,7 @@ try {
   });
   await interrupted.page.evaluate(async () => (await import("/src/rota-compute.ts")).openRotaCompute("2026-05", true, () => {}));
   await interrupted.page.locator("[data-generate]").click();
-  await interrupted.page.getByText("You can retry or resume", { exact: false }).waitFor();
+  await interrupted.page.getByText("Draft ready for review.", { exact: false }).waitFor();
   assert.equal((await fixture()).assignments, 0);
   await interrupted.page.locator("[data-close]").click();
   await interrupted.page.evaluate(async () => (await import("/src/rota-compute.ts")).openRotaCompute("2026-05", true, () => {}));

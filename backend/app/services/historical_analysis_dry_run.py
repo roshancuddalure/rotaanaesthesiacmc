@@ -232,7 +232,6 @@ MANUAL_ALIAS_OVERRIDES = {
     "priyadharshinis": "Priyadharshini S",
     "priyadarshni": "Priyadharshini S",
     "priyadarshnis": "Priyadharshini S",
-    "priyadharshini": "Priyadharshini S",
     "priyadharshiniortho": "Priyadharshini S",
     "priyadharshiniobg": "Priyadharshini S",
     "priyadharshiniurology": "Priyadharshini S",
@@ -441,7 +440,6 @@ MANUAL_ALIAS_OVERRIDES = {
     "sakshiharris": "Sakshi Harris",
     "sharonje": "Sharon J Ebenezer",
     "sharonj": "Sharon J Ebenezer",
-    "sharon": "Sharon J Ebenezer",
     "sharonebenezor": "Sharon J Ebenezer",
     "sharonebenezer": "Sharon J Ebenezer",
     "sharonebenezorbp": "Sharon J Ebenezer",
@@ -454,16 +452,13 @@ MANUAL_ALIAS_OVERRIDES = {
     "prasinlrp": "Prashin L R P",
     "prasin": "Prashin L R P",
     # Context-resolved names
-    "naveen": "Koppaka Naveen Kumar",
     "kopakkanaveen": "Koppaka Naveen Kumar",
     "kopakkanaveenkumarctvs": "Koppaka Naveen Kumar",
     "kopakkanaveenkumar": "Koppaka Naveen Kumar",
     "kopakkanaveenk": "Koppaka Naveen Kumar",
     "kopakanavienkumar": "Koppaka Naveen Kumar",
     "kopakanavieen": "Koppaka Naveen Kumar",
-    "preethi": "Preethi A",            # bare "preethi" in 4th call = Preethi A
     "preethia": "Preethi A",
-    "joel": "Joel Koil Raj J",         # bulk 2025 entries are Joel Koil Raj
     "joelkr": "Joel Koil Raj J",
     "joelkoilraj": "Joel Koil Raj J",
     "joelkoilrajj": "Joel Koil Raj J",
@@ -475,7 +470,6 @@ MANUAL_ALIAS_OVERRIDES = {
     # ── Second batch: additional resolved names ───────────────────────────────
     "manjunath": "Manjunath",
     "pavithra": "Pavithra",
-    "sam": "Samcharles D",             # 1st/2nd call entries → Sam Charles D
     "sugashini": "Sugashini",
     "sughasini": "Sugashini",
     "sharonkc": "Sharon Kavya Chandana P",
@@ -498,7 +492,6 @@ MANUAL_ALIAS_OVERRIDES = {
     "anjuemma": "Anju Emma Brillin",
     "anjuemmabrillin": "Anju Emma Brillin",
     "anjueb": "Anju Emma Brillin",
-    "jeenu": "Jeenu Ann Jose",         # CART/2nd-3rd call → Jeenu Ann Jose
     "jeenuannjose": "Jeenu Ann Jose",
     "jeenijose": "Jeenu Ann Jose",
     "jeenujose": "Jeenu Ann Jose",
@@ -526,8 +519,6 @@ MANUAL_ALIAS_OVERRIDES = {
     "rohanjacob": "Rohan Jacob Titus",
     "rohanjacobtiuts": "Rohan Jacob Titus",
     "rohanjacobT": "Rohan Jacob Titus",
-    "rohanc": "Rohan Chacko Jacob",
-    "rohanchacko": "Rohan Chacko Jacob",
     "rohanchackojacob": "Rohan Chacko Jacob",
     "nandiv": "Nandi Vinayaka B",
     "nandivinayakab": "Nandi Vinayaka B",
@@ -569,7 +560,6 @@ MANUAL_ALIAS_OVERRIDES = {
     "tony": "Tony Thomson Chandy",
     "tonythomsonchandy": "Tony Thomson Chandy",
     # David → PAC context; Karumuru David Raj
-    "david": "Karumuru David Raj",
     "davidraj": "Karumuru David Raj",
     "kdavidraj": "Karumuru David Raj",
     # Samuel → 4th call; Samuel D C (department member)
@@ -578,7 +568,6 @@ MANUAL_ALIAS_OVERRIDES = {
     "samueldc": "Samuel D C",
     "samdc": "Samuel D C",
     # Jonathan → Schell/Shift 2026-03; Jonathan Samuel B
-    "jonathan": "Jonathan Samuel B",
     # Anju → PAC/Shift 2026-03; Anju Emma Brillin
     "anju": "Anju Emma Brillin",
     # PRAVEEN → CB 4th call 2025-06; Praveen Benjamin D
@@ -590,7 +579,6 @@ MANUAL_ALIAS_OVERRIDES = {
     # John → 2nd call 2022 SR; John Arun Kumar J
     "john": "John Arun Kumar J",
     # Anisha → PAC final years 2022; Anisha Joy (senior)
-    "anisha": "Anisha Joy",
     # KARTHI S / Karthi P → PAC; Karthik S / Karthikpandian S
     "karthis": "Karthik S",
     "karthi": "Karthik S",
@@ -1580,127 +1568,82 @@ def period_after(period: str, threshold: str) -> bool:
     return period >= threshold
 
 
+_SHARED_RULES: tuple[dict, dict] | None = None
+_LEVEL_KEYS = {1: "1ST_CALL", 2: "2ND_CALL", 3: "3RD_CALL", 4: "4TH_CALL", 5: "5TH_CALL"}
+
+
+def shared_name_rules() -> tuple[dict, dict]:
+    """The shared member resolution rules by name form, and their target names.
+
+    Uses the saved rules (which admins can edit) when the database is reachable, otherwise the
+    seed (app.services.member_resolution_rules). One source of truth with live imports.
+    """
+    global _SHARED_RULES
+    if _SHARED_RULES is not None:
+        return _SHARED_RULES
+    from uuid import uuid4
+
+    from app.models import MemberResolutionRule
+    from app.services.member_resolution_rules import SEED_RULES, build_seed_rules
+
+    rules, names = [], {}
+    if SessionLocal is not None:
+        try:
+            with SessionLocal() as db:
+                names = {p.id: p.canonical_name for p in db.scalars(select(Person))}
+                rules = [r for r in db.scalars(select(MemberResolutionRule)) if r.active]
+                db.expunge_all()
+        except Exception:  # noqa: BLE001 - offline analysis falls back to the seed
+            rules, names = [], {}
+    if not rules:
+        stand_ins = {r.person: Person(id=uuid4(), canonical_name=r.person) for r in SEED_RULES}
+        rules = build_seed_rules(stand_ins)[0]
+        names = {p.id: p.canonical_name for p in stand_ins.values()}
+    by_form: dict[str, list] = defaultdict(list)
+    for rule in rules:
+        by_form[rule.form_key].append(rule)
+    for key in by_form:
+        by_form[key].sort(key=lambda r: (-r.priority, str(r.person_id), str(r.id)))
+    _SHARED_RULES = (by_form, names)
+    return _SHARED_RULES
+
+
+def duty_area_of(duty_type: str) -> str | None:
+    return duty_type.upper().split("_", 1)[0] if duty_type else None
+
+
 def manual_name_resolution(
     assignment: ParsedRotaAssignment | ParsedUnitPosting,
     period: str,
 ) -> NameResolution | None:
+    from app.services.member_resolver import ResolutionContext, match_rules
+    from app.services.normalization import member_key
+
     cleaned = clean_person_name(assignment.person_name)
     key = compact_name(cleaned)
+
+    if isinstance(assignment, ParsedRotaAssignment):
+        if key == "christina" and period == "2025-03":
+            # Alias summary: bare "Christina" in March 2025 is split by column (3 / 2).
+            if assignment.column_index in {7, 15}:
+                return NameResolution("matched", "Christina Thomas", cleaned, 0.95, "manual_month_split")
+            return NameResolution("matched", "Christina Reshma R", cleaned, 0.95, "manual_month_split")
+        level = duty_level_rank(assignment.duty_type, assignment.duty_label)
+        ctx = ResolutionContext.build(_LEVEL_KEYS.get(level), assignment.duty_date,
+                                      duty_area_of(assignment.duty_type))
+    else:
+        ctx = ResolutionContext.build(assignment.posting_label)
+
+    by_form, names = shared_name_rules()
+    outcome, found = match_rules(by_form.get(member_key(cleaned), []), ctx)
+    if outcome == "rule":
+        return NameResolution("matched", names.get(found.person_id), cleaned, 1.0, "shared_rule")
+    if outcome == "ask":
+        return NameResolution("ambiguous", None, cleaned, 0.0, "shared_short_name_needs_context")
+
     exact = MANUAL_ALIAS_OVERRIDES.get(key)
     if exact is not None:
         return NameResolution("matched", exact, cleaned, 1.0, "manual_alias")
-
-    if not isinstance(assignment, ParsedRotaAssignment):
-        return None
-
-    level = duty_level_rank(assignment.duty_type, assignment.duty_label)
-    lowered = cleaned.casefold()
-
-    if key in {"rohan", "rohanc", "rohanchacko"}:
-        if level == 3 and not period_after(period, "2026-04"):
-            return NameResolution("matched", "Rohan Jacob Titus", cleaned, 0.99, "manual_context")
-        return NameResolution("matched", "Rohan Chacko Jacob", cleaned, 0.99, "manual_context")
-    if key in {"rohanjt", "rohanjacobtitus", "rohantitus", "rohanj"}:
-        return NameResolution("matched", "Rohan Jacob Titus", cleaned, 1.0, "manual_alias")
-
-    if key in {"naveen", "naveenk", "koppakanaveen"}:
-        if level == 4:
-            return NameResolution("matched", "Suda Naveen", cleaned, 0.99, "manual_context")
-        return NameResolution("matched", "Koppaka Naveen Kumar", cleaned, 0.99, "manual_context")
-    if key in {"naveens", "sudanaveen", "sudanaveenkumar"}:
-        return NameResolution("matched", "Suda Naveen", cleaned, 1.0, "manual_alias")
-
-    if key in {"preethia", "preethy", "preethya"}:
-        return NameResolution("matched", "Preethi A", cleaned, 1.0, "manual_alias")
-    if key == "preethi":
-        if level is not None and level >= 3:
-            return NameResolution("matched", "Preethi Kuryan", cleaned, 0.99, "manual_context")
-        return NameResolution("matched", "Preethi A", cleaned, 0.99, "manual_context")
-
-    if key == "daniel":
-        if level == 4:
-            return NameResolution("matched", "Pradeep Daniel", cleaned, 0.99, "manual_context")
-        if level == 1 and period_after(period, "2026-03"):
-            return NameResolution("matched", "Joel Daniel", cleaned, 0.99, "manual_context")
-        return NameResolution("matched", "Daniel Jonathan Roy", cleaned, 0.99, "manual_context")
-
-    if key == "joel":
-        if level is not None and level >= 3:
-            return NameResolution("matched", "Joel V Peter", cleaned, 0.99, "manual_context")
-        if level == 1 and period_after(period, "2026-03"):
-            return NameResolution("matched", "Joel Daniel", cleaned, 0.99, "manual_context")
-        return NameResolution("matched", "Joel Koil Raj", cleaned, 0.99, "manual_context")
-
-    if key == "david":
-        if level == 1:
-            return NameResolution("matched", "David Samson Rontala", cleaned, 0.99, "manual_context")
-        if level == 2:
-            return NameResolution("matched", "Karumuru David Raj", cleaned, 0.99, "manual_context")
-        return NameResolution("ambiguous", None, cleaned, 0.0, "manual_shared_short_name")
-
-    if key == "jeenu":
-        if assignment.duty_type == "CART":
-            return NameResolution("matched", "Jeenu Ann Jose", cleaned, 0.99, "manual_context")
-        if level in {2, 3}:
-            return NameResolution("matched", "Jeenu Ann Jose", cleaned, 0.99, "manual_context")
-        if level == 4:
-            return NameResolution("matched", "Jeenu D", cleaned, 0.99, "manual_context")
-        return NameResolution("ambiguous", None, cleaned, 0.0, "manual_shared_short_name")
-
-    if key == "riya":
-        if level == 3:
-            return NameResolution("matched", "Riya Lal", cleaned, 0.99, "manual_context")
-        return NameResolution("matched", "Riya Sarah Abraham", cleaned, 0.99, "manual_context")
-
-    if key in {"priya", "priyadharshini", "priyadarshini"}:
-        if level == 1:
-            return NameResolution("matched", "Priyadharshini S", cleaned, 0.99, "manual_context")
-        if level == 3:
-            return NameResolution("matched", "Priyadarshini Kalahasthi", cleaned, 0.99, "manual_context")
-        if level == 2:
-            return NameResolution("matched", "Priyadharshini S", cleaned, 0.99, "manual_context")
-        return NameResolution("ambiguous", None, cleaned, 0.0, "manual_shared_short_name")
-
-    if key == "angeline":
-        label = assignment.duty_label.casefold()
-        if level == 4 or "senior" in label:
-            return NameResolution("matched", "Angeline Mary Abraham", cleaned, 0.99, "manual_context")
-        if assignment.duty_type == "PAC" or level in {1, 2, 3}:
-            return NameResolution("matched", "Angelin Aniruth", cleaned, 0.99, "manual_context")
-        return NameResolution("ambiguous", None, cleaned, 0.0, "manual_shared_short_name")
-
-    if key == "anisha":
-        if level == 2:
-            return NameResolution("matched", "Anisha Joy", cleaned, 0.99, "manual_context")
-        return NameResolution("ambiguous", None, cleaned, 0.0, "manual_shared_short_name")
-
-    if key == "christina" and period == "2025-03":
-        if assignment.column_index in {7, 15}:
-            return NameResolution("matched", "Christina Thomas", cleaned, 0.95, "manual_month_split")
-        return NameResolution("matched", "Christina Reshma R", cleaned, 0.95, "manual_month_split")
-
-    if key == "jonathan":
-        if level == 3:
-            return NameResolution("matched", "Jonathan Samuel B", cleaned, 0.99, "manual_context")
-        return NameResolution("ambiguous", None, cleaned, 0.0, "manual_shared_short_name")
-
-    if key == "sharon":
-        if level == 4:
-            return NameResolution("matched", "Sharon Kavya Chandana P", cleaned, 0.99, "manual_context")
-        if level in {2, 3}:
-            return NameResolution("matched", "Sharon J Ebenezer", cleaned, 0.99, "manual_context")
-        return NameResolution("ambiguous", None, cleaned, 0.0, "manual_shared_short_name")
-
-    if key == "sam":
-        if level == 4:
-            return NameResolution("matched", "Samuel D C", cleaned, 0.99, "manual_context")
-        if level in {1, 2}:
-            return NameResolution("matched", "Sam Charles D", cleaned, 0.99, "manual_context")
-        return NameResolution("ambiguous", None, cleaned, 0.0, "manual_shared_short_name")
-
-    if lowered in {"sam c", "sam chandran", "samuel c", "samuel david"}:
-        return NameResolution("matched", "Samuel D C", cleaned, 1.0, "manual_alias")
-
     return None
 
 

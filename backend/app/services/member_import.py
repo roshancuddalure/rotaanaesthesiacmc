@@ -5,7 +5,6 @@ import csv
 import json
 import re
 from datetime import date, datetime
-from difflib import SequenceMatcher
 from io import BytesIO, StringIO
 from xml.etree.ElementTree import ParseError
 from zipfile import BadZipFile, ZipFile
@@ -23,7 +22,8 @@ from app.models import (
     PersonDesignation,
     PersonCallChange,
 )
-from app.services.members import normalize_member_name, compact_name_key
+from app.services.member_resolver import MemberIndex, ResolutionContext, UnknownMemberId
+from app.services.normalization import member_key
 from app.domain.member_validation import normalize_member_display_name, normalize_member_call, normalize_member_status
 from app.services.roster_reconciliation import normalize_designation
 from app.services.imports import is_valid_person_name
@@ -54,6 +54,18 @@ HEADER_ALIASES = {
     "effective_from": {"effective from", "start date"},
     "effective_to": {"effective to", "end date"},
 }
+
+
+def candidate_json(candidate) -> dict:
+    """A resolver candidate as review-screen JSON (keeps the historical id/name keys)."""
+    return {
+        "id": candidate.person_id,
+        "name": candidate.name,
+        "status": candidate.status,
+        "call_level": candidate.call_level,
+        "score": candidate.score,
+        "reason": candidate.reason,
+    }
 
 
 def cell_text(value):
@@ -191,10 +203,11 @@ def preview_member_import(db: Session, filename: str, content: bytes, options: d
         raise ValueError("Each column can only be mapped once.")
     people, snapshot = member_state(db)
     by_id = {str(p.id): p for p in people}
-    keys = {}
-    for person in people:
-        for name in [person.canonical_name] + [a.alias for a in person.aliases]:
-            keys.setdefault(compact_name_key(name), set()).add(str(person.id))
+    member_index = MemberIndex.load(db)
+
+    def owners_of(name_key: str) -> set[str]:
+        """Members whose canonical name or approved alias is exactly this key."""
+        return {str(i) for i in member_index.exact_owners(name_key)}
     resolutions = options.get("resolutions", {})
     rows, seen_names, seen_targets, seen_aliases = [], set(), set(), {}
     workbook = open_member_workbook(filename, content)
@@ -223,6 +236,9 @@ def preview_member_import(db: Session, filename: str, content: bytes, options: d
                         "changes": {},
                         "errors": [],
                         "candidates": [],
+                        "resolution_status": None,
+                        "resolution_reason": "",
+                        "resolution_warnings": [],
                     }
                 )
                 continue
@@ -277,30 +293,41 @@ def preview_member_import(db: Session, filename: str, content: bytes, options: d
                 errors.append("Designation exceeds 100 characters.")
             if any(len(a) > 255 or not is_valid_person_name(a) for a in normalized["aliases"]):
                 errors.append("Invalid alias or alias exceeds 255 characters.")
-            key = compact_name_key(name)
+            key = member_key(name)
             if key in seen_names or key in seen_aliases:
                 errors.append("Duplicate name in this worksheet; consolidate these rows.")
             seen_names.add(key)
-            matches = keys.get(key, set())
-            candidates = set(matches)
-            if not matches:
-                candidates = {
-                    str(p.id)
-                    for p in people
-                    if SequenceMatcher(None, key, normalize_member_name(p.canonical_name)).ratio()
-                    >= 0.82
-                }
             resolution = resolutions.get(str(index), "")
-            target = next(iter(matches)) if len(matches) == 1 else None
-            if resolution and resolution not in {"new", "skip"}:
-                if resolution not in by_id:
-                    errors.append("Selected member no longer exists.")
-                else:
-                    target = resolution
+            chosen = resolution if resolution and resolution not in {"new", "skip"} else None
+            context = ResolutionContext.build(normalized["call_level"])
+            # purpose="history": historical members may be updated; archived or inactive ones
+            # are only targeted when the reviewer chooses them by id.
+            try:
+                member = member_index.resolve(name, context, person_id=chosen, purpose="history")
+            except UnknownMemberId:
+                errors.append("Selected member no longer exists.")
+                member = member_index.resolve(name, context, purpose="history")
+                chosen = "unknown"
+            target = member.person_id if member.matched and chosen != "unknown" else None
+            candidates = list(member.candidates)
+            needs_choice = False
             if resolution == "new":
-                if matches:
+                if owners_of(key) or member.matched:
                     errors.append("Name already matches an existing member.")
                 target = None
+            elif target is None and chosen is None:
+                needs_choice = True
+                if member.status == "not_found" or member.only_similar:
+                    # A brand-new member (loose look-alikes are not a match): block likely
+                    # duplicates unless an admin explicitly confirms "new".
+                    candidates = member_index.near_duplicates(name)
+                    needs_choice = bool(candidates)
+                    if candidates:
+                        member.reason = "Possible duplicate of " + ", ".join(
+                            f"{c.name} ({c.status})" for c in candidates
+                        ) + "; choose the member, or confirm this is a new member."
+                    else:
+                        member.reason = "No existing member with this name; a new member will be created"
             if target and target in seen_targets:
                 errors.append("Multiple rows target the same member; consolidate these rows.")
             if target:
@@ -308,8 +335,8 @@ def preview_member_import(db: Session, filename: str, content: bytes, options: d
                 if name != by_id[target].canonical_name and name not in normalized["aliases"]:
                     normalized["aliases"].append(name)
             for alias in normalized["aliases"]:
-                alias_key = compact_name_key(alias)
-                owners = keys.get(alias_key, set())
+                alias_key = member_key(alias)
+                owners = owners_of(alias_key)
                 if owners - ({target} if target else set()):
                     errors.append(f"Alias belongs to another member: {alias}")
                 if alias_key in seen_aliases and seen_aliases[alias_key] != index:
@@ -351,7 +378,7 @@ def preview_member_import(db: Session, filename: str, content: bytes, options: d
                             "Existing designation has a different end date; review manually."
                         )
             action = "update" if person and changes else "unchanged" if person else "create"
-            if errors or ((len(matches) > 1 or (not matches and candidates)) and not resolution):
+            if errors or needs_choice:
                 action = "needs_review"
             if resolution == "skip":
                 action = "skip"
@@ -365,11 +392,10 @@ def preview_member_import(db: Session, filename: str, content: bytes, options: d
                     "target_name": person.canonical_name if person else None,
                     "changes": changes,
                     "errors": errors,
-                    "candidates": [
-                        {"id": str(p.id), "name": p.canonical_name}
-                        for p in people
-                        if str(p.id) in candidates
-                    ],
+                    "candidates": [candidate_json(c) for c in candidates],
+                    "resolution_status": member.status,
+                    "resolution_reason": member.reason,
+                    "resolution_warnings": list(member.warnings),
                 }
             )
     finally:

@@ -1,9 +1,9 @@
 """Reference catalogs, normalization audit and durable import review batches."""
 
-from datetime import datetime
+from datetime import date, datetime
 from uuid import UUID, uuid4
 
-from sqlalchemy import Boolean, DateTime, Integer, JSON, String, UniqueConstraint
+from sqlalchemy import Boolean, Date, DateTime, ForeignKey, Integer, JSON, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.session import Base
@@ -50,3 +50,33 @@ class ImportReviewBatch(Base):
     rows: Mapped[list] = mapped_column(JSON)
     result: Mapped[dict | None] = mapped_column(JSON, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+
+class MemberResolutionRule(Base):
+    """A reviewed rule saying which member a written name means, optionally only in a context.
+
+    Rules are the shared source of truth for name forms that depend on call level, duty area
+    or date (Plan/Alias/Alias_Resolution_Summary.md). A rule with ``person_id`` set to None
+    means "always ask"; a context-free name form shared by several people has no rule and
+    is asked by default.
+    """
+
+    __tablename__ = "member_resolution_rules"
+
+    id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
+    form: Mapped[str] = mapped_column(String(255))
+    form_key: Mapped[str] = mapped_column(String(255), index=True)
+    person_id: Mapped[UUID | None] = mapped_column(ForeignKey("persons.id"), nullable=True, index=True)
+    call_levels: Mapped[list] = mapped_column(JSON, default=list)  # empty = any call level
+    duty_areas: Mapped[list] = mapped_column(JSON, default=list)  # e.g. CART, PAC, CAESAR
+    effective_from: Mapped[date | None] = mapped_column(Date, nullable=True)
+    effective_to: Mapped[date | None] = mapped_column(Date, nullable=True)
+    # Applies only when the row carries a call level or duty area (an "other contexts" rule).
+    requires_context: Mapped[bool] = mapped_column(Boolean, default=False)
+    priority: Mapped[int] = mapped_column(Integer, default=0)
+    active: Mapped[bool] = mapped_column(Boolean, default=True)
+    note: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    source: Mapped[str] = mapped_column(String(100), default="manual")
+    version: Mapped[int] = mapped_column(Integer, default=1)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)

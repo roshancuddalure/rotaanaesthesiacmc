@@ -3,7 +3,8 @@ from uuid import uuid4
 from app.models import UserAccount
 
 from fastapi.testclient import TestClient
-from sqlalchemy import create_engine, select
+import pytest
+from sqlalchemy import create_engine, func, select
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import StaticPool
 
@@ -19,6 +20,8 @@ from app.services.members import (
     invalid_members,
     merge_people,
     normalize_dirty_member_names,
+    plan_auto_merge,
+    StalePreviewError,
 )
 
 
@@ -53,7 +56,11 @@ def test_auto_merge_duplicate_candidates_merges_exact_compact_groups() -> None:
         session.add_all([first, second, third])
         session.commit()
 
-        result = auto_merge_duplicate_candidates(session)
+        plan = plan_auto_merge(session)
+        assert len(plan["groups"]) == 1
+        assert session.scalar(select(func.count()).select_from(Person)) == 3  # preview changes nothing
+
+        result = auto_merge_duplicate_candidates(session, plan["preview_token"])
 
         assert result.merged_groups == 1
         assert result.merged_people == 1
@@ -61,6 +68,32 @@ def test_auto_merge_duplicate_candidates_merges_exact_compact_groups() -> None:
         names = set(session.scalars(select(Person.canonical_name)))
         assert "Unrelated Person" in names
         assert len(names & {"Divya AJ", "DIVYA A J"}) == 1
+
+
+def test_auto_merge_never_merges_on_a_shared_alias_and_needs_a_fresh_token() -> None:
+    engine = create_engine("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(engine)
+
+    with Session(engine) as session:
+        first = Person(canonical_name="Sujil Ebenezar Sam")
+        second = Person(canonical_name="Samcharles D")
+        first.aliases.append(PersonAlias(alias="Sam", source="historical_analysis_variant"))
+        second.aliases.append(PersonAlias(alias="SAM", source="manual"))
+        session.add_all([first, second])
+        session.commit()
+
+        plan = plan_auto_merge(session)
+        assert plan["groups"] == []
+        assert len(plan["needs_review"]) == 1
+        result = auto_merge_duplicate_candidates(session, plan["preview_token"])
+        assert result.merged_people == 0
+        assert session.scalar(select(func.count()).select_from(Person)) == 2
+
+        session.add(Person(canonical_name="SAMCHARLES D"))
+        session.commit()
+        with pytest.raises(StalePreviewError):
+            auto_merge_duplicate_candidates(session, plan["preview_token"])
+        assert session.scalar(select(func.count()).select_from(Person)) == 3
 
 
 def test_merge_people_moves_assignments_aliases_and_designations() -> None:
@@ -160,6 +193,18 @@ def test_name_cleanup_preserves_real_name_with_noise_suffix() -> None:
         person = session.scalars(select(Person)).one()
         assert person.canonical_name == "Kiruthiga"
         assert person.aliases[0].alias == "Kiruthiga - Till sept 27"
+
+
+def test_name_cleanup_reports_collision_instead_of_merging() -> None:
+    engine = create_engine("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(engine)
+
+    with Session(engine) as session:
+        session.add_all([Person(canonical_name="Kiruthiga - Till sept 27"), Person(canonical_name="Kiruthiga")])
+        session.commit()
+
+        assert normalize_dirty_member_names(session) == 0
+        assert sorted(session.scalars(select(Person.canonical_name))) == ["Kiruthiga", "Kiruthiga - Till sept 27"]
 
 
 def test_member_api_lists_full_roster_and_requires_explicit_restore() -> None:

@@ -4,8 +4,8 @@ import logging
 from typing import Literal
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel, Field
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
+from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -26,20 +26,39 @@ def enabled():
         raise HTTPException(503, "Reviewed compute is disabled by the administrator")
 
 
-class Start(BaseModel):
-    month: str
+class ComputePayload(BaseModel):
+    model_config = ConfigDict(extra="forbid", strict=True)
+
+
+class Start(ComputePayload):
+    month: str = Field(min_length=7, max_length=7, pattern=r"^\d{4}-(0[1-9]|1[0-2])$")
     engine: Literal["server", "local_gpu"] = "server"
 
 
-class Step(BaseModel):
-    revision: int = Field(ge=0)
-    selection: int | None = Field(default=None, ge=0)
-    token: str | None = None
+class Step(ComputePayload):
+    revision: int = Field(ge=0, le=2147483647)
+    selection: int | None = Field(default=None, ge=0, lt=100000)
+    token: str | None = Field(default=None, min_length=64, max_length=64, pattern=r"^[a-f0-9]{64}$")
     fallback: bool = False
 
 
+def limit_start(request: Request, user=Depends(current_user)):
+    request.app.state.compute_limiter.check(user.id, "start")
+
+
+def limit_work(request: Request, user=Depends(current_user)):
+    request.app.state.compute_limiter.check(user.id, "work")
+
+
 @router.get("/capabilities")
-def capabilities(month: str | None = None, db: Session = Depends(get_db)):
+def capabilities(
+    request: Request,
+    month: str | None = Query(default=None, pattern=r"^\d{4}-(0[1-9]|1[0-2])$", max_length=7),
+    db: Session = Depends(get_db),
+    user: UserAccount = Depends(current_user),
+):
+    if month and settings.rota_compute_enabled:
+        request.app.state.compute_limiter.check(user.id, "work")
     return {
         "enabled": settings.rota_compute_enabled,
         "browser_gpu": settings.browser_gpu_enabled,
@@ -51,7 +70,7 @@ def capabilities(month: str | None = None, db: Session = Depends(get_db)):
     }
 
 
-@router.post("/jobs")
+@router.post("/jobs", dependencies=[Depends(limit_start)])
 def start(payload: Start, db: Session = Depends(get_db), user: UserAccount = Depends(current_user)):
     enabled()
     try:
@@ -68,7 +87,11 @@ def start(payload: Start, db: Session = Depends(get_db), user: UserAccount = Dep
 
 
 @router.get("/jobs")
-def jobs(month: str, db: Session = Depends(get_db), user: UserAccount = Depends(current_user)):
+def jobs(
+    month: str = Query(pattern=r"^\d{4}-(0[1-9]|1[0-2])$", max_length=7),
+    db: Session = Depends(get_db),
+    user: UserAccount = Depends(current_user),
+):
     enabled()
     return [
         service.serialize(job)
@@ -87,7 +110,7 @@ def get_job(job_id: UUID, db: Session = Depends(get_db), user: UserAccount = Dep
     return service.serialize(service.owned_job(db, job_id, user))
 
 
-@router.post("/jobs/{job_id}/step")
+@router.post("/jobs/{job_id}/step", dependencies=[Depends(limit_work)])
 def step(
     job_id: UUID,
     payload: Step,
@@ -133,7 +156,7 @@ def cancel(job_id: UUID, db: Session = Depends(get_db), user: UserAccount = Depe
     return service.cancel(db, service.owned_job(db, job_id, user))
 
 
-@router.post("/jobs/{job_id}/apply")
+@router.post("/jobs/{job_id}/apply", dependencies=[Depends(limit_work)])
 def apply(
     job_id: UUID,
     payload: Step,
@@ -149,7 +172,7 @@ def apply(
     return service.apply_job(db, job, payload.revision, user)
 
 
-@router.post("/jobs/{job_id}/validate")
+@router.post("/jobs/{job_id}/validate", dependencies=[Depends(limit_work)])
 def validate(
     job_id: UUID,
     payload: Step,

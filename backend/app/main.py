@@ -19,6 +19,8 @@ from fastapi.staticfiles import StaticFiles
 
 from app.api.routes import api_router
 from app.core.config import settings
+from app.security import ComputeSecurityMiddleware
+from app.services.compute_limits import ComputeLimiter
 
 STATIC_DIR = Path(__file__).resolve().parents[1] / "static"
 logger = logging.getLogger(__name__)
@@ -26,21 +28,22 @@ logger = logging.getLogger(__name__)
 
 def create_app() -> FastAPI:
     app = FastAPI(title=settings.app_name, version="0.1.0")
+    app.state.compute_limiter = ComputeLimiter()
     allowed_origins = {
         settings.frontend_origin,
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-        "http://localhost:5174",
-        "http://127.0.0.1:5174",
     }
+    if settings.app_env.lower() != "production":
+        allowed_origins.update({"http://localhost:5173", "http://127.0.0.1:5173",
+                                "http://localhost:5174", "http://127.0.0.1:5174"})
 
     app.add_middleware(
         CORSMiddleware,
         allow_origins=sorted(allowed_origins),
         allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
+        allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+        allow_headers=["Authorization", "Content-Type", "If-Match"],
     )
+    app.add_middleware(ComputeSecurityMiddleware)
 
     @app.exception_handler(Exception)
     async def unhandled_exception_handler(request: Request, exc: Exception) -> JSONResponse:

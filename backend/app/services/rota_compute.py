@@ -144,6 +144,13 @@ def burden_comparison(state):
 
 
 def create_job(db, month, operator, engine="server"):
+    lock_namespace(db, "rota-compute")
+    active = list(db.scalars(select(RotaComputeJob).where(
+        RotaComputeJob.operator_id == operator.id, RotaComputeJob.status.in_(ACTIVE),
+        RotaComputeJob.created_at > datetime.utcnow() - timedelta(hours=2),
+    ).limit(3)))
+    if len(active) >= 3:
+        raise HTTPException(429, "Three active proposals already exist. Resume or cancel one before starting another.", headers={"Retry-After": "30"})
     lock_namespace(db, "rota-compute:" + month)
     period, _ = writable_period(db, month)
     # Materialize defaults before freezing the snapshot.

@@ -4,7 +4,6 @@ import hashlib
 import json
 from calendar import month_abbr
 from datetime import date, datetime, timedelta, timezone
-from difflib import SequenceMatcher
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from uuid import UUID
@@ -25,14 +24,32 @@ from app.models import (
 )
 from app.services.imports import classify_duty_label, duty_window_for_date, parse_rota_workbook
 from app.services.leave import month_bounds
-from app.services.member_import import cell_text, member_state, open_member_workbook
-from app.services.members import normalize_member_name
+from app.services.member_import import candidate_json, cell_text, member_state, open_member_workbook
+from app.services.member_resolver import MemberIndex, resolve_rows
+from app.services.rota_call_levels import inferred_call_levels_from_duty_type
 
 PAST_SOURCE = "past_duty_upload"
 OFFICIAL_STATUSES = {"historical", "approved", "published", "finalized"}
 ACTIVE_STATUSES = {"assigned", "confirmed", "draft"}
 PAST_FIELDS = ("date", "name", "duty_type", "starts_at", "ends_at", "campus", "slot")
 DUTIES = {d.key: d for d in DUTY_TYPES}
+UNRESOLVED_MEMBER = (
+    "Resolve the member name using the master list. Add missing historical members in Members first."
+)
+
+
+def _duty_area(duty: str | None, campus: str | None) -> str | None:
+    """The duty area the resolver's context rules use (CART, CAESAR, PAC), else the campus."""
+    key = (duty or "").upper()
+    for area in ("CART", "CAESAR", "PAC"):
+        if area in key:
+            return area
+    return campus
+
+
+def _call_level(duty: str | None) -> str | None:
+    levels = inferred_call_levels_from_duty_type(duty)
+    return next(iter(levels)) if len(levels) == 1 else None
 
 
 def open_past_workbook(filename: str, content: bytes):
@@ -225,12 +242,8 @@ def parse_upload(filename: str, content: bytes, options: dict):
 
 def preview_past_duties(db: Session, filename: str, content: bytes, options: dict):
     records, warnings, start, end, today = parse_upload(filename, content, options)
-    people, members_snapshot = member_state(db)
-    people_by_id = {str(p.id): p for p in people}
-    keys = {}
-    for person in people:
-        for value in [person.canonical_name] + [a.alias for a in person.aliases]:
-            keys.setdefault(normalize_member_name(value), set()).add(str(person.id))
+    _, members_snapshot = member_state(db)
+    index = MemberIndex.load(db)
     periods = list(
         db.scalars(
             select(RotaPeriod).where(RotaPeriod.starts_on <= end, RotaPeriod.ends_on >= start)
@@ -260,10 +273,32 @@ def preview_past_duties(db: Session, filename: str, content: bytes, options: dic
     saved_slots = list(
         db.scalars(select(DutySlot).where(DutySlot.duty_date >= start, DutySlot.duty_date <= end))
     )
-    for index, record in enumerate(records, 1):
-        key = str(index)
+    resolutions = options.get("resolutions", {})
+    # First pass: each row's date and duty give the resolver its context, so the whole file
+    # is resolved together and contradictions between rows are flagged.
+    contexts = {}
+    for position, record in enumerate(records, 1):
+        resolution = resolutions.get(str(position), {})
+        if resolution.get("action") == "skip":
+            continue
         raw = record["raw"]
-        resolution = options.get("resolutions", {}).get(key, {})
+        day, _ = _duty_day(raw, start, end, today)
+        duty = _duty_for(record, resolution, mapping_lookup)
+        chosen = resolution.get("person_id")
+        contexts[position] = {
+            "raw_name": raw.get("name", ""),
+            "person_id": chosen if chosen and _known_id(index, chosen) else None,
+            "unknown_id": bool(chosen) and not _known_id(index, chosen),
+            "call_level": _call_level(duty),
+            "on": day,
+            "duty_area": _duty_area(duty, raw.get("campus", "").strip().upper() or None),
+        }
+    ordered = sorted(contexts)
+    resolved = dict(zip(ordered, resolve_rows(index, [contexts[p] for p in ordered], purpose="history")))
+    for position, record in enumerate(records, 1):
+        key = str(position)
+        raw = record["raw"]
+        resolution = resolutions.get(key, {})
         if resolution.get("action") == "skip":
             rows.append(
                 {
@@ -273,6 +308,9 @@ def preview_past_duties(db: Session, filename: str, content: bytes, options: dic
                     "action": "skip",
                     "errors": [],
                     "person_candidates": [],
+                    "resolution_status": None,
+                    "resolution_reason": "",
+                    "resolution_warnings": [],
                     "conflicts": [],
                     "target_assignment": None,
                 }
@@ -281,40 +319,17 @@ def preview_past_duties(db: Session, filename: str, content: bytes, options: dic
         errors = list(period_errors)
         if any(v.startswith("=") for v in raw.values()):
             errors.append("Formula cells must be replaced with values.")
-        try:
-            day = date.fromisoformat(raw.get("date", "").split("T")[0].split(" ")[0])
-            if not start <= day <= end or day >= today:
-                raise ValueError()
-        except ValueError:
-            day = None
-            errors.append(
-                "Duty date must be a completed past date in the selected month (YYYY-MM-DD or Excel date)."
-            )
-        name_key = normalize_member_name(raw.get("name", ""))
-        matches = keys.get(name_key, set())
-        person_id = next(iter(matches)) if len(matches) == 1 else None
-        candidates = set(matches) or {
-            str(p.id)
-            for p in people
-            if SequenceMatcher(None, name_key, normalize_member_name(p.canonical_name)).ratio()
-            >= 0.82
-        }
-        if resolution.get("person_id"):
-            person_id = resolution["person_id"] if resolution["person_id"] in people_by_id else None
-        if person_id is None:
-            errors.append(
-                "Resolve the member name using the master list. Add missing historical members in Members first."
-            )
-        raw_duty = raw.get("duty_type", "")
-        mapping = mapping_lookup.get(raw_duty.casefold().strip())
-        duty = (
-            resolution.get("duty_type")
-            or (mapping.target_key if mapping and mapping.status != "needs_review" else None)
-            or record.get("parsed_duty")
-            or (raw_duty if raw_duty in DUTIES else classify_duty_label(raw_duty))
-        )
-        if mapping and mapping.status == "needs_review" and not resolution.get("duty_type"):
-            duty = None
+        day, date_error = _duty_day(raw, start, end, today)
+        if date_error:
+            errors.append(date_error)
+        member = resolved[position]
+        person_id = member.person_id if member.matched else None
+        if contexts[position]["unknown_id"]:
+            person_id = None
+            errors.append("Selected member no longer exists.")
+        elif person_id is None:
+            errors.append(UNRESOLVED_MEMBER)
+        duty = _duty_for(record, resolution, mapping_lookup)
         if duty not in DUTIES:
             errors.append("Resolve the duty label to a recognized duty type.")
         starts_at = ends_at = None
@@ -348,7 +363,7 @@ def preview_past_duties(db: Session, filename: str, content: bytes, options: dic
         normalized = {
             "date": day.isoformat() if day else None,
             "person_id": person_id,
-            "name": people_by_id[person_id].canonical_name if person_id else raw.get("name"),
+            "name": member.canonical_name if person_id else raw.get("name"),
             "duty_type": duty,
             "starts_at": starts_at.isoformat() if starts_at else None,
             "ends_at": ends_at.isoformat() if ends_at else None,
@@ -450,11 +465,10 @@ def preview_past_duties(db: Session, filename: str, content: bytes, options: dic
                 "normalized": normalized,
                 "action": "needs_review" if errors else action,
                 "errors": errors,
-                "person_candidates": [
-                    {"id": str(p.id), "name": p.canonical_name}
-                    for p in people
-                    if str(p.id) in candidates
-                ],
+                "person_candidates": [candidate_json(c) for c in member.candidates],
+                "resolution_status": member.status,
+                "resolution_reason": member.reason,
+                "resolution_warnings": list(member.warnings),
                 "conflicts": conflicts,
                 "target_assignment": str(target.id) if target else None,
             }
@@ -512,6 +526,38 @@ def preview_past_duties(db: Session, filename: str, content: bytes, options: dic
         "month": options["month"],
         "sheet": options["sheet"],
     }
+
+
+def _known_id(index: MemberIndex, person_id) -> bool:
+    try:
+        return UUID(str(person_id)) in index.by_id
+    except ValueError:
+        return False
+
+
+def _duty_day(raw: dict, start: date, end: date, today: date):
+    try:
+        day = date.fromisoformat(raw.get("date", "").split("T")[0].split(" ")[0])
+        if not start <= day <= end or day >= today:
+            raise ValueError()
+        return day, None
+    except ValueError:
+        return None, (
+            "Duty date must be a completed past date in the selected month (YYYY-MM-DD or Excel date)."
+        )
+
+
+def _duty_for(record: dict, resolution: dict, mapping_lookup: dict):
+    raw_duty = record["raw"].get("duty_type", "")
+    mapping = mapping_lookup.get(raw_duty.casefold().strip())
+    if mapping and mapping.status == "needs_review" and not resolution.get("duty_type"):
+        return None
+    return (
+        resolution.get("duty_type")
+        or (mapping.target_key if mapping and mapping.status != "needs_review" else None)
+        or record.get("parsed_duty")
+        or (raw_duty if raw_duty in DUTIES else classify_duty_label(raw_duty))
+    )
 
 
 def apply_past_duties(
