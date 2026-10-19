@@ -1,0 +1,138 @@
+{
+  "label": "new-390",
+  "steps": [
+    "setup saved and locked",
+    "template generated",
+    "leave imported",
+    "unit postings imported",
+    "member imported",
+    "eagle eye exported",
+    "publish button enabled: false"
+  ],
+  "errors": [],
+  "mutations": [
+    {
+      "method": "PUT",
+      "path": "/api/v1/rota-setup/month/scope",
+      "query": "?month=2026-11",
+      "body": {
+        "included_unit_ids": [
+          "938a3ad5-b14f-4904-a087-32bd9d488658",
+          "f85eb81e-af61-4101-9f42-019d5709a3e3",
+          "43fb23ed-f463-4ce8-b43c-f10981474f38",
+          "20355662-d311-43a5-af4b-3fc726543b2a",
+          "635beb5f-d4e8-4e7b-a574-be06710c495b",
+          "4c4b9657-94d8-4af5-bde8-d9e6538cd944",
+          "86440403-f706-4710-81f0-c094cd378e05",
+          "e7e3624a-d261-46c3-93f5-b34449ba92e7"
+        ],
+        "excluded_unit_ids": [],
+        "include_excluded_units_in_safety": true,
+        "is_locked": true,
+        "lock_reason": "Equivalence check"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rota-template/generate",
+      "query": "?month=2026-11",
+      "body": {
+        "duty_keys": [
+          "MAIN_1ST_24HR",
+          "MAIN_1ST_CO_24HR",
+          "MAIN_2ND_24HR",
+          "MAIN_3RD_24HR",
+          "MAIN_4TH_24HR",
+          "MAIN_CO3RD_24HR",
+          "MAIN_CO4TH_24HR",
+          "RC_1ST_A_24HR",
+          "RC_1ST_B_24HR",
+          "RC_2ND_24HR",
+          "RC_3RD_24HR",
+          "RC_4TH_24HR",
+          "RC_CO3RD_24HR",
+          "RC_CO4TH_24HR",
+          "CB_1ST_24HR",
+          "CB_3RD_24HR",
+          "CB_4TH_24HR",
+          "CB_CO3RD_24HR",
+          "CB_CO4TH_24HR",
+          "CAESAR_B_24HR",
+          "CART",
+          "SCHELL_24HR",
+          "FLOATING_24HR",
+          "FIFTH_CALL"
+        ],
+        "starts_on": "2026-11-01",
+        "ends_on": "2026-11-30",
+        "include_weekdays": true,
+        "include_weekends": true,
+        "replace_existing": true,
+        "allocation_fairness_policy": "hybrid"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/import-review/columns",
+      "query": "",
+      "body": []
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/import-review/leave/preview",
+      "query": "",
+      "body": []
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/import-review/<id>/apply",
+      "query": "",
+      "body": {
+        "excluded": [],
+        "acknowledge_warnings": false
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/import-review/columns",
+      "query": "",
+      "body": []
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/import-review/units/preview",
+      "query": "",
+      "body": []
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/import-review/<id>/apply",
+      "query": "",
+      "body": {
+        "excluded": [],
+        "acknowledge_warnings": false
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/member-workspace/csv/columns",
+      "query": "",
+      "body": []
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/member-workspace/csv/preview",
+      "query": "",
+      "body": []
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/member-workspace/csv/<id>/apply",
+      "query": "",
+      "body": {
+        "excluded": [],
+        "archive_missing": []
+      }
+    }
+  ]
+}

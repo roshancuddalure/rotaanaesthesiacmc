@@ -173,8 +173,8 @@ try {
   await integrated.page.locator('[data-view="compute-settings"]').first().evaluate(button => button.click());
   await integrated.page.getByRole("heading", { name: "Compute Settings", exact: true }).waitFor();
   await integrated.page.locator('[data-view="rota-template"]').first().evaluate(button => button.click());
-  await integrated.page.locator("#rota-template-month").fill("2026-05");
-  await integrated.page.locator("#rota-template-month").dispatchEvent("change");
+  await integrated.page.locator("#working-month").fill("2026-05");
+  await integrated.page.locator("#working-month").dispatchEvent("change");
   await integrated.page.locator("#run-safe-auto-fill").click();
   await integrated.page.getByRole("heading", { name: "Generate and review rota draft", exact: true }).waitFor();
   assert.deepEqual(integrated.errors, []); passed++;

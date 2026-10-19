@@ -1,6 +1,9 @@
 import { openReferenceCatalog } from "./reference-workspace";
 import { openRecordEditor } from "./record-workspace";
 import { request, type DepartmentMember } from "./services/api";
+import { steps } from "./ui";
+
+const MEMBER_IMPORT_STEPS = ["Upload file", "Map columns", "Review rows", "Apply"];
 
 const esc = (value: unknown) =>
   String(value ?? "").replace(
@@ -907,7 +910,7 @@ export async function openMemberWorkspace(
 
 export function openMemberCsvImport(done: () => void) {
   const dialog = workspaceDialog("Import department members", "mw-import");
-  dialog.innerHTML = `<header class="mw-header"><div><h2>Import department members</h2><p>Upload &rarr; Map &rarr; Normalize &rarr; Resolve &rarr; Review &rarr; Apply</p><p>Download the template, fill your member list, then preview changes.</p></div><button type="button" data-close aria-label="Close import">×</button></header><div class="mw-content"><div class="registry-actions"><a class="primary" href="/templates/department-members.csv" download>Download blank CSV template</a><a class="icon-button" href="/templates/department-members-example.csv" download>Download example CSV (filled)</a></div><p>Only canonical_name is required. Blank cells keep the member's current value. New members default to Active and Unassigned.</p><details class="mw-csv-help" open><summary>CSV format and example</summary><p>One member per row. Open the example in Excel, replace the example rows with your members, then save as <strong>CSV UTF-8</strong>.</p><pre>member_id,canonical_name,active_status,call_level,designation,designation_effective_from
+  dialog.innerHTML = `<header class="mw-header"><div><h2>Import department members</h2><div data-import-steps>${steps(MEMBER_IMPORT_STEPS, 0)}</div></div><button type="button" data-close aria-label="Close import">×</button></header><div class="mw-content"><div class="registry-actions"><a class="primary" href="/templates/department-members.csv" download>Download blank CSV template</a><a class="icon-button" href="/templates/department-members-example.csv" download>Download example CSV (filled)</a></div><p>Only canonical_name is required. Blank cells keep the member's current value. New members default to Active and Unassigned.</p><details class="mw-csv-help" open><summary>CSV format and example</summary><p>One member per row. Open the example in Excel, replace the example rows with your members, then save as <strong>CSV UTF-8</strong>.</p><pre>member_id,canonical_name,active_status,call_level,designation,designation_effective_from
 ,Dr Example Member One,active,1ST_CALL,SENIOR RESIDENT,2026-10-01
 ,Dr Example Member Two,active,2ND_CALL,SENIOR RESIDENT (DM TRAINEE),2026-10-01
 ,Dr Example Member Three,active,3RD_CALL,ASSISTANT PROFESSOR,
@@ -938,6 +941,10 @@ export function openMemberCsvImport(done: () => void) {
     e.preventDefault();
     close();
   });
+  function setImportStep(index: number) {
+    const host = dialog.querySelector<HTMLElement>("[data-import-steps]");
+    if (host) host.innerHTML = steps(MEMBER_IMPORT_STEPS, index);
+  }
   async function previewFile() {
     if (!file || busy) return;
     busy = true;
@@ -971,6 +978,7 @@ export function openMemberCsvImport(done: () => void) {
         );
       preview = data;
       applied = false;
+      setImportStep(2);
       renderPreview();
       message.textContent = `${preview!.rows.length} rows previewed. Nothing has been saved.`;
     } catch (error) {
@@ -1140,6 +1148,7 @@ export function openMemberCsvImport(done: () => void) {
           },
         );
         applied = true;
+        setImportStep(MEMBER_IMPORT_STEPS.length);
         root.innerHTML = `<h3>Import complete</h3><p>${esc(result.created)} created · ${esc(result.updated)} updated · ${esc(result.unchanged)} unchanged · ${esc(result.archived ?? 0)} archived · ${esc(result.excluded)} excluded</p><p>Each change is recorded in the member's profile activity.</p><p>Batch ${esc(result.batch_id)}</p>${(result.members as Row[]).map((m) => `<button type="button" data-result-member="${esc(m.id)}">Open ${esc(m.canonical_name)}</button>`).join("")}`;
         root
           .querySelectorAll<HTMLButtonElement>("[data-result-member]")
@@ -1186,6 +1195,7 @@ export function openMemberCsvImport(done: () => void) {
       );
       const data = await response.json();
       if (!response.ok) throw new Error(data.detail);
+      setImportStep(1);
       const fields = [
         "canonical_name",
         "member_id",

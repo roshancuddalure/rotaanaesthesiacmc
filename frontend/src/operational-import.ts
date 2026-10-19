@@ -1,6 +1,9 @@
 import { request, type DepartmentMember } from "./services/api";
 import { workspaceDialog, openMemberWorkspace } from "./member-workspace";
 import { openUnitRegistry, openReferenceCatalog } from "./reference-workspace";
+import { importSummary, steps } from "./ui";
+
+const IMPORT_STEPS = ["Upload file", "Map columns", "Review rows", "Apply"];
 
 type Row = Record<string, any>;
 type Preview = {
@@ -168,7 +171,11 @@ export async function openOperationalImport(
   const excluded = new Set<string>();
   let page = 0;
   const title = kind === "units" ? "Unitwise assignments" : "Leave";
-  dialog.innerHTML = `<header class="mw-header"><div><h2>Import ${title.toLowerCase()}</h2><p>Upload → Map → Normalize → Resolve → Review → Apply</p></div><button data-close type="button" aria-label="Close import review">×</button></header><div class="mw-content"><a href="/templates/${kind === "units" ? "unitwise-assignments" : "leave-records"}.csv" download>Download ${kind === "units" ? "unitwise" : "leave"} CSV template</a>${admin ? `<button type="button" data-manage-import-references>Manage labels and mappings</button>` : ""}<details class="mw-csv-help"><summary>CSV examples</summary><p>Use one row per dated record. Replace the illustrative member and unit names with your department records.</p><pre>${kind === "units" ? "member_name,unit_name,posting_type,starts_on,ends_on\nDr Example Member,Main Unit IV,2ND_CALL,2026-10-01,2026-10-31" : "member_name,starts_on,ends_on,leave_type,leave_slot,status\nDr Example Member,2026-10-03,2026-10-04,CL,FULL_DAY,approved"}</pre></details><form data-settings><label>Month<input type="month" name="month" required value="${esc(month)}"></label><label>File (up to 5 MB and 5,000 rows)<input type="file" required accept="${kind === "units" ? ".csv,.xlsx,.xlsm,.txt" : ".csv,.xlsx,.xls"}"></label><label>Operation<select name="mode"><option value="append">Append new records</option><option value="update_matching">Update matching member/date records</option><option value="replace_month">Replace imported records in this month</option></select></label><label>Dates in this file<select name="date_format"><option value="auto">ISO / detect unambiguous dates</option><option value="DMY">Day / month / year</option><option value="MDY">Month / day / year</option></select></label><p>Ambiguous dates need an explicit format. Blank unitwise dates use the selected month. Leave needs a start date. Replacement preserves records outside the month${kind === "leave" ? " and manually entered leave" : ""}.</p><div data-mapping></div><button class="primary" type="submit">Preview and normalize</button></form><p data-message role="status"></p><section data-review></section></div>`;
+  dialog.innerHTML = `<header class="mw-header"><div><h2>Import ${title.toLowerCase()}</h2><div data-import-steps>${steps(IMPORT_STEPS, 0)}</div></div><button data-close type="button" aria-label="Close import review">×</button></header><div class="mw-content"><div class="registry-actions"><a class="icon-button" href="/templates/${kind === "units" ? "unitwise-assignments" : "leave-records"}.csv" download>Download ${kind === "units" ? "unitwise" : "leave"} CSV template</a><a class="quiet-button" href="/templates/${kind === "units" ? "unitwise-assignments" : "leave-records"}-example.csv" download>Download example CSV</a>${admin ? `<button type="button" class="quiet-button" data-manage-import-references>Manage labels and mappings</button>` : ""}</div><details class="mw-csv-help"><summary>CSV examples</summary><p>Use one row per dated record. Replace the illustrative member and unit names with your department records.</p><pre>${kind === "units" ? "member_name,unit_name,posting_type,starts_on,ends_on\nDr Example Member,Main Unit IV,2ND_CALL,2026-10-01,2026-10-31" : "member_name,starts_on,ends_on,leave_type,leave_slot,status\nDr Example Member,2026-10-03,2026-10-04,CL,FULL_DAY,approved"}</pre></details><form data-settings><label>Month<input type="month" name="month" required value="${esc(month)}"></label><label>File (up to 5 MB and 5,000 rows)<input type="file" required accept="${kind === "units" ? ".csv,.xlsx,.xlsm,.txt" : ".csv,.xlsx,.xls"}"></label><label>Operation<select name="mode"><option value="append">Append new records</option><option value="update_matching">Update matching member/date records</option><option value="replace_month">Replace imported records in this month</option></select></label><label>Dates in this file<select name="date_format"><option value="auto">ISO / detect unambiguous dates</option><option value="DMY">Day / month / year</option><option value="MDY">Month / day / year</option></select></label><p>Ambiguous dates need an explicit format. Blank unitwise dates use the selected month. Leave needs a start date. Replacement preserves records outside the month${kind === "leave" ? " and manually entered leave" : ""}.</p><div data-mapping></div><button class="primary" type="submit">Preview and normalize</button></form><p data-message role="status"></p><section data-review></section></div>`;
+  function setStep(index: number) {
+    const host = dialog.querySelector<HTMLElement>("[data-import-steps]");
+    if (host) host.innerHTML = steps(IMPORT_STEPS, index);
+  }
   const close = () => {
     if (
       busy ||
@@ -202,11 +209,11 @@ export async function openOperationalImport(
       request<Row[]>("/api/v1/normalization/units"),
     ]);
   }
-  try {
-    await loadOptions();
-  } catch (error) {
+  // Load member and unit choices in the background: the file picker and form must respond
+  // immediately, or a file chosen while this loads would be silently ignored.
+  const optionsReady = loadOptions().catch((error) => {
     message.textContent = (error as Error).message;
-  }
+  });
   // The apply button sits below a long row list, so mirror status next to it.
   function say(text: string) {
     message.textContent = text;
@@ -264,6 +271,7 @@ export async function openOperationalImport(
         );
       if (file !== inspectedFile || !dialog.open) return;
       columns = result;
+      setStep(1);
       Object.assign(
         mapping,
         Object.fromEntries(
@@ -324,9 +332,11 @@ export async function openOperationalImport(
         throw new Error(
           "Inputs changed while the preview was loading. Refresh the preview.",
         );
+      await optionsReady;
       preview = result;
       finished = false;
       previewDirty = false;
+      setStep(2);
       renderReview();
       renderMapping();
       message.textContent = `${preview!.rows.length} rows normalized. Nothing has been applied.`;
@@ -359,7 +369,14 @@ export async function openOperationalImport(
     const root = dialog.querySelector<HTMLElement>("[data-review]")!;
     const shown = preview.rows.slice(page * 25, (page + 1) * 25);
     const reviewCounts = () =>
-      `${preview!.rows.filter((row) => !excluded.has(row.key) && !row.issues.length).length} ready - ${preview!.rows.filter((row) => !excluded.has(row.key) && row.issues.length).length} need review - ${excluded.size} excluded`;
+      `${preview!.rows.filter((row) => !excluded.has(row.key) && !row.issues.length).length} ready · ${preview!.rows.filter((row) => !excluded.has(row.key) && row.issues.length).length} need review · ${excluded.size} excluded`;
+    const actionCount = (action: string) => preview!.rows.filter((row) => row.action === action && !excluded.has(row.key)).length;
+    const groupedSummary = importSummary([
+      { label: "new", count: actionCount("create") },
+      { label: "updates", count: actionCount("update") },
+      { label: "unchanged", count: actionCount("unchanged") },
+      { label: "need attention", count: preview!.rows.filter((row) => !excluded.has(row.key) && row.issues.length).length, tone: "warning" },
+    ]);
     const matchState = (row: Row) =>
       excluded.has(row.key)
         ? "Excluded"
@@ -379,7 +396,7 @@ export async function openOperationalImport(
                 : row.action === "create"
                   ? "Matched - new record"
                   : "Matched";
-    root.innerHTML = `<h3>Resolve and review</h3><p data-review-counts>${reviewCounts()}</p>${preview.mode === "replace_month" ? `<details><summary>${preview.replacement_scope.length} existing records affected by replacement</summary>${preview.replacement_scope.map((r) => `<p>${esc(members.find((m) => m.id === r.person_id)?.canonical_name || r.person_id)} · ${esc(r.starts_on)} to ${esc(r.ends_on || "Ongoing")}</p>`).join("")}</details>` : ""}${shown
+    root.innerHTML = `<h3>Resolve and review</h3>${groupedSummary}<p data-review-counts class="review-counts">${reviewCounts()}</p>${preview.mode === "replace_month" ? `<details><summary>${preview.replacement_scope.length} existing records affected by replacement</summary>${preview.replacement_scope.map((r) => `<p>${esc(members.find((m) => m.id === r.person_id)?.canonical_name || r.person_id)} · ${esc(r.starts_on)} to ${esc(r.ends_on || "Ongoing")}</p>`).join("")}</details>` : ""}${shown
       .map((row) => {
         const value = { ...row.values, ...corrections[row.key] };
         return `<article class="mw-history" data-review-row="${esc(row.key)}"><label><input type="checkbox" data-include="${esc(row.key)}" ${excluded.has(row.key) ? "" : "checked"}> Include ${esc(row.source.sheet)} row ${esc(row.source.row)}</label><strong>${esc(matchState(row))}</strong><small>${esc(row.action.replace(/_/g, " "))}</small><p>${row.issues.map(esc).join(" · ")}</p><p>${row.warnings.map(esc).join(" · ")}</p><p>Original name: ${esc(row.values.member_name)} · ${esc(row.person_match.reason)}</p><label>Find member<input type="search" data-find-member="${esc(row.key)}" placeholder="Name, call level or designation"></label><label>Member<select data-row="${esc(row.key)}" data-field="person_id"><option value="">Select member</option>${members
@@ -647,6 +664,7 @@ export async function openOperationalImport(
           },
         );
         finished = true;
+        setStep(IMPORT_STEPS.length);
         root.innerHTML = `<h3>Import complete</h3><p>${result.created} created · ${result.updated} updated · ${result.unchanged} unchanged · ${result.excluded} excluded · ${result.removed} previous records replaced</p><p>Batch ${esc(result.batch_id)}</p><button type="button" data-download-completed-report>Download applied / excluded row report</button>`;
         root
           .querySelector("[data-download-completed-report]")!

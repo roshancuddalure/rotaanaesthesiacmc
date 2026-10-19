@@ -355,7 +355,9 @@ try {
       .locator('[data-view="units"]')
       .first()
       .evaluate((button) => button.click());
-    await page.locator("[data-add-department-unit]").click();
+    // Unit administration lives in the toolbar's "More" menu.
+    await page.locator('summary[aria-label="More unit tools"]').click();
+    await page.locator("[data-add-department-unit]").first().click();
     await page.locator("dialog.reference-workspace [name=name]").waitFor();
     await page
       .locator("dialog.reference-workspace [data-close]")

@@ -1,0 +1,63 @@
+GOAL: Bring every section of the Duty Rota web app (frontend/src, frontend/src/styles.css) to a
+premium, consistent UI/UX standard, without changing rota rules, data, or the backend's interface.
+Implement in phases, test after each phase, and stop for my approval between phases.
+
+SCOPE: all 17 sections: Overview, Duty Analysis, Department Members, Leave, Unit Management,
+Rota Setup, Rota Template, Rota Review, Publish & Export, User Guide, Rota Rules, Eligibility
+Groups, Mappings, Past Duties, Login Accounts, Diagnostics, Compute Settings. Also covers every
+import window (members, units, leave, past duties) and every pop-up window.
+
+PHASES (in order):
+0. Shared design foundations:
+   - Colours: keep CMC red only for the single main action on each page and for real errors
+     (default); totals and plain numbers in neutral text; green/amber/red badges always mean
+     the same thing.
+   - Text: one fixed set of text sizes and spacing.
+   - Shared components, each with hover, focus, active, disabled, loading, error and empty looks:
+     main/secondary/quiet/danger/icon buttons, form fields including a month picker, status
+     badges, number tiles, tables with a row actions menu, pop-up windows with one close button,
+     notices and confirmations, empty screens with a fix-it button, loading placeholders.
+   - One shared lookup that turns codes into readable labels (UNIT_I -> "Unit I",
+     2ND_CALL -> "2nd call") and shows dates like "Sat 19 Oct 2026".
+1. Navigation and page frame:
+   - Profile, Change Password and Sign Out move into one account menu; connection status
+     becomes a small dot.
+   - One month selector in the header, shared by every month-based page.
+   - Sidebar workflow tracker: Setup -> Template -> Review -> Publish, each with a done/blocked
+     marker.
+   - Loading placeholders appear immediately, and a slow page can never overwrite the page the
+     user switched to (fixes the bug where Leave showed Duty Analysis content).
+   - Phone layout: compact header, overflow menu for buttons that don't fit, bottom navigation.
+2. Section-by-section redesign, in this order: Members -> Units -> Leave -> Rota Setup /
+   Template / Review / Publish -> Overview / Analysis -> Admin tools.
+   - Each page opens with what's blocking the user and what to do next.
+   - No internal codes or IDs visible to users.
+   - Destructive actions moved into menus, with confirmation.
+   - Compact tables.
+   - Leave gets a month calendar (default: included).
+   - Unit Management uses quick-assign dropdowns (default: no drag-and-drop).
+   - All imports share one step-by-step layout (Upload -> Map -> Review -> Apply), show results
+     as new / matched / needs attention, keep the status message next to the Apply button, and
+     each has a downloadable example CSV.
+
+DONE WHEN, after every phase and at the end, ALL of these pass:
+1. Backend tests pass (backend: .venv/Scripts/python.exe -m pytest).
+2. Frontend checks pass: npx tsc --noEmit, npm test, npx vite build.
+3. All browser tests pass (npm run test:normalization, test:members, test:compute,
+   test:intelligence), with selectors updated only where the page structure changed.
+4. An axe accessibility check (@axe-core/playwright, test-only dependency (default: approved))
+   reports 0 serious and 0 critical issues on all 17 sections in light and dark mode.
+5. Every section can be used by keyboard alone, with a visible focus outline everywhere.
+6. Automated screenshots at 1440, 1024, 768 and 390px show no sideways scrolling, no
+   overlapping or cut-off controls, and no internal codes on screen.
+   Save before/after pairs in docs/ux-audit/.
+7. A new browser test proves that switching pages quickly never shows another page's content,
+   and that the chosen month carries across pages.
+8. Page layout appears within 100 ms of navigation, with no content jumping around, and
+   Overview shows content in under 1 s on the real dataset.
+9. A full month run-through on a copy of the real data (Setup -> Template -> Review ->
+   Publish -> Excel export, plus one import of each type) gives exactly the same saved data
+   and export as the current version, checked on desktop and at 390px.
+10. No backend or rota-rule changes except the listed bug fixes. Each phase ends with a short
+    report: what changed, test results, screenshot links, open issues. Then wait for my
+    approval before starting the next phase.

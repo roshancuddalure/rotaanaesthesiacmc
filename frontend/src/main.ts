@@ -35,6 +35,7 @@ import { mountMemberImport, resetMemberImport } from "./member-import";
 import { onDataChange } from "./data-sync";
 import { mountWorkflowImportHistory } from "./workflow-import-history";
 import { mountMemberImportHistory } from "./member-import-history";
+import { badge, codeLabel, emptyState, formatDate, formatDateRange, formatMonth, nextStep, pageSkeleton } from "./ui";
 import { mountPastDuties } from "./past-duties";
 import { openMemberProfile } from "./member-profile";
 import {
@@ -315,13 +316,13 @@ let memberPositionFilter = "all";
 let memberCallLevelFilter = "all";
 let memberSort = "name";
 let memberSortDirection: "asc" | "desc" = "asc";
-let leaveMonth = new Date().toISOString().slice(0, 7);
+let leaveMonth = storedWorkingMonth();
 let leaveCalendar: LeaveCalendar | null = null;
 let leaveRequests: LeaveRequest[] = [];
 let leavePressure: LeavePressure | null = null;
 let leaveImportPreview: LeaveImportPreview | null = null;
 let leaveImportFile: File | null = null;
-let unitMonth = new Date().toISOString().slice(0, 7);
+let unitMonth = storedWorkingMonth();
 let unitManagement: UnitManagementMonth | null = null;
 let unitImportPreview: UnitAssignmentImportPreview | null = null;
 let unitImportFile: File | null = null;
@@ -347,9 +348,9 @@ let unitModalUnitId: string | null = null;
 let unitModalSpecialPostingType: string | null = null;
 let unitEditingAssignmentId: string | null = null;
 let rotaPhaseOneRules: RotaPhaseOneRules | null = null;
-let rotaSetupMonth = new Date().toISOString().slice(0, 7);
+let rotaSetupMonth = storedWorkingMonth();
 let rotaSetup: RotaSetupMonth | null = null;
-let rotaTemplateMonth = new Date().toISOString().slice(0, 7);
+let rotaTemplateMonth = storedWorkingMonth();
 let rotaTemplate: RotaTemplateMonth | null = null;
 let rotaTemplateStats: RotaTemplateAllocationStatistics | null = null;
 let rotaSafety: RotaSafetyMonth | null = null;
@@ -371,7 +372,7 @@ if (!["full", "compact", "eagle"].includes(rotaDayModalViewMode)) {
   rotaDayModalViewMode = "full";
 }
 let rotaSuggestionsExpanded = localStorage.getItem("duty_rota_suggestions_expanded") === "1";
-let rotaReviewMonth = new Date().toISOString().slice(0, 7);
+let rotaReviewMonth = storedWorkingMonth();
 let rotaReview: RotaReviewMonth | null = null;
 type RotaReviewFilter = "all" | "hard" | "open" | "warning" | "override";
 let rotaReviewFilter: RotaReviewFilter = "all";
@@ -379,7 +380,7 @@ const reviewCandidateSlots = new Map<string, RotaCandidateSlot>();
 const loadingReviewCandidateSlots = new Set<string>();
 let exchangeSelectedAssignmentId = "";
 const failedExchangeCandidateSlots = new Set<string>();
-let rotaPublishMonth = new Date().toISOString().slice(0, 7);
+let rotaPublishMonth = storedWorkingMonth();
 let rotaPublish: RotaPublishMonth | null = null;
 const rejectedRotaCandidates = new Set<string>();
 const loadingRotaCandidateSlots = new Set<string>();
@@ -389,6 +390,8 @@ let callClusters: CallCluster[] = [];
 let activeCallCluster: CallCluster | null = null;
 
 onDataChange(() => {
+  workflowStatus.delete(rotaPublishMonth);
+  void refreshWorkflowTracker();
   analysis = null;
   analysisManualReview = null;
   analysisPreflight = null;
@@ -524,6 +527,116 @@ function navItemButton(item: NavItem, extraAttributes = ""): string {
 }
 
 let activeView = "overview";
+// Bumped on every navigation or month change; renders started earlier must not paint.
+let viewSeq = 0;
+
+/** Returns a check that stays true only while the screen this render started for is current. */
+function renderTicket(): () => boolean {
+  const seq = viewSeq;
+  return () => seq === viewSeq;
+}
+
+const WORKING_MONTH_KEY = "duty_rota_working_month";
+const MONTH_VIEWS = new Set(["leave", "units", "rota-setup", "rota-template", "rota-review", "rota-publish"]);
+const WORKFLOW_STEPS = [
+  { view: "rota-setup", label: "Setup" },
+  { view: "rota-template", label: "Template" },
+  { view: "rota-review", label: "Review" },
+  { view: "rota-publish", label: "Publish" },
+] as const;
+
+function storedWorkingMonth(): string {
+  try {
+    const saved = localStorage.getItem("duty_rota_working_month");
+    if (saved && /^\d{4}-\d{2}$/.test(saved)) return saved;
+  } catch {
+    // Storage can be unavailable; fall back to the current month.
+  }
+  const today = new Date();
+  return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}`;
+}
+
+/** One month drives every month-based section; switching it clears month-specific drafts. */
+function applyWorkingMonth(month: string): boolean {
+  if (!/^\d{4}-\d{2}$/.test(month)) return false;
+  const changed = [leaveMonth, unitMonth, rotaSetupMonth, rotaTemplateMonth, rotaReviewMonth, rotaPublishMonth]
+    .some((value) => value !== month);
+  leaveMonth = unitMonth = rotaSetupMonth = rotaTemplateMonth = rotaReviewMonth = rotaPublishMonth = month;
+  try {
+    localStorage.setItem(WORKING_MONTH_KEY, month);
+  } catch {
+    // The month still applies for this session.
+  }
+  const picker = document.querySelector<HTMLInputElement>("#working-month");
+  if (picker && picker.value !== month) picker.value = month;
+  if (changed) {
+    viewSeq++;
+    leaveImportPreview = null;
+    leaveImportFile = null;
+    unitImportPreview = null;
+    unitImportFile = null;
+    unitImportFilter = "all";
+    unitImportSearch = "";
+    unitImportResolutions = {};
+    unitEditingAssignmentId = null;
+    invalidateUnitManagementCache();
+    rejectedRotaCandidates.clear();
+    exchangeSelectedAssignmentId = "";
+    // Repaint from cache only; the page reload that follows refreshes the tracker safely.
+    paintWorkflowTracker();
+  }
+  return changed;
+}
+
+type WorkflowState = "done" | "blocked" | "pending";
+const workflowStatus = new Map<string, Record<string, WorkflowState>>();
+
+function workflowStateFrom(publish: RotaPublishMonth): Record<string, WorkflowState> {
+  const blocked = new Set(publish.blockers.map((item) => item.title));
+  const scopeDone = !blocked.has("Monthly unit scope");
+  const templateDone = !blocked.has("Generated slots");
+  const reviewDone = templateDone && !blocked.has("Open slots") && !blocked.has("Hard safety blockers") && !blocked.has("Exchange requests");
+  return {
+    "rota-setup": scopeDone ? "done" : "blocked",
+    "rota-template": templateDone ? "done" : scopeDone ? "blocked" : "pending",
+    "rota-review": reviewDone ? "done" : templateDone ? "blocked" : "pending",
+    "rota-publish": publish.latest_publish ? "done" : reviewDone ? "blocked" : "pending",
+  };
+}
+
+function paintWorkflowTracker() {
+  const status = workflowStatus.get(rotaPublishMonth);
+  const tracker = document.querySelector<HTMLElement>("#workflow-tracker");
+  if (!tracker) return;
+  tracker.querySelector<HTMLElement>("[data-workflow-month]")!.textContent = formatMonth(rotaPublishMonth);
+  WORKFLOW_STEPS.forEach((step) => {
+    const state = status?.[step.view] ?? "pending";
+    const item = tracker.querySelector<HTMLElement>(`[data-workflow-step="${step.view}"]`);
+    if (!item) return;
+    item.dataset.state = status ? state : "unknown";
+    const label = state === "done" ? "done" : state === "blocked" ? "needs action" : "not started";
+    item.querySelector<HTMLElement>(".visually-hidden")!.textContent = status ? `, ${label}` : "";
+  });
+}
+
+/**
+ * Reads the publish checklist for the working month. Only called from the four workflow pages,
+ * which already create the month's draft period, so browsing elsewhere never writes data.
+ */
+async function refreshWorkflowTracker() {
+  if (!WORKFLOW_STEPS.some((step) => step.view === activeView)) {
+    paintWorkflowTracker();
+    return;
+  }
+  const month = rotaPublishMonth;
+  try {
+    const publish = month === rotaPublish?.month ? rotaPublish : await getRotaPublishMonth(month);
+    workflowStatus.set(month, workflowStateFrom(publish));
+  } catch {
+    // The tracker is a convenience; keep the last known state.
+  }
+  if (month === rotaPublishMonth) paintWorkflowTracker();
+}
 
 type ReviewAction = {
   label: string;
@@ -752,14 +865,16 @@ async function runReviewAction(action: HTMLElement) {
     return;
   }
   if (kind === "open-unit") {
-    if (month) unitMonth = month;
+    if (month) applyWorkingMonth(month);
     invalidateUnitManagementCache();
+    showView("units");
     await renderUnitManagement();
     if (target) openUnitModal(target, assignmentId || undefined);
     return;
   }
   if (kind === "open-rota-day") {
-    if (month) rotaTemplateMonth = month;
+    if (month) applyWorkingMonth(month);
+    showView("rota-template");
     await renderRotaTemplate();
     if (target) openRotaDayModal(target);
     return;
@@ -773,12 +888,36 @@ async function runReviewAction(action: HTMLElement) {
   }
 }
 
+function workflowStepButton(item: NavItem, index: number): string {
+  return `<button data-view="${escapeHtml(item.view)}" data-workflow-step="${escapeHtml(item.view)}" data-state="unknown" class="nav-step">
+    <span class="nav-step__num" aria-hidden="true">${index + 1}</span>
+    <span class="nav-step__label">${escapeHtml(item.label)}</span>
+    <span class="nav-step__state" aria-hidden="true"></span><span class="visually-hidden"></span>
+  </button>`;
+}
+
+function accountInitials(): string {
+  const name = currentUser?.display_name || currentUser?.username || "";
+  return name.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]?.toUpperCase() ?? "").join("") || "?";
+}
+
 function renderShell() {
   sidebarOpen = false;
   activeView = "overview";
-  const workflowNav = visibleNavItems()
-    .filter((item) => item.group === "Workflow")
-    .map((item) => navItemButton(item, item.view === "overview" ? 'class="active" aria-current="page"' : ""))
+  const stepViews = WORKFLOW_STEPS.map((step) => step.view as string);
+  const workflowItems = visibleNavItems().filter((item) => item.group === "Workflow");
+  const stepItems = workflowItems.filter((item) => stepViews.includes(item.view));
+  const workflowNav = workflowItems
+    .map((item) => {
+      if (!stepViews.includes(item.view)) {
+        return navItemButton(item, item.view === "overview" ? 'class="active" aria-current="page"' : "");
+      }
+      if (item.view !== stepViews[0]) return "";
+      return `<div class="nav-workflow" id="workflow-tracker" role="group" aria-labelledby="workflow-tracker-label">
+        <div class="nav-section-label" id="workflow-tracker-label">Monthly rota · <span data-workflow-month>${escapeHtml(formatMonth(rotaPublishMonth))}</span></div>
+        ${stepItems.map(workflowStepButton).join("")}
+      </div>`;
+    })
     .join("");
   const adminNavItems = visibleNavItems().filter((item) => item.group === "Admin Tools");
   const adminNav = adminNavItems.length
@@ -823,11 +962,24 @@ function renderShell() {
             <h2 id="section-title">CMC Anaesthesia rota board</h2>
           </div>
         </div>
-        <div class="topbar-actions">
-          <span id="api-status" class="status">Checking API...</span>
-          <button class="icon-button" id="profile">Profile</button>
-          <button class="icon-button" id="change-password">Change Password</button>
-          <button class="icon-button" id="sign-out">Sign Out</button>
+        <div class="topbar-tools">
+          <label class="working-month" id="working-month-field" hidden>
+            <span>Month</span>
+            <input type="month" id="working-month" value="${escapeHtml(rotaPublishMonth)}" aria-label="Working month for leave, units and the monthly rota" />
+          </label>
+          <span id="api-status" class="api-dot" role="status" title="Checking connection"><span class="visually-hidden">Checking connection</span></span>
+          <div class="account-menu">
+            <button type="button" class="account-button" id="account-menu-button" aria-label="Account: ${escapeHtml(currentUser?.display_name || currentUser?.username || "signed in")}" aria-haspopup="menu" aria-expanded="false" aria-controls="account-menu">
+              <span class="account-avatar" aria-hidden="true">${escapeHtml(accountInitials())}</span>
+              <span class="account-name">${escapeHtml(currentUser?.display_name || currentUser?.username || "Account")}</span>
+            </button>
+            <div class="account-menu__list" id="account-menu" role="menu" aria-labelledby="account-menu-button" hidden>
+              <p class="account-menu__who">${escapeHtml(currentUser?.role_label ?? "")}</p>
+              <button type="button" role="menuitem" id="profile">Profile</button>
+              <button type="button" role="menuitem" id="change-password">Change password</button>
+              <button type="button" role="menuitem" id="sign-out">Sign out</button>
+            </div>
+          </div>
         </div>
       </header>
       <div id="view-root"></div>
@@ -868,6 +1020,52 @@ function renderShell() {
   });
   document.getElementById("mobile-more")?.addEventListener("click", () => {
     openMobileMoreMenu();
+  });
+  bindAccountMenu();
+  document.getElementById("working-month")?.addEventListener("change", (event) => {
+    const value = (event.target as HTMLInputElement).value;
+    if (applyWorkingMonth(value) && MONTH_VIEWS.has(activeView)) navigateToView(activeView);
+  });
+  paintWorkflowTracker();
+}
+
+function bindAccountMenu() {
+  const button = document.getElementById("account-menu-button");
+  const menu = document.getElementById("account-menu");
+  if (!button || !menu) return;
+  const items = () => [...menu.querySelectorAll<HTMLButtonElement>("[role=menuitem]")];
+  const setOpen = (open: boolean, focus: "first" | "button" | "none" = "none") => {
+    menu.hidden = !open;
+    button.setAttribute("aria-expanded", String(open));
+    if (open && focus === "first") items()[0]?.focus();
+    if (!open && focus === "button") button.focus();
+  };
+  button.addEventListener("click", () => setOpen(menu.hidden, "first"));
+  button.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      setOpen(true, "first");
+    }
+  });
+  menu.addEventListener("keydown", (event) => {
+    const list = items();
+    const index = list.indexOf(document.activeElement as HTMLButtonElement);
+    if (event.key === "Escape") {
+      event.preventDefault();
+      setOpen(false, "button");
+    } else if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+      event.preventDefault();
+      const step = event.key === "ArrowDown" ? 1 : -1;
+      list[(index + step + list.length) % list.length]?.focus();
+    } else if (event.key === "Tab") {
+      setOpen(false);
+    }
+  });
+  menu.addEventListener("click", (event) => {
+    if ((event.target as HTMLElement).closest("[role=menuitem]")) setOpen(false);
+  });
+  document.addEventListener("click", (event) => {
+    if (!menu.hidden && !(event.target as HTMLElement).closest(".account-menu")) setOpen(false);
   });
 }
 
@@ -1030,9 +1228,11 @@ function refreshShellRefs() {
 
 function setApiStatus(text: string, className: "ok" | "error") {
   if (!apiStatus) return;
-  apiStatus.textContent = text;
-  apiStatus.classList.remove("ok", "error");
-  apiStatus.classList.add(className);
+  const label = className === "ok" ? "Connected to the rota server" : "Cannot reach the rota server";
+  apiStatus.title = label;
+  apiStatus.dataset.state = className;
+  apiStatus.innerHTML = `<span class="visually-hidden">${escapeHtml(label)}</span>`;
+  apiStatus.dataset.text = text;
 }
 
 function setHeader(eyebrow: string, title: string) {
@@ -1062,19 +1262,45 @@ function updateLocalMapping(id: string, patch: Partial<AdminMapping>) {
   mappings = mappings.map((mapping) => (mapping.id === id ? { ...mapping, ...patch } : mapping));
 }
 
+/** Home-page summary of the monthly rota steps, using the tracker's last known state. */
+function overviewMonthPanel(): string {
+  const status = workflowStatus.get(rotaPublishMonth);
+  const labels: Record<WorkflowState, string> = { done: "Done", blocked: "Needs action", pending: "Not started" };
+  const nextView = WORKFLOW_STEPS.find((step) => status?.[step.view] !== "done")?.view ?? "rota-publish";
+  return `<section class="panel overview-month" aria-labelledby="overview-month-title">
+    <div class="overview-month__head">
+      <div>
+        <p class="eyebrow">This month</p>
+        <h3 id="overview-month-title">${escapeHtml(formatMonth(rotaPublishMonth))} rota</h3>
+      </div>
+      <button type="button" class="primary" data-view-shortcut="${nextView}">${status ? "Continue" : "Open Rota Setup"}</button>
+    </div>
+    <ol class="overview-steps">
+      ${WORKFLOW_STEPS.map((step, index) => {
+        const state = status?.[step.view];
+        return `<li class="overview-step" data-state="${state ?? "unknown"}">
+          <button type="button" data-view-shortcut="${step.view}">
+            <span class="overview-step__num" aria-hidden="true">${index + 1}</span>
+            <span class="overview-step__label">${escapeHtml(step.label)}</span>
+            <span class="overview-step__state">${state ? labels[state] : "Open to check"}</span>
+          </button>
+        </li>`;
+      }).join("")}
+    </ol>
+  </section>`;
+}
+
 async function renderOverview() {
+  const current = renderTicket();
   setHeader("Overview", "CMC Anaesthesia rota board");
   if (!viewRoot) return;
-  viewRoot.innerHTML = `<section class="panel"><h3>Loading overview...</h3></section>`;
+  viewRoot.innerHTML = overviewMonthPanel() + pageSkeleton("overview");
   try {
-    analysis = await getAnalysisDashboard();
+    // Reuse the loaded dashboard; any data change clears it (see onDataChange).
+    if (!analysis) analysis = await getAnalysisDashboard();
   } catch (error) {
-    viewRoot.innerHTML = `
-      <section class="panel">
-        <h3>Analysis unavailable</h3>
-        <p>${error instanceof Error ? error.message : "Unable to load duty analysis."}</p>
-      </section>
-    `;
+    if (!current()) return;
+    viewRoot.innerHTML = emptyState({ title: "Duty analysis could not load", body: error instanceof Error ? error.message : "Unable to load duty analysis.", tone: "danger", actionHtml: `<button class="primary" type="button" data-view-shortcut="overview">Try again</button>` });
     return;
   }
   const topTotal = topPeople("total_24hr", 6);
@@ -1086,7 +1312,9 @@ async function renderOverview() {
     .join(" to ");
   const totalLeader = topTotal[0];
   const weekendLeader = topWeekend[0];
+  if (!current()) return;
   viewRoot.innerHTML = `
+    ${overviewMonthPanel()}
     <section class="board-hero">
       <div>
         <span class="board-kicker">${escapeHtml(periodLabel || "Current duty analysis")}</span>
@@ -1094,7 +1322,7 @@ async function renderOverview() {
         <p>Review the main 24hr duty load, weekend burden, and people who may need balancing attention.</p>
       </div>
       <div class="board-hero-actions">
-        <button class="primary" data-view-shortcut="analysis">Open Duty Analysis</button>
+        <button class="icon-button" data-view-shortcut="analysis">Open Duty Analysis</button>
         <button class="icon-button" data-view-shortcut="members">Find Member</button>
       </div>
     </section>
@@ -1235,6 +1463,43 @@ function escapeHtml(value: string): string {
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
 }
+
+/** Compact actions menu for a row or card; items are buttons with the usual data attributes. */
+function rowMenu(label: string, itemsHtml: string): string {
+  return `<details class="row-menu">
+    <summary class="quiet-button row-menu__toggle" aria-label="${escapeHtml(label)}"><span aria-hidden="true">⋯</span></summary>
+    <div class="row-menu__list" role="menu">${itemsHtml}</div>
+  </details>`;
+}
+
+// One open row menu at a time; Escape or an outside click closes it, choosing an item too.
+document.addEventListener("toggle", (event) => {
+  const menu = event.target as HTMLDetailsElement;
+  if (!(menu instanceof HTMLDetailsElement) || !menu.classList.contains("row-menu") || !menu.open) return;
+  document.querySelectorAll<HTMLDetailsElement>("details.row-menu[open]").forEach((other) => {
+    if (other !== menu) other.open = false;
+  });
+  menu.querySelector<HTMLElement>("[role=menuitem]")?.focus();
+}, true);
+document.addEventListener("click", (event) => {
+  const target = event.target as HTMLElement;
+  document.querySelectorAll<HTMLDetailsElement>("details.row-menu[open]").forEach((menu) => {
+    if (!menu.contains(target) || target.closest("[role=menuitem]")) menu.open = false;
+  });
+});
+document.addEventListener("keydown", (event) => {
+  const menu = (event.target as HTMLElement).closest?.("details.row-menu[open]") as HTMLDetailsElement | null;
+  if (!menu) return;
+  const items = [...menu.querySelectorAll<HTMLElement>("[role=menuitem]")];
+  const index = items.indexOf(document.activeElement as HTMLElement);
+  if (event.key === "Escape") {
+    menu.open = false;
+    menu.querySelector("summary")?.focus();
+  } else if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+    event.preventDefault();
+    items[(index + (event.key === "ArrowDown" ? 1 : -1) + items.length) % items.length]?.focus();
+  }
+});
 
 const STAT_HELP: Record<string, string> = {
   "Total 24hr duties": "All 24-hour duty assignments counted in the selected historical period.",
@@ -2406,13 +2671,16 @@ function refreshAnalysisTabContent() {
 }
 
 async function renderAnalysis() {
+  const current = renderTicket();
   setHeader("Analysis", "CMC Anaesthesia Duty Analysis · Jan 2025 – May 2026");
   if (!viewRoot) return;
-  viewRoot.innerHTML = `<section class="panel"><h3>Loading analysis…</h3></section>`;
+  viewRoot.innerHTML = pageSkeleton("analysis");
   try {
-    analysis = await getAnalysisDashboard();
+    // Reuse the loaded dashboard; any data change clears it (see onDataChange).
+    if (!analysis) analysis = await getAnalysisDashboard();
   } catch (error) {
     showToast(error instanceof Error ? error.message : "Failed to load duty analysis", "error");
+    if (!current()) return;
     viewRoot.innerHTML = `<section class="panel"><h3>Analysis unavailable</h3><p>Unable to load duty analysis.</p></section>`;
     return;
   }
@@ -2422,6 +2690,7 @@ async function renderAnalysis() {
       `<button class="analysis-tab-btn${analysisTab === tab.id ? " active" : ""}" data-analysis-tab="${tab.id}">${tab.label}</button>`,
   ).join("");
 
+  if (!current()) return;
   viewRoot.innerHTML = `
     <nav class="analysis-tabs">${tabButtons}</nav>
     <div id="analysis-tab-body">${renderAnalysisTabContent()}</div>
@@ -2541,11 +2810,18 @@ function renderMappings() {
   `).join("");
 
   viewRoot.innerHTML = `
-    <section class="toolbar">
+    <section class="page-toolbar" aria-label="Mapping actions">
+      <p class="page-toolbar__context"><strong>${mappings.length}</strong> label ${mappings.length === 1 ? "mapping" : "mappings"} used when reading imported rota files</p>
+      <div class="page-toolbar__actions">
+        <button type="button" class="primary" data-create-import-mapping>Add mapping</button>
+        <button type="button" class="icon-button" id="scan-mappings">Scan historical files</button>
+        <button type="button" class="quiet-button" data-manage-reference-catalog>Manage reference labels</button>
+      </div>
+    </section>
+    <section class="panel mapping-filters">
       ${renderMappingFilters()}
       <label for="mapping-search" class="visually-hidden">Search mappings</label>
-      <input id="mapping-search" placeholder="Search source label…" value="${escapeHtml(mappingSearch)}" style="min-width:200px;" aria-label="Search mappings" />
-      <button type="button" class="primary" data-create-import-mapping>Add Mapping</button><button type="button" data-manage-reference-catalog>Manage reference labels</button><button class="primary" id="scan-mappings">Scan Historical Files</button>
+      <input id="mapping-search" type="search" placeholder="Search source label…" value="${escapeHtml(mappingSearch)}" />
     </section>
     <section class="panel table-panel hide-mobile">
       <table>
@@ -2562,7 +2838,7 @@ function renderMappings() {
         <tbody>
           ${
             rows ||
-            `<tr><td colspan="6" class="empty">No mappings yet. Add a mapping or scan historical files.</td></tr>`
+            `<tr><td colspan="6">${emptyState({ title: "No mappings yet", body: "Mappings teach the importer what labels in old rota files mean, such as “MOT 1st” → Main 1st call. Scan historical files to collect labels, or add one by hand." })}</td></tr>`
           }
         </tbody>
       </table>
@@ -2574,6 +2850,7 @@ function renderMappings() {
 }
 
 async function renderImports() {
+  const current = renderTicket();
   setHeader("Past Duties", "Upload, review, and use completed duties");
   if (!viewRoot) return;
   if (!isAdminUser()) {
@@ -2586,9 +2863,11 @@ async function renderImports() {
     status = await getHistoricalImportStatus();
   } catch (error) {
     showToast(error instanceof Error ? error.message : "Failed to load historical import status", "error");
+    if (!current()) return;
     viewRoot.innerHTML = `<section class="panel"><h3>Import status unavailable</h3><p>Unable to load historical import status.</p></section>`;
     return;
   }
+  if (!current()) return;
   viewRoot.innerHTML = `
     <div id="past-duties-host"></div>
     <section class="summary-grid">
@@ -2722,35 +3001,45 @@ function ariaSort(key: string): string {
   return `aria-sort="${memberSortDirection === "asc" ? "ascending" : "descending"}"`;
 }
 
-// KNOWN ISSUE (handbook S5): canonical_name is interpolated without escapeHtml() here and in
-// renderMemberCards(); member names can be created via an unauthenticated API (S3).
+// Handbook S5: member names are user input (and creatable via the API, S3); the row and card
+// builders below escape every interpolated value.
+function memberStatusBadge(member: DepartmentMember): string {
+  const tone = member.active_status === "active" ? "success" : member.active_status === "archived" ? "warning" : "neutral";
+  return badge(codeLabel(member.active_status.toUpperCase()), tone);
+}
+
+function memberRowActions(member: DepartmentMember): string {
+  const name = escapeHtml(member.canonical_name);
+  const status = !isAdminUser()
+    ? ""
+    : member.active_status === "archived"
+      ? `<button type="button" role="menuitem" data-restore-member="${member.id}">Restore member</button>`
+      : `<button type="button" role="menuitem" class="row-menu__danger" data-archive-member="${member.id}">Archive member…</button>`;
+  return rowMenu(`Actions for ${member.canonical_name}`, `
+    <button type="button" role="menuitem" data-open-member="${member.id}">Open profile</button>
+    <button type="button" role="menuitem" data-member-profile="${member.id}">Call history and comments</button>
+    ${isAdminUser() ? `<button type="button" role="menuitem" data-open-member="${member.id}" data-profile-tab="roles" aria-label="Change call level for ${name}">Change call level</button>` : ""}
+    ${status}
+  `);
+}
+
 function renderMemberRows(rows: DepartmentMember[]): string {
   return rows
     .map((member) => {
-      const statusClass = memberStatusClass(member);
       const position = memberPosition(member);
       const callLevel = callLevelLabel(normalizeCallLevel(member.effective_call_level ?? member.call_level));
-      const callLevelCell = isAdminUser()
-        ? `<button type="button" class="icon-button compact-action" data-open-member="${member.id}" data-profile-tab="roles" aria-label="Review call level for ${escapeHtml(member.canonical_name)}">${escapeHtml(callLevel)}</button>`
-        : `<span class="call-level-readonly">${escapeHtml(callLevel)}</span>`;
-      const archiveAction = !isAdminUser()
-        ? ""
-        : member.active_status === "archived"
-          ? `<button class="icon-button compact-action" type="button" data-restore-member="${member.id}" aria-label="Restore ${escapeHtml(member.canonical_name)}">Restore</button>`
-          : `<button class="icon-button compact-action danger-button" type="button" data-archive-member="${member.id}" aria-label="Archive ${escapeHtml(member.canonical_name)}">Archive</button>`;
-      const archiveText = member.active_status === "archived"
+      const archived = member.active_status === "archived" && member.archived_at
         ? `<small>Archived ${escapeHtml(formatArchivedAt(member.archived_at))}</small>`
-        : `<small>Not archived</small>`;
+        : "";
       return `
         <tr>
           <td class="member-name-cell">
             <button class="member-profile-link" type="button" data-open-member="${member.id}">${escapeHtml(member.canonical_name)}</button>
-            <button type="button" class="icon-button compact-action" data-member-profile="${member.id}">Call history &amp; comments</button>
             <small>${escapeHtml(position)}</small>
           </td>
-          <td><span class="status-dot ${statusClass}">${escapeHtml(member.active_status)}</span>${archiveText}</td>
-          <td>${callLevelCell}</td>
-          <td>${archiveAction}</td>
+          <td><span class="call-level-pill${callLevel === "Unassigned" ? " is-empty" : ""}">${escapeHtml(callLevel)}</span></td>
+          <td>${memberStatusBadge(member)}${archived}</td>
+          <td class="row-actions-cell">${memberRowActions(member)}</td>
         </tr>
       `;
     })
@@ -2814,7 +3103,7 @@ function updateMemberResults() {
   const tbody = document.querySelector<HTMLTableSectionElement>("#member-table-body");
   if (visibleCount) visibleCount.textContent = String(rows.length);
   if (tbody) {
-    tbody.innerHTML = renderMemberRows(rows) || `<tr><td colspan="4" class="empty">No members found.</td></tr>`;
+    tbody.innerHTML = renderMemberRows(rows) || `<tr><td colspan="4">${emptyState({ title: "No members match these filters", body: "Clear the filters or search for another name." })}</td></tr>`;
   }
   updateMemberCards(rows);
   restoreFocus();
@@ -2822,45 +3111,29 @@ function updateMemberResults() {
 
 function renderMemberCards(rows: DepartmentMember[]): string {
   return rows
-    .map(
-      (member) => {
-        const statusClass = memberStatusClass(member);
-        const callLevel = callLevelLabel(normalizeCallLevel(member.effective_call_level ?? member.call_level));
-        const callLevelControl = isAdminUser()
-          ? `<button type="button" class="icon-button compact-action" data-open-member="${member.id}" data-profile-tab="roles" aria-label="Review call level for ${escapeHtml(member.canonical_name)}">${escapeHtml(callLevel)}</button>`
-          : `<small>${escapeHtml(callLevel)}</small>`;
-        const archiveAction = !isAdminUser()
-          ? ""
-          : member.active_status === "archived"
-            ? `<button class="icon-button compact-action" type="button" data-restore-member="${member.id}">Restore</button>`
-            : `<button class="icon-button compact-action danger-button" type="button" data-archive-member="${member.id}">Archive</button>`;
-        const archiveText = member.active_status === "archived"
-          ? `<small>Archived ${escapeHtml(formatArchivedAt(member.archived_at))}</small>`
-          : "";
-        return `
+    .map((member) => {
+      const callLevel = callLevelLabel(normalizeCallLevel(member.effective_call_level ?? member.call_level));
+      return `
         <article class="member-card">
-          <div>
+          <div class="member-card__main">
             <button class="member-profile-link" type="button" data-open-member="${member.id}">${escapeHtml(member.canonical_name)}</button>
-            <button type="button" class="icon-button compact-action" data-member-profile="${member.id}">Call history &amp; comments</button>
-            <small><span class="status-dot ${statusClass}">${escapeHtml(member.active_status)}</span></small>
             <small>${escapeHtml(memberPosition(member))}</small>
-            ${archiveText}
+            <div class="member-card__meta">
+              <span class="call-level-pill${callLevel === "Unassigned" ? " is-empty" : ""}">${escapeHtml(callLevel)}</span>
+              ${memberStatusBadge(member)}
+            </div>
           </div>
-          <div class="member-card-actions">
-            ${callLevelControl}
-            ${archiveAction}
-          </div>
+          ${memberRowActions(member)}
         </article>
       `;
-      },
-    )
+    })
     .join("");
 }
 
 function updateMemberCards(rows: DepartmentMember[]) {
   const cards = document.querySelector<HTMLDivElement>("#member-card-list");
   if (cards) {
-    cards.innerHTML = renderMemberCards(rows) || `<p class="empty">No members found.</p>`;
+    cards.innerHTML = renderMemberCards(rows) || emptyState({ title: "No members match these filters" });
   }
 }
 
@@ -3013,19 +3286,28 @@ function renderLeaveCalendarDays(): string {
   if (!leaveCalendar) return "";
   const start = leaveCalendar.summary.starts_on;
   const end = leaveCalendar.summary.ends_on;
+  const today = new Date().toLocaleDateString("en-CA");
   const days: string[] = [];
   for (let day = start; day <= end; day = addDaysIso(day, 1)) {
     days.push(day);
   }
-  return days
+  // Monday-first grid: pad the first week so dates line up under their weekday.
+  const firstWeekday = (new Date(`${start}T00:00:00Z`).getUTCDay() + 6) % 7;
+  const padding = Array.from({ length: firstWeekday }, () => `<span class="leave-day-card is-padding" aria-hidden="true"></span>`).join("");
+  // Shade relative to this month's busiest day so the colours stay meaningful at any department size.
+  const busiest = Math.max(0, ...days.map((day) => (leaveCalendar!.days[day] ?? []).length));
+  return padding + days
     .map((day) => {
       const entries = leaveCalendar!.days[day] ?? [];
-      const pressure = entries.length >= 6 ? "high" : entries.length >= 3 ? "watch" : entries.length ? "normal" : "";
+      const share = busiest ? entries.length / busiest : 0;
+      const pressure = !entries.length ? "" : share >= 0.75 ? "high" : share >= 0.4 ? "watch" : "normal";
+      const weekday = new Date(`${day}T00:00:00Z`).getUTCDay();
+      const names = entries.slice(0, 3).map((entry) => escapeHtml(entry.person_name.split(/\s+/).slice(0, 2).join(" ")));
       return `
-        <button class="leave-day-card ${pressure ? `leave-pressure-${pressure}` : ""}" type="button" data-leave-day="${day}" aria-label="${entries.length} leave request${entries.length === 1 ? "" : "s"} on ${day}">
-          <span>${formatIsoDay(day)}</span>
-          <strong>${entries.length}</strong>
-          <small>${entries.slice(0, 3).map((entry) => escapeHtml(entry.person_name)).join(", ") || "No leave"}</small>
+        <button class="leave-day-card ${pressure ? `leave-pressure-${pressure}` : ""} ${weekday === 0 || weekday === 6 ? "is-weekend" : ""} ${day === today ? "is-today" : ""}" type="button" data-leave-day="${day}" aria-label="${escapeHtml(formatDate(day))}: ${entries.length ? `${entries.length} on leave` : "nobody on leave"}">
+          <span class="leave-day-card__date">${Number(day.slice(8, 10))}</span>
+          ${entries.length ? `<strong class="leave-day-card__count">${entries.length}</strong>` : ""}
+          <small>${names.join("<br>")}${entries.length > 3 ? `<br>+${entries.length - 3} more` : ""}</small>
         </button>
       `;
     })
@@ -3077,17 +3359,14 @@ function renderLeaveDayModal(day: string): string {
       <section class="person-modal leave-day-modal" role="dialog" aria-modal="true" aria-labelledby="leave-day-modal-title">
         <header class="person-modal-header">
           <div>
-            <h3 id="leave-day-modal-title">${escapeHtml(formatIsoDay(day))} Leave Requests</h3>
-            <p>${escapeHtml(day)} / grouped by department call level</p>
+            <h3 id="leave-day-modal-title">${escapeHtml(formatDate(day))}</h3>
+            <p>${entries.length ? `${entries.length} on leave · ${approved} approved · ${requested} awaiting review` : "Nobody is on leave"}</p>
           </div>
-          <button class="modal-close" data-close-leave-day-modal aria-label="Close">x</button>
+          <button class="modal-close" data-close-leave-day-modal aria-label="Close">×</button>
         </header>
         <div class="person-modal-body leave-day-modal-body">
-          <div class="audit-chip-row">
-            <span><strong>${entries.length}</strong> ${statLabel("total")}</span>
-            <span><strong>${approved}</strong> ${statLabel("approved")}</span>
-            <span><strong>${requested}</strong> ${statLabel("requested/review")}</span>
-            <span><strong>${new Set(entries.map((entry) => entry.call_level || "Unassigned")).size}</strong> ${statLabel("call groups")}</span>
+          <div class="page-toolbar__actions">
+            <button type="button" class="primary" data-add-operational-record="leave" data-initial-date="${escapeHtml(day)}">Add leave on this day</button>
           </div>
           ${renderLeaveDayCallGroups(day)}
         </div>
@@ -3111,12 +3390,12 @@ function renderLeaveRows(): string {
       (leave) => `
         <tr>
           <td><button type="button" class="member-profile-link" data-open-member="${leave.person.id}" data-profile-tab="leave">${escapeHtml(leave.person.canonical_name)}</button><small>${escapeHtml(callLevelLabel(normalizeCallLevel(leave.person.call_level)))}</small></td>
-          <td>${leave.starts_on}${leave.starts_on !== leave.ends_on ? ` to ${leave.ends_on}` : ""}</td>
+          <td>${escapeHtml(formatDateRange(leave.starts_on, leave.ends_on))}</td>
           <td>${escapeHtml(leaveTypeLabel(leave.leave_slot))}</td>
           <td>${escapeHtml(leaveTypeLabel(leave.leave_type))}</td>
-          <td><span class="status-dot ${leave.status === "approved" ? "active" : "inactive"}">${escapeHtml(leaveStatusLabel(leave.status))}</span></td>
+          <td>${leaveStatusBadge(leave.status)}</td>
           <td class="num">${leave.days}</td>
-          <td><button type="button" class="icon-button" data-edit-operational-record="${leave.id}" data-record-kind="leave">Edit leave</button><button class="icon-button" data-cancel-leave="${leave.id}" ${leave.status === "cancelled" ? "disabled" : ""}>Cancel</button></td>
+          <td class="row-actions-cell">${leaveRowActions(leave)}</td>
         </tr>
       `,
     )
@@ -3127,13 +3406,13 @@ function renderLeaveCards(): string {
   return leaveRequests
     .map(
       (leave) => `
-        <article class="data-card">
-          <button type="button" class="member-profile-link data-card-title" data-open-member="${leave.person.id}" data-profile-tab="leave">${escapeHtml(leave.person.canonical_name)}</button>
-          <div class="data-card-row"><span class="data-card-label">Dates</span><span class="data-card-value">${leave.starts_on}${leave.starts_on !== leave.ends_on ? ` to ${leave.ends_on}` : ""}</span></div>
-          <div class="data-card-row"><span class="data-card-label">Slot</span><span class="data-card-value">${escapeHtml(leaveTypeLabel(leave.leave_slot))}</span></div>
-          <div class="data-card-row"><span class="data-card-label">Type</span><span class="data-card-value">${escapeHtml(leaveTypeLabel(leave.leave_type))}</span></div>
-          <div class="data-card-row"><span class="data-card-label">Status</span><span class="data-card-value">${escapeHtml(leaveStatusLabel(leave.status))}</span></div>
-          <div class="data-card-row"><button type="button" class="icon-button" data-edit-operational-record="${leave.id}" data-record-kind="leave">Edit leave</button><button class="icon-button" data-cancel-leave="${leave.id}" ${leave.status === "cancelled" ? "disabled" : ""}>Cancel</button></div>
+        <article class="data-card leave-card">
+          <div class="leave-card__head">
+            <button type="button" class="member-profile-link" data-open-member="${leave.person.id}" data-profile-tab="leave">${escapeHtml(leave.person.canonical_name)}</button>
+            ${leaveRowActions(leave)}
+          </div>
+          <p>${escapeHtml(formatDateRange(leave.starts_on, leave.ends_on))} · ${escapeHtml(leaveTypeLabel(leave.leave_type))} · ${escapeHtml(leaveTypeLabel(leave.leave_slot))}</p>
+          ${leaveStatusBadge(leave.status)}
         </article>
       `,
     )
@@ -3223,10 +3502,23 @@ function renderLeavePressurePanel(): string {
   `;
 }
 
+function leaveStatusBadge(status: string): string {
+  const tone = status === "approved" ? "success" : status === "cancelled" || status === "rejected" ? "neutral" : "warning";
+  return badge(leaveStatusLabel(status), tone);
+}
+
+function leaveRowActions(leave: LeaveRequest): string {
+  return rowMenu(`Actions for ${leave.person.canonical_name}'s leave`, `
+    <button type="button" role="menuitem" data-edit-operational-record="${leave.id}" data-record-kind="leave">Edit leave</button>
+    ${leave.status === "cancelled" ? "" : `<button type="button" role="menuitem" class="row-menu__danger" data-cancel-leave="${leave.id}">Cancel leave…</button>`}
+  `);
+}
+
 async function renderLeave() {
+  const current = renderTicket();
   setHeader("Leave", "Leave calendar and availability");
   if (!viewRoot) return;
-  viewRoot.innerHTML = `<section class="panel"><h3>Loading leave...</h3></section>`;
+  viewRoot.innerHTML = pageSkeleton("leave");
   try {
     if (!members.length) members = await getMembers();
     [leaveCalendar, leaveRequests, leavePressure] = await Promise.all([
@@ -3236,59 +3528,61 @@ async function renderLeave() {
     ]);
   } catch (error) {
     showToast(error instanceof Error ? error.message : "Failed to load leave", "error");
-    viewRoot.innerHTML = `<section class="panel"><h3>Leave unavailable</h3><p>Unable to load leave calendar.</p></section>`;
+    if (!current()) return;
+    viewRoot.innerHTML = emptyState({ title: "Leave could not load", body: "Check the connection and try again.", tone: "danger", actionHtml: `<button class="primary" type="button" data-view-shortcut="leave">Try again</button>` });
     return;
   }
   const summary = leaveCalendar.summary;
+  const monthName = formatMonth(summary.month);
+  const busiest = summary.busiest_day;
+  if (!current()) return;
   viewRoot.innerHTML = `
-    <section class="roster-command">
-      <div class="roster-command-header">
-        <div>
-          <h3>Leave Management</h3>
-          <p>First layer: manually add approved/requested leave and review monthly leave pressure.</p>
-        </div>
-        <span class="audit-badge">${summary.month}</span>
-      </div>
-      <div class="member-filter-row">
-        <label for="leave-month" class="visually-hidden">Leave month</label>
-        <input id="leave-month" type="month" value="${leaveMonth}" aria-label="Leave month" />
+    <section class="page-toolbar" aria-label="Leave actions">
+      <p class="page-toolbar__context"><strong>${monthName}</strong> · ${summary.total_requests} leave ${summary.total_requests === 1 ? "record" : "records"} for ${summary.people_on_leave} ${summary.people_on_leave === 1 ? "person" : "people"}</p>
+      <div class="page-toolbar__actions">
+        <button type="button" class="primary" data-add-operational-record="leave">Add leave</button>
+        <button type="button" class="icon-button" data-open-normalized-import="leave">Import leave CSV</button>
+        <details class="row-menu">
+          <summary class="icon-button" aria-label="More leave tools">More</summary>
+          <div class="row-menu__list" role="menu">
+            ${isAdminUser() ? `<button type="button" role="menuitem" data-manage-reference-catalog>Labels and mappings</button>` : ""}
+            <a role="menuitem" href="/templates/leave-records.csv" download>Download CSV template</a>
+            <a role="menuitem" href="/templates/leave-records-example.csv" download>Download example CSV</a>
+          </div>
+        </details>
       </div>
     </section>
     <section class="summary-grid four-col board-metrics">
-      ${metricCard(summary.total_requests, "Leave requests", undefined, "metric-primary")}
+      ${metricCard(summary.total_requests, "Leave requests")}
       ${metricCard(summary.people_on_leave, "People on leave")}
       ${metricCard(summary.total_leave_days, "Total leave days")}
-      ${metricCard(summary.busiest_day?.count ?? 0, "Highest day pressure", undefined, "metric-weekend")}
+      ${metricCard(busiest?.count ?? 0, busiest?.count ? `Busiest day · ${formatDate(busiest.date, { weekday: true }).replace(/ \d{4}$/, "")}` : "Highest day pressure", STAT_HELP["Highest day pressure"], (busiest?.count ?? 0) >= 6 ? "is-warn" : "")}
+    </section>
+    <section class="panel leave-calendar" aria-labelledby="leave-calendar-title">
+      <div class="table-caption leave-calendar__head">
+        <h3 id="leave-calendar-title">${monthName}</h3>
+        <p class="leave-calendar__legend">Compared with the busiest day: <span class="legend-swatch is-normal"></span>quieter <span class="legend-swatch is-watch"></span>busier <span class="legend-swatch is-high"></span>busiest</p>
+      </div>
+      <div class="leave-week-header" aria-hidden="true">${["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => `<span>${d}</span>`).join("")}</div>
+      <div class="leave-calendar-grid">${renderLeaveCalendarDays()}</div>
     </section>
     <section class="analytics-grid">
       ${renderLeaveBreakdown("By Call Level", summary.call_level_counts)}
       ${renderLeaveBreakdown("By Unit", summary.unit_counts)}
     </section>
-    ${renderLeavePressurePanel()}
-    <section class="panel leave-form-panel">
-      <h3>Import leave</h3>
-      <p>Map columns, resolve member names, review dates and conflicts, then apply.</p>
-      <button type="button" class="primary" data-open-normalized-import="leave">Import leave CSV / spreadsheet</button>
-      <a href="/templates/leave-records.csv" download>Download CSV template</a>
-    </section>
-    <section class="panel leave-form-panel">
-      <h3>Manage leave</h3>
-      <p>Create leave, review affected duties, or edit a record below.</p>
-      <button type="button" class="primary" data-add-operational-record="leave">Add Leave</button>
-      ${isAdminUser() ? '<button type="button" data-manage-reference-catalog>Manage labels and mappings</button>' : ''}
-    </section>
-    <section class="panel">
-      <h3>Month Calendar</h3>
-      <div class="leave-calendar-grid">${renderLeaveCalendarDays()}</div>
-    </section>
-    <section class="panel table-panel hide-mobile" style="margin-top:16px">
+    <details class="panel disclosure-panel leave-pressure-details">
+      <summary>Leave pressure used by the rota generator</summary>
+      ${renderLeavePressurePanel()}
+    </details>
+    <section class="panel table-panel hide-mobile" aria-labelledby="leave-list-title">
+      <div class="table-caption"><h3 id="leave-list-title">All leave this month</h3><span class="table-caption__count">${leaveRequests.length} records</span></div>
       <table>
-        <thead><tr><th>Member</th><th>Dates</th><th>Slot</th><th>Type</th><th>Status</th><th class="num">Days</th><th></th></tr></thead>
-        <tbody>${renderLeaveRows() || `<tr><td colspan="7" class="empty">No leave recorded for this month.</td></tr>`}</tbody>
+        <thead><tr><th scope="col">Member</th><th scope="col">Dates</th><th scope="col">Session</th><th scope="col">Type</th><th scope="col">Status</th><th scope="col" class="num">Days</th><th scope="col"><span class="visually-hidden">Actions</span></th></tr></thead>
+        <tbody>${renderLeaveRows() || `<tr><td colspan="7">${emptyState({ title: `No leave recorded for ${monthName}` })}</td></tr>`}</tbody>
       </table>
     </section>
-    <section class="card-list">
-      ${renderLeaveCards() || `<p class="empty">No leave recorded for this month.</p>`}
+    <section class="card-list" aria-label="Leave this month">
+      ${renderLeaveCards() || emptyState({ title: `No leave recorded for ${monthName}` })}
     </section>
     <div id="leave-history-host"></div>
   `;
@@ -3406,47 +3700,50 @@ function validationIssuesForSpecialPosting(postingType: string) {
   return (unitManagement?.validation_issues ?? []).filter((issue) => (issue.posting_id ? assignmentIds.has(issue.posting_id) : false));
 }
 
+function unitMemberChips(assignments: UnitAssignment[], showDates = false): string {
+  return `<div class="unit-chip-row">${assignments
+    .map((assignment) => `
+      <span class="unit-member-chip">
+        <button type="button" class="member-profile-link" data-open-member="${assignment.person.id}" data-profile-tab="postings">${escapeHtml(assignment.person.canonical_name)}</button>
+        ${showDates ? `<small>${escapeHtml(formatDateRange(assignment.starts_on, assignment.ends_on))}</small>` : ""}
+      </span>`)
+    .join("")}</div>`;
+}
+
+function unitAvailability(assigned: number, onLeave: number, minimumFree: number): string {
+  const available = Math.max(0, assigned - onLeave);
+  const percent = assigned ? Math.round((available / assigned) * 100) : 0;
+  const tone = !assigned ? "empty" : available < minimumFree ? "low" : "ok";
+  return `<div class="unit-availability" data-tone="${tone}">
+    <div class="unit-availability__bar" aria-hidden="true"><span style="width:${percent}%"></span></div>
+    <p><strong>${available}</strong> available of ${assigned} assigned · ${onLeave} on leave · minimum free ${minimumFree}</p>
+  </div>`;
+}
+
 function renderUnitAssignmentsByUnit(): string {
   if (!unitManagement) return "";
   if (!unitManagement.units.length) {
-    return `<section class="panel"><p class="empty-state">No active units found. Add units through historical import or admin seed before assigning members.</p></section>`;
+    return emptyState({
+      title: "No active units yet",
+      body: "Add the department's units before posting members to them.",
+      actionHtml: isAdminUser() ? `<button class="primary" type="button" data-add-department-unit>Add unit</button>` : "",
+    });
   }
   const specialCards = SPECIAL_UNIT_POSTING_CARDS
     .map(([postingType, label]) => {
       const assignments = specialUnitAssignmentsFor(postingType);
       return `
-        <article
-          class="unit-card special-unit-card"
-          role="button"
-          tabindex="0"
-          data-open-special-unit-modal="${escapeHtml(postingType)}"
-          aria-label="Manage ${escapeHtml(label)} special posting"
-        >
+        <article class="unit-card special-unit-card" data-open-special-unit-modal="${escapeHtml(postingType)}">
           <header>
             <div>
               <h3>${escapeHtml(label)}</h3>
-              <p>Special assignment card</p>
+              <p>Special posting</p>
             </div>
-            <strong>${assignments.length}</strong>
+            <button type="button" class="icon-button btn-sm" data-open-special-unit-modal="${escapeHtml(postingType)}" aria-label="Manage ${escapeHtml(label)} postings">Manage</button>
           </header>
-          <div class="audit-chip-row">
-            <span><strong>${assignments.length}</strong> assigned</span>
-            <span><strong>0</strong> unit load</span>
-          </div>
-          ${
-            assignments.length
-              ? `<div class="unit-chip-row">${assignments
-                  .map(
-                    (assignment) => `
-                      <span class="unit-member-chip">
-                        <button type="button" class="member-profile-link" data-open-member="${assignment.person.id}" data-profile-tab="postings">${escapeHtml(assignment.person.canonical_name)}</button>
-                        <small>${escapeHtml(assignment.starts_on)}${assignment.ends_on ? ` to ${escapeHtml(assignment.ends_on)}` : ""}</small>
-                      </span>
-                    `,
-                  )
-                  .join("")}</div>`
-              : `<p class="empty-state">No members assigned for this month.</p>`
-          }
+          ${assignments.length
+            ? `<p class="unit-card__count"><strong>${assignments.length}</strong> ${assignments.length === 1 ? "member" : "members"} this month</p>${unitMemberChips(assignments, true)}`
+            : `<p class="unit-card__empty">Nobody posted this month.</p>`}
         </article>
       `;
     })
@@ -3458,48 +3755,25 @@ function renderUnitAssignmentsByUnit(): string {
         .map(([postingType, label]) => {
           const people = assignments.filter((assignment) => assignment.posting_type === postingType);
           if (!people.length) return "";
-          return `
-            <div class="unit-call-group">
-              <span>${label}</span>
-              <div class="unit-chip-row">
-                ${people
-                  .map(
-                    (assignment) => `
-                      <span class="unit-member-chip">
-                        <button type="button" class="member-profile-link" data-open-member="${assignment.person.id}" data-profile-tab="postings">${escapeHtml(assignment.person.canonical_name)}</button>
-                      </span>
-                    `,
-                  )
-                  .join("")}
-              </div>
-            </div>
-          `;
+          return `<div class="unit-call-group"><span>${escapeHtml(label)}</span>${unitMemberChips(people)}</div>`;
         })
         .join("");
       const summary = unitSummary(unit.id);
       const assigned = summary?.assigned_members ?? 0;
       const onLeave = summary?.people_with_leave ?? 0;
-      const available = Math.max(0, assigned - onLeave);
       const unitIssues = validationIssuesForUnit(unit.id);
       return `
-        <article class="unit-card" role="button" tabindex="0" data-open-unit-modal="${unit.id}" aria-label="Manage ${escapeHtml(unit.name)} unit">
+        <article class="unit-card" data-open-unit-modal="${unit.id}">
           <header>
             <div>
               <h3>${escapeHtml(unit.name)}</h3>
-              <p>${escapeHtml(unit.campus ?? unit.code)}</p>
+              ${unit.campus ? `<p>${escapeHtml(unit.campus)}</p>` : ""}
             </div>
-            <strong>${assignments.length}</strong>
+            <button type="button" class="icon-button btn-sm" data-open-unit-modal="${unit.id}" aria-label="Manage ${escapeHtml(unit.name)}">Manage</button>
           </header>
-          <div class="audit-chip-row">
-            <span><strong>${assigned}</strong> assigned</span>
-            <span><strong>${onLeave}</strong> on leave</span>
-            <span><strong>${available}</strong> roughly available</span>
-            <span><strong>${unit.minimum_free_people}</strong> fallback min free</span>
-            <span><strong>${summary?.leave_days ?? 0}</strong> leave days</span>
-          </div>
-          ${unitIssues.length ? `<span class="unit-warning-strip">${unitIssues.length} validation ${unitIssues.length === 1 ? "item" : "items"}</span>` : ""}
-          ${assignments.length ? `<p class="unit-card-note">Members are ordered from 1st Call through higher call levels.</p>` : ""}
-          ${grouped || `<p class="empty-state">No members assigned for this month.</p>`}
+          ${unitAvailability(assigned, onLeave, unit.minimum_free_people)}
+          ${unitIssues.length ? `<p class="unit-warning-strip">${badge(`${unitIssues.length} setup ${unitIssues.length === 1 ? "issue" : "issues"}`, "warning")}</p>` : ""}
+          ${grouped || `<p class="unit-card__empty">Nobody posted this month.</p>`}
         </article>
       `;
     })
@@ -3512,18 +3786,18 @@ function renderUnitAssignmentRows(): string {
     .map(
       (assignment) => `
         <tr>
-          <td><button type="button" class="member-profile-link" data-open-member="${assignment.person.id}" data-profile-tab="postings">${escapeHtml(assignment.person.canonical_name)}</button><small>${escapeHtml(assignment.person.call_level ?? "Unassigned")}</small></td>
-          <td>${escapeHtml(assignment.unit?.name ?? (SPECIAL_UNIT_POSTING_KEYS.has(assignment.posting_type) ? "Special card" : "No unit"))}</td>
-          <td>${escapeHtml(callLevelLabel(assignment.effective_call_level ?? assignment.posting_type))}<small>Posting: ${escapeHtml(assignment.posting_type)}</small></td>
-          <td>${assignment.starts_on}${assignment.ends_on ? ` to ${assignment.ends_on}` : ""}</td>
+          <td><button type="button" class="member-profile-link" data-open-member="${assignment.person.id}" data-profile-tab="postings">${escapeHtml(assignment.person.canonical_name)}</button><small>${escapeHtml(callLevelLabel(normalizeCallLevel(assignment.person.call_level)))}</small></td>
+          <td>${escapeHtml(assignment.unit?.name ?? (SPECIAL_UNIT_POSTING_KEYS.has(assignment.posting_type) ? "Special posting" : "No unit"))}</td>
+          <td>${escapeHtml(callLevelLabel(assignment.effective_call_level ?? assignment.posting_type))}${assignment.posting_type !== (assignment.effective_call_level ?? assignment.posting_type) ? `<small>Posted as ${escapeHtml(codeLabel(assignment.posting_type))}</small>` : ""}</td>
+          <td>${escapeHtml(formatDateRange(assignment.starts_on, assignment.ends_on))}</td>
           <td>${escapeHtml(assignment.notes ?? "")}</td>
-          <td>
+          <td class="row-actions-cell">
             ${
               assignment.unit?.id
-                ? `<button class="icon-button" data-open-unit-modal="${assignment.unit.id}">Manage Unit</button>`
+                ? `<button type="button" class="icon-button btn-sm" data-open-unit-modal="${assignment.unit.id}" aria-label="Manage ${escapeHtml(assignment.unit.name)}">Manage</button>`
                 : SPECIAL_UNIT_POSTING_KEYS.has(assignment.posting_type)
-                  ? `<button class="icon-button" data-open-special-unit-modal="${escapeHtml(assignment.posting_type)}">Manage Special Card</button>`
-                  : `<span class="status ok">Special Card</span>`
+                  ? `<button type="button" class="icon-button btn-sm" data-open-special-unit-modal="${escapeHtml(assignment.posting_type)}" aria-label="Manage ${escapeHtml(codeLabel(assignment.posting_type))} postings">Manage</button>`
+                  : ""
             }
           </td>
         </tr>
@@ -3534,14 +3808,12 @@ function renderUnitAssignmentRows(): string {
 
 function renderUnitValidationIssues(): string {
   const issues = unitManagement?.validation_issues ?? [];
-  if (!issues.length) {
-    return `<details class="panel quality-ok unit-validation-panel"><summary><span>Validation</span><span class="quality-status-badge">Clear</span></summary><p>No basic unit assignment issues found.</p></details>`;
-  }
+  if (!issues.length) return "";
   const rows = issues
     .map(
       (issue) => `
         <div class="validation-row ${issue.severity}">
-          <strong>${escapeHtml(issue.severity.toUpperCase())}</strong>
+          ${badge(issue.severity === "error" ? "Error" : "Warning", issue.severity === "error" ? "danger" : "warning")}
           <span>${reviewButton({
             title: "Resolve Unit Assignment Validation",
             status: issue.severity.toUpperCase(),
@@ -3561,10 +3833,11 @@ function renderUnitValidationIssues(): string {
   const errors = issues.filter((issue) => issue.severity === "error").length;
   const warnings = issues.filter((issue) => issue.severity === "warning").length;
   return `
-    <details class="panel quality-warning unit-validation-panel">
+    <details class="panel unit-validation-panel" id="unit-setup-issues" ${errors ? "open" : ""}>
       <summary>
-        <span>Validation warnings</span>
-        <span class="quality-status-badge">${errors} errors / ${warnings} warnings</span>
+        <span>Setup issues</span>
+        ${errors ? badge(`${errors} ${errors === 1 ? "error" : "errors"}`, "danger") : ""}
+        ${warnings ? badge(`${warnings} ${warnings === 1 ? "warning" : "warnings"}`, "warning") : ""}
       </summary>
       <div class="validation-list">${rows}</div>
     </details>
@@ -3878,13 +4151,13 @@ function renderUnitImportPreview(): string {
         placeholder="Search imported member, unit, posting, or issue"
         aria-label="Search unit import preview"
       />
-      <div class="segmented unit-import-filters" role="tablist" aria-label="Unit import filters">
+      <div class="segmented unit-import-filters" role="group" aria-label="Unit import filters">
         ${filters.map((filter) => `
           <button
             type="button"
             class="${unitImportFilter === filter.key ? "selected" : ""}"
             data-unit-import-filter="${filter.key}"
-            aria-selected="${unitImportFilter === filter.key ? "true" : "false"}"
+            aria-pressed="${unitImportFilter === filter.key ? "true" : "false"}"
           >${escapeHtml(filter.label)} <span>${filter.count}</span></button>
         `).join("")}
       </div>
@@ -4003,7 +4276,7 @@ function renderPostingEditorCards(assignments: UnitAssignment[]): string {
     <p>${escapeHtml(assignment.posting_type)} &middot; ${assignment.starts_on} to ${assignment.ends_on || "Ongoing"}</p>
     <p>${escapeHtml(assignment.notes || "")}</p><div class="registry-actions">
     <button type="button" class="primary" data-edit-operational-record="${assignment.id}" data-record-kind="units">Edit posting</button>
-    <button type="button" data-delete-unit-assignment="${assignment.id}">Remove posting</button></div></article>`).join("");
+    <button type="button" class="danger-button btn-sm" data-delete-unit-assignment="${assignment.id}">Remove posting…</button></div></article>`).join("");
 }
 
 function adjacentUnitId(unitId: string, direction: -1 | 1): string | null {
@@ -4160,56 +4433,71 @@ function unitAssignmentPayloadFromForm(form: HTMLFormElement) {
 }
 
 async function renderUnitManagement(forceReload = false) {
-  setHeader("Unit Management", "Monthly unit assignments");
+  const current = renderTicket();
+  setHeader("Unit Management", "Monthly unit postings");
   if (!viewRoot) return;
   const hasWarmCache = Boolean(unitManagement && unitManagementLoadedMonth === unitMonth && !forceReload);
   if (!hasWarmCache) {
-    viewRoot.innerHTML = `<section class="panel"><h3>Loading unit management...</h3></section>`;
+    viewRoot.innerHTML = pageSkeleton("unit management");
   }
   try {
     await loadUnitManagementData(forceReload);
   } catch (error) {
     showToast(error instanceof Error ? error.message : "Failed to load unit management", "error");
-    viewRoot.innerHTML = `<section class="panel"><h3>Unit Management unavailable</h3><p>Unable to load monthly unit assignments.</p></section>`;
+    if (!current()) return;
+    viewRoot.innerHTML = emptyState({ title: "Unit Management could not load", body: "Check the connection and try again.", tone: "danger", actionHtml: `<button class="primary" type="button" data-view-shortcut="units">Try again</button>` });
     return;
   }
   if (!unitManagement) return;
   const errors = unitManagement.validation_issues.filter((issue) => issue.severity === "error").length;
   const warnings = unitManagement.validation_issues.filter((issue) => issue.severity === "warning").length;
   const leaveDays = unitManagement.unit_summaries.reduce((sum, item) => sum + item.leave_days, 0);
+  const monthName = formatMonth(unitManagement.month);
+  const callout = errors
+    ? nextStep({
+        tone: "danger",
+        title: `${errors} unit setup ${errors === 1 ? "error" : "errors"} for ${monthName}`,
+        body: "Fix these before generating the rota; open each issue for the exact member or unit.",
+        actionHtml: `<a class="primary" href="#unit-setup-issues">Review issues</a>`,
+      })
+    : !unitAssignments.length
+      ? nextStep({
+          tone: "info",
+          title: `No unit postings for ${monthName} yet`,
+          body: "Use Import unitwise CSV for the whole month, or Add posting for one member at a time.",
+        })
+      : "";
+  if (!current()) return;
   viewRoot.innerHTML = `
-    <section class="roster-command">
-      <div class="roster-command-header">
-        <div>
-          <h3>Unit Management</h3>
-          <p>Assign members to monthly units by call level. Leave-aware summaries are shown for planning.</p>
-        </div>
-        <span class="audit-badge">${unitManagement.month}</span>
-      </div>
-      <div class="member-filter-row">
-        <label for="unit-month" class="visually-hidden">Unit month</label>
-        <input id="unit-month" type="month" value="${unitMonth}" aria-label="Unit month" />
+    ${callout}
+    <section class="page-toolbar" aria-label="Unit actions">
+      <p class="page-toolbar__context"><strong>${monthName}</strong> · ${unitAssignments.length} postings across ${unitManagement.units.length} units</p>
+      <div class="page-toolbar__actions">
+        <button type="button" class="primary" data-add-operational-record="units">Add posting</button>
+        <button type="button" class="icon-button" data-open-normalized-import="units">Import unitwise CSV</button>
+        <details class="row-menu">
+          <summary class="icon-button" aria-label="More unit tools">More</summary>
+          <div class="row-menu__list" role="menu">
+            ${isAdminUser() ? `<button type="button" role="menuitem" data-add-department-unit>Add unit</button><button type="button" role="menuitem" data-manage-department-units>Manage units</button><button type="button" role="menuitem" data-manage-reference-catalog>Labels and mappings</button>` : ""}
+            <a role="menuitem" href="/templates/unitwise-assignments.csv" download>Download CSV template</a>
+            <a role="menuitem" href="/templates/unitwise-assignments-example.csv" download>Download example CSV</a>
+          </div>
+        </details>
       </div>
     </section>
     <section class="summary-grid four-col board-metrics">
-      ${metricCard(unitAssignments.length, "Assignments", undefined, "metric-primary")}
+      ${metricCard(unitAssignments.length, "Postings", "Member postings to units and special cards for this month.")}
       ${metricCard(unitManagement.units.length, "Active units")}
       ${metricCard(leaveDays, "Unit leave days")}
-      ${metricCard(`${errors}/${warnings}`, "Errors / warnings", undefined, "metric-weekend")}
+      ${metricCard(errors + warnings, "Setup issues", `${errors} errors and ${warnings} warnings found in this month's postings.`, errors ? "is-alert" : warnings ? "is-warn" : "is-good")}
     </section>
     ${renderUnitValidationIssues()}
-    <section class="panel leave-form-panel">
-      <div class="registry-actions">${isAdminUser() ? `<button class="primary" type="button" data-add-department-unit>Add Unit</button><button class="icon-button" type="button" data-manage-department-units>Manage Units</button>` : ""}</div>
-      <div class="registry-actions"><button type="button" class="primary" data-add-operational-record="units">Add Posting</button>${isAdminUser() ? `<button type="button" data-manage-reference-catalog>Manage labels and mappings</button>` : ""}</div><h3>Import Unitwise Assignments</h3>
-      <p>Map columns, resolve names and units, and review changes before applying.</p>
-      <button type="button" class="primary" data-open-normalized-import="units">Import unitwise CSV / spreadsheet</button>
-      <a href="/templates/unitwise-assignments.csv" download>Download CSV template</a>
-    </section>
-    <section class="unit-card-grid">${renderUnitAssignmentsByUnit()}</section>
-    <section class="panel table-panel hide-mobile" style="margin-top:16px">
+    <section class="unit-card-grid" aria-label="Units">${renderUnitAssignmentsByUnit()}</section>
+    <section class="panel table-panel hide-mobile" aria-labelledby="unit-postings-title">
+      <div class="table-caption"><h3 id="unit-postings-title">All postings</h3><span class="table-caption__count">${unitAssignments.length} this month</span></div>
       <table>
-        <thead><tr><th>Member</th><th>Unit</th><th>Call level/posting</th><th>Dates</th><th>Notes</th><th></th></tr></thead>
-        <tbody>${renderUnitAssignmentRows() || `<tr><td colspan="6" class="empty">No unit assignments for this month.</td></tr>`}</tbody>
+        <thead><tr><th scope="col">Member</th><th scope="col">Unit</th><th scope="col">Call level</th><th scope="col">Dates</th><th scope="col">Notes</th><th scope="col"><span class="visually-hidden">Actions</span></th></tr></thead>
+        <tbody>${renderUnitAssignmentRows() || `<tr><td colspan="6">${emptyState({ title: "No postings this month" })}</td></tr>`}</tbody>
       </table>
     </section>
     <div id="unit-history-host"></div>
@@ -4223,9 +4511,10 @@ async function renderUnitManagement(forceReload = false) {
 }
 
 async function renderMembers() {
+  const current = renderTicket();
   setHeader("Members", "Department members");
   if (!viewRoot) return;
-  viewRoot.innerHTML = `<section class="panel"><h3>Loading members...</h3></section>`;
+  viewRoot.innerHTML = pageSkeleton("members");
   try {
     if (isAdminUser()) {
       [members, invalidMembers, memberAudit] = await Promise.all([
@@ -4240,24 +4529,23 @@ async function renderMembers() {
     }
   } catch (error) {
     showToast(error instanceof Error ? error.message : "Failed to load members", "error");
+    if (!current()) return;
     viewRoot.innerHTML = `<section class="panel"><h3>Members unavailable</h3><p>Unable to load department members.</p></section>`;
     return;
   }
+  if (!current()) return;
   renderMembersView();
 }
 
 function renderMembersView() {
   if (!viewRoot) return;
   const rows = filteredMembers();
-  const activeMembers = members.filter((member) => member.active_status === "active").length;
-  const archivedMembers = members.filter((member) => member.active_status === "archived").length;
-  const historicalMembers = members.filter((member) => member.active_status === "historical").length;
-  const inactiveMembers = members.filter((member) => member.active_status === "inactive").length;
+  const statusCount = (status: string) => members.filter((member) => member.active_status === status).length;
   const callLevelOrder: [string, string][] = [
     ["1ST_CALL", "1st"],
     ["2ND_CALL", "2nd"],
     ["3RD_CALL", "3rd"],
-    ["CO_4TH_CALL", "Co 4th"],
+    ["CO_4TH_CALL", "Co-4th"],
     ["4TH_CALL", "4th"],
     ["5TH_CALL", "5th"],
   ];
@@ -4267,110 +4555,120 @@ function renderMembersView() {
     count: members.filter((m) => normalizeCallLevel(m.effective_call_level ?? m.call_level) === key).length,
   }));
   const unassignedCount = members.filter((m) => !(m.effective_call_level ?? m.call_level)).length;
-  const adminTools = isAdminUser() && memberAudit
+  const statusFilters: [typeof memberStatusFilter, string, number][] = [
+    ["active", "Active", statusCount("active")],
+    ["all", "All", members.length],
+    ["historical", "Historical", statusCount("historical")],
+    ["archived", "Archived", statusCount("archived")],
+    ["inactive", "Inactive", statusCount("inactive")],
+  ];
+  const quality = isAdminUser() && memberAudit
+    ? ([
+        ["invalid", memberAudit.invalid_members, "invalid names"],
+        ["duplicates", memberAudit.duplicate_groups, "possible duplicates"],
+        ["calls", memberAudit.missing_call_levels, "without a call level"],
+        ["positions", memberAudit.missing_designations, "without a position"],
+      ] as [string, number, string][]).filter(([, count]) => count > 0)
+    : [];
+  const qualityStrip = quality.length
+    ? `<div class="member-quality" role="group" aria-label="Data quality">
+        <span class="member-quality__label">Data quality</span>
+        ${quality.map(([key, count, label]) => `<button type="button" class="quality-link" data-member-quality="${key}"><strong>${count}</strong> ${escapeHtml(label)}</button>`).join("")}
+      </div>`
+    : isAdminUser() && memberAudit
+      ? `<div class="member-quality is-clean">${badge("Data quality: no issues", "success")}</div>`
+      : "";
+  const adminActions = isAdminUser() && memberAudit
     ? `
-        <div class="member-tools">
-          <div class="member-tool-row">
-            <form class="inline-form" id="create-member-form" style="display:contents;">
-              <label for="new-member-name" class="visually-hidden">New member name</label>
-              <input id="new-member-name" placeholder="New member name" aria-label="New member name" />
-              <button class="primary" type="submit" id="create-member">Create Member</button>
-            </form>
-            <button class="primary" type="button" id="import-member-csv">Import CSV</button><a class="icon-button" href="/templates/department-members.csv" download>Download CSV template</a><a class="icon-button" href="/templates/department-members-example.csv" download>Download example CSV</a></div><details><summary>Advanced member tools</summary><div class="member-tool-row"><button class="icon-button" id="cleanup-members">Clean Invalid Names</button>
-            <button class="icon-button" id="prefill-call-levels">Prefill Call Levels</button>
-            <button class="icon-button" id="reconcile-roster">Reconcile Trusted Roster</button>
+      <div class="member-actions">
+        <form class="member-add" id="create-member-form">
+          <label for="new-member-name" class="visually-hidden">New member name</label>
+          <input id="new-member-name" placeholder="Add a member by full name" autocomplete="off" />
+          <button class="icon-button" type="submit" id="create-member">Add member</button>
+        </form>
+        <button class="primary" type="button" id="import-member-csv">Import CSV</button>
+        <details class="row-menu member-more">
+          <summary class="icon-button" aria-label="More member tools">More</summary>
+          <div class="row-menu__list" role="menu">
+            <a role="menuitem" href="/templates/department-members.csv" download>Download CSV template</a>
+            <a role="menuitem" href="/templates/department-members-example.csv" download>Download example CSV</a>
+            <button type="button" role="menuitem" id="cleanup-members">Clean invalid names</button>
+            <button type="button" role="menuitem" id="prefill-call-levels">Prefill call levels</button>
+            <button type="button" role="menuitem" id="reconcile-roster">Reconcile trusted roster</button>
           </div>
-        </details></div>
-      `
-    : "";
-  const adminAudit = isAdminUser() && memberAudit
-    ? `
-        <div class="audit-chip-row admin-only-inline">
-          <button type="button" class="icon-button" data-member-quality="invalid" ${memberAudit.invalid_members ? "" : "disabled"}><strong>${memberAudit.invalid_members}</strong> invalid names</button>
-          <button type="button" class="icon-button" data-member-quality="duplicates" ${memberAudit.duplicate_groups ? "" : "disabled"}><strong>${memberAudit.duplicate_groups}</strong> duplicate groups</button>
-          <button type="button" class="icon-button" data-member-quality="calls" ${memberAudit.missing_call_levels ? "" : "disabled"}><strong>${memberAudit.missing_call_levels}</strong> unassigned calls</button><button type="button" class="icon-button" data-member-quality="positions" ${memberAudit.missing_designations ? "" : "disabled"}><strong>${memberAudit.missing_designations}</strong> missing positions</button>
-        </div>
-      `
+        </details>
+      </div>`
     : "";
 
   viewRoot.innerHTML = `
-    <section class="roster-command">
-      <div class="roster-command-header">
+    <section class="panel member-hub">
+      <div class="member-hub__head">
         <div>
-          <h3>Department Members</h3>
-          <p>One master list for names, aliases, and call levels. Search by name, position, or call level.</p>
+          <h3>Roster</h3>
+          <p><strong>${statusCount("active")}</strong> active of ${members.length} people. Search by name, alias, position or call level.</p>
         </div>
-        <span class="audit-badge">${rows.length} shown</span>
+        ${adminActions}
       </div>
-      <div class="audit-chip-row">
-        <span><strong id="visible-member-count">${rows.length}</strong> shown</span>
-        <span><strong>${members.length}</strong> total</span>
-        <span><strong>${activeMembers}</strong> active</span>
-        <span><strong>${historicalMembers}</strong> historical</span>
-        <span><strong>${inactiveMembers}</strong> inactive</span>
-        <span><strong>${archivedMembers}</strong> archived</span>
+      <div class="member-filters">
+        <div class="segmented-filter" role="group" aria-label="Filter by status">
+          ${statusFilters.map(([value, label, count]) => `<button type="button" class="status-toggle ${memberStatusFilter === value ? "active" : ""}" data-member-status="${value}" aria-pressed="${memberStatusFilter === value}">${label} <span class="count">${count}</span></button>`).join("")}
+        </div>
+        <div class="member-filters__fields">
+          <label for="member-search" class="visually-hidden">Search members</label>
+          <input id="member-search" type="search" class="member-search-input" placeholder="Search members or positions" value="${escapeHtml(memberSearch)}" />
+          <label for="member-position-filter" class="visually-hidden">Filter by position</label>
+          <select id="member-position-filter">${renderPositionOptions()}</select>
+          <label for="member-call-filter" class="visually-hidden">Filter by call level</label>
+          <select id="member-call-filter">${renderCallLevelFilterOptions()}</select>
+          <button type="button" class="quiet-button" id="clear-member-filters">Clear filters</button>
+        </div>
       </div>
-      <div class="call-level-chip-row">
+      <div class="call-level-chip-row" role="group" aria-label="Call level counts; select one to filter">
         ${callLevelCounts.map(({ key, label, count }) => `
-          <button class="call-chip ${memberCallLevelFilter === callLevelLabel(key) ? "selected" : ""}" data-call-chip="${callLevelLabel(key)}" title="Filter to ${label} Call members">
+          <button type="button" class="call-chip ${memberCallLevelFilter === callLevelLabel(key) ? "selected" : ""}" data-call-chip="${callLevelLabel(key)}" aria-pressed="${memberCallLevelFilter === callLevelLabel(key)}">
             <span class="call-chip-label">${label}</span>
             <strong class="call-chip-count">${count}</strong>
           </button>`).join("")}
-        <span class="call-chip unassigned-chip" title="Members with no call level assigned">
+        <span class="call-chip unassigned-chip">
           <span class="call-chip-label">Unassigned</span>
           <strong class="call-chip-count">${unassignedCount}</strong>
         </span>
       </div>
-      ${adminAudit}
-      <div class="member-control-bar">
-        <div class="member-filter-row">
-          <div class="status-toggle-group" role="group" aria-label="Filter by status">
-            <button class="status-toggle ${memberStatusFilter === "active" ? "active" : ""}" data-member-status="active">Active</button>
-            <button class="status-toggle ${memberStatusFilter === "all" ? "active" : ""}" data-member-status="all">All</button>
-            <button class="status-toggle ${memberStatusFilter === "historical" ? "active" : ""}" data-member-status="historical">Historical</button>
-            <button class="status-toggle ${memberStatusFilter === "archived" ? "active" : ""}" data-member-status="archived">Archived</button>
-            <button class="status-toggle ${memberStatusFilter === "inactive" ? "active" : ""}" data-member-status="inactive">Inactive</button>
-          </div>
-          <label for="member-search" class="visually-hidden">Search members</label>
-          <input id="member-search" class="member-search-input" placeholder="Search members or positions" value="${escapeHtml(memberSearch)}" aria-label="Search members or positions" />
-          <label for="member-position-filter" class="visually-hidden">Filter by position</label>
-          <select id="member-position-filter" aria-label="Filter by position">${renderPositionOptions()}</select>
-          <label for="member-call-filter" class="visually-hidden">Filter by call level</label>
-          <select id="member-call-filter" aria-label="Filter by call level">${renderCallLevelFilterOptions()}</select>
-          <button class="filter-clear-btn" id="clear-member-filters" aria-label="Clear all filters">Clear</button>
-        </div>
-        ${adminTools}
-      </div>
+      ${qualityStrip}
     </section>
     ${isAdminUser() ? `<nav class="member-section-nav" aria-label="Member management sections">
-      <a href="#member-list">Member List</a><a href="#member-import-host">Import and Review</a>
-      <a href="#member-history-host">Import History</a></nav>` : ""}
-    <details class="panel disclosure-panel">
-      <summary>Position Mix</summary>
-      <div class="category-grid">${renderPositionBreakdown()}</div>
-    </details>
-    <section class="panel table-panel" id="member-list">
+      <a class="quiet-button" href="#member-list">Member list</a><a class="quiet-button" href="#member-import-host">Workbook import</a>
+      <a class="quiet-button" href="#member-history-host">Import history</a></nav>` : ""}
+    <section class="panel table-panel" id="member-list" aria-labelledby="member-list-title">
+      <div class="table-caption">
+        <h3 id="member-list-title">Members</h3>
+        <span class="table-caption__count"><strong id="visible-member-count">${rows.length}</strong> shown</span>
+      </div>
       <table class="member-table">
         <colgroup>
           <col class="member-col-name" />
-          <col class="member-col-status" />
           <col class="member-col-call" />
+          <col class="member-col-status" />
           <col class="member-col-action" />
         </colgroup>
         <thead>
           <tr>
-            <th><button class="table-sort" data-member-sort="name" ${ariaSort("name")}>Member${sortIndicator("name")}</button></th>
-            <th><button class="table-sort" data-member-sort="status" ${ariaSort("status")}>Status${sortIndicator("status")}</button></th>
-            <th><button class="table-sort" data-member-sort="call_level" ${ariaSort("call_level")}>Call Level${sortIndicator("call_level")}</button></th>
-            <th>Archive</th>
+            <th scope="col" ${ariaSort("name")}><button class="table-sort" data-member-sort="name">Member${sortIndicator("name")}</button></th>
+            <th scope="col" ${ariaSort("call_level")}><button class="table-sort" data-member-sort="call_level">Call level${sortIndicator("call_level")}</button></th>
+            <th scope="col" ${ariaSort("status")}><button class="table-sort" data-member-sort="status">Status${sortIndicator("status")}</button></th>
+            <th scope="col"><span class="visually-hidden">Actions</span></th>
           </tr>
         </thead>
-        <tbody id="member-table-body">${renderMemberRows(rows) || `<tr><td colspan="4" class="empty">No members found.</td></tr>`}</tbody>
+        <tbody id="member-table-body">${renderMemberRows(rows) || `<tr><td colspan="4">${emptyState({ title: "No members match these filters", body: "Clear the filters or search for another name." })}</td></tr>`}</tbody>
       </table>
     </section>
-    <section class="member-card-list" id="member-card-list">
-      ${renderMemberCards(rows)}
+    <section class="member-card-list" id="member-card-list" aria-label="Members">
+      ${renderMemberCards(rows) || emptyState({ title: "No members match these filters" })}
     </section>
+    <details class="panel disclosure-panel">
+      <summary>Position mix</summary>
+      <div class="category-grid">${renderPositionBreakdown()}</div>
+    </details>
     ${isAdminUser() ? '<div id="member-import-host"></div><div id="member-history-host"></div>' : ""}
   `;
   const importHost = document.getElementById("member-import-host");
@@ -4482,13 +4780,15 @@ function filterClusterMembers(query: string) {
 }
 
 async function renderRotaRules() {
+  const current = renderTicket();
   setHeader("Rota Rules", "Who can do each duty");
   if (!viewRoot) return;
   if (!isAdminUser()) {
     await renderOverview();
     return;
   }
-  viewRoot.innerHTML = `<section class="panel"><h3>Loading rota rules...</h3></section>`;
+  if (!current()) return;
+  viewRoot.innerHTML = pageSkeleton("rota rules");
   try {
     [rotaPhaseOneRules, callClusters] = await Promise.all([
       getRotaPhaseOneRules(),
@@ -4496,6 +4796,7 @@ async function renderRotaRules() {
     ]);
   } catch (error) {
     showToast(error instanceof Error ? error.message : "Failed to load rota rules", "error");
+    if (!current()) return;
     viewRoot.innerHTML = `<section class="panel"><h3>Rota rules unavailable</h3><p>Unable to load Phase 1 rule settings.</p></section>`;
     return;
   }
@@ -4512,8 +4813,8 @@ async function renderRotaRules() {
       <article class="rota-rule-card">
         <header>
           <div>
-            <strong>${escapeHtml(rule.label)}</strong>
-            <small>${escapeHtml(rule.key)}</small>
+            <strong title="Rule key: ${escapeHtml(rule.key)}">${escapeHtml(rule.label)}</strong>
+            <small>${escapeHtml([rule.campus, rule.is_24hr ? "24-hour" : `${rule.duration_hours} h`].filter(Boolean).join(" · "))}</small>
           </div>
           <span class="status">${escapeHtml(eligibilityMode)}</span>
         </header>
@@ -4555,6 +4856,7 @@ async function renderRotaRules() {
     `;
   }).join("");
 
+  if (!current()) return;
   viewRoot.innerHTML = `
     <form id="rota-rules-form">
       <section class="panel action-panel">
@@ -4601,13 +4903,15 @@ async function renderRotaRules() {
 }
 
 async function renderCallClusters() {
+  const current = renderTicket();
   setHeader("Eligibility Groups", "Create smaller duty pools inside a call level");
   if (!viewRoot) return;
   if (!isAdminUser()) {
     await renderOverview();
     return;
   }
-  viewRoot.innerHTML = `<section class="panel"><h3>Loading eligibility groups...</h3></section>`;
+  if (!current()) return;
+  viewRoot.innerHTML = pageSkeleton("eligibility groups");
   try {
     [callClusters, members] = await Promise.all([
       getCallClusters(),
@@ -4620,13 +4924,14 @@ async function renderCallClusters() {
     }
   } catch (error) {
     showToast(error instanceof Error ? error.message : "Failed to load eligibility groups", "error");
+    if (!current()) return;
     viewRoot.innerHTML = `<section class="panel"><h3>Eligibility groups unavailable</h3><p>Unable to load group setup.</p></section>`;
     return;
   }
 
   const clusterRows = callClusters.map((cluster) => `
     <tr>
-      <td><button class="review-text-button" type="button" data-open-call-cluster="${escapeHtml(cluster.id)}">${escapeHtml(cluster.name)}</button><small>${escapeHtml(cluster.key)}</small></td>
+      <td><button class="review-text-button" type="button" data-open-call-cluster="${escapeHtml(cluster.id)}">${escapeHtml(cluster.name)}</button>${cluster.active ? "" : `<small>${badge("Inactive", "neutral")}</small>`}</td>
       <td>${escapeHtml(callLevelLabel(normalizeCallLevel(cluster.call_level)))}</td>
       <td>${cluster.member_count}</td>
       <td>${cluster.active ? `<span class="status ok">Active</span>` : `<span class="status">Inactive</span>`}</td>
@@ -4650,6 +4955,7 @@ async function renderCallClusters() {
       `;
     }).join("");
 
+  if (!current()) return;
   viewRoot.innerHTML = `
     <section class="panel action-panel">
       <div>
@@ -4704,105 +5010,158 @@ async function renderCallClusters() {
 }
 
 async function renderRotaSetup() {
-  setHeader("Rota Setup", "Monthly rota period and unit scope");
+  const current = renderTicket();
+  setHeader("Rota Setup", "Step 1 · Choose the units for this month");
   if (!viewRoot) return;
-  viewRoot.innerHTML = `<section class="panel"><h3>Loading rota setup...</h3></section>`;
+  viewRoot.innerHTML = pageSkeleton("rota setup");
   try {
     rotaSetup = await getRotaSetupMonth(rotaSetupMonth);
   } catch (error) {
     showToast(error instanceof Error ? error.message : "Failed to load rota setup", "error");
-    viewRoot.innerHTML = `<section class="panel"><h3>Rota setup unavailable</h3><p>Unable to load monthly rota setup.</p></section>`;
+    if (!current()) return;
+    viewRoot.innerHTML = emptyState({ title: "Rota setup could not load", body: "Check the connection and try again.", tone: "danger", actionHtml: `<button class="primary" type="button" data-view-shortcut="rota-setup">Try again</button>` });
     return;
   }
 
   const included = new Set(rotaSetup.scope.units.filter((item) => item.status === "included").map((item) => item.unit_id));
   const excluded = new Set(rotaSetup.scope.units.filter((item) => item.status === "excluded").map((item) => item.unit_id));
-  const readyCount = rotaSetup.unit_readiness.filter((item) => item.scope_status === "included" && item.readiness === "ready").length;
-  const reviewCount = rotaSetup.unit_readiness.filter((item) => item.scope_status === "included" && item.readiness !== "ready").length;
+  const includedRows = rotaSetup.unit_readiness.filter((item) => item.scope_status === "included");
+  // A unit nobody is posted to cannot staff duties, whatever its stored readiness says.
+  const isReady = (unit: RotaSetupMonth["unit_readiness"][number]) => unit.readiness === "ready" && unit.assigned_members > 0;
+  const readyCount = includedRows.filter(isReady).length;
+  const reviewCount = includedRows.length - readyCount;
+  const monthName = formatMonth(rotaSetupMonth);
+  const locked = rotaSetup.scope.is_locked;
   const rows = rotaSetup.unit_readiness.map((unit) => {
-    const callMix = Object.entries(unit.call_level_counts).map(([key, count]) => `${escapeHtml(callLevelLabel(normalizeCallLevel(key)))}: ${count}`).join(", ") || "No members";
+    const callMix = Object.entries(unit.call_level_counts).map(([key, count]) => `${escapeHtml(callLevelLabel(normalizeCallLevel(key)))} ${count}`).join(" · ") || "—";
+    const scopeStatus = included.has(unit.unit_id) ? "included" : excluded.has(unit.unit_id) ? "excluded" : "unselected";
+    const readiness = scopeStatus !== "included"
+      ? `<span class="muted-text">Not in this month's rota</span>`
+      : !unit.assigned_members
+        ? reviewButton({
+            title: "Resolve Unit Readiness",
+            status: "Needs Review",
+            summary: `Nobody is posted to ${unit.unit_name} for ${monthName}.`,
+            parameters: { unit: unit.unit_name, assigned_members: unit.assigned_members },
+            issues: ["Post members to this unit in Unit Management, or exclude it from this month."],
+            actions: [
+              { label: "Open Unit Management", kind: "open-unit", target: unit.unit_id, month: rotaSetupMonth, variant: "primary" },
+            ],
+          }, "No members posted", "ds-badge ds-badge--warning review-status-button")
+        : unit.readiness === "ready"
+          ? badge("Ready", "success")
+          : reviewButton({
+              title: "Resolve Unit Readiness",
+              status: "Needs Review",
+              summary: `${unit.unit_name} is not ready for rota generation.`,
+              parameters: { unit: unit.unit_name, assigned_members: unit.assigned_members, leave_days: unit.leave_days },
+              issues: unit.warnings,
+              actions: [
+                { label: "Open Unit Assignment", kind: "open-unit", target: unit.unit_id, month: rotaSetupMonth, variant: "primary" },
+                { label: "Open Unit Management", kind: "navigate", target: "units" },
+              ],
+            }, "Needs review", "ds-badge ds-badge--danger review-status-button");
     return `
       <tr>
-        <td><strong>${escapeHtml(unit.unit_name)}</strong><small>${escapeHtml(unit.unit_code)}${unit.campus ? ` / ${escapeHtml(unit.campus)}` : ""}</small></td>
+        <td><strong>${escapeHtml(unit.unit_name)}</strong>${unit.campus ? `<small>${escapeHtml(unit.campus)}</small>` : ""}</td>
         <td>
-          <select data-scope-unit="${unit.unit_id}">
-            <option value="unselected" ${unit.scope_status === "unselected" ? "selected" : ""}>Not selected</option>
-            <option value="included" ${included.has(unit.unit_id) ? "selected" : ""}>Included</option>
-            <option value="excluded" ${excluded.has(unit.unit_id) ? "selected" : ""}>Excluded</option>
+          <select data-scope-unit="${unit.unit_id}" aria-label="Include ${escapeHtml(unit.unit_name)} in ${escapeHtml(monthName)}" ${locked ? "disabled" : ""}>
+            <option value="unselected" ${scopeStatus === "unselected" ? "selected" : ""}>Not selected</option>
+            <option value="included" ${scopeStatus === "included" ? "selected" : ""}>Included</option>
+            <option value="excluded" ${scopeStatus === "excluded" ? "selected" : ""}>Excluded</option>
           </select>
         </td>
-        <td>${unit.assigned_members}</td>
+        <td class="num">${unit.assigned_members}</td>
         <td>${callMix}</td>
-        <td>${unit.people_with_leave} people / ${unit.leave_days} days</td>
-        <td>${unit.readiness === "ready" ? `<span class="status ok">Ready</span>` : reviewButton({
-          title: "Resolve Unit Readiness",
-          status: "Needs Review",
-          summary: `${unit.unit_name} is not ready for rota generation.`,
-          parameters: { unit: unit.unit_name, assigned_members: unit.assigned_members, leave_days: unit.leave_days },
-          issues: unit.warnings,
-          actions: [
-            { label: "Open Unit Assignment", kind: "open-unit", target: unit.unit_id, month: rotaSetupMonth, variant: "primary" },
-            { label: "Open Unit Management", kind: "navigate", target: "units" },
-          ],
-        }, "Needs review", "status error review-status-button")}</td>
+        <td>${unit.people_with_leave ? `${unit.people_with_leave} people · ${unit.leave_days} days` : "—"}</td>
+        <td>${readiness}</td>
         <td>${unit.warnings.map((warning) => `<small>${reviewButton({
           title: "Resolve Unit Readiness Warning",
           status: "Needs Review",
           summary: warning,
           parameters: { unit: unit.unit_name, month: rotaSetupMonth },
           actions: [{ label: "Open Unit Assignment", kind: "open-unit", target: unit.unit_id, month: rotaSetupMonth, variant: "primary" }],
-        }, warning, "review-text-button")}</small>`).join("") || "<small>None</small>"}</td>
+        }, warning, "review-text-button")}</small>`).join("") || `<span class="muted-text">—</span>`}</td>
       </tr>
     `;
   }).join("");
 
+  const callout = locked
+    ? nextStep({
+        tone: "success",
+        title: `${monthName} scope is locked`,
+        body: `${included.size} units are in this month's rota. Generate the empty rota template next.`,
+        actionHtml: `<button type="button" class="primary" data-view-shortcut="rota-template">Go to Rota Template</button>`,
+      })
+    : !included.size
+      ? nextStep({
+          tone: "info",
+          title: `Choose the units for ${monthName}`,
+          body: "Set each unit to Included or Excluded below, or copy last month's choices, then save and lock the scope.",
+        })
+      : nextStep({
+          tone: reviewCount ? "warning" : "info",
+          title: reviewCount ? `${reviewCount} included ${reviewCount === 1 ? "unit needs" : "units need"} attention before locking` : "Lock the scope to continue",
+          body: reviewCount
+            ? "Open each flagged unit to post members or resolve warnings, or exclude it from this month."
+            : "Tick “Lock this unit scope”, then Save scope. Generation needs a locked scope.",
+        });
+
+  if (!current()) return;
   viewRoot.innerHTML = `
+    ${callout}
     <form id="rota-setup-form">
-      <section class="panel action-panel">
-        <div>
-          <h3>${escapeHtml(rotaSetup.rota_period.name)}</h3>
-          <p>${rotaSetup.rota_period.starts_on} to ${rotaSetup.rota_period.ends_on}. Select the units that should participate in this month's rota generation.</p>
-        </div>
-        <div class="topbar-actions">
-          <label for="rota-setup-month" class="visually-hidden">Rota setup month</label>
-          <input id="rota-setup-month" type="month" value="${rotaSetupMonth}" />
-          <button class="icon-button" type="button" id="clone-rota-scope">Clone Previous</button>
-          <button class="primary" type="submit" id="save-rota-setup">Save Scope</button>
+      <section class="page-toolbar" aria-label="Setup actions">
+        <p class="page-toolbar__context"><strong>${escapeHtml(formatMonth(rotaSetupMonth))}</strong> · ${escapeHtml(formatDateRange(rotaSetup.rota_period.starts_on, rotaSetup.rota_period.ends_on))}</p>
+        <div class="page-toolbar__actions">
+          <button class="icon-button" type="button" id="clone-rota-scope" ${locked ? "disabled" : ""}>Copy last month's units</button>
+          <button class="primary" type="submit" id="save-rota-setup">Save scope</button>
         </div>
       </section>
       <section class="summary-grid four-col">
         ${metricCard(included.size, "Included units")}
         ${metricCard(excluded.size, "Excluded units")}
-        ${metricCard(readyCount, "Ready included")}
-        ${metricCard(reviewCount, "Need review")}
+        ${metricCard(readyCount, "Ready included", undefined, included.size && readyCount === included.size ? "is-good" : "")}
+        ${metricCard(reviewCount, "Need review", undefined, reviewCount ? "is-warn" : "")}
       </section>
-      <section class="panel">
-        <h3>Generation Scope</h3>
-        <label class="checkbox-line"><input id="scope-safety-excluded" type="checkbox" ${rotaSetup.scope.include_excluded_units_in_safety ? "checked" : ""} /> Show excluded units in safety calculations</label>
-        <label class="checkbox-line"><input id="scope-locked" type="checkbox" ${rotaSetup.scope.is_locked ? "checked" : ""} /> Lock this unit scope before generation</label>
-        <label>Lock or unlock reason
-          <input id="scope-lock-reason" value="${escapeHtml(rotaSetup.scope.lock_reason ?? "")}" placeholder="Reason required when unlocking" />
+      <section class="panel scope-lock ${locked ? "is-locked" : ""}">
+        <div class="scope-lock__status">
+          <h3>Scope lock</h3>
+          ${locked ? badge("Locked", "success") : badge("Not locked", "warning")}
+        </div>
+        <label class="checkbox-line"><input id="scope-locked" type="checkbox" ${locked ? "checked" : ""} /> Lock this unit scope before generation</label>
+        <label class="scope-lock__reason">Reason <span class="muted-text">(required when unlocking)</span>
+          <input id="scope-lock-reason" value="${escapeHtml(rotaSetup.scope.lock_reason ?? "")}" placeholder="For example: Unit VI added after board review" />
         </label>
+        <label class="checkbox-line"><input id="scope-safety-excluded" type="checkbox" ${rotaSetup.scope.include_excluded_units_in_safety ? "checked" : ""} /> Count excluded units in safety calculations</label>
       </section>
-      <section class="panel table-panel">
-        <h3>Units For This Month</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Unit</th>
-              <th>Scope</th>
-              <th>Members</th>
-              <th>Call Mix</th>
-              <th>Leave Pressure</th>
-              <th>Readiness</th>
-              <th>Warnings</th>
-            </tr>
-          </thead>
-          <tbody>${rows || `<tr><td colspan="7" class="empty">No units found.</td></tr>`}</tbody>
-        </table>
+      <section class="panel table-panel" aria-labelledby="setup-units-title">
+        <div class="table-caption"><h3 id="setup-units-title">Units for ${escapeHtml(monthName)}</h3><span class="table-caption__count">${included.size} included · ${excluded.size} excluded</span></div>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Unit</th>
+                <th scope="col">In this month</th>
+                <th scope="col" class="num">Members</th>
+                <th scope="col">Call mix</th>
+                <th scope="col">Leave</th>
+                <th scope="col">Readiness</th>
+                <th scope="col">Warnings</th>
+              </tr>
+            </thead>
+            <tbody>${rows || `<tr><td colspan="7">${emptyState({ title: "No active units", body: "Add units in Unit Management first." })}</td></tr>`}</tbody>
+          </table>
+        </div>
       </section>
     </form>
   `;
+  // Unticking the lock re-enables scope editing in place; saving applies both changes together.
+  document.querySelector<HTMLInputElement>("#scope-locked")?.addEventListener("change", (event) => {
+    const lockedNow = (event.target as HTMLInputElement).checked;
+    document.querySelectorAll<HTMLSelectElement | HTMLButtonElement>("[data-scope-unit], #clone-rota-scope")
+      .forEach((control) => { control.disabled = lockedNow; });
+  });
 }
 
 function latestTemplateDutyKeys(template: RotaTemplateMonth): Set<string> {
@@ -5173,7 +5532,7 @@ function renderSlotAssignments(slot: RotaTemplateMonth["slots"][number]): string
           </div>
           <span class="assignment-source-pill">${escapeHtml(assignmentSourceLabel(assignment.source))}</span>
           ${assignment.override_reason ? `<small>Override: ${escapeHtml(assignment.override_reason)}</small>` : ""}
-          <button class="icon-button" type="button" data-clear-rota-assignment="${escapeHtml(assignment.id)}">Clear</button>
+          <button class="danger-button btn-sm" type="button" data-clear-rota-assignment="${escapeHtml(assignment.id)}">Clear assignment…</button>
         </div>
       `).join("")}
     </div>
@@ -5517,7 +5876,7 @@ function renderAllocationEventRows(stats: RotaTemplateAllocationStatistics): str
   return stats.blocked_or_skipped_events.slice(0, 100).map((event) => `
     <tr>
       <td>${escapeHtml(event.duty_date ?? "")}</td>
-      <td>${escapeHtml(event.unit_name || event.unit_code || "Unresolved")}</td>
+      <td>${escapeHtml(event.unit_name || codeLabel(event.unit_code, "Unresolved"))}</td>
       <td>${escapeHtml(leaveTypeLabel(event.duty_type ?? ""))}</td>
       <td>${escapeHtml(leaveTypeLabel(event.action))}</td>
       <td>${escapeHtml(event.reason)}</td>
@@ -5619,13 +5978,13 @@ function renderRotaTemplateOverviewControls(): string {
     { key: "detailed", label: "Detailed" },
   ];
   return `
-    <div class="segmented rota-overview-toggle" role="tablist" aria-label="Rota template overview mode">
+    <div class="segmented rota-overview-toggle" role="group" aria-label="Rota template overview mode">
       ${modes.map((mode) => `
         <button
           type="button"
           class="${rotaTemplateOverviewMode === mode.key ? "selected" : ""}"
           data-rota-overview-mode="${mode.key}"
-          aria-selected="${rotaTemplateOverviewMode === mode.key ? "true" : "false"}"
+          aria-pressed="${rotaTemplateOverviewMode === mode.key ? "true" : "false"}"
         >${escapeHtml(mode.label)}</button>
       `).join("")}
     </div>
@@ -5979,7 +6338,7 @@ function renderUnitDaySafetyRows(safety: RotaSafetyMonth): string {
   return safety.unit_day_safety.slice(0, 100).map((row) => `
     <tr>
       <td>${escapeHtml(row.date)}</td>
-      <td><strong>${escapeHtml(row.unit_name ?? "Unassigned unit")}</strong><small>${escapeHtml(row.unit_code ?? "")}</small></td>
+      <td><strong>${escapeHtml(row.unit_name ?? "Unassigned unit")}</strong></td>
       <td>${row.safety_status === "safe" ? `<span class="status ok">${escapeHtml(safetyStatusLabel(row.safety_status))}</span>` : reviewButton({
         title: "Resolve Unit-Day Safety",
         status: safetyStatusLabel(row.safety_status),
@@ -6030,7 +6389,7 @@ function renderAutoFillEvents(run: NonNullable<RotaAutoFillMonth["latest_run"]>)
   return run.events.slice(0, 100).map((event) => `
     <tr>
       <td>${escapeHtml(event.duty_date ?? "")}</td>
-      <td><strong>${escapeHtml(event.unit_name ?? "Unit")}</strong><small>${escapeHtml(event.unit_code ?? "")}</small></td>
+      <td><strong>${escapeHtml(event.unit_name ?? "Unit")}</strong></td>
       <td>${escapeHtml(event.duty_type ? leaveTypeLabel(event.duty_type) : "")}</td>
       <td>${escapeHtml(event.person_name ?? "")}</td>
       <td><span class="status ${event.severity === "error" ? "error" : event.severity === "warning" ? "warning" : "ok"}">${escapeHtml(autoFillActionLabel(event.action))}</span></td>
@@ -6069,29 +6428,49 @@ function renderAutoFillReport(autoFill: RotaAutoFillMonth | null): string {
 
 function renderRotaTemplateRecovery(message: string): string {
   return `
-    <section class="panel action-panel">
-      <div>
-        <h3>Rota Template Recovery</h3>
-        <p>${escapeHtml(message)}</p>
+    ${nextStep({
+      tone: "warning",
+      title: "The rota template is taking too long to load",
+      body: `${message} Try again, or turn on fast load to open the basic template first.`,
+      actionHtml: `<button type="button" class="primary" data-view-shortcut="rota-template">Try again</button>`,
+    })}
+    <section class="page-toolbar" aria-label="Recovery actions">
+      <label class="checkbox-line toolbar-toggle"><input id="rota-template-fast-mode" type="checkbox" ${rotaTemplateFastMode ? "checked" : ""} /> Fast load</label>
+      <div class="page-toolbar__actions">
+        <details class="row-menu">
+          <summary class="icon-button" aria-label="Clear duties">Clear</summary>
+          <div class="row-menu__list" role="menu">
+            <button type="button" role="menuitem" id="clear-rota-template-cache">Clear draft duties…</button>
+            <button type="button" role="menuitem" class="row-menu__danger" id="clear-rota-template-with-assignments">Clear duties and assignments…</button>
+          </div>
+        </details>
       </div>
-      <div class="topbar-actions">
-        <label for="rota-template-month" class="visually-hidden">Rota template month</label>
-        <input id="rota-template-month" type="month" value="${rotaTemplateMonth}" />
-        <button class="icon-button" type="button" id="clear-rota-template-cache">Clear Draft Duties</button>
-        <button class="icon-button danger-button" type="button" id="clear-rota-template-with-assignments">Clear Duties + Assignments</button>
-      </div>
-    </section>
-    <section class="panel quality-panel">
-      <label class="checkbox-line"><input id="rota-template-fast-mode" type="checkbox" ${rotaTemplateFastMode ? "checked" : ""} /> Fast load mode</label>
-      <p>Fast load opens only the basic template data first, so a slow safety or suggestion check cannot keep this section stuck.</p>
     </section>
   `;
 }
 
+function templateNextStep(locked: boolean, totalSlots: number, openSlots: number, blocked: number, month: string): string {
+  const monthName = formatMonth(month);
+  if (!locked) {
+    return nextStep({ tone: "warning", title: `Lock the ${monthName} unit scope first`, body: "The template is generated from the units chosen and locked in Rota Setup.", actionHtml: `<button type="button" class="primary" data-view-shortcut="rota-setup">Go to Rota Setup</button>` });
+  }
+  if (!totalSlots) {
+    return nextStep({ tone: "info", title: `Generate the empty ${monthName} template`, body: "Check the generation settings below if needed, then choose Generate template." });
+  }
+  if (blocked) {
+    return nextStep({ tone: "danger", title: `${blocked} ${blocked === 1 ? "slot cannot" : "slots cannot"} be assigned safely`, body: "Open the highlighted days in the calendar to see the leave, rest or staffing reason." });
+  }
+  if (openSlots) {
+    return nextStep({ tone: "warning", title: `${openSlots} open ${openSlots === 1 ? "slot needs" : "slots need"} a person`, body: "Use Generate & review draft or the Intelligent generator, or assign from the day view." });
+  }
+  return nextStep({ tone: "success", title: "Every slot has a person", body: "Review warnings, overrides and workload next.", actionHtml: `<button type="button" class="primary" data-view-shortcut="rota-review">Go to Rota Review</button>` });
+}
+
 async function renderRotaTemplate() {
-  setHeader("Rota Template", "Leave-aware empty slot generation and staffing safety");
+  const current = renderTicket();
+  setHeader("Rota Template", "Step 2 · Generate and fill the month");
   if (!viewRoot) return;
-  viewRoot.innerHTML = `<section class="panel"><h3>Loading rota template...</h3></section>`;
+  viewRoot.innerHTML = pageSkeleton("rota template");
   try {
     const templateResult = await withTimeout(getRotaTemplateMonth(rotaTemplateMonth), 12000, "Rota template");
     rotaTemplate = templateResult;
@@ -6131,6 +6510,7 @@ async function renderRotaTemplate() {
     }
   } catch (error) {
     showToast(error instanceof Error ? error.message : "Failed to load rota template", "error");
+    if (!current()) return;
     viewRoot.innerHTML = renderRotaTemplateRecovery(
       error instanceof Error ? error.message : "Unable to load leave-aware template and safety controls.",
     );
@@ -6157,59 +6537,58 @@ async function renderRotaTemplate() {
   const forcedReviewCount = template.summary.forced_review_slots ?? Number(latest?.summary?.forced_review_slots ?? 0);
   const selectedFairnessPolicy = String(latest?.summary?.allocation_fairness_policy ?? "hybrid");
 
+  if (!current()) return;
   viewRoot.innerHTML = `
+    ${templateNextStep(locked, template.summary.total_slots, openSlotCount, safety.summary.hard_blocked_slots, rotaTemplateMonth)}
     <form id="rota-template-form">
-      <section class="panel action-panel">
-        <div>
-          <h3>${escapeHtml(template.rota_period.name)}</h3>
-          <p>${template.rota_period.starts_on} to ${template.rota_period.ends_on}. ${template.scope.included_units.length} included unit(s): ${escapeHtml(includedUnitNames || "none")}.</p>
-        </div>
-        <div class="topbar-actions">
-          <label for="rota-template-month" class="visually-hidden">Rota template month</label>
-          <input id="rota-template-month" type="month" value="${rotaTemplateMonth}" />
-          <button class="primary" type="submit" id="generate-rota-template" ${locked ? "" : "disabled"}>Generate Template</button>
-          <button class="icon-button" type="button" id="clear-rota-template-cache" ${template.slots.length ? "" : "disabled"}>Clear Draft Duties</button>
-          <button class="icon-button danger-button" type="button" id="clear-rota-template-with-assignments" ${assignedSlotCount ? "" : "disabled"}>Clear Duties + Assignments</button>
+      <section class="page-toolbar" aria-label="Rota template actions">
+        <p class="page-toolbar__context"><strong>${escapeHtml(formatMonth(rotaTemplateMonth))}</strong> · ${template.scope.included_units.length} ${template.scope.included_units.length === 1 ? "unit" : "units"}${includedUnitNames ? `: ${escapeHtml(includedUnitNames)}` : ""}</p>
+        <div class="page-toolbar__actions">
+          <button class="primary" type="submit" id="generate-rota-template" ${locked ? "" : "disabled"}>${template.slots.length ? "Regenerate template" : "Generate template"}</button>
           <button class="icon-button" type="button" id="run-safe-auto-fill" ${openSlotCount ? "" : "disabled"}>Generate &amp; review draft</button>
-          <button class="icon-button primary" type="button" id="run-intelligent-rota">Intelligent generator</button>
-          <button class="icon-button" type="button" id="download-eagle-eye-export" ${template.slots.length ? "" : "disabled"}>Export Eagle Eye</button>
-          <button class="icon-button" type="button" id="download-call-wise-template-export" ${template.slots.length ? "" : "disabled"}>Export Call-Wise</button>
+          <button class="icon-button" type="button" id="run-intelligent-rota">Intelligent generator</button>
+          <details class="row-menu">
+            <summary class="icon-button" aria-label="Export rota">Export</summary>
+            <div class="row-menu__list" role="menu">
+              <button type="button" role="menuitem" id="download-eagle-eye-export" ${template.slots.length ? "" : "disabled"}>Eagle Eye workbook</button>
+              <button type="button" role="menuitem" id="download-call-wise-template-export" ${template.slots.length ? "" : "disabled"}>Call-wise workbook</button>
+            </div>
+          </details>
+          <details class="row-menu">
+            <summary class="icon-button" aria-label="Clear duties">Clear</summary>
+            <div class="row-menu__list" role="menu">
+              <button type="button" role="menuitem" id="clear-rota-template-cache" ${template.slots.length ? "" : "disabled"}>Clear draft duties…</button>
+              <button type="button" role="menuitem" class="row-menu__danger" id="clear-rota-template-with-assignments" ${assignedSlotCount ? "" : "disabled"}>Clear duties and assignments…</button>
+            </div>
+          </details>
         </div>
-      </section>
-      <section class="panel quality-panel">
-        <label class="checkbox-line"><input id="rota-template-fast-mode" type="checkbox" ${rotaTemplateFastMode ? "checked" : ""} /> Fast load mode</label>
-        <p>Skips candidate suggestions and auto-fill history while opening this screen. Use this if the template page feels stuck.</p>
-      </section>
-      <section class="panel quality-panel">
-        <h3>Safe Auto-Fill Rule</h3>
-        <p>Strict mode is always used: a slot is filled only when the required call level is known and the selected person has the same normalized call level. Ambiguous call slots are left open for board review.</p>
       </section>
       <section class="summary-grid four-col">
         ${metricCard(template.summary.total_slots, "Template slots")}
-        ${metricCard(template.summary.ready_slots, "Ready slots")}
-        ${metricCard(template.summary.needs_review_slots, "Need review")}
-        ${metricCard(forcedReviewCount, "Forced review")}
+        ${metricCard(`${assignedSlotCount}`, "Assigned slots")}
+        ${metricCard(openSlotCount, "Open slots", undefined, template.summary.total_slots && openSlotCount ? "is-warn" : template.summary.total_slots ? "is-good" : "")}
+        ${metricCard(safety.summary.hard_blocked_slots, "Cannot assign", undefined, safety.summary.hard_blocked_slots ? "is-alert" : "")}
       </section>
-      <section class="summary-grid four-col">
-        ${metricCard(safety.summary.total_slots, "Safety checked")}
-        ${metricCard(safety.summary.safe_slots, "Safe slots", undefined, "metric-primary")}
-        ${metricCard(safety.summary.needs_review_slots, "Needs review", undefined, "metric-weekend")}
-        ${metricCard(safety.summary.hard_blocked_slots, "Cannot assign")}
-      </section>
-      <section class="summary-grid four-col">
-        ${metricCard(minimumAvailable, "Minimum available")}
-        ${metricCard(safety.unit_day_safety.length, "Unit-day checks", "Distinct unit and date combinations checked for staffing safety.")}
-        ${metricCard(assignedSlotCount, "Assigned slots")}
-        ${metricCard(openSlotCount, "Open slots")}
-      </section>
-      <section class="summary-grid four-col">
-        ${metricCard(candidates.summary.slots_with_candidates, "Suggestion slots")}
-        ${metricCard(candidates.summary.eligible_candidates, "Safe suggestions", undefined, "metric-primary")}
-        ${metricCard(candidates.summary.needs_review_candidates, "Review suggestions", undefined, "metric-weekend")}
-        ${metricCard(candidates.summary.blocked_candidates, "Blocked suggestions")}
-      </section>
-      ${rotaTemplateFastMode ? `<section class="panel quality-panel"><h3>Fast Load Active</h3><p>Suggestion cards and auto-fill history are temporarily skipped. Turn off fast load to bring them back.</p></section>` : ""}
-      ${locked ? "" : `<section class="panel quality-panel"><h3>Scope Not Locked</h3><p>Lock the monthly unit scope in Rota Setup before generating the empty template.</p></section>`}
+      <details class="panel disclosure-panel template-figures">
+        <summary>All safety and suggestion figures</summary>
+        <div class="summary-grid four-col">
+          ${metricCard(template.summary.ready_slots, "Ready slots")}
+          ${metricCard(template.summary.needs_review_slots, "Need review")}
+          ${metricCard(forcedReviewCount, "Forced review")}
+          ${metricCard(safety.summary.total_slots, "Safety checked")}
+          ${metricCard(safety.summary.safe_slots, "Safe slots")}
+          ${metricCard(safety.summary.needs_review_slots, "Needs review")}
+          ${metricCard(minimumAvailable, "Minimum available")}
+          ${metricCard(safety.unit_day_safety.length, "Unit-day checks", "Distinct unit and date combinations checked for staffing safety.")}
+          ${metricCard(candidates.summary.slots_with_candidates, "Suggestion slots")}
+          ${metricCard(candidates.summary.eligible_candidates, "Safe suggestions")}
+          ${metricCard(candidates.summary.needs_review_candidates, "Review suggestions")}
+          ${metricCard(candidates.summary.blocked_candidates, "Blocked suggestions")}
+        </div>
+        <p class="template-figures__rule"><strong>Safe auto-fill rule.</strong> A slot is filled only when its call level is known and the chosen person has the same call level. Ambiguous call slots are left open for board review.</p>
+        <label class="checkbox-line"><input id="rota-template-fast-mode" type="checkbox" ${rotaTemplateFastMode ? "checked" : ""} /> Fast load: skip suggestions and auto-fill history when opening this page</label>
+      </details>
+      ${rotaTemplateFastMode ? `<p class="inline-note">${badge("Fast load on", "info")} Suggestions and auto-fill history are skipped. Turn it off under “All safety and suggestion figures”.</p>` : ""}
       <details class="panel template-settings-panel">
         <summary>
           <div>
@@ -6321,14 +6700,13 @@ function renderRotaReviewFilters(review: RotaReviewMonth): string {
     { key: "override", label: "Overrides" },
   ];
   return `
-    <div class="segmented rota-review-filters" role="tablist" aria-label="Rota review filters">
+    <div class="segmented rota-review-filters" role="group" aria-label="Rota review filters">
       ${filters.map((filter) => `
         <button
           type="button"
           class="${rotaReviewFilter === filter.key ? "active" : ""}"
           data-rota-review-filter="${filter.key}"
-          role="tab"
-          aria-selected="${rotaReviewFilter === filter.key ? "true" : "false"}"
+          aria-pressed="${rotaReviewFilter === filter.key ? "true" : "false"}"
         >
           ${escapeHtml(filter.label)}
           <span>${reviewFilterCount(review, filter.key)}</span>
@@ -6366,8 +6744,8 @@ function renderReviewItemRows(review: RotaReviewMonth, items: RotaReviewMonth["r
     const action = item.recommended_action || "Review this rota slot.";
     return `
       <tr>
-        <td>${escapeHtml(item.slot.duty_date)}</td>
-        <td><strong>${escapeHtml(displayRotaUnitLabel(item.slot))}</strong><small>${escapeHtml(item.slot.unit_code ?? "")}</small></td>
+        <td class="nowrap">${escapeHtml(formatDate(item.slot.duty_date).replace(/ \d{4}$/, ""))}</td>
+        <td><strong>${escapeHtml(displayRotaUnitLabel(item.slot))}</strong></td>
         <td>${escapeHtml(leaveTypeLabel(item.slot.duty_type))}</td>
         <td>${item.accepted ? `<span class="status ok">Accepted</span>` : reviewButton({
           title: "Resolve Rota Review Item",
@@ -6412,15 +6790,13 @@ function renderReviewItemsTable(
 ): string {
   return `
     <section class="panel table-panel rota-review-section">
-      <header class="section-heading-row">
-        <div>
-          <h3>${escapeHtml(title)}</h3>
-          <p>${items.length} item${items.length === 1 ? "" : "s"}</p>
-        </div>
-      </header>
+      <div class="table-caption">
+        <h3>${escapeHtml(title)}</h3>
+        <span class="table-caption__count">${items.length} item${items.length === 1 ? "" : "s"}</span>
+      </div>
       <table>
-        <thead><tr><th>Date</th><th>Unit</th><th>Duty</th><th>Status</th><th>Reason</th><th>Assigned</th><th>Suggestions</th><th>Action</th></tr></thead>
-        <tbody>${renderReviewItemRows(review, items) || `<tr><td colspan="8" class="empty">${escapeHtml(emptyText)}</td></tr>`}</tbody>
+        <thead><tr><th scope="col">Date</th><th scope="col">Unit</th><th scope="col">Duty</th><th scope="col">Status</th><th scope="col">Reason</th><th scope="col">Assigned</th><th scope="col">Suggestions</th><th scope="col">Action</th></tr></thead>
+        <tbody>${renderReviewItemRows(review, items) || `<tr><td colspan="8">${emptyState({ title: emptyText })}</td></tr>`}</tbody>
       </table>
     </section>
   `;
@@ -6493,7 +6869,7 @@ function renderRotaReviewSlotModal(slotId: string): string {
         <header class="person-modal-header">
           <div>
             <h3 id="review-slot-title">${escapeHtml(leaveTypeLabel(item.slot.duty_type))}</h3>
-            <p>${escapeHtml(item.slot.duty_date)} / ${escapeHtml(displayRotaUnitLabel(item.slot))}</p>
+            <p>${escapeHtml(formatDate(item.slot.duty_date))} · ${escapeHtml(displayRotaUnitLabel(item.slot))}</p>
           </div>
           <button class="modal-close" data-close-review-slot-modal aria-label="Close">x</button>
         </header>
@@ -6744,10 +7120,31 @@ function renderExchangeRows(review: RotaReviewMonth): string {
   }).join("");
 }
 
+function reviewNextStep(summary: RotaReviewMonth["summary"], month: string): string {
+  const monthName = formatMonth(month);
+  const n = (value: unknown) => Number(value ?? 0);
+  if (!n(summary.total_slots)) {
+    return nextStep({ tone: "info", title: `No rota slots for ${monthName} yet`, body: "Generate and fill the template first.", actionHtml: `<button type="button" class="primary" data-view-shortcut="rota-template">Go to Rota Template</button>` });
+  }
+  if (n(summary.hard_blocked_items)) {
+    return nextStep({ tone: "danger", title: `${n(summary.hard_blocked_items)} hard ${n(summary.hard_blocked_items) === 1 ? "blocker" : "blockers"} must be fixed`, body: "These assignments break leave, rest or eligibility rules. Open each item under Hard blockers below." });
+  }
+  const remaining = [
+    n(summary.open_slots) ? `${n(summary.open_slots)} open ${n(summary.open_slots) === 1 ? "slot" : "slots"}` : "",
+    n(summary.pending_exchange_requests) ? `${n(summary.pending_exchange_requests)} pending ${n(summary.pending_exchange_requests) === 1 ? "exchange" : "exchanges"}` : "",
+    n(summary.unresolved_warning_items) ? `${n(summary.unresolved_warning_items)} unaccepted ${n(summary.unresolved_warning_items) === 1 ? "warning" : "warnings"}` : "",
+  ].filter(Boolean);
+  if (remaining.length) {
+    return nextStep({ tone: "warning", title: `Before publishing: ${remaining.join(", ")}`, body: "Work through the queue below; filters narrow it to one kind of item." });
+  }
+  return nextStep({ tone: "success", title: `${monthName} is ready to publish`, body: "No blockers, open slots or pending exchanges remain.", actionHtml: `<button type="button" class="primary" data-view-shortcut="rota-publish">Go to Publish</button>` });
+}
+
 async function renderRotaReview() {
-  setHeader("Rota Review", "Warnings, overrides, workload, and exchange approvals");
+  const current = renderTicket();
+  setHeader("Rota Review", "Step 3 · Resolve warnings and approve changes");
   if (!viewRoot) return;
-  viewRoot.innerHTML = `<section class="panel"><h3>Loading rota review...</h3></section>`;
+  viewRoot.innerHTML = pageSkeleton("rota review");
   try {
     [rotaReview, members] = await Promise.all([
       withTimeout(getRotaReviewMonth(rotaReviewMonth), 25000, "Rota review"),
@@ -6755,6 +7152,7 @@ async function renderRotaReview() {
     ]);
   } catch (error) {
     showToast(error instanceof Error ? error.message : "Failed to load rota review", "error");
+    if (!current()) return;
     viewRoot.innerHTML = `<section class="panel"><h3>Rota review unavailable</h3><p>Unable to load review dashboard and exchange controls.</p></section>`;
     return;
   }
@@ -6766,38 +7164,37 @@ async function renderRotaReview() {
     const openItems = reviewItemsByFilter(review, "open").filter((item) => item.severity !== "error");
     const overrideItems = reviewItemsByFilter(review, "override").filter((item) => item.severity !== "error");
     const warningItems = reviewItemsByFilter(review, "warning");
+    if (!current()) return;
     viewRoot.innerHTML = `
-      <section class="panel action-panel">
-        <div>
-          <h3>${escapeHtml(review.rota_period.name)}</h3>
-          <p>${review.rota_period.starts_on} to ${review.rota_period.ends_on}. Review open slots, overrides, workload, and exchange requests before final publish.</p>
-        </div>
-        <div class="topbar-actions">
-          <label for="rota-review-month" class="visually-hidden">Rota review month</label>
-          <input id="rota-review-month" type="month" value="${rotaReviewMonth}" />
-          <button class="icon-button" type="button" data-view-shortcut="rota-template">Open Template</button>
+      ${reviewNextStep(summary, rotaReviewMonth)}
+      <section class="page-toolbar" aria-label="Review actions">
+        <p class="page-toolbar__context"><strong>${escapeHtml(formatMonth(rotaReviewMonth))}</strong> · ${summary.assigned_slots ?? 0} of ${summary.total_slots ?? 0} slots assigned · ${(review.person_workload ?? []).length} people on duty</p>
+        <div class="page-toolbar__actions">
+          <button class="icon-button" type="button" data-view-shortcut="rota-template">Open template</button>
+          <button class="icon-button" type="button" data-view-shortcut="rota-publish">Go to Publish</button>
         </div>
       </section>
       <section class="summary-grid four-col">
-        ${metricCard(summary.review_items ?? 0, "Review items", undefined, "metric-weekend")}
-        ${metricCard(summary.hard_blocked_items ?? 0, "Hard-blocked items")}
-        ${metricCard(summary.unresolved_warning_items ?? 0, "Unaccepted warnings")}
-        ${metricCard(summary.accepted_review_items ?? 0, "Accepted warnings", undefined, "metric-primary")}
+        ${metricCard(summary.hard_blocked_items ?? 0, "Hard-blocked items", undefined, summary.hard_blocked_items ? "is-alert" : "")}
+        ${metricCard(summary.open_slots ?? 0, "Open slots", undefined, summary.open_slots ? "is-warn" : "")}
+        ${metricCard(summary.unresolved_warning_items ?? 0, "Unaccepted warnings", undefined, summary.unresolved_warning_items ? "is-warn" : "")}
+        ${metricCard(summary.pending_exchange_requests ?? 0, "Pending exchanges", undefined, summary.pending_exchange_requests ? "is-warn" : "")}
       </section>
-      <section class="summary-grid four-col">
-        ${metricCard(summary.override_assignments ?? 0, "Override assignments")}
-        ${metricCard(summary.pending_exchange_requests ?? 0, "Pending exchanges")}
-        ${metricCard(summary.total_slots ?? 0, "Template slots")}
-        ${metricCard(summary.assigned_slots ?? 0, "Assigned slots", undefined, "metric-primary")}
-        ${metricCard(summary.open_slots ?? 0, "Open slots")}
-        ${metricCard((review.person_workload ?? []).length, "People assigned")}
-      </section>
-      <section class="summary-grid four-col">
-        ${metricCard(summary.fairness_call_levels ?? 0, "Call groups checked")}
-        ${metricCard(summary.over_assigned_people ?? 0, "Over-assigned flags", undefined, "metric-weekend")}
-        ${metricCard(summary.under_assigned_people ?? 0, "Under-assigned flags")}
-        ${metricCard((review.call_level_fairness ?? []).reduce((total, row) => total + row.weekend_24hr, 0), "Weekend 24hr load")}
-      </section>
+      <details class="panel disclosure-panel template-figures">
+        <summary>Workload and fairness figures</summary>
+        <div class="summary-grid four-col">
+          ${metricCard(summary.review_items ?? 0, "Review items")}
+          ${metricCard(summary.accepted_review_items ?? 0, "Accepted warnings")}
+          ${metricCard(summary.override_assignments ?? 0, "Override assignments")}
+          ${metricCard(summary.total_slots ?? 0, "Template slots")}
+          ${metricCard(summary.assigned_slots ?? 0, "Assigned slots")}
+          ${metricCard((review.person_workload ?? []).length, "People assigned")}
+          ${metricCard(summary.fairness_call_levels ?? 0, "Call groups checked")}
+          ${metricCard(summary.over_assigned_people ?? 0, "Over-assigned flags")}
+          ${metricCard(summary.under_assigned_people ?? 0, "Under-assigned flags")}
+          ${metricCard((review.call_level_fairness ?? []).reduce((total, row) => total + row.weekend_24hr, 0), "Weekend 24hr load")}
+        </div>
+      </details>
       <section class="panel rota-review-control-panel">
         <div>
           <h3>Review Queue</h3>
@@ -6847,6 +7244,7 @@ async function renderRotaReview() {
     `;
   } catch (error) {
     showToast(error instanceof Error ? error.message : "Failed to render rota review", "error");
+    if (!current()) return;
     viewRoot.innerHTML = `<section class="panel"><h3>Rota review display error</h3><p>The review data loaded, but one row could not be displayed safely.</p></section>`;
   }
 }
@@ -6900,14 +7298,41 @@ function renderLatestPublish(publish: RotaPublishMonth): string {
   `;
 }
 
+const PUBLISH_CHECK_FIX: Record<string, { view: string; label: string }> = {
+  "Monthly unit scope": { view: "rota-setup", label: "Open Rota Setup" },
+  "Generated slots": { view: "rota-template", label: "Open Rota Template" },
+  "Open slots": { view: "rota-template", label: "Open Rota Template" },
+  "Hard safety blockers": { view: "rota-review", label: "Open Rota Review" },
+  "Exchange requests": { view: "rota-review", label: "Open Rota Review" },
+};
+const PUBLISH_CHECK_ORDER = Object.keys(PUBLISH_CHECK_FIX);
+
+function publishChecklistRows(publish: RotaPublishMonth): string {
+  const items = [
+    ...publish.blockers.map((item) => ({ ...item, ok: false })),
+    ...publish.checks.map((item) => ({ ...item, ok: true })),
+  ].sort((a, b) => PUBLISH_CHECK_ORDER.indexOf(a.title) - PUBLISH_CHECK_ORDER.indexOf(b.title));
+  return items.map((item) => {
+    const fix = PUBLISH_CHECK_FIX[item.title];
+    return `<li class="publish-check ${item.ok ? "is-clear" : "is-blocked"}">
+      <span class="publish-check__icon" aria-hidden="true">${item.ok ? "✓" : "✕"}</span>
+      <div><strong>${escapeHtml(item.title)}</strong><p>${escapeHtml(item.detail)}</p></div>
+      <span class="visually-hidden">${item.ok ? "Done" : "Blocking"}</span>
+      ${!item.ok && fix ? `<button type="button" class="icon-button btn-sm" data-view-shortcut="${fix.view}">${escapeHtml(fix.label)}</button>` : ""}
+    </li>`;
+  }).join("");
+}
+
 async function renderRotaPublish() {
-  setHeader("Publish & Export", "Final checklist, board approval, and Excel export");
+  const current = renderTicket();
+  setHeader("Publish & Export", "Step 4 · Approve and export the final rota");
   if (!viewRoot) return;
-  viewRoot.innerHTML = `<section class="panel"><h3>Loading publish checklist...</h3></section>`;
+  viewRoot.innerHTML = pageSkeleton("publish checklist");
   try {
     rotaPublish = await getRotaPublishMonth(rotaPublishMonth);
   } catch (error) {
     showToast(error instanceof Error ? error.message : "Failed to load publish checklist", "error");
+    if (!current()) return;
     viewRoot.innerHTML = `<section class="panel"><h3>Publish unavailable</h3><p>Unable to load final checklist and export controls.</p></section>`;
     return;
   }
@@ -6915,63 +7340,55 @@ async function renderRotaPublish() {
   const canApprove = currentUser?.permissions
     ? currentUser.permissions.includes("publish_rota")
     : ["rota_board_member", "hod", "superadmin"].includes(currentUser?.role ?? "");
+  if (!current()) return;
   viewRoot.innerHTML = `
-    <section class="panel action-panel">
-      <div>
-        <h3>${escapeHtml(publish.rota_period.name)}</h3>
-        <p>${publish.rota_period.starts_on} to ${publish.rota_period.ends_on}. Rule version: ${escapeHtml(publish.rule_version.name)}.</p>
-      </div>
-      <div class="topbar-actions">
-        <label for="rota-publish-month" class="visually-hidden">Publish month</label>
-        <input id="rota-publish-month" type="month" value="${rotaPublishMonth}" />
-        <button class="icon-button" type="button" data-view-shortcut="rota-review">Open Review</button>
+    ${publish.latest_publish
+      ? nextStep({ tone: "success", title: `${formatMonth(rotaPublishMonth)} is published`, body: "Download the final workbook below. Any later change needs a new approval.", actionHtml: `<a class="primary" href="#publish-export">Go to export</a>` })
+      : publish.can_publish
+        ? nextStep({ tone: "success", title: "Ready for board approval", body: publish.warnings.length ? "Confirm the remaining warnings, add an approval note, then publish." : "Add an approval note, then publish." })
+        : nextStep({ tone: "danger", title: `${publish.blockers.length} ${publish.blockers.length === 1 ? "item blocks" : "items block"} publishing`, body: "Each blocker below links to the page where it is fixed." })}
+    <section class="page-toolbar" aria-label="Publish context">
+      <p class="page-toolbar__context"><strong>${escapeHtml(formatMonth(rotaPublishMonth))}</strong> · ${escapeHtml(formatDateRange(publish.rota_period.starts_on, publish.rota_period.ends_on))} · Rules: ${escapeHtml(publish.rule_version.name)}</p>
+      <div class="page-toolbar__actions">
+        <button class="icon-button" type="button" data-view-shortcut="rota-review">Open review</button>
       </div>
     </section>
     <section class="summary-grid four-col">
-      ${metricCard(publish.summary.total_slots, "Template slots")}
-      ${metricCard(publish.summary.assigned_slots, "Assigned slots", undefined, "metric-primary")}
-      ${metricCard(publish.summary.open_slots, "Open slots")}
-      ${metricCard(publish.blockers.length, "Checklist blockers")}
+      ${metricCard(`${publish.summary.assigned_slots}/${publish.summary.total_slots}`, "Assigned slots")}
+      ${metricCard(publish.summary.open_slots, "Open slots", undefined, publish.summary.open_slots ? "is-warn" : "")}
+      ${metricCard(publish.blockers.length, "Checklist blockers", undefined, publish.blockers.length ? "is-alert" : "is-good")}
+      ${metricCard(publish.warnings.length, "Checklist warnings", undefined, publish.warnings.length ? "is-warn" : "")}
     </section>
-    <section class="summary-grid four-col">
-      ${metricCard(publish.summary.review_items, "Review items", undefined, "metric-weekend")}
-      ${metricCard(publish.summary.hard_blocked_items, "Hard-blocked items")}
-      ${metricCard(publish.summary.override_assignments, "Override assignments")}
-      ${metricCard(publish.warnings.length, "Checklist warnings")}
+    <section class="panel" aria-labelledby="publish-checklist-title">
+      <h3 id="publish-checklist-title">Publish checklist</h3>
+      <ol class="publish-checklist">
+        ${publishChecklistRows(publish)}
+      </ol>
+      ${publish.warnings.length ? `<h4 class="publish-checklist__sub">Warnings to confirm</h4><ul class="publish-checklist">${publish.warnings.map((item) => `
+        <li class="publish-check is-warning">
+          <span class="publish-check__icon" aria-hidden="true">!</span>
+          <div><strong>${escapeHtml(item.title)}</strong><p>${escapeHtml(item.detail)}</p></div>
+          <span class="visually-hidden">Warning</span>
+        </li>`).join("")}</ul>` : ""}
     </section>
-    <section class="panel publish-status-panel ${publish.can_publish ? "quality-ok" : "quality-warning"}">
-      <h3>${publish.can_publish ? "Ready For Board Approval" : "Not Ready To Publish"}</h3>
-      <p>${publish.can_publish ? "No blocking checklist items remain. Confirm warnings if present, then publish." : "Resolve every blocker before final approval can be recorded."}</p>
-    </section>
-    <section class="analytics-grid">
-      <article class="panel">
-        <h3>Clear Checks</h3>
-        ${renderChecklistCards(publish.checks, "No clear checks yet.")}
-      </article>
-      <article class="panel">
-        <h3>Blockers</h3>
-        ${renderChecklistCards(publish.blockers, "No blockers.")}
-      </article>
-    </section>
-    <section class="panel">
-      <h3>Warnings To Confirm</h3>
-      ${renderChecklistCards(publish.warnings, "No remaining warnings need confirmation.")}
-    </section>
-    <section class="panel">
-      <h3>Publish Approval</h3>
-      ${!canApprove ? '<p>You can review this checklist and download published exports. Final approval requires a rota board member, HOD or superadmin account.</p>' : ""}
+    <section class="panel" aria-labelledby="publish-approval-title">
+      <h3 id="publish-approval-title">Board approval</h3>
+      ${!canApprove ? `<p class="inline-note">${badge("View only", "neutral")} Final approval needs a rota board member, HOD or superadmin account.</p>` : ""}
       <form class="publish-form" id="rota-publish-form">
         <label class="checkbox-line">
           <input id="publish-confirm-warnings" type="checkbox" ${publish.requires_warning_confirmation ? "" : "checked"} ${canApprove ? "" : "disabled"} />
-          Confirm remaining warnings and override assignments
+          I confirm the remaining warnings and override assignments
         </label>
-        <label>Approval note<textarea id="publish-approval-note" rows="3" placeholder="Record who approved this rota and any board note" ${canApprove ? "" : "disabled"}></textarea></label>
-        <button class="primary" type="submit" ${publish.can_publish && canApprove ? "" : "disabled"}>Publish Final Rota</button>
+        <label>Approval note<textarea id="publish-approval-note" rows="3" placeholder="Who approved this rota, and any board note" ${canApprove ? "" : "disabled"}></textarea></label>
+        <div class="publish-form__actions">
+          <button class="primary" type="submit" ${publish.can_publish && canApprove ? "" : "disabled"} aria-describedby="publish-disabled-reason">Publish final rota</button>
+          <p id="publish-disabled-reason" class="muted-text">${!publish.can_publish ? "Resolve the checklist blockers above first." : !canApprove ? "Your account can view but not approve." : ""}</p>
+        </div>
       </form>
     </section>
-    <section class="panel action-panel">
+    <section class="panel action-panel" id="publish-export">
       <div>
-        <h3>Final Excel Export</h3>
+        <h3>Final Excel export</h3>
         ${renderLatestPublish(publish)}
       </div>
       <button class="primary" type="button" id="download-rota-export" ${publish.latest_publish ? "" : "disabled"}>Download Excel</button>
@@ -6981,6 +7398,7 @@ async function renderRotaPublish() {
 
 // KNOWN ISSUE (handbook S5): username / display_name are interpolated without escapeHtml().
 async function renderAccounts() {
+  const current = renderTicket();
   setHeader("Accounts", "Rota team login accounts");
   if (!viewRoot) return;
   if (!currentUser || !["computer_admin", "superadmin"].includes(currentUser.role)) {
@@ -6991,6 +7409,7 @@ async function renderAccounts() {
     accounts = await listUserAccounts();
   } catch (error) {
     showToast(error instanceof Error ? error.message : "Failed to load accounts", "error");
+    if (!current()) return;
     viewRoot.innerHTML = `<section class="panel"><h3>Error</h3><p>Unable to load accounts.</p></section>`;
     return;
   }
@@ -6999,9 +7418,10 @@ async function renderAccounts() {
       <div class="data-card-row"><span class="data-card-label">Username</span><span class="data-card-value">${escapeHtml(account.username)}</span></div>
       <div class="data-card-row"><span class="data-card-label">Name</span><span class="data-card-value">${escapeHtml(account.display_name)}</span></div>
       <div class="data-card-row"><span class="data-card-label">Role</span><span class="data-card-value">${escapeHtml(account.role_label)}</span></div>
-      <div class="data-card-row"><span class="data-card-label">Status</span><span class="data-card-value">${escapeHtml(account.active_status)}</span></div><div class="data-card-row">${account.active_status === "active" && (account.role !== "superadmin" || currentUser?.role === "superadmin") ? `<button type="button" class="icon-button" data-account-recovery="${account.id}">Issue Recovery Code</button>` : ""}</div>
+      <div class="data-card-row"><span class="data-card-label">Status</span><span class="data-card-value">${badge(codeLabel(account.active_status.toUpperCase()), account.active_status === "active" ? "success" : "neutral")}</span></div><div class="data-card-row">${account.active_status === "active" && (account.role !== "superadmin" || currentUser?.role === "superadmin") ? `<button type="button" class="icon-button" data-account-recovery="${account.id}">Issue Recovery Code</button>` : ""}</div>
     </article>
   `).join("");
+  if (!current()) return;
   viewRoot.innerHTML = `
     <section class="panel action-panel">
       <div>
@@ -7029,7 +7449,7 @@ async function renderAccounts() {
       <table class="accounts-table">
         <thead><tr><th>Username</th><th>Name</th><th>Role</th><th>Status</th><th>Recovery</th></tr></thead>
         <tbody>
-          ${accounts.map((account) => `<tr><td>${escapeHtml(account.username)}</td><td>${escapeHtml(account.display_name)}</td><td>${escapeHtml(account.role_label)}</td><td>${escapeHtml(account.active_status)}</td><td>${account.active_status === "active" && (account.role !== "superadmin" || currentUser?.role === "superadmin") ? `<button type="button" class="icon-button" data-account-recovery="${account.id}">Issue Recovery Code</button>` : ""}</td></tr>`).join("") || `<tr><td colspan="5" class="empty">No accounts found.</td></tr>`}
+          ${accounts.map((account) => `<tr><td>${escapeHtml(account.username)}</td><td>${escapeHtml(account.display_name)}</td><td>${escapeHtml(account.role_label)}</td><td>${badge(codeLabel(account.active_status.toUpperCase()), account.active_status === "active" ? "success" : "neutral")}</td><td>${account.active_status === "active" && (account.role !== "superadmin" || currentUser?.role === "superadmin") ? `<button type="button" class="icon-button" data-account-recovery="${account.id}">Issue Recovery Code</button>` : ""}</td></tr>`).join("") || `<tr><td colspan="5" class="empty">No accounts found.</td></tr>`}
         </tbody>
       </table>
     </section>
@@ -7040,6 +7460,7 @@ async function renderAccounts() {
 }
 
 async function renderDiagnostics() {
+  const current = renderTicket();
   setHeader("Diagnostics", "Software diagnostics");
   if (!viewRoot) return;
   if (!currentUser || !["computer_admin", "superadmin"].includes(currentUser.role)) {
@@ -7048,6 +7469,7 @@ async function renderDiagnostics() {
   }
   try {
     const diagnostics: DiagnosticsSummary = await getDiagnosticsSummary();
+    if (!current()) return;
     viewRoot.innerHTML = `
       <section class="summary-grid">
         ${metricCard(diagnostics.database_counts.import_warnings ?? 0, "Import warnings")}
@@ -7064,6 +7486,7 @@ async function renderDiagnostics() {
     `;
   } catch (error) {
     showToast(error instanceof Error ? error.message : "Failed to load diagnostics", "error");
+    if (!current()) return;
     viewRoot.innerHTML = `<section class="panel"><h3>Error</h3><p>Unable to load diagnostics.</p></section>`;
   }
 }
@@ -7393,12 +7816,32 @@ function updateNavigationState(selectedView: string) {
   }
 }
 
+/** Marks a screen as current without loading it, for flows that render it themselves. */
+function showView(view: string) {
+  activeView = view;
+  viewSeq++;
+  updateNavigationState(view);
+  const monthField = document.querySelector<HTMLElement>("#working-month-field");
+  if (monthField) monthField.hidden = !MONTH_VIEWS.has(view);
+}
+
 /** Switch screens by name (`data-view` value). State is in memory only - no URL/history routing (handbook U4). */
 function navigateToView(selectedView: string) {
   activeView = selectedView;
+  viewSeq++;
   updateNavigationState(selectedView);
   closeSidebarOnMobile();
   closeMobileMoreMenu();
+  const monthField = document.querySelector<HTMLElement>("#working-month-field");
+  if (monthField) monthField.hidden = !MONTH_VIEWS.has(selectedView);
+  // Paint the destination immediately so the previous page never lingers while data loads.
+  const item = NAV_ITEMS.find((nav) => nav.view === selectedView);
+  if (item && viewRoot && selectedView !== "user-guide") {
+    setHeader(item.label, item.label);
+    viewRoot.innerHTML = pageSkeleton(item.label);
+  }
+  // The tracker refreshes after a workflow page has loaded (see the renderers), never in
+  // parallel with it: on a new month both requests would race to create the rota period.
   if (selectedView === "mappings") {
     void loadMappings().then(() => { if (activeView === "mappings") renderMappings(); });
   } else if (selectedView === "imports") {
@@ -7412,13 +7855,13 @@ function navigateToView(selectedView: string) {
   } else if (selectedView === "units") {
     void renderUnitManagement(true);
   } else if (selectedView === "rota-setup") {
-    void renderRotaSetup();
+    void renderRotaSetup().finally(() => void refreshWorkflowTracker());
   } else if (selectedView === "rota-template") {
-    void renderRotaTemplate();
+    void renderRotaTemplate().finally(() => void refreshWorkflowTracker());
   } else if (selectedView === "rota-review") {
-    void renderRotaReview();
+    void renderRotaReview().finally(() => void refreshWorkflowTracker());
   } else if (selectedView === "rota-publish") {
-    void renderRotaPublish();
+    void renderRotaPublish().finally(() => void refreshWorkflowTracker());
   } else if (selectedView === "user-guide") {
     renderUserGuide();
   } else if (selectedView === "rota-rules") {
@@ -7983,7 +8426,11 @@ function bindViewEvents() {
       void openRecordEditor(kind, undefined, recordButton.dataset.editOperationalRecord, isAdminUser(), () => {
         invalidateUnitManagementCache();
         if (kind === "leave") void renderLeave(); else void renderUnitManagement(true);
-      }, kind === "units" ? {unit_id: recordButton.dataset.initialUnit || "", posting_type: recordButton.dataset.initialPosting || "2ND_CALL", starts_on:unitManagement?.starts_on || `${unitMonth}-01`, ends_on:unitManagement?.ends_on || ""} : undefined); return;
+      }, kind === "units"
+        ? {unit_id: recordButton.dataset.initialUnit || "", posting_type: recordButton.dataset.initialPosting || "2ND_CALL", starts_on:unitManagement?.starts_on || `${unitMonth}-01`, ends_on:unitManagement?.ends_on || ""}
+        : recordButton.dataset.initialDate ? { starts_on: recordButton.dataset.initialDate, ends_on: recordButton.dataset.initialDate } : undefined);
+      if (recordButton.dataset.initialDate) closeLeaveDayModal();
+      return;
     }
     const operationalImport = target.closest<HTMLElement>("[data-open-normalized-import]");
     if (operationalImport) {
@@ -8216,6 +8663,7 @@ function bindViewEvents() {
 
     const cancelLeaveBtn = target.closest<HTMLButtonElement>("[data-cancel-leave]");
     if (cancelLeaveBtn?.dataset.cancelLeave) {
+      if (!confirmAction("Cancel this leave record? It stays in history but no longer blocks availability.")) return;
       setButtonLoading(cancelLeaveBtn, true, "Cancel");
       try {
         await cancelLeaveRequest(cancelLeaveBtn.dataset.cancelLeave);
@@ -8684,7 +9132,7 @@ function bindViewEvents() {
 
     if (target.id === "scan-mappings") {
       const btn = target.closest<HTMLButtonElement>("#scan-mappings");
-      setButtonLoading(btn, true, "Scan Historical Files");
+      setButtonLoading(btn, true, "Scan historical files");
       try {
         await scanHistoricalMappings();
         await loadMappings();
@@ -9030,14 +9478,14 @@ function bindViewEvents() {
       return;
     }
     if (target.id === "leave-month") {
-      leaveMonth = target.value || leaveMonth;
+      applyWorkingMonth(target.value);
       leaveImportPreview = null;
       leaveImportFile = null;
       await renderLeave();
       return;
     }
     if (target.id === "unit-month") {
-      unitMonth = target.value || unitMonth;
+      applyWorkingMonth(target.value);
       unitImportPreview = null;
       unitImportFile = null;
       unitImportFilter = "all";
@@ -9081,12 +9529,12 @@ function bindViewEvents() {
       }
     }
     if (target.id === "rota-setup-month") {
-      rotaSetupMonth = target.value || rotaSetupMonth;
+      applyWorkingMonth(target.value);
       await renderRotaSetup();
       return;
     }
     if (target.id === "rota-template-month") {
-      rotaTemplateMonth = target.value || rotaTemplateMonth;
+      applyWorkingMonth(target.value);
       rejectedRotaCandidates.clear();
       closeRotaDayModal();
       await renderRotaTemplate();
@@ -9101,7 +9549,7 @@ function bindViewEvents() {
       return;
     }
     if (target.id === "rota-review-month") {
-      rotaReviewMonth = target.value || rotaReviewMonth;
+      applyWorkingMonth(target.value);
       exchangeSelectedAssignmentId = "";
       await renderRotaReview();
       return;
@@ -9111,7 +9559,7 @@ function bindViewEvents() {
       return;
     }
     if (target.id === "rota-publish-month") {
-      rotaPublishMonth = target.value || rotaPublishMonth;
+      applyWorkingMonth(target.value);
       await renderRotaPublish();
       return;
     }
@@ -9181,14 +9629,18 @@ function bindViewEvents() {
 async function bootApp() {
   renderShell();
   refreshShellRefs();
+  // Navigation works immediately; it must not wait for the first screen's data.
+  bindNavigation();
+  bindViewEvents();
+  if (viewRoot) viewRoot.innerHTML = pageSkeleton("Overview");
   try {
     await healthCheck();
     currentUser = currentUser ?? await getCurrentUser();
     setApiStatus("API online", "ok");
     if (isAdminUser()) {
-      await loadMappings();
+      void loadMappings().catch(() => undefined);
     }
-    await renderOverview();
+    if (activeView === "overview") await renderOverview();
   } catch (error) {
     setApiStatus("API offline", "error");
     if (viewRoot) {
@@ -9200,10 +9652,33 @@ async function bootApp() {
       `;
     }
   }
-
-  bindNavigation();
-  bindViewEvents();
 }
+
+/**
+ * Wide tables scroll inside their panel on small screens. Keyboard users need to be able to
+ * focus such a region to scroll it, so any panel that actually overflows gets a tab stop and
+ * a name taken from its heading.
+ */
+function labelScrollableRegions(root: ParentNode) {
+  root.querySelectorAll<HTMLElement>(".table-panel, .table-scroll, .member-import-table, .bar-chart").forEach((region) => {
+    const scrolls = region.scrollWidth > region.clientWidth + 1 || region.scrollHeight > region.clientHeight + 1;
+    if (!scrolls || region.hasAttribute("tabindex")) return;
+    region.tabIndex = 0;
+    if (!region.hasAttribute("aria-label") && !region.hasAttribute("aria-labelledby")) {
+      const heading = (region.querySelector("h3, h4, caption") ?? region.closest(".panel")?.querySelector("h3"))?.textContent?.trim();
+      region.setAttribute("role", "region");
+      region.setAttribute("aria-label", heading ? `${heading} (scrollable)` : "Scrollable table");
+    }
+  });
+}
+
+let scrollRegionFrame = 0;
+const scrollRegionObserver = new MutationObserver(() => {
+  cancelAnimationFrame(scrollRegionFrame);
+  scrollRegionFrame = requestAnimationFrame(() => labelScrollableRegions(document));
+});
+scrollRegionObserver.observe(document.body, { childList: true, subtree: true });
+window.addEventListener("resize", () => labelScrollableRegions(document));
 
 /** Entry point: try the stored token; fall back to the login screen. */
 async function boot() {

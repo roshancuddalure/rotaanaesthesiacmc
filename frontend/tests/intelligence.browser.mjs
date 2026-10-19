@@ -90,8 +90,8 @@ try {
  await integrated.page.goto(base);
  await integrated.page.getByRole('heading',{name:'Duty workload at a glance',exact:true}).waitFor();
  await integrated.page.locator('[data-view="rota-template"]').first().evaluate(b=>b.click());
- await integrated.page.locator('#rota-template-month').fill('2026-05');
- await integrated.page.locator('#rota-template-month').dispatchEvent('change');
+ await integrated.page.locator('#working-month').fill('2026-05');
+ await integrated.page.locator('#working-month').dispatchEvent('change');
  await integrated.page.locator('#run-intelligent-rota').click();
  await integrated.page.getByRole('heading',{name:'Intelligent rota generator',exact:true}).waitFor();
  assert.deepEqual(integrated.errors,[]);report.workflows.push('main_template_entry');await integrated.page.close();
