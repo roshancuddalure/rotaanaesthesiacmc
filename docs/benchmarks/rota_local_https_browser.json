@@ -1,0 +1,90 @@
+{
+  "origin": "https://rota.example",
+  "endpoint": "http://127.0.0.1:11438",
+  "permission_denied_blocked": true,
+  "permission_allowed_connected": true,
+  "local_model_passed": true,
+  "response": {
+    "mode": "balanced",
+    "explanation": "The request aims to balance weekend duties fairly while preserving existing assignments, ensuring a fair distribution of responsibilities across the roster without altering existing constraints or preferences.",
+    "proposed_rules": [
+      "Ensure even distribution of weekend duties across the roster."
+    ],
+    "needs_review": true,
+    "model": "qwen2.5:1.5b",
+    "local_only": true,
+    "grounding_check": "passed",
+    "attempts": 1
+  },
+  "explicit_new_rule_extraction": {
+    "passed": true,
+    "runs": [
+      {
+        "mode": "preferences",
+        "explanation": "Proposed settings were extracted from your instruction. Review their quoted evidence; no existing policy has changed.",
+        "proposed_rules": [
+          "Maximum 24-hour duties per month: 8"
+        ],
+        "needs_review": true,
+        "rule_changes": [
+          {
+            "key": "max_24hr_per_month",
+            "value": 8,
+            "evidence": "Propose a maximum of 8 twenty-four-hour duties per member each month for administrator review."
+          }
+        ],
+        "model": "qwen2.5:1.5b",
+        "local_only": true,
+        "grounding_check": "passed",
+        "attempts": 1
+      },
+      {
+        "mode": "preferences",
+        "explanation": "Proposed settings were extracted from your instruction. Review their quoted evidence; no existing policy has changed.",
+        "proposed_rules": [
+          "Maximum 24-hour duties per month: 8"
+        ],
+        "needs_review": true,
+        "rule_changes": [
+          {
+            "key": "max_24hr_per_month",
+            "value": 8,
+            "evidence": "Propose a maximum of 8 twenty-four-hour duties per member each month for administrator review."
+          }
+        ],
+        "model": "qwen2.5:1.5b",
+        "local_only": true,
+        "grounding_check": "passed",
+        "attempts": 1
+      },
+      {
+        "mode": "preferences",
+        "explanation": "Proposed settings were extracted from your instruction. Review their quoted evidence; no existing policy has changed.",
+        "proposed_rules": [
+          "Maximum 24-hour duties per month: 8"
+        ],
+        "needs_review": true,
+        "rule_changes": [
+          {
+            "key": "max_24hr_per_month",
+            "value": 8,
+            "evidence": "Propose a maximum of 8 twenty-four-hour duties per member each month for administrator review."
+          }
+        ],
+        "model": "qwen2.5:1.5b",
+        "local_only": true,
+        "grounding_check": "passed",
+        "attempts": 1
+      }
+    ],
+    "applied_to_application": false
+  },
+  "typed_proposal_ui": {
+    "passed": true,
+    "origin": "https://rota.example",
+    "rule": "max_24hr_per_month",
+    "value": 8,
+    "quoted_source_matched": true,
+    "operational_assignments": 0
+  }
+}

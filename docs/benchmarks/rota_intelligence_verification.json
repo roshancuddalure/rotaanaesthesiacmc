@@ -1,0 +1,73 @@
+{
+  "verified_at_utc": "2026-10-19T05:38:46.596510+00:00",
+  "git_head": "9bf3042c2f3dc6ef4fc816ba58944c09dac2fdd9",
+  "backend": {
+    "passed": 348,
+    "failed": 0,
+    "skipped": 0,
+    "seconds": 171.12,
+    "postgres_concurrency_cases": 8,
+    "migration_upgrade_downgrade_preservation": "passed",
+    "pytest_summary": "348 passed in 171.12s"
+  },
+  "frontend": {
+    "unit_passed": 8,
+    "production_build": "passed",
+    "application_browser_workflows": 40,
+    "intelligence_workflows": 7,
+    "compute_workflows": 14,
+    "normalization_workflows": 11,
+    "member_csv_workflows": 8,
+    "https_local_permission_and_typed_proposal_checks": "passed"
+  },
+  "model": {
+    "selected": "qwen2.5:1.5b",
+    "quantization": "Q4_K_M",
+    "gpu": "NVIDIA GeForce GTX 1650",
+    "backend": "CUDA",
+    "layers_offloaded": "29/29",
+    "four_interpretation_cases": "passed",
+    "typed_rule_extraction_repeated_runs": 3,
+    "automatic_policy_application": false,
+    "language_model_fine_tune_performed": false
+  },
+  "learning": {
+    "method": "bounded_pairwise_ranking_v1",
+    "heldout_evaluation_activation_rollback_tests": "passed",
+    "real_department_examples_approved": 0
+  },
+  "operational_database": {
+    "before_revision": "20261018_0021",
+    "after": {
+      "revision": "20261019_0022",
+      "persons": 312,
+      "units": 8,
+      "duty_assignments": 14448,
+      "rota_compute_jobs": 0,
+      "rota_teaching_examples": 0,
+      "rota_learning_versions": 0
+    },
+    "operational_counts_unchanged": true,
+    "live_rota_generated_or_applied": false
+  },
+  "cleanup": {
+    "temporary_test_databases": 0,
+    "task_test_listeners_stopped": true,
+    "unrelated_local_gpu_service_preserved": true
+  },
+  "checks": {
+    "ruff": "passed",
+    "git_diff_whitespace": "passed",
+    "powershell_stderr_status_quirk": "reproduced separately with a successful native exit code of zero; full pytest success and database cleanup independently verified"
+  },
+  "source_sha256": {
+    "backend/app/services/rota_optimizer.py": "be9ae913f060b3f89e44f5452d6b3e721be25f66f2bc25eabee8c27d33e6a4ee",
+    "backend/app/services/rota_intelligence.py": "4b41097a7cae08d1fff060a8917cd8416c9d4d20ca495f4a2de59e187fe04748",
+    "backend/app/services/rota_compute.py": "de98f4821fed1a3436259786aa0f4a863292aa7a91dc0563ef85199e9158764a",
+    "backend/app/api/v1/rota_intelligence.py": "43cd347039285d607ef28eba52a1e796d27b970eb144df3169d6fcb645321441",
+    "tools/local_rota_assistant.py": "1644456eb48db04888dcc9fc5ca3aa168775cf228881a60ee533f82039994545",
+    "tools/start-local-rota-assistant.ps1": "1dfe56c10bd9529d44e493bc34a2a7c15a609f1a90882cd034d7f0850c5d9046",
+    "frontend/src/rota-intelligence.ts": "f18f0411351f3c7cde022fc8d2c8fb4f75bfc5236405cfc118da9476164f16d7"
+  },
+  "pushed_by_this_task": false
+}

@@ -297,7 +297,7 @@ try {
           });
         }
         applies++;
-        assert.deepEqual(route.request().postDataJSON(), { excluded: [] });
+        assert.deepEqual(route.request().postDataJSON(), { excluded: [], archive_missing: [] });
         if (applies === 1)
           return route.fulfill({
             status: 503,
@@ -324,9 +324,11 @@ try {
     });
     const [download] = await Promise.all([
       page.waitForEvent("download"),
-      page.getByRole("link", { name: "Download CSV template" }).click(),
+      page.getByRole("link", { name: "Download blank CSV template" }).click(),
     ]);
     assert.equal(download.suggestedFilename(), "department-members.csv");
+    const [exampleDownload] = await Promise.all([page.waitForEvent("download"), page.getByRole("link", { name: "Download example CSV (filled)", exact: true }).click()]);
+    assert.equal(exampleDownload.suggestedFilename(), "department-members-example.csv");
     await page.locator("input[type=file]").setInputFiles({
       name: "members.csv",
       mimeType: "text/csv",
@@ -476,7 +478,7 @@ try {
       .waitFor();
     assert.equal(
       await page
-        .getByRole("link", { name: "Download CSV template", exact: true })
+        .getByRole("link", { name: "Download blank CSV template", exact: true })
         .last()
         .isVisible(),
       true,

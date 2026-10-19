@@ -2585,3 +2585,56 @@ frontend unit tests and 33 browser workflows passed; production build, Ruff and
 whitespace checks passed. The browser worker executed real exact-integer kernels on
 an Intel hardware adapter, without enabling special browser GPU flags. Test resources
 were cleaned up. Details and raw benchmark/verification JSON are in the implementation audit.
+
+## 2026-10-19 - Intelligent Rota Generation and Local Assistant
+
+Implemented the user-approved seven-stage plan. Added whole-month CP-SAT planning,
+scarcity-aware validated warm starts, objective time sharing and independent
+lower-bound proofs. The larger fixture exposed a concentrated unfinished incumbent;
+the generator now retains the better validated draft under the configured priority
+order. Added explicit repair scope, locks, distinct alternatives with retained
+coverage, reasons, workload comparison and atomic reviewed replacement history.
+
+Independent validation protects preserved duties and staffing on the next month's
+first day. Existing conflicts remain visible. Locked unfilled duties remain counted
+as uncovered. No automatic safety override, publication or holiday calendar was
+introduced; the existing six-month historical policy remains in force.
+
+Added frozen teaching evidence, accept/prefer/exception feedback, approval/exclusion,
+reviewed historical references, duplicate suppression and bounded pairwise ranking.
+Candidate versions require held-out evaluation and administrator activation; stale
+data or withdrawn source approval prevents activation. Rollback remains explicit.
+This does not claim a departmental language-model fine-tune or automatically approve
+historical rotas as correct examples.
+
+Compared installed Gemma with a small quantized Qwen model. Qwen passed the selected
+interpretation cases and ran on the NVIDIA GTX 1650 through CUDA with 29/29 layers
+offloaded. Added a paired, exact-origin loopback companion and Windows launcher with
+isolated model storage, explicit download preparation and cloud inference disabled.
+Unsupported numerical claims are retried/rejected; model suggestions remain reviewed
+proposals. Browser opt-in, pairing and local-network permission are separate controls.
+
+Preserved subsequent repository changes and a separate local GPU service. Moved the
+companion default to configurable port 11437 to avoid their port conflict. Updated
+the CSV browser harness to the current blank/example template labels and explicit
+empty archive selection; no existing CSV product behavior was reverted.
+
+Applied additive local migration 20261019_0022 after isolated PostgreSQL migration
+checks. Operational counts remained 312 members, 8 units and 14,448 duty assignments;
+live compute jobs, teaching examples and learning versions stayed empty. The current
+verification totals and acceptance evidence are recorded in
+`docs/benchmarks/rota_intelligence_verification.json` and the implementation guide.
+
+Final assistant hardening: numerical changes use typed setting/value proposals
+grounded in the request. The host attaches the original source quote rather than
+trusting a model paraphrase; unrequested numerical proposals are discarded. Added
+regressions separating a 24-hour duty's duration from its requested monthly maximum.
+Verified an explicit maximum of eight in repeated local-model calls and in the
+actual HTTPS-origin review UI, with no operational assignment or policy writes.
+
+Final acceptance: 348 backend tests, eight frontend unit tests and 40 application
+browser workflows passed, plus HTTPS-origin local-model permission and typed-rule
+review checks. Production build, Ruff and whitespace checks passed. Eight concurrency
+cases used real isolated PostgreSQL schemas. Final operational counts and revision
+were read back unchanged apart from the additive schema upgrade. No temporary test
+databases or task-owned listeners remain; the unrelated GPU service was preserved.

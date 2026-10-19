@@ -1170,3 +1170,43 @@ changed: cancel the old proposal and generate a fresh one.
 
 See `../docs/staged_compute_implementation.md` for the complete verification record,
 measured benchmark, supported-device limits and deployment flags.
+
+## Intelligent generator, teaching and the local assistant
+
+In **Rota Template**, choose **Intelligent generator** after setting up the month,
+units, postings, leave and duty template. The existing reviewed scoring generator
+remains available alongside it.
+
+1. In **Plan**, choose Balanced, Fewest changes / repair, or Preferences first.
+   Existing assignments stay fixed. Select individual assignments for replacement
+   only in repair mode; lock any duties that must remain fixed. Locked unfilled
+   duties are still reported as uncovered.
+2. Generate a draft. In **Review**, compare alternatives, monthly workload, reasons,
+   uncovered duties and before/after replacements. A feasible draft is not necessarily
+   a proven optimum. Missing holiday dates are reported, not guessed.
+3. Check the review confirmation and apply. Final server checks run again. Applying
+   saves a draft and attributed history; it does not publish the rota.
+4. Use **Teach this decision** to accept a choice, prefer another eligible member,
+   or record a one-time exception. Choose a reason and optionally explain it.
+   Administrators approve reusable examples or exclude them from future training.
+   Historical references start unverified and need their original context checked.
+5. In **Learning**, administrators can prepare preference-weight candidates, evaluate
+   on two or three held-out draft months and activate an evaluated version. At least
+   six distinct approved cases are required. Actual comparisons teach preference
+   ranking; acceptance-only examples do not invent rejected alternatives. Previous
+   versions remain available for explicit rollback.
+
+The optional **Assistant** runs through a paired companion on your computer. Use
+the launcher command shown in that tab, enter its temporary pairing token and allow
+the website's local-network/loopback permission if requested. The default companion
+port is 11437; use the same port in the launcher and the tab if you change it. The
+model runtime uses a separate port. Other local GPU applications can remain running.
+
+The assistant can suggest a planning mode and propose policies for review. Using
+its suggested mode cannot change safety rules, assign members or approve an
+exception. If the model is unavailable, regular reviewed generation still works.
+No cloud fallback is used. Learning examples require approval; historical rotas
+are not automatically treated as correct training answers.
+
+See `../docs/rota_intelligence_implementation.md` for implementation, setup and
+verification details.

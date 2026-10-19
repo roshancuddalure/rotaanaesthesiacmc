@@ -1,0 +1,76 @@
+{
+  "model": "qwen2.5:1.5b",
+  "synthetic_only": true,
+  "cases": [
+    {
+      "case": "fairness",
+      "passed": true,
+      "result": {
+        "mode": "balanced",
+        "explanation": "The request aims to balance weekend duties fairly while preserving existing assignments. No numerical limits were specified, so no changes were made to the constraints.",
+        "proposed_rules": [],
+        "needs_review": true,
+        "rule_changes": [],
+        "discarded_unrequested_rules": true,
+        "model": "qwen2.5:1.5b",
+        "local_only": true,
+        "grounding_check": "passed",
+        "attempts": 2
+      }
+    },
+    {
+      "case": "repair",
+      "passed": true,
+      "result": {
+        "mode": "repair",
+        "explanation": "The user requests finding replacements for someone with unexpected leave while minimizing changes to other assignments and requiring review of new policies.",
+        "proposed_rules": [],
+        "needs_review": true,
+        "rule_changes": [],
+        "discarded_unrequested_rules": true,
+        "model": "qwen2.5:1.5b",
+        "local_only": true,
+        "grounding_check": "passed",
+        "attempts": 1
+      }
+    },
+    {
+      "case": "preferences",
+      "passed": true,
+      "result": {
+        "mode": "preferences",
+        "explanation": "The request prioritizes honoring recorded personal requests while respecting existing constraints and policies.",
+        "proposed_rules": [],
+        "needs_review": true,
+        "rule_changes": [],
+        "model": "qwen2.5:1.5b",
+        "local_only": true,
+        "grounding_check": "passed",
+        "attempts": 1
+      }
+    },
+    {
+      "case": "new_rule",
+      "passed": true,
+      "result": {
+        "mode": "preferences",
+        "explanation": "Proposed settings were extracted from your instruction. Review their quoted evidence; no existing policy has changed.",
+        "proposed_rules": [
+          "Maximum 24-hour duties per month: 8"
+        ],
+        "needs_review": true,
+        "rule_changes": [
+          {
+            "key": "max_24hr_per_month",
+            "value": 8,
+            "evidence": "Propose a maximum of 8 twenty-four-hour duties per member each month for administrator review."
+          }
+        ],
+        "model": "qwen2.5:1.5b",
+        "local_only": true,
+        "grounding_check": "passed",
+        "attempts": 1
+      }
+    }
+  ]
+}

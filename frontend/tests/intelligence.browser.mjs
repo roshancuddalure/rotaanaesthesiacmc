@@ -11,9 +11,9 @@ async function open(width) {
  await page.context().grantPermissions(['local-network-access'],{origin:base});
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  let sentInstruction='';
- page.on('request',r=>{if(r.url().includes('11435/suggest'))sentInstruction=JSON.parse(r.postData()).instruction;});
+ page.on('request',r=>{if(r.url().includes('11437/suggest'))sentInstruction=JSON.parse(r.postData()).instruction;});
  await page.route('**/__intelligence-test',r=>r.fulfill({contentType:'text/html',body:'<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/src/styles.css"></head><body><button>Open</button></body></html>'}));
- await page.route('**/api/**',async r=>{const url=new URL(r.request().url());if(url.port==='11435'){await r.continue();return;}const response=await r.fetch({url:server+url.pathname+url.search});await r.fulfill({response});});
+ await page.route('**/api/**',async r=>{const url=new URL(r.request().url());if(url.port==='11437'){await r.continue();return;}const response=await r.fetch({url:server+url.pathname+url.search});await r.fulfill({response});});
  await page.goto(base+'/__intelligence-test');
  await page.evaluate(async()=>{const m=await import('/src/rota-intelligence.ts');await m.openIntelligentRota('2026-05',true,()=>{window.applied=true;});});
  return {page,errors,instruction:()=>sentInstruction};
@@ -101,7 +101,7 @@ try {
   await page.locator('[data-local-enabled]').check();
   await page.locator('[data-local-token]').fill(process.env.ASSISTANT_TEST_TOKEN);
   await page.locator('[data-instruction]').fill('Balance weekend duties fairly. Preserve existing assignments.');
-  const [modelResponse]=await Promise.all([page.waitForResponse(r=>r.url().includes('11435/suggest')&&r.request().method()==='POST'),page.getByRole('button',{name:'Ask local assistant'}).click()]);
+  const [modelResponse]=await Promise.all([page.waitForResponse(r=>r.url().includes('11437/suggest')&&r.request().method()==='POST'),page.getByRole('button',{name:'Ask local assistant'}).click()]);
   const modelResult=await modelResponse.json();
   await page.getByText('Local suggestion received. Review before using.').waitFor({timeout:100000});
   assert.equal(instruction(),'Balance weekend duties fairly. Preserve existing assignments.');

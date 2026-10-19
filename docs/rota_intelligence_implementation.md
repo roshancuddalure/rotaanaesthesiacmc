@@ -108,7 +108,9 @@ the user's local application data directory. `-ModelDirectory` selects another
 drive. First-time setup elsewhere can explicitly add `-PrepareModel`; preparation
 checks free space before downloading. The companion can start an isolated Ollama
 runtime on loopback port 11436 with cloud inference disabled, without changing
-the user's existing Ollama configuration. It binds its paired API to 127.0.0.1:11435.
+the user's existing Ollama configuration. It binds its paired API to 127.0.0.1:11437.
+The launcher accepts `-Port`; set the same local companion port in the Assistant tab
+when another port is needed. It is separate from the model runtime's port.
 
 Open Rota Template → **Intelligent generator** → **Assistant**, opt in and enter
 the temporary pairing token printed by the launcher. Allow the website's
@@ -119,6 +121,11 @@ features, not the roster, member UUIDs, leave reasons or profile comments.
 
 Suggestions remain unverified proposals. Numeric grounding rejects/retries
 unsupported numerical claims; it is not a proof of general model accuracy.
+Explicit supported numerical changes use typed setting keys and values. The host
+validates the values against the instruction and attaches the original source
+quote directly. A duty duration such as "twenty-four-hour" is kept distinct from
+the requested monthly maximum. Unrequested numerical proposals are discarded;
+they cannot become policy changes through a general fairness or repair request.
 Using a suggested mode cannot change safety rules, assign members, approve
 exceptions or publish a rota. Local-runtime, permission, parsing or inference
 failure leaves the regular reviewed generator available. There is no automatic
@@ -151,3 +158,14 @@ Machine-readable results are under `docs/benchmarks/rota_intelligence*.json` and
 responses that exposed unsupported claims; those are investigation evidence,
 not the final acceptance result. The final verification artifact records actual
 test counts, build/migration checks and operational-data preservation.
+`rota_local_model_selected.json` records the final selected model's interpretation
+cases. `rota_local_https_browser.json` records permission enforcement, repeated
+typed-rule extraction and the actual HTTPS-origin proposal review UI.
+
+Final verification: **348 backend tests passed with no failures or skips**, including
+eight real PostgreSQL concurrency cases. **Eight frontend unit tests and 40 application
+browser workflows passed**, together with HTTPS-origin permission and typed-proposal
+checks. Production build, Ruff and whitespace checks passed. Local migration retained
+312 members, 8 units and 14,448 duty assignments; live proposal/training tables stayed
+empty. Temporary test databases and task-owned test services were cleaned up; the
+separate local GPU service was preserved.

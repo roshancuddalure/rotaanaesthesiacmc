@@ -394,7 +394,7 @@ def test_new_choices_cannot_break_staffing_of_preserved_duty(compute_db):
 
 
 def test_new_choices_protect_next_month_staffing(compute_db, monkeypatch):
-    from datetime import datetime, timedelta
+    from datetime import datetime
     from app.models import DutySlot
     import app.services.rota_optimizer as optimizer
 

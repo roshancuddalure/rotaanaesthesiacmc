@@ -1,6 +1,7 @@
 param(
     [Parameter(Mandatory = $true)][string]$WebsiteOrigin,
     [string]$ModelDirectory,
+    [ValidateRange(1024,65535)][int]$Port = 11437,
     [switch]$PrepareModel
 )
 $taskRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
@@ -11,6 +12,6 @@ if (-not $ModelDirectory) {
     else { $ModelDirectory = Join-Path $env:LOCALAPPDATA 'DutyRota\models' }
 }
 $taskArguments = @((Join-Path $PSScriptRoot 'local_rota_assistant.py'), '--origin', $WebsiteOrigin,
-    '--model-directory', $ModelDirectory, '--model', 'qwen2.5:1.5b')
+    '--model-directory', $ModelDirectory, '--model', 'qwen2.5:1.5b', '--port', $Port)
 if ($PrepareModel) { $taskArguments += '--prepare-model' }
 & $taskPython @taskArguments

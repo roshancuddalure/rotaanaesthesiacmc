@@ -117,3 +117,66 @@ def test_companion_rejects_invented_numerical_policy_even_in_valid_json():
         assert response.status_code == 502
         assert request.call_count == 2
         assert "no policy or assignments changed" in response.json()["detail"]
+
+    class ExplicitDuration(Response):
+        def read(self):
+            return json.dumps(
+                {
+                    "message": {
+                        "content": json.dumps(
+                            {
+                                "mode": "balanced",
+                                "explanation": "Proposed limit for review.",
+                                "proposed_rules": ["At most 8 24-hour duties per month."],
+                                "needs_review": True,
+                                "rule_changes": [
+                                    {
+                                        "key": "max_24hr_per_month",
+                                        "value": 8,
+                                        "evidence": "at most 8 twenty-four-hour duties per month",
+                                    }
+                                ],
+                            }
+                        )
+                    }
+                }
+            ).encode()
+
+    with patch("urllib.request.urlopen", return_value=ExplicitDuration()), client() as c:
+        response = c.post(
+            "/suggest",
+            headers={"Origin": "https://rota.example", "X-Rota-Pairing": "test-token"},
+            json={"instruction": "Propose at most 8 twenty-four-hour duties per month."},
+        )
+        assert response.status_code == 200
+        assert response.json()["rule_changes"][0]["value"] == 8
+        assert (
+            response.json()["rule_changes"][0]["evidence"]
+            == "Propose at most 8 twenty-four-hour duties per month."
+        )
+
+    class DurationIsNotLimit(ExplicitDuration):
+        def read(self):
+            return json.dumps(
+                {
+                    "message": {
+                        "content": json.dumps(
+                            {
+                                "mode": "balanced",
+                                "explanation": "Review proposal.",
+                                "proposed_rules": [],
+                                "needs_review": True,
+                                "rule_changes": [{"key": "max_24hr_per_month", "value": 24}],
+                            }
+                        )
+                    }
+                }
+            ).encode()
+
+    with patch("urllib.request.urlopen", return_value=DurationIsNotLimit()), client() as c:
+        response = c.post(
+            "/suggest",
+            headers={"Origin": "https://rota.example", "X-Rota-Pairing": "test-token"},
+            json={"instruction": "Propose at most 8 twenty-four-hour duties per month."},
+        )
+        assert response.status_code == 502

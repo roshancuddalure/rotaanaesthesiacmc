@@ -19,6 +19,7 @@ export async function openIntelligentRota(month:string, admin:boolean, onApplied
   let closed=false, busy=false, tab='plan', notice='', job:Job|undefined, setup:Setup;
   let mode='balanced', seconds=30, instruction='', suggestion:any;
   let token=sessionStorage.getItem('rota_local_assistant_pairing') || '';
+  let companionPort=Number(sessionStorage.getItem('rota_local_assistant_port') || '11437');
   let enabled=sessionStorage.getItem('rota_local_assistant_enabled') === 'true';
   let teaching:any[]=[], versions:any[]=[], historicalMonths:string[]=[];
   let teachingDraft:Record<string,FormDataEntryValue>={};
@@ -83,9 +84,10 @@ export async function openIntelligentRota(month:string, admin:boolean, onApplied
       ${tab==='assistant'?`<p>The optional assistant runs on this computer. It suggests settings and policies; it cannot assign members or approve exceptions. Generation works without it.</p>
         <label><input type="checkbox" data-local-enabled ${enabled?'checked':''}> Allow requests to my paired local assistant</label>
         <label>Local pairing token<input type="password" data-local-token value="${esc(token)}" autocomplete="off"></label>
-        <details><summary>Start the local assistant</summary><p>Run the companion on this computer with this website's exact origin, then enter its temporary pairing token. Allow this site's local-network / loopback permission when the browser asks.</p><code>.\\tools\\start-local-rota-assistant.ps1 -WebsiteOrigin ${esc(location.origin)}</code><p>The launcher uses an isolated local model directory. For first-time setup only, add -PrepareModel to download the model. Processing uses the installed model; no cloud fallback.</p></details>
+        <label>Local companion port<input type="number" data-local-port min="1024" max="65535" value="${companionPort}"></label>
+        <details><summary>Start the local assistant</summary><p>Run the companion on this computer with this website's exact origin, then enter its temporary pairing token. Allow this site's local-network / loopback permission when the browser asks.</p><code data-companion-command>.\\tools\\start-local-rota-assistant.ps1 -WebsiteOrigin ${esc(location.origin)} -Port ${companionPort}</code><p>The launcher uses an isolated local model directory. For first-time setup only, add -PrepareModel to download the model. Processing uses the installed model; no cloud fallback.</p></details>
         <label>Your instruction<textarea data-instruction maxlength="2000">${esc(instruction)}</textarea></label><button data-ask ${busy||!enabled||!token?'disabled':''}>Ask local assistant</button>
-        ${suggestion?`<article class="panel"><p>${esc(suggestion.explanation)}</p><p>Suggested mode: ${esc(suggestion.mode)}. Proposed rules require separate policy review.</p><ul>${suggestion.proposed_rules.map((r:string)=>`<li>${esc(r)}</li>`).join('')}</ul><button data-use-suggestion>Use suggested planning mode</button></article>`:''}`:''}
+        ${suggestion?`<article class="panel"><p>${esc(suggestion.explanation)}</p>${suggestion.discarded_unrequested_rules?'<p>Unrequested numerical changes were discarded. Existing policy was preserved.</p>':''}<p>Suggested mode: ${esc(suggestion.mode)}. Proposed rules require separate policy review.</p><ul>${suggestion.proposed_rules.map((r:string)=>`<li>${esc(r)}</li>`).join('')}</ul>${suggestion.rule_changes?.length?`<details><summary>Quoted instruction for proposed settings</summary>${suggestion.rule_changes.map((r:{evidence:string})=>`<blockquote>${esc(r.evidence)}</blockquote>`).join('')}</details>`:''}<button data-use-suggestion>Use suggested planning mode</button></article>`:''}`:''}
       ${tab==='learning'&&admin?`<p>Candidate weights use approved examples only. Held-out months must pass comparison before activation; previous versions remain available for rollback.</p><button data-load-learning>Refresh versions</button><button data-propose-learning>Prepare candidate version</button>
         <label>Held-out draft months (comma separated)<input data-heldout placeholder="2026-06, 2026-07"></label>
         ${versions.map(v=>`<article class="panel"><p>${esc(v.status)} · ${esc(v.id)}</p><pre>${esc(JSON.stringify({weights:v.weights,evaluation:v.evaluation},null,2))}</pre><button data-evaluate="${v.id}">Evaluate on held-out months</button>${v.evaluation?.passed&&v.status!=='active'?`<button data-activate="${v.id}">Activate evaluated version</button>`:''}${v.activated_at&&v.status!=='active'?`<button data-rollback="${v.id}">Restore this version</button>`:''}</article>`).join('')}`:''}
@@ -113,6 +115,7 @@ export async function openIntelligentRota(month:string, admin:boolean, onApplied
     if(input.matches('[data-confirm]')) dialog.querySelector<HTMLButtonElement>('[data-apply]')!.disabled=!input.checked||busy;
     if(input.matches('[data-local-enabled]')) {enabled=input.checked;sessionStorage.setItem('rota_local_assistant_enabled',String(enabled));render();}
     if(input.matches('[data-local-token]')) {token=input.value;sessionStorage.setItem('rota_local_assistant_pairing',token);}
+    if(input.matches('[data-local-port]') && input.validity.valid){companionPort=Number(input.value);sessionStorage.setItem('rota_local_assistant_port',String(companionPort));const command=dialog.querySelector('[data-companion-command]');if(command)command.textContent=`.\\tools\\start-local-rota-assistant.ps1 -WebsiteOrigin ${location.origin} -Port ${companionPort}`;}
     if(input.matches('[data-instruction]')) instruction=input.value;
     if(input.matches('[data-alternative]')) void action(async()=>{job=await api<Job>(`jobs/${job!.id}/select`,{index:Number(input.value),revision:job!.revision});});
   };
@@ -158,7 +161,8 @@ export async function openIntelligentRota(month:string, admin:boolean, onApplied
       else if(b.matches('[data-ask]')) {
         const context=await api(`assistant-context?month=${encodeURIComponent(month)}&instruction=${encodeURIComponent(instruction)}`);
         let response:Response;
-        try {response=await fetch('http://127.0.0.1:11435/suggest',{method:'POST',headers:{'Content-Type':'application/json','X-Rota-Pairing':token},body:JSON.stringify({instruction,context:JSON.stringify(context)}),signal:AbortSignal.timeout(95000)});}
+        if(!Number.isInteger(companionPort)||companionPort<1024||companionPort>65535)throw Error('Enter a valid local companion port between 1024 and 65535.');
+        try {response=await fetch(`http://127.0.0.1:${companionPort}/suggest`,{method:'POST',headers:{'Content-Type':'application/json','X-Rota-Pairing':token},body:JSON.stringify({instruction,context:JSON.stringify(context)}),signal:AbortSignal.timeout(95000)});}
         catch {throw Error('Could not reach the local assistant. Start the companion and allow this site local-network / loopback access in browser permissions. Regular generation remains available.');}
         const data=await response.json();if(!response.ok)throw Error(data.detail || 'Local assistant unavailable');suggestion=data;notice='Local suggestion received. Review before using.';
       }
