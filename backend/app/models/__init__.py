@@ -12,7 +12,9 @@ from app.models.person import Person, PersonAlias, PersonDesignation
 from app.models.member_workspace import MemberActivity, MemberImportPreview, MemberCallLevelChange, LegacyPersonCallChange, LegacyPersonComment
 from app.models.member_profile import PersonCallChange, PersonComment
 from app.models.member_bulk import MemberDistinctPair
+from app.models.member_merge import MemberMerge
 from app.models.posting import PersonPosting
+from app.models.recycle_bin import DeletedRecord
 from app.models.rota import (
     DutyAssignment,
     DutySlot,
@@ -31,6 +33,7 @@ from app.models.rules import RuleSetting, RuleVersion
 from app.models.unit import Unit, UnitCallMinimum
 
 __all__ = [
+    "DeletedRecord",
     "RotaComputeJob",
     "ReferenceValue",
     "NormalizationEvent",
@@ -38,6 +41,7 @@ __all__ = [
     "MemberResolutionRule",
     "MemberActivity",
     "MemberDistinctPair",
+    "MemberMerge",
     "MemberCallLevelChange",
     "LegacyPersonCallChange",
     "LegacyPersonComment",

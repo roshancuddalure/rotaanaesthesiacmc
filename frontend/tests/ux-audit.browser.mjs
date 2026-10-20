@@ -19,7 +19,7 @@ const api = process.env.UX_AUDIT_API || "http://127.0.0.1:8020";
 const out = new URL(`../../docs/ux-audit/${label}/`, import.meta.url);
 const ALL_VIEWS = ["overview", "analysis", "members", "leave", "units", "rota-setup", "rota-template",
   "rota-review", "rota-publish", "user-guide", "rota-rules", "call-clusters", "mappings", "imports",
-  "accounts", "diagnostics", "compute-settings"];
+  "accounts", "diagnostics", "compute-settings", "recycle-bin"];
 const views = option("views")?.split(",") ?? ALL_VIEWS;
 const widths = (option("widths")?.split(",") ?? ["1440", "1024", "768", "390"]).map(Number);
 const schemes = option("schemes")?.split(",") ?? ["light", "dark"];

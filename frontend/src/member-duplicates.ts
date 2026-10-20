@@ -4,8 +4,13 @@
 import { workspaceDialog } from "./member-workspace";
 import {
   dismissSuspectedDuplicate,
+  getMemberMerges,
   getSuspectedDuplicates,
   mergeMembers,
+  previewMerge,
+  undoMemberMerge,
+  type MemberMergeRecord,
+  type MergePreview,
   type SuspectedDuplicate,
   type SuspectedDuplicatePerson,
 } from "./services/api";
@@ -50,10 +55,43 @@ function cardHtml(pair: SuspectedDuplicate, index: number): string {
       ${pair.people.map((p) => `<label><input type="radio" name="keep-${index}" value="${esc(p.id)}" ${p.id === keep.id ? "checked" : ""}> ${esc(p.canonical_name)}</label>`).join("")}
     </fieldset>
     <div class="dup-card__actions">
-      <button type="button" class="danger-button btn-sm" data-merge>Merge into ${esc(keep.canonical_name)}…</button>
+      <button type="button" class="danger-button btn-sm" data-merge>Review merge into ${esc(keep.canonical_name)}…</button>
       <button type="button" class="icon-button btn-sm" data-dismiss>Not the same person</button>
     </div>
+    <div class="dup-card__preview" data-merge-preview hidden></div>
   </article>`;
+}
+
+/** The reviewed plan for one merge: what moves, what is combined, conflicts and warnings. */
+function previewHtml(preview: MergePreview, keptName: string, otherName: string): string {
+  const moves = Object.entries(preview.moves);
+  const combined = preview.combined;
+  return `<section class="merge-plan" aria-label="What this merge will do">
+    <h4>What merging ${esc(otherName)} into ${esc(keptName)} will do</h4>
+    ${preview.warnings.map((w) => `<p class="merge-plan__warning" role="note">${esc(w)}</p>`).join("")}
+    ${moves.length ? `<ul class="merge-plan__moves">${moves.map(([kind, n]) => `<li><strong>${n}</strong> ${esc(kind)} move to ${esc(keptName)}</li>`).join("")}</ul>`
+      : `<p class="muted-text">No records to move.</p>`}
+    ${combined.length ? `<details class="merge-plan__combined"><summary>${esc(plural(combined.length, "duplicate"))} combined instead of copied</summary>
+      <ul>${combined.slice(0, 50).map((c) => `<li>${esc(c)}</li>`).join("")}</ul>
+      ${combined.length > 50 ? `<p class="muted-text">and ${combined.length - 50} more</p>` : ""}</details>` : ""}
+    ${preview.conflicts.map((c) => `<fieldset class="merge-plan__conflict"><legend>${esc(c.description)}</legend>
+      <label><input type="radio" name="conflict-${esc(c.id)}" data-conflict="${esc(c.id)}" value="keep_target" ${c.chosen === "keep_target" ? "checked" : ""}> Keep ${esc(keptName)}'s</label>
+      <label><input type="radio" name="conflict-${esc(c.id)}" data-conflict="${esc(c.id)}" value="keep_source" ${c.chosen === "keep_source" ? "checked" : ""}> Use ${esc(otherName)}'s</label>
+    </fieldset>`).join("")}
+    <p class="muted-text">${esc(otherName)}'s separate record is removed. You can undo this merge afterwards.</p>
+    <div class="dup-card__actions">
+      <button type="button" class="danger-button btn-sm" data-merge-confirm>Confirm merge</button>
+      <button type="button" class="icon-button btn-sm" data-merge-cancel>Cancel</button>
+    </div>
+  </section>`;
+}
+
+function mergesHtml(merges: MemberMergeRecord[]): string {
+  if (!merges.length) return "";
+  return `<details class="dup-history"><summary>Recent merges (${merges.length})</summary><ul>${merges.slice(0, 30).map((m) => `<li>
+      <span>${esc(m.source_names.join(", "))} → ${esc(m.target_name)} · ${esc(new Date(m.merged_at).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" }))} · ${esc(m.operator_name)}</span>
+      ${m.undone_at ? badge("Undone", "neutral") : `<button type="button" class="icon-button btn-sm" data-undo-merge="${esc(m.merge_id)}">Undo merge</button>`}
+    </li>`).join("")}</ul></details>`;
 }
 
 export async function openSuspectedDuplicates(onChanged: () => void | Promise<void>): Promise<void> {
@@ -69,12 +107,17 @@ export async function openSuspectedDuplicates(onChanged: () => void | Promise<vo
   const status = dialog.querySelector<HTMLElement>("[data-status]")!;
   let pairs: SuspectedDuplicate[] = [];
   let busy = false;
+  const previews = new Map<string, { preview: MergePreview; choices: Record<string, string> }>();
 
   const say = (text: string) => { status.textContent = text; };
   const close = () => {
     if (busy) return;
     dialog.close();
     dialog.remove();
+  };
+  const refreshHistory = async () => {
+    const host = body.querySelector<HTMLElement>("[data-history]");
+    if (host) host.innerHTML = mergesHtml(await getMemberMerges().catch(() => []));
   };
   const showEmptyIfDone = () => {
     if (!body.querySelector(".dup-card")) {
@@ -84,11 +127,13 @@ export async function openSuspectedDuplicates(onChanged: () => void | Promise<vo
   const load = async () => {
     body.innerHTML = `<p class="muted-text" role="status">Looking for possible duplicates…</p>`;
     try {
-      pairs = await getSuspectedDuplicates();
+      const [found, merges] = await Promise.all([getSuspectedDuplicates(), getMemberMerges().catch(() => [])]);
+      pairs = found;
       body.innerHTML = pairs.length
         ? `<p class="muted-text">${esc(plural(pairs.length, "possible duplicate pair"))} to review.</p>${pairs.map(cardHtml).join("")}`
         : "";
       showEmptyIfDone();
+      body.insertAdjacentHTML("beforeend", `<div data-history>${mergesHtml(merges)}</div>`);
     } catch (error) {
       const message = error instanceof Error ? error.message : "Could not load possible duplicates";
       body.innerHTML = emptyState({
@@ -120,6 +165,32 @@ export async function openSuspectedDuplicates(onChanged: () => void | Promise<vo
     card.setAttribute("aria-busy", String(value));
   };
 
+  const hidePreview = (card: HTMLElement, pair: SuspectedDuplicate) => {
+    previews.delete(pair.pair_id);
+    const host = card.querySelector<HTMLElement>("[data-merge-preview]")!;
+    host.hidden = true;
+    host.innerHTML = "";
+  };
+  const showPreview = async (card: HTMLElement, pair: SuspectedDuplicate, choices: Record<string, string> = {}) => {
+    const { kept, other } = keptAndOther(card, pair);
+    const host = card.querySelector<HTMLElement>("[data-merge-preview]")!;
+    setCardBusy(card, true);
+    say(`Checking what merging ${other.canonical_name} into ${kept.canonical_name} would do… nothing is changed yet.`);
+    try {
+      const preview = await previewMerge(kept.id, [other.id], choices);
+      previews.set(pair.pair_id, { preview, choices });
+      host.innerHTML = previewHtml(preview, kept.canonical_name, other.canonical_name);
+      host.hidden = false;
+      say("Review the merge below, then confirm.");
+      setCardBusy(card, false);
+      host.querySelector<HTMLElement>("h4")?.setAttribute("tabindex", "-1");
+      host.querySelector<HTMLElement>("h4")?.focus();
+    } catch (error) {
+      setCardBusy(card, false);
+      say(`Could not check this merge: ${error instanceof Error ? error.message : "unknown error"}`);
+    }
+  };
+
   dialog.addEventListener("cancel", (event) => {
     event.preventDefault();
     close();
@@ -130,8 +201,14 @@ export async function openSuspectedDuplicates(onChanged: () => void | Promise<vo
     const card = input.closest<HTMLElement>(".dup-card");
     const pair = card && pairFor(card);
     if (!card || !pair) return;
+    if (input.dataset.conflict) {
+      const state = previews.get(pair.pair_id);
+      if (state) void showPreview(card, pair, { ...state.choices, [input.dataset.conflict]: input.value });
+      return;
+    }
     const { kept } = keptAndOther(card, pair);
-    card.querySelector<HTMLButtonElement>("[data-merge]")!.textContent = `Merge into ${kept.canonical_name}…`;
+    card.querySelector<HTMLButtonElement>("[data-merge]")!.textContent = `Review merge into ${kept.canonical_name}…`;
+    hidePreview(card, pair);
   });
   dialog.addEventListener("click", async (event) => {
     const target = event.target as HTMLElement;
@@ -144,30 +221,69 @@ export async function openSuspectedDuplicates(onChanged: () => void | Promise<vo
       await load();
       return;
     }
+    const undo = target.closest<HTMLButtonElement>("[data-undo-merge]");
+    if (undo && !busy) {
+      busy = true;
+      undo.disabled = true;
+      say("Undoing the merge…");
+      try {
+        const result = await undoMemberMerge(undo.dataset.undoMerge!);
+        busy = false;
+        say(`Merge undone: ${result.restored.join(", ")} restored as a separate record.`);
+        await onChanged();
+        await load();
+      } catch (error) {
+        busy = false;
+        undo.disabled = false;
+        const err = error as Error & { detail?: { blockers?: string[] } };
+        const blockers = err.detail?.blockers?.length ? ` ${err.detail.blockers.join("; ")}.` : "";
+        say(`Could not undo: ${err.message || "unknown error"}.${blockers} Nothing was changed.`);
+      }
+      return;
+    }
     const card = target.closest<HTMLElement>(".dup-card");
     const pair = card && pairFor(card);
     if (!card || !pair || busy) return;
 
     if (target.closest("[data-merge]")) {
+      await showPreview(card, pair);
+      return;
+    }
+
+    if (target.closest("[data-merge-cancel]")) {
+      hidePreview(card, pair);
+      say("Merge cancelled. Nothing was changed.");
+      card.querySelector<HTMLElement>("[data-merge]")?.focus();
+      return;
+    }
+
+    if (target.closest("[data-merge-confirm]")) {
+      const state = previews.get(pair.pair_id);
+      if (!state) return;
       const { kept, other } = keptAndOther(card, pair);
-      const ok = window.confirm(
-        `Merge ${other.canonical_name} into ${kept.canonical_name}? ` +
-        `Their ${plural(other.duties, "duty", "duties")}, ${plural(other.postings, "posting")}, ` +
-        `${plural(other.leave, "leave record")} and aliases move to ${kept.canonical_name}, ` +
-        `and ${other.canonical_name}'s separate record is removed. This cannot be undone.`,
-      );
-      if (!ok) return;
       setCardBusy(card, true);
       say(`Merging ${other.canonical_name} into ${kept.canonical_name}…`);
       try {
-        await mergeMembers(kept.id, [other.id]);
+        const result = await mergeMembers(kept.id, [other.id], state.preview.preview_token, state.choices);
         setCardBusy(card, false);
-        removeCard(card);
-        say(`Merged ${other.canonical_name} into ${kept.canonical_name}.`);
+        previews.delete(pair.pair_id);
+        card.outerHTML = `<article class="dup-card dup-card--done" data-pair="${esc(pair.pair_id)}">
+          <p>${badge("Merged", "success")} ${esc(other.canonical_name)} is now part of ${esc(kept.canonical_name)}.</p>
+          ${result.merge_id ? `<button type="button" class="icon-button btn-sm" data-undo-merge="${esc(result.merge_id)}">Undo merge</button>` : ""}
+        </article>`;
+        pairs = pairs.filter((p) => p.pair_id !== pair.pair_id);
+        say(`Merged ${other.canonical_name} into ${kept.canonical_name}. You can undo it below.`);
+        await refreshHistory();
         await onChanged();
       } catch (error) {
         setCardBusy(card, false);
-        say(`Could not merge: ${error instanceof Error ? error.message : "unknown error"}`);
+        const err = error as Error & { status?: number; detail?: { code?: string } };
+        if (err.status === 409 && err.detail?.code === "stale_preview") {
+          say("The records changed since this preview. Here is the updated plan; review it again.");
+          await showPreview(card, pair, state.choices);
+        } else {
+          say(`Could not merge: ${err.message || "unknown error"}. Nothing was changed.`);
+        }
       }
       return;
     }

@@ -168,20 +168,45 @@ def _pair_score(a: str, b: str, matcher: SequenceMatcher) -> float:
     return 0.9 if contained else 0.0
 
 
+def _words(name: str) -> list[str]:
+    return [w for w in "".join(c if c.isalnum() else " " for c in name.casefold()).split() if w]
+
+
+def _shared_duty_days(db: Session, a: str, b: str) -> int:
+    """Days on which both members held a duty (a merged record could not have)."""
+    days = select(DutySlot.duty_date).join(DutyAssignment, DutyAssignment.duty_slot_id == DutySlot.id)
+    first = set(db.scalars(days.where(DutyAssignment.person_id == UUID(a))))
+    if not first:
+        return 0
+    return len(first & set(db.scalars(days.where(DutyAssignment.person_id == UUID(b)))))
+
+
 def suspected_duplicates(db: Session) -> list[dict]:
     """Pairs of members (any status) whose names or aliases look alike, minus reviewed pairs."""
     people = db.scalars(select(Person).options(selectinload(Person.aliases))).all()
     by_id = {p.id: p for p in people}
     labels: list[tuple[str, UUID, str, str]] = []  # key, person, written form, kind
+    alias_owners: dict[str, set[UUID]] = defaultdict(set)
+    for person in people:
+        for alias in person.aliases:
+            alias_owners[member_key(alias.alias)].add(person.id)
+    # Whole-word owners of each one-word canonical name (e.g. historical "Rohith").
+    word_owners: dict[str, set[UUID]] = defaultdict(set)
+    for person in people:
+        for word in _words(person.canonical_name):
+            word_owners[word].add(person.id)
     for person in people:
         key = member_key(person.canonical_name)
         if key:
             labels.append((key, person.id, person.canonical_name, "name"))
         for alias in person.aliases:
             akey = member_key(alias.alias)
-            if akey:
+            # One-word aliases ("Joseph", "Daniel") and aliases several people carry say
+            # nothing about identity; they produced most false pairs, so they are not compared.
+            if akey and len(_words(alias.alias)) >= 2 and len(alias_owners[akey]) == 1:
                 labels.append((akey, person.id, alias.alias, "alias"))
     labels.sort(key=lambda item: (item[0], str(item[1]), item[2]))
+    words_of = {person.id: set(_words(person.canonical_name)) for person in people}
 
     best: dict[tuple[str, str], tuple[float, str]] = {}
     matcher = SequenceMatcher(None)
@@ -193,9 +218,31 @@ def suspected_duplicates(db: Session) -> list[dict]:
             score = _pair_score(key_a, key_b, matcher)
             if not score:
                 continue
+            spelled_alike = SequenceMatcher(None, key_a, key_b).ratio() >= DUPLICATE_THRESHOLD
+            if (key_a != key_b and not spelled_alike and min(len(key_a), len(key_b)) >= 6
+                    and (key_a in key_b or key_b in key_a)):
+                short_form, short_pid, other_pid = ((form_a, pid_a, pid_b) if len(key_a) <= len(key_b)
+                                                    else (form_b, pid_b, pid_a))
+                short_words = set(_words(short_form))
+                # "Atchi" is not inside "Sengatchi": containment counts only as whole words,
+                # and a single word only when exactly one other member's name has it.
+                if not short_words or not short_words <= words_of[other_pid]:
+                    continue
+                if len(short_words) == 1 and len(word_owners[next(iter(short_words))] - {short_pid}) != 1:
+                    continue
             pair = pair_key(pid_a, pid_b)
             if score <= best.get(pair, (0.0, ""))[0]:
                 continue
+            words_a, words_b = _words(form_a), _words(form_b)
+            if (len(words_a) > 1 and len(words_b) > 1 and len(words_a[-1]) == 1 == len(words_b[-1])
+                    and words_a[-1] != words_b[-1]):
+                continue  # "Christina R" / "Christina T": different initials, different people
+            if key_a != key_b and "alias" in (kind_a, kind_b):
+                # A look-alike alias only counts when the full names are alike too.
+                names = (member_key(by_id[pid_a].canonical_name), member_key(by_id[pid_b].canonical_name))
+                if SequenceMatcher(None, *names).ratio() < 0.75 and not (
+                        names[0] in names[1] or names[1] in names[0]):
+                    continue
             if key_a == key_b:
                 reason = ("Same name" if kind_a == kind_b == "name"
                           else f'Same name form "{form_a}" / "{form_b}"')
@@ -204,6 +251,19 @@ def suspected_duplicates(db: Session) -> list[dict]:
             else:
                 reason = f'Similar spelling: "{form_a}" / "{form_b}"'
             best[pair] = (round(score, 3), reason)
+
+    # A one-word record (often a historical import, e.g. "Rohith", "SANA") that is a whole
+    # word of exactly one other member's name.
+    for person in people:
+        words = _words(person.canonical_name)
+        if len(words) != 1 or len(words[0]) < 3:
+            continue
+        others = word_owners[words[0]] - {person.id}
+        if len(others) == 1:
+            other = by_id[next(iter(others))]
+            pair = pair_key(person.id, other.id)
+            if best.get(pair, (0.0, ""))[0] < 0.9:
+                best[pair] = (0.9, f'One-word record "{person.canonical_name}" matches a word in "{other.canonical_name}"')
 
     dismissed = {pair_key(a, b) for a, b in db.execute(
         select(MemberDistinctPair.person_a_id, MemberDistinctPair.person_b_id))}
@@ -218,6 +278,7 @@ def suspected_duplicates(db: Session) -> list[dict]:
     known_distinct = {pair_key(a, b) for ids in targets_by_form.values() if len(ids) > 1
                       for a in ids for b in ids if a < b}
     pairs = {k: v for k, v in best.items() if k not in dismissed and k not in known_distinct}
+
     involved = {UUID(i) for pair in pairs for i in pair}
     duties = postings = leave = Counter()
     if involved:
@@ -242,7 +303,10 @@ def suspected_duplicates(db: Session) -> list[dict]:
         target = min((pa, pb), key=lambda p: (p.active_status != "active", -duties.get(p.id, 0),
                                               p.canonical_name.casefold(), str(p.id)))
         ordered = sorted((pa, pb), key=lambda p: (p.canonical_name.casefold(), str(p.id)))
-        result.append({"pair_id": f"{a}:{b}", "similarity": score, "reason": reason,
+        shared = _shared_duty_days(db, a, b)
+        if shared:
+            reason += f" · both on duty on {shared} same {'day' if shared == 1 else 'days'}: check they are one person"
+        result.append({"pair_id": f"{a}:{b}", "similarity": score, "reason": reason, "shared_duty_days": shared,
                        "suggested_target_id": str(target.id),
                        "people": [describe(p) for p in ordered]})
     result.sort(key=lambda r: (-r["similarity"], r["people"][0]["canonical_name"].casefold(),

@@ -225,4 +225,28 @@ export async function mountPastDuties(host: HTMLElement) {
     finally { busy = false; if (host.isConnected) render(); }
   };
   render();
+  void mountRecordedSection(host, options.month, status.today.slice(0, 7));
+}
+
+/**
+ * Admin "Recorded past duties · <Month>" table, placed right after the upload host (render()
+ * replaces the host's content, so it lives in a sibling). Loaded on demand; skipped when there
+ * is no real DOM.
+ */
+async function mountRecordedSection(host: HTMLElement, month: string, maxMonth: string) {
+  if (typeof document === "undefined" || typeof HTMLElement === "undefined" || !(host instanceof HTMLElement) || !host.parentElement) return;
+  let section = host.nextElementSibling as HTMLElement | null;
+  if (!section?.hasAttribute("data-recorded-past-duties")) {
+    section = document.createElement("div");
+    section.setAttribute("data-recorded-past-duties", "");
+    host.after(section);
+  }
+  const target = section.cloneNode(false) as HTMLElement;
+  section.replaceWith(target);
+  try {
+    const { mountRecordedPastDuties } = await import("./recycle-bin");
+    if (target.isConnected) await mountRecordedPastDuties(target, month, maxMonth);
+  } catch (error) {
+    target.innerHTML = `<section class="panel" role="alert">Recorded past duties could not be shown: ${escape(error instanceof Error ? error.message : error)}</section>`;
+  }
 }

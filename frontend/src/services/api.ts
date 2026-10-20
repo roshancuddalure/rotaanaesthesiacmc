@@ -1868,17 +1868,70 @@ export function getDedupeCandidates(): Promise<DuplicateCandidate[]> {
   return request<DuplicateCandidate[]>("/api/v1/admin/members/dedupe-candidates");
 }
 
+export interface MergeConflict {
+  id: string;
+  description: string;
+  options: ("keep_target" | "keep_source")[];
+  chosen: "keep_target" | "keep_source";
+}
+
+export interface MergePreview {
+  preview_token: string;
+  target: { id: string; name: string };
+  sources: { id: string; name: string }[];
+  /** Records re-pointed to the kept member, by kind ("duty assignments": 12). */
+  moves: Record<string, number>;
+  /** Duplicates combined or dropped, in plain words. */
+  combined: string[];
+  conflicts: MergeConflict[];
+  warnings: string[];
+}
+
+export interface MemberMergeRecord {
+  merge_id: string;
+  merged_at: string;
+  operator_name: string;
+  target_id: string;
+  target_name: string;
+  source_names: string[];
+  undone_at: string | null;
+  undone_by_name: string | null;
+}
+
+/** What a merge would do; the server runs it and rolls it back. */
+export function previewMerge(targetPersonId: string, sourcePersonIds: string[],
+                             choices: Record<string, string> = {}): Promise<MergePreview> {
+  return request<MergePreview>("/api/v1/admin/members/merge/preview", {
+    method: "POST",
+    body: JSON.stringify({ target_person_id: targetPersonId, source_person_ids: sourcePersonIds, choices }),
+  });
+}
+
+/** Merge; with a preview token the server refuses (409 stale_preview) if anything changed. */
 export function mergeMembers(
   targetPersonId: string,
   sourcePersonIds: string[],
-): Promise<DepartmentMember> {
-  return request<DepartmentMember>("/api/v1/admin/members/merge", {
+  previewToken?: string,
+  choices: Record<string, string> = {},
+): Promise<DepartmentMember & { merge_id?: string }> {
+  return request<DepartmentMember & { merge_id?: string }>("/api/v1/admin/members/merge", {
     method: "POST",
     body: JSON.stringify({
       target_person_id: targetPersonId,
       source_person_ids: sourcePersonIds,
+      ...(previewToken ? { preview_token: previewToken } : {}),
+      choices,
     }),
   });
+}
+
+export function getMemberMerges(): Promise<MemberMergeRecord[]> {
+  return request<MemberMergeRecord[]>("/api/v1/admin/members/merges");
+}
+
+/** Undo a merge exactly; 409 {code: "cannot_undo", blockers} if records changed since. */
+export function undoMemberMerge(mergeId: string): Promise<{ merge_id: string; restored: string[] }> {
+  return request(`/api/v1/admin/members/merges/${encodeURIComponent(mergeId)}/undo`, { method: "POST", body: "{}" });
 }
 
 export function getInvalidMembers(): Promise<InvalidMembersResult> {
@@ -2298,4 +2351,113 @@ export function dismissSuspectedDuplicate(personIds: string[], note: string | nu
     method: "POST",
     body: JSON.stringify({ person_ids: personIds, note }),
   });
+}
+
+// ---- Admin delete and recycle bin (docs/admin_delete_contract.md) ----
+
+export type AdminDeleteKind = "member" | "leave" | "posting" | "past_duty";
+
+export interface AdminDeleteSelection {
+  kind: AdminDeleteKind;
+  ids?: string[];
+  month?: string;
+}
+
+export interface AdminDeletePreview {
+  kind: AdminDeleteKind;
+  count: number;
+  items: { id: string; label: string }[];
+  blocked: { id: string; label: string; reason: string }[];
+  effects: { extra_slots?: number; linked_records?: number };
+  preview_token: string;
+  confirm_phrase: string | null;
+}
+
+export interface AdminDeleteResult {
+  batch_id: string;
+  deleted: number;
+}
+
+export interface RecycleBinBatch {
+  batch_id: string;
+  kind: AdminDeleteKind;
+  count: number;
+  labels: string[];
+  deleted_at: string;
+  deleted_by: string | null;
+  purge_after: string;
+  restored_at: string | null;
+  restored_by: string | null;
+}
+
+export interface RecycleRestoreResult {
+  restored: number;
+  failed: { label: string; reason: string }[];
+}
+
+export interface RecordedPastDuty {
+  id: string;
+  date: string;
+  duty_type: string;
+  duty_label: string;
+  member_id: string | null;
+  member_name: string | null;
+  source: string | null;
+  status: string;
+}
+
+export interface RecordedPastDuties {
+  items: RecordedPastDuty[];
+  truncated: boolean;
+}
+
+function selectionBody(selection: AdminDeleteSelection): Record<string, unknown> {
+  const body: Record<string, unknown> = { kind: selection.kind };
+  if (selection.month) body.month = selection.month;
+  else body.ids = selection.ids ?? [];
+  return body;
+}
+
+export function previewAdminDelete(selection: AdminDeleteSelection): Promise<AdminDeletePreview> {
+  return request<AdminDeletePreview>("/api/v1/admin/delete/preview", {
+    method: "POST",
+    body: JSON.stringify(selectionBody(selection)),
+  });
+}
+
+export function adminDelete(
+  selection: AdminDeleteSelection,
+  previewToken: string,
+  confirmPhrase?: string | null,
+): Promise<AdminDeleteResult> {
+  const body = selectionBody(selection);
+  body.preview_token = previewToken;
+  if (confirmPhrase) body.confirm_phrase = confirmPhrase;
+  return request<AdminDeleteResult>("/api/v1/admin/delete", { method: "POST", body: JSON.stringify(body) });
+}
+
+export function getRecycleBin(): Promise<RecycleBinBatch[]> {
+  return request<RecycleBinBatch[]>("/api/v1/admin/recycle-bin");
+}
+
+export function restoreRecycleBatch(batchId: string): Promise<RecycleRestoreResult> {
+  return request<RecycleRestoreResult>(`/api/v1/admin/recycle-bin/${encodeURIComponent(batchId)}/restore`, {
+    method: "POST",
+    body: "{}",
+  });
+}
+
+export function purgeRecycleBatch(batchId: string): Promise<{ purged: number }> {
+  return request<{ purged: number }>(`/api/v1/admin/recycle-bin/${encodeURIComponent(batchId)}`, {
+    method: "DELETE",
+    body: JSON.stringify({ confirm: true }),
+  });
+}
+
+/** Past duty assignments in a month (YYYY-MM). Accepts either a bare list or {items, truncated}. */
+export async function getRecordedPastDuties(month: string): Promise<RecordedPastDuties> {
+  const data = await request<RecordedPastDuty[] | RecordedPastDuties>(
+    `/api/v1/admin/past-duties/recorded?month=${encodeURIComponent(month)}`,
+  );
+  return Array.isArray(data) ? { items: data, truncated: false } : { items: data.items ?? [], truncated: Boolean(data.truncated) };
 }

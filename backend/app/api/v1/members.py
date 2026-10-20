@@ -120,6 +120,10 @@ class DesignationCreate(BaseModel):
 class MergeRequest(BaseModel):
     target_person_id: UUID
     source_person_ids: list[UUID]
+    # From POST /admin/members/merge/preview; when given, the merge must match that preview.
+    preview_token: str | None = None
+    # Conflict id -> "keep_target" | "keep_source" (see the preview's conflicts).
+    choices: dict[str, str] = {}
 
 
 class DuplicateCandidateRead(BaseModel):
@@ -621,14 +625,72 @@ def prefill_call_levels(payload: ConfirmRequest | None = Body(default=None), db:
         lambda: CallLevelPrefillRead(**prefill_call_levels_from_unitwise(db, token=token).__dict__)))
 
 
-@router.post("/admin/members/merge", dependencies=[Depends(require_admin)])
-def merge_members(payload: MergeRequest, db: Session = Depends(get_db), operator: UserAccount = Depends(require_admin)) -> MemberRead:
-    """Merge ``source_person_ids`` into ``target_person_id`` (moves history, keeps old names as aliases)."""
+def _merge_errors(action):
+    """Merge failures become clear 4xx answers; on any of them nothing was changed."""
+    from app.services.member_merge import MergeConflict, MergeError, UndoBlocked
+
     try:
-        person = audited_member_operation(db, operator, "members_merged",
-            lambda: merge_people(db, payload.target_person_id, payload.source_person_ids))
-    except ValueError as exc:
+        return action()
+    except StalePreviewError as exc:
+        raise HTTPException(status_code=409, detail={"code": "stale_preview", "message": str(exc)}) from exc
+    except UndoBlocked as exc:
+        raise HTTPException(status_code=409, detail={"code": "cannot_undo", "message": str(exc),
+                                                     "blockers": exc.blockers}) from exc
+    except LookupError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except MergeConflict as exc:
+        raise HTTPException(status_code=409, detail={"code": "already_undone", "message": str(exc)}) from exc
+    except MergeError as exc:
+        raise HTTPException(status_code=409, detail={"code": "merge_failed", "message": str(exc)}) from exc
     except IntegrityError as exc:
-        raise HTTPException(status_code=409, detail="Merge produced a duplicate record") from exc
-    return member_to_read(get_member_or_404(db, person.id))
+        from app.services.member_merge import _explain
+
+        raise HTTPException(status_code=409, detail={
+            "code": "merge_failed",
+            "message": f"Merge stopped and nothing was changed: {_explain(exc)}"}) from exc
+
+
+@router.post("/admin/members/merge/preview", dependencies=[Depends(require_admin)])
+def preview_merge_members(payload: MergeRequest, db: Session = Depends(get_db)) -> dict:
+    """What the merge would move, combine and ask about. Runs the merge and rolls it back."""
+    from app.services.member_merge import run_merge
+
+    return _merge_errors(lambda: run_merge(db, payload.target_person_id, payload.source_person_ids,
+                                           choices=payload.choices, preview=True))
+
+
+@router.post("/admin/members/merge", dependencies=[Depends(require_admin)])
+def merge_members(payload: MergeRequest, db: Session = Depends(get_db), operator: UserAccount = Depends(require_admin)) -> dict:
+    """Merge ``source_person_ids`` into ``target_person_id``; undoable via /admin/members/merges."""
+    person = _merge_errors(lambda: audited_member_operation(db, operator, "members_merged",
+        lambda: merge_people(db, payload.target_person_id, payload.source_person_ids, operator=operator,
+                             choices=payload.choices, preview_token=payload.preview_token)))
+    merge_id = getattr(person, "last_merge_id", None)
+    return {**member_to_read(get_member_or_404(db, person.id)).model_dump(mode="json"), "merge_id": merge_id}
+
+
+@router.get("/admin/members/merges", dependencies=[Depends(require_admin)])
+def list_member_merges(db: Session = Depends(get_db)) -> list[dict]:
+    from app.services.member_merge import list_merges
+
+    return list_merges(db)
+
+
+@router.post("/admin/members/merges/{merge_id}/undo", dependencies=[Depends(require_admin)])
+def undo_member_merge(merge_id: UUID, db: Session = Depends(get_db),
+                      operator: UserAccount = Depends(require_admin)) -> dict:
+    """Restore the merged-away records exactly, or 409 with what changed since."""
+    from app.services.member_merge import undo_merge
+
+    def run():
+        result = undo_merge(db, merge_id, operator)
+        db.commit()
+        return result
+
+    try:
+        return _merge_errors(run)
+    except HTTPException:
+        db.rollback()
+        raise
+
+

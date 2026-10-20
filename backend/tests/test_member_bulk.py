@@ -240,7 +240,9 @@ def test_merge_removes_pair_and_shared_key_or_alias_is_found(env):
     a = add_person(sessions, "Dr. Ravi Shankar")
     b = add_person(sessions, "Ravi Shankar")
     c = add_person(sessions, "Priya Nair")
-    d = add_person(sessions, "P Nair Menon")
+    # A fuller record of the same person (whole-word containment); look-alike aliases alone
+    # no longer pair people whose full names differ.
+    d = add_person(sessions, "Priya Nair Menon")
     with sessions() as db:
         db.add(PersonAlias(person_id=d, alias="Priya N."))
         db.commit()
@@ -262,26 +264,36 @@ def test_merge_removes_pair_and_shared_key_or_alias_is_found(env):
 
 
 def test_people_the_name_rules_tell_apart_are_not_offered_for_merge(env):
-    # The alias rules say "Priyadarshini" means one of these two by call level, so they are
-    # known to be different people even though their names are very similar.
+    # The alias rules say "Riya" means one of these two by call level, so they are known to be
+    # different people even though their names are nearly identical.
     from app.models import MemberResolutionRule
 
     client, sessions, _ = env
-    from app.models import PersonAlias
-
-    first = add_person(sessions, "Priyadharshini S")
-    second = add_person(sessions, "Priyadarshini Kalahasthi")
+    first = add_person(sessions, "Riya Lal")
+    second = add_person(sessions, "Riya Lall")
     pair = ":".join(sorted([str(first), str(second)]))
-    with sessions() as db:
-        # Saved short spellings make the two records look alike (as in the real roster).
-        db.add_all([PersonAlias(person_id=first, alias="Priyadharshini", source="test"),
-                    PersonAlias(person_id=second, alias="Priyadarshini", source="test")])
-        db.commit()
     assert pair in {p["pair_id"] for p in client.get(f"{BASE}/suspected-duplicates").json()}
     with sessions() as db:
-        for person_id, level in ((first, "1ST_CALL"), (second, "3RD_CALL")):
-            db.add(MemberResolutionRule(form="Priyadarshini", form_key="priyadarshini", person_id=person_id,
+        for person_id, level in ((first, "3RD_CALL"), (second, "4TH_CALL")):
+            db.add(MemberResolutionRule(form="Riya", form_key="riya", person_id=person_id,
                                         call_levels=[level], duty_areas=[], requires_context=False, priority=10,
                                         active=True, source="test", version=1))
         db.commit()
     assert pair not in {p["pair_id"] for p in client.get(f"{BASE}/suspected-duplicates").json()}
+
+
+def test_one_word_aliases_and_different_initials_do_not_pair_people(env):
+    # The false pairs seen on the real roster: a shared one-word alias, fragments of different
+    # names, and names that differ only by their final initial.
+    client, sessions, _ = env
+    a = add_person(sessions, "Chris Maria Joseph")
+    b = add_person(sessions, "Jonathan Joseph")
+    c = add_person(sessions, "Christina Reshma R")
+    d = add_person(sessions, "Christina Thomas")
+    with sessions() as db:
+        db.add_all([PersonAlias(person_id=a, alias="Joseph"), PersonAlias(person_id=c, alias="CHRISTINA R"),
+                    PersonAlias(person_id=d, alias="CHRISTINA T")])
+        db.commit()
+    ids = {frozenset(p["pair_id"].split(":")) for p in client.get(f"{BASE}/suspected-duplicates").json()}
+    assert frozenset({str(a), str(b)}) not in ids
+    assert frozenset({str(c), str(d)}) not in ids

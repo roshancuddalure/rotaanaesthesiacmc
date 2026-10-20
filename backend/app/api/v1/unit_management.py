@@ -587,6 +587,8 @@ def delete_unit_assignment(
     audit(db,_user,"posting_removed",assignment.id,details)
     db.add(MemberActivity(person_id=assignment.person_id,operator_id=_user.id,operator_name=_user.display_name or _user.username,
                           action="posting_removed",details=details))
-    db.delete(assignment)
+    # The posting goes to the recycle bin (restorable for 30 days), like admin deletes.
+    from app.services.recycle_bin import move_to_bin
+    move_to_bin(db, _user, "posting", [assignment.id])
     db.commit()
     return {"status": "deleted"}

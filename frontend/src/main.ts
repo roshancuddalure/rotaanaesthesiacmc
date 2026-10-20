@@ -37,8 +37,10 @@ import { mountWorkflowImportHistory } from "./workflow-import-history";
 import { mountMemberImportHistory } from "./member-import-history";
 import { badge, codeLabel, emptyState, formatDate, formatDateRange, formatMonth, nextStep, pageSkeleton } from "./ui";
 import { mountPastDuties } from "./past-duties";
+import { renderRecycleBin } from "./recycle-bin";
 import { reviewAndApply } from "./admin-preview";
 import { openArchiveAll } from "./member-bulk";
+import { confirmAdminDelete } from "./admin-delete";
 import { openMemberProfile } from "./member-profile";
 import {
   type AdminMapping,
@@ -103,7 +105,6 @@ import {
   createLeaveRequest,
   createUnitAssignment,
   createUserAccount,
-  deleteUnitAssignment,
   downloadRotaExport,
   downloadRotaTemplateCallWiseExport,
   downloadRotaTemplateEagleEyeExport,
@@ -518,6 +519,7 @@ const NAV_ITEMS: NavItem[] = [
   { view: "accounts", label: "Login Accounts", group: "Admin Tools", adminOnly: true },
   { view: "diagnostics", label: "Diagnostics", group: "Admin Tools", adminOnly: true },
   { view: "compute-settings", label: "Compute Settings", group: "Admin Tools", adminOnly: true },
+  { view: "recycle-bin", label: "Recycle bin", group: "Admin Tools", adminOnly: true },
 ];
 
 const MOBILE_PRIMARY_VIEWS = ["overview", "leave", "units", "rota-template"];
@@ -3032,6 +3034,68 @@ function memberStatusBadge(member: DepartmentMember): string {
   return badge(codeLabel(member.active_status.toUpperCase()), tone);
 }
 
+// Admin delete (recycle bin): row selection per list, shared by Members, Leave and Units.
+type AdminSelectKind = "member" | "leave" | "posting";
+const adminSelection: Record<AdminSelectKind, Set<string>> = { member: new Set(), leave: new Set(), posting: new Set() };
+const ADMIN_DELETE_NOUN: Record<AdminSelectKind, [string, string]> = {
+  member: ["member", "members"],
+  leave: ["leave record", "leave records"],
+  posting: ["posting", "postings"],
+};
+
+/** Keep only selected ids that are still listed, so a hidden row is never deleted by accident. */
+function pruneAdminSelection(kind: AdminSelectKind, visibleIds: string[]) {
+  const visible = new Set(visibleIds);
+  for (const id of [...adminSelection[kind]]) if (!visible.has(id)) adminSelection[kind].delete(id);
+}
+
+function adminSelectBox(kind: AdminSelectKind, id: string, label: string): string {
+  if (!isAdminUser()) return "";
+  return `<input type="checkbox" class="admin-select-box" data-admin-select="${kind}" value="${escapeHtml(id)}" ${adminSelection[kind].has(id) ? "checked" : ""} aria-label="Select ${escapeHtml(label)}" />`;
+}
+
+function adminDeleteSelectedButton(kind: AdminSelectKind): string {
+  if (!isAdminUser()) return "";
+  const n = adminSelection[kind].size;
+  return `<button type="button" class="danger-button btn-sm admin-delete-selected" data-delete-selected="${kind}" ${n ? "" : "disabled"}>Delete selected (${n})</button>`;
+}
+
+function syncAdminSelection(kind: AdminSelectKind) {
+  const n = adminSelection[kind].size;
+  document.querySelectorAll<HTMLButtonElement>(`[data-delete-selected="${kind}"]`).forEach((button) => {
+    button.textContent = `Delete selected (${n})`;
+    button.disabled = n === 0;
+  });
+  document.querySelectorAll<HTMLInputElement>(`[data-admin-select="${kind}"]`).forEach((box) => {
+    box.checked = adminSelection[kind].has(box.value);
+  });
+}
+
+async function refreshMembersAfterDelete() {
+  members = await getMembers();
+  await renderMembers();
+}
+
+async function refreshUnitsAfterDelete() {
+  invalidateUnitManagementCache();
+  await preserveViewport(() => renderUnitManagement(true));
+}
+
+async function runAdminDelete(
+  kind: AdminSelectKind,
+  target: { ids?: string[]; month?: string },
+  title: string,
+  refresh: () => Promise<void>,
+) {
+  const result = await confirmAdminDelete({ kind, ...target, title });
+  if (!result) return;
+  for (const id of target.ids ?? []) adminSelection[kind].delete(id);
+  if (target.month) adminSelection[kind].clear();
+  const [one, many] = ADMIN_DELETE_NOUN[kind];
+  showToast(`${result.deleted} ${result.deleted === 1 ? one : many} deleted. Restore from Recycle bin within 30 days if needed.`, "success");
+  await refresh();
+}
+
 function memberRowActions(member: DepartmentMember): string {
   const name = escapeHtml(member.canonical_name);
   const status = !isAdminUser()
@@ -3039,11 +3103,15 @@ function memberRowActions(member: DepartmentMember): string {
     : member.active_status === "archived"
       ? `<button type="button" role="menuitem" data-restore-member="${member.id}">Restore member</button>`
       : `<button type="button" role="menuitem" class="row-menu__danger" data-archive-member="${member.id}">Archive member…</button>`;
+  const remove = isAdminUser()
+    ? `<button type="button" role="menuitem" class="row-menu__danger" data-delete-member="${member.id}">Delete member…</button>`
+    : "";
   return rowMenu(`Actions for ${member.canonical_name}`, `
     <button type="button" role="menuitem" data-open-member="${member.id}">Open profile</button>
     <button type="button" role="menuitem" data-member-profile="${member.id}">Call history and comments</button>
     ${isAdminUser() ? `<button type="button" role="menuitem" data-open-member="${member.id}" data-profile-tab="roles" aria-label="Change call level for ${name}">Change call level</button>` : ""}
     ${status}
+    ${remove}
   `);
 }
 
@@ -3057,6 +3125,7 @@ function renderMemberRows(rows: DepartmentMember[]): string {
         : "";
       return `
         <tr>
+          ${isAdminUser() ? `<td class="admin-select-cell">${adminSelectBox("member", member.id, member.canonical_name)}</td>` : ""}
           <td class="member-name-cell">
             <button class="member-profile-link" type="button" data-open-member="${member.id}">${escapeHtml(member.canonical_name)}</button>
             <small>${escapeHtml(position)}</small>
@@ -3127,9 +3196,11 @@ function updateMemberResults() {
   const tbody = document.querySelector<HTMLTableSectionElement>("#member-table-body");
   if (visibleCount) visibleCount.textContent = String(rows.length);
   if (tbody) {
-    tbody.innerHTML = renderMemberRows(rows) || `<tr><td colspan="4">${emptyState({ title: "No members match these filters", body: "Clear the filters or search for another name." })}</td></tr>`;
+    pruneAdminSelection("member", rows.map((m) => m.id));
+    tbody.innerHTML = renderMemberRows(rows) || `<tr><td colspan="${isAdminUser() ? 5 : 4}">${emptyState({ title: "No members match these filters", body: "Clear the filters or search for another name." })}</td></tr>`;
   }
   updateMemberCards(rows);
+  syncAdminSelection("member");
   restoreFocus();
 }
 
@@ -3139,6 +3210,7 @@ function renderMemberCards(rows: DepartmentMember[]): string {
       const callLevel = callLevelLabel(normalizeCallLevel(member.effective_call_level ?? member.call_level));
       return `
         <article class="member-card">
+          ${adminSelectBox("member", member.id, member.canonical_name)}
           <div class="member-card__main">
             <button class="member-profile-link" type="button" data-open-member="${member.id}">${escapeHtml(member.canonical_name)}</button>
             <small>${escapeHtml(memberPosition(member))}</small>
@@ -3418,6 +3490,7 @@ function renderLeaveRows(): string {
     .map(
       (leave) => `
         <tr>
+          ${isAdminUser() ? `<td class="admin-select-cell">${adminSelectBox("leave", leave.id, `${leave.person.canonical_name}'s leave ${formatDateRange(leave.starts_on, leave.ends_on)}`)}</td>` : ""}
           <td><button type="button" class="member-profile-link" data-open-member="${leave.person.id}" data-profile-tab="leave">${escapeHtml(leave.person.canonical_name)}</button><small>${escapeHtml(callLevelLabel(normalizeCallLevel(leave.person.call_level)))}</small></td>
           <td>${escapeHtml(formatDateRange(leave.starts_on, leave.ends_on))}</td>
           <td>${escapeHtml(leaveTypeLabel(leave.leave_slot))}</td>
@@ -3437,6 +3510,7 @@ function renderLeaveCards(): string {
       (leave) => `
         <article class="data-card leave-card">
           <div class="leave-card__head">
+            ${adminSelectBox("leave", leave.id, `${leave.person.canonical_name}'s leave ${formatDateRange(leave.starts_on, leave.ends_on)}`)}
             <button type="button" class="member-profile-link" data-open-member="${leave.person.id}" data-profile-tab="leave">${escapeHtml(leave.person.canonical_name)}</button>
             ${leaveRowActions(leave)}
           </div>
@@ -3540,6 +3614,7 @@ function leaveRowActions(leave: LeaveRequest): string {
   return rowMenu(`Actions for ${leave.person.canonical_name}'s leave`, `
     <button type="button" role="menuitem" data-edit-operational-record="${leave.id}" data-record-kind="leave">Edit leave</button>
     ${leave.status === "cancelled" ? "" : `<button type="button" role="menuitem" class="row-menu__danger" data-cancel-leave="${leave.id}">Cancel leave…</button>`}
+    ${isAdminUser() ? `<button type="button" role="menuitem" class="row-menu__danger" data-delete-leave="${leave.id}">Delete leave…</button>` : ""}
   `);
 }
 
@@ -3563,6 +3638,8 @@ async function renderLeave() {
   }
   const summary = leaveCalendar.summary;
   const monthName = formatMonth(summary.month);
+  pruneAdminSelection("leave", leaveRequests.map((leave) => leave.id));
+  const leaveSelectCol = isAdminUser() ? `<th scope="col" class="admin-select-cell"><span class="visually-hidden">Select</span></th>` : "";
   const busiest = summary.busiest_day;
   if (!current()) return;
   viewRoot.innerHTML = `
@@ -3577,6 +3654,7 @@ async function renderLeave() {
             ${isAdminUser() ? `<button type="button" role="menuitem" data-manage-reference-catalog>Labels and mappings</button>` : ""}
             <a role="menuitem" href="/templates/leave-records.csv" download>Download CSV template</a>
             <a role="menuitem" href="/templates/leave-records-example.csv" download>Download example CSV</a>
+            ${isAdminUser() ? `<button type="button" role="menuitem" class="row-menu__danger" data-delete-month="leave">Delete all leave for ${escapeHtml(monthName)}…</button>` : ""}
           </div>
         </details>
       </div>
@@ -3604,13 +3682,14 @@ async function renderLeave() {
       ${renderLeavePressurePanel()}
     </details>
     <section class="panel table-panel hide-mobile" aria-labelledby="leave-list-title">
-      <div class="table-caption"><h3 id="leave-list-title">All leave this month</h3><span class="table-caption__count">${leaveRequests.length} records</span></div>
+      <div class="table-caption"><h3 id="leave-list-title">All leave this month</h3><span class="table-caption__count">${leaveRequests.length} records</span>${adminDeleteSelectedButton("leave")}</div>
       <table>
-        <thead><tr><th scope="col">Member</th><th scope="col">Dates</th><th scope="col">Session</th><th scope="col">Type</th><th scope="col">Status</th><th scope="col" class="num">Days</th><th scope="col"><span class="visually-hidden">Actions</span></th></tr></thead>
-        <tbody>${renderLeaveRows() || `<tr><td colspan="7">${emptyState({ title: `No leave recorded for ${monthName}` })}</td></tr>`}</tbody>
+        <thead><tr>${leaveSelectCol}<th scope="col">Member</th><th scope="col">Dates</th><th scope="col">Session</th><th scope="col">Type</th><th scope="col">Status</th><th scope="col" class="num">Days</th><th scope="col"><span class="visually-hidden">Actions</span></th></tr></thead>
+        <tbody>${renderLeaveRows() || `<tr><td colspan="${isAdminUser() ? 8 : 7}">${emptyState({ title: `No leave recorded for ${monthName}` })}</td></tr>`}</tbody>
       </table>
     </section>
     <section class="card-list" aria-label="Leave this month">
+      ${isAdminUser() && leaveRequests.length ? `<div class="admin-select-bar">${adminDeleteSelectedButton("leave")}</div>` : ""}
       ${renderLeaveCards() || emptyState({ title: `No leave recorded for ${monthName}` })}
     </section>
     <div id="leave-history-host"></div>
@@ -3815,6 +3894,7 @@ function renderUnitAssignmentRows(): string {
     .map(
       (assignment) => `
         <tr>
+          ${isAdminUser() ? `<td class="admin-select-cell">${adminSelectBox("posting", assignment.id, `${assignment.person.canonical_name}'s posting ${formatDateRange(assignment.starts_on, assignment.ends_on)}`)}</td>` : ""}
           <td><button type="button" class="member-profile-link" data-open-member="${assignment.person.id}" data-profile-tab="postings">${escapeHtml(assignment.person.canonical_name)}</button><small>${escapeHtml(callLevelLabel(normalizeCallLevel(assignment.person.call_level)))}</small></td>
           <td>${escapeHtml(assignment.unit?.name ?? (SPECIAL_UNIT_POSTING_KEYS.has(assignment.posting_type) ? "Special posting" : "No unit"))}</td>
           <td>${escapeHtml(callLevelLabel(assignment.effective_call_level ?? assignment.posting_type))}${assignment.posting_type !== (assignment.effective_call_level ?? assignment.posting_type) ? `<small>Posted as ${escapeHtml(codeLabel(assignment.posting_type))}</small>` : ""}</td>
@@ -3828,6 +3908,7 @@ function renderUnitAssignmentRows(): string {
                   ? `<button type="button" class="icon-button btn-sm" data-open-special-unit-modal="${escapeHtml(assignment.posting_type)}" aria-label="Manage ${escapeHtml(codeLabel(assignment.posting_type))} postings">Manage</button>`
                   : ""
             }
+            ${isAdminUser() ? rowMenu(`More actions for ${assignment.person.canonical_name}'s posting`, `<button type="button" role="menuitem" class="row-menu__danger" data-delete-posting="${assignment.id}">Delete posting…</button>`) : ""}
           </td>
         </tr>
       `,
@@ -4482,6 +4563,7 @@ async function renderUnitManagement(forceReload = false) {
   const warnings = unitManagement.validation_issues.filter((issue) => issue.severity === "warning").length;
   const leaveDays = unitManagement.unit_summaries.reduce((sum, item) => sum + item.leave_days, 0);
   const monthName = formatMonth(unitManagement.month);
+  pruneAdminSelection("posting", unitAssignments.map((assignment) => assignment.id));
   const callout = errors
     ? nextStep({
         tone: "danger",
@@ -4510,6 +4592,7 @@ async function renderUnitManagement(forceReload = false) {
             ${isAdminUser() ? `<button type="button" role="menuitem" data-add-department-unit>Add unit</button><button type="button" role="menuitem" data-manage-department-units>Manage units</button><button type="button" role="menuitem" data-manage-reference-catalog>Labels and mappings</button>` : ""}
             <a role="menuitem" href="/templates/unitwise-assignments.csv" download>Download CSV template</a>
             <a role="menuitem" href="/templates/unitwise-assignments-example.csv" download>Download example CSV</a>
+            ${isAdminUser() ? `<button type="button" role="menuitem" class="row-menu__danger" data-delete-month="posting">Delete all postings for ${escapeHtml(monthName)}…</button>` : ""}
           </div>
         </details>
       </div>
@@ -4523,10 +4606,10 @@ async function renderUnitManagement(forceReload = false) {
     ${renderUnitValidationIssues()}
     <section class="unit-card-grid" aria-label="Units">${renderUnitAssignmentsByUnit()}</section>
     <section class="panel table-panel hide-mobile" aria-labelledby="unit-postings-title">
-      <div class="table-caption"><h3 id="unit-postings-title">All postings</h3><span class="table-caption__count">${unitAssignments.length} this month</span></div>
+      <div class="table-caption"><h3 id="unit-postings-title">All postings</h3><span class="table-caption__count">${unitAssignments.length} this month</span>${adminDeleteSelectedButton("posting")}</div>
       <table>
-        <thead><tr><th scope="col">Member</th><th scope="col">Unit</th><th scope="col">Call level</th><th scope="col">Dates</th><th scope="col">Notes</th><th scope="col"><span class="visually-hidden">Actions</span></th></tr></thead>
-        <tbody>${renderUnitAssignmentRows() || `<tr><td colspan="6">${emptyState({ title: "No postings this month" })}</td></tr>`}</tbody>
+        <thead><tr>${isAdminUser() ? `<th scope="col" class="admin-select-cell"><span class="visually-hidden">Select</span></th>` : ""}<th scope="col">Member</th><th scope="col">Unit</th><th scope="col">Call level</th><th scope="col">Dates</th><th scope="col">Notes</th><th scope="col"><span class="visually-hidden">Actions</span></th></tr></thead>
+        <tbody>${renderUnitAssignmentRows() || `<tr><td colspan="${isAdminUser() ? 7 : 6}">${emptyState({ title: "No postings this month" })}</td></tr>`}</tbody>
       </table>
     </section>
     <div id="unit-history-host"></div>
@@ -4569,6 +4652,7 @@ async function renderMembers() {
 function renderMembersView() {
   if (!viewRoot) return;
   const rows = filteredMembers();
+  pruneAdminSelection("member", rows.map((m) => m.id));
   const statusCount = (status: string) => members.filter((member) => member.active_status === status).length;
   const callLevelOrder: [string, string][] = [
     ["1ST_CALL", "1st"],
@@ -4674,9 +4758,11 @@ function renderMembersView() {
       <div class="table-caption">
         <h3 id="member-list-title">Members</h3>
         <span class="table-caption__count"><strong id="visible-member-count">${rows.length}</strong> shown</span>
+        ${adminDeleteSelectedButton("member")}
       </div>
       <table class="member-table">
         <colgroup>
+          ${isAdminUser() ? `<col class="admin-select-col" />` : ""}
           <col class="member-col-name" />
           <col class="member-col-call" />
           <col class="member-col-status" />
@@ -4684,13 +4770,14 @@ function renderMembersView() {
         </colgroup>
         <thead>
           <tr>
+            ${isAdminUser() ? `<th scope="col" class="admin-select-cell"><span class="visually-hidden">Select</span></th>` : ""}
             <th scope="col" ${ariaSort("name")}><button class="table-sort" data-member-sort="name">Member${sortIndicator("name")}</button></th>
             <th scope="col" ${ariaSort("call_level")}><button class="table-sort" data-member-sort="call_level">Call level${sortIndicator("call_level")}</button></th>
             <th scope="col" ${ariaSort("status")}><button class="table-sort" data-member-sort="status">Status${sortIndicator("status")}</button></th>
             <th scope="col"><span class="visually-hidden">Actions</span></th>
           </tr>
         </thead>
-        <tbody id="member-table-body">${renderMemberRows(rows) || `<tr><td colspan="4">${emptyState({ title: "No members match these filters", body: "Clear the filters or search for another name." })}</td></tr>`}</tbody>
+        <tbody id="member-table-body">${renderMemberRows(rows) || `<tr><td colspan="${isAdminUser() ? 5 : 4}">${emptyState({ title: "No members match these filters", body: "Clear the filters or search for another name." })}</td></tr>`}</tbody>
       </table>
     </section>
     <section class="member-card-list" id="member-card-list" aria-label="Members">
@@ -7905,6 +7992,8 @@ function navigateToView(selectedView: string) {
     if (viewRoot) { const host = document.createElement("section"); viewRoot.replaceChildren(host); void renderComputeSettings(host); }
   } else if (selectedView === "diagnostics") {
     void renderDiagnostics();
+  } else if (selectedView === "recycle-bin" && isAdminUser()) {
+    if (viewRoot) { setHeader("Admin tools", "Recycle bin"); void renderRecycleBin(viewRoot); }
   } else {
     void renderOverview();
   }
@@ -8810,19 +8899,42 @@ function bindViewEvents() {
 
     const unitDeleteBtn = target.closest<HTMLButtonElement>("[data-delete-unit-assignment]");
     if (unitDeleteBtn?.dataset.deleteUnitAssignment) {
-      if (!confirmAction("Remove this unit assignment?")) return;
-      setButtonLoading(unitDeleteBtn, true, "Remove");
-      try {
-        await deleteUnitAssignment(unitDeleteBtn.dataset.deleteUnitAssignment);
-        if (unitEditingAssignmentId === unitDeleteBtn.dataset.deleteUnitAssignment) {
-          unitEditingAssignmentId = null;
-        }
-        showToast("Unit assignment removed", "success");
-        invalidateUnitManagementCache();
-        await preserveViewport(() => renderUnitManagement(true));
-      } catch (error) {
-        showToast(error instanceof Error ? error.message : "Failed to remove unit assignment", "error");
-        resetButton(unitDeleteBtn);
+      // Goes through the recycle bin (restorable for 30 days), like every admin delete.
+      const id = unitDeleteBtn.dataset.deleteUnitAssignment;
+      await runAdminDelete("posting", { ids: [id] }, "Remove posting", async () => {
+        if (unitEditingAssignmentId === id) unitEditingAssignmentId = null;
+        await refreshUnitsAfterDelete();
+      });
+      return;
+    }
+
+    // Admin delete (recycle bin): single rows, selected rows, or a whole month.
+    const adminDeleteRow = target.closest<HTMLButtonElement>("[data-delete-member], [data-delete-leave], [data-delete-posting]");
+    if (adminDeleteRow && isAdminUser()) {
+      adminDeleteRow.closest<HTMLDetailsElement>("details.row-menu")?.removeAttribute("open");
+      const { deleteMember, deleteLeave, deletePosting } = adminDeleteRow.dataset;
+      if (deleteMember) await runAdminDelete("member", { ids: [deleteMember] }, "Delete member", refreshMembersAfterDelete);
+      else if (deleteLeave) await runAdminDelete("leave", { ids: [deleteLeave] }, "Delete leave", () => renderLeave());
+      else if (deletePosting) await runAdminDelete("posting", { ids: [deletePosting] }, "Delete posting", refreshUnitsAfterDelete);
+      return;
+    }
+    const adminDeleteSelected = target.closest<HTMLButtonElement>("[data-delete-selected]");
+    if (adminDeleteSelected && isAdminUser()) {
+      const kind = adminDeleteSelected.dataset.deleteSelected as AdminSelectKind;
+      const ids = [...adminSelection[kind]];
+      if (!ids.length) return;
+      const [one, many] = ADMIN_DELETE_NOUN[kind];
+      const refresh = kind === "member" ? refreshMembersAfterDelete : kind === "leave" ? () => renderLeave() : refreshUnitsAfterDelete;
+      await runAdminDelete(kind, { ids }, `Delete ${ids.length} selected ${ids.length === 1 ? one : many}`, refresh);
+      return;
+    }
+    const adminDeleteMonth = target.closest<HTMLButtonElement>("[data-delete-month]");
+    if (adminDeleteMonth && isAdminUser()) {
+      adminDeleteMonth.closest<HTMLDetailsElement>("details.row-menu")?.removeAttribute("open");
+      if (adminDeleteMonth.dataset.deleteMonth === "leave") {
+        await runAdminDelete("leave", { month: leaveMonth }, `Delete all leave for ${formatMonth(leaveMonth)}`, () => renderLeave());
+      } else if (adminDeleteMonth.dataset.deleteMonth === "posting") {
+        await runAdminDelete("posting", { month: unitMonth }, `Delete all postings for ${formatMonth(unitMonth)}`, refreshUnitsAfterDelete);
       }
       return;
     }
@@ -9535,6 +9647,13 @@ function bindViewEvents() {
 
   viewRoot?.addEventListener("change", async (event) => {
     const target = event.target as HTMLInputElement | HTMLSelectElement;
+    if (target instanceof HTMLInputElement && target.dataset.adminSelect) {
+      const kind = target.dataset.adminSelect as AdminSelectKind;
+      if (target.checked) adminSelection[kind].add(target.value);
+      else adminSelection[kind].delete(target.value);
+      syncAdminSelection(kind);
+      return;
+    }
     if (target.id === "member-position-filter") {
       memberPositionFilter = target.value;
       saveFocus();

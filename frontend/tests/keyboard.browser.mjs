@@ -9,7 +9,7 @@ const api = process.env.UX_AUDIT_API || "http://127.0.0.1:8020";
 const STOPS = Number(process.env.KEYBOARD_STOPS || 45);
 const views = ["overview", "analysis", "members", "leave", "units", "rota-setup", "rota-template", "rota-review",
   "rota-publish", "user-guide", "rota-rules", "call-clusters", "mappings", "imports", "accounts", "diagnostics",
-  "compute-settings"];
+  "compute-settings", "recycle-bin"];
 const browser = await chromium.launch({
   headless: true,
   ...(process.env.MEMBER_TEST_BROWSER ? { executablePath: process.env.MEMBER_TEST_BROWSER } : {}),

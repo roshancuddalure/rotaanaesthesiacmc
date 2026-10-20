@@ -14,7 +14,7 @@ import unicodedata
 from dataclasses import dataclass
 from uuid import UUID
 
-from sqlalchemy import select, update
+from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, selectinload
 
@@ -25,8 +25,6 @@ from app.models import (
     PersonAlias,
     PersonDesignation,
     PersonPosting,
-    RotaExchangeRequest, RotaAutoFillEvent, MemberActivity,
-    LegacyPersonComment,
 )
 from app.services.imports import clean_person_name, is_valid_person_name
 from app.services.normalization import member_key
@@ -223,120 +221,24 @@ def ensure_person_alias(db: Session, person: Person, alias: str, source: str = "
     db.add(PersonAlias(person=person, alias=alias, source=source))
 
 
-def move_assignments(db: Session, source: Person, target: Person) -> None:
-    assignments = db.scalars(
-        select(DutyAssignment).where(DutyAssignment.person_id == source.id)
-    ).all()
-    for assignment in assignments:
-        duplicate = db.scalar(
-            select(DutyAssignment).where(
-                DutyAssignment.duty_slot_id == assignment.duty_slot_id,
-                DutyAssignment.person_id == target.id,
-            )
-        )
-        if duplicate is not None:
-            db.delete(assignment)
-        else:
-            assignment.person = target
+def merge_people(db: Session, target_id: UUID, source_ids: list[UUID], *, commit: bool = True,
+                 operator=None, choices: dict | None = None, preview_token: str | None = None) -> Person:
+    """Merge ``source_ids`` into ``target_id`` through the safe merge engine.
 
+    app.services.member_merge re-points every reference (found from the model), resolves
+    duplicates, verifies nothing still refers to the merged records, and stores an undo record.
+    Raises MergeError (a ValueError) with a plain reason; on any error nothing is changed.
+    """
+    from app.services.member_merge import run_merge
 
-def move_postings(db: Session, source: Person, target: Person) -> None:
-    for posting in db.scalars(select(PersonPosting).where(PersonPosting.person_id == source.id)):
-        posting.person = target
-
-
-def move_leave_requests(db: Session, source: Person, target: Person) -> None:
-    for leave_request in db.scalars(select(LeaveRequest).where(LeaveRequest.person_id == source.id)):
-        leave_request.person = target
-
-
-def move_designations(db: Session, source: Person, target: Person) -> None:
-    for designation in db.scalars(
-        select(PersonDesignation).where(PersonDesignation.person_id == source.id)
-    ):
-        existing = next((d for d in target.designations
-                         if d.designation == designation.designation
-                         and d.effective_from == designation.effective_from), None)
-        if existing:
-            if existing.effective_to != designation.effective_to or existing.notes != designation.notes:
-                raise ValueError("Designation histories conflict; correct their dates or notes before merging")
-            source.designations.remove(designation)
-            db.delete(designation)
-        else:
-            designation.person = target
-
-
-def merge_people(db: Session, target_id: UUID, source_ids: list[UUID], *, commit: bool = True) -> Person:
-    """Merge identities and preserve every person reference in one transaction."""
-    target = db.get(Person, target_id)
-    if target is None:
-        raise ValueError("Target person not found")
-
-    if target_id in source_ids:
-        raise ValueError("The surviving member cannot also be a source")
-    sources = [db.get(Person, source_id) for source_id in set(source_ids)]
-    if not sources or any(person is None for person in sources):
-        raise ValueError("Select existing source members")
-    for source in sources:
-        if source.id == target.id:
-            continue
-        # Merges keep their existing semantics: the source's names move to the target.
-        ensure_person_alias(db, target, source.canonical_name, source="dedupe_merge", reassign=True)
-        for alias in list(source.aliases):
-            ensure_person_alias(db, target, alias.alias, source=alias.source, reassign=True)
-            if alias.person is not target:
-                db.delete(alias)
-        move_assignments(db, source, target)
-        move_postings(db, source, target)
-        move_leave_requests(db, source, target)
-        move_designations(db, source, target)
-        for change in list(source.call_level_changes):
-            existing_change = next((c for c in target.call_level_changes if c.effective_from == change.effective_from), None)
-            if existing_change and existing_change.call_level != change.call_level:
-                raise ValueError("Dated call-level changes conflict; resolve them before merging")
-            if existing_change:
-                source.call_level_changes.remove(change)
-                db.delete(change)
-            else:
-                change.person = target
-        for membership in list(source.call_cluster_memberships):
-            duplicate = next((m for m in target.call_cluster_memberships
-                              if m.cluster_id == membership.cluster_id and m.effective_from == membership.effective_from), None)
-            if duplicate:
-                # Preserve the wider eligibility interval and both notes.
-                duplicate.effective_to = (None if duplicate.effective_to is None or membership.effective_to is None
-                                          else max(duplicate.effective_to, membership.effective_to))
-                duplicate.notes = "\n".join(filter(None, [duplicate.notes, membership.notes])) or None
-                source.call_cluster_memberships.remove(membership)
-                db.delete(membership)
-            else:
-                membership.person = target
-        for model, field in [(RotaExchangeRequest, "from_person_id"),
-                             (RotaExchangeRequest, "to_person_id"),
-                             (RotaAutoFillEvent, "person_id"), (MemberActivity, "person_id"),
-                             (LegacyPersonComment, "person_id")]:
-            db.execute(update(model).where(getattr(model, field) == source.id).values({field: target.id}))
+    result = run_merge(db, target_id, list(source_ids), choices=choices, preview_token=preview_token,
+                       operator=operator)
+    if commit:
+        db.commit()
+    else:
         db.flush()
-        for model in (PersonCallChange, PersonComment):
-            for record in db.scalars(select(model).where(model.person_id == source.id)):
-                if model is PersonCallChange:
-                    record.source = f"merged:{record.source}"[:100]
-                    with db.no_autoflush:
-                        if record in source.call_changes:
-                            source.call_changes.remove(record)
-                        target.call_changes.append(record)
-                record.person_id = target.id
-        db.delete(source)
-
-    try:
-        if commit:
-            db.commit()
-        else:
-            db.flush()
-    except IntegrityError:
-        db.rollback()
-        raise
-    db.refresh(target)
+    target = db.get(Person, target_id)
+    target.last_merge_id = result.get("merge_id")  # read by the merge route
     return target
 
 
