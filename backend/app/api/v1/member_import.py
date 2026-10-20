@@ -2,7 +2,6 @@ import json
 import csv
 from io import BytesIO, StringIO
 from uuid import UUID
-from xml.etree.ElementTree import ParseError
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from fastapi.responses import Response
@@ -14,6 +13,13 @@ from sqlalchemy.orm import Session
 from app.api.v1.auth import require_admin
 from app.db.session import get_db
 from app.models import ImportBatch, ImportSourceRecord, UserAccount
+from app.services.import_errors import (
+    UNREADABLE_WORKBOOK,
+    WORKBOOK_ERRORS,
+    MemberResolutionError,
+    StalePreviewError,
+    resolution_detail,
+)
 from app.services.member_import import (
     FIELDS,
     apply_member_import,
@@ -144,7 +150,9 @@ def parse_options(options: str):
 async def inspect(file: UploadFile = File(...), header_row: int = Form(1)):
     try:
         return inspect_member_workbook(file.filename or "", await read_upload(file), header_row)
-    except (ValueError, ParseError) as exc:
+    except WORKBOOK_ERRORS as exc:
+        raise HTTPException(status_code=400, detail=UNREADABLE_WORKBOOK) from exc
+    except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
 
@@ -156,7 +164,11 @@ async def preview(
         return preview_member_import(
             db, file.filename or "", await read_upload(file), parse_options(options)
         )
-    except (ValueError, ParseError) as exc:
+    except MemberResolutionError as exc:
+        raise HTTPException(status_code=422, detail=resolution_detail(exc)) from exc
+    except WORKBOOK_ERRORS as exc:
+        raise HTTPException(status_code=400, detail=UNREADABLE_WORKBOOK) from exc
+    except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
 
@@ -177,9 +189,21 @@ async def apply(
             preview_hash,
             str(actor.id),
         )
-    except (ValueError, ParseError) as exc:
+    # apply_member_import writes all rows in one transaction and rolls back on any error.
+    except StalePreviewError as exc:
+        db.rollback()
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    except MemberResolutionError as exc:
+        db.rollback()
+        raise HTTPException(status_code=422, detail=resolution_detail(exc)) from exc
+    except WORKBOOK_ERRORS as exc:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=UNREADABLE_WORKBOOK) from exc
+    except ValueError as exc:
+        db.rollback()
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     except IntegrityError as exc:
+        db.rollback()
         raise HTTPException(
             status_code=409, detail="Member conflict. Preview again before importing."
         ) from exc

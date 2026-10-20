@@ -37,6 +37,8 @@ import { mountWorkflowImportHistory } from "./workflow-import-history";
 import { mountMemberImportHistory } from "./member-import-history";
 import { badge, codeLabel, emptyState, formatDate, formatDateRange, formatMonth, nextStep, pageSkeleton } from "./ui";
 import { mountPastDuties } from "./past-duties";
+import { reviewAndApply } from "./admin-preview";
+import { openArchiveAll } from "./member-bulk";
 import { openMemberProfile } from "./member-profile";
 import {
   type AdminMapping,
@@ -46,6 +48,9 @@ import {
   type AnalysisPreflight,
   type CallCluster,
   type DepartmentMember,
+  type CleanupMembersResult,
+  type CallLevelPrefillResult,
+  type RosterReconciliationResult,
   type DiagnosticsSummary,
   type HistoricalImportStatus,
   type InvalidMembersResult,
@@ -113,7 +118,6 @@ import {
   getCurrentUser,
   getDiagnosticsSummary,
   getInvalidMembers,
-  getDedupeCandidates,
   getLeaveCalendar,
   getLeavePressure,
   getLeaveRequests,
@@ -1462,6 +1466,26 @@ function escapeHtml(value: string): string {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
+}
+
+const CANCELLED = "cancelled";
+
+/**
+ * Create a member, but if the name is close to an existing member (server 409
+ * near_duplicate) ask the admin first; only an explicit "different person" creates it.
+ */
+async function createMemberChecked(name: string) {
+  try {
+    return await createMember(name);
+  } catch (error) {
+    const err = error as Error & { status?: number; detail?: { code?: string; existing?: { name?: string; canonical_name?: string; status?: string }[] } };
+    if (err.status !== 409 || err.detail?.code !== "near_duplicate") throw error;
+    const existing = (err.detail.existing ?? []).map((p) => `• ${p.name ?? p.canonical_name} (${p.status ?? "member"})`).join("\n");
+    if (!confirmAction(`"${name}" looks like an existing member:\n${existing}\n\nCreate "${name}" as a different person anyway?`)) {
+      throw new Error(CANCELLED);
+    }
+    return createMember(name, "active", true);
+  }
 }
 
 /** Compact actions menu for a row or card; items are buttons with the usual data attributes. */
@@ -3219,8 +3243,13 @@ function matchMethodLabel(value: string | null | undefined): string {
   return (
     ({
       normalized_exact: "Exact name match",
+      canonical_exact: "Exact name match",
+      approved_alias: "Approved alias",
+      approved_rule: "Approved name form",
+      context_rule: "Name rule for this call level",
+      context: "Matched by call level",
+      member_id: "Chosen member",
       ambiguous_exact: "Ambiguous name",
-      fuzzy_auto: "Auto fuzzy name",
       manual_override: "Manual member",
       unit_exact: "Exact unit match",
       unit_ambiguous: "Ambiguous unit",
@@ -4595,6 +4624,8 @@ function renderMembersView() {
             <button type="button" role="menuitem" id="cleanup-members">Clean invalid names</button>
             <button type="button" role="menuitem" id="prefill-call-levels">Prefill call levels</button>
             <button type="button" role="menuitem" id="reconcile-roster">Reconcile trusted roster</button>
+            <button type="button" role="menuitem" id="review-duplicates">Review possible duplicates</button>
+            <button type="button" role="menuitem" class="row-menu__danger" id="archive-all-members">Clear all members…</button>
           </div>
         </details>
       </div>`
@@ -8194,11 +8225,13 @@ function bindViewEvents() {
         return;
       }
       try {
-        await createMember(name);
+        await createMemberChecked(name);
         showToast(`Member "${name}" created`, "success");
         await renderMembers();
       } catch (error) {
-        showToast(error instanceof Error ? error.message : "Failed to create member", "error");
+        if ((error as Error).message !== CANCELLED) {
+          showToast(error instanceof Error ? error.message : "Failed to create member", "error");
+        }
       }
       return;
     }
@@ -8450,11 +8483,19 @@ function bindViewEvents() {
     const qualityButton = target.closest<HTMLButtonElement>("[data-member-quality]");
     if (qualityButton?.dataset.memberQuality) {
       const kind = qualityButton.dataset.memberQuality;
+      if (kind === "duplicates") {
+        // Duplicates are decided pair by pair in the reviewed merge window.
+        void import("./member-duplicates").then(({ openSuspectedDuplicates }) =>
+          openSuspectedDuplicates(async () => {
+            members = await getMembers();
+            await renderMembers();
+          }));
+        return;
+      }
       try {
-        const candidate = kind === "duplicates" ? (await getDedupeCandidates())[0]?.people[0]
-          : kind === "invalid" ? invalidMembers.people[0]
+        const candidate = kind === "invalid" ? invalidMembers.people[0]
           : members.find(m => kind === "positions" ? !latestDesignation(m) : !(m.effective_call_level ?? m.call_level));
-        if (candidate) void openMemberWorkspace(candidate.id, isAdminUser(), onMemberWorkspaceChanged, filteredMembers().map(m => m.id), kind === "duplicates" ? "names" : kind === "positions" ? "roles" : "details");
+        if (candidate) void openMemberWorkspace(candidate.id, isAdminUser(), onMemberWorkspaceChanged, filteredMembers().map(m => m.id), kind === "positions" ? "roles" : "details");
       } catch (error) { showToast(error instanceof Error ? error.message : "Unable to open member review", "error"); }
       return;
     }
@@ -8595,7 +8636,7 @@ function bindViewEvents() {
       if (!confirmAction(`Create a new active department member named "${name}"?`)) return;
       setButtonLoading(createImportMember, true, "Create member");
       try {
-        const member = await createMember(name);
+        const member = await createMemberChecked(name);
         members = await getMembers();
         unitImportResolutions[rowKey] = { ...unitImportResolutionFor(rowKey), person_id: member.id };
         await preserveViewport(() => refreshUnitImportPreview("Member created and selected"));
@@ -9224,56 +9265,87 @@ function bindViewEvents() {
       return;
     }
 
+    // Member admin tools: the server previews first and changes nothing until confirmed.
     if (target.id === "cleanup-members") {
-      if (!confirmAction("Clean invalid member names? This action cannot be undone.")) return;
-      const btn = target.closest<HTMLButtonElement>("#cleanup-members");
-      setButtonLoading(btn, true, "Clean Invalid Names");
-      try {
-        await cleanupInvalidMembers();
-        showToast("Invalid names cleaned", "success");
-        await renderMembers();
-      } catch (error) {
-        showToast(error instanceof Error ? error.message : "Cleanup failed", "error");
-        resetButton(btn);
-      }
+      void reviewAndApply<CleanupMembersResult>({
+        title: "Clean invalid member names",
+        intro: "Tidies stray marks and labels from member names. Names that would clash with another member are listed, never merged.",
+        confirmLabel: "Apply name clean-up",
+        run: cleanupInvalidMembers,
+        changeCount: (p) => (p.renames?.length ?? 0) + (p.to_delete?.length ?? 0),
+        sections: (p) => [
+          { title: "Will be renamed", tone: "success", rows: p.renames ?? [], note: "Renamed when you confirm." },
+          { title: "Will be removed", tone: "danger", rows: p.to_delete ?? [], note: "Not real people (placeholders); removed when you confirm." },
+          { title: "Clashes: not changed", tone: "warning", rows: p.collisions ?? [], note: "Left alone. Merge by hand if they are the same person." },
+        ],
+        onApplied: async (r) => {
+          showToast(`${r.normalized} names cleaned, ${r.deleted} removed`, "success");
+          await renderMembers();
+        },
+      });
       return;
     }
 
+    if (target.id === "archive-all-members") {
+      void openArchiveAll(async () => {
+        members = await getMembers();
+        await renderMembers();
+      });
+      return;
+    }
+
+    if (target.id === "review-duplicates") {
+      void import("./member-duplicates").then(({ openSuspectedDuplicates }) =>
+        openSuspectedDuplicates(async () => {
+          members = await getMembers();
+          await renderMembers();
+        }));
+      return;
+    }
 
     if (target.id === "prefill-call-levels") {
-      const btn = target.closest<HTMLButtonElement>("#prefill-call-levels");
-      setButtonLoading(btn, true, "Prefill Call Levels");
-      try {
-        const result = await prefillCallLevels();
-        await renderMembers();
-        const output = document.createElement("section");
-        output.className = "panel wide";
-        output.innerHTML = `<h3>Call Level Prefill Result</h3><pre>${JSON.stringify(result, null, 2)}</pre>`;
-        viewRoot?.prepend(output);
-        showToast("Call levels prefilled", "success");
-      } catch (error) {
-        showToast(error instanceof Error ? error.message : "Prefill failed", "error");
-        resetButton(btn);
-      }
+      void reviewAndApply<CallLevelPrefillResult>({
+        title: "Prefill call levels",
+        intro: "Reads the trusted unitwise list. Only names that certainly match one member are changed; everything else needs your decision.",
+        confirmLabel: "Set these call levels",
+        run: prefillCallLevels,
+        changeCount: (p) => p.changes ?? (p.rows ?? []).filter((r) => r.action === "set").length,
+        sections: (p) => [
+          { title: "Will change", tone: "success", rows: (p.rows ?? []).filter((r) => r.action === "set"), note: "Set when you confirm." },
+          { title: "Needs a decision: not changed", tone: "warning", rows: (p.rows ?? []).filter((r) => r.action === "review"),
+            note: "The name is shared, unknown or listed at two levels. Set these in each member's profile." },
+        ],
+        onApplied: async (r) => {
+          showToast(`${r.changes ?? r.matched} call levels set`, "success");
+          await renderMembers();
+        },
+      });
       return;
     }
 
     if (target.id === "reconcile-roster") {
-      if (!confirmAction("Reconcile with trusted roster? This may modify member records.")) return;
-      const btn = target.closest<HTMLButtonElement>("#reconcile-roster");
-      setButtonLoading(btn, true, "Reconcile Trusted Roster");
-      try {
-        const result = await reconcileTrustedRoster();
-        await renderMembers();
-        const output = document.createElement("section");
-        output.className = "panel wide";
-        output.innerHTML = `<h3>Trusted Roster Result</h3><pre>${JSON.stringify(result, null, 2)}</pre>`;
-        viewRoot?.prepend(output);
-        showToast("Roster reconciled", "success");
-      } catch (error) {
-        showToast(error instanceof Error ? error.message : "Reconciliation failed", "error");
-        resetButton(btn);
-      }
+      void reviewAndApply<RosterReconciliationResult>({
+        title: "Reconcile with the trusted roster",
+        intro: "Matches the department's trusted list to member records. Only certain matches are renamed or merged; similar names are listed for you to decide.",
+        confirmLabel: "Apply roster changes",
+        run: reconcileTrustedRoster,
+        changeCount: (p) => p.created_people + p.renamed_people + p.merged_people + p.aliases_created + p.designations_created,
+        sections: (p) => {
+          const rows = p.rows ?? [];
+          return [
+            { title: "Will be merged", tone: "danger", rows: rows.filter((r) => r.action === "merge"), note: "Records with the identical name are combined into one member." },
+            { title: "Will be renamed", tone: "success", rows: rows.filter((r) => r.action === "rename"), note: "Renamed to the roster spelling; the old name is kept as an alias." },
+            { title: "Will be created", tone: "success", rows: rows.filter((r) => r.action === "create"), note: "Not in the member list and not close to anyone." },
+            { title: "Needs a decision: not changed", tone: "warning",
+              rows: rows.filter((r) => r.status !== "matched" && r.action !== "create"),
+              note: "Close to an existing member, shared or conflicting. Resolve by hand." },
+          ];
+        },
+        onApplied: async (r) => {
+          showToast(`Roster applied: ${r.renamed_people} renamed, ${r.merged_people} merged, ${r.created_people} created`, "success");
+          await renderMembers();
+        },
+      });
       return;
     }
 

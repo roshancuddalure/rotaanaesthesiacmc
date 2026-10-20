@@ -234,6 +234,8 @@ try {
       /25 ready.*1 excluded/,
     );
     await importer.locator("[data-include]").first().check();
+    // Secondary edits sit in each row's collapsed "Edit row" section.
+    await importer.locator(".import-row__edit > summary").first().click();
     await importer
       .locator("[data-row][data-field=starts_on]")
       .first()

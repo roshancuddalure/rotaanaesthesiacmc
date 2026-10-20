@@ -149,3 +149,85 @@ export function importSummary(counts: { label: string; count: number; tone?: Ton
     .map((item) => `<span class="ds-import-summary__item${item.tone ? ` is-${item.tone}` : ""}"><strong>${item.count}</strong> ${esc(item.label)}</span>`)
     .join("")}</div>`;
 }
+
+/** One proposed member for an import row, as the server's resolver describes it. */
+export interface MemberMatchCandidate {
+  id?: string;
+  person_id?: string;
+  name: string;
+  status?: string;
+  call_level?: string | null;
+  designation?: string | null;
+  units?: string[];
+  reason?: string;
+  score?: number;
+}
+
+export interface MemberMatchView {
+  raw: string;
+  /** matched | needs_review | not_found | ambiguous | conflict | inactive */
+  status: string;
+  name?: string | null;
+  method?: string | null;
+  reason?: string;
+  warnings?: string[];
+  candidates?: MemberMatchCandidate[];
+}
+
+const MATCH_METHOD: Record<string, string> = {
+  member_id: "chosen by you",
+  canonical_exact: "exact name",
+  approved_alias: "approved alias",
+  approved_rule: "approved name form",
+  context_rule: "name rule for this call level",
+  context: "only member with this name on this call level",
+  manual_override: "chosen by you",
+  normalized_exact: "exact name",
+};
+
+/** Human label for how a member was matched. */
+export function matchMethodText(method?: string | null): string {
+  return method ? MATCH_METHOD[method] ?? codeLabel(method.toUpperCase()) : "";
+}
+
+function candidateLine(c: MemberMatchCandidate): string {
+  return [codeLabel((c.call_level ?? "").toUpperCase()), c.designation, ...(c.units ?? []),
+          c.status && c.status !== "active" ? c.status : ""].filter(Boolean).join(" · ");
+}
+
+/**
+ * The member part of an import review row: written name → proposed member, how it was
+ * matched, and one-click alternatives. Choosing an alternative is a button with
+ * `data-pick-member="<id>"` and `data-pick-row="<rowKey>"`; callers handle the click.
+ */
+export function memberMatch(rowKey: string, view: MemberMatchView): string {
+  const matched = view.status === "matched" && view.name;
+  const tone: Tone = matched ? "success" : view.status === "not_found" ? "neutral" : view.status === "conflict" ? "danger" : "warning";
+  const label = matched ? "Matched" : view.status === "ambiguous" ? "Several members fit"
+    : view.status === "inactive" ? "Member not active" : view.status === "not_found" ? "No such member" : "Needs your choice";
+  const alternatives = (view.candidates ?? []).filter((c) => (c.id ?? c.person_id) && c.name !== view.name).slice(0, 5);
+  return `<div class="member-match" data-match-status="${esc(view.status)}">
+    <p class="member-match__line">
+      <span class="member-match__raw">${esc(view.raw || "(blank)")}</span>
+      <span aria-hidden="true">→</span>
+      <strong class="member-match__name">${matched ? esc(view.name) : "<em>not chosen</em>"}</strong>
+      ${badge(label, tone)}
+    </p>
+    <p class="member-match__why">${esc(matched ? `Match: ${matchMethodText(view.method)}` : view.reason ?? "")}</p>
+    ${(view.warnings ?? []).length ? `<p class="member-match__warn">${(view.warnings ?? []).map(esc).join(" · ")}</p>` : ""}
+    ${alternatives.length ? `<div class="member-match__picks" role="group" aria-label="Choose the member for ${esc(view.raw)}">
+      ${alternatives.map((c) => `<button type="button" class="member-pick" data-pick-row="${esc(rowKey)}" data-pick-member="${esc(c.id ?? c.person_id)}">
+        <span>${matched ? "Use " : ""}${esc(c.name)}</span><small>${esc(candidateLine(c) || c.reason || "")}</small></button>`).join("")}
+    </div>` : ""}
+  </div>`;
+}
+
+/** Plain-language reason Apply is blocked, or "" when the reviewed rows can be applied. */
+export function applyBlocker(rows: { key: string; issues: string[]; label: string }[], excluded: Set<string>): string {
+  const included = rows.filter((r) => !excluded.has(r.key));
+  if (!included.length) return "Include at least one row to apply.";
+  const blocked = included.filter((r) => r.issues.length);
+  if (!blocked.length) return "";
+  const first = blocked[0];
+  return `${blocked.length} ${blocked.length === 1 ? "row needs" : "rows need"} a decision before applying. First: ${first.label} — ${first.issues[0]}. Choose the member, fix the row, or untick Include.`;
+}

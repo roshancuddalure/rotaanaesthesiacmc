@@ -27,7 +27,8 @@ from app.services.normalization import member_key
 from app.domain.member_validation import normalize_member_display_name, normalize_member_call, normalize_member_status
 from app.services.roster_reconciliation import normalize_designation
 from app.services.imports import is_valid_person_name
-from app.services.reviewed_import import acquire_import_lock, replayed_result, attach_result
+from app.services.reviewed_import import StalePreviewError, acquire_import_lock, replayed_result, attach_result
+from app.services.import_errors import blocking_rows_message, row_label
 from app.services.upload_limits import validate_tabular_upload
 from app.services.member_profiles import (
     call_level_on,
@@ -180,6 +181,18 @@ def member_state(db: Session):
     return people, sorted(snapshot, key=lambda p: p["id"])
 
 
+def _as_of(value) -> date:
+    """The day a workbook row describes: its effective date if readable, otherwise today."""
+    if isinstance(value, datetime):
+        return value.date()
+    if isinstance(value, date):
+        return value
+    try:
+        return date.fromisoformat(str(value)[:10])
+    except (TypeError, ValueError):
+        return local_today()
+
+
 def preview_member_import(db: Session, filename: str, content: bytes, options: dict):
     header_row = options.get("header_row", 1)
     inspected = inspect_member_workbook(filename, content, header_row)
@@ -189,7 +202,7 @@ def preview_member_import(db: Session, filename: str, content: bytes, options: d
         raise ValueError("Select an existing worksheet.")
     mapping = options.get("mapping", sheet_info["mapping"])
     if "name" not in mapping:
-        raise ValueError("Map a column to member name.")
+        raise ValueError(f"Sheet '{sheet_name}': map a column to member name.")
     if any(
         k not in FIELDS
         or not isinstance(v, int)
@@ -237,6 +250,7 @@ def preview_member_import(db: Session, filename: str, content: bytes, options: d
                         "errors": [],
                         "candidates": [],
                         "resolution_status": None,
+                        "resolution_method": None,
                         "resolution_reason": "",
                         "resolution_warnings": [],
                     }
@@ -299,7 +313,9 @@ def preview_member_import(db: Session, filename: str, content: bytes, options: d
             seen_names.add(key)
             resolution = resolutions.get(str(index), "")
             chosen = resolution if resolution and resolution not in {"new", "skip"} else None
-            context = ResolutionContext.build(normalized["call_level"])
+            # A workbook describes members as of its effective date (else today), so dated
+            # rules ("Daniel" on 1st call from Apr 2026 is Joel Daniel) apply correctly.
+            context = ResolutionContext.build(normalized["call_level"], _as_of(normalized.get("effective_from")))
             # purpose="history": historical members may be updated; archived or inactive ones
             # are only targeted when the reviewer chooses them by id.
             try:
@@ -394,12 +410,18 @@ def preview_member_import(db: Session, filename: str, content: bytes, options: d
                     "errors": errors,
                     "candidates": [candidate_json(c) for c in candidates],
                     "resolution_status": member.status,
+                    "resolution_method": member.method,
                     "resolution_reason": member.reason,
                     "resolution_warnings": list(member.warnings),
                 }
             )
     finally:
         workbook.close()
+    if not rows:
+        raise ValueError(
+            f"Sheet '{sheet_name}' has no member rows below the headings in row {header_row}; "
+            "add at least one member."
+        )
     # Include the entire member state so a concurrent edit invalidates the review.
     digest = hashlib.sha256(
         json.dumps([rows, snapshot, sheet_name, header_row, filename, hashlib.sha256(content).hexdigest(),
@@ -421,9 +443,22 @@ def apply_member_import(
         return replay
     preview = preview_member_import(db, filename, content, options)
     if preview["preview_hash"] != preview_hash:
-        raise ValueError("File, selections, or members changed. Preview again before importing.")
+        raise StalePreviewError("File, selections, or members changed. Preview again before importing.")
     if preview["counts"]["needs_review"]:
-        raise ValueError("Resolve or skip all rows needing review before importing.")
+        raise ValueError(
+            blocking_rows_message(
+                "Resolve or skip all rows needing review before importing",
+                (
+                    (
+                        row_label(row["row"], preview["sheet"]),
+                        row["raw"].get("name") or None,
+                        row["errors"] or [row["resolution_reason"] or "choose the member or skip the row"],
+                    )
+                    for row in preview["rows"]
+                    if row["action"] == "needs_review"
+                ),
+            )
+        )
     if any("call_level" in row["changes"] for row in preview["rows"] if row["action"] == "update"):
         if options.get("confirm_call_changes") is not True:
             raise ValueError("Confirm the reviewed call-level changes before importing.")

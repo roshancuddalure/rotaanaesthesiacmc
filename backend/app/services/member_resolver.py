@@ -270,7 +270,8 @@ class MemberIndex:
             result.reason = "No name given"
             return result
 
-        outcome, found = match_rules(self.rules.get(key, []), ctx)
+        rules = [r for r in self.rules.get(key, []) if purpose == "history" or (r.scope or "all") != "history"]
+        outcome, found = match_rules(rules, ctx)
         if outcome == "rule":
             result.method, result.score = ("context_rule" if is_conditional(found) else "approved_rule"), 1.0
             result.reason = (f"Rule for '{found.form}': {found.note or 'context'}" if is_conditional(found)

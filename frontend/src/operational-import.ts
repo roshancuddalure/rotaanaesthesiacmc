@@ -1,7 +1,8 @@
 import { request, type DepartmentMember } from "./services/api";
 import { workspaceDialog, openMemberWorkspace } from "./member-workspace";
 import { openUnitRegistry, openReferenceCatalog } from "./reference-workspace";
-import { importSummary, steps } from "./ui";
+import { applyBlocker, badge, importSummary, memberMatch, steps, type MemberMatchView } from "./ui";
+import { formatApiError } from "./api-errors";
 
 const IMPORT_STEPS = ["Upload file", "Map columns", "Review rows", "Apply"];
 
@@ -324,9 +325,7 @@ export async function openOperationalImport(
       const result = await response.json();
       if (!response.ok)
         throw new Error(
-          typeof result.detail === "string"
-            ? result.detail
-            : "Unable to preview this file",
+          formatApiError(result.detail, "Unable to preview this file"),
         );
       if (submittedVersion !== draftVersion || !dialog.open)
         throw new Error(
@@ -396,34 +395,87 @@ export async function openOperationalImport(
                 : row.action === "create"
                   ? "Matched - new record"
                   : "Matched";
-    root.innerHTML = `<h3>Resolve and review</h3>${groupedSummary}<p data-review-counts class="review-counts">${reviewCounts()}</p>${preview.mode === "replace_month" ? `<details><summary>${preview.replacement_scope.length} existing records affected by replacement</summary>${preview.replacement_scope.map((r) => `<p>${esc(members.find((m) => m.id === r.person_id)?.canonical_name || r.person_id)} · ${esc(r.starts_on)} to ${esc(r.ends_on || "Ongoing")}</p>`).join("")}</details>` : ""}${shown
-      .map((row) => {
-        const value = { ...row.values, ...corrections[row.key] };
-        return `<article class="mw-history" data-review-row="${esc(row.key)}"><label><input type="checkbox" data-include="${esc(row.key)}" ${excluded.has(row.key) ? "" : "checked"}> Include ${esc(row.source.sheet)} row ${esc(row.source.row)}</label><strong>${esc(matchState(row))}</strong><small>${esc(row.action.replace(/_/g, " "))}</small><p>${row.issues.map(esc).join(" · ")}</p><p>${row.warnings.map(esc).join(" · ")}</p><p>Original name: ${esc(row.values.member_name)} · ${esc(row.person_match.reason)}</p><label>Find member<input type="search" data-find-member="${esc(row.key)}" placeholder="Name, call level or designation"></label><label>Member<select data-row="${esc(row.key)}" data-field="person_id"><option value="">Select member</option>${members
-          .filter((m) => m.active_status === "active")
-          .map(
-            (m) =>
-              `<option value="${m.id}" ${m.id === (value.person_id || row.after.person_id) ? "selected" : ""}>${esc(m.canonical_name)} · ${esc(m.call_level || "Unassigned")} · ${esc(m.designations.slice(-1)[0]?.designation || "Position missing")}</option>`,
-          )
-          .join(
-            "",
-          )}</select></label>${row.person_match.candidates?.length ? `<p>Possible matches: ${row.person_match.candidates.map((c: Row) => `${esc(c.name)} (${esc(c.status)}, ${esc(c.designation || "No designation")}, ${esc(c.units?.join(", ") || "No units")})`).join("; ")}</p><div class="registry-actions">${row.person_match.candidates.map((c: Row) => `<button type="button" data-review-candidate="${esc(c.id)}">${c.status === "active" ? "Review" : "Review / restore"} ${esc(c.name)}</button>`).join("")}</div>` : ""}${admin ? `<button type="button" data-create-member="${esc(row.key)}">Create member</button>` : ""}<label><input type="checkbox" data-row="${esc(row.key)}" data-field="remember_person_alias" ${admin ? "" : "disabled"} ${value.remember_person_alias ? "checked" : ""}> Remember this spelling as an approved alias${admin ? "" : " (administrator only)"}</label><button type="button" data-repeat-member="${esc(row.key)}">Use this member for repeated occurrences of this name</button>${
-          kind === "units"
-            ? `<label>Find unit<input type="search" data-find-unit="${esc(row.key)}" placeholder="Unit name or campus"></label><label>Unit<select data-row="${esc(row.key)}" data-field="unit_id"><option value="">No unit / select unit</option>${units
-                .filter((u) => u.active_status === "active")
-                .map(
-                  (u) =>
-                    `<option value="${u.id}" ${u.id === (value.unit_id || row.after.unit_id) ? "selected" : ""}>${esc(u.name)} · ${esc(u.campus || "Campus not specified")}</option>`,
-                )
-                .join(
-                  "",
-                )}</select></label>${admin ? `<button type="button" data-create-unit="${esc(row.key)}">Create unit</button>` : ""}<label>Posting / call type<input data-row="${esc(row.key)}" data-field="posting_type" value="${esc(value.posting_type)}"></label><label><input type="checkbox" data-row="${esc(row.key)}" data-field="remember_unit_alias" ${admin ? "" : "disabled"} ${value.remember_unit_alias ? "checked" : ""}> Remember this unit label${admin ? "" : " (administrator only)"}</label><button type="button" data-repeat-unit="${esc(row.key)}">Use this unit for repeated labels</button>`
-            : `${["leave_type", "leave_slot", "status"].map((field) => `<label>${esc(field.replace(/_/g, " "))}<input data-row="${esc(row.key)}" data-field="${field}" value="${esc(value[field])}"></label>`).join("")}`
-        }<label>Start date<input data-row="${esc(row.key)}" data-field="starts_on" value="${esc(value.starts_on)}" placeholder="YYYY-MM-DD"></label><label>End date<input data-row="${esc(row.key)}" data-field="ends_on" value="${esc(value.ends_on)}" placeholder="YYYY-MM-DD"></label><details><summary>Original and proposed changes</summary><dl><dt>Member</dt><dd>${esc(row.values.member_name)} &rarr; ${esc(row.person_match.canonical_name || "Needs selection")}<small>${esc(row.person_match.reason)}</small></dd>${row.unit_match ? `<dt>Unit</dt><dd>${esc(row.values.unit_name)} &rarr; ${esc(row.unit_match.name || "Needs selection")}</dd>` : ""}${(row.normalizations || []).map((change: Row) => `<dt>${esc(change.field.replace(/_/g, " "))}</dt><dd>${esc(change.original || "Blank")} &rarr; ${esc(change.proposed || "Blank")}<small>${esc(change.reason)}</small></dd>`).join("")}</dl></details></article>`;
-      })
-      .join(
-        "",
-      )}<div class="registry-actions"><button type="button" data-page="-1" ${page === 0 ? "disabled" : ""}>Previous rows</button><span>Page ${page + 1} of ${Math.ceil(preview.rows.length / 25)}</span><button type="button" data-page="1" ${(page + 1) * 25 >= preview.rows.length ? "disabled" : ""}>Next rows</button></div><label><input type="checkbox" data-acknowledge> I reviewed the affected duties and replacement scope</label><div class="registry-actions"><button type="button" data-refresh>Refresh normalized preview</button><button type="button" data-report>Download row report</button><button type="button" class="primary" data-apply ${previewDirty ? 'aria-disabled="true"' : ""}>Apply reviewed rows</button></div><p data-apply-status role="status" aria-live="polite"></p>`;
+    const memberView = (row: Row): MemberMatchView => ({
+      raw: String(row.values.member_name ?? ""),
+      status: row.person_match.state === "inactive" ? "inactive" : (row.person_match.status ?? row.person_match.state),
+      name: row.person_match.canonical_name,
+      method: row.person_match.method,
+      reason: row.person_match.reason,
+      warnings: row.person_match.warnings ?? [],
+      candidates: row.person_match.candidates ?? [],
+    });
+    const memberOptions = (row: Row, value: Row) =>
+      members
+        .filter((m) => m.active_status === "active")
+        .map((m) => `<option value="${m.id}" ${m.id === (value.person_id || row.after.person_id) ? "selected" : ""}>${esc(m.canonical_name)} · ${esc(m.call_level || "Unassigned")} · ${esc(m.designations.slice(-1)[0]?.designation || "Position missing")}</option>`)
+        .join("");
+    const unitOptions = (row: Row, value: Row) =>
+      units
+        .filter((u) => u.active_status === "active")
+        .map((u) => `<option value="${u.id}" ${u.id === (value.unit_id || row.after.unit_id) ? "selected" : ""}>${esc(u.name)} · ${esc(u.campus || "Campus not specified")}</option>`)
+        .join("");
+    const special = (row: Row) => ["PAIN", "SICU", "DRP"].includes(row.after.posting_type);
+    const rowHtml = (row: Row) => {
+      const value = { ...row.values, ...corrections[row.key] };
+      const tone = excluded.has(row.key) ? "neutral" : row.issues.length ? "warning" : "success";
+      const otherIssues = row.issues.filter((issue: string) => !/department member/i.test(issue));
+      const unitLine = kind === "units" && row.unit_match
+        ? `<p class="import-row__unit"><span class="muted-text">Unit</span> ${esc(row.values.unit_name || "(blank)")} → <strong>${esc(row.unit_match.name || (special(row) ? "Special posting (no unit)" : "not chosen"))}</strong>${row.unit_match.state !== "matched" && !special(row) ? ` ${badge("Choose unit", "warning")}` : ""}</p>`
+        : "";
+      return `<article class="import-row${excluded.has(row.key) ? " is-excluded" : ""}" data-review-row="${esc(row.key)}">
+        <header class="import-row__head">
+          <label class="import-row__include"><input type="checkbox" data-include="${esc(row.key)}" ${excluded.has(row.key) ? "" : "checked"}> Include</label>
+          <span class="import-row__source">${esc(row.source.sheet)} row ${esc(row.source.row)}</span>
+          ${badge(matchState(row), tone)}
+          ${row.action !== "needs_review" ? `<span class="muted-text">${esc(String(row.action).replace(/_/g, " "))}</span>` : ""}
+        </header>
+        ${memberMatch(row.key, memberView(row))}
+        ${unitLine}
+        ${otherIssues.length ? `<ul class="import-row__issues">${otherIssues.map((issue: string) => `<li>${esc(issue)}</li>`).join("")}</ul>` : ""}
+        ${row.warnings.length ? `<p class="member-match__warn">${row.warnings.map(esc).join(" · ")}</p>` : ""}
+        <div class="import-row__actions">
+          ${admin ? `<button type="button" class="quiet-button btn-sm" data-create-member="${esc(row.key)}">Create new member</button>` : ""}
+          ${row.after.person_id || value.person_id ? `<button type="button" class="quiet-button btn-sm" data-repeat-member="${esc(row.key)}">Use this member for every “${esc(row.values.member_name)}” row</button>` : ""}
+          <label class="checkbox-line"><input type="checkbox" data-row="${esc(row.key)}" data-field="remember_person_alias" ${admin ? "" : "disabled"} ${value.remember_person_alias ? "checked" : ""}> Remember this spelling${admin ? "" : " (administrator only)"}</label>
+        </div>
+        <details class="import-row__edit">
+          <summary>Edit row</summary>
+          <div class="import-row__fields">
+            <label>Find member<input type="search" data-find-member="${esc(row.key)}" placeholder="Name, call level or designation"></label>
+            <label>Member<select data-row="${esc(row.key)}" data-field="person_id"><option value="">Select member</option>${memberOptions(row, value)}</select></label>
+            ${kind === "units"
+              ? `<label>Find unit<input type="search" data-find-unit="${esc(row.key)}" placeholder="Unit name or campus"></label>
+                 <label>Unit<select data-row="${esc(row.key)}" data-field="unit_id"><option value="">No unit / select unit</option>${unitOptions(row, value)}</select></label>
+                 ${admin ? `<button type="button" class="quiet-button btn-sm" data-create-unit="${esc(row.key)}">Create unit</button>` : ""}
+                 <label>Posting / call type<input data-row="${esc(row.key)}" data-field="posting_type" value="${esc(value.posting_type)}"></label>
+                 <label class="checkbox-line"><input type="checkbox" data-row="${esc(row.key)}" data-field="remember_unit_alias" ${admin ? "" : "disabled"} ${value.remember_unit_alias ? "checked" : ""}> Remember this unit label${admin ? "" : " (administrator only)"}</label>
+                 <button type="button" class="quiet-button btn-sm" data-repeat-unit="${esc(row.key)}">Use this unit for repeated labels</button>`
+              : ["leave_type", "leave_slot", "status"].map((field) => `<label>${esc(field.replace(/_/g, " "))}<input data-row="${esc(row.key)}" data-field="${field}" value="${esc(value[field])}"></label>`).join("")}
+            <label>Start date<input data-row="${esc(row.key)}" data-field="starts_on" value="${esc(value.starts_on)}" placeholder="YYYY-MM-DD"></label>
+            <label>End date<input data-row="${esc(row.key)}" data-field="ends_on" value="${esc(value.ends_on)}" placeholder="YYYY-MM-DD"></label>
+          </div>
+          <dl class="import-row__changes">${(row.normalizations || []).map((change: Row) => `<dt>${esc(change.field.replace(/_/g, " "))}</dt><dd>${esc(change.original || "Blank")} → ${esc(change.proposed || "Blank")} <small>${esc(change.reason)}</small></dd>`).join("")}</dl>
+          ${row.person_match.candidates?.length ? `<div class="registry-actions">${row.person_match.candidates.map((c: Row) => `<button type="button" class="quiet-button btn-sm" data-review-candidate="${esc(c.id)}">${c.status === "active" ? "Open profile:" : "Review / restore"} ${esc(c.name)}</button>`).join("")}</div>` : ""}
+        </details>
+      </article>`;
+    };
+    const blocker = () =>
+      previewDirty
+        ? "Your changes need a refreshed preview before applying."
+        : applyBlocker(
+            preview!.rows.map((r) => ({ key: r.key, issues: r.issues, label: `row ${r.source.row} “${r.values.member_name ?? ""}”` })),
+            excluded,
+          );
+    root.innerHTML = `<h3>Resolve and review</h3>${groupedSummary}<p data-review-counts class="review-counts">${reviewCounts()}</p>${preview.mode === "replace_month" ? `<details><summary>${preview.replacement_scope.length} existing records affected by replacement</summary>${preview.replacement_scope.map((r) => `<p>${esc(members.find((m) => m.id === r.person_id)?.canonical_name || r.person_id)} · ${esc(r.starts_on)} to ${esc(r.ends_on || "Ongoing")}</p>`).join("")}</details>` : ""}${shown.map(rowHtml).join("")}<div class="pager" ${preview.rows.length <= 25 ? "hidden" : ""}><button type="button" class="icon-button btn-sm" data-page="-1" ${page === 0 ? "disabled" : ""}>Previous rows</button><span>Page ${page + 1} of ${Math.ceil(preview.rows.length / 25)}</span><button type="button" class="icon-button btn-sm" data-page="1" ${(page + 1) * 25 >= preview.rows.length ? "disabled" : ""}>Next rows</button></div><label class="checkbox-line"><input type="checkbox" data-acknowledge> I reviewed the affected duties and replacement scope</label><div class="registry-actions import-apply-bar"><button type="button" class="icon-button" data-refresh>Refresh normalized preview</button><button type="button" class="quiet-button" data-report>Download row report</button><button type="button" class="primary" data-apply ${previewDirty ? 'aria-disabled="true"' : ""}>Apply reviewed rows</button></div><p class="import-apply-blocker" data-apply-blocker role="status">${esc(blocker())}</p><p data-apply-status role="status" aria-live="polite"></p>`;
+    // One-click member choice: save it and re-run the preview so the row is checked again.
+    root.querySelectorAll<HTMLButtonElement>("[data-pick-member]").forEach(
+      (button) =>
+        (button.onclick = () => {
+          (corrections[button.dataset.pickRow!] ??= {}).person_id = button.dataset.pickMember!;
+          draftVersion += 1;
+          void runPreview();
+        }),
+    );
     root.querySelectorAll<HTMLButtonElement>("[data-review-candidate]").forEach(
       (button) =>
         (button.onclick = () => {
@@ -494,6 +546,8 @@ export async function openOperationalImport(
           root.querySelector("[data-review-counts]")!.textContent =
             reviewCounts();
           dirtyPreview();
+          const note = root.querySelector("[data-apply-blocker]");
+          if (note) note.textContent = blocker();
         }),
     );
     root.querySelectorAll<HTMLButtonElement>("[data-page]").forEach(

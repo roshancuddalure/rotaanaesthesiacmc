@@ -115,15 +115,6 @@ def extract_unitwise_call_levels(
 
 
 
-def match_person(query: str, people: "list[Person] | MemberIndex", call_level: str | None = None) -> Person | None:
-    """The member this unitwise name certainly means, or None (needs review / not found)."""
-    index = people if isinstance(people, MemberIndex) else MemberIndex(people, [])
-    result = index.resolve(query, ResolutionContext.build(call_level), purpose="history")
-    if not result.matched:
-        return None
-    return next(p for p in index.people if str(p.id) == result.person_id)
-
-
 def _plan(db: Session, path: Path) -> tuple[list[dict], list[dict], dict[str, Person]]:
     index = MemberIndex.load(db)
     people = {str(person.id): person for person in index.people}

@@ -1,7 +1,8 @@
 import { openReferenceCatalog } from "./reference-workspace";
 import { openRecordEditor } from "./record-workspace";
 import { request, type DepartmentMember } from "./services/api";
-import { steps } from "./ui";
+import { applyBlocker, memberMatch, steps, type MemberMatchView } from "./ui";
+import { formatApiError } from "./api-errors";
 
 const MEMBER_IMPORT_STEPS = ["Upload file", "Map columns", "Review rows", "Apply"];
 
@@ -921,6 +922,8 @@ export function openMemberCsvImport(done: () => void) {
   let preview: { id: string; mode?: string; headers: string[]; rows: Row[]; missing?: Row[] } | undefined;
   let applied = false;
   let busy = false;
+  // True once a value, mode or mapping changed after the last preview; Apply then waits for a refresh.
+  let stale = false;
   const corrections: Record<string, Row> = {};
   const mapping: Record<string, string> = {};
   const close = () => {
@@ -969,15 +972,17 @@ export function openMemberCsvImport(done: () => void) {
           body: form,
         },
       );
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
       if (!response.ok)
         throw new Error(
-          typeof data.detail === "string"
-            ? data.detail
-            : "Unable to preview this file",
+          formatApiError(
+            data.detail,
+            `Unable to preview this file (server response ${response.status}).`,
+          ),
         );
       preview = data;
       applied = false;
+      stale = false;
       setImportStep(2);
       renderPreview();
       message.textContent = `${preview!.rows.length} rows previewed. Nothing has been saved.`;
@@ -1017,11 +1022,100 @@ export function openMemberCsvImport(done: () => void) {
     )}<section class="mw-roster-list"><h4>Existing but missing from file (${missing.length})</h4><p>These active members are not in the uploaded roster. Tick the ones to archive; unticked members stay active. Archiving keeps their duties, leave and history.</p>${missing.length ? `<div class="registry-actions"><button type="button" data-archive-all>Tick all</button><button type="button" data-archive-none>Untick all</button></div>${missing.map((m) => `<article class="mw-history"><label><input type="checkbox" data-archive="${esc(m.id)}"> Archive <strong>${esc(m.canonical_name)}</strong></label><p>${esc(m.call_level || "Unassigned")} &middot; ${esc(m.designation || "No current designation")}</p>${m.possible_row ? `<p class="mw-error">Possibly file row ${esc(m.possible_row)} (spelling differs) &mdash; resolve that row before archiving.</p>` : ""}<button type="button" data-csv-review-member="${esc(m.id)}">Review member profile</button></article>`).join("")}` : "<p>None. Every active member is in the file.</p>"}</section>${actions()}`;
   }
   function actions() {
-    return `<button type="button" data-refresh>Refresh preview after corrections</button><button type="button" data-report>Download row report</button><button class="primary" type="button" data-apply>${preview!.mode === "roster_sync" ? "Apply roster changes" : "Apply selected rows"}</button><p role="status" data-apply-status aria-live="polite"></p>`;
+    return `<button type="button" data-refresh>Refresh preview after corrections</button><button type="button" data-report>Download row report</button><button class="primary" type="button" data-apply aria-describedby="csv-apply-blocker">${preview!.mode === "roster_sync" ? "Apply roster changes" : "Apply selected rows"}</button><p class="import-apply-blocker" id="csv-apply-blocker" data-apply-blocker hidden></p><p role="status" data-apply-status aria-live="polite"></p>`;
+  }
+  /** The member decision for a CSV row, in the shared resolver vocabulary. */
+  function matchView(row: Row): MemberMatchView {
+    const values = row.values as Row;
+    const before = row.before as Row | null;
+    const suggestions = (row.suggestions || []) as Row[];
+    const errors = (row.errors || []) as string[];
+    const raw = String(values.canonical_name ?? "");
+    const distinct = (corrections[String(row.row_number)] || values)._confirm_distinct === "yes";
+    if (row.person_id && before) {
+      const exact = raw.trim().toLowerCase() === String(before.canonical_name ?? "").trim().toLowerCase();
+      return {
+        raw,
+        status: "matched",
+        name: String(before.canonical_name),
+        method: values.member_id ? "member_id" : exact ? "canonical_exact" : "approved_alias",
+      };
+    }
+    if (suggestions.length)
+      return {
+        raw,
+        status: "needs_review",
+        reason: `Possible duplicate of ${suggestions.map((m) => `${m.name} (${m.status || "member"})`).join(", ")}. Choose the member, or confirm this is a different person.`,
+        candidates: suggestions.map((m) => ({
+          id: String(m.id),
+          name: String(m.name),
+          status: m.status as string | undefined,
+          call_level: m.call_level as string | null,
+          designation: m.designation as string | null,
+          units: (m.units || []) as string[],
+        })),
+      };
+    if (row.action === "invalid" && errors.length)
+      return { raw, status: "needs_review", reason: errors[0] };
+    return {
+      raw,
+      status: "not_found",
+      reason: distinct
+        ? "You confirmed this is a different person; a new member will be created."
+        : "No existing member with this name; a new member will be created.",
+    };
   }
   function rowHtml(row: Row): string {
     const values = row.values as Row;
-    return `<article class="mw-history"><label><input type="checkbox" data-include="${row.row_number}" ${["invalid", "needs_review"].includes(String(row.action)) ? "" : "checked"}> Include row ${row.row_number}</label><strong>${esc(String(row.action).replace(/_/g, " "))}</strong>${changeSummary(row)}${["member_id", "canonical_name", "active_status", "call_level", "designation", "designation_effective_from"].map((key) => `<label>${esc(key.replace(/_/g, " "))}<input data-row="${row.row_number}" data-key="${key}" value="${esc(values[key])}"></label>`).join("")}<p>${esc((row.errors as string[]).join(" · "))}</p>${(row.suggestions as Row[]).map((suggestion) => `<article class="mw-history"><strong>Possible match: ${esc(suggestion.name)}</strong><p>${esc(suggestion.status || "")} &middot; ${esc(suggestion.call_level || "Unassigned")} &middot; ${esc(suggestion.designation || "No current designation")}</p><p>${esc(((suggestion.units || []) as string[]).join(", "))}</p><button type="button" data-csv-use-member="${esc(suggestion.id)}" data-csv-member-row="${row.row_number}">Select existing member</button><button type="button" data-csv-review-member="${esc(suggestion.id)}">Review member profile</button></article>`).join("")}${(row.suggestions as Row[]).length ? `<label><input type="checkbox" data-distinct-row="${row.row_number}" ${values._confirm_distinct === "yes" ? "checked" : ""}> I reviewed the matches; create a separate member</label>` : ""}<details><summary>Before → After</summary><pre>${esc(JSON.stringify({ before: row.before, after: row.after, designation_change: row.designation_change }, null, 2))}</pre></details></article>`;
+    const key = String(row.row_number);
+    const suggestions = (row.suggestions || []) as Row[];
+    const errors = (row.errors || []) as string[];
+    const distinct = (corrections[key] || values)._confirm_distinct === "yes";
+    const chosen = (corrections[key] || {}).member_id;
+    const decisions = [
+      suggestions.length ? `<button type="button" class="quiet-button" data-csv-distinct="${esc(key)}">This is a different person</button>` : "",
+      distinct || chosen ? `<button type="button" class="quiet-button" data-csv-undo="${esc(key)}">Undo my choice</button>` : "",
+      ...suggestions.map((suggestion) => `<button type="button" class="quiet-button" data-csv-review-member="${esc(suggestion.id)}">Review profile: ${esc(suggestion.name)}</button>`),
+    ].join("");
+    return `<article class="mw-history" data-csv-row="${esc(key)}"><label><input type="checkbox" data-include="${row.row_number}" ${["invalid", "needs_review"].includes(String(row.action)) ? "" : "checked"}> Include row ${row.row_number}</label><strong>${esc(String(row.action).replace(/_/g, " "))}</strong>${memberMatch(key, matchView(row))}${decisions ? `<div class="registry-actions">${decisions}</div>` : ""}${changeSummary(row)}${errors.length ? `<p class="mw-error">${esc(errors.join(" · "))}</p>` : ""}<details class="import-row-edit"><summary>Edit row</summary><p>Change values, then refresh the preview. Paste a member ID to force a match.</p>${["member_id", "canonical_name", "active_status", "call_level", "designation", "designation_effective_from"].map((field) => `<label>${esc(field.replace(/_/g, " "))}<input data-row="${row.row_number}" data-key="${field}" value="${esc(values[field])}"></label>`).join("")}</details><details><summary>Before → After</summary><pre>${esc(JSON.stringify({ before: row.before, after: row.after, designation_change: row.designation_change }, null, 2))}</pre></details></article>`;
+  }
+  /** Plain-language reason Apply cannot run yet, or "" when the reviewed rows can be applied. */
+  function blockerText(): string {
+    if (!preview) return "";
+    if (stale) return "Values changed. Refresh the preview before applying.";
+    const root = dialog.querySelector<HTMLElement>("#csv-preview")!;
+    const excluded = new Set(
+      [...root.querySelectorAll<HTMLInputElement>("[data-include]:not(:checked)")].map((i) => i.dataset.include!),
+    );
+    const archive = root.querySelectorAll("[data-archive]:checked").length;
+    const rows = preview.rows.map((r) => {
+      const errors = (r.errors || []) as string[];
+      return {
+        key: String(r.row_number),
+        label: `Row ${r.row_number} (${(r.values as Row).canonical_name || "no name"})`,
+        issues: ["invalid", "needs_review"].includes(String(r.action))
+          ? errors.length ? errors : [matchView(r).reason || "needs review"]
+          : [],
+      };
+    });
+    // Roster sync may only archive members missing from the file.
+    if (archive && rows.every((r) => excluded.has(r.key))) return "";
+    return applyBlocker(rows, excluded);
+  }
+  function updateBlocker() {
+    const host = dialog.querySelector<HTMLElement>("[data-apply-blocker]");
+    if (!host) return;
+    const text = blockerText();
+    host.textContent = text;
+    host.hidden = !text;
+  }
+  /** Record a reviewer's member decision for one row, then refresh the preview. */
+  function chooseRow(row: string, change: Row, note: string) {
+    Object.assign((corrections[row] ??= {}), change);
+    stale = true;
+    updateBlocker();
+    dialog.querySelector("#csv-message")!.textContent = note;
+    void previewFile();
   }
   function renderPreview() {
     const root = dialog.querySelector<HTMLElement>("#csv-preview")!;
@@ -1032,21 +1126,39 @@ export function openMemberCsvImport(done: () => void) {
       root.querySelectorAll<HTMLInputElement>("[data-archive]").forEach((i) => (i.checked = true)));
     root.querySelector("[data-archive-none]")?.addEventListener("click", () =>
       root.querySelectorAll<HTMLInputElement>("[data-archive]").forEach((i) => (i.checked = false)));
-    root.querySelectorAll<HTMLButtonElement>("[data-csv-use-member]").forEach(
+    root.querySelectorAll<HTMLButtonElement>("[data-pick-member]").forEach(
       (button) =>
-        (button.onclick = () => {
-          const row = button.dataset.csvMemberRow!;
-          (corrections[row] ??= {}).member_id = button.dataset.csvUseMember;
-          const input = root.querySelector<HTMLInputElement>(
-            `[data-row="${row}"][data-key="member_id"]`,
-          );
-          if (input) input.value = button.dataset.csvUseMember!;
-          root.querySelector<HTMLButtonElement>("[data-apply]")!.disabled =
-            true;
-          dialog.querySelector("#csv-message")!.textContent =
-            "Member selected. Choose Update existing members if appropriate, then refresh the preview.";
-        }),
+        (button.onclick = () =>
+          chooseRow(
+            button.dataset.pickRow!,
+            { member_id: button.dataset.pickMember, _confirm_distinct: "" },
+            "Member chosen. Refreshing the preview…",
+          )),
     );
+    root.querySelectorAll<HTMLButtonElement>("[data-csv-distinct]").forEach(
+      (button) =>
+        (button.onclick = () =>
+          chooseRow(
+            button.dataset.csvDistinct!,
+            { _confirm_distinct: "yes", member_id: "" },
+            "Marked as a different person. Refreshing the preview…",
+          )),
+    );
+    root.querySelectorAll<HTMLButtonElement>("[data-csv-undo]").forEach(
+      (button) =>
+        (button.onclick = () =>
+          chooseRow(
+            button.dataset.csvUndo!,
+            { _confirm_distinct: "", member_id: "" },
+            "Choice undone. Refreshing the preview…",
+          )),
+    );
+    root
+      .querySelectorAll<HTMLInputElement>("[data-include], [data-archive]")
+      .forEach((input) => input.addEventListener("change", updateBlocker));
+    root.querySelector("[data-archive-all]")?.addEventListener("click", updateBlocker);
+    root.querySelector("[data-archive-none]")?.addEventListener("click", updateBlocker);
+    updateBlocker();
     root
       .querySelectorAll<HTMLButtonElement>("[data-csv-review-member]")
       .forEach(
@@ -1066,17 +1178,8 @@ export function openMemberCsvImport(done: () => void) {
         (input.oninput = () => {
           (corrections[input.dataset.row!] ??= {})[input.dataset.key!] =
             input.value;
-          root.querySelector<HTMLButtonElement>("[data-apply]")!.disabled =
-            true;
-        }),
-    );
-    root.querySelectorAll<HTMLInputElement>("[data-distinct-row]").forEach(
-      (input) =>
-        (input.onchange = () => {
-          (corrections[input.dataset.distinctRow!] ??= {})._confirm_distinct =
-            input.checked ? "yes" : "";
-          root.querySelector<HTMLButtonElement>("[data-apply]")!.disabled =
-            true;
+          stale = true;
+          updateBlocker();
         }),
     );
     root
@@ -1119,13 +1222,11 @@ export function openMemberCsvImport(done: () => void) {
         ...root.querySelectorAll<HTMLInputElement>("[data-archive]:checked"),
       ].map((i) => i.dataset.archive!);
       const status = root.querySelector<HTMLElement>("[data-apply-status]")!;
-      const blocked = preview!.rows.filter(
-        (r) =>
-          !excluded.includes(Number(r.row_number)) &&
-          ["invalid", "needs_review"].includes(String(r.action)),
-      );
-      if (blocked.length) {
-        status.textContent = `Resolve or untick ${blocked.length} row(s) that need review (first: row ${blocked[0].row_number}), then refresh the preview.`;
+      // Apply stays clickable; it explains what is missing instead (the server re-checks too).
+      const blocker = blockerText();
+      updateBlocker();
+      if (blocker) {
+        status.textContent = blocker;
         return;
       }
       if (!count && !archive.length) {
@@ -1193,8 +1294,14 @@ export function openMemberCsvImport(done: () => void) {
           body: form,
         },
       );
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.detail);
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok)
+        throw new Error(
+          formatApiError(
+            data.detail,
+            `Unable to read the CSV columns (server response ${response.status}).`,
+          ),
+        );
       setImportStep(1);
       const fields = [
         "canonical_name",
@@ -1231,9 +1338,8 @@ export function openMemberCsvImport(done: () => void) {
                 `[data-map-column="${i}"]`,
               )!.value;
             });
-            dialog
-              .querySelector<HTMLButtonElement>("[data-apply]")
-              ?.setAttribute("disabled", "");
+            stale = true;
+            updateBlocker();
           }),
       );
     } catch (error) {
@@ -1244,9 +1350,8 @@ export function openMemberCsvImport(done: () => void) {
   };
   dialog.querySelector<HTMLSelectElement>("select[name=mode]")!.onchange =
     () => {
-      dialog
-        .querySelector<HTMLButtonElement>("[data-apply]")
-        ?.setAttribute("disabled", "");
+      stale = true;
+      updateBlocker();
       dialog.querySelector("#csv-message")!.textContent =
         "Import mode changed. Preview again before applying.";
     };

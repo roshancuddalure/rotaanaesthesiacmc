@@ -2,7 +2,6 @@ import json
 from datetime import date, datetime, timedelta, timezone
 from io import BytesIO
 from uuid import UUID
-from xml.etree.ElementTree import ParseError
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from fastapi.responses import Response
@@ -21,6 +20,13 @@ from app.services.history_fairness import (
     past_coverage,
     policy_for_date,
     save_history_policy,
+)
+from app.services.import_errors import (
+    UNREADABLE_WORKBOOK,
+    WORKBOOK_ERRORS,
+    MemberResolutionError,
+    StalePreviewError,
+    resolution_detail,
 )
 from app.services.past_duties import (
     PAST_FIELDS,
@@ -149,7 +155,9 @@ async def upload(file: UploadFile):
 async def inspect(file: UploadFile = File(...), header_row: int = Form(1)):
     try:
         return inspect_past_workbook(file.filename or "", await upload(file), header_row)
-    except (ValueError, ParseError) as exc:
+    except WORKBOOK_ERRORS as exc:
+        raise HTTPException(status_code=400, detail=UNREADABLE_WORKBOOK) from exc
+    except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
 
@@ -169,10 +177,21 @@ async def review(
         content = await upload(file)
         if action == "preview":
             return preview_past_duties(db, file.filename or "", content, parsed)
+        # One transaction: apply_past_duties rolls back every row on any error.
         return apply_past_duties(
             db, file.filename or "", content, parsed, preview_hash, str(actor.id)
         )
-    except (ValueError, ParseError) as exc:
+    except StalePreviewError as exc:
+        db.rollback()
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    except MemberResolutionError as exc:
+        db.rollback()
+        raise HTTPException(status_code=422, detail=resolution_detail(exc)) from exc
+    except WORKBOOK_ERRORS as exc:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=UNREADABLE_WORKBOOK) from exc
+    except ValueError as exc:
+        db.rollback()
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     except IntegrityError as exc:
         db.rollback()

@@ -2,8 +2,6 @@
 
 import hashlib
 import json
-from zipfile import BadZipFile
-from openpyxl.utils.exceptions import InvalidFileException
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
@@ -27,6 +25,12 @@ from app.services.operational_import import (
     tabular_records,
 )
 from app.services.normalization import label_key
+from app.services.import_errors import (
+    UNREADABLE_WORKBOOK,
+    WORKBOOK_ERRORS,
+    MemberResolutionError,
+    resolution_detail,
+)
 
 router = APIRouter(prefix="/import-review", dependencies=[Depends(current_user)])
 
@@ -52,7 +56,9 @@ async def columns(file: UploadFile = File(...)):
             "fields": list(FIELDS),
             "suggested": {h: HEADER_MAP.get(label_key(h), "") for h in headers},
         }
-    except (ValueError, TypeError, BadZipFile, InvalidFileException) as exc:
+    except WORKBOOK_ERRORS as exc:
+        raise HTTPException(422, UNREADABLE_WORKBOOK) from exc
+    except (ValueError, TypeError) as exc:
         raise HTTPException(422, str(exc)) from exc
 
 
@@ -93,8 +99,12 @@ async def preview(
         settings["mode"] = mode
         content = await file.read(5 * 1024 * 1024 + 1)
         headers, raw = read_rows(db, kind, file.filename or "upload", content, month, settings)
-        if not raw or len(raw) > 5000:
-            raise ValueError("Import between 1 and 5,000 rows")
+        if not raw:
+            raise ValueError(
+                "The file has headings but no data rows; add at least one row below the headings"
+            )
+        if len(raw) > 5000:
+            raise ValueError(f"The file has {len(raw):,} rows; import at most 5,000 rows at a time")
         rows = normalize_rows(db, kind, month, raw, settings)
         settings["file_hash"] = hashlib.sha256(content).hexdigest()
         replace = []
@@ -112,7 +122,11 @@ async def preview(
                 in ({"unit_board"} if kind == "units" else {"import", "normalized_import"})
             ]
         settings["replacement_scope"] = replace
-    except (ValueError, TypeError, AttributeError, BadZipFile, InvalidFileException) as exc:
+    except MemberResolutionError as exc:
+        raise HTTPException(422, resolution_detail(exc)) from exc
+    except WORKBOOK_ERRORS as exc:
+        raise HTTPException(422, UNREADABLE_WORKBOOK) from exc
+    except (ValueError, TypeError, AttributeError) as exc:
         raise HTTPException(422, str(exc)) from exc
     batch = ImportReviewBatch(
         operator_id=operator.id,
@@ -150,8 +164,16 @@ def apply(
     )
     if not batch:
         raise HTTPException(404, "Import review not found")
+    # apply_batch writes every row in this one transaction and commits once at the end; any
+    # failure rolls the whole batch back so nothing is half-applied.
     try:
         return apply_batch(db, batch, operator, payload.excluded, payload.acknowledge_warnings)
     except IntegrityError as exc:
         db.rollback()
         raise HTTPException(409, "A conflicting record was saved; preview again") from exc
+    except MemberResolutionError as exc:
+        db.rollback()
+        raise HTTPException(422, resolution_detail(exc)) from exc
+    except Exception:
+        db.rollback()
+        raise

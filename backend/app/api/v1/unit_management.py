@@ -486,8 +486,10 @@ async def apply_unit_assignment_upload(
                               request_options, str(_user.id), preview_hash, result)
         db.commit()
     except StalePreviewError as exc:
+        db.rollback()
         raise HTTPException(status_code=409, detail=str(exc)) from exc
     except ValueError as exc:
+        db.rollback()
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     logger.info(
         "unit_management.import_apply month=%s filename=%s created=%s skipped=%s read_ms=%.1f apply_ms=%.1f total_ms=%.1f",

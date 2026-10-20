@@ -24,12 +24,20 @@ const apiModule = dataModule(`
   export const addMemberAlias = (...args) => globalThis.profileApi.alias(...args);
   export const addMemberDesignation = (...args) => globalThis.profileApi.designation(...args);
 `);
-async function controller(filename) {
+// Local modules a controller imports are compiled the same way, so data: URLs can load them.
+async function compiledModule(filename) {
   const source = await readFile(new URL(`../src/${filename}`, import.meta.url), "utf8");
-  const compiled = ts.transpileModule(source, {
+  let compiled = ts.transpileModule(source, {
     compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2020 },
   }).outputText.replace('"./services/api"', JSON.stringify(apiModule));
-  return import(dataModule(compiled));
+  for (const local of ["ui", "member-import"]) {
+    if (compiled.includes(`"./${local}"`))
+      compiled = compiled.replace(`"./${local}"`, JSON.stringify(await compiledModule(`${local}.ts`)));
+  }
+  return dataModule(compiled);
+}
+async function controller(filename) {
+  return import(await compiledModule(filename));
 }
 const importUi = await controller("member-import.ts");
 const historyUi = await controller("member-import-history.ts");
@@ -37,7 +45,8 @@ const pastUi = await controller("past-duties.ts");
 const profileUi = await controller("member-profile.ts");
 const click = (host, action) => host.onclick({ target: { closest: () => ({ dataset: { mi: action } }) } });
 const change = (host, dataset, extra = {}) => host.onchange({ target: { dataset, ...extra } });
-const canApply = host => !host.innerHTML.match(/<button[^>]*data-mi="apply"[^>]*>/)?.[0].includes("disabled");
+// Apply stays clickable; a blocked import shows the reason next to the button instead.
+const canApply = host => host.innerHTML.includes('data-mi="apply"') && !host.innerHTML.includes("import-apply-blocker");
 
 test("CSV review requires call approval, stays reviewed on filtering, and refreshes on apply", async () => {
   importUi.resetMemberImport();
@@ -141,7 +150,7 @@ test("past-duty corrections need approval and update visible coverage after appl
     },
   };
   const clickPast = action => host.onclick({ target: { closest: () => ({ dataset: { past: action } }) } });
-  const canApplyPast = () => !host.innerHTML.match(/<button[^>]*data-past="apply"[^>]*>/)?.[0].includes("disabled");
+  const canApplyPast = () => host.innerHTML.includes('data-past="apply"') && !host.innerHTML.includes("import-apply-blocker");
   await pastUi.mountPastDuties(host);
   assert.match(host.innerHTML, /accept=".xls,.xlsx"/);
   change(host, { past: "file" }, { files: [{ name: "duties.xls" }] });

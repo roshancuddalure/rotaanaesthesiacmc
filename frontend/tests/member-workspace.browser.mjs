@@ -341,15 +341,15 @@ try {
     await page
       .getByRole("heading", { name: "Review changes", exact: true })
       .waitFor();
+    await page.getByText("Edit row", { exact: true }).click();
     await page
       .locator('[data-row="2"][data-key="canonical_name"]')
       .fill("Corrected CSV Example");
-    assert.equal(
-      await page
-        .getByRole("button", { name: "Apply selected rows" })
-        .isDisabled(),
-      true,
-    );
+    // Apply stays clickable but explains why it cannot run yet.
+    await page
+      .locator(".import-apply-blocker")
+      .filter({ hasText: "Refresh the preview before applying" })
+      .waitFor();
     await page
       .getByRole("button", { name: "Refresh preview after corrections" })
       .click();
@@ -358,6 +358,7 @@ try {
         document.querySelector('[data-key="canonical_name"]')?.value ===
         "Corrected CSV Example",
     );
+    assert.equal(await page.locator(".import-apply-blocker").isHidden(), true);
     const [report] = await Promise.all([
       page.waitForEvent("download"),
       page.getByRole("button", { name: "Download row report" }).click(),
@@ -386,6 +387,100 @@ try {
     await page
       .getByRole("button", { name: "Close import", exact: true })
       .click();
+    passed++;
+    await page.close();
+  }
+  // A possible duplicate: alternatives are one-click buttons and Apply explains what is missing.
+  for (const width of [1280, 390]) {
+    const page = await browser.newPage({ viewport: { width, height: 850 } });
+    const errors = [];
+    page.on("pageerror", (e) => errors.push(e.message));
+    await page.route("**/__member-test", (route) =>
+      route.fulfill({
+        contentType: "text/html",
+        body: `<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/src/styles.css"></head><body></body></html>`,
+      }),
+    );
+    const sentCorrections = [];
+    let applies = 0;
+    await page.route("**/api/v1/admin/member-workspace/csv/**", async (route) => {
+      const path = new URL(route.request().url()).pathname;
+      if (path.endsWith("/columns"))
+        return route.fulfill({ json: { headers: ["canonical_name"] } });
+      if (path.endsWith("/preview")) {
+        const body = route.request().postDataBuffer()?.toString() ?? "";
+        const match = body.match(/name="corrections"\r\n\r\n([^\r]*)/);
+        const corrections = JSON.parse(match?.[1] || "{}");
+        sentCorrections.push(corrections);
+        const chosen = corrections["2"]?.member_id === member.id;
+        return route.fulfill({
+          json: {
+            id: "batch-dup",
+            mode: "update_existing",
+            headers: ["canonical_name"],
+            rows: [
+              {
+                row_number: 2,
+                values: { canonical_name: "Dr Renee Membr", ...(chosen ? { member_id: member.id } : {}) },
+                action: chosen ? "update" : "needs_review",
+                errors: [],
+                suggestions: chosen
+                  ? []
+                  : [{ id: member.id, name: "Dr Renee Member", status: "active", call_level: "2ND_CALL", designation: null, units: [] }],
+                before: chosen ? { canonical_name: "Dr Renee Member", active_status: "active", call_level: "2ND_CALL" } : null,
+                after: { canonical_name: "Dr Renee Membr", active_status: "active", call_level: "2ND_CALL" },
+                person_id: chosen ? member.id : null,
+                revision: null,
+              },
+            ],
+          },
+        });
+      }
+      applies++;
+      return route.fulfill({
+        json: { batch_id: "batch-dup", created: 0, updated: 1, unchanged: 0, excluded: 0, members: [] },
+      });
+    });
+    await page.goto(`${base}/__member-test`);
+    await page.evaluate(async () => {
+      const m = await import("/src/member-workspace.ts");
+      m.openMemberCsvImport(() => {});
+    });
+    await page.locator("input[type=file]").setInputFiles({
+      name: "members.csv",
+      mimeType: "text/csv",
+      buffer: Buffer.from("canonical_name\r\nDr Renee Membr\r\n"),
+    });
+    await page.getByText("Map CSV columns", { exact: true }).waitFor();
+    await page.getByRole("button", { name: "Preview import", exact: true }).click();
+    await page.getByRole("heading", { name: "Review changes", exact: true }).waitFor();
+    const row = page.locator('[data-csv-row="2"]');
+    // (a) the needs-review row offers its alternatives as buttons
+    const pick = row.locator(`button[data-pick-member="${member.id}"]`);
+    assert.equal(await pick.count(), 1);
+    assert.match(await pick.textContent(), /Dr Renee Member/);
+    assert.equal(await row.getByRole("button", { name: "This is a different person", exact: true }).count(), 1);
+    assert.match(await row.locator(".member-match").textContent(), /Possible duplicate of Dr Renee Member/);
+    // (b) Apply shows why it is blocked and refuses on click until the row is resolved
+    const blocker = page.locator(".import-apply-blocker");
+    assert.match(await blocker.textContent(), /Include at least one row/);
+    await row.locator("[data-include]").check();
+    assert.match(await blocker.textContent(), /1 row needs a decision before applying/);
+    await page.getByRole("button", { name: "Apply selected rows" }).click();
+    await page
+      .locator("[data-apply-status]")
+      .filter({ hasText: "1 row needs a decision before applying" })
+      .waitFor();
+    assert.equal(applies, 0);
+    await pick.click();
+    await page.locator('[data-csv-row="2"] [data-match-status="matched"]').waitFor();
+    assert.equal(sentCorrections.at(-1)["2"].member_id, member.id);
+    assert.equal(await page.locator(".import-apply-blocker").isHidden(), true);
+    page.once("dialog", (d) => d.accept());
+    await page.getByRole("button", { name: "Apply selected rows" }).click();
+    await page.getByRole("heading", { name: "Import complete", exact: true }).waitFor();
+    assert.equal(applies, 1);
+    assert.deepEqual(errors, []);
     passed++;
     await page.close();
   }

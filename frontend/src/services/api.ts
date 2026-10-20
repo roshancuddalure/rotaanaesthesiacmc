@@ -813,12 +813,39 @@ export interface InvalidMembersResult {
   people: DepartmentMember[];
 }
 
-export interface CleanupMembersResult {
-  normalized: number;
-  deleted: number;
+/** Admin member tools preview first; applying needs the token of the reviewed preview. */
+export interface ReviewedPreview {
+  mode?: "preview" | "applied";
+  preview_token?: string;
 }
 
-export interface RosterReconciliationResult {
+export interface PreviewRow {
+  raw_name?: string;
+  roster_name?: string;
+  cleaned_name?: string;
+  current_name?: string | null;
+  canonical_name?: string | null;
+  current_call_level?: string | null;
+  new_call_level?: string;
+  status?: string;
+  action?: string;
+  reason?: string;
+  candidates?: { name: string; status?: string }[];
+  merge_from?: { name?: string; canonical_name?: string }[];
+  colliding_with?: { name?: string; canonical_name?: string }[];
+}
+
+export interface CleanupMembersResult extends ReviewedPreview {
+  normalized: number;
+  deleted: number;
+  renames?: PreviewRow[];
+  collisions?: PreviewRow[];
+  to_delete?: PreviewRow[];
+}
+
+export interface RosterReconciliationResult extends ReviewedPreview {
+  needs_review?: number;
+  rows?: PreviewRow[];
   roster_entries: number;
   matched_people: number;
   created_people: number;
@@ -830,13 +857,16 @@ export interface RosterReconciliationResult {
   examples: string[];
 }
 
-export interface AutoMergeDuplicatesResult {
+export interface AutoMergeDuplicatesResult extends ReviewedPreview {
   merged_groups: number;
   merged_people: number;
   remaining_groups: number;
 }
 
-export interface CallLevelPrefillResult {
+export interface CallLevelPrefillResult extends ReviewedPreview {
+  changes?: number;
+  needs_review?: number;
+  rows?: PreviewRow[];
   matched: number;
   unmatched: number;
   cleared: number;
@@ -1769,13 +1799,19 @@ export function getMemberAudit(): Promise<MemberAudit> {
   return request<MemberAudit>("/api/v1/admin/members/audit");
 }
 
+/** A name close to an existing member is refused (409 near_duplicate) unless confirmDistinct. */
 export function createMember(
   canonicalName: string,
   activeStatus = "active",
+  confirmDistinct = false,
 ): Promise<DepartmentMember> {
   return request<DepartmentMember>("/api/v1/admin/members", {
     method: "POST",
-    body: JSON.stringify({ canonical_name: canonicalName, active_status: activeStatus }),
+    body: JSON.stringify({
+      canonical_name: canonicalName,
+      active_status: activeStatus,
+      ...(confirmDistinct ? { confirm_distinct: true } : {}),
+    }),
   });
 }
 
@@ -1849,31 +1885,35 @@ export function getInvalidMembers(): Promise<InvalidMembersResult> {
   return request<InvalidMembersResult>("/api/v1/admin/members/invalid");
 }
 
-export function cleanupInvalidMembers(): Promise<CleanupMembersResult> {
+/** Without a token: preview only. With the preview's token: apply exactly that preview. */
+export function cleanupInvalidMembers(previewToken?: string): Promise<CleanupMembersResult> {
   return request<CleanupMembersResult>("/api/v1/admin/members/cleanup-invalid", {
     method: "POST",
-    body: "{}",
+    body: JSON.stringify(previewToken ? { confirm: true, preview_token: previewToken } : {}),
   });
 }
 
-export function reconcileTrustedRoster(): Promise<RosterReconciliationResult> {
+/** Without a token: preview only. With the preview's token: apply exactly that preview. */
+export function reconcileTrustedRoster(previewToken?: string): Promise<RosterReconciliationResult> {
   return request<RosterReconciliationResult>("/api/v1/admin/members/reconcile-trusted-roster", {
     method: "POST",
-    body: "{}",
+    body: JSON.stringify(previewToken ? { confirm: true, preview_token: previewToken } : {}),
   });
 }
 
-export function autoMergeDuplicates(): Promise<AutoMergeDuplicatesResult> {
+/** Without a token: preview only. With the preview's token: apply exactly that preview. */
+export function autoMergeDuplicates(previewToken?: string): Promise<AutoMergeDuplicatesResult> {
   return request<AutoMergeDuplicatesResult>("/api/v1/admin/members/auto-merge-duplicates", {
     method: "POST",
-    body: "{}",
+    body: JSON.stringify(previewToken ? { confirm: true, preview_token: previewToken } : {}),
   });
 }
 
-export function prefillCallLevels(): Promise<CallLevelPrefillResult> {
+/** Without a token: preview only. With the preview's token: apply exactly that preview. */
+export function prefillCallLevels(previewToken?: string): Promise<CallLevelPrefillResult> {
   return request<CallLevelPrefillResult>("/api/v1/admin/members/prefill-call-levels", {
     method: "POST",
-    body: "{}",
+    body: JSON.stringify(previewToken ? { confirm: true, preview_token: previewToken } : {}),
   });
 }
 
@@ -2189,4 +2229,73 @@ export async function downloadRotaTemplateCallWiseExport(month: string): Promise
     blob: await response.blob(),
     filename: filenameFromDisposition(response.headers.get("Content-Disposition"), `call-wise-rota-template-${month}.xlsx`),
   };
+}
+
+// --- Department members: clear all (archive) and suspected duplicates -------------------
+
+export interface ArchiveAllPreview {
+  members: number;
+  linked_duties: number;
+  future_duties: number;
+  leave: number;
+  postings: number;
+  preview_token: string;
+  confirm_phrase: string;
+}
+
+export interface ArchiveAllBatch {
+  batch_id: string;
+  at: string;
+  operator_name: string;
+  archived: number;
+  restored: number;
+}
+
+export function previewArchiveAll(): Promise<ArchiveAllPreview> {
+  return request<ArchiveAllPreview>("/api/v1/admin/members/archive-all/preview");
+}
+
+export function archiveAllMembers(previewToken: string, confirmPhrase: string): Promise<{ batch_id: string; archived: number }> {
+  return request("/api/v1/admin/members/archive-all", {
+    method: "POST",
+    body: JSON.stringify({ preview_token: previewToken, confirm_phrase: confirmPhrase }),
+  });
+}
+
+export function restoreArchiveBatch(batchId: string): Promise<{ batch_id: string; restored: number; skipped: number }> {
+  return request(`/api/v1/admin/members/archive-all/${encodeURIComponent(batchId)}/restore`, { method: "POST", body: "{}" });
+}
+
+export function listArchiveBatches(): Promise<ArchiveAllBatch[]> {
+  return request<ArchiveAllBatch[]>("/api/v1/admin/members/archive-all/batches");
+}
+
+export interface SuspectedDuplicatePerson {
+  id: string;
+  canonical_name: string;
+  active_status: string;
+  call_level: string | null;
+  duties: number;
+  postings: number;
+  leave: number;
+  aliases: string[];
+}
+
+export interface SuspectedDuplicate {
+  pair_id: string;
+  similarity: number;
+  reason: string;
+  suggested_target_id: string;
+  people: SuspectedDuplicatePerson[];
+}
+
+export function getSuspectedDuplicates(): Promise<SuspectedDuplicate[]> {
+  return request<SuspectedDuplicate[]>("/api/v1/admin/members/suspected-duplicates");
+}
+
+export function dismissSuspectedDuplicate(personIds: string[], note: string | null = null): Promise<{ pair_id: string }> {
+  return request("/api/v1/admin/members/suspected-duplicates/dismiss", {
+    method: "POST",
+    body: JSON.stringify({ person_ids: personIds, note }),
+  });
 }

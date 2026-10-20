@@ -1,4 +1,6 @@
-"""Phase 0 evaluation: run every current member-name matcher against the golden set.
+"""Score the shared member resolver (and the historical rebuild) against the golden set.
+
+The Phase 0 scores of the matchers it replaced are kept in docs/member_resolution_baseline.json.
 
 usage (from backend/):  .venv/Scripts/python.exe ../tools/member_resolution_eval.py tests/fixtures/member_resolution_cases.csv <out.json> [database]
 Reads only the named database (default duty_rota_ux_audit, a copy); never writes. Each matcher is
@@ -34,58 +36,37 @@ CALL_TO_DUTY = {"1ST_CALL": ("MAIN_1ST_24HR", "1st call"), "2ND_CALL": ("MAIN_2N
 
 
 def build_matchers(db: Session):
+    from app.models import MemberResolutionRule
     from app.services import historical_analysis_dry_run as hist
     from app.services.imports import ParsedRotaAssignment
-    from app.services.leave_import import clean_person_text, match_person, person_lookup
-    from app.services.members import compact_name_key, normalize_member_name
-    from app.services.normalization import member_lookup, resolve_member
-    from app.services.unit_assignment_import import match_person_for_unit_import
-    from app.services.unitwise_call_levels import match_person as unitwise_match
+    from app.services.member_resolution_rules import build_seed_rules
+    from app.services.member_resolver import MemberIndex, ResolutionContext
 
     people = list(db.scalars(select(Person).options(selectinload(Person.aliases))))
-    review_lookup = member_lookup(db, active_only=False)
-    legacy_lookup = person_lookup(db)
-    compact_keys, spaced_keys = defaultdict(set), defaultdict(set)
-    for p in people:
-        for value in [p.canonical_name, *(a.alias for a in p.aliases)]:
-            compact_keys[compact_name_key(value)].add(p)
-            spaced_keys[normalize_member_name(value)].add(p)
-    hist_aliases = {}
-    for p in people:
-        for a in p.aliases:
-            if hist.compact_name(a.alias):
-                hist_aliases[hist.compact_name(a.alias)] = p.canonical_name
+    by_name = {p.canonical_name: p for p in people}
+    # Use the saved rules when the table exists on this copy; otherwise the seed, in memory.
+    try:
+        saved = list(db.scalars(select(MemberResolutionRule)))
+    except Exception:  # noqa: BLE001 - table not migrated on this copy yet
+        db.rollback()
+        saved = []
+    index = MemberIndex(people, saved or build_seed_rules(by_name)[0])
+    hist.set_shared_index(index)  # the rebuild resolves against this copy, not the working DB
+    hist_aliases = {hist.compact_name(a.alias): p.canonical_name for p in people for a in p.aliases
+                    if hist.compact_name(a.alias)}
     hist_resolver = hist.CanonicalNameResolver(
         [hist.CanonicalMember(str(p.id), p.canonical_name, p.call_level, "db") for p in people], hist_aliases)
-    by_name = {p.canonical_name: p for p in people}
 
-    def review_import(c):
-        day = date.fromisoformat(c["date"]) if c["date"] else None
-        r = resolve_member(db, c["raw_name"], as_of=day, lookup=review_lookup)
-        return r["canonical_name"] if r["state"] == "matched" else None, r["state"]
-
-    def legacy_leave(c):
-        person, method, conf, _ = match_person(clean_person_text(c["raw_name"]), legacy_lookup)
-        return (person.canonical_name if person else None), conf
-
-    def legacy_unit(c):
-        person, method, conf, _, _ = match_person_for_unit_import(clean_person_text(c["raw_name"]), legacy_lookup)
-        return (person.canonical_name if person else None), conf
-
-    def unitwise_prefill(c):
-        person = unitwise_match(clean_person_text(c["raw_name"]), people)
-        return (person.canonical_name if person else None), "matched" if person else "none"
-
-    def member_workbook(c):
-        hits = compact_keys.get(compact_name_key(c["raw_name"]), set())
-        return (next(iter(hits)).canonical_name if len(hits) == 1 else None), f"{len(hits)} key hits"
-
-    def past_duties(c):
-        hits = spaced_keys.get(normalize_member_name(c["raw_name"]), set())
-        return (next(iter(hits)).canonical_name if len(hits) == 1 else None), f"{len(hits)} key hits"
+    def resolver(purpose):
+        def run(c):
+            day = date.fromisoformat(c["date"]) if c["date"] else None
+            r = index.resolve(c["raw_name"], ResolutionContext.build(c["call_level"], day, c["unit"]), purpose=purpose)
+            return (r.canonical_name if r.status == "matched" else None), r.status
+        run.purpose = purpose
+        return run
 
     def historical_rebuild(c):
-        duty_type, label = CALL_TO_DUTY.get(c["call_level"], ("", c["unit"] or ""))
+        duty_type, label = CALL_TO_DUTY.get(c["call_level"], (c["unit"] or "", c["unit"] or ""))
         day = date.fromisoformat(c["date"]) if c["date"] else date(2026, 5, 1)
         when = datetime.combine(day, datetime.min.time())
         assignment = ParsedRotaAssignment(
@@ -96,34 +77,11 @@ def build_matchers(db: Session):
         r = manual or hist_resolver.resolve(c["raw_name"])
         name = r.canonical_name if r.status == "matched" else None
         return (name if name in by_name or name is None else f"{name} [not in DB]"), r.status
+    historical_rebuild.purpose = "history"
 
-    from app.services.member_resolution_rules import build_seed_rules
-    from app.services.member_resolver import MemberIndex, ResolutionContext
-
-    # Use the saved rules when the table exists; otherwise the seed rules, built in memory.
-    try:
-        from app.models import MemberResolutionRule
-        saved = list(db.scalars(select(MemberResolutionRule)))
-    except Exception:  # noqa: BLE001 - table not migrated on this copy yet
-        db.rollback()
-        saved = []
-    rules = saved or build_seed_rules({p.canonical_name: p for p in people})[0]
-    index = MemberIndex(people, rules)
-
-    def resolver(purpose):
-        def run(c):
-            day = date.fromisoformat(c["date"]) if c["date"] else None
-            r = index.resolve(c["raw_name"], ResolutionContext.build(c["call_level"], day, c["unit"]), purpose=purpose)
-            return (r.canonical_name if r.status == "matched" else None), r.status
-        run.purpose = purpose
-        return run
-
-    return {"NEW shared resolver (live imports)": resolver("live"),
-            "NEW shared resolver (history imports)": resolver("history"),
-            "review_import (unit/leave CSV, member CSV)": review_import,
-            "legacy_leave_import": legacy_leave, "legacy_unit_import": legacy_unit,
-            "unitwise_call_level_prefill": unitwise_prefill, "member_workbook_import": member_workbook,
-            "past_duties_import": past_duties, "historical_rebuild (context-aware)": historical_rebuild}, by_name
+    return {"shared resolver (live imports)": resolver("live"),
+            "shared resolver (history imports)": resolver("history"),
+            "historical rebuild": historical_rebuild}, by_name
 
 
 def classify(case, assigned, by_name, purpose="live"):

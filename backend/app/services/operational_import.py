@@ -30,6 +30,7 @@ from app.models import (
     ReferenceValue,
     Unit,
 )
+from app.services.import_errors import blocking_rows_message, row_label
 from app.services.leave import month_bounds
 from app.services.member_resolver import MemberIndex
 from app.services.normalization import (
@@ -239,7 +240,8 @@ def legacy_rows(
     rows = []
     for index, row in enumerate(preview["rows"]):
         values = {
-            "member_name": row.get("raw_person_name") or row.get("cleaned_person_name") or "",
+            # The parser's cleaned name drops ward/date notes ("Sanjana Annie Mathew (BP 16-30)").
+            "member_name": row.get("cleaned_person_name") or row.get("raw_person_name") or "",
             "unit_name": row.get("raw_unit_label") or row.get("unit_name") or "",
             "posting_type": row.get("raw_posting_label") or row.get("posting_type") or "",
             "starts_on": row.get("starts_on") or "",
@@ -636,8 +638,25 @@ def apply_batch(
         raise HTTPException(403, "Only an administrator can approve reusable identity aliases")
     if not selected:
         raise HTTPException(422, "Select at least one row")
-    if any(r["issues"] for r in selected):
-        raise HTTPException(422, "Resolve or exclude every invalid row")
+    blocking = [r for r in selected if r["issues"]]
+    if blocking:
+        raise HTTPException(
+            422,
+            blocking_rows_message(
+                "Resolve or exclude every invalid row",
+                (
+                    (
+                        row_label(r.get("source", {}).get("row") or r["key"], r.get("source", {}).get("sheet")),
+                        display_text(str(r.get("values", {}).get("member_name") or "")) or None,
+                        [
+                            re.sub(r"^Choose the department member for '.*?': ", "choose the member: ", issue)
+                            for issue in r["issues"]
+                        ],
+                    )
+                    for r in blocking
+                ),
+            ),
+        )
     if batch.mode == "replace_month" and not acknowledge_warnings:
         raise HTTPException(422, "Acknowledge the reviewed replacement scope before applying")
     if any(r["warnings"] for r in selected) and not acknowledge_warnings:

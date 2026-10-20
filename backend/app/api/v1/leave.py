@@ -362,7 +362,9 @@ async def apply_leave_upload(
                               {"month": month}, str(_user.id), preview_hash, result)
         db.commit()
     except StalePreviewError as exc:
+        db.rollback()
         raise HTTPException(status_code=409, detail=str(exc)) from exc
     except ValueError as exc:
+        db.rollback()
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     return LeaveImportApplyRead(**result)

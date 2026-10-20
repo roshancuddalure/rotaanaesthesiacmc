@@ -21,6 +21,7 @@ from app.services.normalization import member_key
 logger = logging.getLogger(__name__)
 
 SEED_SOURCE = "alias_summary_2026_05"
+HISTORY_SOURCE = "historical_spellings"
 
 C1, C2, C3, C4 = "1ST_CALL", "2ND_CALL", "3RD_CALL", "4TH_CALL"
 
@@ -203,9 +204,30 @@ def build_seed_rules(people: dict[str, Person]) -> tuple[list[MemberResolutionRu
                 form=form, form_key=key, person_id=person.id, call_levels=list(rule.call_levels),
                 duty_areas=list(rule.duty_areas), effective_from=rule.effective_from,
                 effective_to=rule.effective_to, requires_context=rule.requires_context,
-                priority=rule.priority, active=True, note=rule.note or None, source=SEED_SOURCE,
+                priority=rule.priority, scope="all", active=True, note=rule.note or None, source=SEED_SOURCE,
                 created_at=now, updated_at=now,
             ))
+    from app.services.historical_spellings import DOUBTFUL, HISTORICAL_SPELLINGS
+
+    # Owner-reviewed forms (alias summary and decisions) always win over old-file spellings.
+    reviewed_forms = {r.form_key for r in rules}
+    for key, name in sorted(HISTORICAL_SPELLINGS.items()):
+        person = people.get(name)
+        if key in DOUBTFUL or key in reviewed_forms or not key:
+            continue
+        if person is None:
+            missing.add(name)
+            continue
+        signature = (key, person.id, (), (), None, None, False)
+        if signature in seen:
+            continue
+        seen.add(signature)
+        rules.append(MemberResolutionRule(
+            form=key, form_key=key, person_id=person.id, call_levels=[], duty_areas=[],
+            effective_from=None, effective_to=None, requires_context=False, priority=0, scope="history",
+            active=True, note="Spelling in the historical rota files", source=HISTORY_SOURCE,
+            created_at=now, updated_at=now,
+        ))
     return rules, missing
 
 
@@ -214,14 +236,14 @@ def seed_resolution_rules(db: Session) -> dict:
     people = {p.canonical_name: p for p in db.scalars(select(Person))}
     existing = {
         (r.form_key, r.person_id, tuple(r.call_levels or []), tuple(r.duty_areas or []), r.effective_from,
-         r.effective_to, r.requires_context)
+         r.effective_to, r.requires_context, r.scope or "all")
         for r in db.scalars(select(MemberResolutionRule))
     }
     rules, missing = build_seed_rules(people)
     created = 0
     for rule in rules:
         signature = (rule.form_key, rule.person_id, tuple(rule.call_levels), tuple(rule.duty_areas),
-                     rule.effective_from, rule.effective_to, rule.requires_context)
+                     rule.effective_from, rule.effective_to, rule.requires_context, rule.scope)
         if signature not in existing:
             db.add(rule)
             created += 1

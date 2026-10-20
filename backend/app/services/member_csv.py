@@ -11,6 +11,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
 from app.models import MemberImportPreview, Person, PersonDesignation, UserAccount
+from app.services.import_errors import blocking_rows_message, row_label
 from app.services.member_resolver import MemberIndex
 from app.services.normalization import member_key
 from app.services.member_profile import (
@@ -254,8 +255,13 @@ def apply_preview(db: Session, preview: MemberImportPreview, operator: UserAccou
     selected = [r for r in preview.rows if r["row_number"] not in excluded]
     if not selected and not archive_ids:
         raise HTTPException(422, "Select at least one row")
-    if any(r["action"] in {"invalid", "needs_review"} for r in selected):
-        raise HTTPException(422, "Correct or exclude all invalid and review rows before applying")
+    blocking = [r for r in selected if r["action"] in {"invalid", "needs_review"}]
+    if blocking:
+        raise HTTPException(422, blocking_rows_message(
+            "Correct or exclude all invalid and review rows before applying",
+            ((row_label(r["row_number"]), r["values"].get("canonical_name") or None,
+              r["errors"] or ["looks like an existing member; choose them or confirm this is a new person"])
+             for r in blocking)))
     # Lock existing identities in deterministic order before checking the frozen revisions.
     ids = sorted({UUID(r["person_id"]) for r in selected if r["person_id"]})
     if ids:

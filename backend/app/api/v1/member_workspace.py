@@ -16,6 +16,7 @@ from app.api.v1.auth import current_user, require_admin
 from app.api.v1.members import get_member_or_404, member_to_read
 from app.db.session import get_db
 from app.models import MemberActivity, MemberImportPreview, MemberCallLevelChange, Person, PersonAlias, UserAccount
+from app.services.import_errors import MemberResolutionError, resolution_detail
 from app.services.member_csv import ROSTER_SYNC, apply_preview, build_preview, parse_file, roster_missing
 from app.services.member_profile import (
     ensure_unique_name, record_activity, replace_designations, revision, snapshot, validate_identity,
@@ -236,6 +237,8 @@ async def preview_csv(file: UploadFile = File(...), mode: str = Form("create_onl
             row["values"].update({k: str(v) for k, v in edits.get(str(row["row_number"]), {}).items()
                                   if k in {"member_id", "canonical_name", "active_status", "call_level", "designation", "designation_effective_from", "_confirm_distinct"}})
         result = build_preview(db, rows, mode)
+    except MemberResolutionError as exc:
+        raise HTTPException(422, resolution_detail(exc)) from exc
     except (ValueError, TypeError) as exc:
         raise HTTPException(422, str(exc)) from exc
     preview = MemberImportPreview(operator_id=operator.id, filename=(file.filename or "members.csv")[:255],
@@ -253,7 +256,14 @@ def apply_csv(preview_id: UUID, payload: ApplyRequest, db: Session = Depends(get
     if preview is None:
         raise HTTPException(404, "Preview not found")
     try:
+        # apply_preview commits once after every row; any failure rolls the whole batch back.
         return apply_preview(db, preview, operator, payload.excluded, [str(i) for i in payload.archive_missing])
     except IntegrityError as exc:
         db.rollback()
         raise HTTPException(409, "Members changed since preview; review the file again") from exc
+    except MemberResolutionError as exc:
+        db.rollback()
+        raise HTTPException(422, resolution_detail(exc)) from exc
+    except Exception:
+        db.rollback()
+        raise

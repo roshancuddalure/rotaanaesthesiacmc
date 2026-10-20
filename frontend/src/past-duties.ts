@@ -3,6 +3,36 @@ import {
   type PastDutyOptions, type PastDutyPreview, type PastDutyStatus, type MemberWorkbookInspection, type DepartmentMember,
   type HistoryFairnessPolicy,
 } from "./services/api";
+import { applyBlocker, memberMatch, type MemberMatchCandidate, type MemberMatchView } from "./ui";
+
+/** Past-duty preview row as the shared member resolver now describes it. */
+type PastRow = PastDutyPreview["rows"][number] & {
+  resolution_status?: string | null;
+  resolution_reason?: string;
+  resolution_method?: string | null;
+  resolution_warnings?: string[];
+  person_candidates: MemberMatchCandidate[];
+};
+
+const toggleListeners = new WeakMap<HTMLElement, (event: Event) => void>();
+
+function writtenName(row: PastRow): string {
+  return String(row.raw.name ?? "");
+}
+
+function rowView(row: PastRow, chosen: string | undefined): MemberMatchView {
+  const status = row.resolution_status ?? (row.normalized.person_id ? "matched" : "not_found");
+  const matched = status === "matched";
+  return {
+    raw: writtenName(row),
+    status,
+    name: matched ? String(row.normalized.name ?? "") : null,
+    method: matched ? row.resolution_method ?? (chosen ? "member_id" : undefined) : undefined,
+    reason: row.resolution_reason || "",
+    warnings: row.resolution_warnings ?? [],
+    candidates: row.person_candidates ?? [],
+  };
+}
 
 const escape = (v: unknown) => String(v ?? "").replace(/[&<>"']/g,
   c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
@@ -33,10 +63,38 @@ export async function mountPastDuties(host: HTMLElement) {
   let options: PastDutyOptions = { month: `${previousMonth.getFullYear()}-${String(previousMonth.getMonth()+1).padStart(2,"0")}`,
     sheet: "", layout: "table", header_row: 1, mapping: {}, resolutions: {}, confirm_corrections: false, confirm_warnings: false };
 
+  const openEdits = new Set<string>();
+  // Keep "Edit row" panels open across re-renders (toggle does not bubble, so capture it).
+  const onToggle = (event: Event) => {
+    const panel = event.target as HTMLDetailsElement;
+    const key = panel.dataset?.pastEdit;
+    if (!key) return;
+    if (panel.open) openEdits.add(key); else openEdits.delete(key);
+  };
+  const previousToggle = toggleListeners.get(host);
+  if (previousToggle && typeof host.removeEventListener === "function") host.removeEventListener("toggle", previousToggle, true);
+  toggleListeners.set(host, onToggle);
+  if (typeof host.addEventListener === "function") host.addEventListener("toggle", onToggle, true);
+
+  /** Plain-language reason Apply cannot run yet, or "" when the reviewed upload can be applied. */
+  function blockerText(): string {
+    if (!preview) return "";
+    if (!reviewed) return "Selections changed. Preview again before applying.";
+    const rows = (preview.rows as PastRow[]).map(row => ({
+      key: row.key, label: `Row ${row.row}:${row.column} (${writtenName(row) || "no name"})`,
+      issues: row.action === "needs_review" ? (row.errors.length ? row.errors : [row.resolution_reason || "needs review"]) : [],
+    }));
+    const skipped = new Set(preview.rows.filter(row => row.action === "skip").map(row => row.key));
+    const blocked = applyBlocker(rows, skipped);
+    if (blocked) return blocked;
+    if (preview.warnings.length && !options.confirm_warnings) return "Tick the box to confirm you reviewed the parser warnings before applying.";
+    if (preview.counts.correct && !options.confirm_corrections) return `Tick the box to approve the ${preview.counts.correct} recorded member corrections before applying.`;
+    return "";
+  }
+
   function render() {
     const sheet = inspection?.sheets.find(s => s.name === options.sheet);
-    const canApply = preview && reviewed && !preview.counts.needs_review && preview.rows.length &&
-      (!preview.counts.correct || options.confirm_corrections) && (!preview.warnings.length || options.confirm_warnings);
+    const blocker = blockerText();
     host.innerHTML = `<section class="panel member-import"><h3>Upload Past Duties</h3>
       <p>Completed duties update statistics and future person-allocation scoring. Existing member call levels stay unchanged.</p>
       <p>Table layout: one assignment per row, with date, name, and duty type. Department matrix: date row, weekday row, then duty labels and names, as in the existing departmental rotas.</p>
@@ -54,18 +112,26 @@ export async function mountPastDuties(host: HTMLElement) {
         ${!reviewed ? "<p>Selections changed. Preview again before applying.</p>" : ""}
         <label>Review rows <select data-past="filter">${["all","needs_review","correct","create","unchanged","skip"].map(a => `<option value="${a}" ${filter === a ? "selected" : ""}>${escape(a.replace(/_/g," "))}</option>`).join("")}</select></label>
         <button type="button" data-past="rejected">Download Rejected Rows CSV</button>
-        <div class="member-import-table"><table><thead><tr><th>Source row / original</th><th>Normalized duty</th><th>Outcome</th><th>Resolve</th></tr></thead><tbody>${preview.rows.filter(r => filter === "all" || r.action === filter).map(row => {
+        <div class="member-import-table"><table><thead><tr><th>Source row</th><th>Member</th><th>Outcome</th><th>Decision</th></tr></thead><tbody>${(preview.rows as PastRow[]).filter(r => filter === "all" || r.action === filter).map(row => {
           const resolution = options.resolutions[row.key] ?? {};
-          return `<tr><td>${row.row}:${row.column}${values(row.raw)}</td><td>${values(row.normalized)}</td>
-          <td><strong>${escape(row.action)}</strong>${row.conflicts.map(c => `<p>Recorded: ${escape(c.name)} (${escape(c.slot)})</p>`).join("")}${row.errors.map(e => `<p>${escape(e)}</p>`).join("")}</td>
-          <td><label>Member <select data-past-row="${row.key}" data-resolution="person_id"><option value="">Automatic matching</option>${members.map(p => `<option value="${p.id}" ${resolution.person_id === p.id ? "selected" : ""}>${escape(p.canonical_name)} (${escape(p.active_status)})</option>`).join("")}</select></label>
+          const skipped = row.action === "skip";
+          return `<tr data-past-row-key="${escape(row.key)}"><td>${row.row}:${row.column}</td>
+          <td>${skipped ? `<p>${escape(writtenName(row) || "(blank)")} — skipped; this row will not be recorded.</p>` : memberMatch(row.key, rowView(row, resolution.person_id))}</td>
+          <td><strong>${escape(row.action.replace(/_/g, " "))}</strong>${row.conflicts.map(c => `<p>Recorded: ${escape(c.name)} (${escape(c.slot)})</p>`).join("")}${row.errors.map(e => `<p class="mw-error">${escape(e)}</p>`).join("")}</td>
+          <td><div class="registry-actions">${resolution.person_id ? `<button type="button" class="quiet-button" data-past-resolve-row="${escape(row.key)}" data-past-resolve="person_id" data-past-value="">Undo member choice</button>` : ""}${skipped
+            ? `<button type="button" class="quiet-button" data-past-resolve-row="${escape(row.key)}" data-past-resolve="action" data-past-value="">Include this row again</button>`
+            : `<button type="button" class="quiet-button" data-past-resolve-row="${escape(row.key)}" data-past-resolve="action" data-past-value="skip">Skip this row</button>`}</div>
+          ${row.conflicts.length ? `<label>Replace recorded member <select data-past-row="${row.key}" data-resolution="replace_assignment_id"><option value="">Do not replace</option>${row.conflicts.map(c => `<option value="${c.id}" ${resolution.replace_assignment_id === c.id ? "selected" : ""}>${escape(c.name)} (${escape(c.slot)})</option>`).join("")}</select></label>` : ""}
+          <details class="import-row-edit" data-past-edit="${escape(row.key)}" ${openEdits.has(row.key) ? "open" : ""}><summary>Edit row</summary>
+          <label>Member <select data-past-row="${row.key}" data-resolution="person_id"><option value="">Automatic matching</option>${members.map(p => `<option value="${p.id}" ${resolution.person_id === p.id ? "selected" : ""}>${escape(p.canonical_name)} (${escape(p.active_status)})</option>`).join("")}</select></label>
           <label>Duty type <select data-past-row="${row.key}" data-resolution="duty_type"><option value="">Automatic mapping</option>${status.duty_types.map(d => `<option value="${d.key}" ${resolution.duty_type === d.key ? "selected" : ""}>${escape(d.label)}</option>`).join("")}</select></label>
           <label>Action <select data-past-row="${row.key}" data-resolution="action"><option value="">Automatic / review</option><option value="skip" ${resolution.action === "skip" ? "selected" : ""}>Skip</option><option value="additional" ${resolution.action === "additional" ? "selected" : ""}>Additional parallel duty (needs distinct slot in file)</option></select></label>
-          ${row.conflicts.length ? `<label>Replace recorded member <select data-past-row="${row.key}" data-resolution="replace_assignment_id"><option value="">Do not replace</option>${row.conflicts.map(c => `<option value="${c.id}" ${resolution.replace_assignment_id === c.id ? "selected" : ""}>${escape(c.name)} (${escape(c.slot)})</option>`).join("")}</select></label>` : ""}</td></tr>`;
+          <div><strong>Original</strong>${values(row.raw)}</div><div><strong>Normalized</strong>${values(row.normalized)}</div></details></td></tr>`;
         }).join("")}</tbody></table></div>
         ${preview.warnings.length ? `<div>${preview.warnings.map(w => `<p>Row ${w.row ?? "?"}: ${escape(w.message)}</p>`).join("")}</div><label class="member-import-confirm"><input type="checkbox" data-past="confirm-warnings" ${options.confirm_warnings ? "checked" : ""} />I reviewed the parser warnings and skipped source cells.</label>` : ""}
         ${preview.counts.correct ? `<label class="member-import-confirm"><input type="checkbox" data-past="confirm-corrections" ${options.confirm_corrections ? "checked" : ""} />I approve ${preview.counts.correct} recorded member corrections. Prior assignments remain in the audit history and no longer count in statistics.</label>` : ""}
-        <button type="button" class="primary" data-past="apply" ${canApply ? "" : "disabled"}>Apply Reviewed Past Duties</button>` : ""}
+        <button type="button" class="primary" data-past="apply" ${blocker ? 'aria-describedby="past-apply-blocker"' : ""}>Apply Reviewed Past Duties</button>
+        ${blocker ? `<p class="import-apply-blocker" id="past-apply-blocker">${escape(blocker)}</p>` : ""}` : ""}
       </fieldset><p role="status">${busy ? "Working…" : escape(message)}</p></section>
       <section class="panel"><h3>Recorded History Coverage</h3><p>These are observed records, not proof of a complete roster. Missing dates and members are not assigned zero workload. Fairness uses each member's observed months within the configured window.</p>
         <div class="member-import-table"><table><thead><tr><th>Month</th><th>Duties</th><th>Members</th><th>Days recorded</th><th>Latest duty</th></tr></thead><tbody>${status.coverage.map(c => `<tr><td>${escape(c.month)}</td><td>${c.assignments}</td><td>${c.members}</td><td>${c.days_with_records}</td><td>${escape(c.latest_duty_date)}</td></tr>`).join("") || '<tr><td colspan="5">No approved past duties recorded yet.</td></tr>'}</tbody></table></div></section>
@@ -107,9 +173,27 @@ export async function mountPastDuties(host: HTMLElement) {
     render();
   };
   host.onclick = async event => {
-    const target = (event.target as HTMLElement).closest<HTMLElement>("[data-past], [data-past-batch]");
-    const action = target?.dataset.past;
-    if (busy || !target || (action && !["template","inspect","preview","apply","save-policy","rejected"].includes(action))) return;
+    if (busy) return;
+    const clicked = event.target as HTMLElement;
+    // One-click member choice or row decision: record it the same way the row selects do, then preview again.
+    const found = clicked.closest<HTMLElement>("[data-pick-member], [data-past-resolve-row]");
+    const pick = found?.dataset.pickMember !== undefined || found?.dataset.pastResolveRow !== undefined ? found : null;
+    let target = clicked.closest<HTMLElement>("[data-past], [data-past-batch]");
+    let action = target?.dataset.past;
+    if (pick) {
+      const key = pick.dataset.pickRow ?? pick.dataset.pastResolveRow!;
+      const field = pick.dataset.pickMember !== undefined ? "person_id" : pick.dataset.pastResolve!;
+      const resolution = options.resolutions[key] ??= {};
+      resolution[field] = pick.dataset.pickMember ?? pick.dataset.pastValue ?? "";
+      reviewed = false; options.confirm_corrections = false; options.confirm_warnings = false; message = "";
+      if (!file || !inspection) { render(); return; }
+      target = pick; action = "preview";
+    }
+    if (!target || (action && !["template","inspect","preview","apply","save-policy","rejected"].includes(action))) return;
+    if (action === "apply") {
+      const blocker = blockerText();
+      if (blocker) { message = blocker; render(); return; }
+    }
     busy = true; message = ""; render();
     try {
       if (target.dataset.pastBatch) {
@@ -137,7 +221,7 @@ export async function mountPastDuties(host: HTMLElement) {
         message = result.replayed ? "This reviewed batch was already applied. No additional duties or corrections were recorded." : `Recorded ${result.counts.create} new duties, ${result.counts.correct} corrections, ${result.counts.unchanged} unchanged. Statistics and future candidate scoring now use the saved records.`;
         status = await getPastDutyStatus();
       }
-    } catch (error) { message = error instanceof Error ? error.message : "Past-duty operation failed."; if (action === "apply") reviewed = false; }
+    } catch (error) { message = error instanceof Error && error.message ? error.message : "Past-duty operation failed."; if (action === "apply") reviewed = false; }
     finally { busy = false; if (host.isConnected) render(); }
   };
   render();

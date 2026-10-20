@@ -9,10 +9,9 @@ import unicodedata
 from datetime import date
 from uuid import UUID
 
-from sqlalchemy import select
-from sqlalchemy.orm import Session, selectinload
+from sqlalchemy.orm import Session
 
-from app.models import Person, PersonPosting
+from app.models import Person
 
 TITLE = re.compile(r"^(?:dr|doctor|prof|professor|mr|mrs|ms)\.?\s*", re.I)
 ROMAN = {
@@ -134,32 +133,3 @@ def resolve_member(
         "warnings": result.warnings,
         "candidates": candidates,
     }
-
-
-# TEMPORARY (removed once every caller uses app.services.member_resolver): the previous
-# exact-key lookup and fuzzy candidate list, kept only so in-flight migrations still import.
-def member_lookup(db: Session, *, active_only: bool = True) -> dict[str, Person | None]:
-    query = select(Person).options(selectinload(Person.aliases))
-    if active_only:
-        query = query.where(Person.active_status == "active")
-    lookup: dict[str, Person | None] = {}
-    for person in db.scalars(query):
-        for label in [person.canonical_name, *(a.alias for a in person.aliases)]:
-            key = member_key(label)
-            if key:
-                lookup[key] = None if key in lookup and (lookup[key] is None or lookup[key].id != person.id) else person
-    return lookup
-
-
-def member_candidates(name: str, lookup: dict[str, Person | None], limit: int = 5) -> list[tuple[float, Person]]:
-    from difflib import SequenceMatcher
-
-    key = member_key(name)
-    scores: dict = {}
-    for candidate_key, person in lookup.items():
-        if person is None or not key:
-            continue
-        score = SequenceMatcher(None, key, candidate_key).ratio()
-        if score >= 0.65 and score > scores.get(person.id, (0, None))[0]:
-            scores[person.id] = (score, person)
-    return sorted(scores.values(), key=lambda item: (-item[0], item[1].canonical_name))[:limit]

@@ -2,9 +2,9 @@
 ``python -m app.services.historical_analysis_dry_run [--apply-alias-suggestions | --import-matched-history]``.
 
 1. ``run_dry_run`` parses every rota + unitwise workbook in ``data/source/historical``,
-   resolves names to canonical members (``CanonicalNameResolver``: saved aliases,
-   compact exact, unique first name, ordered token variants, first+last, first+initial,
-   plus ``MANUAL_ALIAS_OVERRIDES``), and writes CSV/JSON/markdown artefacts to
+   resolves names through the shared member resolver (app.services.member_resolver, with
+   the history-scope spellings of app.services.historical_spellings; ``CanonicalNameResolver``
+   only flags invalid cells and proposes alias suggestions for review), and writes CSV/JSON/markdown artefacts to
    ``Plan/Data/analysis_rebuild`` (matched/skipped names, tallies, comparisons with the
    reference HTML report, alias suggestions).
 2. ``import_matched_history_into_session`` purges earlier historical imports and loads
@@ -84,897 +84,6 @@ HISTORICAL_IMPORT_KINDS = {
     "historical_rota",
     "historical_unitwise",
     "historical_analysis_rebuild",
-}
-MANUAL_ALIAS_OVERRIDES = {
-    "pradeeshya": "Pradeeshya Parthiban",
-    "pradeeshyaparthiban": "Pradeeshya Parthiban",
-    "pradeeshyaparthibhan": "Pradeeshya Parthiban",
-    "jerin": "Jerin Daniel D",
-    "jerindaniel": "Jerin Daniel D",
-    "jerindanield": "Jerin Daniel D",
-    "raichel": "Raichel Kurian",
-    "raichelkurian": "Raichel Kurian",
-    "raichelkurien": "Raichel Kurian",
-    "annielyn": "Annielyn Benitta P J",
-    "annielynb": "Annielyn Benitta P J",
-    "annieylb": "Annielyn Benitta P J",
-    "anneilyn": "Annielyn Benitta P J",
-    "annielynbenittapj": "Annielyn Benitta P J",
-    "anjali": "Anjali Rachel Mathew",
-    "anjalir": "Anjali Rachel Mathew",
-    "anjalirachelmathew": "Anjali Rachel Mathew",
-    "anjalirachaelmathew": "Anjali Rachel Mathew",
-    "anton": "Anton Max Cassella Kumar",
-    "antonm": "Anton Max Cassella Kumar",
-    "antonmax": "Anton Max Cassella Kumar",
-    "antonmaxcasella": "Anton Max Cassella Kumar",
-    "antonmaxcassellakumar": "Anton Max Cassella Kumar",
-    "vejans": "Vejans Vishal Antony V",
-    "vejansv": "Vejans Vishal Antony V",
-    "vejansvishalantony": "Vejans Vishal Antony V",
-    "vejansvishalantonyv": "Vejans Vishal Antony V",
-    "alwin": "Alwin Mesak K",
-    "alwinm": "Alwin Mesak K",
-    "alwinmesak": "Alwin Mesak K",
-    "alwinmesakk": "Alwin Mesak K",
-    "edward": "Edward Lourdes Roshan A",
-    "edwardlourde": "Edward Lourdes Roshan A",
-    "edwardlourderoshan": "Edward Lourdes Roshan A",
-    "edwardlourdesroshana": "Edward Lourdes Roshan A",
-    "velu": "Velu Ranganathan",
-    "velurenganathan": "Velu Ranganathan",
-    "veluranganathan": "Velu Ranganathan",
-    "madhumita": "Madhumitha P S",
-    "madumitha": "Madhumitha P S",
-    "madhumitha": "Madhumitha P S",
-    "madhumithaps": "Madhumitha P S",
-    "jenifer": "Jennifer A",
-    "jenifera": "Jennifer A",
-    "jennifer": "Jennifer A",
-    "jennifera": "Jennifer A",
-    "preethi elizabeth kurian".replace(" ", ""): "Preethi Elizabeth Kurian",
-    "preethielizabethkurian": "Preethi Elizabeth Kurian",
-    "preethikurian": "Preethi Elizabeth Kurian",
-    "preethikuryan": "Preethi Elizabeth Kurian",
-    "samcharles": "Samcharles D",
-    "samcharlesd": "Samcharles D",
-    "samc": "Samcharles D",
-    "samuelchandran": "Samuel David Chandran",
-    "samueldaivdchandran": "Samuel David Chandran",
-    "samueldavidchandran": "Samuel David Chandran",
-    "samdavid": "Samuel David Chandran",
-    "pradeepdaniel": "Pradeep Daniel",
-    "pradeepk": "Pradeep Daniel",
-    "danieljonathanroy": "Daniel Jonathan Roy L",
-    "danieljonathanroyl": "Daniel Jonathan Roy L",
-    "shanmugam": "Shanmuga Sundaram",
-    "shanmugham": "Shanmuga Sundaram",
-    "shanmugasundaram": "Shanmuga Sundaram",
-    "shanmughasundaram": "Shanmuga Sundaram",
-    "tamizhanban": "Thamizhanban D",
-    "tamizanban": "Thamizhanban D",
-    "thamizanban": "Thamizhanban D",
-    "thamizhanban": "Thamizhanban D",
-    "thamizhanband": "Thamizhanban D",
-    "vimal": "Vimal B",
-    "vimalbabu": "Vimal B",
-    "meghna": "Meghna S David",
-    "meghnasdavid": "Meghna S David",
-    "savarin": "Savarin Jebha J",
-    "savarinjebha": "Savarin Jebha J",
-    "karthik": "Karthik S",
-    "karthicks": "Karthik S",
-    "karthiks": "Karthik S",
-    "davidk": "Karumuru David Raj",
-    "karumurudavidraj": "Karumuru David Raj",
-    "davidsamsonrontala": "David Samson Rontala",
-    "divya": "Divya J",
-    "divyaj": "Divya J",
-    "chris": "Chris Maria Joseph",
-    "chrismariaj": "Chris Maria Joseph",
-    "chrismariajoseph": "Chris Maria Joseph",
-    "lilly": "Lilly Sophia M",
-    "lillysophia": "Lilly Sophia M",
-    "lillysophiam": "Lilly Sophia M",
-    "ajay": "Ajay A",
-    "ajaya": "Ajay A",
-    "prem": "Prem Jepina P",
-    "premjepina": "Prem Jepina P",
-    "premjepinap": "Prem Jepina P",
-    "joe": "Joe Renitta S",
-    "joerenitta": "Joe Renitta S",
-    "joerenittas": "Joe Renitta S",
-    "james": "James Thapa Magar",
-    "jamesthapam": "James Thapa Magar",
-    "jamesthapamagar": "James Thapa Magar",
-    "joanna": "Joanna",
-    "joannaemmanuel": "Joanna Emmanuel",
-    "joana": "Joanna Emmanuel",
-    "joannaimmanuel": "Joanna Emmanuel",
-    "pavithrap": "Pavithra",
-    "sowmya": "Sowmya A",
-    "soumya": "Sowmya A",
-    "soumiya": "Sowmya A",
-    "sowmyaa": "Sowmya A",
-    "saumya": "Saumya Sheona Loyal",
-    "saumyasheonaloyal": "Saumya Sheona Loyal",
-    "jacintha": "Jacintha Gracelin J",
-    "jacinthagracelinej": "Jacintha Gracelin J",
-    "graceline": "Graceline Vandana N",
-    "gracelinevandanan": "Graceline Vandana N",
-    "yuvrajk": "Yuvaraj K",
-    "yuvarajk": "Yuvaraj K",
-    "sudarshan": "Sudharsan T R",
-    "sudharshan": "Sudharsan T R",
-    "sudharsan": "Sudharsan T R",
-    "sudharsantr": "Sudharsan T R",
-    "sudharshantr": "Sudharsan T R",
-    "navfal": "Navfal Mohamed S A",
-    "navfalmohammedsa": "Navfal Mohamed S A",
-    "rvignesh": "Vignesh R",
-    "vighnesh": "Vignesh R",
-    "vignesh": "Vignesh R",
-    "angelyna": "Angelin Aniruth",
-    "angelin": "Angelin Aniruth",
-    "angelina": "Angelin Aniruth",
-    "angelinaniruth": "Angelin Aniruth",
-    "angelinanirudha": "Angelin Aniruth",
-    "angelineanirudha": "Angelin Aniruth",
-    "sinduja": "Sindhuja D K",
-    "sindhuja": "Sindhuja D K",
-    "sindhujadk": "Sindhuja D K",
-    "jeeva": "Jeeva Priscilla D M",
-    "jeevapriscilladm": "Jeeva Priscilla D M",
-    "jonas": "Jona Samraj D",
-    "jonasamrajd": "Jona Samraj D",
-    "jonathanjoseph": "Jonathan Joseph",
-    "priyadarshinis": "Priyadharshini S",
-    "priyadharshinis": "Priyadharshini S",
-    "priyadarshni": "Priyadharshini S",
-    "priyadarshnis": "Priyadharshini S",
-    "priyadharshiniortho": "Priyadharshini S",
-    "priyadharshiniobg": "Priyadharshini S",
-    "priyadharshiniurology": "Priyadharshini S",
-    "priyadharshinictvs": "Priyadharshini S",
-    "priyadharshinikpaeds": "Priyadharshini S",
-    "priyadharshinik": "Priyadharshini S",
-    "shanmuga": "Shanmuga Sundaram",
-    "shamugam": "Shanmuga Sundaram",
-    "shanmughasundrum": "Shanmuga Sundaram",
-    "shanmughasundharam": "Shanmuga Sundaram",
-    "tamizhanabn": "Thamizhanban D",
-    "thamizan": "Thamizhanban D",
-    "thamizhanaban": "Thamizhanban D",
-    "rohithb": "Buddula Rohith",
-    "buddularohith": "Buddula Rohith",
-    "nandhinis": "Nanthini S",
-    "nanthinis": "Nanthini S",
-    "emyhannah": "Emy Hanna Moni",
-    "emyhannamoni": "Emy Hanna Moni",
-    "karthickpandiyan": "Karthikpandian S",
-    "karthikpandiyan": "Karthikpandian S",
-    "karthikpandians": "Karthikpandian S",
-    "vineeth": "Vineeth Indla",
-    "kaviyas": "Kaviya Sree",
-    "calwin": "Calvin Lawrence Dalmeida",
-    "calvin": "Calvin Lawrence Dalmeida",
-    "calwinlawrence": "Calvin Lawrence Dalmeida",
-    "calwinlawrencedalmeida": "Calvin Lawrence Dalmeida",
-    "calvinlawrencedalmeida": "Calvin Lawrence Dalmeida",
-    "divyalak": "Divyalakshmi",
-    "divyalakshmi": "Divyalakshmi",
-    "kavi": "Kaviarasan",
-    "kaviarasan": "Kaviarasan",
-    "kaviarsan": "Kaviarasan",
-    "mathew": "Mathews Joji",
-    "matthew": "Mathews Joji",
-    "mathews": "Mathews Joji",
-    "mattews": "Mathews Joji",
-    "matthewj": "Mathews Joji",
-    "mathewsjo": "Mathews Joji",
-    "mathewsjoji": "Mathews Joji",
-    "naveenkopakka": "Koppaka Naveen Kumar",
-    "naveenkoppaka": "Koppaka Naveen Kumar",
-    "christinar": "Christina Reshma R",
-    "christinareshmar": "Christina Reshma R",
-    "christinat": "Christina Thomas",
-    "christinathomas": "Christina Thomas",
-    "aneesha": "Aneesha Chris W",
-    "aneeshac": "Aneesha Chris W",
-    "aneeshacris": "Aneesha Chris W",
-    "aneeshachris": "Aneesha Chris W",
-    "aneeshachrisw": "Aneesha Chris W",
-    "aneeshachriswilfred": "Aneesha Chris W",
-    "emelia": "Emilia Mary Pushparaj",
-    "emilya": "Emilia Mary Pushparaj",
-    "emiliamarypushparaj": "Emilia Mary Pushparaj",
-    "praisev": "V Praise Prudveer Nazson",
-    "praisevp": "V Praise Prudveer Nazson",
-    "vpraiseprudveernazson": "V Praise Prudveer Nazson",
-    "nandhini": "Nanthini S",
-    "nandini": "Nanthini S",
-    "elwis": "Elvis Fabian Peters",
-    "elvisfabianpetre": "Elvis Fabian Peters",
-    "elvisfabianpeters": "Elvis Fabian Peters",
-    "selvinderanp": "Selvendiran P",
-    "selvendiranp": "Selvendiran P",
-    "ajayashok": "Ajay A",
-    "joseph": "Joseph A P",
-    "josephap": "Joseph A P",
-    "rmawii": "Ramengmawii Khawlhring",
-    "ramengmawiikhawlhring": "Ramengmawii Khawlhring",
-    "prathimaroys": "Prathima Roys",
-    "meetag": "Meeta G",
-    "mispah": "Jammi Mizpah Shen",
-    "jammimizpahshen": "Jammi Mizpah Shen",
-    "tirzahnm": "Trizah Narayana Moorthy",
-    "trizahnarayanamoorthy": "Trizah Narayana Moorthy",
-    "pornima": "Poornima K",
-    "poornimak": "Poornima K",
-    "joufin": "Jofin F A",
-    "jofinfa": "Jofin F A",
-    "jimsahi": "Jim Shahi G S",
-    "jimshahigs": "Jim Shahi G S",
-    # ── Canonical name fixes (mapping old wrong-target aliases to correct dept names) ──
-    "kishore": "Kishorekumar D",
-    "kishorekumard": "Kishorekumar D",
-    "kishorekumar": "Kishorekumar D",
-    "kishorefn": "Kishorekumar D",
-    "kishorehanson": "Kishorekumar D",
-    "jeevap": "Jeeva Priscilla D M",
-    "jeevapriscilla": "Jeeva Priscilla D M",
-    "jevevap": "Jeeva Priscilla D M",
-    "jeevapricilla": "Jeeva Priscilla D M",
-    "roshnib": "Roshini Benedicta R",
-    "roshnibenedicta": "Roshini Benedicta R",
-    "roshni": "Roshini Benedicta R",
-    "roshinibenedictar": "Roshini Benedicta R",
-    "mahlah": "Sudi Cuty Mahlah",
-    "smahalah": "Sudi Cuty Mahlah",
-    "mahala": "Sudi Cuty Mahlah",
-    "mahalah": "Sudi Cuty Mahlah",
-    "mahla": "Sudi Cuty Mahlah",
-    "sudycutymahlah": "Sudi Cuty Mahlah",
-    "sudicutymahlah": "Sudi Cuty Mahlah",
-    "sudycutymahalah": "Sudi Cuty Mahlah",
-    "sudycutimahlah": "Sudi Cuty Mahlah",
-    "tirzah": "Trizah Narayana Moorthy",
-    "tirzahnarayanamoorthy": "Trizah Narayana Moorthy",
-    "tirzahnaryanamoorthy": "Trizah Narayana Moorthy",
-    "tirzhanaryanamoorthy": "Trizah Narayana Moorthy",
-    "tirzahnarayanamoorti": "Trizah Narayana Moorthy",
-    "rahavi": "Rahavi Rajendran",
-    "rahavirajendran": "Rahavi Rajendran",
-    "mizpah": "Jammi Mizpah Shen",
-    "jammimizpah": "Jammi Mizpah Shen",
-    "jamimizpahshen": "Jammi Mizpah Shen",
-    "nissi": "Dity Nissi",
-    "dittynissi": "Dity Nissi",
-    "ditynissi": "Dity Nissi",
-    "ditty": "Dity Nissi",
-    "jonathans": "Jonathan Samuel B",
-    "jonathansamuelb": "Jonathan Samuel B",
-    "jonathansb": "Jonathan Samuel B",
-    "jim": "Jim Shahi G S",
-    "jimshai": "Jim Shahi G S",
-    "emy": "Emy Hanna Moni",
-    "emmyhanna": "Emy Hanna Moni",
-    "emmyhannamoni": "Emy Hanna Moni",
-    "emihannah": "Emy Hanna Moni",
-    "emihannahmoni": "Emy Hanna Moni",
-    "emiliah": "Emy Hanna Moni",
-    "mawii": "Ramengmawii Khawlhring",
-    "ramengmawii": "Ramengmawii Khawlhring",
-    "ramengmawikhawlring": "Ramengmawii Khawlhring",
-    "ramengmawiikhawlring": "Ramengmawii Khawlhring",
-    "ramengmawiikhwalring": "Ramengmawii Khawlhring",
-    "abella": "Jebamalai Rita Abella K",
-    "abellaj": "Jebamalai Rita Abella K",
-    "jebamalairataabellak": "Jebamalai Rita Abella K",
-    "abellajk": "Jebamalai Rita Abella K",
-    "anishap": "Anisha Pauline L",
-    "anishapauline": "Anisha Pauline L",
-    "anishapaulinel": "Anisha Pauline L",
-    "meeta": "Meeta G",
-    "ken": "Ken Mathew",
-    "kenmathew": "Ken Mathew",
-    "steve": "T Steve Solomon",
-    "steves": "T Steve Solomon",
-    "tsteve": "T Steve Solomon",
-    "tsteveSolomon": "T Steve Solomon",
-    "tstevessolomon": "T Steve Solomon",
-    "ria": "Ria Masih",
-    "riamasih": "Ria Masih",
-    "riamashi": "Ria Masih",
-    "sujile": "Sujil Ebenezar Sam",
-    "sujileb": "Sujil Ebenezar Sam",
-    "sujilebenezarsam": "Sujil Ebenezar Sam",
-    "rajesh": "Rajesh Ravi",
-    "rajeshravi": "Rajesh Ravi",
-    "premj": "Prem Jepina P",
-    "harsha": "Harshavardhini R",
-    "harshavardhini": "Harshavardhini R",
-    "harshavardhinir": "Harshavardhini R",
-    "harshvardhini": "Harshavardhini R",
-    "harshvardhiinir": "Harshavardhini R",
-    "johnarun": "John Arun Kumar J",
-    "johnarunk": "John Arun Kumar J",
-    "johnarunkumarj": "John Arun Kumar J",
-    "eva": "Eva Kumari",
-    "evakumari": "Eva Kumari",
-    "immanuelc": "Immanuel Christopher J",
-    "immanuelchristopherj": "Immanuel Christopher J",
-    "immannuel": "Immanuel Christopher J",
-    "ranjithakv": "Ranjitha K V",
-    "arulnirmal": "Arul Nirmal Raj S",
-    "arulnirmalrajs": "Arul Nirmal Raj S",
-    "praise": "V Praise Prudveer Nazson",
-    "praisepv": "V Praise Prudveer Nazson",
-    "praiseprudveernazson": "V Praise Prudveer Nazson",
-    "praiseprudveernazsonpaeds": "V Praise Prudveer Nazson",
-    "praiseprudveernasonpaeds": "V Praise Prudveer Nazson",
-    "priaseprudveernazson": "V Praise Prudveer Nazson",
-    "irfath": "Mohammed Irfath Khan B",
-    "mdirfath": "Mohammed Irfath Khan B",
-    "mohdirfath": "Mohammed Irfath Khan B",
-    "mohdirfathkhan": "Mohammed Irfath Khan B",
-    "mohammedirfathkhanb": "Mohammed Irfath Khan B",
-    "mohdirfathkhanb": "Mohammed Irfath Khan B",
-    "mohirfathkhan": "Mohammed Irfath Khan B",
-    "mohamedirfathkhanb": "Mohammed Irfath Khan B",
-    "shijimol": "Shijimol G",
-    "shijimolg": "Shijimol G",
-    "shjimolg": "Shijimol G",
-    "jenos": "Jeno Shelton V",
-    "jenoshelton": "Jeno Shelton V",
-    "jenosheltonv": "Jeno Shelton V",
-    "karthikp": "Karthikpandian S",
-    "karthikpandian": "Karthikpandian S",
-    "kartikpandian": "Karthikpandian S",
-    "smithae": "Smitha Elizabeth George",
-    "smithaelizabethgeorge": "Smitha Elizabeth George",
-    "smithaeg": "Smitha Elizabeth George",
-    "dilfa": "Dilfa Sharon",
-    "dilfasharon": "Dilfa Sharon",
-    "sakshi": "Sakshi Harris",
-    "sakshiharris": "Sakshi Harris",
-    "sharonje": "Sharon J Ebenezer",
-    "sharonj": "Sharon J Ebenezer",
-    "sharonebenezor": "Sharon J Ebenezer",
-    "sharonebenezer": "Sharon J Ebenezer",
-    "sharonebenezorbp": "Sharon J Ebenezer",
-    "andrea": "Andrea Cris",
-    "andreacris": "Andrea Cris",
-    "prerna": "Prerna Nayan",
-    "prernanayan": "Prerna Nayan",
-    "prashin": "Prashin L R P",
-    "prashinlrp": "Prashin L R P",
-    "prasinlrp": "Prashin L R P",
-    "prasin": "Prashin L R P",
-    # Context-resolved names
-    "kopakkanaveen": "Koppaka Naveen Kumar",
-    "kopakkanaveenkumarctvs": "Koppaka Naveen Kumar",
-    "kopakkanaveenkumar": "Koppaka Naveen Kumar",
-    "kopakkanaveenk": "Koppaka Naveen Kumar",
-    "kopakanavienkumar": "Koppaka Naveen Kumar",
-    "kopakanavieen": "Koppaka Naveen Kumar",
-    "preethia": "Preethi A",
-    "joelkr": "Joel Koil Raj J",
-    "joelkoilraj": "Joel Koil Raj J",
-    "joelkoilrajj": "Joel Koil Raj J",
-    "joelkj": "Joel Koil Raj J",
-    "joelvp": "Joel Vasanth Peter",
-    "joelvasanthpeter": "Joel Vasanth Peter",
-    "joeld": "Joel Daniel",
-    "joeldaniel": "Joel Daniel",
-    # ── Second batch: additional resolved names ───────────────────────────────
-    "manjunath": "Manjunath",
-    "pavithra": "Pavithra",
-    "sugashini": "Sugashini",
-    "sughasini": "Sugashini",
-    "sharonkc": "Sharon Kavya Chandana P",
-    "sharonkavya": "Sharon Kavya Chandana P",
-    "sharonkavyachandanap": "Sharon Kavya Chandana P",
-    "sahronk": "Sharon Kavya Chandana P",
-    "anitas": "Anita Shirley Joselyn",
-    "anitashirleyjoselyn": "Anita Shirley Joselyn",
-    "anitashirley": "Anita Shirley Joselyn",
-    "angelinema": "Angeline Mary Abraham",
-    "angelinemaryabraham": "Angeline Mary Abraham",
-    "yuvraj": "Yuvaraj K",
-    "divyaaj": "Divya J",
-    "diivyaaj": "Divya J",
-    "shruthis": "Shruti Singh",
-    "shruthi": "Shruti Singh",
-    "shruthistingh": "Shruti Singh",
-    "shruthisingh": "Shruti Singh",
-    "anjue": "Anju Emma Brillin",
-    "anjuemma": "Anju Emma Brillin",
-    "anjuemmabrillin": "Anju Emma Brillin",
-    "anjueb": "Anju Emma Brillin",
-    "jeenuannjose": "Jeenu Ann Jose",
-    "jeenijose": "Jeenu Ann Jose",
-    "jeenujose": "Jeenu Ann Jose",
-    "jeeenujose": "Jeenu Ann Jose",
-    "riyas": "Riya Sarah Abraham",
-    "riyasarahabraham": "Riya Sarah Abraham",
-    "joerenita": "Joe Renitta S",
-    "abhishma": "Abishma A M",
-    "abhishmaam": "Abishma A M",
-    "abishmaam": "Abishma A M",
-    "abishma": "Abishma A M",
-    "vino": "Vinobharathi E",
-    "vinob": "Vinobharathi E",
-    "vinobharathi": "Vinobharathi E",
-    "vinobharathie": "Vinobharathi E",
-    "vionbarathi": "Vinobharathi E",
-    "vinobharti": "Vinobharathi E",
-    "vinobharathy": "Vinobharathi E",
-    "subha": "Subhavarshini M",
-    "subhavarshini": "Subhavarshini M",
-    "subhavarshinim": "Subhavarshini M",
-    "subhavarshim": "Subhavarshini M",
-    "subavarshini": "Subhavarshini M",
-    "rohanjt": "Rohan Jacob Titus",
-    "rohanjacob": "Rohan Jacob Titus",
-    "rohanjacobtiuts": "Rohan Jacob Titus",
-    "rohanjacobT": "Rohan Jacob Titus",
-    "rohanchackojacob": "Rohan Chacko Jacob",
-    "nandiv": "Nandi Vinayaka B",
-    "nandivinayakab": "Nandi Vinayaka B",
-    "nandhiniv": "Nandi Vinayaka B",
-    "hannahaugustine": "Hanna A",
-    "hannah": "Hanna A",
-    "hannaha": "Hanna A",
-    "selvinderan": "Selvendiran P",
-    "selvendiran": "Selvendiran P",
-    "kaviyasri": "Kaviya",
-    "kaviyasree": "Kaviya",
-    "kaviyashri": "Kaviya",
-    # ── Third batch: all remaining skipped names ──────────────────────────────
-    # SERINA / KAREN → 5th call → ambiguous in original roster; now mapped
-    "serina": "Serina Ruth Salin",
-    "serinaruth": "Serina Ruth Salin",
-    "serinaruthsalin": "Serina Ruth Salin",
-    "serinaruthsalins": "Serina Ruth Salin",
-    "karen": "Karen Ruby Lionel",
-    "karenrubylionel": "Karen Ruby Lionel",
-    "karenlionel": "Karen Ruby Lionel",
-    # SATHISH → 5th call
-    "sathish": "Sathish Kumar D",
-    "sathishd": "Sathish Kumar D",
-    "satishd": "Sathish Kumar D",
-    "sathishkumard": "Sathish Kumar D",
-    # SREE → Sreekumar M R (2026-04/05 Junior/Stroke call)
-    "sree": "Sreekumar M R",
-    "sreekumar": "Sreekumar M R",
-    "sreekumarmr": "Sreekumar M R",
-    # ANITA → 5th call
-    "anita": "Anita Shirley Joselyn",
-    # APARANJITH → 5th call; Aparanjit Paul
-    "aparanjith": "Aparanjit Paul",
-    "aparanjit": "Aparanjit Paul",
-    "aparanjitpaul": "Aparanjit Paul",
-    "aparana": "Aparanjit Paul",
-    # TONY → 5th call Jan 2025; Tony Thomson Chandy
-    "tony": "Tony Thomson Chandy",
-    "tonythomsonchandy": "Tony Thomson Chandy",
-    # David → PAC context; Karumuru David Raj
-    "davidraj": "Karumuru David Raj",
-    "kdavidraj": "Karumuru David Raj",
-    # Samuel → 4th call; Samuel D C (department member)
-    "samuel": "Samuel D C",
-    "samueld": "Samuel D C",
-    "samueldc": "Samuel D C",
-    "samdc": "Samuel D C",
-    # Jonathan → Schell/Shift 2026-03; Jonathan Samuel B
-    # Anju → PAC/Shift 2026-03; Anju Emma Brillin
-    "anju": "Anju Emma Brillin",
-    # PRAVEEN → CB 4th call 2025-06; Praveen Benjamin D
-    "praveen": "Praveen Benjamin D",
-    "praveenbd": "Praveen Benjamin D",
-    "praveenbenjamind": "Praveen Benjamin D",
-    # Priyadarshini Kalahasthi. Bare Priyadarshini is context-resolved below.
-    "priyadarshinikalahasthi": "Priyadarshini Kalahasthi",
-    # John → 2nd call 2022 SR; John Arun Kumar J
-    "john": "John Arun Kumar J",
-    # Anisha → PAC final years 2022; Anisha Joy (senior)
-    # KARTHI S / Karthi P → PAC; Karthik S / Karthikpandian S
-    "karthis": "Karthik S",
-    "karthi": "Karthik S",
-    "karthip": "Karthikpandian S",
-    # Franklin J → 2nd call 2022
-    "franklinj": "Franklin Vedha Prabhu",
-    "franklinvedha": "Franklin Vedha Prabhu",
-    "franklinvedu": "Franklin Vedha Prabhu",
-    "franklinvp": "Franklin Vedha Prabhu",
-    "franklinvedhaprabhu": "Franklin Vedha Prabhu",
-    "franklinjbp": "Franklin Vedha Prabhu",
-    # Andrea Chris → 2nd/3rd call 2022 batch
-    "andreaschris": "Andrea Cris",
-    "andreachris": "Andrea Cris",
-    "andreachrisbp": "Andrea Cris",
-    "andreachrismiucusicuposting": "Andrea Cris",
-    # Shwetha A / Shwetha → 1st call 2024 = Swetha A
-    "shwetha": "Swetha A",
-    "shwethaa": "Swetha A",
-    "swethaa": "Swetha A",
-    "swethab": "Swetha A",
-    "swetha": "Swetha A",
-    "shwethasicu": "Swetha A",
-    # Beula P / Beaula P → Beaula P (official)
-    "beulap": "Beaula P",
-    "beulah": "Beaula P",
-    "beulahp": "Beaula P",
-    "beaula": "Beaula P",
-    "beaulap": "Beaula P",
-    "beula": "Beaula P",
-    "beulapsicu": "Beaula P",
-    "beulahpbpnov": "Beaula P",
-    "beulaphpaed": "Beaula P",
-    "beulapebeulap": "Beaula P",
-    "beulaphctvs": "Beaula P",
-    # Maria Anna Eldo → Maria Anna Eldho
-    "mariaannaeldo": "Maria Anna Eldho",
-    "mariaannaeldho": "Maria Anna Eldho",
-    "mariaeldo": "Maria Anna Eldho",
-    "mariaeldho": "Maria Anna Eldho",
-    # Deepthi Dilip → Deepthi D
-    "deepthidilip": "Deepthi D",
-    "deepthidilipctvspt": "Deepthi D",
-    "deepthid": "Deepthi D",
-    # Ruth Tiga → Ruth Tigga
-    "ruthtiga": "Ruth Tigga",
-    "ruthtigga": "Ruth Tigga",
-    # Nazreen Begum → Nasreen Begum K
-    "nazreenbegum": "Nasreen Begum K",
-    "nasreenbegum": "Nasreen Begum K",
-    "nasreenbegumk": "Nasreen Begum K",
-    "nasreenbegumsicuonly": "Nasreen Begum K",
-    # Priyadharshini K → Priyadharshini S (unique context)
-    # (these are all DM/PDF context → Priyadharshini S)
-    # ACHINTIYA / Achintya / Achintya(PDF) → Achinthya Roopa Arul
-    "achintiya": "Achinthya Roopa Arul",
-    "achintya": "Achinthya Roopa Arul",
-    "achintiyapdf": "Achinthya Roopa Arul",
-    "achithiya": "Achinthya Roopa Arul",
-    # Shree Kumar (DM Neuro) → Sreekumar M R
-    "shreekumardmneuro": "Sreekumar M R",
-    "shreekumar": "Sreekumar M R",
-    # Jerolin / Jerolin(PDF) / Jerolin A → new person to add as Jerolin A
-    "jerolin": "Jerolin A",
-    "jerolin a": "Jerolin A",
-    "jerolina": "Jerolin A",
-    "jerolinpdf": "Jerolin A",
-    # Mohd Irfath Khan → Mohammed Irfath Khan B
-    "mohirfath": "Mohammed Irfath Khan B",
-    # Abin Ipe / Abin → Abin Iype
-    "abin": "Abin Iype",
-    "abinipe": "Abin Iype",
-    "abiniype": "Abin Iype",
-    "abinipesicumicuposting": "Abin Iype",
-    # Tamizhanban D → Thamizhanban D (already covered above, extra variants)
-    "tamizhanband": "Thamizhanban D",
-    # Devi Balasubramaniam → Devi Balasubramanyam
-    "devibalasubramaniam": "Devi Balasubramanyam",
-    "devibalasubhramanyam": "Devi Balasubramanyam",
-    "devibalasubramanyam": "Devi Balasubramanyam",
-    "devibalasubramaniyam": "Devi Balasubramanyam",
-    "emmyhanamoni": "Emy Hanna Moni",
-    # Savarin Jeba → Savarin Jebha J
-    "savarinjeba": "Savarin Jebha J",
-    "savarinjebhaj": "Savarin Jebha J",
-    "savarin jeba": "Savarin Jebha J",
-    # MOULESWARAN → Mouleeswaran S
-    "mouleswaran": "Mouleeswaran S",
-    "mouleeswaran": "Mouleeswaran S",
-    "mouleeswaran s": "Mouleeswaran S",
-    "mouleeswaran(am)": "Mouleeswaran S",
-    "mouleswaranamashapmannm": "Mouleeswaran S",
-    # SAMZI / Samzal L → Samzai Lungalang
-    "samzi": "Samzai Lungalang",
-    "samzall": "Samzai Lungalang",
-    "samzallungalang": "Samzai Lungalang",
-    "samzailungalang": "Samzai Lungalang",
-    # ANNIEYL B → Annielyn Benitta P J (already covered above)
-    # Emila / Emiloia → Emilia Mary Pushparaj
-    "emila": "Emilia Mary Pushparaj",
-    "emiloia": "Emilia Mary Pushparaj",
-    "emiliyam": "Emilia Mary Pushparaj",
-    "emiliya": "Emilia Mary Pushparaj",
-    "emmiliamarypushparaj": "Emilia Mary Pushparaj",
-    # Priscila → Priscilla S
-    "priscila": "Priscilla S",
-    "priscillas": "Priscilla S",
-    "priscillasmaria": "Priscilla S",
-    # NEES → Aneesha Chris W
-    "nees": "Aneesha Chris W",
-    # Joffin → Jofin F A
-    "joffin": "Jofin F A",
-    "joffinfa": "Jofin F A",
-    # Febin Saji → Febin Shaji
-    "febinsaji": "Febin Shaji",
-    "febinshaji": "Febin Shaji",
-    # Vency / Vensi Dhevena → Vensi Devena P
-    "vency": "Vensi Devena P",
-    "vensi": "Vensi Devena P",
-    "vensidheveena": "Vensi Devena P",
-    "vensidhevena": "Vensi Devena P",
-    "vensidevena": "Vensi Devena P",
-    "vensidevenap": "Vensi Devena P",
-    # Jessica → Jassica Charles
-    "jessica": "Jassica Charles",
-    "jassica": "Jassica Charles",
-    "jassicacharles": "Jassica Charles",
-    # Mailaika → Malaika Abid Ansari
-    "mailaika": "Malaika Abid Ansari",
-    "malaika": "Malaika Abid Ansari",
-    "malaikaabidansari": "Malaika Abid Ansari",
-    # Pradheeshya / Praddepa → Pradeeshya Parthiban
-    "pradheeshya": "Pradeeshya Parthiban",
-    "praddepa": "Pradeeshya Parthiban",
-    "pradheeshyajeninhelvispfabian": "Pradeeshya Parthiban",
-    # Pardeepa → Pradeepa C
-    "pardeepa": "Pradeepa C",
-    "pradeepa": "Pradeepa C",
-    "pradeepc": "Pradeepa C",
-    # Yalini K P → Yaalini K P
-    "yalinikp": "Yaalini K P",
-    "yalini": "Yaalini K P",
-    "yaalini": "Yaalini K P",
-    "yaalinikp": "Yaalini K P",
-    # BHARATH / Bharath Kumar → new member Bharath Kumar (keep as is)
-    "bharath": "Bharath Kumar",
-    "bharathkumar": "Bharath Kumar",
-    # Jagan → new person in PAC 2025-03
-    # Graceline → Graceline Vandana N
-    "grceline": "Graceline Vandana N",
-    "gracelinevn": "Graceline Vandana N",
-    # Stepehen / Stephen Abishai → Stephen Abishai Barreto
-    "stephen": "Stephen Abishai Barreto",
-    "stephenabishai": "Stephen Abishai Barreto",
-    "stepehenabishaibarreto": "Stephen Abishai Barreto",
-    "stephenabishaibarreto": "Stephen Abishai Barreto",
-    "stepehenabishaibarrito": "Stephen Abishai Barreto",
-    "shanmughasundram": "Shanmuga Sundaram",
-    # Sathyadev Jangam → Satyadev Jangam
-    "sathyadevjangam": "Satyadev Jangam",
-    "satyadevjangam": "Satyadev Jangam",
-    # Amrita Pramod → new person
-    "amritapramod": "Amrita Pramod",
-    # Soumya Sheona Loyal → Saumya Sheona Loyal
-    "soumyasheonaloyal": "Saumya Sheona Loyal",
-    # Nafval Mohammed → Navfal Mohamed S A
-    "nafvalmohammed": "Navfal Mohamed S A",
-    "nafvalmohammedsa": "Navfal Mohamed S A",
-    "navfalmohammed": "Navfal Mohamed S A",
-    # Anoopa Elizabeth → Anoopa Elizabeth Oommen
-    "anoopae": "Anoopa Elizabeth Oommen",
-    "anoopaoommen": "Anoopa Elizabeth Oommen",
-    "anoopaelizabethoommen": "Anoopa Elizabeth Oommen",
-    # Anula A → Anula V
-    "anulaa": "Anula V",
-    "anulav": "Anula V",
-    # Sadhanandha Reddy / Sadanandha → SADHANANDA
-    "sadhanandha": "SADHANANDA",
-    "sadanandha": "SADHANANDA",
-    "sadhanandareddy": "SADHANANDA",
-    "sadhananda": "SADHANANDA",
-    # Narasimha Rao / Narasimma
-    "narasimha": "Narasimha Rao",
-    "narasimmarao": "Narasimha Rao",
-    "narasimhrao": "Narasimha Rao",
-    "narasimma": "Narasimha Rao",
-    # Minu Rajan → Minu
-    "minurajan": "Minu",
-    "minurajanroselind": "Minu",
-    # Zakam David Stanley → Zakkam David Stanley
-    "zakamstanley": "Zakkam David Stanley",
-    "zakamdavid": "Zakkam David Stanley",
-    "zakamdavidstanley": "Zakkam David Stanley",
-    "zakkamstanley": "Zakkam David Stanley",
-    "zakkamds": "Zakkam David Stanley",
-    "abellazakamdavid": "Zakkam David Stanley",
-    # Srividya B → Srividhya B
-    "srividyab": "Srividhya B",
-    "srividhya": "Srividhya B",
-    "srividhyab": "Srividhya B",
-    # Durai Henry → new DM/PDF person
-    "duraihenry": "Durai Henry",
-    # Naveen Raj → new DM/PDF person
-    "naveenraj": "Naveen Raj",
-    # Geerthana M → new 1st call 2026-02 person
-    "geerthanam": "Geerthana M",
-    "geerthana": "Geerthana M",
-    # Ram Prakash → new 1st call person
-    "ramprakashr": "Ram Prakash R",
-    "ramprakash": "Ram Prakash R",
-    # KISHORE (FN) / SMITHAMOL (AN) → split; kishore = Kishorekumar D already handled
-    "smithamol": "Smithamol P B",
-    "smithamolpb": "Smithamol P B",
-    "smithamolan": "Smithamol P B",
-    # Mowli → new 1st call 2026-02
-    "mowli": "Mowli",
-    # Angeline Veronica → Angelyn Veronica? Check: both in DB as same person
-    "angelineveronica": "Angelyn Veronica",
-    "angelynveronica": "Angelyn Veronica",
-    # Abhirami M → Abirami M
-    "abhiramim": "Abirami M",
-    "abhirami": "Abirami M",
-    "abiramim": "Abirami M",
-    # Calwin / CALWIN L → Calvin Lawrence Dalmeida
-    # (already mapped above via calwin/calvin)
-    # KIRUGHIGA → Kiruthiga
-    "kirughiga": "Kiruthiga",
-    "kirughigha": "Kiruthiga",
-    # SOFIA → Sophia Nag
-    "sofia": "Sophia Nag",
-    "sophianag": "Sophia Nag",
-    # Suhasini → Sugashini? Or new person? It's CB C/S AM 2025-01
-    "suhasini": "Sugashini",
-    # Jona E → Jona Samraj D
-    "jonae": "Jona Samraj D",
-    "jonasamraj": "Jona Samraj D",
-    "joanathan": "Jonathan Samuel B",
-    "joanathansamuel": "Jonathan Samuel B",
-    # Inba Idaya / Inbha Idaya → Inba Idhaya A
-    "inbaidaya": "Inba Idhaya A",
-    "inbaidhaya": "Inba Idhaya A",
-    "inbhaidaya": "Inba Idhaya A",
-    "inbhaidhaya": "Inba Idhaya A",
-    "inbaidhayabp": "Inba Idhaya A",
-    "inbhaidayabp": "Inba Idhaya A",
-    "inbaidayaneuro": "Inba Idhaya A",
-    "inbhaidayaneuro": "Inba Idhaya A",
-    # ANDERW S → Andrew Solomon
-    "andews": "Andrew Solomon",
-    "andrewsolomon": "Andrew Solomon",
-    "andrewmoses": "Andrew Solomon",
-    # Prabakaran.S → Prabhakaran S
-    "prabakarans": "Prabhakaran S",
-    "prabhakarans": "Prabhakaran S",
-    # Calvin Lawrence → already mapped
-    "calvinlawrence": "Calvin Lawrence Dalmeida",
-    "calwinlawrenece": "Calvin Lawrence Dalmeida",
-    "calwinlawrewnce": "Calvin Lawrence Dalmeida",
-    # Indla Joseph Vineeth → Indla Joseph Vineeth
-    "indlajosephvineeth": "Indla Joseph Vineeth",
-    "vineethindla": "Indla Joseph Vineeth",
-    # Roham → Rohan Chacko Jacob (typo)
-    "roham": "Rohan Chacko Jacob",
-    "ramengmawikhwalring": "Ramengmawii Khawlhring",
-    "sharonebenezar": "Sharon J Ebenezer",
-    "praiseprudveernason": "V Praise Prudveer Nazson",
-    "sudymahlah": "Sudi Cuty Mahlah",
-    "sudymahlahtirzah": "Sudi Cuty Mahlah",
-    "sudycutymahlahtirzah": "Sudi Cuty Mahlah",
-    "samuelcherwinwesley": "Samuel Cherwin Wesley",
-    "abhilashrn": "Abhilash R N",
-    "jeromekumar": "Jerome Kumar",
-    "sujathabhaskar": "Sujatha Bhaskar",
-    "kishorek": "Kishorekumar D",
-    "harshvardhani": "Harshavardhini R",
-    "harshvardhir": "Harshavardhini R",
-    "harshvardhanir": "Harshavardhini R",
-    "sadhanandhareddy": "SADHANANDA",
-    "anderws": "Andrew Solomon",
-    "antrof": "Antrofelix M",
-    "shanmugan": "Shanmuga Sundaram",
-    "praiseprudveernazon": "V Praise Prudveer Nazson",
-    # Immannuel → Immanuel Christopher J
-    "immannuelc": "Immanuel Christopher J",
-    # Aanton → Anton Max Cassella Kumar
-    "aanton": "Anton Max Cassella Kumar",
-    # ANTRO F → Antrofelix M
-    "antro": "Antrofelix M",
-    "antrofelix": "Antrofelix M",
-    "antrofelixa": "Antrofelix M",
-    "antrofelixm": "Antrofelix M",
-    # Chritina R → Christina Reshma R
-    "chritinar": "Christina Reshma R",
-    # Emiloia → Emilia Mary Pushparaj
-    # (already covered)
-    # Soiphia → Sophia Nag
-    "soiphia": "Sophia Nag",
-    # NANDHI V → Nandi Vinayaka B
-    "nandhiv": "Nandi Vinayaka B",
-    # IRASHA MAL → Irasha Mall
-    "irashamal": "Irasha Mall",
-    "irashamall": "Irasha Mall",
-    # MIZPHA → Jammi Mizpah Shen
-    "mizpha": "Jammi Mizpah Shen",
-    # Sudhrashan → Sudharsan T R
-    "sudhrashan": "Sudharsan T R",
-    # Lilli → Lilly Sophia M
-    "lilli": "Lilly Sophia M",
-    # Sugashnin → Sugashini
-    "sugashnin": "Sugashini",
-    # SOFIA → Sophia Nag (already done)
-    # Narasimma → Narasimha Rao (already done)
-    # Bitsy Regulus → Bitsy Regulas Bouvert
-    "bitsyregulus": "Bitsy Regulas Bouvert",
-    "bitsyregulasbouvert": "Bitsy Regulas Bouvert",
-    # Manna Mary Mathew → Manna Mary Thomas
-    "mannamarymathew": "Manna Mary Thomas",
-    "mannamarythomas": "Manna Mary Thomas",
-    "kopakanaveen": "Koppaka Naveen Kumar",
-    "kopakanavenkumar": "Koppaka Naveen Kumar",
-    "kopakanaveenkumar": "Koppaka Naveen Kumar",
-    "kopakkanaveen(bp115)": "Koppaka Naveen Kumar",
-    # Hanosn → Hanson J
-    "hanosn": "Hanson J",
-    "hansonj": "Hanson J",
-    # Sahlu → Shalu Sharma
-    "sahlu": "Shalu Sharma",
-    "shalus": "Shalu Sharma",
-    "shalusharmma": "Shalu Sharma",
-    # Neenu / NEENU → Neenu Geo Thomas
-    "neenu": "Neenu Geo Thomas",
-    "neenugeo": "Neenu Geo Thomas",
-    "neenugeothomas": "Neenu Geo Thomas",
-    # Dhannya / Dhanya → Dhannya
-    "dhanya": "Dhannya",
-    # JONA E already handled
-    # Vidhya S → Vidhya S (already in DB)
-    "vidhya": "Vidhya S",
-    "vidhyas": "Vidhya S",
-    "vidyas": "Vidhya S",
-    # Kashmira / KASHMIRA → Kashmira Robin George
-    "kashmira": "Kashmira Robin George",
-    "kashmirarobiingeorge": "Kashmira Robin George",
-    "kashmirarobingeorge": "Kashmira Robin George",
-    # Raichel Kurian / Raichel Kurien → Raichel Kurian (already fixed at top)
-    # Rashika / Rasica → Rasica Dias
-    "rasica": "Rasica Dias",
-    "rasicadias": "Rasica Dias",
-    # Poornima / Pornima → Poornima K
-    "poornima": "Poornima K",
-    # Monal Antony → Monal Antony A G (already Antrofelix ≠ Monal Antony)
-    "monalantony": "Monal Antony A G",
-    "monalantonyag": "Monal Antony A G",
-    # RIYA / KAVI → split entry; map to Riya Sarah Abraham + Kaviarasan separately
-    # (these are joint cells — skip as they can't be split automatically)
-    # Angeline Anirutha → Angelin Aniruth
-    "angelineanirutha": "Angelin Aniruth",
-    "angelinanirutha": "Angelin Aniruth",
-    "angelinaanirutha": "Angelin Aniruth",
-    # Remaining DB duplicates to merge
-    "annielynbenitapj": "Annielyn Benitta P J",
-    "joerenitas": "Joe Renitta S",
-    "sudanaveen": "Suda Naveen Kumar",
-    "keerthana": "Keerthana A",
-    "rakshana": "Rakshna K S",
-    "sanjaykanth": "Sanjaykanth R",
-    # Additional single-name stragglers
-    "jagan": "Jagan",                           # PAC 2025-03 — new person
-    "emilyapushparaj": "Emilia Mary Pushparaj",
-    "nxonvedhaasiranthony": "Nixon Veda Asir Anthony",
-    "moinicaj": "Monica J",
-    "calvinlawrenece": "Calvin Lawrence Dalmeida",
-    "kopakanaveenkumarctvs": "Koppaka Naveen Kumar",
-    "mohamedirfathkhan": "Mohammed Irfath Khan B",
-    "anoopaelizabethoomen": "Anoopa Elizabeth Oommen",
-    # Date-suffixed names (e.g. 'Indla Joseph Vineeth( 04/03/2025)') — strip date suffix
-    "indlajosephvineeth04": "Indla Joseph Vineeth",
-    "riyalal04": "Riya Lal",
-    "sarahsharma04": "Sarah Sharma",
-    "minurajan18": "Minu",
-    "narasimharao04": "Narasimha Rao",
-    "ajayalex18": "Ajay A",
-    "tirzahnarayanamoorthi": "Trizah Narayana Moorthy",
-    "tirzhanarayanamoorthy": "Trizah Narayana Moorthy",
-    "praiseprudeveer": "V Praise Prudveer Nazson",
-    "vinobharathye": "Vinobharathi E",
-    "matthews": "Mathews Joji",
-    "preerna": "Prerna Nayan",
-    "calwinl": "Calvin Lawrence Dalmeida",
-    "karthikpan": "Karthikpandian S",
-    "achitiya": "Achinthya Roopa Arul",
-    "jevevapriscilla": "Jeeva Priscilla D M",
-    "anneilynb": "Annielyn Benitta P J",
-    "shanmughasudharam": "Shanmuga Sundaram",
-    "stephenabhishaibarrito": "Stephen Abishai Barreto",
-    "stephenabhishaibarreto": "Stephen Abishai Barreto",
 }
 # Multi-person cells: compact key → list of canonical names to assign the duty to both
 MULTI_PERSON_SPLITS: dict[str, list[str]] = {
@@ -1568,44 +677,51 @@ def period_after(period: str, threshold: str) -> bool:
     return period >= threshold
 
 
-_SHARED_RULES: tuple[dict, dict] | None = None
+_SHARED_INDEX = None
 _LEVEL_KEYS = {1: "1ST_CALL", 2: "2ND_CALL", 3: "3RD_CALL", 4: "4TH_CALL", 5: "5TH_CALL"}
 
 
-def shared_name_rules() -> tuple[dict, dict]:
-    """The shared member resolution rules by name form, and their target names.
+def set_shared_index(index) -> None:
+    """Use this member index for name resolution (tests and scoring on a database copy)."""
+    global _SHARED_INDEX
+    _SHARED_INDEX = index
 
-    Uses the saved rules (which admins can edit) when the database is reachable, otherwise the
-    seed (app.services.member_resolution_rules). One source of truth with live imports.
+
+def shared_index():
+    """The shared member resolver for the rebuild: one source of truth with live imports.
+
+    Uses the department's members and saved rules when the database is reachable; otherwise
+    the canonical member list with the seed rules (app.services.member_resolution_rules).
     """
-    global _SHARED_RULES
-    if _SHARED_RULES is not None:
-        return _SHARED_RULES
+    global _SHARED_INDEX
+    if _SHARED_INDEX is not None:
+        return _SHARED_INDEX
     from uuid import uuid4
 
     from app.models import MemberResolutionRule
-    from app.services.member_resolution_rules import SEED_RULES, build_seed_rules
+    from app.services.member_resolution_rules import build_seed_rules
+    from app.services.member_resolver import MemberIndex
 
-    rules, names = [], {}
+    people, rules = [], []
     if SessionLocal is not None:
         try:
             with SessionLocal() as db:
-                names = {p.id: p.canonical_name for p in db.scalars(select(Person))}
-                rules = [r for r in db.scalars(select(MemberResolutionRule)) if r.active]
+                people = list(MemberIndex.load(db).people)
+                try:
+                    rules = [r for r in db.scalars(select(MemberResolutionRule)) if r.active]
+                except Exception:  # noqa: BLE001 - rules table not migrated yet: use the seed
+                    db.rollback()
+                    rules = []
                 db.expunge_all()
-        except Exception:  # noqa: BLE001 - offline analysis falls back to the seed
-            rules, names = [], {}
+        except Exception:  # noqa: BLE001 - offline analysis works from the member list
+            people = []
+    if not people:
+        people = [Person(id=uuid4(), canonical_name=m.canonical_name, call_level=m.call_level,
+                         active_status="active") for m in load_canonical_members()]
     if not rules:
-        stand_ins = {r.person: Person(id=uuid4(), canonical_name=r.person) for r in SEED_RULES}
-        rules = build_seed_rules(stand_ins)[0]
-        names = {p.id: p.canonical_name for p in stand_ins.values()}
-    by_form: dict[str, list] = defaultdict(list)
-    for rule in rules:
-        by_form[rule.form_key].append(rule)
-    for key in by_form:
-        by_form[key].sort(key=lambda r: (-r.priority, str(r.person_id), str(r.id)))
-    _SHARED_RULES = (by_form, names)
-    return _SHARED_RULES
+        rules = build_seed_rules({p.canonical_name: p for p in people})[0]
+    _SHARED_INDEX = MemberIndex(people, rules)
+    return _SHARED_INDEX
 
 
 def duty_area_of(duty_type: str) -> str | None:
@@ -1615,9 +731,9 @@ def duty_area_of(duty_type: str) -> str | None:
 def manual_name_resolution(
     assignment: ParsedRotaAssignment | ParsedUnitPosting,
     period: str,
-) -> NameResolution | None:
-    from app.services.member_resolver import ResolutionContext, match_rules
-    from app.services.normalization import member_key
+) -> NameResolution:
+    """Resolve one historical cell through the shared member resolver (purpose "history")."""
+    from app.services.member_resolver import ResolutionContext
 
     cleaned = clean_person_name(assignment.person_name)
     key = compact_name(cleaned)
@@ -1634,17 +750,25 @@ def manual_name_resolution(
     else:
         ctx = ResolutionContext.build(assignment.posting_label)
 
-    by_form, names = shared_name_rules()
-    outcome, found = match_rules(by_form.get(member_key(cleaned), []), ctx)
-    if outcome == "rule":
-        return NameResolution("matched", names.get(found.person_id), cleaned, 1.0, "shared_rule")
-    if outcome == "ask":
-        return NameResolution("ambiguous", None, cleaned, 0.0, "shared_short_name_needs_context")
+    result = shared_index().resolve(cleaned, ctx, purpose="history")
+    if result.matched:
+        return NameResolution("matched", result.canonical_name, cleaned, result.score or 1.0, f"shared_{result.method}")
+    names = ", ".join(c.name for c in result.candidates[:3])
+    if result.status in {"ambiguous", "needs_review"} and not result.only_similar:
+        return NameResolution("ambiguous", None, cleaned, 0.0, f"{result.reason}" + (f" ({names})" if names else ""))
+    return NameResolution("unmatched", None, cleaned, 0.0,
+                          f"Review suggested member: {names}" if names else (result.reason or "Not found"))
 
-    exact = MANUAL_ALIAS_OVERRIDES.get(key)
-    if exact is not None:
-        return NameResolution("matched", exact, cleaned, 1.0, "manual_alias")
-    return None
+
+def resolve_historical_name(item: ParsedRotaAssignment | ParsedUnitPosting, period: str,
+                            resolver: "CanonicalNameResolver") -> NameResolution:
+    """Shared resolver decides; the old resolver only flags placeholder/invalid cells."""
+    resolution = manual_name_resolution(item, period)
+    if resolution.status == "unmatched":
+        legacy = resolver.resolve(item.person_name)
+        if legacy.status == "invalid":
+            return legacy
+    return resolution
 
 
 def warning_to_dict(warning: ParseWarning) -> dict[str, object]:
@@ -1704,7 +828,7 @@ def scan_rota_file(path: Path, resolver: CanonicalNameResolver) -> tuple[list[Ma
                 )
             continue
 
-        resolution = manual_name_resolution(assignment, period) or resolver.resolve(assignment.person_name)
+        resolution = resolve_historical_name(assignment, period, resolver)
         if resolution.status != "matched" or resolution.canonical_name is None:
             skipped.append(
                 SkippedName(
@@ -1755,7 +879,7 @@ def scan_unitwise_file(path: Path, resolver: CanonicalNameResolver) -> tuple[lis
     period = period_key(parsed.month.year, parsed.month.month)
 
     for posting in parsed.postings:
-        resolution = manual_name_resolution(posting, period) or resolver.resolve(posting.person_name)
+        resolution = resolve_historical_name(posting, period, resolver)
         if resolution.status != "matched" or resolution.canonical_name is None:
             skipped.append(
                 SkippedName(

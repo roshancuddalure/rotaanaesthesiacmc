@@ -74,6 +74,8 @@ class MemberResolutionRule(Base):
     # Applies only when the row carries a call level or duty area (an "other contexts" rule).
     requires_context: Mapped[bool] = mapped_column(Boolean, default=False)
     priority: Mapped[int] = mapped_column(Integer, default=0)
+    # "all", or "history": spellings from old rota files, used only by past-data imports.
+    scope: Mapped[str] = mapped_column(String(20), default="all", server_default="all")
     active: Mapped[bool] = mapped_column(Boolean, default=True)
     note: Mapped[str | None] = mapped_column(String(500), nullable=True)
     source: Mapped[str] = mapped_column(String(100), default="manual")

@@ -6,9 +6,8 @@ All reads require an authenticated rota account; every mutation requires an admi
 
 from datetime import date, datetime
 from collections import Counter
-from uuid import UUID
-
 from dataclasses import asdict
+from uuid import UUID
 
 from fastapi import APIRouter, Body, Depends, HTTPException
 from pydantic import BaseModel, model_validator, field_validator
@@ -443,7 +442,7 @@ def add_designation(
     return member_to_read(get_member_or_404(db, person_id))
 
 
-@router.get("/admin/members/dedupe-candidates")
+@router.get("/admin/members/dedupe-candidates", dependencies=[Depends(require_admin)])
 def get_dedupe_candidates(db: Session = Depends(get_db)) -> list[DuplicateCandidateRead]:
     return [
         DuplicateCandidateRead(

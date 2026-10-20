@@ -21,6 +21,7 @@ from app.api.routes import api_router
 from app.core.config import settings
 from app.security import ComputeSecurityMiddleware
 from app.services.compute_limits import ComputeLimiter
+from app.services.member_resolver import MemberResolutionError
 
 STATIC_DIR = Path(__file__).resolve().parents[1] / "static"
 logger = logging.getLogger(__name__)
@@ -44,6 +45,14 @@ def create_app() -> FastAPI:
         allow_headers=["Authorization", "Content-Type", "If-Match"],
     )
     app.add_middleware(ComputeSecurityMiddleware)
+
+    @app.exception_handler(MemberResolutionError)
+    async def member_resolution_handler(request: Request, exc: MemberResolutionError) -> JSONResponse:
+        # Safety net: a resolver failure that escapes a route is bad input (for example an
+        # explicit member id that does not exist), never a 500.
+        from app.services.import_errors import resolution_detail
+
+        return JSONResponse(status_code=422, content={"detail": resolution_detail(exc)})
 
     @app.exception_handler(Exception)
     async def unhandled_exception_handler(request: Request, exc: Exception) -> JSONResponse:

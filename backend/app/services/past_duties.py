@@ -23,6 +23,7 @@ from app.models import (
     RotaPeriod,
 )
 from app.services.imports import classify_duty_label, duty_window_for_date, parse_rota_workbook
+from app.services.import_errors import blocking_rows_message, row_label
 from app.services.leave import month_bounds
 from app.services.member_import import candidate_json, cell_text, member_state, open_member_workbook
 from app.services.member_resolver import MemberIndex, resolve_rows
@@ -237,6 +238,11 @@ def parse_upload(filename: str, content: bytes, options: dict):
         workbook.close()
     if len(records) > 10000:
         raise ValueError("Import at most 10000 duty assignments at a time.")
+    if not records:
+        raise ValueError(
+            f"Sheet '{info['name']}' has no duty rows below the headings in row {header}; "
+            "add at least one completed duty."
+        )
     return records, warnings, start, end, today
 
 
@@ -309,6 +315,7 @@ def preview_past_duties(db: Session, filename: str, content: bytes, options: dic
                     "errors": [],
                     "person_candidates": [],
                     "resolution_status": None,
+                        "resolution_method": None,
                     "resolution_reason": "",
                     "resolution_warnings": [],
                     "conflicts": [],
@@ -467,6 +474,7 @@ def preview_past_duties(db: Session, filename: str, content: bytes, options: dic
                 "errors": errors,
                 "person_candidates": [candidate_json(c) for c in member.candidates],
                 "resolution_status": member.status,
+                    "resolution_method": member.method,
                 "resolution_reason": member.reason,
                 "resolution_warnings": list(member.warnings),
                 "conflicts": conflicts,
@@ -563,16 +571,39 @@ def _duty_for(record: dict, resolution: dict, mapping_lookup: dict):
 def apply_past_duties(
     db: Session, filename: str, content: bytes, options: dict, preview_hash: str, actor_id: str
 ):
-    from app.services.reviewed_import import acquire_import_lock, replayed_result, attach_result
+    from app.services.reviewed_import import (
+        StalePreviewError,
+        acquire_import_lock,
+        attach_result,
+        replayed_result,
+    )
     acquire_import_lock(db)
     replay = replayed_result(db, PAST_SOURCE, preview_hash, actor_id, filename, content, options)
     if replay is not None:
         return replay
     preview = preview_past_duties(db, filename, content, options)
     if preview_hash != preview["preview_hash"]:
-        raise ValueError("File, selections, or saved duties changed. Preview again.")
+        raise StalePreviewError("File, selections, or saved duties changed. Preview again.")
     if preview["counts"]["needs_review"]:
-        raise ValueError("Resolve or skip all review items first.")
+        raise ValueError(
+            blocking_rows_message(
+                "Resolve or skip all review items first",
+                (
+                    (
+                        row_label(row["row"], preview["sheet"]),
+                        row["raw"].get("name") or None,
+                        [
+                            f"{error} ({row['resolution_reason']})"
+                            if error == UNRESOLVED_MEMBER and row.get("resolution_reason")
+                            else error
+                            for error in row["errors"]
+                        ],
+                    )
+                    for row in preview["rows"]
+                    if row["action"] == "needs_review"
+                ),
+            )
+        )
     if preview["warnings"] and not options.get("confirm_warnings"):
         raise ValueError("Acknowledge parser warnings before importing.")
     if preview["counts"]["correct"] and not options.get("confirm_corrections"):
