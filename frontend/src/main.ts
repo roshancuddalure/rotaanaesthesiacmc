@@ -1,4 +1,4 @@
-import { openRotaCompute, renderComputeSettings } from "./rota-compute";
+import { openRotaCompute, openAutoassign, renderComputeSettings } from "./rota-compute";
 import { openIntelligentRota } from './rota-intelligence';
 import { openRecordEditor } from "./record-workspace";
 import { openOperationalImport } from "./operational-import";
@@ -42,6 +42,7 @@ import { reviewAndApply } from "./admin-preview";
 import { openArchiveAll } from "./member-bulk";
 import { confirmAdminDelete } from "./admin-delete";
 import { openMemberProfile } from "./member-profile";
+import { renderRotaRulesPage, rotaRulesHasUnsavedChanges } from "./rota-rules";
 import {
   type AdminMapping,
   type AnalysisDashboard,
@@ -69,7 +70,6 @@ import {
   type RotaCandidate,
   type RotaCandidateMonth,
   type RotaCandidateSlot,
-  type RotaPhaseOneRules,
   type RotaPublishChecklistItem,
   type RotaPublishMonth,
   type RotaReviewMonth,
@@ -127,7 +127,6 @@ import {
   getRotaAutoFillMonth,
   getRotaCandidateMonth,
   getRotaSlotCandidates,
-  getRotaPhaseOneRules,
   getRotaPublishMonth,
   getRotaReviewMonth,
   getRotaSafetyMonth,
@@ -155,7 +154,6 @@ import {
   updateCurrentUserProfile,
   updateMapping,
   updateMember,
-  updateRotaPhaseOneRules,
   updateRotaSetupScope,
   updateUnitSettings,
   updateUnitAssignment,
@@ -352,7 +350,6 @@ let unitAssignments: UnitAssignment[] = [];
 let unitModalUnitId: string | null = null;
 let unitModalSpecialPostingType: string | null = null;
 let unitEditingAssignmentId: string | null = null;
-let rotaPhaseOneRules: RotaPhaseOneRules | null = null;
 let rotaSetupMonth = storedWorkingMonth();
 let rotaSetup: RotaSetupMonth | null = null;
 let rotaTemplateMonth = storedWorkingMonth();
@@ -404,7 +401,6 @@ onDataChange(() => {
   memberAudit = null;
   invalidateUnitManagementCache();
   rotaSetup = null;
-  rotaPhaseOneRules = null;
   rotaTemplate = null;
   rotaTemplateStats = null;
   rotaSafety = null;
@@ -435,23 +431,6 @@ const UNIT_IMPORT_POSTING_OPTIONS = [
   { key: "DRP", label: "DRP" },
   { key: "NEURO_ICU", label: "Neuro ICU" },
   { key: "OTHER_SPECIAL", label: "Other special" },
-];
-
-const DUTY_GROUPS = [
-  { key: "main", label: "Main duty" },
-  { key: "rc", label: "RC duty" },
-  { key: "shift", label: "Shift duty" },
-  { key: "cb", label: "CB duty" },
-  { key: "caesar", label: "Caesar duty" },
-  { key: "schell", label: "Schell duty" },
-  { key: "floating", label: "Floating consultant" },
-  { key: "fifth_call", label: "5th call duty" },
-  { key: "cart", label: "CART" },
-  { key: "pac", label: "PAC" },
-  { key: "chad", label: "CHAD" },
-  { key: "ruhsa", label: "RUHSA" },
-  { key: "paeds", label: "Paeds" },
-  { key: "neuro", label: "Neuro" },
 ];
 
 const DUTY_TEMPLATE_GROUP_ORDER = [
@@ -4795,76 +4774,8 @@ function renderMembersView() {
   if (historyHost) void mountMemberImportHistory(historyHost);
 }
 
-function parseNumberOrNull(value: string): number | null {
-  const trimmed = value.trim();
-  if (!trimmed) return null;
-  const parsed = Number(trimmed);
-  return Number.isFinite(parsed) ? parsed : null;
-}
-
 function parseCsv(value: string): string[] {
   return value.split(",").map((item) => item.trim()).filter(Boolean);
-}
-
-function inferredCallLevelsForDutyType(dutyType: string): string[] {
-  const normalized = dutyType.toUpperCase().replace(/[^A-Z0-9]+/g, "_");
-  if (normalized.includes("1ST")) return ["1ST_CALL"];
-  if (normalized.includes("2ND")) return ["2ND_CALL"];
-  if (normalized.includes("CO3RD") || normalized.includes("CO_3RD") || normalized.includes("3RD")) return ["3RD_CALL"];
-  if (normalized.includes("CO4TH") || normalized.includes("CO_4TH")) return ["CO_4TH_CALL"];
-  if (normalized.includes("4TH")) return ["4TH_CALL"];
-  if (normalized.includes("5TH") || normalized.includes("FIFTH")) return ["5TH_CALL"];
-  return [];
-}
-
-function renderCallLevelSelectOptions(selected: string[] = []): string {
-  const selectedSet = new Set(selected.map(normalizeCallLevel));
-  return DUTY_CALL_LEVELS.map((level) => `
-    <option value="${level.key}" ${selectedSet.has(level.key) ? "selected" : ""}>${level.label}</option>
-  `).join("");
-}
-
-function renderClusterSelectOptions(selected: string[] = []): string {
-  const selectedSet = new Set(selected);
-  const grouped = new Map<string, CallCluster[]>();
-  const inactiveGrouped = new Map<string, CallCluster[]>();
-  callClusters
-    .filter((cluster) => cluster.active)
-    .forEach((cluster) => {
-      const level = normalizeCallLevel(cluster.call_level ?? "") ?? "";
-      grouped.set(level, [...(grouped.get(level) ?? []), cluster]);
-    });
-  callClusters
-    .filter((cluster) => !cluster.active)
-    .forEach((cluster) => {
-      const level = normalizeCallLevel(cluster.call_level ?? "") ?? "";
-      inactiveGrouped.set(level, [...(inactiveGrouped.get(level) ?? []), cluster]);
-    });
-  const activeOptions = DUTY_CALL_LEVELS.map((level) => {
-    const clusters = (grouped.get(level.key) ?? []).sort((a, b) => a.name.localeCompare(b.name));
-    if (!clusters.length) return "";
-    return `
-      <optgroup label="${escapeHtml(level.label)}">
-        ${clusters.map((cluster) => `<option value="${escapeHtml(cluster.key)}" ${selectedSet.has(cluster.key) ? "selected" : ""}>${escapeHtml(cluster.name)}</option>`).join("")}
-      </optgroup>
-    `;
-  }).join("");
-  const inactiveOptions = DUTY_CALL_LEVELS.map((level) => {
-    const clusters = (inactiveGrouped.get(level.key) ?? []).sort((a, b) => a.name.localeCompare(b.name));
-    if (!clusters.length) return "";
-    return `
-      <optgroup label="${escapeHtml(level.label)} inactive">
-        ${clusters.map((cluster) => `<option value="${escapeHtml(cluster.key)}" disabled>${escapeHtml(cluster.name)} - inactive</option>`).join("")}
-      </optgroup>
-    `;
-  }).join("");
-  if (activeOptions) return `${activeOptions}${inactiveOptions}`;
-  if (inactiveOptions) return `<option value="" disabled>No active groups. Enable one in Eligibility Groups.</option>${inactiveOptions}`;
-  return `<option value="" disabled>No eligibility groups created</option>`;
-}
-
-function selectedValues(select: HTMLSelectElement): string[] {
-  return Array.from(select.selectedOptions).map((option) => option.value).filter(Boolean);
 }
 
 function renderSingleCallLevelOptions(selected = ""): string {
@@ -4872,12 +4783,6 @@ function renderSingleCallLevelOptions(selected = ""): string {
   return `<option value="">Select call</option>${DUTY_CALL_LEVELS.map((level) => `
     <option value="${level.key}" ${normalized === level.key ? "selected" : ""}>${level.label}</option>
   `).join("")}`;
-}
-
-function renderDutyGroupOptions(selected = ""): string {
-  return DUTY_GROUPS.map((group) => `
-    <option value="${escapeHtml(group.key)}" ${selected === group.key ? "selected" : ""}>${escapeHtml(group.label)}</option>
-  `).join("");
 }
 
 function filterClusterMembers(query: string) {
@@ -4906,118 +4811,10 @@ async function renderRotaRules() {
     return;
   }
   if (!current()) return;
-  viewRoot.innerHTML = pageSkeleton("rota rules");
-  try {
-    [rotaPhaseOneRules, callClusters] = await Promise.all([
-      getRotaPhaseOneRules(),
-      getCallClusters(),
-    ]);
-  } catch (error) {
-    showToast(error instanceof Error ? error.message : "Failed to load rota rules", "error");
-    if (!current()) return;
-    viewRoot.innerHTML = `<section class="panel"><h3>Rota rules unavailable</h3><p>Unable to load Phase 1 rule settings.</p></section>`;
-    return;
-  }
-
-  const rules = rotaPhaseOneRules;
-  const activeClusterCount = callClusters.filter((cluster) => cluster.active).length;
-  const inactiveClusterCount = callClusters.length - activeClusterCount;
-  const dutyRows = rules.duty_rules.map((rule, index) => {
-    const selectedCalls = rule.allowed_call_levels.length ? rule.allowed_call_levels : inferredCallLevelsForDutyType(rule.key);
-    const eligibilityMode = (rule.allowed_cluster_keys?.length ?? 0) > 0
-      ? "Restricted group"
-      : "Call-level only";
-    return `
-      <article class="rota-rule-card">
-        <header>
-          <div>
-            <strong title="Rule key: ${escapeHtml(rule.key)}">${escapeHtml(rule.label)}</strong>
-            <small>${escapeHtml([rule.campus, rule.is_24hr ? "24-hour" : `${rule.duration_hours} h`].filter(Boolean).join(" · "))}</small>
-          </div>
-          <span class="status">${escapeHtml(eligibilityMode)}</span>
-        </header>
-        <div class="rota-rule-grid">
-          <label>Display label<input data-rule-index="${index}" data-rule-field="label" value="${escapeHtml(rule.label)}" /></label>
-          <label>Call levels allowed
-            <select class="rule-select compact-rule-select" data-rule-index="${index}" data-rule-field="allowed_call_levels" multiple size="4">
-              ${renderCallLevelSelectOptions(selectedCalls)}
-            </select>
-            <small class="field-help">Ordinary duties use this list.</small>
-          </label>
-          <label>Specific groups allowed
-            <select class="rule-select compact-rule-select" data-rule-index="${index}" data-rule-field="allowed_cluster_keys" multiple size="4">
-              ${renderClusterSelectOptions(rule.allowed_cluster_keys ?? [])}
-            </select>
-            <small class="field-help">${escapeHtml(eligibilityMode)}</small>
-          </label>
-          <label>Groups excluded
-            <select class="rule-select compact-rule-select" data-rule-index="${index}" data-rule-field="excluded_cluster_keys" multiple size="4">
-              ${renderClusterSelectOptions(rule.excluded_cluster_keys ?? [])}
-            </select>
-          </label>
-          <label>Duty category
-            <select data-rule-index="${index}" data-rule-field="group">
-              ${renderDutyGroupOptions(rule.group)}
-            </select>
-            <small class="field-help">Category only, not a member list.</small>
-          </label>
-          <label>Hours<input data-rule-index="${index}" data-rule-field="duration_hours" type="number" min="0" max="48" value="${rule.duration_hours}" /></label>
-        </div>
-        <div class="rota-rule-flags">
-          <label><input data-rule-index="${index}" data-rule-field="is_mandatory" type="checkbox" ${rule.is_mandatory ? "checked" : ""} /> Mandatory</label>
-          <label><input data-rule-index="${index}" data-rule-field="is_adjustable" type="checkbox" ${rule.is_adjustable ? "checked" : ""} /> Adjustable</label>
-          <label><input data-rule-index="${index}" data-rule-field="blocks_elective_same_day" type="checkbox" ${rule.blocks_elective_same_day ? "checked" : ""} /> Same-day block</label>
-          <label><input data-rule-index="${index}" data-rule-field="blocks_elective_next_day" type="checkbox" ${rule.blocks_elective_next_day ? "checked" : ""} /> Next-day block</label>
-          <label><input data-rule-index="${index}" data-rule-field="active" type="checkbox" ${rule.active ? "checked" : ""} /> Active</label>
-        </div>
-      </article>
-    `;
-  }).join("");
-
-  if (!current()) return;
-  viewRoot.innerHTML = `
-    <form id="rota-rules-form">
-      <section class="panel action-panel">
-        <div>
-          <h3>Rota Rules And Eligibility</h3>
-          <p>Choose which call levels and special eligibility groups can do each duty. These choices control suggestions, manual assignment checks, and Strict Auto-Fill.</p>
-        </div>
-        <div class="topbar-actions">
-          <button class="icon-button" type="button" data-view-shortcut="call-clusters">Manage Eligibility Groups</button>
-          <button class="primary" type="submit" id="save-rota-rules">Save Rules</button>
-        </div>
-      </section>
-      <section class="summary-grid four-col">
-        ${metricCard(rules.duty_rules.length, "Duty types")}
-        ${metricCard(rules.rest_rules.minimum_gap_after_24hr_hours, "Rest hours")}
-        ${metricCard(`${rules.unit_staffing_rules.warning_unavailable_percent}%`, "Warning threshold")}
-        ${metricCard(`${rules.unit_staffing_rules.hard_block_unavailable_percent}%`, "Hard block threshold")}
-      </section>
-      <section class="panel">
-        <h3>Safety Guardrails</h3>
-        <div class="form-grid">
-          <label>Minimum gap after 24hr duty<input id="rule-rest-hours" type="number" min="0" max="168" value="${rules.rest_rules.minimum_gap_after_24hr_hours}" /></label>
-          <label>Minimum available per unit<input id="rule-min-available" type="number" min="0" value="${rules.unit_staffing_rules.minimum_available_count}" /></label>
-          <label>Warning unavailable %<input id="rule-warning-percent" type="number" min="0" max="100" value="${rules.unit_staffing_rules.warning_unavailable_percent}" /></label>
-          <label>Hard block unavailable %<input id="rule-hard-percent" type="number" min="0" max="100" value="${rules.unit_staffing_rules.hard_block_unavailable_percent}" /></label>
-          <label>Max 24hr duties/month<input id="rule-max-24hr" type="number" min="0" value="${rules.duty_count_limits.max_24hr_per_month ?? ""}" placeholder="Unset" /></label>
-          <label>Max weekend 24hr/month<input id="rule-max-weekend" type="number" min="0" value="${rules.duty_count_limits.max_weekend_24hr_per_month ?? ""}" placeholder="Unset" /></label>
-        </div>
-        <label class="checkbox-line"><input id="rule-post-blocks" type="checkbox" ${rules.rest_rules.post_24hr_blocks_next_day_elective ? "checked" : ""} /> Post-24hr duty blocks next-day elective availability</label>
-        <label class="checkbox-line"><input id="rule-small-unit" type="checkbox" ${rules.unit_staffing_rules.small_unit_uses_absolute_minimum ? "checked" : ""} /> Small units use absolute minimum availability</label>
-      </section>
-      <section class="panel table-panel rota-rules-panel">
-        <h3>Who Can Do Each Duty?</h3>
-        <p class="panel-note">Use call levels for ordinary duties. Add eligibility groups only when a smaller selected pool within that call can do a duty, such as Schell, shift, PAC, or PB duties. Duty category is for counting and grouping duties; it is not a member list.</p>
-        ${callClusters.length && !activeClusterCount ? `
-          <p class="status warning">You have ${inactiveClusterCount} eligibility group(s), but none are active. Open Eligibility Groups and tick Active to use them here.</p>
-        ` : inactiveClusterCount ? `
-          <p class="panel-note">${inactiveClusterCount} inactive eligibility group(s) are shown as disabled options. Tick Active in Eligibility Groups to make them selectable.</p>
-        ` : ""}
-        <div class="rota-rule-list">${dutyRows}</div>
-      </section>
-    </form>
-  `;
+  await renderRotaRulesPage(viewRoot, {
+    onNavigate: (view) => navigateToView(view),
+    isCurrent: () => current() && activeView === "rota-rules",
+  });
 }
 
 async function renderCallClusters() {
@@ -6579,9 +6376,19 @@ function templateNextStep(locked: boolean, totalSlots: number, openSlots: number
     return nextStep({ tone: "danger", title: `${blocked} ${blocked === 1 ? "slot cannot" : "slots cannot"} be assigned safely`, body: "Open the highlighted days in the calendar to see the leave, rest or staffing reason." });
   }
   if (openSlots) {
-    return nextStep({ tone: "warning", title: `${openSlots} open ${openSlots === 1 ? "slot needs" : "slots need"} a person`, body: "Use Generate & review draft or the Intelligent generator, or assign from the day view." });
+    return nextStep({ tone: "warning", title: `${openSlots} open ${openSlots === 1 ? "slot needs" : "slots need"} a person`, body: "Choose Autoassign members to prepare a reviewed assignment draft, or assign from the day view." });
   }
   return nextStep({ tone: "success", title: "Every slot has a person", body: "Review warnings, overrides and workload next.", actionHtml: `<button type="button" class="primary" data-view-shortcut="rota-review">Go to Rota Review</button>` });
+}
+
+function generationReadiness(template: NonNullable<typeof rotaTemplate>, early=false) {
+  const draft=template.rota_period.status.toLowerCase()==="draft";
+  const assigned=template.slots.filter(s=>s.assignments.some(a=>["assigned","confirmed","draft"].includes(a.status.toLowerCase()))).length;
+  const open=Math.max(0,template.slots.length-assigned), locked=template.scope.is_locked;
+  return `<section class="generation-overview panel" aria-label="Generation workflow"><div class="generation-heading"><div><p class="eyebrow">Generation workspace</p><h2>Build the duties. Find the right people.</h2><p>${escapeHtml(formatMonth(rotaTemplateMonth))} · ${template.scope.included_units.length} units · ${template.slots.length} duties · ${assigned} filled · ${open} open</p></div><button type="button" class="icon-button" data-view-shortcut="compute-settings">Compute settings</button></div>
+    <ol class="generation-stages"><li><strong>1 · Build template</strong><span>Allocate duties to included units</span></li><li><strong>2 · Autoassign members</strong><span>Prepare safe member proposals</span></li><li><strong>3 · Review draft</strong><span>Apply only after final validation</span></li></ol>
+    <p role="status">${!draft?"This month is published. Generation is read-only.":!locked?"Lock included units in Rota Setup before building the template.":!template.slots.length?"Build and apply the template first, then Autoassign members.":!open?"All duties have members. Review the draft or use explicit repair in Whole-month optimisation.":`${open} duties are ready for Autoassign. Existing assignments stay fixed unless you explicitly allow repairs.`}</p>
+    ${early?`<div class="generation-early-actions"><button type="button" class="primary" data-early-build ${!draft||!locked?"disabled":""}>Build template</button><button type="button" class="primary" id="run-safe-auto-fill" ${!draft||!open?"disabled":""}>Autoassign members</button><button type="button" data-view-shortcut="rota-review">Review draft</button><p>Actions are ready. Optional reports are still loading…</p></div>`:""}</section>`;
 }
 
 async function renderRotaTemplate() {
@@ -6592,40 +6399,22 @@ async function renderRotaTemplate() {
   try {
     const templateResult = await withTimeout(getRotaTemplateMonth(rotaTemplateMonth), 12000, "Rota template");
     rotaTemplate = templateResult;
-    if (rotaTemplateFastMode) {
-      rotaSafety = emptyRotaSafety(templateResult);
-      rotaCandidates = emptyRotaCandidates(rotaTemplateMonth);
-      rotaAutoFill = null;
-      try {
-        rotaTemplateStats = await withTimeout(getRotaTemplateAllocationStatistics(rotaTemplateMonth), 12000, "Allocation statistics");
-      } catch (error) {
-        rotaTemplateStats = null;
-        showToast(error instanceof Error ? error.message : "Allocation statistics could not load", "warning");
-      }
-    } else {
-      try {
-        rotaTemplateStats = await withTimeout(getRotaTemplateAllocationStatistics(rotaTemplateMonth), 12000, "Allocation statistics");
-      } catch (error) {
-        rotaTemplateStats = null;
-        showToast(error instanceof Error ? error.message : "Allocation statistics could not load", "warning");
-      }
-      try {
-        rotaSafety = await withTimeout(getRotaSafetyMonth(rotaTemplateMonth), 12000, "Rota safety check");
-      } catch (error) {
-        rotaSafety = emptyRotaSafety(templateResult);
-        showToast(error instanceof Error ? error.message : "Rota safety check could not load", "warning");
-      }
-      try {
-        [rotaCandidates, rotaAutoFill] = await Promise.all([
-          withTimeout(getRotaCandidateMonth(rotaTemplateMonth), 12000, "Rota suggestions"),
-          withTimeout(getRotaAutoFillMonth(rotaTemplateMonth), 12000, "Rota auto-fill history"),
-        ]);
-      } catch (error) {
-        rotaCandidates = emptyRotaCandidates(rotaTemplateMonth);
-        rotaAutoFill = null;
-        showToast(error instanceof Error ? error.message : "Rota suggestions could not load", "warning");
-      }
-    }
+    if(!current()) return;
+    viewRoot.innerHTML=generationReadiness(templateResult,true)+pageSkeleton("optional generation reports");
+    const results=await Promise.allSettled([
+      withTimeout(getRotaTemplateAllocationStatistics(rotaTemplateMonth),12000,"Allocation statistics"),
+      ...(rotaTemplateFastMode?[]:[
+        withTimeout(getRotaSafetyMonth(rotaTemplateMonth),12000,"Rota safety check"),
+        withTimeout(getRotaCandidateMonth(rotaTemplateMonth),12000,"Rota suggestions"),
+        withTimeout(getRotaAutoFillMonth(rotaTemplateMonth),12000,"Rota auto-fill history"),
+      ]),
+    ]);
+    if(!current())return;
+    rotaTemplateStats=results[0].status==='fulfilled'?results[0].value as typeof rotaTemplateStats:null;
+    rotaSafety=results[1]?.status==='fulfilled'?results[1].value as typeof rotaSafety:emptyRotaSafety(templateResult);
+    rotaCandidates=results[2]?.status==='fulfilled'?results[2].value as typeof rotaCandidates:emptyRotaCandidates(rotaTemplateMonth);
+    rotaAutoFill=results[3]?.status==='fulfilled'?results[3].value as typeof rotaAutoFill:null;
+    for(const result of results)if(result.status==='rejected')showToast(result.reason instanceof Error?result.reason.message:"An optional report could not load. Generation remains available.","warning");
   } catch (error) {
     showToast(error instanceof Error ? error.message : "Failed to load rota template", "error");
     if (!current()) return;
@@ -6636,8 +6425,8 @@ async function renderRotaTemplate() {
   }
 
   const template = rotaTemplate;
-  const safety = rotaSafety;
-  const candidates = rotaCandidates;
+  const safety = rotaSafety || emptyRotaSafety(template);
+  const candidates = rotaCandidates || emptyRotaCandidates(rotaTemplateMonth);
   const autoFill = rotaAutoFill;
   const stats = rotaTemplateStats;
   const locked = template.scope.is_locked;
@@ -6646,7 +6435,7 @@ async function renderRotaTemplate() {
   const minimumAvailable = safety.unit_day_safety.length
     ? Math.min(...safety.unit_day_safety.map((row) => row.minimum_available_members))
     : 0;
-  const assignedSlotCount = template.slots.filter((slot) => slot.assignments.length > 0).length;
+  const assignedSlotCount = template.slots.filter((slot) => slot.assignments.some(a=>["assigned","confirmed","draft"].includes(a.status.toLowerCase()))).length;
   const openSlotCount = Math.max(0, template.slots.length - assignedSlotCount);
   const selectedDutyKeys = latestTemplateDutyKeys(template);
   const selectedDutyCount = selectedDutyKeys.size;
@@ -6657,14 +6446,15 @@ async function renderRotaTemplate() {
 
   if (!current()) return;
   viewRoot.innerHTML = `
+    ${generationReadiness(template)}
     ${templateNextStep(locked, template.summary.total_slots, openSlotCount, safety.summary.hard_blocked_slots, rotaTemplateMonth)}
     <form id="rota-template-form">
       <section class="page-toolbar" aria-label="Rota template actions">
         <p class="page-toolbar__context"><strong>${escapeHtml(formatMonth(rotaTemplateMonth))}</strong> · ${template.scope.included_units.length} ${template.scope.included_units.length === 1 ? "unit" : "units"}${includedUnitNames ? `: ${escapeHtml(includedUnitNames)}` : ""}</p>
         <div class="page-toolbar__actions">
-          <button class="primary" type="submit" id="generate-rota-template" ${locked ? "" : "disabled"}>${template.slots.length ? "Regenerate template" : "Generate template"}</button>
-          <button class="icon-button" type="button" id="run-safe-auto-fill" ${openSlotCount ? "" : "disabled"}>Generate &amp; review draft</button>
-          <button class="icon-button" type="button" id="run-intelligent-rota">Intelligent generator</button>
+          <button class="primary" type="submit" id="generate-rota-template" ${locked && template.rota_period.status.toLowerCase()==="draft" ? "" : "disabled"}>${template.slots.length ? "Preview rebuilt template" : "Build template"}</button>
+          <button class="icon-button" type="button" id="run-safe-auto-fill" ${openSlotCount && template.rota_period.status.toLowerCase()==="draft" ? "" : "disabled"}>Autoassign members</button>
+          <button class="icon-button" type="button" id="run-intelligent-rota" ${template.rota_period.status.toLowerCase()==="draft" && template.slots.length ? "" : "disabled"}>Whole-month optimisation</button>
           <details class="row-menu">
             <summary class="icon-button" aria-label="Export rota">Export</summary>
             <div class="row-menu__list" role="menu">
@@ -7945,6 +7735,12 @@ function showView(view: string) {
 
 /** Switch screens by name (`data-view` value). State is in memory only - no URL/history routing (handbook U4). */
 function navigateToView(selectedView: string) {
+  // Leaving (or reloading) Rota Rules with unsaved edits asks first; the edits live only on that page.
+  if (activeView === "rota-rules" && rotaRulesHasUnsavedChanges()
+      && !window.confirm("You have unsaved rota rule changes. Leave this page and discard them?")) {
+    updateNavigationState(activeView);
+    return;
+  }
   activeView = selectedView;
   viewSeq++;
   updateNavigationState(selectedView);
@@ -8094,46 +7890,6 @@ function bindViewEvents() {
       }
       return;
     }
-    if (form.id === "rota-rules-form") {
-      event.preventDefault();
-      if (!rotaPhaseOneRules) return;
-      const btn = form.querySelector<HTMLButtonElement>("#save-rota-rules");
-      const nextRules = JSON.parse(JSON.stringify(rotaPhaseOneRules)) as RotaPhaseOneRules;
-      nextRules.rest_rules.minimum_gap_after_24hr_hours = Number(form.querySelector<HTMLInputElement>("#rule-rest-hours")?.value ?? 24);
-      nextRules.rest_rules.post_24hr_blocks_next_day_elective = Boolean(form.querySelector<HTMLInputElement>("#rule-post-blocks")?.checked);
-      nextRules.unit_staffing_rules.minimum_available_count = Number(form.querySelector<HTMLInputElement>("#rule-min-available")?.value ?? 1);
-      nextRules.unit_staffing_rules.warning_unavailable_percent = Number(form.querySelector<HTMLInputElement>("#rule-warning-percent")?.value ?? 30);
-      nextRules.unit_staffing_rules.hard_block_unavailable_percent = Number(form.querySelector<HTMLInputElement>("#rule-hard-percent")?.value ?? 40);
-      nextRules.unit_staffing_rules.small_unit_uses_absolute_minimum = Boolean(form.querySelector<HTMLInputElement>("#rule-small-unit")?.checked);
-      nextRules.duty_count_limits.max_24hr_per_month = parseNumberOrNull(form.querySelector<HTMLInputElement>("#rule-max-24hr")?.value ?? "");
-      nextRules.duty_count_limits.max_weekend_24hr_per_month = parseNumberOrNull(form.querySelector<HTMLInputElement>("#rule-max-weekend")?.value ?? "");
-      form.querySelectorAll<HTMLInputElement | HTMLSelectElement>("[data-rule-index]").forEach((control) => {
-        const index = Number(control.dataset.ruleIndex);
-        const field = control.dataset.ruleField;
-        const rule = nextRules.duty_rules[index];
-        if (!rule || !field) return;
-        if (field === "duration_hours") rule.duration_hours = Number(control.value || 0);
-        else if (control instanceof HTMLSelectElement && field === "allowed_call_levels") rule.allowed_call_levels = selectedValues(control);
-        else if (control instanceof HTMLSelectElement && field === "allowed_cluster_keys") rule.allowed_cluster_keys = selectedValues(control);
-        else if (control instanceof HTMLSelectElement && field === "excluded_cluster_keys") rule.excluded_cluster_keys = selectedValues(control);
-        else if (control instanceof HTMLInputElement && control.type === "checkbox") {
-          (rule as unknown as Record<string, boolean>)[field] = control.checked;
-        } else {
-          (rule as unknown as Record<string, string>)[field] = control.value.trim();
-        }
-      });
-      setButtonLoading(btn, true, "Save Rules");
-      try {
-        const { rule_version: _ruleVersion, ...payload } = nextRules;
-        rotaPhaseOneRules = await updateRotaPhaseOneRules(payload);
-        showToast("Rota rules saved", "success");
-        await renderRotaRules();
-      } catch (error) {
-        showToast(error instanceof Error ? error.message : "Failed to save rota rules", "error");
-        resetButton(btn);
-      }
-      return;
-    }
     if (form.id === "call-cluster-form") {
       event.preventDefault();
       const btn = form.querySelector<HTMLButtonElement>("#save-call-cluster");
@@ -8228,25 +7984,18 @@ function bindViewEvents() {
         showToast("Select at least one duty type", "warning");
         return;
       }
-      if (!confirmAction("Generate the leave-aware empty slot template for this month?")) return;
-      setButtonLoading(btn, true, "Generate Template");
-      try {
-        rotaTemplate = await generateRotaTemplate(rotaTemplateMonth, {
-          duty_keys: dutyKeys,
-          starts_on: form.querySelector<HTMLInputElement>("#template-start")?.value || null,
-          ends_on: form.querySelector<HTMLInputElement>("#template-end")?.value || null,
-          include_weekdays: Boolean(form.querySelector<HTMLInputElement>("#template-weekdays")?.checked),
-          include_weekends: Boolean(form.querySelector<HTMLInputElement>("#template-weekends")?.checked),
-          replace_existing: Boolean(form.querySelector<HTMLInputElement>("#template-replace")?.checked),
-          allocation_fairness_policy: (form.querySelector<HTMLSelectElement>("#template-fairness-policy")?.value as "equal_unit" | "equal_people" | "hybrid") || "hybrid",
-        });
-        showToast(`Generated ${rotaTemplate.latest_run?.created_slots ?? 0} empty slot(s)`, "success");
-        rejectedRotaCandidates.clear();
-        await renderRotaTemplate();
-      } catch (error) {
-        showToast(error instanceof Error ? error.message : "Failed to generate rota template", "error");
-        resetButton(btn);
-      }
+      await openRotaCompute(rotaTemplateMonth, isAdminUser(), () => {
+        rejectedRotaCandidates.clear(); void renderRotaTemplate();
+      }, {
+        duty_keys: dutyKeys,
+        starts_on: form.querySelector<HTMLInputElement>("#template-start")?.value || null,
+        ends_on: form.querySelector<HTMLInputElement>("#template-end")?.value || null,
+        include_weekdays: Boolean(form.querySelector<HTMLInputElement>("#template-weekdays")?.checked),
+        include_weekends: Boolean(form.querySelector<HTMLInputElement>("#template-weekends")?.checked),
+        replace_existing: Boolean(form.querySelector<HTMLInputElement>("#template-replace")?.checked),
+        allocation_fairness_policy: form.querySelector<HTMLSelectElement>("#template-fairness-policy")?.value || "hybrid",
+      });
+      resetButton(btn);
       return;
     }
     if (form.id === "rota-exchange-form") {
@@ -9022,8 +8771,14 @@ function bindViewEvents() {
       return;
     }
 
+    if (target.hasAttribute("data-early-build") && rotaTemplate) {
+      const summary=rotaTemplate.latest_run?.summary || {};
+      const configuration={duty_keys:summary.duty_keys || [...latestTemplateDutyKeys(rotaTemplate)],replace_existing:true,
+        allocation_fairness_policy:summary.allocation_fairness_policy || "hybrid"};
+      void openRotaCompute(rotaTemplateMonth,isAdminUser(),()=>{void renderRotaTemplate();},configuration);return;
+    }
     if (target.id === "run-safe-auto-fill") {
-      void openRotaCompute(rotaTemplateMonth, isAdminUser(), () => {
+      void openAutoassign(rotaTemplateMonth, isAdminUser(), () => {
         rejectedRotaCandidates.clear(); closeRotaDayModal(); void renderRotaTemplate();
       });
       return;

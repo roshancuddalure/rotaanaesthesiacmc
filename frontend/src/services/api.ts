@@ -947,6 +947,10 @@ export interface CallCluster {
 }
 
 export interface RotaPhaseOneRules {
+  /** Hash of the saved rules; sent back as `base_revision` so a stale save is refused (409). */
+  revision?: string;
+  /** Eligibility groups with today's active member counts (read-only; not part of the save payload). */
+  groups?: RotaRuleGroup[];
   rule_version: {
     id: string;
     name: string;
@@ -2086,10 +2090,11 @@ export function getRotaPhaseOneRules(): Promise<RotaPhaseOneRules> {
   return request<RotaPhaseOneRules>("/api/v1/admin/rota-rules/phase-one");
 }
 
-export function updateRotaPhaseOneRules(payload: Omit<RotaPhaseOneRules, "rule_version">): Promise<RotaPhaseOneRules> {
+/** Saves the full rules payload. `baseRevision` is the revision the edits started from: 409 `stale_rules` when someone saved since, 422 `invalid_rules` with every error problem. */
+export function updateRotaPhaseOneRules(payload: RotaRulesPayload, baseRevision: string | null = null): Promise<RotaPhaseOneRules> {
   return request<RotaPhaseOneRules>("/api/v1/admin/rota-rules/phase-one", {
     method: "PUT",
-    body: JSON.stringify(payload),
+    body: JSON.stringify({ ...payload, base_revision: baseRevision }),
   });
 }
 
@@ -2460,4 +2465,82 @@ export async function getRecordedPastDuties(month: string): Promise<RecordedPast
     `/api/v1/admin/past-duties/recorded?month=${encodeURIComponent(month)}`,
   );
   return Array.isArray(data) ? { items: data, truncated: false } : { items: data.items ?? [], truncated: Boolean(data.truncated) };
+}
+
+// --- Rota rules: checks, history and eligibility gaps (docs/rota_rules_contract.md) ---
+
+export interface RotaRuleGroup { key: string; name: string; call_level: string | null; active: boolean; members: number; }
+
+/** What the PUT, /check and a version snapshot carry: the rules without server-only fields. */
+export type RotaRulesPayload = Omit<RotaPhaseOneRules, "rule_version" | "revision" | "groups">;
+
+export interface RotaRuleProblem {
+  duty_key: string | null;
+  field: string;
+  code: string;
+  severity: "error" | "warning";
+  message: string;
+  fix: string;
+}
+
+export interface RotaRuleDutyCheck { effective_call_levels: string[]; eligible_now: number; eligible_by_level: Record<string, number>; }
+
+export interface RotaRulesCheck { problems: RotaRuleProblem[]; duties: Record<string, RotaRuleDutyCheck>; }
+
+export interface RotaRuleVersionSummary {
+  version_id: string;
+  saved_at: string;
+  saved_by: string | null;
+  revision: string;
+  changed_duties: string[];
+  note: string | null;
+}
+
+export interface RotaRuleVersion { version_id: string; saved_at: string; saved_by: string | null; rules: RotaRulesPayload; }
+
+export interface RotaEligibilityGap { duty_key: string; label: string; reason: string; }
+
+/** Dry run of a save: every problem (errors block a save, warnings never do) and who is eligible today per duty. */
+export function checkRotaRules(payload: RotaRulesPayload): Promise<RotaRulesCheck> {
+  return request<RotaRulesCheck>("/api/v1/admin/rota-rules/phase-one/check", { method: "POST", body: JSON.stringify(payload) });
+}
+
+export function getRotaRuleVersions(): Promise<RotaRuleVersionSummary[]> {
+  return request<RotaRuleVersionSummary[]>("/api/v1/admin/rota-rules/phase-one/versions");
+}
+
+export function getRotaRuleVersion(versionId: string): Promise<RotaRuleVersion> {
+  return request<RotaRuleVersion>(`/api/v1/admin/rota-rules/phase-one/versions/${encodeURIComponent(versionId)}`);
+}
+
+/** Saves an older snapshot as the current rules (a new version). 409 `stale_rules` as for the PUT; 404 for an unknown version. */
+export function restoreRotaRuleVersion(versionId: string, baseRevision: string | null): Promise<RotaPhaseOneRules> {
+  return request<RotaPhaseOneRules>(`/api/v1/admin/rota-rules/phase-one/versions/${encodeURIComponent(versionId)}/restore`, {
+    method: "POST",
+    body: JSON.stringify({ base_revision: baseRevision }),
+  });
+}
+
+/** Active duties nobody is eligible for in the month (YYYY-MM). */
+export function getEligibilityGaps(month: string): Promise<RotaEligibilityGap[]> {
+  return request<RotaEligibilityGap[]>(`/api/v1/admin/rota-rules/eligibility-gaps?month=${encodeURIComponent(month)}`);
+}
+
+type RotaRulesApiError = Error & { status?: number; detail?: unknown };
+
+/** The `{code, ...}` detail of a rota-rules error, when the server sent one. */
+export function rotaRulesErrorDetail(error: unknown): { code?: string; message?: string; problems?: RotaRuleProblem[]; current_revision?: string } | null {
+  const detail = (error as RotaRulesApiError | null)?.detail;
+  return detail && typeof detail === "object" && !Array.isArray(detail) ? detail as { code?: string } : null;
+}
+
+/** True for 409 `stale_rules`: someone else saved the rules after this page loaded them. */
+export function isStaleRulesError(error: unknown): boolean {
+  return (error as RotaRulesApiError | null)?.status === 409 && rotaRulesErrorDetail(error)?.code === "stale_rules";
+}
+
+/** The problems of a 422 `invalid_rules`, or null for any other error. */
+export function invalidRulesProblems(error: unknown): RotaRuleProblem[] | null {
+  const detail = rotaRulesErrorDetail(error);
+  return (error as RotaRulesApiError | null)?.status === 422 && detail?.code === "invalid_rules" ? detail.problems ?? [] : null;
 }

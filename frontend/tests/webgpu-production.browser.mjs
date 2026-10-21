@@ -27,12 +27,27 @@ try {
     await page.locator('[data-view="rota-template"]').first().evaluate(b => b.click()); await templateLoaded;
     await page.getByText('Template Generation Settings', { exact: true }).waitFor();
     await page.locator("#working-month").fill("2026-05"); await page.locator("#working-month").dispatchEvent("change");
-    await page.locator("#run-safe-auto-fill").click(); await page.locator("[data-generate]").click();
+    await page.locator("#run-safe-auto-fill").click(); await page.locator("[data-quick]").click(); await page.locator("[data-generate]").click();
     await page.getByText("Draft ready for review.", { exact: false }).waitFor();
     assert.equal(await page.locator("[data-apply]").isDisabled(), true);
     const state = await (await fetch(base + "/__fixture")).json(); assert.equal(state.assignments, 0);
     const jobs = await (await fetch(base + "/api/v1/rota-compute/jobs?month=2026-05")).json(); assert.equal(jobs[0].engine, "local_gpu");
     await page.locator("[data-cancel]").click(); await page.getByText("Proposal cancelled.", { exact: false }).waitFor();
+    await page.locator('[data-close]').click();
+    await fetch(base+'/__fixture/template',{method:'POST'});
+    await page.reload();await page.getByRole('heading',{name:'Duty workload at a glance',exact:true}).waitFor();
+    await page.locator('[data-view="rota-template"]').first().evaluate(b=>b.click());
+    await page.getByText('Template Generation Settings',{exact:true}).waitFor();
+    await page.locator('.template-settings-panel > summary').click();
+    await page.locator('#template-start').fill('2026-05-01');await page.locator('#template-end').fill('2026-05-04');
+    await page.locator('#generate-rota-template').click();
+    await page.getByRole('heading',{name:'Preview template allocation',exact:true}).waitFor();
+    await page.locator('[data-generate]').click();await page.getByText('Draft ready for review.',{exact:false}).waitFor({timeout:60000});
+    const templateJobs=await(await fetch(base+'/api/v1/rota-compute/jobs?month=2026-05')).json();
+    assert.equal(templateJobs[0].kind,'template');assert.equal(templateJobs[0].engine,'local_gpu');
+    assert.equal((await(await fetch(base+'/__fixture/generation')).json()).slots,0);
+    assert.equal(await page.locator('[data-apply]').isDisabled(),true);
+    await page.locator('[data-cancel]').click();await page.getByText('Proposal cancelled.',{exact:false}).waitFor();
     const workerPath = await page.evaluate(async () => {
       const html = await (await fetch("/")).text(); const script = html.match(/src="([^"]+\.js)"/)[1];
       const js = await (await fetch(script)).text(); return "/assets/" + js.match(/compute-worker-[\w-]+\.js/)[0];
@@ -56,7 +71,7 @@ try {
       try { await fetch("https://untrusted.example/gpu"); return false; } catch { return true; }
     }); assert.equal(denied, true);
     assert.deepEqual(errors, []);
-    report.workflows.push({ width, gpu_generation: true, review_required: true, assignments: 0, worker_network_blocked: true, external_network_blocked: true });
+    report.workflows.push({ width, gpu_generation: true,template_gpu_generation:true, review_required: true, assignments: 0,template_slots_before_apply:0, worker_network_blocked: true, external_network_blocked: true });
     await page.close();
   }
   if (process.env.COMPUTE_PREVIEW_URL) {

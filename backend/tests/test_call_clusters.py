@@ -179,13 +179,22 @@ def test_rota_rules_reject_unknown_engine_markers() -> None:
 
         payload["duty_rules"][0]["allowed_call_levels"] = ["Not a real call"]
         bad_call = client.put("/api/v1/admin/rota-rules/phase-one", headers=headers, json=payload)
-        assert bad_call.status_code == 400
-        assert "Unknown allowed call level" in bad_call.json()["detail"]
+        # Contract 21 Oct 2026: structured 422 listing every problem (was a plain 400).
+        assert bad_call.status_code == 422
+        detail = bad_call.json()["detail"]
+        assert detail["code"] == "invalid_rules"
+        assert any(
+            p["code"] == "unknown_call_level" and "Unknown allowed call level" in p["message"]
+            for p in detail["problems"]
+        )
 
         response = client.get("/api/v1/admin/rota-rules/phase-one", headers=headers)
         payload = response.json()
         payload.pop("rule_version")
         payload["duty_rules"][0]["allowed_cluster_keys"] = ["misspelled_group_key"]
         bad_group = client.put("/api/v1/admin/rota-rules/phase-one", headers=headers, json=payload)
-        assert bad_group.status_code == 400
-        assert "Unknown allowed eligibility group" in bad_group.json()["detail"]
+        assert bad_group.status_code == 422
+        assert any(
+            p["code"] == "unknown_group" and "Unknown allowed eligibility group" in p["message"]
+            for p in bad_group.json()["detail"]["problems"]
+        )

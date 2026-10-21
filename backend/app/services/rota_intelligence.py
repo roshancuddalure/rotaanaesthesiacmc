@@ -1,6 +1,8 @@
 """Reviewed optimization orchestration and teaching; no autonomous policy changes."""
 
 import copy
+import hashlib
+import json
 from itertools import product
 from datetime import datetime, date
 from uuid import UUID, uuid4
@@ -16,6 +18,19 @@ from app.services.rota_optimizer import solve_month, without_slots, validate_pla
 from app.services.reference_registry import lock_namespace
 
 DEFAULT_WEIGHTS = {"burden": 1, "spacing": 1, "history": 1}
+
+
+def benchmark_context_hash(data_hash, learning):
+    return hashlib.sha256(
+        json.dumps(
+            [
+                data_hash,
+                str(learning.id) if learning else None,
+                learning.data["weights"] if learning else DEFAULT_WEIGHTS,
+            ],
+            sort_keys=True,
+        ).encode()
+    ).hexdigest()
 
 
 def calendar(db):
@@ -111,11 +126,12 @@ def start(db, month, user, options):
     people = context.people
     if any(p["slot_id"] not in slots or UUID(p["person_id"]) not in people for p in requested):
         raise HTTPException(422, "Preferences must reference this month and posted members")
-    result = compute.create_job(db, month, user)
+    result = compute.create_job(db, month, user, options.get("engine", "server"), commit=False)
     job = db.get(compute.RotaComputeJob, UUID(result["id"]))
     learning = active_learning(db)
     job.state = {
         **job.state,
+        "benchmark_context_hash": benchmark_context_hash(job.context_hash, learning),
         "intelligence": {
             "version": 1,
             "options": options,
@@ -128,6 +144,7 @@ def start(db, month, user, options):
                 s: {
                     "assignment_id": str(compute.active_slot_assignments(slots[s])[0].id),
                     "person_id": str(compute.active_slot_assignments(slots[s])[0].person_id),
+                    "status": compute.active_slot_assignments(slots[s])[0].status,
                 }
                 for s in repair
             },
@@ -137,7 +154,7 @@ def start(db, month, user, options):
     return compute.serialize(job)
 
 
-def advance(db, job, revision):
+def advance(db, job, revision, selection=None, token=None, fallback=False, selections=None):
     if revision < job.revision or job.status not in {"queued", "running"}:
         return compute.serialize(job)
     if revision != job.revision:
@@ -156,6 +173,93 @@ def advance(db, job, revision):
         and (s in intelligence["originals"] or not compute.active_slot_assignments(slot))
     }
     preferences = {f"{p['slot_id']}:{p['person_id']}": p["penalty"] for p in options["preferences"]}
+    if fallback:
+        job.engine = "server"
+        state["fallback_reason"] = "Browser computation unavailable; continued on the server."
+    if job.engine == "local_gpu":
+        from app.services.compute_kernels import frame, ranks
+        from app.services.rota_candidates import slot_candidates_with_context
+        import hashlib
+
+        assistance = intelligence.setdefault(
+            "gpu_assistance", {"cursor": 0, "hints": {}, "batches": []}
+        )
+        if not assistance.get("prepared"):
+            for sid, slot in sorted(slots.items()):
+                candidates = [
+                    c
+                    for c in slot_candidates_with_context(db, slot=slot, context=base)["candidates"]
+                    if c["validation_status"] == "clear"
+                    and c["candidate_status"] == "eligible"
+                    and not c["requires_override"]
+                ]
+                if not candidates:
+                    continue
+                ordered = sorted(candidates, key=lambda c: c["person_id"])
+                canonical_ties = {
+                    c["person_id"]: i
+                    for i, c in enumerate(
+                        sorted(candidates, key=lambda c: (c["person_name"], c["person_id"]))
+                    )
+                }
+                numeric, _ = frame(
+                    [
+                        [
+                            sum(
+                                c["score_parts"].get(key, 0) * intelligence["weights"][weight]
+                                for key, weight in [
+                                    ("burden", "burden"),
+                                    ("historical_fairness", "history"),
+                                    ("rest", "spacing"),
+                                ]
+                            ),
+                            c["rank_score"],
+                        ]
+                        for c in ordered
+                    ],
+                    [canonical_ties[c["person_id"]] for c in ordered],
+                )
+                assistance["batches"].append(
+                    {"slot": sid, "people": [c["person_id"] for c in ordered], "public": numeric}
+                )
+            assistance["prepared"] = True
+        cursor = assistance["cursor"]
+        batches = assistance["batches"]
+        if selection is not None or selections is not None:
+            expected_token = hashlib.sha256(
+                f"optimizer:{job.id}:{job.revision}:{cursor}".encode()
+            ).hexdigest()
+            supplied = selections if selections is not None else [selection]
+            if (
+                cursor >= len(batches)
+                or token != expected_token
+                or not 1 <= len(supplied) <= min(32, len(batches) - cursor)
+            ):
+                raise HTTPException(422, "Invalid optimizer scoring frame")
+            expected = [
+                ranks(b["public"]["rows"], b["public"]["ties"]).index(0)
+                for b in batches[cursor : cursor + len(supplied)]
+            ]
+            if (
+                supplied != expected
+                or any(type(i) is not int for i in supplied)
+                or selection is not None
+                and selection != supplied[0]
+            ):
+                raise HTTPException(422, "GPU optimizer hint disagreed with canonical scoring")
+            for offset, selected in enumerate(supplied):
+                batch = batches[cursor + offset]
+                assistance["hints"][batch["slot"]] = batch["people"][selected]
+            state["metrics"]["gpu_frames_verified"] = state["metrics"].get(
+                "gpu_frames_verified", 0
+            ) + len(supplied)
+            assistance["cursor"] += len(supplied)
+        if assistance["cursor"] < len(batches):
+            job.status = "running"
+            job.revision += 1
+            job.state = state
+            db.commit()
+            return compute.serialize(job)
     # One bounded search per request. Further calls produce distinct alternatives.
     previous = intelligence["alternatives"]
     forbidden = [p["choices"] for p in previous]
@@ -179,6 +283,7 @@ def advance(db, job, revision):
         holiday_dates=calendar(db),
         minimum_coverage=len(previous[0]["choices"]) if previous else 0,
         minimum_required=minimum_required,
+        seed_choices=intelligence.get("gpu_assistance", {}).get("hints", {}),
     )
     decisions = []
     final_context = without_slots(base, [])

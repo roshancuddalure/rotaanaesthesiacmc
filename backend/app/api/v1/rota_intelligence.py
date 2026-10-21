@@ -15,6 +15,7 @@ from app.services import rota_compute as compute, rota_intelligence as service
 from app.services.auth import ADMIN_ROLES
 from app.services.leave import month_bounds
 from app.services.rota_candidates import candidate_context
+from app.api.v1.rota_compute import limit_start, limit_work
 
 router = APIRouter(prefix="/rota-intelligence", dependencies=[Depends(current_user)])
 
@@ -28,6 +29,7 @@ class Preference(BaseModel):
 class Start(BaseModel):
     model_config = ConfigDict(extra="forbid")
     month: str
+    engine: Literal["server", "local_gpu"] = "server"
     mode: Literal["balanced", "repair", "preferences"] = "balanced"
     seconds: int = Field(default=30, ge=1, le=120)
     locked_slots: list[UUID] = Field(default_factory=list, max_length=5000)
@@ -225,9 +227,17 @@ def historical_examples(
     return {"prepared": count, "status": "unverified"}
 
 
-@router.post("/jobs")
+@router.post("/jobs", dependencies=[Depends(limit_start)])
 def start(payload: Start, db: Session = Depends(get_db), user: UserAccount = Depends(current_user)):
     enabled()
+    if payload.engine == "local_gpu" and (
+        user.role not in ADMIN_ROLES
+        or not settings.browser_gpu_enabled
+        or not settings.optimizer_gpu_enabled
+    ):
+        raise HTTPException(
+            403, "Optimizer GPU assistance requires an admin and enabled GPU features"
+        )
     try:
         month_bounds(payload.month)
     except ValueError as exc:
@@ -250,7 +260,7 @@ def select_alternative(
     )
 
 
-@router.post("/jobs/{job_id}/alternative")
+@router.post("/jobs/{job_id}/alternative", dependencies=[Depends(limit_work)])
 def alternative(
     job_id: UUID,
     payload: Selection,

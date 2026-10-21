@@ -29,7 +29,7 @@ from app.models.rota import (
     RotaTemplateGenerationEvent,
     RotaTemplateGenerationRun,
 )
-from app.models.rules import RuleSetting, RuleVersion
+from app.models.rules import RotaRuleVersion, RuleSetting, RuleVersion
 from app.models.unit import Unit, UnitCallMinimum
 
 __all__ = [
@@ -74,6 +74,7 @@ __all__ = [
     "RotaReviewDecision",
     "RotaTemplateGenerationEvent",
     "RotaTemplateGenerationRun",
+    "RotaRuleVersion",
     "RuleSetting",
     "RuleVersion",
     "Unit",

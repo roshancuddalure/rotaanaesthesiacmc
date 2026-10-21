@@ -160,3 +160,38 @@ test("disabled browser storage cannot enable local GPU or cause unhandled errors
     assert.equal(await compute.prepareEngine(true, true, { month: "2026-05", hash: "same" }), "server");
   } finally { globalThis.localStorage = original; }
 });
+
+test("signed lexicographic ranking preserves ordered objectives and exact boundaries",()=>{
+  const input=protocol.scoreInput({kernel:'lexicographic',version:3,rows:[[-2147483648,2147483647],[-2147483647,-2147483648],[-2147483648,2147483647]],ties:[2,1,0]});
+  assert.deepEqual(protocol.numericScores(input),[1,2,0]);
+  assert.deepEqual(Object.keys(input),['kernel','version','rows','ties']);
+  assert.throws(()=>protocol.scoreInput({...input,rows:[[2147483648]]}));
+  assert.throws(()=>protocol.scoreInput({...input,version:2}));
+  assert.throws(()=>protocol.scoreInput({...input,rows:[Array(33).fill(0)],ties:[0]}));
+});
+test("automatic proofs cannot cross workloads, configurations or kernels",()=>{
+  reset();const p=pref();p.test.kernel_checks={members:true,template:true,optimizer:true};compute.savePreference(p);compute.rememberTest(p.test);
+  const context={month:'2026-05',hash:'same',workload:'template',configuration:'template-options'};
+  assert.equal(compute.selectedEngine(true,true,context),'server');
+  p.proofs={template:{...p.proof,workload:'template',kernel_version:3,configuration:'template-options'}};compute.savePreference(p);
+  assert.equal(compute.selectedEngine(true,true,context),'local_gpu');
+  assert.equal(compute.selectedEngine(true,true,{...context,configuration:'changed'}),'server');
+  assert.equal(compute.selectedEngine(true,true,{...context,estimatedRows:8}),'server');
+  assert.equal(compute.selectedEngine(true,true,{...context,workload:'optimizer'}),'server');
+  p.proofs.template.kernel_version=2;compute.savePreference(p);assert.equal(compute.selectedEngine(true,true,context),'server');
+});
+test("frozen cross-language golden fixtures preserve scores and canonical winners",async()=>{
+  const cases=JSON.parse(await readFile(new URL('../../backend/tests/fixtures/generation_numeric_goldens.json',import.meta.url),'utf8'));
+  for(const fixture of cases){
+    const input=protocol.scoreInput({rows:fixture.rows,ties:fixture.ties,...(fixture.kernel==='lexicographic'?{kernel:fixture.kernel,version:3}:{})});
+    assert.deepEqual(protocol.numericScores(input),fixture.expected_scores,fixture.name);
+    assert.equal(protocol.winnerFor(fixture.expected_scores,fixture.ties),fixture.expected_winner,fixture.name);
+  }
+});
+test("numeric batch envelopes retain order, aggregate timings and reject changed devices",async()=>{
+  reset();const input={...valid(),batches:[valid(),valid()]};let calls=0;
+  const result=await compute.scoreFrame(input,async()=>({winner:calls++,scores:[36],gpu_ms:2,signature:'same'}));
+  assert.deepEqual(result.selections,[0,1]);assert.equal(result.gpu_ms,4);
+  await assert.rejects(compute.scoreFrame({...valid(),batches:[]},async()=>{}),/Invalid numeric batch/);
+  calls=0;await assert.rejects(compute.scoreFrame(input,async()=>({winner:0,scores:[36],gpu_ms:1,signature:String(calls++)})),/GPU changed/);
+});

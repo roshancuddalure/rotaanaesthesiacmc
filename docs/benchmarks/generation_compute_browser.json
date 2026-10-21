@@ -1,0 +1,191 @@
+{
+  "date": "2026-10-20T21:19:47.465Z",
+  "hardware": [
+    {
+      "mode": "default",
+      "test": {
+        "supported": true,
+        "software": false,
+        "adapter": "intel",
+        "vendor": "intel",
+        "architecture": "gen-9",
+        "description": "",
+        "device": "",
+        "signature": "[2,\"high-performance\",\"intel\",\"gen-9\",\"\",\"\",false,268435456,134217728,65535]",
+        "preference": "high-performance",
+        "version": 2,
+        "parity": true,
+        "test_ms": 710.8000000119209,
+        "kernel_checks": {
+          "members": true,
+          "template": true,
+          "optimizer": true
+        }
+      },
+      "cases": [
+        {
+          "count": 1,
+          "parity": true,
+          "gpu_ms": 5.199999988079071
+        },
+        {
+          "count": 63,
+          "parity": true,
+          "gpu_ms": 5
+        },
+        {
+          "count": 64,
+          "parity": true,
+          "gpu_ms": 4.699999988079071
+        },
+        {
+          "count": 65,
+          "parity": true,
+          "gpu_ms": 5
+        },
+        {
+          "count": 513,
+          "parity": true,
+          "gpu_ms": 5.799999982118607
+        },
+        {
+          "count": 2048,
+          "parity": true,
+          "gpu_ms": 9
+        },
+        {
+          "count": 4096,
+          "parity": true,
+          "gpu_ms": 17
+        }
+      ]
+    },
+    {
+      "mode": "nvidia",
+      "test": {
+        "supported": true,
+        "software": false,
+        "adapter": "nvidia",
+        "vendor": "nvidia",
+        "architecture": "turing",
+        "description": "",
+        "device": "",
+        "signature": "[2,\"high-performance\",\"nvidia\",\"turing\",\"\",\"\",false,268435456,134217728,65535]",
+        "preference": "high-performance",
+        "version": 2,
+        "parity": true,
+        "test_ms": 901.5,
+        "kernel_checks": {
+          "members": true,
+          "template": true,
+          "optimizer": true
+        }
+      },
+      "cases": [
+        {
+          "count": 1,
+          "parity": true,
+          "gpu_ms": 1.7999999821186066
+        },
+        {
+          "count": 63,
+          "parity": true,
+          "gpu_ms": 2.7999999821186066
+        },
+        {
+          "count": 64,
+          "parity": true,
+          "gpu_ms": 1.800000011920929
+        },
+        {
+          "count": 65,
+          "parity": true,
+          "gpu_ms": 4.5
+        },
+        {
+          "count": 513,
+          "parity": true,
+          "gpu_ms": 5.200000017881393
+        },
+        {
+          "count": 2048,
+          "parity": true,
+          "gpu_ms": 6.199999988079071
+        },
+        {
+          "count": 4096,
+          "parity": true,
+          "gpu_ms": 7
+        }
+      ]
+    }
+  ],
+  "workflows": [
+    {
+      "mode": "default",
+      "width": 1280,
+      "template_preview_no_writes": true,
+      "template_gpu": true,
+      "review_required": true,
+      "autoassigned": 4,
+      "serious_accessibility_violations": 0
+    },
+    {
+      "mode": "default",
+      "width": 390,
+      "template_preview_no_writes": true,
+      "template_gpu": true,
+      "review_required": true,
+      "autoassigned": 4,
+      "serious_accessibility_violations": 0
+    },
+    {
+      "mode": "default",
+      "width": 320,
+      "template_preview_no_writes": true,
+      "template_gpu": true,
+      "review_required": true,
+      "autoassigned": 4,
+      "serious_accessibility_violations": 0
+    },
+    {
+      "mode": "default",
+      "kind": "whole-month",
+      "gpu_frames": 2,
+      "review_required": true
+    },
+    {
+      "mode": "nvidia",
+      "width": 1280,
+      "template_preview_no_writes": true,
+      "template_gpu": true,
+      "review_required": true,
+      "autoassigned": 4,
+      "serious_accessibility_violations": 0
+    },
+    {
+      "mode": "nvidia",
+      "width": 390,
+      "template_preview_no_writes": true,
+      "template_gpu": true,
+      "review_required": true,
+      "autoassigned": 4,
+      "serious_accessibility_violations": 0
+    },
+    {
+      "mode": "nvidia",
+      "width": 320,
+      "template_preview_no_writes": true,
+      "template_gpu": true,
+      "review_required": true,
+      "autoassigned": 4,
+      "serious_accessibility_violations": 0
+    },
+    {
+      "mode": "nvidia",
+      "kind": "whole-month",
+      "gpu_frames": 2,
+      "review_required": true
+    }
+  ]
+}

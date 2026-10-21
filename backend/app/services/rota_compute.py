@@ -31,7 +31,7 @@ from app.services.rota_candidates import (
     slot_candidates_with_context,
     add_provisional_assignment,
 )
-from app.services.rota_safety import required_call_levels, rule_for_slot
+from app.services.rota_safety import required_call_levels, rule_for_slot, rules_groups
 from app.services.rota_setup import monthly_setup
 
 ACTIVE = {"queued", "running", "completed"}
@@ -87,6 +87,15 @@ def writable_period(db, month):
 def serialize(job):
     state = job.state
     decisions = state.get("decisions", [])
+    pending_frame = state.get("pending", {}).get("public")
+    if state.get("template") and job.status == "running" and job.engine == "local_gpu":
+        from app.services.template_compute import public_frame
+        pending_frame = public_frame(job, state["template"])
+    assistance = state.get("intelligence", {}).get("gpu_assistance", {})
+    cursor = assistance.get("cursor", 0)
+    batches = assistance.get("batches", [])
+    if job.engine == "local_gpu" and job.status == "running" and cursor < len(batches):
+        pending_frame = {**batches[cursor]["public"], "token": hashlib.sha256(f"optimizer:{job.id}:{job.revision}:{cursor}".encode()).hexdigest(),"batches":[b["public"] for b in batches[cursor:cursor+32]]}
     return {
         "id": str(job.id),
         "month": job.month,
@@ -95,17 +104,21 @@ def serialize(job):
         "fallback_reason": state.get("fallback_reason"),
         "revision": job.revision,
         "context_hash": job.context_hash,
+        "benchmark_context_hash": state.get("benchmark_context_hash",job.context_hash),
         "processed": state.get("cursor", 0),
         "total": len(state.get("slots", [])),
-        "proposed": sum(d.get("person_id") is not None for d in decisions),
-        "unresolved": sum(d.get("action") == "unresolved" for d in decisions),
+        "proposed": len(decisions) if state.get("template") else sum(d.get("person_id") is not None for d in decisions),
+        "unresolved": sum(bool(d.get("forced")) for d in decisions) if state.get("template") else sum(d.get("action") == "unresolved" for d in decisions),
         "decisions": decisions,
-        "frame": state.get("pending", {}).get("public"),
+        "frame": pending_frame,
+        "kind": "template" if state.get("template") else "intelligent" if state.get("intelligence") else "members",
+        "requested_engine": state.get("requested_engine", job.engine),
+        "template": {key: value for key, value in state.get("template", {}).items() if key in {"options", "summary", "plan_hash"}} or None,
         "metrics": state.get("metrics", {}),
         "error": state.get("error"),
         "result": state.get("result"),
         "burden": burden_comparison(state),
-        "intelligence": state.get("intelligence"),
+        "intelligence": {k:v for k,v in state["intelligence"].items() if k!="gpu_assistance"} if state.get("intelligence") else None,
         "created_at": job.created_at.isoformat() + "Z",
     }
 
@@ -143,7 +156,7 @@ def burden_comparison(state):
     return {"members": len(before), "before": summarize(before), "after": summarize(after)}
 
 
-def create_job(db, month, operator, engine="server"):
+def create_job(db, month, operator, engine="server", *, commit=True):
     lock_namespace(db, "rota-compute")
     active = list(db.scalars(select(RotaComputeJob).where(
         RotaComputeJob.operator_id == operator.id, RotaComputeJob.status.in_(ACTIVE),
@@ -182,6 +195,7 @@ def create_job(db, month, operator, engine="server"):
         engine=engine,
         context_hash=context_hash(db),
         state={
+            "requested_engine": engine,
             "slots": [str(s.id) for s in slots],
             "cursor": 0,
             "operator_name": operator.display_name or operator.username,
@@ -205,7 +219,10 @@ def create_job(db, month, operator, engine="server"):
         },
     )
     db.add(job)
-    db.commit()
+    if commit:
+        db.commit()
+    else:
+        db.flush()
     return serialize(job)
 
 
@@ -254,7 +271,9 @@ def prepare_context(db, job, state):
 
 def choose_candidates(db, slot, context):
     row = slot_candidates_with_context(db, slot=slot, context=context)
-    calls = required_call_levels(slot, rule_for_slot(slot, context.rules))
+    calls = required_call_levels(
+        slot, rule_for_slot(slot, context.rules), rules_groups(context.rules, slot)
+    )
     candidates = (
         [
             c
@@ -264,7 +283,7 @@ def choose_candidates(db, slot, context):
             and not c["requires_override"]
             and c["call_level"] in calls
         ]
-        if len(calls) == 1
+        if calls
         else []
     )
     return row, candidates
@@ -289,11 +308,16 @@ def decision_for(
     }
 
 
-def advance(db, job, revision, selection=None, token=None, fallback=False, batch=8):
+def advance(db, job, revision, selection=None, token=None, fallback=False, batch=8,selections=None):
+    if job.state.get("template"):
+        from app.services.template_compute import advance as advance_template
+        return advance_template(db, job, revision, selection, token, fallback,selections)
     if job.state.get("intelligence"):
         from app.services.rota_intelligence import advance as intelligent_advance
 
-        return intelligent_advance(db, job, revision)
+        return intelligent_advance(db, job, revision, selection, token, fallback,selections)
+    if selections is not None:
+        raise HTTPException(422,"Batched results require a template or optimiser workload")
     if revision < job.revision:
         return serialize(job)  # Retry after a lost response: do not execute another step.
     if revision != job.revision:
@@ -317,6 +341,7 @@ def advance(db, job, revision, selection=None, token=None, fallback=False, batch
             raise HTTPException(
                 422, "Local computation disagreed with the validated ranking. Retry on the server."
             )
+        state["metrics"]["gpu_frames_verified"] = state["metrics"].get("gpu_frames_verified",0)+1
         candidate = pending["candidates"][selection]
         slot = slots[state["slots"][state["cursor"]]]
         state["decisions"].append(decision_for(slot, candidate))
@@ -383,12 +408,7 @@ def cancel(db, job):
     return serialize(job)
 
 
-def apply_job(db, job, revision, operator=None, dry_run=False):
-    if job.status == "applied":
-        return serialize(job)
-    if job.status != "completed" or job.revision != revision:
-        raise HTTPException(409, "Complete and review this proposal before applying")
-    lock_namespace(db, "rota-compute:" + job.month)
+def lock_operational_inputs(db):
     if db.get_bind().dialect.name == "postgresql":
         # Protect the final snapshot even from older writers that do not use advisory locks.
         from sqlalchemy import text
@@ -428,6 +448,19 @@ def apply_job(db, job, revision, operator=None, dry_run=False):
                 + " IN SHARE ROW EXCLUSIVE MODE"
             )
         )
+def apply_job(db, job, revision, operator=None, dry_run=False):
+    if job.state.get("template"):
+        from app.core.config import settings
+        if not settings.template_compute_enabled:
+            raise HTTPException(503, "Reviewed template computation is disabled; cancel remains available")
+        from app.services.template_compute import apply as apply_template
+        return apply_template(db, job, revision, operator, dry_run)
+    if job.status == "applied":
+        return serialize(job)
+    if job.status != "completed" or job.revision != revision:
+        raise HTTPException(409, "Complete and review this proposal before applying")
+    lock_namespace(db, "rota-compute:" + job.month)
+    lock_operational_inputs(db)
     check_current(db, job)
     started = perf_counter()
     context = candidate_context(db, job.month)
@@ -514,18 +547,19 @@ def apply_job(db, job, revision, operator=None, dry_run=False):
             )
         )
     saved = 0
+    created_assignments = []
     for d in proposals:
         if d["slot_id"] in originals and d["slot_id"] not in changed_originals:
             continue
         saved += 1
-        db.add(
-            DutyAssignment(
+        created_assignment = DutyAssignment(
                 duty_slot_id=UUID(d["slot_id"]),
                 person_id=UUID(d["person_id"]),
                 status="assigned",
                 source="reviewed_compute_draft",
             )
-        )
+        db.add(created_assignment)
+        created_assignments.append(created_assignment)
         db.add(
             MemberActivity(
                 person_id=UUID(d["person_id"]),
@@ -538,10 +572,13 @@ def apply_job(db, job, revision, operator=None, dry_run=False):
             )
         )
     job.status = "applied"
+    db.flush()
     job.revision += 1
     job.state = {
         **job.state,
-        "result": {"assigned": saved, "replaced": len(changed_originals), "published": False},
+        "result": {"assigned": saved, "replaced": len(changed_originals), "published": False,
+                   "assignment_ids": [str(a.id) for a in created_assignments],
+                   "after_context_hash": context_hash(db)},
         "metrics": {
             **job.state["metrics"],
             "apply_ms": round((perf_counter() - started) * 1000, 2),

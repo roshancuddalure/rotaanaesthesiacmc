@@ -11,38 +11,114 @@
     "preference": "high-performance",
     "version": 2,
     "parity": true,
-    "test_ms": 248.30000001192093,
+    "test_ms": 182.09999999403954,
+    "kernel_checks": {
+      "members": true,
+      "template": true,
+      "optimizer": true
+    },
     "batches": [
       {
         "length": 1,
-        "gpu_ms": 4.5999999940395355
+        "gpu_ms": 4.9000000059604645
       },
       {
         "length": 64,
-        "gpu_ms": 4.799999997019768
+        "gpu_ms": 6
       },
       {
         "length": 513,
-        "gpu_ms": 7.4000000059604645
+        "gpu_ms": 6.0999999940395355
       },
       {
         "length": 10000,
-        "gpu_ms": 23.299999997019768
+        "gpu_ms": 22.299999982118607
       }
     ],
     "overflow_rejected": true
   },
   "end_to_end_comparison": {
-    "server_ms": 297.29999999701977,
-    "local_ms": 568.7000000029802,
+    "server_ms": 176.39999997615814,
+    "local_ms": 360.59999999403954,
     "month": "2026-05",
-    "context_hash": "8bb9662bf139bbbb901336da6173a3051d3db20dd8066404b79320ccf4285e80",
+    "context_hash": "feda212e24aa1f5ae915b6512c69b017f99c40525714c09cf0d9ca531f5c99f7",
     "parity": true,
-    "at": 1792444751435,
+    "at": 1792531200572,
     "version": 2,
     "adapter": "intel",
     "signature": "[2,\"high-performance\",\"intel\",\"gen-9\",\"\",\"\",false,268435456,134217728,65535]",
     "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+    "workload": "members",
+    "kernel_version": 2,
+    "configuration": "",
+    "stage_timings": [
+      {
+        "engine": "server",
+        "total_ms": 162.2000000178814,
+        "gpu_initialization_ms": 0,
+        "gpu_encode_upload_ms": 0,
+        "gpu_dispatch_readback_ms": 0,
+        "cpu_verification_ms": 0,
+        "gpu_total_ms": 0,
+        "final_validation_ms": 56.80000001192093,
+        "http_and_server_ms": 162.2000000178814
+      },
+      {
+        "engine": "local_gpu",
+        "total_ms": 360.59999999403954,
+        "gpu_initialization_ms": 62.19999998807907,
+        "gpu_encode_upload_ms": 0.699999988079071,
+        "gpu_dispatch_readback_ms": 7.200000017881393,
+        "cpu_verification_ms": 0.19999998807907104,
+        "gpu_total_ms": 73,
+        "final_validation_ms": 65.7999999821186,
+        "http_and_server_ms": 287.59999999403954
+      },
+      {
+        "engine": "local_gpu",
+        "total_ms": 371,
+        "gpu_initialization_ms": 54.69999998807907,
+        "gpu_encode_upload_ms": 1.7000000178813934,
+        "gpu_dispatch_readback_ms": 8.400000005960464,
+        "cpu_verification_ms": 0.09999999403953552,
+        "gpu_total_ms": 66.69999998807907,
+        "final_validation_ms": 66.80000001192093,
+        "http_and_server_ms": 304.30000001192093
+      },
+      {
+        "engine": "server",
+        "total_ms": 176.39999997615814,
+        "gpu_initialization_ms": 0,
+        "gpu_encode_upload_ms": 0,
+        "gpu_dispatch_readback_ms": 0,
+        "cpu_verification_ms": 0,
+        "gpu_total_ms": 0,
+        "final_validation_ms": 65,
+        "http_and_server_ms": 176.39999997615814
+      },
+      {
+        "engine": "server",
+        "total_ms": 211.5,
+        "gpu_initialization_ms": 0,
+        "gpu_encode_upload_ms": 0,
+        "gpu_dispatch_readback_ms": 0,
+        "cpu_verification_ms": 0,
+        "gpu_total_ms": 0,
+        "final_validation_ms": 75.10000002384186,
+        "http_and_server_ms": 211.5
+      },
+      {
+        "engine": "local_gpu",
+        "total_ms": 349.7999999821186,
+        "gpu_initialization_ms": 52.099999994039536,
+        "gpu_encode_upload_ms": 0.800000011920929,
+        "gpu_dispatch_readback_ms": 10.999999970197678,
+        "cpu_verification_ms": 0.19999998807907104,
+        "gpu_total_ms": 67.09999999403954,
+        "final_validation_ms": 43.099999994039536,
+        "http_and_server_ms": 282.69999998807907
+      }
+    ],
     "selected": "server"
   },
   "workflows": 14

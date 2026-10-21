@@ -27,7 +27,7 @@ from app.services.rota_candidates import (
     slot_candidates_with_context,
     add_provisional_assignment,
 )
-from app.services.rota_safety import required_call_levels, rule_for_slot
+from app.services.rota_safety import required_call_levels, rule_for_slot, rules_groups
 from app.services.rota_setup import monthly_setup
 from app.services.rota_template import PHASE4_SLOT_SOURCE
 
@@ -199,8 +199,10 @@ def _run_safe_auto_fill(
                 performance[key] += elapsed
         candidates = list(candidate_row["candidates"])
         rule = rule_for_slot(slot, context.rules)
-        required_calls = required_call_levels(slot, rule)
-        if options.strict_call_level and len(required_calls) != 1:
+        required_calls = required_call_levels(slot, rule, rules_groups(context.rules, slot))
+        # Multi-level duties (groups of different call levels) are fine: the candidate's
+        # level must be one of them. Only a slot with no known call level is ambiguous.
+        if options.strict_call_level and not required_calls:
             skipped += 1
             review += 1
             add_event(

@@ -1,13 +1,15 @@
 import { request } from './services/api';
 import { workspaceDialog } from './member-workspace';
+import { prepareEngine, RecoveringCompute, invalidateDevice, preference, selectedEngine,scoreFrame } from './compute-device';
 
 const esc = (v: unknown) => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]!);
 const api = <T = any>(path: string, data?: unknown) => request<T>(`/api/v1/rota-intelligence/${path}`,
-  data === undefined ? {} : {method:'POST',body:JSON.stringify(data)});
+  data === undefined ? {signal:AbortSignal.timeout(15000)} : {method:'POST',body:JSON.stringify(data),signal:AbortSignal.timeout(150000)});
 const compute = <T = any>(path: string, data?: unknown) => request<T>(`/api/v1/rota-compute/${path}`,
-  data === undefined ? {} : {method:'POST',body:JSON.stringify(data)});
+  data === undefined ? {signal:AbortSignal.timeout(15000)} : {method:'POST',body:JSON.stringify(data),signal:AbortSignal.timeout(150000)});
 type Decision = {slot_id:string; date:string; duty:string; action:string; person_id:string|null; person_name:string|null; reason:string; original?:{person_id:string}};
 type Job = {id:string;revision:number;status:string;decisions:Decision[];proposed:number;unresolved:number;
+  engine:'server'|'local_gpu';context_hash:string;benchmark_context_hash?:string;fallback_reason?:string;frame?:{rows:number[][];ties:number[];token:string;batches?:{rows:number[][];ties:number[]}[]};
   burden:{members:number;before:Record<string,{min:number;max:number;mean:number}>;after:Record<string,{min:number;max:number;mean:number}>};
   intelligence?:{selected:number;alternatives:{status:string;uncovered:number;changed:number;elapsed_ms:number;warnings:string[];objectives:{name:string;value:number;proven:boolean}[];history_window:{start:string;end:string;observed_months:string[]}}[]};result?:{assigned:number;replaced:number}};
 type Setup = {slots:{id:string;date:string;label:string;assigned:{id:string;name:string}[]}[];people:{id:string;name:string}[];history_lookback:number;history_months:string[];rules:any;holiday_dates:string[]};
@@ -17,6 +19,9 @@ export async function openIntelligentRota(month:string, admin:boolean, onApplied
   dialog.innerHTML='<p class="mw-content" role="status">Loading planning options...</p>';
   dialog.showModal();
   let closed=false, busy=false, tab='plan', notice='', job:Job|undefined, setup:Setup;
+  const lifetime=new AbortController();
+  let gpu:RecoveringCompute|undefined;
+  dialog.addEventListener('close',()=>{lifetime.abort();gpu?.close();});
   let mode='balanced', seconds=30, instruction='', suggestion:any;
   let token=sessionStorage.getItem('rota_local_assistant_pairing') || '';
   let companionPort=Number(sessionStorage.getItem('rota_local_assistant_port') || '11437');
@@ -30,6 +35,7 @@ export async function openIntelligentRota(month:string, admin:boolean, onApplied
     setup=await api<Setup>(`setup?month=${encodeURIComponent(month)}`);
     const recent=await compute<Job[]>(`jobs?month=${encodeURIComponent(month)}`);
     job=recent.find(j=>j.intelligence && ['queued','running','completed'].includes(j.status));
+    job ||= recent.find(j=>j.intelligence && j.status==='applied');
     if(recent.some(j=>!j.intelligence && ['queued','running','completed'].includes(j.status))) notice='An existing scoring proposal is active. Resume or cancel it in Generate & review draft first.';
   } catch(e) {dialog.innerHTML=`<div class="mw-content"><p role="alert">${esc(e instanceof Error?e.message:e)}</p><button data-close>Close</button></div>`;
     dialog.querySelector('button')!.onclick=()=>dialog.close();return;}
@@ -65,7 +71,7 @@ export async function openIntelligentRota(month:string, admin:boolean, onApplied
         <details><summary>Member preferences</summary><label>Duty<select data-pref-slot>${slots()}</select></label><label>Member<select data-pref-person>${people()}</select></label><label>Preference<select data-pref-cost><option value="-100">Prefer</option><option value="100">Avoid if possible</option></select></label><button data-add-preference>Add preference</button><p>${preferences.length} preferences recorded for this proposal.</p></details>
         <details><summary>Configured safety rules</summary><pre>${esc(JSON.stringify({rest:setup.rules.rest_rules,limits:setup.rules.duty_count_limits,staffing:setup.rules.unit_staffing_rules},null,2))}</pre></details>
         <button class="primary" data-generate ${busy || (job && ['queued','running','completed'].includes(job.status))?'disabled':''}>Generate intelligent draft</button>
-        ${job && ['queued','running'].includes(job.status)?'<button data-resume>Resume generation</button>':''}`:''}
+        ${job && ['queued','running'].includes(job.status)?'<button data-resume>Resume generation</button><button data-continue-server>Continue on server</button>':''}`:''}
       ${tab==='review'?`${!job?'<p>Generate a draft first.</p>':`<p>${job.proposed} proposed · ${job.unresolved} uncovered. ${report?`${esc(report.status)} · ${(report.elapsed_ms/1000).toFixed(2)} seconds · ${report.changed} existing assignments changed`:''}</p>
         ${report?.warnings?.map(w=>`<p>${esc(w)}</p>`).join('') || ''}
         ${job.burden?`<details><summary>Monthly workload comparison</summary><p>${job.burden.members} active posted members. Counts include preserved assignments.</p><dl>${[['total','All duties'],['hours24','24-hour duties'],['weekend24','Weekend 24-hour duties']].map(([key,label])=>`<dt>${label}</dt><dd>Before: ${job!.burden.before[key].min}–${job!.burden.before[key].max}; proposed: ${job!.burden.after[key].min}–${job!.burden.after[key].max}. Mean ${job!.burden.before[key].mean} → ${job!.burden.after[key].mean}.</dd>`).join('')}</dl></details>`:''}
@@ -73,6 +79,7 @@ export async function openIntelligentRota(month:string, admin:boolean, onApplied
           <details><summary>Optimization evidence</summary><p>Optimal describes this configured model and candidate set; uncovered duties still need review.</p><pre>${esc(JSON.stringify(report.objectives,null,2))}</pre></details>`:''}
         <div class="table-scroll"><table><thead><tr><th>Duty</th><th>Proposal</th><th>Reason / teach</th></tr></thead><tbody>${job.decisions.map(d=>`<tr><td data-label="Duty">${esc(d.date)}<small>${esc(d.duty)}</small></td><td data-label="Proposal">${proposal(d)}</td><td data-label="Reason / teach">${d.person_id?`<p>Eligible choice in the validated whole-month plan.</p><details><summary>Why this choice?</summary><p>${esc(d.reason)}</p></details><button data-teach-slot="${d.slot_id}">Teach this decision</button>`:esc(d.reason)}</td></tr>`).join('')}</tbody></table></div>
         ${job.status==='completed'?`<button data-more ${busy || job.intelligence!.alternatives.length>=3?'disabled':''}>Find another alternative</button><label><input type="checkbox" data-confirm> I reviewed changes and uncovered duties</label><button class="primary" data-apply disabled>Apply reviewed draft</button>`:''}
+        ${job.status==='applied'?'<details><summary>Reverse this generation</summary><p>Reversal is available only while this draft and its inputs remain unchanged.</p><label><input type="checkbox" data-reversal-confirm> I reviewed and want to reverse these assignments</label><button data-revert disabled>Validate and reverse</button></details>':''}
         ${['queued','running','completed'].includes(job.status)?'<button data-cancel>Cancel proposal</button>':''}<button data-download>Download evidence</button>`}`:''}
       ${tab==='teaching'?`<p>Examples start unverified. Administrators approve reusable lessons; one-time exceptions never become policy automatically.</p>
         <form data-teaching-form><label>Proposed duty<select name="slot_id">${job?.decisions.filter(d=>d.person_id).map(d=>`<option value="${d.slot_id}">${esc(d.date)} · ${esc(d.duty)} · ${esc(d.person_name)}</option>`).join('') || ''}</select></label>
@@ -100,7 +107,28 @@ export async function openIntelligentRota(month:string, admin:boolean, onApplied
     if(focusAttribute)dialog.querySelector<HTMLElement>(`[${focusAttribute}${focusValue?`="${CSS.escape(focusValue)}"`:''}]`)?.focus({preventScroll:true});
   }
   async function run() {
-    while(!closed && job && ['queued','running'].includes(job.status)) job=await compute<Job>(`jobs/${job.id}/step`,{revision:job.revision});
+    try {
+      while(!closed && job && ['queued','running'].includes(job.status)) {
+        let extra:object={};
+        if(job.frame)try {
+          gpu ||= new RecoveringCompute(message=>{notice=message;render();});
+          const scored=await scoreFrame(job.frame,frame=>gpu!.score(frame));extra={selection:scored.winner,...('selections' in scored?{selections:scored.selections}:{}),token:job.frame.token};
+        }catch(error){if(closed)break;invalidateDevice(error);gpu?.close();gpu=undefined;extra={fallback:true};notice='GPU assistance interrupted. Continuing on the server.';}
+        if(closed)break;
+        const prior=job;
+        try {job=await compute<Job>(`jobs/${job.id}/step`,{revision:job.revision,...extra});}
+        catch(error){
+          const status=(error as {status?:number})?.status;
+          if(status===422 && 'selection' in extra){invalidateDevice(error);job=await compute<Job>(`jobs/${prior.id}/step`,{revision:prior.revision,fallback:true});}
+          else if(status===undefined || status>=500){
+            const saved=await compute<Job>(`jobs/${prior.id}`);
+            if(closed)break;
+            job=saved.revision!==prior.revision || !['queued','running'].includes(saved.status)?saved:await compute<Job>(`jobs/${prior.id}/step`,{revision:prior.revision,...extra});
+          }else throw error;
+        }
+        if(!closed){notice=`${job.engine==='local_gpu'?'GPU candidate ranking + server optimisation':'Server optimisation'} · ${job.status}. ${job.fallback_reason || ''}`;render();}
+      }
+    }finally{gpu?.close();gpu=undefined;}
     if(job?.status==='completed') {
       await compute(`jobs/${job.id}/validate`,{revision:job.revision});
       notice='Draft ready for review. No assignments have been saved.';tab='review';
@@ -113,6 +141,7 @@ export async function openIntelligentRota(month:string, admin:boolean, onApplied
     if(input.matches('[data-lock]')) {const id=input.dataset.lock!;if(input.checked){locks.add(id);repairs.delete(id);}else locks.delete(id);render();}
     if(input.matches('[data-repair]')) {const id=input.dataset.repair!;if(input.checked){repairs.add(id);locks.delete(id);}else repairs.delete(id);render();}
     if(input.matches('[data-confirm]')) dialog.querySelector<HTMLButtonElement>('[data-apply]')!.disabled=!input.checked||busy;
+    if(input.matches('[data-reversal-confirm]')) dialog.querySelector<HTMLButtonElement>('[data-revert]')!.disabled=!input.checked||busy;
     if(input.matches('[data-local-enabled]')) {enabled=input.checked;sessionStorage.setItem('rota_local_assistant_enabled',String(enabled));render();}
     if(input.matches('[data-local-token]')) {token=input.value;sessionStorage.setItem('rota_local_assistant_pairing',token);}
     if(input.matches('[data-local-port]') && input.validity.valid){companionPort=Number(input.value);sessionStorage.setItem('rota_local_assistant_port',String(companionPort));const command=dialog.querySelector('[data-companion-command]');if(command)command.textContent=`.\\tools\\start-local-rota-assistant.ps1 -WebsiteOrigin ${location.origin} -Port ${companionPort}`;}
@@ -141,12 +170,26 @@ export async function openIntelligentRota(month:string, admin:boolean, onApplied
     const holidays=dialog.querySelector<HTMLInputElement>('[data-holidays]')?.value || '';
     const historyMonth=dialog.querySelector<HTMLSelectElement>('[data-history-month]')?.value || '';
     const historicalVerified=b.dataset.approveExample ? dialog.querySelector<HTMLInputElement>(`[data-verify-history="${b.dataset.approveExample}"]`)?.checked || false : false;
+    const reversalConfirmed=dialog.querySelector<HTMLInputElement>('[data-reversal-confirm]')?.checked === true;
     void action(async()=>{
-      if(b.matches('[data-generate]')) {job=await api<Job>('jobs',{month,mode,seconds,repair_slots:mode==='repair'?[...repairs]:[],locked_slots:[...locks],preferences});await run();}
+      if(b.matches('[data-generate]')) {
+        const caps=await compute<{browser_gpu:boolean;optimizer_gpu:boolean;context_hash:string;optimizer_context_hash?:string;workload_estimates?:{optimizer_rows:number}}>(`capabilities?month=${encodeURIComponent(month)}`);
+        const engine=await prepareEngine(admin,caps.browser_gpu&&caps.optimizer_gpu,{month,hash:caps.optimizer_context_hash || caps.context_hash,workload:'optimizer',estimatedRows:caps.workload_estimates?.optimizer_rows},lifetime.signal);
+        if(closed)return;
+        job=await api<Job>('jobs',{month,mode,seconds,engine,repair_slots:mode==='repair'?[...repairs]:[],locked_slots:[...locks],preferences});
+        if(engine==='local_gpu' && preference().mode==='auto' && selectedEngine(admin,true,{month,hash:job.benchmark_context_hash || job.context_hash,workload:'optimizer'})!=='local_gpu')
+          job=await compute<Job>(`jobs/${job.id}/step`,{revision:job.revision,fallback:true});
+        await run();
+      }
       else if(b.matches('[data-resume]'))await run();
       else if(b.matches('[data-more]')) {job=await api<Job>(`jobs/${job!.id}/alternative`,{revision:job!.revision,index:0});notice='Alternative search finished. Compare coverage and changes before selecting.';}
       else if(b.matches('[data-apply]')) {job=await compute<Job>(`jobs/${job!.id}/apply`,{revision:job!.revision});notice=`${job.result?.assigned} assignments saved; ${job.result?.replaced} replaced. Not published.`;onApplied();}
-      else if(b.matches('[data-cancel]')){job=await compute<Job>(`jobs/${job!.id}/cancel`,{});notice=job.status==='applied'?'This draft was already applied; saved assignments were preserved.':'Proposal cancelled; assignments unchanged.';}
+      else if(b.matches('[data-revert]') && reversalConfirmed) {
+        await compute(`jobs/${job!.id}/reversal-check`,{revision:job!.revision});
+        job=await compute<Job>(`jobs/${job!.id}/revert`,{revision:job!.revision});notice='Generation reversed. Previous assignments restored.';onApplied();
+      }
+      else if(b.matches('[data-continue-server]')){gpu?.close();gpu=undefined;invalidateDevice();job=await compute<Job>(`jobs/${job!.id}/step`,{revision:job!.revision,fallback:true});await run();}
+      else if(b.matches('[data-cancel]')){gpu?.close();gpu=undefined;job=await compute<Job>(`jobs/${job!.id}/cancel`,{});notice=job.status==='applied'?'This draft was already applied; saved assignments were preserved.':'Proposal cancelled; assignments unchanged.';}
       else if(b.matches('[data-load-teaching]'))teaching=await api('teaching');
       else if(b.matches('[data-save-calendar]')){const result=await api('calendar',{dates:holidays.split(',').map(s=>s.trim()).filter(Boolean)});setup.holiday_dates=result.dates;notice='Reviewed holiday calendar saved. Existing proposals must be regenerated.';}
       else if(b.matches('[data-history-months]'))historicalMonths=await api('history-months');

@@ -28,6 +28,7 @@ from typing import Any
 from dataclasses import dataclass
 from datetime import date, datetime, time, timedelta
 from uuid import UUID
+from time import perf_counter
 
 import xlsxwriter
 from sqlalchemy import delete, select, update
@@ -46,6 +47,7 @@ from app.models import (
 )
 from app.services.leave import ACTIVE_LEAVE_STATUSES, date_range, leave_requests_for_month, month_bounds
 from app.services.rota_call_levels import inferred_call_levels_from_duty_type, normalize_call_level
+from app.services.rota_eligibility import effective_call_levels
 from app.services.rota_rules import DutyRule, RotaPhaseOneRules, get_phase_one_rules
 from app.services.rota_setup import SCOPE_INCLUDED, monthly_setup
 
@@ -243,8 +245,11 @@ def active_unit_member_ids(
     postings: list[PersonPosting],
     unit_id: UUID,
     day: date,
-    call_level: str | None = None,
+    call_level: str | set[str] | frozenset[str] | None = None,
 ) -> set[UUID]:
+    """Active members of ``unit_id`` on ``day``; ``call_level`` may be one level or a set
+    (multi-level duties), ``None`` for everyone."""
+    levels = as_level_set(call_level)
     return {
         posting.person_id
         for posting in postings
@@ -252,8 +257,16 @@ def active_unit_member_ids(
         and posting.starts_on <= day
         and (posting.ends_on is None or posting.ends_on >= day)
         and posting.person.active_status == "active"
-        and (call_level is None or normalize_call_level(call_level_on(posting.person, day) or posting.posting_type) == call_level)
+        and (not levels or normalize_call_level(call_level_on(posting.person, day) or posting.posting_type) in levels)
     }
+
+
+def as_level_set(call_level: str | set[str] | frozenset[str] | None) -> set[str]:
+    if call_level is None:
+        return set()
+    if isinstance(call_level, str):
+        return {call_level}
+    return set(call_level)
 
 
 def allocation_target_weights(
@@ -445,23 +458,34 @@ def unit_minimum_free_people(unit: Unit, rules: RotaPhaseOneRules) -> int:
     return max(0, int(value))
 
 
+def required_calls_for_rule(rule: DutyRule) -> set[str]:
+    """The duty's effective call levels (rota_eligibility): rule levels or key-inferred,
+    plus each active allowed group's level."""
+    return effective_call_levels(rule)
+
+
 def required_call_for_rule(rule: DutyRule) -> str | None:
-    allowed = {normalize_call_level(item) for item in rule.allowed_call_levels}
-    allowed.discard("Unassigned")
-    if len(allowed) == 1:
-        return next(iter(allowed))
-    inferred = inferred_call_levels_from_duty_type(rule.key)
-    return next(iter(inferred)) if len(inferred) == 1 else None
+    """The single effective call level, or ``None`` for multi-level (or unknown) duties."""
+    levels = required_calls_for_rule(rule)
+    return next(iter(levels)) if len(levels) == 1 else None
 
 
-def unit_minimum_free_people_for_call(unit: Unit, call_level: str | None, rules: RotaPhaseOneRules) -> int:
+def unit_minimum_free_people_for_call(
+    unit: Unit, call_level: str | set[str] | frozenset[str] | None, rules: RotaPhaseOneRules
+) -> int:
+    """Unit minimum for one level or a set of levels. For a set, the per-level minimums
+    found are added up (each level keeps its own minimum free); the unit fallback is used
+    when none of the levels has its own minimum."""
     fallback = unit_minimum_free_people(unit, rules)
-    if call_level is None:
+    levels = as_level_set(call_level)
+    if not levels:
         return fallback
-    for row in getattr(unit, "call_minimums", []):
-        if normalize_call_level(row.call_level) == call_level:
-            return max(0, int(row.minimum_free_people))
-    return fallback
+    found = [
+        max(0, int(row.minimum_free_people))
+        for row in getattr(unit, "call_minimums", [])
+        if normalize_call_level(row.call_level) in levels
+    ]
+    return sum(found) if found else fallback
 
 
 def duty_group_for_rule(rule: DutyRule | None, duty_key: str) -> str:
@@ -469,12 +493,16 @@ def duty_group_for_rule(rule: DutyRule | None, duty_key: str) -> str:
 
 
 def required_call_bucket_for_rule(rule: DutyRule | None, duty_key: str) -> str:
-    if rule is not None:
-        required_call = required_call_for_rule(rule)
-        if required_call is not None:
-            return required_call
-    inferred = inferred_call_levels_from_duty_type(duty_key)
-    return next(iter(inferred)) if len(inferred) == 1 else "Unassigned"
+    """Fairness bucket: the single level, ``"3RD_CALL+4TH_CALL"`` for multi-level duties,
+    or ``"Unassigned"``."""
+    levels = (
+        required_calls_for_rule(rule)
+        if rule is not None
+        else inferred_call_levels_from_duty_type(duty_key)
+    )
+    if not levels:
+        return "Unassigned"
+    return "+".join(sorted(levels))
 
 
 def required_call_bucket_for_slot(slot: DutySlot, rule: DutyRule | None) -> str:
@@ -578,10 +606,19 @@ def post_24hr_rest_count(
     counts: dict[tuple[UUID, date, str | None], int],
     unit_id: UUID,
     day: date,
-    call_level: str | None,
+    call_level: str | set[str] | frozenset[str] | None,
 ) -> int:
-    if call_level is not None:
+    if isinstance(call_level, str):
         return counts.get((unit_id, day, call_level), 0)
+    if call_level:
+        # Multi-level duty: rests of any of its levels, plus unstamped (multi-level) slots.
+        return sum(
+            count
+            for (count_unit_id, count_day, count_call), count in counts.items()
+            if count_unit_id == unit_id
+            and count_day == day
+            and (count_call is None or count_call in call_level)
+        )
     return sum(
         count
         for (count_unit_id, count_day, _count_call), count in counts.items()
@@ -683,7 +720,9 @@ def slot_pressure_in_layout(
     rule = rules_by_key.get(slot.duty_type)
     if rule is None or not rule_applies_to_unit(rule, unit):
         return None
-    required_call = normalize_call_level(slot.call_level) if slot.call_level else required_call_for_rule(rule)
+    required_calls = (
+        {normalize_call_level(slot.call_level)} if slot.call_level else required_calls_for_rule(rule)
+    )
     same_day_count = 0
     previous_24hr_count = 0
     for other in all_slots:
@@ -696,16 +735,18 @@ def slot_pressure_in_layout(
             same_day_count += 1
         if other.is_24hr and other.duty_date + timedelta(days=1) == slot.duty_date:
             other_call = normalize_call_level(other.call_level) if other.call_level else None
-            if required_call is None or other_call == required_call:
+            if not required_calls or other_call is None or other_call in required_calls:
                 previous_24hr_count += 1
     return pressure_for_slot(
-        unit_member_ids=active_unit_member_ids(postings, unit.id, slot.duty_date, call_level=required_call),
+        unit_member_ids=active_unit_member_ids(
+            postings, unit.id, slot.duty_date, call_level=required_calls or None
+        ),
         day_leaves=leaves.get(slot.duty_date, {}),
         rule=rule,
         rules=rules,
         provisional_unit_day_duties=same_day_count,
         provisional_post_24hr_duties=previous_24hr_count,
-        minimum_free_people=unit_minimum_free_people_for_call(unit, required_call, rules),
+        minimum_free_people=unit_minimum_free_people_for_call(unit, required_calls or None, rules),
     )
 
 
@@ -740,6 +781,7 @@ def optimize_template_slot_layout(
     events: list[RotaTemplateGenerationEvent] = []
     max_swaps = min(200, len(movable_slots) * 2)
     current_score = template_pattern_score(all_slots, rules_by_key)
+    comparisons = 0
 
     for _ in range(max_swaps):
         best_swap: tuple[int, DutySlot, DutySlot, dict[str, object], dict[str, object]] | None = None
@@ -748,6 +790,10 @@ def optimize_template_slot_layout(
             if first_unit is None:
                 continue
             for second in movable_slots[index + 1 :]:
+                comparisons += 1
+                if comparisons > 20000:
+                    run.summary={**run.summary,"shuffle_comparisons":comparisons-1,"shuffle_budget_limited":True}
+                    return applied,events
                 if first.duty_type != second.duty_type or first.duty_date == second.duty_date:
                     continue
                 second_unit = units_by_id.get(second.unit_id)
@@ -931,6 +977,7 @@ def choose_balanced_unit(
     provisional_unit_day_counts: dict[tuple[UUID, date], int],
     provisional_post_24hr_counts: dict[tuple[UUID, date, str | None], int],
     allocation_fairness_policy: str,
+    numeric_selector=None,
 ) -> tuple[UnitAllocation | None, list[UnitAllocation]]:
     """Pick the unit that should own one (day, duty) slot.
 
@@ -944,9 +991,9 @@ def choose_balanced_unit(
     """
     allocations: list[UnitAllocation] = []
     allocation_fairness_policy = normalize_allocation_fairness_policy(allocation_fairness_policy)
-    required_call = required_call_for_rule(rule)
+    required_calls = required_calls_for_rule(rule) or None
     group = duty_group_for_rule(rule, rule.key)
-    call_bucket = required_call or required_call_bucket_for_rule(rule, rule.key)
+    call_bucket = required_call_bucket_for_rule(rule, rule.key)
     group_call = group_call_bucket(group, call_bucket)
     unit_total_active_counts: dict[UUID, int] = {}
     unit_bucket_active_counts: dict[UUID, int] = {}
@@ -958,8 +1005,8 @@ def choose_balanced_unit(
             continue
         total_member_ids = active_unit_member_ids(postings, unit.id, day)
         bucket_member_ids = (
-            active_unit_member_ids(postings, unit.id, day, call_level=required_call)
-            if required_call
+            active_unit_member_ids(postings, unit.id, day, call_level=required_calls)
+            if required_calls
             else total_member_ids
         )
         unit_total_active_counts[unit.id] = len(total_member_ids)
@@ -974,9 +1021,9 @@ def choose_balanced_unit(
                 provisional_post_24hr_counts,
                 unit.id,
                 day,
-                required_call,
+                required_calls,
             ),
-            minimum_free_people=unit_minimum_free_people_for_call(unit, required_call, rules),
+            minimum_free_people=unit_minimum_free_people_for_call(unit, required_calls, rules),
         )
         hard_blocked = pressure["status"] == "hard_block"
         warning = pressure["status"] == "warning"
@@ -1153,6 +1200,17 @@ def choose_balanced_unit(
             allocation.score,
         )
 
+    def numeric_choice(pool, key):
+        ordered = sorted(pool, key=lambda allocation: (allocation.unit.name, str(allocation.unit.id)))
+        keys = [key(allocation) for allocation in ordered]
+        expected = min(range(len(ordered)), key=lambda i: (keys[i], i))
+        if numeric_selector is None:
+            return ordered[expected]
+        selected_index = numeric_selector([list(k) for k in keys], list(range(len(ordered))))
+        if type(selected_index) is not int or selected_index != expected:
+            raise ValueError("Numeric allocation disagreed with canonical template fairness")
+        return ordered[selected_index]
+
     if safe_allocations:
         selected = min(
             safe_allocations,
@@ -1163,6 +1221,11 @@ def choose_balanced_unit(
                 allocation.unit.name,
             ),
         )
+        selected = numeric_choice(safe_allocations, lambda allocation: (
+                unit_weekend_day_counts.get((allocation.unit.id, day.weekday()), 0) if is_weekend else 0,
+                unit_weekend_counts.get(allocation.unit.id, 0) if is_weekend else 0,
+                *fairness_key(allocation),
+        ))
         return selected, allocations
 
     selected = min(
@@ -1177,6 +1240,13 @@ def choose_balanced_unit(
             allocation.unit.name,
         ),
     )
+    selected = numeric_choice(allocations, lambda allocation: (
+            forced_damage_score(allocation)[0],
+            unit_weekend_day_counts.get((allocation.unit.id, day.weekday()), 0) if is_weekend else 0,
+            unit_weekend_counts.get(allocation.unit.id, 0) if is_weekend else 0,
+            unit_forced_counts.get(allocation.unit.id, 0), *fairness_key(allocation),
+            *forced_damage_score(allocation)[1:],
+    ))
     return selected, allocations
 
 
@@ -1184,6 +1254,7 @@ def generate_empty_template(
     db: Session,
     month: str,
     options: TemplateGenerationOptions | None = None,
+    *, commit: bool = True, numeric_selector=None,
 ) -> dict[str, object]:
     """Create (and unit-allocate) the month's template slots; see the module docstring.
 
@@ -1192,10 +1263,13 @@ def generate_empty_template(
     duty in a different unit, because existing slots are matched per unit label (B7).
     """
     options = options or TemplateGenerationOptions()
+    planning_started = perf_counter()
     options.allocation_fairness_policy = normalize_allocation_fairness_policy(
         options.allocation_fairness_policy
     )
     period, scope = monthly_setup(db, month)
+    if period.status.lower() != "draft":
+        raise ValueError("Only an unpublished draft month can generate a template")
     if not scope.is_locked:
         raise ValueError("Monthly unit scope must be locked before template generation")
 
@@ -1308,10 +1382,13 @@ def generate_empty_template(
             )
     created_slots: list[DutySlot] = []
     events: list[RotaTemplateGenerationEvent] = []
+    existing_duties={(slot.duty_date,slot.duty_type) for slot in existing_slots}
 
     for day in days:
         day_leaves = leaves.get(day, {})
         for rule in duty_rules_for_day(duties, day, days[0]):
+            if (day,rule.key) in existing_duties:
+                continue
             selected, allocations = choose_balanced_unit(
                 units=units,
                 day=day,
@@ -1334,6 +1411,7 @@ def generate_empty_template(
                 provisional_unit_day_counts=provisional_unit_day_counts,
                 provisional_post_24hr_counts=provisional_post_24hr_counts,
                 allocation_fairness_policy=options.allocation_fairness_policy,
+                numeric_selector=numeric_selector,
             )
             if selected is None:
                 for unit in units:
@@ -1367,14 +1445,12 @@ def generate_empty_template(
                 if forced_allocation
                 else selected.reason
             )
-            inferred_call_levels = sorted(inferred_call_levels_from_duty_type(rule.key))
-            slot_call_level = (
-                rule.allowed_call_levels[0]
-                if len(rule.allowed_call_levels) == 1
-                else inferred_call_levels[0] if len(inferred_call_levels) == 1 else None
-            )
+            # New templates only (contract 21 Oct 2026): stamp the slot with the duty's single
+            # effective call level; a multi-level duty (e.g. groups of 3rd and 4th call) gets
+            # no call level, so eligibility follows the rule rather than the duty's name.
+            slot_call_level = required_call_for_rule(rule)
             slot_group = duty_group_for_rule(rule, rule.key)
-            slot_call = normalize_call_level(slot_call_level) if slot_call_level else required_call_bucket_for_rule(rule, rule.key)
+            slot_call = slot_call_level or required_call_bucket_for_rule(rule, rule.key)
             slot_group_call = group_call_bucket(slot_group, slot_call)
             slot = DutySlot(
                 rota_period=period,
@@ -1553,6 +1629,7 @@ def generate_empty_template(
     for event in events:
         db.add(event)
     db.flush()
+    allocation_finished = perf_counter()
     vertical_shuffle_swaps, shuffle_events = optimize_template_slot_layout(
         run=run,
         created_slots=created_slots,
@@ -1580,8 +1657,14 @@ def generate_empty_template(
         "skipped_slots": run.skipped_slots,
         "blocked_slots": run.blocked_slots,
         "vertical_shuffle_swaps": vertical_shuffle_swaps,
+        "stage_timings_ms":{"allocation":round((allocation_finished-planning_started)*1000,2),
+                            "layout_refinement":round((perf_counter()-allocation_finished)*1000,2)},
+        "layout_engine":"server: stateful safety checks; bounded conservative swaps",
     }
-    db.commit()
+    if commit:
+        db.commit()
+    else:
+        db.flush()
     db.refresh(run)
     return template_month(db, month, run.id)
 
@@ -1590,6 +1673,8 @@ def clear_template_cache(db: Session, month: str, *, clear_assignments: bool = F
     """Delete the month's generated slots and generation history (and, if requested, their
     assignments). Not blocked for published months (handbook B1)."""
     period, _scope = monthly_setup(db, month)
+    if period.status.lower() != "draft":
+        raise ValueError("Only an unpublished draft month can clear a template")
     slots = list(
         db.scalars(
             select(DutySlot)
@@ -2220,9 +2305,8 @@ def call_wise_sheet_name(call_level: str) -> str:
 
 
 def call_levels_for_export_rule(rule: DutyRule | None, duty_key: str) -> set[str]:
-    if rule and rule.allowed_call_levels:
-        values = {normalize_call_level(item) for item in rule.allowed_call_levels}
-        values.discard("Unassigned")
+    if rule is not None:
+        values = effective_call_levels(rule)
         if values:
             return values
     inferred = inferred_call_levels_from_duty_type(duty_key)

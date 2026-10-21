@@ -34,7 +34,14 @@ const fakeDevice={
    if(kind==='allocation'&&trace.created===2)throw Error('out of memory');
    trace.created++;return {destroy(){trace.destroyed++;},unmap(){trace.unmapped++;},
      async mapAsync(){if(kind==='mapping')throw Error('mapping failed');},
-     getMappedRange(){const result=[];for(let i=0;i<written.length;i+=9){let sum=0;for(let j=0;j<9;j++)sum+=written[i+j];result.push(kind==='parity'?0:sum);}return new Int32Array(result).buffer;}};
+     getMappedRange(){const result=[];
+      const count=written[0],width=written[1];
+      if(count>0&&width>0&&written.length===2+count*(width+1)) {
+        const rows=Array.from({length:count},(_,i)=>Array.from(written.slice(2+i*(width+1),2+(i+1)*(width+1))));
+        const order=rows.map((_,i)=>i).sort((a,b)=>{for(let k=0;k<width;k++){if(rows[a][k]!==rows[b][k])return rows[a][k]-rows[b][k];}return rows[a][width]-rows[b][width];});
+        order.forEach((i,rank)=>result[i]=rank);
+      }else for(let i=0;i<written.length;i+=9){let sum=0;for(let j=0;j<9;j++)sum+=written[i+j];result.push(kind==='parity'?0:sum);}
+      return new Int32Array(result).buffer;}};
  },
  queue:{writeBuffer(_b,_o,data){written=data;},submit(){if(kind==='submit')throw Error('submission failed');}},
  createBindGroup(){return {};},createCommandEncoder(){return {beginComputePass(){return {setPipeline(){},setBindGroup(){},dispatchWorkgroups(){},end(){}};},copyBufferToBuffer(){},finish(){return {};}};}
@@ -89,7 +96,7 @@ try {
     ["adapter-error", "gpu-error", 0], ["device-request", "gpu-error", 0], ["pipeline", "gpu-error", 0],
     ["limits", "limits", 0], ["allocation", "gpu-error", 2], ["mapping", "gpu-error", 3],
     ["submit", "gpu-error", 3], ["scope-error", "gpu-error", 3], ["parity", "parity", 3],
-    ["software", null, 3], ["success", null, 3],
+    ["software", null, 6], ["success", null, 6],
   ]) {
     const page = await browser.newPage();
     await page.route("**/src/compute-worker.ts*", async route => {
@@ -99,7 +106,7 @@ try {
     const result = await rawCall(page, { id: 1, type: "test", preference: "high-performance" });
     assert.equal(result.error?.code || null, expected, JSON.stringify(result));
     assert.equal(result.trace.destroyed, destroyed, kind);
-    if (kind === "success") assert.equal(result.trace.unmapped, 1);
+    if (kind === "success") assert.equal(result.trace.unmapped, 2);
     if (kind === "software") assert.equal(result.result.software, true);
     report.injected.push({ kind, error: result.error?.code || null, ...result.trace }); await page.close();
   }

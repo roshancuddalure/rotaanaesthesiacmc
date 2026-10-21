@@ -17,12 +17,12 @@ from __future__ import annotations
 from datetime import date
 from typing import Any
 
-from pydantic import BaseModel, Field, field_validator, model_validator
+from pydantic import BaseModel, Field, PrivateAttr, field_validator, model_validator
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.domain.duty_types import DUTY_TYPES
-from app.models import CallCluster, ReferenceValue, RuleSetting, RuleVersion
+from app.models import ReferenceValue, RuleSetting, RuleVersion
 from app.services.call_clusters import ensure_default_call_clusters
 from app.services.rota_call_levels import normalize_call_level
 
@@ -92,7 +92,9 @@ class DutyRule(BaseModel):
     label: str
     group: str
     campus: str | None = None
-    duration_hours: int = Field(ge=0, le=48)
+    # Range (0-48) is checked as a ``bad_hours`` problem, not by pydantic, so the Rota Rules
+    # page can list every problem at once (docs/rota_rules_contract.md).
+    duration_hours: int
     start_time: str = "08:00"
     end_time: str = "08:00"
     is_24hr: bool = False
@@ -108,6 +110,9 @@ class DutyRule(BaseModel):
     allowed_designations: list[str] = Field(default_factory=list)
     allowed_units: list[str] = Field(default_factory=list)
     excluded_units: list[str] = Field(default_factory=list)
+    # Eligibility groups snapshot attached by ``get_phase_one_rules`` (not serialised); lets
+    # ``rota_eligibility.effective_call_levels(rule)`` add each active group's call level.
+    _groups: dict | None = PrivateAttr(default=None)
 
     @field_validator("key", "label", "group", "start_time", "end_time")
     @classmethod
@@ -135,12 +140,7 @@ class UnitStaffingRules(BaseModel):
     warning_unavailable_percent: int = Field(default=30, ge=0, le=100)
     hard_block_unavailable_percent: int = Field(default=40, ge=0, le=100)
     small_unit_uses_absolute_minimum: bool = True
-
-    @model_validator(mode="after")
-    def validate_threshold_order(self) -> "UnitStaffingRules":
-        if self.hard_block_unavailable_percent < self.warning_unavailable_percent:
-            raise ValueError("Hard block threshold cannot be below warning threshold")
-        return self
+    # Hard block below warning is reported as a ``guardrail`` warning (never blocks a save).
 
 
 class RotaPhaseOneRules(BaseModel):
@@ -149,6 +149,7 @@ class RotaPhaseOneRules(BaseModel):
     rest_rules: RestRules = Field(default_factory=RestRules)
     unit_staffing_rules: UnitStaffingRules = Field(default_factory=UnitStaffingRules)
     notes: str | None = None
+    _groups: dict | None = PrivateAttr(default=None)
 
     @property
     def duty_rules_by_key(self) -> dict[str, DutyRule]:
@@ -225,6 +226,27 @@ def get_or_create_phase_one_rule_version(db: Session) -> RuleVersion:
     return rule_version
 
 
+class RotaRulesInvalid(ValueError):
+    """Error-severity problems found by ``rota_rules_admin.rule_problems``."""
+
+    def __init__(self, problems: list[dict[str, Any]]):
+        self.problems = problems
+        errors = [p["message"] for p in problems if p["severity"] == "error"]
+        super().__init__("; ".join(errors) or "Rules are not valid")
+
+
+def attach_groups(rules: RotaPhaseOneRules, groups: dict | None = None, db: Session | None = None) -> RotaPhaseOneRules:
+    """Attach the eligibility groups snapshot to the rule set and every duty rule."""
+    if groups is None:
+        from app.services.rota_eligibility import load_groups_by_key
+
+        groups = load_groups_by_key(db) if db is not None else {}
+    rules._groups = groups
+    for rule in rules.duty_rules:
+        rule._groups = groups
+    return rules
+
+
 def get_phase_one_rules(db: Session) -> tuple[RuleVersion, RotaPhaseOneRules]:
     """Load the saved rules merged with current defaults (new duty types are appended, legacy
     PAC keys forced inactive). Creates the rule version, default rules and default clusters on
@@ -273,13 +295,15 @@ def get_phase_one_rules(db: Session) -> tuple[RuleVersion, RotaPhaseOneRules]:
     rules.duty_rules.sort(
         key=lambda rule: DEFAULT_DUTY_ORDER.get(rule.key, len(DEFAULT_DUTY_ORDER))
     )
+    attach_groups(rules, db=db)
     return rule_version, rules
 
 
 def save_phase_one_rules(
     db: Session, rules: RotaPhaseOneRules
 ) -> tuple[RuleVersion, RotaPhaseOneRules]:
-    """Validate and overwrite the single rule setting in place (no history kept - handbook B11)."""
+    """Validate and overwrite the single rule setting in place. Version history is kept by
+    ``rota_rules_admin.save_rules_with_history`` (the API path)."""
     ensure_default_call_clusters(db)
     validate_phase_one_rules(db, rules)
     rule_version = get_or_create_phase_one_rule_version(db)
@@ -314,36 +338,19 @@ def save_phase_one_rules(
             value.version += 1
     db.commit()
     db.refresh(rule_version)
+    attach_groups(rules, db=db)
     return rule_version, rules
 
 
 def validate_phase_one_rules(db: Session, rules: RotaPhaseOneRules) -> None:
-    cluster_keys = set(db.scalars(select(CallCluster.key)))
-    registered_keys = set(
-        db.scalars(select(ReferenceValue.key).where(ReferenceValue.kind == "duty_type"))
-    )
+    """Raise ``RotaRulesInvalid`` listing every error-severity problem; normalise call levels.
+
+    Warnings (inactive/empty groups, nobody eligible, duplicate labels, guardrails) never
+    block. See ``rota_rules_admin.rule_problems`` for the codes."""
+    from app.services.rota_rules_admin import rule_problems
+
+    problems = rule_problems(db, rules)
+    if any(problem["severity"] == "error" for problem in problems):
+        raise RotaRulesInvalid(problems)
     for rule in rules.duty_rules:
-        if rule.key not in VALID_DUTY_KEYS | registered_keys:
-            raise ValueError(f"Unknown duty rule: {rule.key}")
-        if rule.group not in VALID_DUTY_GROUPS:
-            raise ValueError(f"Unknown duty group for {rule.label}: {rule.group}")
-
-        normalized_call_levels = [normalize_call_level(item) for item in rule.allowed_call_levels]
-        invalid_call_levels = sorted(
-            {item for item in normalized_call_levels if item not in VALID_CALL_LEVELS}
-        )
-        if invalid_call_levels:
-            raise ValueError(
-                f"Unknown allowed call level for {rule.label}: {', '.join(invalid_call_levels)}"
-            )
-        rule.allowed_call_levels = normalized_call_levels
-
-        for field_name, values in (
-            ("allowed eligibility group", rule.allowed_cluster_keys),
-            ("excluded eligibility group", rule.excluded_cluster_keys),
-        ):
-            unknown_keys = sorted({value for value in values if value not in cluster_keys})
-            if unknown_keys:
-                raise ValueError(
-                    f"Unknown {field_name} for {rule.label}: {', '.join(unknown_keys)}"
-                )
+        rule.allowed_call_levels = [normalize_call_level(item) for item in rule.allowed_call_levels]

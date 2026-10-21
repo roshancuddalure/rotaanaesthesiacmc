@@ -20,6 +20,9 @@ class Settings(BaseSettings):
     frontend_origin: str = "http://localhost:5173"
     rota_compute_enabled: bool = True
     browser_gpu_enabled: bool = True
+    template_compute_enabled: bool = True
+    template_gpu_enabled: bool = True
+    optimizer_gpu_enabled: bool = True
     rota_intelligence_enabled: bool = True
 
     model_config = SettingsConfigDict(

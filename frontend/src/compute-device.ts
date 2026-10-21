@@ -2,9 +2,12 @@ import { COMPUTE_VERSION, ComputeError, deviceTest, finiteTime, powerPreference,
 import type { DeviceTest, PowerPreference, ScoreInput, ScoreResult, ComputeErrorCode } from "./compute-protocol";
 export type { DeviceTest, PowerPreference } from "./compute-protocol";
 export type ComputeMode = "server" | "auto" | "local_gpu";
+export type Workload = "members" | "template" | "optimizer";
+export interface ComputeContext { month: string; hash: string; workload?: Workload; configuration?: string; estimatedRows?: number }
 export interface EngineProof { server_ms: number; local_ms: number; parity: boolean; at: number; version: number; adapter: string;
-  month: string; context_hash: string; signature: string; browser: string }
-export interface ComputePreference { enabled: boolean; mode: ComputeMode; power: PowerPreference; test?: DeviceTest; proof?: EngineProof }
+  month: string; context_hash: string; signature: string; browser: string; workload?: Workload; kernel_version?: number; configuration?: string;
+  stage_timings?:Record<string,string|number>[] }
+export interface ComputePreference { enabled: boolean; mode: ComputeMode; power: PowerPreference; test?: DeviceTest; proof?: EngineProof; proofs?: Partial<Record<Workload, EngineProof>> }
 const KEY = "duty_rota_compute_device_v1";
 const verified = new Set<string>();
 let lastFailure: { code: ComputeErrorCode; at: number } | undefined;
@@ -20,13 +23,21 @@ export function preference(): ComputePreference {
     if (["server", "auto", "local_gpu"].includes(String(p.mode))) result.mode = p.mode as ComputeMode;
     if (powerPreference(p.power)) result.power = p.power;
     if (deviceTest(p.test) && p.test.preference === result.power) result.test = p.test;
-    const proof = p.proof;
-    if (record(proof) && proof.version === COMPUTE_VERSION && typeof proof.parity === "boolean" &&
+    const validProof = (proof: unknown): proof is EngineProof => {
+    return record(proof) && proof.version === COMPUTE_VERSION && typeof proof.parity === "boolean" &&
         finiteTime(proof.server_ms) && proof.server_ms > 0 && finiteTime(proof.local_ms) && proof.local_ms > 0 &&
         typeof proof.at === "number" && Number.isFinite(proof.at) && proof.at <= Date.now() && Date.now() - proof.at < 7 * 86400000 &&
         typeof proof.month === "string" && /^\d{4}-(0[1-9]|1[0-2])$/.test(proof.month) &&
         typeof proof.context_hash === "string" && proof.context_hash.length <= 128 && typeof proof.adapter === "string" && proof.adapter.length <= 160 &&
-        typeof proof.signature === "string" && proof.signature === result.test?.signature && proof.browser === browser()) result.proof = proof as unknown as EngineProof;
+        typeof proof.signature === "string" && proof.signature === result.test?.signature && proof.browser === browser();
+    };
+    if(validProof(p.proof)) result.proof=p.proof;
+    if(record(p.proofs)) for(const workload of ["members","template","optimizer"] as Workload[]) {
+      const proof=p.proofs[workload];
+      if(validProof(proof) && proof.workload===workload && proof.kernel_version===(workload==="members"?2:3) &&
+        (proof.configuration===undefined || typeof proof.configuration==="string" && proof.configuration.length<=2000))
+        (result.proofs ||= {})[workload]=proof;
+    }
   } catch { /* Missing, blocked or corrupt storage always defaults to server. */ }
   return result;
 }
@@ -38,27 +49,34 @@ export function resetPreference() { verified.clear(); try { localStorage.removeI
 export function invalidateDevice(reason?: unknown) {
   verified.clear();
   if (reason instanceof ComputeError) lastFailure = { code: reason.code, at: Date.now() };
-  const p = preference(); delete p.proof; delete p.test;
+  const p = preference(); delete p.proof; delete p.proofs; delete p.test;
   try { savePreference(p); } catch { /* In-memory gate still prevents reuse. */ }
 }
 export function rememberTest(test: DeviceTest) {
   if (!deviceTest(test) || !test.supported || !test.parity) throw new ComputeError("protocol", "Invalid GPU test result.");
   const p = preference();
-  if (p.test?.signature !== test.signature) delete p.proof;
+  if (p.test?.signature !== test.signature) {delete p.proof;delete p.proofs;}
   p.test = test; savePreference(p); verified.add(test.signature);
   lastFailure = undefined;
 }
-export function selectedEngine(admin: boolean, gpuEnabled: boolean, context?: { month: string; hash: string }): "server" | "local_gpu" {
+export function selectedEngine(admin: boolean, gpuEnabled: boolean, context?: ComputeContext): "server" | "local_gpu" {
   const p = preference();
   if (!admin || !gpuEnabled || !p.enabled || !p.test?.supported || !p.test.parity || p.test.software || !verified.has(p.test.signature)) return "server";
+  const workload=context?.workload || "members";
+  if(workload!=="members" && !p.test.kernel_checks?.[workload]) return "server";
   if (p.mode === "local_gpu") return "local_gpu";
-  const proof = p.proof;
+  if(context?.estimatedRows!==undefined && context.estimatedRows<256) return "server";
+  const proof = p.proofs?.[workload] || (workload==="members"?p.proof:undefined);
   return p.mode === "auto" && proof?.parity && proof.month === context?.month && proof.context_hash === context?.hash
+    && (proof.configuration || "") === (context?.configuration || "")
     && proof.local_ms <= proof.server_ms * 0.8 ? "local_gpu" : "server";
 }
-export async function prepareEngine(admin: boolean, gpuEnabled: boolean, context: { month: string; hash: string }, signal?: AbortSignal) {
+export async function prepareEngine(admin: boolean, gpuEnabled: boolean, context: ComputeContext, signal?: AbortSignal) {
   const p = preference();
   if (signal?.aborted || !admin || !gpuEnabled || !p.enabled || p.mode === "server") return "server" as const;
+  const workload=context.workload || "members";
+  if(p.mode==="auto" && (!(p.proofs?.[workload] || (workload==="members"?p.proof:undefined)) ||
+      context.estimatedRows!==undefined && context.estimatedRows<256))return "server" as const;
   let worker: ComputeWorker | undefined;
   const abort = () => worker?.close();
   try {
@@ -134,6 +152,8 @@ export class RecoveringCompute {
           const previous = preference().test?.signature;
           const test = await this.worker.call("test");
           if (test.software) throw new ComputeError("software", "Browser selected a fallback adapter. Continuing on server.");
+          if("kernel" in input && input.kernel==="lexicographic" && !test.kernel_checks?.template)
+            throw new ComputeError("unavailable","Ordered ranking self-test failed. Continuing on the server.");
           rememberTest(test);
           if (previous && previous !== test.signature) throw new ComputeError("protocol", "Browser-selected GPU changed. Retest and compare engines again.");
         }
@@ -150,6 +170,21 @@ export class RecoveringCompute {
     }
   }
   close() { this.closed = true; this.worker?.close(); this.worker = undefined; }
+}
+
+export async function scoreFrame(input:ScoreInput & {batches?:ScoreInput[]},score:(input:ScoreInput)=>Promise<ScoreResult>) {
+  if(!input.batches)return score(input);
+  if(!Array.isArray(input.batches) || input.batches.length<1 || input.batches.length>32)throw new ComputeError("protocol","Invalid numeric batch envelope.");
+  const results:ScoreResult[]=[];
+  const began=performance.now();
+  for(const frame of input.batches){
+    if(performance.now()-began>20000)throw new ComputeError("timeout","Numeric batch exceeded its time budget. Continue on the server.");
+    results.push(await score(frame));
+  }
+  if(results.some(result=>result.signature!==results[0].signature))throw new ComputeError("device-lost","GPU changed inside a numeric batch.");
+  const timings={initialization_ms:0,encode_upload_ms:0,dispatch_readback_ms:0,verification_ms:0};
+  for(const result of results) for(const key of Object.keys(timings) as (keyof typeof timings)[])timings[key]+=result.timings?.[key] || 0;
+  return {...results[0],selections:results.map(result=>result.winner),gpu_ms:results.reduce((total,result)=>total+result.gpu_ms,0),timings};
 }
 
 export function diagnostics() {

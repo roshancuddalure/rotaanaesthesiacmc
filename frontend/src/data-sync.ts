@@ -6,7 +6,7 @@ export function notifyDataChange(path: string, method = "GET"): void {
   if (typeof window === "undefined" || ["GET", "HEAD"].includes(method.toUpperCase()) ||
       path.startsWith("/api/v1/auth/") ||
       path.startsWith("/api/v1/rota-intelligence/") ||
-      (path.startsWith("/api/v1/rota-compute/") && !path.endsWith("/apply")) || /\/(?:preview|inspect|import-preview)(?:\?|$)/.test(path)) return;
+      (path.startsWith("/api/v1/rota-compute/") && !path.endsWith("/apply") && !path.endsWith("/revert")) || /\/(?:preview|inspect|import-preview|rota-rules\/phase-one\/check)(?:\?|$)/.test(path)) return;
   const change: DataChange = { path, at: Date.now() };
   window.dispatchEvent(new CustomEvent(EVENT, { detail: change }));
   try { localStorage.setItem(REVISION_KEY, JSON.stringify({ ...change, nonce: Math.random() })); }

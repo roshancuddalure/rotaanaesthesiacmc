@@ -25,15 +25,13 @@ from app.services.rota_safety import (
     assignment_indexes,
     assignments_for_safety,
     leaves_by_day_and_person,
-    member_call_level,
     member_contexts_for_day,
-    member_matches_cluster_rules,
-    normalize_call_level,
     postings_for_month,
-    required_call_levels,
     rule_for_slot,
+    rules_groups,
     slot_safety,
 )
+from app.services.rota_eligibility import CODE_CALL_LEVEL, eligibility
 from app.services.rota_template import PHASE4_SLOT_SOURCE
 
 MANUAL_ASSIGNMENT_SOURCE = "manual_rota_board"
@@ -378,26 +376,18 @@ def validate_assignment(
             )
         )
     else:
-        required_calls = required_call_levels(slot, rule)
-        if required_calls and not any(
-            member_call_level(context) in required_calls for context in person_contexts
-        ):
-            validation_issues.append(
-                issue(
-                    "blocked",
-                    "call_level_mismatch",
-                    f"This slot requires {', '.join(sorted(required_calls))}; the member is listed as {normalize_call_level(person.call_level)}.",
-                )
+        # One eligibility function for every path (rota_eligibility, contract 21 Oct 2026).
+        groups = rules_groups(rules, slot, person_contexts)
+        decisions = [eligibility(context, slot, rule, groups) for context in person_contexts]
+        if not any(decision.eligible for decision in decisions):
+            decision = decisions[0]
+            code = (
+                "call_level_mismatch"
+                if decision.code == CODE_CALL_LEVEL
+                else "call_subgroup_mismatch"
             )
-        if not any(
-            member_matches_cluster_rules(db, context, slot, rule) for context in person_contexts
-        ):
             validation_issues.append(
-                issue(
-                    "blocked",
-                    "call_subgroup_mismatch",
-                    "This member is not in an eligible subgroup for this duty type.",
-                )
+                issue("blocked", code, f"{decision.reason}.")
             )
 
     hard_people, warning_people = selected_person_safety(safety, person.id)
@@ -479,6 +469,8 @@ def assign_person_to_slot(
     """
     slot = hydrate_slot(db, slot_id)
     person = db.get(Person, person_id)
+    if slot.rota_period.status.lower() != "draft":
+        raise RotaAssignmentError("Only an unpublished draft month can assign members", status_code=409)
     if person is None:
         raise RotaAssignmentError("Department member not found", status_code=404)
 
@@ -561,6 +553,8 @@ def assign_person_to_slot(
 
 def clear_assignment(db: Session, assignment_id: UUID) -> dict[str, object]:
     assignment = hydrate_assignment(db, assignment_id)
+    if assignment.duty_slot.rota_period.status.lower() != "draft":
+        raise RotaAssignmentError("Only an unpublished draft month can clear assignments", status_code=409)
     slot_id = assignment.duty_slot_id
     cleared = assignment_to_dict(assignment)
     db.delete(assignment)

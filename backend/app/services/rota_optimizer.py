@@ -179,6 +179,7 @@ def solve_month(
     holiday_dates=None,
     minimum_coverage=0,
     minimum_required=0,
+    seed_choices=None,
 ):
     started = perf_counter()
     deadline = started + seconds
@@ -330,7 +331,7 @@ def solve_month(
             and not c["requires_override"]
             and c["person_id"] in candidates[sid]
         ]
-        eligible.sort(key=lambda c: c["person_id"] != originals.get(sid))
+        eligible.sort(key=lambda c: (c["person_id"] != originals.get(sid), c["person_id"] != (seed_choices or {}).get(sid)))
         if eligible:
             seed[sid] = eligible[0]["person_id"]
             add_provisional_assignment(seed_context, slot, UUID(seed[sid]))

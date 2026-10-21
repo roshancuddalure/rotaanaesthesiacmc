@@ -8,7 +8,8 @@ or a 24h duty on the previous day). The slot is ``safe`` / ``needs_review`` /
 
 Known limitations (handbook B2, B5, P2): the rest check only looks at the previous
 calendar day within the same month, all posting sources are considered (not only the
-unit board), and cluster rules are queried per person per slot.
+unit board), and group memberships come from the preloaded postings (one query per person only when
+memberships were not preloaded).
 """
 
 from __future__ import annotations
@@ -18,7 +19,7 @@ from dataclasses import dataclass
 from datetime import date, timedelta
 from uuid import UUID
 
-from sqlalchemy import inspect, or_, select
+from sqlalchemy import or_, select
 from sqlalchemy.orm import Session, object_session, selectinload
 
 from app.models import (
@@ -32,7 +33,6 @@ from app.models import (
     PersonCallClusterMembership,
 )
 from app.services.history_fairness import OFFICIAL_STATUSES, unique_assignments
-from app.services.member_profiles import call_level_on
 from app.services.leave import (
     ACTIVE_LEAVE_STATUSES,
     BLOCKING_LEAVE_STATUSES,
@@ -40,9 +40,16 @@ from app.services.leave import (
     leave_requests_for_month,
     month_bounds,
 )
-from app.services.call_clusters import active_cluster_keys_for_person
-from app.services.rota_call_levels import inferred_call_levels_from_duty_type, normalize_call_level
-from app.services.rota_rules import DutyRule, RotaPhaseOneRules, get_phase_one_rules
+from app.services.rota_call_levels import normalize_call_level
+from app.services.rota_eligibility import (
+    active_group_keys_on,
+    attached_groups,
+    eligibility,
+    load_groups_by_key,
+    member_call_level,
+    required_call_levels_for,
+)
+from app.services.rota_rules import DutyRule, RotaPhaseOneRules, attach_groups, get_phase_one_rules
 from app.services.rota_setup import monthly_setup
 from app.services.rota_template import PHASE4_SLOT_SOURCE
 
@@ -60,37 +67,17 @@ class MemberContext:
     day: date | None = None
 
 
-def member_call_level(member: MemberContext) -> str:
-    day = member.day or date.today()
-    has_timeline = any(c.effective_from <= day for c in member.person.call_level_changes) or any(
-        c.effective_from <= day and not c.source.startswith("merged:")
-        for c in member.person.call_changes
-    )
-    return normalize_call_level(
-        call_level_on(member.person, day)
-        if has_timeline
-        else member.posting_type or call_level_on(member.person, day)
-    )
-
-
 def rule_for_slot(slot: DutySlot, rules: RotaPhaseOneRules) -> DutyRule | None:
     return rules.duty_rules_by_key.get(slot.duty_type)
 
 
-def required_call_levels(slot: DutySlot, rule: DutyRule | None) -> set[str]:
-    """Call levels allowed to take ``slot``: the slot's own call level, else the rule's
-    ``allowed_call_levels``, else levels inferred from the duty key (e.g. ``*_3RD_*``)."""
-    if slot.call_level:
-        normalized = normalize_call_level(slot.call_level)
-        if normalized != "Unassigned":
-            return {normalized}
-    if rule and rule.allowed_call_levels:
-        return {
-            normalized
-            for item in rule.allowed_call_levels
-            if (normalized := normalize_call_level(item)) != "Unassigned"
-        }
-    return inferred_call_levels_from_duty_type(slot.duty_type)
+def required_call_levels(
+    slot: DutySlot, rule: DutyRule | None, groups: dict | None = None
+) -> set[str]:
+    """Call levels allowed to take ``slot``: the slot's own call level, else the duty's
+    effective call levels (rule levels or key-inferred, plus active allowed groups' levels).
+    Delegates to ``rota_eligibility``."""
+    return required_call_levels_for(slot, rule, groups)
 
 
 def unit_minimum_for_required_calls(
@@ -115,31 +102,30 @@ def unit_minimum_for_required_calls(
 def member_matches_cluster_rules(
     db: Session | None, context: MemberContext, slot: DutySlot, rule: DutyRule | None
 ) -> bool:
-    """Check the duty rule's allowed/excluded eligibility groups for this member on the slot date.
+    """Group part of eligibility only (allowed/excluded groups on the slot date).
 
-    Runs one query per call (per member per slot) - a hot spot during auto-fill (handbook P2).
+    Thin compatibility wrapper over ``rota_eligibility.eligibility`` (call level not checked).
     """
     if rule is None:
         return True
-    if db is None:
-        return not rule.allowed_cluster_keys
-    if "call_cluster_memberships" not in inspect(context.person).unloaded:
-        active_keys = {
-            m.cluster.key
-            for m in context.person.call_cluster_memberships
-            if m.cluster.active
-            and m.effective_from <= slot.duty_date
-            and (m.effective_to is None or m.effective_to >= slot.duty_date)
-        }
-    else:
-        active_keys = active_cluster_keys_for_person(db, context.person.id, slot.duty_date)
-    allowed = set(rule.allowed_cluster_keys)
-    excluded = set(rule.excluded_cluster_keys)
-    if allowed and not active_keys.intersection(allowed):
-        return False
-    if excluded and active_keys.intersection(excluded):
-        return False
-    return True
+    memberships = active_group_keys_on(context.person, slot.duty_date, db)
+    return eligibility(context, slot, rule, None, memberships, check_call_level=False).eligible
+
+
+def rules_groups(rules: RotaPhaseOneRules, slot: DutySlot | None = None, contexts=()) -> dict:
+    """Groups attached to ``rules`` by ``get_phase_one_rules``; loaded (and attached) from the
+    session when the rules were built in memory."""
+    groups = attached_groups(rules)
+    if groups is not None:
+        return dict(groups)
+    session = object_session(slot) if slot is not None else None
+    if session is None:
+        session = next((object_session(c.person) for c in contexts if object_session(c.person)), None)
+    if session is None:
+        return {}
+    loaded = load_groups_by_key(session)
+    attach_groups(rules, loaded)
+    return loaded
 
 
 def slot_leave_blocks(leave: LeaveRequest, slot: DutySlot) -> bool:
@@ -429,16 +415,10 @@ def slot_safety(
     rule = rule_for_slot(slot, rules)
     day_contexts = member_contexts_for_day(postings, slot.duty_date)
     unit_contexts = [context for context in day_contexts if context.unit_id == slot.unit_id]
-    required_calls = required_call_levels(slot, rule)
+    groups = rules_groups(rules, slot, unit_contexts)
+    required_calls = required_call_levels(slot, rule, groups)
     eligible = [
-        context
-        for context in unit_contexts
-        if not required_calls or member_call_level(context) in required_calls
-    ]
-    eligible = [
-        context
-        for context in eligible
-        if member_matches_cluster_rules(object_session(context.person), context, slot, rule)
+        context for context in unit_contexts if eligibility(context, slot, rule, groups).eligible
     ]
     day_leaves = leaves.get(slot.duty_date, {})
     same_day = same_day_assignments.get(slot.duty_date, {})

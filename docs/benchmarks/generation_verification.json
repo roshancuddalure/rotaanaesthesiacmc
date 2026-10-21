@@ -1,0 +1,146 @@
+{
+  "completed_at_utc": "2026-10-20T21:22:16.938375+00:00",
+  "scope": "Approved 60-item template allocation and member Autoassign implementation",
+  "production_database_accessed": false,
+  "deployed": false,
+  "pushed": false,
+  "backend": {
+    "command": "backend/.venv/Scripts/python.exe tools/test_compute_postgres.py --full",
+    "passed": 598,
+    "failed": 0,
+    "warnings": 7,
+    "duration_seconds": 353.18,
+    "exit_code": 0,
+    "database": "fresh generated loopback PostgreSQL, removed in finally",
+    "migration_roundtrip_and_sentinel_preservation": true
+  },
+  "api_schema_followup": {
+    "passed": 13,
+    "failed": 0,
+    "included_in_full_count": true
+  },
+  "frontend": {
+    "command": "npm test",
+    "passed": 56,
+    "failed": 0,
+    "production_build_passed": true,
+    "build_warnings": [
+      "569.47 kB main bundle exceeds Vite 500 kB warning threshold",
+      "intelligence and recycle-bin have both static and dynamic imports"
+    ]
+  },
+  "python_lint": {
+    "passed": true,
+    "scope": "new compute services, modified compute/intelligence API/services, generation tests and fixture/PG tools"
+  },
+  "browser": {
+    "generation": {
+      "hardware_runs": 2,
+      "adapters": [
+        "intel gen-9",
+        "nvidia turing"
+      ],
+      "full_workflows": 8,
+      "row_boundaries": [
+        1,
+        63,
+        64,
+        65,
+        513,
+        2048,
+        4096
+      ],
+      "whole_month_apply_and_reversal": true
+    },
+    "controls": {
+      "workload_comparisons": 2,
+      "runs_per_comparison": 6,
+      "readiness_recovery_workflows": 5,
+      "viewports": [
+        320,
+        390,
+        768,
+        1280
+      ]
+    },
+    "compute": {
+      "workflows": 14
+    },
+    "recovery": {
+      "hardware_runs": 2,
+      "injected_worker_faults": 20,
+      "recovery_workflows": 8
+    },
+    "production": {
+      "workflows": 3,
+      "viewports": [
+        1280,
+        390,
+        320
+      ],
+      "template_and_quick_autoassign": true,
+      "worker_connect_src_none_verified": true,
+      "external_fetch_blocked": true
+    },
+    "intelligence_regression": {
+      "workflows": 6,
+      "optional_local_language_model_exercised": false
+    },
+    "accessibility": {
+      "serious_or_critical_axe_violations": 0,
+      "horizontal_overflow": false,
+      "keyboard_build_activation": true
+    }
+  },
+  "performance": {
+    "template_fixture_server_median_ms": 3502.7,
+    "template_fixture_gpu_median_ms": 11259,
+    "optimizer_fixture_server_median_ms": 204.3,
+    "optimizer_fixture_gpu_median_ms": 351,
+    "interpretation": "These fixtures favour CPU. Automatic must not select GPU using these proofs."
+  },
+  "limitations": [
+    "WebGPU exposes browser-selected adapters, not an inventory of all physical GPUs.",
+    "Constraint solving, final policy validation and stateful template refinement remain on CPU.",
+    "Bounded solving may leave uncovered duties; optimal status applies only to a proved configured model.",
+    "Tests cover local hardware and fixtures; driver/browser changes need fresh verification.",
+    "Unrelated concurrent rules/eligibility work remains in the shared working tree."
+  ],
+  "files": {
+    "backend/app/services/compute_kernels.py": "8b1fcb1cf7f68d203e42aa97fe56ed6d86143f911f1749731fce48f379ffd2b6",
+    "backend/app/services/template_compute.py": "4af940687d6b047712f5680692f9145f7a035eefe369a6f173c9f68edf3efece",
+    "backend/app/services/generation_undo.py": "21227948208dff9e41ee539660609cc97eb7b84038d6659e920db866756335b3",
+    "backend/app/services/rota_compute.py": "17715b551ba8551bcdc7a52aade0cf52c19d7afdece68da472ac85415580a8e2",
+    "backend/app/services/rota_template.py": "1d67ec9e047ef3b94d1500aa97db2ab9341ab3dabb35cae1f86fb37ad26ffca3",
+    "backend/app/services/rota_intelligence.py": "acc90bd5e0654947cd16b2b92891a346a2c430760a23223f2b377f1747ef7641",
+    "backend/app/services/rota_optimizer.py": "c657619d912c44b00182a1b386a683ebb34bfa2593d0207391a6b47766172600",
+    "backend/app/api/v1/rota_compute.py": "a6cde4a58a07650ed68627c1d7db7c712909d52f601809450792427768ef8ca6",
+    "backend/app/api/v1/rota_intelligence.py": "25cf6f98a1997b1290f1698fc5c9bbe720b78f4221f42d5ff26d1a00d59f7fe5",
+    "frontend/src/compute-worker.ts": "f67f75b98cbc72932e706167253d1e4df1f5234fe6346aa0d94191ff31a3fe7b",
+    "frontend/src/compute-protocol.ts": "d9dff1ad6ddda42e63da02dc6dd3d322f3cdc17fe824698e578a38cfcc57e1a5",
+    "frontend/src/compute-device.ts": "c7083623b77132d2ace7d1a0a815ad457a695c9e381afcfd1aeb91af1a6d4eca",
+    "frontend/src/rota-compute.ts": "2e21778a34bb857a24ad13bdaf744e5175042cb47c28cbc1f7fa556f9c89f94b",
+    "frontend/src/rota-intelligence.ts": "2e35ec5cbd7867b14acee8a6dae817688a3df79e5f44a3f55827fd79ec476d33",
+    "frontend/src/main.ts": "dae79489cd8a5b8888ce19a086974659bc0ef4f9c64257a2bbc440e696033bfe",
+    "frontend/src/styles.css": "6b0e6987de28d5fce88574f6d3e232c74d88fff424ddf1e31fb156741eb7fc05",
+    "backend/tests/test_template_compute.py": "c21f5d7366f5f881e29d51d0bc3ecb7e584e4035e2e06ebfdfc64537d3080d5e",
+    "backend/tests/test_generation_reliability.py": "b0974ce787ccbc39bf38ec760c83d750803a7eb1cf249c01dd0b856ac81eeacf",
+    "backend/tests/test_generation_api.py": "34d63886849736756cee4081c8688852480877a3fe6aee264ee737dcab4a018b",
+    "backend/tests/test_template_compute_concurrency.py": "85c6e1fa56304ecefc4bb588ce26037e7923f79f0080b7075ac5d1be37d19f6c",
+    "frontend/tests/generation-compute.browser.mjs": "60fc397f2d54e49ebc01a050a97a5d8626f1b981b795ceeab8adcb6d3fca4901",
+    "frontend/tests/generation-controls.browser.mjs": "938e6c3823baa074808d1788bf3b243c810b4d9cf56b5effe03c0ec41befc91a",
+    "frontend/tests/webgpu-production.browser.mjs": "2116c2be58acd1521c9244298f6bc39b2de996b4def9452937c8d77218566d2a",
+    "docs/generation_compute_delivery.md": "ca25ed2d270e59bb2ec669b57f14d59ba88cab4fafaff02888cf083749e1dd73",
+    "docs/benchmarks/generation_compute_browser.json": "27c80ddd66fd1a2b70e04eabaee2b665ac21010033e58f5470c43ad0c32bf10a",
+    "docs/benchmarks/generation_controls_browser.json": "e327f8a3ea4970bf5db051ee69a89b0cd3c3eb1ba4cea29adf5a757215fde6a8",
+    "docs/benchmarks/rota_compute_browser.json": "458515978fb3da292743a3c435937b47f39bae79d7736d75e1a126606f110a2a",
+    "docs/benchmarks/webgpu_recovery.json": "585e1ce26ec6e8e261f3e1c01f4c1b8f3979b0217827ef53f724704e00951922",
+    "docs/benchmarks/webgpu_production.json": "27ba64918905b28017960c9bb34ef392f2bb956541aaafbcd345509b4d0f4a3c",
+    "docs/benchmarks/rota_intelligence_browser.json": "7af0caa81ab2f8dae720686f6ba1ae83707cc9964bf1abc216bf7e1c1197b42c",
+    "frontend/tests/artifacts/template-gpu-review-mobile.png": "a488d17c034648fb714a1e07617d396ac4cf63ce280308ce9f5876c7e9d5c8fe"
+  },
+  "cleanup": {
+    "generated_postgresql_test_databases_remaining": 0,
+    "owned_disposable_test_servers_stopped": true
+  }
+}

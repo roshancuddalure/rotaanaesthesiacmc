@@ -1,17 +1,18 @@
 /** No network access, user shaders, member names, IDs or authentication tokens. */
-import { COMPUTE_VERSION, ComputeError, cpuScores, powerPreference, record, scoreInput, winnerFor } from "./compute-protocol";
+import { COMPUTE_VERSION, ComputeError, numericScores, powerPreference, record, scoreInput, winnerFor } from "./compute-protocol";
 import type { DeviceTest, PowerPreference, ScoreInput, WorkerRequest } from "./compute-protocol";
 const scope = globalThis as unknown as {
   isSecureContext: boolean; navigator: Navigator; postMessage: (value: unknown) => void;
   onmessage: (event: MessageEvent<unknown>) => void;
 };
-type Resources = { device: GPUDevice; pipeline: GPUComputePipeline; details: Omit<DeviceTest, "test_ms" | "parity">; fault?: ComputeError };
+type Resources = { device: GPUDevice; pipeline: GPUComputePipeline; rankPipeline?: GPUComputePipeline; details: Omit<DeviceTest, "test_ms" | "parity">; fault?: ComputeError };
 let resources: Resources | undefined;
 let initialization: Promise<Resources> | undefined;
 let busy = false;
 const clean = (value: string | undefined) => (value || "").replace(/[\x00-\x1f\x7f]/g, "").slice(0, 160);
 
 async function initialize(preference: PowerPreference): Promise<Resources> {
+  if(resources?.fault) throw resources.fault;
   if (resources && !resources.fault && resources.details.preference === preference) return resources;
   if (initialization) return initialization;
   initialization = (async () => {
@@ -55,10 +56,14 @@ async function initialize(preference: PowerPreference): Promise<Resources> {
 }
 
 async function gpuScores(input: ScoreInput, preference: PowerPreference) {
+  const began=performance.now();
   const active = await initialize(preference);
-  const { device, pipeline } = active;
+  const initialized=performance.now();
+  const { device } = active;
+  const rank = "kernel" in input && input.kernel === "lexicographic";
+  const width = input.rows[0].length;
   if (active.fault) throw active.fault;
-  const byteLength = input.rows.length * 9 * 4, outputBytes = input.rows.length * 4;
+  const byteLength = (rank ? 2 + input.rows.length * (width + 1) : input.rows.length * 9) * 4, outputBytes = input.rows.length * 4;
   if (byteLength > device.limits.maxStorageBufferBindingSize || byteLength > device.limits.maxBufferSize ||
       outputBytes > device.limits.maxStorageBufferBindingSize || outputBytes > device.limits.maxBufferSize ||
       Math.ceil(input.rows.length / 64) > device.limits.maxComputeWorkgroupsPerDimension || device.limits.maxComputeInvocationsPerWorkgroup < 64 ||
@@ -68,9 +73,35 @@ async function gpuScores(input: ScoreInput, preference: PowerPreference) {
   let mapped: GPUBuffer | undefined;
   device.pushErrorScope("out-of-memory"); device.pushErrorScope("internal"); device.pushErrorScope("validation");
   let scores: number[] = [], failure: unknown;
+  let submitted=initialized,readback=initialized;
   try {
+    let pipeline = active.pipeline;
+    if (rank && !active.rankPipeline) {
+      const module = device.createShaderModule({code:`
+        @group(0) @binding(0) var<storage, read> inputs: array<i32>;
+        @group(0) @binding(1) var<storage, read_write> scores: array<i32>;
+        @compute @workgroup_size(64)
+        fn main(@builtin(global_invocation_id) id: vec3<u32>) {
+          let count=u32(inputs[0]); let width=u32(inputs[1]); let row=id.x;
+          if(row>=count) {return;}
+          let start=2u+row*(width+1u); var rank=0i;
+          for(var other=0u;other<count;other=other+1u) {
+            let candidate=2u+other*(width+1u); var lower=false; var same=true;
+            for(var col=0u;col<width;col=col+1u) {
+              let a=inputs[candidate+col]; let b=inputs[start+col];
+              if(a<b) {lower=true;same=false;break;} if(a>b) {same=false;break;}
+            }
+            if(lower || (same && inputs[candidate+width]<inputs[start+width])) {rank=rank+1i;}
+          }
+          scores[row]=rank;
+        }`});
+      active.rankPipeline = await device.createComputePipelineAsync({layout:"auto",compute:{module,entryPoint:"main"}});
+    }
+    if(rank) pipeline=active.rankPipeline!;
     const data = new Int32Array(byteLength / 4);
-    input.rows.forEach((row, i) => data.set(row, i * 9));
+    if(rank) {data[0]=input.rows.length;data[1]=width;input.rows.forEach((row,i)=>{
+      const start=2+i*(width+1);data.set(row,start);data[start+width]=input.ties[i];
+    });} else input.rows.forEach((row, i) => data.set(row, i * 9));
     const buffer = (size: number, usage: GPUBufferUsageFlags) => {
       const b = device.createBuffer({ size, usage }); buffers.push(b); return b;
     };
@@ -82,9 +113,10 @@ async function gpuScores(input: ScoreInput, preference: PowerPreference) {
       { binding: 0, resource: { buffer: source } }, { binding: 1, resource: { buffer: output } }] });
     const encoder = device.createCommandEncoder(), pass = encoder.beginComputePass();
     pass.setPipeline(pipeline); pass.setBindGroup(0, group); pass.dispatchWorkgroups(Math.ceil(input.rows.length / 64)); pass.end();
-    encoder.copyBufferToBuffer(output, 0, read, 0, outputBytes); device.queue.submit([encoder.finish()]);
+    encoder.copyBufferToBuffer(output, 0, read, 0, outputBytes); device.queue.submit([encoder.finish()]);submitted=performance.now();
     await read.mapAsync(GPUMapMode.READ); mapped = read;
     scores = Array.from(new Int32Array(read.getMappedRange().slice(0)));
+    readback=performance.now();
     if (active.fault) throw active.fault;
   } catch (error) { failure = error; }
   finally {
@@ -95,9 +127,11 @@ async function gpuScores(input: ScoreInput, preference: PowerPreference) {
     }
   }
   if (failure) throw active.fault || failure;
-  const expected = cpuScores(input);
+  const verificationStarted=performance.now();
+  const expected = numericScores(input);
   if (scores.length !== expected.length || scores.some((n, i) => n !== expected[i])) throw new ComputeError("parity", "GPU and CPU score parity failed.");
-  return { scores, active };
+  return { scores, active, timings:{initialization_ms:initialized-began,encode_upload_ms:submitted-initialized,
+    dispatch_readback_ms:readback-submitted,verification_ms:performance.now()-verificationStarted} };
 }
 
 scope.onmessage = async ({ data }) => {
@@ -112,9 +146,18 @@ scope.onmessage = async ({ data }) => {
     const request = data as WorkerRequest;
     const input = request.type === "test" ? { rows: Array.from({ length: 512 }, (_, i) => Array.from({ length: 9 }, (_, j) => (i + j) % 997)), ties: Array.from({ length: 512 }, (_, i) => i) } : scoreInput(request);
     const started = performance.now();
-    const { scores, active } = await gpuScores(input, request.preference);
-    scope.postMessage({ id, result: request.type === "test" ? { ...active.details, parity: true, test_ms: performance.now() - started } :
-      { scores, winner: winnerFor(scores, input.ties), gpu_ms: performance.now() - started, signature: active.details.signature } });
+    const { scores, active, timings } = await gpuScores(input, request.preference);
+    const kernelChecks={members:true,template:false,optimizer:false};
+    if(request.type === "test") {
+      try {
+        await gpuScores(scoreInput({kernel:"lexicographic",version:3,
+          rows:[[-2147483648,2147483647],[-2147483647,-2147483648],[-2147483648,2147483647]],ties:[2,1,0]}),request.preference);
+        kernelChecks.template=true;kernelChecks.optimizer=true;
+      }catch(error){if(active.fault)throw active.fault;/* Keep verified member scoring available; rank-dependent workloads use server fallback. */}
+    }
+    scope.postMessage({ id, result: request.type === "test" ? { ...active.details, parity: true, test_ms: performance.now() - started,
+      kernel_checks:kernelChecks } :
+      { scores, winner: winnerFor(scores, input.ties), gpu_ms: performance.now() - started, signature: active.details.signature,timings } });
   } catch (error) {
     scope.postMessage({ id, error: { code: error instanceof ComputeError ? error.code : "gpu-error",
       message: error instanceof ComputeError ? error.message : "GPU execution failed. Retest or continue on the server." } });

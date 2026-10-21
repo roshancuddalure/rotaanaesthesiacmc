@@ -175,11 +175,15 @@ try {
   await integrated.page.getByRole("heading", { name: "Duty workload at a glance", exact: true }).waitFor();
   await integrated.page.locator('[data-view="compute-settings"]').first().evaluate(button => button.click());
   await integrated.page.locator(".compute-settings h2").waitFor();
+  const templateResponse=integrated.page.waitForResponse(r=>r.url().includes('/api/v1/rota-template/month'));
   await integrated.page.locator('[data-view="rota-template"]').first().evaluate(button => button.click());
+  await templateResponse;
+  await integrated.page.getByText('Template Generation Settings',{exact:true}).waitFor();
   await integrated.page.locator("#working-month").fill("2026-05");
   await integrated.page.locator("#working-month").dispatchEvent("change");
   await integrated.page.locator("#run-safe-auto-fill").click();
-  await integrated.page.getByRole("heading", { name: "Generate and review rota draft", exact: true }).waitFor();
+  await integrated.page.locator("[data-quick]").click();
+  await integrated.page.getByRole("heading", { name: /^Autoassign members/ }).waitFor();
   assert.deepEqual(integrated.errors, []); passed++;
   await integrated.page.close();
   // Resume a genuinely pending local frame in a fresh page, then cancel without writes.

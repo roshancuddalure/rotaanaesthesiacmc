@@ -1,6 +1,6 @@
 """Versioned rule storage. In practice a single ``RuleVersion`` ("Rota generator default
 rules") holds one JSON ``RuleSetting`` (``rota_generator.phase1``) that is overwritten
-in place on save - there is no real version history yet (handbook B11).
+in place on save. Every save also stores a ``RotaRuleVersion`` copy (history and restore).
 """
 
 from datetime import date, datetime
@@ -42,3 +42,20 @@ class RuleSetting(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
     rule_version: Mapped[RuleVersion] = relationship(back_populates="settings")
+
+
+class RotaRuleVersion(Base):
+    """One saved copy of the Rota Rules (docs/rota_rules_contract.md). Written on every save
+    and restore; the first save after the upgrade also stores the earlier rules with the
+    note "Before history"."""
+
+    __tablename__ = "rota_rule_versions"
+
+    id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
+    revision: Mapped[str] = mapped_column(String(64), index=True)
+    rules: Mapped[dict] = mapped_column(JSON)
+    saved_by_id: Mapped[UUID | None] = mapped_column(nullable=True)
+    saved_by_name: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    saved_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, index=True)
+    changed_duties: Mapped[list] = mapped_column(JSON, default=list)
+    note: Mapped[str | None] = mapped_column(Text, nullable=True)

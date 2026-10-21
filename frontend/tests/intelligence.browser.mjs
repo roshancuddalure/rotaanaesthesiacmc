@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import {writeFile} from 'node:fs/promises';
 import {chromium} from 'playwright';
-const base='http://127.0.0.1:5178', server='http://127.0.0.1:8019';
-const browser=await chromium.launch({headless:true,executablePath:process.env.MEMBER_TEST_BROWSER || 'C:/Users/rosha/AppData/Local/ms-playwright/chromium-1243/chrome-win64/chrome.exe'});
+const base=process.env.MEMBER_TEST_URL || 'http://127.0.0.1:5178', server='http://127.0.0.1:8019';
+const browser=await chromium.launch({headless:true,executablePath:process.env.MEMBER_TEST_BROWSER || chromium.executablePath()});
 const reset=()=>fetch(server+'/__fixture/reset',{method:'POST'});
 const fixture=async()=>(await fetch(server+'/__fixture')).json();
 const report={workflows:[],local_model:null};
