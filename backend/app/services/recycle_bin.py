@@ -394,6 +394,8 @@ def _remove_item(db: Session, kind: str, item_id: UUID, plan: dict) -> dict:
     elif kind == "posting":
         _remove(db, "person_postings", [item_id], payload)
     else:
+        from app.services.extra_duty_hooks import void_extra_duty_records
+        void_extra_duty_records(db, [item_id], "deleted")
         _remove(db, "duty_assignments", [item_id], payload)
         slot_id = plan.get("slot_carriers", {}).get(item_id)
         if slot_id is not None:

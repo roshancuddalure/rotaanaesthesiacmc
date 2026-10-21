@@ -8,6 +8,7 @@ from sqlalchemy import Date, DateTime, Uuid, select
 
 from app.models import DutyAssignment, DutySlot, MemberActivity, RotaTemplateGenerationRun
 from app.services import rota_compute as compute
+from app.services.extra_duty_hooks import void_extra_duty_records
 from app.services.reference_registry import lock_namespace
 
 
@@ -74,6 +75,7 @@ def revert(db, job, revision, user, dry_run=False):
                     details={"job_id": str(job.id), "assignment_id": assignment_id},
                 )
             )
+            void_extra_duty_records(db, [assignment.id], "generation reverted")
             db.delete(assignment)
         for sid, original in job.state.get("intelligence", {}).get("originals", {}).items():
             assignment = db.get(DutyAssignment, UUID(original["assignment_id"]))

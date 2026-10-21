@@ -32,6 +32,7 @@ from app.services.rota_safety import (
     slot_safety,
 )
 from app.services.rota_eligibility import CODE_CALL_LEVEL, eligibility
+from app.services.extra_duty_hooks import void_extra_duty_records
 from app.services.rota_template import PHASE4_SLOT_SOURCE
 
 MANUAL_ASSIGNMENT_SOURCE = "manual_rota_board"
@@ -518,6 +519,7 @@ def assign_person_to_slot(
         )
 
     if replace_existing:
+        void_extra_duty_records(db, [a.id for a in active_slot_assignments], "replaced")
         for assignment in active_slot_assignments:
             db.delete(assignment)
         db.flush()
@@ -557,6 +559,7 @@ def clear_assignment(db: Session, assignment_id: UUID) -> dict[str, object]:
         raise RotaAssignmentError("Only an unpublished draft month can clear assignments", status_code=409)
     slot_id = assignment.duty_slot_id
     cleared = assignment_to_dict(assignment)
+    void_extra_duty_records(db, [assignment.id], "cleared")
     db.delete(assignment)
     db.commit()
     slot = hydrate_slot(db, slot_id)

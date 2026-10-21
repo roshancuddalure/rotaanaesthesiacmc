@@ -18,7 +18,16 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
 from app.services.member_profile import default_call_level_on
-from app.models import DutyAssignment, DutySlot, Person, PersonPosting, RotaExchangeRequest, RotaReviewDecision, UserAccount
+from app.models import (
+    DutyAssignment,
+    DutySlot,
+    ExtraDutyRecord,
+    Person,
+    PersonPosting,
+    RotaExchangeRequest,
+    RotaReviewDecision,
+    UserAccount,
+)
 from app.services.leave import month_bounds
 from app.services.rota_assignment import (
     RotaAssignmentError,
@@ -41,6 +50,16 @@ EXCHANGE_NEEDS_OVERRIDE = "needs_override"
 EXCHANGE_BLOCKED = "blocked"
 EXCHANGE_APPROVED = "approved"
 EXCHANGE_REJECTED = "rejected"
+
+# docs/extra_duty_contract.md §5/§8: plain words for the rules the extra-duty layer may override.
+EXTRA_DUTY_RULE_LABELS = {
+    "unit_safety_hard_block": "Unit short-staffed (hard block)",
+    "unit_safety_review": "Unit staffing warning",
+    "monthly_24hr_limit": "Over monthly 24-hour limit",
+    "monthly_weekend_24hr_limit": "Over weekend 24-hour limit",
+    "monthly_same_group_limit": "Over monthly limit for this duty type",
+    "monthly_same_campus_limit": "Over monthly limit for this campus",
+}
 
 
 class RotaReviewError(ValueError):
@@ -116,6 +135,8 @@ def recommended_action(issues: list[dict[str, str]]) -> str:
     codes = {issue["code"] for issue in issues}
     if "hard_blocked" in codes:
         return "Resolve blockers or document a deliberate board override before assigning."
+    if "extra_duty_exception" in codes:
+        return "Confirm the extra-duty layer's cover for this short-staffed slot before publishing."
     if "open_slot" in codes:
         return "Assign a safe suggestion or use manual assignment with an override reason if needed."
     if "override_assignment" in codes:
@@ -135,14 +156,46 @@ def review_decisions_for_slots(db: Session, slots: list[DutySlot]) -> dict[tuple
     return {(decision.duty_slot_id, decision.issue_code): decision for decision in decisions}
 
 
+def active_extra_duty_records(db: Session, slots: list[DutySlot]) -> dict[UUID, ExtraDutyRecord]:
+    """Active ledger records keyed by assignment id, for the slots' active assignments."""
+    assignment_ids = [a.id for slot in slots for a in active_slot_assignments(slot)]
+    if not assignment_ids:
+        return {}
+    records: dict[UUID, ExtraDutyRecord] = {}
+    for start in range(0, len(assignment_ids), 500):
+        chunk = assignment_ids[start:start + 500]
+        for record in db.scalars(
+            select(ExtraDutyRecord).where(
+                ExtraDutyRecord.assignment_id.in_(chunk), ExtraDutyRecord.status == "active"
+            )
+        ):
+            records[record.assignment_id] = record
+    return records
+
+
+def extra_duty_exception_message(assignments: list[DutyAssignment], records: list[ExtraDutyRecord]) -> str:
+    names = ", ".join(
+        a.person.canonical_name if a.person else str(a.person_id)
+        for a in assignments
+        if any(r.assignment_id == a.id for r in records)
+    )
+    rules = list(dict.fromkeys(code for r in records for code in (r.overridden_rules or [])))
+    overridden = ", ".join(EXTRA_DUTY_RULE_LABELS.get(code, code) for code in rules) or "none"
+    return f"Covered by the extra-duty layer: {names}; rules overridden: {overridden}."
+
+
 def review_items(
     slots: list[DutySlot],
     safety_by_slot: dict[str, dict[str, object]],
     candidates_by_slot: dict[str, dict[str, object]],
     decisions_by_slot_issue: dict[tuple[UUID, str], RotaReviewDecision] | None = None,
+    extra_duty_by_assignment: dict[UUID, ExtraDutyRecord] | None = None,
 ) -> list[dict[str, object]]:
+    """``extra_duty_by_assignment``: active ledger records by assignment id; a hard-blocked slot
+    covered by such an assignment becomes an ``extra_duty_exception`` warning (contract §5)."""
     rows: list[dict[str, object]] = []
     decisions_by_slot_issue = decisions_by_slot_issue or {}
+    extra_duty_by_assignment = extra_duty_by_assignment or {}
     for slot in slots:
         slot_id = str(slot.id)
         safety = safety_by_slot.get(slot_id)
@@ -172,7 +225,19 @@ def review_items(
         if safety:
             safety_status = str(safety.get("safety_status"))
             reasons = [str(reason) for reason in safety.get("reasons", [])]
-            if safety_status == SAFETY_HARD_BLOCK:
+            extra_records = [
+                extra_duty_by_assignment[a.id] for a in assignments if a.id in extra_duty_by_assignment
+            ]
+            if safety_status == SAFETY_HARD_BLOCK and extra_records:
+                issues.append(
+                    review_issue(
+                        "warning",
+                        "extra_duty_exception",
+                        extra_duty_exception_message(assignments, extra_records),
+                        decisions_by_slot_issue.get((slot.id, "extra_duty_exception")),
+                    )
+                )
+            elif safety_status == SAFETY_HARD_BLOCK:
                 issues.append(
                     review_issue(
                         "error",
@@ -457,7 +522,10 @@ def rota_review_month(db: Session, month: str) -> dict[str, object]:
     # day modal where the board is actively working on a specific day.
     candidates_by_slot: dict[str, dict[str, object]] = {}
     decisions_by_slot_issue = review_decisions_for_slots(db, slots)
-    items = review_items(slots, safety_by_slot, candidates_by_slot, decisions_by_slot_issue)
+    extra_duty_by_assignment = active_extra_duty_records(db, slots)
+    items = review_items(
+        slots, safety_by_slot, candidates_by_slot, decisions_by_slot_issue, extra_duty_by_assignment
+    )
     exchange_requests = exchange_requests_for_period(db, period.id)
     exchange_counts = defaultdict(int)
     for exchange in exchange_requests:
@@ -488,6 +556,10 @@ def rota_review_month(db: Session, month: str) -> dict[str, object]:
             "accepted_review_items": sum(1 for item in items if item.get("accepted")),
             "unresolved_warning_items": unresolved_warning_items,
             "override_assignments": sum(1 for item in active_assignments if item.override_reason),
+            "extra_duty_records": sum(1 for item in active_assignments if item.id in extra_duty_by_assignment),
+            "extra_duty_exception_items": sum(
+                1 for item in items if any(i["code"] == "extra_duty_exception" for i in item["issues"])
+            ),
             "exchange_requests": len(exchange_requests),
             "pending_exchange_requests": exchange_counts[EXCHANGE_PENDING]
             + exchange_counts[EXCHANGE_NEEDS_OVERRIDE],
@@ -503,7 +575,7 @@ def rota_review_month(db: Session, month: str) -> dict[str, object]:
     }
 
 
-ACCEPTABLE_REVIEW_DECISION_CODES = {"template_review", "safety_review", "override_assignment"}
+ACCEPTABLE_REVIEW_DECISION_CODES = {"template_review", "safety_review", "override_assignment", "extra_duty_exception"}
 
 
 def accept_review_issue(

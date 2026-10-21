@@ -24,6 +24,7 @@ class Settings(BaseSettings):
     template_gpu_enabled: bool = True
     optimizer_gpu_enabled: bool = True
     rota_intelligence_enabled: bool = True
+    extra_duty_layer_enabled: bool = True
 
     model_config = SettingsConfigDict(
         env_file=(REPO_DIR / ".env", BACKEND_DIR / ".env", ".env"),

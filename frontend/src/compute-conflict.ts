@@ -6,11 +6,11 @@ export interface ProposalConflict {
   owned?: boolean; operator_name?: string | null; updated_at?: string | null;
   template?: { options?: object } | null;
 }
-type Stage = "members" | "template" | "intelligent";
+type Stage = "members" | "template" | "intelligent" | "extra_duty";
 
 const escape = (value: unknown) => String(value ?? "").replace(/[&<>"']/g,
   c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
-export const stageName = (kind?: string) => kind === "template" ? "Build template (unit allocation)"
+export const stageName = (kind?: string) => kind === "extra_duty" ? "Extra-duty layer" : kind === "template" ? "Build template (unit allocation)"
   : kind === "intelligent" ? "Whole-month optimisation" : "Autoassign members (quick safe fill)";
 const statusText = (c: ProposalConflict) => c.status === "completed" ? "Ready for review — not applied yet"
   : c.status === "queued" ? "Waiting to start" : `Paused at ${c.processed} of ${c.total} duties`;

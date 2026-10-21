@@ -9,10 +9,10 @@ from datetime import date
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 from sqlalchemy.orm import Session, selectinload
 
-from app.api.v1.auth import current_user
+from app.api.v1.auth import current_user, require_admin
 from app.db.session import get_db
 from app.services.member_profiles import call_level_on
 from app.services.reference_catalog import resolve_value
@@ -30,6 +30,38 @@ from app.services.upload_limits import read_bounded_upload
 from app.services.reviewed_import import acquire_import_lock, reviewed_hash, verify_reviewed_hash, StalePreviewError, replayed_result, record_workflow_batch
 
 router = APIRouter()
+
+
+class LeaveApprovalScope(BaseModel):
+    model_config = ConfigDict(extra="forbid", strict=True)
+    month: str = Field(pattern=r"^\d{4}-(0[1-9]|1[0-2])$", min_length=7, max_length=7)
+
+
+class LeaveApprovalApply(LeaveApprovalScope):
+    review_token: str = Field(pattern=r"^[a-f0-9]{64}$", min_length=64, max_length=64)
+    acknowledge_duties: bool = False
+
+
+@router.post("/leave/approval-preview")
+def preview_monthly_approval(payload: LeaveApprovalScope, user=Depends(require_admin), db=Depends(get_db)):
+    from app.services.leave_approval import preview
+
+    try:
+        month_bounds(payload.month)
+    except ValueError as exc:
+        raise HTTPException(422, str(exc)) from exc
+    return preview(db, payload.month, user)
+
+
+@router.post("/leave/approve-month")
+def approve_monthly_leave(payload: LeaveApprovalApply, user=Depends(require_admin), db=Depends(get_db)):
+    from app.services.leave_approval import approve_month
+
+    try:
+        month_bounds(payload.month)
+    except ValueError as exc:
+        raise HTTPException(422, str(exc)) from exc
+    return approve_month(db, payload.month, user, payload.review_token, payload.acknowledge_duties)
 
 
 class LeavePersonRead(BaseModel):

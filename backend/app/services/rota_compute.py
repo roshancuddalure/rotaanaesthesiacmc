@@ -565,6 +565,8 @@ def apply_job(db, job, revision, operator=None, dry_run=False):
     for sid in changed_originals:
         old = db.get(DutyAssignment, UUID(originals[sid]["assignment_id"]))
         old.status = "cancelled"
+        from app.services.extra_duty_hooks import void_extra_duty_records
+        void_extra_duty_records(db, [old.id], "replaced")
         db.add(
             MemberActivity(
                 person_id=old.person_id,

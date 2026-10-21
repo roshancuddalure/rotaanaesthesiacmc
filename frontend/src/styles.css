@@ -6721,3 +6721,18 @@ button.rr-tile[aria-pressed="true"] { border-color: var(--color-info-text); box-
 .compute-steps { list-style: none; padding: 0; margin: var(--space-2) 0; display: grid; gap: var(--space-1); }
 .compute-steps li { color: var(--color-text-secondary); }
 .compute-steps li.done { color: var(--color-success-text); }
+
+.leave-approval-workspace .table-scroll table { width: 100%; min-width: 0; table-layout: fixed; }
+.leave-approval-workspace caption { text-align: left; padding: 12px 0; font-weight: 600; }
+.leave-approval-workspace th, .leave-approval-workspace td { white-space: normal; overflow-wrap: anywhere; }
+.leave-approval-workspace .mw-footer { flex-wrap: wrap; }
+.leave-approval-workspace .mw-footer button { min-height: 44px; }
+@media (max-width: 600px) {
+  .leave-approval-workspace thead { display: none; }
+  .leave-approval-workspace table, .leave-approval-workspace caption { display: block; max-width: 100%; }
+  .leave-approval-workspace tbody, .leave-approval-workspace tr, .leave-approval-workspace td { display: block; }
+  .leave-approval-workspace tr { margin-bottom: 12px; border: 1px solid var(--color-border); border-radius: 10px; padding: 10px; }
+  .leave-approval-workspace td { padding: 4px; border: 0; }
+  .leave-approval-workspace td::before { content: attr(data-label); display: block; font-size: 12px; font-weight: 600; color: var(--color-text-secondary); }
+  .leave-approval-workspace .mw-footer .primary { flex: 1; }
+}

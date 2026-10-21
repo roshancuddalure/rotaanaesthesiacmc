@@ -83,6 +83,7 @@ if __name__ == "__main__":
                 "tests/test_import_concurrency.py",
                 "tests/test_rota_compute_concurrency.py",
                 "tests/test_template_compute_concurrency.py",
+                "tests/test_leave_approval_concurrency.py",
             ]
         )
         result = subprocess.run(

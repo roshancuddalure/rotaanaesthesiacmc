@@ -12,6 +12,7 @@ from app.models.person import Person, PersonAlias, PersonDesignation
 from app.models.member_workspace import MemberActivity, MemberImportPreview, MemberCallLevelChange, LegacyPersonCallChange, LegacyPersonComment
 from app.models.member_profile import PersonCallChange, PersonComment
 from app.models.member_bulk import MemberDistinctPair
+from app.models.extra_duty import ExtraDutyBatch, ExtraDutyRecord, UnitFallback
 from app.models.member_merge import MemberMerge
 from app.models.posting import PersonPosting
 from app.models.recycle_bin import DeletedRecord
@@ -75,6 +76,9 @@ __all__ = [
     "RotaTemplateGenerationEvent",
     "RotaTemplateGenerationRun",
     "RotaRuleVersion",
+    "ExtraDutyBatch",
+    "ExtraDutyRecord",
+    "UnitFallback",
     "RuleSetting",
     "RuleVersion",
     "Unit",

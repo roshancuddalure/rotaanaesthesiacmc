@@ -1700,6 +1700,8 @@ def clear_template_cache(db: Session, month: str, *, clear_assignments: bool = F
             .where(RotaAutoFillEvent.duty_slot_id.in_(slot_ids))
             .values(duty_slot_id=None)
         )
+        from app.services.extra_duty_hooks import void_extra_duty_records
+        void_extra_duty_records(db, assignment_ids, "cleared")
         db.execute(delete(DutyAssignment).where(DutyAssignment.id.in_(assignment_ids)))
         db.flush()
 

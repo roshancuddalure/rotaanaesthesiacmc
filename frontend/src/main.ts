@@ -1,4 +1,5 @@
 import { openRotaCompute, openAutoassign, renderComputeSettings } from "./rota-compute";
+import { openMonthlyLeaveApproval } from "./leave-approval";
 import { preference as computePreference } from "./compute-device";
 import { openIntelligentRota } from './rota-intelligence';
 import { openRecordEditor } from "./record-workspace";
@@ -3624,6 +3625,7 @@ async function renderLeave() {
   }
   const summary = leaveCalendar.summary;
   const monthName = formatMonth(summary.month);
+  const pendingApprovals = leaveRequests.filter(leave => ["requested", "imported_pending_review"].includes(leave.status.toLowerCase())).length;
   pruneAdminSelection("leave", leaveRequests.map((leave) => leave.id));
   const leaveSelectCol = isAdminUser() ? `<th scope="col" class="admin-select-cell"><span class="visually-hidden">Select</span></th>` : "";
   const busiest = summary.busiest_day;
@@ -3634,6 +3636,7 @@ async function renderLeave() {
       <div class="page-toolbar__actions">
         <button type="button" class="primary" data-add-operational-record="leave">Add leave</button>
         <button type="button" class="icon-button" data-open-normalized-import="leave">Import leave CSV</button>
+        ${isAdminUser() ? `<button type="button" class="icon-button" data-approve-month-leave ${pendingApprovals ? "" : "disabled"}>Approve all pending (${pendingApprovals})</button>` : ""}
         <details class="row-menu">
           <summary class="icon-button" aria-label="More leave tools">More</summary>
           <div class="row-menu__list" role="menu">
@@ -8712,6 +8715,15 @@ function bindViewEvents() {
         showToast(error instanceof Error ? error.message : "Failed to clone previous scope", "error");
         resetButton(btn);
       }
+      return;
+    }
+
+    if (target.closest("[data-approve-month-leave]") && isAdminUser()) {
+      const approvalMonth = leaveMonth;
+      openMonthlyLeaveApproval(approvalMonth, count => {
+        showToast(`${count} leave request${count === 1 ? "" : "s"} approved for ${formatMonth(approvalMonth)}`, "success");
+        void renderLeave();
+      });
       return;
     }
 

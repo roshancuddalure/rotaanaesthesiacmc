@@ -123,6 +123,16 @@ def rota_publish_checklist(db: Session, month: str) -> dict[str, object]:
             )
         )
 
+    extra_duties = int(summary.get("extra_duty_records", 0))
+    if extra_duties > 0:
+        warnings.append(
+            checklist_item(
+                "warning",
+                "Extra duties (ledger)",
+                f"Extra duties (ledger): {extra_duties}. Assigned by the extra-duty layer; see the audit report.",
+            )
+        )
+
     approval = latest_publish_approval(db, period.id)
     return {
         "month": month,
