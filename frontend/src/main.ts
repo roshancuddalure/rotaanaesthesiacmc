@@ -1,4 +1,5 @@
 import { openRotaCompute, openAutoassign, renderComputeSettings } from "./rota-compute";
+import { preference as computePreference } from "./compute-device";
 import { openIntelligentRota } from './rota-intelligence';
 import { openRecordEditor } from "./record-workspace";
 import { openOperationalImport } from "./operational-import";
@@ -164,6 +165,12 @@ import {
   rejectRotaExchange,
   requestRotaExchange,
 } from "./services/api";
+
+function computeEngineLabel() {
+  const p = computePreference();
+  if (!p.enabled || p.mode === "server") return "Compute: Server · change";
+  return p.mode === "local_gpu" ? "Compute: this GPU (pilot) · change" : "Compute: Automatic · change";
+}
 
 /* ============================================================
    UX Helpers — Toast, Sidebar, Focus Preservation
@@ -6385,7 +6392,7 @@ function generationReadiness(template: NonNullable<typeof rotaTemplate>, early=f
   const draft=template.rota_period.status.toLowerCase()==="draft";
   const assigned=template.slots.filter(s=>s.assignments.some(a=>["assigned","confirmed","draft"].includes(a.status.toLowerCase()))).length;
   const open=Math.max(0,template.slots.length-assigned), locked=template.scope.is_locked;
-  return `<section class="generation-overview panel" aria-label="Generation workflow"><div class="generation-heading"><div><p class="eyebrow">Generation workspace</p><h2>Build the duties. Find the right people.</h2><p>${escapeHtml(formatMonth(rotaTemplateMonth))} · ${template.scope.included_units.length} units · ${template.slots.length} duties · ${assigned} filled · ${open} open</p></div><button type="button" class="icon-button" data-view-shortcut="compute-settings">Compute settings</button></div>
+  return `<section class="generation-overview panel" aria-label="Generation workflow"><div class="generation-heading"><div><p class="eyebrow">Generation workspace</p><h2>Build the duties. Find the right people.</h2><p>${escapeHtml(formatMonth(rotaTemplateMonth))} · ${template.scope.included_units.length} units · ${template.slots.length} duties · ${assigned} filled · ${open} open</p></div><button type="button" class="icon-button" data-view-shortcut="compute-settings" title="Choose server or this computer's GPU for generation">${escapeHtml(computeEngineLabel())}</button></div>
     <ol class="generation-stages"><li><strong>1 · Build template</strong><span>Allocate duties to included units</span></li><li><strong>2 · Autoassign members</strong><span>Prepare safe member proposals</span></li><li><strong>3 · Review draft</strong><span>Apply only after final validation</span></li></ol>
     <p role="status">${!draft?"This month is published. Generation is read-only.":!locked?"Lock included units in Rota Setup before building the template.":!template.slots.length?"Build and apply the template first, then Autoassign members.":!open?"All duties have members. Review the draft or use explicit repair in Whole-month optimisation.":`${open} duties are ready for Autoassign. Existing assignments stay fixed unless you explicitly allow repairs.`}</p>
     ${early?`<div class="generation-early-actions"><button type="button" class="primary" data-early-build ${!draft||!locked?"disabled":""}>Build template</button><button type="button" class="primary" id="run-safe-auto-fill" ${!draft||!open?"disabled":""}>Autoassign members</button><button type="button" data-view-shortcut="rota-review">Review draft</button><p>Actions are ready. Optional reports are still loading…</p></div>`:""}</section>`;

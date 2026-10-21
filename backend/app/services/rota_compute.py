@@ -156,6 +156,25 @@ def burden_comparison(state):
     return {"members": len(before), "before": summarize(before), "after": summarize(after)}
 
 
+def conflict_summary(db, job, operator):
+    """What the generator needs to offer Resume/Cancel for a blocking proposal."""
+    from app.models import UserAccount
+
+    state = job.state or {}
+    owner = db.get(UserAccount, job.operator_id)
+    return {
+        "job_id": str(job.id),
+        "month": job.month,
+        "status": job.status,
+        "kind": "template" if state.get("template") else "intelligent" if state.get("intelligence") else "members",
+        "processed": state.get("cursor", 0),
+        "total": len(state.get("slots", [])),
+        "owned": job.operator_id == operator.id,
+        "operator_name": (owner.display_name or owner.username) if owner else None,
+        "updated_at": job.updated_at.isoformat() + "Z" if job.updated_at else None,
+    }
+
+
 def create_job(db, month, operator, engine="server", *, commit=True):
     lock_namespace(db, "rota-compute")
     active = list(db.scalars(select(RotaComputeJob).where(
@@ -163,7 +182,15 @@ def create_job(db, month, operator, engine="server", *, commit=True):
         RotaComputeJob.created_at > datetime.utcnow() - timedelta(hours=2),
     ).limit(3)))
     if len(active) >= 3:
-        raise HTTPException(429, "Three active proposals already exist. Resume or cancel one before starting another.", headers={"Retry-After": "30"})
+        raise HTTPException(
+            429,
+            {
+                "code": "too_many_proposals",
+                "message": "Three active proposals already exist. Resume or cancel one before starting another.",
+                "jobs": [conflict_summary(db, other, operator) for other in active],
+            },
+            headers={"Retry-After": "30"},
+        )
     lock_namespace(db, "rota-compute:" + month)
     period, _ = writable_period(db, month)
     # Materialize defaults before freezing the snapshot.
@@ -184,8 +211,9 @@ def create_job(db, month, operator, engine="server", *, commit=True):
         raise HTTPException(
             409,
             {
+                "code": "proposal_exists",
                 "message": "A proposal already exists for this month. Resume or cancel it.",
-                "job_id": str(existing.id),
+                **conflict_summary(db, existing, operator),
             },
         )
     slots = open_slots_for_period(db, period.id)

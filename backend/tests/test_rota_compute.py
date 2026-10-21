@@ -335,3 +335,20 @@ def test_api_permissions_resumption_failure_state_and_feature_flags(compute_db, 
         assert client.get("/api/v1/rota-compute/jobs?month=2026-05").status_code == 503
     finally:
         app.dependency_overrides.clear()
+
+
+def test_conflict_detail_lets_the_generator_offer_resume_and_cancel(compute_db):
+    db, user = compute_db
+    first = compute.create_job(db, "2026-05", user)
+    with pytest.raises(HTTPException) as raised:
+        compute.create_job(db, "2026-05", user)
+    detail = raised.value.detail
+    assert raised.value.status_code == 409
+    assert detail["code"] == "proposal_exists" and detail["job_id"] == first["id"]
+    assert detail["kind"] == "members" and detail["status"] == "queued" and detail["owned"] is True
+    assert detail["month"] == "2026-05" and "processed" in detail and "total" in detail
+    other = UserAccount(id=uuid4(), role="computer_admin")
+    with pytest.raises(HTTPException) as raised:
+        compute.create_job(db, "2026-05", other)
+    assert raised.value.detail["owned"] is False
+    assert raised.value.detail["operator_name"] in {None, user.display_name or user.username}

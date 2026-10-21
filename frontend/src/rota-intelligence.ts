@@ -1,6 +1,7 @@
 import { request } from './services/api';
 import { workspaceDialog } from './member-workspace';
 import { prepareEngine, RecoveringCompute, invalidateDevice, preference, selectedEngine,scoreFrame } from './compute-device';
+import { conflictsFromError, showProposalConflict } from './compute-conflict';
 
 const esc = (v: unknown) => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]!);
 const api = <T = any>(path: string, data?: unknown) => request<T>(`/api/v1/rota-intelligence/${path}`,
@@ -36,7 +37,12 @@ export async function openIntelligentRota(month:string, admin:boolean, onApplied
     const recent=await compute<Job[]>(`jobs?month=${encodeURIComponent(month)}`);
     job=recent.find(j=>j.intelligence && ['queued','running','completed'].includes(j.status));
     job ||= recent.find(j=>j.intelligence && j.status==='applied');
-    if(recent.some(j=>!j.intelligence && ['queued','running','completed'].includes(j.status))) notice='An existing scoring proposal is active. Resume or cancel it in Generate & review draft first.';
+    const blocking=recent.find(j=>!j.intelligence && ['queued','running','completed'].includes(j.status));
+    if(blocking){
+      showProposalConflict(dialog,{month,admin,stage:'intelligent',onApplied,conflicts:[{processed:0,total:0,...(blocking as Partial<{processed:number;total:number}>),...blocking,job_id:blocking.id,month,owned:true}],
+        retry:()=>void openIntelligentRota(month,admin,onApplied)});
+      return;
+    }
   } catch(e) {dialog.innerHTML=`<div class="mw-content"><p role="alert">${esc(e instanceof Error?e.message:e)}</p><button data-close>Close</button></div>`;
     dialog.querySelector('button')!.onclick=()=>dialog.close();return;}
   const people=(selected='')=>setup.people.map(p=>`<option value="${esc(p.id)}" ${p.id===selected?'selected':''}>${esc(p.name)}</option>`).join('');
@@ -154,9 +160,14 @@ export async function openIntelligentRota(month:string, admin:boolean, onApplied
     if(input.matches('[data-local-token]')){token=input.value;sessionStorage.setItem('rota_local_assistant_pairing',token);
       const ask=dialog.querySelector<HTMLButtonElement>('[data-ask]');if(ask)ask.disabled=busy||!enabled||!token;}
   };
-  async function action(work:()=>Promise<void>) {if(busy)return;busy=true;render();try{await work();}catch(e){notice=e instanceof Error?e.message:String(e);
+  async function action(work:()=>Promise<void>) {if(busy)return;busy=true;render();let handedOff=false;try{await work();}catch(e){
+    const conflicts=conflictsFromError(e);
+    if(conflicts?.length && !closed){handedOff=true;busy=false;
+      showProposalConflict(dialog,{month,admin,stage:'intelligent',onApplied,conflicts,message:e instanceof Error?e.message:undefined,
+        retry:()=>void openIntelligentRota(month,admin,onApplied)});return;}
+    notice=e instanceof Error?e.message:String(e);
     if(job)try{job=await compute<Job>(`jobs/${job.id}`);}catch{/*Keep known state for recovery.*/}
-  }finally{busy=false;render();}}
+  }finally{if(!handedOff){busy=false;render();}}}
   dialog.onclick=event=>{
     const b=(event.target as HTMLElement).closest<HTMLButtonElement>('button');if(!b)return;
     if(b.matches('[data-close]')){dialog.close();return;}
