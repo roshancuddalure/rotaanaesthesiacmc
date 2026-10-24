@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {writeFile} from 'node:fs/promises';
 import {chromium} from 'playwright';
-const base=process.env.MEMBER_TEST_URL || 'http://127.0.0.1:5178', server='http://127.0.0.1:8019';
+const base=process.env.MEMBER_TEST_URL || 'http://127.0.0.1:5178', server=process.env.COMPUTE_TEST_API || 'http://127.0.0.1:8019';
 const browser=await chromium.launch({headless:true,executablePath:process.env.MEMBER_TEST_BROWSER || chromium.executablePath()});
 const reset=()=>fetch(server+'/__fixture/reset',{method:'POST'});
 const fixture=async()=>(await fetch(server+'/__fixture')).json();
@@ -12,7 +12,7 @@ async function open(width) {
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  let sentInstruction='';
  page.on('request',r=>{if(r.url().includes('11437/suggest'))sentInstruction=JSON.parse(r.postData()).instruction;});
- await page.route('**/__intelligence-test',r=>r.fulfill({contentType:'text/html',body:'<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/src/styles.css"></head><body><button>Open</button></body></html>'}));
+ await page.route('**/__intelligence-test',r=>r.fulfill({contentType:'text/html',body:'<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/src/styles.css"><link rel="stylesheet" href="/src/premium-theme.css"></head><body><button>Open</button></body></html>'}));
  await page.route('**/api/**',async r=>{const url=new URL(r.request().url());if(url.port==='11437'){await r.continue();return;}const response=await r.fetch({url:server+url.pathname+url.search});await r.fulfill({response});});
  await page.goto(base+'/__intelligence-test');
  await page.evaluate(async()=>{const m=await import('/src/rota-intelligence.ts');await m.openIntelligentRota('2026-05',true,()=>{window.applied=true;});});
@@ -89,7 +89,7 @@ try {
  await integrated.page.addInitScript(()=>localStorage.setItem('duty_rota_auth_token','disposable'));
  await integrated.page.goto(base);
  await integrated.page.getByRole('heading',{name:'Duty workload at a glance',exact:true}).waitFor();
- await integrated.page.locator('[data-view="rota-template"]').first().evaluate(b=>b.click());
+ await integrated.page.locator('[data-view="rota-template"]:visible').first().click();
  await integrated.page.locator('#working-month').fill('2026-05');
  await integrated.page.locator('#working-month').dispatchEvent('change');
  await integrated.page.locator('#run-intelligent-rota').click();

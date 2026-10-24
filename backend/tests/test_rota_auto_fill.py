@@ -175,7 +175,8 @@ def test_safe_auto_fill_leaves_ambiguous_call_slots_open() -> None:
         assert session.query(DutyAssignment).count() == 0
         event = session.query(RotaAutoFillEvent).one()
         assert event.action == "skipped"
-        assert "ambiguous" in event.reason.lower()
+        assert "no call level; set one in Rota Rules" in event.reason  # only a duty with no level is unresolved
+        assert event.details["problem"] == "call_level_missing"
 
 
 @contextmanager

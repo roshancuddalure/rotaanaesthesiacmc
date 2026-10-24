@@ -1,0 +1,71 @@
+{
+  "recorded_at_utc": "2026-10-22T11:38:04.378373+00:00",
+  "requirements": [
+    135,
+    136,
+    137,
+    139,
+    150,
+    155,
+    156,
+    157,
+    159,
+    160,
+    208,
+    209,
+    212,
+    223,
+    225,
+    227,
+    228,
+    258
+  ],
+  "completion_claim": false,
+  "scope": "Normalized import inline unit creation recovery and reference-management workflows; frontend-only bounded fixtures.",
+  "source_sha256": {
+    "frontend/src/operational-import.ts": "838afc1e32c4f0fa271eaa451423753d0054cdef6f3295da9e812257eb6d4e27",
+    "frontend/src/reference-workspace.ts": "b0e111f78ff245eb94254c7c1d2fe1ebfa0224eda7a6c8d6ef83c1dc5f32a7de"
+  },
+  "confirmed_before": "After intercepted successful unit creation, a failed follow-up choices GET produced an unhandled page error, no read retry and no unit correction. Diagnostic requests never reached a backend.",
+  "change": [
+    "Record the confirmed created unit on the original row and invalidate the preview immediately.",
+    "Catch dependent member/unit GET failures; show Unit created and a read-only retry without replaying the POST.",
+    "Scope pending choices to the original open dialog, File, preview and column generation; replacement-file drafts ignore late results.",
+    "Guard duplicate retry activation, retain native keyboard focus while pending and restore the exact visible row summary on owned success.",
+    "Keep the full recovery message and retry visible below the dialog header; preserve deliberate newer focus.",
+    "Reference management required no source change: exercised both existing unit/posting and leave catalogs, failed load/save retries, stable identity, exact payload, close/focus and retained import context."
+  ],
+  "checks": {
+    "created_unit_workflows": 12,
+    "import_reference_workflows": 12,
+    "candidate_workflows_rerun": 6,
+    "refresh_workflows_rerun": 12,
+    "normalized_editor_recovery_workflows": 15,
+    "unit_tests": 100,
+    "build_exit_code": 0,
+    "build_inputs_held": true,
+    "tagged_axe_failure_surfaces": 6,
+    "axe_violations": 0
+  },
+  "evidence": [
+    "docs/premium-ui/qa-import-created-unit.json",
+    "docs/premium-ui/qa-import-reference-controls.json",
+    "docs/premium-ui/qa-import-candidate-choice.json",
+    "docs/premium-ui/qa-import-created-unit-before.json",
+    "docs/premium-ui/reviews/operational-import-keyboard-fixed-current.json",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json",
+    "tmp/premium-normalized-save-current.log"
+  ],
+  "screenshots": [
+    "docs/premium-ui/screenshots/recovery/import-unit-choices-320.png",
+    "docs/premium-ui/screenshots/recovery/import-unit-choices-1280.png"
+  ],
+  "limitations": [
+    "All create/reference writes and reads intercepted. Payload and UI outcomes verified; no production or real persisted read-back certification.",
+    "Unit import is a one-row fixture; reference management uses an empty import review. Other modes, roles, row counts and server validation remain separate acceptance work.",
+    "Axe covers the open light-theme import recovery dialog at 320/1280 in three engines. It does not certify every contrast/state, native assistive technology or physical devices.",
+    "Physical checks remain pending at user request; independent reviewer usage limit remains. Previously recorded native month-picker and rules-test limitations retained.",
+    "144-route/viewport/theme matrix is historical after these local changes. No whole-requirement or full-260 completion claim.",
+    "No backend, API contract, permission, scheduling, persisted semantics, export-content, deployment or production changes made for this batch."
+  ]
+}

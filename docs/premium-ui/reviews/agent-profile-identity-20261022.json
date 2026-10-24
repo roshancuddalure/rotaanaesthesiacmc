@@ -1,0 +1,228 @@
+{
+  "schema_version": 1,
+  "reviewer": "profile_identity_review",
+  "reviewed_at_utc": "2026-10-22T13:07:30.622311+00:00",
+  "scope": "Frontend-only specialist audit of plan121/124/126/132/133. Source inspection plus six GET-only fixture workflows; no application source edits or backend writes.",
+  "status": "gaps_confirmed_bounded_runtime",
+  "source_sha256": {
+    "frontend/src/member-profile.ts": "ab676605aab62d4463d680d204e862df6aa087fb1a5bc3260536aad4ce93c3e0",
+    "frontend/src/member-workspace.ts": "3a7b2300bf74eecf53e151908791d87fdcc1c21aebc3a270a5fb57b9d7379ee8",
+    "frontend/src/styles.css": "e5e5802b5cdef146b542fcfafc1b2040f232898cafaa89dcf30554235da140b5",
+    "frontend/src/premium-theme.css": "89e37305c5efca7be5570b00676a79aa83260a8c013a65bfc62d41a242fe0823"
+  },
+  "priority_findings": [
+    {
+      "id": "legacy-identity-current-designation",
+      "requirements": [
+        121,
+        126,
+        133
+      ],
+      "source": [
+        "frontend/src/member-profile.ts:110",
+        "frontend/src/member-profile.ts:111",
+        "frontend/src/member-workspace.ts:415",
+        "frontend/src/member-workspace.ts:441"
+      ],
+      "finding": "Legacy header selects the final designation array entry without checking effective dates. A future2099 designation is shown as current identity while workspace Overview shows the actual current position. Workspace computes a position in render but does not display that value in the header.",
+      "safe_frontend_fix": "Use the already-returned profile.today to date-filter legacy header designation, keeping source ordering as the tie-breaker; use truthful Position not recorded when none is current. Do not change designation records or eligibility. Consider a shared visual identity header while preserving existing role gates and actions.",
+      "bounded_runtime": "All three engines at320/1280 reproduce Future reviewer position in legacy header versus Current reviewer position in workspace Overview.",
+      "acceptance": "Check past-only,current,future-only,current+future,empty histories; current label must match effective dates, all full names/designations escaped and wrapped, Close stays visible and keyboard reachable. Existing request paths and role-specific controls unchanged."
+    },
+    {
+      "id": "generic-history-null-label",
+      "requirements": [
+        133
+      ],
+      "source": [
+        "frontend/src/member-workspace.ts:401"
+      ],
+      "finding": "History renderer applies value??Ongoing to every null scalar. Fixture null unit and null notes therefore display Ongoing, inventing duration semantics for missing identity/text fields.",
+      "safe_frontend_fix": "Use Ongoing only for known open-ended date fields such as ends_on/effective_to. Use neutral Not recorded for other null scalar values, retaining all nonnull values, zeroes, booleans and raw IDs. Avoid guessing special-posting semantics for a missing unit.",
+      "bounded_runtime": "All six contexts render unit=Ongoing,notes=Ongoing,ends_on=Ongoing. Null values were injected in GET fixture only; production prevalence not certified.",
+      "acceptance": "GET fixtures for null unit/notes/date,zero,false,empty strings and escaped labels. Verify ends_on remains Ongoing, other nulls truthfully unrecorded, exact nonnull values preserved; no mutation or request changes."
+    }
+  ],
+  "additional_findings": [
+    {
+      "id": "legacy-long-identity-overflow",
+      "requirements": [
+        126
+      ],
+      "source": [
+        "frontend/src/styles.css:4938"
+      ],
+      "finding": "Legacy header lacks the workspace min-width0/anywhere wrapping treatment. Long unbroken surname fixture causes header and dialog horizontal overflow in all six contexts, though measured name and Close rectangles do not overlap.",
+      "safe_frontend_fix": "Scope min-width0 to legacy header identity column, overflow-wrap:anywhere to name/designation and flex-shrink0 to Close. Test320/1280 light/dark and enlarged text with no dialog horizontal overflow."
+    }
+  ],
+  "other_reviewed_items": [
+    {
+      "requirement": 124,
+      "assessment": "Workspace labels/order are centralized in labels. Legacy profile uses a different section/disclosure hierarchy. Counts are absent in tab labels; avoid adding misleading zeroes or new reads solely to populate counts. Full cross-entry acceptance remains open."
+    },
+    {
+      "requirement": 132,
+      "assessment": "Workspace Duties already renders returned official-analysis numbers and actual duty records in the same view, with date filters. This audit does not certify all workload metrics or their backend meaning."
+    }
+  ],
+  "tests_executed": [
+    {
+      "command": "node tmp/profile-identity-review.mjs",
+      "result": "6/6 Chromium,Firefox,WebKit \u00d7320/1280 diagnostic workflows reproduced specified gaps;18 intercepted GETs,0writes,0pageerrors. Findings are failures to address, not completed acceptance."
+    }
+  ],
+  "runtime_results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "getOnlyRequests": [
+        "/api/v1/admin/member-workspace/identity-review",
+        "/api/v1/admin/member-workspace/identity-review/postings",
+        "/api/v1/members/identity-review/profile"
+      ],
+      "workspaceCurrentPositionVisibleInOverview": true,
+      "workspaceHeaderOmitsCurrentPosition": true,
+      "legacyHeaderShowsFuturePosition": true,
+      "nullHistoryPresentation": {
+        "unit": "Ongoing",
+        "starts on": "2026-10-01",
+        "ends on": "Ongoing",
+        "notes": "Ongoing"
+      },
+      "legacyLongIdentityGeometry": {
+        "headerOverflow": true,
+        "nameOverlapsClose": false,
+        "dialogOverflow": true
+      },
+      "pageErrors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "getOnlyRequests": [
+        "/api/v1/admin/member-workspace/identity-review",
+        "/api/v1/admin/member-workspace/identity-review/postings",
+        "/api/v1/members/identity-review/profile"
+      ],
+      "workspaceCurrentPositionVisibleInOverview": true,
+      "workspaceHeaderOmitsCurrentPosition": true,
+      "legacyHeaderShowsFuturePosition": true,
+      "nullHistoryPresentation": {
+        "unit": "Ongoing",
+        "starts on": "2026-10-01",
+        "ends on": "Ongoing",
+        "notes": "Ongoing"
+      },
+      "legacyLongIdentityGeometry": {
+        "headerOverflow": true,
+        "nameOverlapsClose": false,
+        "dialogOverflow": true
+      },
+      "pageErrors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "getOnlyRequests": [
+        "/api/v1/admin/member-workspace/identity-review",
+        "/api/v1/admin/member-workspace/identity-review/postings",
+        "/api/v1/members/identity-review/profile"
+      ],
+      "workspaceCurrentPositionVisibleInOverview": true,
+      "workspaceHeaderOmitsCurrentPosition": true,
+      "legacyHeaderShowsFuturePosition": true,
+      "nullHistoryPresentation": {
+        "unit": "Ongoing",
+        "starts on": "2026-10-01",
+        "ends on": "Ongoing",
+        "notes": "Ongoing"
+      },
+      "legacyLongIdentityGeometry": {
+        "headerOverflow": true,
+        "nameOverlapsClose": false,
+        "dialogOverflow": true
+      },
+      "pageErrors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "getOnlyRequests": [
+        "/api/v1/admin/member-workspace/identity-review",
+        "/api/v1/admin/member-workspace/identity-review/postings",
+        "/api/v1/members/identity-review/profile"
+      ],
+      "workspaceCurrentPositionVisibleInOverview": true,
+      "workspaceHeaderOmitsCurrentPosition": true,
+      "legacyHeaderShowsFuturePosition": true,
+      "nullHistoryPresentation": {
+        "unit": "Ongoing",
+        "starts on": "2026-10-01",
+        "ends on": "Ongoing",
+        "notes": "Ongoing"
+      },
+      "legacyLongIdentityGeometry": {
+        "headerOverflow": true,
+        "nameOverlapsClose": false,
+        "dialogOverflow": true
+      },
+      "pageErrors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "getOnlyRequests": [
+        "/api/v1/admin/member-workspace/identity-review",
+        "/api/v1/admin/member-workspace/identity-review/postings",
+        "/api/v1/members/identity-review/profile"
+      ],
+      "workspaceCurrentPositionVisibleInOverview": true,
+      "workspaceHeaderOmitsCurrentPosition": true,
+      "legacyHeaderShowsFuturePosition": true,
+      "nullHistoryPresentation": {
+        "unit": "Ongoing",
+        "starts on": "2026-10-01",
+        "ends on": "Ongoing",
+        "notes": "Ongoing"
+      },
+      "legacyLongIdentityGeometry": {
+        "headerOverflow": true,
+        "nameOverlapsClose": false,
+        "dialogOverflow": true
+      },
+      "pageErrors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "getOnlyRequests": [
+        "/api/v1/admin/member-workspace/identity-review",
+        "/api/v1/admin/member-workspace/identity-review/postings",
+        "/api/v1/members/identity-review/profile"
+      ],
+      "workspaceCurrentPositionVisibleInOverview": true,
+      "workspaceHeaderOmitsCurrentPosition": true,
+      "legacyHeaderShowsFuturePosition": true,
+      "nullHistoryPresentation": {
+        "unit": "Ongoing",
+        "starts on": "2026-10-01",
+        "ends on": "Ongoing",
+        "notes": "Ongoing"
+      },
+      "legacyLongIdentityGeometry": {
+        "headerOverflow": true,
+        "nameOverlapsClose": false,
+        "dialogOverflow": true
+      },
+      "pageErrors": []
+    }
+  ],
+  "limits": [
+    "No physical-device checks.",
+    "Synthetic GET-only fixtures; no production data inspected or changed.",
+    "No complete accessibility/role/all-action certification.",
+    "No source mutation performed; root should implement a bounded fix before claiming remediation.",
+    "Report hashes sampled after diagnostics; this report makes no global concurrency snapshot guarantee."
+  ]
+}

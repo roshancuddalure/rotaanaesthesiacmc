@@ -1,0 +1,82 @@
+{
+  "recorded_at_utc": "2026-10-23T14:24:15.003575+00:00",
+  "completion_claim": false,
+  "requirements": [
+    124,
+    208,
+    209,
+    212,
+    219,
+    258
+  ],
+  "scope": "Canonical member profile tab presentation: stable labels/order with honest loaded-list counts and retry status.",
+  "source_sha256": {
+    "frontend/src/member-workspace.ts": "15f504eee18a641172e05386ff351b16b87948cf08bcb280390ea2ed250c1887",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "6cca906917c5ea8e430f91cc394d2f0852f24fec6049c548d885ea2449c81aa3"
+  },
+  "changes": [
+    "Keep existing eight labels/order and accessible names. Add aria-hidden visual loaded badges with accessible descriptions for postings,leave,duties,activity only after returned rows exist.",
+    "Unloaded lists show no invented zero; successful empty list shows0loaded. Counts describe loaded records and explicitly may be a subset of full history, not a total or filtered-row count.",
+    "Failed list reads show Retry needed and describe the existing Retry action. Composite roles/aliases/duplicates tabs receive no ambiguous mixed counts. Existing endpoints,cache/error/retry behavior,keyboard handlers andpermissions unchanged."
+  ],
+  "checks": {
+    "tab_contexts": 12,
+    "engines": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "widths": [
+      320,
+      1280
+    ],
+    "themes": "dark320/light1280",
+    "roles": [
+      "admin fixture",
+      "view-only fixture"
+    ],
+    "loaded_values": {
+      "postings": 1,
+      "leave": 0,
+      "duties": 2,
+      "activity_after_retry": 3
+    },
+    "semantics": "Duty date filter yields1visible row while2loaded badge stays truthful. Unloaded and zero distinct. Activity503 marksretry, explicitGETretryupdates3loaded andfocusesActivity. Home/End andselectedtabreveal preserve cachedread counts. Accessible names andeight-taborder stable.",
+    "draft_and_role_gate": "Admin unsaved name retained; view-only keeps Edit unavailable. No mutations.",
+    "tab_rail_axe_checks": 24,
+    "profile_header_regression_contexts": 12,
+    "header_axe_checks": 12,
+    "tagged_axe_violations": 0,
+    "history_recovery_contexts": 12,
+    "rail_resize_contexts": 2,
+    "browser_total": 38,
+    "unit_tests": 100,
+    "build_exit_code": 0,
+    "build_inputs_held": true,
+    "static_inventories": "Style/action write/check match; static integrity only."
+  },
+  "evidence": [
+    "docs/premium-ui/qa-profile-tab-status.json",
+    "docs/premium-ui/qa-profile-header-space.json",
+    "docs/premium-ui/qa-member-history-retry.json",
+    "docs/premium-ui/qa-profile-rail-independent.json",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+  ],
+  "test": "frontend/tests/premium-profile-tab-status.browser.mjs",
+  "test_sha256": "4023c58652605178e607242a2c5bad0de44ae80aa2bf0a7ff41ffaa31895a860",
+  "screenshot": "docs/premium-ui/screenshots/profile-tabs/retry-320.png",
+  "visual_review": {
+    "reviewer": "rootimplementer,notindependent",
+    "finding": "320darkview-onlyprofile: Activityselected/focusedandRetryneededvisuallyclear,selectedtabfullyrevealed; Retryactioninbody,existingreadonlyfooterretained."
+  },
+  "limitations": [
+    "Root implementer review, not independent signoff. Re-running a file named independent does not create new independent review.",
+    "Canonical profile only; legacy profile is a different form without this tab rail and was not converted. Full124 cross-surface standardization remains open.",
+    "Counts are returned rows only. No backend total-history/completeness or all-query/candidate semantics certified.",
+    "Exact sectionGET paths/counts tested; extra-duty ledger existing reads excluded from that section-count assertion. No API calls added by metadata helper.",
+    "Error/loaded railaxe24 plusheader12 are scoped; not entiredialog/nativeATspeech or physicaldevice certification.",
+    "Only frontend member-workspace presentation and CSS changed this batch. No backend/API/permissions/scheduling/persistedsemantics/export changes; concurrent work preserved.",
+    "All260/samefixture workflow/calculation/export equivalence remain open."
+  ]
+}

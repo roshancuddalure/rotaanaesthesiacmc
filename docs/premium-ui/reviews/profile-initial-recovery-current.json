@@ -1,0 +1,76 @@
+{
+  "recorded_at_utc": "2026-10-24T02:07:12.578521+00:00",
+  "completion_claim": false,
+  "scope": "Canonical profile initial loading exit and explicit same-context GET recovery; loaded profile save behavior separately regressed.",
+  "requirements": [
+    49,
+    54,
+    56,
+    69,
+    81,
+    83,
+    84,
+    85,
+    87,
+    91,
+    92,
+    93,
+    225,
+    227,
+    229,
+    241,
+    242,
+    243,
+    246
+  ],
+  "source_sha256": {
+    "frontend/src/member-workspace.ts": "4ddb7efade2d5886e8d62dc5fa7225eb2448b02c4be37ebb0ce474b5d3562c41",
+    "frontend/src/main.ts": "93eebef4269de921331c843211094321582d241e6af186172339f1ae26b52b9e",
+    "frontend/src/workspace-load-state.ts": "cdd0e323d7e83e6e668a381bbfcc37cad4726b1193ac5de31d5f14e03eecd9c6",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "bbdf4ef4dc05d3850d94be50569177e850ab5bbac8376c20a1cadf13ead9162e"
+  },
+  "changes": [
+    "Use shared labelled loading header with reachable Close and skeleton.",
+    "Use shared failure view with explicit Retry; close old unavailable dialog and reopen exact member/context,guard late completion by connected/open."
+  ],
+  "checks": {
+    "development_initial_contexts": 24,
+    "production_initial_contexts": 24,
+    "production_real_profile_save_regressions": 6,
+    "short_height_rail_regressions": 2,
+    "unit_tests_passed": 104,
+    "build_passed": true,
+    "build_inputs_held": true,
+    "static_inventory_checks": true,
+    "tagged_loading_error_axe_findings": 0
+  },
+  "evidence": [
+    "docs/premium-ui/qa-profile-initial-recovery/report-development.json",
+    "docs/premium-ui/qa-profile-initial-recovery/report-production.json",
+    "docs/premium-ui/qa-profile-initial-recovery/before.json",
+    "docs/premium-ui/reviews/profile-initial-recovery-source-review.json",
+    "docs/premium-ui/reviews/profile-initial-recovery-test-review.json",
+    "docs/premium-ui/qa-profile-persistence/report.json",
+    "docs/premium-ui/qa-profile-rail-independent.json",
+    "frontend/tests/premium-profile-initial-recovery.browser.mjs",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json",
+    "tmp/premium-profile-initial-unit.log",
+    "tmp/premium-profile-initial-development.log",
+    "tmp/premium-profile-initial-development-repeat.log"
+  ],
+  "manual_visual_review": [
+    "Root inspected320dark loading and error captures: labelled Close,full-width skeleton,wrapped error heading and visible focused Retry without overlap."
+  ],
+  "limitations": [
+    "Initial recovery scenarios are read-only fixture computer-admin GETs; real save/conflict regressions mutate disposable RAM only. No production DB operations.",
+    "Members and Leave entry tabs tested. Retry preserves all six arguments by source review; proposed-status restoration and every caller context are not runtime-covered here.",
+    "Close actions activated by keyboard;44px geometry/hit checks and emulation do not prove physical touch/native screen-reader behavior.",
+    "Scoped tagged axe is limited to initial loading/error dialog,not whole-app WCAG. Only pageerror gate in new suite; no separate all-console/network-failure gate.",
+    "Read requests are not cancelled on dismissal; late results ignored. No new API,timeout,permission or save contract.",
+    "Initial strict geometry failures retained: second diagnostic measured43.99999809265137px. Test now explicitly permits0.01CSSpx rounding while requiring44px computed minima and pointer center hit. No CSS relaxed.",
+    "Browser test holds six declared sources/test hash. Production asset identity is separately bounded by build/package snapshot,not independently every downloaded asset.",
+    "No backend edits by this batch; concurrent backend work remains separately present. Full260 completion remains unproven."
+  ]
+}

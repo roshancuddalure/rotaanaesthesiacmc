@@ -1,0 +1,56 @@
+{
+  "recorded_at_utc": "2026-10-22T11:28:19.201905+00:00",
+  "requirements": [
+    123,
+    134,
+    135,
+    136,
+    137,
+    138,
+    139,
+    140,
+    155,
+    156,
+    160,
+    208,
+    209,
+    223,
+    225,
+    227,
+    228,
+    258
+  ],
+  "completion_claim": false,
+  "scope": "Normalizedunitimport candidate resolution, stale-review safety, rowfocus, settings/mapping/search/profilecontext; boundedfixtureworkflows.",
+  "source_sha256": {
+    "frontend/src/operational-import.ts": "838afc1e32c4f0fa271eaa451423753d0054cdef6f3295da9e812257eb6d4e27"
+  },
+  "evidence": [
+    "docs/premium-ui/qa-import-candidate-choice.json",
+    "docs/premium-ui/qa-import-candidate-choice-before.json",
+    "docs/premium-ui/reviews/operational-import-keyboard-fixed-current.json",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+  ],
+  "confirmed_before": "Changingcandidate then receiving503 keptoldpreviewapplicable: aria-disabled absent, blockerempty, nativeApplysent1diagnosticinterceptedrequest. No backendwriteoccurred.",
+  "change": [
+    "Candidatechoice nowusesexistingdirtyPreview immediately, invalidatingapplicability before previewrequest; failure/supersededrequest cannot silentlykeepoldpreviewapplicable.",
+    "Pass initiatingcandidatebutton toexistingpreviewlifecycle. Onsuccessfulownedkeyboardchoice, focus replacementEditrowsummaryfor exactrow, withRefreshfallback and visible row scroll; candidate invalidation does not jump to footer. Deliberate newerfocus retainsprecedence.",
+    "Existing previewsettings/API requestshape/candidateID semantics unchanged."
+  ],
+  "checks": {
+    "candidate_resolution_workflows": 6,
+    "refresh_focus_recovery_regressions": 12,
+    "unit_tests": 100,
+    "build_exit": 0,
+    "build_inputs_unchanged": true
+  },
+  "limitations": [
+    "Actualexportedunitimporttwo-rowfixture only; doesnotcertifyallmembermatchmodes/servereligibilityorrealdatarestoration.",
+    "WebKitinterception exposedmultipartmetadata/settingsbutnotfilebodybytes. TestchecksactualselectedFile.text() andfilename separately; no wire-byteclaim.",
+    "Columnfixture startswithwrongName→unit_name suggestion; actualcontrolcorrectstoName→member_name andrequestassertionwouldfailifhandlerdidnothing.",
+    "ApplyblockedtestusesnativekeyboardEnter becausePlaywrightpointerhelperrespectsaria-disabled; no forcedclick orbackendmutation.",
+    "Priorwide144matrixhistoricalafterlocalmodulechanges. Independentagentreview/physical/nativeassistive checks pending; earlierknownrules/nativepickerlimitations retained.",
+    "No backend/API-contract/permissions/scheduling/persisted-data/export-content/productionchanges; full260goal active/incomplete."
+  ],
+  "latest_regression_rerun_at_utc": "2026-10-22T11:38:04.378373+00:00"
+}

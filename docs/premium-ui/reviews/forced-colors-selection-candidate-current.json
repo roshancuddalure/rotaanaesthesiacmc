@@ -1,0 +1,3328 @@
+{
+  "recorded_at_utc": "2026-10-22T05:18:01.157Z",
+  "requirements": [
+    40,
+    202,
+    216
+  ],
+  "scope": "Style-only browser harness with actual shipped class/ARIA combinations and existing stylesheet sources. Candidate CSS injected only into isolated test document. Not actual operational component actions, native Windows high contrast, screen-reader or WebKit coverage. Parent actual analytics selection-before probe is separate evidence.",
+  "source_hashes": {
+    "frontend/src/styles.css": "ab9087e56579fb8920ea02d1482209a71101f9650787a9086d73c5dd84af20f8",
+    "frontend/src/premium-theme.css": "1a8e83688dba2496a12073b786677900d28a9d8002c8b64b682975dec657b96b",
+    "frontend/src/unit-member-lists.ts": "9d29fb79214cce10962f480c9efb56741cc24a5f9b98a5ad7ec539ce49eda7ac",
+    "frontend/src/component-reference.ts": "5fcdcf57286267e2f4d0ef45a903d699ee7acf9acfdc8880e2b637474afea9c9"
+  },
+  "candidate_css": "@media (forced-colors: active) { :is(.analysis-tab-btn[aria-selected=\"true\"], .segmented button.selected, .segmented button[aria-pressed=\"true\"], .leave-calendar__switch button[aria-pressed=\"true\"], .rr-filter[aria-pressed=\"true\"], .rr-tile[aria-pressed=\"true\"], .intelligence-tabs button[aria-pressed=\"true\"]) { border-color: Highlight; font-weight: 700; text-decoration-line: underline; text-decoration-thickness: 3px; text-underline-offset: 4px; } }",
+  "results": [
+    {
+      "engine": "chromium",
+      "colorScheme": "light",
+      "width": 320,
+      "forcedColorsSupported": true,
+      "before": [
+        {
+          "variant": "analytics",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(0, 0, 0)",
+            "borderWidth": "1px",
+            "fontWeight": "600",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(0, 0, 0)",
+            "borderWidth": "1px",
+            "fontWeight": "600",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        },
+        {
+          "variant": "segmented",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(0, 0, 0)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgba(255, 255, 255, 0)",
+            "borderColor": "rgb(0, 0, 0)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        },
+        {
+          "variant": "leave-calendar",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(0, 0, 0)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(0, 0, 0)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        },
+        {
+          "variant": "rule-filter",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(0, 0, 0)",
+            "borderWidth": "1px",
+            "fontWeight": "650",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(0, 0, 0)",
+            "borderWidth": "1px",
+            "fontWeight": "650",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        },
+        {
+          "variant": "rule-tile",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(0, 0, 0)",
+            "borderWidth": "1px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(0, 0, 0)",
+            "borderWidth": "1px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        },
+        {
+          "variant": "intelligence",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(0, 0, 0)",
+            "borderWidth": "2px",
+            "fontWeight": "700",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(0, 0, 0)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        }
+      ],
+      "after": [
+        {
+          "variant": "analytics",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(55, 0, 110)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(0, 0, 0)",
+            "borderWidth": "1px",
+            "fontWeight": "600",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(55, 0, 110)",
+            "borderWidth": "1px",
+            "fontWeight": "600",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        },
+        {
+          "variant": "segmented",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(55, 0, 110)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgba(255, 255, 255, 0)",
+            "borderColor": "rgb(0, 0, 0)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgba(255, 255, 255, 0)",
+            "borderColor": "rgb(55, 0, 110)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        },
+        {
+          "variant": "leave-calendar",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(55, 0, 110)",
+            "borderWidth": "2px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(0, 0, 0)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(0, 0, 0)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        },
+        {
+          "variant": "rule-filter",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(55, 0, 110)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(0, 0, 0)",
+            "borderWidth": "1px",
+            "fontWeight": "650",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(55, 0, 110)",
+            "borderWidth": "1px",
+            "fontWeight": "650",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        },
+        {
+          "variant": "rule-tile",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(55, 0, 110)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(0, 0, 0)",
+            "borderWidth": "1px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(55, 0, 110)",
+            "borderWidth": "1px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        },
+        {
+          "variant": "intelligence",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(55, 0, 110)",
+            "borderWidth": "2px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(0, 0, 0)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(0, 0, 0)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        }
+      ],
+      "api_requests": 0
+    },
+    {
+      "engine": "chromium",
+      "colorScheme": "light",
+      "width": 1280,
+      "forcedColorsSupported": true,
+      "before": [
+        {
+          "variant": "analytics",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(0, 0, 0)",
+            "borderWidth": "1px",
+            "fontWeight": "600",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(0, 0, 0)",
+            "borderWidth": "1px",
+            "fontWeight": "600",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        },
+        {
+          "variant": "segmented",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(0, 0, 0)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgba(255, 255, 255, 0)",
+            "borderColor": "rgb(0, 0, 0)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        },
+        {
+          "variant": "leave-calendar",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(0, 0, 0)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(0, 0, 0)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        },
+        {
+          "variant": "rule-filter",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(0, 0, 0)",
+            "borderWidth": "1px",
+            "fontWeight": "650",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(0, 0, 0)",
+            "borderWidth": "1px",
+            "fontWeight": "650",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        },
+        {
+          "variant": "rule-tile",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(0, 0, 0)",
+            "borderWidth": "1px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(0, 0, 0)",
+            "borderWidth": "1px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        },
+        {
+          "variant": "intelligence",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(0, 0, 0)",
+            "borderWidth": "2px",
+            "fontWeight": "700",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(0, 0, 0)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        }
+      ],
+      "after": [
+        {
+          "variant": "analytics",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(55, 0, 110)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(0, 0, 0)",
+            "borderWidth": "1px",
+            "fontWeight": "600",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(55, 0, 110)",
+            "borderWidth": "1px",
+            "fontWeight": "600",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        },
+        {
+          "variant": "segmented",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(55, 0, 110)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgba(255, 255, 255, 0)",
+            "borderColor": "rgb(0, 0, 0)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgba(255, 255, 255, 0)",
+            "borderColor": "rgb(55, 0, 110)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        },
+        {
+          "variant": "leave-calendar",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(55, 0, 110)",
+            "borderWidth": "2px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(0, 0, 0)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(0, 0, 0)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        },
+        {
+          "variant": "rule-filter",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(55, 0, 110)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(0, 0, 0)",
+            "borderWidth": "1px",
+            "fontWeight": "650",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(55, 0, 110)",
+            "borderWidth": "1px",
+            "fontWeight": "650",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        },
+        {
+          "variant": "rule-tile",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(55, 0, 110)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(0, 0, 0)",
+            "borderWidth": "1px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(55, 0, 110)",
+            "borderWidth": "1px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        },
+        {
+          "variant": "intelligence",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(55, 0, 110)",
+            "borderWidth": "2px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(0, 0, 0)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(255, 255, 255)",
+            "borderColor": "rgb(0, 0, 0)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        }
+      ],
+      "api_requests": 0
+    },
+    {
+      "engine": "chromium",
+      "colorScheme": "dark",
+      "width": 320,
+      "forcedColorsSupported": true,
+      "before": [
+        {
+          "variant": "analytics",
+          "selected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(255, 255, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "600",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(255, 255, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "600",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        },
+        {
+          "variant": "segmented",
+          "selected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(255, 255, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgba(0, 0, 0, 0)",
+            "borderColor": "rgb(255, 255, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        },
+        {
+          "variant": "leave-calendar",
+          "selected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(255, 255, 255)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(255, 255, 255)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        },
+        {
+          "variant": "rule-filter",
+          "selected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(255, 255, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "650",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(255, 255, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "650",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        },
+        {
+          "variant": "rule-tile",
+          "selected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(255, 255, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(255, 255, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        },
+        {
+          "variant": "intelligence",
+          "selected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(255, 255, 255)",
+            "borderWidth": "2px",
+            "fontWeight": "700",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(255, 255, 255)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        }
+      ],
+      "after": [
+        {
+          "variant": "analytics",
+          "selected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(26, 235, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(255, 255, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "600",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(26, 235, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "600",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        },
+        {
+          "variant": "segmented",
+          "selected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(26, 235, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgba(0, 0, 0, 0)",
+            "borderColor": "rgb(255, 255, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgba(0, 0, 0, 0)",
+            "borderColor": "rgb(26, 235, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        },
+        {
+          "variant": "leave-calendar",
+          "selected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(26, 235, 255)",
+            "borderWidth": "2px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(255, 255, 255)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(255, 255, 255)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        },
+        {
+          "variant": "rule-filter",
+          "selected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(26, 235, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(255, 255, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "650",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(26, 235, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "650",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        },
+        {
+          "variant": "rule-tile",
+          "selected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(26, 235, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(255, 255, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(26, 235, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        },
+        {
+          "variant": "intelligence",
+          "selected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(26, 235, 255)",
+            "borderWidth": "2px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(255, 255, 255)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(255, 255, 255)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        }
+      ],
+      "api_requests": 0
+    },
+    {
+      "engine": "chromium",
+      "colorScheme": "dark",
+      "width": 1280,
+      "forcedColorsSupported": true,
+      "before": [
+        {
+          "variant": "analytics",
+          "selected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(255, 255, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "600",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(255, 255, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "600",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        },
+        {
+          "variant": "segmented",
+          "selected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(255, 255, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgba(0, 0, 0, 0)",
+            "borderColor": "rgb(255, 255, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        },
+        {
+          "variant": "leave-calendar",
+          "selected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(255, 255, 255)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(255, 255, 255)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        },
+        {
+          "variant": "rule-filter",
+          "selected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(255, 255, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "650",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(255, 255, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "650",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        },
+        {
+          "variant": "rule-tile",
+          "selected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(255, 255, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(255, 255, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        },
+        {
+          "variant": "intelligence",
+          "selected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(255, 255, 255)",
+            "borderWidth": "2px",
+            "fontWeight": "700",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(255, 255, 255)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        }
+      ],
+      "after": [
+        {
+          "variant": "analytics",
+          "selected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(26, 235, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(255, 255, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "600",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(26, 235, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "600",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        },
+        {
+          "variant": "segmented",
+          "selected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(26, 235, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgba(0, 0, 0, 0)",
+            "borderColor": "rgb(255, 255, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgba(0, 0, 0, 0)",
+            "borderColor": "rgb(26, 235, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        },
+        {
+          "variant": "leave-calendar",
+          "selected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(26, 235, 255)",
+            "borderWidth": "2px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(255, 255, 255)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(255, 255, 255)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        },
+        {
+          "variant": "rule-filter",
+          "selected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(26, 235, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(255, 255, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "650",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(26, 235, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "650",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        },
+        {
+          "variant": "rule-tile",
+          "selected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(26, 235, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(255, 255, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(26, 235, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        },
+        {
+          "variant": "intelligence",
+          "selected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(26, 235, 255)",
+            "borderWidth": "2px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(255, 255, 255)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgb(0, 0, 0)",
+            "borderColor": "rgb(255, 255, 255)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        }
+      ],
+      "api_requests": 0
+    },
+    {
+      "engine": "firefox",
+      "colorScheme": "light",
+      "width": 320,
+      "forcedColorsSupported": true,
+      "before": [
+        {
+          "variant": "analytics",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "600",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "600",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        },
+        {
+          "variant": "segmented",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgba(0, 0, 0, 0)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        },
+        {
+          "variant": "leave-calendar",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        },
+        {
+          "variant": "rule-filter",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "650",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "650",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        },
+        {
+          "variant": "rule-tile",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        },
+        {
+          "variant": "intelligence",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "2px",
+            "fontWeight": "700",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        }
+      ],
+      "after": [
+        {
+          "variant": "analytics",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(51, 153, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "600",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "600",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        },
+        {
+          "variant": "segmented",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(51, 153, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgba(0, 0, 0, 0)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        },
+        {
+          "variant": "leave-calendar",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(51, 153, 255)",
+            "borderWidth": "2px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        },
+        {
+          "variant": "rule-filter",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(51, 153, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "650",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "650",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        },
+        {
+          "variant": "rule-tile",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(51, 153, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        },
+        {
+          "variant": "intelligence",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(51, 153, 255)",
+            "borderWidth": "2px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        }
+      ],
+      "api_requests": 0
+    },
+    {
+      "engine": "firefox",
+      "colorScheme": "light",
+      "width": 1280,
+      "forcedColorsSupported": true,
+      "before": [
+        {
+          "variant": "analytics",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "600",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "600",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        },
+        {
+          "variant": "segmented",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgba(0, 0, 0, 0)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        },
+        {
+          "variant": "leave-calendar",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        },
+        {
+          "variant": "rule-filter",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "650",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "650",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        },
+        {
+          "variant": "rule-tile",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        },
+        {
+          "variant": "intelligence",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "2px",
+            "fontWeight": "700",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        }
+      ],
+      "after": [
+        {
+          "variant": "analytics",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(51, 153, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "600",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "600",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        },
+        {
+          "variant": "segmented",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(51, 153, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgba(0, 0, 0, 0)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        },
+        {
+          "variant": "leave-calendar",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(51, 153, 255)",
+            "borderWidth": "2px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        },
+        {
+          "variant": "rule-filter",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(51, 153, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "650",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "650",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        },
+        {
+          "variant": "rule-tile",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(51, 153, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        },
+        {
+          "variant": "intelligence",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(51, 153, 255)",
+            "borderWidth": "2px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        }
+      ],
+      "api_requests": 0
+    },
+    {
+      "engine": "firefox",
+      "colorScheme": "dark",
+      "width": 320,
+      "forcedColorsSupported": true,
+      "before": [
+        {
+          "variant": "analytics",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "600",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "600",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        },
+        {
+          "variant": "segmented",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgba(0, 0, 0, 0)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        },
+        {
+          "variant": "leave-calendar",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        },
+        {
+          "variant": "rule-filter",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "650",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "650",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        },
+        {
+          "variant": "rule-tile",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        },
+        {
+          "variant": "intelligence",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "2px",
+            "fontWeight": "700",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        }
+      ],
+      "after": [
+        {
+          "variant": "analytics",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(51, 153, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "600",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "600",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        },
+        {
+          "variant": "segmented",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(51, 153, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgba(0, 0, 0, 0)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgba(0, 0, 0, 0)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        },
+        {
+          "variant": "leave-calendar",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(51, 153, 255)",
+            "borderWidth": "2px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        },
+        {
+          "variant": "rule-filter",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(51, 153, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "650",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "650",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        },
+        {
+          "variant": "rule-tile",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(51, 153, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        },
+        {
+          "variant": "intelligence",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(51, 153, 255)",
+            "borderWidth": "2px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        }
+      ],
+      "api_requests": 0
+    },
+    {
+      "engine": "firefox",
+      "colorScheme": "dark",
+      "width": 1280,
+      "forcedColorsSupported": true,
+      "before": [
+        {
+          "variant": "analytics",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "600",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "600",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        },
+        {
+          "variant": "segmented",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgba(0, 0, 0, 0)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        },
+        {
+          "variant": "leave-calendar",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        },
+        {
+          "variant": "rule-filter",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "650",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "650",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        },
+        {
+          "variant": "rule-tile",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        },
+        {
+          "variant": "intelligence",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "2px",
+            "fontWeight": "700",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          }
+        }
+      ],
+      "after": [
+        {
+          "variant": "analytics",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(51, 153, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "600",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "600",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        },
+        {
+          "variant": "segmented",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(51, 153, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgba(0, 0, 0, 0)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        },
+        {
+          "variant": "leave-calendar",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(51, 153, 255)",
+            "borderWidth": "2px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        },
+        {
+          "variant": "rule-filter",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(51, 153, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "650",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "650",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        },
+        {
+          "variant": "rule-tile",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(51, 153, 255)",
+            "borderWidth": "1px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "1px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        },
+        {
+          "variant": "intelligence",
+          "selected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(51, 153, 255)",
+            "borderWidth": "2px",
+            "fontWeight": "700",
+            "textDecorationLine": "underline",
+            "textDecorationThickness": "3px",
+            "textUnderlineOffset": "4px",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselected": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "none",
+            "outlineWidth": "3px"
+          },
+          "unselectedFocus": {
+            "color": "rgb(0, 0, 0)",
+            "background": "rgb(233, 233, 237)",
+            "borderColor": "rgb(143, 143, 157)",
+            "borderWidth": "2px",
+            "fontWeight": "400",
+            "textDecorationLine": "none",
+            "textDecorationThickness": "auto",
+            "textUnderlineOffset": "auto",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "persistent_selection_distinct_from_focus": true
+        }
+      ],
+      "api_requests": 0
+    }
+  ],
+  "unit_member_controls": {
+    "disposition": "No persistent selection state required",
+    "reason": "Show more/all/fewer are stateless native action buttons with replacement focus, not toggles or tabs. Do not add misleading selected styling or ARIA."
+  },
+  "component_reference_gap": "Reference has representative statuses/actions but no paired selected-versus-unselected forced-colors tab/filter samples. Add isolated samples and keyboard focus demonstration after approved CSS correction.",
+  "completion_claim": false
+}

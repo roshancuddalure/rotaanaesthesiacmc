@@ -1,0 +1,54 @@
+{
+  "recorded_at_utc": "2026-10-22T16:33:39.944115+00:00",
+  "completion_claim": false,
+  "requirements": [
+    38,
+    39,
+    215
+  ],
+  "scope": "Existing unit validation warning-to-posting reveal respects reduced-motion preference; readonly-field monospace fallback.",
+  "source_sha256": {
+    "frontend/src/main.ts": "3b7bb9d63d72082cf47835bec9cc9e0a2169462269167d59c1225113b823fe79",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "c5d2653ab6c46fadb54a904a7a1bab406831eca8b361ab3c03d806980dbefb0e"
+  },
+  "baseline": "Actual reduced-motion Chromium320 action requested smooth; readonly-field fell back to body sans font because --font-mono undefined.",
+  "changes": [
+    "Only reveal scroll behavior branches on current reduced-motion media preference; target, center alignment, highlight duration and data remain unchanged.",
+    "readonly-field font declaration adds ui-monospace/monospace fallback when custom font token absent."
+  ],
+  "checks": {
+    "unit_motion_contexts": 12,
+    "engines": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "widths": [
+      320,
+      1280
+    ],
+    "motion_preferences": [
+      "reduce",
+      "no-preference"
+    ],
+    "existing_unit_board_regressions": 6,
+    "unit_tests": 100,
+    "build_exit_code": 0,
+    "build_inputs_held": true
+  },
+  "evidence": [
+    "docs/premium-ui/qa-unit-motion-before.json",
+    "docs/premium-ui/qa-unit-motion.json",
+    "docs/premium-ui/qa-unit-board-independent.json",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+  ],
+  "test": "frontend/tests/premium-unit-motion.browser.mjs",
+  "test_sha256": "58171449da2c85ef480eb0796d6cdf10b8ed25d5e1f093dfeee426282c63e425",
+  "limitations": [
+    "scrollIntoView instrumentation delegates to native original; asserts requested options/target and highlight, not motion perception or physical-device scrolling.",
+    "Font fallback uses an injected readonly-field style fixture; not all operational field routes or external-resource failure contexts certified.",
+    "GET-only unit fixtures and disposable companion reads; no mutation or persistence claims. Existing unit-board regression rerun by root, not a new independent review.",
+    "No whole-app reduced-motion or icon/font acceptance inferred. Physical/native/independent checks pending. Full260goal active/incomplete. No backend/API/scheduling/data/export/production changes in this batch."
+  ]
+}

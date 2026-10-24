@@ -3,7 +3,8 @@ import {
   type PastDutyOptions, type PastDutyPreview, type PastDutyStatus, type MemberWorkbookInspection, type DepartmentMember,
   type HistoryFairnessPolicy,
 } from "./services/api";
-import { applyBlocker, memberMatch, type MemberMatchCandidate, type MemberMatchView } from "./ui";
+import { applyBlocker, memberMatch, retainActionFocus, type MemberMatchCandidate, type MemberMatchView } from "./ui";
+import { formatAuditTimestamp } from "./audit-time";
 
 /** Past-duty preview row as the shared member resolver now describes it. */
 type PastRow = PastDutyPreview["rows"][number] & {
@@ -15,6 +16,7 @@ type PastRow = PastDutyPreview["rows"][number] & {
 };
 
 const toggleListeners = new WeakMap<HTMLElement, (event: Event) => void>();
+const pastLoads = new WeakMap<HTMLElement, number>();
 
 function writtenName(row: PastRow): string {
   return String(row.raw.name ?? "");
@@ -42,18 +44,34 @@ function values(data: Record<string, unknown>) {
 }
 
 export async function mountPastDuties(host: HTMLElement) {
+  const generation = (pastLoads.get(host) ?? 0) + 1;
+  pastLoads.set(host, generation);
+  const isCurrent = () => host.isConnected && pastLoads.get(host) === generation;
+  host.onclick = null;
+  host.onchange = null;
   host.innerHTML = '<section class="panel"><p role="status">Loading past duties…</p></section>';
   let status: PastDutyStatus;
   let members: DepartmentMember[];
   try { [status, members] = await Promise.all([getPastDutyStatus(), getMembers()]); }
-  catch (error) { host.innerHTML = `<section class="panel">${escape(error instanceof Error ? error.message : error)}</section>`; return; }
-  if (!host.isConnected) return;
+  catch (error) {
+    if (!isCurrent()) return;
+    host.innerHTML = `<section class="panel"><h3>Past duties unavailable</h3><p role="alert">${escape(error instanceof Error ? error.message : error)}</p><button type="button" data-past-retry>Try again</button></section>`;
+    host.querySelector<HTMLButtonElement>('[data-past-retry]')?.addEventListener('click', event => {
+      const restoreFocus = retainActionFocus(host, event.currentTarget as HTMLElement, () => host.querySelector<HTMLElement>('[data-past-retry], [data-past="template"]'));
+      const retryGeneration = (pastLoads.get(host) ?? 0) + 1;
+      void mountPastDuties(host).finally(() => restoreFocus(pastLoads.get(host) === retryGeneration));
+    });
+    return;
+  }
+  if (!isCurrent()) return;
   let file: File | undefined;
   let inspection: MemberWorkbookInspection | undefined;
   let preview: PastDutyPreview | undefined;
   let reviewed = false;
   let busy = false;
   let message = "";
+  let savedOutcome = "";
+  let refreshError = "";
   let historyHtml = "";
   let filter = "all";
   let policy: HistoryFairnessPolicy = { ...status.policy };
@@ -93,6 +111,7 @@ export async function mountPastDuties(host: HTMLElement) {
   }
 
   function render() {
+    if (!isCurrent()) return;
     const sheet = inspection?.sheets.find(s => s.name === options.sheet);
     const blocker = blockerText();
     host.innerHTML = `<section class="panel member-import"><h3>Upload Past Duties</h3>
@@ -132,7 +151,8 @@ export async function mountPastDuties(host: HTMLElement) {
         ${preview.counts.correct ? `<label class="member-import-confirm"><input type="checkbox" data-past="confirm-corrections" ${options.confirm_corrections ? "checked" : ""} />I approve ${preview.counts.correct} recorded member corrections. Prior assignments remain in the audit history and no longer count in statistics.</label>` : ""}
         <button type="button" class="primary" data-past="apply" ${blocker ? 'aria-describedby="past-apply-blocker"' : ""}>Apply Reviewed Past Duties</button>
         ${blocker ? `<p class="import-apply-blocker" id="past-apply-blocker">${escape(blocker)}</p>` : ""}` : ""}
-      </fieldset><p role="status">${busy ? "Working…" : escape(message)}</p></section>
+      </fieldset><p role="status">${busy ? "Working…" : escape(message)}</p>
+      ${savedOutcome ? `<section class="past-saved-outcome" aria-label="Last applied import"><p role="status">${escape(savedOutcome)}</p>${refreshError ? `<p role="alert">Your import was saved, but the latest coverage and history could not load. ${escape(refreshError)}</p><button type="button" data-past="refresh-status" ${busy ? 'disabled' : ''}>Refresh saved details</button><p>This retry only reads data; it will not apply the import again.</p>` : ''}</section>` : ''}</section>
       <section class="panel"><h3>Recorded History Coverage</h3><p>These are observed records, not proof of a complete roster. Missing dates and members are not assigned zero workload. Fairness uses each member's observed months within the configured window.</p>
         <div class="member-import-table"><table><thead><tr><th>Month</th><th>Duties</th><th>Members</th><th>Days recorded</th><th>Latest duty</th></tr></thead><tbody>${status.coverage.map(c => `<tr><td>${escape(c.month)}</td><td>${c.assignments}</td><td>${c.members}</td><td>${c.days_with_records}</td><td>${escape(c.latest_duty_date)}</td></tr>`).join("") || '<tr><td colspan="5">No approved past duties recorded yet.</td></tr>'}</tbody></table></div></section>
       <section class="panel member-import"><h3>Historical Fairness Settings</h3><p>History adds a ranking penalty for above-average observed burden among active peers at the same current call level. Unknown history is neutral. Safety and leave rules remain authoritative.</p>
@@ -140,9 +160,10 @@ export async function mountPastDuties(host: HTMLElement) {
       <label>Effective from <input type="date" data-past="effective-from" value="${effectiveFrom}" /></label>
       ${(["lookback_months", "total_weight", "hours24_weight", "weekend_weight", "group_weight"] as const).map(field => `<label>${escape(field.replace(/_/g," "))}<input type="number" data-policy="${field}" value="${policy[field]}" min="${field === "lookback_months" ? 1 : 0}" max="${field === "lookback_months" ? 36 : 100}" step="${field === "lookback_months" ? 1 : .5}" /></label>`).join("")}
       <button type="button" data-past="save-policy">Save Fairness Settings</button></fieldset></section>
-      <section class="panel"><h3>Past-Duty Import History</h3><div class="member-import-table"><table><thead><tr><th>File / month</th><th>Account / imported</th><th>Outcome</th><th>Review</th></tr></thead><tbody>${status.history.map(h => `<tr><td>${escape(h.filename)}<small>${escape(h.month)} / ${escape(h.sheet)}</small></td><td>${escape(h.actor)}<small>${escape(h.at ? new Date(h.at).toLocaleString("en-IN", {timeZone:"Asia/Calcutta"}) : "")}</small></td><td>${Object.entries(h.counts).map(([a,c]) => `${c} ${escape(a)}`).join(" · ")}</td><td><button data-past-batch="${h.id}" ${busy ? "disabled" : ""}>View Rows</button></td></tr>`).join("") || '<tr><td colspan="4">No uploads yet.</td></tr>'}</tbody></table></div>${historyHtml}</section>`;
+      <section class="panel"><h3>Past-Duty Import History</h3><div class="member-import-table"><table><thead><tr><th>File / month</th><th>Account / imported</th><th>Outcome</th><th>Review</th></tr></thead><tbody>${status.history.map(h => `<tr><td>${escape(h.filename)}<small>${escape(h.month)} / ${escape(h.sheet)}</small></td><td>${escape(h.actor)}<small>${escape(formatAuditTimestamp(h.at, "Asia/Kolkata"))}</small></td><td>${Object.entries(h.counts).map(([a,c]) => `${c} ${escape(a)}`).join(" · ")}</td><td><button data-past-batch="${escape(h.id)}" ${busy ? "disabled" : ""}>View Rows</button></td></tr>`).join("") || '<tr><td colspan="4">No uploads yet.</td></tr>'}</tbody></table></div>${historyHtml}</section>`;
   }
   host.onchange = event => {
+    if (!isCurrent() || busy) return;
     const target = event.target as HTMLInputElement;
     if (target.dataset.policy) {
       if (target.dataset.policy === "enabled") policy.enabled = target.checked;
@@ -173,7 +194,7 @@ export async function mountPastDuties(host: HTMLElement) {
     render();
   };
   host.onclick = async event => {
-    if (busy) return;
+    if (!isCurrent() || busy) return;
     const clicked = event.target as HTMLElement;
     // One-click member choice or row decision: record it the same way the row selects do, then preview again.
     const found = clicked.closest<HTMLElement>("[data-pick-member], [data-past-resolve-row]");
@@ -189,20 +210,29 @@ export async function mountPastDuties(host: HTMLElement) {
       if (!file || !inspection) { render(); return; }
       target = pick; action = "preview";
     }
-    if (!target || (action && !["template","inspect","preview","apply","save-policy","rejected"].includes(action))) return;
+    if (!target || (action && !["template","inspect","preview","apply","save-policy","rejected","refresh-status"].includes(action))) return;
+    const focusTarget = target;
+    const restoreFocus = retainActionFocus(host, target, () => {
+      const controls = [...host.querySelectorAll<HTMLElement>('[data-past], [data-past-batch]')];
+      return controls.find(control => !control.matches(':disabled') && control.dataset.past === action && control.dataset.pastBatch === focusTarget.dataset.pastBatch)
+        ?? host.querySelector<HTMLElement>('[data-past="inspect"]:not(:disabled), [data-past="template"]:not(:disabled)');
+    });
     if (action === "apply") {
       const blocker = blockerText();
-      if (blocker) { message = blocker; render(); return; }
+      if (blocker) { message = blocker; render(); restoreFocus(isCurrent()); return; }
     }
     busy = true; message = ""; render();
     try {
-      if (target.dataset.pastBatch) {
+      if (action === "refresh-status") {
+        await refreshSavedStatus();
+      } else if (target.dataset.pastBatch) {
         const batch = await getPastDutyHistory(target.dataset.pastBatch);
         historyHtml = `<h4>${escape(batch.filename)}</h4><div class="member-import-table"><table><thead><tr><th>Source</th><th>Original</th><th>Normalized</th><th>Outcome / prior member</th></tr></thead><tbody>${batch.rows.map(r => `<tr><td>${r.row}:${r.column}</td><td>${values(r.raw)}</td><td>${values(r.normalized)}</td><td>${escape(r.action)}${r.before ? `<p>Previous: ${escape(r.before.name)} (${escape(r.before.status)})</p>` : ""}</td></tr>`).join("")}</tbody></table></div>`;
       } else if (action === "rejected" && preview) {
         downloadPreviewIssues(preview.rows,"past_duty_rejected_rows.csv");
       } else if (action === "template") {
         const blob = await downloadPastDutyTemplate(); const url = URL.createObjectURL(blob);
+        if (!isCurrent()) { URL.revokeObjectURL(url); return; }
         const link = document.createElement("a"); link.href = url; link.download = "past-duties-template.xlsx"; link.click();
         setTimeout(() => URL.revokeObjectURL(url), 1000);
       } else if (action === "save-policy") {
@@ -216,16 +246,28 @@ export async function mountPastDuties(host: HTMLElement) {
         preview = await pastDutyUpload<PastDutyPreview>("preview", file, options);
         reviewed = true; options.confirm_corrections = false; options.confirm_warnings = false;
       } else if (file && action === "apply" && reviewed && preview) {
+        savedOutcome = ""; refreshError = "";
         const result = await pastDutyUpload<{counts: Record<string,number>; replayed?: boolean}>("apply", file, options, preview.preview_hash);
+        if (!isCurrent()) return;
         reviewed = false; preview = undefined;
-        message = result.replayed ? "This reviewed batch was already applied. No additional duties or corrections were recorded." : `Recorded ${result.counts.create} new duties, ${result.counts.correct} corrections, ${result.counts.unchanged} unchanged. Statistics and future candidate scoring now use the saved records.`;
-        status = await getPastDutyStatus();
+        savedOutcome = result.replayed ? "This reviewed batch was already applied. No additional duties or corrections were recorded." : `Recorded ${result.counts.create} new duties, ${result.counts.correct} corrections, ${result.counts.unchanged} unchanged. Statistics and future candidate scoring now use the saved records.`;
+        await refreshSavedStatus();
       }
     } catch (error) { message = error instanceof Error && error.message ? error.message : "Past-duty operation failed."; if (action === "apply") reviewed = false; }
-    finally { busy = false; if (host.isConnected) render(); }
+    finally { busy = false; render(); restoreFocus(isCurrent()); }
   };
+  async function refreshSavedStatus() {
+    try {
+      const latest = await getPastDutyStatus();
+      if (!isCurrent()) return;
+      status = latest;
+      refreshError = "";
+    } catch (error) {
+      if (isCurrent()) refreshError = error instanceof Error ? error.message : "Refresh unavailable.";
+    }
+  }
   render();
-  void mountRecordedSection(host, options.month, status.today.slice(0, 7));
+  void mountRecordedSection(host, options.month, status.today.slice(0, 7), isCurrent);
 }
 
 /**
@@ -233,8 +275,8 @@ export async function mountPastDuties(host: HTMLElement) {
  * replaces the host's content, so it lives in a sibling). Loaded on demand; skipped when there
  * is no real DOM.
  */
-async function mountRecordedSection(host: HTMLElement, month: string, maxMonth: string) {
-  if (typeof document === "undefined" || typeof HTMLElement === "undefined" || !(host instanceof HTMLElement) || !host.parentElement) return;
+async function mountRecordedSection(host: HTMLElement, month: string, maxMonth: string, isCurrent: () => boolean) {
+  if (!isCurrent() || typeof document === "undefined" || typeof HTMLElement === "undefined" || !(host instanceof HTMLElement) || !host.parentElement) return;
   let section = host.nextElementSibling as HTMLElement | null;
   if (!section?.hasAttribute("data-recorded-past-duties")) {
     section = document.createElement("div");
@@ -245,8 +287,9 @@ async function mountRecordedSection(host: HTMLElement, month: string, maxMonth: 
   section.replaceWith(target);
   try {
     const { mountRecordedPastDuties } = await import("./recycle-bin");
-    if (target.isConnected) await mountRecordedPastDuties(target, month, maxMonth);
+    if (target.isConnected && isCurrent()) await mountRecordedPastDuties(target, month, maxMonth);
   } catch (error) {
+    if (!target.isConnected || !isCurrent()) return;
     target.innerHTML = `<section class="panel" role="alert">Recorded past duties could not be shown: ${escape(error instanceof Error ? error.message : error)}</section>`;
   }
 }

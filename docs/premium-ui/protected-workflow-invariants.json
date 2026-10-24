@@ -1,0 +1,112 @@
+{
+  "schema_version": 1,
+  "scope": "Protected frontend workflow boundaries for the approved 260-item UI goal. This register identifies evidence and remaining gaps; it does not certify scheduling correctness or full equivalence.",
+  "whole_requirement_completion_proven": false,
+  "invariants": [
+    {
+      "id": "selected-month-continuity",
+      "contract": "Navigation, retries and review actions retain the explicitly selected working month. Requests and confirmations identify that same month.",
+      "modules": [
+        "frontend/src/main.ts",
+        "frontend/src/leave-approval.ts",
+        "frontend/src/rota-compute.ts"
+      ],
+      "tests": [
+        "frontend/tests/premium-read-deadline.browser.mjs",
+        "frontend/tests/premium-generation-actions.browser.mjs",
+        "frontend/tests/premium-monthly-leave-review.browser.mjs"
+      ],
+      "assertions": [
+        "Read deadline retry checks working-month 2026-11 and every rota-review GET query.",
+        "Generation fixtures check selected month in requests, review tokens and downloads.",
+        "Monthly approval fixture checks exact month/review token/acknowledgement body."
+      ],
+      "status": "bounded_assertions_available",
+      "limits": "Fixture months and paths only; all roles and every navigation/error variant require further acceptance."
+    },
+    {
+      "id": "assignment-preservation-and-explicit-apply",
+      "contract": "Opening, reviewing and closing a proposal cannot apply it. Existing reviewed apply/reversal boundaries and revision payloads stay unchanged. Presentation must not recompute assignments.",
+      "modules": [
+        "frontend/src/rota-compute.ts",
+        "frontend/src/rota-intelligence.ts"
+      ],
+      "tests": [
+        "frontend/tests/premium-generation-actions.browser.mjs",
+        "frontend/tests/premium-template-forced.browser.mjs",
+        "frontend/tests/premium-generation-equivalence.browser.mjs",
+        "frontend/tests/premium-optimizer-equivalence.browser.mjs"
+      ],
+      "assertions": [
+        "Forced-label fixture asserts no POST before review acknowledgement, exact revision27 apply and callback once.",
+        "Existing generation suite checks exact apply/revert bodies and callbacks; assistant suggestion has no assignment or policy write.",
+        "Fresh48 real optimizer UI runs compare distinct alternatives, objectives/proof flags/burden, exact requests, locks, selected repair, preferences, saved history and reversal restoration; preview/selection do not save."
+      ],
+      "status": "fresh_bounded_server_generation_and_optimizer_evidence",
+      "limits": "Server template/quick member and four small optimizer fixtures established on3engines320/1280 using serialized SQLite RAM. Hardware GPU, fullmonth fixtures, teaching/learning/assistant, concurrency and allvariants remain open.",
+      "evidence": [
+        "docs/premium-ui/reviews/generation-equivalence-current.json",
+        "docs/premium-ui/equivalence-generation/report.json",
+        "docs/premium-ui/reviews/optimizer-equivalence-current.json",
+        "docs/premium-ui/equivalence-optimizer/report.json"
+      ]
+    },
+    {
+      "id": "reviewed-import-decisions",
+      "contract": "Candidate identity, row exclusions, roster choices and selected import context survive permitted preview refreshes. A stale preview cannot be applied; a new file starts a new review lifetime.",
+      "modules": [
+        "frontend/src/member-workspace.ts",
+        "frontend/src/operational-import.ts"
+      ],
+      "tests": [
+        "frontend/tests/premium-member-csv-lifetime.browser.mjs",
+        "frontend/tests/premium-member-csv-choice-independent.browser.mjs",
+        "frontend/tests/premium-import-candidate-choice.browser.mjs",
+        "frontend/tests/premium-import-equivalence.browser.mjs"
+      ],
+      "assertions": [
+        "CSV lifetime test checks selected-file bytes, pending-control locks, exact retry payload and one completion callback.",
+        "Candidate choice test checks corrections, mapping/date-format retention and stale Apply disabled state.",
+        "Fresh real-API runs cover all3member/all3operational CSVmodes: received byte hashes, exact payloads, refreshed exclusions, selected missing-member archive, refusal/no-write boundaries and replacement interval preservation on3engines320/1280."
+      ],
+      "status": "fresh_bounded_real_api_and_historical_fault_evidence",
+      "limits": "Fresh mode report covers one synthetic exact-name ISOdate CSVfixture on serializedSQLiteRAM. Historical fault/candidate/mapping reports still need currentrerun; additionalroles/formats/largefiles/corrections/allreportexports/productionconcurrency remainopen.",
+      "evidence": [
+        "docs/premium-ui/reviews/import-modes-equivalence-current.json",
+        "docs/premium-ui/equivalence-import-modes/report.json"
+      ]
+    },
+    {
+      "id": "explicit-publishing",
+      "contract": "Generating or saving a draft does not publish. Publishing retains its explicit review/confirmation, selected month and existing request boundary.",
+      "modules": [
+        "frontend/src/main.ts",
+        "frontend/src/rota-compute.ts",
+        "frontend/src/rota-intelligence.ts"
+      ],
+      "tests": [
+        "frontend/tests/premium-generation-actions.browser.mjs",
+        "frontend/tests/premium-publish-equivalence.browser.mjs"
+      ],
+      "assertions": [
+        "Publish fixtures require a note, dismiss confirmation without a POST, then accept with exact selected-month body.",
+        "Generation apply fixtures preserve existing Not published result text and separate publish journey.",
+        "Fresh fullapp3engine320/1280 ready/warnings/blocked/viewer403 pairs prove note/refusal/acknowledgement/authority/persistence boundaries, preserved rota and one-cell-validated final workbook equality."
+      ],
+      "status": "fresh_bounded_real_api_publication_evidence",
+      "limits": "SmallrealAPI SQLiteRAMfixtures withfixtureauth/nativeproxy. Otherroles/superadminoverride/allblockers/networkfailures/alternateexports/productionconcurrency andcompleteacceptanceopen. Published-atonecellvalidatedagainstownapprovalthen normalized; othercellsexact.",
+      "evidence": [
+        "docs/premium-ui/reviews/publish-equivalence-current.json",
+        "docs/premium-ui/equivalence-publish/report.json",
+        "docs/premium-ui/equivalence-publish/workbook-comparison.json"
+      ]
+    }
+  ],
+  "integration_gates": [
+    "Held-input production build and affected existing suites after source changes stop.",
+    "Current broad family regressions with recorded source snapshots, not historical report reuse.",
+    "Same-fixture original/current operational and export equivalence in isolated disposable systems.",
+    "Independent review of exact assertions and remaining gaps; source matching alone is insufficient.",
+    "Physical checks remain pending at user direction; native assistive-technology checks remain separate."
+  ]
+}

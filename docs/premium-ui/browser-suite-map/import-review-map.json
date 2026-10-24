@@ -1,0 +1,1383 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-10-24T03:58:41.438642+00:00",
+  "scope": "Documentation-only complete source inspection for five import suites. No tests executed, source/runtime changed, current pass certification or whole-item acceptance.",
+  "source_inspection_method": "Read all five current scripts and retained JSON scopes/results/request and semantic state samples. Exact source_lines refer to test scripts. Hash comparisons recorded at inspection; matching narrow modules never refresh unheld dependencies. Each execution_verified is false to avoid turning historical report inspection into current-run certification.",
+  "entries": [
+    {
+      "suite": "frontend/tests/premium-member-csv-lifetime.browser.mjs",
+      "sha256": "dd8cc6e20253e597af1c1edb76543b9d4e821c0acee0e6155e5c2d40f6e76d45",
+      "source_inspected": true,
+      "execution_verified": false,
+      "execution_verification_scope": "Inspected six retained rows with asserted outcome flags; member-workspace source has since changed. No runtime execution by mapper; execution_verified=false means this mapping does not certify a current run.",
+      "screens": [
+        "Exported Members CSV dialog in isolated module harness"
+      ],
+      "contexts": {
+        "engines": [
+          "chromium",
+          "firefox",
+          "webkit"
+        ],
+        "widths": [
+          320,
+          1280
+        ],
+        "height": 900,
+        "themes": "Default only; not explicit theme coverage",
+        "cases": 6,
+        "fixture": "Every API request fully intercepted; dev-only synthetic HTML invokes actual exported module"
+      },
+      "assertion_groups": [
+        {
+          "action": "ignore-obsolete-columns",
+          "selector": "input[type=file]; #csv-message; [data-map-column]",
+          "outcome": "After A columns held, selecting B and releasing A503 does not show obsolete A error.",
+          "source_lines": [
+            21,
+            23
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-member-csv-lifetime.json"
+          ]
+        },
+        {
+          "action": "preview-lock-and-reentry",
+          "selector": "#csv-form; [name=mode]; input[type=file]",
+          "outcome": "Preview disables file/mode; synthetic repeated submit while pending produces exactly one preview body.",
+          "source_lines": [
+            22,
+            23
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-member-csv-lifetime.json"
+          ]
+        },
+        {
+          "action": "apply-lock-refusal-retry",
+          "selector": "[data-apply]; [data-include=\"2\"]; [data-close]",
+          "outcome": "Pending Apply locks file/include/Close; synthetic repeated click produces one intercepted Apply.503 restores enabled file, B draft, selected row and exact Apply focus; explicit Enter retries.",
+          "source_lines": [
+            24,
+            25
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-member-csv-lifetime.json"
+          ]
+        },
+        {
+          "action": "completion-exact-body-and-next-action",
+          "selector": "[data-result-member]; [data-apply]",
+          "outcome": "Two intercepted Apply attempts equal excluded:[],archive_missing:[]; one completion callback and result-member focus after retry success.",
+          "source_lines": [
+            27,
+            28
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-member-csv-lifetime.json"
+          ]
+        },
+        {
+          "action": "new-file-discard-and-preview-context",
+          "selector": "input[type=file]; [data-close]",
+          "outcome": "C chosen after completion restores discard guard; declined Close retains C, accepted Close detaches. Preview body includes B filename and create_only mode; no pageerrors.",
+          "source_lines": [
+            28
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-member-csv-lifetime.json"
+          ]
+        },
+        {
+          "action": "declared-source-held",
+          "selector": "src/member-workspace.ts",
+          "outcome": "Module SHA unchanged across run; this is one module only.",
+          "source_lines": [
+            6,
+            32
+          ],
+          "evidence_class": "source_integrity",
+          "report_paths": [
+            "docs/premium-ui/qa-member-csv-lifetime.json"
+          ]
+        }
+      ],
+      "retained_evidence": [
+        {
+          "report": "docs/premium-ui/qa-member-csv-lifetime.json",
+          "report_sha256": "77912625ec7cfa0b889ae9be82d8b35e1afe62410f9fa99333b35abbc6ab24c8",
+          "recorded_at_utc": null,
+          "result_rows": 6,
+          "retained_test_sha256": null,
+          "source_hash_comparisons": [
+            {
+              "path": "frontend/src/member-workspace.ts",
+              "retained_sha256": "3a7b2300bf74eecf53e151908791d87fdcc1c21aebc3a270a5fb57b9d7379ee8",
+              "current_sha256": "4ddb7efade2d5886e8d62dc5fa7225eb2448b02c4be37ebb0ce474b5d3562c41",
+              "matches": false
+            }
+          ]
+        }
+      ],
+      "limitations": [
+        "Historical report has six outcome rows but no test-script SHA or timestamp. Its member-workspace SHA differs now; current execution is unverified.",
+        "Intercepted POST success is UI recovery evidence, not DB persistence. No actual report/example download activation or content validation.",
+        "Repeated submit/click is synthetic; native keyboard is used for initial preview/Apply and retry, not all reentry assertions. No axe, physical device or native AT certification."
+      ]
+    },
+    {
+      "suite": "frontend/tests/premium-import-candidate-choice.browser.mjs",
+      "sha256": "b20dd97cbd33229ed8f40b4b510510e92cb1f5b8e357a46c1a7938ddc02440f5",
+      "source_inspected": true,
+      "execution_verified": false,
+      "execution_verification_scope": "Inspected six retained outcome rows; declared operational-import SHA matches current, narrow scope only. No runtime execution by mapper; execution_verified=false means this mapping does not certify a current run.",
+      "screens": [
+        "Normalized Units import review",
+        "Archived member profile opened from candidate row"
+      ],
+      "contexts": {
+        "engines": [
+          "chromium",
+          "firefox",
+          "webkit"
+        ],
+        "widths": [
+          320,
+          1280
+        ],
+        "height": 900,
+        "cases": 6,
+        "fixture": "Synthetic module harness; all GET and POST API responses intercepted; no RAM writes"
+      },
+      "assertion_groups": [
+        {
+          "action": "file-settings-payload",
+          "selector": "input[type=file]; [data-map=\"0\"]; [name=month]; [name=mode]; [name=date_format]",
+          "outcome": "Local file name/text exact. Preview POST checks candidate.csv, update_matching and2026-10; retry retains DMY and Name?member_name mapping.",
+          "source_lines": [
+            18,
+            19,
+            23,
+            26
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-import-candidate-choice.json"
+          ]
+        },
+        {
+          "action": "member-unit-search-preserves-current-option",
+          "selector": "[data-find-member]; [data-find-unit]; [data-field=person_id] option; [data-field=unit_id] option",
+          "outcome": "Searching Beta hides unrelated member while current Alpha stays visible; searching Main hides Remote unit.",
+          "source_lines": [
+            24
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-import-candidate-choice.json"
+          ]
+        },
+        {
+          "action": "candidate-refusal-blocks-apply-and-row-retry",
+          "selector": "[data-pick-member=beta]; [data-apply]; [data-review-row=\"CSV:2\"] summary",
+          "outcome": "Candidate preview503 sets aria-disabled; activating Apply sends zero requests. Explicit candidate retry shows Beta; focus remains row summary within900px viewport. Both retry corrections target CSV:2 beta only; second row stays Alpha.",
+          "source_lines": [
+            25,
+            26
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-import-candidate-choice.json"
+          ]
+        },
+        {
+          "action": "archived-exact-profile-cancel",
+          "selector": "[data-review-candidate=archived]; #mw-form; [data-field=active_status]; [data-close]",
+          "outcome": "Archived candidate opens exact Dr Archived profile with proposed active status, one exact workspace read. Close returns focus to review button and preserves importer month; no save.",
+          "source_lines": [
+            21,
+            26
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-import-candidate-choice.json"
+          ]
+        },
+        {
+          "action": "declared-source-held",
+          "selector": "src/operational-import.ts",
+          "outcome": "Operational module SHA unchanged during run; dependent member-workspace/theme not held.",
+          "source_lines": [
+            6,
+            30
+          ],
+          "evidence_class": "source_integrity",
+          "report_paths": [
+            "docs/premium-ui/qa-import-candidate-choice.json"
+          ]
+        }
+      ],
+      "retained_evidence": [
+        {
+          "report": "docs/premium-ui/qa-import-candidate-choice.json",
+          "report_sha256": "3c46899e732f80c2be9089a4989ae82045c6d99f29d941541917c72b2571a154",
+          "recorded_at_utc": null,
+          "result_rows": 6,
+          "retained_test_sha256": null,
+          "source_hash_comparisons": [
+            {
+              "path": "frontend/src/operational-import.ts",
+              "retained_sha256": "9e11514d205d71049e2f0baa10f005def74941e0b90584a9c84b968f9ae19dfc",
+              "current_sha256": "9e11514d205d71049e2f0baa10f005def74941e0b90584a9c84b968f9ae19dfc",
+              "matches": true
+            }
+          ]
+        }
+      ],
+      "limitations": [
+        "Retained six rows have no test-script SHA/timestamp. Operational-import hash matches now, but profile/CSS dependencies are unheld; no current complete-run claim.",
+        "All API responses are intercepted. Apply requests asserted zero; restoration or persisted candidate selection not certified.",
+        "No CSV download is activated/content checked; no full-app entry route, theme matrix, axe/native AT/physical device certification."
+      ]
+    },
+    {
+      "suite": "frontend/tests/premium-import-equivalence.browser.mjs",
+      "sha256": "6e87aa634db43078b66ad94728215fceade8bd7270f781a6cfbb2808be20d9d0",
+      "source_inspected": true,
+      "execution_verified": false,
+      "execution_verification_scope": "Inspected retained normal and extended raw paired reports and request/state data. Historical sources differ from current; current run unverified. No runtime execution by mapper; execution_verified=false means this mapping does not certify a current run.",
+      "screens": [
+        "Exported Members CSV dialog",
+        "Exported Leave normalized import",
+        "Exported Units normalized import"
+      ],
+      "contexts": {
+        "engines": [
+          "chromium",
+          "firefox",
+          "webkit"
+        ],
+        "widths": [
+          320,
+          1280
+        ],
+        "height": 900,
+        "comparison": "Baseline5201 versus current5202 native proxy, both isolated RAM8032 seed; synthetic harness not normal route entry",
+        "normal_cases": 6,
+        "extended_cases": 6,
+        "normal_scenarios": 3,
+        "extended_scenarios": 9,
+        "fixture": "Real uploaded CSV API requests and real fixture saves; only synthetic HTML route fulfilled"
+      },
+      "assertion_groups": [
+        {
+          "action": "preview-and-declined-confirmation-save-nothing",
+          "selector": "[data-include]; [data-apply]",
+          "outcome": "Preview leaves RAM semantic state identical. Declining native Apply confirmation sends no Apply, saves no records, and no callback. Reviewed exclusion survives operational refresh.",
+          "source_lines": [
+            101,
+            113,
+            125,
+            129,
+            130,
+            131
+          ],
+          "evidence_class": "real_ram_state_and_request_comparison",
+          "report_paths": [
+            "docs/premium-ui/equivalence-import/report.json",
+            "docs/premium-ui/equivalence-import-modes/report.json"
+          ]
+        },
+        {
+          "action": "replacement-acknowledgement-boundary",
+          "selector": "[data-acknowledge]; [data-apply]",
+          "outcome": "Extended replacement mode: native Enter while scope acknowledgement cleared sends no Apply.",
+          "source_lines": [
+            114,
+            115,
+            116,
+            117,
+            118,
+            119,
+            120,
+            121
+          ],
+          "evidence_class": "real_ram_request_boundary",
+          "report_paths": [
+            "docs/premium-ui/equivalence-import-modes/report.json"
+          ]
+        },
+        {
+          "action": "confirmed-append-create-saved-semantics",
+          "selector": "[data-apply]; heading Import complete",
+          "outcome": "Actual API creates precisely included member/leave/posting values; excluded member absent. Member count/leave count/posting count rise by one for base scenarios.",
+          "source_lines": [
+            [
+              133,
+              145
+            ]
+          ],
+          "evidence_class": "real_ram_persisted_semantic_state",
+          "report_paths": [
+            "docs/premium-ui/equivalence-import/report.json",
+            "docs/premium-ui/equivalence-import-modes/report.json"
+          ]
+        },
+        {
+          "action": "extended-member-update-and-roster-archive",
+          "selector": "[name=mode]; [data-archive]; [data-include=\"3\"]",
+          "outcome": "Extended member update/roster preserve counts, excluded Safe Member call level, leave and posting history; included target call-level changes and explicit missing Spare Two archived only in roster_sync.",
+          "source_lines": [
+            [
+              146,
+              151
+            ]
+          ],
+          "evidence_class": "real_ram_persisted_semantic_state",
+          "report_paths": [
+            "docs/premium-ui/equivalence-import-modes/report.json"
+          ]
+        },
+        {
+          "action": "extended-unique-update-and-replacement-boundaries",
+          "selector": "[name=mode]; [data-apply]",
+          "outcome": "update_matching alters exact unique reviewed interval only; replace_month creates included row, excludes second, preserves manual/outside-month rows and splits spanning eligible intervals exactly.",
+          "source_lines": [
+            [
+              152,
+              161
+            ]
+          ],
+          "evidence_class": "real_ram_persisted_semantic_state",
+          "report_paths": [
+            "docs/premium-ui/equivalence-import-modes/report.json"
+          ]
+        },
+        {
+          "action": "exact-upload-bytes-fields-and-before-after-equivalence",
+          "selector": "input[type=file]; fixture /__equivalence/requests and /__equivalence/import-state",
+          "outcome": "Native multipart received file SHA and byte count equal fixture bytes, every request2xx and generated preview path ID explicitly mapped. Baseline/current initial, stages, recorded requests and errors exactly equal; completion callback count equals scenarios.",
+          "source_lines": [
+            166,
+            167,
+            [
+              169,
+              180
+            ],
+            187
+          ],
+          "evidence_class": "real_ram_upload_content_and_equivalence",
+          "report_paths": [
+            "docs/premium-ui/equivalence-import/report.json",
+            "docs/premium-ui/equivalence-import-modes/report.json"
+          ]
+        },
+        {
+          "action": "source-snapshots-held",
+          "selector": "src tree; baseline frontend/src; backend/app read-only hashes",
+          "outcome": "Current frontend, historical baseline and backend source hashes unchanged during each run; baseline manifest verified. Runtime fixture seed resets are explicit and do mutate isolated RAM only.",
+          "source_lines": [
+            25,
+            61,
+            [
+              191,
+              193
+            ]
+          ],
+          "evidence_class": "source_integrity",
+          "report_paths": [
+            "docs/premium-ui/equivalence-import/report.json",
+            "docs/premium-ui/equivalence-import-modes/report.json"
+          ]
+        }
+      ],
+      "retained_evidence": [
+        {
+          "report": "docs/premium-ui/equivalence-import/report.json",
+          "report_sha256": "abc7c02de4694dec7762f7394a2a4e8e4a1d49205d478852167fe6343c75093a",
+          "recorded_at_utc": "2026-10-23T17:21:07.893Z",
+          "result_rows": 6,
+          "retained_test_sha256": null,
+          "source_hash_comparisons": [
+            {
+              "path": "frontend/src/admin-delete.ts",
+              "retained_sha256": "85e603d4deadda5341a8016ff12cc83c8413196da000f86c5693313e91481f80",
+              "current_sha256": "85e603d4deadda5341a8016ff12cc83c8413196da000f86c5693313e91481f80",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/admin-preview.ts",
+              "retained_sha256": "f35a221b465119ca793169f9508775ebf26c36d2e76d4f05ec259d2230e33d46",
+              "current_sha256": "f35a221b465119ca793169f9508775ebf26c36d2e76d4f05ec259d2230e33d46",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/analysis-charts.ts",
+              "retained_sha256": "f359e98aee083d502aa5af1c9c31e065f16c9a4eab4c4c7f279fcf6b00bb37b0",
+              "current_sha256": "f359e98aee083d502aa5af1c9c31e065f16c9a4eab4c4c7f279fcf6b00bb37b0",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/api-errors.ts",
+              "retained_sha256": "55d90faf3f364b3a7835fe5dd465f6b3633e05942bd6f71e37d89fb7b7f8b94d",
+              "current_sha256": "55d90faf3f364b3a7835fe5dd465f6b3633e05942bd6f71e37d89fb7b7f8b94d",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/audit-time.ts",
+              "retained_sha256": "136542cb2daec343417532d372f2e8ce01a0e6103ef6c62a7a4a8017ac8a6d15",
+              "current_sha256": "136542cb2daec343417532d372f2e8ce01a0e6103ef6c62a7a4a8017ac8a6d15",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/balance-duties.ts",
+              "retained_sha256": "ab4f5ffad3f219380ffc74cc0212ace10b57c1d951c2e3e6137547fed6a35113",
+              "current_sha256": "ab4f5ffad3f219380ffc74cc0212ace10b57c1d951c2e3e6137547fed6a35113",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/component-reference.css",
+              "retained_sha256": "46ed291bfdd2463fdc470392a12207bf37fca0478587c24a5019b82e6f7262ee",
+              "current_sha256": "46ed291bfdd2463fdc470392a12207bf37fca0478587c24a5019b82e6f7262ee",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/component-reference.ts",
+              "retained_sha256": "dcf2631694638459aa31be896bb966e0d8472e56b811d28464392a8fc34b15de",
+              "current_sha256": "dcf2631694638459aa31be896bb966e0d8472e56b811d28464392a8fc34b15de",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/compute-conflict.ts",
+              "retained_sha256": "1e69a3b0258c2da5f7588f7a6e2c6a8f26bf9130be9dd34e62e27c9431a05623",
+              "current_sha256": "1e69a3b0258c2da5f7588f7a6e2c6a8f26bf9130be9dd34e62e27c9431a05623",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/compute-device.ts",
+              "retained_sha256": "c7083623b77132d2ace7d1a0a815ad457a695c9e381afcfd1aeb91af1a6d4eca",
+              "current_sha256": "c7083623b77132d2ace7d1a0a815ad457a695c9e381afcfd1aeb91af1a6d4eca",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/compute-protocol.ts",
+              "retained_sha256": "d9dff1ad6ddda42e63da02dc6dd3d322f3cdc17fe824698e578a38cfcc57e1a5",
+              "current_sha256": "d9dff1ad6ddda42e63da02dc6dd3d322f3cdc17fe824698e578a38cfcc57e1a5",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/compute-worker.ts",
+              "retained_sha256": "f67f75b98cbc72932e706167253d1e4df1f5234fe6346aa0d94191ff31a3fe7b",
+              "current_sha256": "f67f75b98cbc72932e706167253d1e4df1f5234fe6346aa0d94191ff31a3fe7b",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/data-sync.ts",
+              "retained_sha256": "8408ff9eb6369d486126b7471ffc15a45fbe7f6fe5decd73b231f1dbf07c2f02",
+              "current_sha256": "8408ff9eb6369d486126b7471ffc15a45fbe7f6fe5decd73b231f1dbf07c2f02",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/decorative-icons.ts",
+              "retained_sha256": "7e2d11356114e96f242435a2cd7cb7bc24cdc1787142e864e1cf053f92c373d7",
+              "current_sha256": "7e2d11356114e96f242435a2cd7cb7bc24cdc1787142e864e1cf053f92c373d7",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/extra-duty.ts",
+              "retained_sha256": "52084624922de21f2a0fa478eb1ca4c883cdeb66dd1d05147d0f21fe806bc7ea",
+              "current_sha256": "52084624922de21f2a0fa478eb1ca4c883cdeb66dd1d05147d0f21fe806bc7ea",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/form-validation.ts",
+              "retained_sha256": "a6d6cfa746f502cf05e5f4f1e1acade1c7ca82b592a497d98b79661854783a93",
+              "current_sha256": "a6d6cfa746f502cf05e5f4f1e1acade1c7ca82b592a497d98b79661854783a93",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/frontend-runtime.ts",
+              "retained_sha256": "45efce04e229e0bdcbc84de4c9570dd9c04877b2adb869269a6e40ff68b12a01",
+              "current_sha256": "45efce04e229e0bdcbc84de4c9570dd9c04877b2adb869269a6e40ff68b12a01",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/generation-comparison.ts",
+              "retained_sha256": "1ab0ada55fa8e4c581424c5ea3da441752fbdee1c9994d75466d48c16383da55",
+              "current_sha256": "1ab0ada55fa8e4c581424c5ea3da441752fbdee1c9994d75466d48c16383da55",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/generation-reversal-scope.ts",
+              "retained_sha256": "4f5ce7136076e2b9ab3f07f91405083a7955425f19ebc7b8cdd1e6e22108e2af",
+              "current_sha256": "4f5ce7136076e2b9ab3f07f91405083a7955425f19ebc7b8cdd1e6e22108e2af",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/import-report.ts",
+              "retained_sha256": "e33b0081d3f42286b4838160bb73f0dfcba0f77b493271e3fa8ce6a466b68a38",
+              "current_sha256": "e33b0081d3f42286b4838160bb73f0dfcba0f77b493271e3fa8ce6a466b68a38",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/leave-approval.ts",
+              "retained_sha256": "42e5a47751ae081d1b97108209c7a2b53272985251d153aa065f7718f43e544f",
+              "current_sha256": "42e5a47751ae081d1b97108209c7a2b53272985251d153aa065f7718f43e544f",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/limits.ts",
+              "retained_sha256": "f7c040de08fd0a593e1e071d7c09b2696344b9b85bbcd836f5367b49e4ef8db6",
+              "current_sha256": "f7c040de08fd0a593e1e071d7c09b2696344b9b85bbcd836f5367b49e4ef8db6",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/main.ts",
+              "retained_sha256": "dfd3746fd11d696d1be6f668e8f69b92914b8a53e4f5210c1a1d2e38d3641176",
+              "current_sha256": "6ebdf70eb1f3663e144c26ea4ceddcee83989a18c84b24a0e3e2a6fdc0b3dbdb",
+              "matches": false
+            },
+            {
+              "path": "frontend/src/member-bulk.ts",
+              "retained_sha256": "e0d040ab5f9f83a090a15fe4b4b619d25e97ae8b06d86dface5b4a62231f5202",
+              "current_sha256": "e0d040ab5f9f83a090a15fe4b4b619d25e97ae8b06d86dface5b4a62231f5202",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/member-duplicates.ts",
+              "retained_sha256": "9d59b0abf7ed6001612403aed286a87159d76e3824f3b08a539845d5f509b4bf",
+              "current_sha256": "9d59b0abf7ed6001612403aed286a87159d76e3824f3b08a539845d5f509b4bf",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/member-import-history.ts",
+              "retained_sha256": "0357db668bac46f7c4c28c575e2f7c688b00c95671acb1f475aea0946e89ec92",
+              "current_sha256": "0357db668bac46f7c4c28c575e2f7c688b00c95671acb1f475aea0946e89ec92",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/member-import.ts",
+              "retained_sha256": "010ff61e931b5fdcd0bede461face32db6562e1b987782a509be1adf58fbee42",
+              "current_sha256": "010ff61e931b5fdcd0bede461face32db6562e1b987782a509be1adf58fbee42",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/member-profile.ts",
+              "retained_sha256": "6c98cd791a4ee592f1dc945d20ab3e7b512c6f3f00378f266de71a76f868bb73",
+              "current_sha256": "6c98cd791a4ee592f1dc945d20ab3e7b512c6f3f00378f266de71a76f868bb73",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/member-workspace.ts",
+              "retained_sha256": "b39d53795adcbe1d850aeb3cf20f71bd78f4a48a4280e7f9e7e9cff2f796e50c",
+              "current_sha256": "4ddb7efade2d5886e8d62dc5fa7225eb2448b02c4be37ebb0ce474b5d3562c41",
+              "matches": false
+            },
+            {
+              "path": "frontend/src/navigation-history.ts",
+              "retained_sha256": "7987fe6b5034c80e44708b0e46d5bf4009a1e3eabca092a5b8a31ca1afdde0b4",
+              "current_sha256": "7987fe6b5034c80e44708b0e46d5bf4009a1e3eabca092a5b8a31ca1afdde0b4",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/operational-import.ts",
+              "retained_sha256": "838afc1e32c4f0fa271eaa451423753d0054cdef6f3295da9e812257eb6d4e27",
+              "current_sha256": "9e11514d205d71049e2f0baa10f005def74941e0b90584a9c84b968f9ae19dfc",
+              "matches": false
+            },
+            {
+              "path": "frontend/src/past-duties.ts",
+              "retained_sha256": "7c12653627145099d9785ce83788335687a850534d0af0f921a9bc29d538657c",
+              "current_sha256": "7c12653627145099d9785ce83788335687a850534d0af0f921a9bc29d538657c",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/premium-theme.css",
+              "retained_sha256": "318db78d306c37a50969306ca78ef7e9c0f7676ee6337ab4ca8fc7650fb4a72b",
+              "current_sha256": "559041ee03d192fcc291582bd7572e8d32004e9d5428b7e57fbbea9ba9e60f83",
+              "matches": false
+            },
+            {
+              "path": "frontend/src/record-workspace.ts",
+              "retained_sha256": "aff5fa264638bad4448e8e0c42434e6245b4dbe55b970e0b026a05d2631b9bec",
+              "current_sha256": "aff5fa264638bad4448e8e0c42434e6245b4dbe55b970e0b026a05d2631b9bec",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/recycle-bin.ts",
+              "retained_sha256": "7d2e02cd9f198999e2c7eaf788218ed3164781b39536176a63180a92c65ffc17",
+              "current_sha256": "7d2e02cd9f198999e2c7eaf788218ed3164781b39536176a63180a92c65ffc17",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/reference-workspace.ts",
+              "retained_sha256": "93ba8a2d765f43f0fb220586393b3a1cdf6cb944d9fb1ebd26290028a450208e",
+              "current_sha256": "93ba8a2d765f43f0fb220586393b3a1cdf6cb944d9fb1ebd26290028a450208e",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/rota-compute.ts",
+              "retained_sha256": "e5f967e6166e2ace9352983a468002d45850188d8811363230305d7597fb70ab",
+              "current_sha256": "e5f967e6166e2ace9352983a468002d45850188d8811363230305d7597fb70ab",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/rota-intelligence.ts",
+              "retained_sha256": "bda7257a3cafdcf6c4122575cc454abb1623f27dbd13950ea1d61260a23bb79b",
+              "current_sha256": "bda7257a3cafdcf6c4122575cc454abb1623f27dbd13950ea1d61260a23bb79b",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/rota-rules.ts",
+              "retained_sha256": "c34342b13df315ddff27bcba19cd495fd21918ab6f2f982257cd8e5a1955efff",
+              "current_sha256": "c34342b13df315ddff27bcba19cd495fd21918ab6f2f982257cd8e5a1955efff",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/services/api.ts",
+              "retained_sha256": "aa2c18465d33286850509e7ad19bf810ffcbc88758008c60aedb8294b52f9e8f",
+              "current_sha256": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+              "matches": false
+            },
+            {
+              "path": "frontend/src/session-role.ts",
+              "retained_sha256": "bb13b581f4d2320d7010ca754567ed2aa7a504abd4ec3eaae6bfbc830306fb1b",
+              "current_sha256": "bb13b581f4d2320d7010ca754567ed2aa7a504abd4ec3eaae6bfbc830306fb1b",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/shell-accessibility.ts",
+              "retained_sha256": "47a8302e3272e90162d995f2e1d91a36c94116c76a97f5e62b2ecc31de79efc9",
+              "current_sha256": "47a8302e3272e90162d995f2e1d91a36c94116c76a97f5e62b2ecc31de79efc9",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/styles.css",
+              "retained_sha256": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+              "current_sha256": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/superadmin.ts",
+              "retained_sha256": "767ec62ae188efd4fda9b5a8f5173d24b80c89964e23d372d7b31ceb1dc818f8",
+              "current_sha256": "767ec62ae188efd4fda9b5a8f5173d24b80c89964e23d372d7b31ceb1dc818f8",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/ui-feedback.ts",
+              "retained_sha256": "af25aa3329afbe97de610ecfd83a00c70991863b2cba8ba5e301c205230f19da",
+              "current_sha256": "af25aa3329afbe97de610ecfd83a00c70991863b2cba8ba5e301c205230f19da",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/ui.ts",
+              "retained_sha256": "88579ed75c8c72e4fd4e2d98508a58c42b925202362589a2469623664c2a975f",
+              "current_sha256": "88579ed75c8c72e4fd4e2d98508a58c42b925202362589a2469623664c2a975f",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/unit-board-filters.ts",
+              "retained_sha256": "b52758e18a4d6abeda57b57ef84e0614b085a317e9d3ca345e096d860ea384a3",
+              "current_sha256": "b52758e18a4d6abeda57b57ef84e0614b085a317e9d3ca345e096d860ea384a3",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/unit-member-lists.ts",
+              "retained_sha256": "9d29fb79214cce10962f480c9efb56741cc24a5f9b98a5ad7ec539ce49eda7ac",
+              "current_sha256": "9d29fb79214cce10962f480c9efb56741cc24a5f9b98a5ad7ec539ce49eda7ac",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/vite-env.d.ts",
+              "retained_sha256": "65996936fbb042915f7b74a200fcdde7e410f32a669b1ab9597cfaa4b0faddb5",
+              "current_sha256": "65996936fbb042915f7b74a200fcdde7e410f32a669b1ab9597cfaa4b0faddb5",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/workflow-import-history.ts",
+              "retained_sha256": "6af21b09f48bb6632ac7afb78759884d4aa0e9750d520f48be0c79ea3d4b5cf5",
+              "current_sha256": "6af21b09f48bb6632ac7afb78759884d4aa0e9750d520f48be0c79ea3d4b5cf5",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/workspace-load-state.ts",
+              "retained_sha256": "cdd0e323d7e83e6e668a381bbfcc37cad4726b1193ac5de31d5f14e03eecd9c6",
+              "current_sha256": "cdd0e323d7e83e6e668a381bbfcc37cad4726b1193ac5de31d5f14e03eecd9c6",
+              "matches": true
+            }
+          ]
+        },
+        {
+          "report": "docs/premium-ui/equivalence-import-modes/report.json",
+          "report_sha256": "8796ee575d540c12021e04b712fcb0a5f74e855754933914b8bd5245f5f136af",
+          "recorded_at_utc": "2026-10-23T17:26:37.826Z",
+          "result_rows": 6,
+          "retained_test_sha256": null,
+          "source_hash_comparisons": [
+            {
+              "path": "frontend/src/admin-delete.ts",
+              "retained_sha256": "85e603d4deadda5341a8016ff12cc83c8413196da000f86c5693313e91481f80",
+              "current_sha256": "85e603d4deadda5341a8016ff12cc83c8413196da000f86c5693313e91481f80",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/admin-preview.ts",
+              "retained_sha256": "f35a221b465119ca793169f9508775ebf26c36d2e76d4f05ec259d2230e33d46",
+              "current_sha256": "f35a221b465119ca793169f9508775ebf26c36d2e76d4f05ec259d2230e33d46",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/analysis-charts.ts",
+              "retained_sha256": "f359e98aee083d502aa5af1c9c31e065f16c9a4eab4c4c7f279fcf6b00bb37b0",
+              "current_sha256": "f359e98aee083d502aa5af1c9c31e065f16c9a4eab4c4c7f279fcf6b00bb37b0",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/api-errors.ts",
+              "retained_sha256": "55d90faf3f364b3a7835fe5dd465f6b3633e05942bd6f71e37d89fb7b7f8b94d",
+              "current_sha256": "55d90faf3f364b3a7835fe5dd465f6b3633e05942bd6f71e37d89fb7b7f8b94d",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/audit-time.ts",
+              "retained_sha256": "136542cb2daec343417532d372f2e8ce01a0e6103ef6c62a7a4a8017ac8a6d15",
+              "current_sha256": "136542cb2daec343417532d372f2e8ce01a0e6103ef6c62a7a4a8017ac8a6d15",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/balance-duties.ts",
+              "retained_sha256": "ab4f5ffad3f219380ffc74cc0212ace10b57c1d951c2e3e6137547fed6a35113",
+              "current_sha256": "ab4f5ffad3f219380ffc74cc0212ace10b57c1d951c2e3e6137547fed6a35113",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/component-reference.css",
+              "retained_sha256": "46ed291bfdd2463fdc470392a12207bf37fca0478587c24a5019b82e6f7262ee",
+              "current_sha256": "46ed291bfdd2463fdc470392a12207bf37fca0478587c24a5019b82e6f7262ee",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/component-reference.ts",
+              "retained_sha256": "dcf2631694638459aa31be896bb966e0d8472e56b811d28464392a8fc34b15de",
+              "current_sha256": "dcf2631694638459aa31be896bb966e0d8472e56b811d28464392a8fc34b15de",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/compute-conflict.ts",
+              "retained_sha256": "1e69a3b0258c2da5f7588f7a6e2c6a8f26bf9130be9dd34e62e27c9431a05623",
+              "current_sha256": "1e69a3b0258c2da5f7588f7a6e2c6a8f26bf9130be9dd34e62e27c9431a05623",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/compute-device.ts",
+              "retained_sha256": "c7083623b77132d2ace7d1a0a815ad457a695c9e381afcfd1aeb91af1a6d4eca",
+              "current_sha256": "c7083623b77132d2ace7d1a0a815ad457a695c9e381afcfd1aeb91af1a6d4eca",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/compute-protocol.ts",
+              "retained_sha256": "d9dff1ad6ddda42e63da02dc6dd3d322f3cdc17fe824698e578a38cfcc57e1a5",
+              "current_sha256": "d9dff1ad6ddda42e63da02dc6dd3d322f3cdc17fe824698e578a38cfcc57e1a5",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/compute-worker.ts",
+              "retained_sha256": "f67f75b98cbc72932e706167253d1e4df1f5234fe6346aa0d94191ff31a3fe7b",
+              "current_sha256": "f67f75b98cbc72932e706167253d1e4df1f5234fe6346aa0d94191ff31a3fe7b",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/data-sync.ts",
+              "retained_sha256": "8408ff9eb6369d486126b7471ffc15a45fbe7f6fe5decd73b231f1dbf07c2f02",
+              "current_sha256": "8408ff9eb6369d486126b7471ffc15a45fbe7f6fe5decd73b231f1dbf07c2f02",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/decorative-icons.ts",
+              "retained_sha256": "7e2d11356114e96f242435a2cd7cb7bc24cdc1787142e864e1cf053f92c373d7",
+              "current_sha256": "7e2d11356114e96f242435a2cd7cb7bc24cdc1787142e864e1cf053f92c373d7",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/extra-duty.ts",
+              "retained_sha256": "52084624922de21f2a0fa478eb1ca4c883cdeb66dd1d05147d0f21fe806bc7ea",
+              "current_sha256": "52084624922de21f2a0fa478eb1ca4c883cdeb66dd1d05147d0f21fe806bc7ea",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/form-validation.ts",
+              "retained_sha256": "a6d6cfa746f502cf05e5f4f1e1acade1c7ca82b592a497d98b79661854783a93",
+              "current_sha256": "a6d6cfa746f502cf05e5f4f1e1acade1c7ca82b592a497d98b79661854783a93",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/frontend-runtime.ts",
+              "retained_sha256": "45efce04e229e0bdcbc84de4c9570dd9c04877b2adb869269a6e40ff68b12a01",
+              "current_sha256": "45efce04e229e0bdcbc84de4c9570dd9c04877b2adb869269a6e40ff68b12a01",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/generation-comparison.ts",
+              "retained_sha256": "1ab0ada55fa8e4c581424c5ea3da441752fbdee1c9994d75466d48c16383da55",
+              "current_sha256": "1ab0ada55fa8e4c581424c5ea3da441752fbdee1c9994d75466d48c16383da55",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/generation-reversal-scope.ts",
+              "retained_sha256": "4f5ce7136076e2b9ab3f07f91405083a7955425f19ebc7b8cdd1e6e22108e2af",
+              "current_sha256": "4f5ce7136076e2b9ab3f07f91405083a7955425f19ebc7b8cdd1e6e22108e2af",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/import-report.ts",
+              "retained_sha256": "e33b0081d3f42286b4838160bb73f0dfcba0f77b493271e3fa8ce6a466b68a38",
+              "current_sha256": "e33b0081d3f42286b4838160bb73f0dfcba0f77b493271e3fa8ce6a466b68a38",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/leave-approval.ts",
+              "retained_sha256": "42e5a47751ae081d1b97108209c7a2b53272985251d153aa065f7718f43e544f",
+              "current_sha256": "42e5a47751ae081d1b97108209c7a2b53272985251d153aa065f7718f43e544f",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/limits.ts",
+              "retained_sha256": "f7c040de08fd0a593e1e071d7c09b2696344b9b85bbcd836f5367b49e4ef8db6",
+              "current_sha256": "f7c040de08fd0a593e1e071d7c09b2696344b9b85bbcd836f5367b49e4ef8db6",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/main.ts",
+              "retained_sha256": "dfd3746fd11d696d1be6f668e8f69b92914b8a53e4f5210c1a1d2e38d3641176",
+              "current_sha256": "6ebdf70eb1f3663e144c26ea4ceddcee83989a18c84b24a0e3e2a6fdc0b3dbdb",
+              "matches": false
+            },
+            {
+              "path": "frontend/src/member-bulk.ts",
+              "retained_sha256": "e0d040ab5f9f83a090a15fe4b4b619d25e97ae8b06d86dface5b4a62231f5202",
+              "current_sha256": "e0d040ab5f9f83a090a15fe4b4b619d25e97ae8b06d86dface5b4a62231f5202",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/member-duplicates.ts",
+              "retained_sha256": "9d59b0abf7ed6001612403aed286a87159d76e3824f3b08a539845d5f509b4bf",
+              "current_sha256": "9d59b0abf7ed6001612403aed286a87159d76e3824f3b08a539845d5f509b4bf",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/member-import-history.ts",
+              "retained_sha256": "0357db668bac46f7c4c28c575e2f7c688b00c95671acb1f475aea0946e89ec92",
+              "current_sha256": "0357db668bac46f7c4c28c575e2f7c688b00c95671acb1f475aea0946e89ec92",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/member-import.ts",
+              "retained_sha256": "010ff61e931b5fdcd0bede461face32db6562e1b987782a509be1adf58fbee42",
+              "current_sha256": "010ff61e931b5fdcd0bede461face32db6562e1b987782a509be1adf58fbee42",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/member-profile.ts",
+              "retained_sha256": "6c98cd791a4ee592f1dc945d20ab3e7b512c6f3f00378f266de71a76f868bb73",
+              "current_sha256": "6c98cd791a4ee592f1dc945d20ab3e7b512c6f3f00378f266de71a76f868bb73",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/member-workspace.ts",
+              "retained_sha256": "b39d53795adcbe1d850aeb3cf20f71bd78f4a48a4280e7f9e7e9cff2f796e50c",
+              "current_sha256": "4ddb7efade2d5886e8d62dc5fa7225eb2448b02c4be37ebb0ce474b5d3562c41",
+              "matches": false
+            },
+            {
+              "path": "frontend/src/navigation-history.ts",
+              "retained_sha256": "7987fe6b5034c80e44708b0e46d5bf4009a1e3eabca092a5b8a31ca1afdde0b4",
+              "current_sha256": "7987fe6b5034c80e44708b0e46d5bf4009a1e3eabca092a5b8a31ca1afdde0b4",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/operational-import.ts",
+              "retained_sha256": "838afc1e32c4f0fa271eaa451423753d0054cdef6f3295da9e812257eb6d4e27",
+              "current_sha256": "9e11514d205d71049e2f0baa10f005def74941e0b90584a9c84b968f9ae19dfc",
+              "matches": false
+            },
+            {
+              "path": "frontend/src/past-duties.ts",
+              "retained_sha256": "7c12653627145099d9785ce83788335687a850534d0af0f921a9bc29d538657c",
+              "current_sha256": "7c12653627145099d9785ce83788335687a850534d0af0f921a9bc29d538657c",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/premium-theme.css",
+              "retained_sha256": "318db78d306c37a50969306ca78ef7e9c0f7676ee6337ab4ca8fc7650fb4a72b",
+              "current_sha256": "559041ee03d192fcc291582bd7572e8d32004e9d5428b7e57fbbea9ba9e60f83",
+              "matches": false
+            },
+            {
+              "path": "frontend/src/record-workspace.ts",
+              "retained_sha256": "aff5fa264638bad4448e8e0c42434e6245b4dbe55b970e0b026a05d2631b9bec",
+              "current_sha256": "aff5fa264638bad4448e8e0c42434e6245b4dbe55b970e0b026a05d2631b9bec",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/recycle-bin.ts",
+              "retained_sha256": "7d2e02cd9f198999e2c7eaf788218ed3164781b39536176a63180a92c65ffc17",
+              "current_sha256": "7d2e02cd9f198999e2c7eaf788218ed3164781b39536176a63180a92c65ffc17",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/reference-workspace.ts",
+              "retained_sha256": "93ba8a2d765f43f0fb220586393b3a1cdf6cb944d9fb1ebd26290028a450208e",
+              "current_sha256": "93ba8a2d765f43f0fb220586393b3a1cdf6cb944d9fb1ebd26290028a450208e",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/rota-compute.ts",
+              "retained_sha256": "e5f967e6166e2ace9352983a468002d45850188d8811363230305d7597fb70ab",
+              "current_sha256": "e5f967e6166e2ace9352983a468002d45850188d8811363230305d7597fb70ab",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/rota-intelligence.ts",
+              "retained_sha256": "bda7257a3cafdcf6c4122575cc454abb1623f27dbd13950ea1d61260a23bb79b",
+              "current_sha256": "bda7257a3cafdcf6c4122575cc454abb1623f27dbd13950ea1d61260a23bb79b",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/rota-rules.ts",
+              "retained_sha256": "c34342b13df315ddff27bcba19cd495fd21918ab6f2f982257cd8e5a1955efff",
+              "current_sha256": "c34342b13df315ddff27bcba19cd495fd21918ab6f2f982257cd8e5a1955efff",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/services/api.ts",
+              "retained_sha256": "aa2c18465d33286850509e7ad19bf810ffcbc88758008c60aedb8294b52f9e8f",
+              "current_sha256": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+              "matches": false
+            },
+            {
+              "path": "frontend/src/session-role.ts",
+              "retained_sha256": "bb13b581f4d2320d7010ca754567ed2aa7a504abd4ec3eaae6bfbc830306fb1b",
+              "current_sha256": "bb13b581f4d2320d7010ca754567ed2aa7a504abd4ec3eaae6bfbc830306fb1b",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/shell-accessibility.ts",
+              "retained_sha256": "47a8302e3272e90162d995f2e1d91a36c94116c76a97f5e62b2ecc31de79efc9",
+              "current_sha256": "47a8302e3272e90162d995f2e1d91a36c94116c76a97f5e62b2ecc31de79efc9",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/styles.css",
+              "retained_sha256": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+              "current_sha256": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/superadmin.ts",
+              "retained_sha256": "767ec62ae188efd4fda9b5a8f5173d24b80c89964e23d372d7b31ceb1dc818f8",
+              "current_sha256": "767ec62ae188efd4fda9b5a8f5173d24b80c89964e23d372d7b31ceb1dc818f8",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/ui-feedback.ts",
+              "retained_sha256": "af25aa3329afbe97de610ecfd83a00c70991863b2cba8ba5e301c205230f19da",
+              "current_sha256": "af25aa3329afbe97de610ecfd83a00c70991863b2cba8ba5e301c205230f19da",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/ui.ts",
+              "retained_sha256": "88579ed75c8c72e4fd4e2d98508a58c42b925202362589a2469623664c2a975f",
+              "current_sha256": "88579ed75c8c72e4fd4e2d98508a58c42b925202362589a2469623664c2a975f",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/unit-board-filters.ts",
+              "retained_sha256": "b52758e18a4d6abeda57b57ef84e0614b085a317e9d3ca345e096d860ea384a3",
+              "current_sha256": "b52758e18a4d6abeda57b57ef84e0614b085a317e9d3ca345e096d860ea384a3",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/unit-member-lists.ts",
+              "retained_sha256": "9d29fb79214cce10962f480c9efb56741cc24a5f9b98a5ad7ec539ce49eda7ac",
+              "current_sha256": "9d29fb79214cce10962f480c9efb56741cc24a5f9b98a5ad7ec539ce49eda7ac",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/vite-env.d.ts",
+              "retained_sha256": "65996936fbb042915f7b74a200fcdde7e410f32a669b1ab9597cfaa4b0faddb5",
+              "current_sha256": "65996936fbb042915f7b74a200fcdde7e410f32a669b1ab9597cfaa4b0faddb5",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/workflow-import-history.ts",
+              "retained_sha256": "6af21b09f48bb6632ac7afb78759884d4aa0e9750d520f48be0c79ea3d4b5cf5",
+              "current_sha256": "6af21b09f48bb6632ac7afb78759884d4aa0e9750d520f48be0c79ea3d4b5cf5",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/workspace-load-state.ts",
+              "retained_sha256": "cdd0e323d7e83e6e668a381bbfcc37cad4726b1193ac5de31d5f14e03eecd9c6",
+              "current_sha256": "cdd0e323d7e83e6e668a381bbfcc37cad4726b1193ac5de31d5f14e03eecd9c6",
+              "matches": true
+            }
+          ]
+        }
+      ],
+      "limitations": [
+        "Both retained reports have six passed baseline/current pairs; normal has3stages and11requests/run; extended has9stages and33requests/run. Neither stores test-script SHA, and multiple application source hashes differ now. Normal historical report predates current extended-capable script shape; mapping distinguishes normal/extended assertions.",
+        "Real fixture API writes and semantic state are stronger than intercepted success but are one synthetic seed/current backend, not production or all-role concurrency.",
+        "Upload bytes are verified; this suite does not download completed reports/example CSVs or validate downloaded contents.",
+        "Random multipart boundaries omitted by fixture recording; preview IDs explicitly symbolized. No universal format/invalid-file/permissions/nativeAT/physical certification."
+      ]
+    },
+    {
+      "suite": "frontend/tests/premium-inline-member-selection-lifetime.browser.mjs",
+      "sha256": "8dd5865b3fccd021eec19e62cf50b4d1936567f6e3786294d9407f921254ed7f",
+      "source_inspected": true,
+      "execution_verified": false,
+      "execution_verification_scope": "Inspected retained development/production30passed rows each and exact test SHA; partial declared-source drift prevents current-run certification. No runtime execution by mapper; execution_verified=false means this mapping does not certify a current run.",
+      "screens": [
+        "Actual Units page CSV toolbar",
+        "Normalized import review",
+        "Create department member inline chooser"
+      ],
+      "contexts": {
+        "engines": [
+          "chromium",
+          "firefox",
+          "webkit"
+        ],
+        "widths": [
+          320,
+          1280
+        ],
+        "height": 900,
+        "reduced_motion": "reduce",
+        "variants": [
+          "changed-success",
+          "changed-refusal",
+          "unchanged-retry",
+          "name-reverted",
+          "call-level"
+        ],
+        "cases_per_environment": 30,
+        "environments": [
+          "development5197",
+          "production preview5198"
+        ],
+        "fixture": "Read-only RAM8032 GETs; every POST intercepted; columns/preview/resolve allowlist"
+      },
+      "assertion_groups": [
+        {
+          "action": "allowlist-no-forwarded-mutations",
+          "selector": "API router",
+          "outcome": "POST methods restricted to columns, units/preview, members/resolve. Unexpected create/apply/other endpoint fails assertion; no POST forwarded to RAM.",
+          "source_lines": [
+            21,
+            [
+              27,
+              30
+            ]
+          ],
+          "evidence_class": "intercepted_request_boundary",
+          "report_paths": [
+            "docs/premium-ui/qa-inline-member-selection-lifetime/report-development.json",
+            "docs/premium-ui/qa-inline-member-selection-lifetime/report-production.json"
+          ]
+        },
+        {
+          "action": "obsolete-selection-keeps-name-focus-and-unselected-row",
+          "selector": "[data-use-existing]; [name=canonical_name]; [data-error]; [data-review-row=\"CSV:2\"] [data-field=person_id]",
+          "outcome": "Name edited during held selection GET keeps chooser, exact new/current name and focus, empty error, unselected parent row; changed-name old503 cannot overwrite feedback.",
+          "source_lines": [
+            [
+              38,
+              48
+            ]
+          ],
+          "evidence_class": "fixture_read_and_intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-inline-member-selection-lifetime/report-development.json",
+            "docs/premium-ui/qa-inline-member-selection-lifetime/report-production.json"
+          ]
+        },
+        {
+          "action": "unchanged-refusal-explicit-retry-and-call-level-only",
+          "selector": "[data-use-existing]; [name=call_level]",
+          "outcome": "Unchanged-name503 shows held refusal and explicit retry chooses safe member. Call-level-only edit preserves prior valid member choice; it does not invalidate name selection.",
+          "source_lines": [
+            40,
+            46,
+            47,
+            49,
+            57,
+            58,
+            59
+          ],
+          "evidence_class": "fixture_read_and_intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-inline-member-selection-lifetime/report-development.json",
+            "docs/premium-ui/qa-inline-member-selection-lifetime/report-production.json"
+          ]
+        },
+        {
+          "action": "changed-back-name-and-held-lookup-focus",
+          "selector": "[name=canonical_name]; [data-use-existing]",
+          "outcome": "Changing name away and back invalidates old selection. Held blur lookup replaces old candidate DOM; exact new candidate retains keyboard focus and Enter selects it.",
+          "source_lines": [
+            41,
+            [
+              49,
+              55
+            ]
+          ],
+          "evidence_class": "fixture_read_and_intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-inline-member-selection-lifetime/report-development.json",
+            "docs/premium-ui/qa-inline-member-selection-lifetime/report-production.json"
+          ]
+        },
+        {
+          "action": "exact-row-correction-file-month-and-no-apply",
+          "selector": "[data-review-row=\"CSV:2\"] [data-field=person_id]; [data-refresh]; [data-apply]",
+          "outcome": "Chooser closes with intended member only in CSV:2; CSV:3 unchanged. Apply remains aria-disabled until fresh preview. Refresh carries exact correction; file name/text and month preserved; RAM members match original; no pageerrors.",
+          "source_lines": [
+            59,
+            60
+          ],
+          "evidence_class": "fixture_read_and_intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-inline-member-selection-lifetime/report-development.json",
+            "docs/premium-ui/qa-inline-member-selection-lifetime/report-production.json"
+          ]
+        },
+        {
+          "action": "declared-source-and-test-held",
+          "selector": "src/main.ts; src/operational-import.ts; src/member-workspace.ts; src/services/api.ts; test script",
+          "outcome": "Four declared source hashes and own script SHA unchanged during run.",
+          "source_lines": [
+            8,
+            9,
+            11,
+            66
+          ],
+          "evidence_class": "source_integrity",
+          "report_paths": [
+            "docs/premium-ui/qa-inline-member-selection-lifetime/report-development.json",
+            "docs/premium-ui/qa-inline-member-selection-lifetime/report-production.json"
+          ]
+        }
+      ],
+      "retained_evidence": [
+        {
+          "report": "docs/premium-ui/qa-inline-member-selection-lifetime/report-development.json",
+          "report_sha256": "7e383a27ee05afaf1b0d972b8cc09795afb03e14fe55e80a80876dacbe6fea72",
+          "recorded_at_utc": "2026-10-24T01:47:42.077Z",
+          "result_rows": 30,
+          "retained_test_sha256": "8dd5865b3fccd021eec19e62cf50b4d1936567f6e3786294d9407f921254ed7f",
+          "source_hash_comparisons": [
+            {
+              "path": "frontend/src/main.ts",
+              "retained_sha256": "93eebef4269de921331c843211094321582d241e6af186172339f1ae26b52b9e",
+              "current_sha256": "6ebdf70eb1f3663e144c26ea4ceddcee83989a18c84b24a0e3e2a6fdc0b3dbdb",
+              "matches": false
+            },
+            {
+              "path": "frontend/src/operational-import.ts",
+              "retained_sha256": "9e11514d205d71049e2f0baa10f005def74941e0b90584a9c84b968f9ae19dfc",
+              "current_sha256": "9e11514d205d71049e2f0baa10f005def74941e0b90584a9c84b968f9ae19dfc",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/member-workspace.ts",
+              "retained_sha256": "b39d53795adcbe1d850aeb3cf20f71bd78f4a48a4280e7f9e7e9cff2f796e50c",
+              "current_sha256": "4ddb7efade2d5886e8d62dc5fa7225eb2448b02c4be37ebb0ce474b5d3562c41",
+              "matches": false
+            },
+            {
+              "path": "frontend/src/services/api.ts",
+              "retained_sha256": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+              "current_sha256": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+              "matches": true
+            }
+          ]
+        },
+        {
+          "report": "docs/premium-ui/qa-inline-member-selection-lifetime/report-production.json",
+          "report_sha256": "36ac166d5e2c6be2e8990f70d44ab9cedaa2cbe554ed1f9b40004f1de5c62fc3",
+          "recorded_at_utc": "2026-10-24T01:49:17.833Z",
+          "result_rows": 30,
+          "retained_test_sha256": "8dd5865b3fccd021eec19e62cf50b4d1936567f6e3786294d9407f921254ed7f",
+          "source_hash_comparisons": [
+            {
+              "path": "frontend/src/main.ts",
+              "retained_sha256": "93eebef4269de921331c843211094321582d241e6af186172339f1ae26b52b9e",
+              "current_sha256": "6ebdf70eb1f3663e144c26ea4ceddcee83989a18c84b24a0e3e2a6fdc0b3dbdb",
+              "matches": false
+            },
+            {
+              "path": "frontend/src/operational-import.ts",
+              "retained_sha256": "9e11514d205d71049e2f0baa10f005def74941e0b90584a9c84b968f9ae19dfc",
+              "current_sha256": "9e11514d205d71049e2f0baa10f005def74941e0b90584a9c84b968f9ae19dfc",
+              "matches": true
+            },
+            {
+              "path": "frontend/src/member-workspace.ts",
+              "retained_sha256": "b39d53795adcbe1d850aeb3cf20f71bd78f4a48a4280e7f9e7e9cff2f796e50c",
+              "current_sha256": "4ddb7efade2d5886e8d62dc5fa7225eb2448b02c4be37ebb0ce474b5d3562c41",
+              "matches": false
+            },
+            {
+              "path": "frontend/src/services/api.ts",
+              "retained_sha256": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+              "current_sha256": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+              "matches": true
+            }
+          ]
+        }
+      ],
+      "limitations": [
+        "Both retained30-row reports record current script SHA; operational-import/api hashes match now, main/member-workspace have changed. Historical bounded results, no current whole-source execution certification.",
+        "Changed-name and focus probe modes record prior bugs and are not successful current outcomes; mapping uses non-probe retained reports only.",
+        "All POSTs intercepted; RAM member-list equality covers read state, not actual persisted create/Apply semantics. No downloads, axe, nativeAT, physical device/all-role certification."
+      ]
+    },
+    {
+      "suite": "frontend/tests/premium-operational-import-file-race-fixed.browser.mjs",
+      "sha256": "e88ac6b7b826fa478d401240db74fc41a179122b66c1f110ca65fa6da759268b",
+      "source_inspected": true,
+      "execution_verified": false,
+      "execution_verification_scope": "Inspected all12retained workflows; source snapshots differ now and current run not verified. No runtime execution by mapper; execution_verified=false means this mapping does not certify a current run.",
+      "screens": [
+        "Actual Leave import toolbar",
+        "Actual Units import toolbar",
+        "Operational import dialog"
+      ],
+      "contexts": {
+        "engines": [
+          "chromium",
+          "firefox",
+          "webkit"
+        ],
+        "widths": [
+          320,
+          1280
+        ],
+        "height": 850,
+        "reduced_motion": "reduce",
+        "kinds": [
+          "leave",
+          "units"
+        ],
+        "cases": 12,
+        "fixture": "All nonGET intercepted; known member/unit GETs intercepted, remaining GETs to RAM8031; dev5197 only"
+      },
+      "assertion_groups": [
+        {
+          "action": "old-column-failure-cannot-replace-new-file",
+          "selector": "input[type=file]; [data-map=\"0\"]; [data-message]; [data-mapping]",
+          "outcome": "After A held/B selected, A503 leaves status exact, file B and B Employee mapping intact.",
+          "source_lines": [
+            34,
+            35
+          ],
+          "evidence_class": "fixture_read_and_intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/reviews/operational-import-file-race-fixed-current.json"
+          ]
+        },
+        {
+          "action": "pending-native-lock-refusal-no-auto-replay",
+          "selector": "input,select,textarea,button; [data-apply-status]",
+          "outcome": "During held Apply all native controls disabled (no disabled-file bypass).503 restores original per-control disabled states, B and reviewed row; exactly one Apply, no automatic retry.",
+          "source_lines": [
+            36,
+            37
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/reviews/operational-import-file-race-fixed-current.json"
+          ]
+        },
+        {
+          "action": "manual-retry-and-newer-focus-preserved",
+          "selector": "[data-apply]; link Download example CSV; [data-download-completed-report]",
+          "outcome": "Refusal restores Apply focus; Enter retries.320 deliberate link focus survives completion;1280 next completed-report action receives focus. File B remains and enabled.",
+          "source_lines": [
+            38
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/reviews/operational-import-file-race-fixed-current.json"
+          ]
+        },
+        {
+          "action": "new-file-discard-and-exact-apply-body",
+          "selector": "input[type=file]; button Close import review",
+          "outcome": "New C clears old review. Declining Close preserves C/open dialog; accept detaches; four prompts total. Exactly two Apply attempts have identical excluded:[],acknowledge_warnings:false payload; no pageerrors.",
+          "source_lines": [
+            39
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/reviews/operational-import-file-race-fixed-current.json"
+          ]
+        },
+        {
+          "action": "declared-module-hash-hold-main-drift-recorded",
+          "selector": "src/operational-import.ts; src/member-workspace.ts; src/main.ts",
+          "outcome": "Operational/member-workspace unchanged across run; main start/end recorded separately without required equality.",
+          "source_lines": [
+            5,
+            6,
+            43,
+            44
+          ],
+          "evidence_class": "source_integrity",
+          "report_paths": [
+            "docs/premium-ui/reviews/operational-import-file-race-fixed-current.json"
+          ]
+        }
+      ],
+      "retained_evidence": [
+        {
+          "report": "docs/premium-ui/reviews/operational-import-file-race-fixed-current.json",
+          "report_sha256": "8dc9bc6976f9177c8fe8fcc4aabf1556c1c568c56e418898a9a5dcd4eb3b2ea7",
+          "recorded_at_utc": "2026-10-22T10:25:58.426Z",
+          "result_rows": 12,
+          "retained_test_sha256": null,
+          "source_hash_comparisons": [
+            {
+              "path": "frontend/src/operational-import.ts",
+              "retained_sha256": "cc9cf665de88de0def1c43d917ccb69fc056033df98675964cc7a7c49e05d0b1",
+              "current_sha256": "9e11514d205d71049e2f0baa10f005def74941e0b90584a9c84b968f9ae19dfc",
+              "matches": false
+            },
+            {
+              "path": "frontend/src/member-workspace.ts",
+              "retained_sha256": "74f9c688b2c4e4e703f8bee347bbee3ec4f3e1085005647efca7c75b9789179b",
+              "current_sha256": "4ddb7efade2d5886e8d62dc5fa7225eb2448b02c4be37ebb0ce474b5d3562c41",
+              "matches": false
+            },
+            {
+              "path": "frontend/src/main.ts",
+              "retained_sha256": "8099e2182e25a65e48a138ea172210af5ae81eefe8e7b14c4aedb7a615fc791f",
+              "current_sha256": "6ebdf70eb1f3663e144c26ea4ceddcee83989a18c84b24a0e3e2a6fdc0b3dbdb",
+              "matches": false
+            }
+          ]
+        }
+      ],
+      "limitations": [
+        "Retained12outcome rows, no test SHA; all3recorded source hashes differ now. Report filename current is historical metadata, not freshness proof.",
+        "All Apply POSTs intercepted; no actual DB persistence. Example/report controls are focused, never activated; download-content evidence absent.",
+        "No theme matrix, axe/nativeAT/physical-device checks. Main hash could drift without failing suite; only two module holds enforced."
+      ]
+    }
+  ]
+}

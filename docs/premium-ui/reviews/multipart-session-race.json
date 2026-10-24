@@ -1,0 +1,12 @@
+{
+  "captured_at": "2026-10-21T14:34:59.722Z",
+  "fixture": "actual API helper transpiled, fully mocked fetch; no server calls",
+  "finding": "Direct multipart response bypasses auth-generation guard",
+  "action": "memberWorkbookRequest apply",
+  "old_session_response_resolved_after_new_session": true,
+  "result": {
+    "applied": true,
+    "owner": "old-account"
+  },
+  "impact": "Old-account upload can resolve as successful and trigger caller callbacks after account change; main cross-tab UI teardown mitigates visible dialogs but does not enforce helper contract."
+}

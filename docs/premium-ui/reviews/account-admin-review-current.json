@@ -1,0 +1,64 @@
+{
+  "recorded_at_utc": "2026-10-22T09:59:56.481608+00:00",
+  "reviewer": "auth_form_independent_tests",
+  "scope": "Independent source/test review plus strengthened actualapp accountadmin6workflows. No appedits/backendwrites.",
+  "source_sha256": {
+    "frontend/src/main.ts": "6f7287fe95b1e9a11e327c2e47f5df86c1d49c79cd74c182198bf1c15e12df6c",
+    "frontend/src/services/api.ts": "96fd19d658559bd3838033957873258e5108f94c422ed1cb9f92c7ad8dd46913",
+    "frontend/tests/premium-account-admin-lifetime.browser.mjs": "b0e9759455779f2750a39769d1b4dc363095b6092fbf1f9e3375116995e09a67",
+    "docs/premium-ui/qa-account-admin-before.json": "dfa9e940d6fc7e7c732a2282d10a0046a36108f023dfc1a3419829424a4d5b17",
+    "docs/premium-ui/qa-account-admin-lifetime.json": "ef03b14ca9adbf2eee758e54f8a1812131083412a017bf53516d0e29dd25ab15"
+  },
+  "baseline": "qa-account-admin-before.json recordsoneChromium320latepromptafterleavingaccounts;retainedhistoricalevidence.",
+  "current_evidence": {
+    "terminal": "67351exit0",
+    "report": "docs/premium-ui/qa-account-admin-lifetime.json",
+    "cases": 6,
+    "late_prompt_counts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "late_create_destination_guard": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ]
+  },
+  "source_review": [
+    {
+      "context": "renderAccounts7342",
+      "finding": "Computeradmin/superadmin gate and superadminroleoption/recoveryvisibility conditions retained. confirmedCreation optionalUIcontextonly; listGET/readbackfailure truthfulstatus removesstalecreateform."
+    },
+    {
+      "context": "account-form8026",
+      "finding": "Exactcreatepayload username/display_name/password/role unchanged; currentguard requires originaloperator/viewSeq/renderSeq/accountsroute/connectedform+unabortedbinding beforeanycompletionUI. Busybuttonblocksduplicate;confirmedPOSTsuccessreadbackGETfailure doesnotretryPOST."
+    },
+    {
+      "context": "recovery8536",
+      "finding": "Exactaccount.id recoveryendpoint unchanged;existingidentityconfirm retained. Disabled/connected/admin preconditions and operator/view/render/bindingsignal connectedbutton guard preventlatecodepromptafterroute/signout. Explicitretryonly;finallyrestoresbusyforlivecontext."
+    }
+  ],
+  "strengthened_test": [
+    "ExistingcancelnoPOST,heldsyntheticduplicate,503manualrecoveryretryexacttarget,promptusername/expiry,late/signoutnoprompt andconfirmedcreateGETfailure/manualreadretry retained.",
+    "Addedheldcreation afterroutechangeOverview; exacttargetpayload preserved, oldformnotrendered,heading/context unchanged,nostaletoast.",
+    "Threebrowserengines320/1280;allcreate/recoveryPOSTintercepted,GETonlyfixtureforwarded."
+  ],
+  "contract_disposition": {
+    "api_endpoint_or_payload_change_found": false,
+    "role_permission_semantic_change_found": false,
+    "automatic_mutation_replay_found": false,
+    "no_global_completion_claim": true
+  },
+  "limitations": [
+    "No backendauthorization/passwordpolicy/realcredentials/persistence certification;UIvisibility is not serverpermissionproof.",
+    "Onlylistedstates/roles covered;allaccountactions notblanketcertified.",
+    "Snapshotmainhashmatchesreport;concurrentfuturechangesmayinvalidate."
+  ]
+}

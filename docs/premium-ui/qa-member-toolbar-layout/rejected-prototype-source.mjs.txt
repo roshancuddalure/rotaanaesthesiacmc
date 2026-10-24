@@ -1,0 +1,52 @@
+// Layout-only roster refinement: measured geometry, native controls and text-spacing fallback.
+import assert from 'node:assert/strict';
+import {readFile,writeFile,mkdir} from 'node:fs/promises';
+import {createHash} from 'node:crypto';
+import {chromium,firefox,webkit} from 'playwright';
+const probe=process.env.ROSTER_LAYOUT_PROBE==='1',base=process.env.MEMBER_TEST_URL||'http://127.0.0.1:5197',api='http://127.0.0.1:8032',out='../docs/premium-ui/qa-member-toolbar-layout';
+export const rules=`
+/* Pair small-screen roster controls without reducing touch targets. */
+@media (max-width: 768px) {
+  .member-hub .member-filters { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+  .member-hub .member-filters > :is(.segmented-filter, .member-search-row, .member-active-filters) { grid-column: 1 / -1; min-width: 0; }
+  .member-hub .member-filter-panel { min-width: 0; }
+  .member-hub .member-filter-panel[open] { grid-column: 1 / -1; }
+  .member-hub .member-sort-control select { min-width: 0; }
+}
+@media (max-width: 420px) {
+  .member-hub .member-add input, .member-hub .member-search-row input { flex-basis: 7rem; }
+}
+`;
+const files=['src/main.ts','src/styles.css','src/premium-theme.css'];const hashes=async()=>Object.fromEntries(await Promise.all(files.map(async f=>['frontend/'+f,createHash('sha256').update(await readFile(f)).digest('hex')])));
+const held=await hashes(),results=[];await mkdir(out,{recursive:true});
+const reset=await fetch(api+'/__equivalence/reset',{method:'POST'});assert.equal((await reset.json()).storage,'disposable-sqlite-memory');
+const geometry=async page=>page.evaluate(()=>{
+ const box=s=>{const r=document.querySelector(s).getBoundingClientRect();return {top:r.top+scrollY,left:r.left,right:r.right,width:r.width,height:r.height};};
+ return {hub:box('.member-hub'),members:box(innerWidth<=768?'#member-card-list':'#member-list'),add:box('#create-member'),name:box('#new-member-name'),search:box('#member-search'),clear:box('#clear-member-filters'),sort:box('#member-sort'),filter:box('#member-filter-panel'),overflow:document.documentElement.scrollWidth>innerWidth+1};
+});
+for(const [engine,type]of Object.entries(probe?{chromium}:{chromium,firefox,webkit})){
+ const browser=await type.launch();try{for(const width of probe?[320,390,768,1280]:[320,390,420,421,600,768,769,1280]){
+  const context=await browser.newContext({viewport:{width,height:844},reducedMotion:'reduce'}),page=await context.newPage(),errors=[],writes=[];
+  page.on('pageerror',e=>errors.push(e.message));await context.addInitScript(()=>{localStorage.setItem('duty_rota_auth_token','member-toolbar-layout');localStorage.setItem('duty_rota_working_month','2026-05');});
+  await context.route('**/api/**',async route=>{const r=route.request(),u=new URL(r.url());if(r.method()!=='GET'){writes.push(r.method()+' '+u.pathname);return route.abort();}return route.fulfill({response:await route.fetch({url:api+u.pathname+u.search})});});
+  try{
+   await page.goto(base+'/#view=members');await page.locator('#member-filter-panel').waitFor();await page.waitForLoadState('networkidle');
+   const before=await geometry(page),controls=await page.locator('.member-hub :is(button,input,select,summary)').count();
+   if(probe)await page.addStyleTag({content:rules});
+   const compact=await geometry(page);assert.equal(compact.overflow,false);assert.equal(await page.locator('.member-hub :is(button,input,select,summary)').count(),controls);
+   for(const key of ['add','name','search','clear','sort']){assert.ok(compact[key].height>=44,key+' retains44pxheight');assert.ok(compact[key].left>=-1&&compact[key].right<=width+1,key+' fits viewport');}
+   if(width<=420){assert.ok(Math.abs(compact.add.top-compact.name.top)<=1,'Add name and action share a row '+JSON.stringify(compact));assert.ok(Math.abs(compact.search.top-compact.clear.top)<=1,'Search and clear share a row');}
+   await page.screenshot({path:`${out}/${probe?'prototype':'current'}-${engine}-${width}.png`,fullPage:true});
+   await page.locator('#member-filter-panel summary').focus();await page.keyboard.press('Enter');
+   assert.equal(await page.getByLabel('Filter by position',{exact:true}).isVisible(),width<=768);
+   if(width<=768)assert.ok((await page.locator('#member-filter-panel').boundingBox()).width>=compact.hub.width-40,'Expanded controls regain full panel width');
+   await page.addStyleTag({content:'.member-hub,.member-hub * { line-height:1.5 !important; letter-spacing:.12em !important; word-spacing:.16em !important; }'});
+   const spaced=await geometry(page);assert.equal(spaced.overflow,false,'Text spacing keeps page bounds');
+   for(const key of ['add','name','search','clear','sort'])assert.ok(spaced[key].width>=60&&spaced[key].left>=-1&&spaced[key].right<=width+1,key+' readable under spacing');
+   assert.deepEqual(errors,[]);assert.deepEqual(writes,[]);results.push({engine,width,before,compact,spaced,controls_preserved:controls,passed:true});
+  }finally{await context.close();}
+ }}finally{await browser.close();}
+}
+assert.deepEqual(await hashes(),held);
+await writeFile(`${out}/${probe?'prototype':'report'}.json`,JSON.stringify({recorded_at_utc:new Date().toISOString(),scope:probe?'Injected CSS prototype geometry only; no shipped-code certification.':'Roster layout on actual app stylesheet: paired controls,44pxheights,full-width expanded filterfields,text-spacing bounds. Real readonlyRAM fixture;not allroles/themes/nativeAT or whole-app certification.',source_sha256:held,results},null,2)+'\n');
+console.log(`Member toolbar layout:${results.length} contexts passed`);

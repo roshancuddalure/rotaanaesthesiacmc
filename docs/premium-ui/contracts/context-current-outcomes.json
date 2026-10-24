@@ -1,0 +1,52 @@
+{
+  "recorded_at_utc": "2026-10-22T05:37:17.368467+00:00",
+  "scope": "Five exact context actions, bounded actual outcomes; fullinventory/currentallrole certification unproven.",
+  "evidence": "docs/premium-ui/qa-context-action-outcomes-independent.json",
+  "source_snapshot": {
+    "src/main.ts": "9b9f4bbd0df59f70fcd0e1b5f63aa71bdb91c4d8648a22498d0165d6fd881e64",
+    "src/member-workspace.ts": "21cbb5ae116f3abae60bcc09d35d3d4ae028424d6acbdd421a79749606632e14",
+    "src/navigation-history.ts": "497ec55345319991665cb849c42c8d985b673abe0db7bfe352370ac09972dd48"
+  },
+  "actions": [
+    {
+      "inventory_action_id": "main-ts::renderSortTh::5117e30052a6",
+      "selector": "[data-person-sort=\"total_24hr\"]",
+      "label": "Personnel Total24hr sort",
+      "runtime_status": "passed_bounded_outcomes",
+      "test": "frontend/tests/premium-context-action-outcomes-independent.browser.mjs",
+      "scope": "3engines320/1280; personnel sortdesktoponly, deterministic31people/3unitfixtures, no backend writes."
+    },
+    {
+      "inventory_action_id": "main-ts::renderPaginator::801bd2c553cc",
+      "selector": "[data-set-page=\"personnel:1\"]",
+      "label": "Personnel Next page",
+      "runtime_status": "passed_bounded_outcomes",
+      "test": "frontend/tests/premium-context-action-outcomes-independent.browser.mjs",
+      "scope": "3engines320/1280; personnel sortdesktoponly, deterministic31people/3unitfixtures, no backend writes."
+    },
+    {
+      "inventory_action_id": "main-ts::-callback-::edc6db8e8509::3",
+      "selector": "[data-analysis-person]",
+      "label": "Open analytical member",
+      "runtime_status": "passed_bounded_outcomes",
+      "test": "frontend/tests/premium-context-action-outcomes-independent.browser.mjs",
+      "scope": "3engines320/1280; personnel sortdesktoponly, deterministic31people/3unitfixtures, no backend writes."
+    },
+    {
+      "inventory_action_id": "main-ts::renderUnitModal::8bd46cb39d0e",
+      "selector": "[data-unit-modal-nav=\"context-unit-0\"]",
+      "label": "Previous unit",
+      "runtime_status": "passed_bounded_outcomes",
+      "test": "frontend/tests/premium-context-action-outcomes-independent.browser.mjs",
+      "scope": "3engines320/1280; personnel sortdesktoponly, deterministic31people/3unitfixtures, no backend writes."
+    },
+    {
+      "inventory_action_id": "main-ts::renderUnitModal::471c551e48a5",
+      "selector": "[data-unit-modal-nav=\"context-unit-2\"]",
+      "label": "Next unit",
+      "runtime_status": "passed_bounded_outcomes",
+      "test": "frontend/tests/premium-context-action-outcomes-independent.browser.mjs",
+      "scope": "3engines320/1280; personnel sortdesktoponly, deterministic31people/3unitfixtures, no backend writes."
+    }
+  ]
+}

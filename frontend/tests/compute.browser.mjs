@@ -15,7 +15,7 @@ async function pageAt(width = 1280) {
   const errors = [];
   page.on("pageerror", error => errors.push(error.message));
   await page.route("**/__compute-test", route => route.fulfill({ contentType: "text/html",
-    body: '<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/src/styles.css"></head><body><button id="opener">Open</button><main id="host"></main></body></html>' }));
+    body: '<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/src/styles.css"><link rel="stylesheet" href="/src/premium-theme.css"></head><body><button id="opener">Open</button><main id="host"></main></body></html>' }));
   await page.route("**/api/**", async route => {
     const url = new URL(route.request().url());
     const response = await route.fetch({ url: api + url.pathname + url.search });

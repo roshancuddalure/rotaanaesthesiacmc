@@ -1,0 +1,72 @@
+{
+  "recorded_at_utc": "2026-10-22T12:36:16.575264+00:00",
+  "requirements": [
+    54,
+    55,
+    82,
+    87,
+    88,
+    92,
+    94,
+    96,
+    167,
+    168,
+    208,
+    209,
+    212,
+    219,
+    223,
+    225,
+    228,
+    258
+  ],
+  "completion_claim": false,
+  "source_sha256": {
+    "frontend/src/rota-compute.ts": "e8bc5b3df8ba79118531361e2db3f93038dac8d29c4051bc9867bef6da4701e8",
+    "frontend/src/ui.ts": "12e79214fc4f094e9b391df88ff498cda65d3539b9d0f1da59cffc139c8e4f85",
+    "frontend/src/styles.css": "e5e5802b5cdef146b542fcfafc1b2040f232898cafaa89dcf30554235da140b5",
+    "frontend/src/premium-theme.css": "ff2aee7148e54e4e40aae847189110cf3d9228d90fabffbd63a3449a1e1a935d"
+  },
+  "scope": "Compute Settings owned keyboard focus and disclosure continuity; UI-only re-render behavior.",
+  "confirmed_before": "Actual Chromium320: enable/mode/power/workload/reset changes each lost active focus and closed the open GPU setup checklist. Preference values themselves were retained.",
+  "change": [
+    "Capture a known settings control or help summary before re-render; restore its replacement with preventScroll only when re-render left BODY focused.",
+    "Retain open help disclosures by summary text when re-rendering preferences or device-test results.",
+    "Use existing retainActionFocus for pending TestDevice/Compare. Restore owned initiating action after result, or enabled TestDevice/Reset fallback when Compare becomes unavailable. Deliberate newer focus and detached hosts take precedence.",
+    "Do not change preference serialization, computation eligibility, benchmark/worker/request logic, scoring or server validation. Existing Compare disabled expression still matches frozen baseline."
+  ],
+  "checks": {
+    "compute_focus_workflows": 6,
+    "synchronous_control_focus_and_help_outcomes": 30,
+    "pending_test_focus_contexts": 24,
+    "comparison_preflight_failure_focus_fallbacks": 6,
+    "compute_prerequisite_regressions": 120,
+    "mock_device_feedback_regressions": 6,
+    "existing_generation_workflows": 21,
+    "unit_tests": 100,
+    "build_exit_code": 0,
+    "held_build_inputs": true,
+    "comparison_disabled_expression_unchanged": true
+  },
+  "evidence": [
+    "docs/premium-ui/qa-compute-focus.json",
+    "docs/premium-ui/qa-compute-focus-before.json",
+    "docs/premium-ui/qa-compute-prerequisites.json",
+    "docs/premium-ui/qa-compute-test-feedback.json",
+    "docs/premium-ui/qa-generation-actions-current.json",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+  ],
+  "tests": {
+    "frontend/tests/premium-compute-focus.browser.mjs": "f40a095a4b55c1b202d65b0280b342f1f05f5424bde94fbc9944b9bedb324e0c",
+    "frontend/tests/premium-compute-prerequisites.browser.mjs": "0387046f409cc80006177c105aa8f588fa0ee72a6d7f6bf9507531d41eb0e82e",
+    "frontend/tests/premium-compute-test-feedback.browser.mjs": "592695350b988e0d99c6cc1ad71c1c7334b04005fffdd72153bd5f3254518af4"
+  },
+  "limitations": [
+    "Actual settings UI uses intercepted capabilities and held mock Worker failure. No actual GPU/NVIDIA/device speed, worker startup or kernel certification.",
+    "Six focus fixtures cover3engines320/1280 in light theme. Deliberate pending destinations are enabled Diagnostics, help summary and an outside control; disabled month fields are intentionally not force-focused.",
+    "Comparison failure is mocked preflight, before proposal creation. Full comparison, every permission/context/lifetime and every disclosure combination remain separate acceptance.",
+    "Existing prerequisite regression includes12scoped axe surfaces and both themes; no new whole-app/native screen-reader/physical certification. Prior144broadmatrix remains historical.",
+    "Existing21generation suite has mocked writes and disposable GETs; not every source held across its runtime. Independent-review usage limitation remains; coordinator results are not independent sign-offs.",
+    "No backend/API-contract/permission/scheduling/persisted semantics/export-content/production changes made in this batch. Full260 goal active/incomplete; no whole-item completion claim."
+  ]
+}

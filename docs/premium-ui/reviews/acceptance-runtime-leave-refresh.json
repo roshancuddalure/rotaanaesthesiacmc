@@ -1,0 +1,169 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-10-24T04:32:58.491727+00:00",
+  "reviewer": "/root/acceptance_runtime_leave",
+  "scope": "Fresh acceptance runtime evidence for items143/146/148; existing scripts executed sequentially against held frontend source. No application or test source edits.",
+  "completion_claim": false,
+  "counts": {
+    "browser_contexts": 42,
+    "monthly_review": 6,
+    "calendar_boundaries": 24,
+    "pressure": 12,
+    "tagged_axe_contexts": 18
+  },
+  "suites": [
+    {
+      "name": "monthly-review",
+      "command": "node tests/premium-monthly-leave-review.browser.mjs",
+      "cwd": "frontend",
+      "exit_code": 0,
+      "contexts": 6,
+      "report": "docs/premium-ui/qa-monthly-leave-review.json",
+      "report_sha256": "569203d8d3f329e709216709e2191cd8d90271fbb0496f78b97a279b33873f9b",
+      "test": "frontend/tests/premium-monthly-leave-review.browser.mjs",
+      "test_sha256": "a74030383a9104084b59c6e7a27f5158ddce903af9a9deaf6562eb09c911e093",
+      "log": "tmp/acceptance-leave-monthly-review.log",
+      "log_sha256": "c11c7ddf048e66735249889a424e0ab46228cc99c20dbd87cfae2ca34fbd2714",
+      "source_sha256": {
+        "frontend/src/leave-approval.ts": "42e5a47751ae081d1b97108209c7a2b53272985251d153aa065f7718f43e544f",
+        "frontend/src/ui.ts": "88579ed75c8c72e4fd4e2d98508a58c42b925202362589a2469623664c2a975f",
+        "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+        "frontend/src/premium-theme.css": "559041ee03d192fcc291582bd7572e8d32004e9d5428b7e57fbbea9ba9e60f83"
+      },
+      "scope": "Actual monthlyapproval18rowfixture and2duties,fullcrossmonthdates,preview503/heldretry,newerfocus,independentack/confirm,interceptedapproval503 thenpreviewPOSTretrywithoutreplay.3engines320/1280. AllPOSTintercepted, nobackendwrites."
+    },
+    {
+      "name": "calendar-boundaries",
+      "command": "node tests/premium-leave-calendar-boundaries.browser.mjs",
+      "cwd": "frontend",
+      "exit_code": 0,
+      "contexts": 24,
+      "report": "docs/premium-ui/qa-leave-calendar-boundaries.json",
+      "report_sha256": "2bf2f21b54d1c3ba860113f5819231274fea94fba74decf884afe2e976d5ba99",
+      "test": "frontend/tests/premium-leave-calendar-boundaries.browser.mjs",
+      "test_sha256": "1f8e7dcbbaf8c771634f6cf44cfa2d7e86edb39de05b35c8d843de048b99d6c6",
+      "log": "tmp/acceptance-leave-calendar-boundaries.log",
+      "log_sha256": "82f3eadd6b9b905d70a1fcc2264af2974cbe9e67f1cfb273545ba866274f3546",
+      "source_sha256": {
+        "frontend/src/main.ts": "658711ebf2ce8b26094131a5f1e4fe383d9ff98f6d0fc3dc5e9961fba44ac983",
+        "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+        "frontend/src/premium-theme.css": "559041ee03d192fcc291582bd7572e8d32004e9d5428b7e57fbbea9ba9e60f83"
+      },
+      "scope": "Actual app empty-month boundary fixtures, 28/29/30/31 days. GET-only disposable shell. Dark320/light1280; no physical or native screen-reader claim."
+    },
+    {
+      "name": "pressure",
+      "command": "node tests/premium-leave-pressure.browser.mjs",
+      "cwd": "frontend",
+      "exit_code": 0,
+      "contexts": 12,
+      "report": "docs/premium-ui/qa-leave-pressure.json",
+      "report_sha256": "588d4411d951a110df4b0fd62aed52137e7296503522570a76461ddc02fae344",
+      "test": "frontend/tests/premium-leave-pressure.browser.mjs",
+      "test_sha256": "930c4781459244b6a9005eff64557dec9353e88e0453f478241b9a20440ba3d5",
+      "log": "tmp/acceptance-leave-pressure.log",
+      "log_sha256": "04e6bd1603c45561b005a276e4d0c9fd96b46942bfad0c9208e064ddb2c2e89d",
+      "source_sha256": {
+        "frontend/src/main.ts": "658711ebf2ce8b26094131a5f1e4fe383d9ff98f6d0fc3dc5e9961fba44ac983",
+        "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+        "frontend/src/premium-theme.css": "559041ee03d192fcc291582bd7572e8d32004e9d5428b7e57fbbea9ba9e60f83"
+      },
+      "scope": "ActualLeavepressure12unitgroups/6callgroups/9days,reportedcountsunchanged,top7existingrank,remaininggroupsdisclosure,existingdaymodalstatus/focus.3engines320/1280 light/dark. Fixturepressure/calendarGETs,otherGETsdisposable8031; no operationalwrites or backend aggregateconsistency certification."
+    }
+  ],
+  "source_sha256": {
+    "frontend/src/leave-approval.ts": "42e5a47751ae081d1b97108209c7a2b53272985251d153aa065f7718f43e544f",
+    "frontend/src/ui.ts": "88579ed75c8c72e4fd4e2d98508a58c42b925202362589a2469623664c2a975f",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "559041ee03d192fcc291582bd7572e8d32004e9d5428b7e57fbbea9ba9e60f83",
+    "frontend/src/main.ts": "658711ebf2ce8b26094131a5f1e4fe383d9ff98f6d0fc3dc5e9961fba44ac983"
+  },
+  "source_held_at_report_creation": true,
+  "network_safety": {
+    "monthly_review": "Every API request locally fulfilled; POST preview and approval are intercepted. Approval response is503; callback count stays0.",
+    "calendar_boundaries": "Every API request asserted GET and forwarded only to disposable127.0.0.1:8031, calendar response replaced with local empty-month fixture.",
+    "pressure": "Every API request asserted GET; pressure/calendar responses locally fulfilled, all other GETs forwarded only to disposable127.0.0.1:8031.",
+    "production_requests": 0,
+    "mutation_requests_forwarded": 0
+  },
+  "condition_mappings": [
+    {
+      "item_id": 143,
+      "requirement": "Present full date ranges for cross-month leave so monthly approval cannot appear narrower than its actual effect.",
+      "condition_results": [
+        {
+          "condition_index": 1,
+          "condition": "Monthly leave review shows each affected leave's full start/end range, including dates outside the selected month.",
+          "assessment": "supported_in_scoped_current_ui_evidence",
+          "evidence": "Source maps every review request through formatDateRange(leave.starts_on,leave.ends_on), without clipping; six browser contexts explicitly render29Oct2026 through3Dec2026 under November.",
+          "source_or_test_location": "frontend/src/leave-approval.ts:24"
+        },
+        {
+          "condition_index": 2,
+          "condition": "Confirmation explains effects beyond that month when the existing operation affects the entire record.",
+          "assessment": "supported_in_scoped_current_ui_evidence",
+          "evidence": "Source and six rendered contexts include the explicit full-date-range warning and affected-duty explanation before confirmation.",
+          "source_or_test_location": "frontend/src/leave-approval.ts:21"
+        }
+      ],
+      "acceptance_decision": "Root reviewer decides item acceptance; no ledger status changed by this specialist."
+    },
+    {
+      "item_id": 146,
+      "requirement": "Give calendars keyboard behavior matching their actual semantics; never add grid roles without the complete interaction pattern.",
+      "condition_results": [
+        {
+          "condition_index": 1,
+          "condition": "Calendar controls use native semantics or a complete keyboard model appropriate to their actual role.",
+          "assessment": "supported_in_scoped_current_ui_evidence",
+          "evidence": "24contexts inspect native button calendar semantics; every28/29/30/31day receives chronologicalTab, Enter opens exactdate, Escape returns exactday in month/list. Empty padding is hidden/unfocusable.",
+          "source_or_test_location": "frontend/src/main.ts:3598"
+        },
+        {
+          "condition_index": 2,
+          "condition": "Any grid-role calendar implements required focus movement and selection behavior rather than adding decorative grid roles.",
+          "assessment": "supported_in_scoped_current_ui_evidence",
+          "evidence": "All24contexts assert zero grid/gridcell roles in the month calendar; no grid keyboard model is advertised. Native month/list controls expose aria-pressed and aria-controls.",
+          "source_or_test_location": "frontend/tests/premium-leave-calendar-boundaries.browser.mjs"
+        }
+      ],
+      "acceptance_decision": "Root reviewer decides item acceptance; no ledger status changed by this specialist."
+    },
+    {
+      "item_id": 148,
+      "requirement": "Reflow leave-pressure summaries into readable unit and call-level groups without duplicating every explanatory paragraph.",
+      "condition_results": [
+        {
+          "condition_index": 1,
+          "condition": "Pressure summaries group unit and call-level information with readable counts and warnings.",
+          "assessment": "supported_in_scoped_current_ui_evidence",
+          "evidence": "12contexts verify unit/call group exactkeys/counts, top7day order/counts, full-date review status/focus, nooverflow at320/1280 across both themes.",
+          "source_or_test_location": "frontend/src/main.ts:3732"
+        },
+        {
+          "condition_index": 2,
+          "condition": "Shared explanations are consolidated without losing group-specific meaning or hiding returned groups.",
+          "assessment": "supported_in_scoped_current_ui_evidence",
+          "evidence": "Source renders shared blocking/pending and count-definition explanations once outside the group loop. Native disclosure exposes all12returned units after8initial groups;6callgroups retained; hostile long unit label remains escaped.",
+          "source_or_test_location": "frontend/src/main.ts:3743"
+        }
+      ],
+      "acceptance_decision": "Root reviewer decides item acceptance; no ledger status changed by this specialist."
+    }
+  ],
+  "historical_reports_preserved": [
+    "docs/premium-ui/qa-monthly-leave-review-pre-acceptance-refresh-20261024.json",
+    "docs/premium-ui/qa-leave-calendar-boundaries-pre-acceptance-refresh-20261024.json",
+    "docs/premium-ui/qa-leave-pressure-pre-acceptance-refresh-20261024.json"
+  ],
+  "limitations": [
+    "Development target5197 only; no production-build runtime rerun in this specialist task.",
+    "Scripts hold their listed frontend source hashes; no full dependency graph or bundled asset certification.",
+    "Item143 verifies UI disclosure of full fixture ranges and unchanged intercepted payload, not successful persisted approval or backend range semantics.",
+    "Calendar boundary fixture is empty and covers dark320/light1280; it does not certify every populated calendar or every calendar surface in the application.",
+    "Pressure counts are fixture exactness, not certification of backend aggregate calculation.",
+    "Scoped tagged axe audits only monthly review and pressure(18contexts); no full application WCAG certification.",
+    "Browser emulation only; no physical-device, native screen-reader, actual touch, or hardware performance claims.",
+    "No appsource, testsource, backend or ledger edits in this task."
+  ]
+}

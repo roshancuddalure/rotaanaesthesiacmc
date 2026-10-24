@@ -1,0 +1,98 @@
+{
+  "recorded_at_utc": "2026-10-22T11:47:39.090626+00:00",
+  "requirements": [
+    12,
+    63,
+    66,
+    67,
+    68,
+    69,
+    70,
+    71,
+    72,
+    73,
+    74,
+    76,
+    77,
+    79,
+    82,
+    197,
+    208,
+    209,
+    219,
+    230,
+    251,
+    258
+  ],
+  "completion_claim": false,
+  "scope": "Frontend role visibility inventory and actual navigation; persistent explanation of existing unavailable-link Overview fallback.",
+  "source_sha256": {
+    "frontend/src/main.ts": "74e072cea72b83cfc2b7fb069a8dc038096e1e0f656a55ce0866ad16e5e63bde",
+    "frontend/src/navigation-history.ts": "7987fe6b5034c80e44708b0e46d5bf4009a1e3eabca092a5b8a31ca1afdde0b4",
+    "frontend/src/premium-theme.css": "ff2aee7148e54e4e40aae847189110cf3d9228d90fabffbd63a3449a1e1a935d"
+  },
+  "before": "Actual HOD320 startup at unknown hash rendered Overview with no availability explanation; baseline report and later screenshot show the original behavior/context.",
+  "change": [
+    "Add a persistent shared-style callout outside the asynchronously replaced view root. Unknown links and known role-limited sections get fixed, distinct copy; arbitrary URL content is not interpolated.",
+    "Continue to Overview runs the existing navigator, sets the Overview hash and focuses its heading. Allowed navigation clears the notice; signed-out startup stays on authentication.",
+    "Preserve NAV_ITEMS, visibleNavItems, isAdminUser and operational control gates; no permission, backend or API contract changes."
+  ],
+  "checks": {
+    "signed_in_role_layouts": 24,
+    "signed_out_layouts": 6,
+    "tagged_axe_surfaces": 24,
+    "tagged_axe_violations": 0,
+    "skip_link_regressions": 12,
+    "guide_help_regressions": 9,
+    "unit_tests": 100,
+    "build_exit_code": 0,
+    "held_build_inputs": true
+  },
+  "evidence": [
+    "docs/premium-ui/qa-role-navigation.json",
+    "docs/premium-ui/qa-signed-out-navigation.json",
+    "docs/premium-ui/qa-role-navigation-before.json",
+    "docs/premium-ui/qa-skip-content-independent.json",
+    "docs/premium-ui/qa-guide-help-independent.json",
+    "docs/premium-ui/role-visibility-current.md",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+  ],
+  "tests": {
+    "frontend/tests/premium-role-navigation.browser.mjs": "1aa652d46618c929e69d11f9c80587a179dcbb9b0f964ece7a9bbb0dc105c692",
+    "frontend/tests/premium-signed-out-navigation.browser.mjs": "11a9d1ee0f11e4a426eb61b016ad6b07ad157296a6e4bb2d41144a32a3151693"
+  },
+  "visual_review": {
+    "reviewer": "root implementer; not independent",
+    "inspected": [
+      "docs/premium-ui/screenshots/recovery/route-hod-320.png",
+      "docs/premium-ui/screenshots/recovery/route-superadmin-1280.png"
+    ],
+    "result": "Availability callout and action readable at both widths. Mobile screenshot exposes unrelated existing Template word-break defect in Overview tiles; remains open."
+  },
+  "limitations": [
+    "Authenticated identities and API responses use a disposable GET-only fixture. This does not establish backend authorization, every protected route/action or actual account provisioning.",
+    "Navigation/toolbar visibility checked for all4 existing role values; one restricted-link transition per role, not every route. HOD backend registry exists, while frontend role type omits it; unchanged.",
+    "No profile editing/publish authority inferred from navigation visibility. Existing permissions remain authoritative.",
+    "New callout verified in light theme at320/1280; dark/high-zoom/landscape and native assistive/physical-device checks require separate evidence.",
+    "All independent reviews remain their recorded snapshots; usage limit prevents new independent review here. Coordinator regression reruns are not independent sign-offs.",
+    "144 broad responsive matrix is historical after main changes; full260 goal active/incomplete. No whole requirement complete. No deployment, commit, push or production changes."
+  ],
+  "latest_regression_rerun": {
+    "recorded_at_utc": "2026-10-22T11:54:52.762429+00:00",
+    "layouts": 24,
+    "report": "docs/premium-ui/qa-role-navigation.json",
+    "source_sha256": {
+      "frontend/src/main.ts": "74e072cea72b83cfc2b7fb069a8dc038096e1e0f656a55ce0866ad16e5e63bde",
+      "frontend/src/navigation-history.ts": "7987fe6b5034c80e44708b0e46d5bf4009a1e3eabca092a5b8a31ca1afdde0b4",
+      "frontend/src/styles.css": "645b00bf7cc07246f257ec5c90015b6d273a0b212478672ce098684d282385e4",
+      "frontend/src/premium-theme.css": "ff2aee7148e54e4e40aae847189110cf3d9228d90fabffbd63a3449a1e1a935d"
+    },
+    "test_sha256": "7a59de7e407b3472a2134efd9c56d6151b30ee153b8a28ec2a4f35a3f6bdef36"
+  },
+  "overview_word_break_followup": {
+    "status": "fixed_for_tested_contexts",
+    "review": "docs/premium-ui/reviews/overview-style-inventory-current.json",
+    "report": "docs/premium-ui/qa-overview-steps.json",
+    "limit": "30scoped layouts; original screenshot/finding retained as historical."
+  }
+}

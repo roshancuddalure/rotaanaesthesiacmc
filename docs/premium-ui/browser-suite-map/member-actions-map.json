@@ -1,0 +1,1033 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-10-24T03:58:28.403441+00:00",
+  "scope": "Documentation-only assertion map of five existing member/profile action suites; historical raw report scope explicitly distinguished from source inspection and current certification. No new tests run or whole item acceptance inferred.",
+  "source_inspection_method": "Read complete five current scripts and retained raw reports. source_lines are exact inclusive script anchors. Compare every declared report source hash to current file; retain mismatches and report/script binding limits.",
+  "entries": [
+    {
+      "suite": "frontend/tests/premium-profile-persistence.browser.mjs",
+      "sha256": "ec429235a5463e5151dcd5e0174f706258a85782f77851c2bbaad3b39185a9e1",
+      "source_inspected": true,
+      "execution_verified": true,
+      "execution_verification_scope": "Inspected retained raw JSON results and scopes only; no execution in this documentation task. Historical evidence: at least one declared application source/build hash differs from current files. Reports lacking test_sha256 do not bind the retained execution to the mapped current script. No current runtime acceptance inferred.",
+      "screens": [
+        "Members actual full-app opener",
+        "Canonical member workspace Details/Names & duplicates/Roles & eligibility/Overview",
+        "Compare changes"
+      ],
+      "contexts": {
+        "environment": "production preview http://127.0.0.1:5198",
+        "fixture": "Real existing API forwarded unchanged to disposable SQLite memory at8032; fixture reset per context; two direct external PUTs simulate competing editor. First successful browser PUT response held after server commit.",
+        "normal": {
+          "engines": [
+            "chromium",
+            "firefox",
+            "webkit"
+          ],
+          "widths": [
+            320,
+            1280
+          ],
+          "heights": [
+            568,
+            800
+          ],
+          "themes": "browser default",
+          "cases": 6
+        },
+        "zoom": {
+          "engine": "chromium",
+          "outer_viewport": [
+            1280,
+            900
+          ],
+          "themes": [
+            "light",
+            "dark"
+          ],
+          "actual_tab_zoom_factors": [
+            2,
+            4
+          ],
+          "cases": 4
+        },
+        "month": "2026-05"
+      },
+      "retained_reports": [
+        {
+          "path": "docs/premium-ui/qa-profile-persistence/report.json",
+          "sha256": "36c9a4dfd7ca8d1599f690f9b7a564f269281cc61ee47b2933aa48daa45b1029",
+          "recorded_at_utc": "2026-10-24T02:04:56.031Z",
+          "rows": 6,
+          "passed_true_rows": 6,
+          "test_sha256": null,
+          "test_sha_matches_current_script": null,
+          "declared_source_files": 72,
+          "source_mismatches_at_inspection": [
+            "frontend/src/main.ts",
+            "frontend/src/premium-theme.css",
+            "frontend/dist/index.html"
+          ],
+          "source_missing_at_inspection": [
+            "frontend/dist/assets/index-CJhCr2eQ.css",
+            "frontend/dist/assets/index-CmXnPZ4b.js",
+            "frontend/dist/assets/member-duplicates-KwvMt9v2.js",
+            "frontend/dist/assets/recycle-bin-qXjYhgZx.js",
+            "frontend/dist/assets/rota-intelligence-DUqGWpEq.js"
+          ],
+          "report_scope": "Full-app production canonical profile against real API/disposable RAM: identity/alias/base call/future designation/future call edits, row removal, pending-repeat guard, independent GET and reopen, actual concurrent revision409 and both comparison choices. Linked posting/leave preserved. Server responses forwarded unchanged; first committed success held to check repeat activation. Not all profile controls/roles/fixtures or production concurrency.",
+          "result_engines": [
+            "chromium",
+            "firefox",
+            "webkit"
+          ],
+          "result_widths": [
+            320,
+            1280
+          ],
+          "result_variants": []
+        },
+        {
+          "path": "docs/premium-ui/qa-profile-persistence-zoom/report.json",
+          "sha256": "2baaed0b4bd779bf07cb4dc4bcedb8f66569a918438548171c2c3190ea594e6b",
+          "recorded_at_utc": "2026-10-23T19:17:02.595Z",
+          "rows": 4,
+          "passed_true_rows": 4,
+          "test_sha256": null,
+          "test_sha_matches_current_script": null,
+          "declared_source_files": 72,
+          "source_mismatches_at_inspection": [
+            "frontend/src/main.ts",
+            "frontend/src/member-workspace.ts",
+            "frontend/src/operational-import.ts",
+            "frontend/src/premium-theme.css",
+            "frontend/src/services/api.ts",
+            "frontend/dist/index.html"
+          ],
+          "source_missing_at_inspection": [
+            "frontend/dist/assets/index-B9rRkXEL.js",
+            "frontend/dist/assets/index-BlvAkvxx.css",
+            "frontend/dist/assets/member-duplicates-xFM3KzQN.js",
+            "frontend/dist/assets/recycle-bin-BdDXypXB.js",
+            "frontend/dist/assets/rota-intelligence-DiRaY5YA.js"
+          ],
+          "report_scope": "Full-app production canonical profile against real API/disposable RAM: identity/alias/base call/future designation/future call edits, row removal, pending-repeat guard, independent GET and reopen, actual concurrent revision409 and both comparison choices. Linked posting/leave preserved. Server responses forwarded unchanged; first committed success held to check repeat activation. Not all profile controls/roles/fixtures or production concurrency.",
+          "result_engines": [
+            "chromium"
+          ],
+          "result_widths": [
+            1280
+          ],
+          "result_variants": []
+        }
+      ],
+      "assertion_groups": [
+        {
+          "action": "draft-row-controls",
+          "selector": "[data-aliases]; [data-remove-alias]; [data-add-designation-row]; [data-remove-designation]; [data-add-call-change]; [data-remove-call-change]",
+          "outcome": "Alias removal leaves only chosen alias; add/remove designation and future-call rows return zero counts; entering name/base call/future rows and tab changes sends zero PUT before explicit Save.",
+          "source_lines": [
+            [
+              63,
+              83
+            ]
+          ],
+          "evidence_class": "real_fixture_persistence_and_local_interaction",
+          "report_paths": [
+            "docs/premium-ui/qa-profile-persistence/report.json",
+            "docs/premium-ui/qa-profile-persistence-zoom/report.json"
+          ]
+        },
+        {
+          "action": "pending-save-and-exact-committed-fields",
+          "selector": "Save changes; button[type=submit]; .mw-summary article",
+          "outcome": "First real PUT succeeds and is held after commit; disabled submit plus repeat Enter sends one browser mutation. Independent GET asserts name, base call, aliases including original name, one exact future designation/date/notes and future-call/date/notes; revision changes. Summary keeps current missing designation/base call rather than future rows.",
+          "source_lines": [
+            [
+              38,
+              47
+            ],
+            [
+              84,
+              101
+            ]
+          ],
+          "evidence_class": "real_fixture_persistence_and_independent_readback",
+          "report_paths": [
+            "docs/premium-ui/qa-profile-persistence/report.json",
+            "docs/premium-ui/qa-profile-persistence-zoom/report.json"
+          ]
+        },
+        {
+          "action": "reopen-and-reload-readback",
+          "selector": "[data-close]; [data-open-member]; Details; Roles & eligibility; Names & duplicates",
+          "outcome": "Close/reload/reopen confirms saved name/base call/future designation/alias from actual disposable API.",
+          "source_lines": [
+            [
+              102,
+              106
+            ]
+          ],
+          "evidence_class": "real_fixture_persistence_and_reload_readback",
+          "report_paths": [
+            "docs/premium-ui/qa-profile-persistence/report.json",
+            "docs/premium-ui/qa-profile-persistence-zoom/report.json"
+          ]
+        },
+        {
+          "action": "concurrency-comparison-choices",
+          "selector": "Compare changes; Use latest version; Keep my draft for review; Save changes",
+          "outcome": "Two external real saves produce actual revision409s. Latest choice changes draft without saving; Keep choice preserves draft without saving or overwriting competing value. Explicit later Save uses latest revision. Exact browser status sequence200/409/409/200 and four browser PUTs.",
+          "source_lines": [
+            [
+              52,
+              52
+            ],
+            [
+              107,
+              123
+            ]
+          ],
+          "evidence_class": "real_fixture_concurrency_and_independent_readback",
+          "report_paths": [
+            "docs/premium-ui/qa-profile-persistence/report.json",
+            "docs/premium-ui/qa-profile-persistence-zoom/report.json"
+          ]
+        },
+        {
+          "action": "linked-record-preservation",
+          "selector": "Details; [data-close]; /member-workspace/:id/postings; /leave; /activity",
+          "outcome": "Second reload retains explicitly reviewed name, latest competing name preserved as alias; exact linked posting/leave GET records unchanged; activity grows by four successful saves including two external saves. Page errors absent.",
+          "source_lines": [
+            [
+              124,
+              132
+            ]
+          ],
+          "evidence_class": "real_fixture_persistence_and_independent_readback",
+          "report_paths": [
+            "docs/premium-ui/qa-profile-persistence/report.json",
+            "docs/premium-ui/qa-profile-persistence-zoom/report.json"
+          ]
+        },
+        {
+          "action": "actual-browser-zoom",
+          "selector": "chrome.tabs.setZoom/getZoom; window innerWidth/devicePixelRatio",
+          "outcome": "Chromium extension sets actual tab zoom200/400percent; getZoom and DPR match, viewport dimensions scale, CSS zoom remains1 and visualViewport.scale1. This group applies only to four zoom rows.",
+          "source_lines": [
+            [
+              55,
+              60
+            ],
+            [
+              137,
+              139
+            ]
+          ],
+          "evidence_class": "browser_zoom_measurement_and_real_fixture_workflow",
+          "report_paths": [
+            "docs/premium-ui/qa-profile-persistence-zoom/report.json"
+          ]
+        }
+      ],
+      "limitations": [
+        "No test execution performed by this mapper; source inspection locates assertions and retained results only.",
+        "No whole requirement acceptance, all-role certification, native screen-reader or physical-device certification.",
+        "Real RAM persistence/readback, not production persistence/concurrency. Limited fields/records and admin role.",
+        "Retained reports have no script SHA; source/public/dist held within execution only, currently drifted. Zoom report includes extension hashes; extension control is not native assistive technology or unaided traversal."
+      ],
+      "whole_requirement_completion_proven": false
+    },
+    {
+      "suite": "frontend/tests/premium-profile-initial-recovery.browser.mjs",
+      "sha256": "404034b2fcaa8e48545e323a9b8ba56b0da68b376ea191052f01585ac1e5523a",
+      "source_inspected": true,
+      "execution_verified": true,
+      "execution_verification_scope": "Inspected retained raw JSON results and scopes only; no execution in this documentation task. Historical evidence: at least one declared application source/build hash differs from current files. Reports lacking test_sha256 do not bind the retained execution to the mapped current script. No current runtime acceptance inferred.",
+      "screens": [
+        "Members opener",
+        "Leave opener",
+        "Canonical initial profile loading/failure/recovered view"
+      ],
+      "contexts": {
+        "engines": [
+          "chromium",
+          "firefox",
+          "webkit"
+        ],
+        "widths": [
+          320,
+          1280
+        ],
+        "height": 844,
+        "themes": [
+          "light",
+          "dark"
+        ],
+        "origins": [
+          "members",
+          "leave"
+        ],
+        "cases_per_environment": 24,
+        "environments": [
+          "development5197",
+          "production preview5198"
+        ],
+        "fixture": "All API methods asserted GET; reads forwarded to8032 except held profile reads and synthetic503. No writes forwarded.",
+        "month": "2026-05"
+      },
+      "retained_reports": [
+        {
+          "path": "docs/premium-ui/qa-profile-initial-recovery/report-development.json",
+          "sha256": "d61b7f8b826e64f598a2f7df3f0528cf2bcf83bcf67034a4f9ac780606947805",
+          "recorded_at_utc": "2026-10-24T02:01:32.672Z",
+          "rows": 24,
+          "passed_true_rows": 24,
+          "test_sha256": "404034b2fcaa8e48545e323a9b8ba56b0da68b376ea191052f01585ac1e5523a",
+          "test_sha_matches_current_script": true,
+          "declared_source_files": 6,
+          "source_mismatches_at_inspection": [
+            "frontend/src/main.ts",
+            "frontend/src/premium-theme.css"
+          ],
+          "source_missing_at_inspection": [],
+          "report_scope": "Canonical initial profile GET recovery via actual Members/Leave controls. Three engines,two widths,two themes; held close,503 retry/repeat/second failure,real GET same identity/tab,late dismissal focus and scoped axe. No mutations/all-role/native AT/physical certification.",
+          "result_engines": [
+            "chromium",
+            "firefox",
+            "webkit"
+          ],
+          "result_widths": [
+            320,
+            1280
+          ],
+          "result_variants": []
+        },
+        {
+          "path": "docs/premium-ui/qa-profile-initial-recovery/report-production.json",
+          "sha256": "e269b696838601b6e70a3ce4a04cb7410edf6a958032977c97d828341978139a",
+          "recorded_at_utc": "2026-10-24T02:04:00.169Z",
+          "rows": 24,
+          "passed_true_rows": 24,
+          "test_sha256": "404034b2fcaa8e48545e323a9b8ba56b0da68b376ea191052f01585ac1e5523a",
+          "test_sha_matches_current_script": true,
+          "declared_source_files": 6,
+          "source_mismatches_at_inspection": [
+            "frontend/src/main.ts",
+            "frontend/src/premium-theme.css"
+          ],
+          "source_missing_at_inspection": [],
+          "report_scope": "Canonical initial profile GET recovery via actual Members/Leave controls. Three engines,two widths,two themes; held close,503 retry/repeat/second failure,real GET same identity/tab,late dismissal focus and scoped axe. No mutations/all-role/native AT/physical certification.",
+          "result_engines": [
+            "chromium",
+            "firefox",
+            "webkit"
+          ],
+          "result_widths": [
+            320,
+            1280
+          ],
+          "result_variants": []
+        }
+      ],
+      "assertion_groups": [
+        {
+          "action": "initial-close-target",
+          "selector": "Member profile dialog; Close loading button",
+          "outcome": "Held initial profile GET shows one Close; measured width/height>=43.99CSSpx, computed minimums>=44 and center hit target matches. Allows0.01CSSpx rounding tolerance.",
+          "source_lines": [
+            [
+              31,
+              36
+            ]
+          ],
+          "evidence_class": "geometry_and_intercepted_read",
+          "report_paths": [
+            "docs/premium-ui/qa-profile-initial-recovery/report-development.json",
+            "docs/premium-ui/qa-profile-initial-recovery/report-production.json"
+          ]
+        },
+        {
+          "action": "loading-and-error-tagged-axe",
+          "selector": "dialog.member-workspace; role=status; role=alert",
+          "outcome": "Loading and503 failure dialog scoped WCAG2A/AA,2.1A/AA,2.2AA tagged axe violations are empty.",
+          "source_lines": [
+            37,
+            40
+          ],
+          "evidence_class": "scoped_automated_accessibility",
+          "report_paths": [
+            "docs/premium-ui/qa-profile-initial-recovery/report-development.json",
+            "docs/premium-ui/qa-profile-initial-recovery/report-production.json"
+          ]
+        },
+        {
+          "action": "dismiss-initial-read",
+          "selector": "Close loading button; originating [data-open-member]",
+          "outcome": "Keyboard Close removes dialog; releasing held read leaves no dialog and original opener focused.",
+          "source_lines": [
+            39
+          ],
+          "evidence_class": "fixture_read_and_local_interaction",
+          "report_paths": [
+            "docs/premium-ui/qa-profile-initial-recovery/report-development.json",
+            "docs/premium-ui/qa-profile-initial-recovery/report-production.json"
+          ]
+        },
+        {
+          "action": "explicit-retry-second-refusal",
+          "selector": "Try again; role=alert",
+          "outcome": "Synthetic503 is visible; Retry reopens held loading with one Close and repeat Enter leaves immediate count3; second503 shown again.",
+          "source_lines": [
+            40,
+            42
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-profile-initial-recovery/report-development.json",
+            "docs/premium-ui/qa-profile-initial-recovery/report-production.json"
+          ]
+        },
+        {
+          "action": "same-member-and-entry-tab-recovery",
+          "selector": "Try again; [data-member-identity]; [data-tab=overview/leave]; [data-edit]",
+          "outcome": "Explicit success retry forwards real GET same person, identity matches, originating Leave or Overview selected and one Edit exists; Close restores opener.",
+          "source_lines": [
+            43
+          ],
+          "evidence_class": "fixture_read_and_local_interaction",
+          "report_paths": [
+            "docs/premium-ui/qa-profile-initial-recovery/report-development.json",
+            "docs/premium-ui/qa-profile-initial-recovery/report-production.json"
+          ]
+        },
+        {
+          "action": "dismiss-held-success-retry",
+          "selector": "Try again; Close; originating opener",
+          "outcome": "After further failure/retry, Close before successful GET completion suppresses resurrection and restores opener. Exactly six same-person profile GETs overall, no page errors, member list unchanged by independent GET.",
+          "source_lines": [
+            [
+              44,
+              46
+            ],
+            [
+              19,
+              25
+            ]
+          ],
+          "evidence_class": "fixture_read_and_independent_readback",
+          "report_paths": [
+            "docs/premium-ui/qa-profile-initial-recovery/report-development.json",
+            "docs/premium-ui/qa-profile-initial-recovery/report-production.json"
+          ]
+        }
+      ],
+      "limitations": [
+        "No test execution performed by this mapper; source inspection locates assertions and retained results only.",
+        "No whole requirement acceptance, all-role certification, native screen-reader or physical-device certification.",
+        "Scoped tagged axe on loading/error dialog only; no full-app WCAG certification. Close target is measured/hit-tested, not physical touch.",
+        "Six profile GET counts and same path asserted; held retry repeat assertion is immediate plus later total, not exact phase-array verification.",
+        "Failure-view Close is present but not activated by this suite; actual loading Close and recovery Retry are activated."
+      ],
+      "whole_requirement_completion_proven": false
+    },
+    {
+      "suite": "frontend/tests/premium-profile-cancel-identity.browser.mjs",
+      "sha256": "b42e5c406e9c0bebd95853bcee552a296c963fe5901aa6953ce0da9055f0f6d5",
+      "source_inspected": true,
+      "execution_verified": true,
+      "execution_verification_scope": "Inspected six retained raw report rows: exact paths/body/outcome booleans and empty pageErrors; rows have no passed flag or test SHA. Sole declared source member-workspace.ts hash matches current file, but styles, imported modules and script were not bound by report. No new execution or current runtime certification inferred.",
+      "screens": [
+        "Isolated canonical member workspace Leave rail"
+      ],
+      "contexts": {
+        "engines": [
+          "chromium",
+          "firefox",
+          "webkit"
+        ],
+        "widths": [
+          320,
+          1280
+        ],
+        "height": 900,
+        "cases": 6,
+        "environment": "development5197 module-mounted synthetic opener page",
+        "role": "canManage=true",
+        "fixture": "All API GET/POST requests intercepted, mutable local leave rows, first accepted cancellation503; no backend persistence."
+      },
+      "retained_reports": [
+        {
+          "path": "docs/premium-ui/qa-profile-cancel-identity.json",
+          "sha256": "21bb47852f90dd27bde0990937043ff68999dee16306836bd4bf364365c6d4b1",
+          "recorded_at_utc": null,
+          "rows": 6,
+          "passed_true_rows": 0,
+          "test_sha256": null,
+          "test_sha_matches_current_script": null,
+          "declared_source_files": 1,
+          "source_mismatches_at_inspection": [],
+          "source_missing_at_inspection": [],
+          "report_scope": "Actual member workspace, native confirmation text and keyboard activation, 3 engines x 320/1280, cross-month/overlapping targets, rejection, mocked POST503, GET-only recovery and exact accepted ID/body. All API calls mocked; no backend enforcement, production changes or physical native prompt visual certification.",
+          "result_engines": [
+            "chromium",
+            "firefox",
+            "webkit"
+          ],
+          "result_widths": [
+            320,
+            1280
+          ],
+          "result_variants": []
+        }
+      ],
+      "assertion_groups": [
+        {
+          "action": "distinct-rejectable-confirmations",
+          "selector": "[data-cancel-profile-leave=:id]; native confirm",
+          "outcome": "Three cross-month/overlapping leave targets each name exact member/date-range/record-ID/category and retain-history/duties warning; dismissal sends zero POST and keeps three controls. HTML-like fixture names/types create no img.",
+          "source_lines": [
+            [
+              35,
+              45
+            ]
+          ],
+          "evidence_class": "intercepted_mutation_and_native_confirmation",
+          "report_paths": [
+            "docs/premium-ui/qa-profile-cancel-identity.json"
+          ]
+        },
+        {
+          "action": "failed-cancellation-get-recovery",
+          "selector": "[data-cancel-profile-leave=cross-month]; [data-retry]",
+          "outcome": "Accepted cross-month cancellation sends one bodyless exact ID POST and synthetic503. Explicit Retry reloads leave without replaying POST.",
+          "source_lines": [
+            [
+              46,
+              50
+            ],
+            [
+              23,
+              29
+            ]
+          ],
+          "evidence_class": "intercepted_mutation_and_read_recovery",
+          "report_paths": [
+            "docs/premium-ui/qa-profile-cancel-identity.json"
+          ]
+        },
+        {
+          "action": "success-exact-target-only",
+          "selector": "[data-cancel-profile-leave=overlap-two]; article.mw-history",
+          "outcome": "Accepting overlap-two sends second exact bodyless POST; refreshed row shows Cancelled; its cancel button disappears and sibling buttons remain. Callback count0 retained; exactly three leave reads and no page errors.",
+          "source_lines": [
+            [
+              51,
+              58
+            ]
+          ],
+          "evidence_class": "intercepted_mutation_and_mocked_state_refresh",
+          "report_paths": [
+            "docs/premium-ui/qa-profile-cancel-identity.json"
+          ]
+        },
+        {
+          "action": "missing-target-refusal",
+          "selector": "[data-cancel-profile-leave=missing-target]",
+          "outcome": "Deliberately altered unknown dataset target shows refresh/refusal message; total POSTs stay2 and confirmation messages stay5, so no guessed target mutation/confirmation.",
+          "source_lines": [
+            [
+              59,
+              63
+            ]
+          ],
+          "evidence_class": "synthetic_defensive_local_interaction",
+          "report_paths": [
+            "docs/premium-ui/qa-profile-cancel-identity.json"
+          ]
+        }
+      ],
+      "limitations": [
+        "No test execution performed by this mapper; source inspection locates assertions and retained results only.",
+        "No whole requirement acceptance, all-role certification, native screen-reader or physical-device certification.",
+        "All responses and resulting cancelled status are mocked; exact request-path/body and local UI outcomes only. No backend authorization or actual persisted cancellation.",
+        "Native confirm text is captured and accepted/dismissed by automation; native prompt visual layout/physical interaction unproven.",
+        "Missing-target test deliberately modifies DOM dataset; it is a defensive synthetic condition.",
+        "Report rows have no passed flag or test SHA; inspected exact outcome booleans/path arrays and empty pageErrors rather than assuming pass from count."
+      ],
+      "whole_requirement_completion_proven": false
+    },
+    {
+      "suite": "frontend/tests/premium-member-create-conflicts.browser.mjs",
+      "sha256": "24e84357ca498248a04413ec2f49211f01dade955ea5fa7f3809c2e51477672f",
+      "source_inspected": true,
+      "execution_verified": true,
+      "execution_verification_scope": "Inspected retained raw JSON results and scopes only; no execution in this documentation task. Historical evidence: at least one declared application source/build hash differs from current files. Reports lacking test_sha256 do not bind the retained execution to the mapped current script. No current runtime acceptance inferred.",
+      "screens": [
+        "Members Add member disclosure/form",
+        "Overview route during create",
+        "Account focus during Members refresh"
+      ],
+      "contexts": {
+        "engines": [
+          "chromium",
+          "firefox",
+          "webkit"
+        ],
+        "widths": [
+          320,
+          1280
+        ],
+        "height": 844,
+        "themes": "browser default",
+        "base_variants": [
+          "exact",
+          "near-cancel",
+          "near-accept",
+          "permission",
+          "near-navigate",
+          "draft-focus"
+        ],
+        "extra_variants": [
+          "near-return",
+          "draft-focus-moved"
+        ],
+        "cases_per_environment": 48,
+        "retained_cases_total": 96,
+        "environments": [
+          "development5197",
+          "production preview5198"
+        ],
+        "fixture": "Reset isolated8032 RAM each case. Real duplicate409 and successful POST/readback; only initial permission403 injected. Holds selected real responses and refresh GET.",
+        "month": "2026-05"
+      },
+      "retained_reports": [
+        {
+          "path": "docs/premium-ui/qa-member-create-conflicts/report-development.json",
+          "sha256": "78bde655def6be7f0d10a948dd42d8c9e2e12776897208a1993c3a4e38c9d2c1",
+          "recorded_at_utc": "2026-10-24T01:31:59.627Z",
+          "rows": 36,
+          "passed_true_rows": 36,
+          "test_sha256": null,
+          "test_sha_matches_current_script": null,
+          "declared_source_files": 3,
+          "source_mismatches_at_inspection": [
+            "frontend/src/main.ts",
+            "frontend/src/premium-theme.css"
+          ],
+          "source_missing_at_inspection": [],
+          "report_scope": "Actual exact/near duplicate responses, explicit different-person confirmation/cancellation, injected403 recovery, late conflict route boundary and retained-draft focus. Three engines, two widths; disposable RAM admin, not real permission/all-role certification.",
+          "result_engines": [
+            "chromium",
+            "firefox",
+            "webkit"
+          ],
+          "result_widths": [
+            320,
+            1280
+          ],
+          "result_variants": [
+            "draft-focus",
+            "exact",
+            "near-accept",
+            "near-cancel",
+            "near-navigate",
+            "permission"
+          ]
+        },
+        {
+          "path": "docs/premium-ui/qa-member-create-conflicts/report-production.json",
+          "sha256": "74c0c9bc2b7559161d778468658a5abaf34a07680ab278f69f4ff66547365afc",
+          "recorded_at_utc": "2026-10-24T01:33:08.271Z",
+          "rows": 36,
+          "passed_true_rows": 36,
+          "test_sha256": null,
+          "test_sha_matches_current_script": null,
+          "declared_source_files": 3,
+          "source_mismatches_at_inspection": [
+            "frontend/src/main.ts",
+            "frontend/src/premium-theme.css"
+          ],
+          "source_missing_at_inspection": [],
+          "report_scope": "Actual exact/near duplicate responses, explicit different-person confirmation/cancellation, injected403 recovery, late conflict route boundary and retained-draft focus. Three engines, two widths; disposable RAM admin, not real permission/all-role certification.",
+          "result_engines": [
+            "chromium",
+            "firefox",
+            "webkit"
+          ],
+          "result_widths": [
+            320,
+            1280
+          ],
+          "result_variants": [
+            "draft-focus",
+            "exact",
+            "near-accept",
+            "near-cancel",
+            "near-navigate",
+            "permission"
+          ]
+        },
+        {
+          "path": "docs/premium-ui/qa-member-create-conflicts/report-extra-development.json",
+          "sha256": "99bf25c418c034afa94c53442ca84fd92c10adf3eb17b5f73abb4b1b25a99383",
+          "recorded_at_utc": "2026-10-24T01:34:12.644Z",
+          "rows": 12,
+          "passed_true_rows": 12,
+          "test_sha256": "24e84357ca498248a04413ec2f49211f01dade955ea5fa7f3809c2e51477672f",
+          "test_sha_matches_current_script": true,
+          "declared_source_files": 3,
+          "source_mismatches_at_inspection": [
+            "frontend/src/main.ts",
+            "frontend/src/premium-theme.css"
+          ],
+          "source_missing_at_inspection": [],
+          "report_scope": "Late near-duplicate after leaving/returning Members; deliberate focus movement during held successful refresh. Three engines,two widths; disposable RAM admin.",
+          "result_engines": [
+            "chromium",
+            "firefox",
+            "webkit"
+          ],
+          "result_widths": [
+            320,
+            1280
+          ],
+          "result_variants": [
+            "draft-focus-moved",
+            "near-return"
+          ]
+        },
+        {
+          "path": "docs/premium-ui/qa-member-create-conflicts/report-extra-production.json",
+          "sha256": "361925315842d274b8ea3e97aec83effa7e1f14f3f0dee597c5f100216cc7784",
+          "recorded_at_utc": "2026-10-24T01:34:46.431Z",
+          "rows": 12,
+          "passed_true_rows": 12,
+          "test_sha256": "24e84357ca498248a04413ec2f49211f01dade955ea5fa7f3809c2e51477672f",
+          "test_sha_matches_current_script": true,
+          "declared_source_files": 3,
+          "source_mismatches_at_inspection": [
+            "frontend/src/main.ts",
+            "frontend/src/premium-theme.css"
+          ],
+          "source_missing_at_inspection": [],
+          "report_scope": "Late near-duplicate after leaving/returning Members; deliberate focus movement during held successful refresh. Three engines,two widths; disposable RAM admin.",
+          "result_engines": [
+            "chromium",
+            "firefox",
+            "webkit"
+          ],
+          "result_widths": [
+            320,
+            1280
+          ],
+          "result_variants": [
+            "draft-focus-moved",
+            "near-return"
+          ]
+        }
+      ],
+      "assertion_groups": [
+        {
+          "action": "late-near-duplicate-route-ownership",
+          "selector": "#create-member; Overview; mobile More Members; #create-member-form",
+          "outcome": "Held actual near409 after leaving or leaving/returning does not prompt; exact original members and single409 retained. Return variant restores original draft, enabled action and aria-busy=false after completion.",
+          "source_lines": [
+            [
+              39,
+              53
+            ]
+          ],
+          "evidence_class": "real_fixture_conflict_and_route_ownership",
+          "report_paths": [
+            "docs/premium-ui/qa-member-create-conflicts/report-development.json",
+            "docs/premium-ui/qa-member-create-conflicts/report-production.json",
+            "docs/premium-ui/qa-member-create-conflicts/report-extra-development.json",
+            "docs/premium-ui/qa-member-create-conflicts/report-extra-production.json"
+          ]
+        },
+        {
+          "action": "retained-next-draft-focus",
+          "selector": "#new-member-name; #account-menu-button",
+          "outcome": "While successful create response held, user enters different draft with selection4..8. Refresh retains text; usual focused draft recovers focus/selection. Extra variant deliberately moves focus to account control during held GET and it remains there.",
+          "source_lines": [
+            [
+              54,
+              62
+            ]
+          ],
+          "evidence_class": "real_fixture_save_and_local_focus",
+          "report_paths": [
+            "docs/premium-ui/qa-member-create-conflicts/report-development.json",
+            "docs/premium-ui/qa-member-create-conflicts/report-production.json",
+            "docs/premium-ui/qa-member-create-conflicts/report-extra-development.json",
+            "docs/premium-ui/qa-member-create-conflicts/report-extra-production.json"
+          ]
+        },
+        {
+          "action": "explicit-distinct-confirmation",
+          "selector": "#create-member; native confirm",
+          "outcome": "Real near409 plus accepted one confirmation sends exact original body then same body with confirm_distinct=true; statuses409/200, input cleared.",
+          "source_lines": [
+            [
+              64,
+              66
+            ]
+          ],
+          "evidence_class": "real_fixture_persistence_and_native_confirmation",
+          "report_paths": [
+            "docs/premium-ui/qa-member-create-conflicts/report-development.json",
+            "docs/premium-ui/qa-member-create-conflicts/report-production.json",
+            "docs/premium-ui/qa-member-create-conflicts/report-extra-development.json",
+            "docs/premium-ui/qa-member-create-conflicts/report-extra-production.json"
+          ]
+        },
+        {
+          "action": "refusal-and-cancellation-recovery",
+          "selector": "#new-member-name; #create-member; role=alert",
+          "outcome": "Exact409, near409 dismissed, or injected403 retain draft, original list, action label and idle busy state. Near cancellation shows no misleading cancelled/created alert; other variants show refusal. Explicit retry alone produces second200 with exact plain original/recovery body.",
+          "source_lines": [
+            [
+              67,
+              72
+            ]
+          ],
+          "evidence_class": "real_fixture_conflict_and_intercepted_permission_refusal",
+          "report_paths": [
+            "docs/premium-ui/qa-member-create-conflicts/report-development.json",
+            "docs/premium-ui/qa-member-create-conflicts/report-production.json",
+            "docs/premium-ui/qa-member-create-conflicts/report-extra-development.json",
+            "docs/premium-ui/qa-member-create-conflicts/report-extra-production.json"
+          ]
+        },
+        {
+          "action": "independent-saved-member-readback",
+          "selector": "/api/v1/admin/members",
+          "outcome": "For variants that save, independent GET proves exactly one added chosen canonical name and every other original member unchanged; page errors empty. Navigate/return variants separately require original unchanged and do not claim persistence.",
+          "source_lines": [
+            [
+              74,
+              78
+            ]
+          ],
+          "evidence_class": "real_fixture_persistence_and_independent_readback",
+          "report_paths": [
+            "docs/premium-ui/qa-member-create-conflicts/report-development.json",
+            "docs/premium-ui/qa-member-create-conflicts/report-production.json",
+            "docs/premium-ui/qa-member-create-conflicts/report-extra-development.json",
+            "docs/premium-ui/qa-member-create-conflicts/report-extra-production.json"
+          ]
+        }
+      ],
+      "limitations": [
+        "No test execution performed by this mapper; source inspection locates assertions and retained results only.",
+        "No whole requirement acceptance, all-role certification, native screen-reader or physical-device certification.",
+        "Permission403 is synthetic frontend recovery; not actual permission enforcement.",
+        "Base raw reports predate script SHA/target metadata and erroneously flag near-navigate exact_saved_member_readback even though no save occurs; assertions require original list unchanged. Consolidated report corrects flag but is not new execution.",
+        "Exact count/sequence assertions bound selected variants; not every concurrent create/role or production behavior."
+      ],
+      "whole_requirement_completion_proven": false
+    },
+    {
+      "suite": "frontend/tests/premium-member-create-pending.browser.mjs",
+      "sha256": "ddcfcddd499ea982fb735e5aa6dca032e1b9ee2badc5c05a87387743e6e8487a",
+      "source_inspected": true,
+      "execution_verified": true,
+      "execution_verification_scope": "Inspected retained raw JSON results and scopes only; no execution in this documentation task. Historical evidence: at least one declared application source/build hash differs from current files. Reports lacking test_sha256 do not bind the retained execution to the mapped current script. No current runtime acceptance inferred.",
+      "screens": [
+        "Members Add member disclosure/form",
+        "Members status-filter rerender",
+        "Overview route",
+        "Sign-out/login"
+      ],
+      "contexts": {
+        "engines": [
+          "chromium",
+          "firefox",
+          "webkit"
+        ],
+        "widths": [
+          320,
+          1280
+        ],
+        "height": 844,
+        "themes": "browser default",
+        "variants": [
+          "navigate",
+          "signout"
+        ],
+        "cases_per_environment": 12,
+        "environments": [
+          "development5197",
+          "production preview5198"
+        ],
+        "fixture": "Reset8032 disposable RAM per case; first POST held then mocked503 (not forwarded), explicit retry real POST commits and its response held. GETs forwarded.",
+        "month": "2026-05"
+      },
+      "retained_reports": [
+        {
+          "path": "docs/premium-ui/qa-member-create-pending/report-development.json",
+          "sha256": "a37b2ff9400b6d8bc0ac7ec294f58cb85917cc939cf26478f54d7283e9231acc",
+          "recorded_at_utc": "2026-10-24T01:35:36.984Z",
+          "rows": 12,
+          "passed_true_rows": 12,
+          "test_sha256": null,
+          "test_sha_matches_current_script": null,
+          "declared_source_files": 3,
+          "source_mismatches_at_inspection": [
+            "frontend/src/main.ts",
+            "frontend/src/premium-theme.css"
+          ],
+          "source_missing_at_inspection": [],
+          "report_scope": "Pending member-create guard with actual keyboard repeats,rerender,refusal/explicitretry,real RAM save/readback,and held committed completion after route/sign-out. Not every role/duplicate/concurrency case.",
+          "result_engines": [
+            "chromium",
+            "firefox",
+            "webkit"
+          ],
+          "result_widths": [
+            320,
+            1280
+          ],
+          "result_variants": [
+            "navigate",
+            "signout"
+          ]
+        },
+        {
+          "path": "docs/premium-ui/qa-member-create-pending/report-production.json",
+          "sha256": "42b3a0fdd247c9fff6d939ee5d5eb3d6b6c3d7e25049773c1363cff154996d53",
+          "recorded_at_utc": "2026-10-24T01:36:19.224Z",
+          "rows": 12,
+          "passed_true_rows": 12,
+          "test_sha256": null,
+          "test_sha_matches_current_script": null,
+          "declared_source_files": 3,
+          "source_mismatches_at_inspection": [
+            "frontend/src/main.ts",
+            "frontend/src/premium-theme.css"
+          ],
+          "source_missing_at_inspection": [],
+          "report_scope": "Pending member-create guard with actual keyboard repeats,rerender,refusal/explicitretry,real RAM save/readback,and held committed completion after route/sign-out. Not every role/duplicate/concurrency case.",
+          "result_engines": [
+            "chromium",
+            "firefox",
+            "webkit"
+          ],
+          "result_widths": [
+            320,
+            1280
+          ],
+          "result_variants": [
+            "navigate",
+            "signout"
+          ]
+        }
+      ],
+      "assertion_groups": [
+        {
+          "action": "pending-repeat-across-form-replacement",
+          "selector": "#create-member; [data-member-status=all]; #create-member-form; #new-member-name",
+          "outcome": "Held first POST disables explicit submit; repeated Enter sends no duplicate. Status-filter activation disconnects original form, new form remains disabled and implicit input Enter still produces one POST.",
+          "source_lines": [
+            [
+              22,
+              25
+            ]
+          ],
+          "evidence_class": "intercepted_pending_mutation_and_dom_replacement",
+          "report_paths": [
+            "docs/premium-ui/qa-member-create-pending/report-development.json",
+            "docs/premium-ui/qa-member-create-pending/report-production.json"
+          ]
+        },
+        {
+          "action": "pending-disclosure-state",
+          "selector": "#member-create-status; #create-member-form; #member-add-panel > summary",
+          "outcome": "Creating status names pending member and form aria-busy=true; mobile collapse displays Creating, reopening retains disabled submit.",
+          "source_lines": [
+            [
+              26,
+              27
+            ]
+          ],
+          "evidence_class": "intercepted_pending_and_local_interaction",
+          "report_paths": [
+            "docs/premium-ui/qa-member-create-pending/report-development.json",
+            "docs/premium-ui/qa-member-create-pending/report-production.json"
+          ]
+        },
+        {
+          "action": "refusal-and-explicit-retry",
+          "selector": "#create-member; role=alert; #new-member-name",
+          "outcome": "Released mocked503 restores original Add member label, retains draft and exact original members. Explicit retry real200 commits one exact new member, preserves siblings; pending repeated Enter gives no third POST.",
+          "source_lines": [
+            [
+              28,
+              31
+            ]
+          ],
+          "evidence_class": "intercepted_refusal_and_real_fixture_persistence_readback",
+          "report_paths": [
+            "docs/premium-ui/qa-member-create-pending/report-development.json",
+            "docs/premium-ui/qa-member-create-pending/report-production.json"
+          ]
+        },
+        {
+          "action": "late-success-route-preservation",
+          "selector": "Overview; Members; #section-title; #new-member-name",
+          "outcome": "After committed save while response held, navigate Overview; releasing completion shows success but keeps exact Overview title/hash. Returning Members enables action and clears saved draft.",
+          "source_lines": [
+            [
+              32,
+              34
+            ]
+          ],
+          "evidence_class": "real_fixture_commit_and_route_ownership",
+          "report_paths": [
+            "docs/premium-ui/qa-member-create-pending/report-development.json",
+            "docs/premium-ui/qa-member-create-pending/report-production.json"
+          ]
+        },
+        {
+          "action": "late-success-after-signout",
+          "selector": "#account-menu-button; #sign-out; Username login field",
+          "outcome": "Signing out before committed response releases retains login, no Members form/success toast/unconfirmed-save error appears from old operation.",
+          "source_lines": [
+            [
+              35,
+              36
+            ]
+          ],
+          "evidence_class": "real_fixture_commit_and_signed_out_ui_ownership",
+          "report_paths": [
+            "docs/premium-ui/qa-member-create-pending/report-development.json",
+            "docs/premium-ui/qa-member-create-pending/report-production.json"
+          ]
+        },
+        {
+          "action": "exact-mutation-contract",
+          "selector": "#create-member; /api/v1/admin/members",
+          "outcome": "Final exact two statuses503/200 and identical canonical_name/active_status request bodies; no page errors. Failed first POST intercepted, second forwarded to isolated RAM.",
+          "source_lines": [
+            16,
+            38
+          ],
+          "evidence_class": "intercepted_failure_and_real_fixture_request_contract",
+          "report_paths": [
+            "docs/premium-ui/qa-member-create-pending/report-development.json",
+            "docs/premium-ui/qa-member-create-pending/report-production.json"
+          ]
+        }
+      ],
+      "limitations": [
+        "No test execution performed by this mapper; source inspection locates assertions and retained results only.",
+        "No whole requirement acceptance, all-role certification, native screen-reader or physical-device certification.",
+        "503 is intercepted; real successful save/readback only on explicit retry. Not production mutation or backend permission certification.",
+        "Immediate duplicate count assertions are backed by final exact two request/status/body assertions in this scenario, not universal concurrency proof.",
+        "No native confirm/duplicate variants here; covered separately by conflicts suite. Reports lack current script SHA/target binding."
+      ],
+      "whole_requirement_completion_proven": false
+    }
+  ]
+}

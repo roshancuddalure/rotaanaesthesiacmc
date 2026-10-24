@@ -1,0 +1,49 @@
+{
+  "recorded_at_utc": "2026-10-22T10:50:26.302044+00:00",
+  "completion_claim": false,
+  "requirements": [
+    135,
+    140,
+    155,
+    156,
+    160,
+    179,
+    186,
+    196,
+    200,
+    209,
+    227,
+    258
+  ],
+  "scope": "New exact outcomes for existing reference fields/section switching and importer template links. No app or API changes.",
+  "evidence": [
+    "docs/premium-ui/qa-reference-meaning-fields.json",
+    "docs/premium-ui/qa-csv-template-artifacts.json"
+  ],
+  "tests": [
+    "frontend/tests/premium-reference-meaning-fields.browser.mjs",
+    "frontend/tests/premium-csv-template-artifacts.browser.mjs"
+  ],
+  "source_sha256": {
+    "frontend/src/reference-workspace.ts": "b0e111f78ff245eb94254c7c1d2fe1ebfa0224eda7a6c8d6ef83c1dc5f32a7de",
+    "frontend/src/member-workspace.ts": "74f9c688b2c4e4e703f8bee347bbee3ec4f3e1085005647efca7c75b9789179b",
+    "frontend/src/operational-import.ts": "cc9cf665de88de0def1c43d917ccb69fc056033df98675964cc7a7c49e05d0b1"
+  },
+  "checks": {
+    "reference_field_workflows": 6,
+    "template_browser_contexts": 6,
+    "exact_csv_downloads": 36,
+    "newly_linked_bounded_contracts": 6,
+    "overlay_bounded": 90,
+    "overlay_total": 114,
+    "full_contracts": 0
+  },
+  "limits": [
+    "AllPUTmutationsfullyintercepted; fixtureGETrefresh/callback exactpayloads do not certify backendpersistence/authorization/calculationcorrectness.",
+    "Scheduling-related fields were only manipulated in disposable fixture UI to verify unchanged existing serialization; no source behavior/configuration/backend value changed.",
+    "Template CSV bytes compared to current repo-native artifacts; no realspreadsheet application or formulaexecution claim.",
+    "No app changes; previous100unit/buildpass remains its recorded matching-input snapshot, not new test execution thisbatch.",
+    "Specialist agents unavailable after usage limit; root performed this batch without new independent signoff. Physical/nativeassistive checks pending.",
+    "All260goal remains active/incomplete; no commit/push/deploy or productionwrites."
+  ]
+}

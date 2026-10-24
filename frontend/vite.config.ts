@@ -12,6 +12,8 @@ export default defineConfig(({ mode }) => {
   const workerPolicy = "default-src 'none'; script-src 'self'; connect-src 'none'; object-src 'none'";
   const policy = `default-src 'self'; script-src 'self'; worker-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' http://127.0.0.1:* ${apiOrigin}; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'`;
   return {
+    // Build identity contains no environment values, repository paths or user information.
+    define: { __FRONTEND_BUILD_ID__: JSON.stringify(new Date().toISOString().replace(/[^0-9TZ]/g, "")) },
     preview: { headers: {
       "Content-Security-Policy": policy, "X-Content-Type-Options": "nosniff",
       "Referrer-Policy": "same-origin", "X-Frame-Options": "DENY",

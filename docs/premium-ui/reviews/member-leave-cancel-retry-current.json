@@ -1,0 +1,35 @@
+{
+  "recorded_at_utc": "2026-10-22T05:45:56.624698+00:00",
+  "status": "reproduced_requires_frontend_fix",
+  "scope": "Chromium320actualapp analytical memberentry;allGETfixture/interceptedcancel503;0backendwrites",
+  "contract_id": "member-workspace-022",
+  "test": "frontend/tests/premium-member-linked-actions-independent.browser.mjs:54",
+  "steps": [
+    "Open analyticsPersonnel ContextPerson30 profile,Leave tab.",
+    "Confirm Cancel leave;interceptexact /leave/requests/linked-leave/cancel POST503.",
+    "Errorvisible,activate Retry."
+  ],
+  "observed": "No new leave GET;existing error remains,recordcontrols absent.",
+  "cause": "Cancellation catch sets errors.leave/render but retains cache.leave. Generic retry clears errors[tab], calls loadTab;loadTab earlyreturns on truthy cache[key],neverrender.",
+  "source_sha256": {
+    "frontend/src/member-workspace.ts": "35cb92656ca7c8c43b1c0a6de4c51eec56ca6854fd60d420e4330be362f8f56f"
+  },
+  "recommended": "Explicitmanualretryinvalidate cached active tab before GET,or truthfullyrestorecached UI;verify onlyGETretry,noautomaticcancellationPOST.",
+  "followup": {
+    "recorded_at_utc": "2026-10-22T05:49:34.202642+00:00",
+    "status": "fixed_by_coordinator_verified_six_bounded_workflows",
+    "report": "docs/premium-ui/qa-member-linked-actions-independent.json",
+    "evidence": "RetryreadsactiveleaveGETonce,noautomaticcancellationPOSTreplay;recordcontrolsrestored",
+    "source_sha256": {
+      "src/main.ts": "72c0b8291d77271848ec32a13a10b4373938dec256112bc3ddab9caf121d0e42",
+      "src/member-workspace.ts": "fb70b958851874f5f66cd1e4c579a8b78beb30116dbba262a7af7a48dfb71c36",
+      "src/record-workspace.ts": "0443d0f51c27e462efa3a27397d2016398b8fc888c578436cd45410a5a6dadf1"
+    }
+  },
+  "later_disposition": {
+    "recorded_at_utc": "2026-10-22T05:55:12.468030+00:00",
+    "status": "fixed_bounded_six_engine_width_workflows",
+    "evidence": "docs/premium-ui/qa-member-linked-actions-independent.json",
+    "limit": "Originalreproduction retained; exactreadretry/noPOSTreplay, notacceptedcancellation/persistencecertification."
+  }
+}

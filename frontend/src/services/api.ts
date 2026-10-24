@@ -11,6 +11,7 @@
  */
 import { notifyDataChange } from "../data-sync";
 import { formatApiError, networkRecoveryMessage } from "../api-errors";
+import { safeLocalStorage } from "../frontend-runtime";
 export { downloadPreviewIssues } from "../import-report";
 
 const API_BASE_URL =
@@ -73,20 +74,21 @@ export function getPastDutyHistory(id: string): Promise<PastDutyHistoryDetail> {
   return request(`/api/v1/admin/past-duties/history/${encodeURIComponent(id)}`);
 }
 export async function pastDutyUpload<T>(action: string, file: File, options: PastDutyOptions, hash = ""): Promise<T> {
+  assertSessionCanSubmit(`/api/v1/admin/past-duties/${action}`);
+  const generation = authGeneration;
   const body = new FormData(); body.append("file", file); body.append("header_row", String(options.header_row));
   body.append("options", JSON.stringify(options)); body.append("preview_hash", hash);
   const response = await fetch(`${API_BASE_URL}/api/v1/admin/past-duties/${action}`, {
     method: "POST", headers: { Authorization: `Bearer ${authToken}` }, body,
   });
-  if (!response.ok) throw await errorFromResponse(response);
-  return readMutationResult<T>(response, `/api/v1/admin/past-duties/${action}`, "POST");
+  return readUploadResult<T>(response, `/api/v1/admin/past-duties/${action}`, generation);
 }
 export async function downloadPastDutyTemplate(): Promise<Blob> {
+  const generation = authGeneration;
   const response = await fetch(`${API_BASE_URL}/api/v1/admin/past-duties/template`, {
     headers: { Authorization: `Bearer ${authToken}` },
   });
-  if (!response.ok) throw await errorFromResponse(response);
-  return response.blob();
+  return readDownloadBlob(response, generation, '/api/v1/admin/past-duties/template');
 }
 
 export interface MemberImportOptions {
@@ -124,6 +126,8 @@ export async function memberWorkbookRequest<T>(
   action: "inspect" | "preview" | "apply", file: File,
   options: MemberImportOptions, previewHash = "",
 ): Promise<T> {
+  assertSessionCanSubmit(`/api/v1/admin/members/import/${action}`);
+  const generation = authGeneration;
   const body = new FormData();
   body.append("file", file);
   body.append("header_row", String(options.header_row));
@@ -132,16 +136,15 @@ export async function memberWorkbookRequest<T>(
   const response = await fetch(`${API_BASE_URL}/api/v1/admin/members/import/${action}`, {
     method: "POST", headers: { Authorization: `Bearer ${authToken}` }, body,
   });
-  if (!response.ok) throw await errorFromResponse(response);
-  return readMutationResult<T>(response, `/api/v1/admin/members/import/${action}`, "POST");
+  return readUploadResult<T>(response, `/api/v1/admin/members/import/${action}`, generation);
 }
 
 export async function downloadMemberImportTemplate(format: "csv" | "xlsx" = "xlsx"): Promise<Blob> {
+  const generation = authGeneration;
   const response = await fetch(`${API_BASE_URL}/api/v1/admin/members/import/template?format=${format}`, {
     headers: { Authorization: `Bearer ${authToken}` },
   });
-  if (!response.ok) throw await errorFromResponse(response);
-  return response.blob();
+  return readDownloadBlob(response, generation, '/api/v1/admin/members/import/template');
 }
 
 export interface MemberImportHistory {
@@ -188,73 +191,201 @@ export function getWorkflowImportRows(kind: WorkflowImportKind, id: string, offs
   return request(`/api/v1/imports/${kind}/history/${encodeURIComponent(id)}?offset=${offset}`);
 }
 export async function downloadRejectedImportRows(kind: WorkflowImportKind, id: string): Promise<void> {
+  const generation = authGeneration;
   const response = await fetch(`${API_BASE_URL}/api/v1/imports/${kind}/history/${encodeURIComponent(id)}/rejected.csv`, {
     headers: authToken ? {Authorization: `Bearer ${authToken}`} : {},
   });
-  if (!response.ok) throw await errorFromResponse(response);
-  const url=URL.createObjectURL(await response.blob());
+  const blob = await readDownloadBlob(response, generation, `/api/v1/imports/${kind}/history/${encodeURIComponent(id)}/rejected.csv`);
+  const url=URL.createObjectURL(blob);
   const link=document.createElement("a");link.href=url;link.download=`rejected_${kind}_${id}.csv`;
   link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
 
-let authToken = localStorage.getItem("duty_rota_auth_token") ?? "";
+let authToken = safeLocalStorage.getItem("duty_rota_auth_token") ?? "";
+let authGeneration = 0;
+let expiredGeneration = -1;
+const publicAuthenticationPath = (path: string) => /^\/api\/v1\/auth\/(sign-in|forgot-password|reset-password)(?:\?|$)/.test(path);
+
+function markSessionExpired(generation: number, path: string) {
+  if (!authToken || generation !== authGeneration || publicAuthenticationPath(path) || expiredGeneration === generation) return;
+  expiredGeneration = generation;
+  if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') window.dispatchEvent(new Event('duty-rota:session-expired'));
+}
+
+function assertSessionCanSubmit(path: string) {
+  if (expiredGeneration === authGeneration && !publicAuthenticationPath(path))
+    throw new ApiRequestError('Sign in again before submitting another change. Your draft has not been submitted again.', 'http', 401);
+}
+
+/** Stop old-account responses from repainting a new session; never replay requests. */
+export function installSessionSynchronization(target: Window): () => void {
+  const changed = (event: StorageEvent) => {
+    if (event.key !== "duty_rota_auth_token" && event.key !== null) return;
+    // Ignore sessionStorage events; a storage-clear event applies only to localStorage.
+    try { if (event.storageArea && event.storageArea !== target.localStorage) return; }
+    catch { /* Blocked storage still permits a safe session reset. */ }
+    const next = event.key === null ? "" : event.newValue ?? "";
+    if (next === authToken) return;
+    authToken = next;
+    authGeneration++;
+    target.dispatchEvent(new Event("duty-rota:session-changed"));
+  };
+  target.addEventListener("storage", changed);
+  return () => target.removeEventListener("storage", changed);
+}
+
+if (typeof window !== "undefined" && typeof window.addEventListener === "function") {
+  installSessionSynchronization(window);
+}
 
 export function setAuthToken(token: string) {
+  expiredGeneration = -1;
+  if (authToken !== token) authGeneration++;
   authToken = token;
-  localStorage.setItem("duty_rota_auth_token", token);
+  safeLocalStorage.setItem("duty_rota_auth_token", token);
 }
 
 export function clearAuthToken() {
+  expiredGeneration = -1;
+  authGeneration++;
   authToken = "";
-  localStorage.removeItem("duty_rota_auth_token");
+  safeLocalStorage.removeItem("duty_rota_auth_token");
 }
 
 /**
  * JSON request helper: adds the bearer token, throws `Error` with the backend `detail`
  * message (and `error.detail` for structured validation payloads).
- * Notes: `...options` is spread after `headers`, so passing `options.headers` replaces the
- * defaults instead of merging. A 401 (expired 12h session) is surfaced as a normal error;
- * nothing redirects to the login screen (handbook U1).
+ * Headers are merged. Read requests have a generous bounded deadline; mutations retain
+ * their existing lifetime and are never retried. Caller cancellation stays an AbortError.
  */
-export async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
-  let response: Response;
+export class ApiRequestError extends Error {
+  constructor(message: string, public kind: "http" | "network" | "timeout" | "invalid-response", public status?: number, public detail?: unknown) {
+    super(message);
+    this.name = "ApiRequestError";
+  }
+}
+
+export interface ApiRequestOptions extends RequestInit { readTimeoutMs?: number; }
+
+async function readDownloadBlob(response: Response, generation: number, path: string, spreadsheet = false): Promise<Blob> {
+  const checkSession = () => {
+    if (generation !== authGeneration) throw new DOMException('Session changed; download cancelled.', 'AbortError');
+  };
+  checkSession();
+  if (response.status === 401) markSessionExpired(generation, path);
+  if (!response.ok) throw await errorForSession(response, generation, true);
+  const blob = await response.blob();
+  checkSession();
+  if (!blob.size) throw new ApiRequestError("The server returned an empty download. No file was created. Try the download again when the service is available.", "invalid-response", response.status);
+  if (spreadsheet) {
+    // XLSX is a ZIP container. Reject proxy/login/error documents even if a
+    // successful response or filename describes them as a workbook. This is
+    // transport validation, not a parser or a claim that every ZIP is valid XLSX.
+    const type = blob.type.split(';', 1)[0].trim().toLowerCase();
+    const header = new Uint8Array(await blob.slice(0, 4).arrayBuffer());
+    checkSession();
+    const allowedType = !type || [
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'application/octet-stream', 'application/zip',
+    ].includes(type);
+    if (!allowedType || header.length !== 4 || header[0] !== 0x50 || header[1] !== 0x4b || header[2] !== 0x03 || header[3] !== 0x04) {
+      throw new ApiRequestError("The server did not return an Excel workbook. No file was created. Try the download again when the service is available.", "invalid-response", response.status);
+    }
+  }
+  return blob;
+}
+
+/** Multipart responses belong to the session that submitted them, including slow body decoding. */
+async function readUploadResult<T>(response: Response, path: string, generation: number, mutation = true): Promise<T> {
+  const checkSession = () => {
+    if (generation !== authGeneration) throw new ApiRequestError("Your session changed while this request was running. The save outcome is not confirmed. Sign in and check the current record before submitting again.", "network");
+  };
+  checkSession();
+  if (response.status === 401) markSessionExpired(generation, path);
+  if (!response.ok) throw await errorForSession(response, generation, !mutation);
+  let result: T;
+  if (mutation) result = await readMutationResult<T>(response, path, "POST");
+  else {
+    try { result = await response.json() as T; }
+    catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') throw error;
+      throw new ApiRequestError('The server returned an unreadable preview. Prepare the preview again; nothing has been applied by this preview request.', 'invalid-response', response.status);
+    }
+  }
+  checkSession();
+  return result;
+}
+
+export async function request<T>(path: string, options: ApiRequestOptions = {}): Promise<T> {
+  const generation = authGeneration;
   const headers = new Headers(options.headers);
   if (!headers.has("Content-Type")) headers.set("Content-Type", "application/json");
   if (authToken) headers.set("Authorization", `Bearer ${authToken}`);
+  const method = (options.method ?? "GET").toUpperCase();
+  const isRead = ["GET", "HEAD"].includes(method);
+  if (!isRead) assertSessionCanSubmit(path);
+  // Existing large analytics/report reads keep their original lifetime.
+  const defaultReadTimeout = /\/analysis\/|\/diagnostics(?:\/|\?|$)|statistics(?:\?|$)/.test(path) ? 0 : 120000;
+  const { readTimeoutMs = defaultReadTimeout, ...fetchOptions } = options;
+  const controller = new AbortController();
+  let timedOut = false;
+  const cancel = () => controller.abort(options.signal?.reason);
+  if (options.signal?.aborted) cancel();
+  else options.signal?.addEventListener("abort", cancel, { once: true });
+  const timer = isRead && Number.isFinite(readTimeoutMs) && readTimeoutMs > 0
+    ? setTimeout(() => { timedOut = true; controller.abort(); }, readTimeoutMs) : undefined;
   try {
-    response = await fetch(`${API_BASE_URL}${path}`, {
-      ...options,
+    const response = await fetch(`${API_BASE_URL}${path}`, {
+      ...fetchOptions,
       headers,
+      signal: controller.signal,
     });
-  } catch (error) {
-    console.error("Backend request failed", error);
-    throw new Error(networkRecoveryMessage(Boolean(import.meta.env.DEV)));
-  }
-  if (!response.ok) {
-    let message = `API request failed: ${response.status}`;
-    let detail: unknown = null;
-    try {
-      const payload = await response.json();
-      detail = payload.detail;
-      message = formatApiError(detail, message);
-    } catch {
-      // Keep the status-based fallback when the server does not return JSON.
+    if (generation !== authGeneration) {
+      if (isRead) throw new DOMException("Session changed", "AbortError");
+      throw new ApiRequestError("Your session changed while this request was running. The save outcome is not confirmed. Sign in and check the current record before submitting again.", "network");
     }
-    const error = new Error(message) as Error & { detail?: unknown; status?: number };
-    error.detail = detail;
-    error.status = response.status;
-    throw error;
+    if (response.status === 401) markSessionExpired(generation, path);
+    if (!response.ok) throw await errorForSession(response, generation, isRead);
+    const result = await readMutationResult<T>(response, path, method);
+    // Account changes can also happen while decoding a slow response body.
+    if (generation !== authGeneration) {
+      if (isRead) throw new DOMException("Session changed", "AbortError");
+      throw new ApiRequestError("Your session changed while this request was running. The save outcome is not confirmed. Sign in and check the current record before submitting again.", "network");
+    }
+    return result;
+  } catch (error) {
+    if (options.signal?.aborted) throw new DOMException("Request cancelled", "AbortError");
+    if (timedOut) throw new ApiRequestError("This request took too long. Check your connection and retry.", "timeout");
+    if (error instanceof ApiRequestError) throw error;
+    if (error instanceof DOMException && error.name === "AbortError") throw error;
+    const recovery = networkRecoveryMessage(Boolean(import.meta.env.DEV));
+    throw new ApiRequestError(isRead ? recovery : `${recovery} The save outcome is not confirmed. Check the current record before submitting again.`, "network");
+  } finally {
+    clearTimeout(timer);
+    options.signal?.removeEventListener("abort", cancel);
   }
-  return readMutationResult<T>(response, path, options.method ?? "GET");
 }
 
 async function readMutationResult<T>(response: Response, path: string, method: string): Promise<T> {
-  const result = await response.json() as T;
+  if ([204, 205].includes(response.status) || method.toUpperCase() === "HEAD") {
+    notifyDataChange(path, method);
+    return undefined as T;
+  }
+  let result: T;
+  try { result = await response.json() as T; }
+  catch (error) {
+    if (error instanceof DOMException && error.name === "AbortError") throw error;
+    const mutation = !["GET", "HEAD"].includes(method.toUpperCase());
+    if (mutation) notifyDataChange(path, method);
+    throw new ApiRequestError(mutation
+      ? "The server replied, but the save result could not be read. Check the current record before submitting again."
+      : "The server returned an unreadable response. Retry; if this continues, contact your department administrator.", "invalid-response", response.status);
+  }
   if (!(result && typeof result === "object" && "replayed" in result && result.replayed)) notifyDataChange(path, method);
   return result;
 }
 
-/** Error builder for upload/download calls. Any 5xx defaults to an "offline or crashed" message (handbook U3). */
+/** Shared structured status handling for JSON, upload and download responses. */
 async function errorFromResponse(response: Response): Promise<Error> {
   let message = `API request failed: ${response.status}`;
   let detail: unknown = null;
@@ -268,9 +399,37 @@ async function errorFromResponse(response: Response): Promise<Error> {
   } catch {
     // Keep the status-based fallback when the server does not return JSON.
   }
-  const error = new Error(message) as Error & { detail?: unknown };
-  error.detail = detail;
+  return new ApiRequestError(message, "http", response.status, detail);
+}
+
+async function errorForSession(response: Response, generation: number, read: boolean): Promise<Error> {
+  const error = await errorFromResponse(response);
+  if (generation !== authGeneration) {
+    if (read) throw new DOMException('Session changed', 'AbortError');
+    throw new ApiRequestError('Your session changed while this request was running. The save outcome is not confirmed. Sign in and check the current record before submitting again.', 'network');
+  }
   return error;
+}
+
+/** Browser-owned multipart boundaries, shared auth context and no automatic retry. */
+export async function requestMultipartJSON<T>(path: string, body: FormData): Promise<T> {
+  assertSessionCanSubmit(path);
+  const generation = authGeneration;
+  try {
+    const response = await fetch(`${API_BASE_URL}${path}`, {method:'POST', headers:{Authorization:`Bearer ${authToken}`}, body});
+    return await readUploadResult<T>(response, path, generation, false);
+  } catch (error) {
+    if (error instanceof ApiRequestError || (error instanceof DOMException && error.name === 'AbortError')) throw error;
+    throw new ApiRequestError(networkRecoveryMessage(Boolean(import.meta.env.DEV)), 'network');
+  }
+}
+
+/** Authenticated file bytes remain unchanged; only session lifetime and refusal are handled. */
+export async function requestDownload(path: string, signal?: AbortSignal): Promise<{blob: Blob; filename: string | null}> {
+  const generation = authGeneration;
+  const response = await fetch(`${API_BASE_URL}${path}`, {headers:authToken ? {Authorization:`Bearer ${authToken}`} : {}, signal});
+  const blob = await readDownloadBlob(response, generation, path);
+  return {blob, filename: response.headers.get('Content-Disposition')?.match(/filename="?([^";]+)"?/i)?.[1] ?? null};
 }
 
 export function healthCheck(): Promise<{ status: string }> {
@@ -946,11 +1105,16 @@ export interface CallCluster {
   members?: CallClusterMember[];
 }
 
+/** A unit as the rules endpoints list it, for "Only these units" / "Never these units". */
+export interface RotaRuleUnit { id: string; code: string; name: string; campus: string | null; active: boolean }
+
 export interface RotaPhaseOneRules {
   /** Hash of the saved rules; sent back as `base_revision` so a stale save is refused (409). */
   revision?: string;
   /** Eligibility groups with today's active member counts (read-only; not part of the save payload). */
   groups?: RotaRuleGroup[];
+  /** Every registered unit, active first (read-only; not part of the save payload). */
+  units?: RotaRuleUnit[];
   rule_version: {
     id: string;
     name: string;
@@ -977,6 +1141,10 @@ export interface RotaPhaseOneRules {
     hard_block_unavailable_percent: number;
     small_unit_uses_absolute_minimum: boolean;
   };
+  /** Limit section (docs/limits_callevel_fairness_contract.md §3); changed only through the Limits page. */
+  fairness_rules?: { max_gap_within_call_level: number; target_mode: string };
+  /** Limit section; changed only through the Limits page. */
+  extra_duty_rules?: { justice_lookback_months: number };
   notes: string | null;
 }
 
@@ -1569,6 +1737,17 @@ export interface RotaPublishApproval {
   created_at: string;
 }
 
+/** One member above an individual duty limit after the plan (docs/extra_duty_fill_all_contract.md §4). */
+export interface OverLimitPerson {
+  person_id: string;
+  person_name: string;
+  call_level: string | null;
+  home_unit_name: string | null;
+  month_duties: number;
+  month_24hr: number;
+  limits: { code: string; label: string; limit: number; actual: number }[];
+}
+
 export interface RotaPublishMonth {
   month: string;
   rota_period: {
@@ -1589,6 +1768,10 @@ export interface RotaPublishMonth {
   blockers: RotaPublishChecklistItem[];
   warnings: RotaPublishChecklistItem[];
   latest_publish: RotaPublishApproval | null;
+  /** Full list behind the "Members over their individual limit" warning. */
+  over_limit_people?: OverLimitPerson[];
+  /** Duty totals per call level (docs/limits_callevel_fairness_contract.md §2). */
+  call_level_spread?: CallLevelSpread[];
 }
 
 export function getMappingOptions(): Promise<MappingOptions> {
@@ -1665,6 +1848,8 @@ export function getLeavePressure(month: string): Promise<LeavePressure> {
 }
 
 export async function previewLeaveImport(month: string, file: File): Promise<LeaveImportPreview> {
+  assertSessionCanSubmit('/api/v1/leave/import-preview');
+  const generation = authGeneration;
   const formData = new FormData();
   formData.append("file", file);
   const response = await fetch(`${API_BASE_URL}/api/v1/leave/import-preview?month=${encodeURIComponent(month)}`, {
@@ -1672,13 +1857,12 @@ export async function previewLeaveImport(month: string, file: File): Promise<Lea
     headers: authToken ? { Authorization: `Bearer ${authToken}` } : {},
     body: formData,
   });
-  if (!response.ok) {
-    throw await errorFromResponse(response);
-  }
-  return response.json() as Promise<LeaveImportPreview>;
+  return readUploadResult<LeaveImportPreview>(response, "/api/v1/leave/import-preview", generation, false);
 }
 
 export async function applyLeaveImport(month: string, file: File, previewHash: string): Promise<LeaveImportApplyResult> {
+  assertSessionCanSubmit('/api/v1/leave/import-apply');
+  const generation = authGeneration;
   const formData = new FormData();
   formData.append("file", file);
   formData.append("preview_hash", previewHash);
@@ -1687,10 +1871,7 @@ export async function applyLeaveImport(month: string, file: File, previewHash: s
     headers: authToken ? { Authorization: `Bearer ${authToken}` } : {},
     body: formData,
   });
-  if (!response.ok) {
-    throw await errorFromResponse(response);
-  }
-  return readMutationResult<LeaveImportApplyResult>(response, "/api/v1/leave/import-apply", "POST");
+  return readUploadResult<LeaveImportApplyResult>(response, "/api/v1/leave/import-apply", generation);
 }
 
 export function getLeaveRequests(month: string): Promise<LeaveRequest[]> {
@@ -1732,6 +1913,8 @@ export async function previewUnitAssignmentImport(
   replaceExisting = false,
   resolutions: Record<string, UnitImportResolution> = {},
 ): Promise<UnitAssignmentImportPreview> {
+  assertSessionCanSubmit('/api/v1/unit-management/import-preview');
+  const generation = authGeneration;
   const formData = new FormData();
   formData.append("file", file);
   formData.append("resolutions_json", JSON.stringify(resolutions));
@@ -1740,10 +1923,7 @@ export async function previewUnitAssignmentImport(
     headers: authToken ? { Authorization: `Bearer ${authToken}` } : {},
     body: formData,
   });
-  if (!response.ok) {
-    throw await errorFromResponse(response);
-  }
-  return response.json() as Promise<UnitAssignmentImportPreview>;
+  return readUploadResult<UnitAssignmentImportPreview>(response, "/api/v1/unit-management/import-preview", generation, false);
 }
 
 export async function applyUnitAssignmentImport(
@@ -1753,6 +1933,8 @@ export async function applyUnitAssignmentImport(
   resolutions: Record<string, UnitImportResolution> = {},
   previewHash = "",
 ): Promise<UnitAssignmentImportApplyResult> {
+  assertSessionCanSubmit('/api/v1/unit-management/import-apply');
+  const generation = authGeneration;
   const formData = new FormData();
   formData.append("file", file);
   formData.append("preview_hash", previewHash);
@@ -1765,10 +1947,7 @@ export async function applyUnitAssignmentImport(
       body: formData,
     },
   );
-  if (!response.ok) {
-    throw await errorFromResponse(response);
-  }
-  return readMutationResult<UnitAssignmentImportApplyResult>(response, "/api/v1/unit-management/import-apply", "POST");
+  return readUploadResult<UnitAssignmentImportApplyResult>(response, "/api/v1/unit-management/import-apply", generation);
 }
 
 export function createUnitAssignment(payload: UnitAssignmentPayload): Promise<UnitAssignment> {
@@ -1974,11 +2153,12 @@ export function prefillCallLevels(previewToken?: string): Promise<CallLevelPrefi
   });
 }
 
-export async function signIn(username: string, password: string): Promise<SignInResponse> {
+export async function signIn(username: string, password: string, mayCommit: () => boolean = () => true): Promise<SignInResponse> {
   const response = await request<SignInResponse>("/api/v1/auth/sign-in", {
     method: "POST",
     body: JSON.stringify({ username, password }),
   });
+  if (!mayCommit()) throw new DOMException('Sign-in form changed; response ignored.', 'AbortError');
   setAuthToken(response.token);
   return response;
 }
@@ -2250,43 +2430,39 @@ function filenameFromDisposition(disposition: string | null, fallback: string): 
   return match?.[1] ?? fallback;
 }
 
-export async function downloadRotaExport(month: string): Promise<{ blob: Blob; filename: string }> {
-  const response = await fetch(`${API_BASE_URL}/api/v1/rota-publish/export?month=${encodeURIComponent(month)}`, {
-    headers: authToken ? { Authorization: `Bearer ${authToken}` } : {},
-  });
-  if (!response.ok) {
-    throw await errorFromResponse(response);
+/** Download reads have a bounded lifetime; stopping a read does not stop server work. */
+async function downloadSpreadsheet(path: string, fallback: string): Promise<{ blob: Blob; filename: string }> {
+  const generation = authGeneration;
+  const controller = new AbortController();
+  let timedOut = false;
+  const timer = setTimeout(() => { timedOut = true; controller.abort(); }, 120000);
+  try {
+    const response = await fetch(`${API_BASE_URL}${path}`, {
+      headers: authToken ? { Authorization: `Bearer ${authToken}` } : {},
+      signal: controller.signal,
+    });
+    const blob = await readDownloadBlob(response, generation, path.split('?')[0], true);
+    return { blob, filename: filenameFromDisposition(response.headers.get('Content-Disposition'), fallback) };
+  } catch (error) {
+    if (generation !== authGeneration) throw new DOMException('Session changed; download cancelled.', 'AbortError');
+    if (timedOut) throw new ApiRequestError('The download took too long. No file was sent to your browser. The server may still be preparing it; check your connection and try the download again.', 'timeout');
+    if (error instanceof ApiRequestError || error instanceof DOMException && error.name === 'AbortError') throw error;
+    throw new ApiRequestError(networkRecoveryMessage(Boolean(import.meta.env.DEV)), 'network');
+  } finally {
+    clearTimeout(timer);
   }
-  return {
-    blob: await response.blob(),
-    filename: filenameFromDisposition(response.headers.get("Content-Disposition"), `final-rota-${month}.xlsx`),
-  };
+}
+
+export async function downloadRotaExport(month: string): Promise<{ blob: Blob; filename: string }> {
+  return downloadSpreadsheet(`/api/v1/rota-publish/export?month=${encodeURIComponent(month)}`, `final-rota-${month}.xlsx`);
 }
 
 export async function downloadRotaTemplateEagleEyeExport(month: string): Promise<{ blob: Blob; filename: string }> {
-  const response = await fetch(`${API_BASE_URL}/api/v1/rota-template/eagle-eye-export?month=${encodeURIComponent(month)}`, {
-    headers: authToken ? { Authorization: `Bearer ${authToken}` } : {},
-  });
-  if (!response.ok) {
-    throw await errorFromResponse(response);
-  }
-  return {
-    blob: await response.blob(),
-    filename: filenameFromDisposition(response.headers.get("Content-Disposition"), `eagle-eye-rota-template-${month}.xlsx`),
-  };
+  return downloadSpreadsheet(`/api/v1/rota-template/eagle-eye-export?month=${encodeURIComponent(month)}`, `eagle-eye-rota-template-${month}.xlsx`);
 }
 
 export async function downloadRotaTemplateCallWiseExport(month: string): Promise<{ blob: Blob; filename: string }> {
-  const response = await fetch(`${API_BASE_URL}/api/v1/rota-template/call-wise-export?month=${encodeURIComponent(month)}`, {
-    headers: authToken ? { Authorization: `Bearer ${authToken}` } : {},
-  });
-  if (!response.ok) {
-    throw await errorFromResponse(response);
-  }
-  return {
-    blob: await response.blob(),
-    filename: filenameFromDisposition(response.headers.get("Content-Disposition"), `call-wise-rota-template-${month}.xlsx`),
-  };
+  return downloadSpreadsheet(`/api/v1/rota-template/call-wise-export?month=${encodeURIComponent(month)}`, `call-wise-rota-template-${month}.xlsx`);
 }
 
 // --- Department members: clear all (archive) and suspected duplicates -------------------
@@ -2478,7 +2654,8 @@ export interface RotaRuleProblem {
   duty_key: string | null;
   field: string;
   code: string;
-  severity: "error" | "warning";
+  /** "info" items (such as `call_level_pool`) are notes, not problems. */
+  severity: "error" | "warning" | "info";
   message: string;
   fix: string;
 }
@@ -2543,4 +2720,163 @@ export function isStaleRulesError(error: unknown): boolean {
 export function invalidRulesProblems(error: unknown): RotaRuleProblem[] | null {
   const detail = rotaRulesErrorDetail(error);
   return (error as RotaRulesApiError | null)?.status === 422 && detail?.code === "invalid_rules" ? detail.problems ?? [] : null;
+}
+
+/* ---------------------------------------------------------------------------------------- */
+/* Limits page (docs/limits_callevel_fairness_contract.md §3) and call-level fairness (§2)    */
+/* ---------------------------------------------------------------------------------------- */
+
+/** The five limit sections, stored inside the rules JSON but changed only through the Limits API. */
+export interface LimitSections {
+  duty_count_limits: RotaPhaseOneRules["duty_count_limits"];
+  rest_rules: RotaPhaseOneRules["rest_rules"];
+  unit_staffing_rules: RotaPhaseOneRules["unit_staffing_rules"];
+  fairness_rules: { max_gap_within_call_level: number; target_mode: string };
+  extra_duty_rules: { justice_lookback_months: number };
+}
+export type LimitSectionKey = keyof LimitSections;
+export const LIMIT_SECTION_KEYS: LimitSectionKey[] = ["duty_count_limits", "rest_rules", "unit_staffing_rules", "fairness_rules", "extra_duty_rules"];
+
+export interface LimitField {
+  path: string;
+  section: LimitSectionKey | string;
+  label: string;
+  help: string;
+  example: string;
+  kind: "int" | "bool" | "percent" | "hours" | "choice";
+  min?: number | null;
+  max?: number | null;
+  unit?: string | null;
+  /** Text for an empty value ("No limit"); null when the setting cannot be left blank. */
+  blank_means?: string | null;
+  hard_or_soft: "hard" | "soft" | "guide";
+  /** Only for kind "choice" (the server sends `options`). */
+  options?: { value: string; label: string }[];
+  choices?: { value: string; label: string }[];
+}
+
+export interface CallLevelTarget {
+  call_level: string;
+  label: string;
+  slots: number;
+  members: number;
+  target: number;
+  min_expected: number;
+  max_expected: number;
+}
+
+export interface LimitsRead {
+  version_id: string | null;
+  saved_at: string | null;
+  saved_by: string | null;
+  limits: LimitSections;
+  defaults: Partial<LimitSections>;
+  fields: LimitField[];
+  targets: CallLevelTarget[];
+  can_edit: boolean;
+  limits_version_id?: string | null;
+  month?: string;
+  sections?: { key: string; title: string; intro: string }[];
+  hard_or_soft_labels?: Record<string, string>;
+}
+
+export interface LimitChange { path: string; label: string; before: unknown; after: unknown; sentence: string }
+export interface LimitProblem { path: string; severity: "error" | "warning"; message: string }
+export interface LimitsPreview {
+  changes: LimitChange[];
+  problems: LimitProblem[];
+  /** Null when the preview found errors. */
+  impact: { over_limit_people: number; members_over: string[]; over_limit_people_now?: number; newly_over?: number; sentence?: string; month?: string } | null;
+  month?: string;
+}
+export interface LimitsHistoryEntry {
+  version_id: string;
+  saved_at: string;
+  saved_by: string | null;
+  note: string | null;
+  label?: string | null;
+  changes: LimitChange[];
+}
+
+export interface CallLevelSpreadMember { person_id: string; name: string; duties: number; extra_duties: number; diff_from_target: number }
+export interface CallLevelSpread {
+  call_level: string;
+  label?: string;
+  target: number;
+  min: number;
+  max: number;
+  gap: number;
+  allowed_gap: number;
+  ok: boolean;
+  reason?: string | null;
+  members: CallLevelSpreadMember[];
+}
+
+/* Balance duties (docs/call_level_pool_and_balance_contract.md §2). */
+export interface BalanceRange { min: number; max: number; gap: number }
+export interface BalanceLevel {
+  call_level: string;
+  label?: string;
+  /** [low, high] goals within the level, or a ready-made "6–7" text. */
+  goal_range: [number, number] | number[] | string | null;
+  before: BalanceRange;
+  after: BalanceRange;
+  ok_after: boolean;
+  reason_if_not?: string | null;
+  allowed_gap?: number;
+}
+export interface BalanceMove {
+  kind: "move" | "swap";
+  slot_id: string;
+  duty_date: string;
+  duty_label: string;
+  from_person: string;
+  from_unit: string | null;
+  to_person: string;
+  to_unit: string | null;
+  cross_unit: boolean;
+  reason: string;
+  call_level?: string | null;
+  /** Swaps: the other duty that goes the opposite way, when the backend names it. */
+  swap_slot_id?: string | null;
+  swap_duty_date?: string | null;
+  swap_duty_label?: string | null;
+  /** docs/balance_extra_duties_contract.md §1: a duty placed by the extra-duty layer; its ledger record moves with it. */
+  extra_duty?: boolean;
+  ledger_from?: string | null;
+  ledger_to?: string | null;
+  new_overridden_rules?: string[];
+}
+export interface BalanceMember {
+  person_id: string;
+  name: string;
+  call_level: string;
+  unit: string | null;
+  before: number;
+  after: number;
+  goal: number;
+  avail_days: number;
+  /** Extra-duty-layer duties held before → after (balance_extra_duties_contract §1). */
+  extra_before?: number;
+  extra_after?: number;
+}
+export interface BalanceSummary { moves: number; swaps: number; cross_unit: number; levels_balanced_before: number; levels_balanced_after: number; extra_moves?: number }
+export interface BalancePreview {
+  month: string;
+  plan_hash: string;
+  context_hash: string;
+  token: string;
+  summary: BalanceSummary;
+  levels: BalanceLevel[];
+  moves: BalanceMove[];
+  members: BalanceMember[];
+}
+export interface BalanceApplyResult extends BalancePreview { batch_id: string }
+export interface BalanceBatch { id: string; status: string; created_at: string; created_by_name: string | null; summary?: Partial<BalanceSummary> & { mode?: string } }
+export interface BalanceStatus {
+  month: string;
+  enabled: boolean;
+  balanced: boolean;
+  levels: (Partial<BalanceLevel> & { call_level: string; label?: string; min?: number; max?: number; gap?: number; allowed_gap?: number; ok?: boolean })[];
+  batches: BalanceBatch[];
 }

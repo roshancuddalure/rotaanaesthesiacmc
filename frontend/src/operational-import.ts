@@ -1,8 +1,8 @@
-import { request, type DepartmentMember } from "./services/api";
+import { request, requestMultipartJSON, type DepartmentMember } from "./services/api";
 import { workspaceDialog, openMemberWorkspace } from "./member-workspace";
+import { lockWorkspaceControls, protectWorkspaceDraft } from "./workspace-load-state";
 import { openUnitRegistry, openReferenceCatalog } from "./reference-workspace";
-import { applyBlocker, badge, importSummary, memberMatch, steps, type MemberMatchView } from "./ui";
-import { formatApiError } from "./api-errors";
+import { applyBlocker, badge, importSummary, memberMatch, retainActionFocus, steps, type MemberMatchView } from "./ui";
 
 const IMPORT_STEPS = ["Upload file", "Map columns", "Review rows", "Apply"];
 
@@ -34,7 +34,13 @@ export async function createMemberInline(
   dialog.innerHTML = `<header class="mw-header"><h2>Create department member</h2><button type="button" data-close aria-label="Close member creation">×</button></header><form class="mw-content"><p>Check the suggested existing members before creating a new identity. This creates the member; the import still requires review and apply.</p><label>Full member name<input name="canonical_name" required maxlength="255" value="${esc(name)}"></label><section data-existing-members aria-live="polite"></section><label>Default call level<select name="call_level"><option value="">Unassigned</option>${["1ST_CALL", "2ND_CALL", "3RD_CALL", "CO_4TH_CALL", "4TH_CALL", "5TH_CALL"].map((key) => `<option>${key}</option>`).join("")}</select></label><p data-error class="mw-error" role="alert"></p><button class="primary" type="submit">Create member</button></form>`;
   let busy = false;
   let memberDraftDirty = false;
+  protectWorkspaceDraft(dialog, () => busy || memberDraftDirty);
   let lookupSequence = 0;
+  let nameEditSequence = 0;
+  const creationStatus = document.createElement("p");
+  creationStatus.setAttribute("role", "status");
+  creationStatus.setAttribute("aria-live", "polite");
+  dialog.append(creationStatus);
   const close = () => {
     if (
       busy ||
@@ -54,7 +60,10 @@ export async function createMemberInline(
     const nameInput = dialog.querySelector<HTMLInputElement>(
       "[name=canonical_name]",
     )!;
-    if (!nameInput.value.trim()) return;
+    if (!nameInput.value.trim()) {
+      dialog.querySelector("[data-existing-members]")!.textContent = "Enter a name to check existing members.";
+      return;
+    }
     try {
       const result = await request<Row>(
         "/api/v1/normalization/members/resolve",
@@ -64,22 +73,45 @@ export async function createMemberInline(
       const root = dialog.querySelector<HTMLElement>(
         "[data-existing-members]",
       )!;
+      const focusedCandidate = document.activeElement instanceof HTMLButtonElement && root.contains(document.activeElement)
+        ? { use: document.activeElement.dataset.useExisting, review: document.activeElement.dataset.reviewExisting }
+        : null;
       root.innerHTML = result.candidates.length
         ? `<h3>Check existing members</h3>${result.candidates.map((c: Row) => `<article class="mw-history"><strong>${esc(c.name)}</strong><p>${esc(c.status)} &rarr; ${esc(c.call_level || "Unassigned")} &rarr; ${esc(c.designation || "No current designation")}</p>${c.status === "active" ? `<button type="button" data-use-existing="${c.id}">Use this member</button>` : `<button type="button" data-review-existing="${c.id}">Review / restore member</button>`}</article>`).join("")}`
         : "<p>No matching identities found.</p>";
       root.querySelectorAll<HTMLButtonElement>("[data-use-existing]").forEach(
         (button) =>
           (button.onclick = async () => {
-            const members = await request<DepartmentMember[]>(
-              "/api/v1/admin/members",
-            );
-            const member = members.find(
-              (m) => m.id === button.dataset.useExisting,
-            );
-            if (member) {
-              memberDraftDirty = false;
-              close();
-              done(member);
+            if (busy) return;
+            const selectedNameVersion = nameEditSequence;
+            const choiceIsCurrent = () => dialog.isConnected && dialog.open
+              && selectedNameVersion === nameEditSequence;
+            const restoreFocus = retainActionFocus(dialog, button, () => button.isConnected ? button : null);
+            busy = true;
+            button.disabled = true;
+            creationStatus.textContent = "Checking selected member. Changing the name cancels this choice.";
+            dialog.querySelector("[data-error]")!.textContent = "";
+            try {
+              const members = await request<DepartmentMember[]>(
+                "/api/v1/admin/members",
+              );
+              if (!choiceIsCurrent()) return;
+              const member = members.find(
+                (m) => m.id === button.dataset.useExisting,
+              );
+              if (member) {
+                memberDraftDirty = false;
+                busy = false;
+                close();
+                done(member);
+              } else dialog.querySelector("[data-error]")!.textContent = "This member is no longer available. Check the name again.";
+            } catch (error) {
+              if (choiceIsCurrent()) dialog.querySelector("[data-error]")!.textContent = (error as Error).message;
+            } finally {
+              busy = false;
+              button.disabled = false;
+              if (dialog.open) creationStatus.textContent = "";
+              restoreFocus(choiceIsCurrent());
             }
           }),
       );
@@ -100,15 +132,23 @@ export async function createMemberInline(
               );
             }),
         );
+      if (focusedCandidate && document.activeElement === document.body) {
+        const replacement = [...root.querySelectorAll<HTMLButtonElement>("[data-use-existing], [data-review-existing]")]
+          .find(button => (focusedCandidate.use && button.dataset.useExisting === focusedCandidate.use)
+            || (focusedCandidate.review && button.dataset.reviewExisting === focusedCandidate.review));
+        (replacement ?? nameInput).focus({ preventScroll: true });
+      }
     } catch (error) {
-      if (dialog.open)
+      if (current === lookupSequence && dialog.open)
         dialog.querySelector("[data-error]")!.textContent = (
           error as Error
         ).message;
     }
   }
-  dialog.querySelector<HTMLFormElement>("form")!.oninput = () => {
+  dialog.querySelector<HTMLFormElement>("form")!.oninput = (event) => {
     memberDraftDirty = true;
+    lookupSequence++;
+    if (event.target instanceof HTMLInputElement && event.target.name === "canonical_name") nameEditSequence++;
   };
   dialog.querySelector<HTMLInputElement>("[name=canonical_name]")!.onblur =
     () => void checkExisting();
@@ -116,10 +156,20 @@ export async function createMemberInline(
   dialog.querySelector<HTMLFormElement>("form")!.onsubmit = async (e) => {
     e.preventDefault();
     if (busy) return;
-    busy = true;
+    const form = e.target as HTMLFormElement;
+    const submit = form.querySelector<HTMLButtonElement>('[type="submit"]')!;
     const values = Object.fromEntries(
-      new FormData(e.target as HTMLFormElement),
+      new FormData(form),
     );
+    busy = true;
+    lookupSequence++;
+    const alive = () => dialog.isConnected && dialog.open;
+    const restoreFocus = retainActionFocus(dialog, submit, () => submit.isConnected ? submit : null);
+    const unlock = lockWorkspaceControls(dialog);
+    submit.textContent = "Creating member…";
+    form.setAttribute("aria-busy", "true");
+    creationStatus.textContent = "Creating member. Please wait before closing.";
+    dialog.querySelector("[data-error]")!.textContent = "";
     try {
       const member = await request<DepartmentMember>("/api/v1/admin/members", {
         method: "POST",
@@ -128,16 +178,24 @@ export async function createMemberInline(
           call_level: values.call_level || null,
         }),
       });
+      if (!alive()) return;
       busy = false;
       memberDraftDirty = false;
       close();
       done(member);
     } catch (error) {
-      dialog.querySelector("[data-error]")!.textContent = (
+      if (alive()) dialog.querySelector("[data-error]")!.textContent = (
         error as Error
       ).message;
     } finally {
+      unlock();
       busy = false;
+      if (alive()) {
+        submit.textContent = "Create member";
+        form.removeAttribute("aria-busy");
+        creationStatus.textContent = "";
+      }
+      restoreFocus(alive());
     }
   };
 }
@@ -158,8 +216,10 @@ export async function openOperationalImport(
   let file: File | undefined;
   let busy = false;
   let finished = false;
+  protectWorkspaceDraft(dialog, () => busy || Boolean((file || preview) && !finished));
   let previewDirty = true;
   let draftVersion = 0;
+  let columnLoadSequence = 0;
   let columns:
     | { headers: string[]; fields: string[]; suggested: Record<string, string> }
     | undefined;
@@ -180,9 +240,9 @@ export async function openOperationalImport(
   const close = () => {
     if (
       busy ||
-      (preview &&
+      ((file || preview) &&
         !finished &&
-        !confirm("Close this review? No import changes have been applied."))
+        !confirm("Discard this import draft? No import changes have been applied."))
     )
       return;
     dialog.close();
@@ -216,15 +276,15 @@ export async function openOperationalImport(
     message.textContent = (error as Error).message;
   });
   // The apply button sits below a long row list, so mirror status next to it.
-  function say(text: string) {
+  function say(text: string, revealFooter = true) {
     message.textContent = text;
     const status = dialog.querySelector<HTMLElement>("[data-apply-status]");
     if (status) {
       status.textContent = text;
-      status.scrollIntoView({ block: "nearest" });
+      if (revealFooter) status.scrollIntoView({ block: "nearest" });
     }
   }
-  function dirtyPreview() {
+  function dirtyPreview(revealFooter = true) {
     draftVersion++;
     previewDirty = true;
     dialog
@@ -232,13 +292,16 @@ export async function openOperationalImport(
       ?.setAttribute("aria-disabled", "true");
     say(
       "Changes need a refreshed preview before applying. Click “Refresh normalized preview”.",
+      revealFooter,
     );
   }
   dialog.querySelector<HTMLFormElement>("[data-settings]")!.onchange =
-    dirtyPreview;
+    () => dirtyPreview();
   const fileInput = dialog.querySelector<HTMLInputElement>("input[type=file]")!;
   fileInput.onchange = async () => {
+    const inspectedSequence = ++columnLoadSequence;
     file = fileInput.files?.[0];
+    finished = false;
     preview = undefined;
     columns = undefined;
     previewDirty = true;
@@ -253,24 +316,8 @@ export async function openOperationalImport(
     const upload = new FormData();
     upload.append("file", file);
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL ?? ""}/api/v1/import-review/columns`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("duty_rota_auth_token") || ""}`,
-          },
-          body: upload,
-        },
-      );
-      const result = await response.json();
-      if (!response.ok)
-        throw new Error(
-          typeof result.detail === "string"
-            ? result.detail
-            : "Unable to inspect file columns",
-        );
-      if (file !== inspectedFile || !dialog.open) return;
+      const result = await requestMultipartJSON<{headers:string[];fields:string[];suggested:Record<string,string>}>('/api/v1/import-review/columns', upload);
+      if (inspectedSequence !== columnLoadSequence || file !== inspectedFile || !dialog.isConnected || !dialog.open) return;
       columns = result;
       setStep(1);
       Object.assign(
@@ -286,14 +333,23 @@ export async function openOperationalImport(
         ? "Check column mappings, then preview the records."
         : "Section-style file: preview to review extracted records.";
     } catch (error) {
-      message.textContent = (error as Error).message;
+      if (inspectedSequence === columnLoadSequence && file === inspectedFile && dialog.isConnected && dialog.open)
+        message.textContent = (error as Error).message;
     }
   };
-  async function runPreview() {
+  async function runPreview(initiator?: HTMLElement) {
     if (!file || busy) return;
     busy = true;
+    const alive = () => dialog.isConnected && dialog.open;
+    const initiatedWithFocus = Boolean(initiator && document.activeElement === initiator);
+    let focusMoved = false;
+    const trackFocus = (event: FocusEvent) => {
+      if (event.target !== initiator && event.target !== document.body && event.target !== document.documentElement)
+        focusMoved = true;
+    };
+    document.addEventListener("focusin", trackFocus);
     const submittedVersion = draftVersion;
-    message.textContent = "Parsing and normalizing records…";
+    say("Parsing and normalizing records…", false);
     const values = new FormData(
       dialog.querySelector<HTMLFormElement>("[data-settings]")!,
     );
@@ -312,42 +368,44 @@ export async function openOperationalImport(
       }),
     );
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL ?? ""}/api/v1/import-review/${kind}/preview`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("duty_rota_auth_token") || ""}`,
-          },
-          body: data,
-        },
-      );
-      const result = await response.json();
-      if (!response.ok)
-        throw new Error(
-          formatApiError(result.detail, "Unable to preview this file"),
-        );
-      if (submittedVersion !== draftVersion || !dialog.open)
+      const result = await requestMultipartJSON<Preview>(`/api/v1/import-review/${kind}/preview`, data);
+      if (submittedVersion !== draftVersion || !alive())
         throw new Error(
           "Inputs changed while the preview was loading. Refresh the preview.",
         );
       await optionsReady;
+      if (!alive()) return;
+      if (submittedVersion !== draftVersion)
+        throw new Error("Inputs changed while the preview was loading. Refresh the preview.");
+      const chosenRow = initiator?.dataset.pickRow;
+      const restoreInitiator = initiatedWithFocus && !focusMoved && initiator?.isConnected
+        && document.activeElement === initiator && (initiator.matches("[data-refresh]") || Boolean(chosenRow));
       preview = result;
       finished = false;
       previewDirty = false;
       setStep(2);
       renderReview();
       renderMapping();
-      message.textContent = `${preview!.rows.length} rows normalized. Nothing has been applied.`;
+      say(`${preview!.rows.length} rows normalized. Nothing has been applied.`, false);
+      if (restoreInitiator && alive() && !focusMoved
+        && (document.activeElement === document.body || document.activeElement === dialog)) {
+        const target = chosenRow
+          ? dialog.querySelector<HTMLElement>(`[data-review-row="${CSS.escape(chosenRow)}"] summary`)
+          : dialog.querySelector<HTMLElement>("[data-refresh]");
+        const restored = target ?? dialog.querySelector<HTMLElement>("[data-refresh]");
+        restored?.focus({ preventScroll: true });
+        if (chosenRow) restored?.scrollIntoView({ block: "nearest", behavior: "instant" });
+      }
     } catch (error) {
-      message.textContent = (error as Error).message;
+      if (alive()) say((error as Error).message, false);
     } finally {
+      document.removeEventListener("focusin", trackFocus);
       busy = false;
     }
   }
   dialog.querySelector<HTMLFormElement>("[data-settings]")!.onsubmit = (e) => {
     e.preventDefault();
-    void runPreview();
+    void runPreview(e.submitter instanceof HTMLElement ? e.submitter : undefined);
   };
   function renderMapping() {
     const headerInfo = columns || preview;
@@ -472,8 +530,8 @@ export async function openOperationalImport(
       (button) =>
         (button.onclick = () => {
           (corrections[button.dataset.pickRow!] ??= {}).person_id = button.dataset.pickMember!;
-          draftVersion += 1;
-          void runPreview();
+          dirtyPreview(false);
+          void runPreview(button);
         }),
     );
     root.querySelectorAll<HTMLButtonElement>("[data-review-candidate]").forEach(
@@ -553,13 +611,18 @@ export async function openOperationalImport(
     root.querySelectorAll<HTMLButtonElement>("[data-page]").forEach(
       (b) =>
         (b.onclick = () => {
+          if (b.disabled) return;
+          const restoreFocus = retainActionFocus(dialog, b, () =>
+            root.querySelector<HTMLButtonElement>(`[data-page="${b.dataset.page}"]:not(:disabled)`)
+            ?? root.querySelector<HTMLButtonElement>('[data-page]:not(:disabled)'));
           page += Number(b.dataset.page);
           renderReview();
+          restoreFocus(dialog.open);
         }),
     );
     root
       .querySelector("[data-refresh]")!
-      .addEventListener("click", () => void runPreview());
+      .addEventListener("click", event => void runPreview(event.currentTarget as HTMLElement));
     root.querySelectorAll<HTMLButtonElement>("[data-create-member]").forEach(
       (button) =>
         (button.onclick = () => {
@@ -578,14 +641,70 @@ export async function openOperationalImport(
       (button) =>
         (button.onclick = () => {
           const key = button.dataset.createUnit!;
+          const importFile = file;
+          const importPreview = preview;
+          const importColumns = columnLoadSequence;
+          const current = () => dialog.isConnected && dialog.open
+            && file === importFile && preview === importPreview
+            && columnLoadSequence === importColumns;
           void openUnitRegistry(
             (unit) => {
-              if (!unit) return;
-              void loadOptions().then(() => {
-                (corrections[key] ??= {}).unit_id = unit.id;
-                renderReview();
-                dirtyPreview();
-              });
+              if (!unit || !current()) return;
+              (corrections[key] ??= {}).unit_id = unit.id;
+              dirtyPreview(false);
+              let retry: HTMLButtonElement | undefined;
+              let refreshing = false;
+              const choiceMessage = (text: string) => {
+                if (retry?.isConnected && message.firstChild?.nodeType === Node.TEXT_NODE) {
+                  message.firstChild.textContent = text;
+                  const status = dialog.querySelector<HTMLElement>("[data-apply-status]");
+                  if (status) status.textContent = text;
+                } else say(text, false);
+              };
+              const refreshChoices = async () => {
+                if (refreshing || !current()) return;
+                refreshing = true;
+                retry?.setAttribute("aria-disabled", "true");
+                choiceMessage("Unit created. Refreshing member and unit choices…");
+                try {
+                  const [loadedMembers, loadedUnits] = await Promise.all([
+                    request<DepartmentMember[]>("/api/v1/admin/members"),
+                    request<Row[]>("/api/v1/normalization/units"),
+                  ]);
+                  if (!current()) return;
+                  const restoreRow = document.activeElement === button
+                    || document.activeElement === retry;
+                  members = loadedMembers;
+                  units = loadedUnits;
+                  renderReview();
+                  say("Unit created and selected for this row. Refresh the normalized preview before applying.", false);
+                  if (restoreRow) {
+                    const summary = dialog.querySelector<HTMLElement>(`[data-review-row="${CSS.escape(key)}"] summary`);
+                    summary?.focus({ preventScroll: true });
+                    summary?.scrollIntoView({ block: "nearest", behavior: "instant" });
+                  }
+                } catch (error) {
+                  if (!current()) return;
+                  const restoreRetry = document.activeElement === button
+                    || document.activeElement === retry;
+                  choiceMessage(`Unit created. Member and unit choices could not refresh. ${error instanceof Error ? error.message : "Please retry."}`);
+                  retry ??= document.createElement("button");
+                  retry.type = "button";
+                  retry.className = "quiet-button";
+                  retry.dataset.retryUnitOptions = "";
+                  retry.textContent = "Retry member and unit choices";
+                  retry.onclick = () => void refreshChoices();
+                  if (!retry.isConnected) message.append(retry);
+                  if (restoreRetry) {
+                    retry.focus({ preventScroll: true });
+                    message.scrollIntoView({ block: "nearest", behavior: "instant" });
+                  }
+                } finally {
+                  refreshing = false;
+                  retry?.removeAttribute("aria-disabled");
+                }
+              };
+              void refreshChoices();
             },
             undefined,
             true,
@@ -674,7 +793,7 @@ export async function openOperationalImport(
     root
       .querySelector("[data-report]")!
       .addEventListener("click", downloadReport);
-    root.querySelector("[data-apply]")!.addEventListener("click", async () => {
+    root.querySelector("[data-apply]")!.addEventListener("click", async event => {
       if (busy) return say("An import action is still running…");
       if (previewDirty)
         return say(
@@ -704,19 +823,31 @@ export async function openOperationalImport(
         )
       )
         return;
+      const appliedPreview = preview!;
+      const appliedFile = file;
+      const appliedVersion = draftVersion;
+      const applyPayload = JSON.stringify({
+        excluded: [...excluded],
+        acknowledge_warnings: acknowledge,
+      });
+      const ownsApply = () => dialog.isConnected && dialog.open && preview === appliedPreview
+        && file === appliedFile && draftVersion === appliedVersion;
+      const restoreApplyFocus = retainActionFocus(dialog, event.currentTarget as HTMLElement,
+        () => dialog.querySelector<HTMLElement>("[data-apply], [data-download-completed-report]"));
       busy = true;
+      // A delayed inspection must not replace locked controls or apply feedback.
+      columnLoadSequence++;
+      const unlock = lockWorkspaceControls(dialog);
       say("Applying reviewed rows…");
       try {
         const result = await request<Row>(
-          `/api/v1/import-review/${preview!.id}/apply`,
+          `/api/v1/import-review/${appliedPreview.id}/apply`,
           {
             method: "POST",
-            body: JSON.stringify({
-              excluded: [...excluded],
-              acknowledge_warnings: acknowledge,
-            }),
+            body: applyPayload,
           },
         );
+        if (!ownsApply()) return;
         finished = true;
         setStep(IMPORT_STEPS.length);
         root.innerHTML = `<h3>Import complete</h3><p>${result.created} created · ${result.updated} updated · ${result.unchanged} unchanged · ${result.excluded} excluded · ${result.removed} previous records replaced</p><p>Batch ${esc(result.batch_id)}</p><button type="button" data-download-completed-report>Download applied / excluded row report</button>`;
@@ -725,9 +856,11 @@ export async function openOperationalImport(
           .addEventListener("click", downloadReport);
         updated();
       } catch (error) {
-        say((error as Error).message);
+        if (ownsApply()) say((error as Error).message);
       } finally {
+        unlock();
         busy = false;
+        restoreApplyFocus(ownsApply());
       }
     });
   }

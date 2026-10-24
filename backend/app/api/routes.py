@@ -15,10 +15,13 @@ from app.api.v1.admin_mappings import router as admin_mappings_router
 from app.api.v1.admin_delete import router as admin_delete_router
 from app.api.v1.diagnostics import router as diagnostics_router
 from app.api.v1.extra_duty import router as extra_duty_router
+from app.api.v1.balance_duties import router as balance_duties_router
+from app.api.v1.superadmin_allocation import router as superadmin_allocation_router
 from app.api.v1.health import router as health_router
 from app.api.v1.import_history import router as import_history_router
 from app.api.v1.historical_imports import router as historical_imports_router
 from app.api.v1.leave import router as leave_router
+from app.api.v1.limits import router as limits_router
 from app.api.v1.members import router as members_router
 from app.api.v1.member_bulk import router as member_bulk_router
 from app.api.v1.member_workspace import router as member_workspace_router
@@ -53,8 +56,11 @@ api_router.include_router(admin_mappings_router, prefix="/v1", tags=["admin mapp
 api_router.include_router(admin_delete_router, prefix="/v1", tags=["admin delete"])
 api_router.include_router(diagnostics_router, prefix="/v1", tags=["diagnostics"])
 api_router.include_router(extra_duty_router, prefix="/v1", tags=["extra duty"])
+api_router.include_router(balance_duties_router, prefix="/v1", tags=["balance duties"])
+api_router.include_router(superadmin_allocation_router, prefix="/v1", tags=["superadmin allocation"])
 api_router.include_router(historical_imports_router, prefix="/v1", tags=["historical imports"])
 api_router.include_router(leave_router, prefix="/v1", tags=["leave"])
+api_router.include_router(limits_router, prefix="/v1", tags=["limits"])
 api_router.include_router(member_bulk_router, prefix="/v1", tags=["members"])
 api_router.include_router(members_router, prefix="/v1", tags=["members"])
 api_router.include_router(member_workspace_router, prefix="/v1", tags=["member workspace"])

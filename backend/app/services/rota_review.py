@@ -11,7 +11,7 @@ that it is still the assignment the request was made against.
 from __future__ import annotations
 
 from collections import defaultdict
-from datetime import datetime
+from datetime import datetime, timedelta
 from uuid import UUID
 
 from sqlalchemy import select
@@ -21,6 +21,7 @@ from app.services.member_profile import default_call_level_on
 from app.models import (
     DutyAssignment,
     DutySlot,
+    ExtraDutyBatch,
     ExtraDutyRecord,
     Person,
     PersonPosting,
@@ -59,7 +60,22 @@ EXTRA_DUTY_RULE_LABELS = {
     "monthly_weekend_24hr_limit": "Over weekend 24-hour limit",
     "monthly_same_group_limit": "Over monthly limit for this duty type",
     "monthly_same_campus_limit": "Over monthly limit for this campus",
+    # docs/extra_duty_fill_all_contract.md §3/§6 (fill-all "all units" mode).
+    "fallback_unit": "Covered a duty for another unit",
+    "any_unit": "Covered from another unit",
+    "outside_scope_unit": "Covered from a unit outside this month's scope",
+    "unposted_member": "Member has no posting this month",
+    "unit_rule": "Duty not allowed for this unit",
+    # docs/superadmin_override_contract.md section 2.
+    "superadmin_allocation": "Superadmin allocation",
 }
+
+# docs/superadmin_override_contract.md section 2: a superadmin allocation is reviewed as a
+# warning ("Superadmin allocation by X: reason"), never as a hard block.
+SUPERADMIN_SOURCE = "superadmin_allocation"
+SUPERADMIN_REASON_PREFIX = "Superadmin allocation:"
+
+OVER_LIMIT_DETAIL_NAMES = 5
 
 
 class RotaReviewError(ValueError):
@@ -133,8 +149,12 @@ def compact_safety(row: dict[str, object] | None) -> dict[str, object] | None:
 
 def recommended_action(issues: list[dict[str, str]]) -> str:
     codes = {issue["code"] for issue in issues}
+    if "call_level_changed" in codes:
+        return "Replace this member with someone on the duty's call level before publishing."
     if "hard_blocked" in codes:
         return "Resolve blockers or document a deliberate board override before assigning."
+    if "superadmin_allocation" in codes:
+        return "Confirm the superadmin allocation before publishing."
     if "extra_duty_exception" in codes:
         return "Confirm the extra-duty layer's cover for this short-staffed slot before publishing."
     if "open_slot" in codes:
@@ -173,6 +193,157 @@ def active_extra_duty_records(db: Session, slots: list[DutySlot]) -> dict[UUID, 
     return records
 
 
+def superadmin_allocations(
+    db: Session,
+    slots: list[DutySlot],
+    extra_duty_by_assignment: dict[UUID, ExtraDutyRecord],
+) -> dict[UUID, dict[str, object]]:
+    """Active superadmin allocations by assignment id, with who made them and why (from the
+    allocation's ``ExtraDutyBatch`` summary; falls back to the assignment's override reason)."""
+    pairs = [
+        (slot, assignment)
+        for slot in slots
+        for assignment in active_slot_assignments(slot)
+        if assignment.source == SUPERADMIN_SOURCE
+    ]
+    if not pairs:
+        return {}
+    batch_ids = {
+        extra_duty_by_assignment[a.id].batch_id for _slot, a in pairs if a.id in extra_duty_by_assignment
+    }
+    batches = (
+        {batch.id: batch for batch in db.scalars(select(ExtraDutyBatch).where(ExtraDutyBatch.id.in_(batch_ids)))}
+        if batch_ids
+        else {}
+    )
+    rows: dict[UUID, dict[str, object]] = {}
+    for slot, assignment in pairs:
+        record = extra_duty_by_assignment.get(assignment.id)
+        batch = batches.get(record.batch_id) if record is not None else None
+        summary = dict(batch.summary or {}) if batch is not None else {}
+        reason = summary.get("reason")
+        if not reason:
+            reason = (assignment.override_reason or "").strip()
+            if reason.startswith(SUPERADMIN_REASON_PREFIX):
+                reason = reason[len(SUPERADMIN_REASON_PREFIX):].strip()
+        created = batch.created_at if batch is not None else assignment.created_at
+        rows[assignment.id] = {
+            "assignment_id": str(assignment.id),
+            "slot_id": str(slot.id),
+            "duty_date": slot.duty_date.isoformat(),
+            "duty_type": slot.duty_type,
+            "slot_label": slot.slot_label,
+            "unit_name": slot.unit.name if slot.unit else None,
+            "person_id": str(assignment.person_id),
+            "person_name": assignment.person.canonical_name if assignment.person else None,
+            "by": summary.get("by") or (batch.created_by_name if batch is not None else None),
+            "reason": reason or None,
+            "post_publish": bool(summary.get("post_publish")),
+            "overridden_rules": list(record.overridden_rules or []) if record is not None else [SUPERADMIN_SOURCE],
+            "batch_id": str(batch.id) if batch is not None else None,
+            "created_at": created.isoformat() if created else None,
+        }
+    return rows
+
+
+def call_level_mismatches(db: Session, month: str, slots: list[DutySlot]) -> dict[UUID, dict[str, object]]:
+    """Active assignments in ``month`` whose member's call level (on the duty date) is not in the
+    duty's level set (a pool allows each of its levels), or whose duty has no level at all, by
+    assignment id (docs/call_level_pool_and_balance_contract.md section 1). Typically appears
+    after a promotion.
+
+    ``{assignment_id: {assignment_id, slot_id, duty_date, duty_type, slot_label, unit_name,
+    person_id, person_name, source, superadmin, required_call_level, required_call_levels,
+    person_call_level, message}}``. ``required_call_level`` is the single level or ``None``
+    (pool or unresolved), for display only.
+    """
+    from app.services.rota_eligibility import (
+        describe_level,
+        describe_levels,
+        member_call_level,
+        required_call_levels,
+    )
+    from app.services.rota_rules import get_phase_one_rules
+    from app.services.rota_safety import (
+        MemberContext,
+        member_contexts_for_day,
+        postings_for_month,
+        rule_for_slot,
+        rules_groups,
+    )
+
+    starts_on, ends_on = month_bounds(month)
+    pairs = [
+        (slot, assignment)
+        for slot in slots
+        if starts_on <= slot.duty_date <= ends_on
+        for assignment in active_slot_assignments(slot)
+    ]
+    if not pairs:
+        return {}
+    _version, rules = get_phase_one_rules(db)
+    postings = postings_for_month(db, starts_on, ends_on)
+    contexts_by_day: dict = {}
+    rows: dict[UUID, dict[str, object]] = {}
+    for slot, assignment in pairs:
+        person = assignment.person
+        if person is None:
+            continue
+        day = slot.duty_date
+        if day not in contexts_by_day:
+            by_person: dict = defaultdict(list)
+            for context in member_contexts_for_day(postings, day):
+                by_person[context.person.id].append(context)
+            contexts_by_day[day] = by_person
+        contexts = contexts_by_day[day].get(person.id, [])
+        context = next((c for c in contexts if c.unit_id == slot.unit_id), None) or (
+            contexts[0] if contexts else MemberContext(person, slot.unit_id, person.call_level or "", day)
+        )
+        rule = rule_for_slot(slot, rules)
+        required = required_call_levels(slot, rule, rules_groups(rules, slot))
+        level = member_call_level(context)
+        if level in required:
+            continue
+        name = person.canonical_name
+        superadmin = assignment.source == SUPERADMIN_SOURCE
+        if not required:
+            detail = f"this duty has no call level (set one in Rota Rules); {name} is {describe_level(level)}"
+        else:
+            detail = f"{name} is now {describe_level(level)}; the duty needs {describe_levels(required)}"
+        message = (
+            f"Call level crossed by superadmin: {detail}"
+            if superadmin
+            else f"Call level no longer matches: {detail}"
+        )
+        rows[assignment.id] = {
+            "assignment_id": str(assignment.id),
+            "slot_id": str(slot.id),
+            "duty_date": day.isoformat(),
+            "duty_type": slot.duty_type,
+            "slot_label": slot.slot_label,
+            "unit_name": slot.unit.name if slot.unit else None,
+            "person_id": str(person.id),
+            "person_name": name,
+            "source": assignment.source,
+            "superadmin": superadmin,
+            "required_call_level": next(iter(required)) if len(required) == 1 else None,
+            "required_call_levels": sorted(required),
+            "person_call_level": level,
+            "message": message,
+        }
+    return rows
+
+
+def superadmin_allocation_message(rows: list[dict[str, object]]) -> str:
+    parts = []
+    for row in rows:
+        text = f"Superadmin allocation by {row.get('by') or 'a superadmin'}: {row.get('reason') or 'no reason recorded'}"
+        if row.get("person_name"):
+            text += f" ({row['person_name']})"
+        parts.append(text)
+    return "; ".join(parts) + "."
+
+
 def extra_duty_exception_message(assignments: list[DutyAssignment], records: list[ExtraDutyRecord]) -> str:
     names = ", ".join(
         a.person.canonical_name if a.person else str(a.person_id)
@@ -184,18 +355,65 @@ def extra_duty_exception_message(assignments: list[DutyAssignment], records: lis
     return f"Covered by the extra-duty layer: {names}; rules overridden: {overridden}."
 
 
+def extra_duty_pressure(slots: list[DutySlot], extra_duty_by_assignment: dict[UUID, ExtraDutyRecord]):
+    """(unit, day) pairs whose staffing the extra-duty layer stretched: the day of each ledgered extra
+    duty and, for its rest, the next day. A filled slot hard-blocked there is a consequence of
+    the owner-approved staffing override, not an unsafe assignment of its own."""
+    pressure: set[tuple[UUID | None, object]] = set()
+    for slot in slots:
+        if any(a.id in extra_duty_by_assignment for a in active_slot_assignments(slot)):
+            pressure.add((slot.unit_id, slot.duty_date))
+            pressure.add((slot.unit_id, slot.duty_date + timedelta(days=1)))
+    return pressure
+
+
+def individual_limit_breaches(db: Session, month: str, rules=None) -> list[dict[str, object]]:
+    """Members above an individual duty limit in the saved month (fill-all contract §4/§6):
+    the planner's shared helper, imported lazily (``extra_duty`` is a heavier module)."""
+    from app.services.extra_duty import individual_limit_breaches as shared
+
+    return list(shared(db, month, rules))
+
+
+def over_limit_detail(people: list[dict[str, object]]) -> str:
+    """Checklist text: "N member(s) above an individual duty limit: Name (24-hour 7/6), ...",
+    at most five names then "and N more" (contract §6)."""
+    parts = []
+    for person in people[:OVER_LIMIT_DETAIL_NAMES]:
+        limits = ", ".join(
+            f"{item.get('label') or item.get('code')} {item.get('actual')}/{item.get('limit')}"
+            for item in person.get("limits") or []
+        )
+        parts.append(f"{person.get('person_name')} ({limits})" if limits else str(person.get("person_name")))
+    text = f"{len(people)} member(s) above an individual duty limit: " + ", ".join(parts)
+    if len(people) > OVER_LIMIT_DETAIL_NAMES:
+        text += f" and {len(people) - OVER_LIMIT_DETAIL_NAMES} more"
+    return text
+
+
 def review_items(
     slots: list[DutySlot],
     safety_by_slot: dict[str, dict[str, object]],
     candidates_by_slot: dict[str, dict[str, object]],
     decisions_by_slot_issue: dict[tuple[UUID, str], RotaReviewDecision] | None = None,
     extra_duty_by_assignment: dict[UUID, ExtraDutyRecord] | None = None,
+    superadmin_by_assignment: dict[UUID, dict[str, object]] | None = None,
+    call_level_by_assignment: dict[UUID, dict[str, object]] | None = None,
 ) -> list[dict[str, object]]:
     """``extra_duty_by_assignment``: active ledger records by assignment id; a hard-blocked slot
-    covered by such an assignment becomes an ``extra_duty_exception`` warning (contract §5)."""
+    covered by such an assignment becomes an ``extra_duty_exception`` warning (contract §5).
+    So does a filled slot hard-blocked only because extra duties stretched its unit that day.
+    ``superadmin_by_assignment`` (``superadmin_allocations``): a slot held by a superadmin
+    allocation gets a ``superadmin_allocation`` warning instead of ``hard_blocked``.
+    ``call_level_by_assignment`` (``call_level_mismatches``): an assignment on a different call
+    level is the error ``call_level_changed``, or the warning ``superadmin_cross_level`` when a
+    superadmin allocation crossed the level on purpose."""
     rows: list[dict[str, object]] = []
+    call_level_by_assignment = call_level_by_assignment or {}
     decisions_by_slot_issue = decisions_by_slot_issue or {}
     extra_duty_by_assignment = extra_duty_by_assignment or {}
+    superadmin_by_assignment = superadmin_by_assignment or {}
+    pressure = extra_duty_pressure(slots, extra_duty_by_assignment)
     for slot in slots:
         slot_id = str(slot.id)
         safety = safety_by_slot.get(slot_id)
@@ -222,18 +440,47 @@ def review_items(
                 )
             )
 
+        superadmin_rows = [
+            superadmin_by_assignment.get(a.id)
+            or {"by": None, "reason": None, "person_name": a.person.canonical_name if a.person else None}
+            for a in assignments
+            if a.source == SUPERADMIN_SOURCE
+        ]
+        if superadmin_rows:
+            issues.append(
+                review_issue(
+                    "warning",
+                    "superadmin_allocation",
+                    superadmin_allocation_message(superadmin_rows),
+                    decisions_by_slot_issue.get((slot.id, "superadmin_allocation")),
+                )
+            )
+
         if safety:
             safety_status = str(safety.get("safety_status"))
             reasons = [str(reason) for reason in safety.get("reasons", [])]
             extra_records = [
                 extra_duty_by_assignment[a.id] for a in assignments if a.id in extra_duty_by_assignment
             ]
-            if safety_status == SAFETY_HARD_BLOCK and extra_records:
+            if superadmin_rows:
+                pass  # the superadmin_allocation warning covers this slot's safety state
+            elif safety_status == SAFETY_HARD_BLOCK and extra_records:
                 issues.append(
                     review_issue(
                         "warning",
                         "extra_duty_exception",
                         extra_duty_exception_message(assignments, extra_records),
+                        decisions_by_slot_issue.get((slot.id, "extra_duty_exception")),
+                    )
+                )
+            elif safety_status == SAFETY_HARD_BLOCK and assignments and (slot.unit_id, slot.duty_date) in pressure:
+                issues.append(
+                    review_issue(
+                        "warning",
+                        "extra_duty_exception",
+                        "Unit staffing limit exceeded on this day because the extra-duty layer used "
+                        "this unit's members (see the ledger). This duty's own member is not on leave "
+                        "or resting. " + " ".join(reasons),
                         decisions_by_slot_issue.get((slot.id, "extra_duty_exception")),
                     )
                 )
@@ -256,7 +503,23 @@ def review_items(
                 )
 
         for assignment in assignments:
-            if assignment.override_reason:
+            mismatch = call_level_by_assignment.get(assignment.id)
+            if mismatch is None:
+                continue
+            if mismatch["superadmin"]:
+                issues.append(
+                    review_issue(
+                        "warning",
+                        "superadmin_cross_level",
+                        str(mismatch["message"]),
+                        decisions_by_slot_issue.get((slot.id, "superadmin_cross_level")),
+                    )
+                )
+            else:
+                issues.append(review_issue("error", "call_level_changed", str(mismatch["message"])))
+
+        for assignment in assignments:
+            if assignment.override_reason and assignment.source != SUPERADMIN_SOURCE:
                 issues.append(
                     review_issue(
                         "warning",
@@ -523,14 +786,23 @@ def rota_review_month(db: Session, month: str) -> dict[str, object]:
     candidates_by_slot: dict[str, dict[str, object]] = {}
     decisions_by_slot_issue = review_decisions_for_slots(db, slots)
     extra_duty_by_assignment = active_extra_duty_records(db, slots)
+    superadmin_by_assignment = superadmin_allocations(db, slots, extra_duty_by_assignment)
+    call_level_by_assignment = call_level_mismatches(db, month, slots)
     items = review_items(
-        slots, safety_by_slot, candidates_by_slot, decisions_by_slot_issue, extra_duty_by_assignment
+        slots,
+        safety_by_slot,
+        candidates_by_slot,
+        decisions_by_slot_issue,
+        extra_duty_by_assignment,
+        superadmin_by_assignment,
+        call_level_by_assignment,
     )
     exchange_requests = exchange_requests_for_period(db, period.id)
     exchange_counts = defaultdict(int)
     for exchange in exchange_requests:
         exchange_counts[exchange.status] += 1
     assigned_slots = sum(1 for slot in slots if active_slot_assignments(slot))
+    over_limit_people = individual_limit_breaches(db, month)
     unresolved_warning_items = sum(
         1
         for item in items
@@ -566,7 +838,25 @@ def rota_review_month(db: Session, month: str) -> dict[str, object]:
             "fairness_call_levels": len(fairness),
             "over_assigned_people": sum(len(row["over_assigned"]) for row in fairness),
             "under_assigned_people": sum(len(row["under_assigned"]) for row in fairness),
+            "over_limit_members": len(over_limit_people),
+            "superadmin_allocations": len(superadmin_by_assignment),
+            # Strict call level (limits contract section 1); Agent 2's publish blocker reads it.
+            "call_level_mismatch_items": sum(
+                1 for item in items if any(i["code"] == "call_level_changed" for i in item["issues"])
+            ),
+            "superadmin_cross_level_items": sum(
+                1 for row in call_level_by_assignment.values() if row["superadmin"]
+            ),
         },
+        "over_limit_people": over_limit_people,
+        "superadmin_allocations": sorted(
+            superadmin_by_assignment.values(),
+            key=lambda row: (str(row["duty_date"]), str(row["duty_type"]), str(row["person_name"] or "")),
+        ),
+        "superadmin_cross_level": sorted(
+            (row for row in call_level_by_assignment.values() if row["superadmin"]),
+            key=lambda row: (str(row["duty_date"]), str(row["duty_type"]), str(row["person_name"] or "")),
+        ),
         "review_items": items,
         "person_workload": workload,
         "call_level_fairness": fairness,
@@ -575,7 +865,14 @@ def rota_review_month(db: Session, month: str) -> dict[str, object]:
     }
 
 
-ACCEPTABLE_REVIEW_DECISION_CODES = {"template_review", "safety_review", "override_assignment", "extra_duty_exception"}
+ACCEPTABLE_REVIEW_DECISION_CODES = {
+    "template_review",
+    "safety_review",
+    "override_assignment",
+    "extra_duty_exception",
+    "superadmin_allocation",
+    "superadmin_cross_level",
+}
 
 
 def accept_review_issue(

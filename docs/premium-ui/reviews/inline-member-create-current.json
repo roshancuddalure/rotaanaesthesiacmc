@@ -1,0 +1,53 @@
+{
+  "recorded_at_utc": "2026-10-22T10:54:11.288136+00:00",
+  "requirements": [
+    123,
+    131,
+    134,
+    135,
+    136,
+    140,
+    155,
+    156,
+    208,
+    212,
+    221,
+    223,
+    225,
+    227,
+    228,
+    258
+  ],
+  "completion_claim": false,
+  "scope": "Existing inline member creation pending/failure/retry/lifetime presentation; no request or persisted semantics changes.",
+  "source_sha256": {
+    "frontend/src/operational-import.ts": "3b01e14cbdbbb3c1a9bd2c0c1ea519ce4787170697e3ae34aba446014374df2a"
+  },
+  "evidence": [
+    "docs/premium-ui/qa-inline-member-create.json",
+    "docs/premium-ui/qa-inline-member-create-before.json",
+    "docs/premium-ui/qa-inline-member-choice-independent.json",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+  ],
+  "confirmed_before": "Held inlinecreatePOST left4nativecontrols enabled, Createbuttontextunchanged, formbusy absent. Existing internalbusyguard blocked duplicates but did not explain waiting or prevent editing submitted fields.",
+  "changes": [
+    "Capture unchanged FormData payload before shared control lock; mark creating state and provide local polite wait guidance.",
+    "Invalidate pending identity lookup at create start; stale lookup failure cannot overwrite creating feedback.",
+    "On refusal unlock original controls, retain values and restore keyboardfocus onlywhenowned. Manualretry sends exactsamepayload; no automatic replay.",
+    "Creation callback/UI updates require live original dialog; success closes once and returns exact fixturemember."
+  ],
+  "checks": {
+    "creation_workflows": 6,
+    "nested_choice_regression_workflows": 6,
+    "unit_tests": 100,
+    "build_exit": 0,
+    "build_inputs_unchanged": true
+  },
+  "limits": [
+    "Alllookup/createPOSTsintercepted; exactpayload/callback checks do not certify backendpersistence or realidentitycreation.",
+    "Late lookup test injects realintercepted503response after creation starts; no genericnetworktimeout/nativeplatformcertification.",
+    "No new independentagent signoff due previously reported usage limit; root implemented and tested locally.",
+    "No backend/API-contract/permission/scheduling/persisted-data/export-content changes or production actions.",
+    "All260goal remains active/incomplete; physical/nativeassistive and prior rules/nativebrowser limitations remain pending."
+  ]
+}

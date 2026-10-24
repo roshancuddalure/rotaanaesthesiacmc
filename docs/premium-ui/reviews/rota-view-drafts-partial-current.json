@@ -1,0 +1,75 @@
+{
+  "recorded_at_utc": "2026-10-22T18:21:26.205929+00:00",
+  "completion_claim": false,
+  "requirements": [
+    92,
+    175,
+    208,
+    209,
+    219,
+    227,
+    258
+  ],
+  "scope": "Popup-local manual input retention across intentional rota day view switches, including candidate refresh while Compact is active; mixed candidate response acceptance.",
+  "source_sha256": {
+    "frontend/src/main.ts": "0e4a44c63079b3ccc08cb52282058bd8709e7feb4ca106ae72f74580c98ae4f2",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "e545e63f720e4794d39bf55e73d0a622d842429592ea313ec824c2c78604c1c4"
+  },
+  "changes": [
+    "Extracted remember/restore helpers with a popup-owned WeakMap for local member selection, override text and replace checkbox. Switching Full/Compact/Eagle retains each slot draft without browser storage or persisted record changes.",
+    "Candidate refresh reuses the same retained draft state; returning to Full uses refreshed authoritative options. Missing choices are cleared and explained, with no stale option insertion.",
+    "Day navigation clears the current popup draft state. Closing and reopening creates a fresh popup draft, verified without carrying prior values.",
+    "Preserved existing Promise.all all-or-nothing candidate cache update and request/retry semantics; added a two-slot mixed503/late-success test rather than changing batch behavior."
+  ],
+  "checks": {
+    "expanded_candidate_recovery_contexts": 54,
+    "partial_response_contexts": 6,
+    "day_view_regressions": 6,
+    "browser_total": 66,
+    "engines": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "widths": [
+      320,
+      1280
+    ],
+    "mode_roundtrip": [
+      "full",
+      "compact",
+      "eagle",
+      "full"
+    ],
+    "mixed_response_assertions": "One503 plus late sibling success retains original options and both distinct manual drafts; no automatic retries. Explicit retry performs exactly two reads per slot total, updates both lists and preserves each checkbox/reason.",
+    "fresh_popup_isolation": true,
+    "day_view_scoped_axe_checks": 6,
+    "tagged_axe_violations": 0,
+    "unit_tests": 100,
+    "build_exit_code": 0,
+    "build_inputs_held": true,
+    "static_inventories": "Style/action write/check match; static integrity only."
+  },
+  "evidence": [
+    "docs/premium-ui/qa-rota-candidate-recovery.json",
+    "docs/premium-ui/qa-rota-candidate-partial.json",
+    "docs/premium-ui/qa-rota-day-views.json",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+  ],
+  "tests": {
+    "frontend/tests/premium-rota-candidate-recovery.browser.mjs": "675b2d6b10a233d82fb1a2f006f0a729b40ee41401b32d99bdc5d23902e8f9b5",
+    "frontend/tests/premium-rota-candidate-partial.browser.mjs": "fec0dd0990d1acb4b0b80d947986e37fb52191e51a87171263b77c58b9cdb196",
+    "frontend/tests/fixtures/rota-day-fixture.mjs": "c1619bbd0638fa7745fd053b12ce552ce19c19cbfffc5b3cbb19215e5880113c"
+  },
+  "limitations": [
+    "Root implementer verification, not fresh independent signoff.",
+    "54 recovery contexts use defaultlight;6 day contexts include dark320/light1280. No every-theme/role/calendar-mode matrix.",
+    "Mixed response behavior remains existing all-or-nothing commit; this is not backend partial-recovery or candidate-quality certification.",
+    "Popup drafts survive view switches only within the same popup/day. Day navigation and closing retain existing discard behavior; no cross-day or persistent draft feature introduced.",
+    "WeakMap lifetime follows popup identity by source design; fresh-popup value isolation is tested, not a heap-leak audit.",
+    "No native screen-reader speech or physical checks. Full175/all260 and same-fixture calculations/exports equivalence remain open.",
+    "Only frontend main.ts changed in this batch. No backend/API/permission/scheduling/persistence/export edits; concurrent work preserved.",
+    "Earlier42 optional-generation report is historical after this source change; no fresh42 claim for this batch."
+  ]
+}

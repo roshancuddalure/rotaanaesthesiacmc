@@ -1,0 +1,34 @@
+{
+  "base": "http://127.0.0.1:5197",
+  "results": [
+    {
+      "name": "blocked entry script retains readable startup and genuine reload link",
+      "passed": true
+    },
+    {
+      "name": "blocked browser storage keeps login usable without uncaught failure",
+      "passed": true
+    },
+    {
+      "name": "quota failures preserve usable authenticated navigation",
+      "passed": true
+    },
+    {
+      "name": "preload failure preserves edited field and declining reload never navigates",
+      "passed": true
+    },
+    {
+      "name": "compute settings expose slow loading and recover from 503 through a genuine retry",
+      "passed": true
+    },
+    {
+      "name": "typed request client handles HTTP, malformed, empty and cancelled responses without mutation replay",
+      "passed": true
+    }
+  ],
+  "skipped": [],
+  "limitations": [
+    "Preload event is injected; real missing production chunks covered separately",
+    "Edited field exercises unsaved-input protection, not persistent draft restoration"
+  ]
+}

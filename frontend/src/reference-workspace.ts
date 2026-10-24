@@ -1,5 +1,8 @@
 import { request } from "./services/api";
 import { workspaceDialog } from "./member-workspace";
+import { workspaceLoading, workspaceLoadFailure, savedReadbackFailure, lockWorkspaceControls, protectWorkspaceDraft } from "./workspace-load-state";
+import { installFormValidation, watchFormFocus } from "./form-validation";
+import { formatAuditTimestamp } from "./audit-time";
 
 const esc = (value: unknown) =>
   String(value ?? "").replace(
@@ -10,10 +13,18 @@ const esc = (value: unknown) =>
       ]!,
   );
 
+function updateRegistryResultStatus(dialog: HTMLDialogElement, selector: string, noun: string) {
+  const choices = [...dialog.querySelectorAll<HTMLElement>(selector)];
+  const shown = choices.filter(choice => !choice.hidden).length;
+  const status = dialog.querySelector<HTMLElement>("[data-search-results]");
+  if (status) status.textContent = !choices.length ? `No ${noun} loaded.` : shown ? `${shown} of ${choices.length} ${noun} shown.` : `No ${noun} match these filters. Clear the search or adjust the filters.`;
+}
+
 export async function openMappingCreator(saved: () => void) {
   const dialog = workspaceDialog("Add imported label mapping", "mw-import");
   let dirty = false,
     busy = false;
+  protectWorkspaceDraft(dialog, () => dirty || busy);
   const close = () => {
     if (busy || (dirty && !confirm("Discard this mapping draft?"))) return;
     dialog.close();
@@ -28,15 +39,38 @@ export async function openMappingCreator(saved: () => void) {
     .querySelectorAll<HTMLButtonElement>("[data-close]")
     .forEach((b) => (b.onclick = close));
   const form = dialog.querySelector<HTMLFormElement>("form")!;
+  const validation = installFormValidation(form, form.querySelector<HTMLElement>("[data-error]")!);
   const type = form.querySelector<HTMLSelectElement>("[name=mapping_type]")!;
   const target = form.querySelector<HTMLSelectElement>("[name=target_key]")!;
+  const saveButton = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+  const saveStatus = document.createElement("p");
+  saveStatus.setAttribute("role", "status");
+  saveStatus.setAttribute("aria-atomic", "true");
+  form.before(saveStatus);
+  const destinationStatus = document.createElement("div");
+  destinationStatus.setAttribute("data-destination-status", "");
+  target.closest("label")!.after(destinationStatus);
+  let destinationsReady = false;
+  let optionsSequence = 0;
+  const filterDestinations = () => {
+    const q = form.querySelector<HTMLInputElement>("[data-find]")!.value.toLowerCase();
+    Array.from(target.options).forEach(option => { option.hidden = Boolean(option.value && !option.selected && !option.text.toLowerCase().includes(q)); });
+  };
   async function load() {
+    const sequence = ++optionsSequence;
+    const retryFocused = destinationStatus.contains(document.activeElement);
+    destinationsReady = false;
+    saveButton.disabled = true;
+    destinationStatus.innerHTML = '<p role="status">Loading destinations…</p>';
+    target.disabled = true;
+    target.innerHTML = '<option value="">Loading destinations...</option>';
     try {
       const values = await request<any[]>(
         type.value === "unit_label"
           ? "/api/v1/normalization/units"
           : `/api/v1/normalization/catalog/${type.value === "duty_label" ? "duty_type" : "posting_type"}`,
       );
+      if (!dialog.open || sequence !== optionsSequence) return;
       target.innerHTML = `<option value="">Select a destination</option>${values
         .filter((i) => i.active !== false && i.active_status !== "archived")
         .map(
@@ -44,37 +78,51 @@ export async function openMappingCreator(saved: () => void) {
             `<option value="${esc(i.id || i.key)}">${esc(i.label || `${i.campus || ""} ${i.name}`.trim())}</option>`,
         )
         .join("")}`;
+      destinationsReady = true;
+      destinationStatus.replaceChildren();
+      filterDestinations();
     } catch (error) {
-      form.querySelector("[data-error]")!.textContent = (
-        error as Error
-      ).message;
+      if (!dialog.open || sequence !== optionsSequence) return;
+      target.innerHTML = '<option value="">Destinations unavailable</option>';
+      destinationStatus.innerHTML = `<p role="alert">${esc(error instanceof Error ? error.message : "Destinations could not load.")}</p><button type="button" data-retry-destinations>Retry destinations</button>`;
+      destinationStatus.querySelector<HTMLButtonElement>("button")!.onclick = () => void load();
+      if (retryFocused && (document.activeElement === document.body || document.activeElement === dialog))
+        destinationStatus.querySelector<HTMLButtonElement>("button")!.focus({ preventScroll: true });
+    } finally {
+      if (dialog.open && sequence === optionsSequence) {
+        target.disabled = !destinationsReady;
+        saveButton.disabled = !destinationsReady || busy;
+        if (destinationsReady && retryFocused && (document.activeElement === document.body || document.activeElement === dialog))
+          target.focus({ preventScroll: true });
+      }
     }
   }
   type.onchange = () => void load();
-  form.oninput = () => {
-    dirty = true;
+  form.oninput = (event) => {
+    if (event.target instanceof HTMLElement && event.target.matches("[name]"))
+      dirty = true;
   };
-  form.querySelector<HTMLInputElement>("[data-find]")!.oninput = (e) => {
-    const q = (e.target as HTMLInputElement).value.toLowerCase();
-    Array.from(target.options).forEach(
-      (o) =>
-        (o.hidden = Boolean(
-          o.value && !o.selected && !o.text.toLowerCase().includes(q),
-        )),
-    );
-  };
+  form.querySelector<HTMLInputElement>("[data-find]")!.oninput = filterDestinations;
   form.onsubmit = async (e) => {
     e.preventDefault();
-    if (busy) return;
+    if (busy || !destinationsReady || target.disabled || !target.value) return;
+    const values = Object.fromEntries(new FormData(form));
+    const targetLabel = target.selectedOptions[0]?.text;
     busy = true;
+    validation.clear();
+    const focus = watchFormFocus();
+    const unlock = lockWorkspaceControls(dialog);
+    saveButton.textContent = "Saving mapping…";
+    saveButton.setAttribute("aria-busy", "true");
+    form.setAttribute("aria-busy", "true");
+    saveStatus.textContent = "Saving mapping. Please wait before closing.";
     try {
-      const values = Object.fromEntries(new FormData(form));
       await request("/api/v1/admin/mappings", {
         method: "POST",
         body: JSON.stringify({
           ...values,
           status: "reviewed",
-          target_label: target.selectedOptions[0]?.text,
+          target_label: targetLabel,
         }),
       });
       dirty = false;
@@ -82,11 +130,16 @@ export async function openMappingCreator(saved: () => void) {
       close();
       saved();
     } catch (error) {
-      form.querySelector("[data-error]")!.textContent = (
-        error as Error
-      ).message;
+      validation.show(error, focus.unchanged());
     } finally {
       busy = false;
+      unlock();
+      saveButton.disabled = !destinationsReady;
+      saveButton.textContent = "Save mapping";
+      saveButton.removeAttribute("aria-busy");
+      form.removeAttribute("aria-busy");
+      saveStatus.textContent = "";
+      focus.stop();
     }
   };
   await load();
@@ -115,16 +168,19 @@ async function openReferenceHistory(query: string) {
     event.preventDefault();
     close();
   });
-  dialog.innerHTML = '<p role="status">Loading activity…</p>';
-  try {
+  async function loadActivity() {
+    if (!dialog.open) return;
+    const restoreFocus = workspaceLoading(dialog, "Reference activity", close);
+    try {
     const rows = await request<Record<string, any>[]>(
       `/api/v1/normalization/activity?${query}`,
     );
+    if (!dialog.open) return;
     dialog.innerHTML = `<header class="mw-header"><h2>Reference activity</h2><button type="button" data-close aria-label="Close activity">×</button></header><div class="mw-content">${
       rows
         .map(
           (row) =>
-            `<article class="mw-history"><strong>${esc(row.action.replace(/_/g, " "))}</strong><p>${esc(row.operator)} · ${esc(new Date(row.created_at).toLocaleString())}</p><dl>${Object.entries(
+            `<article class="mw-history"><strong>${esc(row.action.replace(/_/g, " "))}</strong><p>${esc(row.operator)} · ${esc(formatAuditTimestamp(row.created_at))}</p><dl>${Object.entries(
               row.details.after || row.details.before || {},
             )
               .filter(([key]) => !["id", "revision", "usage"].includes(key))
@@ -136,10 +192,14 @@ async function openReferenceHistory(query: string) {
         )
         .join("") || "<p>No activity recorded for this reference yet.</p>"
     }</div>`;
-  } catch (error) {
-    dialog.innerHTML = `<p role="alert">${esc((error as Error).message)}</p><button data-close>Close</button>`;
-  }
+    } catch (error) {
+      workspaceLoadFailure(dialog, "Activity unavailable", error, () => void loadActivity(), close);
+      return;
+    }
   dialog.querySelector<HTMLButtonElement>("[data-close]")!.onclick = close;
+  restoreFocus();
+  }
+  await loadActivity();
 }
 
 export async function openUnitRegistry(
@@ -154,10 +214,16 @@ export async function openUnitRegistry(
   );
   let units: Unit[] = [];
   let selected: Unit | undefined;
+  let confirmedUnit: Unit | undefined;
   let busy = false;
   let dirty = false;
+  protectWorkspaceDraft(dialog, () => dirty || (busy && !confirmedUnit));
   let month = new Date().toLocaleDateString("en-CA").slice(0, 7);
   let statusFilter = "all";
+  let monthSequence = 0;
+  let countsMonth = month;
+  let countState: "ready" | "loading" | "error" = "ready";
+  let countError = "";
   const close = () => {
     if (busy || (dirty && !confirm("Discard unsaved unit details?"))) return;
     dialog.close();
@@ -168,18 +234,102 @@ export async function openUnitRegistry(
     e.preventDefault();
     close();
   });
-  dialog.innerHTML = "<p role='status'>Loading units…</p>";
-  try {
+  async function loadUnits() {
+    if (!dialog.open) return;
+    const restoreFocus = workspaceLoading(dialog, "Department units", close);
+    try {
     units = await request<Unit[]>(`/api/v1/normalization/units?month=${month}`);
+    if (!dialog.open) return;
   } catch (error) {
-    dialog.innerHTML = `<p role="alert">${esc((error as Error).message)}</p><button type="button">Close</button>`;
-    dialog.querySelector("button")!.onclick = close;
+    if (!dialog.open) return;
+    workspaceLoadFailure(dialog, "Units unavailable", error, () => void loadUnits(), close);
     return;
   }
+  countsMonth = month;
+  countState = "ready";
   selected = units.find((u) => u.id === initialId);
+  if (createNew) selected = undefined;
+  render();
+  restoreFocus();
+  }
+
+  async function refreshSavedUnit() {
+    if (!dialog.open || !confirmedUnit || busy) return;
+    busy = true;
+    const restoreFocus = workspaceLoading(dialog, "Refreshing saved unit", () => { busy = false; close(); });
+    try {
+      const refreshed = await request<Unit[]>(`/api/v1/normalization/units?month=${month}`);
+      if (!dialog.open) return;
+      units = refreshed;
+      countsMonth = month;
+      countState = "ready";
+      ++monthSequence;
+      selected = confirmedUnit;
+      confirmedUnit = undefined;
+      busy = false;
+      render();
+      restoreFocus();
+      saved(selected);
+    } catch (error) {
+      savedReadbackFailure(dialog, error, () => void refreshSavedUnit(), close);
+    } finally { busy = false; }
+  }
+
+  function updateCountStatus() {
+    const status = dialog.querySelector<HTMLElement>("[data-count-status]");
+    if (!status) return;
+    status.querySelector<HTMLElement>("[data-count-message]")!.textContent =
+      countState === "loading" ? `Loading member counts for ${month}. Showing last confirmed counts for ${countsMonth}. You can keep editing.` :
+      countState === "error" ? `Member counts for ${month} could not load. Showing last confirmed counts for ${countsMonth}. ${countError}` :
+      `Member counts shown for ${countsMonth}.`;
+    const retry = status.querySelector<HTMLButtonElement>("button")!;
+    retry.hidden = countState === "ready" || (countState === "loading" && retry.hidden);
+    retry.disabled = countState === "loading" || busy;
+    retry.onclick = () => void refreshMemberCounts();
+    const list = dialog.querySelector<HTMLElement>(".registry-unit-list")!;
+    if (countState === "loading") list.setAttribute("aria-busy", "true");
+    else list.removeAttribute("aria-busy");
+  }
+
+  async function refreshMemberCounts() {
+    if (!dialog.open) return;
+    const sequence = ++monthSequence;
+    const requestedMonth = month;
+    countState = "loading";
+    countError = "";
+    updateCountStatus();
+    try {
+      const loadedUnits = await request<Unit[]>(`/api/v1/normalization/units?month=${requestedMonth}`);
+      if (!dialog.open || sequence !== monthSequence) return;
+      // A count refresh must never replace the editor or its revision/draft.
+      const counts = new Map(loadedUnits.map(unit => [unit.id, unit.usage.selected_members]));
+      units.forEach(unit => {
+        const count = counts.get(unit.id);
+        if (count === undefined) delete unit.usage.selected_members;
+        else unit.usage.selected_members = count;
+      });
+      countsMonth = requestedMonth;
+      dialog.querySelectorAll<HTMLElement>("[data-unit-count]").forEach(label => {
+        const count = counts.get(label.dataset.unitCount!);
+        label.textContent = count === undefined ? `Member count unavailable for ${countsMonth}` : `${count} members in ${countsMonth}`;
+      });
+      countState = "ready";
+    } catch (error) {
+      if (!dialog.open || sequence !== monthSequence) return;
+      countState = "error";
+      countError = error instanceof Error ? error.message : "Please retry.";
+    }
+    if (!dialog.open || sequence !== monthSequence) return;
+    const retry = dialog.querySelector<HTMLButtonElement>("[data-count-status] button");
+    const retryFocused = document.activeElement === retry;
+    updateCountStatus();
+    if (countState === "ready" && retryFocused)
+      dialog.querySelector<HTMLInputElement>("[data-unit-month]")?.focus({ preventScroll: true });
+  }
 
   function render() {
-    dialog.innerHTML = `<header class="mw-header"><div><h2>Department units</h2><p>Create units, maintain names and aliases, and preserve their history.</p></div><button data-close type="button" aria-label="Close unit management">×</button></header><div class="mw-content"><div class="registry-actions"><label>Find a unit<input type="search" data-search placeholder="Name, code, campus or alias"></label><label>Member count month<input type="month" data-unit-month value="${month}"></label><label>Show units<select data-unit-status><option value="all">All</option><option value="active" ${statusFilter === "active" ? "selected" : ""}>Active</option><option value="archived" ${statusFilter === "archived" ? "selected" : ""}>Archived</option></select></label><button type="button" data-new>Add Unit</button></div><div class="registry-unit-list">${units.map((u) => `<button type="button" data-select-unit="${u.id}" data-unit-state="${u.active_status}" data-unit-search="${esc([u.name, u.code, u.campus, ...u.aliases].join(" ").toLowerCase())}"><strong>${esc(u.name)}</strong> · ${esc(u.campus || "Campus not specified")} · ${esc(u.code)} · ${esc(u.active_status)} &middot; ${u.usage.selected_members ?? 0} members in ${month}</button>`).join("") || "<p>No units yet. Add your first department unit below.</p>"}</div><hr><h3>${selected ? `Edit ${esc(selected.name)}` : "Add a unit"}</h3>${selected ? `<p>${selected.usage.postings} postings · ${selected.usage.duties} duty slots linked. ${selected.usage.future_postings} current/upcoming postings and ${selected.usage.future_duties} future duty slots.</p><button type="button" data-unit-history>View unit activity</button>` : ""}<form id="registry-unit-form"><label>Unit name<input name="name" required maxlength="255" value="${esc(selected?.name)}" placeholder="For example: Unit IV"></label><label>Campus<input name="campus" maxlength="100" value="${esc(selected?.campus)}" placeholder="For example: Main or Ranipet"></label><label>Unique unit code<input name="code" maxlength="50" value="${esc(selected?.code)}" placeholder="Suggested from name and campus"></label><label>Minimum free people<input name="minimum_free_people" type="number" min="0" required value="${selected?.minimum_free_people ?? 1}"></label><details><summary>Call-wise staffing minimums</summary>${["1ST_CALL", "2ND_CALL", "3RD_CALL", "CO_4TH_CALL", "4TH_CALL", "5TH_CALL"].map((level) => `<label>${level.replace(/_/g, " ")}<input type="number" min="0" data-call-minimum="${level}" placeholder="Use fallback minimum" value="${selected?.call_minimums?.find(([key]) => key === level)?.[1] ?? ""}"></label>`).join("")}</details><label>Alternative labels (one per line)<textarea name="aliases" rows="4" placeholder="Use campus-qualified aliases where numbered units could be confused">${esc(selected?.aliases.join("\n"))}</textarea></label><label>Notes<textarea name="notes" rows="3">${esc(selected?.notes)}</textarea></label><label>Membership<select name="active_status"><option value="active" ${selected?.active_status !== "archived" ? "selected" : ""}>Active</option><option value="archived" ${selected?.active_status === "archived" ? "selected" : ""}>Archived</option></select></label><p>Renaming keeps the previous unit label as an alias. Archiving preserves postings and duty history.</p><p class="mw-error" role="alert" data-error></p><div class="mw-footer"><span data-dirty>Saved details</span><button type="button" data-close>Cancel</button><button class="primary" type="submit">${selected ? "Save unit" : "Create unit"}</button></div></form></div>`;
+    if (!dialog.open) return;
+    dialog.innerHTML = `<header class="mw-header"><div><h2>Department units</h2><p>Create units, maintain names and aliases, and preserve their history.</p></div><button data-close type="button" aria-label="Close unit management">×</button></header><div class="mw-content"><div class="registry-actions"><label>Find a unit<input type="search" data-search placeholder="Name, code, campus or alias"></label><label>Member count month<input type="month" data-unit-month value="${month}"></label><label>Show units<select data-unit-status><option value="all">All</option><option value="active" ${statusFilter === "active" ? "selected" : ""}>Active</option><option value="archived" ${statusFilter === "archived" ? "selected" : ""}>Archived</option></select></label><button type="button" data-new>Add Unit</button></div><div data-count-status><p role="status" aria-atomic="true" data-count-message></p><button type="button" hidden>Retry member counts</button></div><p role="status" aria-live="polite" aria-atomic="true" data-search-results></p><div class="registry-unit-list">${units.map((u) => `<button type="button" data-select-unit="${u.id}" ${selected?.id === u.id ? 'aria-current="true"' : ""} data-unit-state="${u.active_status}" data-unit-search="${esc([u.name, u.code, u.campus, ...u.aliases].join(" ").toLowerCase())}"><strong>${esc(u.name)}</strong> · ${esc(u.campus || "Campus not specified")} · ${esc(u.code)} · ${esc(u.active_status)} &middot; <span data-unit-count="${esc(u.id)}">${u.usage.selected_members === undefined ? `Member count unavailable for ${countsMonth}` : `${u.usage.selected_members} members in ${countsMonth}`}</span></button>`).join("") || "<p>No units yet. Add your first department unit below.</p>"}</div><hr><h3>${selected ? `Edit ${esc(selected.name)}` : "Add a unit"}</h3>${selected ? `<p>${selected.usage.postings} postings · ${selected.usage.duties} duty slots linked. ${selected.usage.future_postings} current/upcoming postings and ${selected.usage.future_duties} future duty slots.</p><button type="button" data-unit-history>View unit activity</button>` : ""}<form id="registry-unit-form"><label>Unit name<input name="name" required maxlength="255" value="${esc(selected?.name)}" placeholder="For example: Unit IV"></label><label>Campus<input name="campus" maxlength="100" value="${esc(selected?.campus)}" placeholder="For example: Main or Ranipet"></label><label>Unique unit code<input name="code" maxlength="50" value="${esc(selected?.code)}" placeholder="Suggested from name and campus"></label><label>Minimum free people<input name="minimum_free_people" type="number" min="0" required value="${selected?.minimum_free_people ?? 1}"></label><details><summary>Call-wise staffing minimums</summary>${["1ST_CALL", "2ND_CALL", "3RD_CALL", "CO_4TH_CALL", "4TH_CALL", "5TH_CALL"].map((level) => `<label>${level.replace(/_/g, " ")}<input type="number" min="0" data-call-minimum="${level}" placeholder="Use fallback minimum" value="${selected?.call_minimums?.find(([key]) => key === level)?.[1] ?? ""}"></label>`).join("")}</details><label>Alternative labels (one per line)<textarea name="aliases" rows="4" placeholder="Use campus-qualified aliases where numbered units could be confused">${esc(selected?.aliases.join("\n"))}</textarea></label><label>Notes<textarea name="notes" rows="3">${esc(selected?.notes)}</textarea></label><label>Membership<select name="active_status"><option value="active" ${selected?.active_status !== "archived" ? "selected" : ""}>Active</option><option value="archived" ${selected?.active_status === "archived" ? "selected" : ""}>Archived</option></select></label><p>Renaming keeps the previous unit label as an alias. Archiving preserves postings and duty history.</p><p class="mw-error" role="alert" data-error></p><div class="mw-footer"><span data-dirty>Saved details</span><button type="button" data-close>Cancel</button><button class="primary" type="submit">${selected ? "Save unit" : "Create unit"}</button></div></form></div>`;
     dialog
       .querySelectorAll<HTMLButtonElement>("[data-close]")
       .forEach((b) => (b.onclick = close));
@@ -204,12 +354,6 @@ export async function openUnitRegistry(
           render();
         }),
     );
-    dialog.querySelector<HTMLInputElement>("[data-search]")!.oninput = (e) => {
-      const q = (e.target as HTMLInputElement).value.toLowerCase();
-      dialog
-        .querySelectorAll<HTMLButtonElement>("[data-unit-search]")
-        .forEach((b) => (b.hidden = !b.dataset.unitSearch!.includes(q)));
-    };
     function filterUnits() {
       const q = dialog
         .querySelector<HTMLInputElement>("[data-search]")!
@@ -223,6 +367,7 @@ export async function openUnitRegistry(
               (statusFilter !== "all" &&
                 el.dataset.unitState !== statusFilter)),
         );
+      updateRegistryResultStatus(dialog, "[data-unit-search]", "units");
     }
     dialog.querySelector<HTMLSelectElement>("[data-unit-status]")!.onchange = (
       e,
@@ -232,28 +377,31 @@ export async function openUnitRegistry(
     };
     dialog.querySelector<HTMLInputElement>("[data-search]")!.oninput =
       filterUnits;
-    dialog.querySelector<HTMLInputElement>("[data-unit-month]")!.onchange =
-      async (e) => {
-        if (dirty && !confirm("Discard edits and change the count month?")) {
-          (e.target as HTMLInputElement).value = month;
-          return;
-        }
-        month = (e.target as HTMLInputElement).value || month;
-        try {
-          units = await request<Unit[]>(
-            `/api/v1/normalization/units?month=${month}`,
-          );
-          selected = units.find((u) => u.id === selected?.id);
-          dirty = false;
-          render();
-        } catch (error) {
-          dialog.querySelector("[data-error]")!.textContent = (
-            error as Error
-          ).message;
-        }
-      };
+    dialog.querySelector<HTMLInputElement>("[data-unit-month]")!.onchange = (e) => {
+      const nextMonth = (e.target as HTMLInputElement).value || month;
+      if (nextMonth === month) return;
+      if (dirty && !confirm("Discard edits and change the count month?")) {
+        (e.target as HTMLInputElement).value = month;
+        return;
+      }
+      month = nextMonth;
+      if (dirty) {
+        // Discard only the draft explicitly confirmed now, never later edits.
+        dirty = false;
+        render();
+      }
+      void refreshMemberCounts();
+    };
+    updateCountStatus();
     filterUnits();
     const form = dialog.querySelector<HTMLFormElement>("form")!;
+    let submittedCallInputs: HTMLInputElement[] = [];
+    const validation = installFormValidation(form, form.querySelector<HTMLElement>("[data-error]")!, path => {
+      if (path.length === 3 && path[0] === "call_minimums" && typeof path[1] === "number" && path[2] === "minimum_free_people") {
+        return submittedCallInputs[path[1]] ?? null;
+      }
+      return null;
+    });
     form.oninput = () => {
       dirty = true;
       dialog.querySelector("[data-dirty]")!.textContent = "Unsaved changes";
@@ -272,6 +420,10 @@ export async function openUnitRegistry(
         const result = await request<{ code: string }>(
           `/api/v1/normalization/units/suggest-code?name=${encodeURIComponent(name)}&campus=${encodeURIComponent(campus)}`,
         );
+        if (!dialog.open || !form.isConnected ||
+          (form.elements.namedItem("name") as HTMLInputElement).value !== name ||
+          (form.elements.namedItem("campus") as HTMLInputElement).value !== campus ||
+          (form.elements.namedItem("code") as HTMLInputElement).value) return;
         (form.elements.namedItem("code") as HTMLInputElement).value =
           result.code;
       } catch {
@@ -301,6 +453,7 @@ export async function openUnitRegistry(
             minimum_free_people: Number(input.value),
           })),
       };
+      submittedCallInputs = [...form.querySelectorAll<HTMLInputElement>("[data-call-minimum]")].filter(input => input.value !== "");
       if (
         selected &&
         payload.active_status !== selected.active_status &&
@@ -312,12 +465,19 @@ export async function openUnitRegistry(
       busy = true;
       const submit = form.querySelector<HTMLButtonElement>("[type=submit]")!;
       submit.disabled = true;
+      const submitLabel = submit.textContent;
+      submit.textContent = "Saving unit…";
+      form.setAttribute("aria-busy", "true");
+      validation.clear();
+      const focus = watchFormFocus();
+      const unlock = lockWorkspaceControls(dialog);
       try {
         const result = await request<Unit>(
           `/api/v1/normalization/units${selected ? `/${selected.id}` : ""}`,
           { method: selected ? "PUT" : "POST", body: JSON.stringify(payload) },
         );
         selected = result;
+        confirmedUnit = result;
         dirty = false;
         if (createNew) {
           busy = false;
@@ -328,22 +488,29 @@ export async function openUnitRegistry(
         units = await request<Unit[]>(
           `/api/v1/normalization/units?month=${month}`,
         );
+        countsMonth = month;
+        countState = "ready";
+        ++monthSequence;
         selected = result;
+        confirmedUnit = undefined;
         dirty = false;
         render();
         saved(result);
       } catch (error) {
-        form.querySelector("[data-error]")!.textContent = (
-          error as Error
-        ).message;
+        if (confirmedUnit) savedReadbackFailure(dialog, error, () => void refreshSavedUnit(), close);
+        else validation.show(error, focus.unchanged());
       } finally {
+        unlock();
+        focus.stop();
         busy = false;
         submit.disabled = false;
+        submit.textContent = submitLabel;
+        form.removeAttribute("aria-busy");
+        if (dialog.open) updateCountStatus();
       }
     };
   }
-  if (createNew) selected = undefined;
-  render();
+  await loadUnits();
 }
 
 type Reference = {
@@ -370,6 +537,8 @@ export async function openReferenceCatalog(
     selected: Reference | undefined,
     dirty = false,
     busy = false;
+  let confirmedReferenceSave = false;
+  protectWorkspaceDraft(dialog, () => dirty || (busy && !confirmedReferenceSave));
   const kinds: Record<string, string> = {
     campus: "Campuses",
     designation: "Designations",
@@ -390,19 +559,32 @@ export async function openReferenceCatalog(
     close();
   });
   async function load() {
+    const loadingKind = kind;
+    const restoreFocus = workspaceLoading(dialog, "Reference labels and mappings", () => {
+      if (confirmedReferenceSave) busy = false;
+      close();
+    });
     try {
-      items = await request<Reference[]>(
+      const loadedItems = await request<Reference[]>(
         `/api/v1/normalization/catalog/${kind}`,
       );
+      if (!dialog.open || loadingKind !== kind) return;
+      items = loadedItems;
       selected = undefined;
       dirty = false;
+      const notifySaved = confirmedReferenceSave;
+      confirmedReferenceSave = false;
       render();
+      restoreFocus();
+      if (notifySaved) saved();
     } catch (error) {
-      dialog.innerHTML = `<p role="alert">${esc((error as Error).message)}</p><button>Close</button>`;
-      dialog.querySelector("button")!.onclick = close;
+      if (!dialog.open || loadingKind !== kind) return;
+      if (confirmedReferenceSave) savedReadbackFailure(dialog, error, () => void load(), close);
+      else workspaceLoadFailure(dialog, "Reference labels unavailable", error, () => void load(), close);
     }
   }
   function render() {
+    if (!dialog.open) return;
     dialog.innerHTML = `<header class="mw-header"><div><h2>Reference labels and mappings</h2><p>A mapping connects an imported spelling to an approved value. Example: CL → Casual leave.</p></div><button type="button" data-close aria-label="Close reference management">×</button></header><div class="mw-content"><label>Section<select data-kind>${Object.entries(
       kinds,
     )
@@ -412,7 +594,7 @@ export async function openReferenceCatalog(
       )
       .join(
         "",
-      )}</select></label><label>Find a label<input type="search" data-search></label><div class="registry-actions"><button type="button" data-new>Add ${kind.replace(/_/g, " ")}</button><button type="button" data-add-mapping>Add Mapping</button></div><div class="registry-unit-list">${items.map((i) => `<button type="button" data-key="${esc(i.key)}" data-label-search="${esc([i.key, i.label, ...i.aliases].join(" ").toLowerCase())}">${esc(i.label)} · ${i.active ? "Active" : "Archived"} · ${i.usage.records} linked records</button>`).join("") || "<p>No values yet. Add the first value above.</p>"}</div><form><h3>${selected ? `Edit ${esc(selected.label)}` : "Add a reference value"}</h3><label>Stable key<input name="key" required pattern="[A-Za-z0-9_]+" value="${esc(selected?.key)}" ${selected ? "readonly" : ""} placeholder="For example: STUDY_LEAVE"></label><label>Display label<input name="label" required maxlength="255" value="${esc(selected?.label)}"></label><label>Imported spellings / aliases (one per line)<textarea name="aliases" rows="4" placeholder="For example: study leave&#10;Study LV">${esc(selected?.aliases.join("\n"))}</textarea></label>${
+      )}</select></label><label>Find a label<input type="search" data-search></label><div class="registry-actions"><button type="button" data-new>Add ${kind.replace(/_/g, " ")}</button><button type="button" data-add-mapping>Add Mapping</button></div><p role="status" aria-live="polite" aria-atomic="true" data-search-results></p><div class="registry-unit-list">${items.map((i) => `<button type="button" data-key="${esc(i.key)}" ${selected?.key === i.key ? 'aria-current="true"' : ""} data-label-search="${esc([i.key, i.label, ...i.aliases].join(" ").toLowerCase())}">${esc(i.label)} · ${i.active ? "Active" : "Archived"} · ${i.usage.records} linked records</button>`).join("") || "<p>No values yet. Add the first value above.</p>"}</div><form><h3>${selected ? `Edit ${esc(selected.label)}` : "Add a reference value"}</h3><label>Stable key<input name="key" required pattern="[A-Za-z0-9_]+" value="${esc(selected?.key)}" ${selected ? "readonly" : ""} placeholder="For example: STUDY_LEAVE"></label><label>Display label<input name="label" required maxlength="255" value="${esc(selected?.label)}"></label><label>Imported spellings / aliases (one per line)<textarea name="aliases" rows="4" placeholder="For example: study leave&#10;Study LV">${esc(selected?.aliases.join("\n"))}</textarea></label>${
       ["leave_status", "leave_slot", "posting_type"].includes(kind)
         ? `<label>Operational meaning<select name="maps_to" required><option value="">Choose a supported meaning</option>${items
             .filter((i) => i.behavior.maps_to === i.key)
@@ -463,7 +645,9 @@ export async function openReferenceCatalog(
       dialog
         .querySelectorAll<HTMLElement>("[data-label-search]")
         .forEach((el) => (el.hidden = !el.dataset.labelSearch!.includes(q)));
+      updateRegistryResultStatus(dialog, "[data-label-search]", "labels");
     };
+    updateRegistryResultStatus(dialog, "[data-label-search]", "labels");
     dialog.querySelectorAll<HTMLButtonElement>("[data-key]").forEach(
       (b) =>
         (b.onclick = () => {
@@ -499,6 +683,7 @@ export async function openReferenceCatalog(
         dialog.querySelector<HTMLTextAreaElement>("[name=aliases]")!.focus();
       };
     const form = dialog.querySelector<HTMLFormElement>("form")!;
+    const validation = installFormValidation(form, form.querySelector<HTMLElement>("[data-error]")!);
     form.oninput = () => {
       dirty = true;
     };
@@ -526,6 +711,13 @@ export async function openReferenceCatalog(
       )
         return;
       busy = true;
+      validation.clear();
+      const focus = watchFormFocus();
+      const unlock = lockWorkspaceControls(dialog);
+      const submit = form.querySelector<HTMLButtonElement>('[type="submit"]')!;
+      const submitLabel = submit.textContent;
+      submit.textContent = "Saving reference…";
+      form.setAttribute("aria-busy", "true");
       try {
         await request(
           `/api/v1/normalization/catalog/${kind}/${encodeURIComponent(String(values.key))}`,
@@ -567,13 +759,15 @@ export async function openReferenceCatalog(
           },
         );
         dirty = false;
+        confirmedReferenceSave = true;
         await load();
-        saved();
       } catch (error) {
-        form.querySelector("[data-error]")!.textContent = (
-          error as Error
-        ).message;
+        validation.show(error, focus.unchanged());
       } finally {
+        unlock();
+        submit.textContent = submitLabel;
+        form.removeAttribute("aria-busy");
+        focus.stop();
         busy = false;
       }
     };

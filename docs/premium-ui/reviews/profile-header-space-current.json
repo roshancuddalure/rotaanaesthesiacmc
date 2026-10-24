@@ -1,0 +1,75 @@
+{
+  "recorded_at_utc": "2026-10-23T14:16:37.367289+00:00",
+  "completion_claim": false,
+  "requirements": [
+    105,
+    208,
+    209,
+    212,
+    219,
+    258
+  ],
+  "scope": "Canonical member profile header space for full255character identity, status and essential actions; existing draft/tab outcome checks.",
+  "source_sha256": {
+    "frontend/src/member-workspace.ts": "b670955ad37d34343e01264ff4c62f68d8214c3cb9bac5725ef87b65b8e7612a",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "56a8509d9d013195326d89056e50b4fa99d31dbe5f82ac3cbc7a901a7ee18fd5"
+  },
+  "before": {
+    "report": "docs/premium-ui/qa-profile-header-space-before.json",
+    "finding": "320x568/255charactername: header498.45px, body32px and footerstarts591.45px,belowviewport."
+  },
+  "changes": [
+    "Bound only canonical member-name heading to min4.5em/18dvh with native vertical scrolling, full text retained and no ellipsis or data truncation. Status and Close remain outside the name scroller.",
+    "Enable keyboard tabindex and descriptive scroll guidance only while name overflows; short names add no tab stop. Existing viewport resize path refreshes that presentation attribute.",
+    "Keep existing header/member fields, roles, permission gates, Edit/Close callbacks, tab ordering and save behavior unchanged."
+  ],
+  "checks": {
+    "header_contexts": 12,
+    "engines": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "viewports": [
+      "320x568 dark",
+      "1280x800 light"
+    ],
+    "name_lengths": [
+      18,
+      255
+    ],
+    "geometry": "Body remainsatleast80px, Close/Edit centerhit tests prove controls reachable; full heading text exact, overflowheadingkeyboardArrowDown works; shortheadinghasnoextra tabindex.",
+    "draft": "Unsaved name survives Overview/Roles/Details switches; dirtyclose and exactopenerfocus preserved. GET-only fixtures, no save.",
+    "scoped_header_axe_checks": 12,
+    "tagged_axe_violations": 0,
+    "existing_identity_contexts": 6,
+    "indexed_validation_conflict_contexts": 6,
+    "unit_tests": 100,
+    "build_exit_code": 0,
+    "build_inputs_held": true,
+    "static_inventories": "Style/action write/check match; source integrity only."
+  },
+  "evidence": [
+    "docs/premium-ui/qa-profile-header-space-before.json",
+    "docs/premium-ui/qa-profile-header-space.json",
+    "docs/premium-ui/qa-profile-identity-fixed.json",
+    "docs/premium-ui/reviews/member-validation-indexed-current.json",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+  ],
+  "test": "frontend/tests/premium-profile-header-space.browser.mjs",
+  "test_sha256": "2428f90df6df6c97ebbf2043b6d2596cddc289482f5f8e5ddb7b83ad33b27a12",
+  "screenshot": "docs/premium-ui/screenshots/profile-header/long-name-320.png",
+  "visual_review": {
+    "reviewer": "rootimplementer,notindependent",
+    "finding": "320darkheaderafterkeyboardscroll:fullidentityremainsinscrollarea,Active/2ndCallandClosevisible,tabrail/bodyandEditfooteravailable; no giantheaderpushingactionsbelowwindow."
+  },
+  "limitations": [
+    "Root implementer review, not independent signoff.",
+    "New checks cover canonical admin profile header, not every roster/card/role/context covered by full105.",
+    "Viewport-resize scrollattribute update is implemented through existing handler; no physical rotation/keyboard/native screen-reader speech certification.",
+    "12scopedheaderaxechecks do not certify entire profile or every rail/workspace workflow.",
+    "No real backend writes; original designation/field/error outcomes tested by supplied fixtures. No API/permission/scheduling/persistence/export changes.",
+    "Only frontend member-workspace.ts and scoped premiumCSS changed this batch; concurrent work preserved. Full105/all260/samefixture equivalence remain open."
+  ]
+}

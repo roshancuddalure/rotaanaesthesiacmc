@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "reviewer": "profile_draft_review",
+  "reviewed_at_utc": "2026-10-21T16:11:27.181660+00:00",
+  "scope": "Independent bounded legacy member-profile draft dismissal, in-flight save and confirmed-write/readback recovery review for approved plan75. Not whole-plan or all-dialog acceptance.",
+  "status": "accepted_for_bounded_profile_draft_scope",
+  "reviewed_files_sha256": {
+    "frontend/src/member-profile.ts": "abe02a8cd2cac967585db38fc62748fc7984d559ee1b16e0f189f860e6616ba2",
+    "frontend/tests/premium-profile-draft-review.browser.mjs": "460ff1e959e8de41db4e94f87f27f3052c6755932817b553603623366c285073"
+  },
+  "verified": [
+    "Initial field defaults and edit-then-revert are clean. Pointer Close and Escape close without a dirty prompt.",
+    "Dirty pointer Close and Escape offer explicit discard confirmation. Declining preserves the exact draft and open native modal.",
+    "Busy saves prevent pointer Close and Escape dismissal and trigger a beforeunload cancellable event guard.",
+    "Confirmed successful comment clears only its own form and preserves an independent unsaved alias draft.",
+    "Failed comment mutation preserves its input, and no automatic retry occurs.",
+    "Confirmed mutation followed by profile GET503 presents Refresh profile and blocks additional writes. Saved fields are disabled to prevent untracked edits being discarded on readback.",
+    "Other form fields remain editable during readback recovery. Newly edited sibling draft survives both failed and successful GET-only retries.",
+    "Repeated manual readback retry performs one GET each and never repeats the confirmed POST; intercepted profile contains exactly one corresponding comment.",
+    "Accepted discard removes the beforeunload effect; initial ordinary close returns focus to its opener.",
+    "Source inspection confirms duplicate open requests use the same cancel/dirty/busy boundary, direct private-dialog removal releases the unload listener, and close avoids stealing deliberate newer focus.",
+    "Existing five mutation paths and submitted payload constructions remain intact in inspected source. Independent test verifies the unchanged comment body payload; root separate suite covers other forms.",
+    "Final Refresh focus patch independently rechecked in source: current meaningful dialog focus takes precedence over captured fallback. Independent browser rerun asserts failed GET restores Refresh focus and subsequent real Enter activation performs successful GET-only recovery at all3 widths."
+  ],
+  "resolved_findings": [
+    {
+      "id": "confirmed-save-edit-loss",
+      "problem": "Inputs in an already-confirmed saved form were editable while awaiting failed readback; successful Refresh would reset those new edits.",
+      "resolution": "Saved form fieldset disabled until readback completes; independent browser test confirms saved textarea cannot edit while sibling inputs remain editable and preserved."
+    }
+  ],
+  "required_fixes": [],
+  "tests_executed": [
+    {
+      "command": "node tests/premium-profile-draft-review.browser.mjs",
+      "result": "3 responsive Chromium workflows passed on final focus patch at320/390/1280; real pointer and keyboard including failed readback focus restoration and Enter retry; intercepted requests,0backend writes",
+      "report": "docs/premium-ui/qa-profile-draft-independent.json"
+    }
+  ],
+  "remaining_limits": [
+    "This review does not certify plan75 across every navigation, month-switch and other dialog boundary.",
+    "beforeunload behavior was checked by dispatching a cancellable event. Browser-native actual tab-exit confirmation and physical devices were not tested.",
+    "Role gating beyond inspected existing conditionals, all five form payload outcomes, account switching and global session recovery require their separate suites.",
+    "Unknown mutation outcomes after network failure are not confirmed writes and remain subject to the existing API uncertainty guidance; no automatic mutation reconciliation or retry is claimed.",
+    "No backend source or application source changes by reviewer; only independent test/report artifacts added."
+  ]
+}

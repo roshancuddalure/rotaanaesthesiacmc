@@ -1,0 +1,555 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-10-24T03:39:14.157645+00:00",
+  "scope": "Documentation-only inspected assertion map for three shell suites. No new test execution or whole-item acceptance. Root inventory index must account for remaining browser suites.",
+  "source_inspection_method": "Read complete current test scripts, inspected retained JSON reports and completion logs, and compared declared current source hashes. source_lines is a list of relevant exact test-script line numbers, not application source lines.",
+  "entries": [
+    {
+      "suite": "frontend/tests/premium-connection-status.browser.mjs",
+      "sha256": "8c2d553451e8c11c5e17752dc737a38d04f9aa257285962fa2b922e0f19abab0",
+      "source_inspected": true,
+      "execution_verified": true,
+      "execution_verification_scope": "Inspected retained dev and production JSON: 36 passed rows each; both record the current script SHA and matching four declared source hashes. No new execution by this mapper. Only the declared source scope is current, not every dependency or deployed asset.",
+      "screens": [
+        "Shell server details",
+        "Overview startup failure and recovery",
+        "Members creation draft",
+        "Sign-out/login"
+      ],
+      "contexts": {
+        "engines": [
+          "chromium",
+          "firefox",
+          "webkit"
+        ],
+        "widths": [
+          320,
+          1280
+        ],
+        "height": 844,
+        "themes": [
+          "light",
+          "dark"
+        ],
+        "month": "2026-05",
+        "variants": [
+          "status",
+          "replace-session",
+          "startup-failure"
+        ],
+        "cases_per_environment": 36,
+        "environments": [
+          "development http://127.0.0.1:5197",
+          "production preview http://127.0.0.1:5198"
+        ],
+        "fixture": "GET requests forwarded to isolated loopback8032; sign-in locally fulfilled; browser clock controlled"
+      },
+      "assertion_groups": [
+        {
+          "action": "pre-authentication-disabled",
+          "selector": "[data-check-connection]",
+          "outcome": "With initial auth/me held, Check server is disabled before binding. Every non-probe context.",
+          "source_lines": [
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-connection-status/report-development.json",
+            "docs/premium-ui/qa-connection-status/report-production.json"
+          ]
+        },
+        {
+          "action": "startup-failure-explicit-retry",
+          "selector": "[data-startup-retry]; #connection-checker summary; Check server",
+          "outcome": "After held503 health, manual successful health check leaves startup failure in place. Explicit Retry startup removes it and reaches actual loaded Overview heading, not failed analysis; exact health phases hold-failure/success/success, no intercepted sign-in.",
+          "source_lines": [
+            28,
+            29
+          ],
+          "evidence_class": "fixture_read_and_intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-connection-status/report-development.json",
+            "docs/premium-ui/qa-connection-status/report-production.json"
+          ]
+        },
+        {
+          "action": "old-session-startup-ownership",
+          "selector": "#sign-out; #login-submit; #new-member-name",
+          "outcome": "After old health held, signout/new intercepted signin and Members navigation, releasing old health preserves exact replacement draft/focus and produces no startup failure. Exact two health phases and one intercepted signin.",
+          "source_lines": [
+            24,
+            25,
+            30,
+            31,
+            33
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-connection-status/report-development.json",
+            "docs/premium-ui/qa-connection-status/report-production.json"
+          ]
+        },
+        {
+          "action": "startup-navigation-ownership",
+          "selector": "#mobile-more; [data-mobile-more-view=members]; .sidebar [data-view=members]; #new-member-name",
+          "outcome": "Members draft entered before held startup health finishes keeps the identical connected input node and its focus after completion.",
+          "source_lines": [
+            24,
+            35,
+            37
+          ],
+          "evidence_class": "fixture_read_and_local_interaction",
+          "report_paths": [
+            "docs/premium-ui/qa-connection-status/report-development.json",
+            "docs/premium-ui/qa-connection-status/report-production.json"
+          ]
+        },
+        {
+          "action": "manual-check-failure-retry",
+          "selector": "#connection-checker summary; Check server",
+          "outcome": "503 recheck reaches unconfirmed wording and restores original enabled button, label and focus; held retry repeated Enter has no duplicate GET, with exact complete phase array checked later.",
+          "source_lines": [
+            37,
+            38,
+            39,
+            45
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-connection-status/report-development.json",
+            "docs/premium-ui/qa-connection-status/report-production.json"
+          ]
+        },
+        {
+          "action": "freshness-and-network-generations",
+          "selector": "#connection-checker[data-state]",
+          "outcome": "Simulated300005ms makes checked state stale without GET; offline/online become offline/unconfirmed without GET; network transition while request held prevents old successful completion claiming checked.",
+          "source_lines": [
+            39,
+            40,
+            41,
+            45
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-connection-status/report-development.json",
+            "docs/premium-ui/qa-connection-status/report-production.json"
+          ]
+        },
+        {
+          "action": "status-panel-accessibility-and-geometry",
+          "selector": "#connection-checker; .connection-checker-panel; summary",
+          "outcome": "Successful deliberate check preserves draft; scoped tagged axe has zero violations; panel stays within16px viewport gutters; Escape closes details and restores summary focus. Only status variant12contexts/environment.",
+          "source_lines": [
+            42
+          ],
+          "evidence_class": "geometry_and_automated_accessibility",
+          "report_paths": [
+            "docs/premium-ui/qa-connection-status/report-development.json",
+            "docs/premium-ui/qa-connection-status/report-production.json"
+          ]
+        },
+        {
+          "action": "pending-signout-disposal",
+          "selector": "Check server; #sign-out",
+          "outcome": "Signout while manual health held removes checker; releasing completion keeps login mounted. Exact six health phases, zero signin in this variant and no pageerrors.",
+          "source_lines": [
+            44,
+            45,
+            47
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-connection-status/report-development.json",
+            "docs/premium-ui/qa-connection-status/report-production.json"
+          ]
+        },
+        {
+          "action": "source-and-test-hold",
+          "selector": "declared hashes",
+          "outcome": "Before/after four source files and own script SHA equal; reports preserve exact test SHA and source hashes.",
+          "source_lines": [
+            6,
+            7,
+            8,
+            52
+          ],
+          "evidence_class": "source_snapshot",
+          "report_paths": [
+            "docs/premium-ui/qa-connection-status/report-development.json",
+            "docs/premium-ui/qa-connection-status/report-production.json"
+          ]
+        }
+      ],
+      "limitations": [
+        "No physical-device, native assistive-technology, real authentication/session-expiry, transport-timeout or all-action certification.",
+        "Clock advancement is freshness logic evidence, not real elapsed soak/performance.",
+        "Axe/geometry/Escape checks apply only to status variant; false fields on other variants mean not assessed, not failed.",
+        "Initial sign-in is synthetic and all nonGET requests are locally intercepted; no real persistence assertion.",
+        "Probe mode before.json is historical before-fix evidence, excluded from current passed contexts.",
+        "Shared report.json may be overwritten; map uses separately retained development/production reports."
+      ]
+    },
+    {
+      "suite": "frontend/tests/premium-header-wrap.browser.mjs",
+      "sha256": "83cd884f0a7d5cdb30078ea82ff4808da7ee257411ef9c96f8afca3aa1ccbf2e",
+      "source_inspected": true,
+      "execution_verified": true,
+      "execution_verification_scope": "Inspected retained30-row report, all errors arrays empty, report main/styles/premium hashes match current declared files; completion log reports30. Report does not record script SHA, so current assertion-source linkage is inspected but not cryptographically bound to that execution.",
+      "screens": [
+        "Leave calendar shell header",
+        "Account menu"
+      ],
+      "contexts": {
+        "engines": [
+          "chromium",
+          "firefox",
+          "webkit"
+        ],
+        "widths": [
+          320,
+          390,
+          769,
+          1024,
+          1280
+        ],
+        "height": 900,
+        "text_variants": [
+          "normal",
+          "local topbar font-size28px line-height1.5"
+        ],
+        "month": "2026-11",
+        "role": "intercepted computer_admin",
+        "account_name": "Dr plus Alexanderson repeated16times",
+        "cases": 30,
+        "environment": "development http://127.0.0.1:5197",
+        "fixture": "GET-only loopback8031; auth/me locally fulfilled"
+      },
+      "assertion_groups": [
+        {
+          "action": "loaded-leave-presence",
+          "selector": "#working-month:visible; .leave-calendar-grid",
+          "outcome": "Requires visible month and rendered leave grid before measuring; does not assert leave data contents or approval outcomes.",
+          "source_lines": [
+            12,
+            13
+          ],
+          "evidence_class": "screen_presence",
+          "report_paths": [
+            "docs/premium-ui/qa-header-wrap.json",
+            "tmp/premium-connection-header-current.log"
+          ]
+        },
+        {
+          "action": "wrapped-header-bounds",
+          "selector": "#section-title; #working-month; #account-menu-button; .account-avatar",
+          "outcome": "Title/month/account in viewport with width>=40; no pairwise overlap or document overflow; avatar contents fit bounds at normal and injected text sizes.",
+          "source_lines": [
+            14,
+            15,
+            16,
+            17
+          ],
+          "evidence_class": "geometry",
+          "report_paths": [
+            "docs/premium-ui/qa-header-wrap.json",
+            "tmp/premium-connection-header-current.log"
+          ]
+        },
+        {
+          "action": "account-menu-keyboard-and-month",
+          "selector": "#account-menu-button; #account-menu; #working-month",
+          "outcome": "Exact full account accessible label; Enter opens menu in horizontal viewport; Escape returns focus; same month value and no additional request during menu interaction; no pageerrors.",
+          "source_lines": [
+            17
+          ],
+          "evidence_class": "local_interaction_and_geometry",
+          "report_paths": [
+            "docs/premium-ui/qa-header-wrap.json",
+            "tmp/premium-connection-header-current.log"
+          ]
+        },
+        {
+          "action": "source-hold",
+          "selector": "main/styles/premium source hashes",
+          "outcome": "Declared source hashes unchanged across suite; baseline mode is excluded from current30-case evidence.",
+          "source_lines": [
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22
+          ],
+          "evidence_class": "source_snapshot",
+          "report_paths": [
+            "docs/premium-ui/qa-header-wrap.json",
+            "tmp/premium-connection-header-current.log"
+          ]
+        }
+      ],
+      "limitations": [
+        "No explicit dark-theme matrix, browser zoom, OS text scaling, software keyboard, physical device or native monthpicker behavior.",
+        "Menu assertion covers horizontal bounds only; it does not measure vertical occlusion.",
+        "Account menu navigation/profile/logout outcomes are not asserted by this suite.",
+        "No persistent changes or exports; requests restricted to GET.",
+        "Current report has no test SHA and does not hash every runtime dependency."
+      ]
+    },
+    {
+      "suite": "frontend/tests/premium-shell.browser.mjs",
+      "sha256": "ce4b8b7c8776918c7bf4f65cb4a8295a9d3ec79993b30429b53b0f42612ab2a4",
+      "source_inspected": true,
+      "execution_verified": true,
+      "execution_verification_scope": "Inspected retained log reports eight outcome workflows passed. This script emits no JSON or script/source hash hold; execution is an unsealed retained-log outcome, not a fresh or independently rerun assertion by mapper.",
+      "screens": [
+        "Overview contextual help",
+        "Leave navigation",
+        "Account profile modal",
+        "Legacy overlay stack",
+        "Login",
+        "Error notifications",
+        "Mobile sidebar",
+        "Mobile More sheet",
+        "Startup recovery"
+      ],
+      "contexts": {
+        "engine": "chromium",
+        "viewports": [
+          "1280x900 initial desktop",
+          "390x700 drawer and More",
+          "1280x900 after More resize",
+          "default newPage recovery viewport"
+        ],
+        "environment": "development default5197 (environment override possible; plain log does not record URL)",
+        "fixture": "default8031; signin and profilePUT locallyfulfilled; other requests forwarded; no exhaustive mutation-deny assertion",
+        "workflows": 8
+      },
+      "assertion_groups": [
+        {
+          "action": "context-help",
+          "selector": "[data-help]; [data-help-content]",
+          "outcome": "Keyboard Enter sets expanded true and creates exactly one content node; Escape collapses and removes it.",
+          "source_lines": [
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35
+          ],
+          "evidence_class": "local_interaction",
+          "report_paths": [
+            "tmp/premium-connection-shell-current.log"
+          ]
+        },
+        {
+          "action": "leave-navigation-focus",
+          "selector": "[data-view=\"leave\"]; #section-title",
+          "outcome": "Actual navigation click leaves section title as active element. Does not assert full Leave contents.",
+          "source_lines": [
+            37,
+            38,
+            39
+          ],
+          "evidence_class": "local_interaction",
+          "report_paths": [
+            "tmp/premium-connection-shell-current.log"
+          ]
+        },
+        {
+          "action": "profile-overlay-stack",
+          "selector": "#profile; #profile-modal; #profile-submit; #review-action-modal",
+          "outcome": "Profile inerts app and traps Tab. Synthetically appended top legacy overlay inerts lower profile; Escape removes only upper overlay, restores lower interactivity/exact opener; second Escape restores app/account opener.",
+          "source_lines": [
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59,
+            60,
+            61,
+            62,
+            63,
+            64,
+            65,
+            66,
+            67,
+            68
+          ],
+          "evidence_class": "local_interaction_with_injected_overlay",
+          "report_paths": [
+            "tmp/premium-connection-shell-current.log"
+          ]
+        },
+        {
+          "action": "relogin-single-profile-save",
+          "selector": "#sign-out; #login-submit; #profile-display-name; #profile-submit",
+          "outcome": "Two intercepted signins followed by explicit profile save closes modal and results in exactly one intercepted profilePUT. No exact payload or fresh GET readback assertion.",
+          "source_lines": [
+            70,
+            71,
+            72,
+            73,
+            74,
+            75,
+            76,
+            77,
+            78,
+            79,
+            80,
+            81,
+            82,
+            83,
+            84
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "tmp/premium-connection-shell-current.log"
+          ]
+        },
+        {
+          "action": "notification-deduplication-and-escaping",
+          "selector": ".toast.error; Dismiss notification",
+          "outcome": "Direct dev-module announceToast called twice with same malicious-looking text; exactly one toast, no img, still present after7500ms; explicit dismissal removes it.",
+          "source_lines": [
+            85,
+            86,
+            87,
+            88,
+            89,
+            90,
+            91,
+            92,
+            93,
+            94,
+            95,
+            96,
+            97
+          ],
+          "evidence_class": "direct_module_injection_and_local_interaction",
+          "report_paths": [
+            "tmp/premium-connection-shell-current.log"
+          ]
+        },
+        {
+          "action": "mobile-sidebar-inert-and-focus",
+          "selector": "#sidebar-toggle; .sidebar [data-view]; .content",
+          "outcome": "At390x700 drawer opens/inerts content; Tab from last navigation item stays inside sidebar; Escape restores content and expanded false.",
+          "source_lines": [
+            98,
+            99,
+            100,
+            101,
+            102,
+            103,
+            104,
+            105,
+            106,
+            107
+          ],
+          "evidence_class": "local_interaction",
+          "report_paths": [
+            "tmp/premium-connection-shell-current.log"
+          ]
+        },
+        {
+          "action": "mobile-more-resize-cleanup",
+          "selector": "#mobile-more; #mobile-more-menu",
+          "outcome": "Open More then resize to desktop removes sheet, restores app interactivity and expanded false.",
+          "source_lines": [
+            108,
+            109,
+            110,
+            111,
+            112,
+            113,
+            114,
+            115
+          ],
+          "evidence_class": "local_interaction",
+          "report_paths": [
+            "tmp/premium-connection-shell-current.log"
+          ]
+        },
+        {
+          "action": "startup-error-escape-and-retry",
+          "selector": "[data-startup-retry]; #view-root img; #view-root [aria-busy=\"true\"]",
+          "outcome": "Synthetic health503 error containing img markup renders no image. Deliberate retry after clearing failure removes retry and initial busy state. Does not assert loaded Overview heading or record final pageerrors on recovery page.",
+          "source_lines": [
+            117,
+            118,
+            119,
+            120,
+            121,
+            122,
+            123,
+            124,
+            125,
+            126,
+            127,
+            128,
+            129,
+            130,
+            131,
+            132,
+            133,
+            134
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "tmp/premium-connection-shell-current.log"
+          ]
+        }
+      ],
+      "limitations": [
+        "No source/script hash hold or JSON report; mapped current script hash is not evidence that retained runtime used this exact script.",
+        "Chromium only; mixed fixed viewports, no explicit themes/other roles/nativeAT/physical checks.",
+        "Synthetic nested overlay does not prove actual nested operational workflows.",
+        "Direct /src/ui-feedback.ts import makes full suite development-specific, not production-bundle verification.",
+        "Profile save/signin are intercepted; no real persistence, exact payload or profile readback proof.",
+        "Forwarding path does not globally reject unexpected writes, so do not claim suite independently proves zero forwarded mutations.",
+        "Primary page errors checked before separate recovery page; no recovery-page error listener or final loaded-content assertion."
+      ]
+    }
+  ]
+}

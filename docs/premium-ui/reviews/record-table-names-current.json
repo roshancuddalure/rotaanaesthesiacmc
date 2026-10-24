@@ -1,0 +1,69 @@
+{
+  "recorded_at_utc": "2026-10-23T19:42:58.215837+00:00",
+  "completion_claim": false,
+  "requirements": [
+    47,
+    101,
+    104,
+    201,
+    241,
+    248,
+    251,
+    255,
+    257,
+    258,
+    259
+  ],
+  "scope": "Three record tables now reference their existing headings for accessible names. Explicit read-only runtime checks of names, column scopes and intentional desktop/mobile representations; no visual/handler/API changes.",
+  "before": {
+    "finding": "Member table had neither caption nor aria name despite a labelled containing section. Same source pattern in leave/posting tables.",
+    "probe_log": "tmp/premium-table-naming-before.log",
+    "classification": "Accessibility improvement; not a claim that every unnamed table is an automatic WCAG failure."
+  },
+  "changed_application_files": [
+    "frontend/src/main.ts"
+  ],
+  "implementation": "Three aria-labelledby attributes referencing existing unique heading IDs; no new visible text/styles/handlers.",
+  "checks": {
+    "development_route_contexts": 63,
+    "production_route_contexts": 63,
+    "browser_engines": 3,
+    "widths": [
+      320,
+      700,
+      701,
+      767,
+      768,
+      769,
+      1280
+    ],
+    "tables_named": 3,
+    "unit_tests_passed": 104,
+    "build_passed": true,
+    "build_inputs_held": true,
+    "static_action_style_checks_passed": true,
+    "saved_member_leave_posting_state_preserved": true
+  },
+  "source_sha256": {
+    "frontend/src/main.ts": "88fdedaa7f8aace6b343dd3347cacf4316ef5ca82123111698a48b564cf9edbc",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "e1f99f30fc0bb0e1c84fa3972824058712d68ea842697ee71777d1dd51d6cfba"
+  },
+  "build_snapshot": "docs/premium-ui/reviews/frontend-build-snapshot-current.json",
+  "evidence": [
+    "frontend/src/main.ts",
+    "frontend/tests/premium-record-table-semantics.browser.mjs",
+    "docs/premium-ui/qa-record-table-semantics/report-development.json",
+    "docs/premium-ui/qa-record-table-semantics/report-production.json",
+    "docs/premium-ui/qa-record-table-semantics/README.md",
+    "docs/premium-ui/contracts/record-table-semantics-current.json",
+    "tmp/premium-table-naming-unit.log"
+  ],
+  "limitations": [
+    "Three loaded record surfaces, not every table or all roles/empty/error states.",
+    "One member profile representation is explicitly checked; unit grouping board and desktop posting list intentionally coexist as distinct views.",
+    "Three-file source hold only; production build snapshot separately links actual compiled main source. No native AT/physical-device certification.",
+    "No broad final runtime/action or all260 completion inferred. Historical main-source reports are marked historical after this edit.",
+    "No backend, API contract, permissions, scheduling, saved semantics or export-content changes."
+  ]
+}

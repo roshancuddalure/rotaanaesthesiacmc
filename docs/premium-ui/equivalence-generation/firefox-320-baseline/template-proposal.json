@@ -1,0 +1,149 @@
+{
+  "id": "87ddc1e9-a216-406f-b048-743e3726ea8d",
+  "month": "2026-05",
+  "status": "completed",
+  "engine": "server",
+  "fallback_reason": null,
+  "revision": 1,
+  "context_hash": "e9ad2f5dfba04b0cb1d2c85256b0a4a852515f7fbb92b04e4ecfca7129e76ea7",
+  "benchmark_context_hash": "e9ad2f5dfba04b0cb1d2c85256b0a4a852515f7fbb92b04e4ecfca7129e76ea7",
+  "processed": 4,
+  "total": 4,
+  "proposed": 4,
+  "unresolved": 3,
+  "decisions": [
+    {
+      "slot_id": "0",
+      "date": "2026-05-01",
+      "duty": "Main 1st Call",
+      "unit": "Unit I",
+      "action": "template",
+      "person_id": null,
+      "person_name": null,
+      "reason": "Unit leave pressure is within configured limits.",
+      "score": null,
+      "forced": false
+    },
+    {
+      "slot_id": "1",
+      "date": "2026-05-02",
+      "duty": "Main 1st Call",
+      "unit": "Unit I",
+      "action": "template",
+      "person_id": null,
+      "person_name": null,
+      "reason": "Forced minimal-damage allocation: all candidate units were hard blocked; Unit I was selected as the least damaging and fairest unit. 75% of the unit is unavailable, meeting hard block threshold 40%.",
+      "score": null,
+      "forced": true
+    },
+    {
+      "slot_id": "2",
+      "date": "2026-05-03",
+      "duty": "Main 1st Call",
+      "unit": "Unit I",
+      "action": "template",
+      "person_id": null,
+      "person_name": null,
+      "reason": "Forced minimal-damage allocation: all candidate units were hard blocked; Unit I was selected as the least damaging and fairest unit. 50% of the unit is unavailable, meeting hard block threshold 40%.",
+      "score": null,
+      "forced": true
+    },
+    {
+      "slot_id": "3",
+      "date": "2026-05-04",
+      "duty": "Main 1st Call",
+      "unit": "Unit I",
+      "action": "template",
+      "person_id": null,
+      "person_name": null,
+      "reason": "Forced minimal-damage allocation: all candidate units were hard blocked; Unit I was selected as the least damaging and fairest unit. 50% of the unit is unavailable, meeting hard block threshold 40%.",
+      "score": null,
+      "forced": true
+    }
+  ],
+  "frame": null,
+  "kind": "template",
+  "requested_engine": "server",
+  "template": {
+    "options": {
+      "duty_keys": [
+        "MAIN_1ST_24HR"
+      ],
+      "starts_on": "2026-05-01",
+      "ends_on": "2026-05-04",
+      "replace_existing": true
+    },
+    "summary": {
+      "month": "2026-05",
+      "duty_keys": [
+        "MAIN_1ST_24HR"
+      ],
+      "starts_on": "2026-05-01",
+      "ends_on": "2026-05-04",
+      "include_weekdays": true,
+      "include_weekends": true,
+      "replace_existing": true,
+      "duty_ordering": "rotated_by_family_per_day",
+      "allocation_fairness_policy": "hybrid",
+      "created_slots": 4,
+      "needs_review_slots": 3,
+      "unresolved_slots": 0,
+      "forced_review_slots": 3,
+      "skipped_slots": 0,
+      "blocked_slots": 3,
+      "vertical_shuffle_swaps": 0,
+      "stage_timings_ms": {
+        "allocation": 51.39,
+        "layout_refinement": 0.11
+      },
+      "layout_engine": "server: stateful safety checks; bounded conservative swaps"
+    },
+    "plan_hash": "68b7d5653ad8628af7e5d37d11d0368d54fa4088cf99b87206673bac18c4bc81"
+  },
+  "metrics": {
+    "planning_ms": 182.81,
+    "steps": 1
+  },
+  "error": null,
+  "result": null,
+  "burden": {
+    "members": 4,
+    "before": {
+      "total": {
+        "min": 0,
+        "max": 0,
+        "mean": 0
+      },
+      "hours24": {
+        "min": 0,
+        "max": 0,
+        "mean": 0
+      },
+      "weekend24": {
+        "min": 0,
+        "max": 0,
+        "mean": 0
+      }
+    },
+    "after": {
+      "total": {
+        "min": 0,
+        "max": 0,
+        "mean": 0
+      },
+      "hours24": {
+        "min": 0,
+        "max": 0,
+        "mean": 0
+      },
+      "weekend24": {
+        "min": 0,
+        "max": 0,
+        "mean": 0
+      }
+    }
+  },
+  "intelligence": null,
+  "created_at": "2026-10-23T19:21:06.668385Z",
+  "session_elapsed_ms": 330
+}

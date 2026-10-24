@@ -43,7 +43,11 @@ def seed_safety_context(session: Session) -> tuple[Unit, Person, Person]:
     return unit, first, second
 
 
-def create_slot(session: Session, unit: Unit, duty_date: date, duty_type: str, is_24hr: bool) -> DutySlot:
+def create_slot(
+    session: Session, unit: Unit, duty_date: date, duty_type: str, is_24hr: bool, call_level: str | None = None
+) -> DutySlot:
+    # ``call_level``: a duty with no call level (e.g. the made-up "PAC") is unresolved
+    # under strict call level and nobody is eligible, so tests about leave/rest stamp one.
     period, _scope = monthly_setup(session, "2026-05")
     starts_at, ends_at = duty_bounds(duty_date, 24 if is_24hr else 8)
     slot = DutySlot(
@@ -51,6 +55,7 @@ def create_slot(session: Session, unit: Unit, duty_date: date, duty_type: str, i
         unit=unit,
         duty_date=duty_date,
         duty_type=duty_type,
+        call_level=call_level,
         slot_label=f"{unit.code}:{duty_type}:{duty_date.isoformat()}",
         starts_at=starts_at,
         ends_at=ends_at,
@@ -69,7 +74,7 @@ def test_month_safety_subtracts_approved_leave_and_previous_24hr_rest() -> None:
     with Session(engine) as session:
         unit, leave_person, rest_person = seed_safety_context(session)
         previous_slot = create_slot(session, unit, date(2026, 5, 1), "MAIN_1ST_24HR", True)
-        target_slot = create_slot(session, unit, date(2026, 5, 2), "PAC", False)
+        target_slot = create_slot(session, unit, date(2026, 5, 2), "PAC", False, "1ST_CALL")
         session.add(
             DutyAssignment(
                 duty_slot=previous_slot,
@@ -147,7 +152,7 @@ def test_month_safety_warns_for_review_pending_leave_without_subtracting_person(
 
     with Session(engine) as session:
         unit, leave_person, _second = seed_safety_context(session)
-        slot = create_slot(session, unit, date(2026, 5, 3), "PAC", False)
+        slot = create_slot(session, unit, date(2026, 5, 3), "PAC", False, "1ST_CALL")
         session.add(
             LeaveRequest(
                 person=leave_person,
@@ -236,7 +241,7 @@ def safety_client() -> Generator[TestClient, None, None]:
     with testing_session() as seed_session:
         seed_superadmin(seed_session)
         unit, _first, _second = seed_safety_context(seed_session)
-        create_slot(seed_session, unit, date(2026, 5, 4), "PAC", False)
+        create_slot(seed_session, unit, date(2026, 5, 4), "PAC", False, "1ST_CALL")
         seed_session.commit()
 
     def override_get_db() -> Generator[Session, None, None]:

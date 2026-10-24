@@ -34,7 +34,7 @@ for(const mode of ['default','nvidia']) {
    await fetch(api+'/__fixture/template',{method:'POST'});
    const context=await browser.newContext({viewport:{width,height:900}}),page=await context.newPage(),errors=[];
    page.on('pageerror',e=>errors.push(e.message));
-   await page.route('**/__generation',r=>r.fulfill({contentType:'text/html',body:'<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/src/styles.css"></head><body><main id="host"></main></body></html>'}));
+   await page.route('**/__generation',r=>r.fulfill({contentType:'text/html',body:'<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/src/styles.css"><link rel="stylesheet" href="/src/premium-theme.css"></head><body><main id="host"></main></body></html>'}));
    await page.route('**/api/**',async r=>{const url=new URL(r.request().url()),response=await r.fetch({url:api+url.pathname+url.search});await r.fulfill({response});});
    await page.goto(base+'/__generation');
    await page.evaluate(async configuration=>{
@@ -74,7 +74,7 @@ for(const mode of ['default','nvidia']) {
   await fetch(api+'/__fixture/reset',{method:'POST'});
   const optimizerContext=await browser.newContext({viewport:{width:390,height:900}}),optimizer=await optimizerContext.newPage();
   const optimizerErrors=[];optimizer.on('pageerror',e=>optimizerErrors.push(e.message));
-  await optimizer.route('**/__optimizer',r=>r.fulfill({contentType:'text/html',body:'<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/src/styles.css"></head><body></body></html>'}));
+  await optimizer.route('**/__optimizer',r=>r.fulfill({contentType:'text/html',body:'<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/src/styles.css"><link rel="stylesheet" href="/src/premium-theme.css"></head><body></body></html>'}));
   await optimizer.route('**/api/**',async r=>{const u=new URL(r.request().url()),response=await r.fetch({url:api+u.pathname+u.search});await r.fulfill({response});});
   await optimizer.goto(base+'/__optimizer');
   await optimizer.evaluate(async()=>{

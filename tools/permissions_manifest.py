@@ -31,7 +31,7 @@ def route_inventory():
                 deps=set(router_dependencies)
                 for default in [*node.args.defaults,*[d for d in node.args.kw_defaults if d]]:deps|=dependency_names(default)
                 for keyword in decorator.keywords:deps|=dependency_names(keyword.value)
-                gates=deps&{'current_user','require_admin','require_publisher','require_superadmin','profile_manager'}
+                gates=deps&{'current_user','require_admin','require_publisher','require_superadmin','profile_manager','require_limits_reader'}
                 path=('/api' if source.stem=='health' else '/api/v1')+prefix+decorator.args[0].value
                 notes=''
                 if source.stem=='import_history':notes='Members/past history additionally requires admin; leave/unit history follows authenticated workflow access.'
@@ -64,7 +64,7 @@ Computer admins maintain the data and account infrastructure; final publication 
 
 Public endpoints are health, catalog metadata, sign-in, recovery instructions and reset using an administrator-issued code. They do not expose personnel or reset codes. Authenticated recovery codes expire after 30 minutes and invalidate older codes.
 
-Server gate legend: `current_user` = recognized active authenticated role; `require_admin` = computer admin/superadmin; `profile_manager` = admin/HOD; `require_publisher` = board/HOD/superadmin; `require_superadmin` = superadmin.
+Server gate legend: `current_user` = recognized active authenticated role; `require_admin` = computer admin/superadmin; `profile_manager` = admin/HOD; `require_publisher` = board/HOD/superadmin; `require_superadmin` = superadmin; `require_limits_reader` = superadmin/computer admin/rota board (read-only Limits).
 
 The inventory below is generated from router, decorator and function-parameter dependencies by `tools/permissions_manifest.py`. Runtime regressions verify anonymous rejection, board/HOD versus admin behavior, superadmin grant/recovery restrictions and all four publication roles. A regression compares this inventory with OpenAPI and fails if a new non-public route lacks a declared gate.
 

@@ -1,0 +1,155 @@
+{
+  "recorded_at_utc": "2026-10-22T05:04:44.927Z",
+  "requirements": [
+    239
+  ],
+  "scope": "TypeScript-bound symbol references across application sources only. No runtime execution, no deletion and no whole-item pass.",
+  "source_sha256": {
+    "src/main.ts": "4075cf124ccb72af7ff983c459139d963ba29075cc3b3de5617659959ac40906"
+  },
+  "method": "Resolve each target private function symbol with TypeScript checker; count references across source program, classify references by enclosing function. Exported/dynamic/reflection/HTML event entry risks require separate manual review.",
+  "rows": [
+    {
+      "name": "renderLeaveImportPreview",
+      "source": "src/main.ts",
+      "line": 3684,
+      "lines": 59,
+      "exported": false,
+      "reference_count": 0,
+      "references": [],
+      "disposition": "unreferenced_private_function_candidate"
+    },
+    {
+      "name": "renderUnitImportPreview",
+      "source": "src/main.ts",
+      "line": 4389,
+      "lines": 103,
+      "exported": false,
+      "reference_count": 0,
+      "references": [],
+      "disposition": "unreferenced_private_function_candidate"
+    },
+    {
+      "name": "renderUnitImportResolvers",
+      "source": "src/main.ts",
+      "line": 4310,
+      "lines": 7,
+      "exported": false,
+      "reference_count": 1,
+      "references": [
+        {
+          "source": "src/main.ts",
+          "line": 4430,
+          "owner": "(callback/module)",
+          "usage": "direct_call"
+        }
+      ],
+      "disposition": "retained_dependency_review_required"
+    },
+    {
+      "name": "renderUnitImportCorrectionModal",
+      "source": "src/main.ts",
+      "line": 4318,
+      "lines": 70,
+      "exported": false,
+      "reference_count": 1,
+      "references": [
+        {
+          "source": "src/main.ts",
+          "line": 4489,
+          "owner": "renderUnitImportPreview",
+          "usage": "direct_call"
+        }
+      ],
+      "disposition": "retained_dependency_review_required"
+    },
+    {
+      "name": "filteredUnitImportRows",
+      "source": "src/main.ts",
+      "line": 4158,
+      "lines": 25,
+      "exported": false,
+      "reference_count": 1,
+      "references": [
+        {
+          "source": "src/main.ts",
+          "line": 4393,
+          "owner": "renderUnitImportPreview",
+          "usage": "direct_call"
+        }
+      ],
+      "disposition": "retained_dependency_review_required"
+    },
+    {
+      "name": "refreshUnitImportPreview",
+      "source": "src/main.ts",
+      "line": 4226,
+      "lines": 11,
+      "exported": false,
+      "reference_count": 9,
+      "references": [
+        {
+          "source": "src/main.ts",
+          "line": 8671,
+          "owner": "(callback/module)",
+          "usage": "direct_call"
+        },
+        {
+          "source": "src/main.ts",
+          "line": 8891,
+          "owner": "(callback/module)",
+          "usage": "direct_call"
+        },
+        {
+          "source": "src/main.ts",
+          "line": 8901,
+          "owner": "(callback/module)",
+          "usage": "direct_call"
+        },
+        {
+          "source": "src/main.ts",
+          "line": 8921,
+          "owner": "(callback/module)",
+          "usage": "direct_call"
+        },
+        {
+          "source": "src/main.ts",
+          "line": 8940,
+          "owner": "(callback/module)",
+          "usage": "direct_call"
+        },
+        {
+          "source": "src/main.ts",
+          "line": 8976,
+          "owner": "(callback/module)",
+          "usage": "direct_call"
+        },
+        {
+          "source": "src/main.ts",
+          "line": 10057,
+          "owner": "(callback/module)",
+          "usage": "direct_call"
+        },
+        {
+          "source": "src/main.ts",
+          "line": 10063,
+          "owner": "(callback/module)",
+          "usage": "direct_call"
+        },
+        {
+          "source": "src/main.ts",
+          "line": 10069,
+          "owner": "(callback/module)",
+          "usage": "direct_call"
+        }
+      ],
+      "disposition": "retained_dependency_review_required"
+    }
+  ],
+  "retained_boundaries": [
+    "Do not delete shared API exports, import-report helpers, month draft/reset guards or delegated branches merely because two renderers are unreferenced.",
+    "Current leave/unit toolbar invokes operational-import; preview/report/apply outcome evidence is separate.",
+    "Two private zero-reference renderer candidates can be removed in a separate isolated edit after current regression freeze; dependencies shared with delegated handlers remain retained pending full entry-graph review."
+  ],
+  "completion_claim": false
+}

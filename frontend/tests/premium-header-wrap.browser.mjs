@@ -1,0 +1,22 @@
+import assert from 'node:assert/strict';
+import {readFile,writeFile,mkdir} from 'node:fs/promises';
+import {createHash} from 'node:crypto';
+import {chromium,firefox,webkit} from 'playwright';
+const baseline=process.env.HEADER_WRAP_BASELINE==='1',results=[];
+const paths=['src/main.ts','src/styles.css','src/premium-theme.css'];const hashes=async()=>Object.fromEntries(await Promise.all(paths.map(async p=>['frontend/'+p,createHash('sha256').update(await readFile(p)).digest('hex')]))),initial=await hashes();
+const name='Dr '+ 'Alexanderson'.repeat(16);
+for(const [engine,launcher]of Object.entries(baseline?{chromium}:{chromium,firefox,webkit})){
+ const browser=await launcher.launch();
+ try{for(const width of [320,390,769,1024,1280])for(const largeText of [false,true]){
+  const context=await browser.newContext({viewport:{width,height:900},reducedMotion:'reduce'}),page=await context.newPage(),requests=[],errors=[];page.on('pageerror',e=>errors.push(e.message));await context.addInitScript(()=>{localStorage.setItem('duty_rota_auth_token','header-fixture');localStorage.setItem('duty_rota_working_month','2026-11');});
+  await page.route('**/api/**',async r=>{const q=r.request(),u=new URL(q.url());assert.equal(q.method(),'GET');requests.push(u.pathname+u.search);if(u.pathname.endsWith('/auth/me'))return r.fulfill({json:{id:'header',username:'header',display_name:name,role:'computer_admin',role_label:'Computer admin',active_status:'active'}});return r.fulfill({response:await r.fetch({url:'http://127.0.0.1:8031'+u.pathname+u.search})});});
+  await page.goto('http://127.0.0.1:5197/#view=leave');await page.locator('#working-month:visible').waitFor();await page.locator('.leave-calendar-grid').waitFor();
+  if(largeText)await page.addStyleTag({content:'.topbar :is(h2,p,span,input,button){font-size:28px!important;line-height:1.5!important}'});
+  const geometry=await page.evaluate(()=>{const rect=n=>{const r=n.getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height};};return {title:rect(document.querySelector('#section-title')),month:rect(document.querySelector('#working-month')),account:rect(document.querySelector('#account-menu-button')),topbar:rect(document.querySelector('.topbar')),pageOverflow:document.documentElement.scrollWidth>innerWidth};});
+  if(!baseline){for(const id of ['title','month','account']){assert.ok(geometry[id].left>=-1&&geometry[id].right<=width+1,JSON.stringify({engine,width,largeText,id,geometry}));assert.ok(geometry[id].width>=40);}assert.equal(geometry.pageOverflow,false);const overlap=(a,b)=>Math.min(a.right,b.right)>Math.max(a.left,b.left)+1&&Math.min(a.bottom,b.bottom)>Math.max(a.top,b.top)+1;assert.equal(overlap(geometry.title,geometry.month)||overlap(geometry.title,geometry.account)||overlap(geometry.month,geometry.account),false);
+   assert.equal(await page.locator('.account-avatar').evaluate(n=>n.scrollWidth<=n.clientWidth+1&&n.scrollHeight<=n.clientHeight+1),true);const reads=requests.length,account=page.locator('#account-menu-button');assert.equal(await account.getAttribute('aria-label'),'Account: '+name);await account.focus();await page.keyboard.press('Enter');const menu=page.locator('#account-menu');await menu.waitFor({state:'visible'});const box=await menu.boundingBox();assert.ok(box.x>=-1&&box.x+box.width<=width+1,JSON.stringify({engine,width,largeText,box}));await page.keyboard.press('Escape');assert.equal(await account.evaluate(n=>n===document.activeElement),true);assert.equal(requests.length,reads);assert.equal(await page.locator('#working-month').inputValue(),'2026-11');assert.deepEqual(errors,[]);if(engine==='chromium'&&largeText){await mkdir('../docs/premium-ui/screenshots/header',{recursive:true});await page.screenshot({path:'../docs/premium-ui/screenshots/header/wrap-'+width+'.png'});}
+  }
+  results.push({engine,width,largeText,geometry,requests,errors});await page.waitForLoadState('networkidle');await context.close();
+ }}finally{await browser.close();}
+}
+assert.deepEqual(await hashes(),initial);await writeFile('../docs/premium-ui/qa-header-wrap'+(baseline?'-before':'')+'.json',JSON.stringify({source_sha256:initial,scope:'Actual leave-header long account name at320/390/769/1024/1280,normal/local28px text. Account menu keyboard/viewport andmonthcontinuity. GET-only disposableAPI; notphysicaltext scaling/native monthpicker validation.',results},null,2)+'\n');console.log('Header contexts: '+results.length);

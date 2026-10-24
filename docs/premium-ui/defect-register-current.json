@@ -1,0 +1,1464 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-10-24T09:31:30.863241+00:00",
+  "reviewer": "/root/defect_register_consolidation",
+  "status": "initial_consolidation_incomplete",
+  "scope": "Documentation-only initial register consolidating current connection batch, profile initial recovery, inline member selection, all20 historical specialist action queue records and all14 reliability gap observations. No application edits, fixture operations, test execution, ledger status changes or whole-item certification.",
+  "completion_claim": false,
+  "item15_complete": false,
+  "coverage": {
+    "connection_records": 7,
+    "profile_initial_records": 1,
+    "inline_selection_and_legacy_records": 3,
+    "specialist_queue_records": 20,
+    "reliability_gap_records": 14,
+    "total_records": 50,
+    "every_repository_finding_reconciled": false,
+    "profile_sections_records": 3,
+    "profile_nullable_identity_records": 1,
+    "profile_effective_wrap_records": 1
+  },
+  "classification_policy": {
+    "verified_bug": "Actual stored baseline/runtime failure establishes a bug at its historical snapshot; disposition may be fixed_bounded, not open.",
+    "design_improvement": "Presentation/usability improvement or source-confirmed copy gap; no new runtime bug inferred.",
+    "historical_finding": "Prior finding/disposition retained without asserting current applicability.",
+    "investigation": "Evidence/coverage gap or source recommendation requiring current reconciliation; not a confirmed open application bug."
+  },
+  "current_inspected_source_sha256": {
+    "frontend/src/main.ts": "fcc39d763c0c5b3d0e3551215c301c7d0691b2b9d071b53b079e73f7de7bb501",
+    "frontend/src/member-workspace.ts": "4ddb7efade2d5886e8d62dc5fa7225eb2448b02c4be37ebb0ce474b5d3562c41",
+    "frontend/src/operational-import.ts": "9e11514d205d71049e2f0baa10f005def74941e0b90584a9c84b968f9ae19dfc",
+    "frontend/src/connection-status.ts": "bb8080819c5d9aac5c5caf402565256bf2df0129a08367cdb6a41fadc2311007",
+    "frontend/src/premium-theme.css": "559041ee03d192fcc291582bd7572e8d32004e9d5428b7e57fbbea9ba9e60f83",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+  },
+  "inspection_notes": [
+    "Inspected baseline results, declared source hashes and retained after reports for three batches; read targeted current source for guards, recovery, focus and cancellation copy. No test reruns by this reviewer.",
+    "Connection reports are current for their four declared files; profile/inline reports retain historical main/theme/member-workspace integration hashes. Equality of one source does not recertify integration.",
+    "Specialist queue entries and reliability sections are preserved as reconciliation candidates; linked findings were not all independently runtime-reproduced.",
+    "Corrected legacy graph evidence location in this register; original reviews remain untouched.",
+    "Broader repository findings, every acceptance condition and all later supplemental reviews remain to be reconciled. This is an initial item15 deliverable, not completion."
+  ],
+  "missing_evidence_paths_at_recording": [],
+  "summary_by_classification": {
+    "verified_bug": 13,
+    "design_improvement": 2,
+    "historical_finding": 19,
+    "investigation": 16
+  },
+  "items": [
+    {
+      "id": "FE-CONN-001",
+      "classification": "verified_bug",
+      "title": "Server status falsely implied continuous connectivity",
+      "expected": "Describe last confirmed health result, browser network advisory and explicit recovery truthfully.",
+      "observed": "Baseline Chromium320dark remained titled Connected to the rota server after browser offline.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/qa-connection-status/before.json",
+          "exists_at_recording": true,
+          "sha256": "ac0f46ee3c3999aab2ee31b632b9b65a4b57943051807eb19dad31f7707a05bd"
+        },
+        {
+          "path": "docs/premium-ui/reviews/connection-status-current.json",
+          "exists_at_recording": true,
+          "sha256": "e6491a99a96a3030f73dbd58a24d320a1ca1f6b84e24d7b51e3e75973852a2e0"
+        },
+        {
+          "path": "docs/premium-ui/qa-connection-status/report-development.json",
+          "exists_at_recording": true,
+          "sha256": "96046add14ab615ad16fd0b3f51f4422951bbe6c403a0b09614d78187cae239e"
+        },
+        {
+          "path": "docs/premium-ui/qa-connection-status/report-production.json",
+          "exists_at_recording": true,
+          "sha256": "32c82958532bcc0bf2eb5cce9a5736513d382b962dc28295e016bec38f49256a"
+        }
+      ],
+      "snapshot_policy": "Evidence file digests identify inspected records. Embedded source hashes remain authoritative for their runtime snapshot; current file equality is not a rerun.",
+      "applicability": "Fixed within current declared connection source snapshot; 36 development and36 production contexts passed; three engines,320/1280,light/dark. Per-variant false feature flags can mean not assessed.",
+      "owner": "frontend coordinator",
+      "disposition": "fixed_bounded",
+      "next_verification": "Retain no-polling/clock-age/offline/online/manual-check assertions; transport timeout and real authentication expiry remain separate."
+    },
+    {
+      "id": "FE-CONN-002",
+      "classification": "verified_bug",
+      "title": "Late startup health replaced an active draft screen",
+      "expected": "Startup may initialize only the view and session that still own its result.",
+      "observed": "Baseline held startup completion replaced the Members input and lost focus.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/qa-connection-status/before.json",
+          "exists_at_recording": true,
+          "sha256": "ac0f46ee3c3999aab2ee31b632b9b65a4b57943051807eb19dad31f7707a05bd"
+        },
+        {
+          "path": "docs/premium-ui/reviews/connection-status-current.json",
+          "exists_at_recording": true,
+          "sha256": "e6491a99a96a3030f73dbd58a24d320a1ca1f6b84e24d7b51e3e75973852a2e0"
+        },
+        {
+          "path": "docs/premium-ui/qa-connection-status/report-development.json",
+          "exists_at_recording": true,
+          "sha256": "96046add14ab615ad16fd0b3f51f4422951bbe6c403a0b09614d78187cae239e"
+        },
+        {
+          "path": "docs/premium-ui/qa-connection-status/report-production.json",
+          "exists_at_recording": true,
+          "sha256": "32c82958532bcc0bf2eb5cce9a5736513d382b962dc28295e016bec38f49256a"
+        }
+      ],
+      "snapshot_policy": "Evidence file digests identify inspected records. Embedded source hashes remain authoritative for their runtime snapshot; current file equality is not a rerun.",
+      "applicability": "Fixed within current declared connection source snapshot; 36 development and36 production contexts passed; three engines,320/1280,light/dark. Per-variant false feature flags can mean not assessed.",
+      "owner": "frontend coordinator",
+      "disposition": "fixed_bounded",
+      "next_verification": "Keep current draft identity/focus assertion when changing boot/navigation; broader delayed-route/month races are not covered here."
+    },
+    {
+      "id": "FE-CONN-003",
+      "classification": "verified_bug",
+      "title": "Old startup completion overwrote a replacement session",
+      "expected": "A signed-out startup cannot alter a newly signed-in shell.",
+      "observed": "Baseline old held health completion caused startup failure UI to replace a new session Members draft.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/qa-connection-status/before.json",
+          "exists_at_recording": true,
+          "sha256": "ac0f46ee3c3999aab2ee31b632b9b65a4b57943051807eb19dad31f7707a05bd"
+        },
+        {
+          "path": "docs/premium-ui/reviews/connection-status-current.json",
+          "exists_at_recording": true,
+          "sha256": "e6491a99a96a3030f73dbd58a24d320a1ca1f6b84e24d7b51e3e75973852a2e0"
+        },
+        {
+          "path": "docs/premium-ui/qa-connection-status/report-development.json",
+          "exists_at_recording": true,
+          "sha256": "96046add14ab615ad16fd0b3f51f4422951bbe6c403a0b09614d78187cae239e"
+        },
+        {
+          "path": "docs/premium-ui/qa-connection-status/report-production.json",
+          "exists_at_recording": true,
+          "sha256": "32c82958532bcc0bf2eb5cce9a5736513d382b962dc28295e016bec38f49256a"
+        }
+      ],
+      "snapshot_policy": "Evidence file digests identify inspected records. Embedded source hashes remain authoritative for their runtime snapshot; current file equality is not a rerun.",
+      "applicability": "Fixed within current declared connection source snapshot; 36 development and36 production contexts passed; three engines,320/1280,light/dark. Per-variant false feature flags can mean not assessed.",
+      "owner": "frontend coordinator",
+      "disposition": "fixed_bounded",
+      "next_verification": "Retain signout/synthetic replacement-session late-response assertion; synthetic sign-in is not real authentication certification."
+    },
+    {
+      "id": "FE-CONN-004",
+      "classification": "design_improvement",
+      "title": "Mobile and keyboard access to server details",
+      "expected": "Expose readable connection details and an explicit check control at narrow widths and by keyboard.",
+      "observed": "Prior dot was hover-only and hidden at narrow widths per independent source review; current native details panel supplies text, status and explicit GET check.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/reviews/connection-status-current.json",
+          "exists_at_recording": true,
+          "sha256": "e6491a99a96a3030f73dbd58a24d320a1ca1f6b84e24d7b51e3e75973852a2e0"
+        },
+        {
+          "path": "docs/premium-ui/reviews/connection-status-source-review.json",
+          "exists_at_recording": true,
+          "sha256": "9cae3f90874f1c5565c1fff1ad87b17fd09b3d98ffd633990b1b8c0c413f7074"
+        },
+        {
+          "path": "docs/premium-ui/qa-connection-status/report-development.json",
+          "exists_at_recording": true,
+          "sha256": "96046add14ab615ad16fd0b3f51f4422951bbe6c403a0b09614d78187cae239e"
+        },
+        {
+          "path": "docs/premium-ui/qa-connection-status/report-production.json",
+          "exists_at_recording": true,
+          "sha256": "32c82958532bcc0bf2eb5cce9a5736513d382b962dc28295e016bec38f49256a"
+        }
+      ],
+      "snapshot_policy": "Evidence file digests identify inspected records. Embedded source hashes remain authoritative for their runtime snapshot; current file equality is not a rerun.",
+      "applicability": "Current bounded source and status-variant geometry/keyboard/scoped axe evidence; physical devices/native AT untested.",
+      "owner": "frontend coordinator",
+      "disposition": "implemented_bounded",
+      "next_verification": "Review long localized status copy and native AT/physical walkthrough separately."
+    },
+    {
+      "id": "FE-CONN-005",
+      "classification": "verified_bug",
+      "title": "WebKit dark connection check contrast",
+      "expected": "The check action must remain readable in dark mode.",
+      "observed": "Intermediate actual WebKit320dark run found white text on native gray button at reported1.81 contrast. Shared primary style was applied; final scoped status audits passed.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/reviews/connection-status-current.json",
+          "exists_at_recording": true,
+          "sha256": "e6491a99a96a3030f73dbd58a24d320a1ca1f6b84e24d7b51e3e75973852a2e0"
+        },
+        {
+          "path": "docs/premium-ui/qa-connection-status/contrast-webkit-dark.png",
+          "exists_at_recording": true,
+          "sha256": "3ef3418502796b867edd97816d1e3e26e4e34909e85b8f5d74a2f02f334b5b20"
+        },
+        {
+          "path": "tmp/premium-connection-development-repeat.log",
+          "exists_at_recording": true,
+          "sha256": "e043ebce0c3eacb95628e503d7894784f7dda87bcee2b6a9bd73a455f05041ee"
+        },
+        {
+          "path": "docs/premium-ui/qa-connection-status/report-development.json",
+          "exists_at_recording": true,
+          "sha256": "96046add14ab615ad16fd0b3f51f4422951bbe6c403a0b09614d78187cae239e"
+        },
+        {
+          "path": "docs/premium-ui/qa-connection-status/report-production.json",
+          "exists_at_recording": true,
+          "sha256": "32c82958532bcc0bf2eb5cce9a5736513d382b962dc28295e016bec38f49256a"
+        }
+      ],
+      "snapshot_policy": "Evidence file digests identify inspected records. Embedded source hashes remain authoritative for their runtime snapshot; current file equality is not a rerun.",
+      "applicability": "Historical intermediate contrast defect; final source-matched scoped audits supersede only this bounded control.",
+      "owner": "frontend coordinator",
+      "disposition": "fixed_bounded",
+      "next_verification": "Retain actual computed contrast checks; no whole-app contrast certification."
+    },
+    {
+      "id": "FE-CONN-006",
+      "classification": "verified_bug",
+      "title": "Wrapped account menu escaped viewport with enlarged text",
+      "expected": "Keep account menu within the viewport when header wraps at320px and28px text.",
+      "observed": "Intermediate header run observed menu x=-122,width200. Account auto-margin restored right anchoring; current30-context header regression passed.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/reviews/connection-status-current.json",
+          "exists_at_recording": true,
+          "sha256": "e6491a99a96a3030f73dbd58a24d320a1ca1f6b84e24d7b51e3e75973852a2e0"
+        },
+        {
+          "path": "tmp/premium-connection-header-regression.log",
+          "exists_at_recording": true,
+          "sha256": "a02c7c439a930c986ca5f4788424add1a8e40fc6708883822269b978508f07e0"
+        },
+        {
+          "path": "docs/premium-ui/qa-header-wrap.json",
+          "exists_at_recording": true,
+          "sha256": "c0c3943a2c349ddf867e2ff6feba2ff1ebcf4afa35f3c5ea41a005ee5bae4211"
+        }
+      ],
+      "snapshot_policy": "Evidence file digests identify inspected records. Embedded source hashes remain authoritative for their runtime snapshot; current file equality is not a rerun.",
+      "applicability": "Current header report plus historical failure, not a claim about every popup or software keyboard.",
+      "owner": "frontend coordinator",
+      "disposition": "fixed_bounded",
+      "next_verification": "Retain enlarged-text and exact-month/menu geometry regression after header changes."
+    },
+    {
+      "id": "FE-CONN-007",
+      "classification": "historical_finding",
+      "title": "Connection test assertions initially permitted weak evidence",
+      "expected": "Await terminal UI state and complete exact request phase arrays; verify actual loaded Overview.",
+      "observed": "Independent test review strengthened early request count and default page-title checks; initial harness immediate-state wait also failed. Final retained reports use the stronger test hash.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/reviews/connection-status-current.json",
+          "exists_at_recording": true,
+          "sha256": "e6491a99a96a3030f73dbd58a24d320a1ca1f6b84e24d7b51e3e75973852a2e0"
+        },
+        {
+          "path": "docs/premium-ui/reviews/connection-status-test-review.json",
+          "exists_at_recording": true,
+          "sha256": "6e80fbecd6ffb38f28d633cf7ac7e332b2ef32e1f04a2684067421767011e4b6"
+        },
+        {
+          "path": "docs/premium-ui/qa-connection-status/report-development.json",
+          "exists_at_recording": true,
+          "sha256": "96046add14ab615ad16fd0b3f51f4422951bbe6c403a0b09614d78187cae239e"
+        },
+        {
+          "path": "docs/premium-ui/qa-connection-status/report-production.json",
+          "exists_at_recording": true,
+          "sha256": "32c82958532bcc0bf2eb5cce9a5736513d382b962dc28295e016bec38f49256a"
+        }
+      ],
+      "snapshot_policy": "Evidence file digests identify inspected records. Embedded source hashes remain authoritative for their runtime snapshot; current file equality is not a rerun.",
+      "applicability": "Test quality finding, not an additional application bug.",
+      "owner": "frontend coordinator",
+      "disposition": "test_assertions_strengthened",
+      "next_verification": "Retain exact phase arrays and loaded content assertion; do not count earlier weaker runs as current proof."
+    },
+    {
+      "id": "FE-PROFILE-001",
+      "classification": "verified_bug",
+      "title": "Initial member profile lacked explicit Close and Retry",
+      "expected": "A loading profile offers reachable Close; failure offers explicit same-context recovery.",
+      "observed": "Baseline actual Members320dark probe counted zero loading Close controls and zero failure Retry controls. Current source uses shared loading/failure helpers and connected/open guards.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/qa-profile-initial-recovery/before.json",
+          "exists_at_recording": true,
+          "sha256": "a09adcdf7bc5facca13fc8441a3ba8320083abcf4113e1ffcfe7af31ad34aad8"
+        },
+        {
+          "path": "docs/premium-ui/reviews/profile-initial-recovery-current.json",
+          "exists_at_recording": true,
+          "sha256": "ed4e0b8685dd8752f37490db0e971b05732a14dce71569e84b90f4e1b9a93f1b"
+        },
+        {
+          "path": "docs/premium-ui/qa-profile-initial-recovery/report-development.json",
+          "exists_at_recording": true,
+          "sha256": "d61b7f8b826e64f598a2f7df3f0528cf2bcf83bcf67034a4f9ac780606947805"
+        },
+        {
+          "path": "docs/premium-ui/qa-profile-initial-recovery/report-production.json",
+          "exists_at_recording": true,
+          "sha256": "e269b696838601b6e70a3ce4a04cb7410edf6a958032977c97d828341978139a"
+        }
+      ],
+      "snapshot_policy": "Evidence file digests identify inspected records. Embedded source hashes remain authoritative for their runtime snapshot; current file equality is not a rerun.",
+      "applicability": "48 initial recovery contexts passed at the report snapshot. Current member-workspace matches reviewed hash; main/theme changed later, so complete current integration is not inferred.",
+      "owner": "frontend coordinator",
+      "disposition": "fixed_bounded_historical_integration",
+      "next_verification": "Rerun affected profile integration when integration scope requires it; proposed-status and every caller remain outside this suite."
+    },
+    {
+      "id": "FE-IMPORT-001",
+      "classification": "verified_bug",
+      "title": "Held member selection overrode a changed name",
+      "expected": "A member choice becomes obsolete when its canonical-name context changes.",
+      "observed": "Baseline held GET selected Safe Member after editable name changed to Spare One. Current operational import compares name edit generation before success/error updates.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/qa-inline-member-selection-lifetime/before.json",
+          "exists_at_recording": true,
+          "sha256": "d379597cd5c0a48ac3e996dc3a8bbbe7a7c5e826904639893645561fb1f3cab9"
+        },
+        {
+          "path": "docs/premium-ui/reviews/inline-member-selection-lifetime-current.json",
+          "exists_at_recording": true,
+          "sha256": "befc3c74d1b044970c85770490d8471b41f8c01f0c52e347417f29714d8d78b3"
+        },
+        {
+          "path": "docs/premium-ui/qa-inline-member-selection-lifetime/report-development.json",
+          "exists_at_recording": true,
+          "sha256": "7e383a27ee05afaf1b0d972b8cc09795afb03e14fe55e80a80876dacbe6fea72"
+        },
+        {
+          "path": "docs/premium-ui/qa-inline-member-selection-lifetime/report-production.json",
+          "exists_at_recording": true,
+          "sha256": "36ac166d5e2c6be2e8990f70d44ab9cedaa2cbe554ed1f9b40004f1de5c62fc3"
+        }
+      ],
+      "snapshot_policy": "Evidence file digests identify inspected records. Embedded source hashes remain authoritative for their runtime snapshot; current file equality is not a rerun.",
+      "applicability": "60 contexts at their declared historical integration snapshot; operational-import source still matches, main/member-workspace changed later. CSV POSTs locally intercepted, GETs RAM only.",
+      "owner": "frontend coordinator",
+      "disposition": "fixed_bounded_historical_integration",
+      "next_verification": "Retain changed-success/refusal/change-back and call-level-only cases; real parser/persistence/permissions not proven by mocked preview flow."
+    },
+    {
+      "id": "FE-IMPORT-002",
+      "classification": "verified_bug",
+      "title": "Name lookup repaint lost candidate keyboard focus",
+      "expected": "Preserve the exact focused candidate/action across eligible lookup repaint without stealing unrelated focus.",
+      "observed": "Historical WebKit1280 held lookup replaced the focused candidate and prevented keyboard activation. Current source captures candidate ID/action and restores matching replacement only when focus fell to BODY.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/qa-inline-member-selection-lifetime/before-focus.json",
+          "exists_at_recording": true,
+          "sha256": "5debc088b11df8ce1d48b1a17969e7b83eede9b11cc146e176e9a6f7ab098387"
+        },
+        {
+          "path": "docs/premium-ui/reviews/inline-member-selection-lifetime-current.json",
+          "exists_at_recording": true,
+          "sha256": "befc3c74d1b044970c85770490d8471b41f8c01f0c52e347417f29714d8d78b3"
+        },
+        {
+          "path": "docs/premium-ui/qa-inline-member-selection-lifetime/report-development.json",
+          "exists_at_recording": true,
+          "sha256": "7e383a27ee05afaf1b0d972b8cc09795afb03e14fe55e80a80876dacbe6fea72"
+        },
+        {
+          "path": "docs/premium-ui/qa-inline-member-selection-lifetime/report-production.json",
+          "exists_at_recording": true,
+          "sha256": "36ac166d5e2c6be2e8990f70d44ab9cedaa2cbe554ed1f9b40004f1de5c62fc3"
+        }
+      ],
+      "snapshot_policy": "Evidence file digests identify inspected records. Embedded source hashes remain authoritative for their runtime snapshot; current file equality is not a rerun.",
+      "applicability": "Bounded historical runtime results and current operational-import source equality; native AT and every fallback variant remain unproven.",
+      "owner": "frontend coordinator",
+      "disposition": "fixed_bounded_historical_integration",
+      "next_verification": "Retain candidate repaint keyboard case; separately verify disappearance fallback and inactive review-focus variants if altered."
+    },
+    {
+      "id": "FE-IMPORT-003",
+      "classification": "historical_finding",
+      "title": "Legacy import cancellation warning has no current producer",
+      "expected": "Assess a control on a reachable application entry before changing it.",
+      "observed": "Legacy delegated data-unit-import-create-member handler has no current markup producer in the inspected entry graph; visible Units CSV uses openOperationalImport/createMemberInline. Legacy handler remains untouched.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/reviews/legacy-import-entry-graph-current.json",
+          "exists_at_recording": true,
+          "sha256": "d9bd07beb8214752b8ccaf7d62441169655fe760401f0bbb968eb2b223646817"
+        },
+        {
+          "path": "docs/premium-ui/reviews/inline-member-selection-lifetime-current.json",
+          "exists_at_recording": true,
+          "sha256": "befc3c74d1b044970c85770490d8471b41f8c01f0c52e347417f29714d8d78b3"
+        }
+      ],
+      "snapshot_policy": "Evidence file digests identify inspected records. Embedded source hashes remain authoritative for their runtime snapshot; current file equality is not a rerun.",
+      "applicability": "Historical source reachability disposition, not proof of every possible dynamic invocation or a current user-facing cancellation bug.",
+      "owner": "frontend coordinator",
+      "disposition": "disposed_unreachable_legacy_path",
+      "next_verification": "Revalidate entry edges before deleting legacy code or if a new producer is introduced.",
+      "citation_correction": "Inline review cites docs/premium-ui/legacy-import-entry-graph-current.json; inspected artifact is under docs/premium-ui/reviews/."
+    },
+    {
+      "id": "FE-SPECIALIST-001",
+      "classification": "historical_finding",
+      "title": "Refresh keyboard scroll regions when native disclosure opens",
+      "expected": "Refresh keyboard scroll regions when native disclosure opens",
+      "observed": "The historical specialist action queue records: not_reproduced_no_source_change.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/specialist-action-queue-current.json",
+          "exists_at_recording": true,
+          "sha256": "f59ecace8ed5441f05a07b45024d6ac84ba95edd68169cf6f9c5df225b1b721f"
+        },
+        {
+          "path": "docs/premium-ui/reviews/agent-surface-scroll-20261022.json",
+          "exists_at_recording": true,
+          "sha256": "73d7f762b82dc110b63b17e70a8cfc2aaa9006b2342802e178c24b7ae524de20"
+        },
+        {
+          "path": "docs/premium-ui/qa-disclosure-scroll.json",
+          "exists_at_recording": true,
+          "sha256": "dbee593f047845a4626799da0bbe09d1aee66ec0e0dde0b00df90f996c947dfe"
+        }
+      ],
+      "snapshot_policy": "Evidence file digests identify inspected records. Embedded source hashes remain authoritative for their runtime snapshot; current file equality is not a rerun.",
+      "applicability": "Historical ten-specialist queue, recorded 2026-10-22T17:13:27.683857+00:00. Queue status is preserved verbatim; this consolidation does not independently execute or recertify its runtime outcomes.",
+      "owner": "frontend coordinator",
+      "disposition": "historical_queue_disposition_requires_current_reconciliation",
+      "next_verification": "Retain not-reproduced disposition; no bug inferred from source recommendation alone.",
+      "original_specialist": "surface-scroll",
+      "original_queue_status": "not_reproduced_no_source_change"
+    },
+    {
+      "id": "FE-SPECIALIST-002",
+      "classification": "historical_finding",
+      "title": "Dynamic viewport cap on legacy profile",
+      "expected": "Dynamic viewport cap on legacy profile",
+      "observed": "The historical specialist action queue records: implemented_emulated_only.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/specialist-action-queue-current.json",
+          "exists_at_recording": true,
+          "sha256": "f59ecace8ed5441f05a07b45024d6ac84ba95edd68169cf6f9c5df225b1b721f"
+        },
+        {
+          "path": "docs/premium-ui/reviews/agent-surface-scroll-20261022.json",
+          "exists_at_recording": true,
+          "sha256": "73d7f762b82dc110b63b17e70a8cfc2aaa9006b2342802e178c24b7ae524de20"
+        }
+      ],
+      "snapshot_policy": "Evidence file digests identify inspected records. Embedded source hashes remain authoritative for their runtime snapshot; current file equality is not a rerun.",
+      "applicability": "Historical ten-specialist queue, recorded 2026-10-22T17:13:27.683857+00:00. Queue status is preserved verbatim; this consolidation does not independently execute or recertify its runtime outcomes.",
+      "owner": "frontend coordinator",
+      "disposition": "historical_queue_disposition_requires_current_reconciliation",
+      "next_verification": "Inspect the linked specialist finding and follow-up against current source and requirement-specific assertions before changing its disposition.",
+      "original_specialist": "surface-scroll",
+      "original_queue_status": "implemented_emulated_only"
+    },
+    {
+      "id": "FE-SPECIALIST-003",
+      "classification": "historical_finding",
+      "title": "Current designation excludes future and expired records",
+      "expected": "Current designation excludes future and expired records",
+      "observed": "The historical specialist action queue records: fixed_bounded.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/specialist-action-queue-current.json",
+          "exists_at_recording": true,
+          "sha256": "f59ecace8ed5441f05a07b45024d6ac84ba95edd68169cf6f9c5df225b1b721f"
+        },
+        {
+          "path": "docs/premium-ui/reviews/agent-profile-identity-20261022.json",
+          "exists_at_recording": true,
+          "sha256": "766e69534cec48a09189973508505ced5dd72a06d59d42f133cc3da0d2f57685"
+        }
+      ],
+      "snapshot_policy": "Evidence file digests identify inspected records. Embedded source hashes remain authoritative for their runtime snapshot; current file equality is not a rerun.",
+      "applicability": "Historical ten-specialist queue, recorded 2026-10-22T17:13:27.683857+00:00. Queue status is preserved verbatim; this consolidation does not independently execute or recertify its runtime outcomes.",
+      "owner": "frontend coordinator",
+      "disposition": "historical_queue_disposition_requires_current_reconciliation",
+      "next_verification": "Inspect the linked specialist finding and follow-up against current source and requirement-specific assertions before changing its disposition.",
+      "original_specialist": "profile-identity",
+      "original_queue_status": "fixed_bounded"
+    },
+    {
+      "id": "FE-SPECIALIST-004",
+      "classification": "historical_finding",
+      "title": "Missing fields are Not recorded; long names wrap",
+      "expected": "Missing fields are Not recorded; long names wrap",
+      "observed": "The historical specialist action queue records: fixed_bounded.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/specialist-action-queue-current.json",
+          "exists_at_recording": true,
+          "sha256": "f59ecace8ed5441f05a07b45024d6ac84ba95edd68169cf6f9c5df225b1b721f"
+        },
+        {
+          "path": "docs/premium-ui/reviews/agent-profile-identity-20261022.json",
+          "exists_at_recording": true,
+          "sha256": "766e69534cec48a09189973508505ced5dd72a06d59d42f133cc3da0d2f57685"
+        }
+      ],
+      "snapshot_policy": "Evidence file digests identify inspected records. Embedded source hashes remain authoritative for their runtime snapshot; current file equality is not a rerun.",
+      "applicability": "Historical ten-specialist queue, recorded 2026-10-22T17:13:27.683857+00:00. Queue status is preserved verbatim; this consolidation does not independently execute or recertify its runtime outcomes.",
+      "owner": "frontend coordinator",
+      "disposition": "historical_queue_disposition_requires_current_reconciliation",
+      "next_verification": "Inspect the linked specialist finding and follow-up against current source and requirement-specific assertions before changing its disposition.",
+      "original_specialist": "profile-identity",
+      "original_queue_status": "fixed_bounded"
+    },
+    {
+      "id": "FE-SPECIALIST-005",
+      "classification": "historical_finding",
+      "title": "Expose returned forced template allocation marker",
+      "expected": "Expose returned forced template allocation marker",
+      "observed": "The historical specialist action queue records: fixed_bounded.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/specialist-action-queue-current.json",
+          "exists_at_recording": true,
+          "sha256": "f59ecace8ed5441f05a07b45024d6ac84ba95edd68169cf6f9c5df225b1b721f"
+        },
+        {
+          "path": "docs/premium-ui/reviews/agent-generation-presentation-20261022.json",
+          "exists_at_recording": true,
+          "sha256": "4e6b579c059cd7764b0c0f0fb0e403974fb2d4e93a0e08517184ce2e1c462547"
+        },
+        {
+          "path": "docs/premium-ui/reviews/specialist-integration-current.json",
+          "exists_at_recording": true,
+          "sha256": "1e0d552f1118929c5f26c203e0c4ba635228242ca622df467d5cbf757d93da78"
+        }
+      ],
+      "snapshot_policy": "Evidence file digests identify inspected records. Embedded source hashes remain authoritative for their runtime snapshot; current file equality is not a rerun.",
+      "applicability": "Historical ten-specialist queue, recorded 2026-10-22T17:13:27.683857+00:00. Queue status is preserved verbatim; this consolidation does not independently execute or recertify its runtime outcomes.",
+      "owner": "frontend coordinator",
+      "disposition": "historical_queue_disposition_requires_current_reconciliation",
+      "next_verification": "Inspect the linked specialist finding and follow-up against current source and requirement-specific assertions before changing its disposition.",
+      "original_specialist": "generation-presentation",
+      "original_queue_status": "fixed_bounded"
+    },
+    {
+      "id": "FE-SPECIALIST-006",
+      "classification": "historical_finding",
+      "title": "Label real queued, working and review-ready states",
+      "expected": "Label real queued, working and review-ready states",
+      "observed": "The historical specialist action queue records: fixed_bounded.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/specialist-action-queue-current.json",
+          "exists_at_recording": true,
+          "sha256": "f59ecace8ed5441f05a07b45024d6ac84ba95edd68169cf6f9c5df225b1b721f"
+        },
+        {
+          "path": "docs/premium-ui/reviews/agent-generation-presentation-20261022.json",
+          "exists_at_recording": true,
+          "sha256": "4e6b579c059cd7764b0c0f0fb0e403974fb2d4e93a0e08517184ce2e1c462547"
+        },
+        {
+          "path": "docs/premium-ui/reviews/generation-state-current.json",
+          "exists_at_recording": true,
+          "sha256": "ad437259e0fc5ab4bfa4750fe56b8e2edb0be25adedf31c4980093b19f9eb634"
+        }
+      ],
+      "snapshot_policy": "Evidence file digests identify inspected records. Embedded source hashes remain authoritative for their runtime snapshot; current file equality is not a rerun.",
+      "applicability": "Historical ten-specialist queue, recorded 2026-10-22T17:13:27.683857+00:00. Queue status is preserved verbatim; this consolidation does not independently execute or recertify its runtime outcomes.",
+      "owner": "frontend coordinator",
+      "disposition": "historical_queue_disposition_requires_current_reconciliation",
+      "next_verification": "Inspect the linked specialist finding and follow-up against current source and requirement-specific assertions before changing its disposition.",
+      "original_specialist": "generation-presentation",
+      "original_queue_status": "fixed_bounded"
+    },
+    {
+      "id": "FE-SPECIALIST-007",
+      "classification": "historical_finding",
+      "title": "Preserve preflight semantic quality borders",
+      "expected": "Preserve preflight semantic quality borders",
+      "observed": "The historical specialist action queue records: inactive_renderer_no_callsite.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/specialist-action-queue-current.json",
+          "exists_at_recording": true,
+          "sha256": "f59ecace8ed5441f05a07b45024d6ac84ba95edd68169cf6f9c5df225b1b721f"
+        },
+        {
+          "path": "docs/premium-ui/reviews/agent-visual-tokens-20261022.json",
+          "exists_at_recording": true,
+          "sha256": "99d8dd578d40c1a4da5f9b7ea480604dce343a346d2e194642a6ffb1bcfc5422"
+        }
+      ],
+      "snapshot_policy": "Evidence file digests identify inspected records. Embedded source hashes remain authoritative for their runtime snapshot; current file equality is not a rerun.",
+      "applicability": "Historical ten-specialist queue, recorded 2026-10-22T17:13:27.683857+00:00. Queue status is preserved verbatim; this consolidation does not independently execute or recertify its runtime outcomes.",
+      "owner": "frontend coordinator",
+      "disposition": "historical_queue_disposition_requires_current_reconciliation",
+      "next_verification": "Do not style an inactive renderer as a live defect; recheck reachability before future cleanup.",
+      "original_specialist": "visual-tokens",
+      "original_queue_status": "inactive_renderer_no_callsite"
+    },
+    {
+      "id": "FE-SPECIALIST-008",
+      "classification": "historical_finding",
+      "title": "Consolidate icon conventions",
+      "expected": "Consolidate icon conventions",
+      "observed": "The historical specialist action queue records: shared_svg_family_fixed_bounded.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/specialist-action-queue-current.json",
+          "exists_at_recording": true,
+          "sha256": "f59ecace8ed5441f05a07b45024d6ac84ba95edd68169cf6f9c5df225b1b721f"
+        },
+        {
+          "path": "docs/premium-ui/reviews/agent-visual-tokens-20261022.json",
+          "exists_at_recording": true,
+          "sha256": "99d8dd578d40c1a4da5f9b7ea480604dce343a346d2e194642a6ffb1bcfc5422"
+        },
+        {
+          "path": "docs/premium-ui/reviews/icons-current.json",
+          "exists_at_recording": true,
+          "sha256": "aac4fc52ea717f61f2934adfe256925d57cfb62a48a3e5ec7863662297f81248"
+        }
+      ],
+      "snapshot_policy": "Evidence file digests identify inspected records. Embedded source hashes remain authoritative for their runtime snapshot; current file equality is not a rerun.",
+      "applicability": "Historical ten-specialist queue, recorded 2026-10-22T17:13:27.683857+00:00. Queue status is preserved verbatim; this consolidation does not independently execute or recertify its runtime outcomes.",
+      "owner": "frontend coordinator",
+      "disposition": "historical_queue_disposition_requires_current_reconciliation",
+      "next_verification": "Inspect the linked specialist finding and follow-up against current source and requirement-specific assertions before changing its disposition.",
+      "original_specialist": "visual-tokens",
+      "original_queue_status": "shared_svg_family_fixed_bounded"
+    },
+    {
+      "id": "FE-SPECIALIST-009",
+      "classification": "historical_finding",
+      "title": "Respect reduced motion for unit-row smooth scrolling",
+      "expected": "Respect reduced motion for unit-row smooth scrolling",
+      "observed": "The historical specialist action queue records: fixed_bounded.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/specialist-action-queue-current.json",
+          "exists_at_recording": true,
+          "sha256": "f59ecace8ed5441f05a07b45024d6ac84ba95edd68169cf6f9c5df225b1b721f"
+        },
+        {
+          "path": "docs/premium-ui/reviews/agent-motion-fallback-20261022.json",
+          "exists_at_recording": true,
+          "sha256": "9e3cc0e238905875eab1a6b0f1ae7949197c57f6fa51f9d29757f003bbfb6c66"
+        },
+        {
+          "path": "docs/premium-ui/reviews/unit-motion-current.json",
+          "exists_at_recording": true,
+          "sha256": "2282644c949dcb150fcb8df028b82ebd2ae9d698d12cca9752c4453e014f8b6a"
+        }
+      ],
+      "snapshot_policy": "Evidence file digests identify inspected records. Embedded source hashes remain authoritative for their runtime snapshot; current file equality is not a rerun.",
+      "applicability": "Historical ten-specialist queue, recorded 2026-10-22T17:13:27.683857+00:00. Queue status is preserved verbatim; this consolidation does not independently execute or recertify its runtime outcomes.",
+      "owner": "frontend coordinator",
+      "disposition": "historical_queue_disposition_requires_current_reconciliation",
+      "next_verification": "Inspect the linked specialist finding and follow-up against current source and requirement-specific assertions before changing its disposition.",
+      "original_specialist": "motion-fallback",
+      "original_queue_status": "fixed_bounded"
+    },
+    {
+      "id": "FE-SPECIALIST-010",
+      "classification": "historical_finding",
+      "title": "Give mono font variable a reliable fallback",
+      "expected": "Give mono font variable a reliable fallback",
+      "observed": "The historical specialist action queue records: fixed_bounded.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/specialist-action-queue-current.json",
+          "exists_at_recording": true,
+          "sha256": "f59ecace8ed5441f05a07b45024d6ac84ba95edd68169cf6f9c5df225b1b721f"
+        },
+        {
+          "path": "docs/premium-ui/reviews/agent-motion-fallback-20261022.json",
+          "exists_at_recording": true,
+          "sha256": "9e3cc0e238905875eab1a6b0f1ae7949197c57f6fa51f9d29757f003bbfb6c66"
+        },
+        {
+          "path": "docs/premium-ui/reviews/unit-motion-current.json",
+          "exists_at_recording": true,
+          "sha256": "2282644c949dcb150fcb8df028b82ebd2ae9d698d12cca9752c4453e014f8b6a"
+        }
+      ],
+      "snapshot_policy": "Evidence file digests identify inspected records. Embedded source hashes remain authoritative for their runtime snapshot; current file equality is not a rerun.",
+      "applicability": "Historical ten-specialist queue, recorded 2026-10-22T17:13:27.683857+00:00. Queue status is preserved verbatim; this consolidation does not independently execute or recertify its runtime outcomes.",
+      "owner": "frontend coordinator",
+      "disposition": "historical_queue_disposition_requires_current_reconciliation",
+      "next_verification": "Inspect the linked specialist finding and follow-up against current source and requirement-specific assertions before changing its disposition.",
+      "original_specialist": "motion-fallback",
+      "original_queue_status": "fixed_bounded"
+    },
+    {
+      "id": "FE-SPECIALIST-011",
+      "classification": "design_improvement",
+      "title": "Name leave-cancellation target and date range",
+      "expected": "Name leave-cancellation target and date range",
+      "observed": "The historical specialist action queue records: profile_path_fixed_main_path_pending. Current source inspection confirms main.ts:9048 still uses generic Cancel this leave record wording while member-workspace.ts:753 names member,dates,category and record ID.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/specialist-action-queue-current.json",
+          "exists_at_recording": true,
+          "sha256": "f59ecace8ed5441f05a07b45024d6ac84ba95edd68169cf6f9c5df225b1b721f"
+        },
+        {
+          "path": "docs/premium-ui/reviews/agent-validation-recovery-20261022.json",
+          "exists_at_recording": true,
+          "sha256": "fa394e81d617db193d19510180dabc961672f58090e588299e7273f391bf09f4"
+        }
+      ],
+      "snapshot_policy": "Evidence file digests identify inspected records. Embedded source hashes remain authoritative for their runtime snapshot; current file equality is not a rerun.",
+      "applicability": "Historical ten-specialist queue, recorded 2026-10-22T17:13:27.683857+00:00. Queue status is preserved verbatim; this consolidation does not independently execute or recertify its runtime outcomes.",
+      "owner": "frontend coordinator",
+      "disposition": "profile_fixed_main_copy_gap_source_confirmed_runtime_unverified",
+      "next_verification": "Reproduce actual main cancellation dialog, then name exact existing target using current data; preserve POST ID/method, confirmation dismissal and all cancellation semantics. Test overlapping and cross-month records before claiming fixed.",
+      "original_specialist": "validation-recovery",
+      "original_queue_status": "profile_path_fixed_main_path_pending",
+      "subsequent_disposition": {
+        "recorded_at_utc": "2026-10-24T03:59:12.390780+00:00",
+        "status": "fixed_bounded_main_andcanonical_fixture_cases",
+        "evidence": [
+          "docs/premium-ui/reviews/leave-cancel-identity-current.json",
+          "docs/premium-ui/qa-leave-cancel-identity/report-development.json",
+          "docs/premium-ui/qa-leave-cancel-identity/report-production.json"
+        ],
+        "limit": "Originalfinding retained; exactfullshell24cases andcanonical6,notallroles/nativemodalvisuals."
+      }
+    },
+    {
+      "id": "FE-SPECIALIST-012",
+      "classification": "historical_finding",
+      "title": "Remove destructive draft-clearing guidance from read timeouts",
+      "expected": "Remove destructive draft-clearing guidance from read timeouts",
+      "observed": "The historical specialist action queue records: fixed_bounded.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/specialist-action-queue-current.json",
+          "exists_at_recording": true,
+          "sha256": "f59ecace8ed5441f05a07b45024d6ac84ba95edd68169cf6f9c5df225b1b721f"
+        },
+        {
+          "path": "docs/premium-ui/reviews/agent-validation-recovery-20261022.json",
+          "exists_at_recording": true,
+          "sha256": "fa394e81d617db193d19510180dabc961672f58090e588299e7273f391bf09f4"
+        }
+      ],
+      "snapshot_policy": "Evidence file digests identify inspected records. Embedded source hashes remain authoritative for their runtime snapshot; current file equality is not a rerun.",
+      "applicability": "Historical ten-specialist queue, recorded 2026-10-22T17:13:27.683857+00:00. Queue status is preserved verbatim; this consolidation does not independently execute or recertify its runtime outcomes.",
+      "owner": "frontend coordinator",
+      "disposition": "historical_queue_disposition_requires_current_reconciliation",
+      "next_verification": "Inspect the linked specialist finding and follow-up against current source and requirement-specific assertions before changing its disposition.",
+      "original_specialist": "validation-recovery",
+      "original_queue_status": "fixed_bounded"
+    },
+    {
+      "id": "FE-SPECIALIST-013",
+      "classification": "historical_finding",
+      "title": "Show no-results and result counts in reference searches",
+      "expected": "Show no-results and result counts in reference searches",
+      "observed": "The historical specialist action queue records: fixed_bounded.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/specialist-action-queue-current.json",
+          "exists_at_recording": true,
+          "sha256": "f59ecace8ed5441f05a07b45024d6ac84ba95edd68169cf6f9c5df225b1b721f"
+        },
+        {
+          "path": "docs/premium-ui/reviews/agent-table-selection-20261022.json",
+          "exists_at_recording": true,
+          "sha256": "19e137e8d520e2bd566d444700473566b1da4e869584f2350646d30dc92a1452"
+        },
+        {
+          "path": "docs/premium-ui/reviews/search-selection-current.json",
+          "exists_at_recording": true,
+          "sha256": "e4d31557d83462e232e841286456e74a6f5ef264bf6c68877222e59f7458aa5a"
+        }
+      ],
+      "snapshot_policy": "Evidence file digests identify inspected records. Embedded source hashes remain authoritative for their runtime snapshot; current file equality is not a rerun.",
+      "applicability": "Historical ten-specialist queue, recorded 2026-10-22T17:13:27.683857+00:00. Queue status is preserved verbatim; this consolidation does not independently execute or recertify its runtime outcomes.",
+      "owner": "frontend coordinator",
+      "disposition": "historical_queue_disposition_requires_current_reconciliation",
+      "next_verification": "Inspect the linked specialist finding and follow-up against current source and requirement-specific assertions before changing its disposition.",
+      "original_specialist": "table-selection",
+      "original_queue_status": "fixed_bounded"
+    },
+    {
+      "id": "FE-SPECIALIST-014",
+      "classification": "historical_finding",
+      "title": "Announce past-duty selection count and scope",
+      "expected": "Announce past-duty selection count and scope",
+      "observed": "The historical specialist action queue records: fixed_bounded.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/specialist-action-queue-current.json",
+          "exists_at_recording": true,
+          "sha256": "f59ecace8ed5441f05a07b45024d6ac84ba95edd68169cf6f9c5df225b1b721f"
+        },
+        {
+          "path": "docs/premium-ui/reviews/agent-table-selection-20261022.json",
+          "exists_at_recording": true,
+          "sha256": "19e137e8d520e2bd566d444700473566b1da4e869584f2350646d30dc92a1452"
+        },
+        {
+          "path": "docs/premium-ui/reviews/search-selection-current.json",
+          "exists_at_recording": true,
+          "sha256": "e4d31557d83462e232e841286456e74a6f5ef264bf6c68877222e59f7458aa5a"
+        }
+      ],
+      "snapshot_policy": "Evidence file digests identify inspected records. Embedded source hashes remain authoritative for their runtime snapshot; current file equality is not a rerun.",
+      "applicability": "Historical ten-specialist queue, recorded 2026-10-22T17:13:27.683857+00:00. Queue status is preserved verbatim; this consolidation does not independently execute or recertify its runtime outcomes.",
+      "owner": "frontend coordinator",
+      "disposition": "historical_queue_disposition_requires_current_reconciliation",
+      "next_verification": "Inspect the linked specialist finding and follow-up against current source and requirement-specific assertions before changing its disposition.",
+      "original_specialist": "table-selection",
+      "original_queue_status": "fixed_bounded"
+    },
+    {
+      "id": "FE-SPECIALIST-015",
+      "classification": "historical_finding",
+      "title": "Expose staffing warnings after the first 100 returned rows",
+      "expected": "Expose staffing warnings after the first 100 returned rows",
+      "observed": "The historical specialist action queue records: fixed_bounded.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/specialist-action-queue-current.json",
+          "exists_at_recording": true,
+          "sha256": "f59ecace8ed5441f05a07b45024d6ac84ba95edd68169cf6f9c5df225b1b721f"
+        },
+        {
+          "path": "docs/premium-ui/reviews/agent-leave-calendar-20261022.json",
+          "exists_at_recording": true,
+          "sha256": "a1636244fd3fbcd419aaf485a150d113de7500306298e20840bb70bef27f5ce4"
+        },
+        {
+          "path": "docs/premium-ui/reviews/staffing-review-current.json",
+          "exists_at_recording": true,
+          "sha256": "899bb100fc6a10e8c174c7a89b09108610792d5105c707fb5ff4856d7300fbfe"
+        }
+      ],
+      "snapshot_policy": "Evidence file digests identify inspected records. Embedded source hashes remain authoritative for their runtime snapshot; current file equality is not a rerun.",
+      "applicability": "Historical ten-specialist queue, recorded 2026-10-22T17:13:27.683857+00:00. Queue status is preserved verbatim; this consolidation does not independently execute or recertify its runtime outcomes.",
+      "owner": "frontend coordinator",
+      "disposition": "historical_queue_disposition_requires_current_reconciliation",
+      "next_verification": "Inspect the linked specialist finding and follow-up against current source and requirement-specific assertions before changing its disposition.",
+      "original_specialist": "leave-calendar",
+      "original_queue_status": "fixed_bounded"
+    },
+    {
+      "id": "FE-SPECIALIST-016",
+      "classification": "historical_finding",
+      "title": "Open existing exact-unit review from staffing warning",
+      "expected": "Open existing exact-unit review from staffing warning",
+      "observed": "The historical specialist action queue records: fixed_bounded.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/specialist-action-queue-current.json",
+          "exists_at_recording": true,
+          "sha256": "f59ecace8ed5441f05a07b45024d6ac84ba95edd68169cf6f9c5df225b1b721f"
+        },
+        {
+          "path": "docs/premium-ui/reviews/agent-leave-calendar-20261022.json",
+          "exists_at_recording": true,
+          "sha256": "a1636244fd3fbcd419aaf485a150d113de7500306298e20840bb70bef27f5ce4"
+        },
+        {
+          "path": "docs/premium-ui/reviews/staffing-review-current.json",
+          "exists_at_recording": true,
+          "sha256": "899bb100fc6a10e8c174c7a89b09108610792d5105c707fb5ff4856d7300fbfe"
+        }
+      ],
+      "snapshot_policy": "Evidence file digests identify inspected records. Embedded source hashes remain authoritative for their runtime snapshot; current file equality is not a rerun.",
+      "applicability": "Historical ten-specialist queue, recorded 2026-10-22T17:13:27.683857+00:00. Queue status is preserved verbatim; this consolidation does not independently execute or recertify its runtime outcomes.",
+      "owner": "frontend coordinator",
+      "disposition": "historical_queue_disposition_requires_current_reconciliation",
+      "next_verification": "Inspect the linked specialist finding and follow-up against current source and requirement-specific assertions before changing its disposition.",
+      "original_specialist": "leave-calendar",
+      "original_queue_status": "fixed_bounded"
+    },
+    {
+      "id": "FE-SPECIALIST-017",
+      "classification": "historical_finding",
+      "title": "Use shared audit timestamp formatter in rules history",
+      "expected": "Use shared audit timestamp formatter in rules history",
+      "observed": "The historical specialist action queue records: fixed_bounded.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/specialist-action-queue-current.json",
+          "exists_at_recording": true,
+          "sha256": "f59ecace8ed5441f05a07b45024d6ac84ba95edd68169cf6f9c5df225b1b721f"
+        },
+        {
+          "path": "docs/premium-ui/reviews/agent-rules-presentation-20261022.json",
+          "exists_at_recording": true,
+          "sha256": "334b5da2f26385cfdfe6f94f339d4e4a6768dc14a02e1e458a5fd124b7af9c25"
+        },
+        {
+          "path": "docs/premium-ui/reviews/specialist-integration-current.json",
+          "exists_at_recording": true,
+          "sha256": "1e0d552f1118929c5f26c203e0c4ba635228242ca622df467d5cbf757d93da78"
+        }
+      ],
+      "snapshot_policy": "Evidence file digests identify inspected records. Embedded source hashes remain authoritative for their runtime snapshot; current file equality is not a rerun.",
+      "applicability": "Historical ten-specialist queue, recorded 2026-10-22T17:13:27.683857+00:00. Queue status is preserved verbatim; this consolidation does not independently execute or recertify its runtime outcomes.",
+      "owner": "frontend coordinator",
+      "disposition": "historical_queue_disposition_requires_current_reconciliation",
+      "next_verification": "Inspect the linked specialist finding and follow-up against current source and requirement-specific assertions before changing its disposition.",
+      "original_specialist": "rules-presentation",
+      "original_queue_status": "fixed_bounded"
+    },
+    {
+      "id": "FE-SPECIALIST-018",
+      "classification": "historical_finding",
+      "title": "Reproduce save-dock clearance with large text",
+      "expected": "Reproduce save-dock clearance with large text",
+      "observed": "The historical specialist action queue records: reproduced_fixed_bounded.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/specialist-action-queue-current.json",
+          "exists_at_recording": true,
+          "sha256": "f59ecace8ed5441f05a07b45024d6ac84ba95edd68169cf6f9c5df225b1b721f"
+        },
+        {
+          "path": "docs/premium-ui/reviews/agent-rules-presentation-20261022.json",
+          "exists_at_recording": true,
+          "sha256": "334b5da2f26385cfdfe6f94f339d4e4a6768dc14a02e1e458a5fd124b7af9c25"
+        },
+        {
+          "path": "docs/premium-ui/reviews/rules-dock-current.json",
+          "exists_at_recording": true,
+          "sha256": "9c89400a1d9effed5f1adac99361c9a6c94a34d0b6149789c0fe5b9aa5beba42"
+        }
+      ],
+      "snapshot_policy": "Evidence file digests identify inspected records. Embedded source hashes remain authoritative for their runtime snapshot; current file equality is not a rerun.",
+      "applicability": "Historical ten-specialist queue, recorded 2026-10-22T17:13:27.683857+00:00. Queue status is preserved verbatim; this consolidation does not independently execute or recertify its runtime outcomes.",
+      "owner": "frontend coordinator",
+      "disposition": "historical_queue_disposition_requires_current_reconciliation",
+      "next_verification": "Inspect the linked specialist finding and follow-up against current source and requirement-specific assertions before changing its disposition.",
+      "original_specialist": "rules-presentation",
+      "original_queue_status": "reproduced_fixed_bounded"
+    },
+    {
+      "id": "FE-SPECIALIST-019",
+      "classification": "investigation",
+      "title": "Run current integrated workflow equivalence checks",
+      "expected": "Run current integrated workflow equivalence checks",
+      "observed": "The historical specialist action queue records: verification_pending.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/specialist-action-queue-current.json",
+          "exists_at_recording": true,
+          "sha256": "f59ecace8ed5441f05a07b45024d6ac84ba95edd68169cf6f9c5df225b1b721f"
+        },
+        {
+          "path": "docs/premium-ui/reviews/agent-acceptance-evidence-20261022.json",
+          "exists_at_recording": true,
+          "sha256": "f9e4be381b660af427e99a19cad640ae021711df55064d8fdb5c713bfd6ddeef"
+        }
+      ],
+      "snapshot_policy": "Evidence file digests identify inspected records. Embedded source hashes remain authoritative for their runtime snapshot; current file equality is not a rerun.",
+      "applicability": "Historical ten-specialist queue, recorded 2026-10-22T17:13:27.683857+00:00. Queue status is preserved verbatim; this consolidation does not independently execute or recertify its runtime outcomes.",
+      "owner": "frontend coordinator",
+      "disposition": "historical_queue_disposition_requires_current_reconciliation",
+      "next_verification": "Inspect the linked specialist finding and follow-up against current source and requirement-specific assertions before changing its disposition.",
+      "original_specialist": "acceptance-evidence",
+      "original_queue_status": "verification_pending"
+    },
+    {
+      "id": "FE-SPECIALIST-020",
+      "classification": "investigation",
+      "title": "Map protected invariants to concrete assertions and review",
+      "expected": "Map protected invariants to concrete assertions and review",
+      "observed": "The historical specialist action queue records: register_created_independent_review_unavailable.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/specialist-action-queue-current.json",
+          "exists_at_recording": true,
+          "sha256": "f59ecace8ed5441f05a07b45024d6ac84ba95edd68169cf6f9c5df225b1b721f"
+        },
+        {
+          "path": "docs/premium-ui/reviews/agent-acceptance-evidence-20261022.json",
+          "exists_at_recording": true,
+          "sha256": "f9e4be381b660af427e99a19cad640ae021711df55064d8fdb5c713bfd6ddeef"
+        }
+      ],
+      "snapshot_policy": "Evidence file digests identify inspected records. Embedded source hashes remain authoritative for their runtime snapshot; current file equality is not a rerun.",
+      "applicability": "Historical ten-specialist queue, recorded 2026-10-22T17:13:27.683857+00:00. Queue status is preserved verbatim; this consolidation does not independently execute or recertify its runtime outcomes.",
+      "owner": "frontend coordinator",
+      "disposition": "historical_queue_disposition_requires_current_reconciliation",
+      "next_verification": "Inspect the linked specialist finding and follow-up against current source and requirement-specific assertions before changing its disposition.",
+      "original_specialist": "acceptance-evidence",
+      "original_queue_status": "register_created_independent_review_unavailable"
+    },
+    {
+      "id": "FE-RELIABILITY-001",
+      "classification": "investigation",
+      "title": "Session expiry and permission changes (197, 230).",
+      "expected": "Distinguish expired session and role refusal; preserve safe context without mutation replay.",
+      "observed": "`services/api.ts:request` protects against cross-tab token changes, including slow JSON decoding, but a current-session 401 or 403 only becomes a local `ApiRequestError`. A token can remain installed and the protected screen can remain interactive after expiry. Add one frontend expiry presentation/lifecycle that blocks repeated failed submissions, distinguishes expiry from role refusal, protects safe unsaved context, and never replays a mutation. Prove an expired in-flight save remains uncertain and that reauthentication requires deliberate resubmission. Do not treat the passing two-tab sign-out test as evidence for this different case.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/reliability-gaps-current.md",
+          "exists_at_recording": true,
+          "sha256": "ad015d7c796553e7b28edaa4fb09b456b69aaa994388017b5e732b2dc449d3c5"
+        },
+        {
+          "path": "docs/premium-ui/reviews/reliability-current.json",
+          "exists_at_recording": true,
+          "sha256": "dd81e95e150659f1dbe35924d4ebade72db8472b53c006df8693c515c7a3cb37"
+        }
+      ],
+      "snapshot_policy": "Evidence file digests identify inspected records. Embedded source hashes remain authoritative for their runtime snapshot; current file equality is not a rerun.",
+      "applicability": "Historical21October source/evidence gap assessment. Integration updates in its introduction and later bounded reports may supersede parts; not a current reproduced bug list. Source counts, bundle sizes and runtime counts are historical.",
+      "owner": "frontend coordinator",
+      "disposition": "partial_followups_require_scope_reconciliation",
+      "next_verification": "Reconcile current acceptance definitions, source ownership and exact runtime assertions for this scope; preserve completed bounded fixes rather than reopening old observations wholesale."
+    },
+    {
+      "id": "FE-RELIABILITY-002",
+      "classification": "investigation",
+      "title": "Mappings response ordering and recovery (184, 224, 225): integration fixed the source gap.",
+      "expected": "Order mapping reads and preserve useful rows with explicit recovery.",
+      "observed": "Initial inspection found unguarded global assignment and clearing useful rows on failure. The coordinator has since added `mappingLoadSequence`, captured-account checks, local-edit invalidation, preserved rows and escaped inline error/retry. I inspected those changes and two actual-source race tests; the stored Chromium report now has ten outcomes. Older Firefox/WebKit reports have eight editor outcomes each and do not yet prove the newer error/retry path. Keep a final source-matched race/recovery rerun and cross-engine recovery disposition rather than repeating the original defect claim.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/reliability-gaps-current.md",
+          "exists_at_recording": true,
+          "sha256": "ad015d7c796553e7b28edaa4fb09b456b69aaa994388017b5e732b2dc449d3c5"
+        },
+        {
+          "path": "docs/premium-ui/reviews/reliability-current.json",
+          "exists_at_recording": true,
+          "sha256": "dd81e95e150659f1dbe35924d4ebade72db8472b53c006df8693c515c7a3cb37"
+        }
+      ],
+      "snapshot_policy": "Evidence file digests identify inspected records. Embedded source hashes remain authoritative for their runtime snapshot; current file equality is not a rerun.",
+      "applicability": "Historical21October source/evidence gap assessment. Integration updates in its introduction and later bounded reports may supersede parts; not a current reproduced bug list. Source counts, bundle sizes and runtime counts are historical.",
+      "owner": "frontend coordinator",
+      "disposition": "partial_followups_require_scope_reconciliation",
+      "next_verification": "Reconcile current acceptance definitions, source ownership and exact runtime assertions for this scope; preserve completed bounded fixes rather than reopening old observations wholesale."
+    },
+    {
+      "id": "FE-RELIABILITY-003",
+      "classification": "investigation",
+      "title": "Month changes and import drafts (75, 136, 227): independent integration finding fixed.",
+      "expected": "Declining month discard preserves all relevant import drafts.",
+      "observed": "Review caught the delegated `#leave-month` and `#unit-month` handlers ignoring the new central `applyWorkingMonth` false return and clearing drafts after a declined discard. The coordinator then changed all six legacy month branches to return before any cleanup when the decision is false. I inspected the corrected callers and independently ran `node --test tests/render-lifecycle.test.mjs`: eight tests pass, including an AST-extracted actual-handler test executing all six declined branches and verifying files/previews/resolutions/selections remain unchanged with no renderer/cleanup calls. This is stronger than the original central-function-only proof, but it is not a real browser file-picker preservation check. Remaining acceptance concerns other draft boundaries and browser file/mapping retention.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/reliability-gaps-current.md",
+          "exists_at_recording": true,
+          "sha256": "ad015d7c796553e7b28edaa4fb09b456b69aaa994388017b5e732b2dc449d3c5"
+        },
+        {
+          "path": "docs/premium-ui/reviews/reliability-current.json",
+          "exists_at_recording": true,
+          "sha256": "dd81e95e150659f1dbe35924d4ebade72db8472b53c006df8693c515c7a3cb37"
+        }
+      ],
+      "snapshot_policy": "Evidence file digests identify inspected records. Embedded source hashes remain authoritative for their runtime snapshot; current file equality is not a rerun.",
+      "applicability": "Historical21October source/evidence gap assessment. Integration updates in its introduction and later bounded reports may supersede parts; not a current reproduced bug list. Source counts, bundle sizes and runtime counts are historical.",
+      "owner": "frontend coordinator",
+      "disposition": "partial_followups_require_scope_reconciliation",
+      "next_verification": "Reconcile current acceptance definitions, source ownership and exact runtime assertions for this scope; preserve completed bounded fixes rather than reopening old observations wholesale."
+    },
+    {
+      "id": "FE-RELIABILITY-004",
+      "classification": "investigation",
+      "title": "Sign-out cleanup consistency (86, 225, 230): integration fixed the source gap.",
+      "expected": "Sign-out invalidates private views, imports and in-flight view ownership.",
+      "observed": "The coordinator removed duplicate delegated sign-out and introduced shared `resetPrivateSessionView` for local/cross-tab cleanup. Inspection confirms mappings/imports/candidate contexts/selections and render generations are cleared. Existing stored session/shell outcomes cover bounded behavior; add a slow screen-load sign-out followed by another-role login if not already covered by final tests. Current-session expiry remains a separate gap in item 1 above.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/reliability-gaps-current.md",
+          "exists_at_recording": true,
+          "sha256": "ad015d7c796553e7b28edaa4fb09b456b69aaa994388017b5e732b2dc449d3c5"
+        },
+        {
+          "path": "docs/premium-ui/reviews/reliability-current.json",
+          "exists_at_recording": true,
+          "sha256": "dd81e95e150659f1dbe35924d4ebade72db8472b53c006df8693c515c7a3cb37"
+        }
+      ],
+      "snapshot_policy": "Evidence file digests identify inspected records. Embedded source hashes remain authoritative for their runtime snapshot; current file equality is not a rerun.",
+      "applicability": "Historical21October source/evidence gap assessment. Integration updates in its introduction and later bounded reports may supersede parts; not a current reproduced bug list. Source counts, bundle sizes and runtime counts are historical.",
+      "owner": "frontend coordinator",
+      "disposition": "partial_followups_require_scope_reconciliation",
+      "next_verification": "Reconcile current acceptance definitions, source ownership and exact runtime assertions for this scope; preserve completed bounded fixes rather than reopening old observations wholesale."
+    },
+    {
+      "id": "FE-RELIABILITY-005",
+      "classification": "investigation",
+      "title": "Uncertain saves are explained but not universally reconciled (93, 229, 243).",
+      "expected": "Explain uncertain saves and offer record-specific deliberate reconciliation where available.",
+      "observed": "The shared helper correctly avoids mutation replay and warns when body decoding, network delivery or account change leaves the outcome uncertain. That is necessary, but the record-specific refresh/check path is not established for every editor. Map available existing GET/read-back capabilities to each affected save. Keep the original draft until the user chooses reconciliation, and disclose where the API cannot distinguish outcomes. Mocked read-back must stay labelled as frontend contract evidence.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/reliability-gaps-current.md",
+          "exists_at_recording": true,
+          "sha256": "ad015d7c796553e7b28edaa4fb09b456b69aaa994388017b5e732b2dc449d3c5"
+        },
+        {
+          "path": "docs/premium-ui/reviews/reliability-current.json",
+          "exists_at_recording": true,
+          "sha256": "dd81e95e150659f1dbe35924d4ebade72db8472b53c006df8693c515c7a3cb37"
+        }
+      ],
+      "snapshot_policy": "Evidence file digests identify inspected records. Embedded source hashes remain authoritative for their runtime snapshot; current file equality is not a rerun.",
+      "applicability": "Historical21October source/evidence gap assessment. Integration updates in its introduction and later bounded reports may supersede parts; not a current reproduced bug list. Source counts, bundle sizes and runtime counts are historical.",
+      "owner": "frontend coordinator",
+      "disposition": "partial_followups_require_scope_reconciliation",
+      "next_verification": "Reconcile current acceptance definitions, source ownership and exact runtime assertions for this scope; preserve completed bounded fixes rather than reopening old observations wholesale."
+    },
+    {
+      "id": "FE-RELIABILITY-006",
+      "classification": "investigation",
+      "title": "Stale data marking is incomplete (64, 226).",
+      "expected": "Describe visible data freshness truthfully across failed refresh/context changes.",
+      "observed": "Several screens preserve useful data or cached optional summaries, but there is no complete register showing when each visible value was last confirmed or when its context became stale. Avoid introducing a decorative connected/saved indicator. Cover failed refresh after populated content and context change while an optional report is slow. Status must describe the evidence actually available.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/reliability-gaps-current.md",
+          "exists_at_recording": true,
+          "sha256": "ad015d7c796553e7b28edaa4fb09b456b69aaa994388017b5e732b2dc449d3c5"
+        },
+        {
+          "path": "docs/premium-ui/reviews/reliability-current.json",
+          "exists_at_recording": true,
+          "sha256": "dd81e95e150659f1dbe35924d4ebade72db8472b53c006df8693c515c7a3cb37"
+        }
+      ],
+      "snapshot_policy": "Evidence file digests identify inspected records. Embedded source hashes remain authoritative for their runtime snapshot; current file equality is not a rerun.",
+      "applicability": "Historical21October source/evidence gap assessment. Integration updates in its introduction and later bounded reports may supersede parts; not a current reproduced bug list. Source counts, bundle sizes and runtime counts are historical.",
+      "owner": "frontend coordinator",
+      "disposition": "partial_followups_require_scope_reconciliation",
+      "next_verification": "Reconcile current acceptance definitions, source ownership and exact runtime assertions for this scope; preserve completed bounded fixes rather than reopening old observations wholesale."
+    },
+    {
+      "id": "FE-RELIABILITY-007",
+      "classification": "investigation",
+      "title": "Action acceptance remains incomplete (3–7, 82, 140, 160, 180, 200, 258).",
+      "expected": "Map every enabled action to its exact asserted outcome and protected invariants.",
+      "observed": "The inventory discovers 844 candidates; it does not certify 844 actions. Admin contracts explicitly record 147 runtime-pending candidates of 188. Other contract files contain “requires exact assertion mapping” entries. Classify true controls, structural fields and reference-only samples, then attach the existing exact assertions or add missing outcomes. Prioritize enabled destructive/import/publish/reversal/download controls. No enabled action may receive a pass just because its screen or module suite passed.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/reliability-gaps-current.md",
+          "exists_at_recording": true,
+          "sha256": "ad015d7c796553e7b28edaa4fb09b456b69aaa994388017b5e732b2dc449d3c5"
+        },
+        {
+          "path": "docs/premium-ui/reviews/reliability-current.json",
+          "exists_at_recording": true,
+          "sha256": "dd81e95e150659f1dbe35924d4ebade72db8472b53c006df8693c515c7a3cb37"
+        }
+      ],
+      "snapshot_policy": "Evidence file digests identify inspected records. Embedded source hashes remain authoritative for their runtime snapshot; current file equality is not a rerun.",
+      "applicability": "Historical21October source/evidence gap assessment. Integration updates in its introduction and later bounded reports may supersede parts; not a current reproduced bug list. Source counts, bundle sizes and runtime counts are historical.",
+      "owner": "frontend coordinator",
+      "disposition": "partial_followups_require_scope_reconciliation",
+      "next_verification": "Reconcile current acceptance definitions, source ownership and exact runtime assertions for this scope; preserve completed bounded fixes rather than reopening old observations wholesale."
+    },
+    {
+      "id": "FE-RELIABILITY-008",
+      "classification": "investigation",
+      "title": "Download failure and artifact checks need an explicit matrix (179, 186, 245).",
+      "expected": "Record artifact metadata/content/failure acceptance for every operational download.",
+      "observed": "Existing suites validate some download outcomes. A complete filename/format/nonempty/content/failure matrix is not supplied for every operational export and rejection report. Direct `fetch` download helpers also bypass the common request helper, so check expiry/account-change/cancellation behavior separately. No export content or backend contract change is authorized.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/reliability-gaps-current.md",
+          "exists_at_recording": true,
+          "sha256": "ad015d7c796553e7b28edaa4fb09b456b69aaa994388017b5e732b2dc449d3c5"
+        },
+        {
+          "path": "docs/premium-ui/reviews/reliability-current.json",
+          "exists_at_recording": true,
+          "sha256": "dd81e95e150659f1dbe35924d4ebade72db8472b53c006df8693c515c7a3cb37"
+        }
+      ],
+      "snapshot_policy": "Evidence file digests identify inspected records. Embedded source hashes remain authoritative for their runtime snapshot; current file equality is not a rerun.",
+      "applicability": "Historical21October source/evidence gap assessment. Integration updates in its introduction and later bounded reports may supersede parts; not a current reproduced bug list. Source counts, bundle sizes and runtime counts are historical.",
+      "owner": "frontend coordinator",
+      "disposition": "partial_followups_require_scope_reconciliation",
+      "next_verification": "Reconcile current acceptance definitions, source ownership and exact runtime assertions for this scope; preserve completed bounded fixes rather than reopening old observations wholesale."
+    },
+    {
+      "id": "FE-RELIABILITY-009",
+      "classification": "investigation",
+      "title": "Shared visual state reference is representative (16, 28, 40, 202).",
+      "expected": "Verify actual visual states and computed contrast before removing compatibility styling.",
+      "observed": "The component reference demonstrates several real controls and eight tested theme/width combinations. It does not demonstrate every focus/hover/pressed/error/disabled/loading variant across all migrated components. Inventory remaining hard-coded and inline state colors; verify actual computed contrast and focus boundaries before deleting compatibility selectors. The 48 measured pairs do not prove every actual pairing.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/reliability-gaps-current.md",
+          "exists_at_recording": true,
+          "sha256": "ad015d7c796553e7b28edaa4fb09b456b69aaa994388017b5e732b2dc449d3c5"
+        },
+        {
+          "path": "docs/premium-ui/reviews/reliability-current.json",
+          "exists_at_recording": true,
+          "sha256": "dd81e95e150659f1dbe35924d4ebade72db8472b53c006df8693c515c7a3cb37"
+        }
+      ],
+      "snapshot_policy": "Evidence file digests identify inspected records. Embedded source hashes remain authoritative for their runtime snapshot; current file equality is not a rerun.",
+      "applicability": "Historical21October source/evidence gap assessment. Integration updates in its introduction and later bounded reports may supersede parts; not a current reproduced bug list. Source counts, bundle sizes and runtime counts are historical.",
+      "owner": "frontend coordinator",
+      "disposition": "partial_followups_require_scope_reconciliation",
+      "next_verification": "Reconcile current acceptance definitions, source ownership and exact runtime assertions for this scope; preserve completed bounded fixes rather than reopening old observations wholesale."
+    },
+    {
+      "id": "FE-RELIABILITY-010",
+      "classification": "investigation",
+      "title": "Sticky and keyboard occlusion evidence is narrower than screen reflow (52, 54, 139, 171, 208, 249).",
+      "expected": "Verify focused fields and final review rows are not occluded by wrapped sticky controls.",
+      "observed": "The geometry suite checks shell breakpoint edges and text-spacing/forced-color navigation, plus one unit action. It does not measure every final import/proposal row and validation field against wrapped sticky-footer rectangles. Add focused bounding-box/scroll outcomes for the longest review forms at 320×568 and 844×390. Software-keyboard hardware behavior stays pending; do not infer it from viewport changes.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/reliability-gaps-current.md",
+          "exists_at_recording": true,
+          "sha256": "ad015d7c796553e7b28edaa4fb09b456b69aaa994388017b5e732b2dc449d3c5"
+        },
+        {
+          "path": "docs/premium-ui/reviews/reliability-current.json",
+          "exists_at_recording": true,
+          "sha256": "dd81e95e150659f1dbe35924d4ebade72db8472b53c006df8693c515c7a3cb37"
+        }
+      ],
+      "snapshot_policy": "Evidence file digests identify inspected records. Embedded source hashes remain authoritative for their runtime snapshot; current file equality is not a rerun.",
+      "applicability": "Historical21October source/evidence gap assessment. Integration updates in its introduction and later bounded reports may supersede parts; not a current reproduced bug list. Source counts, bundle sizes and runtime counts are historical.",
+      "owner": "frontend coordinator",
+      "disposition": "partial_followups_require_scope_reconciliation",
+      "next_verification": "Reconcile current acceptance definitions, source ownership and exact runtime assertions for this scope; preserve completed bounded fixes rather than reopening old observations wholesale."
+    },
+    {
+      "id": "FE-RELIABILITY-011",
+      "classification": "investigation",
+      "title": "Production asset failure matrix is incomplete (235, 236, 250).",
+      "expected": "Distinguish initial and post-ready asset failures and release-retention dependencies.",
+      "observed": "Genuine missing recycle-bin chunk recovery and production GPU/CSP workflows pass in stored reports. Missing styles after ready, worker asset mismatches in old tabs, optional font/icon failure and hosting release-retention configuration need separate acceptance evidence. The bootstrap ignores errors once ready, so its initial-load recovery does not establish post-ready stylesheet recovery. Hosting settings are documentation dependencies, not permission to edit backend infrastructure.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/reliability-gaps-current.md",
+          "exists_at_recording": true,
+          "sha256": "ad015d7c796553e7b28edaa4fb09b456b69aaa994388017b5e732b2dc449d3c5"
+        },
+        {
+          "path": "docs/premium-ui/reviews/reliability-current.json",
+          "exists_at_recording": true,
+          "sha256": "dd81e95e150659f1dbe35924d4ebade72db8472b53c006df8693c515c7a3cb37"
+        }
+      ],
+      "snapshot_policy": "Evidence file digests identify inspected records. Embedded source hashes remain authoritative for their runtime snapshot; current file equality is not a rerun.",
+      "applicability": "Historical21October source/evidence gap assessment. Integration updates in its introduction and later bounded reports may supersede parts; not a current reproduced bug list. Source counts, bundle sizes and runtime counts are historical.",
+      "owner": "frontend coordinator",
+      "disposition": "partial_followups_require_scope_reconciliation",
+      "next_verification": "Reconcile current acceptance definitions, source ownership and exact runtime assertions for this scope; preserve completed bounded fixes rather than reopening old observations wholesale."
+    },
+    {
+      "id": "FE-RELIABILITY-012",
+      "classification": "investigation",
+      "title": "Measured performance and safe cleanup remain open (14, 115, 237–239).",
+      "expected": "Measure repeatable render, long tasks and layout shift before optional optimization/cleanup.",
+      "observed": "Current build reports roughly 616 kB main JS and a conflicting static/dynamic extra-duty import warning. It also includes concurrent changes. Record repeatable render/long-task/layout-shift observations with representative large fixtures, then split only measured optional costs and remove dead paths only after proving action reachability. Bundle-size change alone does not establish an operational speed improvement.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/reliability-gaps-current.md",
+          "exists_at_recording": true,
+          "sha256": "ad015d7c796553e7b28edaa4fb09b456b69aaa994388017b5e732b2dc449d3c5"
+        },
+        {
+          "path": "docs/premium-ui/reviews/reliability-current.json",
+          "exists_at_recording": true,
+          "sha256": "dd81e95e150659f1dbe35924d4ebade72db8472b53c006df8693c515c7a3cb37"
+        }
+      ],
+      "snapshot_policy": "Evidence file digests identify inspected records. Embedded source hashes remain authoritative for their runtime snapshot; current file equality is not a rerun.",
+      "applicability": "Historical21October source/evidence gap assessment. Integration updates in its introduction and later bounded reports may supersede parts; not a current reproduced bug list. Source counts, bundle sizes and runtime counts are historical.",
+      "owner": "frontend coordinator",
+      "disposition": "partial_followups_require_scope_reconciliation",
+      "next_verification": "Reconcile current acceptance definitions, source ownership and exact runtime assertions for this scope; preserve completed bounded fixes rather than reopening old observations wholesale."
+    },
+    {
+      "id": "FE-RELIABILITY-013",
+      "classification": "investigation",
+      "title": "Role/context and browser coverage needs final reconciliation (12, 76, 197, 219, 251, 255).",
+      "expected": "Reconcile role/context/browser evidence and refusal outcomes.",
+      "observed": "The 144-case audit covers admin-like navigation states in Chromium. Mapping workflows additionally cover Firefox/WebKit. Neither proves all roles or every engine for generation, imports and account forms. Use authorized disposable or mocked fixtures, explicit unchanged payload assertions, and negative 403 outcomes; retain server permissions as authority.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/reliability-gaps-current.md",
+          "exists_at_recording": true,
+          "sha256": "ad015d7c796553e7b28edaa4fb09b456b69aaa994388017b5e732b2dc449d3c5"
+        },
+        {
+          "path": "docs/premium-ui/reviews/reliability-current.json",
+          "exists_at_recording": true,
+          "sha256": "dd81e95e150659f1dbe35924d4ebade72db8472b53c006df8693c515c7a3cb37"
+        }
+      ],
+      "snapshot_policy": "Evidence file digests identify inspected records. Embedded source hashes remain authoritative for their runtime snapshot; current file equality is not a rerun.",
+      "applicability": "Historical21October source/evidence gap assessment. Integration updates in its introduction and later bounded reports may supersede parts; not a current reproduced bug list. Source counts, bundle sizes and runtime counts are historical.",
+      "owner": "frontend coordinator",
+      "disposition": "partial_followups_require_scope_reconciliation",
+      "next_verification": "Reconcile current acceptance definitions, source ownership and exact runtime assertions for this scope; preserve completed bounded fixes rather than reopening old observations wholesale."
+    },
+    {
+      "id": "FE-RELIABILITY-014",
+      "classification": "investigation",
+      "title": "Release and review deliverables remain open (194, 256–260).",
+      "expected": "Provide current review deliverables and item-specific evidence with honest remaining limits.",
+      "observed": "Current reports are individually useful, but not all cover the latest source hashes. Complete per-item five-perspective disposition, action evidence, reviewed screenshots, frontend rollback/review-build instructions and unresolved issues. Preserve historical reports; do not turn a newer review timestamp into a newer runtime pass. Deployment and push remain separate approvals.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/reliability-gaps-current.md",
+          "exists_at_recording": true,
+          "sha256": "ad015d7c796553e7b28edaa4fb09b456b69aaa994388017b5e732b2dc449d3c5"
+        },
+        {
+          "path": "docs/premium-ui/reviews/reliability-current.json",
+          "exists_at_recording": true,
+          "sha256": "dd81e95e150659f1dbe35924d4ebade72db8472b53c006df8693c515c7a3cb37"
+        }
+      ],
+      "snapshot_policy": "Evidence file digests identify inspected records. Embedded source hashes remain authoritative for their runtime snapshot; current file equality is not a rerun.",
+      "applicability": "Historical21October source/evidence gap assessment. Integration updates in its introduction and later bounded reports may supersede parts; not a current reproduced bug list. Source counts, bundle sizes and runtime counts are historical.",
+      "owner": "frontend coordinator",
+      "disposition": "partial_followups_require_scope_reconciliation",
+      "next_verification": "Reconcile current acceptance definitions, source ownership and exact runtime assertions for this scope; preserve completed bounded fixes rather than reopening old observations wholesale."
+    },
+    {
+      "id": "FE-PROFILE-SECTIONS-001",
+      "classification": "verified_bug",
+      "title": "Missing explicit section overflow cue",
+      "expected": "Off-screen member sections have discoverable truthful directional guidance.",
+      "observed": "Source inspection found only native scrollbar; actual conditionalcue nowtested throughbothorientations/reflow/nativewheel.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/qa-profile-tabs-complete.json",
+          "exists_at_recording": true,
+          "sha256": "d4eb0562477d0717892d408446ad9b7aa649705e9ac74aceb2601e4ff6be17a1"
+        },
+        {
+          "path": "docs/premium-ui/reviews/profile-tabs-complete-current.json",
+          "exists_at_recording": true,
+          "sha256": "3276214f87c7845822058e55127cb169ade8dd1f43ba3959a0ee6b5a8c4709c4"
+        }
+      ],
+      "snapshot_policy": "Final source/test snapshot applies; earlier failures retained.",
+      "applicability": "CanonicalprofilePhase7tabpatternonly;noallfunctionsclaim.",
+      "owner": "frontend coordinator",
+      "disposition": "fixed_bounded",
+      "next_verification": "Retainfullnativekeyboard/reflow/noobserverregressions;nativeAT/physicaldevicespending."
+    },
+    {
+      "id": "FE-PROFILE-SECTIONS-002",
+      "classification": "verified_bug",
+      "title": "Cue height clipped selected tab without ResizeObserver",
+      "expected": "Selected Activity remainsfullyrevealed whenResizeObserver unavailable.",
+      "observed": "Unchangedcontainerregression reproducedclippingaftercuevisibilitychanged; cuevisibilitynowsettlesbeforegeometry.",
+      "evidence": [
+        {
+          "path": "tmp/premium-profile-tabs-complete-container-before-fix.log",
+          "exists_at_recording": true,
+          "sha256": "7b7122e1fb5bdb57956c46b81eca79b9d3d128d6530253868c99a49420d828db"
+        },
+        {
+          "path": "docs/premium-ui/reviews/profile-tabs-complete-current.json",
+          "exists_at_recording": true,
+          "sha256": "3276214f87c7845822058e55127cb169ade8dd1f43ba3959a0ee6b5a8c4709c4"
+        }
+      ],
+      "snapshot_policy": "Final source/test snapshot applies; earlier failures retained.",
+      "applicability": "CanonicalprofilePhase7tabpatternonly;noallfunctionsclaim.",
+      "owner": "frontend coordinator",
+      "disposition": "fixed_bounded",
+      "next_verification": "Retainfullnativekeyboard/reflow/noobserverregressions;nativeAT/physicaldevicespending."
+    },
+    {
+      "id": "FE-PROFILE-SECTIONS-003",
+      "classification": "verified_bug",
+      "title": "Implicit horizontal rail became extra native focus stop",
+      "expected": "Canonicaltabpatternusesselectedtabonlyasrovingentry.",
+      "observed": "Fullnativekeyboardrun recordedNAVfocusonShiftTabbeforeClose; explicitnavtabindex-1 removedextra stop, final6contexts passed.",
+      "evidence": [
+        {
+          "path": "tmp/premium-profile-tabs-complete-native-rail-stop-before.log",
+          "exists_at_recording": true,
+          "sha256": "7f5e4866336f3776c3b252fe8676d869d4d8985e6b125bc8464181f5e40ddf00"
+        },
+        {
+          "path": "docs/premium-ui/reviews/profile-tabs-complete-current.json",
+          "exists_at_recording": true,
+          "sha256": "3276214f87c7845822058e55127cb169ade8dd1f43ba3959a0ee6b5a8c4709c4"
+        }
+      ],
+      "snapshot_policy": "Final source/test snapshot applies; earlier failures retained.",
+      "applicability": "CanonicalprofilePhase7tabpatternonly;noallfunctionsclaim.",
+      "owner": "frontend coordinator",
+      "disposition": "fixed_bounded",
+      "next_verification": "Retainfullnativekeyboard/reflow/noobserverregressions;nativeAT/physicaldevicespending."
+    },
+    {
+      "id": "FE-PROFILE-NULL-EFFECTIVE-001",
+      "classification": "verified_bug",
+      "title": "Profile header and overview substitute base call level for explicitly null effective level",
+      "expected": "Review nullable server-effective semantics and show unassigned distinctly from absent old-server fields without changing server rules.",
+      "observed": "Current header/overview use effective_call_level || call_level; new timeline explicitly preserves null as Unassigned. The existing fallback predates this batch; source-byte proof confirms it was preserved.",
+      "evidence": [
+        {
+          "path": "docs/premium-ui/reviews/profile-date-cards-current.json",
+          "exists_at_recording": true,
+          "sha256": "fc1ce3b70e409ab0fbfb6eec5eb160212a3bec707dc1f154416e7b3481e3186e"
+        }
+      ],
+      "snapshot_policy": "Source inspection plus new nullable timeline fixture; no separate header null browser assertion yet.",
+      "applicability": "Existing canonical header/overview; requirements122/133 remain partial.",
+      "owner": "frontend coordinator",
+      "disposition": "fixed_bounded",
+      "next_verification": "Retain new regression; broader header designation and complete promotion timeline remain partial.",
+      "resolution": {
+        "recorded_at_utc": "2026-10-24T09:49:01.396196+00:00",
+        "observed": "Explicit null renders Unassigned; omitted effective field renders Base default with missing-effective explanation. Unknown returned strings remain escaped and complete. Header, overview and roles summary agree.",
+        "evidence": "docs/premium-ui/reviews/effective-identity-current.json",
+        "scope": "Six engine/width contexts contain 72 role/fixture workflows and 36 exact locally fulfilled unchanged PUT payloads. No backend persistence certification."
+      }
+    },
+    {
+      "id": "FE-PROFILE-EFFECTIVE-WRAP-001",
+      "classification": "verified_bug",
+      "title": "Long unknown effective value overflowed mobile profile header",
+      "expected": "Retain complete escaped returned text within header width.",
+      "observed": "Targeted browser run measured 411px scroll width in a 228px identity region. Scoped overflow-wrap rule corrected this without truncation.",
+      "evidence": [
+        {
+          "path": "tmp/premium-profile-effective-before-wrap.log",
+          "exists_at_recording": true,
+          "sha256": "6dd4ec61d1dd39d84048a85e04e71479afd963986b2d26ad69d26d9dde5c7183"
+        },
+        {
+          "path": "docs/premium-ui/qa-profile-effective-identity.json",
+          "exists_at_recording": true,
+          "sha256": "aea9cfb9b423fe6095a3d99d594eff5dd0a0335bf0648cabe3b9fa2891ffe73e"
+        }
+      ],
+      "snapshot_policy": "Preserved pre-fix failure and final held-source regression.",
+      "applicability": "Canonical profile header identity and missing-effective note only.",
+      "owner": "frontend coordinator",
+      "disposition": "fixed_bounded",
+      "next_verification": "Retain unknown HTML-like value fixture across three engines and two widths."
+    }
+  ],
+  "latest_bounded_resolution_at_utc": "2026-10-24T09:49:01.396196+00:00"
+}

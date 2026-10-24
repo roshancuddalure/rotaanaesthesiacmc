@@ -30,7 +30,7 @@ try {
     await page.route("**/__member-test", (route) =>
       route.fulfill({
         contentType: "text/html",
-        body: `<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/src/styles.css"></head><body><button id="opener">Open member</button></body></html>`,
+        body: `<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/src/styles.css"><link rel="stylesheet" href="/src/premium-theme.css"></head><body><button id="opener">Open member</button></body></html>`,
       }),
     );
     let shouldFail = false;
@@ -256,7 +256,7 @@ try {
     await page.route("**/__member-test", (route) =>
       route.fulfill({
         contentType: "text/html",
-        body: `<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/src/styles.css"></head><body></body></html>`,
+        body: `<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/src/styles.css"><link rel="stylesheet" href="/src/premium-theme.css"></head><body></body></html>`,
       }),
     );
     let previews = 0;
@@ -398,7 +398,7 @@ try {
     await page.route("**/__member-test", (route) =>
       route.fulfill({
         contentType: "text/html",
-        body: `<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/src/styles.css"></head><body></body></html>`,
+        body: `<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/src/styles.css"><link rel="stylesheet" href="/src/premium-theme.css"></head><body></body></html>`,
       }),
     );
     const sentCorrections = [];

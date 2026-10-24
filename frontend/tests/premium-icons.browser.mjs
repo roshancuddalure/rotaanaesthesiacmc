@@ -1,0 +1,24 @@
+import assert from 'node:assert/strict';
+import {mkdir,readFile,writeFile} from 'node:fs/promises';
+import {createHash} from 'node:crypto';
+import {chromium,firefox,webkit} from 'playwright';
+const results=[],paths=['src/decorative-icons.ts','src/main.ts','src/limits.ts','src/rota-rules.ts','src/styles.css','src/premium-theme.css'];
+const hashes=async()=>Object.fromEntries(await Promise.all(paths.map(async p=>['frontend/'+p,createHash('sha256').update(await readFile(p)).digest('hex')]))),initial=await hashes();
+const names=['close','menu','star','warning','lock','check','chevron','search'];
+for(const [engine,launcher]of Object.entries({chromium,firefox,webkit})){
+ const browser=await launcher.launch();
+ try{for(const width of [320,1280])for(const theme of ['light','dark']){
+  const context=await browser.newContext({viewport:{width,height:900},colorScheme:theme,reducedMotion:'reduce'}),page=await context.newPage(),errors=[],remote=[];page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(!new URL(r.url()).hostname.match(/^(127\.0\.0\.1|localhost)$/))remote.push(r.url());});
+  await context.addInitScript(()=>{localStorage.setItem('duty_rota_auth_token','icons-fixture');localStorage.setItem('duty_rota_working_month','2026-11');});
+  await page.route('**/api/**',async r=>{const q=r.request(),u=new URL(q.url());assert.equal(q.method(),'GET');return r.fulfill({response:await r.fetch({url:'http://127.0.0.1:8031'+u.pathname+u.search})});});
+  await page.goto('http://127.0.0.1:5197/#view=user-guide');await page.locator('#guide-checklist').waitFor();
+  if(width===320){const toggle=page.locator('#sidebar-toggle');await toggle.focus();await page.keyboard.press('Enter');await page.locator('#sidebar-close').waitFor({state:'visible'});await page.locator('#sidebar-close').focus();await page.keyboard.press('Enter');assert.equal(await toggle.evaluate(n=>n===document.activeElement),true);}
+  const shell=await page.locator('#sidebar-toggle svg,#sidebar-close svg').evaluateAll(ns=>ns.map(n=>({className:n.getAttribute('class'),viewBox:n.getAttribute('viewBox'),hidden:n.getAttribute('aria-hidden'),focusable:n.getAttribute('focusable')})));assert.equal(shell.length,2);assert.ok(shell.every(n=>n.className.includes('app-icon')&&n.viewBox==='0 0 24 24'&&n.hidden==='true'&&n.focusable==='false'));
+  await page.evaluate(async names=>{const {decorativeIcon}=await import('/src/decorative-icons.ts');const section=document.createElement('section');section.className='panel';section.id='icon-fixture';section.innerHTML='<h2>Local icon family</h2><p>Decorative SVGs keep their meaning in adjacent text.</p><div style="display:grid;gap:16px">'+names.map(name=>`<div data-icon="${name}" style="display:flex;align-items:center;gap:12px">${decorativeIcon(name)}<span>${name}</span></div>`).join('')+'</div>';document.querySelector('#view-root').prepend(section);},names);
+  const svgs=page.locator('#icon-fixture svg');assert.equal(await svgs.count(),8);for(const icon of await svgs.all()){assert.equal(await icon.getAttribute('stroke-width'),'2');assert.equal(await icon.getAttribute('fill'),'none');assert.equal(await icon.getAttribute('focusable'),'false');const box=await icon.boundingBox();assert.ok(Math.abs(box.width-24)<0.1);assert.ok(Math.abs(box.height-24)<0.1);assert.equal(await icon.locator('title,text,image,use').count(),0);}
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);assert.equal(await page.locator('#working-month').inputValue(),'2026-11');assert.deepEqual(remote,[]);assert.deepEqual(errors,[]);if(engine==='chromium'){await mkdir('../docs/premium-ui/screenshots/icons',{recursive:true});await page.locator('#icon-fixture').evaluate(n=>n.scrollIntoView({block:'start',behavior:'instant'}));await page.screenshot({path:`../docs/premium-ui/screenshots/icons/family-${width}-${theme}.png`});}
+  results.push({engine,width,theme,sharedLocalIcons:8,shellDecorativeSemantics:true,consistentGeometry24px:true,mobileMenuCloseFocus:width===320,selectedMonthPreserved:true,noRemoteResources:true,pageOverflow:false,errors});await page.waitForLoadState('networkidle');await context.close();
+ }}finally{await browser.close();}
+}
+for(const file of ['main.ts','limits.ts','rota-rules.ts'])assert.equal((await readFile('src/'+file,'utf8')).includes('<svg'),false,'Existing inline SVGs all use shared helper: '+file);
+assert.deepEqual(await hashes(),initial);await writeFile('../docs/premium-ui/qa-icons.json',JSON.stringify({source_sha256:initial,scope:'Actual app shell/menu + controlled eight-icon gallery of shared local helper.3engines320/1280light/dark. Gallery geometry is not full Limits/rules route coverage; existing module regressions run separately. GET-only disposableAPI, no remote icon/font resources or physical/native claim.',results},null,2)+'\n');console.log('Icon family workflows: '+results.length);

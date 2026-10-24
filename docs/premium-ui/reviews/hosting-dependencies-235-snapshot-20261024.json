@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-10-24T08:37:52.456383+00:00",
+  "reviewer": "/root/acceptance_scope_reconciliation",
+  "scope_type": "documentary_snapshot_for_root_adjudication",
+  "scope": "Original requirement 235 hosting dependency inspection and deployment follow-up only. This immutable snapshot is not item acceptance, hosting compliance or deployment authorization.",
+  "item_id": 235,
+  "requirement": "Inspect HTML revalidation, immutable hashed assets and previous-release retention as hosting dependencies without silently modifying server infrastructure.",
+  "criteria_reference": {
+    "path": "docs/premium-ui/acceptance-criteria/items-174-260.json",
+    "sha256": "faa73e22aaeaf81c75886803908b250906fb55e85031087bb5e211aa7394dbac"
+  },
+  "source_inspections": [
+    {
+      "path": "backend/app/main.py",
+      "sha256": "950dd9a45a7e67ffc4403899dcdab33e211e951b5e596574786bd2532a2d135c",
+      "access": "read only",
+      "finding": "Combined FastAPI application conditionally mounts frontend directory using native StaticFiles with html=True. This file contains no explicit HTML revalidation, immutable asset caching or previous-release retention policy. That absence does not establish effective live middleware/proxy/CDN headers.",
+      "excerpt": {
+        "start_line": 65,
+        "end_line": 68,
+        "text": "    app.include_router(api_router, prefix=\"/api\")\n    if STATIC_DIR.exists():\n        app.mount(\"/\", StaticFiles(directory=STATIC_DIR, html=True), name=\"frontend\")\n    return app"
+      }
+    },
+    {
+      "path": "Dockerfile",
+      "sha256": "3d978f13d5670ac46c97ff5393401532564175a6639cb17cae67037837a70175",
+      "access": "read only",
+      "finding": "Root image builds frontend and copies frontend/dist into ./static. Image replacement is visible; an old-asset retention window or atomic release hosting policy is not established by this file."
+    },
+    {
+      "path": "frontend/Dockerfile",
+      "sha256": "70285035ed5a6f449727ae9c3020ca8b416d08e56309424ce4c6f32f2d4c2a3d",
+      "access": "read only",
+      "finding": "Standalone image builds public/src inputs and serves Vite preview. Container image/runtime and live hosting headers are not verified by this inspection."
+    }
+  ],
+  "attributed_document_excerpts": [
+    {
+      "source": "docs/premium-ui/review-build-and-rollback.md",
+      "source_sha256": "53b85c0b3dd0a8a589814f9b910e1a04321ccc26c43fd64002460fa00084ff52",
+      "start_line": 224,
+      "end_line": 228,
+      "text": "## Concrete rollback disposition\n\nNo independently accepted previous deployed frontend artifact has been established in this workspace. A live rollback cannot therefore be certified here. Before a separately authorized deployment, retain the exact currently deployed frontend artifact, its complete asset manifest, hosting/cache configuration and API compatibility evidence. A rollback restores those exact frontend assets through the host's existing atomic release process, then verifies sign-in, navigation, downloads and stale-tab recovery against that release. It does not restore a database, run a migration or change backend configuration.\n\nKeep old hashed assets available for already-open tabs according to the verified host policy. If the host cannot switch complete releases atomically, document and test its actual replacement procedure before release approval. Never use the task-start source snapshot or a broad Git reset as a rollback: hashes do not establish ownership of shared-file changes. An isolated reverse patch still requires hunk-by-hunk review against concurrent work and appropriate frontend regression checks. That source rollback artifact remains pending."
+    },
+    {
+      "source": "docs/premium-ui/review-build-and-rollback.md",
+      "source_sha256": "53b85c0b3dd0a8a589814f9b910e1a04321ccc26c43fd64002460fa00084ff52",
+      "start_line": 270,
+      "end_line": 276,
+      "text": "## Packaging and hosting disposition\n\nThe root Dockerfile already copies `frontend/public` before building. The standalone `frontend/Dockerfile` now copies `public` too; without that copy its image would omit the recovery bootstrap and downloadable templates. The current local build contains `dist/frontend-bootstrap.js` and `dist/templates/department-members.csv`. A source contract checks both Docker copy paths. Docker is unavailable in this environment, so no container-image build or container-runtime pass is claimed.\n\nThe inspected combined application mounts its frontend using `StaticFiles` in `backend/app/main.py`. The repository inspection did not establish an explicit HTML cache-revalidation policy, immutable hashed-asset policy or retained-assets window for previous releases. These are hosting acceptance dependencies. No backend or infrastructure configuration was changed for this UI task. The Vite preview worker/CSP checks verify the local reviewed build, not live hosting or a CDN's headers.\n\nBefore an independently authorized deployment, verify the actual host's HTML revalidation, hashed asset handling, previous-release asset retention, CSP and worker isolation. Preserve the controlled update prompt: it must not reload or replay a mutation automatically. Keep the build identity visible in expandable support details. A working old-tab recovery flow requires evidence against the actual serving policy as well as the local missing-chunk test."
+    }
+  ],
+  "hosting_dependencies": [
+    {
+      "dependency": "HTML revalidation",
+      "evidence_status": "Effective live-host evidence unavailable",
+      "actual_inspection": "Native StaticFiles mount and image serving arrangement inspected; no explicit policy established from those files. No live response-header request performed.",
+      "required_follow_up": "Deployment/hosting operator must capture actual HTML response headers and validate timely revalidation for both fresh and already-open tabs before separately authorized deployment."
+    },
+    {
+      "dependency": "Immutable hashed assets",
+      "evidence_status": "Effective live-host evidence unavailable",
+      "actual_inspection": "Local reviewed Vite archives contain hashed JS/CSS asset filenames. Hash naming does not prove host Cache-Control behavior.",
+      "required_follow_up": "Deployment/hosting operator must inspect actual hashed-asset headers and verify appropriate immutable caching alongside HTML revalidation; retain exact host configuration evidence before separately authorized deployment."
+    },
+    {
+      "dependency": "Previous-release asset retention",
+      "evidence_status": "Host retention policy and known-good deployed release unavailable",
+      "actual_inspection": "No release-retention window established by inspected source/image instructions. Existing local review archives are not proof that old deployed assets remain served.",
+      "required_follow_up": "Deployment/hosting operator must retain exact current deployed artifact and asset manifest, establish/test old-asset retention for existing tabs and document/test actual atomic or replacement rollback procedure before separately authorized deployment."
+    }
+  ],
+  "conditions": [
+    {
+      "condition": "Inspect and record actual or unavailable evidence for HTML revalidation, immutable hashed assets and previous-release asset retention.",
+      "recommendation": "satisfied within original inspection/documentation scope",
+      "rationale": "Each of HTML revalidation, immutable hashed assets and prior-release retention is explicitly inspected at source level and recorded as unavailable for actual host enforcement. Unavailable evidence is an allowed explicit outcome of this condition."
+    },
+    {
+      "condition": "Document hosting requirements and responsible deployment follow-up without changing server infrastructure under frontend approval.",
+      "recommendation": "satisfied within original inspection/documentation scope",
+      "rationale": "Snapshot assigns actual-host evidence and recovery verification to the deployment/hosting operator before separate deployment approval. Relevant existing rollback/hosting paragraphs are preserved verbatim with source attribution; no infrastructure action is performed."
+    }
+  ],
+  "operations": {
+    "application_edits": 0,
+    "backend_edits": 0,
+    "infrastructure_edits": 0,
+    "browser_or_runtime_tests": 0,
+    "live_host_header_requests": 0,
+    "deployment_authorized": false
+  },
+  "limitations": [
+    "This snapshot preserves documentary evidence; root must independently adjudicate item acceptance.",
+    "No live/CDN header behavior, container runtime, release retention or production rollback is certified.",
+    "Source excerpts/hashes identify the inspection snapshot; future source changes need applicability review.",
+    "Existing concurrent backend work is read only and is not claimed as this frontend task implementation."
+  ]
+}

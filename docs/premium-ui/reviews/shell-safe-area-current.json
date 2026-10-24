@@ -1,0 +1,81 @@
+{
+  "recorded_at_utc": "2026-10-23T14:08:52.885262+00:00",
+  "completion_claim": false,
+  "requirements": [
+    51,
+    62,
+    208,
+    209,
+    258
+  ],
+  "scope": "Shared safe-area CSS paths and existing expanded/compact/mobile shell acceptance, including native profile draft under a reduced emulated viewport.",
+  "source_sha256": {
+    "frontend/src/main.ts": "87e8234cf013acaafa18af0ed1be542c873a310e4c64c6bd2a848d1a09f8376e",
+    "frontend/src/member-workspace.ts": "de306e42702a496adb312b8c552c73541a6de15cfb4b895b03785c3e9dafe808",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "b4b0c2f85d6173d7602c3aa4a0854dce2abe80246dc9ac73b9533189a34ce033",
+    "frontend/index.html": "4b7afb8eeccdd1d27d12a2550c90817a997c6ff90da0b044fd18c36b93223914"
+  },
+  "changes": [
+    "Add four env-backed safe-area customproperties with0px fallback; enable viewport-fit=cover in existing viewport metadata.",
+    "Use inset-aware padding for sidebar/content at desktop and mobile widths, bottom-nav edges, More backdrop, legacy overlay padding, full-screen native header/content/rail/footer and recovery notice bounds. Zero insets retain existing baseline padding through max().",
+    "Correct container-query profile content/rail and short-height header/footer overrides that otherwise replaced safe padding.",
+    "Existing expanded264px/compact236px/mobile drawer states retained; no new navigation mode, route, role visibility or persisted preference introduced."
+  ],
+  "checks": {
+    "safe_area_contexts": 36,
+    "engines": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "widths": [
+      320,
+      390,
+      768,
+      844,
+      900,
+      1280
+    ],
+    "insets": [
+      {
+        "top": 0,
+        "right": 0,
+        "bottom": 0,
+        "left": 0
+      },
+      {
+        "top": 28,
+        "right": 28,
+        "bottom": 34,
+        "left": 24
+      }
+    ],
+    "inset_method": "Custom-property overrides exercise real CSS padding/position paths; no claim browser env() exposed an actual notch.",
+    "shell_states": "Mobile drawerclosed/inert/open/modal/Escape and More keyboardreturn, 44pxbottomnav controls, desktopwidth236/264, currentroutearia-current preserved.",
+    "native_profile": "Unsaved member name retained after reduced viewport height500 and Overview/Details tab changes. Header close and footer controls clear synthetic edges; dirty close restores exact fixture opener. GET-only.",
+    "existing_shell_workflows": 8,
+    "shell_workflow_evidence": "Observed current node tests/premium-shell.browser.mjs console:8 outcome workflows passed. Existing command does not persist a report or declare full source hold.",
+    "existing_header_contexts": 30,
+    "unit_tests": 100,
+    "build_exit_code": 0,
+    "build_inputs_held": true,
+    "static_inventories": "Style/action write/check match; source integrity only."
+  },
+  "evidence": [
+    "docs/premium-ui/qa-shell-safe-area.json",
+    "docs/premium-ui/qa-header-wrap.json",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+  ],
+  "test": "frontend/tests/premium-shell-safe-area.browser.mjs",
+  "test_sha256": "74e461f24e111bc1d0f6f61333d440a89f69778231b770b06505794ad9884be0",
+  "limitations": [
+    "Root implementer verification, not independent signoff.",
+    "Synthetic inset tests prove CSS paths only. Actual device env()/notch/homeindicator/nativekeyboard/rotation and physical device checks remain pending, as requested.",
+    "Native popup assertions cover canonical member profile only; every drawer/dialog/sticky variant and 200percenttext under positive insets remain unverified.",
+    "Existing compact/expanded states verified, not a new optional collapsed icon-rail control. Full62 still requires broader visual/role/state acceptance.",
+    "No fresh axe or screenshot visual audit in this batch; keyboard/bounds assertions are not whole accessibility or premium-design certification.",
+    "No operational backend writes; fixtures forward GET-only disposable reads. No API/permission/scheduling/persistedsemantics/export changes.",
+    "Only frontend premium-theme.css and viewport metadata changed in this batch. Concurrent work preserved; full51/62/all260 and samefixture equivalence remain open."
+  ]
+}

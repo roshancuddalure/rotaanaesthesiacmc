@@ -1,0 +1,225 @@
+{
+  "recorded_at_utc": "2026-10-23T20:36:00.583513+00:00",
+  "completion_claim": false,
+  "requirements": [
+    19,
+    49,
+    55,
+    56,
+    72,
+    73,
+    82,
+    84,
+    87,
+    92,
+    93,
+    100,
+    208,
+    209,
+    211,
+    227,
+    240,
+    241,
+    242,
+    243,
+    244,
+    246,
+    247,
+    248,
+    249,
+    251,
+    253,
+    255,
+    257,
+    258,
+    259
+  ],
+  "scope": "Mobile native member-creation disclosure with full-width fields, distinct open/hide/submit controls, in-memory private draft retention/clearing and actual unchanged creation API verification. Main/UI stylesheet only.",
+  "changed_application_files": [
+    "frontend/src/main.ts",
+    "frontend/src/premium-theme.css"
+  ],
+  "implementation": [
+    "First-use mobile creation collapsed; desktop expanded. Search, ImportCSV and More retain their existing selectors and remain directly available.",
+    "Native header label distinguishes Addmember from Hidememberform; hiding retains a Draft marker.",
+    "Full-width editor with intrinsic action-grid fallback for enlarged/spaced text. Focused header stays visible during desktop resize.",
+    "In-memory name survives filter/route rerenders and clears after its successful submission or sign-out; a different newly entered name stays unsaved. No persistent draft storage or auto-save.",
+    "Existing createMemberChecked/API request and duplicate-handling pipeline retained."
+  ],
+  "checks": {
+    "development_creation_contexts": 15,
+    "production_creation_contexts": 15,
+    "expanded_action_group_tagged_axe_findings": 0,
+    "enlarged_text_mobile_contexts_per_environment": 9,
+    "actual_saved_members_across_two_runs": 30,
+    "injected_refusal_then_explicit_retry_contexts": 30,
+    "delayed_success_filter_reconciliation_contexts": 30,
+    "different_new_draft_preservation_contexts": 12,
+    "existing_sort_contexts": 18,
+    "existing_filter_theme_contexts": 6,
+    "unit_tests_passed": 104,
+    "build_passed": true,
+    "build_inputs_held": true,
+    "static_inventory_checks": true,
+    "current_family_action_ids": 4,
+    "total_observed_action_ids_including_historical": 26
+  },
+  "source_sha256": {
+    "frontend/src/main.ts": "5a8129dbcd1544b1349273b99045f3b3f20b2349ecb7e1e627d9fd8a9d7b649e",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "42fd0ba8113f144f9d61886d88c71d67f4c0bcb64018a4e652c5db9806cfc677",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+  },
+  "measurements": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "retained_previous_fixture_top": 1214.28125,
+      "current_fixture_top": 1122.28125,
+      "reduction_vs_previous_fixture": 92.0,
+      "current_form_expansion_height": 168
+    },
+    {
+      "engine": "chromium",
+      "width": 390,
+      "retained_previous_fixture_top": 1073.53125,
+      "current_fixture_top": 981.53125,
+      "reduction_vs_previous_fixture": 92.0,
+      "current_form_expansion_height": 168
+    },
+    {
+      "engine": "chromium",
+      "width": 768,
+      "retained_previous_fixture_top": 790.5625,
+      "current_fixture_top": 750.5625,
+      "reduction_vs_previous_fixture": 40.0,
+      "current_form_expansion_height": 168
+    },
+    {
+      "engine": "chromium",
+      "width": 769,
+      "retained_previous_fixture_top": 919.640625,
+      "current_fixture_top": 919.640625,
+      "reduction_vs_previous_fixture": 0.0,
+      "current_form_expansion_height": 0
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "retained_previous_fixture_top": 676.96875,
+      "current_fixture_top": 676.96875,
+      "reduction_vs_previous_fixture": 0.0,
+      "current_form_expansion_height": 0
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "retained_previous_fixture_top": 1214.9000244140625,
+      "current_fixture_top": 1122.9000244140625,
+      "reduction_vs_previous_fixture": 92.0,
+      "current_form_expansion_height": 168
+    },
+    {
+      "engine": "firefox",
+      "width": 390,
+      "retained_previous_fixture_top": 1074.0999755859375,
+      "current_fixture_top": 982.0999755859375,
+      "reduction_vs_previous_fixture": 92.0,
+      "current_form_expansion_height": 168
+    },
+    {
+      "engine": "firefox",
+      "width": 768,
+      "retained_previous_fixture_top": 790.5999755859375,
+      "current_fixture_top": 750.5999755859375,
+      "reduction_vs_previous_fixture": 40.0,
+      "current_form_expansion_height": 168
+    },
+    {
+      "engine": "firefox",
+      "width": 769,
+      "retained_previous_fixture_top": 919.7000122070312,
+      "current_fixture_top": 919.7000122070312,
+      "reduction_vs_previous_fixture": 0.0,
+      "current_form_expansion_height": 0
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "retained_previous_fixture_top": 677.0166625976562,
+      "current_fixture_top": 677.0166625976562,
+      "reduction_vs_previous_fixture": 0.0,
+      "current_form_expansion_height": 0
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "retained_previous_fixture_top": 1218.28125,
+      "current_fixture_top": 1126.28125,
+      "reduction_vs_previous_fixture": 92.0,
+      "current_form_expansion_height": 168
+    },
+    {
+      "engine": "webkit",
+      "width": 390,
+      "retained_previous_fixture_top": 1077.53125,
+      "current_fixture_top": 985.53125,
+      "reduction_vs_previous_fixture": 92.0,
+      "current_form_expansion_height": 168
+    },
+    {
+      "engine": "webkit",
+      "width": 768,
+      "retained_previous_fixture_top": 793.5625,
+      "current_fixture_top": 753.5625,
+      "reduction_vs_previous_fixture": 40.0,
+      "current_form_expansion_height": 168
+    },
+    {
+      "engine": "webkit",
+      "width": 769,
+      "retained_previous_fixture_top": 966.328125,
+      "current_fixture_top": 966.328125,
+      "reduction_vs_previous_fixture": 0.0,
+      "current_form_expansion_height": 0
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "retained_previous_fixture_top": 686.96875,
+      "current_fixture_top": 686.96875,
+      "reduction_vs_previous_fixture": 0.0,
+      "current_form_expansion_height": 0
+    }
+  ],
+  "measurement_limit": "Retained previous synthetic fixture layout compared to current same engine/width;not a performance benchmark or general above-fold guarantee. Current expanded-minus-collapsed height is a different measure.",
+  "rejected_prototype": {
+    "evidence": "docs/premium-ui/qa-member-toolbar-layout/README.md",
+    "disposition": "Narrow-field injected CSS rejected; not shipped. Native grouping keeps full-width text fields."
+  },
+  "evidence": [
+    "frontend/tests/premium-member-create-disclosure.browser.mjs",
+    "frontend/tests/premium-member-sort.browser.mjs",
+    "docs/premium-ui/qa-member-create-disclosure/report-development.json",
+    "docs/premium-ui/qa-member-create-disclosure/report-production.json",
+    "docs/premium-ui/qa-member-create-disclosure/README.md",
+    "docs/premium-ui/qa-member-sort.json",
+    "docs/premium-ui/qa-member-filters.json",
+    "docs/premium-ui/contracts/member-create-disclosure-current.json",
+    "docs/premium-ui/runtime-action-coverage-current.json",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json",
+    "tmp/premium-member-create-disclosure-unit.log"
+  ],
+  "manual_visual_review": [
+    "Current production320dark closed and expanded captures: full262px namefield inside262px panel;keyboard outline and action labels readable.",
+    "Current initial320light capture; no narrow-field prototype shipped."
+  ],
+  "limitations": [
+    "Initial member section remains below320px phone viewport;this group reduces retained fixture height by92px at320/390 and40px at768,not a complete above-fold redesign.",
+    "Draft is in memory only; full reload clears it. No new browser-unload guard is added by this component.",
+    "Scoped tagged axe and enlarged-text injection do not certify whole-app WCAG,actual browser zoom,nativeAT or physical devices.",
+    "Pending repeat activation,allduplicate/permission/concurrency variants and complete cross-account signin remain outside these cases.",
+    "Current focused gates do not refresh every historical integrated report. No new independent specialist signoff this batch.",
+    "No backend,API contract,permission,scheduling,record normalization or export-content changes;only disposable RAM mutations for tests."
+  ]
+}

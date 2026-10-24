@@ -1,0 +1,53 @@
+{
+  "recorded_at_utc": "2026-10-22T09:40:42.097Z",
+  "requirements": [
+    212,
+    223
+  ],
+  "scope": "Actual canonical member profile details edit in Chromium320/1280; local whitespace validation and intercepted422 canonical_name field error. All requests intercepted; no backend writes. This is a reproducible finding report, not acceptance pass.",
+  "source_hashes": {
+    "frontend/src/member-workspace.ts": "435634629297141da1f95850471d16026096168e2c0e5280f2e2f2ba3fc10f3b",
+    "frontend/src/operational-import.ts": "555fc9b45a2e3024ecc705f9a553e3efe053b816988dda67607bca76cc8a232a",
+    "frontend/src/form-validation.ts": "a6d6cfa746f502cf05e5f4f1e1acade1c7ca82b592a497d98b79661854783a93"
+  },
+  "results": [
+    {
+      "width": 320,
+      "stale_local_after_correction": {
+        "ariaInvalid": "true",
+        "description": "mw-error-canonical_name",
+        "hint": "Enter the member’s name."
+      },
+      "structured_server_error": {
+        "ariaInvalid": null,
+        "description": null,
+        "summary": "canonical name: Name already registered",
+        "focus": "mw-error"
+      },
+      "intercepted_puts": 1,
+      "javascript_errors": []
+    },
+    {
+      "width": 1280,
+      "stale_local_after_correction": {
+        "ariaInvalid": "true",
+        "description": "mw-error-canonical_name",
+        "hint": "Enter the member’s name."
+      },
+      "structured_server_error": {
+        "ariaInvalid": null,
+        "description": null,
+        "summary": "canonical name: Name already registered",
+        "focus": "mw-error"
+      },
+      "intercepted_puts": 1,
+      "javascript_errors": []
+    }
+  ],
+  "findings": [
+    "Local custom validation correctly sets aria-invalid/describedby, but changing to a valid name retains stale error attributes/hint until next submit/render.",
+    "Structured422 is shown in focused alert summary, but its loc body/canonical_name is not mapped back to visible input aria-invalid/describedby. Existing generic server message is preserved; no blank error claim."
+  ],
+  "recommendation": "Integrate existing form-validation mapping into canonical save error path with custom data-field/data-d/data-call-change resolver, or equivalent inline field lifecycle. Clear only owned validation hints on edits and preserve conflict-current compare UI. Avoid rewriting payloads or local validation rules. Operational import source currently shows generic live status; no invalid-import runtime finding claimed.",
+  "completion_claim": false
+}

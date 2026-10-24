@@ -1,0 +1,61 @@
+{
+  "recorded_at_utc": "2026-10-22T12:20:08.067087+00:00",
+  "requirements": [
+    3,
+    4,
+    15,
+    17,
+    18,
+    93,
+    94,
+    127,
+    129,
+    131,
+    208,
+    209,
+    212,
+    219,
+    223,
+    225,
+    228,
+    258
+  ],
+  "completion_claim": false,
+  "scope": "Separate user-requested live progress GUI and member-history Retry owned focus; frontend-only app change.",
+  "source_sha256": {
+    "frontend/src/member-workspace.ts": "3a7b2300bf74eecf53e151908791d87fdcc1c21aebc3a270a5fb57b9d7379ee8",
+    "docs/premium-ui/progress-window.html": "53d6eff4de9a73f3565ddba94bafaa413eeb6ffbf6247516d0a567ea6f94be88",
+    "tools/frontend_progress_window.py": "09bf1439c6fe331da063e785dc68654c9b905ebdc2f4343c4ffcc9c2bc4fb23e"
+  },
+  "change": [
+    "Local read-only dashboard reads all260ledger items, certified count, current work notes and completed bounded verification batches. Filters/paging/evidence panels and refresh-error recovery tested.",
+    "History Retry previously loaded correct member activity but lost focus to BODY. Existing retainActionFocus now restores replacement Retry on failure or the original activity tab after success; deliberate newer focus takes precedence."
+  ],
+  "checks": {
+    "progress_gui_layouts": 6,
+    "progress_tagged_axe_violations": 0,
+    "history_retry_workflows": 12,
+    "csv_candidate_regressions": 12,
+    "csv_lifetime_regressions": 6,
+    "unit_tests": 100,
+    "build_exit_code": 0,
+    "build_inputs_held": true
+  },
+  "evidence": [
+    "docs/premium-ui/qa-progress-window.json",
+    "docs/premium-ui/qa-member-history-retry.json",
+    "docs/premium-ui/qa-member-history-retry-before.json",
+    "docs/premium-ui/progress-window.md",
+    "docs/premium-ui/qa-member-csv-candidate.json",
+    "docs/premium-ui/qa-member-csv-lifetime.json",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+  ],
+  "limitations": [
+    "Progress window is a separate loopback viewer, not part of the deployed rota product. Current work notes are dated statements, not process/agent monitoring.",
+    "Automatic approval review blocked Start-Process browser launch; user can open the running local URL. No workaround launch attempted.",
+    "Retry suite covers activity503/heldGETsuccess and deliberately newer details focus in3engines320/1280. Other tabs/failures remain separate acceptance.",
+    "All history API requests intercepted; no backend persistence or permissions certification. Dashboard exposes only approved progress documents, not credentials or arbitrary files.",
+    "114/114 historical member-family controls now have bounded assertion links, but0 full contracts and0whole260requirements certified. Physical/native/new independent checks remain pending; broader matrix historical.",
+    "No backend/API-contract/permission/scheduling/persisted-data/export-content/deployment changes. Full goal active/incomplete."
+  ]
+}

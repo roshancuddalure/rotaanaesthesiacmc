@@ -1,0 +1,74 @@
+{
+  "recorded_at_utc": "2026-10-24T01:50:35.202509+00:00",
+  "completion_claim": false,
+  "scope": "Current Units CSV inline existing-member selection lifetime and keyboard focus across name-result repaint. Frontend-only fixes.",
+  "requirements": [
+    69,
+    86,
+    87,
+    93,
+    150,
+    155,
+    156,
+    157,
+    225,
+    239,
+    241,
+    242,
+    243,
+    246
+  ],
+  "source_sha256": {
+    "frontend/src/main.ts": "93eebef4269de921331c843211094321582d241e6af186172339f1ae26b52b9e",
+    "frontend/src/operational-import.ts": "9e11514d205d71049e2f0baa10f005def74941e0b90584a9c84b968f9ae19dfc",
+    "frontend/src/member-workspace.ts": "b39d53795adcbe1d850aeb3cf20f71bd78f4a48a4280e7f9e7e9cff2f796e50c",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+  },
+  "baseline_evidence": [
+    "docs/premium-ui/qa-inline-member-selection-lifetime/before.json",
+    "docs/premium-ui/qa-inline-member-selection-lifetime/before-focus.json"
+  ],
+  "changes": [
+    "Name edits invalidate pending existing-member selections and obsolete errors; checking status and guarded action focus recovery added.",
+    "Exact focused candidate ID/action retained across lookup repaint; no focus steal from other fields."
+  ],
+  "checks": {
+    "development_selection_contexts": 30,
+    "production_selection_contexts": 30,
+    "inline_creation_regression_contexts": 6,
+    "existing_choice_regression_workflows": 6,
+    "candidate_choice_regression_workflows": 6,
+    "unit_tests_passed": 104,
+    "build_passed": true,
+    "build_inputs_held": true,
+    "static_inventory_checks": true,
+    "server_mutations_in_new_suite": 0
+  },
+  "evidence": [
+    "docs/premium-ui/qa-inline-member-selection-lifetime/report-development.json",
+    "docs/premium-ui/qa-inline-member-selection-lifetime/report-production.json",
+    "docs/premium-ui/qa-inline-member-create.json",
+    "docs/premium-ui/qa-inline-member-choice-independent.json",
+    "docs/premium-ui/qa-import-candidate-choice.json",
+    "docs/premium-ui/qa-inline-member-selection-lifetime/before.json",
+    "docs/premium-ui/qa-inline-member-selection-lifetime/before-focus.json",
+    "docs/premium-ui/reviews/inline-member-selection-source-review.json",
+    "docs/premium-ui/reviews/inline-member-selection-test-review.json",
+    "frontend/tests/premium-inline-member-selection-lifetime.browser.mjs",
+    "docs/premium-ui/legacy-import-entry-graph-current.json",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json",
+    "tmp/premium-inline-selection-unit-final.log",
+    "tmp/premium-inline-selection-development.log",
+    "tmp/premium-inline-selection-production.log"
+  ],
+  "limitations": [
+    "Current app entry is actual Units CSV import, but CSV columns/preview/resolve POSTs are intercepted. This tests frontend choice lifetime,not real parsing,persistence,permissions or all-role behavior.",
+    "Every non-GET API operation is locally fulfilled or rejected before forwarding; only GET requests reach disposable RAM8032. This is not production DB testing.",
+    "Complete normalization payload/request-count equivalence is not claimed; assertions cover chosen correction and retained file/month/other row.",
+    "Three engines at320/1280; native AT/physical devices remain pending. Candidate disappearance fallback and inactive review-focus variants are source-reviewed,not runtime-covered.",
+    "New browser suite holds four declared source files/test hash; separate held build/archive checks cover packaging,not independently every downloaded browser asset.",
+    "Initial failed harness readiness wait and intermediate production keyboard failure logs retained. Final30+30 runs pass after targeted fixes; initial attempts were not all green.",
+    "Legacy cancellation handler remains untouched because no current markup producer exists.",
+    "No backend/API contract/permission/scheduling/export-content edits by this batch. Concurrent backend modifications remain separately present."
+  ]
+}

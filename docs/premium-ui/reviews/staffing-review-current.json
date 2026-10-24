@@ -1,0 +1,84 @@
+{
+  "recorded_at_utc": "2026-10-22T16:44:19.166328+00:00",
+  "completion_claim": false,
+  "requirements": [
+    103,
+    153,
+    208,
+    209,
+    219,
+    258
+  ],
+  "scope": "Detailed template staffing review: access all returned checks and open affected unit using existing editor.",
+  "source_sha256": {
+    "frontend/src/main.ts": "2cc06f1d285229e8a4541214eb4bbee73a2263b190921973d71d32bdd8c1af43",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "abb7d607fc93f96500e16174615a31def2dfea9f5a0ad9b1dd8c202dac6098bb"
+  },
+  "source_confirmed_before": "Reachable Detailed overview rendered only safety.unit_day_safety.slice(0,100); warnings only offered general unit navigation despite returned unit_id.",
+  "changes": [
+    "Keep first100 returned rows and add a44px native disclosure containing every remaining check in unchanged order; reported counts/statuses/rules are not recomputed.",
+    "Use existing open-unit action for nonnull unit IDs with selected template month. Null IDs explicitly offer general Unit Management without guessing.",
+    "Missing general destination retains review and explains recovery. Existing unit read failure stays on its recoverable board, without opening a stale editor; absent returned unit has an explanatory notification.",
+    "Genuine eight-column comparisons get contained keyboard-accessible horizontal scrolling, intact dates and readable unit widths."
+  ],
+  "checks": {
+    "staffing_contexts": 6,
+    "engines": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "widths": [
+      320,
+      1280
+    ],
+    "returned_row_fixture": 103,
+    "boundary_counts": [
+      0,
+      1,
+      100,
+      103
+    ],
+    "scoped_axe_violations": 0,
+    "generation_approval_publish_regressions": 21,
+    "unit_tests": 100,
+    "build_exit_code": 0,
+    "held_build_inputs": true
+  },
+  "action_contracts": [
+    {
+      "selector": ".staffing-remainder > summary",
+      "outcome": "Native Enter expands remaining3of103; all server rows/counts match exactly, no reordered or duplicate rows. Escape from last warning restores exact opener and expanded state."
+    },
+    {
+      "selector": "[data-review-action-kind=open-unit]",
+      "outcome": "Exact returned unit/month opens existing editor; failedGET opens no stale modal and manual existing Try again read recovers."
+    },
+    {
+      "selector": "[data-review-action-kind=navigate] in no-unit staffing review",
+      "outcome": "General board opens with no guessed unit; missing destination retains dialog and explanation."
+    }
+  ],
+  "evidence": [
+    "docs/premium-ui/qa-staffing-review.json",
+    "docs/premium-ui/qa-generation-actions-current.json",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json",
+    "docs/premium-ui/reviews/agent-leave-calendar-20261022.json"
+  ],
+  "test": "frontend/tests/premium-staffing-review.browser.mjs",
+  "test_sha256": "1a4c0cd7e631fe69b012b992af4cbd329b25ac41f7d40c437e006ef4a962e880",
+  "visual_review": {
+    "reviewer": "root implementer, not independent",
+    "screenshot": "docs/premium-ui/screenshots/staffing/remaining-320.png",
+    "result": "Mobile comparison uses local horizontal scroll with full dates, wider unit column and readable disclosure; no page overflow."
+  },
+  "limits": [
+    "GET-only safety/unit fixtures plus disposable companionAPI; no real safety enforcement, scheduling correctness, persistence or backend mutation certified.",
+    "Remainder uses native disclosure and renders returned data, not additional backend pagination. Very large returned arrays require separate performance acceptance.",
+    "Lighttheme3engines320/1280; physical/native assistive and fresh independent post-fix review pending.",
+    "Generation21regression reports omit some full dependency source-hold declarations; matching narrow report hashes do not certify the entire worktree.",
+    "Unit failure fixture uses a clean reload. Existing warm-cache stale notice separately tested historically, not fully re-certified here. Late navigation/absentunit branch not fully matrix-tested.",
+    "Only this batch makes no backend/API-contract/permission/scheduling/persisted-data/export-content/production changes. Full260 goal active/incomplete."
+  ]
+}

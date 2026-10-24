@@ -1,0 +1,33 @@
+{
+  "results": [
+    {
+      "case": "old detached-root defect reproduced through in-memory guard substitution",
+      "passed": true
+    },
+    {
+      "case": "connected draft retains unload protection; detached draft releases it; disposal cancels queued check",
+      "passed": true
+    },
+    {
+      "case": "in-flight old check ignored after disposal; new render has no old draft or check result",
+      "passed": true
+    },
+    {
+      "case": "real dirty-rule sign-out and explicit same-route new-account sign-in",
+      "width": 320,
+      "passed": true,
+      "navigation_decline_preserves_connected_draft": true,
+      "old_draft_absent": true,
+      "backend_mutations": 0
+    },
+    {
+      "case": "real dirty-rule sign-out and explicit same-route new-account sign-in",
+      "width": 1280,
+      "passed": true,
+      "navigation_decline_preserves_connected_draft": true,
+      "old_draft_absent": true,
+      "backend_mutations": 0
+    }
+  ],
+  "scope": "Independent Chromium actual-component and full-app lifecycle checks. APIs intercepted; production data untouched. Synthetic cancelable beforeunload tests predicate behavior, not physical browser prompt UX."
+}

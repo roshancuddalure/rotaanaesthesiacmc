@@ -1,0 +1,977 @@
+{
+  "label": "baseline",
+  "initial": {
+    "storage": "disposable-sqlite-memory",
+    "slot_id_map": {
+      "9396e3e4-c62e-45a4-a686-c4af894a0693": [
+        "2026-05-02",
+        "MAIN_1ST_24HR",
+        "Unit I",
+        "1ST_CALL",
+        "UNIT_I:1ST_CALL:2026-05-02"
+      ],
+      "c51b9c6d-9362-4e1c-b4ee-89ee5b0b56d4": [
+        "2026-05-03",
+        "MAIN_1ST_24HR",
+        "Unit I",
+        "2ND_CALL",
+        "UNIT_I:2ND_CALL:2026-05-03"
+      ],
+      "1606544b-cbd1-49e2-a1ef-ec4f3a8760bd": [
+        "2026-05-04",
+        "MAIN_1ST_24HR",
+        "Unit I",
+        "1ST_CALL",
+        "UNIT_I:1ST_CALL:2026-05-04"
+      ]
+    },
+    "fixture_people": [
+      [
+        "618daf70-c703-4fbe-ba0b-3118f67f517d",
+        "Blocked Member"
+      ],
+      [
+        "7609dc92-3615-41a5-9f71-e0d02a690ae5",
+        "Spare Two"
+      ],
+      [
+        "c4fe526d-5915-428f-aab5-2f7f367a0b35",
+        "Safe Member"
+      ],
+      [
+        "cdae620b-c618-48e2-ac9e-28e635c4c213",
+        "Spare One"
+      ]
+    ],
+    "fixture_units": [
+      [
+        "3195eb68-5146-4062-8432-a2a136d89945",
+        "Unit I"
+      ]
+    ],
+    "slots": [
+      {
+        "key": [
+          "2026-05-02",
+          "MAIN_1ST_24HR",
+          "Unit I",
+          "1ST_CALL",
+          "UNIT_I:1ST_CALL:2026-05-02"
+        ],
+        "starts_at": "2026-05-02T08:00:00",
+        "ends_at": "2026-05-03T08:00:00",
+        "is_24hr": true,
+        "max_assignees": 1,
+        "source": "phase4_template",
+        "template_status": "ready",
+        "template_reason": null,
+        "notes": null
+      },
+      {
+        "key": [
+          "2026-05-03",
+          "MAIN_1ST_24HR",
+          "Unit I",
+          "2ND_CALL",
+          "UNIT_I:2ND_CALL:2026-05-03"
+        ],
+        "starts_at": "2026-05-03T08:00:00",
+        "ends_at": "2026-05-04T08:00:00",
+        "is_24hr": true,
+        "max_assignees": 1,
+        "source": "phase4_template",
+        "template_status": "ready",
+        "template_reason": null,
+        "notes": null
+      },
+      {
+        "key": [
+          "2026-05-04",
+          "MAIN_1ST_24HR",
+          "Unit I",
+          "1ST_CALL",
+          "UNIT_I:1ST_CALL:2026-05-04"
+        ],
+        "starts_at": "2026-05-04T08:00:00",
+        "ends_at": "2026-05-05T08:00:00",
+        "is_24hr": true,
+        "max_assignees": 1,
+        "source": "phase4_template",
+        "template_status": "ready",
+        "template_reason": null,
+        "notes": null
+      }
+    ],
+    "assignments": [
+      {
+        "slot": [
+          "2026-05-02",
+          "MAIN_1ST_24HR",
+          "Unit I",
+          "1ST_CALL",
+          "UNIT_I:1ST_CALL:2026-05-02"
+        ],
+        "person": "Blocked Member",
+        "status": "assigned",
+        "source": "manual",
+        "override_reason": null
+      },
+      {
+        "slot": [
+          "2026-05-04",
+          "MAIN_1ST_24HR",
+          "Unit I",
+          "1ST_CALL",
+          "UNIT_I:1ST_CALL:2026-05-04"
+        ],
+        "person": "Safe Member",
+        "status": "assigned",
+        "source": "manual_rota_board",
+        "override_reason": null
+      }
+    ]
+  },
+  "proposal": {
+    "month": "2026-05",
+    "kind": "intelligent",
+    "status": "completed",
+    "engine": "server",
+    "requested_engine": "server",
+    "revision": 3,
+    "processed": 3,
+    "total": 3,
+    "proposed": 1,
+    "unresolved": 1,
+    "decisions": [
+      {
+        "slot_id": "9396e3e4-c62e-45a4-a686-c4af894a0693",
+        "date": "2026-05-02",
+        "duty": "UNIT_I:1ST_CALL:2026-05-02",
+        "unit": "Unit I",
+        "action": "proposed",
+        "person_id": "7609dc92-3615-41a5-9f71-e0d02a690ae5",
+        "person_name": "Spare Two",
+        "score": -50000,
+        "is_24hr": true,
+        "weekend": true,
+        "score_parts": {
+          "status": 0,
+          "same_day_type": 0,
+          "burden": 0,
+          "weekend": 0,
+          "rest": 0,
+          "staffing": 0,
+          "fairness": -50000,
+          "validation": 0,
+          "historical_fairness": 0
+        },
+        "reason": "Whole-month optimization. Historical coverage is unknown for this member; history scoring is neutral, not zero-workload credit. Call-level target this month: 0.50 duties; this member has 0 (-0.50). No person-specific leave or rest blocker was found. Current month load: 0 duties, 0 24-hour, 0 weekend 24-hour. Same weekend load this month: 0 duties. Same duty group already assigned this month: 0. No saved duty assignment found nearby in this month. Duty load is at or below the current assigned-member average.",
+        "original": {
+          "assignment_id": "62f8e62e-3aa2-4c73-b836-eab077feae6a",
+          "person_id": "618daf70-c703-4fbe-ba0b-3118f67f517d",
+          "status": "assigned"
+        }
+      },
+      {
+        "slot_id": "c51b9c6d-9362-4e1c-b4ee-89ee5b0b56d4",
+        "date": "2026-05-03",
+        "duty": "UNIT_I:2ND_CALL:2026-05-03",
+        "unit": "Unit I",
+        "action": "unresolved",
+        "person_id": null,
+        "person_name": null,
+        "score": null,
+        "is_24hr": true,
+        "weekend": true,
+        "score_parts": {},
+        "reason": "No clear eligible member is posted to the required unit and call level for this date.",
+        "original": null
+      },
+      {
+        "slot_id": "1606544b-cbd1-49e2-a1ef-ec4f3a8760bd",
+        "date": "2026-05-04",
+        "duty": "UNIT_I:1ST_CALL:2026-05-04",
+        "unit": "Unit I",
+        "action": "preserved",
+        "person_id": null,
+        "person_name": null,
+        "score": null,
+        "is_24hr": true,
+        "weekend": false,
+        "score_parts": {},
+        "reason": "Locked or existing assignment preserved."
+      }
+    ],
+    "burden": {
+      "members": 4,
+      "before": {
+        "total": {
+          "min": 0,
+          "max": 1,
+          "mean": 0.5
+        },
+        "hours24": {
+          "min": 0,
+          "max": 1,
+          "mean": 0.5
+        },
+        "weekend24": {
+          "min": 0,
+          "max": 1,
+          "mean": 0.25
+        }
+      },
+      "after": {
+        "total": {
+          "min": 0,
+          "max": 1,
+          "mean": 0.5
+        },
+        "hours24": {
+          "min": 0,
+          "max": 1,
+          "mean": 0.5
+        },
+        "weekend24": {
+          "min": 0,
+          "max": 1,
+          "mean": 0.25
+        }
+      }
+    },
+    "selected": 1,
+    "alternatives": [
+      {
+        "choices": {
+          "9396e3e4-c62e-45a4-a686-c4af894a0693": "cdae620b-c618-48e2-ac9e-28e635c4c213"
+        },
+        "status": "optimal",
+        "objectives": [
+          {
+            "name": "required_coverage",
+            "value": -1,
+            "proven": true,
+            "proof": "independent_lower_bound"
+          },
+          {
+            "name": "coverage",
+            "value": -1,
+            "proven": true,
+            "proof": "independent_lower_bound"
+          },
+          {
+            "name": "changes",
+            "value": 1,
+            "proven": true,
+            "proof": "independent_lower_bound"
+          },
+          {
+            "name": "call_level_equality",
+            "value": 0,
+            "proven": true,
+            "proof": "independent_lower_bound"
+          },
+          {
+            "name": "weekend_burden",
+            "value": 100,
+            "proven": true,
+            "proof": "independent_lower_bound"
+          },
+          {
+            "name": "night_burden",
+            "value": 100,
+            "proven": true,
+            "proof": "independent_lower_bound"
+          },
+          {
+            "name": "holiday_burden",
+            "value": 0,
+            "proven": true,
+            "proof": "independent_lower_bound"
+          },
+          {
+            "name": "workload",
+            "value": 100,
+            "proven": true,
+            "proof": "independent_lower_bound"
+          },
+          {
+            "name": "spacing_history",
+            "value": 0,
+            "proven": true,
+            "proof": "independent_lower_bound"
+          },
+          {
+            "name": "preferences",
+            "value": 0,
+            "proven": true,
+            "proof": "independent_lower_bound"
+          }
+        ],
+        "cuts": 0,
+        "baseline_retained": false,
+        "quality": [
+          -1,
+          -1,
+          1,
+          0,
+          100,
+          100,
+          0,
+          100,
+          0,
+          0
+        ],
+        "uncovered": 1,
+        "mode": "repair",
+        "holiday_dates": [],
+        "warnings": [
+          "No holiday dates configured; holiday balancing was not evaluated."
+        ],
+        "history_window": {
+          "start": "2025-11-01",
+          "end": "2026-04-30",
+          "observed_months": []
+        },
+        "decisions": [
+          {
+            "slot_id": "9396e3e4-c62e-45a4-a686-c4af894a0693",
+            "date": "2026-05-02",
+            "duty": "UNIT_I:1ST_CALL:2026-05-02",
+            "unit": "Unit I",
+            "action": "proposed",
+            "person_id": "cdae620b-c618-48e2-ac9e-28e635c4c213",
+            "person_name": "Spare One",
+            "score": -50000,
+            "is_24hr": true,
+            "weekend": true,
+            "score_parts": {
+              "status": 0,
+              "same_day_type": 0,
+              "burden": 0,
+              "weekend": 0,
+              "rest": 0,
+              "staffing": 0,
+              "fairness": -50000,
+              "validation": 0,
+              "historical_fairness": 0
+            },
+            "reason": "Whole-month optimization. Historical coverage is unknown for this member; history scoring is neutral, not zero-workload credit. Call-level target this month: 0.50 duties; this member has 0 (-0.50). No person-specific leave or rest blocker was found. Current month load: 0 duties, 0 24-hour, 0 weekend 24-hour. Same weekend load this month: 0 duties. Same duty group already assigned this month: 0. No saved duty assignment found nearby in this month. Duty load is at or below the current assigned-member average.",
+            "original": {
+              "assignment_id": "62f8e62e-3aa2-4c73-b836-eab077feae6a",
+              "person_id": "618daf70-c703-4fbe-ba0b-3118f67f517d",
+              "status": "assigned"
+            }
+          },
+          {
+            "slot_id": "c51b9c6d-9362-4e1c-b4ee-89ee5b0b56d4",
+            "date": "2026-05-03",
+            "duty": "UNIT_I:2ND_CALL:2026-05-03",
+            "unit": "Unit I",
+            "action": "unresolved",
+            "person_id": null,
+            "person_name": null,
+            "score": null,
+            "is_24hr": true,
+            "weekend": true,
+            "score_parts": {},
+            "reason": "No clear eligible member is posted to the required unit and call level for this date.",
+            "original": null
+          },
+          {
+            "slot_id": "1606544b-cbd1-49e2-a1ef-ec4f3a8760bd",
+            "date": "2026-05-04",
+            "duty": "UNIT_I:1ST_CALL:2026-05-04",
+            "unit": "Unit I",
+            "action": "preserved",
+            "person_id": null,
+            "person_name": null,
+            "score": null,
+            "is_24hr": true,
+            "weekend": false,
+            "score_parts": {},
+            "reason": "Locked or existing assignment preserved."
+          }
+        ],
+        "preserved_conflicts": [],
+        "rejected": {
+          "9396e3e4-c62e-45a4-a686-c4af894a0693": [
+            {
+              "person_name": "Blocked Member",
+              "issues": [
+                {
+                  "severity": "error",
+                  "code": "leave",
+                  "message": "Approved leave"
+                }
+              ]
+            }
+          ],
+          "c51b9c6d-9362-4e1c-b4ee-89ee5b0b56d4": []
+        },
+        "changed": 1
+      },
+      {
+        "choices": {
+          "9396e3e4-c62e-45a4-a686-c4af894a0693": "7609dc92-3615-41a5-9f71-e0d02a690ae5"
+        },
+        "status": "optimal",
+        "objectives": [
+          {
+            "name": "required_coverage",
+            "value": -1,
+            "proven": true
+          },
+          {
+            "name": "coverage",
+            "value": -1,
+            "proven": true,
+            "proof": "independent_lower_bound"
+          },
+          {
+            "name": "changes",
+            "value": 1,
+            "proven": true,
+            "proof": "independent_lower_bound"
+          },
+          {
+            "name": "call_level_equality",
+            "value": 0,
+            "proven": true
+          },
+          {
+            "name": "weekend_burden",
+            "value": 100,
+            "proven": true
+          },
+          {
+            "name": "night_burden",
+            "value": 100,
+            "proven": true
+          },
+          {
+            "name": "holiday_burden",
+            "value": 0,
+            "proven": true,
+            "proof": "independent_lower_bound"
+          },
+          {
+            "name": "workload",
+            "value": 100,
+            "proven": true
+          },
+          {
+            "name": "spacing_history",
+            "value": 0,
+            "proven": true,
+            "proof": "independent_lower_bound"
+          },
+          {
+            "name": "preferences",
+            "value": 0,
+            "proven": true,
+            "proof": "independent_lower_bound"
+          }
+        ],
+        "cuts": 0,
+        "baseline_retained": false,
+        "quality": [
+          -1,
+          -1,
+          1,
+          0,
+          100,
+          100,
+          0,
+          100,
+          0,
+          0
+        ],
+        "uncovered": 1,
+        "mode": "repair",
+        "holiday_dates": [],
+        "warnings": [
+          "No holiday dates configured; holiday balancing was not evaluated."
+        ],
+        "history_window": {
+          "start": "2025-11-01",
+          "end": "2026-04-30",
+          "observed_months": []
+        },
+        "decisions": [
+          {
+            "slot_id": "9396e3e4-c62e-45a4-a686-c4af894a0693",
+            "date": "2026-05-02",
+            "duty": "UNIT_I:1ST_CALL:2026-05-02",
+            "unit": "Unit I",
+            "action": "proposed",
+            "person_id": "7609dc92-3615-41a5-9f71-e0d02a690ae5",
+            "person_name": "Spare Two",
+            "score": -50000,
+            "is_24hr": true,
+            "weekend": true,
+            "score_parts": {
+              "status": 0,
+              "same_day_type": 0,
+              "burden": 0,
+              "weekend": 0,
+              "rest": 0,
+              "staffing": 0,
+              "fairness": -50000,
+              "validation": 0,
+              "historical_fairness": 0
+            },
+            "reason": "Whole-month optimization. Historical coverage is unknown for this member; history scoring is neutral, not zero-workload credit. Call-level target this month: 0.50 duties; this member has 0 (-0.50). No person-specific leave or rest blocker was found. Current month load: 0 duties, 0 24-hour, 0 weekend 24-hour. Same weekend load this month: 0 duties. Same duty group already assigned this month: 0. No saved duty assignment found nearby in this month. Duty load is at or below the current assigned-member average.",
+            "original": {
+              "assignment_id": "62f8e62e-3aa2-4c73-b836-eab077feae6a",
+              "person_id": "618daf70-c703-4fbe-ba0b-3118f67f517d",
+              "status": "assigned"
+            }
+          },
+          {
+            "slot_id": "c51b9c6d-9362-4e1c-b4ee-89ee5b0b56d4",
+            "date": "2026-05-03",
+            "duty": "UNIT_I:2ND_CALL:2026-05-03",
+            "unit": "Unit I",
+            "action": "unresolved",
+            "person_id": null,
+            "person_name": null,
+            "score": null,
+            "is_24hr": true,
+            "weekend": true,
+            "score_parts": {},
+            "reason": "No clear eligible member is posted to the required unit and call level for this date.",
+            "original": null
+          },
+          {
+            "slot_id": "1606544b-cbd1-49e2-a1ef-ec4f3a8760bd",
+            "date": "2026-05-04",
+            "duty": "UNIT_I:1ST_CALL:2026-05-04",
+            "unit": "Unit I",
+            "action": "preserved",
+            "person_id": null,
+            "person_name": null,
+            "score": null,
+            "is_24hr": true,
+            "weekend": false,
+            "score_parts": {},
+            "reason": "Locked or existing assignment preserved."
+          }
+        ],
+        "preserved_conflicts": [],
+        "rejected": {
+          "9396e3e4-c62e-45a4-a686-c4af894a0693": [
+            {
+              "person_name": "Blocked Member",
+              "issues": [
+                {
+                  "severity": "error",
+                  "code": "leave",
+                  "message": "Approved leave"
+                }
+              ]
+            }
+          ],
+          "c51b9c6d-9362-4e1c-b4ee-89ee5b0b56d4": []
+        },
+        "changed": 1
+      }
+    ]
+  },
+  "saved": {
+    "storage": "disposable-sqlite-memory",
+    "slot_id_map": {
+      "9396e3e4-c62e-45a4-a686-c4af894a0693": [
+        "2026-05-02",
+        "MAIN_1ST_24HR",
+        "Unit I",
+        "1ST_CALL",
+        "UNIT_I:1ST_CALL:2026-05-02"
+      ],
+      "c51b9c6d-9362-4e1c-b4ee-89ee5b0b56d4": [
+        "2026-05-03",
+        "MAIN_1ST_24HR",
+        "Unit I",
+        "2ND_CALL",
+        "UNIT_I:2ND_CALL:2026-05-03"
+      ],
+      "1606544b-cbd1-49e2-a1ef-ec4f3a8760bd": [
+        "2026-05-04",
+        "MAIN_1ST_24HR",
+        "Unit I",
+        "1ST_CALL",
+        "UNIT_I:1ST_CALL:2026-05-04"
+      ]
+    },
+    "fixture_people": [
+      [
+        "618daf70-c703-4fbe-ba0b-3118f67f517d",
+        "Blocked Member"
+      ],
+      [
+        "7609dc92-3615-41a5-9f71-e0d02a690ae5",
+        "Spare Two"
+      ],
+      [
+        "c4fe526d-5915-428f-aab5-2f7f367a0b35",
+        "Safe Member"
+      ],
+      [
+        "cdae620b-c618-48e2-ac9e-28e635c4c213",
+        "Spare One"
+      ]
+    ],
+    "fixture_units": [
+      [
+        "3195eb68-5146-4062-8432-a2a136d89945",
+        "Unit I"
+      ]
+    ],
+    "slots": [
+      {
+        "key": [
+          "2026-05-02",
+          "MAIN_1ST_24HR",
+          "Unit I",
+          "1ST_CALL",
+          "UNIT_I:1ST_CALL:2026-05-02"
+        ],
+        "starts_at": "2026-05-02T08:00:00",
+        "ends_at": "2026-05-03T08:00:00",
+        "is_24hr": true,
+        "max_assignees": 1,
+        "source": "phase4_template",
+        "template_status": "ready",
+        "template_reason": null,
+        "notes": null
+      },
+      {
+        "key": [
+          "2026-05-03",
+          "MAIN_1ST_24HR",
+          "Unit I",
+          "2ND_CALL",
+          "UNIT_I:2ND_CALL:2026-05-03"
+        ],
+        "starts_at": "2026-05-03T08:00:00",
+        "ends_at": "2026-05-04T08:00:00",
+        "is_24hr": true,
+        "max_assignees": 1,
+        "source": "phase4_template",
+        "template_status": "ready",
+        "template_reason": null,
+        "notes": null
+      },
+      {
+        "key": [
+          "2026-05-04",
+          "MAIN_1ST_24HR",
+          "Unit I",
+          "1ST_CALL",
+          "UNIT_I:1ST_CALL:2026-05-04"
+        ],
+        "starts_at": "2026-05-04T08:00:00",
+        "ends_at": "2026-05-05T08:00:00",
+        "is_24hr": true,
+        "max_assignees": 1,
+        "source": "phase4_template",
+        "template_status": "ready",
+        "template_reason": null,
+        "notes": null
+      }
+    ],
+    "assignments": [
+      {
+        "slot": [
+          "2026-05-02",
+          "MAIN_1ST_24HR",
+          "Unit I",
+          "1ST_CALL",
+          "UNIT_I:1ST_CALL:2026-05-02"
+        ],
+        "person": "Blocked Member",
+        "status": "cancelled",
+        "source": "manual",
+        "override_reason": null
+      },
+      {
+        "slot": [
+          "2026-05-04",
+          "MAIN_1ST_24HR",
+          "Unit I",
+          "1ST_CALL",
+          "UNIT_I:1ST_CALL:2026-05-04"
+        ],
+        "person": "Safe Member",
+        "status": "assigned",
+        "source": "manual_rota_board",
+        "override_reason": null
+      },
+      {
+        "slot": [
+          "2026-05-02",
+          "MAIN_1ST_24HR",
+          "Unit I",
+          "1ST_CALL",
+          "UNIT_I:1ST_CALL:2026-05-02"
+        ],
+        "person": "Spare Two",
+        "status": "assigned",
+        "source": "reviewed_compute_draft",
+        "override_reason": null
+      }
+    ]
+  },
+  "reversed": {
+    "storage": "disposable-sqlite-memory",
+    "slot_id_map": {
+      "9396e3e4-c62e-45a4-a686-c4af894a0693": [
+        "2026-05-02",
+        "MAIN_1ST_24HR",
+        "Unit I",
+        "1ST_CALL",
+        "UNIT_I:1ST_CALL:2026-05-02"
+      ],
+      "c51b9c6d-9362-4e1c-b4ee-89ee5b0b56d4": [
+        "2026-05-03",
+        "MAIN_1ST_24HR",
+        "Unit I",
+        "2ND_CALL",
+        "UNIT_I:2ND_CALL:2026-05-03"
+      ],
+      "1606544b-cbd1-49e2-a1ef-ec4f3a8760bd": [
+        "2026-05-04",
+        "MAIN_1ST_24HR",
+        "Unit I",
+        "1ST_CALL",
+        "UNIT_I:1ST_CALL:2026-05-04"
+      ]
+    },
+    "fixture_people": [
+      [
+        "618daf70-c703-4fbe-ba0b-3118f67f517d",
+        "Blocked Member"
+      ],
+      [
+        "7609dc92-3615-41a5-9f71-e0d02a690ae5",
+        "Spare Two"
+      ],
+      [
+        "c4fe526d-5915-428f-aab5-2f7f367a0b35",
+        "Safe Member"
+      ],
+      [
+        "cdae620b-c618-48e2-ac9e-28e635c4c213",
+        "Spare One"
+      ]
+    ],
+    "fixture_units": [
+      [
+        "3195eb68-5146-4062-8432-a2a136d89945",
+        "Unit I"
+      ]
+    ],
+    "slots": [
+      {
+        "key": [
+          "2026-05-02",
+          "MAIN_1ST_24HR",
+          "Unit I",
+          "1ST_CALL",
+          "UNIT_I:1ST_CALL:2026-05-02"
+        ],
+        "starts_at": "2026-05-02T08:00:00",
+        "ends_at": "2026-05-03T08:00:00",
+        "is_24hr": true,
+        "max_assignees": 1,
+        "source": "phase4_template",
+        "template_status": "ready",
+        "template_reason": null,
+        "notes": null
+      },
+      {
+        "key": [
+          "2026-05-03",
+          "MAIN_1ST_24HR",
+          "Unit I",
+          "2ND_CALL",
+          "UNIT_I:2ND_CALL:2026-05-03"
+        ],
+        "starts_at": "2026-05-03T08:00:00",
+        "ends_at": "2026-05-04T08:00:00",
+        "is_24hr": true,
+        "max_assignees": 1,
+        "source": "phase4_template",
+        "template_status": "ready",
+        "template_reason": null,
+        "notes": null
+      },
+      {
+        "key": [
+          "2026-05-04",
+          "MAIN_1ST_24HR",
+          "Unit I",
+          "1ST_CALL",
+          "UNIT_I:1ST_CALL:2026-05-04"
+        ],
+        "starts_at": "2026-05-04T08:00:00",
+        "ends_at": "2026-05-05T08:00:00",
+        "is_24hr": true,
+        "max_assignees": 1,
+        "source": "phase4_template",
+        "template_status": "ready",
+        "template_reason": null,
+        "notes": null
+      }
+    ],
+    "assignments": [
+      {
+        "slot": [
+          "2026-05-02",
+          "MAIN_1ST_24HR",
+          "Unit I",
+          "1ST_CALL",
+          "UNIT_I:1ST_CALL:2026-05-02"
+        ],
+        "person": "Blocked Member",
+        "status": "assigned",
+        "source": "manual",
+        "override_reason": null
+      },
+      {
+        "slot": [
+          "2026-05-04",
+          "MAIN_1ST_24HR",
+          "Unit I",
+          "1ST_CALL",
+          "UNIT_I:1ST_CALL:2026-05-04"
+        ],
+        "person": "Safe Member",
+        "status": "assigned",
+        "source": "manual_rota_board",
+        "override_reason": null
+      }
+    ]
+  },
+  "requests": [
+    {
+      "method": "POST",
+      "path": "/api/v1/rota-assignments/slots/<observed-unselected-May4-slot>/assign",
+      "query": "",
+      "status": 200,
+      "payload": {
+        "format": "json",
+        "value": {
+          "person_id": "c4fe526d-5915-428f-aab5-2f7f367a0b35"
+        }
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rota-intelligence/jobs",
+      "query": "",
+      "status": 200,
+      "payload": {
+        "format": "json",
+        "value": {
+          "month": "2026-05",
+          "mode": "repair",
+          "seconds": 30,
+          "engine": "server",
+          "repair_slots": [
+            "9396e3e4-c62e-45a4-a686-c4af894a0693"
+          ],
+          "locked_slots": [],
+          "preferences": []
+        }
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rota-compute/jobs/<observed-optimizer-job>/step",
+      "query": "",
+      "status": 200,
+      "payload": {
+        "format": "json",
+        "value": {
+          "revision": 0
+        }
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rota-compute/jobs/<observed-optimizer-job>/validate",
+      "query": "",
+      "status": 200,
+      "payload": {
+        "format": "json",
+        "value": {
+          "revision": 1
+        }
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rota-intelligence/jobs/<observed-optimizer-job>/alternative",
+      "query": "",
+      "status": 200,
+      "payload": {
+        "format": "json",
+        "value": {
+          "revision": 1,
+          "index": 0
+        }
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rota-intelligence/jobs/<observed-optimizer-job>/select",
+      "query": "",
+      "status": 200,
+      "payload": {
+        "format": "json",
+        "value": {
+          "index": 1,
+          "revision": 2
+        }
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rota-compute/jobs/<observed-optimizer-job>/apply",
+      "query": "",
+      "status": 200,
+      "payload": {
+        "format": "json",
+        "value": {
+          "revision": 3
+        }
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rota-compute/jobs/<observed-optimizer-job>/reversal-check",
+      "query": "",
+      "status": 200,
+      "payload": {
+        "format": "json",
+        "value": {
+          "revision": 4
+        }
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rota-compute/jobs/<observed-optimizer-job>/revert",
+      "query": "",
+      "status": 200,
+      "payload": {
+        "format": "json",
+        "value": {
+          "revision": 4
+        }
+      }
+    }
+  ],
+  "errors": []
+}

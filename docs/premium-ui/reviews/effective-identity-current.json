@@ -1,0 +1,78 @@
+{
+  "recorded_at_utc": "2026-10-24T09:47:10.143582+00:00",
+  "completion_claim": false,
+  "scope": "Truthful null/omitted/unknown effective call identity with preserved editing and legacy transition regression.",
+  "source_sha256": {
+    "frontend/src/member-workspace.ts": "b1cb138f47d633946e47d5d8b180d7efbc863e58e9e652b8742de9532de505ce",
+    "frontend/src/record-workspace.ts": "aff5fa264638bad4448e8e0c42434e6245b4dbe55b970e0b026a05d2631b9bec",
+    "frontend/src/ui.ts": "88579ed75c8c72e4fd4e2d98508a58c42b925202362589a2469623664c2a975f",
+    "frontend/src/audit-time.ts": "136542cb2daec343417532d372f2e8ce01a0e6103ef6c62a7a4a8017ac8a6d15",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "16cfdf384b7fe441593e0bfab36b328130734c6fb24c5d90b7d805aa1c2513dd",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/workspace-load-state.ts": "cdd0e323d7e83e6e668a381bbfcc37cad4726b1193ac5de31d5f14e03eecd9c6"
+  },
+  "test_sha256": "5f9ade16402b41c5844fb6250f664397d94e9997c60fa27c24397be19f87ef0e",
+  "checks": {
+    "effective_identity_browser_contexts": 6,
+    "profile_fixture_role_workflows_within_six_contexts": 72,
+    "exact_mocked_puts_within_workflows": 36,
+    "legacy_timeline_contexts": 6,
+    "legacy_role_variants_within_six_contexts": 12,
+    "date_card_regression_contexts": 7,
+    "fixed_clock_identity_regression_contexts": 6,
+    "tab_status_role_workflows": 12,
+    "tab_keyboard_regression_contexts": 6,
+    "container_observer_workflows": 6,
+    "all_browser_contexts_and_workflows": 49,
+    "unit_tests_passed": 110,
+    "held_build_passed": true,
+    "forwarded_mutations": 0
+  },
+  "changes": [
+    "A shared presentation helper preserves explicit null as Unassigned. An omitted field shows Base default with a missing-effective-value explanation.",
+    "Header, Overview and roles summary agree. Missing or unknown effective information prompts review. Unknown returned text stays escaped, complete and wrapped.",
+    "Base editing, drafts and API/save handlers remain unchanged. The inline header note has explicit spacing."
+  ],
+  "independent_review": {
+    "reviewer": "/root/effective_identity_review",
+    "method": "Read-only contract, type, before-patch, source, new-test and legacy-fixture audit; no edits or execution.",
+    "outcome": "No blocking semantic issue after spacing and wrapping fixes. Explicit null is retained; omission is labeled honestly. Requirements 122, 128 and 133 remain partial."
+  },
+  "root_review": [
+    "Read the isolated patch and executed a byte-preservation proof: all source after form wiring and the prior CSS prefix are unchanged.",
+    "Inspected the six-fixture matrix and 72 role workflows, including 36 exact mocked PUTs. Returned current/future differences do not alter base editing or payloads.",
+    "Retained the mobile overflow failure (228px width, 411px scroll width); the final scoped-wrap regression passed. Fixed the existing identity test clock to its intended 22 October boundary date."
+  ],
+  "evidence": [
+    "docs/premium-ui/qa-profile-effective-identity.json",
+    "docs/premium-ui/qa-legacy-timeline.json",
+    "docs/premium-ui/qa-profile-date-cards.json",
+    "docs/premium-ui/qa-profile-identity-fixed.json",
+    "docs/premium-ui/qa-profile-tab-status.json",
+    "docs/premium-ui/qa-profile-tabs-complete.json",
+    "docs/premium-ui/qa-member-container-independent.json",
+    "docs/premium-ui/reviews/effective-identity-source-preservation.json",
+    "tmp/premium-profile-effective-before-wrap.log",
+    "tmp/premium-profile-effective-development.log",
+    "tmp/premium-profile-effective-legacy-timeline.log",
+    "tmp/premium-profile-effective-identity-regression.log",
+    "tmp/premium-profile-effective-date-cards-regression.log",
+    "tmp/premium-profile-effective-status-regression.log",
+    "tmp/premium-profile-effective-tabs-regression.log",
+    "tmp/premium-profile-effective-container-regression.log",
+    "tmp/premium-profile-effective-unit.log",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+  ],
+  "limitations": [
+    "Six new contexts use three engines at 320px dark and 1280px light. Six fixtures and two roles produce 72 workflows within those contexts. All 36 PUTs were locally fulfilled with exact payload assertions; this is not real persistence or backend authorization certification. Explicit null with null base is not a separate fixture.",
+    "Six legacy contexts cover 12 role variants and exact returned baseline, transitions, dates, scheduled flags and current value. The server reference date is 15 September 2026; the device clock is 24 October. Backend date calculations and complete designation/promotion timeline coverage remain unproven.",
+    "The existing identity regression now fixes its clock to 22 October 2026 to match its original boundary fixtures. Other expectations are unchanged. No native assistive-technology, physical-device or production-bundle claim is made for this batch.",
+    "Requirements 122, 128 and 133 remain partial. All 18 previously accepted requirements retain scoped revalidation; no new whole requirement is accepted.",
+    "This batch changes no backend, API contract, permissions, scheduling, persistence or export semantics. No commit, push or deployment."
+  ],
+  "final_independent_audit": {
+    "reviewer": "/root/effective_final_audit",
+    "outcome": "No blockers. Verified current eight source hashes and test digest, 49 result entries, 72 nested workflows and 36 mocked PUTs. Scope limitations agree with tests."
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "recorded_at_utc": "2026-10-22T10:14:17.710194+00:00",
+  "completion_claim": false,
+  "scope": "Frontend account form presentation, nested member choice, unit-count draft preservation and normalized-import refresh context; bounded outcomes only.",
+  "source_sha256": {
+    "frontend/src/main.ts": "8099e2182e25a65e48a138ea172210af5ae81eefe8e7b14c4aedb7a615fc791f",
+    "frontend/src/premium-theme.css": "ff2aee7148e54e4e40aae847189110cf3d9228d90fabffbd63a3449a1e1a935d",
+    "frontend/src/reference-workspace.ts": "3c3f30aa049973ce9403636ef8a6bb8312c29f9af630e5cd37350f5d67d86691",
+    "frontend/src/operational-import.ts": "de5fec9dd97efa18aa7deb3d22e1aa93fb3e012ed8386d87d25e626ed2202497",
+    "frontend/src/rota-rules.ts": "cee7024308a1623dd69fd21c8e822ed4cb7b5d5a413dc4ab2ab8a5a4f9e19204"
+  },
+  "changes": [
+    "Account creation uses visible persistent labels and a responsive intrinsic grid; password constraints, role options, IDs and payloads preserved.",
+    "Unit member-count reads update only count presentation, retain the editor DOM/draft/dirty state and provide explicitly dated previous counts plus manual read retry.",
+    "Normalized import refresh reports pending/failure/success at top and footer and restores replacement Refresh focus only when its initiating keyboard context remains owned. Newer deliberate focus is preserved.",
+    "Three erased TypeScript assertions reconcile narrower shared severity declarations with pre-existing runtime info filtering. Exact transpiled JavaScript equality proven; concurrent rules/API semantics retained."
+  ],
+  "evidence": [
+    "docs/premium-ui/qa-account-form-layout.json",
+    "docs/premium-ui/qa-inline-member-choice-independent.json",
+    "docs/premium-ui/reviews/unit-month-draft-finish-current.json",
+    "docs/premium-ui/reviews/operational-import-keyboard-fixed-current.json",
+    "docs/premium-ui/reviews/unit-month-draft-audit-current.json",
+    "docs/premium-ui/reviews/unit-month-draft-regression-current.json",
+    "docs/premium-ui/reviews/rules-severity-type-compat-current.json",
+    "docs/premium-ui/reviews/operational-import-native-month-escape-current.json",
+    "docs/premium-ui/qa-preview-rejections.json"
+  ],
+  "checks": {
+    "account_form_layout_contexts": 12,
+    "nested_member_choice_workflows": 6,
+    "unit_count_recovery_workflows": 6,
+    "unit_catalog_selection_regressions": 24,
+    "normalized_save_regressions": 15,
+    "normalized_refresh_workflows": 12,
+    "unit_tests": 100,
+    "build_exit": 0
+  },
+  "screenshots": [
+    "docs/premium-ui/screenshots/accounts/320-dark.png",
+    "docs/premium-ui/screenshots/accounts/320-light.png",
+    "docs/premium-ui/screenshots/accounts/1280-dark.png",
+    "docs/premium-ui/screenshots/accounts/1280-light.png"
+  ],
+  "limits": [
+    "Physical-device/native screen-reader checks pending by existing disposition.",
+    "Current rota-rules.browser suite passed its first13checks, then failed its old Choose one call level expectation atline338. Concurrent rules source now supports deliberate multi-level pools per docs/call_level_pool_and_balance_contract.md; no UI-team scheduling semantics change made to satisfy this obsolete expectation. Full rules-suite pass not claimed.",
+    "Native Chromium month-picker Escape sends a second trusted noncancelable cancel event and closes the busy importer. This is a remaining native-browser limitation, not a passing busy-Escape claim; actual reopened importer remains unchanged after old response completion. See separate diagnostic.",
+    "Concurrent balance-duties/main/styles edits preserved; older reports may be historical for those dependencies. No final whole-worktree deployment freeze claimed.",
+    "An import report run lost its dialog during shared Vite source edits; final frozen-source run recorded separately.",
+    "Mutations intercepted or absent in fixtures; no production persistence/authorization certification.",
+    "No UI-team backend/API-contract/permission/scheduling/persisted-semantics/export-content edits. Concurrent source work preserved.",
+    "All260goal remains active/incomplete. No commit/push/deploy."
+  ]
+}

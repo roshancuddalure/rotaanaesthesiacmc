@@ -5,8 +5,13 @@ validation, candidates, auto-fill, the optimizer, compute and the Rota Rules che
 ``eligibility`` here. Do not copy this logic elsewhere.
 
 Order of checks:
-1. Call level: the slot's own ``call_level`` (a manual override or an old stamped slot) when
-   set, otherwise the duty's ``effective_call_levels``.
+1. Call level (strict, docs/limits_callevel_fairness_contract.md section 1 as amended by
+   docs/call_level_pool_and_balance_contract.md section 1): the member's level must be in
+   ``required_call_levels`` - ``{slot.call_level}`` when the slot is stamped, otherwise the
+   duty's effective levels. A duty whose Rota Rules list several levels is a deliberate
+   *pool*: any member of those levels may take it, and that is not a crossover. Members
+   outside the set are refused (``call_level_mismatch``). Only a duty with *no* level is
+   unresolved (``call_level_unresolved``). Only a superadmin allocation may cross call level.
 2. Allowed groups: if the rule names any, the member must belong (on the slot date) to at
    least one *active* allowed group.
 3. Excluded groups: the member must not belong to an excluded group.
@@ -43,6 +48,8 @@ CALL_LEVEL_ORDER = ["1ST_CALL", "2ND_CALL", "3RD_CALL", "4TH_CALL", "CO_4TH_CALL
 CODE_CALL_LEVEL = "call_level"
 CODE_NOT_IN_GROUP = "not_in_group"
 CODE_EXCLUDED_GROUP = "excluded_group"
+CODE_CALL_LEVEL_UNRESOLVED = "call_level_unresolved"
+UNRESOLVED_REASON = "This duty has no call level; set one in Rota Rules"
 
 
 @dataclass(frozen=True)
@@ -114,15 +121,82 @@ def effective_call_levels(rule: Any, groups_by_key: Mapping[str, Any] | None = N
     return levels
 
 
-def required_call_levels_for(slot: Any, rule: Any, groups_by_key: Mapping[str, Any] | None = None) -> set[str]:
-    """Levels a member needs for ``slot``: the slot's own level, else the effective levels."""
+def required_call_levels(
+    slot: Any, rule: Any, groups_by_key: Mapping[str, Any] | None = None
+) -> set[str]:
+    """The set of call levels a member may have to take ``slot`` (single source of truth).
+
+    - slot stamped with a level -> ``{that level}``
+    - otherwise the rule's effective levels (explicit levels or key-inferred, plus each active
+      allowed group's level); several levels make the duty a deliberate *pool*
+    - otherwise (no rule) the levels inferred from the duty key
+    - an empty set means the duty is *unresolved*: nobody may take it.
+    """
     if slot is not None and getattr(slot, "call_level", None):
         normalized = normalize_call_level(slot.call_level)
         if normalized != "Unassigned":
             return {normalized}
     if rule is not None:
+        if groups_by_key is None:
+            groups_by_key = attached_groups(rule) or {}
         return effective_call_levels(rule, groups_by_key)
-    return inferred_call_levels_from_duty_type(getattr(slot, "duty_type", None))
+    return set(inferred_call_levels_from_duty_type(getattr(slot, "duty_type", None)))
+
+
+# Backwards-compatible name used by rota_safety and older callers.
+required_call_levels_for = required_call_levels
+
+
+def required_call_level(
+    slot: Any, rule: Any, groups_by_key: Mapping[str, Any] | None = None
+) -> str | None:
+    """Display helper: the single required level, or ``None`` for a pool or unresolved duty.
+
+    Never use this to decide eligibility; use ``required_call_levels`` (a pool returns
+    ``None`` here but is fillable by any of its levels).
+    """
+    levels = required_call_levels(slot, rule, groups_by_key)
+    return next(iter(levels)) if len(levels) == 1 else None
+
+
+def is_pool(levels: Iterable[str]) -> bool:
+    return len(set(levels)) > 1
+
+
+def pool_label(levels: Iterable[str]) -> str:
+    """"3rd call and 4th call" style text for a level set."""
+    words = [describe_level(level) for level in _sort_levels(levels)]
+    if len(words) <= 1:
+        return "".join(words)
+    return f"{', '.join(words[:-1])} and {words[-1]}"
+
+
+def call_level_missing_message(label: str) -> str:
+    """Rules-check text for an active duty with no call level at all."""
+    return f"{label}: no call level; set one in Rota Rules"
+
+
+def call_level_pool_message(label: str, levels: Iterable[str]) -> str:
+    """Rules-check info text for a pool duty."""
+    return f"{label}: open to {pool_label(levels)} (pool)"
+
+
+def call_level_mismatch_reason(required: Iterable[str], member_level: str) -> str:
+    """"Needs 3rd call or 4th call; listed as 2nd call"."""
+    return f"Needs {describe_levels(required) or 'a call level'}; listed as {describe_level(member_level)}"
+
+
+def eligibility_issue_code(decision: Decision) -> str:
+    """Validation/strict-block code for a refused ``Decision``."""
+    if decision.code == CODE_CALL_LEVEL:
+        return "call_level_mismatch"
+    if decision.code == CODE_CALL_LEVEL_UNRESOLVED:
+        return CODE_CALL_LEVEL_UNRESOLVED
+    return "call_subgroup_mismatch"
+
+
+def call_level_label(level: str | None) -> str:
+    return describe_level(level or "")
 
 
 def member_call_level(member: Any) -> str:
@@ -211,15 +285,13 @@ def eligibility(
     """
     if groups is None:
         groups = attached_groups(rule) or {}
-    required = required_call_levels_for(slot, rule, groups) if check_call_level else set()
-    if required:
+    if check_call_level:
+        required = required_call_levels(slot, rule, groups)
+        if not required:
+            return Decision(False, UNRESOLVED_REASON, CODE_CALL_LEVEL_UNRESOLVED)
         level = member_call_level(member_context)
         if level not in required:
-            return Decision(
-                False,
-                f"Needs {describe_levels(required)}; listed as {describe_level(level)}",
-                CODE_CALL_LEVEL,
-            )
+            return Decision(False, call_level_mismatch_reason(required, level), CODE_CALL_LEVEL)
     if rule is None:
         return Decision(True)
     allowed = list(rule.allowed_cluster_keys or [])

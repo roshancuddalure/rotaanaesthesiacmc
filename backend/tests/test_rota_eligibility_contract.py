@@ -250,6 +250,11 @@ def test_a_one_group_member_eligible_same_level_non_member_not() -> None:
     assert "3rd Call A" in eligibility_messages(blocked)
 
 
+# Call-level pools (docs/call_level_pool_and_balance_contract.md section 1, 22 Oct 2026): groups
+# of two levels make the duty a deliberate *pool*: members of either level (in an allowed group)
+# may take it; other levels are still refused. Only a duty with no level is unresolved.
+
+
 def test_a_two_groups_different_levels_safety_path(pac_world) -> None:
     sessions, slot_id, ids, _unit = pac_world
     assert eligible_ids_via_safety(sessions, slot_id) == {ids["sr"], ids["senior"]}
@@ -261,7 +266,11 @@ def test_a_two_groups_different_levels_manual_validation(pac_world) -> None:
     assert not is_blocked(validation_for(sessions, slot_id, ids["senior"])), \
         validation_for(sessions, slot_id, ids["senior"])["issues"]
     for name in ("loose4", "loose3", "second"):
-        assert is_blocked(validation_for(sessions, slot_id, ids[name])), name
+        validation = validation_for(sessions, slot_id, ids[name])
+        assert is_blocked(validation), name
+        assert "call_level_unresolved" not in {i["code"] for i in validation["issues"]}, name
+    assert "call_level_mismatch" in {
+        i["code"] for i in validation_for(sessions, slot_id, ids["second"])["issues"]}
 
 
 def test_a_two_groups_reason_texts(pac_world) -> None:
@@ -530,8 +539,14 @@ def test_c_check_effective_levels_and_eligible_now_for_two_groups(api) -> None:
     assert res.status_code == 200, res.text
     info = res.json()["duties"]["MAIN_PAC_3RD"]
     assert sorted(info["effective_call_levels"]) == ["3RD_CALL", "4TH_CALL"]
+    # Two levels = a pool: members of both levels are eligible; the check notes the pool (info).
     assert info["eligible_now"] == 2
     assert {k: v for k, v in info["eligible_by_level"].items() if v} == {"3RD_CALL": 1, "4TH_CALL": 1}
+    problem = next(p for p in res.json()["problems"]
+                   if p["duty_key"] == "MAIN_PAC_3RD" and p["code"] == "call_level_pool")
+    assert problem["severity"] == "info"
+    assert problem["message"] == "Main PAC 3rd Call: open to 3rd call and 4th call (pool)"
+    assert not [p for p in res.json()["problems"] if p["code"] == "call_level_not_single"]
     first = res.json()["duties"]["MAIN_2ND_24HR"]
     assert first["effective_call_levels"] == ["2ND_CALL"]
     assert first["eligible_now"] == 1

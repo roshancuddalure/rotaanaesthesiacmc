@@ -1,0 +1,32 @@
+{
+  "reviewer": "analysis_navigation_review",
+  "checked_at": "2026-10-21T16:34:09.550Z",
+  "verdict": "accepted_for_bounded_navigation_scope",
+  "sourceHashes": {
+    "frontend/src/main.ts": "ef5f025883701ccbf5c9e525e5c7b307d153109b768eab4bf88d1b9f536925df",
+    "frontend/src/member-workspace.ts": "c2d6640b336fbfb4646d60b73d77b9383e126c6ba03bd3215180dc79e5bd2c1f",
+    "frontend/src/premium-theme.css": "b8b7c7b9fe0a3c8dc4de1825ed77ca9c264aabea0c0c7aadb55acfeb85527ba9"
+  },
+  "evidence": [
+    "frontend/tests/premium-analysis-navigation-independent.browser.mjs",
+    "docs/premium-ui/qa-analysis-navigation-independent.json",
+    "frontend/tests/premium-profile-rail-independent.browser.mjs",
+    "docs/premium-ui/qa-profile-rail-independent.json"
+  ],
+  "verified": [
+    "Actual app analytics tablist, nine tabs, selected state, one roving keyboard stop and labelled focusable panel.",
+    "Home, End and wrapping arrows move focus without activating; native Enter and Space activate existing tab handlers.",
+    "Tab moves from tablist to its panel. Keyboard reveal only scrolls the rail, preserves page scroll and exposes the whole focused tab.",
+    "Both directions of 320/1280 resize preserve selected-tab visibility in Chromium, Firefox and WebKit.",
+    "Navigation reuses one dashboard GET and issues no mutations. Chromium scoped tagged axe checks reported no findings.",
+    "Actual profile rail uses current rect-based helper; initially selected final tab, Home/End and both directions of desktop/320 resize remain inside rail at 844x390 and 1280x390 in Chromium.",
+    "Profile orientation changes with layout and existing activation behavior is preserved; isolated fixture records zero writes."
+  ],
+  "required_fixes": [],
+  "limitations": [
+    "Analytics independent data is empty; calculation correctness, populated pagination, drill-down and export contents are outside this review.",
+    "Profile review covers selected-tab geometry only, not profile saving or broader session behavior.",
+    "No physical-device or actual screen-reader acceptance performed.",
+    "Acceptance is bounded to listed source hashes and workflows; it does not establish completion of all 260 requirements."
+  ]
+}

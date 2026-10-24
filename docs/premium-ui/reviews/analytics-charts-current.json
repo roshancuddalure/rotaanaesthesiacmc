@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "reviewer": "analytics_chart_review",
+  "reviewed_at_utc": "2026-10-21T16:18:22.624412+00:00",
+  "scope": "Independent bounded review of five analysis charts for approved118/119/120; presentation helper browser review and baseline calculation-input comparison, not whole-plan acceptance",
+  "status": "accepted_for_bounded_chart_presentation_scope",
+  "reviewed_files_sha256": {
+    "frontend/src/analysis-charts.ts": "5fcaadda64cc221ebd75df9aba1e5e29d5843e6a35a878be2bab4c60118c5e83",
+    "frontend/src/main.ts": "529aa3006b7c47314930416ebb7951502c9ac2ad11414305aeda485e98098bf8",
+    "frontend/src/premium-theme.css": "ee830f9071651db5eba0f48d85d2e54cecd75e27b1371561d637a6b578ea83eb",
+    "frontend/tests/premium-analysis-independent-review.browser.mjs": "bd6ec440334d7c8928bff8167285a6fa9a6929c89aacbd58fd05f4623e5deb42"
+  },
+  "verified": [
+    "Exactly five analysis bar-chart call sites use the shared renderer, each with an explicit chart title; full weekday names retained in table row headers.",
+    "All five numeric input fragments exactly match task-start baseline: day aggregation, monthly total/weekend values, active people monthly values, weekend monthly values, fifth-call monthly reducer.",
+    "Chromium independent renderer tests passed320px light/dark,1280px light,320px forced-colors with actual keyboard disclosure and focusable data-table region.",
+    "Exact zero, ordinary, negative and inconsistent finite returned values remain in table; invalid/inconsistent input is unplotted and explained, missing data shown Unavailable; zero bars remain zero height in forced colors.",
+    "Hostile title and long hostile labels are text only, with no injected element/script, no document-level overflow and no NaN/Infinity inline heights.",
+    "Striped weekend and solid weekday swatches remain distinguishable by pattern including emulated forced colors; scoped tagged axe finds zero violations in four tested modes.",
+    "Empty arrays show explicit no-data message; table uses caption, column headers and full row headers; no API calls or persistent writes in isolated review."
+  ],
+  "resolved_findings": [
+    {
+      "id": "forced-colors-zero-height",
+      "finding": "Forced-color border gave height0 bars2px geometry",
+      "resolution": "Explicit hidden zero nodes plus scoped display:none!important; independently revalidated in forcedColors active."
+    },
+    {
+      "id": "hidden-chart-focus",
+      "finding": "Shell scroll-region observer would focus aria-hidden overflowing chart wrapper",
+      "resolution": "Only noninteractive individual columns are aria-hidden; chart wrapper is named focusable region."
+    },
+    {
+      "id": "standalone-chart-focus",
+      "finding": "New named overflowing chart was not keyboard focusable without later shell observer",
+      "resolution": "Direct tabindex=0 on named visual region; isolated scoped axe rerun passes."
+    }
+  ],
+  "tests_executed": [
+    {
+      "command": "node tests/premium-analysis-independent-review.browser.mjs",
+      "result": "4 passed independently; docs/premium-ui/qa-analysis-independent-review.json"
+    }
+  ],
+  "remaining_limits": [
+    "Whole item118/119/120 acceptance still requires broader analysis states, existing person drill-down outcomes and export preservation evidence; this review does not certify those operations.",
+    "Chart helper review is isolated Chromium emulation with actual app styles; root integration cross-browser suite is separate evidence, not counted as independently run here.",
+    "No manual screen-reader or physical-device checks; those remain pending. No backend edits, production claims or deployment."
+  ]
+}

@@ -1,6 +1,7 @@
 """Extra-duty layer API (docs/extra_duty_contract.md §4). Admin only.
 
-Preview -> apply (token + plan_hash) -> undo per batch, the month's verification, the
+Preview -> apply (token + plan_hash, optional ``mode``: "standard" | "all_units", see
+docs/extra_duty_fill_all_contract.md) -> undo per batch, the month's verification, the
 justice ledger, per-unit fallback order and the 360° audit report download.
 The planner/report services are imported inside the handlers so this router loads even
 while they are unavailable. Errors are ``{detail: {code, message, ...}}``.
@@ -41,17 +42,23 @@ def require_enabled(user: UserAccount = Depends(require_admin)) -> UserAccount:
     return user
 
 
-router = APIRouter(prefix="/extra-duty", dependencies=[Depends(require_enabled)])
+router = APIRouter(prefix="/extra-duty", dependencies=[Depends(require_admin), Depends(require_enabled)])
+
+
+FillMode = Literal["standard", "all_units"]
 
 
 class MonthRequest(BaseModel):
     month: str
+    # docs/extra_duty_fill_all_contract.md §2: "standard" (default) or "all_units" (fill-all).
+    mode: FillMode = "standard"
 
 
 class ApplyRequest(BaseModel):
     month: str
     token: str
     plan_hash: str
+    mode: FillMode = "standard"
 
 
 class UndoRequest(BaseModel):
@@ -136,14 +143,14 @@ def extra_duty_status(month: str = Query(...), db: Session = Depends(get_db)) ->
 def extra_duty_preview(payload: MonthRequest, db: Session = Depends(get_db),
                        user: UserAccount = Depends(require_admin)) -> dict:
     month = _check_month(payload.month)
-    return _call(_service().preview, db, month, user)
+    return _call(_service().preview, db, month, user, mode=payload.mode)
 
 
 @router.post("/apply")
 def extra_duty_apply(payload: ApplyRequest, db: Session = Depends(get_db),
                      user: UserAccount = Depends(require_admin)) -> dict:
     month = _check_month(payload.month)
-    return _call(_service().apply, db, month, payload.token, payload.plan_hash, user)
+    return _call(_service().apply, db, month, payload.token, payload.plan_hash, user, mode=payload.mode)
 
 
 @router.post("/batches/{batch_id}/undo")
@@ -173,12 +180,12 @@ def extra_duty_ledger(month: str | None = Query(None), person_id: UUID | None = 
 
 @router.get("/report")
 def extra_duty_report(month: str = Query(...), format: Literal["html", "xlsx"] = Query("html"),
-                      db: Session = Depends(get_db)):
+                      db: Session = Depends(get_db), user: UserAccount = Depends(require_admin)):
     _check_month(month)
     try:
         from app.services import rota_report_360 as report
 
-        data = report.build_report_data(db, month)
+        data = report.build_report_data(db, month, generated_by=user.display_name or user.username)
         if format == "html":
             content: bytes | str = report.render_html(data)
         else:

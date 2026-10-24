@@ -1,3 +1,4 @@
+import { decorativeIcon } from "./decorative-icons";
 /**
  * Rota Rules (admin): who can do each duty, how each duty behaves, and the safety guardrails.
  *
@@ -11,6 +12,7 @@
  * saved anyway) -> PUT with `base_revision` (409 stale_rules / 422 invalid_rules handled).
  * History lists saved versions, compares one with the current rules, and restores it.
  */
+import { formatAuditTimestamp } from "./audit-time";
 import { workspaceDialog } from "./member-workspace";
 import {
   checkRotaRules,
@@ -18,6 +20,7 @@ import {
   getRotaPhaseOneRules,
   getRotaRuleVersion,
   getRotaRuleVersions,
+  getUnits,
   invalidRulesProblems,
   isStaleRulesError,
   restoreRotaRuleVersion,
@@ -29,14 +32,35 @@ import {
   type RotaRulesCheck,
   type RotaRulesPayload,
   type RotaRuleVersionSummary,
+  type RotaRuleUnit,
+  type UnitRead,
 } from "./services/api";
-import { badge, codeLabel, emptyState, esc, formatDate, nextStep, pageSkeleton, type Tone } from "./ui";
+import { badge, codeLabel, emptyState, esc, nextStep, pageSkeleton, type Tone } from "./ui";
 
 export interface RotaRulesPageOptions {
   onNavigate(view: string): void;
   /** False once the app has moved to another screen; late responses then do not paint. */
   isCurrent?: () => boolean;
+  /** True for a superadmin: the read-only limits summary links to the Limits page. */
+  canEditLimits?: boolean;
 }
+
+/** Limit sections: stored with the rules but changed only on the Limits page (docs/limits_callevel_fairness_contract.md §3). */
+const LIMIT_SECTIONS = ["duty_count_limits", "rest_rules", "unit_staffing_rules", "fairness_rules", "extra_duty_rules"] as const;
+const LIMIT_SUMMARY: { path: string; label: string; unit?: string; blank?: string; kind?: "bool" | "percent" }[] = [
+  { path: "duty_count_limits.max_24hr_per_month", label: "Max 24-hour duties per member per month", unit: "duties", blank: "No limit" },
+  { path: "duty_count_limits.max_weekend_24hr_per_month", label: "Max weekend 24-hour duties per member per month", unit: "duties", blank: "No limit" },
+  { path: "duty_count_limits.max_same_group_per_month", label: "Max duties of the same category per month", unit: "duties", blank: "No limit" },
+  { path: "duty_count_limits.max_same_campus_per_month", label: "Max duties on the same campus per month", unit: "duties", blank: "No limit" },
+  { path: "rest_rules.minimum_gap_after_24hr_hours", label: "Minimum rest after a 24-hour duty", unit: "hours" },
+  { path: "rest_rules.post_24hr_blocks_next_day_elective", label: "No elective work the day after a 24-hour duty", kind: "bool" },
+  { path: "unit_staffing_rules.minimum_available_count", label: "Minimum people free in each unit", unit: "people" },
+  { path: "unit_staffing_rules.warning_unavailable_percent", label: "Warn when this share of a unit is away", kind: "percent" },
+  { path: "unit_staffing_rules.hard_block_unavailable_percent", label: "Refuse when this share of a unit is away", kind: "percent" },
+  { path: "unit_staffing_rules.small_unit_uses_absolute_minimum", label: "Small units use the minimum number instead of percentages", kind: "bool" },
+  { path: "fairness_rules.max_gap_within_call_level", label: "Largest allowed gap within a call level", unit: "duties" },
+  { path: "extra_duty_rules.justice_lookback_months", label: "Months counted for extra duties", unit: "months" },
+];
 
 // ---------------------------------------------------------------------------------------
 // Reference data and hint texts (exactly as in the contract tables)
@@ -111,6 +135,16 @@ const HINTS: Record<string, Hint> = {
     text: "Members of these groups can never do this duty, even if otherwise eligible.",
     more: "Example: exclude Schell so members of that group are never given this duty. A group cannot be both allowed and excluded.",
   },
+  allowed_units: {
+    label: "Only these units",
+    text: "If any are chosen, this duty is only set up in these units and only covered by them. Leave it empty for every unit.",
+    more: "Example: choose UNIT I and UNIT II for a duty that runs only there. The extra-duty layer and Fill remaining duties never move it to another unit.",
+  },
+  excluded_units: {
+    label: "Never these units",
+    text: "This duty is never set up in these units and never moved to them, even to cover a gap.",
+    more: "Example: exclude UNIT V so the duty never runs there. A unit cannot be in both lists; choosing it here takes it out of Only these units.",
+  },
   group: {
     label: "Duty category",
     text: "Used for counting and grouping duties in reports and exports. It is not a member list.",
@@ -146,13 +180,16 @@ const GUARD_SWITCHES: { path: string; label: string; text: string; more: string 
 
 const FLAGS = ["active", "is_mandatory", "is_adjustable", "blocks_elective_same_day", "blocks_elective_next_day"] as const;
 type Flag = (typeof FLAGS)[number];
-const LIST_FIELDS = ["allowed_call_levels", "allowed_cluster_keys", "excluded_cluster_keys"] as const;
+const LIST_FIELDS = ["allowed_call_levels", "allowed_cluster_keys", "excluded_cluster_keys", "allowed_units", "excluded_units"] as const;
+type UnitField = "allowed_units" | "excluded_units";
+const UNIT_FIELDS: UnitField[] = ["allowed_units", "excluded_units"];
 type ListField = (typeof LIST_FIELDS)[number];
 
 const FIELD_LABELS: Record<string, string> = {
   label: "Display label", group: "Duty category", duration_hours: "Hours", active: "Active", is_mandatory: "Mandatory",
   is_adjustable: "Adjustable", blocks_elective_same_day: "Same-day block", blocks_elective_next_day: "Next-day block",
   allowed_call_levels: "Call levels allowed", allowed_cluster_keys: "Groups allowed", excluded_cluster_keys: "Groups excluded",
+  allowed_units: "Only these units", excluded_units: "Never these units",
 };
 
 type Filter = "all" | "groups" | "nobody" | "warnings" | "inactive" | "changed";
@@ -165,15 +202,26 @@ const FILTERS: { key: Filter; label: string }[] = [
   { key: "changed", label: "Changed" },
 ];
 
-const LOCK_ICON = `<svg class="rr-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4.5 7V5a3.5 3.5 0 0 1 7 0v2h.5A1 1 0 0 1 13 8v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h.5Zm1.5 0h4V5a2 2 0 0 0-4 0v2Z"/></svg>`;
-const WARN_ICON = `<svg class="rr-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 1.5c.4 0 .8.2 1 .6l6 10.6c.4.8-.1 1.8-1 1.8H2c-.9 0-1.4-1-1-1.8L7 2.1c.2-.4.6-.6 1-.6Zm-.75 4.25v4h1.5v-4h-1.5Zm0 5.25v1.5h1.5V11h-1.5Z"/></svg>`;
-const CHECK_ICON = `<svg class="rr-icon rr-chip__tick" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M6.2 11.6 2.9 8.3l1.1-1.1 2.2 2.2 5.8-5.8 1.1 1.1z"/></svg>`;
-const CHEVRON = `<svg class="rr-icon rr-chev" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M5.7 3.3 10.4 8l-4.7 4.7-1.1-1.1L8.2 8 4.6 4.4z"/></svg>`;
-const SEARCH_ICON = `<svg class="rr-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M7 2a5 5 0 0 1 4 8l3 3-1 1-3-3A5 5 0 1 1 7 2Zm0 1.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Z"/></svg>`;
+const LOCK_ICON = decorativeIcon("lock", "rr-icon");
+const WARN_ICON = decorativeIcon("warning", "rr-icon");
+const CHECK_ICON = decorativeIcon("check", "rr-icon rr-chip__tick");
+const CHEVRON = decorativeIcon("chevron", "rr-icon rr-chev");
+const SEARCH_ICON = decorativeIcon("search", "rr-icon");
 
 // ---------------------------------------------------------------------------------------
 // State
 // ---------------------------------------------------------------------------------------
+
+interface RuleSaveOperation {
+  version: number;
+  revision: string | null;
+  changes: number;
+  submitted: RotaPhaseOneRules;
+  confirmed: boolean;
+  busy: boolean;
+  readSequence: number;
+  error: string;
+}
 
 interface State {
   root: HTMLElement;
@@ -183,10 +231,14 @@ interface State {
   draft: RotaPhaseOneRules;
   revision: string | null;
   groups: RotaRuleGroup[];
+  /** Registered units (GET /units); `unitsLoaded` is false when they could not load. */
+  units: RotaRuleUnit[];
+  unitsLoaded: boolean;
   check: RotaRulesCheck | null;
   checkState: "idle" | "checking" | "error";
   checkFresh: boolean;
   checkSeq: number;
+  draftVersion: number;
   checkTimer: number | undefined;
   query: string;
   filter: Filter;
@@ -195,6 +247,8 @@ interface State {
   openHints: Set<string>;
   guardOpen: boolean;
   status: { text: string; tone: Tone } | null;
+  saveOperation: RuleSaveOperation | null;
+  dockCleanup?: () => void;
 }
 
 let state: State | null = null;
@@ -203,7 +257,17 @@ let unloadBound = false;
 /** True while the Rota Rules page is on screen with edits that have not been saved. */
 export function rotaRulesHasUnsavedChanges(): boolean {
   const st = state;
-  return Boolean(st && st.root.contains(st.page) && changeCount(st) > 0);
+  return Boolean(st && st.root.isConnected && st.root.contains(st.page) && changeCount(st) > 0);
+}
+
+/** Drop private, in-memory editor state when authentication changes. Never saves or restores rules. */
+export function disposeRotaRulesPage(): void {
+  if (state) {
+    state.dockCleanup?.();
+    window.clearTimeout(state.checkTimer);
+    state.checkSeq++;
+  }
+  state = null;
 }
 
 const clone = <T,>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
@@ -258,6 +322,8 @@ function normalizeRules(rules: RotaPhaseOneRules): RotaPhaseOneRules {
     allowed_call_levels: rule.allowed_call_levels ?? [],
     allowed_cluster_keys: rule.allowed_cluster_keys ?? [],
     excluded_cluster_keys: rule.excluded_cluster_keys ?? [],
+    allowed_units: rule.allowed_units ?? [],
+    excluded_units: rule.excluded_units ?? [],
   }));
   copy.rest_rules = copy.rest_rules ?? { minimum_gap_after_24hr_hours: 24, post_24hr_blocks_next_day_elective: true };
   copy.unit_staffing_rules = copy.unit_staffing_rules ?? { minimum_available_count: 1, warning_unavailable_percent: 30, hard_block_unavailable_percent: 40, small_unit_uses_absolute_minimum: true };
@@ -266,8 +332,15 @@ function normalizeRules(rules: RotaPhaseOneRules): RotaPhaseOneRules {
 }
 
 function payloadOf(rules: RotaPhaseOneRules): RotaRulesPayload {
-  const { rule_version: _version, revision: _revision, groups: _groups, ...rest } = clone(rules);
+  const { rule_version: _version, revision: _revision, groups: _groups, units: _units, ...rest } = clone(rules);
   return rest as RotaRulesPayload;
+}
+
+/** The PUT body: never the limit sections, so the server keeps their stored values. */
+function savePayloadOf(rules: RotaPhaseOneRules): RotaRulesPayload {
+  const payload = payloadOf(rules) as unknown as Record<string, unknown>;
+  for (const key of LIMIT_SECTIONS) delete payload[key];
+  return payload as unknown as RotaRulesPayload;
 }
 
 function getPath(obj: unknown, path: string): unknown {
@@ -328,6 +401,42 @@ function missingGroups(st: State, rule: DutyRule): string[] {
   return [...rule.allowed_cluster_keys, ...rule.excluded_cluster_keys].filter((key) => !groupByKey(st, key));
 }
 
+/** The unit a saved token stands for: its id, or (legacy) its code or name, ignoring case. */
+function unitFor(st: State, token: string): RotaRuleUnit | undefined {
+  const t = String(token ?? "").trim().toLowerCase();
+  if (!t) return undefined;
+  return st.units.find((u) => u.id.toLowerCase() === t) ?? st.units.find((u) => u.code.toLowerCase() === t || u.name.toLowerCase() === t);
+}
+
+function unitIsActive(unit: RotaRuleUnit): boolean {
+  return unit.active !== false;
+}
+
+/** Units from the rules response, or (older servers) from GET /units. */
+function ruleUnitsFromRead(list: UnitRead[]): RotaRuleUnit[] {
+  return list.map((u) => ({ id: u.id, code: u.code, name: u.name, campus: u.campus, active: String(u.active_status ?? "active").toLowerCase() === "active" }));
+}
+
+function unitName(st: State, token: string): string {
+  return unitFor(st, token)?.name ?? (st.unitsLoaded ? `Missing unit (${token})` : token);
+}
+
+/** Tokens that match no registered unit (only known once the units have loaded). */
+function missingUnits(st: State, rule: DutyRule): string[] {
+  if (!st.unitsLoaded) return [];
+  return [...rule.allowed_units, ...rule.excluded_units].filter((token) => !unitFor(st, token));
+}
+
+/** True when any token in the list stands for this unit. */
+function listHasUnit(st: State, list: string[], unit: RotaRuleUnit): boolean {
+  return list.some((token) => unitFor(st, token)?.id === unit.id);
+}
+
+/** Unit names for a list, one per unit (legacy tokens shown as their unit). */
+function unitNames(st: State, list: string[]): string[] {
+  return [...new Set(list.map((token) => unitName(st, token)))];
+}
+
 /** The duty's own levels: the saved list, or the levels the duty name implies when it lists none. */
 function baseLevels(rule: DutyRule): { levels: string[]; inferred: boolean } {
   if (rule.allowed_call_levels.length) return { levels: [...new Set(rule.allowed_call_levels.map(normalizeLevel))], inferred: false };
@@ -354,8 +463,9 @@ function effectiveLevels(st: State, rule: DutyRule): string[] {
   return [...new Set(levels.map(normalizeLevel))].sort((a, b) => levelOrder(a) - levelOrder(b));
 }
 
+/** Problems to fix or look at. Info items (such as `call_level_pool`) are shown as tags, not counted. */
 function dutyProblems(st: State, key: string): RotaRuleProblem[] {
-  return (st.check?.problems ?? []).filter((problem) => problem.duty_key === key);
+  return (st.check?.problems ?? []).filter((problem) => problem.duty_key === key && (problem.severity as string) !== "info");
 }
 
 function eligibleNow(st: State, key: string): number | null {
@@ -373,7 +483,7 @@ function filterTest(st: State, filter: Filter, rule: DutyRule): boolean {
   switch (filter) {
     case "groups": return rule.allowed_cluster_keys.length > 0 || rule.excluded_cluster_keys.length > 0;
     case "nobody": return rule.active && eligibleNow(st, rule.key) === 0;
-    case "warnings": return dutyProblems(st, rule.key).length > 0 || missingGroups(st, rule).length > 0;
+    case "warnings": return dutyProblems(st, rule.key).length > 0 || missingGroups(st, rule).length > 0 || missingUnits(st, rule).length > 0;
     case "inactive": return !rule.active;
     case "changed": return isChanged(st, rule);
     default: return true;
@@ -401,8 +511,8 @@ function fieldHead(st: State, id: string, hint: Hint, forId?: string): string {
     ${helpMore(st, `${id}-more`, hint.more)}`;
 }
 
-function chip(options: { pressed: boolean; label: string; sub?: string; duty: string; field: ListField; value: string; tone?: "warning" | "danger"; disabled?: boolean; note?: string }): string {
-  return `<button type="button" class="rr-chip${options.tone ? ` is-${options.tone}` : ""}" aria-pressed="${options.pressed}"
+function chip(options: { pressed: boolean; label: string; sub?: string; duty: string; field: ListField; value: string; tone?: "warning" | "danger"; disabled?: boolean; note?: string; muted?: boolean }): string {
+  return `<button type="button" class="rr-chip${options.tone ? ` is-${options.tone}` : ""}${options.muted ? " is-muted" : ""}" aria-pressed="${options.pressed}"
       ${options.disabled ? 'aria-disabled="true"' : ""} data-chip data-duty="${esc(options.duty)}" data-field="${options.field}" data-value="${esc(options.value)}"
       data-fk="chip:${esc(options.duty)}:${options.field}:${esc(options.value)}">
       ${CHECK_ICON}<span class="rr-chip__text"><span class="rr-chip__label">${esc(options.label)}</span>${options.sub ? `<span class="rr-chip__sub">${esc(options.sub)}</span>` : ""}</span>
@@ -454,7 +564,9 @@ function tilesHtml(st: State): string {
 }
 
 function noticesHtml(st: State): string {
-  const parts: string[] = [];
+  const context = st.checkFresh ? "current" : st.checkState === "error" ? "error" : st.checkState === "checking" ? "checking" : "stale";
+  const contextText = st.checkFresh ? "Matches this draft" : st.checkState === "error" ? "Current draft not checked: the latest check failed" : st.checkState === "checking" ? "Checking this draft" : "Draft changed: waiting for its check";
+  const parts: string[] = [`<p class="rr-muted" data-check-context="${context}" role="status">${esc(contextText)}. Draft ${st.draftVersion + 1}; saved revision: ${esc(st.revision ?? "not reported")}.${!st.checkFresh && st.check ? " Counts and validation warnings from the previous check do not validate these edits." : ""}</p>`];
   if (st.checkState === "error") {
     parts.push(nextStep({
       tone: "warning",
@@ -470,6 +582,15 @@ function noticesHtml(st: State): string {
       title: `${plural(missing.length, "duty uses", "duties use")} groups that no longer exist`,
       body: `${missing.slice(0, 4).map((rule) => rule.label).join(", ")}${missing.length > 4 ? ` and ${missing.length - 4} more` : ""}. Remove the missing groups before saving.`,
       actionHtml: `<button type="button" class="primary btn-sm" data-remove-missing="*">Remove missing groups</button>`,
+    }));
+  }
+  const missingU = st.draft.duty_rules.filter((rule) => missingUnits(st, rule).length);
+  if (missingU.length) {
+    parts.push(nextStep({
+      tone: "danger",
+      title: `${plural(missingU.length, "duty uses", "duties use")} units that no longer exist`,
+      body: `${missingU.slice(0, 4).map((rule) => rule.label).join(", ")}${missingU.length > 4 ? ` and ${missingU.length - 4} more` : ""}. Remove the missing units before saving.`,
+      actionHtml: `<button type="button" class="primary btn-sm" data-remove-missing-units="*">Remove missing units</button>`,
     }));
   }
   if (st.groups.length && !st.groups.some((group) => group.active)) {
@@ -513,10 +634,12 @@ function headHtml(st: State, rule: DutyRule): string {
       <span class="rr-duty__meta">${esc(meta)}${changed ? ` <span class="rr-dot" aria-hidden="true"></span><span class="rr-edited">Edited</span>` : ""}</span></span>
     </button>
     <div class="rr-duty__who" aria-label="Who can do it">
-      ${levels.length ? levels.map((level) => `<span class="rr-tag${added.has(level) ? " is-auto" : ""}">${added.has(level) ? LOCK_ICON : ""}${esc(levelLabel(level))}</span>`).join("") : `<span class="rr-tag is-empty">No call level</span>`}
+      ${levels.length ? levels.map((level) => `<span class="rr-tag${added.has(level) ? " is-auto" : ""}">${added.has(level) ? LOCK_ICON : ""}${esc(levelLabel(level))}</span>`).join("") : missingLevel(st, rule) ? `<span class="rr-tag is-empty is-level-missing" data-level-missing>${WARN_ICON}No call level</span>` : `<span class="rr-tag is-empty">No call level</span>`}
+      ${levels.length > 1 ? `<span class="rr-tag is-pool" data-level-pool title="Any member of these call levels may take this duty. This is not a crossover.">${esc(poolText(levels))}</span>` : ""}
       ${groups.slice(0, 3).map((key) => `<span class="rr-tag is-group${groupByKey(st, key) ? "" : " is-missing"}">${esc(groupName(st, key))}</span>`).join("")}
       ${groups.length > 3 ? `<span class="rr-tag is-group">+${groups.length - 3}</span>` : ""}
       ${excluded.length ? `<span class="rr-tag is-excluded">Not ${esc(excluded.map((key) => groupName(st, key)).slice(0, 2).join(", "))}${excluded.length > 2 ? ` +${excluded.length - 2}` : ""}</span>` : ""}
+      ${unitTags(st, rule)}
     </div>
     <div class="rr-duty__flags">
       ${!rule.active ? badge("Inactive", "neutral") : ""}
@@ -526,16 +649,27 @@ function headHtml(st: State, rule: DutyRule): string {
     </div>`;
 }
 
+/** "Only UNIT I, UNIT II" and "Not UNIT V" summary tags for a duty head. */
+function unitTags(st: State, rule: DutyRule): string {
+  const tag = (prefix: string, list: string[], cls: string, data: string) => {
+    if (!list.length) return "";
+    const names = unitNames(st, list);
+    const missing = st.unitsLoaded && list.some((token) => !unitFor(st, token));
+    return `<span class="rr-tag ${cls}${missing ? " is-missing" : ""}" data-unit-tag="${data}">${esc(prefix)} ${esc(names.slice(0, 3).join(", "))}${names.length > 3 ? ` +${names.length - 3}` : ""}</span>`;
+  };
+  return tag("Only", rule.allowed_units, "is-unit", "only") + tag("Not", rule.excluded_units, "is-excluded is-unit", "not");
+}
+
 function eligHtml(st: State, rule: DutyRule): string {
   const problems = dutyProblems(st, rule.key);
-  const missing = missingGroups(st, rule).length;
+  const missing = missingGroups(st, rule).length + (problems.some((p) => p.code === "missing_unit") ? 0 : missingUnits(st, rule).length);
   const errors = problems.filter((p) => p.severity === "error").length + missing;
   const warnings = problems.length - problems.filter((p) => p.severity === "error").length;
   const count = eligibleNow(st, rule.key);
   let elig: string;
   if (count === null) elig = st.checkState === "error" ? `<span class="rr-count is-unknown" title="Couldn't check eligibility right now">— eligible</span>` : `<span class="rr-count is-unknown">Checking…</span>`;
-  else if (count === 0 && rule.active) elig = `<span class="rr-count is-zero">Nobody eligible</span>`;
-  else elig = `<span class="rr-count${st.checkFresh ? "" : " is-stale"}"><strong>${count}</strong> eligible</span>`;
+  else if (count === 0 && rule.active) elig = `<span class="rr-count is-zero${st.checkFresh ? "" : " is-stale"}">${st.checkFresh ? "" : "Previous check: "}Nobody eligible</span>`;
+  else elig = `<span class="rr-count${st.checkFresh ? "" : " is-stale"}">${st.checkFresh ? "" : "Previous check: "}<strong>${count}</strong> eligible</span>`;
   const total = errors + warnings;
   const warn = total ? `<span class="rr-warncount is-${errors ? "error" : "warning"}" title="${esc(plural(total, "problem"))}">${WARN_ICON}${total}<span class="visually-hidden"> ${errors ? plural(errors, "error") : ""}${errors && warnings ? " and " : ""}${warnings ? plural(warnings, "warning") : ""}</span></span>` : "";
   return `${elig}${warn}`;
@@ -561,8 +695,16 @@ function previewHtml(st: State, rule: DutyRule): string {
     const byLevel = Object.entries(duty.eligible_by_level ?? {}).filter(([, n]) => typeof n === "number").sort(([a], [b]) => levelOrder(normalizeLevel(a)) - levelOrder(normalizeLevel(b)));
     count = `<p class="rr-preview__count${duty.eligible_now === 0 && rule.active ? " is-zero" : ""}"><strong>${duty.eligible_now}</strong> ${duty.eligible_now === 1 ? "person is" : "people are"} eligible today${byLevel.length > 1 ? ` <span class="rr-preview__split">(${byLevel.map(([level, n]) => `${esc(levelLabel(normalizeLevel(level)))} ${n}`).join(" · ")})</span>` : ""}</p>`;
   }
+  const onlyUnits = unitNames(st, rule.allowed_units);
+  const notUnits = unitNames(st, rule.excluded_units);
+  const unitLine = onlyUnits.length || notUnits.length
+    ? `<p class="rr-preview__line" data-unit-line>${[
+        onlyUnits.length ? `Runs only in <strong>${esc(onlyUnits.join(", "))}</strong>` : "",
+        notUnits.length ? `never in <strong>${esc(notUnits.join(", "))}</strong>` : "",
+      ].filter(Boolean).join("; ")}.</p>` : "";
   return `<p class="rr-preview__title">Who can do this duty</p>
     <p class="rr-preview__line">${rule.active ? "" : "<strong>Inactive</strong>: never generated. When active: "}Anyone on ${parts.join(", ")}.</p>
+    ${unitLine}
     ${count}
     ${problemsList(problems)}`;
 }
@@ -602,6 +744,31 @@ function editorHtml(st: State, rule: DutyRule): string {
     const missing = selected.filter((k) => !groupByKey(st, k)).map((k) => chip({ pressed: true, label: `Missing group (${k})`, sub: "No longer exists · click to remove", duty: key, field, value: k, tone: "danger" }));
     return [...missing, ...chips].join("") || `<p class="rr-empty-note">No eligibility groups yet. <button type="button" class="quiet-button btn-sm" data-act="groups">Create one in Eligibility groups</button></p>`;
   };
+  const sortedUnits = [...st.units].sort((a, b) => Number(!unitIsActive(a)) - Number(!unitIsActive(b)) || a.name.localeCompare(b.name, undefined, { numeric: true }));
+  const unitChips = (field: UnitField) => {
+    const other: UnitField = field === "allowed_units" ? "excluded_units" : "allowed_units";
+    if (!st.unitsLoaded) {
+      const saved = rule[field].map((token) => chip({ pressed: true, label: token, sub: "Units could not load", duty: key, field, value: token }));
+      return `${saved.join("")}<p class="rr-empty-note">Units could not load, so they cannot be chosen right now. Saved choices are kept.</p>`;
+    }
+    const chips = sortedUnits.map((unit) => {
+      const pressed = listHasUnit(st, rule[field], unit);
+      const inOther = listHasUnit(st, rule[other], unit);
+      const inactive = !unitIsActive(unit);
+      const sub = [unit.code && unit.code.replace(/[_-]+/g, " ").toLowerCase() !== unit.name.toLowerCase() ? unit.code : "", unit.campus ?? "", inactive ? "Inactive" : "", inOther ? `In ${FIELD_LABELS[other]}` : ""].filter(Boolean).join(" · ");
+      return chip({
+        pressed, label: unit.name, sub, duty: key, field, value: unit.id,
+        tone: inactive ? "warning" : undefined,
+        muted: inactive || inOther,
+        disabled: inactive && !pressed,
+        note: inactive ? "Inactive unit: it gets no duties. Turn it on in Unit Management to choose it." : inOther ? `Already in ${FIELD_LABELS[other]}; choosing it here moves it.` : undefined,
+      });
+    });
+    const missing = rule[field].filter((token) => !unitFor(st, token)).map((token) => chip({ pressed: true, label: `Missing unit (${token})`, sub: "No longer exists · click to remove", duty: key, field, value: token, tone: "danger" }));
+    return [...missing, ...chips].join("") || `<p class="rr-empty-note">No units are registered yet. Add units in Unit Management.</p>`;
+  };
+  const missingU = missingUnits(st, rule);
+  const inactiveUnitSelected = UNIT_FIELDS.some((field) => rule[field].some((token) => { const unit = unitFor(st, token); return unit && !unitIsActive(unit); }));
   const hasInactive = [...rule.allowed_cluster_keys, ...rule.excluded_cluster_keys].some((k) => groupByKey(st, k) && !groupByKey(st, k)!.active);
   const inactiveExists = st.groups.some((group) => !group.active);
   const missing = missingGroups(st, rule);
@@ -643,6 +810,17 @@ function editorHtml(st: State, rule: DutyRule): string {
           : inactiveExists ? `<p class="rr-note">Greyed groups are inactive; turn them on in Eligibility groups to choose them.</p>` : ""}
         ${missing.length ? `<div class="rr-note is-danger"><p>${esc(plural(missing.length, "selected group no longer exists", "selected groups no longer exist"))}.</p>
           <button type="button" class="danger-button btn-sm" data-remove-missing="${esc(key)}">Remove missing groups</button></div>` : ""}
+        <div class="rr-field">
+          ${fieldHead(st, `rr-${id}-units`, HINTS.allowed_units)}
+          <div class="rr-chips" role="group" aria-labelledby="rr-${id}-units-label" aria-describedby="rr-${id}-units-hint">${unitChips("allowed_units")}</div>
+        </div>
+        <div class="rr-field">
+          ${fieldHead(st, `rr-${id}-xunits`, HINTS.excluded_units)}
+          <div class="rr-chips" role="group" aria-labelledby="rr-${id}-xunits-label" aria-describedby="rr-${id}-xunits-hint">${unitChips("excluded_units")}</div>
+        </div>
+        ${inactiveUnitSelected ? `<p class="rr-note is-warning">An inactive unit is selected. It gets no duties until it is turned on in Unit Management.</p>` : ""}
+        ${missingU.length ? `<div class="rr-note is-danger"><p>${esc(plural(missingU.length, "selected unit no longer exists", "selected units no longer exist"))}.</p>
+          <button type="button" class="danger-button btn-sm" data-remove-missing-units="${esc(key)}">Remove missing units</button></div>` : ""}
         <div class="rr-preview" data-preview="${esc(key)}" aria-live="polite">${previewHtml(st, rule)}</div>
       </section>
       <section class="rr-editor__col" aria-labelledby="rr-${id}-how">
@@ -720,49 +898,84 @@ function listHtml(st: State): string {
   }).join("");
 }
 
+/**
+ * Server problem `call_level_missing`, or (before a fresh check) an active duty with no level
+ * (docs/call_level_pool_and_balance_contract.md §1). Such duties are never filled.
+ */
+function missingLevel(st: State, rule: DutyRule): boolean {
+  if (dutyProblems(st, rule.key).some((p) => p.code === "call_level_missing")) return true;
+  return rule.active && effectiveLevels(st, rule).length === 0;
+}
+
+/** Several listed levels form a deliberate pool: "Pool: 3rd + 4th call". */
+function poolText(levels: string[]): string {
+  return `Pool: ${levels.map((level) => levelLabel(level).replace(/\s*call$/i, "")).join(" + ")} call`;
+}
+
+function limitValueText(item: (typeof LIMIT_SUMMARY)[number], value: unknown): string {
+  if (item.kind === "bool") return value ? "On" : "Off";
+  if (value === null || value === undefined || value === "") return item.blank ?? "Not set";
+  if (item.kind === "percent") return `${value}%`;
+  const n = Number(value);
+  const unit = item.unit ? (n === 1 ? (item.unit === "people" ? "person" : item.unit.replace(/ies$/, "y")).replace(/s$/, "") : item.unit) : "";
+  return unit ? `${n} ${unit}` : String(value);
+}
+
+/** Read-only limits summary: limits change only on the Limits page, by a superadmin. */
 function guardHtml(st: State): string {
-  const problems = (st.check?.problems ?? []).filter((problem) => !problem.duty_key);
-  const warn = Number(getPath(st.draft, "unit_staffing_rules.warning_unavailable_percent"));
-  const hard = Number(getPath(st.draft, "unit_staffing_rules.hard_block_unavailable_percent"));
-  const localWarn = hard < warn && !problems.some((p) => p.code === "guardrail")
-    ? [{ duty_key: null, field: "unit_staffing_rules.hard_block_unavailable_percent", code: "guardrail", severity: "warning" as const, message: "Hard block % is below warning %.", fix: "Set the hard block at or above the warning % so people are warned before they are refused." }]
-    : [];
-  const changed = changedGuards(st).length;
-  const fields = GUARD_FIELDS.map((field) => {
-    const id = `rr-g-${domId(field.path)}`;
-    const value = getPath(st.draft, field.path);
-    const num = value === null || value === undefined || value === "" ? NaN : Number(value);
-    const bad = Number.isFinite(num) ? num < field.min || num > field.max : !field.nullable;
-    return `<div class="rr-field rr-guard__field">
-      ${fieldHead(st, id, { label: field.label, text: field.text, more: field.more }, `${id}-input`)}
-      <div class="rr-input-unit">
-        <input type="number" inputmode="numeric" id="${id}-input" min="${field.min}" max="${field.max}" step="1" value="${Number.isFinite(num) ? num : ""}"
-          ${field.nullable ? 'placeholder="No cap"' : ""} data-guard-num="${esc(field.path)}" data-fk="guard:${esc(field.path)}"
-          aria-describedby="${id}-hint ${id}-err" ${bad ? 'aria-invalid="true"' : ""} />
-        <span class="rr-input-unit__unit" aria-hidden="true">${esc(field.unit)}</span>
-      </div>
-      <p class="rr-field-error" id="${id}-err">${bad ? `Enter a number from ${field.min} to ${field.max}${field.nullable ? ", or leave it empty" : ""}.` : ""}</p>
-    </div>`;
-  }).join("");
-  const switches = GUARD_SWITCHES.map((item) => switchHtml(st, `rr-g-${domId(item.path)}`, {
-    label: item.label, text: item.text, more: item.more,
-    checked: Boolean(getPath(st.draft, item.path)),
-    attrs: `data-guard-switch="${esc(item.path)}"`,
-  })).join("");
+  const problems = (st.check?.problems ?? []).filter((problem) => !problem.duty_key && (problem.severity as string) !== "info");
+  const items = LIMIT_SUMMARY.filter((item) => getPath(st.saved, item.path) !== undefined || item.path.startsWith("duty_count_limits"));
+  const action = st.opts.canEditLimits
+    ? `<button type="button" class="primary btn-sm" data-act="limits" data-fk="edit-limits">Edit in Limits</button>`
+    : `<p class="rr-limits__locked">${LOCK_ICON}<span>Only a superadmin can change limits.</span></p>`;
   return `<h3 class="rr-guard__heading">
       <button type="button" class="rr-cat__toggle rr-guard__toggle" aria-expanded="${st.guardOpen}" aria-controls="rr-guard-body" data-guard-toggle data-fk="guard-toggle">
-        ${CHEVRON}<span class="rr-cat__name">Safety guardrails</span>
-        <span class="rr-cat__count">Rest, unit cover and monthly caps for everyone</span>
-        ${changed ? `<span class="rr-cat__flag is-info">${changed} edited</span>` : ""}
-        ${problems.length + localWarn.length ? `<span class="rr-cat__flag is-warning">${problems.length + localWarn.length} to check</span>` : ""}
+        ${CHEVRON}<span class="rr-cat__name">Limits</span>
+        <span class="rr-cat__count">Monthly caps, rest, unit cover and equal duties · read-only here</span>
+        ${problems.length ? `<span class="rr-cat__flag is-warning">${problems.length} to check</span>` : ""}
       </button>
     </h3>
     <div class="rr-guard__body" id="rr-guard-body" ${st.guardOpen ? "" : "hidden"}>
-      <p class="rr-guard__intro">These limits apply to every duty and member. They protect rest and keep enough people in each unit.</p>
-      ${problemsList([...problems, ...localWarn])}
-      <div class="rr-guard__grid">${fields}</div>
-      <div class="rr-switches rr-guard__switches">${switches}</div>
+      <div class="rr-limits__top">
+        <p class="rr-guard__intro">These limits apply to every duty and member. They are changed on the Limits page, with a confirmation, and saved as their own version.</p>
+        ${action}
+      </div>
+      ${problemsList(problems)}
+      <dl class="rr-limits">${items.map((item) => `<div class="rr-limits__item"><dt>${esc(item.label)}</dt><dd>${esc(limitValueText(item, getPath(st.saved, item.path)))}</dd></div>`).join("")}</dl>
     </div>`;
+}
+
+/** Keep a wrapped save dock from obscuring editor controls in a short viewport. */
+function installRulesDockLayout(st: State): void {
+  const dock = st.page.querySelector<HTMLElement>(".rr-dock");
+  if (!dock) return;
+  if (typeof ResizeObserver === "undefined") {
+    dock.classList.add("rr-dock--flow");
+    return;
+  }
+  let frame = 0;
+  const viewport = window.visualViewport;
+  const cleanup = () => {
+    observer.disconnect();
+    cancelAnimationFrame(frame);
+    window.removeEventListener("resize", schedule);
+    viewport?.removeEventListener("resize", schedule);
+  };
+  const update = () => {
+    if (!st.root.isConnected || !st.root.contains(st.page)) { cleanup(); return; }
+    const available = viewport?.height ?? window.innerHeight;
+    dock.classList.toggle("rr-dock--flow", dock.getBoundingClientRect().height > available * 0.4);
+  };
+  const schedule = () => {
+    cancelAnimationFrame(frame);
+    frame = requestAnimationFrame(update);
+  };
+  const observer = new ResizeObserver(schedule);
+  observer.observe(dock);
+  window.addEventListener("resize", schedule);
+  viewport?.addEventListener("resize", schedule);
+  st.dockCleanup = cleanup;
+  update();
 }
 
 function dockHtml(st: State): string {
@@ -770,11 +983,12 @@ function dockHtml(st: State): string {
   const duties = changedDuties(st);
   const guards = changedGuards(st).length;
   const what = [...duties.slice(0, 3).map((rule) => rule.label), ...(guards ? ["guardrails"] : [])].join(", ") + (duties.length > 3 ? ` +${duties.length - 3} more` : "");
-  return `<div class="rr-savebar" ${changes ? "" : "hidden"}>
-      <p class="rr-savebar__text"><strong data-unsaved-count>${plural(changes, "unsaved change")}</strong><span class="rr-savebar__what">${esc(what)}</span></p>
+  const saving = st.saveOperation;
+  return `<div class="rr-savebar" ${changes || saving ? "" : "hidden"}>
+      <p class="rr-savebar__text"><strong data-unsaved-count>${saving?.confirmed ? "Rules saved; reload required" : plural(changes, "unsaved change")}</strong><span class="rr-savebar__what">${saving?.confirmed ? "Reload saved details before saving again. Later edits are kept." : esc(what)}</span></p>
       <div class="rr-savebar__actions">
-        <button type="button" class="quiet-button" data-discard data-fk="discard">Discard</button>
-        <button type="button" class="primary" data-review data-fk="review">Review &amp; save</button>
+        ${saving ? `<button type="button" class="primary" data-save-refresh data-fk="review" ${saving.busy ? "disabled" : ""}>${saving.confirmed ? "Reload saved rules" : "Saving..."}</button>` : `<button type="button" class="quiet-button" data-discard data-fk="discard">Discard</button>
+        <button type="button" class="primary" data-review data-fk="review">Review &amp; save</button>`}
       </div>
     </div>`;
 }
@@ -879,33 +1093,42 @@ function setStatus(st: State, text: string, tone: Tone = "info"): void {
 }
 
 function alive(st: State): boolean {
-  return state === st && st.root.contains(st.page) && (st.opts.isCurrent?.() ?? true);
+  return state === st && st.root.isConnected && st.root.contains(st.page) && (st.opts.isCurrent?.() ?? true);
 }
 
 // ---------------------------------------------------------------------------------------
 // Live check (debounced; never blocks editing)
 // ---------------------------------------------------------------------------------------
 
+function invalidateCheck(st: State): void {
+  st.draftVersion++;
+  st.checkSeq++;
+  st.checkFresh = false;
+  st.checkState = "idle";
+}
+
 function scheduleCheck(st: State, delay = 400): void {
   window.clearTimeout(st.checkTimer);
-  st.checkFresh = false;
+  invalidateCheck(st);
   st.checkTimer = window.setTimeout(() => void runCheck(st), delay);
 }
 
 async function runCheck(st: State): Promise<RotaRulesCheck | null> {
   window.clearTimeout(st.checkTimer);
   const seq = ++st.checkSeq;
+  const version = st.draftVersion;
   st.checkState = "checking";
+  paintSummary(st);
   try {
     const result = await checkRotaRules(payloadOf(st.draft));
-    if (seq !== st.checkSeq || !alive(st)) return result;
+    if (seq !== st.checkSeq || version !== st.draftVersion || !alive(st)) return null;
     st.check = { problems: result?.problems ?? [], duties: result?.duties ?? {} };
     st.checkState = "idle";
     st.checkFresh = true;
     paintChecks(st);
     return st.check;
   } catch {
-    if (seq !== st.checkSeq || !alive(st)) return null;
+    if (seq !== st.checkSeq || version !== st.draftVersion || !alive(st)) return null;
     st.checkState = "error";
     st.checkFresh = false;
     paintChecks(st);
@@ -915,12 +1138,12 @@ async function runCheck(st: State): Promise<RotaRulesCheck | null> {
 
 /** After any edit: repaint what depends on it and re-check. */
 function edited(st: State, key: string | null, scope: "duty" | "head" | "list" | "guard" | "none" = "duty"): void {
+  scheduleCheck(st);
   if (key && scope === "duty") paintDuty(st, key);
   if (key && scope === "head") paintHead(st, key);
   if (scope === "list") paintList(st);
   if (scope === "guard") paintGuard(st);
-  paintSummary(st);
-  scheduleCheck(st);
+  paintChecks(st);
 }
 
 // ---------------------------------------------------------------------------------------
@@ -934,8 +1157,17 @@ function toggleChip(st: State, button: HTMLElement): void {
   const rule = draftRule(st, key);
   if (!rule || !LIST_FIELDS.includes(field)) return;
   if (button.getAttribute("aria-disabled") === "true") {
+    if (field === "allowed_units" || field === "excluded_units") {
+      setStatus(st, `${unitFor(st, value)?.name ?? "This unit"} is inactive, so it cannot be chosen. Turn it on in Unit Management first.`, "warning");
+      return;
+    }
     const group = groupByKey(st, value);
     setStatus(st, `${group?.name ?? "This group"} is inactive, so it cannot be chosen. Turn it on in Eligibility groups first.`, "warning");
+    return;
+  }
+  if (field === "allowed_units" || field === "excluded_units") {
+    toggleUnit(st, rule, field, value);
+    edited(st, key);
     return;
   }
   if (field === "allowed_call_levels" && !rule.allowed_call_levels.length) rule.allowed_call_levels = [...baseLevels(rule).levels];
@@ -952,6 +1184,42 @@ function toggleChip(st: State, button: HTMLElement): void {
     }
   }
   edited(st, key);
+}
+
+/** Adds or removes a unit; legacy code/name tokens for the same unit count as that unit. */
+function toggleUnit(st: State, rule: DutyRule, field: UnitField, value: string): void {
+  const unit = unitFor(st, value);
+  const other: UnitField = field === "allowed_units" ? "excluded_units" : "allowed_units";
+  if (!unit) {
+    // A missing token: clicking removes it.
+    rule[field] = rule[field].filter((token) => token !== value);
+    return;
+  }
+  const same = (token: string) => unitFor(st, token)?.id === unit.id;
+  if (rule[field].some(same)) {
+    rule[field] = rule[field].filter((token) => !same(token));
+    return;
+  }
+  rule[field] = [...rule[field], unit.id];
+  if (rule[other].some(same)) {
+    rule[other] = rule[other].filter((token) => !same(token));
+    setStatus(st, `${unit.name} moved from ${FIELD_LABELS[other]} to ${FIELD_LABELS[field]}: a unit cannot be in both.`, "info");
+  }
+}
+
+function removeMissingUnits(st: State, target: string): void {
+  let removed = 0;
+  for (const rule of st.draft.duty_rules) {
+    if (target !== "*" && rule.key !== target) continue;
+    for (const field of UNIT_FIELDS) {
+      const keep = rule[field].filter((token) => unitFor(st, token));
+      removed += rule[field].length - keep.length;
+      rule[field] = keep;
+    }
+  }
+  setStatus(st, removed ? `Removed ${plural(removed, "missing unit")}. Save to keep this.` : "No missing units to remove.", removed ? "success" : "info");
+  if (target === "*") edited(st, null, "list");
+  else edited(st, target);
 }
 
 function toggleFlag(st: State, button: HTMLElement): void {
@@ -1039,6 +1307,8 @@ function goToDuty(st: State, key: string | null, field: string): void {
     allowed_call_levels: '[data-field="allowed_call_levels"]',
     allowed_cluster_keys: '[data-field="allowed_cluster_keys"]',
     excluded_cluster_keys: '[data-field="excluded_cluster_keys"]',
+    allowed_units: '[data-field="allowed_units"]',
+    excluded_units: '[data-field="excluded_units"]',
   };
   const target = (selector[field] && row?.querySelector<HTMLElement>(selector[field])) || row?.querySelector<HTMLElement>("[data-toggle-duty]");
   row?.scrollIntoView({ block: "start", behavior: reducedMotion() ? "auto" : "smooth" });
@@ -1052,6 +1322,7 @@ function goToDuty(st: State, key: string | null, field: string): void {
 function fmtValue(st: State, field: string, value: unknown): string {
   if (field === "allowed_call_levels") return (value as string[]).length ? (value as string[]).map((l) => levelLabel(normalizeLevel(l))).join(", ") : "from duty name";
   if (field === "allowed_cluster_keys" || field === "excluded_cluster_keys") return (value as string[]).length ? (value as string[]).map((k) => groupName(st, k)).join(", ") : "none";
+  if (field === "allowed_units" || field === "excluded_units") return (value as string[]).length ? unitNames(st, value as string[]).join(", ") : field === "allowed_units" ? "every unit" : "none";
   if (field === "group") return categoryLabel(String(value));
   if (typeof value === "boolean") return value ? "on" : "off";
   if (value === null || value === undefined || value === "") return "none";
@@ -1095,10 +1366,12 @@ function rebaseOnto(st: State, latest: RotaPhaseOneRules): void {
   const mine = changedDuties(st);
   const myGuards = changedGuards(st).map((path) => [path, getPath(st.draft, path)] as const);
   const fresh = normalizeRules(latest);
+  invalidateCheck(st);
   st.saved = clone(fresh);
   st.draft = clone(fresh);
   st.revision = fresh.revision ?? null;
   if (fresh.groups) st.groups = fresh.groups;
+  if (Array.isArray(fresh.units)) { st.units = fresh.units; st.unitsLoaded = true; }
   for (const rule of mine) {
     const index = st.draft.duty_rules.findIndex((item) => item.key === rule.key);
     if (index >= 0) st.draft.duty_rules[index] = clone(rule);
@@ -1108,15 +1381,71 @@ function rebaseOnto(st: State, latest: RotaPhaseOneRules): void {
 
 function applySaved(st: State, rules: RotaPhaseOneRules, message: string): void {
   const fresh = normalizeRules(rules);
+  if (st.saveOperation) st.saveOperation.readSequence++;
+  st.saveOperation = null;
+  scheduleCheck(st, 0);
   st.saved = clone(fresh);
   st.draft = clone(fresh);
   st.revision = fresh.revision ?? null;
   if (fresh.groups) st.groups = fresh.groups;
+  if (Array.isArray(fresh.units)) { st.units = fresh.units; st.unitsLoaded = true; }
   paintList(st);
   paintGuard(st);
   paintSummary(st);
   setStatus(st, message, "success");
+}
+
+/** Overlay only edits made after submission, retaining fresh server fields elsewhere. */
+function laterDraftOntoSaved(saved: RotaPhaseOneRules, submitted: RotaPhaseOneRules, draft: RotaPhaseOneRules): RotaPhaseOneRules {
+  const overlay = (fresh: unknown, before: unknown, after: unknown, path = ""): unknown => {
+    if (JSON.stringify(before) === JSON.stringify(after)) return fresh;
+    if (path === "duty_rules" && Array.isArray(fresh) && Array.isArray(before) && Array.isArray(after)) {
+      const oldRules = new Map(before.map(rule => [rule.key, rule]));
+      const newRules = new Map(after.map(rule => [rule.key, rule]));
+      // Only registered server duties are retained, matching the existing rebase contract.
+      return fresh.map(rule => newRules.has(rule.key)
+        ? overlay(rule, oldRules.get(rule.key), newRules.get(rule.key), `duty:${rule.key}`) : rule);
+    }
+    if (before && after && typeof before === "object" && typeof after === "object"
+      && !Array.isArray(before) && !Array.isArray(after)) {
+      const previous = before as Record<string, unknown>, current = after as Record<string, unknown>;
+      const result = { ...(fresh && typeof fresh === "object" ? fresh : {}) } as Record<string, unknown>;
+      for (const key of new Set([...Object.keys(previous), ...Object.keys(current)])) {
+        if (JSON.stringify(previous[key]) === JSON.stringify(current[key])) continue;
+        if (!(key in current)) delete result[key];
+        else result[key] = overlay(result[key], previous[key], current[key], path ? `${path}.${key}` : key);
+      }
+      return result;
+    }
+    return after === undefined ? undefined : clone(after);
+  };
+  return overlay(saved, submitted, draft) as RotaPhaseOneRules;
+}
+
+/** A confirmed save may finish after the user has made further local edits. */
+function acceptConfirmedSave(st: State, rules: RotaPhaseOneRules, operation: RuleSaveOperation): void {
+  if (!alive(st) || st.saveOperation !== operation) return;
+  if (!Array.isArray(rules?.duty_rules)) throw new Error("The saved rules response was incomplete. Reload saved rules again.");
+  const fresh = normalizeRules(rules);
+  const laterDraft = st.draftVersion === operation.version ? null : laterDraftOntoSaved(fresh, operation.submitted, st.draft);
+  st.saveOperation = null;
+  const message = `Rota rules saved: ${plural(operation.changes, "change")}.`;
+  if (st.draftVersion === operation.version) {
+    applySaved(st, fresh, message);
+    return;
+  }
+  // Compare with the submitted snapshot, including edits that restored an older value.
+  // Untouched fields adopt the server result; only later local changes are overlaid.
+  st.saved = clone(fresh);
+  st.draft = laterDraft!;
+  st.revision = fresh.revision ?? null;
+  if (fresh.groups) st.groups = fresh.groups;
+  if (Array.isArray(fresh.units)) { st.units = fresh.units; st.unitsLoaded = true; }
   scheduleCheck(st, 0);
+  paintList(st);
+  paintGuard(st);
+  paintSummary(st);
+  setStatus(st, `${message} Your later edits are kept; review them before saving.`, "success");
 }
 
 function closeDialog(dialog: HTMLDialogElement, after?: () => void): void {
@@ -1126,13 +1455,56 @@ function closeDialog(dialog: HTMLDialogElement, after?: () => void): void {
 }
 
 async function openReview(st: State): Promise<void> {
+  if (!alive(st) || (st.saveOperation && !st.saveOperation.confirmed)) return;
+  const ownsReviewFocus = document.activeElement === st.page.querySelector("[data-review], [data-save-refresh]");
   const dialog = workspaceDialog("Review rota rule changes", "rr-dialog");
-  let phase: "checking" | "ready" | "saving" | "stale" | "reloading" = "checking";
+  let recoverySequence = 0;
+  let ownedSave = st.saveOperation;
+  const reviewAlive = () => alive(st) && dialog.isConnected && dialog.open;
+  dialog.addEventListener("close", () => {
+    recoverySequence++;
+    const saved = ownedSave;
+    if (saved?.confirmed && st.saveOperation === saved) {
+      saved.readSequence++;
+      saved.busy = false;
+      if (alive(st)) {
+        paintSummary(st);
+        setStatus(st, "Your rules were saved. Reload saved rules before saving again; your later edits are kept.", "warning");
+      }
+    }
+    if (ownsReviewFocus && st.root.isConnected && st.root.contains(st.page) && changeCount(st) > 0 && document.activeElement === document.body)
+      st.page.querySelector<HTMLElement>("[data-review], [data-save-refresh]")?.focus({ preventScroll: true });
+  }, { once: true });
+  let phase: "checking" | "ready" | "saving" | "stale" | "reloading" | "saved-refresh" = st.saveOperation?.confirmed ? "saved-refresh" : "checking";
   let problems: RotaRuleProblem[] = [];
   let checkFailed = false;
   let message = "";
-  const label = (key: string | null) => (key ? draftRule(st, key)?.label ?? codeLabel(key) : "Safety guardrails");
+  let reviewCheckSequence = 0;
+  const label = (key: string | null) => (key ? draftRule(st, key)?.label ?? codeLabel(key) : "Limits");
   const render = () => {
+    if (!reviewAlive()) return;
+    if (phase === "saved-refresh") {
+      const saved = st.saveOperation;
+      if (!saved?.confirmed) return;
+      const active = document.activeElement;
+      const closeIndex = Array.from(dialog.querySelectorAll("[data-close]")).findIndex(button => button === active);
+      const retryFocused = active === dialog.querySelector("[data-save-refresh-retry]");
+      dialog.innerHTML = `<header class="mw-header"><div><h2>Rules saved</h2><p>The save completed. Reload only reads the latest saved rules.</p></div>
+        <button type="button" data-close aria-label="Close review">&times;</button></header>
+        <div class="mw-content rr-review">${nextStep({
+          tone: saved.error ? "warning" : "info",
+          title: saved.error ? "Saved; latest details unavailable" : saved.busy ? "Reloading saved details" : "Saved details need reload",
+          body: "Your rules were saved. Reload saved rules before saving again. Your later edits are kept.",
+          actionHtml: `<button type="button" class="primary" data-save-refresh-retry ${saved.busy ? "disabled" : ""}>${saved.busy ? "Loading saved rules..." : "Reload saved rules"}</button>`,
+        })}
+        <p role="status" aria-live="polite" class="admin-preview__message">${esc(saved.error || message)}</p>
+        <div class="admin-preview__actions rr-review__actions"><button type="button" class="icon-button" data-close>Keep editing</button></div></div>`;
+      if (document.activeElement === document.body) {
+        if (closeIndex >= 0) dialog.querySelectorAll<HTMLElement>("[data-close]")[closeIndex]?.focus({ preventScroll: true });
+        else if (retryFocused && !saved.busy) dialog.querySelector<HTMLElement>("[data-save-refresh-retry]")?.focus({ preventScroll: true });
+      }
+      return;
+    }
     const errors = problems.filter((p) => p.severity === "error");
     const warnings = problems.filter((p) => p.severity !== "error");
     const n = changeCount(st);
@@ -1162,12 +1534,61 @@ async function openReview(st: State): Promise<void> {
         </div>
       </div>`;
   };
+  const refreshSaved = async () => {
+    const operation = st.saveOperation;
+    if (!reviewAlive() || !operation?.confirmed || operation.busy) return;
+    const version = st.draftVersion, revision = st.revision;
+    const sequence = ++operation.readSequence;
+    const ownsRead = () => reviewAlive() && st.saveOperation === operation
+      && sequence === operation.readSequence && version === st.draftVersion && revision === st.revision;
+    operation.busy = true;
+    operation.error = "";
+    phase = "saved-refresh";
+    message = "Your rules were saved. Loading the latest saved details...";
+    paintSummary(st);
+    render();
+    try {
+      const latest = await getRotaPhaseOneRules();
+      if (!ownsRead()) return;
+      if (!Array.isArray(latest?.duty_rules)) throw new Error("The saved rules response was incomplete. Reload saved rules again.");
+      operation.busy = false;
+      acceptConfirmedSave(st, latest, operation);
+      closeDialog(dialog);
+    } catch (error) {
+      if (!ownsRead()) return;
+      operation.busy = false;
+      operation.error = `Your rules were saved, but the latest saved details could not be loaded. ${error instanceof Error ? error.message : "Try reloading saved rules."}`;
+      paintSummary(st);
+      setStatus(st, operation.error, "warning");
+      render();
+      if (document.activeElement === document.body) dialog.querySelector<HTMLElement>("[data-save-refresh-retry]")?.focus({ preventScroll: true });
+    } finally {
+      // A draft changed during the read also invalidates its result, without trapping Retry.
+      if (reviewAlive() && st.saveOperation === operation && sequence === operation.readSequence && operation.busy) {
+        operation.busy = false;
+        message = "Your rules were saved. Your draft changed during reload; reload again to keep those edits.";
+        paintSummary(st);
+        render();
+      }
+    }
+  };
   const check = async () => {
+    const sequence = ++reviewCheckSequence;
+    const version = st.draftVersion;
     phase = "checking";
     render();
-    const result = await runCheck(st);
+    const pending = runCheck(st);
+    const requestSequence = st.checkSeq;
+    const result = await pending;
+    if (!alive(st) || !dialog.isConnected || !dialog.open || sequence !== reviewCheckSequence) return;
+    if (version !== st.draftVersion || requestSequence !== st.checkSeq) {
+      message = "The draft changed during this check. Keep editing and review the current draft again.";
+      problems = [];
+      render();
+      return;
+    }
     checkFailed = !result;
-    problems = result?.problems ?? [];
+    problems = (result?.problems ?? []).filter((p) => (p.severity as string) !== "info");
     phase = "ready";
     render();
     const focusTarget = dialog.querySelector<HTMLElement>("[data-goto], [data-save]:not([disabled]), [data-close]");
@@ -1179,26 +1600,34 @@ async function openReview(st: State): Promise<void> {
   });
   dialog.addEventListener("click", async (event) => {
     const target = event.target as HTMLElement;
+    if (target.closest("[data-save-refresh-retry]")) { await refreshSaved(); return; }
     if (target.closest("[data-close]")) {
       if (phase !== "saving") closeDialog(dialog);
       return;
     }
     const goto = target.closest<HTMLElement>("[data-goto]");
     if (goto) {
+      if (phase === "saving") return;
       const key = goto.dataset.goto || null;
       const field = goto.dataset.gotoField ?? "";
       closeDialog(dialog, () => goToDuty(st, key, field));
       return;
     }
     if (target.closest("[data-stale-reload]")) {
+      if (phase !== "stale" || !reviewAlive()) return;
+      const operation = ++recoverySequence, version = st.draftVersion, revision = st.revision;
+      const ownsRecovery = () => reviewAlive() && operation === recoverySequence
+        && version === st.draftVersion && revision === st.revision;
       phase = "reloading";
       message = "Loading the latest rules…";
       render();
       try {
         const latest = await getRotaPhaseOneRules();
+        if (!ownsRecovery()) return;
         closeDialog(dialog);
         applySaved(st, latest, "Loaded the latest rules. Your unsaved edits were discarded.");
       } catch (error) {
+        if (!ownsRecovery()) return;
         phase = "stale";
         message = error instanceof Error ? error.message : "Could not load the latest rules";
         render();
@@ -1206,19 +1635,29 @@ async function openReview(st: State): Promise<void> {
       return;
     }
     if (target.closest("[data-stale-review]")) {
+      if (phase !== "stale" || !reviewAlive()) return;
+      const operation = ++recoverySequence;
+      let version = st.draftVersion, revision = st.revision;
+      const ownsRecovery = () => reviewAlive() && operation === recoverySequence
+        && version === st.draftVersion && revision === st.revision;
       phase = "reloading";
       message = "Loading the latest rules…";
       render();
       try {
         const latest = await getRotaPhaseOneRules();
+        if (!ownsRecovery()) return;
         rebaseOnto(st, latest);
+        version = st.draftVersion;
+        revision = st.revision;
         paintList(st);
         paintGuard(st);
         paintSummary(st);
         await check();
+        if (!ownsRecovery()) return;
         message = "Your edits were laid over the latest rules. Check them, then save.";
         render();
       } catch (error) {
+        if (!ownsRecovery()) return;
         phase = "stale";
         message = error instanceof Error ? error.message : "Could not load the latest rules";
         render();
@@ -1226,15 +1665,25 @@ async function openReview(st: State): Promise<void> {
       return;
     }
     if (target.closest("[data-save]") && phase === "ready") {
+      if (!reviewAlive() || st.saveOperation) return;
+      const operation: RuleSaveOperation = {
+        version: st.draftVersion, revision: st.revision, changes: changeCount(st), submitted: clone(st.draft),
+        confirmed: false, busy: true, readSequence: 0, error: "",
+      };
+      st.saveOperation = operation;
+      ownedSave = operation;
       phase = "saving";
-      message = "Saving…";
+      message = "Saving...";
+      paintSummary(st);
       render();
-      const n = changeCount(st);
+      let saved: RotaPhaseOneRules;
       try {
-        const saved = await updateRotaPhaseOneRules(payloadOf(st.draft), st.revision);
-        closeDialog(dialog);
-        if (alive(st)) applySaved(st, saved?.duty_rules ? saved : await getRotaPhaseOneRules(), `Rota rules saved: ${plural(n, "change")}.`);
+        saved = await updateRotaPhaseOneRules(savePayloadOf(st.draft), st.revision);
       } catch (error) {
+        if (!alive(st) || st.saveOperation !== operation) return;
+        st.saveOperation = null;
+        paintSummary(st);
+        if (!reviewAlive() || operation.version !== st.draftVersion || operation.revision !== st.revision) return;
         if (isStaleRulesError(error)) {
           phase = "stale";
           message = "";
@@ -1253,26 +1702,38 @@ async function openReview(st: State): Promise<void> {
         }
         render();
         dialog.querySelector<HTMLElement>("[data-stale-review], [data-goto], [data-close]")?.focus();
+        return;
       }
+      if (!alive(st) || st.saveOperation !== operation) return;
+      operation.confirmed = true;
+      operation.busy = false;
+      if (Array.isArray(saved?.duty_rules) && operation.revision === st.revision) {
+        // A complete successful PUT response is authoritative even if its review closed.
+        // A newer saved baseline instead requires a current read before reconciliation.
+        acceptConfirmedSave(st, saved, operation);
+        if (reviewAlive()) closeDialog(dialog);
+        return;
+      }
+      phase = "saved-refresh";
+      paintSummary(st);
+      setStatus(st, "Your rules were saved. Reload saved rules before saving again; your later edits are kept.", "warning");
+      if (reviewAlive()) await refreshSaved();
     }
   });
   render();
-  await check();
+  if (phase !== "saved-refresh") await check();
 }
 
 // ---------------------------------------------------------------------------------------
 // History
 // ---------------------------------------------------------------------------------------
 
-const TIME_FORMAT = new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit" });
-
 function formatWhen(iso: string): string {
-  const date = new Date(iso);
-  return Number.isNaN(date.getTime()) ? String(iso ?? "") : `${formatDate(iso, { weekday: false })}, ${TIME_FORMAT.format(date)}`;
+  return formatAuditTimestamp(iso);
 }
 
 function versionDiffHtml(st: State, rules: RotaRulesPayload): string {
-  const then = new Map((rules.duty_rules ?? []).map((rule) => [rule.key, { ...rule, allowed_call_levels: rule.allowed_call_levels ?? [], allowed_cluster_keys: rule.allowed_cluster_keys ?? [], excluded_cluster_keys: rule.excluded_cluster_keys ?? [] }]));
+  const then = new Map((rules.duty_rules ?? []).map((rule) => [rule.key, { ...rule, allowed_call_levels: rule.allowed_call_levels ?? [], allowed_cluster_keys: rule.allowed_cluster_keys ?? [], excluded_cluster_keys: rule.excluded_cluster_keys ?? [], allowed_units: rule.allowed_units ?? [], excluded_units: rule.excluded_units ?? [] }]));
   const now = new Map(st.saved.duty_rules.map((rule) => [rule.key, rule]));
   const rows: string[] = [];
   for (const [key, old] of then) {
@@ -1309,7 +1770,7 @@ async function openHistory(st: State): Promise<void> {
             const isCurrent = index === 0 && (!st.revision || version.revision === st.revision);
             const changed = version.changed_duties ?? [];
             return `<li class="rr-history__item">
-              <div class="rr-history__head"><strong>${esc(formatWhen(version.saved_at))}</strong>
+              <div class="rr-history__head"><strong>Saved at ${esc(formatWhen(version.saved_at))}</strong>
                 <span class="rr-muted">by ${esc(version.saved_by || "unknown")}</span>${isCurrent ? badge("Current", "success") : ""}</div>
               <p class="rr-history__changed">${changed.length ? `Changed: ${esc(changed.slice(0, 6).join(", "))}${changed.length > 6 ? ` and ${changed.length - 6} more` : ""}` : "No duty changes recorded"}</p>
               ${version.note ? `<p class="rr-muted">${esc(version.note)}</p>` : ""}
@@ -1501,6 +1962,7 @@ function bindPage(st: State): void {
     }
     const act = el("[data-act]");
     if (act?.dataset.act === "groups") { st.opts.onNavigate("call-clusters"); return; }
+    if (act?.dataset.act === "limits") { st.opts.onNavigate("limits"); return; }
     if (act?.dataset.act === "history") { void openHistory(st); return; }
     const chipEl = el("[data-chip]");
     if (chipEl) { toggleChip(st, chipEl); return; }
@@ -1557,11 +2019,21 @@ function bindPage(st: State): void {
     if (el("[data-collapse-all]")) { st.expanded.clear(); paintList(st); return; }
     const reset = el("[data-reset-duty]");
     if (reset) { resetDuty(st, reset.dataset.resetDuty ?? ""); return; }
+    const missingUnitsBtn = el("[data-remove-missing-units]");
+    if (missingUnitsBtn) { removeMissingUnits(st, missingUnitsBtn.dataset.removeMissingUnits ?? "*"); return; }
     const missing = el("[data-remove-missing]");
     if (missing) { removeMissing(st, missing.dataset.removeMissing ?? "*"); return; }
-    if (el("[data-retry-check]")) { setStatus(st, "Checking eligibility again…", "info"); void runCheck(st).then((r) => setStatus(st, r ? "Eligibility checked." : "Still couldn't check eligibility. Your edits are kept.", r ? "success" : "warning")); return; }
+    if (el("[data-retry-check]")) {
+      setStatus(st, "Checking eligibility again…", "info");
+      const pending = runCheck(st), sequence = st.checkSeq, version = st.draftVersion;
+      void pending.then((r) => {
+        if (alive(st) && sequence === st.checkSeq && version === st.draftVersion)
+          setStatus(st, r ? "Eligibility checked for this draft." : "Still couldn't check eligibility. Your edits are kept.", r ? "success" : "warning");
+      });
+      return;
+    }
     if (el("[data-discard]")) { discardAll(st); return; }
-    if (el("[data-review]")) { void openReview(st); return; }
+    if (el("[data-review], [data-save-refresh]")) { void openReview(st); return; }
     if (el("[data-status-dismiss]")) { setStatus(st, ""); page.querySelector<HTMLElement>("[data-search]")?.focus(); }
   });
   page.addEventListener("input", (event) => {
@@ -1627,6 +2099,7 @@ function bindPage(st: State): void {
  * page state is dropped.
  */
 export async function renderRotaRulesPage(root: HTMLElement, opts: RotaRulesPageOptions): Promise<void> {
+  state?.dockCleanup?.();
   if (state) window.clearTimeout(state.checkTimer);
   state = null;
   const current = () => opts.isCurrent?.() ?? true;
@@ -1652,14 +2125,18 @@ export async function renderRotaRulesPage(root: HTMLElement, opts: RotaRulesPage
     root.querySelector<HTMLButtonElement>("[data-rr-retry]")?.addEventListener("click", () => void renderRotaRulesPage(root, opts), { once: true });
     return;
   }
+  // Units come with the rules; older servers do not send them, so fall back to GET /units.
+  // If both fail the page still works (saved unit choices are kept, not editable).
+  let units: RotaRuleUnit[] | null = Array.isArray(rules.units) ? rules.units : null;
+  if (!units) units = await getUnits().then((list) => (Array.isArray(list) ? ruleUnitsFromRead(list) : null)).catch(() => null);
   if (!current()) return;
   const page = document.createElement("div");
   page.className = "rr-page";
   const st: State = {
     root, page, opts,
-    saved: clone(rules), draft: clone(rules), revision: rules.revision ?? null, groups,
-    check: null, checkState: "idle", checkFresh: false, checkSeq: 0, checkTimer: undefined,
-    query: "", filter: "all", expanded: new Set(), collapsed: new Set(), openHints: new Set(), guardOpen: false, status: null,
+    saved: clone(rules), draft: clone(rules), revision: rules.revision ?? null, groups, units: units ?? [], unitsLoaded: units !== null,
+    check: null, checkState: "idle", checkFresh: false, checkSeq: 0, draftVersion: 0, checkTimer: undefined,
+    query: "", filter: "all", expanded: new Set(), collapsed: new Set(), openHints: new Set(), guardOpen: false, status: null, saveOperation: null,
   };
   state = st;
   page.innerHTML = pageHtml(st);
@@ -1668,6 +2145,7 @@ export async function renderRotaRulesPage(root: HTMLElement, opts: RotaRulesPage
   paintList(st);
   paintGuard(st);
   paintSummary(st);
+  installRulesDockLayout(st);
   if (!unloadBound) {
     unloadBound = true;
     window.addEventListener("beforeunload", (event) => {

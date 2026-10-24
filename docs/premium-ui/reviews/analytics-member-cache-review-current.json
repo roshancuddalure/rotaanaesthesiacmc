@@ -1,0 +1,57 @@
+{
+  "recorded_at_utc": "2026-10-22T09:37:56.886518+00:00",
+  "reviewer": "preview_rejection_artifacts_independent",
+  "requirements": [
+    225,
+    227,
+    237,
+    242,
+    244,
+    255
+  ],
+  "scope": "Independent source-only review of renderedAnalysisPeople WeakMap and canonical member opener. No new browser execution or app edits; parent save/outcome test evidence remains separate.",
+  "source_hashes": {
+    "frontend/src/main.ts": "4e1e9d4effaea1c7b353ee1c27e11e752013a38561d195e198c2d968e7b248ba",
+    "frontend/src/member-workspace.ts": "435634629297141da1f95850471d16026096168e2c0e5280f2e2f2ba3fc10f3b",
+    "frontend/src/data-sync.ts": "8408ff9eb6369d486126b7471ffc15a45fbe7f6fe5decd73b231f1dbf07c2f02"
+  },
+  "disposition": "bounded_source_review_no_required_change_found",
+  "checks": [
+    {
+      "topic": "capture_before_invalidation",
+      "assessment": "onDataChange derives a first-name-match map and full person-ID navigation list from the currently loaded analysis before setting analysis=null. It records stable IDs only for existing rendered data-analysis-person buttons."
+    },
+    {
+      "topic": "first_match_equivalence",
+      "assessment": "Map inserts a name only once, preserving former Array.find first matching name behavior. Same-name ambiguity is neither newly resolved nor worsened by this presentation cache."
+    },
+    {
+      "topic": "opener_contract",
+      "assessment": "Actual delegated button is passed to openAnalysisPersonModal; captured mapping takes precedence, otherwise live analysis lookup is retained. Canonical workspace arguments preserve selected ID, current isAdminUser(), existing callback, full navigation IDs and duties tab. No API path/payload changed."
+    },
+    {
+      "topic": "navigation_array",
+      "assessment": "The captured array is a fresh analysis.people.map result shared across captured buttons. Member workspace reads ids/indexOf and indexes for previous/next; no mutation of the provided array found. It is not Object.freeze immutable, but current consumers treat it as read-only."
+    },
+    {
+      "topic": "lifetime_and_private_data",
+      "assessment": "WeakMap keys are DOM buttons. Route/session DOM removal makes entries eligible for collection; resetPrivateSessionView aborts view listeners and removes private surfaces. No localStorage, public DOM identity injection or permission changes introduced."
+    },
+    {
+      "topic": "repeat_invalidations",
+      "assessment": "When analysis is already null, later invalidations leave prior button snapshots intact, preserving still-rendered links. A fresh rendered button has no inherited mapping and uses current analysis fallback. This matches intended existing rendered snapshot behavior."
+    },
+    {
+      "topic": "scope_boundary",
+      "assessment": "No scheduling, allocation, calculation, persisted data, export content or backend source changes appear in this fix."
+    }
+  ],
+  "bounded_followup_checks": [
+    "Parent actual canonical-save regression should prove an existing rendered analytics member link still opens exact prior ID after cache invalidation, including profile next/previous context.",
+    "A same-name fixture should retain first-match selection if explicit identity ambiguity coverage is needed; current source proof is not runtime test evidence.",
+    "If future code reuses the same button node for a different person without replacing it, snapshot invalidation must accompany that reuse. Current inspected analytics renderers replace markup rather than mutate person identity on existing buttons."
+  ],
+  "completion_claim": false,
+  "browser_cases_executed_by_reviewer": 0,
+  "required_source_changes": []
+}

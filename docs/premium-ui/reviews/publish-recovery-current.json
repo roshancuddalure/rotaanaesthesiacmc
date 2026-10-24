@@ -1,0 +1,76 @@
+{
+  "recorded_at_utc": "2026-10-23T13:45:11.772092+00:00",
+  "completion_claim": false,
+  "requirements": [
+    178,
+    90,
+    92,
+    208,
+    209,
+    219,
+    227,
+    258
+  ],
+  "scope": "Publish-versus-draft consequences, month-specific existing confirmation, publish form lifecycle and checklist read recovery.",
+  "source_sha256": {
+    "frontend/src/main.ts": "87e8234cf013acaafa18af0ed1be542c873a310e4c64c6bd2a848d1a09f8376e",
+    "frontend/src/ui.ts": "12e79214fc4f094e9b391df88ff498cda65d3539b9d0f1da59cffc139c8e4f85",
+    "frontend/src/services/api.ts": "aa2c18465d33286850509e7ad19bf810ffcbc88758008c60aedb8294b52f9e8f",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "e6db76e6ac5bd7454c46c06946ca58d63161839c790a7303d3ac2948d2fbd092"
+  },
+  "changes": [
+    "Add selected-month consequence copy distinguishing application of a draft from final publication; existing server prerequisites and approval gates unchanged.",
+    "Native confirmation identifies selected month. Existing endpoint, warning acknowledgement and trimmed approval-note payload retained. Required note now receives aria-required, inline description, invalid state/focus on empty submit and error clearing on input.",
+    "Guard duplicate submissions per existing form with WeakSet and aria-busy. Capture submitted month/account/form; late results cannot commit to another month/view/account. No server request cancellation or rollback claimed.",
+    "Separate confirmed publication from failed followup read. Confirmed-success read failure shows Publication recorded and GET-only Retry checklist, without another publication form. Initialread failure also offers GET-only retry.",
+    "Retry restores owned focus to current retry/export/note only if newer focus was not chosen. Existing tracker reads remain supported; test read counts include them rather than assuming exactly one initialGET."
+  ],
+  "checks": {
+    "publish_contexts": 42,
+    "engines": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "widths": [
+      320,
+      1280
+    ],
+    "scenarios": [
+      "503 publication refusal retains note/warning and reenables action",
+      "confirmed publication then failed checklist read and GET-only retry",
+      "initial checklist failure and GET-only retry",
+      "late success after route change",
+      "late success after month change",
+      "view-only gate",
+      "server blocker gate"
+    ],
+    "confirmation": "Missing note sends noPOST; dismissing month-specific confirmation preserves note and sends noPOST; synthetic duplicate submit while pending causes no second confirmation/POST.",
+    "server_contract": "All publish writes intercepted; exact November2026 endpoint/month, confirm_warnings:true and approval_note unchanged. Failed followup read retries onlyGET; no automatic publication replay.",
+    "existing_generation_workflows": 21,
+    "scoped_chromium_axe_checks": 4,
+    "tagged_axe_violations": 0,
+    "unit_tests": 100,
+    "build_exit_code": 0,
+    "build_inputs_held": true,
+    "static_inventories": "Style/action source write/check match; static integrity only."
+  },
+  "evidence": [
+    "docs/premium-ui/qa-publish-recovery.json",
+    "docs/premium-ui/qa-generation-actions-publish-batch.json",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+  ],
+  "test": "frontend/tests/premium-publish-recovery.browser.mjs",
+  "test_sha256": "f7ff59c279e8ccced338fe4b961db8c6973f957a8ecfac9730f35615662171a3",
+  "limitations": [
+    "Root implementer verification, not independent signoff.",
+    "42contexts use defaultlight; other theme/role/permission combinations and every server prerequisite reason remain unverified beyond declared fixtures.",
+    "Duplicate guard includes synthetic submit testing; this is a frontend concurrency protection, not backend idempotency certification.",
+    "Late route/month paths tested; account-switch guard is source protection, not a newly exercised multi-account race audit.",
+    "No actual publishing/backend/production writes. Server refusal and confirmed-success responses are intercepted fixtures; no backend confirmation/persistence/permissions/export equivalence certified.",
+    "Four scoped axe checks do not prove all AT behavior; native screen readers, physical devices and full260 acceptance remain open.",
+    "Only frontend main.ts and generation action test confirmation expectation changed in this batch. No backend/API/scheduling/persistedsemantics/exportcontent changes; concurrent work preserved.",
+    "Full178/all-form90 and samefixture workflow/calculation/export equivalence not certified."
+  ]
+}

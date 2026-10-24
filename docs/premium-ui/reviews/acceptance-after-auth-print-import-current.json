@@ -1,0 +1,253 @@
+{
+  "recorded_at_utc": "2026-10-22T04:41:03.211118+00:00",
+  "reviewer": "preview_rejection_artifacts_acceptance_refresh",
+  "scope": "Documentation-only refresh of all260 exact approved requirements against current ledger, five perspective entries, evidence files and declared source hashes; adds recent auth18/print6/import12 bounded reports. No new browser execution or app/backend changes in this audit.",
+  "completion_claim": false,
+  "recognized_recent_evidence": [
+    {
+      "path": "docs/premium-ui/qa-auth-forms-independent.json",
+      "items": [
+        86,
+        93,
+        100,
+        197,
+        224,
+        225,
+        230,
+        243,
+        246,
+        247,
+        251
+      ],
+      "former_priorities": [
+        "change-password-dialog-outcome-lifetime",
+        "recovery-reset-form-lifecycle"
+      ],
+      "scope": "18 actual-app auth cases: three browser engines, two emulated widths, password dialog/forgot-reset/sign-in races. Exact intercepted payloads, error draft retention, synthetic duplicate guards, detached/account lifetime and delayed timer. Does not certify server credential policy or native password managers.",
+      "snapshot_disposition": "source_matched_for_recorded_files",
+      "recorded_result_rows": 18
+    },
+    {
+      "path": "docs/premium-ui/qa-unit-print-independent.json",
+      "items": [
+        115,
+        199,
+        242,
+        244,
+        248,
+        249,
+        251,
+        255
+      ],
+      "former_priorities": [
+        "print-long-paginated-unit-board"
+      ],
+      "scope": "Six actual-app emulated engine/width print cases with123 rows, filtered61 rows, expanded members, lifecycle/media signal overlap and restoration. Chromium native headless PDFs parsed; no physical print, Firefox/WebKit native dialog or all printable reports claim.",
+      "snapshot_disposition": "source_matched_for_recorded_files",
+      "recorded_result_rows": 6
+    },
+    {
+      "path": "docs/premium-ui/qa-preview-rejections.json",
+      "items": [
+        140,
+        179,
+        186,
+        242,
+        245,
+        247,
+        251
+      ],
+      "former_priorities": [
+        "rejected-preview-csv-artifact-path"
+      ],
+      "scope": "12 actual-app toolbar normalized import workflows; real selected files, intercepted columns/preview,24 real keyboard-triggered CSV downloads with exact bytes/formula/quote/newline and exclusions. Current report contains all rows. Legacy data-preview-rejections controls are unreachable and not runtime-certified. Browser handoff/Blob failures are not covered.",
+      "snapshot_disposition": "source_matched_for_recorded_files",
+      "recorded_result_rows": 12
+    }
+  ],
+  "next_five": [
+    {
+      "rank": 1,
+      "id": "component-state-and-variant-register",
+      "classification": "source_confirmed_acceptance_gap_not_reproduced_operational_bug",
+      "items": [
+        16,
+        28,
+        37,
+        40,
+        202,
+        217
+      ],
+      "source": [
+        "frontend/src/component-reference.ts",
+        "frontend/src/component-reference.css",
+        "frontend/tests/premium-components.browser.mjs"
+      ],
+      "finding": "The reference explicitly describes representative states. It includes default/disabled/busy examples and local validation, but no complete named register covering every shipped variant, hover/pressed/selected/focus and theme pairing, nor a visible specification of token/control/icon dimensions. Existing bounded component screenshots do not prove every required state.",
+      "next_action": "Inventory actual shipped control variants and token dimensions; extend the isolated reference with deterministic state examples and a mapping to real controls. Measure normal/large/nontext contrast, visible focus and forced-colors per applicable state in light/dark; capture320/zoom geometry. Keep all sample actions local.",
+      "acceptance": [
+        "A state/variant register identifies covered samples and justified exceptions.",
+        "Pointer hover/pressed and keyboard focus/selected/disabled/busy/error/success have outcome and computed-style evidence in both themes.",
+        "No sample request or operational data write; no broad pass inferred from samples alone."
+      ],
+      "coordination_status": "Root preparing bounded component validation/specification follow-up; not a completed all-state review."
+    },
+    {
+      "rank": 2,
+      "id": "explicit-audit-timezone-formatting",
+      "classification": "source_confirmed_presentation_inconsistency_runtime_extent_unverified",
+      "items": [
+        186,
+        191,
+        196,
+        198
+      ],
+      "source": [
+        "frontend/src/workflow-import-history.ts",
+        "frontend/src/reference-workspace.ts",
+        "frontend/src/member-bulk.ts",
+        "frontend/src/member-workspace.ts",
+        "frontend/src/member-import-history.ts",
+        "frontend/src/recycle-bin.ts"
+      ],
+      "finding": "Audit/history timestamps use browser-local toLocaleString in several views, en-GB local formatting in workflow history/archive, and explicit Asia/Calcutta in other histories. Visible formats generally omit a timezone label. This identifies inconsistent presentation, not a claim stored timestamps or operational dates are wrong.",
+      "next_action": "Define one presentation-only audit timestamp helper with explicit timezone context and invalid/missing fallback; use it in the identified histories. Preserve source ISO values and date-only/month scheduling semantics. Test UTC and non-India browser zones, near-midnight dates, invalid/missing values and long operator labels.",
+      "acceptance": [
+        "The same audit instant has a consistent documented zone label across identified views.",
+        "Invalid optional timestamps render a truthful fallback without throwing.",
+        "Existing API payloads and recorded values are byte-for-byte unchanged."
+      ],
+      "coordination_status": "Root preparing presentation-only helper: preserve existing browser-local histories and existing India-zone member histories, adding explicit zone context. No new runtime evidence yet at this audit snapshot."
+    },
+    {
+      "rank": 3,
+      "id": "orphaned-legacy-import-path-disposition",
+      "classification": "source_confirmed_unreachable_candidates_cleanup_requires_dependency_audit",
+      "items": [
+        140,
+        179,
+        186,
+        239,
+        258
+      ],
+      "source": [
+        "frontend/src/main.ts",
+        "frontend/src/import-report.ts",
+        "frontend/tests/premium-preview-rejections.browser.mjs"
+      ],
+      "finding": "renderLeaveImportPreview and renderUnitImportPreview have definitions but no callers; former leave/unit file/form IDs occur only in delegated handlers. Current toolbar opens openOperationalImport. The new12-case actual-app report confirms data-preview-rejections is absent. This is unreachable-source evidence, not an enabled no-op button or permission defect.",
+      "next_action": "Build a dependency map of legacy preview state/renderers/resolver/apply branches and shared helpers before deleting only proven dead frontend code. Preserve shared API exports and tests used elsewhere. Re-run normalized import/file/report/apply outcomes and current action inventory; do not change CSV/workbook content or backend import behavior.",
+      "acceptance": [
+        "Every removed symbol has no live render/event entry after dependency review.",
+        "Current toolbar file→preview→review→apply/report contracts remain covered for both kinds.",
+        "Remaining legacy paths have explicit retained rationale rather than implied runtime passes."
+      ]
+    },
+    {
+      "rank": 4,
+      "id": "measured-optional-extra-duty-module-boundary",
+      "classification": "source_confirmed_split_conflict_performance_benefit_unproven",
+      "items": [
+        237,
+        238,
+        250,
+        254
+      ],
+      "source": [
+        "frontend/src/main.ts",
+        "frontend/src/member-workspace.ts",
+        "frontend/src/extra-duty.ts"
+      ],
+      "finding": "main.ts statically imports extra-duty actions/helpers while member-workspace dynamically imports the same module. The dynamic import cannot establish a separate lazy boundary while the static graph includes it. Current verification already records the warning; this does not establish a measured latency regression or authorize changes to concurrent extra-duty logic.",
+      "next_action": "Profile the current production graph and identify genuinely optional entry actions versus shared synchronous helpers. If evidence supports a split, move only frontend presentation entry boundaries with explicit loading/failure/retry and closed-context guards; preserve all extra-duty calculations/API contracts and concurrent work.",
+      "acceptance": [
+        "Before/after emitted graph and declared-environment route/dialog measurements justify any split.",
+        "Missing optional chunk exposes safe manual recovery without mutation replay or draft loss.",
+        "Existing extra-duty/fill-all/profile entry outcome suites pass; no scheduling/backend edits."
+      ],
+      "scope_boundary": "Concurrent extra-duty implementation must be preserved; module split remains a profiling/review dependency unless a justified isolated frontend boundary is established. No blind optimization."
+    },
+    {
+      "rank": 5,
+      "id": "stable-action-outcome-and-all260-review-reconciliation",
+      "classification": "documentary_acceptance_gap_not_absence_of_all_runtime_tests",
+      "items": [
+        200,
+        241,
+        242,
+        243,
+        256,
+        257,
+        258,
+        259,
+        260
+      ],
+      "source": [
+        "docs/premium-ui/action-inventory.json",
+        "docs/premium-ui/traceability.json",
+        "docs/premium-ui/reviews/visual-current.json",
+        "docs/premium-ui/reviews/responsive-current.json",
+        "docs/premium-ui/reviews/accessibility-current.json",
+        "docs/premium-ui/reviews/reliability-current.json",
+        "docs/premium-ui/reviews/interaction-current.json"
+      ],
+      "finding": "The static inventory explicitly certifies runtime0 among902 control candidates; focused outcome reports exist separately. Ledger items still lack many stable action IDs, assigned current evidence and final five-perspective/independent dispositions. This is a mapping/sign-off gap, not evidence that902 controls are broken or wholly untested.",
+      "next_action": "Reconcile one concrete workflow family at a time: stable action/role/context→actual control→outcome test and current source/build snapshot. Mark source-only, unreachable, denied, dependency and justifiedNA explicitly. Refresh each exact requirement with five perspectives, preserving historical snapshots and unresolved checks; do not mark complete from aggregate test counts.",
+      "acceptance": [
+        "No enabled operational action is unexplained in the final held-snapshot register.",
+        "Each numbered requirement has item-specific evidence or explicit remaining work and reviewer disposition.",
+        "Review package/build manifest is refreshed only after final source gate, with physical/screen-reader dependencies preserved."
+      ]
+    }
+  ],
+  "limits": [
+    "All requirement completion remains unproven in this audit; counts are documentary disposition, not implemented-feature percentages.",
+    "Physical-device checks pending at user direction; actual native screen-reader checks remain separately pending.",
+    "No broad source-only grep can establish a bug or prove absence of indirectly covered runtime behavior. Top-five test gaps are bounded targeted search findings.",
+    "Source freshness is evaluated at this audit snapshot; concurrent edits may invalidate it. No backend or production operation performed."
+  ],
+  "counts": {
+    "requirements": 260,
+    "recorded_implementation_statuses": {
+      "partial": 106,
+      "pending": 153,
+      "dependency": 1
+    },
+    "audit_dispositions": {
+      "implementation_links_present_full_acceptance_unproven": 71,
+      "implementation_ledger_unpopulated_review_evidence_available": 152,
+      "source_matched_bounded_evidence_full_requirement_unproven": 36,
+      "explicit_dependency_requires_disposition": 1
+    },
+    "whole_requirement_completion_proven": 0,
+    "evidence_files": 202,
+    "missing_evidence_files": 0,
+    "recorded_report_snapshot_dispositions": {
+      "historical_source_differs": 21,
+      "no_frontend_hashes_declared": 70,
+      "source_matched_for_recorded_files": 7
+    }
+  },
+  "source_hashes": {
+    "frontend/src/component-reference.ts": "514f069de71b7a2331674c9695293fe0fd5a777e95340707fcd9131587408bea",
+    "frontend/src/component-reference.css": "9f61f0e1218c584b05e597e9b506f79627eae5c01e054d3b3c5d5fff0fca601b",
+    "frontend/tests/premium-components.browser.mjs": "d33bc7914604f5ce0ef681f0fcd64da3ebc81ce4ab7ead371c64ee036e9345cf",
+    "frontend/src/workflow-import-history.ts": "447d5eb1b051d2444d44901ce9c5a1f1f9af65f1243e63257d3aed8f8ce8ef47",
+    "frontend/src/reference-workspace.ts": "871ee680c0079b8ee507674135a3ec2f1e6050eb5e193387e42719b77104f9f9",
+    "frontend/src/member-bulk.ts": "bdc5d9de97ff701d22f62e94cb05c1ecadf8d7a43d029f647805b51d0a0e158b",
+    "frontend/src/member-workspace.ts": "21cbb5ae116f3abae60bcc09d35d3d4ae028424d6acbdd421a79749606632e14",
+    "frontend/src/member-import-history.ts": "2db8edebfd4c63dfc30f793315ab73abfce0c8afeca8d651f51c774588771712",
+    "frontend/src/recycle-bin.ts": "a4f0c76ac143a5fe7ce030a7189dd371c811a67543a38e79cc61b746bc6ff9c8",
+    "frontend/src/main.ts": "fcb6897095dc8269ca0f0ae49d6c77a8920e01b8d6a138e600f02e919ba8bf26",
+    "frontend/src/import-report.ts": "e33b0081d3f42286b4838160bb73f0dfcba0f77b493271e3fa8ce6a466b68a38",
+    "frontend/tests/premium-preview-rejections.browser.mjs": "9c279ac9e0e9929f4472a8f5091c0e78fec41e622d53e8669a99ac7f4497c98b",
+    "frontend/src/extra-duty.ts": "75dadfc96c8a30c65f85488d4fc4f0914af1e69f077bc76a2b6173ff310ebfc9",
+    "docs/premium-ui/action-inventory.json": "1856cf563677452ba9569577694f59009e602e935871dcd210f5ecc04fb457bd",
+    "docs/premium-ui/traceability.json": "fdeb01b31c6bee43e3b5779854be02f3190b09f8c55b54fe88f102343f6881e7",
+    "docs/premium-ui/reviews/visual-current.json": "c03f02536ff38edee10d7ca572e9c545b34d5dd4a4dd3f9b6b0dc7f2da89b635",
+    "docs/premium-ui/reviews/responsive-current.json": "e4e59f0e49760c13628e501c8d0d9d3421e4bb5db33d0c8ca06743d441a7d63c",
+    "docs/premium-ui/reviews/accessibility-current.json": "b32cb8f51de113fd5d9db84e6c855a603767633fee24b33a616552700eb41ea0",
+    "docs/premium-ui/reviews/reliability-current.json": "dd81e95e150659f1dbe35924d4ebade72db8472b53c006df8693c515c7a3cb37",
+    "docs/premium-ui/reviews/interaction-current.json": "2b8da674b8b74258fe8861a411b089b25c639cc38c3cb03fe228eac137045569"
+  }
+}

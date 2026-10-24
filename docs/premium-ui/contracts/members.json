@@ -1,0 +1,2259 @@
+{
+  "schema_version": 1,
+  "scope": "Five requested modules; dynamic same-action rows represented by selector family, form fields grouped by serialized contract. Shared extra-duty controls delegated to extra-duty module owner. No claim every control passed.",
+  "new_run": "docs/premium-ui/member-actions-results.json",
+  "contracts": [
+    {
+      "id": "member-workspace-001",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-close]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Close profile; dirty draft requires confirmation and cancelled confirmation preserves values",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/member-workspace.browser.mjs",
+      "status": "existing-assertions",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-workspace-002",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-edit]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Show enabled profile editor retaining current values",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/member-workspace.browser.mjs",
+      "status": "existing-assertions",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-workspace-003",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-cancel-edit]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Discard only confirmed draft; send no update request",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/member-workspace.browser.mjs",
+      "status": "existing-assertions",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-workspace-004",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "#mw-form button[type=submit]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Validate all tabs; PUT profile once; show confirmed saved values after independent read-back",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "partial-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-workspace-005",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-tab]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Select associated panel and preserve drafts across all seven sections",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/member-workspace.browser.mjs",
+      "status": "existing-assertions",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-workspace-006",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-tab-link]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Open specified tab and move focus to its active tab button",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "passed-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-workspace-007",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-prev],button[data-next]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Load adjacent actual member identity; dirty-cancel leaves current identity unchanged",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/member-workspace.browser.mjs",
+      "status": "existing-assertions",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-workspace-008",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-copy-member-id]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Copy exact ID or select readonly ID when clipboard is denied",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": null,
+      "status": "untested",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-workspace-009",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "input[data-preserve-name]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Toggle preserve_previous_name payload; no mutation until save",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "passed-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-workspace-010",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "[data-field=canonical_name],[data-field=active_status],[data-field=call_level]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Edit the named draft field and save exact payload",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": null,
+      "status": "partial-existing-assertions",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-workspace-011",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "textarea[data-aliases]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Keep aliases across tab changes then persist normalized alias list",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/member-workspace.browser.mjs",
+      "status": "partial-existing-assertions",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-workspace-012",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-remove-alias]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Remove selected alias from draft only; cancellation leaves stored alias",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "passed-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-workspace-013",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-add-designation-row]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Append empty position; invalid submission selects roles tab and marks field invalid",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "partial-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-workspace-014",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-remove-designation]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Remove only selected draft position; no immediate mutation",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "passed-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-workspace-015",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "[data-d]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Update selected designation field without overwriting other rows",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "partial-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-workspace-016",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-add-call-change]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Add dated draft call change; unique date validation applies before save",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "passed-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-workspace-017",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-remove-call-change]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Remove selected dated draft change without immediate mutation",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "passed-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-workspace-018",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "[data-call-change]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Retain exact selected level/date/notes in saved profile payload",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "passed-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-workspace-019",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-manage-profile-references]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Open designation catalog above profile and restore focus on dismissal",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": null,
+      "status": "untested",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-workspace-020",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "input[data-duty-from],input[data-duty-until]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Filter displayed duty history to chosen inclusive range and retain filter on retry",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": null,
+      "status": "untested",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-workspace-021",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-add-record],button[data-edit-record]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Open correct posting/leave editor with selected member and record",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": null,
+      "status": "untested",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-workspace-022",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-cancel-profile-leave]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Confirm cancellation, save exact leave identity and refresh returned history; dismiss sends no write",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": null,
+      "status": "untested",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-workspace-023",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-retry]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Reload failed tab and replace error with returned records/empty state",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/member-workspace.browser.mjs",
+      "status": "existing-assertions",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-workspace-024",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-retry-duplicates]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Repeat failed duplicate check and show new candidates",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": null,
+      "status": "untested",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-workspace-025",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-merge-source]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Open merge review for selected source and target without applying before explicit confirmation",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": null,
+      "status": "untested",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-workspace-026",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-dismiss]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Dismiss identified dismissible status/overlay and restore appropriate focus",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": null,
+      "status": "untested",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-workspace-027",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-close] (CSV dialog)",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Close CSV import; unsaved review confirmation preserves when dismissed",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/member-workspace.browser.mjs",
+      "status": "partial-existing-assertions",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-workspace-028",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "a[href=\"/templates/department-members.csv\"],a[href=\"/templates/department-members-example.csv\"]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Download named nonempty template and example CSV with expected headers",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/member-workspace.browser.mjs",
+      "status": "partial-existing-assertions",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-workspace-029",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "input[type=file] (CSV dialog)",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Read file header and reveal column mapping; oversized/bad file produces recoverable message",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/member-workspace.browser.mjs",
+      "status": "partial-existing-assertions",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-workspace-030",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "[data-map-column]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Preview sends explicit header mapping; ignored column absent from selected fields",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": null,
+      "status": "untested",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-workspace-031",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "form button[type=submit] (CSV dialog)",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Preview import without writes; produce correct before/after and blockers",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/member-workspace.browser.mjs",
+      "status": "existing-assertions",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-workspace-032",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-archive-all],button[data-archive-none]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Select/clear all missing roster archive boxes and update blocker; never apply directly",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": null,
+      "status": "untested",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-workspace-033",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "input[data-archive]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Include only chosen missing-member IDs in archive_missing",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": null,
+      "status": "untested",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-workspace-034",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "input[data-include]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Exclude unchecked row IDs; unresolved included row prevents apply",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/member-workspace.browser.mjs",
+      "status": "existing-assertions",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-workspace-035",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-pick-member]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Use exact existing member ID and refresh normalized preview",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/member-workspace.browser.mjs",
+      "status": "existing-assertions",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-workspace-036",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-csv-distinct]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Mark row explicitly new distinct person; refresh review without immediate write",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": null,
+      "status": "untested",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-workspace-037",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-csv-undo]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Clear local match decision; restore server-normalized unresolved state",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": null,
+      "status": "untested",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-workspace-038",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-csv-review-member]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Open selected candidate profile above import and preserve import draft",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": null,
+      "status": "untested",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-workspace-039",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "[data-row][data-key]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Edit exact CSV row/field, mark preview dirty, require refreshed review",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/member-workspace.browser.mjs",
+      "status": "existing-assertions",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-workspace-040",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-refresh]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Resubmit corrections and replace review only with matching latest response",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/member-workspace.browser.mjs",
+      "status": "existing-assertions",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-workspace-041",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-report]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Download department-member-import-report.csv with actual included/excluded row contents",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/member-workspace.browser.mjs",
+      "status": "partial-existing-assertions",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-workspace-042",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-apply]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Confirm apply with exact excluded/archive_missing arrays; show result and recover from503",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/member-workspace.browser.mjs",
+      "status": "existing-assertions",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-workspace-043",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-result-member]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Open selected newly applied member using exact returned ID",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": null,
+      "status": "untested",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-profile-001",
+      "module": "frontend/src/member-profile.ts",
+      "selector": "[data-profile-close]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Remove dialog and restore opener without sending mutation",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "passed-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-profile-002",
+      "module": "frontend/src/member-profile.ts",
+      "selector": "[data-profile-form=call] button[type=submit]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "POST exact level/effective date/reason, GET refreshed timeline and independently reopen",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "passed-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-profile-003",
+      "module": "frontend/src/member-profile.ts",
+      "selector": "[data-profile-form=designation] button",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "POST designation with effective date and show returned history after GET",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "passed-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-profile-004",
+      "module": "frontend/src/member-profile.ts",
+      "selector": "[data-profile-form=alias] button",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "POST alias and source then GET refreshed alias list",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "passed-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-profile-005",
+      "module": "frontend/src/member-profile.ts",
+      "selector": "[data-profile-form=comment] button",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "POST comment once;503 preserves draft; retry shows confirmed comment",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "passed-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-profile-006",
+      "module": "frontend/src/member-profile.ts",
+      "selector": "[data-profile-form=details] button",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "PUT exact identity/status retaining call default; fresh GET/reopen confirms saved values",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "passed-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-profile-007",
+      "module": "frontend/src/member-profile.ts",
+      "selector": "details > summary",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Expand corresponding history/import/editor section without writes",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "partial-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "member-profile-008",
+      "module": "frontend/src/member-profile.ts",
+      "selector": "[data-profile-form] input,[data-profile-form] select,[data-profile-form] textarea",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Retain unrelated form drafts when other form saves; validate required inputs",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": null,
+      "status": "partial-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "record-workspace-001",
+      "module": "frontend/src/record-workspace.ts",
+      "selector": "[data-close]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Confirm dirty cancellation; dismiss confirmation preserves fields and sends no save",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "untested",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "record-workspace-002",
+      "module": "frontend/src/record-workspace.ts",
+      "selector": "[data-member-search]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Filter member options while retaining current selected identity",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": null,
+      "status": "untested",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "record-workspace-003",
+      "module": "frontend/src/record-workspace.ts",
+      "selector": "[name=person_id]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Bind exact member to review and saved record",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "passed-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "record-workspace-004",
+      "module": "frontend/src/record-workspace.ts",
+      "selector": "[data-new-member]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Open member creation and select returned identity without losing record draft",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": null,
+      "status": "untested",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "record-workspace-005",
+      "module": "frontend/src/record-workspace.ts",
+      "selector": "[data-new-unit]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Create nested unit; select new ID; preserve posting notes",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/normalization.browser.mjs",
+      "status": "existing-assertions",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "record-workspace-006",
+      "module": "frontend/src/record-workspace.ts",
+      "selector": "[data-references]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Open appropriate catalog then refresh options retaining all draft values",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": null,
+      "status": "untested",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "record-workspace-007",
+      "module": "frontend/src/record-workspace.ts",
+      "selector": "[name=unit_id],[name=posting_type]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Persist reviewed unit/posting pair with exact token",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/normalization.browser.mjs",
+      "status": "existing-assertions",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "record-workspace-008",
+      "module": "frontend/src/record-workspace.ts",
+      "selector": "[name=leave_type],[name=leave_slot],[name=status]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Review supported leave labels and persist exact unchanged values",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": null,
+      "status": "partial-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "record-workspace-009",
+      "module": "frontend/src/record-workspace.ts",
+      "selector": "[name=starts_on],[name=ends_on],[name=notes]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Retain exact selected dates/notes; editing invalidates prior review",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "passed-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "record-workspace-010",
+      "module": "frontend/src/record-workspace.ts",
+      "selector": "form button[type=submit]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Preview without save, display impacts; enable save only for valid current review",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "passed-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "record-workspace-011",
+      "module": "frontend/src/record-workspace.ts",
+      "selector": "[data-save]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "POST reviewed token+values; close only after success; recover from error preserving draft",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "partial-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "reference-workspace-001",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "[data-close]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Dismiss top reference/unit/mapping/history surface; dirty cancel leaves draft and sends no PUT",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "passed-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "reference-workspace-002",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "[data-kind]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Load chosen catalog, abandon dirty switch when confirmation dismissed",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": null,
+      "status": "untested",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "reference-workspace-003",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "[data-search] (catalog)",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Filter actual labeled buttons by key,label,alias",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "passed-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "reference-workspace-004",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "[data-key]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Load exact reference into editor and protect stable key from edit",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "passed-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "reference-workspace-005",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "[data-new] (catalog)",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Clear selection and display creation form",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "passed-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "reference-workspace-006",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "form button[type=submit] (catalog)",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "PUT precise aliases/status/version/behavior; refresh catalog from GET",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "partial-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "reference-workspace-007",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "[name=key],[name=label],[name=aliases],[name=active]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Edit correct catalog fields; preserve stored data if cancelled",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "partial-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "reference-workspace-008",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "[name=maps_to]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Send supported operational meaning unchanged",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": null,
+      "status": "untested",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "reference-workspace-009",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "[name=group],[name=duration_hours],[name=start_time],[name=end_time],[name=allowed_call_levels]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Save exact existing duty behavior shape and derived is_24hr without semantic changes",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": null,
+      "status": "untested",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "reference-workspace-010",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "[name=counts_in_main_24hr],[name=is_mandatory],[name=blocks_elective_same_day],[name=blocks_elective_next_day]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Send explicit booleans matching checked duty behavior",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": null,
+      "status": "untested",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "reference-workspace-011",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "[data-reference-history]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Load activity for exact kind/key then close top history only",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "passed-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "reference-workspace-012",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "[data-add-mapping]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Focus selected catalog reference alias field; no new modal or mutation. If no selection, show guidance.",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "partial-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "reference-workspace-013",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "[name=mapping_type]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Load supported destination options for chosen mapping category; reject stale option response",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "passed-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "reference-workspace-014",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "[data-find]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Filter destination options without clearing selected target",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "passed-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "reference-workspace-015",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "[name=source_label],[name=target_key],[name=notes] (mapping)",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "POST exact category/source/target/notes; refresh callback only after success",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "passed-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "reference-workspace-016",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "form button[type=submit] (mapping)",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Save one mapping; server error preserves draft and enables retry",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": null,
+      "status": "untested",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "reference-workspace-017",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "[data-search] (units)",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Filter unit buttons by code,name,campus,alias",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "passed-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "reference-workspace-018",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "[data-unit-status]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Show only selected active/archive state",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "passed-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "reference-workspace-019",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "[data-unit-month]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Reload actual unit count month; retain dirty draft or confirm discard",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "passed-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "reference-workspace-020",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "[data-select-unit]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Populate exact unit editor with usage,revision,staffing values",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "passed-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "reference-workspace-021",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "[data-new] (units)",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Reset selected unit and show new-unit form",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": null,
+      "status": "untested",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "reference-workspace-022",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "[data-unit-history]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Load exact selected unit activity in top dialog",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "passed-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "reference-workspace-023",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "[name=name],[name=campus],[name=code] (units)",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Suggest unique code while preserving explicit code; post exact identity",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/normalization.browser.mjs",
+      "status": "partial-existing-assertions",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "reference-workspace-024",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "[name=minimum_free_people],[data-call-minimum]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Retain fallback and per-call minimum numbers in existing API shape",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "passed-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "reference-workspace-025",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "[name=aliases],[name=notes],[name=active_status] (units)",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Preserve alias lines/notes/archive state in reviewed unit save",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": null,
+      "status": "untested",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "reference-workspace-026",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "#registry-unit-form button[type=submit]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "POST new or PUT versioned existing unit once; select created unit in caller",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "partial-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "operational-import-001",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[data-close]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Dismiss importer/create-member only; dirty draft protected; no apply on cancellation",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": null,
+      "status": "untested",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "operational-import-002",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[data-use-existing]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Return exact selected active member using fresh options; create request count remains0",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": null,
+      "status": "untested",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "operational-import-003",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[data-review-existing]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Open archived member profile then refresh candidate search without losing name draft",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": null,
+      "status": "untested",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "operational-import-004",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[name=canonical_name],[name=call_level] (inline creation)",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Search duplicate candidates and submit exact new identity/default call",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": null,
+      "status": "untested",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "operational-import-005",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "form button[type=submit] (inline creation)",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Create once; parent selects returned identity; error preserves draft",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": null,
+      "status": "untested",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "operational-import-006",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "a[download]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Download corresponding blank/example unitwise or leave CSV with correct content",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": null,
+      "status": "untested",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "operational-import-007",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[data-manage-import-references]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Open catalog; retain file/mapping/corrections",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": null,
+      "status": "untested",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "operational-import-008",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[data-settings] [name=month],[data-settings] [name=mode],[data-settings] [name=date_format]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Any settings change invalidates preview and keeps selected file",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": null,
+      "status": "untested",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "operational-import-009",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[data-settings] input[type=file]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Read supported file; enforce5MB/5000row limits through existing server contract",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/normalization.browser.mjs",
+      "status": "partial-existing-assertions",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "operational-import-010",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[data-settings] button[type=submit]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Send multipart preview with settings,corrections,excluded,mapping; no writes",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/normalization.browser.mjs",
+      "status": "existing-assertions",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "operational-import-011",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[data-map]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Change header mapping then mark review stale until refresh",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": null,
+      "status": "untested",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "operational-import-012",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[data-include]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Exclude row and update visible include counts without apply",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "partial-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "operational-import-013",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[data-pick-member]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Select exact candidate and refresh preview without creating member",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": null,
+      "status": "untested",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "operational-import-014",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[data-review-candidate]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Open candidate profile preserving review state",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": null,
+      "status": "untested",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "operational-import-015",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[data-find-member],[data-find-unit]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Filter only corresponding row select options and retain selected value",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": null,
+      "status": "untested",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "operational-import-016",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[data-row][data-field]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Edit one row; preserve local values; block stale apply",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "partial-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "operational-import-017",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[data-create-member]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Open inline creation for row then set returned member ID",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "passed-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "operational-import-018",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[data-create-unit]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Open registry and set new unit only in selected correction row",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": null,
+      "status": "untested",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "operational-import-019",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[data-repeat-member]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Apply selected member only to exact repeated member-label rows",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "passed-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "operational-import-020",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[data-repeat-unit]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Apply selected unit only to exact repeated unit-label rows",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "passed-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "operational-import-021",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[data-page]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Change25-row page without losing include/correction state",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/normalization.browser.mjs",
+      "status": "existing-assertions",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "operational-import-022",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[data-refresh]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Resubmit all current corrections; replace preview with latest normalized response",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "passed-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "operational-import-023",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[data-report]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Download correct normalization CSV with source/action/errors/corrections",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "passed-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "operational-import-024",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[data-acknowledge]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Allow affected-duty/replacement scope acknowledgement without changing records",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "passed-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "operational-import-025",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[data-apply]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Refuse stale/unresolved review; POST exact batch token/exclusions/acknowledgement once; show totals",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "partial-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    },
+    {
+      "id": "operational-import-026",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[data-download-completed-report]",
+      "context": {
+        "role": "computer_admin unless explicitly readonly board_member test",
+        "month": "2026-10; profile mutations use explicit effective date2026-11-01",
+        "layout": [
+          1280,
+          390,
+          320
+        ]
+      },
+      "expected_outcome": "Download applied/excluded report with meaningful row results",
+      "negative_contract": "Dismiss/cancel/invalid/stale input sends no mutation; unrelated draft and selected context preserved",
+      "evidence": "frontend/tests/premium-member-actions.browser.mjs",
+      "status": "passed-current-run",
+      "scope_note": "Mocked UI contract only; existing-assertions need current integrated rerun; partial statuses do not prove all clauses"
+    }
+  ],
+  "summary": {
+    "existing-assertions": 16,
+    "partial-current-run": 14,
+    "partial-existing-assertions": 8,
+    "passed-current-run": 37,
+    "untested": 39
+  },
+  "remaining_control_ids": [
+    "member-workspace-001",
+    "member-workspace-002",
+    "member-workspace-003",
+    "member-workspace-004",
+    "member-workspace-005",
+    "member-workspace-007",
+    "member-workspace-008",
+    "member-workspace-010",
+    "member-workspace-011",
+    "member-workspace-013",
+    "member-workspace-015",
+    "member-workspace-019",
+    "member-workspace-020",
+    "member-workspace-021",
+    "member-workspace-022",
+    "member-workspace-023",
+    "member-workspace-024",
+    "member-workspace-025",
+    "member-workspace-026",
+    "member-workspace-027",
+    "member-workspace-028",
+    "member-workspace-029",
+    "member-workspace-030",
+    "member-workspace-031",
+    "member-workspace-032",
+    "member-workspace-033",
+    "member-workspace-034",
+    "member-workspace-035",
+    "member-workspace-036",
+    "member-workspace-037",
+    "member-workspace-038",
+    "member-workspace-039",
+    "member-workspace-040",
+    "member-workspace-041",
+    "member-workspace-042",
+    "member-workspace-043",
+    "member-profile-007",
+    "member-profile-008",
+    "record-workspace-001",
+    "record-workspace-002",
+    "record-workspace-004",
+    "record-workspace-005",
+    "record-workspace-006",
+    "record-workspace-007",
+    "record-workspace-008",
+    "record-workspace-011",
+    "reference-workspace-002",
+    "reference-workspace-006",
+    "reference-workspace-007",
+    "reference-workspace-008",
+    "reference-workspace-009",
+    "reference-workspace-010",
+    "reference-workspace-012",
+    "reference-workspace-016",
+    "reference-workspace-021",
+    "reference-workspace-023",
+    "reference-workspace-025",
+    "reference-workspace-026",
+    "operational-import-001",
+    "operational-import-002",
+    "operational-import-003",
+    "operational-import-004",
+    "operational-import-005",
+    "operational-import-006",
+    "operational-import-007",
+    "operational-import-008",
+    "operational-import-009",
+    "operational-import-010",
+    "operational-import-011",
+    "operational-import-012",
+    "operational-import-013",
+    "operational-import-014",
+    "operational-import-015",
+    "operational-import-016",
+    "operational-import-018",
+    "operational-import-021",
+    "operational-import-025"
+  ]
+}

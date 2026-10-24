@@ -99,7 +99,9 @@ def test_slot_candidates_rank_low_burden_person_and_explain_blockers() -> None:
         assert any("Approved leave" in reason for reason in blocked["reasons"])
 
 
-def test_shift_slot_with_unassigned_call_level_uses_unit_member_pool() -> None:
+def test_shift_slot_with_unassigned_call_level_is_unresolved_and_offers_nobody() -> None:
+    """Strict call level (limits_callevel_fairness_contract section 1): a duty with no single
+    call level is unresolved; nobody of any level is offered until Rota Rules sets one."""
     engine = create_engine("sqlite+pysqlite:///:memory:")
     Base.metadata.create_all(engine)
 
@@ -124,9 +126,8 @@ def test_shift_slot_with_unassigned_call_level_uses_unit_member_pool() -> None:
 
         result = slot_candidates(session, slot.id)
 
-        names = {candidate["person_name"] for candidate in result["candidates"]}
-        assert names == {"First Call", "Third Call"}
-        assert all(candidate["candidate_status"] == "eligible" for candidate in result["candidates"])
+        eligible = [c for c in result["candidates"] if c["candidate_status"] == "eligible"]
+        assert eligible == []
 
 
 def test_weekend_slot_prefers_member_with_fewer_weekend_duties() -> None:

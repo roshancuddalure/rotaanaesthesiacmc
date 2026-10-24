@@ -1,0 +1,73 @@
+{
+  "recorded_at_utc": "2026-10-24T03:37:38.211391+00:00",
+  "completion_claim": false,
+  "scope": "Accessible mobile Server connection panel and explicit health check, fresh/stale/offline states, startup page/session ownership and bounded header regression.",
+  "requirements": [
+    64,
+    65,
+    68,
+    69,
+    80,
+    85,
+    86,
+    87,
+    93,
+    225,
+    229,
+    230,
+    241,
+    242,
+    243,
+    246
+  ],
+  "source_sha256": {
+    "frontend/src/main.ts": "fcc39d763c0c5b3d0e3551215c301c7d0691b2b9d071b53b079e73f7de7bb501",
+    "frontend/src/connection-status.ts": "bb8080819c5d9aac5c5caf402565256bf2df0129a08367cdb6a41fadc2311007",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/premium-theme.css": "559041ee03d192fcc291582bd7572e8d32004e9d5428b7e57fbbea9ba9e60f83"
+  },
+  "changes": [
+    "Native details summary available on mobile, read-only health recheck, explicit last-check text, offline/unconfirmed/stale states without health polling.",
+    "Pending guard, disposal/focus ownership and viewport-clamped panel; initial pre-auth control disabled.",
+    "Startup health completion cannot overwrite later page or signed-in session; startup error distinguishes startup from server availability.",
+    "Shared primary action style fixes WebKit dark contrast; wrapped account stays right anchored."
+  ],
+  "checks": {
+    "development_connection_contexts": 36,
+    "production_connection_contexts": 36,
+    "header_wrap_regression_contexts": 30,
+    "shell_outcome_workflows": 8,
+    "total_browser_contexts_and_workflows": 110,
+    "unit_tests_passed": 104,
+    "build_passed": true,
+    "build_inputs_held": true,
+    "static_inventory_checks": true,
+    "scoped_tagged_axe_status_contexts": 24,
+    "scoped_tagged_axe_findings": 0
+  },
+  "evidence": [
+    "docs/premium-ui/qa-connection-status/report-development.json",
+    "docs/premium-ui/qa-connection-status/report-production.json",
+    "docs/premium-ui/qa-connection-status/before.json",
+    "docs/premium-ui/reviews/connection-status-source-review.json",
+    "docs/premium-ui/reviews/connection-status-test-review.json",
+    "docs/premium-ui/qa-header-wrap.json",
+    "tmp/premium-connection-shell-current.log",
+    "tmp/premium-connection-unit-sealed.log",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+  ],
+  "manual_visual_review": [
+    "Root inspected representative320dark panel capture: readable status/time, visible primary check button,16px viewport gutter and retained draft."
+  ],
+  "limitations": [
+    "No whole260 certification. Browser emulation is not native AT or physical-device evidence.",
+    "Status axe is scoped to12status contexts per environment,not whole-app WCAG. False per-variant feature booleans in other variants mean unassessed/not applicable; passed is the variant outcome.",
+    "Five-minute freshness uses advanced browser clock,not a wall-clock soak. No performance claim.",
+    "Synthetic sign-in is locally intercepted; all other mutation requests refused. No forwarded mutation requests; not a comprehensive production DB-state proof.",
+    "Existing read timeout retained; requests are not cancelled on dismissal and late results are ignored. No new API,permission or persisted-data contract.",
+    "Declared source/test hashes are held; complete build input and asset identity are separately checked by held build/package.",
+    "Concurrent dev/prod initially shared report.json; production was preserved and development rerun sequentially to retain both. Extra recapture is not counted twice.",
+    "Earlier failing logs retained: immediate-state harness race fixed with terminal-state wait; real WebKit dark button contrast fixed with shared primary style; enlarged-text account-menu overflow fixed by account auto-margin.",
+    "No backend edits by this batch; concurrent backend changes remain untouched."
+  ]
+}

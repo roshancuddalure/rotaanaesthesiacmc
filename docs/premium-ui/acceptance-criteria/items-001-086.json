@@ -1,0 +1,2129 @@
+{
+  "schema_version": 1,
+  "scope": "Objective acceptance criteria for original approved items 1–86. Definitions only: no completion certification, ledger mutation or new runtime execution.",
+  "plan": "docs/premium_frontend_upgrade_plan_2026-10-21.md",
+  "reviewer": "acceptance_requirements_001_040",
+  "policy": [
+    "Requirements remain verbatim and full scope is preserved.",
+    "Existing evidence candidates are files inspected or verified to exist; existence and source freshness alone do not certify their assertions or whole requirements.",
+    "Physical-device checks remain pending at the user's direction; emulation is accepted with that explicit limitation. Native screen-reader checks remain separate where actually applicable.",
+    "Apply only relevant verification to each requirement. Current runtime implementation must be supported by appropriately scoped evidence; documentary deliverables do not inherit unrelated application-wide runtime gates.",
+    "Procedural timing exceptions are historical limitations, not silently relaxed pass conditions."
+  ],
+  "items": [
+    {
+      "item_id": 1,
+      "requirement": "Inventory every frontend screen, modal, drawer, menu, rail, embedded report and role-dependent entry point before redesign.",
+      "acceptance_scope": "Definition/documentation or recorded-baseline deliverable: Inventory/documentation of all frontend entry and surface families. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Enumerate every screen, modal, drawer, menu, rail and embedded report, linking source and entry point",
+        "Expand dynamic and role-dependent entry points and explicitly classify inactive/reference surfaces"
+      ],
+      "evidence_needed": [
+        "A source-grounded, dated register/specification/baseline containing the complete requested information and explicit exceptions.",
+        "Traceable references demonstrating: Enumerate every screen, modal, drawer, menu, rail and embedded report, linking source and entry point; Expand dynamic and role-dependent entry points and explicitly classify inactive/reference surfaces. No unrelated all-role, native-screen-reader or all-action runtime gate is required merely to accept this definition deliverable."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/surface-taxonomy.md",
+        "docs/premium-ui/action-inventory.json",
+        "docs/premium-ui/role-visibility-current.md",
+        "docs/premium-ui/review-artifact-current.json",
+        "docs/premium-ui/reviews/review-package-validation-independent.json",
+        "docs/premium-ui/qa-review-artifact/report.json",
+        "docs/premium-ui/acceptance-audit-current.json"
+      ],
+      "remaining_gap": "Reconcile source candidates with reachable nested and role-specific surfaces.",
+      "procedural_exception": "The original requirement's baseline or before-implementation timing must be evidenced by dated artifacts. Later inventories/specifications cannot retroactively establish that timing; record the historical limitation where original evidence is insufficient."
+    },
+    {
+      "item_id": 2,
+      "requirement": "Record the current source snapshot and concurrent changes so unrelated work remains intact throughout implementation.",
+      "acceptance_scope": "Definition/documentation or recorded-baseline deliverable: Source preservation and concurrent-change documentation. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Retain dated source hashes, copied frontend baseline and initial worktree status",
+        "Reconcile current task edits and concurrent differences against the baseline without reverting unrelated work"
+      ],
+      "evidence_needed": [
+        "A source-grounded, dated register/specification/baseline containing the complete requested information and explicit exceptions.",
+        "Traceable references demonstrating: Retain dated source hashes, copied frontend baseline and initial worktree status; Reconcile current task edits and concurrent differences against the baseline without reverting unrelated work. No unrelated all-role, native-screen-reader or all-action runtime gate is required merely to accept this definition deliverable."
+      ],
+      "existing_evidence_candidates": [
+        "tmp/premium-ui-baseline-20261021T130359Z/manifest.json",
+        "tmp/premium-ui-baseline-20261021T130359Z/git-status.txt",
+        "docs/premium-ui/backend-boundary.json",
+        "docs/premium-ui/review-artifact-current.json",
+        "docs/premium-ui/reviews/review-package-validation-independent.json",
+        "docs/premium-ui/qa-review-artifact/report.json",
+        "docs/premium-ui/acceptance-audit-current.json"
+      ],
+      "remaining_gap": "Current boundary reconciliation must accompany the retained initial baseline.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 3,
+      "requirement": "Catalogue every button, link, submit control, tab and clickable card with a stable action identifier.",
+      "acceptance_scope": "Definition/documentation or recorded-baseline deliverable: Complete action catalogue. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Give every button, link, submit, tab and clickable card a stable identifier",
+        "Expand generated and conditional controls or document their parameterized identity and reachability"
+      ],
+      "evidence_needed": [
+        "A source-grounded, dated register/specification/baseline containing the complete requested information and explicit exceptions.",
+        "Traceable references demonstrating: Give every button, link, submit, tab and clickable card a stable identifier; Expand generated and conditional controls or document their parameterized identity and reachability. No unrelated all-role, native-screen-reader or all-action runtime gate is required merely to accept this definition deliverable."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/action-inventory.json",
+        "docs/premium-ui/qa-rules-local-actions-independent.json",
+        "docs/premium-ui/reviews/component-time-rules-cleanup-current.json",
+        "docs/premium-ui/contracts/rules-local-current.json",
+        "docs/premium-ui/reviews/legacy-cleanup-bundle-equivalence.json",
+        "docs/premium-ui/qa-preview-rejections.json",
+        "docs/premium-ui/qa-guide-help-independent.json",
+        "docs/premium-ui/qa-member-three-controls-independent.json",
+        "docs/premium-ui/qa-context-action-outcomes-independent.json",
+        "docs/premium-ui/reviews/guide-copy-forced-colors-current.json",
+        "docs/premium-ui/qa-member-duplicates-entry-independent.json",
+        "docs/premium-ui/reviews/gallery-duplicates-current.json",
+        "docs/premium-ui/qa-member-linked-actions-independent.json",
+        "docs/premium-ui/qa-chooser-destinations.json"
+      ],
+      "remaining_gap": "Source candidates require operational/reference/inactive classification and dynamic expansion.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 4,
+      "requirement": "Record each action's role, selected month, target record and prerequisites in one searchable interaction register.",
+      "acceptance_scope": "Definition/documentation or recorded-baseline deliverable: Searchable action-context register. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "For every action record actor role, selected-month applicability, target record and prerequisites",
+        "Link the entry to its exact source action ID and make missing or inapplicable context explicit"
+      ],
+      "evidence_needed": [
+        "A source-grounded, dated register/specification/baseline containing the complete requested information and explicit exceptions.",
+        "Traceable references demonstrating: For every action record actor role, selected-month applicability, target record and prerequisites; Link the entry to its exact source action ID and make missing or inapplicable context explicit. No unrelated all-role, native-screen-reader or all-action runtime gate is required merely to accept this definition deliverable."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/action-inventory.json",
+        "docs/premium-ui/runtime-action-coverage-current.json",
+        "docs/premium-ui/qa-rules-local-actions-independent.json",
+        "docs/premium-ui/qa-context-action-outcomes-independent.json",
+        "docs/premium-ui/reviews/guide-copy-forced-colors-current.json",
+        "docs/premium-ui/reviews/progress-window-history-retry-current.json",
+        "docs/premium-ui/qa-progress-window.json",
+        "docs/premium-ui/qa-member-history-retry.json",
+        "docs/premium-ui/reviews/profile-persistence-actions-current.json",
+        "docs/premium-ui/qa-profile-persistence/report.json",
+        "docs/premium-ui/contracts/member-profile-persistence-current.json",
+        "tmp/premium-profile-persistence-current.log",
+        "frontend/tests/premium-profile-persistence.browser.mjs",
+        "docs/premium-ui/qa-profile-persistence/README.md"
+      ],
+      "remaining_gap": "Many entries still contain contextual candidates instead of exact contracts.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 5,
+      "requirement": "Define observable success outcomes for each action, including navigation, changed results, saved values or downloaded artifacts.",
+      "acceptance_scope": "Definition/documentation or recorded-baseline deliverable: Observable outcome specification for all actions. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Specify an observable result for every action, including result-set change, navigation destination, persisted read-back or artifact contents as applicable",
+        "Name the assertion and expected failure/cancellation outcome without treating a click or HTTP success alone as completion"
+      ],
+      "evidence_needed": [
+        "A source-grounded, dated register/specification/baseline containing the complete requested information and explicit exceptions.",
+        "Traceable references demonstrating: Specify an observable result for every action, including result-set change, navigation destination, persisted read-back or artifact contents as applicable; Name the assertion and expected failure/cancellation outcome without treating a click or HTTP success alone as completion. No unrelated all-role, native-screen-reader or all-action runtime gate is required merely to accept this definition deliverable."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/runtime-action-coverage-current.json",
+        "frontend/src/main.ts",
+        "docs/premium-ui/qa-eligibility-new-independent.json",
+        "docs/premium-ui/reviews/action-gaps-current.json",
+        "docs/premium-ui/qa-rules-local-actions-independent.json",
+        "docs/premium-ui/reviews/component-time-rules-cleanup-current.json",
+        "docs/premium-ui/contracts/rules-local-current.json",
+        "docs/premium-ui/reviews/legacy-cleanup-bundle-equivalence.json",
+        "docs/premium-ui/qa-preview-rejections.json",
+        "docs/premium-ui/qa-guide-help-independent.json",
+        "docs/premium-ui/qa-member-three-controls-independent.json",
+        "docs/premium-ui/qa-context-action-outcomes-independent.json",
+        "docs/premium-ui/reviews/guide-copy-forced-colors-current.json",
+        "docs/premium-ui/qa-member-duplicates-entry-independent.json"
+      ],
+      "remaining_gap": "Complete outcome specifications and assertion mappings for unmatched operational actions.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 6,
+      "requirement": "Identify controls that only appear functional, recording confirmed no-op behavior separately from untested or permission-blocked states.",
+      "acceptance_scope": "Definition/documentation or recorded-baseline deliverable: No-op investigation and disposition register. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Record confirmed no-ops with reproducible expected-versus-observed behavior",
+        "Distinguish confirmed no-ops from untested, inaccessible, permission-blocked and source-only suspicion"
+      ],
+      "evidence_needed": [
+        "A source-grounded, dated register/specification/baseline containing the complete requested information and explicit exceptions.",
+        "Traceable references demonstrating: Record confirmed no-ops with reproducible expected-versus-observed behavior; Distinguish confirmed no-ops from untested, inaccessible, permission-blocked and source-only suspicion. No unrelated all-role, native-screen-reader or all-action runtime gate is required merely to accept this definition deliverable."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/specialist-action-queue-current.json",
+        "docs/premium-ui/qa-rules-local-actions-independent.json",
+        "docs/premium-ui/reviews/component-time-rules-cleanup-current.json",
+        "docs/premium-ui/contracts/rules-local-current.json",
+        "docs/premium-ui/reviews/legacy-cleanup-bundle-equivalence.json",
+        "docs/premium-ui/qa-preview-rejections.json"
+      ],
+      "remaining_gap": "Reconcile remaining source findings into explicit behavior dispositions.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 7,
+      "requirement": "Map every available action to its existing handler and API contract without inventing unsupported backend capabilities.",
+      "acceptance_scope": "Definition/documentation or recorded-baseline deliverable: Exact action-to-handler/API mapping. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Map every available action to its actual handler and existing request or local/navigation contract",
+        "Identify local/native actions as such and preserve method, endpoint, payload and permission boundaries"
+      ],
+      "evidence_needed": [
+        "A source-grounded, dated register/specification/baseline containing the complete requested information and explicit exceptions.",
+        "Traceable references demonstrating: Map every available action to its actual handler and existing request or local/navigation contract; Identify local/native actions as such and preserve method, endpoint, payload and permission boundaries. No unrelated all-role, native-screen-reader or all-action runtime gate is required merely to accept this definition deliverable."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/action-inventory.json",
+        "docs/premium-ui/qa-rules-local-actions-independent.json",
+        "docs/premium-ui/reviews/component-time-rules-cleanup-current.json",
+        "docs/premium-ui/contracts/rules-local-current.json",
+        "docs/premium-ui/reviews/legacy-cleanup-bundle-equivalence.json",
+        "docs/premium-ui/qa-preview-rejections.json",
+        "docs/premium-ui/reviews/profile-persistence-actions-current.json",
+        "docs/premium-ui/qa-profile-persistence/report.json",
+        "docs/premium-ui/contracts/member-profile-persistence-current.json",
+        "docs/premium-ui/runtime-action-coverage-current.json",
+        "tmp/premium-profile-persistence-current.log",
+        "frontend/tests/premium-profile-persistence.browser.mjs",
+        "docs/premium-ui/qa-profile-persistence/README.md",
+        "docs/premium-ui/reviews/profile-persistence-actual-zoom-current.json"
+      ],
+      "remaining_gap": "Candidate listener and endpoint associations need exact action-level reconciliation.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 8,
+      "requirement": "Capture baseline screenshots with settled fixtures/fonts, reduced animation and defined scroll positions across populated, empty and failed-request states.",
+      "acceptance_scope": "Definition/documentation or recorded-baseline deliverable: Reproducible baseline screenshot coverage. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Capture populated, empty and failed-request states with recorded fixtures, settled fonts, reduced motion and defined scroll positions",
+        "Identify exact baseline source, viewport and theme for each capture"
+      ],
+      "evidence_needed": [
+        "A source-grounded, dated register/specification/baseline containing the complete requested information and explicit exceptions.",
+        "Traceable references demonstrating: Capture populated, empty and failed-request states with recorded fixtures, settled fonts, reduced motion and defined scroll positions; Identify exact baseline source, viewport and theme for each capture. No unrelated all-role, native-screen-reader or all-action runtime gate is required merely to accept this definition deliverable."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-responsive/report.json",
+        "docs/premium-ui/reviews/responsive-matrix-refresh-current.json",
+        "docs/premium-ui/reviews/integrated-current-build-20261024.json"
+      ],
+      "remaining_gap": "Explicit state-by-surface baseline matrix and repeatable capture metadata remain incomplete.",
+      "procedural_exception": "The original requirement's baseline or before-implementation timing must be evidenced by dated artifacts. Later inventories/specifications cannot retroactively establish that timing; record the historical limitation where original evidence is insufficient."
+    },
+    {
+      "item_id": 9,
+      "requirement": "Inventory existing design tokens, hard-coded colors, duplicate selectors and inline layout exceptions before consolidating styles.",
+      "acceptance_scope": "Definition/documentation or recorded-baseline deliverable: Pre-consolidation style inventory. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Enumerate token definitions, hard-coded colors, duplicate selectors and inline exceptions with source references and scopes",
+        "Include relevant bootstrap/index styles or explicitly account for them in a supplementary inventory"
+      ],
+      "evidence_needed": [
+        "A source-grounded, dated register/specification/baseline containing the complete requested information and explicit exceptions.",
+        "Traceable references demonstrating: Enumerate token definitions, hard-coded colors, duplicate selectors and inline exceptions with source references and scopes; Include relevant bootstrap/index styles or explicitly account for them in a supplementary inventory. No unrelated all-role, native-screen-reader or all-action runtime gate is required merely to accept this definition deliverable."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/style-inventory.json",
+        "docs/premium-ui/style-inventory.md",
+        "docs/premium-ui/reviews/overview-style-inventory-current.json",
+        "docs/premium-ui/qa-overview-steps.json"
+      ],
+      "remaining_gap": "Current frontend/src inventory is strong but explicitly excludes some presentation sources.",
+      "procedural_exception": "The original requirement's baseline or before-implementation timing must be evidenced by dated artifacts. Later inventories/specifications cannot retroactively establish that timing; record the historical limitation where original evidence is insufficient."
+    },
+    {
+      "item_id": 10,
+      "requirement": "Classify reusable surfaces into pages, panels, record cards, tables, editors, dialogs and contextual overlays.",
+      "acceptance_scope": "Definition/documentation or recorded-baseline deliverable: Reusable surface classification. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Classify reusable surfaces as pages, panels, record cards, tables, editors, dialogs or contextual overlays",
+        "Link each family to existing source and describe its presentation/interaction boundary"
+      ],
+      "evidence_needed": [
+        "A source-grounded, dated register/specification/baseline containing the complete requested information and explicit exceptions.",
+        "Traceable references demonstrating: Classify reusable surfaces as pages, panels, record cards, tables, editors, dialogs or contextual overlays; Link each family to existing source and describe its presentation/interaction boundary. No unrelated all-role, native-screen-reader or all-action runtime gate is required merely to accept this definition deliverable."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/surface-taxonomy.md",
+        "docs/premium-ui/reviews/current-family-matrix-wave.json",
+        "docs/premium-ui/qa-family-regressions-current.json",
+        "docs/premium-ui/qa-responsive/report.json",
+        "docs/premium-ui/table-surface-inventory.json",
+        "docs/premium-ui/representative-fixtures.md"
+      ],
+      "remaining_gap": "Verify taxonomy remains aligned with newly added surface families; do not require unrelated runtime certification.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 11,
+      "requirement": "Establish representative fixtures containing long names, missing values, large counts, mixed statuses and boundary dates.",
+      "acceptance_scope": "Definition/documentation or recorded-baseline deliverable: Representative fixture definition. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Provide concrete fixtures covering long names, missing values, large counts, mixed statuses and boundary dates",
+        "Link fixture definitions to their assertion locations and document synthetic/disposable scope"
+      ],
+      "evidence_needed": [
+        "A source-grounded, dated register/specification/baseline containing the complete requested information and explicit exceptions.",
+        "Traceable references demonstrating: Provide concrete fixtures covering long names, missing values, large counts, mixed statuses and boundary dates; Link fixture definitions to their assertion locations and document synthetic/disposable scope. No unrelated all-role, native-screen-reader or all-action runtime gate is required merely to accept this definition deliverable."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/representative-fixtures.md",
+        "docs/premium-ui/reviews/current-family-matrix-wave.json",
+        "docs/premium-ui/qa-family-regressions-current.json",
+        "docs/premium-ui/qa-responsive/report.json",
+        "docs/premium-ui/surface-taxonomy.md",
+        "docs/premium-ui/table-surface-inventory.json"
+      ],
+      "remaining_gap": "Documented fixture families exist; retain verifiable references and identify any missing requested condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 12,
+      "requirement": "Document current permission-dependent visibility for admins, department heads, board members and signed-out users.",
+      "acceptance_scope": "Definition/documentation or recorded-baseline deliverable: Permission-dependent visibility documentation. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Document navigation and operational entry visibility for administrators, department heads, board members and signed-out users",
+        "Identify conditional row/profile/generation actions and preserve server authority rather than inferring permissions from visible navigation"
+      ],
+      "evidence_needed": [
+        "A source-grounded, dated register/specification/baseline containing the complete requested information and explicit exceptions.",
+        "Traceable references demonstrating: Document navigation and operational entry visibility for administrators, department heads, board members and signed-out users; Identify conditional row/profile/generation actions and preserve server authority rather than inferring permissions from visible navigation. No unrelated all-role, native-screen-reader or all-action runtime gate is required merely to accept this definition deliverable."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/role-visibility-current.md",
+        "docs/premium-ui/reviews/role-navigation-current.json",
+        "docs/premium-ui/qa-role-navigation.json",
+        "docs/premium-ui/qa-signed-out-navigation.json"
+      ],
+      "remaining_gap": "Current role register covers navigation and specified toolbars but not all conditional action families.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 13,
+      "requirement": "Identify protected workflow invariants, including selected-month continuity, assignment preservation, reviewed imports and explicit publishing.",
+      "acceptance_scope": "Definition/documentation or recorded-baseline deliverable: Protected workflow invariant definition. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Identify selected-month continuity, assignment preservation, reviewed imports and explicit publication/apply boundaries",
+        "Link each invariant to affected frontend modules and its planned or existing verification evidence"
+      ],
+      "evidence_needed": [
+        "A source-grounded, dated register/specification/baseline containing the complete requested information and explicit exceptions.",
+        "Traceable references demonstrating: Identify selected-month continuity, assignment preservation, reviewed imports and explicit publication/apply boundaries; Link each invariant to affected frontend modules and its planned or existing verification evidence. No unrelated all-role, native-screen-reader or all-action runtime gate is required merely to accept this definition deliverable."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/protected-workflow-invariants.json",
+        "docs/premium-ui/reviews/specialist-integration-current.json",
+        "docs/premium-ui/reviews/member-sort-current.json",
+        "docs/premium-ui/qa-member-sort.json"
+      ],
+      "remaining_gap": "Invariant register exists; documentary acceptance does not require every downstream runtime gate.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 14,
+      "requirement": "Record current bundle sizes, render timings, layout shifts and long tasks on documented test hardware.",
+      "acceptance_scope": "Definition/documentation or recorded-baseline deliverable: Baseline performance measurement. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Record bundle sizes, render timings, layout shifts and long tasks for representative workloads",
+        "Record hardware, browser, build, fixture sizes and measurement method so baseline observations can be reproduced"
+      ],
+      "evidence_needed": [
+        "A source-grounded, dated register/specification/baseline containing the complete requested information and explicit exceptions.",
+        "Traceable references demonstrating: Record bundle sizes, render timings, layout shifts and long tasks for representative workloads; Record hardware, browser, build, fixture sizes and measurement method so baseline observations can be reproduced. No unrelated all-role, native-screen-reader or all-action runtime gate is required merely to accept this definition deliverable."
+      ],
+      "existing_evidence_candidates": [
+        "frontend/src/main.ts",
+        "frontend/src/unit-board-filters.ts",
+        "frontend/src/premium-theme.css",
+        "frontend/src/unit-member-lists.ts",
+        "docs/premium-ui/qa-unit-performance-baseline.json",
+        "docs/premium-ui/qa-unit-performance.json",
+        "docs/premium-ui/qa-unit-performance-comparison.json",
+        "docs/premium-ui/qa-unit-members-independent.json",
+        "docs/premium-ui/qa-unit-member-performance-comparison.json"
+      ],
+      "remaining_gap": "Existing bounded performance reports lack a complete hardware-labelled application baseline and layout-shift coverage.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 15,
+      "requirement": "Establish a defect register that separates verified bugs, design improvements, historical findings and open investigation questions.",
+      "acceptance_scope": "Definition/documentation or recorded-baseline deliverable: Defect-register establishment. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Maintain a searchable register separating reproduced bugs, design improvements, historical findings and investigation questions",
+        "Give each entry evidence, applicability snapshot, owner/status and next disposition"
+      ],
+      "evidence_needed": [
+        "A source-grounded, dated register/specification/baseline containing the complete requested information and explicit exceptions.",
+        "Traceable references demonstrating: Maintain a searchable register separating reproduced bugs, design improvements, historical findings and investigation questions; Give each entry evidence, applicability snapshot, owner/status and next disposition. No unrelated all-role, native-screen-reader or all-action runtime gate is required merely to accept this definition deliverable."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/specialist-action-queue-current.json",
+        "docs/premium-ui/reliability-gaps-current.md",
+        "docs/premium-ui/reviews/progress-window-history-retry-current.json",
+        "docs/premium-ui/qa-progress-window.json",
+        "docs/premium-ui/qa-member-history-retry.json"
+      ],
+      "remaining_gap": "Current evidence is distributed across historical reviews and specialist queues.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 16,
+      "requirement": "Define accessible component states before implementation: default, hover, focus, selected, disabled, busy, error and success.",
+      "acceptance_scope": "Definition/documentation or recorded-baseline deliverable: Accessible component-state definition. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Specify default, hover, focus, selected, disabled, busy, error and success behavior for applicable component families",
+        "Define visible semantics, keyboard behavior and recovery expectations separately from implementation certification"
+      ],
+      "evidence_needed": [
+        "A source-grounded, dated register/specification/baseline containing the complete requested information and explicit exceptions.",
+        "Traceable references demonstrating: Specify default, hover, focus, selected, disabled, busy, error and success behavior for applicable component families; Define visible semantics, keyboard behavior and recovery expectations separately from implementation certification. No unrelated all-role, native-screen-reader or all-action runtime gate is required merely to accept this definition deliverable."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/component-state-specification.md",
+        "frontend/src/rota-compute.ts",
+        "frontend/src/premium-theme.css",
+        "frontend/src/component-reference.ts",
+        "frontend/src/component-reference.css",
+        "docs/premium-ui/reviews/history-compute-current.json",
+        "docs/premium-ui/qa-component-correction.json",
+        "docs/premium-ui/qa-operational-states-independent.json",
+        "docs/premium-ui/components/report.json",
+        "docs/premium-ui/qa-forced-colors/selection-current.json",
+        "docs/premium-ui/reviews/forced-colors-current-style-independent.json",
+        "docs/premium-ui/reviews/guide-copy-forced-colors-current.json",
+        "docs/premium-ui/qa-reference-gallery.json",
+        "docs/premium-ui/reviews/reference-contrast-independent-current.json"
+      ],
+      "remaining_gap": "State specification exists; original timing cannot be recovered from later documentation.",
+      "procedural_exception": "The original requirement's baseline or before-implementation timing must be evidenced by dated artifacts. Later inventories/specifications cannot retroactively establish that timing; record the historical limitation where original evidence is insufficient."
+    },
+    {
+      "item_id": 17,
+      "requirement": "Map every existing browser suite to the screens, states and actions it actually verifies.",
+      "acceptance_scope": "Definition/documentation or recorded-baseline deliverable: Existing browser-suite coverage map. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Map every existing browser suite to screens, states and actions actually asserted",
+        "Separate screen presence, intercepted outcomes, real persistence and artifact assertions and record excluded variants"
+      ],
+      "evidence_needed": [
+        "A source-grounded, dated register/specification/baseline containing the complete requested information and explicit exceptions.",
+        "Traceable references demonstrating: Map every existing browser suite to screens, states and actions actually asserted; Separate screen presence, intercepted outcomes, real persistence and artifact assertions and record excluded variants. No unrelated all-role, native-screen-reader or all-action runtime gate is required merely to accept this definition deliverable."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-methodology.md",
+        "docs/premium-ui/qa-member-csv-choice-independent.json",
+        "docs/premium-ui/reviews/skip-heading-csv-current.json",
+        "docs/premium-ui/qa-member-roster-bulk-independent.json",
+        "docs/premium-ui/reviews/history-controls-cleanup-current.json",
+        "docs/premium-ui/qa-member-save-independent.json",
+        "docs/premium-ui/reviews/profile-selection-current.json",
+        "docs/premium-ui/qa-member-csv-correction-independent.json",
+        "docs/premium-ui/reviews/admin-validation-current.json",
+        "docs/premium-ui/reviews/member-candidate-profile-close-current.json",
+        "docs/premium-ui/qa-member-csv-candidate.json",
+        "docs/premium-ui/qa-legacy-profile-fields.json",
+        "docs/premium-ui/qa-record-close.json",
+        "docs/premium-ui/reviews/progress-window-history-retry-current.json"
+      ],
+      "remaining_gap": "No complete assertion-level suite coverage map is established.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 18,
+      "requirement": "Define objective pass conditions and supporting evidence for every numbered upgrade before marking it complete.",
+      "acceptance_scope": "Definition/documentation or recorded-baseline deliverable: Requirement-specific objective acceptance criteria. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Give each numbered upgrade concrete pass conditions, required evidence and explicit remaining gaps matching its actual scope",
+        "Keep documentary, procedural, runtime and external-device requirements distinct before assigning completion"
+      ],
+      "evidence_needed": [
+        "A source-grounded, dated register/specification/baseline containing the complete requested information and explicit exceptions.",
+        "Traceable references demonstrating: Give each numbered upgrade concrete pass conditions, required evidence and explicit remaining gaps matching its actual scope; Keep documentary, procedural, runtime and external-device requirements distinct before assigning completion. No unrelated all-role, native-screen-reader or all-action runtime gate is required merely to accept this definition deliverable."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/traceability.json",
+        "docs/premium-ui/acceptance-audit-current.json",
+        "docs/premium-ui/qa-member-csv-choice-independent.json",
+        "docs/premium-ui/reviews/skip-heading-csv-current.json",
+        "docs/premium-ui/qa-member-roster-bulk-independent.json",
+        "docs/premium-ui/reviews/history-controls-cleanup-current.json",
+        "docs/premium-ui/qa-member-save-independent.json",
+        "docs/premium-ui/reviews/profile-selection-current.json",
+        "docs/premium-ui/qa-member-csv-correction-independent.json",
+        "docs/premium-ui/reviews/admin-validation-current.json",
+        "docs/premium-ui/qa-responsive/report.json",
+        "docs/premium-ui/reviews/responsive-matrix-refresh-current.json",
+        "docs/premium-ui/reviews/member-candidate-profile-close-current.json",
+        "docs/premium-ui/qa-member-csv-candidate.json"
+      ],
+      "remaining_gap": "This criteria register supplies definitions only; independent disposition against evidence remains necessary.",
+      "procedural_exception": "The original requirement's baseline or before-implementation timing must be evidenced by dated artifacts. Later inventories/specifications cannot retroactively establish that timing; record the historical limitation where original evidence is insufficient."
+    },
+    {
+      "item_id": 19,
+      "requirement": "Prioritize broken actions, inaccessible controls, hidden content and lost drafts ahead of purely decorative refinements.",
+      "acceptance_scope": "Definition/documentation or recorded-baseline deliverable: Implementation prioritization policy and execution. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Order reproduced broken actions, inaccessible controls, hidden content and lost drafts ahead of decorative work",
+        "Record prioritization changes and evidence-backed dispositions in the active queue"
+      ],
+      "evidence_needed": [
+        "A source-grounded, dated register/specification/baseline containing the complete requested information and explicit exceptions.",
+        "Traceable references demonstrating: Order reproduced broken actions, inaccessible controls, hidden content and lost drafts ahead of decorative work; Record prioritization changes and evidence-backed dispositions in the active queue. No unrelated all-role, native-screen-reader or all-action runtime gate is required merely to accept this definition deliverable."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/specialist-action-queue-current.json",
+        "docs/premium-ui/execution-status.md",
+        "frontend/src/workspace-load-state.ts",
+        "frontend/src/record-workspace.ts",
+        "frontend/src/reference-workspace.ts",
+        "frontend/src/member-workspace.ts",
+        "frontend/src/operational-import.ts",
+        "frontend/src/rota-compute.ts",
+        "frontend/src/premium-theme.css",
+        "frontend/src/main.ts",
+        "frontend/src/past-duties.ts",
+        "frontend/src/recycle-bin.ts",
+        "frontend/src/services/api.ts",
+        "docs/premium-ui/qa-workspace-unload-independent.json"
+      ],
+      "remaining_gap": "Reconcile historical queues into a current authoritative priority register.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 20,
+      "requirement": "Freeze the approved visual direction and workflow contracts before broad styling begins, documenting later scope changes explicitly.",
+      "acceptance_scope": "Definition/documentation or recorded-baseline deliverable: Visual/workflow contract baseline and change control. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Record approved visual direction and protected workflow contracts before broad styling",
+        "Document subsequent scope or visual-contract changes with rationale, affected snapshot and review"
+      ],
+      "evidence_needed": [
+        "A source-grounded, dated register/specification/baseline containing the complete requested information and explicit exceptions.",
+        "Traceable references demonstrating: Record approved visual direction and protected workflow contracts before broad styling; Document subsequent scope or visual-contract changes with rationale, affected snapshot and review. No unrelated all-role, native-screen-reader or all-action runtime gate is required merely to accept this definition deliverable."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/visual-contract.md",
+        "docs/premium-ui/reviews/header-wrap-current.json",
+        "docs/premium-ui/qa-header-wrap.json"
+      ],
+      "remaining_gap": "Existing visual contract was recorded after implementation and openly acknowledges the timing exception.",
+      "procedural_exception": "The existing visual-contract.md explicitly records that the contract was documented after implementation; it cannot establish the required pre-styling freeze. Preserve that exception and document subsequent change control."
+    },
+    {
+      "item_id": 21,
+      "requirement": "Consolidate competing token definitions into one documented semantic system while preserving intentional component-specific variations.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Semantic-token consolidation. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Establish one documented semantic token authority with intentional component variations",
+        "Reconcile competing legacy definitions using computed-style and behavior equivalence before deleting compatibility rules"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Establish one documented semantic token authority with intentional component variations; Reconcile competing legacy definitions using computed-style and behavior equivalence before deleting compatibility rules, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/design-system.md",
+        "docs/premium-ui/style-inventory.json",
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/component-state-specification.md"
+      ],
+      "remaining_gap": "Active override authority exists but contextual legacy consolidation is unfinished.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 22,
+      "requirement": "Introduce a shared semantic-color map separating brand identity, interaction feedback, scheduling status, chart categories and destructive actions.",
+      "acceptance_scope": "Definition/documentation or recorded-baseline deliverable: Semantic-color map definition. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Map brand, interaction feedback, scheduling statuses, chart categories and destructive actions to distinct named purposes",
+        "Document component-specific exceptions so decoration cannot imply operational state"
+      ],
+      "evidence_needed": [
+        "A source-grounded, dated register/specification/baseline containing the complete requested information and explicit exceptions.",
+        "Traceable references demonstrating: Map brand, interaction feedback, scheduling statuses, chart categories and destructive actions to distinct named purposes; Document component-specific exceptions so decoration cannot imply operational state. No unrelated all-role, native-screen-reader or all-action runtime gate is required merely to accept this definition deliverable."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/style-inventory.md",
+        "docs/premium-ui/reviews/overview-style-inventory-current.json",
+        "docs/premium-ui/qa-overview-steps.json",
+        "docs/premium-ui/style-inventory.json",
+        "docs/premium-ui/design-system.md",
+        "docs/premium-ui/component-state-specification.md"
+      ],
+      "remaining_gap": "General families exist; scheduling/chart category mappings need explicit component/token reconciliation.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 23,
+      "requirement": "Apply royal navy consistently to navigation and workspace framing without darkening every content container.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Royal navy navigation/workspace application. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Apply navy consistently to navigation and workspace framing across supported themes",
+        "Inspect representative full workflows to confirm ordinary content containers retain readable surface hierarchy"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Apply navy consistently to navigation and workspace framing across supported themes; Inspect representative full workflows to confirm ordinary content containers retain readable surface hierarchy, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/royal-palette-current.json",
+        "docs/premium-ui/qa-royal-palette.json",
+        "docs/premium-ui/reviews/responsive-refresh-current.json",
+        "docs/premium-ui/qa-responsive-current-20261023/report.json",
+        "docs/premium-ui/reviews/frontend-build-snapshot-current.json",
+        "tmp/premium-responsive-current-20261023.log",
+        "tmp/premium-ui-responsive-refresh-unit.log",
+        "tools/frontend_visual_fixture_server.py",
+        "frontend/tests/premium-regression.browser.mjs",
+        "docs/premium-ui/design-system.md",
+        "docs/premium-ui/component-state-specification.md"
+      ],
+      "remaining_gap": "Complete current framing consistency and exception review.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 24,
+      "requirement": "Use violet for primary actions and active selection, with measured hover, pressed and focus variants.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Violet primary/selection states. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Use violet consistently for primary actions and active selection",
+        "Measure hover, pressed and focus variants on their actual surfaces in both themes while preserving visible focus"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Use violet consistently for primary actions and active selection; Measure hover, pressed and focus variants on their actual surfaces in both themes while preserving visible focus, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-forced-colors/selection-current.json",
+        "docs/premium-ui/reviews/guide-copy-forced-colors-current.json",
+        "docs/premium-ui/reviews/reference-contrast-independent-current.json",
+        "docs/premium-ui/reviews/gallery-duplicates-current.json",
+        "docs/premium-ui/design-system.md",
+        "docs/premium-ui/component-state-specification.md"
+      ],
+      "remaining_gap": "Current state coverage remains sampled rather than complete.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 25,
+      "requirement": "Reserve champagne accents for identity details and separators, keeping warning indicators visually distinct from decoration.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Champagne decorative accent restriction. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Limit champagne usage to identity details and separators",
+        "Confirm warning indicators have distinct semantic styling and textual meaning independent of champagne"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Limit champagne usage to identity details and separators; Confirm warning indicators have distinct semantic styling and textual meaning independent of champagne, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/royal-palette-current.json",
+        "docs/premium-ui/qa-royal-palette.json",
+        "docs/premium-ui/reviews/responsive-refresh-current.json",
+        "docs/premium-ui/qa-responsive-current-20261023/report.json",
+        "docs/premium-ui/reviews/frontend-build-snapshot-current.json",
+        "tmp/premium-responsive-current-20261023.log",
+        "tmp/premium-ui-responsive-refresh-unit.log",
+        "tools/frontend_visual_fixture_server.py",
+        "frontend/tests/premium-regression.browser.mjs",
+        "docs/premium-ui/design-system.md",
+        "docs/premium-ui/component-state-specification.md"
+      ],
+      "remaining_gap": "Classify remaining champagne usages and verify their operational context.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 26,
+      "requirement": "Retain burgundy as a controlled accent and preserve unmistakable danger styling for destructive operations.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Burgundy accent and danger distinction. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Use burgundy only in documented accent roles",
+        "Keep destructive actions unmistakably styled and named in both themes and compact contexts"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Use burgundy only in documented accent roles; Keep destructive actions unmistakably styled and named in both themes and compact contexts, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/operational-token-audit-current.json",
+        "docs/premium-ui/reviews/history-controls-cleanup-current.json",
+        "docs/premium-ui/design-system.md",
+        "docs/premium-ui/component-state-specification.md"
+      ],
+      "remaining_gap": "Complete accent/destructive usage inventory and contextual review.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 27,
+      "requirement": "Define complete light and dark mappings for surfaces, borders, input fields, overlays and disabled states.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Complete light/dark semantic mappings. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Define light and dark values for surfaces, borders, fields, overlays and disabled states",
+        "Inspect actual component instances for unmapped fallback or conflicting state colors"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Define light and dark values for surfaces, borders, fields, overlays and disabled states; Inspect actual component instances for unmapped fallback or conflicting state colors, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "frontend/src/component-reference.ts",
+        "frontend/src/component-reference.css",
+        "docs/premium-ui/qa-operational-states-independent.json",
+        "docs/premium-ui/qa-reference-gallery.json",
+        "docs/premium-ui/reviews/reference-contrast-independent-current.json",
+        "docs/premium-ui/reviews/gallery-duplicates-current.json",
+        "docs/premium-ui/reviews/responsive-refresh-current.json",
+        "docs/premium-ui/qa-responsive-current-20261023/report.json",
+        "docs/premium-ui/reviews/frontend-build-snapshot-current.json",
+        "tmp/premium-responsive-current-20261023.log",
+        "tmp/premium-ui-responsive-refresh-unit.log",
+        "tools/frontend_visual_fixture_server.py",
+        "frontend/tests/premium-regression.browser.mjs",
+        "docs/premium-ui/design-system.md"
+      ],
+      "remaining_gap": "Complete component/state mapping and legacy exception disposition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 28,
+      "requirement": "Measure actual state/theme pairings: 4.5:1 normal text, 3:1 large text and applicable essential non-text graphics.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Actual contrast verification. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Measure actual foreground/background/state/theme pairs against 4.5:1 normal text and 3:1 large text",
+        "Measure applicable essential non-text graphics and state boundaries at 3:1 and record legitimate exemptions"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Measure actual foreground/background/state/theme pairs against 4.5:1 normal text and 3:1 large text; Measure applicable essential non-text graphics and state boundaries at 3:1 and record legitimate exemptions, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-operational-states-independent.json",
+        "docs/premium-ui/reviews/reference-contrast-independent-current.json",
+        "docs/premium-ui/reviews/gallery-duplicates-current.json",
+        "docs/premium-ui/reviews/responsive-refresh-current.json",
+        "docs/premium-ui/qa-responsive-current-20261023/report.json",
+        "docs/premium-ui/reviews/frontend-build-snapshot-current.json",
+        "tmp/premium-responsive-current-20261023.log",
+        "tmp/premium-ui-responsive-refresh-unit.log",
+        "tools/frontend_visual_fixture_server.py",
+        "frontend/tests/premium-regression.browser.mjs",
+        "docs/premium-ui/reviews/independent-outcomes-strengthened-current.json",
+        "docs/premium-ui/contracts/reference-focus-states-current.json",
+        "docs/premium-ui/reviews/integrated-current-build-20261024.json",
+        "docs/premium-ui/design-system.md"
+      ],
+      "remaining_gap": "Existing measured subsets do not cover all actual operational pairings or current theme states.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 29,
+      "requirement": "Establish a clear typography scale for page titles, panel headings, field labels, body text and metadata.",
+      "acceptance_scope": "Definition/documentation or recorded-baseline deliverable: Typography scale definition. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Define a clear scale for page titles, panel headings, field labels, body copy and metadata",
+        "Link the scale to shared tokens and role-specific selectors so intended hierarchy is reproducible"
+      ],
+      "evidence_needed": [
+        "A source-grounded, dated register/specification/baseline containing the complete requested information and explicit exceptions.",
+        "Traceable references demonstrating: Define a clear scale for page titles, panel headings, field labels, body copy and metadata; Link the scale to shared tokens and role-specific selectors so intended hierarchy is reproducible. No unrelated all-role, native-screen-reader or all-action runtime gate is required merely to accept this definition deliverable."
+      ],
+      "existing_evidence_candidates": [
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/qa-account-form-layout.json",
+        "docs/premium-ui/reviews/count-import-layout-current.json",
+        "docs/premium-ui/design-system.md",
+        "docs/premium-ui/component-state-specification.md"
+      ],
+      "remaining_gap": "Definitions exist; check role coverage without imposing unrelated all-action runtime gates.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 30,
+      "requirement": "Increase sustained-reading text where cramped typography currently makes operational guidance difficult to scan comfortably.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Sustained-reading typography improvement. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Identify cramped operational guidance and increase text size/spacing where needed",
+        "Inspect wide and narrow presentations with long guidance to confirm readable flow and intact actions"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Identify cramped operational guidance and increase text size/spacing where needed; Inspect wide and narrow presentations with long guidance to confirm readable flow and intact actions, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/overview-style-inventory-current.json",
+        "docs/premium-ui/qa-overview-steps.json",
+        "docs/premium-ui/style-inventory.json",
+        "docs/premium-ui/style-inventory.md",
+        "docs/premium-ui/design-system.md",
+        "docs/premium-ui/component-state-specification.md"
+      ],
+      "remaining_gap": "Complete guidance-surface inventory and acceptance of remaining cramped text.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 31,
+      "requirement": "Use tabular numerals for workload totals, dates, percentages, capacity, runtime and comparison columns.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Tabular numeric presentation. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Apply tabular numerals to workload totals, dates, percentages, capacity, runtime and comparison columns",
+        "Verify computed numeric typography on actual instances in every requested category without altering values"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Apply tabular numerals to workload totals, dates, percentages, capacity, runtime and comparison columns; Verify computed numeric typography on actual instances in every requested category without altering values, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/leave-pressure-current.json",
+        "docs/premium-ui/qa-leave-pressure.json",
+        "docs/premium-ui/design-system.md",
+        "docs/premium-ui/component-state-specification.md"
+      ],
+      "remaining_gap": "Requested category coverage is incomplete despite shared selectors and scoped fixes.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 32,
+      "requirement": "Standardize line heights and paragraph widths so explanations remain readable inside both wide panels and narrow dialogs.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Readable line-height and paragraph measures. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Define consistent line heights and bounded reading widths for explanatory content",
+        "Inspect wide panels and narrow dialogs with long copy and enlarged text for readable flow and complete content"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Define consistent line heights and bounded reading widths for explanatory content; Inspect wide panels and narrow dialogs with long copy and enlarged text for readable flow and complete content, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-account-form-layout.json",
+        "docs/premium-ui/reviews/count-import-layout-current.json",
+        "docs/premium-ui/design-system.md",
+        "docs/premium-ui/component-state-specification.md"
+      ],
+      "remaining_gap": "Line-height coverage exists; paragraph-width and explanatory-surface coverage remain incomplete.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 33,
+      "requirement": "Replace decorative uppercase paragraphs with sentence case while retaining short, purposeful section labels where useful.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Contextual sentence-case cleanup. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Replace decorative uppercase paragraphs with sentence case while preserving source values and intentional short labels",
+        "Classify remaining uppercase declarations by actual content and verify long operational copy"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Replace decorative uppercase paragraphs with sentence case while preserving source values and intentional short labels; Classify remaining uppercase declarations by actual content and verify long operational copy, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/type-elevation-current.json",
+        "docs/premium-ui/qa-type-elevation.json",
+        "docs/premium-ui/design-system.md",
+        "docs/premium-ui/component-state-specification.md"
+      ],
+      "remaining_gap": "Representative fixes exist; remaining uppercase contexts require classification.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 34,
+      "requirement": "Define consistent spacing tokens for page gutters, card padding, field groups, toolbars and stacked mobile actions.",
+      "acceptance_scope": "Definition/documentation or recorded-baseline deliverable: Spacing-token definition. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Define consistent page gutter, card padding, field group, toolbar and mobile stack spacing tokens",
+        "Document the scale and intended role mappings using existing shared values"
+      ],
+      "evidence_needed": [
+        "A source-grounded, dated register/specification/baseline containing the complete requested information and explicit exceptions.",
+        "Traceable references demonstrating: Define consistent page gutter, card padding, field group, toolbar and mobile stack spacing tokens; Document the scale and intended role mappings using existing shared values. No unrelated all-role, native-screen-reader or all-action runtime gate is required merely to accept this definition deliverable."
+      ],
+      "existing_evidence_candidates": [
+        "frontend/src/styles.css",
+        "docs/premium-ui/component-state-specification.md",
+        "frontend/src/component-reference.ts",
+        "frontend/src/component-reference.css",
+        "docs/premium-ui/qa-reference-gallery.json",
+        "docs/premium-ui/reviews/gallery-duplicates-current.json",
+        "docs/premium-ui/design-system.md"
+      ],
+      "remaining_gap": "Definition deliverable exists; migration of every legacy declaration is a separate acceptance concern.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 35,
+      "requirement": "Establish distinct radius tokens for fields, cards, dialogs and status chips instead of indiscriminate pill shapes.",
+      "acceptance_scope": "Definition/documentation or recorded-baseline deliverable: Radius-token definition. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Define distinct field, card, dialog and status-chip radius roles",
+        "Document intentional compact/pill exceptions so ordinary surfaces do not receive indiscriminate pill shapes"
+      ],
+      "evidence_needed": [
+        "A source-grounded, dated register/specification/baseline containing the complete requested information and explicit exceptions.",
+        "Traceable references demonstrating: Define distinct field, card, dialog and status-chip radius roles; Document intentional compact/pill exceptions so ordinary surfaces do not receive indiscriminate pill shapes. No unrelated all-role, native-screen-reader or all-action runtime gate is required merely to accept this definition deliverable."
+      ],
+      "existing_evidence_candidates": [
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/component-state-specification.md",
+        "frontend/src/component-reference.ts",
+        "frontend/src/component-reference.css",
+        "docs/premium-ui/qa-reference-gallery.json",
+        "docs/premium-ui/reviews/gallery-duplicates-current.json",
+        "docs/premium-ui/design-system.md"
+      ],
+      "remaining_gap": "Tokens exist; verify complete role documentation rather than requiring unrelated workflow tests.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 36,
+      "requirement": "Limit elevation to a small documented hierarchy separating ordinary panels, menus and blocking dialogs.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Small elevation hierarchy. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Document a small hierarchy for ordinary panels, floating menus and blocking dialogs",
+        "Reconcile actual shadow declarations and intentional focus/inset exceptions against that hierarchy"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Document a small hierarchy for ordinary panels, floating menus and blocking dialogs; Reconcile actual shadow declarations and intentional focus/inset exceptions against that hierarchy, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/type-elevation-current.json",
+        "docs/premium-ui/qa-type-elevation.json",
+        "docs/premium-ui/design-system.md",
+        "docs/premium-ui/component-state-specification.md"
+      ],
+      "remaining_gap": "Sampled layers conform but legacy elevation exceptions remain unclassified.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 37,
+      "requirement": "Standardize one icon family, optical sizing, stroke weight and alignment with adjacent text and controls.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Unified icon family. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Use one locally defined family with consistent optical sizes, strokes and alignment",
+        "Classify remaining symbols as icons or meaningful text and migrate actual icons without removing labels"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Use one locally defined family with consistent optical sizes, strokes and alignment; Classify remaining symbols as icons or meaningful text and migrate actual icons without removing labels, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/icon-contract.md",
+        "docs/premium-ui/reviews/icons-current.json",
+        "docs/premium-ui/qa-icons.json",
+        "docs/premium-ui/reviews/independent-outcomes-strengthened-current.json",
+        "docs/premium-ui/contracts/reference-focus-states-current.json",
+        "docs/premium-ui/design-system.md",
+        "docs/premium-ui/component-state-specification.md"
+      ],
+      "remaining_gap": "Eight SVGs are unified; remaining icon/symbol contexts need classification and visual review.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 38,
+      "requirement": "Provide reliable local font and icon fallbacks so blocked resources cannot erase labels or alter control usability.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Local font/icon resilience. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Provide usable local font stacks and icon assets or text fallbacks",
+        "Block optional external font/icon resources and verify labels, control targets and layout remain usable"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Provide usable local font stacks and icon assets or text fallbacks; Block optional external font/icon resources and verify labels, control targets and layout remain usable, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/unit-motion-current.json",
+        "docs/premium-ui/qa-unit-motion.json",
+        "docs/premium-ui/reviews/icons-current.json",
+        "docs/premium-ui/qa-icons.json",
+        "docs/premium-ui/icon-contract.md",
+        "docs/premium-ui/design-system.md",
+        "docs/premium-ui/component-state-specification.md"
+      ],
+      "remaining_gap": "Local resources exist; complete blocked-resource outcome coverage is missing.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 39,
+      "requirement": "Define restrained motion durations and a reduced-motion alternative for every nonessential transition or loading treatment.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Motion contract and reduced alternatives. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Define restrained durations for nonessential transitions and loading treatments",
+        "Inventory CSS and imperative animation/scroll behavior and verify reduced-motion alternatives preserve outcomes"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Define restrained durations for nonessential transitions and loading treatments; Inventory CSS and imperative animation/scroll behavior and verify reduced-motion alternatives preserve outcomes, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/reviews/unit-motion-current.json",
+        "docs/premium-ui/qa-unit-motion.json",
+        "docs/premium-ui/design-system.md",
+        "docs/premium-ui/component-state-specification.md"
+      ],
+      "remaining_gap": "Global CSS reduction and scoped scroll fixes exist; complete imperative-motion/duration inventory remains.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 40,
+      "requirement": "Create a component reference specifying control heights, icon sizes, radii, spacing and every interaction state in both themes.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Two-theme component reference. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Provide reference examples specifying control heights, icon sizes, radii and spacing",
+        "Demonstrate all applicable default, hover, focus, selected, disabled, busy, error and success states in light and dark themes"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Provide reference examples specifying control heights, icon sizes, radii and spacing; Demonstrate all applicable default, hover, focus, selected, disabled, busy, error and success states in light and dark themes, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/component-state-specification.md",
+        "frontend/component-reference.html",
+        "frontend/src/component-reference.css",
+        "frontend/src/component-reference.ts",
+        "docs/premium-ui/components/report.json",
+        "docs/premium-ui/qa-component-correction.json",
+        "docs/premium-ui/qa-operational-states-independent.json",
+        "docs/premium-ui/qa-reference-gallery.json",
+        "docs/premium-ui/reviews/reference-contrast-independent-current.json",
+        "docs/premium-ui/reviews/gallery-duplicates-current.json",
+        "docs/premium-ui/reviews/independent-outcomes-strengthened-current.json",
+        "docs/premium-ui/contracts/reference-focus-states-current.json",
+        "docs/premium-ui/design-system.md"
+      ],
+      "remaining_gap": "Gallery exists but full applicable component/state matrix and current contrast/focus evidence remain incomplete.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 41,
+      "requirement": "Establish supported viewport and input-mode ranges before assigning breakpoints to individual components or entire pages.",
+      "acceptance_scope": "Definition/documentation or recorded-baseline deliverable: Supported viewport/input-range definition. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Document supported viewport ranges, orientation and pointer/keyboard/touch modes before selecting breakpoints",
+        "Link breakpoint decisions to those supported conditions and explicit exclusions"
+      ],
+      "evidence_needed": [
+        "A source-grounded, dated register/specification/baseline containing the complete requested information and explicit exceptions.",
+        "Traceable references demonstrating: Document supported viewport ranges, orientation and pointer/keyboard/touch modes before selecting breakpoints; Link breakpoint decisions to those supported conditions and explicit exclusions. No unrelated all-role, native-screen-reader or all-action runtime gate is required merely to accept this definition deliverable."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/component-state-specification.md",
+        "docs/premium-ui/qa-responsive/report.json",
+        "docs/premium-ui/reviews/responsive-matrix-refresh-current.json",
+        "docs/premium-ui/reviews/overview-style-inventory-current.json",
+        "docs/premium-ui/qa-overview-steps.json",
+        "docs/premium-ui/style-inventory.json",
+        "docs/premium-ui/style-inventory.md",
+        "docs/premium-ui/reviews/responsive-refresh-current.json",
+        "docs/premium-ui/qa-responsive-current-20261023/report.json",
+        "docs/premium-ui/reviews/frontend-build-snapshot-current.json",
+        "tmp/premium-responsive-current-20261023.log",
+        "tmp/premium-ui-responsive-refresh-unit.log",
+        "tools/frontend_visual_fixture_server.py",
+        "frontend/tests/premium-regression.browser.mjs"
+      ],
+      "remaining_gap": "Supported matrix exists in scattered specifications; consolidate range/input contract and original timing disposition.",
+      "procedural_exception": "The original requirement's baseline or before-implementation timing must be evidenced by dated artifacts. Later inventories/specifications cannot retroactively establish that timing; record the historical limitation where original evidence is insufficient."
+    },
+    {
+      "item_id": 42,
+      "requirement": "Replace disconnected page-width rules with a shell grid supporting wide boards and comfortably bounded reading panels.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Responsive shell grid. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Use one coherent shell composition for wide boards and bounded reading panels",
+        "Verify shell expansion, compact navigation and mobile layouts retain content and usable reading measures"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Use one coherent shell composition for wide boards and bounded reading panels; Verify shell expansion, compact navigation and mobile layouts retain content and usable reading measures, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-account-form-layout.json",
+        "docs/premium-ui/reviews/count-import-layout-current.json",
+        "docs/premium-ui/qa-responsive/report.json",
+        "docs/premium-ui/reviews/responsive-matrix-refresh-current.json",
+        "docs/premium-ui/reviews/overview-style-inventory-current.json",
+        "docs/premium-ui/qa-overview-steps.json",
+        "docs/premium-ui/style-inventory.json",
+        "docs/premium-ui/style-inventory.md"
+      ],
+      "remaining_gap": "Complete current shell geometry and per-surface exception acceptance.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 43,
+      "requirement": "Use fluid gutters with minimum and maximum limits so layouts breathe without wasting space on smaller screens.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Fluid page gutters. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Define fluid gutters with explicit lower and upper limits",
+        "Measure narrow and wide layouts to confirm controls fit and reading surfaces avoid excessive empty space"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Define fluid gutters with explicit lower and upper limits; Measure narrow and wide layouts to confirm controls fit and reading surfaces avoid excessive empty space, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-responsive/report.json",
+        "docs/premium-ui/reviews/responsive-matrix-refresh-current.json",
+        "docs/premium-ui/reviews/overview-style-inventory-current.json",
+        "docs/premium-ui/qa-overview-steps.json",
+        "docs/premium-ui/style-inventory.json",
+        "docs/premium-ui/style-inventory.md",
+        "docs/premium-ui/reviews/responsive-refresh-current.json",
+        "docs/premium-ui/qa-responsive-current-20261023/report.json",
+        "docs/premium-ui/reviews/frontend-build-snapshot-current.json",
+        "tmp/premium-responsive-current-20261023.log",
+        "tmp/premium-ui-responsive-refresh-unit.log",
+        "tools/frontend_visual_fixture_server.py",
+        "frontend/tests/premium-regression.browser.mjs"
+      ],
+      "remaining_gap": "Verify computed gutter range across supported shell variants.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 44,
+      "requirement": "Give shrinking Grid and Flexbox children explicit minimum-size rules to prevent long content expanding entire pages.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Shrink-safe Grid/Flex children. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Identify shrinking grid/flex content and apply explicit minimum-size rules where needed",
+        "Use long unbroken values and nested toolbars to prove children cannot expand the document horizontally"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Identify shrinking grid/flex content and apply explicit minimum-size rules where needed; Use long unbroken values and nested toolbars to prove children cannot expand the document horizontally, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-container-reflow-independent.json",
+        "docs/premium-ui/reviews/reflow-linked-recovery-current.json",
+        "docs/premium-ui/reviews/overview-style-inventory-current.json",
+        "docs/premium-ui/qa-overview-steps.json",
+        "docs/premium-ui/style-inventory.json",
+        "docs/premium-ui/style-inventory.md"
+      ],
+      "remaining_gap": "Complete affected-container coverage rather than treating shared rules as universal proof.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 45,
+      "requirement": "Introduce size container queries where panels change width independently of the browser window or navigation state.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Panel-size container queries. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Use size container queries for reusable panels whose available width changes independently of viewport",
+        "Verify the same component in different container widths responds without losing controls or data"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Use size container queries for reusable panels whose available width changes independently of viewport; Verify the same component in different container widths responds without losing controls or data, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "frontend/src/premium-theme.css",
+        "frontend/src/member-workspace.ts",
+        "docs/premium-ui/reviews/compute-container-current-independent.json",
+        "docs/premium-ui/qa-container-reflow-independent.json",
+        "docs/premium-ui/reviews/reflow-linked-recovery-current.json",
+        "docs/premium-ui/qa-member-container-independent.json",
+        "docs/premium-ui/reviews/member-container-current.json",
+        "docs/premium-ui/reviews/member-width-existing-regressions-current.json",
+        "docs/premium-ui/qa-account-form-layout.json",
+        "docs/premium-ui/reviews/count-import-layout-current.json",
+        "docs/premium-ui/qa-responsive/report.json",
+        "docs/premium-ui/reviews/responsive-matrix-refresh-current.json",
+        "docs/premium-ui/reviews/responsive-refresh-current.json",
+        "docs/premium-ui/qa-responsive-current-20261023/report.json"
+      ],
+      "remaining_gap": "Bounded chooser/profile work exists; complete reusable-panel candidate classification and adoption.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 46,
+      "requirement": "Keep functional media-query or intrinsic-layout fallbacks for components when container-query support is unavailable.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Container-query fallback. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Provide media-query or intrinsic-layout fallback for every container-query-dependent component",
+        "Disable or emulate absent support and verify usable content/actions with the fallback"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Provide media-query or intrinsic-layout fallback for every container-query-dependent component; Disable or emulate absent support and verify usable content/actions with the fallback, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "frontend/src/premium-theme.css",
+        "frontend/src/member-workspace.ts",
+        "docs/premium-ui/reviews/compute-container-current-independent.json",
+        "docs/premium-ui/qa-container-reflow-independent.json",
+        "docs/premium-ui/reviews/reflow-linked-recovery-current.json",
+        "docs/premium-ui/qa-member-container-independent.json",
+        "docs/premium-ui/reviews/member-container-current.json",
+        "docs/premium-ui/reviews/member-width-existing-regressions-current.json",
+        "docs/premium-ui/reviews/responsive-refresh-current.json",
+        "docs/premium-ui/qa-responsive-current-20261023/report.json",
+        "docs/premium-ui/reviews/frontend-build-snapshot-current.json",
+        "tmp/premium-responsive-current-20261023.log",
+        "tmp/premium-ui-responsive-refresh-unit.log",
+        "tools/frontend_visual_fixture_server.py"
+      ],
+      "remaining_gap": "Complete per-component fallback assertions beyond supported-browser default rendering.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 47,
+      "requirement": "Resolve the 700–768px transition band deliberately, testing every breakpoint immediately below, at and above its threshold.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Breakpoint-edge continuity. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Enumerate actual breakpoints in the 700–768px transition band",
+        "Test immediately below, at and above each threshold for geometry, focus and navigation access"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Enumerate actual breakpoints in the 700–768px transition band; Test immediately below, at and above each threshold for geometry, focus and navigation access, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "frontend/src/member-workspace.ts",
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/qa-member-container-independent.json",
+        "docs/premium-ui/qa-profile-rail-independent.json",
+        "docs/premium-ui/reviews/member-container-current.json",
+        "docs/premium-ui/reviews/member-width-existing-regressions-current.json",
+        "docs/premium-ui/reviews/record-table-names-current.json",
+        "docs/premium-ui/reviews/integrated-current-build-20261024.json"
+      ],
+      "remaining_gap": "Complete current breakpoint inventory and edge matrix for affected components.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 48,
+      "requirement": "Make comfortable density the default; permit documented compact variants for comparison data rather than cramped editors and guidance.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Comfortable default density. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Use readable default field/control spacing for editors and guidance",
+        "Restrict compact density to documented comparison contexts and verify essential data/actions remain legible"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Use readable default field/control spacing for editors and guidance; Restrict compact density to documented comparison contexts and verify essential data/actions remain legible, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/overview-style-inventory-current.json",
+        "docs/premium-ui/qa-overview-steps.json",
+        "docs/premium-ui/style-inventory.json",
+        "docs/premium-ui/style-inventory.md"
+      ],
+      "remaining_gap": "Review remaining dense editor/guidance exceptions and document valid compact variants.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 49,
+      "requirement": "Replace arbitrary fixed heights with content-driven sizing except where a bounded scrolling region is genuinely necessary.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Content-driven height cleanup. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Replace arbitrary content heights that clip or waste space with intrinsic sizing",
+        "Document justified bounded scrolling regions and prove their final content/actions remain accessible"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Replace arbitrary content heights that clip or waste space with intrinsic sizing; Document justified bounded scrolling regions and prove their final content/actions remain accessible, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/compute-container-current-independent.json",
+        "docs/premium-ui/reviews/reflow-linked-recovery-current.json",
+        "docs/premium-ui/qa-member-container-independent.json",
+        "docs/premium-ui/reviews/member-container-current.json",
+        "docs/premium-ui/reviews/member-width-existing-regressions-current.json",
+        "docs/premium-ui/reviews/mobile-member-filter-hierarchy-current.json",
+        "docs/premium-ui/reviews/member-create-disclosure-current.json"
+      ],
+      "remaining_gap": "Classify remaining fixed-height declarations and verify contextual behavior.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 50,
+      "requirement": "Use dynamic viewport sizing for full-height mobile surfaces, retaining a stable fallback for older browser behavior.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Dynamic mobile viewport sizing. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Use dynamic viewport units for full-height mobile surfaces with stable fallback declarations",
+        "Verify reduced usable height and orientation changes preserve close controls, body scrolling and actions"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Use dynamic viewport units for full-height mobile surfaces with stable fallback declarations; Verify reduced usable height and orientation changes preserve close controls, body scrolling and actions, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/rules-dock-current.json",
+        "docs/premium-ui/qa-rules-dock.json",
+        "docs/premium-ui/reviews/responsive-refresh-current.json",
+        "docs/premium-ui/qa-responsive-current-20261023/report.json",
+        "docs/premium-ui/reviews/frontend-build-snapshot-current.json",
+        "tmp/premium-responsive-current-20261023.log",
+        "tmp/premium-ui-responsive-refresh-unit.log",
+        "tools/frontend_visual_fixture_server.py",
+        "frontend/tests/premium-regression.browser.mjs"
+      ],
+      "remaining_gap": "Complete full-height surface coverage and fallback assertions; emulation cannot certify physical browser chrome.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 51,
+      "requirement": "Add safe-area insets to bottom navigation, sticky actions, drawer edges and full-screen mobile dialogs.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Safe-area edge protection. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Apply safe-area insets to bottom navigation, sticky actions, drawer edges and mobile full-screen dialogs",
+        "Verify simulated nonzero insets do not hide content or make final actions unreachable"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Apply safe-area insets to bottom navigation, sticky actions, drawer edges and mobile full-screen dialogs; Verify simulated nonzero insets do not hide content or make final actions unreachable, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/shell-safe-area-current.json",
+        "docs/premium-ui/qa-shell-safe-area.json"
+      ],
+      "remaining_gap": "Complete edge-surface/inset coverage with explicit physical-device limitation.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 52,
+      "requirement": "Reserve clearance for actual sticky dimensions, proving the final review row and validation errors scroll fully above wrapped controls.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Sticky-dimension clearance. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Reserve clearance based on actual wrapped sticky-action dimensions",
+        "Scroll final review rows and validation messages above the controls and verify visibility and hit testing"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Reserve clearance based on actual wrapped sticky-action dimensions; Scroll final review rows and validation messages above the controls and verify visibility and hit testing, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [],
+      "remaining_gap": "Bounded long-review checks exist; remaining sticky editors/review surfaces need measured coverage.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 53,
+      "requirement": "Define a single primary scroll container for each screen or dialog, allowing nested scrolling only when explicitly justified.",
+      "acceptance_scope": "Definition/documentation or recorded-baseline deliverable: Primary scroll-container definition. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Identify one primary scroller for each screen/dialog",
+        "Document justified nested comparison scrollers and verify keyboard/pointer access without trapped or competing scroll areas"
+      ],
+      "evidence_needed": [
+        "A source-grounded, dated register/specification/baseline containing the complete requested information and explicit exceptions.",
+        "Traceable references demonstrating: Identify one primary scroller for each screen/dialog; Document justified nested comparison scrollers and verify keyboard/pointer access without trapped or competing scroll areas. No unrelated all-role, native-screen-reader or all-action runtime gate is required merely to accept this definition deliverable."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/surface-taxonomy.md",
+        "docs/premium-ui/reviews/rules-dock-current.json",
+        "docs/premium-ui/qa-rules-dock.json"
+      ],
+      "remaining_gap": "Complete surface-by-surface scroll ownership register and behavior checks.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 54,
+      "requirement": "Ensure focused fields remain visible when software keyboards, browser chrome or orientation changes reduce usable screen height.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Focused-field viewport resilience. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Keep focused fields visible when usable height shrinks due to keyboard, chrome or orientation",
+        "Verify scroll/viewport adjustments preserve drafts, focus and reachable actions"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Keep focused fields visible when usable height shrinks due to keyboard, chrome or orientation; Verify scroll/viewport adjustments preserve drafts, focus and reachable actions, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "frontend/src/member-workspace.ts",
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/qa-container-reflow-independent.json",
+        "docs/premium-ui/reviews/reflow-linked-recovery-current.json",
+        "docs/premium-ui/qa-member-container-independent.json",
+        "docs/premium-ui/qa-workspace-resize-cleanup.json",
+        "docs/premium-ui/qa-profile-rail-independent.json",
+        "docs/premium-ui/reviews/member-container-current.json",
+        "docs/premium-ui/reviews/member-width-existing-regressions-current.json",
+        "docs/premium-ui/reviews/overview-style-inventory-current.json",
+        "docs/premium-ui/qa-overview-steps.json",
+        "docs/premium-ui/style-inventory.json",
+        "docs/premium-ui/style-inventory.md",
+        "docs/premium-ui/reviews/compute-focus-current.json"
+      ],
+      "remaining_gap": "Emulated short-height/visualViewport evidence needs remaining-surface coverage; physical software-keyboard checks remain pending by user choice.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 55,
+      "requirement": "Reflow toolbar groups by task importance so primary actions remain reachable before optional filters and report tools.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Task-prioritized toolbar reflow. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Order/reflow toolbar groups so primary actions remain reachable before optional filters/reports",
+        "Verify phone and desktop layouts retain every applicable action and correct outcomes"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Order/reflow toolbar groups so primary actions remain reachable before optional filters/reports; Verify phone and desktop layouts retain every applicable action and correct outcomes, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/compute-container-current-independent.json",
+        "docs/premium-ui/qa-chooser-destinations.json",
+        "docs/premium-ui/reviews/reflow-linked-recovery-current.json",
+        "docs/premium-ui/reviews/overview-style-inventory-current.json",
+        "docs/premium-ui/qa-overview-steps.json",
+        "docs/premium-ui/style-inventory.json",
+        "docs/premium-ui/style-inventory.md",
+        "docs/premium-ui/reviews/compute-focus-current.json",
+        "docs/premium-ui/qa-compute-focus.json",
+        "docs/premium-ui/reviews/monthly-leave-review-current.json",
+        "docs/premium-ui/qa-monthly-leave-review.json",
+        "docs/premium-ui/reviews/mobile-member-filter-hierarchy-current.json",
+        "docs/premium-ui/reviews/member-create-disclosure-current.json"
+      ],
+      "remaining_gap": "Member toolbar improvements exist; complete remaining workflow toolbar hierarchy and action checks.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 56,
+      "requirement": "Wrap long names, error messages and translated-style labels without displacing close buttons, badges or action menus.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Long-content control protection. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Wrap long names, errors and expanded labels without overlap or clipping",
+        "Verify close buttons, badges and menus remain visible, reachable and correctly targeted"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Wrap long names, errors and expanded labels without overlap or clipping; Verify close buttons, badges and menus remain visible, reachable and correctly targeted, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/compute-container-current-independent.json",
+        "docs/premium-ui/qa-container-reflow-independent.json",
+        "docs/premium-ui/reviews/reflow-linked-recovery-current.json",
+        "docs/premium-ui/qa-member-container-independent.json",
+        "docs/premium-ui/reviews/member-container-current.json",
+        "docs/premium-ui/reviews/member-width-existing-regressions-current.json",
+        "docs/premium-ui/qa-account-form-layout.json",
+        "docs/premium-ui/reviews/count-import-layout-current.json",
+        "docs/premium-ui/reviews/member-create-disclosure-current.json"
+      ],
+      "remaining_gap": "Complete long-content matrix for remaining component families.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 57,
+      "requirement": "Replace unnecessary nested borders with spacing and tonal surface changes that make parent-child relationships immediately clear.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Surface-hierarchy simplification. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Identify unnecessary nested borders and replace them with spacing or tonal relationships",
+        "Review light/dark parent-child hierarchy while retaining meaningful focus, warning and control boundaries"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Identify unnecessary nested borders and replace them with spacing or tonal relationships; Review light/dark parent-child hierarchy while retaining meaningful focus, warning and control boundaries, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/leave-pressure-current.json",
+        "docs/premium-ui/qa-leave-pressure.json"
+      ],
+      "remaining_gap": "Complete contextual nested-surface review; do not remove semantic borders by source pattern alone.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 58,
+      "requirement": "Preserve mixed-card alignment without truncating essential names, date ranges or warnings; allow discoverable truncation only for secondary metadata.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Mixed-card content preservation. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Align mixed-content cards while retaining complete essential names, date ranges and warnings",
+        "Allow truncation only for secondary metadata with a discoverable way to read the full value"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Align mixed-content cards while retaining complete essential names, date ranges and warnings; Allow truncation only for secondary metadata with a discoverable way to read the full value, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/compute-container-current-independent.json",
+        "docs/premium-ui/reviews/reflow-linked-recovery-current.json"
+      ],
+      "remaining_gap": "Complete representative heterogeneous-card and long-value acceptance.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 59,
+      "requirement": "Support browser zoom and increased text size without hiding actions, truncating essential information or forcing page-level sideways scrolling.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Zoom and text enlargement. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Verify supported browser zoom and increased text-size/spacing conditions retain all actions and essential content",
+        "Ensure no document-level horizontal scrolling, allowing only justified local comparison overflow"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Verify supported browser zoom and increased text-size/spacing conditions retain all actions and essential content; Ensure no document-level horizontal scrolling, allowing only justified local comparison overflow, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/compute-container-current-independent.json",
+        "docs/premium-ui/qa-container-reflow-independent.json",
+        "docs/premium-ui/reviews/reflow-linked-recovery-current.json",
+        "docs/premium-ui/qa-member-container-independent.json",
+        "docs/premium-ui/qa-profile-rail-independent.json",
+        "docs/premium-ui/reviews/member-container-current.json",
+        "docs/premium-ui/reviews/member-width-existing-regressions-current.json",
+        "docs/premium-ui/qa-responsive/report.json",
+        "docs/premium-ui/reviews/responsive-matrix-refresh-current.json",
+        "docs/premium-ui/reviews/integrated-current-build-20261024.json",
+        "docs/premium-ui/reviews/mobile-member-filter-hierarchy-current.json"
+      ],
+      "remaining_gap": "Actual zoom and scoped text tests exist; complete remaining workflows and avoid claiming CSS zoom as browser zoom.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 60,
+      "requirement": "Add deliberate local scrolling affordances only to comparison regions whose information cannot meaningfully reflow into cards.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Justified local comparison scrolling. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Classify comparison regions that cannot meaningfully become record cards",
+        "Provide discoverable horizontal-scroll cues and keyboard-accessible named regions only where overflow actually occurs"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Classify comparison regions that cannot meaningfully become record cards; Provide discoverable horizontal-scroll cues and keyboard-accessible named regions only where overflow actually occurs, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-responsive/report.json",
+        "docs/premium-ui/reviews/responsive-matrix-refresh-current.json"
+      ],
+      "remaining_gap": "Complete per-region classification and dynamic overflow/focus assertions.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 61,
+      "requirement": "Refine desktop navigation into clear workflow and administrative groups, keeping frequent operational tasks easy to locate.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Desktop navigation grouping. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Group existing desktop destinations into clear operational and administration sections",
+        "Review findability and verify frequent destinations, role visibility and existing route outcomes"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Group existing desktop destinations into clear operational and administration sections; Review findability and verify frequent destinations, role visibility and existing route outcomes, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/overview-style-inventory-current.json",
+        "docs/premium-ui/qa-overview-steps.json",
+        "docs/premium-ui/style-inventory.json",
+        "docs/premium-ui/style-inventory.md"
+      ],
+      "remaining_gap": "Existing grouping requires current visual/findability and role-entry reconciliation.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 62,
+      "requirement": "Standardize expanded, compact and mobile drawer states with predictable widths, labels and active-state treatment.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Expanded/compact/mobile navigation states. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Define predictable widths, labels and active treatment for all navigation states",
+        "Verify transitions preserve destination, keyboard access and correct visible navigation"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Define predictable widths, labels and active treatment for all navigation states; Verify transitions preserve destination, keyboard access and correct visible navigation, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/shell-safe-area-current.json",
+        "docs/premium-ui/qa-shell-safe-area.json"
+      ],
+      "remaining_gap": "Complete state/transition matrix including compact and responsive edge cases.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 63,
+      "requirement": "Keep the selected month prominent and consistent wherever month-scoped leave, units, generation, review or publishing is shown.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Selected-month continuity and prominence. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Display the same selected working month across leave, units, generation, review and publishing",
+        "Verify requests, confirmation context and visible month remain consistent during navigation and recovery"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Display the same selected working month across leave, units, generation, review and publishing; Verify requests, confirmation context and visible month remain consistent during navigation and recovery, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/role-navigation-current.json",
+        "docs/premium-ui/qa-role-navigation.json",
+        "docs/premium-ui/qa-signed-out-navigation.json",
+        "docs/premium-ui/role-visibility-current.md",
+        "docs/premium-ui/reviews/overview-style-inventory-current.json",
+        "docs/premium-ui/qa-overview-steps.json",
+        "docs/premium-ui/style-inventory.json",
+        "docs/premium-ui/style-inventory.md",
+        "docs/premium-ui/reviews/responsive-refresh-current.json",
+        "docs/premium-ui/qa-responsive-current-20261023/report.json",
+        "docs/premium-ui/reviews/frontend-build-snapshot-current.json",
+        "tmp/premium-responsive-current-20261023.log",
+        "tmp/premium-ui-responsive-refresh-unit.log",
+        "tools/frontend_visual_fixture_server.py"
+      ],
+      "remaining_gap": "Complete all month-scoped surfaces and slow/error transition assertions.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 64,
+      "requirement": "Present connection and save status truthfully, avoiding decorative green indicators without corresponding evidence of current availability.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Truthful connection/save status. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Tie connection and save indicators to actual known request/session/save state",
+        "Verify failures, pending requests, stale data and uncertain outcomes cannot appear as confirmed connected/saved"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Tie connection and save indicators to actual known request/session/save state; Verify failures, pending requests, stale data and uncertain outcomes cannot appear as confirmed connected/saved, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "frontend/src/main.ts",
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/qa-unit-freshness.json",
+        "docs/premium-ui/qa-unit-freshness-independent.json",
+        "docs/premium-ui/qa-unit-cache-session.json",
+        "docs/premium-ui/reviews/unit-freshness-current.json",
+        "docs/premium-ui/reviews/compute-prerequisites-current.json",
+        "docs/premium-ui/qa-compute-prerequisites.json",
+        "docs/premium-ui/qa-compute-test-feedback.json"
+      ],
+      "remaining_gap": "Complete current status/freshness register across screens and editors.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 65,
+      "requirement": "Align page title, month controls and account actions so the header remains balanced when text wraps.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Wrapping header composition. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Keep title, month controls and account actions balanced at supported widths and enlarged text",
+        "Verify titles retain meaningful width and controls remain visible and operable without overlap"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Keep title, month controls and account actions balanced at supported widths and enlarged text; Verify titles retain meaningful width and controls remain visible and operable without overlap, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/header-wrap-current.json",
+        "docs/premium-ui/qa-header-wrap.json",
+        "docs/premium-ui/visual-contract.md"
+      ],
+      "remaining_gap": "Bounded header fix exists; complete current header variants and long-title cases.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 66,
+      "requirement": "Make mobile primary navigation comfortable for touch and protect it from device safe areas and browser controls.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Touch-safe mobile primary navigation. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Provide comfortable touch targets and readable current-location cues",
+        "Protect navigation and content from safe-area/browser-control overlap under short and changing viewports"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Provide comfortable touch targets and readable current-location cues; Protect navigation and content from safe-area/browser-control overlap under short and changing viewports, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/role-navigation-current.json",
+        "docs/premium-ui/qa-role-navigation.json",
+        "docs/premium-ui/qa-signed-out-navigation.json",
+        "docs/premium-ui/role-visibility-current.md"
+      ],
+      "remaining_gap": "Complete current navigation geometry and simulated inset checks; physical device checks remain pending.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 67,
+      "requirement": "Organize the mobile More surface into scan-friendly groups with clear current location and a reachable close action.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Grouped mobile More surface. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Group available More destinations for scanning and show current location",
+        "Keep a reachable close action and verify each visible destination navigates correctly"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Group available More destinations for scanning and show current location; Keep a reachable close action and verify each visible destination navigates correctly, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/role-navigation-current.json",
+        "docs/premium-ui/qa-role-navigation.json",
+        "docs/premium-ui/qa-signed-out-navigation.json",
+        "docs/premium-ui/role-visibility-current.md"
+      ],
+      "remaining_gap": "Complete role-dependent More grouping/current-location and short-height close checks.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 68,
+      "requirement": "Prevent account menus, mobile navigation, contextual menus and modal overlays from competing for focus or stacking unpredictably.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Overlay focus/stack coordination. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Ensure account menus, mobile navigation, context menus and modals have deterministic stacking and focus ownership",
+        "Verify opening/closing nested surfaces leaves only the intended surface interactive and restores normal underlying access"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Ensure account menus, mobile navigation, context menus and modals have deterministic stacking and focus ownership; Verify opening/closing nested surfaces leaves only the intended surface interactive and restores normal underlying access, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-workspace-resize-cleanup.json",
+        "docs/premium-ui/reviews/member-container-current.json",
+        "docs/premium-ui/reviews/member-width-existing-regressions-current.json",
+        "docs/premium-ui/reviews/role-navigation-current.json",
+        "docs/premium-ui/qa-role-navigation.json",
+        "docs/premium-ui/qa-signed-out-navigation.json",
+        "docs/premium-ui/role-visibility-current.md"
+      ],
+      "remaining_gap": "Complete simultaneous/nested overlay combinations and responsive transition checks.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 69,
+      "requirement": "Restore focus to the correct opener after closing drawers or menus, including after responsive layout changes.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Responsive opener focus restoration. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Restore focus to the correct usable opener after closing drawers or menus",
+        "When responsive layout replaces/hides the opener, choose the equivalent visible control without overriding newer deliberate focus"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Restore focus to the correct usable opener after closing drawers or menus; When responsive layout replaces/hides the opener, choose the equivalent visible control without overriding newer deliberate focus, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "frontend/src/main.ts",
+        "frontend/src/member-workspace.ts",
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/qa-analysis-tabs.json",
+        "docs/premium-ui/qa-analysis-navigation-independent.json",
+        "docs/premium-ui/qa-profile-rail-independent.json",
+        "docs/premium-ui/qa-workspace-resize-cleanup.json",
+        "docs/premium-ui/reviews/member-container-current.json",
+        "docs/premium-ui/reviews/member-width-existing-regressions-current.json",
+        "docs/premium-ui/reviews/role-navigation-current.json",
+        "docs/premium-ui/qa-role-navigation.json",
+        "docs/premium-ui/qa-signed-out-navigation.json",
+        "docs/premium-ui/role-visibility-current.md",
+        "docs/premium-ui/reviews/member-create-conflicts-current.json"
+      ],
+      "remaining_gap": "Complete opener lifecycle variants across responsive transitions.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 70,
+      "requirement": "Clear obsolete drawer overlays, body scroll locks and inert state when resizing, preserving normal desktop pointer and keyboard access.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Drawer-resize cleanup. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Remove obsolete overlays, scroll locks and inert state when leaving mobile drawer mode",
+        "Verify desktop pointer and keyboard access and preserve current route/focus after repeated resizing"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Remove obsolete overlays, scroll locks and inert state when leaving mobile drawer mode; Verify desktop pointer and keyboard access and preserve current route/focus after repeated resizing, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/role-navigation-current.json",
+        "docs/premium-ui/qa-role-navigation.json",
+        "docs/premium-ui/qa-signed-out-navigation.json",
+        "docs/premium-ui/role-visibility-current.md"
+      ],
+      "remaining_gap": "Existing cleanup needs complete current drawer-state transition coverage.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 71,
+      "requirement": "Add destination focus and accessible route announcements without disrupting deliberate in-page user focus or data entry.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Route focus and announcement behavior. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Provide meaningful destination focus and an accessible route announcement after navigation",
+        "Prevent stale responses or route effects from overriding deliberate in-page focus or ongoing entry"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Provide meaningful destination focus and an accessible route announcement after navigation; Prevent stale responses or route effects from overriding deliberate in-page focus or ongoing entry, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-guide-help-independent.json",
+        "docs/premium-ui/qa-history.json",
+        "docs/premium-ui/reviews/guide-copy-forced-colors-current.json",
+        "docs/premium-ui/reviews/role-navigation-current.json",
+        "docs/premium-ui/qa-role-navigation.json",
+        "docs/premium-ui/qa-signed-out-navigation.json",
+        "docs/premium-ui/role-visibility-current.md"
+      ],
+      "remaining_gap": "Complete rapid-navigation/focus ownership variants and announcement DOM checks; native speech delivery is separately pending.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 72,
+      "requirement": "Preserve relevant filters, selected tabs and scroll position when returning from a record or profile detail view.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Return-context preservation. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Retain relevant filters, tabs and scroll position when opening/closing record or profile details",
+        "Verify context after save, cancel and recoverable failure without restoring stale account/month state"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Retain relevant filters, tabs and scroll position when opening/closing record or profile details; Verify context after save, cancel and recoverable failure without restoring stale account/month state, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "frontend/src/main.ts",
+        "frontend/src/member-workspace.ts",
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/qa-analysis-tabs.json",
+        "docs/premium-ui/qa-analysis-navigation-independent.json",
+        "docs/premium-ui/qa-profile-rail-independent.json",
+        "docs/premium-ui/qa-member-three-controls-independent.json",
+        "docs/premium-ui/qa-context-action-outcomes-independent.json",
+        "docs/premium-ui/qa-history.json",
+        "docs/premium-ui/reviews/guide-copy-forced-colors-current.json",
+        "docs/premium-ui/qa-member-duplicates-entry-independent.json",
+        "docs/premium-ui/reviews/gallery-duplicates-current.json",
+        "docs/premium-ui/qa-member-linked-actions-independent.json",
+        "docs/premium-ui/reviews/reflow-linked-recovery-current.json"
+      ],
+      "remaining_gap": "Complete per-workflow return-context matrix beyond bounded member/profile checks.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 73,
+      "requirement": "Provide frontend navigation history where appropriate so Back returns meaningfully without losing unsaved operational context.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Meaningful frontend history. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Support Back/Forward for applicable frontend navigation without losing unsaved context",
+        "Verify accepted and refused dirty-navigation transitions preserve correct history, route and draft"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Support Back/Forward for applicable frontend navigation without losing unsaved context; Verify accepted and refused dirty-navigation transitions preserve correct history, route and draft, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "frontend/src/main.ts",
+        "frontend/src/navigation-history.ts",
+        "docs/premium-ui/qa-history.json",
+        "docs/premium-ui/qa-guide-help-independent.json",
+        "docs/premium-ui/reviews/guide-copy-forced-colors-current.json",
+        "docs/premium-ui/reviews/role-navigation-current.json",
+        "docs/premium-ui/qa-role-navigation.json",
+        "docs/premium-ui/qa-signed-out-navigation.json",
+        "docs/premium-ui/role-visibility-current.md",
+        "docs/premium-ui/reviews/mobile-member-filter-hierarchy-current.json",
+        "docs/premium-ui/reviews/member-create-disclosure-current.json"
+      ],
+      "remaining_gap": "Existing history behavior needs complete dirty-state and workflow-context outcomes.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 74,
+      "requirement": "Preserve or safely reject deep links using existing frontend routing capabilities, avoiding unsupported server-route assumptions.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Safe deep-link handling. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Restore supported permitted deep links on load and history navigation",
+        "Reject unknown or role-unavailable links with a safe explained destination using existing frontend routes"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Restore supported permitted deep links on load and history navigation; Reject unknown or role-unavailable links with a safe explained destination using existing frontend routes, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "frontend/src/main.ts",
+        "frontend/src/navigation-history.ts",
+        "frontend/tests/render-lifecycle.test.mjs",
+        "docs/premium-ui/qa-history.json",
+        "docs/premium-ui/reviews/role-navigation-current.json",
+        "docs/premium-ui/qa-role-navigation.json",
+        "docs/premium-ui/qa-signed-out-navigation.json",
+        "docs/premium-ui/role-visibility-current.md"
+      ],
+      "remaining_gap": "Bounded role/deep-link tests exist; complete route/context variants without assuming new server routes.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 75,
+      "requirement": "Make unsaved-change handling consistent across navigation, month switches, modal dismissal and browser unload boundaries.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Consistent unsaved-change boundaries. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Apply coherent dirty-state decisions to navigation, month changes, modal dismissal and browser unload",
+        "Verify declining discard preserves every affected draft/file/selection and accepting follows explicit existing semantics"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Apply coherent dirty-state decisions to navigation, month changes, modal dismissal and browser unload; Verify declining discard preserves every affected draft/file/selection and accepting follows explicit existing semantics, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "frontend/src/member-profile.ts",
+        "frontend/src/workspace-load-state.ts",
+        "frontend/src/record-workspace.ts",
+        "frontend/src/reference-workspace.ts",
+        "frontend/src/member-workspace.ts",
+        "frontend/src/operational-import.ts",
+        "frontend/src/rota-intelligence.ts",
+        "docs/premium-ui/qa-profile-draft-independent.json",
+        "docs/premium-ui/qa-profile-readback.json",
+        "docs/premium-ui/reviews/profile-draft-current.json",
+        "docs/premium-ui/reviews/rules-session-current.json",
+        "docs/premium-ui/qa-rules-session-independent.json",
+        "docs/premium-ui/qa-workspace-unload-independent.json",
+        "docs/premium-ui/qa-intelligence-drafts.json"
+      ],
+      "remaining_gap": "Many fixes exist but complete editor/boundary matrix and uncertain-save distinctions remain.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 76,
+      "requirement": "Clearly explain role-limited navigation while retaining server permissions as the authority for every protected action.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Role-limited navigation explanation. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Explain unavailable role-limited destinations and provide a safe accessible route",
+        "Retain existing visibility policy and server authorization as authority for protected requests"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Explain unavailable role-limited destinations and provide a safe accessible route; Retain existing visibility policy and server authorization as authority for protected requests, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/role-navigation-current.json",
+        "docs/premium-ui/qa-role-navigation.json",
+        "docs/premium-ui/qa-signed-out-navigation.json",
+        "docs/premium-ui/role-visibility-current.md",
+        "docs/premium-ui/reviews/generation-entrypoints-current.json",
+        "docs/premium-ui/qa-generation-entrypoints.json"
+      ],
+      "remaining_gap": "Complete role-limited route/control context beyond current navigation and toolbar coverage.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 77,
+      "requirement": "Provide a useful not-found or unavailable-section state with a safe route back to accessible workflows.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Unavailable-section recovery. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Render useful unknown/unavailable-section feedback without leaking arbitrary URL markup",
+        "Activate the safe return action and confirm destination, hash cleanup and heading focus"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Render useful unknown/unavailable-section feedback without leaking arbitrary URL markup; Activate the safe return action and confirm destination, hash cleanup and heading focus, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/role-navigation-current.json",
+        "docs/premium-ui/qa-role-navigation.json",
+        "docs/premium-ui/qa-signed-out-navigation.json",
+        "docs/premium-ui/role-visibility-current.md"
+      ],
+      "remaining_gap": "Bounded implementation exists; verify remaining unknown/permission/session entry combinations.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 78,
+      "requirement": "Give help and user-guide links contextual destinations rather than sending every question to one generic page.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Contextual help destinations. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Map each help/user-guide entry to relevant existing topic or supported section",
+        "Verify actual destination/topic visibility and useful return/navigation behavior with keyboard and touch"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Map each help/user-guide entry to relevant existing topic or supported section; Verify actual destination/topic visibility and useful return/navigation behavior with keyboard and touch, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-guide-help-independent.json",
+        "docs/premium-ui/reviews/guide-copy-forced-colors-current.json"
+      ],
+      "remaining_gap": "Guide outcomes exist; reconcile remaining help entry points and generic destinations.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 79,
+      "requirement": "Refine login and recovery while supporting password managers, autofill and paste, preserving appropriate autocomplete and accessible authentication behavior.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Accessible login/recovery refinement. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Preserve meaningful labels, autocomplete, password-manager-friendly controls, paste and autofill semantics",
+        "Verify login/recovery transitions, validation and recoverable failure without exposing credentials or changing authentication contracts"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Preserve meaningful labels, autocomplete, password-manager-friendly controls, paste and autofill semantics; Verify login/recovery transitions, validation and recoverable failure without exposing credentials or changing authentication contracts, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/role-navigation-current.json",
+        "docs/premium-ui/qa-role-navigation.json",
+        "docs/premium-ui/qa-signed-out-navigation.json",
+        "docs/premium-ui/role-visibility-current.md"
+      ],
+      "remaining_gap": "Bounded form evidence exists; native password-manager/autofill checks need honest disposition rather than emulation claims.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 80,
+      "requirement": "Test navigation with rapid switching, slow responses and repeated month changes to confirm the final destination remains authoritative.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Navigation race resilience. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Exercise rapid route changes, delayed/reordered responses and repeated month switches",
+        "Assert the final chosen account/month/destination owns rendered data, focus and context with no obsolete resurrection"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Exercise rapid route changes, delayed/reordered responses and repeated month switches; Assert the final chosen account/month/destination owns rendered data, focus and context with no obsolete resurrection, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-guide-help-independent.json",
+        "docs/premium-ui/qa-history.json",
+        "docs/premium-ui/reviews/guide-copy-forced-colors-current.json"
+      ],
+      "remaining_gap": "Complete current affected-screen race coverage beyond sampled lifecycle paths.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 81,
+      "requirement": "Standardize primary, secondary, tertiary and destructive button variants with consistent sizing, icons and interaction states.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Shared button variants. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Define consistent primary, secondary, tertiary and destructive button sizing/icon/state roles",
+        "Verify actual shared and exceptional controls retain readable default/hover/focus/disabled/busy behavior in both themes"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Define consistent primary, secondary, tertiary and destructive button sizing/icon/state roles; Verify actual shared and exceptional controls retain readable default/hover/focus/disabled/busy behavior in both themes, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/overview-style-inventory-current.json",
+        "docs/premium-ui/qa-overview-steps.json",
+        "docs/premium-ui/style-inventory.json",
+        "docs/premium-ui/style-inventory.md"
+      ],
+      "remaining_gap": "Complete variant migration and exception/current-state coverage.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 82,
+      "requirement": "Ensure every visible button either performs its specified action or exposes a clear explanation when unavailable.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Every visible button has a specified outcome. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Classify and contract every visible operational button including generated/contextual/role variants",
+        "Verify each performs its stated outcome or provides a discoverable reason for unavailability using exact assertions"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Classify and contract every visible operational button including generated/contextual/role variants; Verify each performs its stated outcome or provides a discoverable reason for unavailability using exact assertions, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/role-navigation-current.json",
+        "docs/premium-ui/qa-role-navigation.json",
+        "docs/premium-ui/qa-signed-out-navigation.json",
+        "docs/premium-ui/role-visibility-current.md",
+        "docs/premium-ui/reviews/overview-style-inventory-current.json",
+        "docs/premium-ui/qa-overview-steps.json",
+        "docs/premium-ui/style-inventory.json",
+        "docs/premium-ui/style-inventory.md",
+        "docs/premium-ui/reviews/compute-prerequisites-current.json",
+        "docs/premium-ui/qa-compute-prerequisites.json",
+        "docs/premium-ui/qa-compute-test-feedback.json",
+        "docs/premium-ui/reviews/compute-focus-current.json",
+        "docs/premium-ui/qa-compute-focus.json",
+        "docs/premium-ui/reviews/generation-entrypoints-current.json"
+      ],
+      "remaining_gap": "953 source candidates are not complete runtime contracts; broad unmatched action coverage remains.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 83,
+      "requirement": "Give icon-only buttons meaningful accessible names and optional tooltips that work with keyboard focus and touch.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Icon-only control names and help. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Give every icon-only control a meaningful accessible name tied to its action",
+        "If a tooltip is provided, make its guidance reachable by keyboard focus and touch without requiring hover"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Give every icon-only control a meaningful accessible name tied to its action; If a tooltip is provided, make its guidance reachable by keyboard focus and touch without requiring hover, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "frontend/src/member-import-history.ts",
+        "frontend/src/workflow-import-history.ts",
+        "frontend/src/ui.ts",
+        "docs/premium-ui/reviews/history-compute-current.json"
+      ],
+      "remaining_gap": "Complete contextual icon-only inventory/name checks and optional tooltip behavior.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 84,
+      "requirement": "Use native button/link semantics and prohibit nested interactive cards or controls, keeping each action's target unambiguous.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Native action semantics and unnested targets. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Use native buttons for actions and links for navigation with appropriate keyboard activation",
+        "Eliminate nested interactive cards/controls and verify each target activates only its own intended action"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Use native buttons for actions and links for navigation with appropriate keyboard activation; Eliminate nested interactive cards/controls and verify each target activates only its own intended action, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/engine-radio-current.json",
+        "docs/premium-ui/qa-engine-radio.json",
+        "docs/premium-ui/reviews/member-create-disclosure-current.json"
+      ],
+      "remaining_gap": "Complete rendered interactive nesting and semantic-action inventory beyond source candidates.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 85,
+      "requirement": "Keep ordinary actions visually distinct from destructive or irreversible operations, especially inside compact menus and sticky footers.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Ordinary/destructive visual distinction. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Give destructive/irreversible operations distinct styling and explicit consequence-oriented labels",
+        "Verify compact menus and sticky footers retain the distinction across light/dark and interaction states"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Give destructive/irreversible operations distinct styling and explicit consequence-oriented labels; Verify compact menus and sticky footers retain the distinction across light/dark and interaction states, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/operational-token-audit-current.json",
+        "docs/premium-ui/reviews/history-controls-cleanup-current.json"
+      ],
+      "remaining_gap": "Complete destructive-control context/state matrix and visual review.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 86,
+      "requirement": "Register delegated handlers once, guard in-flight mutations against repeated activation and prevent duplicate submissions after reauthentication.",
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Single delegated registration and duplicate-mutation protection. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "pass_conditions": [
+        "Register delegated listeners once across rerenders and repeated view/session activation",
+        "Hold mutation responses and repeat pointer/keyboard activation to prove one in-flight operation, safe cleanup and no automatic replay after reauthentication"
+      ],
+      "evidence_needed": [
+        "Current affected-source references and a classified list of applicable instances or justified exceptions.",
+        "Direct rendered/interaction evidence demonstrating: Register delegated listeners once across rerenders and repeated view/session activation; Hold mutation responses and repeat pointer/keyboard activation to prove one in-flight operation, safe cleanup and no automatic replay after reauthentication, with source/build, theme, viewport and input context where relevant. Retain unchanged API contracts, permissions, persisted semantics and export contents."
+      ],
+      "existing_evidence_candidates": [
+        "frontend/src/main.ts",
+        "frontend/src/services/api.ts",
+        "frontend/tests/premium-shell.browser.mjs",
+        "docs/premium-ui/reviews/rules-session-current.json",
+        "docs/premium-ui/qa-rules-session-independent.json",
+        "docs/premium-ui/qa-auth-forms-independent.json",
+        "docs/premium-ui/reviews/member-create-pending-current.json",
+        "docs/premium-ui/qa-member-create-pending/report-development.json",
+        "docs/premium-ui/qa-member-create-pending/report-production.json",
+        "docs/premium-ui/qa-member-create-disclosure/report.json",
+        "docs/premium-ui/reviews/member-create-conflicts-current.json",
+        "docs/premium-ui/reviews/member-create-conflicts-source-review.json",
+        "docs/premium-ui/reviews/member-create-conflicts-test-review.json",
+        "docs/premium-ui/qa-member-create-conflicts/consolidated.json"
+      ],
+      "remaining_gap": "Bounded pending guards exist; complete mutation-family and reauthentication duplicate-suppression coverage.",
+      "procedural_exception": null
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "reviewer": "visual_tokens_review specialist 4 of 10",
+  "date": "2026-10-22",
+  "scope": "Read-only source audit of requirements 23,25,33,36,37; two bounded findings only. No source, shared ledger, backend, workflow, or browser-matrix edits.",
+  "evidence_kind": "source-only",
+  "source_sha256": {
+    "frontend/src/styles.css": "e5e5802b5cdef146b542fcfafc1b2040f232898cafaa89dcf30554235da140b5",
+    "frontend/src/premium-theme.css": "c5d2653ab6c46fadb54a904a7a1bab406831eca8b361ab3c03d806980dbefb0e",
+    "frontend/src/main.ts": "367ac6a5fb23c8cdc2159086d8bec58da86c4e42f0e69ce33d9305062e2c40f9",
+    "frontend/src/limits.ts": "bda2282d83716df03daa043fa46c395d3d8c1c2969a4de1f159fc992408ab925"
+  },
+  "findings": [
+    {
+      "id": "VT-1",
+      "requirement_ids": [
+        25
+      ],
+      "priority": "medium",
+      "title": "Preflight quality-state border is overridden by generic panel presentation",
+      "locations": [
+        "frontend/src/main.ts:2670",
+        "frontend/src/styles.css:994",
+        "frontend/src/styles.css:998",
+        "frontend/src/styles.css:5274",
+        "frontend/src/styles.css:5281",
+        "frontend/src/premium-theme.css:164"
+      ],
+      "source_confirmed_observation": "Preflight details receives panel plus quality-ok or quality-warning. Early quality selectors define literal green/pink borders, but later .panel border-color has equal specificity and later source order; .panel:hover also forces neutral border. The border therefore cannot reliably communicate the existing quality class. Textual issue content remains present. This is a presentation inconsistency, not evidence that scheduling warnings or validation fail.",
+      "safe_proposed_fix": "Add narrowly scoped .quality-panel.quality-warning and .quality-panel.quality-ok rules after generic panel styles using semantic warning-border/success-border tokens, including deliberate hover handling. Retain exact content, class conditions, handlers, and workflow gates. Do not recolor scheduling severity logic.",
+      "required_tests": [
+        "Render existing safe and unsafe preflight fixtures in light and dark themes; inspect computed border color before/after hover and keyboard focus.",
+        "Verify textual issues and included periods remain identical, native details remains keyboard operable, and no API or scheduling payload changes occur.",
+        "Check narrow 320px layout and forced-colors handling; retain semantic text independent of color."
+      ]
+    },
+    {
+      "id": "VT-2",
+      "requirement_ids": [
+        37
+      ],
+      "priority": "medium",
+      "title": "Source still contains multiple independently drawn icon conventions",
+      "locations": [
+        "frontend/src/main.ts:1022",
+        "frontend/src/main.ts:1034",
+        "frontend/src/limits.ts:119",
+        "frontend/src/limits.ts:120",
+        "frontend/src/styles.css:7043"
+      ],
+      "source_confirmed_observation": "Shell close/menu icons use inline 24x24 stroked SVG with stroke-width 2, Limits warning uses independently authored 16x16 filled SVG, and Limits identity uses a font-rendered star. Existing icons are decorative and aria-hidden. This proves the one-family requirement is not yet fulfilled; it does not prove misalignment or accessibility failure at runtime.",
+      "safe_proposed_fix": "Inventory all icon usage first, then adopt a small local SVG helper or existing repository family for decorative identity/menu/warning icons. Preserve the current visible text, aria-hidden state, accessible names, clickable controls, and semantic warning text. Use scoped explicit icon boxes and shared optical sizing; do not replace meaningful text with icon-only controls.",
+      "required_tests": [
+        "Capture shell and Limits icons at 320px and desktop in Chromium, Firefox and WebKit, light/dark, checking baseline alignment and no font-dependent glyph variation.",
+        "Verify unchanged accessible names, focus order, touch-target dimensions and actual button outcomes.",
+        "Check CSP compatibility and offline operation with local SVG; do not introduce remote icon resources."
+      ]
+    }
+  ],
+  "remaining_scope_notes": [
+    "Royal navy framing and semantic theme/shadow tokens are present; no global visual consistency certification was attempted.",
+    "Uppercase rules still exist, but the inspected role/section labels alone do not establish a violation of the purposeful-short-label exception in requirement 33.",
+    "No browser tests, axe checks, pixel contrast measurements, or full icon inventory ran in this source-only audit.",
+    "No whole requirement is certified and no implementation status should be changed solely from this report."
+  ]
+}

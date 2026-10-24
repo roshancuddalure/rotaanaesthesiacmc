@@ -1,0 +1,72 @@
+{
+  "recorded_at_utc": "2026-10-22T12:43:02.240115+00:00",
+  "requirements": [
+    76,
+    82,
+    161,
+    162,
+    163,
+    166,
+    167,
+    208,
+    209,
+    219,
+    223,
+    225,
+    228,
+    258
+  ],
+  "completion_claim": false,
+  "source_sha256": {
+    "frontend/src/rota-compute.ts": "ad22213210f7cc4d877e8d95af9a51bce1e3205b5e3e3d4d4e680aeb79987d37",
+    "frontend/src/rota-intelligence.ts": "ab0155910cd3f9cf7729154df1205bceaa21c89fa808ec0abe89374335107317",
+    "frontend/src/main.ts": "74e072cea72b83cfc2b7fb069a8dc038096e1e0f656a55ce0866ad16e5e63bde",
+    "frontend/src/styles.css": "e5e5802b5cdef146b542fcfafc1b2040f232898cafaa89dcf30554235da140b5",
+    "frontend/src/premium-theme.css": "ff2aee7148e54e4e40aae847189110cf3d9228d90fabffbd63a3449a1e1a935d"
+  },
+  "scope": "Autoassign method chooser and proposal Compute Settings shortcut; UI access affordance matches existing navigation policy.",
+  "confirmed_before": "Actual app board-member320: enabled OpenComputeSettings closed quick proposal, with no ComputeSettings nav destination; hash stayed user-guide. Baseline read-only fixture recorded this silent dead end.",
+  "change": [
+    "Non-admin proposal users see the existing shortcut disabled with an associated explanation that Settings is for administrators; server generation remains available in the same window.",
+    "Before closing an admin proposal, confirm its settings navigation destination exists. If missing, keep proposal open and explain the unavailable destination.",
+    "Admin shortcut uses the same existing navigation click; generation engine, API permission, scheduling, assignments and mode-selection logic unchanged."
+  ],
+  "checks": {
+    "entrypoint_role_browser_workflows": 12,
+    "scoped_nonadmin_axe_surfaces": 6,
+    "tagged_axe_violations": 0,
+    "admin_missing_destination_recoveries": 6,
+    "compute_focus_regressions": 6,
+    "mock_device_feedback_regressions": 6,
+    "existing_generation_action_workflows": 21,
+    "unit_tests": 100,
+    "build_exit_code": 0,
+    "build_inputs_held": true
+  },
+  "evidence": [
+    "docs/premium-ui/qa-generation-entrypoints.json",
+    "docs/premium-ui/qa-generation-entrypoints-before.json",
+    "docs/premium-ui/qa-compute-focus.json",
+    "docs/premium-ui/qa-compute-test-feedback.json",
+    "docs/premium-ui/qa-generation-actions-current.json",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+  ],
+  "tests": {
+    "frontend/tests/premium-generation-entrypoints.browser.mjs": "af3ef26c86e59f813224bd979ba96681a2147add56ee72d60b9b2bb415001144",
+    "frontend/tests/premium-generation-actions.browser.mjs": "0ce92a53c8d02feb4dd669ca9471f2cd080f30fc1d5a2c4e58c3e8eb4e94af18"
+  },
+  "visual_review": {
+    "reviewer": "root implementer, not independent",
+    "screenshot": "docs/premium-ui/screenshots/generation/settings-access-320.png",
+    "result": "Disabled settings shortcut and explanatory paragraph readable inside quick proposal; Server and Generate remain present."
+  },
+  "limitations": [
+    "Chooser is opened through its exported function in the actual app shell; the method and settings buttons are native UI controls. This doesnot certify visibility or prerequisites of every parent Autoassign launcher.",
+    "Two mockedroles(board-member/computer-admin),threeengines320/1280 lighttheme. HOD/superadmin/landscape/zoom/physical variations remain separate.",
+    "Generation GETresponses intercepted; remaining shell GETs target disposable8031. No job creation, Apply, Publish or database writes. Existing21workflow suite separately mocks mutations; not persistence certification.",
+    "Missing admin navigation is simulated by removing that actual nav button after initial successful navigation; recovery is a bounded frontend lifecycle check.",
+    "GPU radios are checked only for disabled/server fallback with browser_gpu=false; no realGPU/kernel/speed claims and no enabled-radio selection outcome claim.",
+    "Prior120settings-gate matrix has an older fullmodule hash; current6focus/6devicefeedback regressions linked separately. Broader144matrix remains historical. Physical/native/newindependentreview pending.",
+    "No backend/API-contract/permissions/scheduling/persisted-data/export-content/deployment changes made in this batch. Full260goal active/incomplete; no whole-requirement acceptance."
+  ]
+}

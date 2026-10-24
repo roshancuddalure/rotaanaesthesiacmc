@@ -22,7 +22,7 @@ try {
     let stale = width === 390; // on the phone run, the first archive attempt is stale
     let previews = 0;
     await page.route("**/__bulk-test", (route) =>
-      route.fulfill({ contentType: "text/html", body: '<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/src/styles.css"></head><body></body></html>' }));
+      route.fulfill({ contentType: "text/html", body: '<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/src/styles.css"><link rel="stylesheet" href="/src/premium-theme.css"></head><body></body></html>' }));
     await page.route("**/api/v1/**", async (route) => {
       const req = route.request();
       const path = new URL(req.url()).pathname;

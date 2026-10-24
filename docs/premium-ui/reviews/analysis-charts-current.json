@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "reviewer": "analytics_final_check",
+  "reviewed_at_utc": "2026-10-21T16:29:18.496534+00:00",
+  "status": "accepted_for_bounded_chart_presentation_scope",
+  "scope": "Independent review of the shared analysis chart renderer, associated theme styles and the five existing numeric input mappings. Not whole-analysis, full frontend, or whole-plan acceptance.",
+  "reviewed_files_sha256": {
+    "frontend/src/analysis-charts.ts": "f359e98aee083d502aa5af1c9c31e065f16c9a4eab4c4c7f279fcf6b00bb37b0",
+    "frontend/src/main.ts": "529aa3006b7c47314930416ebb7951502c9ac2ad11414305aeda485e98098bf8",
+    "frontend/src/premium-theme.css": "c62c790d42fbe0279cae23ee7e88dd6fd7b84febee5d1efb2294d8c938e30072",
+    "frontend/src/styles.css": "ab9087e56579fb8920ea02d1482209a71101f9650787a9086d73c5dd84af20f8",
+    "frontend/tests/premium-analysis-independent-review.browser.mjs": "298ed17abe8f77583068653165a6bbae75f383acddbaf35ce388a26eac7342bb",
+    "frontend/tests/premium-analysis-charts.browser.mjs": "b4f7765c142a0ca0fb9100d177d4302173cd49aed42b5942d84e9d70f3a94122"
+  },
+  "baseline": "tmp/premium-ui-baseline-20261021T130359Z/frontend/src/main.ts",
+  "baseline_mapping_comparison": [
+    {
+      "chart": "Monthly 24hr Load",
+      "evidence": "Same month order, month_labels, month_stats.total_24hr and weekend_24hr fields as task-start baseline."
+    },
+    {
+      "chart": "Day of Week Pattern",
+      "evidence": "Same per-day sum of each person.day_breakdown[day] ?? 0; same Saturday/Sunday weekend partition; adds full day title to existing abbreviated label."
+    },
+    {
+      "chart": "People Active by Month",
+      "evidence": "Same month order, month_labels and month_stats.persons field."
+    },
+    {
+      "chart": "Weekend 24hr Duties per Month",
+      "evidence": "Same month order, month_labels and month_stats.weekend_24hr field."
+    },
+    {
+      "chart": "5th Call Duties per Month",
+      "evidence": "Same per-month sum of people.fifth_call_monthly[month] ?? 0."
+    }
+  ],
+  "verified": [
+    "Four independent Chromium cases pass on current source:320light,320dark,1280light,320forced-colors.",
+    "Keyboard Enter opens native chart-data disclosure; focus reaches labeled scroll region.",
+    "Exact table values distinguish total/weekend/weekday, including full day names; invalid or inconsistent values are shown faithfully without plotting misleading bars.",
+    "Zero bar heights remain exactly0 including forced colors; no NaN/Infinity inline dimensions; invalid negative or weekend>total entries receive unplotted placeholder.",
+    "Hostile labels/titles are escaped; isolated rendering makes no API calls and emits no pageerror.",
+    "Long hostile labels do not cause document overflow; striped weekend and solid weekday styles remain distinct in forced-colors computed styles.",
+    "Current accessible caption uses actual visually-hidden utility and computes to absolute1x1px; test covers preceding undefined-utility regression.",
+    "Axe chart-subtree WCAG2A/AA,2.1AA,2.2AA tags report0violations in each isolated case."
+  ],
+  "commands": [
+    {
+      "command": "node tests/premium-analysis-independent-review.browser.mjs",
+      "result": "4 current cases passed independently",
+      "artifact": "docs/premium-ui/qa-analysis-independent-review.json"
+    }
+  ],
+  "resolved_findings": [
+    {
+      "id": "undefined-hidden-utility",
+      "resolution": "Root replaced undefined sr-only with existing visually-hidden; independent actual computed geometry assertion added and passed."
+    },
+    {
+      "id": "table-min-width-specificity",
+      "resolution": "Root strengthened chart-data table rule specificity after screenshot review; final stylesheet inspected. Full integration fit check belongs to root suite; independent isolated review verifies no document overflow."
+    }
+  ],
+  "required_fixes": [],
+  "limits": [
+    "The five numeric mappings were independently inspected against task-start source; this reviewer did not rerun the whole cross-browser integration suite. Root owns its final execution and artifacts.",
+    "Isolated data tests do not prove full backend calculations, production persistence, exports, individual-person drilldown or all analysis actions.",
+    "Forced-colors evidence is browser emulation and computed styles; no physical display or manual screen-reader acceptance.",
+    "Physical-device checks pending as explicitly requested. Backend files, API contracts, persisted semantics and exports were not edited by this reviewer.",
+    "Main and theme file hashes include unrelated concurrent work; acceptance covers only the chart helper, five source input mappings and chart style rules inspected."
+  ]
+}

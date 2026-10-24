@@ -1,0 +1,216 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-10-24T03:59:51.475906+00:00",
+  "scope": "One currentbounded Leave cancellation suite; documentation integrity is distinct from current rawtest evidence.",
+  "entries": [
+    {
+      "suite": "frontend/tests/premium-leave-cancel-identity.browser.mjs",
+      "sha256": "f251540eb3964a7378218b468078c3a92cab18ca68747b522b3595727fabb2c1",
+      "source_inspected": true,
+      "execution_verified": true,
+      "execution_verification_scope": "Root inspected two12passed rawreports,current5source/testhashes andindependent rawreport audit. No backend persistence/authorization claims.",
+      "screens": [
+        "Actual fullshell Leave table/cards androwmenus",
+        "Members creation draft",
+        "Signout/login"
+      ],
+      "contexts": {
+        "engines": [
+          "chromium",
+          "firefox",
+          "webkit"
+        ],
+        "widths": [
+          320,
+          1280
+        ],
+        "themes": [
+          "light",
+          "dark"
+        ],
+        "month": "2026-11",
+        "role": "Synthetic token resolved viaRAMfixtureadmin",
+        "environments": [
+          "dev5197",
+          "productionpreview5198"
+        ]
+      },
+      "assertion_groups": [
+        {
+          "action": "Open rowmenu anddecline exacttarget nativeconfirmation",
+          "selector": "details.row-menu > summary;[data-cancel-leave]",
+          "outcome": "Three overlapping/crossmonth records show exactmember/full dates/type/slot/status/ID;declining sends no mutation.",
+          "source_lines": [
+            55,
+            56,
+            57,
+            58,
+            59,
+            60,
+            61,
+            62,
+            65,
+            66,
+            67,
+            68,
+            69
+          ],
+          "evidence_class": "native_keyboard_and_intercepted_request_absence",
+          "report_paths": [
+            "docs/premium-ui/qa-leave-cancel-identity/report-development.json",
+            "docs/premium-ui/qa-leave-cancel-identity/report-production.json"
+          ]
+        },
+        {
+          "action": "Confirm cancellation,503refusal",
+          "selector": "[data-cancel-leave=\"overlap-two\"]",
+          "outcome": "One exactPOSTbody{},no refresh orautomaticreplay;syntheticrecords unchanged.",
+          "source_lines": [
+            70,
+            71,
+            72,
+            73,
+            74,
+            75
+          ],
+          "evidence_class": "intercepted_mutation_failure",
+          "report_paths": [
+            "docs/premium-ui/qa-leave-cancel-identity/report-development.json",
+            "docs/premium-ui/qa-leave-cancel-identity/report-production.json"
+          ]
+        },
+        {
+          "action": "Explicitly retry same record",
+          "selector": "[data-cancel-leave=\"overlap-two\"]",
+          "outcome": "Enabled retry submits sameexactPOST{},GETrefresh shows targetcancelled andsiblingsunchanged.",
+          "source_lines": [
+            76,
+            77,
+            78,
+            79,
+            80,
+            81,
+            82,
+            83,
+            84
+          ],
+          "evidence_class": "intercepted_mutation_and_fixture_readback_not_real_persistence",
+          "report_paths": [
+            "docs/premium-ui/qa-leave-cancel-identity/report-development.json",
+            "docs/premium-ui/qa-leave-cancel-identity/report-production.json"
+          ]
+        },
+        {
+          "action": "Synthetic missingtarget probe",
+          "selector": "[data-cancel-leave=\"missing-target\"]",
+          "outcome": "Explicittoast andno confirmation/request;HTML-like names inert.",
+          "source_lines": [
+            85,
+            86,
+            87,
+            88,
+            89
+          ],
+          "evidence_class": "synthetic_dataset_corruption_and_request_absence",
+          "report_paths": [
+            "docs/premium-ui/qa-leave-cancel-identity/report-development.json",
+            "docs/premium-ui/qa-leave-cancel-identity/report-production.json"
+          ]
+        },
+        {
+          "action": "Hold200/503untilMembers navigation",
+          "selector": "[data-cancel-leave=\"cross-month\"];#mobile-more;.sidebar [data-view=\"members\"]",
+          "outcome": "Deliveredresponse cannotrefreshLeave/addstaletoast;newMembersdraftandfocus retained.",
+          "source_lines": [
+            91,
+            92,
+            93,
+            94,
+            95,
+            96,
+            97,
+            99,
+            100,
+            101,
+            102,
+            103,
+            107,
+            108,
+            109,
+            110,
+            111,
+            112,
+            113,
+            114,
+            115
+          ],
+          "evidence_class": "delivered_intercepted_response_and_actual_route_dom_ownership",
+          "report_paths": [
+            "docs/premium-ui/qa-leave-cancel-identity/report-development.json",
+            "docs/premium-ui/qa-leave-cancel-identity/report-production.json"
+          ]
+        },
+        {
+          "action": "Hold200/503untilsignout",
+          "selector": "#account-menu-button;#sign-out",
+          "outcome": "Deliveredresponse cannotrecreate authenticatedshelloraddstalefeedback.",
+          "source_lines": [
+            91,
+            93,
+            95,
+            96,
+            97,
+            104,
+            105,
+            107,
+            108,
+            109,
+            110,
+            111,
+            112,
+            116
+          ],
+          "evidence_class": "delivered_intercepted_response_and_login_preservation",
+          "report_paths": [
+            "docs/premium-ui/qa-leave-cancel-identity/report-development.json",
+            "docs/premium-ui/qa-leave-cancel-identity/report-production.json"
+          ]
+        },
+        {
+          "action": "Hashandunexpectedrequest/errorgates",
+          "selector": "Whole script",
+          "outcome": "5declaredsources+script held;allmutationroutes intercepted,unexpectedmutations/pageerrors fail.",
+          "source_lines": [
+            9,
+            10,
+            11,
+            12,
+            30,
+            32,
+            33,
+            34,
+            35,
+            39,
+            40,
+            41,
+            89,
+            119,
+            120,
+            125
+          ],
+          "evidence_class": "script_and_source_integrity_bounded_scope",
+          "report_paths": [
+            "docs/premium-ui/qa-leave-cancel-identity/report-development.json",
+            "docs/premium-ui/qa-leave-cancel-identity/report-production.json"
+          ]
+        }
+      ],
+      "limitations": [
+        "No source mapping makes unexecuted/historical results current; these two rawreports specifically currentfor5declaredfiles/test only.",
+        "No monthchange/sameroute rerender/newsignin,realpersistence/authorization/nativepromptvisual/physical/nativeAT certification.",
+        "Missingtarget is syntheticDOMcorruption. Sibling GETreadback uses intercepted mutable state,notdatabasepersistence.",
+        "Keyboard activation only. No new scopedaxe/geometry audit; fullscope notclaimed."
+      ]
+    }
+  ]
+}

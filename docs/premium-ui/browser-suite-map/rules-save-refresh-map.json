@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-10-24T08:14:59.153570+00:00",
+  "scope": "Bounded confirmed-save read-recovery assertions.",
+  "entries": [
+    {
+      "suite": "frontend/tests/premium-rules-save-refresh.browser.mjs",
+      "sha256": "44b7fcadb6d88040829e153536f675bc26144c6760336d215a237a8e2916bcd3",
+      "source_inspected": true,
+      "execution_verified": true,
+      "execution_verification_scope": "Root6 contexts8 scenarios each; source/test held and independent read-only source/test review.",
+      "screens": [
+        "Exported Rota Rules editor",
+        "Review / confirmed-save recovery dialog"
+      ],
+      "contexts": {
+        "engines": [
+          "chromium",
+          "firefox",
+          "webkit"
+        ],
+        "widths": [
+          320,
+          1280
+        ],
+        "fixture": "Every API locally fulfilled; explicit held responses; paused clock"
+      },
+      "assertion_groups": [
+        {
+          "action": "Dismiss pending confirmed-save read",
+          "selector": "Native dialog controls; [data-save-refresh]; [data-save-refresh-retry]; [data-text-field=label]",
+          "outcome": "Late GET200/503 cannot repaint closed review or overwrite later draft/focus/status; reopening never replays PUT.",
+          "source_lines": [
+            22,
+            58,
+            63
+          ],
+          "evidence_class": "native_editor_locally_intercepted_save_and_held_refresh",
+          "report_paths": [
+            "docs/premium-ui/qa-rules-save-refresh.json"
+          ]
+        },
+        {
+          "action": "Retry current read failure",
+          "selector": "Native dialog controls; [data-save-refresh]; [data-save-refresh-retry]; [data-text-field=label]",
+          "outcome": "Confirmed-save feedback remains visible; explicit retry issues GET only.",
+          "source_lines": [
+            22,
+            63,
+            65
+          ],
+          "evidence_class": "native_editor_locally_intercepted_save_and_held_refresh",
+          "report_paths": [
+            "docs/premium-ui/qa-rules-save-refresh.json"
+          ]
+        },
+        {
+          "action": "Recover malformed successful response",
+          "selector": "Native dialog controls; [data-save-refresh]; [data-save-refresh-retry]; [data-text-field=label]",
+          "outcome": "Non-array rules response is rejected without draft loss or repeated PUT; explicit retry recovers.",
+          "source_lines": [
+            22,
+            65,
+            72
+          ],
+          "evidence_class": "native_editor_locally_intercepted_save_and_held_refresh",
+          "report_paths": [
+            "docs/premium-ui/qa-rules-save-refresh.json"
+          ]
+        },
+        {
+          "action": "Preserve later edit/change-back",
+          "selector": "Native dialog controls; [data-save-refresh]; [data-save-refresh-retry]; [data-text-field=label]",
+          "outcome": "Later label edits survive while fresh guard48 and revision2 are used; restoring original label remains an intentional delta.",
+          "source_lines": [
+            22,
+            55,
+            63,
+            71,
+            72
+          ],
+          "evidence_class": "native_editor_locally_intercepted_save_and_held_refresh",
+          "report_paths": [
+            "docs/premium-ui/qa-rules-save-refresh.json"
+          ]
+        },
+        {
+          "action": "Replace page while read pending",
+          "selector": "Native dialog controls; [data-save-refresh]; [data-save-refresh-retry]; [data-text-field=label]",
+          "outcome": "Detached-page success/error cannot touch replacement screen or its focus.",
+          "source_lines": [
+            22,
+            47,
+            48,
+            50,
+            53,
+            55,
+            57,
+            59,
+            60,
+            63,
+            67,
+            69,
+            71,
+            77
+          ],
+          "evidence_class": "native_editor_locally_intercepted_save_and_held_refresh",
+          "report_paths": [
+            "docs/premium-ui/qa-rules-save-refresh.json"
+          ]
+        },
+        {
+          "action": "Exact requests and snapshot",
+          "selector": "Native dialog controls; [data-save-refresh]; [data-save-refresh-retry]; [data-text-field=label]",
+          "outcome": "Exact old/new revision PUT and full validation bodies; all APIs fulfilled locally, declared source/test held.",
+          "source_lines": [
+            29,
+            35,
+            76
+          ],
+          "evidence_class": "native_editor_locally_intercepted_save_and_held_refresh",
+          "report_paths": [
+            "docs/premium-ui/qa-rules-save-refresh.json"
+          ]
+        }
+      ],
+      "limitations": [
+        "New suite uses exported development-module editor in locally intercepted API fixtures, three engines at320/1280; no real persistence/auth, production-bundle, native-AT or physical-device certification.",
+        "History supersession, malformed PUT envelope and complete PUT response after dismissed review are independently source-reviewed, not explicitly runtime exercised by the new suite.",
+        "Read ownership guards do not certify all network timeout/abort or authentication transitions. No full requirement182/225 completion inferred.",
+        "No backend/API/permission/scheduling/persistence/export contract change by this batch; concurrent work preserved. No commit/push/deploy."
+      ]
+    }
+  ]
+}

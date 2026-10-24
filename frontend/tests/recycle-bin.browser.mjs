@@ -50,7 +50,7 @@ try {
     let bin = structuredClone(BATCHES);
     let recorded = structuredClone(RECORDED);
     await page.route("**/__rb-test", (route) =>
-      route.fulfill({ contentType: "text/html", body: '<html lang="en"><head><title>Recycle bin test</title><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/src/styles.css"></head><body><main><div id="root"></div></main></body></html>' }));
+      route.fulfill({ contentType: "text/html", body: '<html lang="en"><head><title>Recycle bin test</title><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/src/styles.css"><link rel="stylesheet" href="/src/premium-theme.css"></head><body><main><div id="root"></div></main></body></html>' }));
     await page.route("**/api/v1/**", async (route) => {
       const req = route.request();
       const url = new URL(req.url());

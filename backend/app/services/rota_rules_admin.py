@@ -24,6 +24,7 @@ from app.models import (
     PersonCallClusterMembership,
     ReferenceValue,
     RotaRuleVersion,
+    Unit,
 )
 from app.services.leave import date_range, month_bounds
 from app.services.member_profiles import local_today
@@ -37,7 +38,9 @@ from app.services.rota_eligibility import (
     group_info,
     member_call_level,
 )
+from app.services.rota_eligibility import call_level_missing_message, call_level_pool_message
 from app.services.rota_rules import (
+    LIMIT_SECTIONS,
     VALID_CALL_LEVELS,
     VALID_DUTY_GROUPS,
     VALID_DUTY_KEYS,
@@ -173,6 +176,82 @@ def group_summaries(db: Session, day: date | None = None) -> list[dict[str, Any]
     return rows
 
 
+def _unit_is_active(unit: Unit) -> bool:
+    return (unit.active_status or "active").lower() == "active"
+
+
+def unit_summaries(db: Session) -> list[dict[str, Any]]:
+    """``[{id, code, name, campus, active}]`` for every unit (active first, then by campus,
+    name). The Rota Rules page offers these as "Units allowed / excluded" chips and writes the
+    unit ``id`` into ``allowed_units``/``excluded_units``."""
+    units = list(db.scalars(select(Unit)))
+    units.sort(key=lambda u: (not _unit_is_active(u), (u.campus or "").lower(), u.name.lower(), u.code.lower()))
+    return [
+        {
+            "id": str(unit.id),
+            "code": unit.code,
+            "name": unit.name,
+            "campus": unit.campus,
+            "active": _unit_is_active(unit),
+        }
+        for unit in units
+    ]
+
+
+def _unit_tokens(tokens: list[str], units: list[Unit]) -> tuple[dict[str, list[Unit]], list[str]]:
+    """Resolve rule unit tokens (unit id, or legacy code/name) -> ({token: units}, missing)."""
+    from app.services.rota_template import token_matches_unit
+
+    matched: dict[str, list[Unit]] = {}
+    missing: list[str] = []
+    for token in tokens:
+        if not str(token).strip():
+            missing.append(str(token))
+            continue
+        hits = [unit for unit in units if token_matches_unit(str(token), unit)]
+        if hits:
+            matched[token] = hits
+        elif token not in missing:
+            missing.append(token)
+    return matched, missing
+
+
+def unit_rule_problems(rule: Any, units: list[Unit]) -> list[dict[str, Any]]:
+    """``missing_unit`` (error), ``unit_in_both`` (error) and ``inactive_unit`` (warning, active
+    duties only) for one duty's allowed/excluded unit lists."""
+    problems: list[dict[str, Any]] = []
+    label = rule.label
+    resolved: dict[str, dict[Any, Unit]] = {}
+    for field, tokens, word in (
+        ("allowed_units", rule.allowed_units, "Units allowed"),
+        ("excluded_units", rule.excluded_units, "Units excluded"),
+    ):
+        matched, missing = _unit_tokens(list(tokens), units)
+        resolved[field] = {unit.id: unit for hits in matched.values() for unit in hits}
+        for token in missing:
+            problems.append(_problem(rule.key, field, "missing_unit", "error",
+                                     f"{label}: selected unit no longer exists ({token or 'blank'}).",
+                                     f"Remove it from {word}."))
+    both = sorted(
+        (unit for unit_id, unit in resolved["allowed_units"].items() if unit_id in resolved["excluded_units"]),
+        key=lambda u: u.name.lower(),
+    )
+    if both:
+        names = ", ".join(unit.name for unit in both)
+        problems.append(_problem(rule.key, "excluded_units", "unit_in_both", "error",
+                                 f"{label}: {names} is both allowed and excluded, so the duty cannot be placed there.",
+                                 "Remove the unit from either Units allowed or Units excluded."))
+    if rule.active:
+        both_ids = {unit.id for unit in both}
+        for unit in sorted(resolved["allowed_units"].values(), key=lambda u: u.name.lower()):
+            if unit.id in both_ids or _unit_is_active(unit):
+                continue
+            problems.append(_problem(rule.key, "allowed_units", "inactive_unit", "warning",
+                                     f"{label}: unit {unit.name} is inactive; no duty is made for it.",
+                                     "Activate the unit, or remove it from Units allowed."))
+    return problems
+
+
 # --------------------------------------------------------------------------- checks
 
 
@@ -216,7 +295,8 @@ def rule_problems(
     duties: dict[str, dict[str, Any]] | None = None,
     group_rows: list[dict[str, Any]] | None = None,
 ) -> list[dict[str, Any]]:
-    """Every problem in ``rules`` (errors block a save, warnings never do)."""
+    """Every problem in ``rules`` (errors block a save, warnings never do; ``info`` items such as
+    ``call_level_pool`` are notes, not warnings)."""
     groups = groups if groups is not None else groups_by_key(db)
     if duties is None:
         today = local_today()
@@ -227,6 +307,7 @@ def rule_problems(
         db.scalars(select(ReferenceValue.key).where(ReferenceValue.kind == "duty_type"))
     )
     problems: list[dict[str, Any]] = []
+    all_units = list(db.scalars(select(Unit)))
     for rule in rules.duty_rules:
         label = rule.label
         if rule.key not in VALID_DUTY_KEYS | registered_keys:
@@ -263,8 +344,23 @@ def rule_problems(
             problems.append(_problem(rule.key, "excluded_cluster_keys", "allowed_and_excluded", "error",
                                      f"{label}: {names} is both allowed and excluded, so nobody in it can do the duty.",
                                      "Remove the group from either Groups allowed or Groups excluded."))
+        problems.extend(unit_rule_problems(rule, all_units))
         if not rule.active:
             continue
+        # Strict call level (call_level_pool_and_balance_contract section 1): several levels make
+        # a deliberate pool (info only, not a warning); a duty with no level is unresolved - a
+        # warning so existing rules still save, but generation and auto-fill leave its slots open.
+        effective = effective_call_levels(rule, groups)
+        if not effective:
+            problems.append(_problem(rule.key, "allowed_call_levels", "call_level_missing", "warning",
+                                     call_level_missing_message(label),
+                                     "Pick at least one call level (or an eligibility group of that level). "
+                                     "Until then its slots stay open and are never auto-filled."))
+        elif len(effective) > 1:
+            problems.append(_problem(rule.key, "allowed_call_levels", "call_level_pool", "info",
+                                     call_level_pool_message(label, effective),
+                                     "Any member of these call levels may take this duty. To limit it to one "
+                                     "level, keep only that level and its groups."))
         for key in rule.allowed_cluster_keys:
             group = groups.get(key)
             if group is None or key in both:
@@ -278,7 +374,7 @@ def rule_problems(
                                          f"{label}: group {group.name} has no members today.",
                                          "Add members to the group, or remove it here."))
         info = duties.get(rule.key)
-        if info is not None and info["eligible_now"] == 0:
+        if info is not None and info["eligible_now"] == 0 and effective:
             levels = info["effective_call_levels"]
             problems.append(_problem(rule.key, "allowed_cluster_keys" if rule.allowed_cluster_keys else "allowed_call_levels",
                                      "nobody_eligible", "warning",
@@ -350,8 +446,12 @@ def save_rules_with_history(
     user: Any = None,
     base_revision: str | None = None,
     note: str | None = None,
+    allow_limit_changes: bool = False,
 ):
     """Stale check -> validate (all problems) -> save -> store a version.
+
+    The limit sections (``LIMIT_SECTIONS``) keep their stored values unless
+    ``allow_limit_changes`` is set; only the Limits API (app/services/limits.py) sets it.
 
     Raises ``StaleRules`` or ``RotaRulesInvalid``. Returns ``(rule_version, rules)`` as
     re-read after the save (the GET shape)."""
@@ -360,6 +460,9 @@ def save_rules_with_history(
     before_revision = rules_revision(before_payload)
     if base_revision is not None and base_revision != before_revision:
         raise StaleRules(before_revision)
+    if not allow_limit_changes:
+        for section in LIMIT_SECTIONS:
+            setattr(rules, section, getattr(before, section).model_copy(deep=True))
     has_history = db.scalar(select(RotaRuleVersion.id).limit(1)) is not None
     save_phase_one_rules(db, rules)  # raises RotaRulesInvalid (a ValueError)
     rule_version, saved = get_phase_one_rules(db)

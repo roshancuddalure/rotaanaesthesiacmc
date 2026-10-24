@@ -1,0 +1,92 @@
+{
+  "recorded_at_utc": "2026-10-22T09:23:44.700Z",
+  "requirements": [
+    239
+  ],
+  "completion_claim": false,
+  "scope": "Exactly eight private legacy import renderer/filter functions; TypeScript-bound reference closure and isolated esbuild module emit equivalence. Shared API exports, state, delegated branches and current operational import untouched.",
+  "before_main_sha256": "6cc938e2bd2a2214f42d672fcf91d198a67b0ac1b5072c4b1a164eee94886e65",
+  "source_sha256": {
+    "frontend/src/main.ts": "5d35061fc00ad62a49cfa374bc8e469a35865e0dfc0549e970664431b8643a0d"
+  },
+  "removed": [
+    {
+      "name": "unitImportRowMatchesFilter",
+      "start": 188688,
+      "end": 189421,
+      "lines": 10
+    },
+    {
+      "name": "filteredUnitImportRows",
+      "start": 189425,
+      "end": 190271,
+      "lines": 25
+    },
+    {
+      "name": "unitImportMatchSummary",
+      "start": 192033,
+      "end": 192515,
+      "lines": 9
+    },
+    {
+      "name": "renderUnitImportMemberResolver",
+      "start": 192645,
+      "end": 194011,
+      "lines": 23
+    },
+    {
+      "name": "renderUnitImportUnitResolver",
+      "start": 194015,
+      "end": 194917,
+      "lines": 17
+    },
+    {
+      "name": "renderUnitImportPostingResolver",
+      "start": 194921,
+      "end": 195609,
+      "lines": 15
+    },
+    {
+      "name": "renderUnitImportResolvers",
+      "start": 195613,
+      "end": 195878,
+      "lines": 7
+    },
+    {
+      "name": "renderUnitImportCorrectionModal",
+      "start": 195882,
+      "end": 199709,
+      "lines": 70
+    }
+  ],
+  "references": [
+    {
+      "name": "unitImportRowMatchesFilter",
+      "position": 189653
+    },
+    {
+      "name": "renderUnitImportMemberResolver",
+      "position": 195725
+    },
+    {
+      "name": "renderUnitImportUnitResolver",
+      "position": 195767
+    },
+    {
+      "name": "renderUnitImportPostingResolver",
+      "position": 195807
+    }
+  ],
+  "executable_emit": {
+    "method": "esbuild transform TypeScript, ESM es2022 tree-shaking and minification; imports remain external. Byte-for-byte output equality asserted before app mutation.",
+    "before_sha256": "395aaab05e30526893ffe3571d4f493be99e6d82db75c6b940463e2755377faf",
+    "after_sha256": "395aaab05e30526893ffe3571d4f493be99e6d82db75c6b940463e2755377faf",
+    "bytes": 397343,
+    "equal": true
+  },
+  "limits": [
+    "Isolated main-module emit equivalence, not full production bundle equivalence. Full build and real operational-import regressions required separately.",
+    "No reflected name/public export observed; compiled TypeScript-bound references audited.",
+    "No backend, API export, handler, persisted state, mutation or export-content change."
+  ]
+}

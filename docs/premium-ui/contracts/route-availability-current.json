@@ -1,0 +1,35 @@
+{
+  "recorded_at_utc": "2026-10-22T11:47:39.090626+00:00",
+  "completion_claim": false,
+  "inventory_action_id": "main-ts::updateRouteAvailabilityNotice::23ad8b8d0d85",
+  "selector": "[data-route-overview]",
+  "source_sha256": {
+    "frontend/src/main.ts": "74e072cea72b83cfc2b7fb069a8dc038096e1e0f656a55ce0866ad16e5e63bde",
+    "frontend/src/navigation-history.ts": "7987fe6b5034c80e44708b0e46d5bf4009a1e3eabca092a5b8a31ca1afdde0b4",
+    "frontend/src/premium-theme.css": "ff2aee7148e54e4e40aae847189110cf3d9228d90fabffbd63a3449a1e1a935d"
+  },
+  "actor": "Signed-in user encountering unknown/role-limited link",
+  "prerequisite": "Persistent unavailable-link notice shown over existing Overview fallback",
+  "expected": "Keyboard activation clears notice, navigates to Overview hash and focuses its heading without a mutation",
+  "outcome": "Exact outcome asserted in24 role/width/browser contexts",
+  "report": "docs/premium-ui/qa-role-navigation.json",
+  "test": "frontend/tests/premium-role-navigation.browser.mjs",
+  "full_contract_pass": false,
+  "remaining": [
+    "Dark/high-zoom/landscape variation",
+    "Native screen readers/physical devices",
+    "Independent review",
+    "Every request-failure/supersession context"
+  ],
+  "latest_regression_rerun": {
+    "recorded_at_utc": "2026-10-22T11:54:52.762429+00:00",
+    "report": "docs/premium-ui/qa-role-navigation.json",
+    "source_sha256": {
+      "frontend/src/main.ts": "74e072cea72b83cfc2b7fb069a8dc038096e1e0f656a55ce0866ad16e5e63bde",
+      "frontend/src/navigation-history.ts": "7987fe6b5034c80e44708b0e46d5bf4009a1e3eabca092a5b8a31ca1afdde0b4",
+      "frontend/src/styles.css": "645b00bf7cc07246f257ec5c90015b6d273a0b212478672ce098684d282385e4",
+      "frontend/src/premium-theme.css": "ff2aee7148e54e4e40aae847189110cf3d9228d90fabffbd63a3449a1e1a935d"
+    },
+    "layouts": 24
+  }
+}

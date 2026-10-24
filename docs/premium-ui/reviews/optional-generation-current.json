@@ -1,0 +1,75 @@
+{
+  "recorded_at_utc": "2026-10-22T17:29:54.531115+00:00",
+  "completion_claim": false,
+  "requirements": [
+    164,
+    208,
+    209,
+    212,
+    219,
+    258
+  ],
+  "scope": "Generation essential actions during optional report delay/refusal/deadline with route/month-safe dialog focus recovery.",
+  "source_sha256": {
+    "frontend/src/main.ts": "728b4c2c3939dec6dabc8605637eaa62fc625e6a9d390c67795683545a397eb8",
+    "frontend/src/member-workspace.ts": "3a8e1b6ad7b0916b4d702256b325e25554f5d87279a37149a33e53f8e482857b",
+    "frontend/src/rota-compute.ts": "cba72c9dee5c4782143194cde5b15b3440bb2e880e70a9de3a84125771111c9f",
+    "frontend/src/rota-intelligence.ts": "b7c38cc1e10bb6cd61a5fe5f84260ee2a3ae42567f7a9b826cdbd4c13e975ace",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "c8735b125b0aeb78f9d7ab1712b4e12a33443bc38a3c11050c1e3f36016c497f"
+  },
+  "reproduced_before": {
+    "report": "docs/premium-ui/qa-optional-generation-before.json",
+    "finding": "EarlyBuild/Autoassignalreadyusableandchooserpersistedthroughfourreport503responses,butclosingchooserleftfocuswithoutreplacementopener."
+  },
+  "changes": [
+    "AddoptionalUI-onlyfallbackFocuscallback to workspaceDialog and generationdialog entrypoints. Existingcallerswithoutcallback retainoriginalbehavior.",
+    "Pass explicit callbackthroughAutoassignchooser,Quick safe fill,Whole-month optimisation andearlytemplateBuild. Callbackresolvescurrentenabledactiononlyonsamerotatemplateviewandsamemonth.",
+    "UsefallbackonlywhenoriginalopenerisdisconnectedanddocumentfocusisBODY. Newermeaningfulfocusisretained. No computedIDs,requests,payloads,state/generationlogicchanged."
+  ],
+  "checks": {
+    "optional_report_contexts": 42,
+    "engines": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "widths": [
+      320,
+      1280
+    ],
+    "branches": [
+      "chooser",
+      "quick",
+      "optimise",
+      "build",
+      "newer-focus",
+      "navigate-away",
+      "deadline"
+    ],
+    "optional_reads_held_per_context": 4,
+    "generation_action_regressions": 21,
+    "record_close_regressions": 12,
+    "total_bounded_workflows": 75,
+    "unit_tests": 100,
+    "build_exit_code": 0,
+    "build_inputs_held": true
+  },
+  "evidence": [
+    "docs/premium-ui/qa-optional-generation-before.json",
+    "docs/premium-ui/qa-optional-generation.json",
+    "docs/premium-ui/qa-generation-actions-current.json",
+    "docs/premium-ui/qa-record-close.json",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+  ],
+  "test": "frontend/tests/premium-optional-generation.browser.mjs",
+  "test_sha256": "7a259ad0b206cf39ae4425e7983d3c062e0921a154de231243d1652f79c865ff",
+  "limitations": [
+    "GET-onlysyntheticone-open-slottemplateandheldoptionalreads. Allfourreportfailuresoccurtogetherinfixture;independentreportcombinations/published/lockedpermissionsstatesremainseparateacceptance.",
+    "Deadlinebranchacceleratesonly12000mslocaltimersto600msandthenfulfillsheldresponseslate. Nativeelapsed12second/performancebehaviornotcertified.",
+    "Navigate-awayguardusesprogrammatichashchangeunderopenmodal. Newer-focusguardusesnativeclosefollowedbyexplicitfocusonthemonthcontrolbeforequeuedcloseevent. No claimofphysical/nativeATworkflow.",
+    "Existing21generationregressioninterceptsapply/revert/approval/publishpayloadsandcallbacks;12recordcloseregressionprotectsdefaultdialogclose/draftbehavior. No actualwrites/GPU/eligibility/persistencecertification.",
+    "OptionalUIfunctionargumentschangedonlytoforwardfocuscallback;backendAPIcontracts/servicesunchanged. Originalcurrent144/tenfamilysnapshotnowhistoricalafterfocusedits.",
+    "Freshindependent/native/physical/full164/full260acceptancepending. Thisbatchmakesnobackend/API-contract/permissions/scheduling/data/export/productionchanges."
+  ]
+}

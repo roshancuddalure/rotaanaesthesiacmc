@@ -1,0 +1,157 @@
+{
+  "recorded_at_utc": "2026-10-24T08:32:08.786476+00:00",
+  "scope_type": "documentary_deliverable_only",
+  "scope": "Explicit acceptance of original surface classification10,typography scale29,spacing definition34 andradius roles35. No uniform runtime adoption claim.",
+  "independent_review": {
+    "reviewer": "acceptance_map_next",
+    "path": "docs/premium-ui/reviews/design-role-definitions-independent.json"
+  },
+  "root_review": {
+    "reviewer": "/root",
+    "method": "Read exact original requirements/conditions,complete family taxonomy anddesign-role mapping. Reviewed current token roles/selectors,documented responsive/fixed exceptions,andindependent source verdicts. Full styles migration andcomputed cascade outcomes are distinct unaccepted requirements."
+  },
+  "evidence_sha256": {
+    "docs/premium-ui/surface-taxonomy.md": "f3549ce9ed28cbb08b8aa0cb1ad16834578e4530291ec47229d0b91cd33fd291",
+    "docs/premium-ui/design-role-mappings.md": "3e0abfd23172492ab4f1a8bb0a88bc6ff8c568d481e54821ddde77655d979d32",
+    "docs/premium-ui/acceptance-criteria/items-001-086.json": "5f84ff2a0927e6f67f8e09d326e5874bb49e27b6c1752ad6443c5a4b8ccb0625",
+    "frontend/src/main.ts": "658711ebf2ce8b26094131a5f1e4fe383d9ff98f6d0fc3dc5e9961fba44ac983",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "fbffffcf4ce63fb630e79c9662dbd20a2d2f0b261a22f49d7b409f4b3281ef6e",
+    "frontend/src/connection-status.ts": "bb8080819c5d9aac5c5caf402565256bf2df0129a08367cdb6a41fadc2311007",
+    "frontend/src/rota-compute.ts": "e5f967e6166e2ace9352983a468002d45850188d8811363230305d7597fb70ab",
+    "frontend/src/member-workspace.ts": "8ddc65f07445bd3ce775147a5cfdc0b14da7bd7cfe061dcdb59726ec8ec6f80e",
+    "frontend/src/record-workspace.ts": "aff5fa264638bad4448e8e0c42434e6245b4dbe55b970e0b026a05d2631b9bec",
+    "frontend/src/reference-workspace.ts": "93ba8a2d765f43f0fb220586393b3a1cdf6cb944d9fb1ebd26290028a450208e",
+    "docs/premium-ui/reviews/design-role-definitions-independent.json": "36d5f26fe6bd372fdc73a962dd68c4ea43c74cc0848499baf7c61f784bb77f99",
+    "docs/premium-ui/reviews/design-role-definitions-acceptance.json": "0af16324c494e19bb07fdf8b9819bd9d7f45655b159613a7e632b100df82307c",
+    "docs/premium-ui/reviews/design-role-definitions-leave-cancel-revalidation.json": "e39b20b1d3cc7196da7165729b6fe8885bab5b0a6d64beda6b9e1241d2fb550a",
+    "docs/premium-ui/reviews/design-role-definitions-diagnostics-revalidation.json": "c9dd636bf572f066c7b7d3efcc42794f94feffd056b6bf2778d171a0b04959b7",
+    "docs/premium-ui/reviews/design-role-definitions-comparison-revalidation.json": "6cf1264b88e62d5841f157c9ddfb6396a611368bdcb32c0e971dcde582c8cc2f",
+    "docs/premium-ui/reviews/csv-guide-source-preservation.json": "df3808154a4393047c60b501b1bc9431caddaa6f680bc2ae7c500ff4813659eb"
+  },
+  "items": [
+    {
+      "item_id": 10,
+      "requirement": "Classify reusable surfaces into pages, panels, record cards, tables, editors, dialogs and contextual overlays.",
+      "conditions": [
+        {
+          "condition": "Classify reusable surfaces as pages, panels, record cards, tables, editors, dialogs or contextual overlays",
+          "satisfied": true,
+          "evidence": [
+            "docs/premium-ui/surface-taxonomy.md: surface-family and table-family tables"
+          ],
+          "rationale": "Taxonomy explicitly classifies pages, panels, member/unit record cards, record editors, native dialogs, contextual overlays, menus/drawers, inline disclosure and feedback. Separate table-family section distinguishes comparative grids, record lists, structured editors, review lists and inactive literals."
+        },
+        {
+          "condition": "Link each family to existing source and describe its presentation/interaction boundary",
+          "satisfied": true,
+          "evidence": [
+            "frontend/src/main.ts:569-594,754-791,1059-1061,1421-1425,3402-3407,4022-4071; frontend/src/member-workspace.ts:166; frontend/src/rota-compute.ts:278; frontend/src/record-workspace.ts:26-56; frontend/src/reference-workspace.ts:24-33"
+          ],
+          "rationale": "Each family names existing modules/selector/function contexts and presentation/interaction boundaries. Verified NAV_ITEMS19 entries and current role filter; member-card/unit-card source markup; review overlay markup; native member/compute dialog opening; record/reference draft boundaries. New Server details family explicitly reconciled."
+        }
+      ]
+    },
+    {
+      "item_id": 29,
+      "requirement": "Establish a clear typography scale for page titles, panel headings, field labels, body text and metadata.",
+      "conditions": [
+        {
+          "condition": "Define a clear scale for page titles, panel headings, field labels, body copy and metadata",
+          "satisfied": true,
+          "evidence": [
+            "docs/premium-ui/design-role-mappings.md: Typography roles"
+          ],
+          "rationale": "Document maps requested hierarchy to page title text-2xl24-30, panel text-md16, field label text-sm14, body text-base16, metadata text-xs12. It distinguishes generic h3/dialog/metric roles and explicitly records exceptions rather than pretending all heading levels mean one visual role."
+        },
+        {
+          "condition": "Link the scale to shared tokens and role-specific selectors so intended hierarchy is reproducible",
+          "satisfied": true,
+          "evidence": [
+            "frontend/src/premium-theme.css:74-81,161,302; frontend/src/styles.css:161-172,226-231,505-510,5087-5089,5286; frontend/src/main.ts:47-48"
+          ],
+          "rationale": "Read premium token declarations and concrete shared selectors: h2/text-2xl, panel h3/text-md, label/text-sm, body/text-base, help/eyebrow/text-xs. Main imports premium after legacy. Role mappings are reproducible declaration-level definitions; no computed-value or migration claim inferred."
+        }
+      ]
+    },
+    {
+      "item_id": 34,
+      "requirement": "Define consistent spacing tokens for page gutters, card padding, field groups, toolbars and stacked mobile actions.",
+      "conditions": [
+        {
+          "condition": "Define consistent page gutter, card padding, field group, toolbar and mobile stack spacing tokens",
+          "satisfied": true,
+          "evidence": [
+            "frontend/src/styles.css:45-53,477-487,3324-3328,3361-3366,3530-3534,5992-6003; frontend/src/premium-theme.css:163,170,229-231,301,491-532"
+          ],
+          "rationale": "Existing4px shared spacing tokens define4/8/12/16/20/24/32/40/48. Document explicitly maps page gutters through current safe-area/clamp responsive role expressions, card/panel padding, field-grid/label gaps, toolbar clusters and mobile wrapped-action spacing. Dedicated semantic aliases are not necessary to establish mappings using existing shared values. Literal/responsive exceptions are disclosed, not presented as completed uniform adoption."
+        },
+        {
+          "condition": "Document the scale and intended role mappings using existing shared values",
+          "satisfied": true,
+          "evidence": [
+            "docs/premium-ui/design-role-mappings.md: Spacing roles"
+          ],
+          "rationale": "Scale and all five requested role mappings documented with concrete declarations and mobile overrides. Explicitly identifies absence of named gutter/card-padding aliases,10pxfooter gap,12px mobile footer and wrapping semantics. These are migration/adoption limits; the definition does not invent nonexistent role aliases."
+        }
+      ]
+    },
+    {
+      "item_id": 35,
+      "requirement": "Establish distinct radius tokens for fields, cards, dialogs and status chips instead of indiscriminate pill shapes.",
+      "conditions": [
+        {
+          "condition": "Define distinct field, card, dialog and status-chip radius roles",
+          "satisfied": true,
+          "evidence": [
+            "frontend/src/premium-theme.css:82-85,264-266,309-310,521; frontend/src/styles.css:497,627-631,663-667,3324-3326,3361-3363,5275-5277,5493-5499"
+          ],
+          "rationale": "Distinct roles map ordinary fields tosm8, compact cards tomd10, panels/ordinary cards tolg16, major dialogs toxl20, status chips tofull999. Verified field/card/panel/dialog/status declarations; canonical fields10px and fullheight mobile0px are explicit exceptions. Generic geometric token names are sufficient to define distinct documented role assignments."
+        },
+        {
+          "condition": "Document intentional compact/pill exceptions so ordinary surfaces do not receive indiscriminate pill shapes",
+          "satisfied": true,
+          "evidence": [
+            "docs/premium-ui/design-role-mappings.md: Radius and compact status roles; frontend/src/styles.css:663-674,1435-1448,1755-1762,4880"
+          ],
+          "rationale": "Document restricts pill-role exception to compact textual status/count badges and states ordinary fields/cards/dialogs are not authorized pill roles. It separately identifies period badge hardcoding, identity-chip pill and asymmetric navigation as existing adoption exceptions; it does not infer approval/rationale for every legacy pill. This meets definition condition; elimination/reconciliation of all legacy shapes remains separate implementation work."
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "No global style migration, computed cascade, screenshot, action outcome, accessibility or mobile runtime acceptance inferred.",
+    "Low-specificity :where radius declarations may lose to legacy class selectors; documentation acknowledges this correctly.",
+    "Spacing maps existing scale and responsive expressions; absent semantic aliases and10pxfooter exception are disclosed. This review does not require adding aliases solely to close a definition requirement.",
+    "Member-identity/navigation pill keep/change decisions remain adoption work; neither is silently certified as an intentional approved status exception.",
+    "Table literal candidate count/per-instance reachability belongs to broader inventory/requirement101 acceptance; requirement10 family classification is not a complete per-instance operational inventory."
+  ],
+  "revalidation": {
+    "parent_review": "docs/premium-ui/reviews/design-role-definitions-leave-cancel-revalidation.json",
+    "parent_sha256": "e39b20b1d3cc7196da7165729b6fe8885bab5b0a6d64beda6b9e1241d2fb550a",
+    "reviewer": "/root",
+    "changed_supporting_sources": {
+      "frontend/src/main.ts": {
+        "before": "6ebdf70eb1f3663e144c26ea4ceddcee83989a18c84b24a0e3e2a6fdc0b3dbdb",
+        "after": "658711ebf2ce8b26094131a5f1e4fe383d9ff98f6d0fc3dc5e9961fba44ac983"
+      }
+    },
+    "method": "Root inspected diagnostics-only rendering/clipboard changes and corrected stale navigation comment. Existing surface families,role selector/token definitions,fixture scripts and protected invariant contracts are unchanged. New aggregate support presentation remains a page disclosure in the existing classification. This review revalidates original documentary conditions only,not currentruntime results."
+  },
+  "comparison_css_revalidation": {
+    "reviewer": "/root",
+    "method": "Read exact append and current original conditions; verified previous CSS byte prefix unchanged with originalSHA, all other evidence unchanged. New selectors onlycomparison cues, generation comparison andadmin-preview wrappers; no sharedtoken/typography/spacing/radius definitions orLeave date/calendar/pressure selectors changed. Reviewed source-author scoped assessment, explicitly not an independent author review; root adjudication supplies separate review.",
+    "original_css_prefix_sha256": "559041ee03d192fcc291582bd7572e8d32004e9d5428b7e57fbbea9ba9e60f83",
+    "runtime_evidence_scope": "Historical runtime reports retain original snapshots. No runtime rerun or all-page style certification inferred by scoped append review."
+  },
+  "csv_guide_revalidation": {
+    "reviewer": "/root",
+    "independent_source_reviewer": "/root/csv_guide_contract_review",
+    "changed_evidence": [
+      "frontend/src/premium-theme.css",
+      "frontend/src/member-workspace.ts"
+    ],
+    "method": "Root inspected guide markup, scoped CSS and13-case assertions, actual320/1280screenshots, exactwhole-source reconstruction and priorCSSprefixhash. Every prior handler byte unchanged.61semanticclassifications/rationales/selections unchanged; onlyguide exceptionimplementationdescription refined. Existing typography/spacing/radius/fixtures/invariants intact. CSV-specific .mw-import selectors cannot match Leaveapproval/calendar/pressure.",
+    "scope": "Specific original accepted conditions retained. Historical runtime snapshots stay historical; this source applicability review creates no new runtime completion."
+  }
+}

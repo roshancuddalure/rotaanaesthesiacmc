@@ -1,0 +1,60 @@
+{
+  "recorded_at_utc": "2026-10-22T11:09:48.956737+00:00",
+  "requirements": [
+    123,
+    131,
+    150,
+    155,
+    156,
+    159,
+    160,
+    208,
+    209,
+    225,
+    227,
+    242,
+    258
+  ],
+  "completion_claim": false,
+  "scope": "Record editor after nested reference save and delayed options read; bounded Addleave scenarios preserving named field/search/nested dialog focus.",
+  "source_sha256": {
+    "frontend/src/record-workspace.ts": "f53fd32448f962156a7ff795dd34e6a0e0aa48ed82d9183354676cbceea8e904"
+  },
+  "evidence": [
+    "docs/premium-ui/qa-record-reference-refresh.json",
+    "docs/premium-ui/qa-record-reference-refresh-before.json",
+    "docs/premium-ui/qa-normalized-save-independent.json",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+  ],
+  "confirmed_before": "Nested catalogsave started delayedouteroptionsGET. Closingcatalogandeditingnotes retaineddraftvalues butoldrecordrerender removedfocusedtextarea andresetselection to0,0.",
+  "change": "Capture active destination immediately before asynchronousoptionsrefresh renders, then restore its replacement only if originaleditor ownedfocus and renderleftbody/dialogfocused. Preserve namedfield caret, membersearchtext/filter andeditorformscroll. Active nestedcatalogfocus is leftalone. Existing requests/options/payload/dirty/review-save rules untouched.",
+  "checks": {
+    "browser_scenarios": 18,
+    "engines": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "widths": [
+      320,
+      1280
+    ],
+    "focus_contexts": [
+      "notes_caret",
+      "member_search_filter",
+      "nested_catalog"
+    ],
+    "normalized_save_regression_workflows": 15,
+    "unit_tests": 100,
+    "build_exit": 0,
+    "build_inputs_unchanged": true
+  },
+  "limitations": [
+    "ActualexportedAddleave→catalogfixture, notallposting/recordtypes orkeyboardplatforms.",
+    "ExactlyonecatalogPUTinterceptedpercase; norecordpreview/save/backendwrites, no realreferencepersistenceclaim.",
+    "Membersearchrestoration usesexistinginputfilterhandler withprogrammaticevent; testchecks retainedvalue,caretandhiddenunrelatedoption.",
+    "Prior144route matrix nowpredates this record-onlyfocuschange; preservedashistorical, notrecertifiedby18nestedcases.",
+    "Independentagents unavailableafterreportedusagelimit. Physical/nativeassistivechecks pending; nativepicker/rules-testlimitations retained.",
+    "No backend/API-contract/permissions/scheduling/persisted-data/export-content or productionchanges; full260goal remainsactive/incomplete."
+  ]
+}

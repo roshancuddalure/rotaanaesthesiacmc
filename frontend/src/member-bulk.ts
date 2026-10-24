@@ -12,9 +12,9 @@ import {
   type ArchiveAllPreview,
 } from "./services/api";
 import { badge, esc } from "./ui";
+import { formatAuditTimestamp } from "./audit-time";
 
-const when = (iso: string) =>
-  new Date(iso).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" });
+const when = formatAuditTimestamp;
 
 export async function openArchiveAll(onChanged: () => void | Promise<void>): Promise<void> {
   const dialog = workspaceDialog("Clear all members", "archive-all");
@@ -22,6 +22,7 @@ export async function openArchiveAll(onChanged: () => void | Promise<void>): Pro
   let batches: ArchiveAllBatch[] = [];
   let typed = "";
   let busy = false;
+  let loading = false;
   let message = "";
   let result: { batch_id: string; archived: number } | undefined;
 
@@ -44,6 +45,7 @@ export async function openArchiveAll(onChanged: () => void | Promise<void>): Pro
       : "";
 
   const render = () => {
+    if (!dialog.isConnected) return;
     const header = `<header class="mw-header"><div><h2>Clear all members</h2><p>Archives every active member. Nothing is deleted, and you can restore the whole batch.</p></div>
       <button type="button" data-close aria-label="Close clear all members">×</button></header>`;
     let body: string;
@@ -57,7 +59,9 @@ export async function openArchiveAll(onChanged: () => void | Promise<void>): Pro
           </div>
         </div>`;
     } else if (!preview) {
-      body = `<p role="status">Counting members and their records… nothing has been changed.</p>`;
+      body = loading
+        ? `<p role="status">Counting members and their records… nothing has been changed.</p>`
+        : `<section role="alert"><h3>Could not count members</h3><p>Nothing has been changed. Get fresh counts before reviewing an archive.</p><button type="button" class="primary" data-retry-counts>Try again</button></section>`;
     } else if (!preview.members) {
       body = `<p>There are no active members to archive.</p>`;
     } else {
@@ -88,14 +92,22 @@ export async function openArchiveAll(onChanged: () => void | Promise<void>): Pro
   };
 
   const load = async () => {
+    if (loading || !dialog.open) return;
+    loading = true;
     preview = undefined;
     render();
     try {
-      [preview, batches] = await Promise.all([previewArchiveAll(), listArchiveBatches().catch(() => [])]);
+      const [nextPreview, nextBatches] = await Promise.all([previewArchiveAll(), listArchiveBatches().catch(() => [])]);
+      if (!dialog.open) return;
+      preview = nextPreview;
+      batches = nextBatches;
     } catch (error) {
+      if (!dialog.open) return;
       message = error instanceof Error ? error.message : "Could not count members";
+    } finally {
+      loading = false;
     }
-    render();
+    if (dialog.open) render();
   };
 
   dialog.addEventListener("cancel", (event) => {
@@ -105,6 +117,13 @@ export async function openArchiveAll(onChanged: () => void | Promise<void>): Pro
   dialog.addEventListener("click", async (event) => {
     const target = event.target as HTMLElement;
     if (target.closest("[data-close]")) return close();
+    if (target.closest("[data-retry-counts]")) {
+      if (!busy) {
+        message = "";
+        await load();
+      }
+      return;
+    }
     const undo = target.closest<HTMLButtonElement>("[data-undo]");
     if (undo && !busy) {
       busy = true;

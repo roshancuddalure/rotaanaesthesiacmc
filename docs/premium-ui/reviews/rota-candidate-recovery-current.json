@@ -1,0 +1,82 @@
+{
+  "recorded_at_utc": "2026-10-22T18:16:43.512896+00:00",
+  "completion_claim": false,
+  "requirements": [
+    92,
+    175,
+    208,
+    209,
+    219,
+    227,
+    258
+  ],
+  "scope": "Late per-slot rota candidate read/retry presentation, popup identity, local manual input/focus preservation and route/listener lifecycle.",
+  "source_sha256": {
+    "frontend/src/main.ts": "6abcca5b363a99456eb2107ea03bc56f264098e611cf87598a77c0f919ee52b7",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "e545e63f720e4794d39bf55e73d0a622d842429592ea313ec824c2c78604c1c4"
+  },
+  "before": {
+    "report": "docs/premium-ui/qa-rota-candidate-recovery-before.json",
+    "finding": "Heldsuccessreplacedthepopuprootandlostselectedperson,overridereasonandfocus."
+  },
+  "changes": [
+    "Refresh content within the existing popup root; retain local person selection when present in refreshed options, override reason, replace checkbox, owned focus/text selection and body scroll.",
+    "When selected member disappears, clear selection and announce review requirement. An empty refreshed list retains manual text/checkbox controls with an empty member list and unavailable explanation; no old candidate option is reintroduced.",
+    "Failed candidate reads retain inputs and offer explicit Retry candidate suggestions. Retry focus goes to a replacement retry or current view switch only when focus fell to body; newer focus is preserved.",
+    "Ignore successful/error results if the template/account/month context changed. Per-request tokens prevent an old request cleanup clearing a newer slot loading marker.",
+    "Close day popup during accepted route navigation, matching previous nested-overlay unmount behavior. Scope new outside-shell action bridge to the existing view event AbortSignal."
+  ],
+  "checks": {
+    "candidate_contexts": 48,
+    "engines": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "widths": [
+      320,
+      1280
+    ],
+    "scenarios": [
+      "late focused manual input",
+      "late compact view",
+      "selected member removed",
+      "empty refreshed member list",
+      "popup closed before response",
+      "another day opened",
+      "navigate away",
+      "503 then explicit retry"
+    ],
+    "requests": "GET-only intercepted candidate reads plus GET-only disposable companion API; no assignment/apply/publish writes.",
+    "day_view_regressions": 6,
+    "day_view_scoped_axe_checks": 6,
+    "tagged_axe_violations": 0,
+    "optional_generation_regressions": 42,
+    "browser_total": 96,
+    "unit_tests": 100,
+    "build_exit_code": 0,
+    "build_inputs_held": true,
+    "static_inventories": "Style/action source inventories refreshed and match; not runtime certification."
+  },
+  "evidence": [
+    "docs/premium-ui/qa-rota-candidate-recovery-before.json",
+    "docs/premium-ui/qa-rota-candidate-recovery.json",
+    "docs/premium-ui/qa-rota-day-views.json",
+    "docs/premium-ui/qa-optional-generation.json",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+  ],
+  "tests": {
+    "frontend/tests/premium-rota-candidate-recovery.browser.mjs": "9b2206774ac8520e5a6b1ed0e1ffc6fc65fb4c8c83e77d0998a943284a6a64ac",
+    "frontend/tests/fixtures/rota-day-fixture.mjs": "c1619bbd0638fa7745fd053b12ce552ce19c19cbfffc5b3cbb19215e5880113c"
+  },
+  "limitations": [
+    "Root implementer verification; no fresh independent signoff.",
+    "Tests cover declared late-response scenarios. Account/template object guard and overlapping token cleanup are source safeguards, not newly exercised multi-account/security race certification.",
+    "The compact late-response test proves current mode/focus retention. Manual draft persistence across an intentional Full-to-Compact-to-Full switch remains a separate acceptance gap.",
+    "Missing candidate clears local selection; server remains eligibility authority. No scheduling, scoring, API shape, persistence or export content changes.",
+    "New recovery scenarios use default light theme; current day regression includes dark320/light1280. No full theme/role/slot-action matrix, native AT or physical-device certification.",
+    "Mixed per-slot partial success retains existing Promise.all behavior and needs separate audit; no retry replay or partial-batch semantics introduced.",
+    "Only frontend main.ts changed in this batch; concurrent backend work preserved. Full260 and same-fixture equivalence remain open."
+  ]
+}

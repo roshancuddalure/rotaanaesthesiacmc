@@ -1,0 +1,39 @@
+.component-reference { width: min(1120px, calc(100% - 32px)); margin: 32px auto; display: grid; gap: 24px; }
+.component-reference > header { max-width: 70ch; }
+.component-reference h1 { margin: 8px 0; }
+.component-reference h2 { margin: 0 0 16px; }
+.component-reference [hidden] { display: none !important; }
+.reference-token-grid, .reference-variant-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 16px; }
+.reference-token-grid > div { min-width: 0; padding: 12px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); }
+.reference-token-grid dt { font-weight: 650; }
+.reference-token-grid dd { margin: 4px 0 0; overflow-wrap: anywhere; }
+.reference-token-grid output { display: block; font-variant-numeric: tabular-nums; }
+.reference-variant-grid fieldset { min-width: 0; margin: 0; padding: 16px; border: 1px solid var(--color-border); border-radius: var(--radius-md); }
+.reference-variant-grid legend { font-weight: 650; padding-inline: 4px; }
+.component-reference .reference-actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.component-reference form { display: grid; gap: 16px; }
+.component-reference table { min-width: 600px; }
+.component-reference [data-reference-result] { min-height: 28px; }
+.component-reference label { overflow-wrap: anywhere; }
+.component-reference :where(input:not([type='checkbox']):not([type='radio']), select, textarea) {
+  width: 100%;
+  min-width: 0;
+  min-height: var(--control-height);
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border: 1px solid var(--color-input-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--text-base);
+  line-height: 1.4;
+}
+.component-reference :where(input, select, textarea):disabled {
+  background: var(--color-disabled-bg);
+  color: var(--color-disabled-text);
+  border-color: var(--color-disabled-border);
+}
+.component-reference .checkbox-line { display: flex; gap: 10px; min-height: 44px; margin: 0; align-items: center; }
+.component-reference details > summary { min-height: 44px; align-content: center; cursor: pointer; }
+@media (max-width: 600px) { .component-reference { width: calc(100% - 24px); margin-block: 16px; gap: 16px; } }

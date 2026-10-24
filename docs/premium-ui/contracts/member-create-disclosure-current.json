@@ -1,0 +1,125 @@
+{
+  "recorded_at_utc": "2026-10-24T01:37:12.462082+00:00",
+  "completion_claim": false,
+  "scope": "Four exact Members creation/sign-out IDs: current conflict/recovery/pending cases. Earlier full disclosure layout checks remain historical.",
+  "source_sha256": {
+    "frontend/src/main.ts": "93eebef4269de921331c843211094321582d241e6af186172339f1ae26b52b9e",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "bbdf4ef4dc05d3850d94be50569177e850ab5bbac8376c20a1cadf13ead9162e",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+  },
+  "groups": [
+    {
+      "action_id": "main-ts::renderMembersView::3734325a6076",
+      "selector": "#member-add-panel > summary",
+      "source": "frontend/src/main.ts",
+      "context": {
+        "role": "fixture computer_admin",
+        "screen": "Members; sign-out via account menu",
+        "working_month": "2026-05;member creation itself not month scoped",
+        "prerequisites": "Members/audit loaded,existingcreationpermission"
+      },
+      "outcome": "Native Add member / Hide member form disclosure; no write on opening/closing; draft retained. Current pending cases also prove repeat suppression across actual form replacement, explicit retry and late route/sign-out completion boundaries.",
+      "evidence": [
+        "docs/premium-ui/qa-member-create-conflicts/report-development.json",
+        "docs/premium-ui/qa-member-create-conflicts/report-production.json",
+        "docs/premium-ui/qa-member-create-conflicts/report-extra-development.json",
+        "docs/premium-ui/qa-member-create-conflicts/report-extra-production.json",
+        "docs/premium-ui/qa-member-create-pending/report-development.json",
+        "docs/premium-ui/qa-member-create-pending/report-production.json",
+        "docs/premium-ui/reviews/member-create-conflicts-current.json"
+      ],
+      "variants_unassessed": [
+        "Every role/near-duplicate naming condition",
+        "Native AT/physical touch",
+        "Cross-account sign-in restoration",
+        "Cross-tab/full-reload idempotency"
+      ],
+      "current_followup": "Actual409 exact/near duplicate handling and explicit distinct confirmation/cancellation; injected403 recovery; pending guards; late route/return boundaries; retained-draft focus/selection and deliberate focus movement."
+    },
+    {
+      "action_id": "main-ts::renderMembersView::a1724be464bd",
+      "selector": "#new-member-name",
+      "source": "frontend/src/main.ts",
+      "context": {
+        "role": "fixture computer_admin",
+        "screen": "Members; sign-out via account menu",
+        "working_month": "2026-05;member creation itself not month scoped",
+        "prerequisites": "Members/audit loaded,existingcreationpermission"
+      },
+      "outcome": "Exact private draft survives filter/route changes; value escaped, not persisted; successful submitted name clears and different draft remains. Current pending cases also prove repeat suppression across actual form replacement, explicit retry and late route/sign-out completion boundaries.",
+      "evidence": [
+        "docs/premium-ui/qa-member-create-conflicts/report-development.json",
+        "docs/premium-ui/qa-member-create-conflicts/report-production.json",
+        "docs/premium-ui/qa-member-create-conflicts/report-extra-development.json",
+        "docs/premium-ui/qa-member-create-conflicts/report-extra-production.json",
+        "docs/premium-ui/qa-member-create-pending/report-development.json",
+        "docs/premium-ui/qa-member-create-pending/report-production.json",
+        "docs/premium-ui/reviews/member-create-conflicts-current.json"
+      ],
+      "variants_unassessed": [
+        "Every role/near-duplicate naming condition",
+        "Native AT/physical touch",
+        "Cross-account sign-in restoration",
+        "Cross-tab/full-reload idempotency"
+      ],
+      "current_followup": "Actual409 exact/near duplicate handling and explicit distinct confirmation/cancellation; injected403 recovery; pending guards; late route/return boundaries; retained-draft focus/selection and deliberate focus movement."
+    },
+    {
+      "action_id": "main-ts::renderMembersView::994226c8c8bd",
+      "selector": "#create-member",
+      "source": "frontend/src/main.ts",
+      "context": {
+        "role": "fixture computer_admin",
+        "screen": "Members; sign-out via account menu",
+        "working_month": "2026-05;member creation itself not month scoped",
+        "prerequisites": "Members/audit loaded,existingcreationpermission"
+      },
+      "outcome": "Injected503 preserves name; explicit retry sends unchanged body to real existing API; independent GET confirms exactly one added member and linked records unchanged. Current pending cases also prove repeat suppression across actual form replacement, explicit retry and late route/sign-out completion boundaries.",
+      "evidence": [
+        "docs/premium-ui/qa-member-create-conflicts/report-development.json",
+        "docs/premium-ui/qa-member-create-conflicts/report-production.json",
+        "docs/premium-ui/qa-member-create-conflicts/report-extra-development.json",
+        "docs/premium-ui/qa-member-create-conflicts/report-extra-production.json",
+        "docs/premium-ui/qa-member-create-pending/report-development.json",
+        "docs/premium-ui/qa-member-create-pending/report-production.json",
+        "docs/premium-ui/reviews/member-create-conflicts-current.json"
+      ],
+      "variants_unassessed": [
+        "Every role/near-duplicate naming condition",
+        "Native AT/physical touch",
+        "Cross-account sign-in restoration",
+        "Cross-tab/full-reload idempotency"
+      ],
+      "current_followup": "Actual409 exact/near duplicate handling and explicit distinct confirmation/cancellation; injected403 recovery; pending guards; late route/return boundaries; retained-draft focus/selection and deliberate focus movement."
+    },
+    {
+      "action_id": "main-ts::renderShell::e4ca792a1ada",
+      "selector": "#sign-out",
+      "source": "frontend/src/main.ts",
+      "context": {
+        "role": "fixture computer_admin",
+        "screen": "Members; sign-out via account menu",
+        "working_month": "2026-05;member creation itself not month scoped",
+        "prerequisites": "Members/audit loaded,existingcreationpermission"
+      },
+      "outcome": "Native account menu/sign-out removes private form and draft text; private draft absent from localStorage. Full cross-account login lifecycle outside this case. Current pending cases also prove repeat suppression across actual form replacement, explicit retry and late route/sign-out completion boundaries.",
+      "evidence": [
+        "docs/premium-ui/qa-member-create-conflicts/report-development.json",
+        "docs/premium-ui/qa-member-create-conflicts/report-production.json",
+        "docs/premium-ui/qa-member-create-conflicts/report-extra-development.json",
+        "docs/premium-ui/qa-member-create-conflicts/report-extra-production.json",
+        "docs/premium-ui/qa-member-create-pending/report-development.json",
+        "docs/premium-ui/qa-member-create-pending/report-production.json",
+        "docs/premium-ui/reviews/member-create-conflicts-current.json"
+      ],
+      "variants_unassessed": [
+        "Every role/near-duplicate naming condition",
+        "Native AT/physical touch",
+        "Cross-account sign-in restoration",
+        "Cross-tab/full-reload idempotency"
+      ],
+      "current_followup": "Actual409 exact/near duplicate handling and explicit distinct confirmation/cancellation; injected403 recovery; pending guards; late route/return boundaries; retained-draft focus/selection and deliberate focus movement."
+    }
+  ]
+}

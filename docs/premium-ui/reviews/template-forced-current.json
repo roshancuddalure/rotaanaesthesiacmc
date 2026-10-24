@@ -1,0 +1,22 @@
+{
+  "date": "2026-10-22",
+  "scope": "Bounded template forced-allocation presentation; requirements165/172 remain incomplete outside this case.",
+  "source_sha256": {
+    "frontend/src/rota-compute.ts": "507c7aab2085a1b609578d35840d589c19c3a764af5710d0b6c8eae4fa7e94b6"
+  },
+  "baseline_source_sha256": "2f34d4c6dc8654cdf258891e7873075eb8424f4e0884953ca60eb7b1018184af",
+  "baseline_reproduced": "Server forced:true response had zero explicit row markers despite introductory claim.",
+  "source_delta_proof": "Reversing exactly optional forced:boolean response type and template-only forced===true textual small/strong marker reproduces exact baseline bytes and SHA256. No action, payload, eligibility, summary, export, worker or scheduling code changed in this batch.",
+  "evidence": [
+    "docs/premium-ui/qa-template-forced-before.json",
+    "docs/premium-ui/qa-template-forced-current.json",
+    "frontend/tests/premium-template-forced.browser.mjs"
+  ],
+  "executed": "12 workflows, three browser engines x320/1280xlight/dark. Each checks marker only true template row; false/missing flags unmarked; member-renderer fixture unmarked; original row order, date, unit, reason and summary counts; escaped long HTML-like labels; native table focus and keyboard review/apply. Apply intercepted with exact job URL and revision27, one callback and no prior POST. Zero scoped tagged axe violations, page JS errors or page overflow.",
+  "visual_review": "Inspected Chromium320light screenshot: marker is readable below wrapped unit; existing scrollable content and sticky action footer retain controls. Other screenshots captured but not visually certified.",
+  "limits": [
+    "All job/capability/apply fixtures intercepted. Remaining GETs disposable8031. No real writes, GPU hardware, eligibility/backend correctness or physical device claim.",
+    "Light/dark, mobile/desktop are bounded browser emulation. No whole requirement certification.",
+    "No shared CSS or backend files edited. Root owns integration build/regressions."
+  ]
+}

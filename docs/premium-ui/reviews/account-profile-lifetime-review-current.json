@@ -1,0 +1,69 @@
+{
+  "recorded_at_utc": "2026-10-22T09:34:03.575783+00:00",
+  "reviewer": "preview_rejection_artifacts_independent",
+  "scope": "Independent source and test review of current account-profile form lifecycle. No new browser execution or application edits in this review. Existing six actual-app cases are bounded evidence only.",
+  "requirements": [
+    197,
+    224,
+    225,
+    230,
+    243,
+    246
+  ],
+  "source_hashes": {
+    "frontend/src/main.ts": "ebb675e071cfa7df8f1ea0821b2e6a5054bbc214e24cf5e30b4d1a6ff08062f6",
+    "frontend/src/services/api.ts": "96fd19d658559bd3838033957873258e5108f94c422ed1cb9f92c7ad8dd46913",
+    "frontend/tests/premium-account-profile-lifetime.browser.mjs": "130dafd5e5fd189d45a144033c9cf66e4faa88837f4abcf0a7547c74b7f4d157",
+    "docs/premium-ui/qa-account-profile-lifetime.json": "3e15ad8963b0d9f09edbe0663a294c903a814fa24f2506c6f2a6b84981f729c4"
+  },
+  "recorded_runtime_cases": 6,
+  "disposition": "source_guard_sound_bounded_test_pass_with_coverage_limits",
+  "findings": [
+    {
+      "id": "context_guard_before_private_ui_mutation",
+      "status": "source_confirmed",
+      "detail": "The alive predicate checks aborted event-binding lifetime, captured operator object identity, connected form/dialog, current modal node identity and exact current form identity. After awaited updateCurrentUserProfile, it runs before currentUser assignment, modal close or success toast. Error handling similarly checks alive before message/button update."
+    },
+    {
+      "id": "duplicate_and_manual_retry",
+      "status": "source_and_existing_test_confirmed",
+      "detail": "WeakSet pendingProfileForms plus disabled-button and alive checks run before validation/request. Pending registration occurs synchronously before await. Finally deletes the exact form only. Failed active request restores its button and existing draft; no automatic mutation replay. Existing six cases cover one held synthetic duplicate and explicit manual retry."
+    },
+    {
+      "id": "payload_preservation",
+      "status": "source_and_existing_test_confirmed_bounded",
+      "detail": "Existing API PUT /auth/me contract preserved: trimmed display_name, trimmed nonempty email or null. Existing test checks nonempty email exact payload on refusal/retry; empty email?null and optional invalid email native validation are not independently asserted."
+    },
+    {
+      "id": "signed_out_test_predicate_overlap",
+      "status": "coverage_limit_not_reproduced_bug",
+      "detail": "The test closes the old profile dialog before signing out, so form/dialog disconnected checks already reject the result. It confirms no sign-in replacement/success feedback, but does not isolate captured-operator or abort guard behavior. Do not claim isolated operator/abort proof from this case."
+    },
+    {
+      "id": "late_completion_observation",
+      "status": "test_strengthening_recommendation",
+      "detail": "Closed/reopened and signout cases release a held route then wait250/200ms rather than explicitly observing the response consumed and any scheduled UI work settled. Existing guard is sound by source, but event-based settlement would make regression evidence less timing-sensitive."
+    }
+  ],
+  "recommended_bounded_followups": [
+    {
+      "priority": 1,
+      "action": "Add a late account-profile response after a replacement authenticated session, assert old response consumed, then reopen current profile and verify newer operator values/token/menu remain. Use existing mocked authentication paths; no real credentials or backend writes."
+    },
+    {
+      "priority": 2,
+      "action": "Replace fixed post-release waits with an explicit matched requestfinished/response-completion signal plus UI frame settlement, preserving deliberate focus assertions."
+    },
+    {
+      "priority": 3,
+      "action": "Add blank-email exact null payload and active-dialog failed response aria-busy removal checks, along with detached error response not adding private feedback."
+    }
+  ],
+  "no_source_change_requested": true,
+  "completion_claim": false,
+  "limits": [
+    "No independent actual browser rerun in this review; hashes bind inspected source/test/report.",
+    "Successful reopen uses returned response state, not backend fresh-GET persistence; existing report correctly states no persistence claim.",
+    "No security-policy/password-manager/backend authorization claim."
+  ]
+}

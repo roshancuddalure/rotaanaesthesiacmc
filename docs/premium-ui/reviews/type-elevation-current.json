@@ -1,0 +1,73 @@
+{
+  "recorded_at_utc": "2026-10-23T14:43:31.005025+00:00",
+  "completion_claim": false,
+  "requirements": [
+    33,
+    36,
+    208,
+    209,
+    258
+  ],
+  "scope": "Human role/period-context casing and bounded four-tier elevation presentation checks.",
+  "source_sha256": {
+    "frontend/src/main.ts": "87e8234cf013acaafa18af0ed1be542c873a310e4c64c6bd2a848d1a09f8376e",
+    "frontend/src/member-workspace.ts": "15f504eee18a641172e05386ff351b16b87948cf08bcb280390ea2ed250c1887",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "a55b583e397ab84c6ed267062ad1395e7798923234cd990367395ece06959ae3"
+  },
+  "before": {
+    "report": "docs/premium-ui/qa-type-elevation-before.json",
+    "finding": "Contextkicker/roleparagraphCSSuppercase;recoverynoticeusedmenulgshadow. Nativeworkspacealreadyresolvedtointendedxl atruntime;proposedoverridewasredundantandremoved."
+  },
+  "changes": [
+    "Account role descriptions and board/period context kickers retain source casing with normalletter spacing. Stored codes and purposeful short navigation labels retain existing treatment; no label strings or data modified.",
+    "Recovery notice uses documented contextualnotice shadowmd. Panel/menu/dialog tiers were already correct in measured runtime and remain unchanged; no redundant native shadow override retained.",
+    "Visual contract now names checked component mappings and explicitly excludes semantic inset stripes/focus rings from the elevation hierarchy."
+  ],
+  "checks": {
+    "style_contexts": 12,
+    "engines": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "widths": [
+      320,
+      1280
+    ],
+    "themes": [
+      "light",
+      "dark"
+    ],
+    "surfaces": "Actual guide panel/kicker/accountmenu/role/native member profile/MobileMore; representative injected notice and warningmetric CSS probes.",
+    "tokens": "Computed box-shadow equals sm(panel),md(notice),lg(menu),xl(nativeprofile/More); selected/warning inset marker preserved. Source text unchanged, short navlabel uppercase retained.",
+    "focus": "Accountmenu Escape, nativeprofileClose andmobileMoreEscape restore exact openers. GET-only.",
+    "existing_shell_workflows": 8,
+    "shell_evidence": "Current command node tests/premium-shell.browser.mjs console reports8outcome workflows; no persistent report or sourcehold in existing test.",
+    "profile_header_regressions": 12,
+    "header_scoped_axe_checks": 12,
+    "tagged_axe_violations": 0,
+    "unit_tests": 100,
+    "build_exit_code": 0,
+    "build_inputs_held": true,
+    "static_inventories": "Style/action write/check match; static integrity only."
+  },
+  "evidence": [
+    "docs/premium-ui/qa-type-elevation-before.json",
+    "docs/premium-ui/qa-type-elevation.json",
+    "docs/premium-ui/qa-profile-header-space.json",
+    "docs/premium-ui/visual-contract.md",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+  ],
+  "test": "frontend/tests/premium-type-elevation.browser.mjs",
+  "test_sha256": "2cb20d545a7e67fc7470cc4edf15fb56610f4b44773ace3099140a832ae575a3",
+  "limitations": [
+    "Root implementer verification, not fresh independent review.",
+    "Runtime baseline corrected an initial source-only hypothesis about native shadow mismatch; no actual native shadow bug claimed fixed.",
+    "Twelvecontexts cover representative common surfaces, not every legacy shadow,hover/focus/forced-color state or entire uppercase inventory. Full33/36 remain open.",
+    "Notice and warninginset checks use injected style probes, not actual API/runtime error recovery scenarios. Existing recovery behavior unchanged.",
+    "No new typography/elevation screenshot visual acceptance or whole-surface axe pass;12headeraxe checks are regression scope only.",
+    "No physical/nativeAT speech checks. Full260 and samefixture workflow/calculation/export equivalence remain open.",
+    "Only frontend premiumCSS plus documentation changed this batch. No backend/API/permission/scheduling/persistence/export edits; concurrent work preserved."
+  ]
+}

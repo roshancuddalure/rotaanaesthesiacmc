@@ -1,0 +1,712 @@
+{
+  "recorded_at_utc": "2026-10-24T01:48:32.689Z",
+  "reviewer": "preview_rejection_artifacts",
+  "requirements": [
+    239
+  ],
+  "scope": "Bounded current TypeScript-bound private symbol references and source literal/template entry graph. Removed private closures are evidenced separately by legacy-private-cleanup-current.json; this script makes no app edit or runtime certification.",
+  "source_hashes": {
+    "frontend/src/data-sync.ts": "8408ff9eb6369d486126b7471ffc15a45fbe7f6fe5decd73b231f1dbf07c2f02",
+    "frontend/src/api-errors.ts": "55d90faf3f364b3a7835fe5dd465f6b3633e05942bd6f71e37d89fb7b7f8b94d",
+    "frontend/src/frontend-runtime.ts": "45efce04e229e0bdcbc84de4c9570dd9c04877b2adb869269a6e40ff68b12a01",
+    "frontend/src/import-report.ts": "e33b0081d3f42286b4838160bb73f0dfcba0f77b493271e3fa8ce6a466b68a38",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/ui.ts": "88579ed75c8c72e4fd4e2d98508a58c42b925202362589a2469623664c2a975f",
+    "frontend/src/workspace-load-state.ts": "cdd0e323d7e83e6e668a381bbfcc37cad4726b1193ac5de31d5f14e03eecd9c6",
+    "frontend/src/form-validation.ts": "a6d6cfa746f502cf05e5f4f1e1acade1c7ca82b592a497d98b79661854783a93",
+    "frontend/src/audit-time.ts": "136542cb2daec343417532d372f2e8ce01a0e6103ef6c62a7a4a8017ac8a6d15",
+    "frontend/src/reference-workspace.ts": "93ba8a2d765f43f0fb220586393b3a1cdf6cb944d9fb1ebd26290028a450208e",
+    "frontend/src/operational-import.ts": "9e11514d205d71049e2f0baa10f005def74941e0b90584a9c84b968f9ae19dfc",
+    "frontend/src/record-workspace.ts": "aff5fa264638bad4448e8e0c42434e6245b4dbe55b970e0b026a05d2631b9bec",
+    "frontend/src/compute-protocol.ts": "d9dff1ad6ddda42e63da02dc6dd3d322f3cdc17fe824698e578a38cfcc57e1a5",
+    "frontend/src/compute-device.ts": "c7083623b77132d2ace7d1a0a815ad457a695c9e381afcfd1aeb91af1a6d4eca",
+    "frontend/src/generation-reversal-scope.ts": "4f5ce7136076e2b9ab3f07f91405083a7955425f19ebc7b8cdd1e6e22108e2af",
+    "frontend/src/generation-comparison.ts": "1ab0ada55fa8e4c581424c5ea3da441752fbdee1c9994d75466d48c16383da55",
+    "frontend/src/rota-intelligence.ts": "bda7257a3cafdcf6c4122575cc454abb1623f27dbd13950ea1d61260a23bb79b",
+    "frontend/src/rota-compute.ts": "e5f967e6166e2ace9352983a468002d45850188d8811363230305d7597fb70ab",
+    "frontend/src/compute-conflict.ts": "1e69a3b0258c2da5f7588f7a6e2c6a8f26bf9130be9dd34e62e27c9431a05623",
+    "frontend/src/session-role.ts": "bb13b581f4d2320d7010ca754567ed2aa7a504abd4ec3eaae6bfbc830306fb1b",
+    "frontend/src/extra-duty.ts": "52084624922de21f2a0fa478eb1ca4c883cdeb66dd1d05147d0f21fe806bc7ea",
+    "frontend/src/member-workspace.ts": "b39d53795adcbe1d850aeb3cf20f71bd78f4a48a4280e7f9e7e9cff2f796e50c",
+    "frontend/src/admin-delete.ts": "85e603d4deadda5341a8016ff12cc83c8413196da000f86c5693313e91481f80",
+    "frontend/src/admin-preview.ts": "f35a221b465119ca793169f9508775ebf26c36d2e76d4f05ec259d2230e33d46",
+    "frontend/src/analysis-charts.ts": "f359e98aee083d502aa5af1c9c31e065f16c9a4eab4c4c7f279fcf6b00bb37b0",
+    "frontend/src/balance-duties.ts": "ab4f5ffad3f219380ffc74cc0212ace10b57c1d951c2e3e6137547fed6a35113",
+    "frontend/src/component-reference.ts": "dcf2631694638459aa31be896bb966e0d8472e56b811d28464392a8fc34b15de",
+    "frontend/src/compute-worker.ts": "f67f75b98cbc72932e706167253d1e4df1f5234fe6346aa0d94191ff31a3fe7b",
+    "frontend/src/decorative-icons.ts": "7e2d11356114e96f242435a2cd7cb7bc24cdc1787142e864e1cf053f92c373d7",
+    "frontend/src/leave-approval.ts": "42e5a47751ae081d1b97108209c7a2b53272985251d153aa065f7718f43e544f",
+    "frontend/src/ui-feedback.ts": "af25aa3329afbe97de610ecfd83a00c70991863b2cba8ba5e301c205230f19da",
+    "frontend/src/limits.ts": "f7c040de08fd0a593e1e071d7c09b2696344b9b85bbcd836f5367b49e4ef8db6",
+    "frontend/src/unit-member-lists.ts": "9d29fb79214cce10962f480c9efb56741cc24a5f9b98a5ad7ec539ce49eda7ac",
+    "frontend/src/unit-board-filters.ts": "b52758e18a4d6abeda57b57ef84e0614b085a317e9d3ca345e096d860ea384a3",
+    "frontend/src/navigation-history.ts": "7987fe6b5034c80e44708b0e46d5bf4009a1e3eabca092a5b8a31ca1afdde0b4",
+    "frontend/src/shell-accessibility.ts": "47a8302e3272e90162d995f2e1d91a36c94116c76a97f5e62b2ecc31de79efc9",
+    "frontend/src/superadmin.ts": "767ec62ae188efd4fda9b5a8f5173d24b80c89964e23d372d7b31ceb1dc818f8",
+    "frontend/src/member-import.ts": "010ff61e931b5fdcd0bede461face32db6562e1b987782a509be1adf58fbee42",
+    "frontend/src/workflow-import-history.ts": "6af21b09f48bb6632ac7afb78759884d4aa0e9750d520f48be0c79ea3d4b5cf5",
+    "frontend/src/member-import-history.ts": "0357db668bac46f7c4c28c575e2f7c688b00c95671acb1f475aea0946e89ec92",
+    "frontend/src/recycle-bin.ts": "7d2e02cd9f198999e2c7eaf788218ed3164781b39536176a63180a92c65ffc17",
+    "frontend/src/past-duties.ts": "7c12653627145099d9785ce83788335687a850534d0af0f921a9bc29d538657c",
+    "frontend/src/member-bulk.ts": "e0d040ab5f9f83a090a15fe4b4b619d25e97ae8b06d86dface5b4a62231f5202",
+    "frontend/src/member-profile.ts": "6c98cd791a4ee592f1dc945d20ab3e7b512c6f3f00378f266de71a76f868bb73",
+    "frontend/src/rota-rules.ts": "c34342b13df315ddff27bcba19cd495fd21918ab6f2f982257cd8e5a1955efff",
+    "frontend/src/member-duplicates.ts": "9d59b0abf7ed6001612403aed286a87159d76e3824f3b08a539845d5f509b4bf",
+    "frontend/src/main.ts": "93eebef4269de921331c843211094321582d241e6af186172339f1ae26b52b9e"
+  },
+  "rows": [
+    {
+      "name": "unitImportRowByKey",
+      "line": 4154,
+      "end_line": 4156,
+      "reference_count": 4,
+      "references": [
+        {
+          "file": "frontend/src/main.ts",
+          "line": 8965,
+          "owner": "(delegated callback)",
+          "usage": "direct_call"
+        },
+        {
+          "file": "frontend/src/main.ts",
+          "line": 8975,
+          "owner": "(delegated callback)",
+          "usage": "direct_call"
+        },
+        {
+          "file": "frontend/src/main.ts",
+          "line": 8999,
+          "owner": "(delegated callback)",
+          "usage": "direct_call"
+        },
+        {
+          "file": "frontend/src/main.ts",
+          "line": 9018,
+          "owner": "(delegated callback)",
+          "usage": "direct_call"
+        }
+      ],
+      "called_identifiers": [],
+      "exported": false,
+      "disposition": "retained_until_entry_edges_disposed"
+    },
+    {
+      "name": "scheduleUnitImportPreviewRender",
+      "line": 4186,
+      "end_line": 4194,
+      "reference_count": 1,
+      "references": [
+        {
+          "file": "frontend/src/main.ts",
+          "line": 10289,
+          "owner": "(delegated callback)",
+          "usage": "direct_call"
+        }
+      ],
+      "called_identifiers": [
+        "renderUnitManagement"
+      ],
+      "exported": false,
+      "disposition": "retained_until_entry_edges_disposed"
+    },
+    {
+      "name": "refreshUnitImportPreview",
+      "line": 4196,
+      "end_line": 4206,
+      "reference_count": 9,
+      "references": [
+        {
+          "file": "frontend/src/main.ts",
+          "line": 8726,
+          "owner": "(delegated callback)",
+          "usage": "direct_call"
+        },
+        {
+          "file": "frontend/src/main.ts",
+          "line": 8958,
+          "owner": "(delegated callback)",
+          "usage": "direct_call"
+        },
+        {
+          "file": "frontend/src/main.ts",
+          "line": 8968,
+          "owner": "(delegated callback)",
+          "usage": "direct_call"
+        },
+        {
+          "file": "frontend/src/main.ts",
+          "line": 8988,
+          "owner": "(delegated callback)",
+          "usage": "direct_call"
+        },
+        {
+          "file": "frontend/src/main.ts",
+          "line": 9007,
+          "owner": "(delegated callback)",
+          "usage": "direct_call"
+        },
+        {
+          "file": "frontend/src/main.ts",
+          "line": 9043,
+          "owner": "(delegated callback)",
+          "usage": "direct_call"
+        },
+        {
+          "file": "frontend/src/main.ts",
+          "line": 10164,
+          "owner": "(delegated callback)",
+          "usage": "direct_call"
+        },
+        {
+          "file": "frontend/src/main.ts",
+          "line": 10170,
+          "owner": "(delegated callback)",
+          "usage": "direct_call"
+        },
+        {
+          "file": "frontend/src/main.ts",
+          "line": 10176,
+          "owner": "(delegated callback)",
+          "usage": "direct_call"
+        }
+      ],
+      "called_identifiers": [
+        "previewUnitAssignmentImport",
+        "renderUnitManagement",
+        "showToast"
+      ],
+      "exported": false,
+      "disposition": "retained_until_entry_edges_disposed"
+    },
+    {
+      "name": "unitImportResolutionFor",
+      "line": 4210,
+      "end_line": 4212,
+      "reference_count": 8,
+      "references": [
+        {
+          "file": "frontend/src/main.ts",
+          "line": 8967,
+          "owner": "(delegated callback)",
+          "usage": "direct_call"
+        },
+        {
+          "file": "frontend/src/main.ts",
+          "line": 8987,
+          "owner": "(delegated callback)",
+          "usage": "direct_call"
+        },
+        {
+          "file": "frontend/src/main.ts",
+          "line": 9000,
+          "owner": "(delegated callback)",
+          "usage": "direct_call"
+        },
+        {
+          "file": "frontend/src/main.ts",
+          "line": 9006,
+          "owner": "(delegated callback)",
+          "usage": "direct_call"
+        },
+        {
+          "file": "frontend/src/main.ts",
+          "line": 9019,
+          "owner": "(delegated callback)",
+          "usage": "direct_call"
+        },
+        {
+          "file": "frontend/src/main.ts",
+          "line": 10163,
+          "owner": "(delegated callback)",
+          "usage": "direct_call"
+        },
+        {
+          "file": "frontend/src/main.ts",
+          "line": 10169,
+          "owner": "(delegated callback)",
+          "usage": "direct_call"
+        },
+        {
+          "file": "frontend/src/main.ts",
+          "line": 10175,
+          "owner": "(delegated callback)",
+          "usage": "direct_call"
+        }
+      ],
+      "called_identifiers": [],
+      "exported": false,
+      "disposition": "retained_until_entry_edges_disposed"
+    }
+  ],
+  "selectors": [
+    {
+      "selector": "leave-import-form",
+      "occurrences": [
+        {
+          "file": "frontend/src/main.ts",
+          "line": 8586,
+          "owner": "(delegated callback)",
+          "kind": "literal_selector_or_action_key",
+          "text_excerpt": "\"leave-import-form\""
+        }
+      ],
+      "assessment": "Source occurrences only; distinguish unreachable private-renderer markup from active handler selectors before cleanup."
+    },
+    {
+      "selector": "leave-import-file",
+      "occurrences": [
+        {
+          "file": "frontend/src/main.ts",
+          "line": 8589,
+          "owner": "(delegated callback)",
+          "kind": "literal_selector_or_action_key",
+          "text_excerpt": "\"#leave-import-file\""
+        }
+      ],
+      "assessment": "Source occurrences only; distinguish unreachable private-renderer markup from active handler selectors before cleanup."
+    },
+    {
+      "selector": "unit-import-form",
+      "occurrences": [
+        {
+          "file": "frontend/src/main.ts",
+          "line": 8606,
+          "owner": "(delegated callback)",
+          "kind": "literal_selector_or_action_key",
+          "text_excerpt": "\"unit-import-form\""
+        }
+      ],
+      "assessment": "Source occurrences only; distinguish unreachable private-renderer markup from active handler selectors before cleanup."
+    },
+    {
+      "selector": "unit-import-file",
+      "occurrences": [
+        {
+          "file": "frontend/src/main.ts",
+          "line": 8609,
+          "owner": "(delegated callback)",
+          "kind": "literal_selector_or_action_key",
+          "text_excerpt": "\"#unit-import-file\""
+        }
+      ],
+      "assessment": "Source occurrences only; distinguish unreachable private-renderer markup from active handler selectors before cleanup."
+    },
+    {
+      "selector": "unit-import-replace",
+      "occurrences": [
+        {
+          "file": "frontend/src/main.ts",
+          "line": 8610,
+          "owner": "(delegated callback)",
+          "kind": "literal_selector_or_action_key",
+          "text_excerpt": "\"#unit-import-replace\""
+        }
+      ],
+      "assessment": "Source occurrences only; distinguish unreachable private-renderer markup from active handler selectors before cleanup."
+    },
+    {
+      "selector": "apply-leave-import",
+      "occurrences": [
+        {
+          "file": "frontend/src/main.ts",
+          "line": 725,
+          "owner": "(module)",
+          "kind": "literal_selector_or_action_key",
+          "text_excerpt": "\"apply-leave-import\""
+        },
+        {
+          "file": "frontend/src/main.ts",
+          "line": 971,
+          "owner": "runReviewAction",
+          "kind": "literal_selector_or_action_key",
+          "text_excerpt": "\"apply-leave-import\""
+        },
+        {
+          "file": "frontend/src/main.ts",
+          "line": 972,
+          "owner": "runReviewAction",
+          "kind": "literal_selector_or_action_key",
+          "text_excerpt": "\"#apply-leave-import\""
+        },
+        {
+          "file": "frontend/src/main.ts",
+          "line": 9268,
+          "owner": "(delegated callback)",
+          "kind": "literal_selector_or_action_key",
+          "text_excerpt": "\"apply-leave-import\""
+        },
+        {
+          "file": "frontend/src/main.ts",
+          "line": 9269,
+          "owner": "(delegated callback)",
+          "kind": "literal_selector_or_action_key",
+          "text_excerpt": "\"#apply-leave-import\""
+        }
+      ],
+      "assessment": "Source occurrences only; distinguish unreachable private-renderer markup from active handler selectors before cleanup."
+    },
+    {
+      "selector": "apply-unit-import",
+      "occurrences": [
+        {
+          "file": "frontend/src/main.ts",
+          "line": 725,
+          "owner": "(module)",
+          "kind": "literal_selector_or_action_key",
+          "text_excerpt": "\"apply-unit-import\""
+        },
+        {
+          "file": "frontend/src/main.ts",
+          "line": 975,
+          "owner": "runReviewAction",
+          "kind": "literal_selector_or_action_key",
+          "text_excerpt": "\"apply-unit-import\""
+        },
+        {
+          "file": "frontend/src/main.ts",
+          "line": 976,
+          "owner": "runReviewAction",
+          "kind": "literal_selector_or_action_key",
+          "text_excerpt": "\"#apply-unit-import\""
+        },
+        {
+          "file": "frontend/src/main.ts",
+          "line": 9288,
+          "owner": "(delegated callback)",
+          "kind": "literal_selector_or_action_key",
+          "text_excerpt": "\"apply-unit-import\""
+        },
+        {
+          "file": "frontend/src/main.ts",
+          "line": 9289,
+          "owner": "(delegated callback)",
+          "kind": "literal_selector_or_action_key",
+          "text_excerpt": "\"#apply-unit-import\""
+        }
+      ],
+      "assessment": "Source occurrences only; distinguish unreachable private-renderer markup from active handler selectors before cleanup."
+    },
+    {
+      "selector": "data-preview-rejections",
+      "occurrences": [
+        {
+          "file": "frontend/src/main.ts",
+          "line": 8825,
+          "owner": "(delegated callback)",
+          "kind": "literal_selector_or_action_key",
+          "text_excerpt": "\"[data-preview-rejections]\""
+        }
+      ],
+      "assessment": "Source occurrences only; distinguish unreachable private-renderer markup from active handler selectors before cleanup."
+    },
+    {
+      "selector": "data-unit-import-filter",
+      "occurrences": [
+        {
+          "file": "frontend/src/main.ts",
+          "line": 8931,
+          "owner": "(delegated callback)",
+          "kind": "literal_selector_or_action_key",
+          "text_excerpt": "\"[data-unit-import-filter]\""
+        }
+      ],
+      "assessment": "Source occurrences only; distinguish unreachable private-renderer markup from active handler selectors before cleanup."
+    },
+    {
+      "selector": "unit-import-search",
+      "occurrences": [
+        {
+          "file": "frontend/src/main.ts",
+          "line": 10286,
+          "owner": "(delegated callback)",
+          "kind": "literal_selector_or_action_key",
+          "text_excerpt": "\"unit-import-search\""
+        }
+      ],
+      "assessment": "Source occurrences only; distinguish unreachable private-renderer markup from active handler selectors before cleanup."
+    },
+    {
+      "selector": "data-open-unit-import-correction",
+      "occurrences": [
+        {
+          "file": "frontend/src/main.ts",
+          "line": 8939,
+          "owner": "(delegated callback)",
+          "kind": "literal_selector_or_action_key",
+          "text_excerpt": "\"[data-open-unit-import-correction]\""
+        }
+      ],
+      "assessment": "Source occurrences only; distinguish unreachable private-renderer markup from active handler selectors before cleanup."
+    },
+    {
+      "selector": "data-close-unit-import-correction",
+      "occurrences": [
+        {
+          "file": "frontend/src/main.ts",
+          "line": 8946,
+          "owner": "(delegated callback)",
+          "kind": "literal_selector_or_action_key",
+          "text_excerpt": "\"[data-close-unit-import-correction]\""
+        }
+      ],
+      "assessment": "Source occurrences only; distinguish unreachable private-renderer markup from active handler selectors before cleanup."
+    },
+    {
+      "selector": "data-clear-unit-import-correction",
+      "occurrences": [
+        {
+          "file": "frontend/src/main.ts",
+          "line": 8953,
+          "owner": "(delegated callback)",
+          "kind": "literal_selector_or_action_key",
+          "text_excerpt": "\"[data-clear-unit-import-correction]\""
+        }
+      ],
+      "assessment": "Source occurrences only; distinguish unreachable private-renderer markup from active handler selectors before cleanup."
+    },
+    {
+      "selector": "unit-import-correction-form",
+      "occurrences": [
+        {
+          "file": "frontend/src/main.ts",
+          "line": 8712,
+          "owner": "(delegated callback)",
+          "kind": "literal_selector_or_action_key",
+          "text_excerpt": "\"unit-import-correction-form\""
+        },
+        {
+          "file": "frontend/src/main.ts",
+          "line": 10180,
+          "owner": "(delegated callback)",
+          "kind": "literal_selector_or_action_key",
+          "text_excerpt": "\"#unit-import-correction-form\""
+        }
+      ],
+      "assessment": "Source occurrences only; distinguish unreachable private-renderer markup from active handler selectors before cleanup."
+    },
+    {
+      "selector": "data-unit-import-accept-suggested",
+      "occurrences": [
+        {
+          "file": "frontend/src/main.ts",
+          "line": 8962,
+          "owner": "(delegated callback)",
+          "kind": "literal_selector_or_action_key",
+          "text_excerpt": "\"[data-unit-import-accept-suggested]\""
+        }
+      ],
+      "assessment": "Source occurrences only; distinguish unreachable private-renderer markup from active handler selectors before cleanup."
+    },
+    {
+      "selector": "data-unit-import-create-member",
+      "occurrences": [
+        {
+          "file": "frontend/src/main.ts",
+          "line": 8972,
+          "owner": "(delegated callback)",
+          "kind": "literal_selector_or_action_key",
+          "text_excerpt": "\"[data-unit-import-create-member]\""
+        }
+      ],
+      "assessment": "Source occurrences only; distinguish unreachable private-renderer markup from active handler selectors before cleanup."
+    },
+    {
+      "selector": "data-unit-import-save-alias",
+      "occurrences": [
+        {
+          "file": "frontend/src/main.ts",
+          "line": 8996,
+          "owner": "(delegated callback)",
+          "kind": "literal_selector_or_action_key",
+          "text_excerpt": "\"[data-unit-import-save-alias]\""
+        }
+      ],
+      "assessment": "Source occurrences only; distinguish unreachable private-renderer markup from active handler selectors before cleanup."
+    },
+    {
+      "selector": "data-unit-import-save-unit-map",
+      "occurrences": [
+        {
+          "file": "frontend/src/main.ts",
+          "line": 9015,
+          "owner": "(delegated callback)",
+          "kind": "literal_selector_or_action_key",
+          "text_excerpt": "\"[data-unit-import-save-unit-map]\""
+        }
+      ],
+      "assessment": "Source occurrences only; distinguish unreachable private-renderer markup from active handler selectors before cleanup."
+    },
+    {
+      "selector": "data-unit-import-person",
+      "occurrences": [],
+      "assessment": "Source occurrences only; distinguish unreachable private-renderer markup from active handler selectors before cleanup."
+    },
+    {
+      "selector": "data-unit-import-unit",
+      "occurrences": [],
+      "assessment": "Source occurrences only; distinguish unreachable private-renderer markup from active handler selectors before cleanup."
+    },
+    {
+      "selector": "data-unit-import-posting",
+      "occurrences": [],
+      "assessment": "Source occurrences only; distinguish unreachable private-renderer markup from active handler selectors before cleanup."
+    }
+  ],
+  "completion_claim": false,
+  "candidate_waves": [
+    {
+      "wave": 1,
+      "status": "removed_private_closure_see_exact_cleanup_evidence",
+      "symbols": [
+        "filteredUnitImportRows",
+        "unitImportMatchSummary",
+        "renderUnitImportResolvers",
+        "renderUnitImportCorrectionModal"
+      ],
+      "rationale": "All symbols in this wave are absent from current declarations. See legacy-private-cleanup-current.json for bound-reference closure, exact ranges and executable emit equivalence; actual operational regressions recorded separately."
+    },
+    {
+      "wave": 2,
+      "status": "removed_private_closure_see_exact_cleanup_evidence",
+      "symbols": [
+        "unitImportRowMatchesFilter",
+        "renderUnitImportMemberResolver",
+        "renderUnitImportUnitResolver",
+        "renderUnitImportPostingResolver"
+      ],
+      "rationale": "All symbols in this wave are absent from current declarations. See legacy-private-cleanup-current.json for bound-reference closure, exact ranges and executable emit equivalence; actual operational regressions recorded separately."
+    },
+    {
+      "wave": 3,
+      "status": "delegated_entry_candidates_retain_until_coordinated_branch_audit",
+      "symbols": [
+        "refreshUnitImportPreview",
+        "scheduleUnitImportPreviewRender",
+        "unitImportRowByKey",
+        "unitImportResolutionFor"
+      ],
+      "selectors": [
+        "leave-import-form",
+        "unit-import-form",
+        "unit-import-correction-form",
+        "data-preview-rejections",
+        "apply-leave-import",
+        "apply-unit-import",
+        "data-unit-import-filter",
+        "unit-import-search",
+        "data-open-unit-import-correction",
+        "data-close-unit-import-correction",
+        "data-clear-unit-import-correction",
+        "data-unit-import-accept-suggested",
+        "data-unit-import-create-member",
+        "data-unit-import-save-alias",
+        "data-unit-import-save-unit-map",
+        "data-unit-import-person",
+        "data-unit-import-unit",
+        "data-unit-import-posting"
+      ],
+      "rationale": "References originate in live delegated event callbacks but require legacy selector markup not emitted by current operational toolbar. Some selector markup is emitted by now-unreferenced renderer roots. Whole branches must be checked together; counting references alone cannot label these functions safe to remove."
+    }
+  ],
+  "entry_edges": [
+    {
+      "entry": "Current leave/unit toolbar data-open-normalized-import",
+      "path": [
+        "main.ts delegated click",
+        "openOperationalImport(kind, selectedMonth, callback, isAdmin)",
+        "operational-import.ts private file/settings/review state",
+        "/api/v1/import-review/columns",
+        "/api/v1/import-review/{kind}/preview",
+        "/api/v1/import-review/{kind}/apply"
+      ],
+      "disposition": "Retain live path. Existing12case actualapp report certifies downloads only; other preview/apply suites separate."
+    },
+    {
+      "entry": "Legacy leave-import-form / unit-import-form submit",
+      "path": [
+        "main.ts delegated submit",
+        "previewLeaveImport / previewUnitAssignmentImport",
+        "legacy module state",
+        "renderLeave / renderUnitManagement"
+      ],
+      "disposition": "No current form markup producer found; neither main view renders removed private preview. Retain until coordinated branch removal approved and regressions run."
+    },
+    {
+      "entry": "Legacy unit correction/member/unit/posting controls",
+      "path": [
+        "now unreferenced resolver/correction renderers",
+        "main.ts click/change/submit branches",
+        "refreshUnitImportPreview",
+        "previewUnitAssignmentImport"
+      ],
+      "disposition": "Nine refresh references are callback-level edges, not evidence of current user entry. Some callbacks mutate aliases/mappings/member records before refresh, so do not exercise via synthetic injected DOM or remove shared API helpers."
+    },
+    {
+      "entry": "Review action kind apply-leave-import / apply-unit-import",
+      "path": [
+        "ReviewAction union and dispatcher",
+        "querySelector legacy apply button",
+        "legacy apply handlers"
+      ],
+      "disposition": "No current action producer found after two renderers removal. Retain type/dispatcher clauses until reviewButton and all callers are separately audited."
+    }
+  ],
+  "retained_shared_boundaries": [
+    {
+      "symbols": [
+        "SPECIAL_UNIT_POSTING_KEYS",
+        "UNIT_POSTING_TYPES",
+        "units",
+        "members",
+        "mappings",
+        "unitMonth",
+        "leaveMonth"
+      ],
+      "reason": "Shared with live unit-card grouping, direct assignment forms, mapping management and operational context. Never remove based on legacy dependency graph."
+    },
+    {
+      "symbols": [
+        "loadUnitManagementData",
+        "invalidateUnitManagementCache",
+        "renderUnitManagement",
+        "renderLeave",
+        "applyWorkingMonth",
+        "resetPrivateState"
+      ],
+      "reason": "Live load/current-context/month/session controls. Legacy state fields remain inputs to shared discard/reset logic; no partial state deletion proposed."
+    },
+    {
+      "symbols": [
+        "previewLeaveImport",
+        "previewUnitAssignmentImport",
+        "applyLeaveImport",
+        "applyUnitAssignmentImport",
+        "downloadPreviewIssues",
+        "createMemberChecked",
+        "addMemberAlias",
+        "createMapping",
+        "updateMapping"
+      ],
+      "reason": "API exports/shared helpers remain retained regardless of private-renderer reachability. Changing exported API surface or server behavior is outside this cleanup."
+    },
+    {
+      "symbols": [
+        "UNIT_IMPORT_POSTING_OPTIONS",
+        "UNIT_IMPORT_TABLE_ID",
+        "unitImportCorrectionRowKey",
+        "unitImportResolutions",
+        "unitImportFile",
+        "unitImportPreview",
+        "leaveImportFile",
+        "leaveImportPreview"
+      ],
+      "reason": "Potentially legacy data/constants still referenced by retained branches or shared guards. Keep until whole dependency closure and exact source ownership confirmed."
+    }
+  ],
+  "limits": [
+    "AST symbol binding covers compiled application TypeScript, not runtime reflection or injected selectors. No injected DOM test is proposed.",
+    "Current source is authoritative; line locations and references must be refreshed after any cleanup.",
+    "No claim every orphan handler is removable or every current import action is certified.",
+    "Report-only work; application/backend changes and mutation requests are zero."
+  ]
+}

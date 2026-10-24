@@ -1,0 +1,68 @@
+{
+  "recorded_at_utc": "2026-10-22T12:47:26.985917+00:00",
+  "requirements": [
+    82,
+    84,
+    88,
+    92,
+    94,
+    167,
+    208,
+    209,
+    212,
+    219,
+    223,
+    225,
+    228,
+    258
+  ],
+  "completion_claim": false,
+  "source_sha256": {
+    "frontend/src/rota-compute.ts": "2f34d4c6dc8654cdf258891e7873075eb8424f4e0884953ca60eb7b1018184af",
+    "frontend/src/compute-device.ts": "c7083623b77132d2ace7d1a0a815ad457a695c9e381afcfd1aeb91af1a6d4eca",
+    "frontend/src/styles.css": "e5e5802b5cdef146b542fcfafc1b2040f232898cafaa89dcf30554235da140b5",
+    "frontend/src/premium-theme.css": "ff2aee7148e54e4e40aae847189110cf3d9228d90fabffbd63a3449a1e1a935d"
+  },
+  "scope": "Proposal engine radio keyboard continuity; only focus identity matching changed.",
+  "confirmed_before": "Actual Chromium320 nativeArrowDown saved and checked local_gpu, but activefocus returned to Server. Stored selection correct; next arrow action started from wrong radio.",
+  "change": [
+    "Capture the active engine radio value before re-render and restore the same value within the existing data-engine-choice selector.",
+    "All other focused controls retain their existing selector behavior. No preference serialization, eligibility, scoring, benchmark, worker or request changes.",
+    "Exact pre-test source bytes can be reconstructed by removing only the added focus-value snapshot and restoring the prior focus query."
+  ],
+  "checks": {
+    "engine_radio_workflows": 12,
+    "native_successful_arrow_transitions": 48,
+    "storage_refusal_retry_reopen_contexts": 12,
+    "generation_entrypoint_regressions": 12,
+    "settings_focus_regressions": 6,
+    "mock_device_feedback_regressions": 6,
+    "existing_generation_workflows": 21,
+    "unit_tests": 100,
+    "build_exit_code": 0,
+    "build_inputs_held": true,
+    "focus_only_source_delta_verified": true
+  },
+  "evidence": [
+    "docs/premium-ui/qa-engine-radio.json",
+    "docs/premium-ui/qa-engine-radio-before.json",
+    "docs/premium-ui/reviews/engine-radio-source-delta.json",
+    "docs/premium-ui/qa-generation-entrypoints.json",
+    "docs/premium-ui/qa-compute-focus.json",
+    "docs/premium-ui/qa-compute-test-feedback.json",
+    "docs/premium-ui/qa-generation-actions-current.json",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+  ],
+  "tests": {
+    "frontend/tests/premium-engine-radio.browser.mjs": "2483f95b9130f700b2aecda40f6f55019b5743c4901e8791bc010d64e4c1a6d7",
+    "frontend/tests/premium-generation-entrypoints.browser.mjs": "af3ef26c86e59f813224bd979ba96681a2147add56ee72d60b9b2bb415001144"
+  },
+  "limitations": [
+    "Enabled-radio UI uses a navigator.gpu presence fixture; Worker startup throws if attempted. No realGPU/adapter/kernel/speed or selection-for-actual-computation certification.",
+    "Threeengines320/1280,member/template adminproposals,lighttheme. Server/local/auto values and native arrows,storage refusal,retry/reopen verified; allroles/othernativeinputmodes remain separate.",
+    "Storage refusal uses a conditional Storage.setItem exception for the compute key only; prior persisted mode retained. This is frontend recovery evidence, not every browser storage-policy case.",
+    "Generation API requests are mocked GET-only in this suite. Existing21workflow suite mocks writes; no realjobcreation/apply/publish/backendpersistence proof.",
+    "Entrypoint regression retains6scoped axe surfaces; no new fullvisual/nativeassistive/physical acceptance. Prior120gate matrix remains historical by fullmodulehash. Independent-review usage limitation remains.",
+    "No backend/API-contract/permission/scheduling/persistedsemantics/export-content/deployment/production changes made in this batch. Full260goalactive/incomplete;0whole requirements certified."
+  ]
+}

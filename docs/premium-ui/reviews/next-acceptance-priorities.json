@@ -1,0 +1,175 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-10-22T02:57:42.169467+00:00",
+  "reviewer": "premium_acceptance_priorities",
+  "scope": "Next five concrete implementation/review deliverable priorities from current source. Bounded audit, not whole260 sign-off. Source-only risks distinguished from reproduced behavior.",
+  "safety": {
+    "application_source_edits": 0,
+    "backend_edits": 0,
+    "production_operations": 0,
+    "mutation_requests": 0,
+    "browser_requests": "Two GETs intercepted in actual-module Chromium harness; no application server requests."
+  },
+  "recognized_recent_progress": [
+    "Past-duty confirmed-save recovery and eligibility group save protection have recent focused evidence. They are not repeated as missing solely because old traceability labels remain partial.",
+    "Mapping scan is currently being addressed by root and is excluded from these next priorities.",
+    "Existing recycle restore/purge, account create/recovery and export tests prove bounded happy/failure cases; this audit does not erase those passes.",
+    "Existing review-build-and-rollback.md supplies useful commands and scope/hosting boundaries; the release priority below concerns reproducible final artifacts, not absence of all instructions."
+  ],
+  "priorities": [
+    {
+      "rank": 1,
+      "id": "intelligent-editor-draft-lifecycle",
+      "requirements": [
+        174,
+        227,
+        208,
+        242,
+        247
+      ],
+      "status": "reproduced_missing_behavior",
+      "source": [
+        "frontend/src/rota-intelligence.ts:57",
+        "frontend/src/rota-intelligence.ts:73",
+        "frontend/src/rota-intelligence.ts:106",
+        "frontend/src/rota-intelligence.ts:176"
+      ],
+      "finding": "render preserves teachingDraft but not unsaved holiday/held-out fields. Close directly closes dialog without dirty handling. Memory locks and repair sets survive renders; this finding does not claim they are lost.",
+      "runtime_evidence": "docs/premium-ui/reviews/next-acceptance-priorities-runtime.json",
+      "observed": "Chromium390x844: holiday2026-05-11 becomes empty after Assistant\u2192Plan; held-out2026-03,2026-04 becomes empty after Plan\u2192Learning; typed teaching explanation closes without confirmation. Two mocked GETs, no mutation, no page error.",
+      "next_action": "Maintain in-memory values for every editable tab field through render/tab changes, scope baseline/dirty status per unsaved form, and use existing shared draft lifecycle for explicit Close/Escape/browser-unload protection. Mark fields clean only after their own confirmed save. Preserve existing abort behavior and exact payloads; do not persist personal drafts or replay mutations.",
+      "acceptance": [
+        "Real keyboard and pointer tab round trips preserve holiday/held-out/teaching fields and intended open details.",
+        "Declined Close/Escape preserves all drafts; accepted discard closes and removes listeners. Synthetic beforeunload proves predicates only, not native prompt.",
+        "Confirmed mutation plus failed follow-up GET retains truthful confirmed state; no replay.",
+        "Existing intelligent generation/apply/repair/resume payload and outcome suites remain unchanged."
+      ]
+    },
+    {
+      "rank": 2,
+      "id": "recycle-confirmed-action-readback",
+      "requirements": [
+        191,
+        192,
+        224,
+        226,
+        229,
+        243,
+        246
+      ],
+      "status": "source_demonstrated_gap_runtime_followup_required",
+      "source": [
+        "frontend/src/recycle-bin.ts:108",
+        "frontend/src/recycle-bin.ts:119",
+        "frontend/src/recycle-bin.ts:132"
+      ],
+      "finding": "After a successful restore, result is displayed but the old batch object remains until GET. A failed follow-up GET is silently swallowed; card can still expose Restore and Delete forever with old restoration status. Existing tests assert successful follow-up read, or failed restore, rather than confirmed restore plus failed GET.",
+      "next_action": "Track confirmed restore/purge separately from readback, explain latest-list failure with a GET-only retry, suppress unsafe repeat action on confirmed fully restored batches until authoritative refresh, preserve partial-conflict detail, and retain focus at the result/retry. Never invent restored_at timestamps or mark partially restored work fully restored.",
+      "acceptance": [
+        "Mock one full restore success then failedGET: exact1POST, visible success plus stale/readback warning, retry issues GET only, no second Restore.",
+        "Partial conflicts remain readable and authorized residual actions preserve existing semantics.",
+        "Purge confirmation dismissed sends0DELETE; held repeated activation sends1DELETE; failed read after confirmed purge does not resurrect deleted card.",
+        "Late responses after route/session change do not repaint or focus another page;320/1280 keyboard focus and overflow."
+      ]
+    },
+    {
+      "rank": 3,
+      "id": "diagnostics-operational-summary",
+      "requirements": [
+        189,
+        190,
+        195,
+        198,
+        203,
+        240
+      ],
+      "status": "source_demonstrated_presentation_gap",
+      "source": [
+        "frontend/src/main.ts:7645",
+        "frontend/src/main.ts:7661"
+      ],
+      "finding": "Diagnostics currently renders3 counts then an expanded Diagnostics Payload JSON pre as the main panel. Support build identity alone is collapsed. This does not yet meet short service summary plus expandable technical information. Initial failure already has manual retry and context guards; that is existing implemented behavior.",
+      "next_action": "Lead with plain-language counts/known validation status and timestamp of actual confirmation. Move existing raw payload and Copy JSON into deliberately expandable technical details, keep build identity/support inside that surface, and inspect actual returned fields for private material before copy. Only summarize evidence present in the response; do not invent connected/healthy claims from counts.",
+      "acceptance": [
+        "Populated/empty/optional-null/long labels at320/844landscape/1280 light/dark.",
+        "Collapsed technical data remains keyboard reachable; copied JSON preserves approved existing diagnostic semantics and contains no session token/pairing secret.",
+        "503 retry and401/403 retain truthful permission/session behavior; no unrelated route break.",
+        "Stale response after navigation/account change cannot replace content or steal focus."
+      ]
+    },
+    {
+      "rank": 4,
+      "id": "export-validity-truthful-feedback",
+      "requirements": [
+        179,
+        180,
+        245,
+        250
+      ],
+      "status": "source_demonstrated_gap_with_existing_bounded_download_evidence",
+      "source": [
+        "frontend/src/services/api.ts:270",
+        "frontend/src/services/api.ts:2410",
+        "frontend/src/main.ts:9349",
+        "frontend/src/main.ts:9371"
+      ],
+      "finding": "readDownloadBlob returns any successful body including zero bytes. Three workbook handlers say downloaded immediately after anchor activation, which cannot prove browser disk completion. Existing auth-generation checks already reject cross-session bodies; preserve them. No claim existing exports are corrupt.",
+      "next_action": "Reject empty/unexpected response artifacts safely before anchor handoff, preserve returned bytes and filenames, use accurate download-started/ready wording, and provide manual retry/failure status. Add source-matched artifact matrix for final rota/Eagle Eye/call-wise and CSV/rejection exports; do not alter export contents or API contracts.",
+      "acceptance": [
+        "Assert exact filename and byte content/signature for each workbook/CSV fixture.",
+        "200empty,HTMLerrorwith200,403,401,offline,and body decode failure produce no success handoff.",
+        "Held repeated activation invokes1GET; account change while decoding cannot download old session artifact.",
+        "Browser download event proves handoff and saved temp file proves bytes in test only; blocked browser-native handoff limits explicitly recorded."
+      ]
+    },
+    {
+      "rank": 5,
+      "id": "reproducible-review-build-and-open-issues",
+      "requirements": [
+        194,
+        256,
+        257,
+        258,
+        259,
+        260
+      ],
+      "status": "remaining_deliverable_not_runtime_defect",
+      "source": [
+        "docs/premium-ui/review-build-and-rollback.md",
+        "docs/premium-ui/verification-current.json",
+        "docs/premium-ui/traceability.json"
+      ],
+      "finding": "There is an active/incomplete evidence ledger and useful rollback guidance, but no discovered final immutable review-build manifest/package connecting emitted asset hashes/build identity to per-item disposition and selected UI rollback patch. Current source-hashed reports often intentionally cover historical snapshots. This is not a request to deploy or make blanket complete claims.",
+      "next_action": "At a held final source snapshot, package frontend dist with artifact hashes/build identity and exact run commands, assemble a concrete unresolved-issue list with dependencies, link each requirement to current or explicitly historical evidence, and prepare/review an isolated frontend reverse patch preserving concurrent source. Keep physical-device and real-screen-reader checks pending. No production host or backend change is authorized.",
+      "acceptance": [
+        "A reviewer can launch the exact packaged build without rebuilding and identify all emitted artifacts/hash mismatches.",
+        "Per-item evidence distinguishes implemented,verified,unverified,dependency and justifiedNA; no stale timestamp promotion.",
+        "Rollback instructions identify owned frontend changes in shared files, explicitly preserve concurrent backend/rules/extra-duty work, and state tested recovery limits.",
+        "Final action ledger has no unexplained enabled operational action; run build/typecheck/relevant regressions against same snapshot."
+      ]
+    }
+  ],
+  "source_sha256": {
+    "frontend/src/rota-intelligence.ts": "20789db85cd70f6e52fe8a00a83d273d8a217d89a6cf9ff454e3e71d5fcda461",
+    "frontend/src/recycle-bin.ts": "f27f8490b990e3316efa61e13b81bc28c22adea313adc004e277306f8f662b86",
+    "frontend/src/main.ts": "34e4f40565833ed8435c4d86f3a79313eb9e5714b538f28ebbb13fa4b6344e81",
+    "frontend/src/services/api.ts": "b7dbea6efa9fb16febcb7aa6baaf6c488c75175635f503eb417f338e80a5551f",
+    "docs/premium_frontend_upgrade_plan_2026-10-21.md": "03e15be7620d680cfd9385d91e584fa0c49e64a6b5c93505ac19cac008b63a7b",
+    "docs/premium-ui/verification-current.json": "8e4ae24c2a3f7b943968de1bd433e9d3fddf4d3d4848ab5cf231f16031019d4e",
+    "docs/premium-ui/review-build-and-rollback.md": "866cc981ecacaba210c850bdea509c79672b9f8ac0820cb7102a952de8bfd0c3",
+    "docs/premium-ui/reviews/next-acceptance-priorities-runtime.json": "9abb232d47c3c3dd04b8035a9c314065af29f8695596eab19bdc775df962f4fd"
+  },
+  "limits": [
+    "Only intelligence draft round trips and Close were newly run in browser; recycle, diagnostics, exports and packaging findings derive from listed source/evidence.",
+    "No physical-device, native browser exit prompt, native screen-reader, production hosting or final all260 acceptance claim.",
+    "Line numbers are snapshot locators and may move under concurrent integration."
+  ],
+  "followup_recorded_at_utc": "2026-10-22T04:20:48.273135+00:00",
+  "followup_evidence": {
+    "recycle": "docs/premium-ui/qa-recycle-recovery-independent.json",
+    "diagnostics": "docs/premium-ui/qa-diagnostics-hierarchy/report.json",
+    "exports": "docs/premium-ui/qa-export-artifacts.json",
+    "intelligent_drafts": "docs/premium-ui/reviews/intelligence-drafts-current.json"
+  },
+  "followup_note": "Original source observations are historical. Linked reports address intelligent drafts, recycle confirmed-readback recovery, Diagnostics hierarchy and empty primary exports within bounded scope. Immutable review package, isolated rollback artifact, every-action/current per-item acceptance and broader export format validation remain outstanding."
+}

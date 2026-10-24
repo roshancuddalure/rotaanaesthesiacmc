@@ -22,7 +22,7 @@ let jobs = [templateJob];
 let cancelled = [];
 let startResponse = null;
 await page.route("**/__conflict", r => r.fulfill({ contentType: "text/html",
-  body: '<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>t</title><link rel="stylesheet" href="/src/styles.css"></head><body><main id="host"><button data-view="compute-settings">Compute Settings</button></main></body></html>' }));
+  body: '<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>t</title><link rel="stylesheet" href="/src/styles.css"><link rel="stylesheet" href="/src/premium-theme.css"></head><body><main id="host"><button data-view="compute-settings">Compute Settings</button></main></body></html>' }));
 await page.route("**/api/**", async r => {
   const url = new URL(r.request().url());
   const method = r.request().method();

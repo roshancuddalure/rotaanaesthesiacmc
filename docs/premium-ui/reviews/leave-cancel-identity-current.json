@@ -1,0 +1,77 @@
+{
+  "recorded_at_utc": "2026-10-24T03:59:12.390780+00:00",
+  "completion_claim": false,
+  "scope": "Exact mainLeave cancellation identity andowned late-response UI; existing canonical cancellation separately regressed.",
+  "requirements": [
+    80,
+    85,
+    87,
+    92,
+    93,
+    225,
+    227,
+    230,
+    241,
+    242,
+    243,
+    246
+  ],
+  "source_sha256": {
+    "frontend/src/main.ts": "6ebdf70eb1f3663e144c26ea4ceddcee83989a18c84b24a0e3e2a6fdc0b3dbdb",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/ui.ts": "88579ed75c8c72e4fd4e2d98508a58c42b925202362589a2469623664c2a975f",
+    "frontend/src/premium-theme.css": "559041ee03d192fcc291582bd7572e8d32004e9d5428b7e57fbbea9ba9e60f83",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86"
+  },
+  "changes": [
+    "Replace anonymous nativeconfirmation with exactmember,fullshortdates,type,slot,status andrecordID; retain history/duty-review consequence.",
+    "Refuse unavailable targets beforeconfirmation orrequest; capture exacttargetID.",
+    "Suppress success/error/refresh of departed route/session/render/month; preserve newer screen drafts/focus."
+  ],
+  "checks": {
+    "development_contexts": 12,
+    "production_contexts": 12,
+    "late_completion_scenarios_within_those_contexts": 96,
+    "canonical_profile_regression_contexts": 6,
+    "total_browser_contexts": 30,
+    "unit_tests_passed": 104,
+    "held_build_passed": true,
+    "inventories_passed": true,
+    "forwarded_mutation_requests": 0
+  },
+  "evidence": [
+    "docs/premium-ui/qa-leave-cancel-identity/report-development.json",
+    "docs/premium-ui/qa-leave-cancel-identity/report-production.json",
+    "docs/premium-ui/qa-profile-cancel-identity.json",
+    "docs/premium-ui/reviews/leave-cancel-source-review.json",
+    "frontend/tests/premium-leave-cancel-identity.browser.mjs",
+    "tmp/premium-leave-cancel-before.log",
+    "tmp/premium-leave-cancel-development.log",
+    "tmp/premium-leave-cancel-development-repeat.log",
+    "tmp/premium-leave-cancel-production.log",
+    "tmp/premium-leave-cancel-unit.log",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json",
+    "docs/premium-ui/reviews/leave-cancel-test-report-review.json"
+  ],
+  "limitations": [
+    "All cancellation writes locally intercepted; GETsnotlocallymocked forwardonlytoRAM8032. No backend enforcement,realpersistence orproduction mutation evidence.",
+    "Native keyboard activation of actual mobile/desktop row menus; native prompt visualappearance/physicaltouch/nativeAT notcertified. No new scopedaxe run in this suite.",
+    "Late scenarios cover success/failure afterMembersnavigationandsignout,with actual deliveredresponse.finished andnewdraft/focus/login assertions. Month changes,sameroute rerenders,replacementsignin remain untested.",
+    "Clickedbutton existing loading guard retained. No claim of duplicateprevention across newly rendered controls or all reauthentication cases.",
+    "Synthetic missing-target case deliberately corrupts dataset; it verifies refusal,notordinary userreachability.",
+    "Beforeprobe failed exact identity assertion on oldgenericprompt. Firstafterrun hit testharness sameURLreuse after syntheticcorruption; fixed freshdocumentqueries andstrengthened heldresponse settlement. All failedlogs retained.",
+    "Canonical profile6regressions use fully mocked modulefixture andnullPOSTbody; newfullshell24 use main{}POSTbody. Reports retain distinct declared source scope.",
+    "No whole260 completion. Existing six documentary signoffs explicitly revalidated against this bounded mainhandler patch; broader runtime acceptance remains incomplete."
+  ],
+  "suite_mapping_followup": {
+    "all_scripts": 244,
+    "browser_suites": 227,
+    "other_scripts": 17,
+    "assertions_mapped": 29,
+    "pending_assertion_review": 215,
+    "browser_suites_pending_assertion_review": 198,
+    "reviewed_assertion_groups": 166,
+    "scope": "Documentation/sourceinspection only; eachmappedreport retainsoriginalsnapshot.",
+    "index": "docs/premium-ui/browser-suite-map/index.json"
+  }
+}

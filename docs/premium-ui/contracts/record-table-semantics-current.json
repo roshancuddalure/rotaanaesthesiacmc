@@ -1,0 +1,46 @@
+{
+  "recorded_at_utc": "2026-10-23T19:42:58.215837+00:00",
+  "scope": "Three bounded runtime record-table semantics; static60openinginventory remains separate/unclassified.",
+  "source_sha256": {
+    "frontend/src/main.ts": "88fdedaa7f8aace6b343dd3347cacf4316ef5ca82123111698a48b564cf9edbc",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "e1f99f30fc0bb0e1c84fa3972824058712d68ea842697ee71777d1dd51d6cfba"
+  },
+  "surfaces": [
+    {
+      "view": "members",
+      "selector": "table[aria-labelledby=\"member-list-title\"]",
+      "accessible_name": "Members",
+      "column_scope": "col",
+      "runtime_contexts_per_environment": 21,
+      "classification": "record_list",
+      "mobile_representation": "Member/leave responsive cards; unit grouping board remains a distinct view",
+      "limit": "Only loaded fixture role and populated state; no all-table/role/nativeAT certification"
+    },
+    {
+      "view": "leave",
+      "selector": "table[aria-labelledby=\"leave-list-title\"]",
+      "accessible_name": "All leave this month",
+      "column_scope": "col",
+      "runtime_contexts_per_environment": 21,
+      "classification": "record_list",
+      "mobile_representation": "Member/leave responsive cards; unit grouping board remains a distinct view",
+      "limit": "Only loaded fixture role and populated state; no all-table/role/nativeAT certification"
+    },
+    {
+      "view": "units",
+      "selector": "table[aria-labelledby=\"unit-postings-title\"]",
+      "accessible_name": "All postings",
+      "column_scope": "col",
+      "runtime_contexts_per_environment": 21,
+      "classification": "record_list",
+      "mobile_representation": "Member/leave responsive cards; unit grouping board remains a distinct view",
+      "limit": "Only loaded fixture role and populated state; no all-table/role/nativeAT certification"
+    }
+  ],
+  "evidence": [
+    "docs/premium-ui/qa-record-table-semantics/report-development.json",
+    "docs/premium-ui/qa-record-table-semantics/report-production.json"
+  ],
+  "full_acceptance": false
+}

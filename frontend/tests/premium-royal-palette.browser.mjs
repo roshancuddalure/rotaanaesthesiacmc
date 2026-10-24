@@ -1,0 +1,29 @@
+import assert from 'node:assert/strict';
+import {readFile,writeFile,mkdir} from 'node:fs/promises';
+import {createHash} from 'node:crypto';
+import {chromium,firefox,webkit} from 'playwright';
+import AxeBuilder from '@axe-core/playwright';
+const baseline=process.env.ROYAL_PALETTE_BASELINE==='1',results=[];
+const paths=['main.ts','limits.ts','member-workspace.ts','styles.css','premium-theme.css'];
+const hashes=async()=>Object.fromEntries(await Promise.all(paths.map(async n=>['frontend/src/'+n,createHash('sha256').update(await readFile('src/'+n)).digest('hex')]))),initial=await hashes();
+await mkdir('../docs/premium-ui/screenshots/palette',{recursive:true});
+for(const [engine,launcher]of Object.entries(baseline?{chromium}:{chromium,firefox,webkit})){
+ const browser=await launcher.launch();
+ try{for(const width of baseline?[1280]:[320,1280])for(const scheme of baseline?['dark']:['light','dark']){
+  const context=await browser.newContext({viewport:{width,height:900},colorScheme:scheme,reducedMotion:'reduce'}),page=await context.newPage(),errors=[];
+  page.on('pageerror',e=>errors.push(e.message));await context.addInitScript(()=>{localStorage.setItem('duty_rota_auth_token','palette-review');localStorage.setItem('duty_rota_working_month','2026-11');});
+  await page.route('**/api/**',async r=>{assert.equal(r.request().method(),'GET');const u=new URL(r.request().url());if(u.pathname==='/api/v1/admin/member-workspace/palette-person')return r.fulfill({json:{member:{id:'palette-person',canonical_name:'Dr Palette Example',active_status:'active',call_level:'2ND_CALL',aliases:[],designations:[],call_level_changes:[]},impact:{}}});const response=await r.fetch({url:'http://127.0.0.1:8031'+u.pathname+u.search});if(u.pathname.endsWith('/auth/me')){const user=await response.json();return r.fulfill({json:{...user,role:'superadmin'}});}return r.fulfill({response});});
+  await page.goto('http://127.0.0.1:5197/#view=limits');await page.locator('.limits-hero').waitFor();
+  const tokens=await page.evaluate(()=>Object.fromEntries(['--color-sidebar','--dialog-header-bg','--color-surface','--royal-champagne','--color-warning-text','--color-warning-bg'].map(token=>{const probe=document.createElement('span');probe.style.color=`var(${token})`;document.body.append(probe);const color=getComputedStyle(probe).color;probe.remove();return [token,color];})));
+  const gradient=await page.locator('.sidebar').evaluate(e=>getComputedStyle(e).backgroundImage),panel=await page.locator('.limits-hero').evaluate(e=>getComputedStyle(e).backgroundColor),brand=await page.locator('.brand-mark').evaluate(e=>getComputedStyle(e).borderTopColor);
+  const soft=page.locator('.limits-legend .limits-badge--soft');assert.equal(await soft.count(),1);const warning=await soft.evaluate(e=>({text:e.textContent.trim(),color:getComputedStyle(e).color,background:getComputedStyle(e).backgroundColor,title:e.title}));
+  const eyebrow=await page.locator('.limits-hero .limits-eyebrow').evaluate(e=>({text:e.textContent.trim(),color:getComputedStyle(e).color}));
+  const axe=await new AxeBuilder({page}).include('.limits-hero').withTags(['wcag2a','wcag2aa','wcag21aa','wcag22aa']).analyze();
+  if(!baseline&&engine==='chromium')await page.screenshot({path:`../docs/premium-ui/screenshots/palette/limits-${scheme}-${width}.png`});
+  await page.evaluate(()=>{const button=document.createElement('button');button.id='palette-profile';button.textContent='Review member';button.onclick=()=>import('/src/member-workspace.ts').then(m=>m.openMemberWorkspace('palette-person',true,()=>{}));document.querySelector('#view-root').append(button);});const open=page.locator('#palette-profile');await open.focus();await page.keyboard.press('Enter');const dialog=page.locator('dialog.member-workspace');await dialog.locator('[data-edit]').waitFor();const header=await dialog.locator('.mw-header').evaluate(e=>getComputedStyle(e).backgroundColor);
+  if(!baseline){assert.ok(gradient.includes(tokens['--color-sidebar']),'Navigation respects the active navy theme token');assert.equal(header,tokens['--dialog-header-bg']);assert.equal(panel,tokens['--color-surface']);assert.notEqual(panel,header,'Ordinary content keeps its content surface');assert.equal(brand,tokens['--royal-champagne']);assert.equal(warning.color,tokens['--color-warning-text']);assert.equal(warning.background,tokens['--color-warning-bg']);assert.notEqual(warning.color,brand);assert.ok(warning.text.length>0&&warning.title.length>0,'Warning has explicit text and explanatory title');assert.deepEqual(axe.violations.map(v=>v.id),[]);}
+  await dialog.locator('[data-close]').click();await dialog.waitFor({state:'detached'});assert.equal(await open.evaluate(e=>e===document.activeElement),true);assert.equal(await page.locator('.sidebar [data-view=limits]').getAttribute('aria-current'),'page');assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);assert.deepEqual(errors,[]);
+  results.push({engine,width,scheme,tokens,gradient,panel,brand,header,warning,eyebrow,scopedAxeViolations:axe.violations.map(v=>v.id),paletteVerified:!baseline,existingRoleNavigationAndFocus:true,noWrites:true,errors});await page.waitForLoadState('networkidle');await context.close();
+ }}finally{await browser.close();}
+}
+assert.deepEqual(await hashes(),initial);await writeFile('../docs/premium-ui/qa-royal-palette'+(baseline?'-before':'')+'.json',JSON.stringify({recorded_at_utc:new Date().toISOString(),source_sha256:initial,scope:'Actual Limits hero/legend, sidebar/brand and canonical profile header. Computed active theme navy/content/decorative/warning tokens and scoped contrast.3engines320/1280lightdark after change. GET-only disposable fixture, injected profile opener; no backend writes or authorization certification.',results},null,2)+'\n');console.log(`Royal palette: ${results.length} contexts`);

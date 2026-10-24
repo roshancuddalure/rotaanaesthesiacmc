@@ -27,6 +27,7 @@ from app.services.rota_candidates import (
     slot_candidates_with_context,
     add_provisional_assignment,
 )
+from app.services.rota_eligibility import call_level_missing_message
 from app.services.rota_safety import required_call_levels, rule_for_slot, rules_groups
 from app.services.rota_setup import monthly_setup
 from app.services.rota_template import PHASE4_SLOT_SOURCE
@@ -79,7 +80,8 @@ def safe_candidate(
             and candidate.get("validation_status") == "clear"
             and not candidate.get("requires_override")
         ):
-            if strict_call_level and str(candidate.get("call_level")) not in required_calls:
+            # Always strict: the option is kept for compatibility but cannot relax call level.
+            if str(candidate.get("call_level")) not in required_calls:
                 continue
             return candidate
     return None
@@ -199,10 +201,12 @@ def _run_safe_auto_fill(
                 performance[key] += elapsed
         candidates = list(candidate_row["candidates"])
         rule = rule_for_slot(slot, context.rules)
-        required_calls = required_call_levels(slot, rule, rules_groups(context.rules, slot))
-        # Multi-level duties (groups of different call levels) are fine: the candidate's
-        # level must be one of them. Only a slot with no known call level is ambiguous.
-        if options.strict_call_level and not required_calls:
+        slot_groups = rules_groups(context.rules, slot)
+        # Strict call level (call_level_pool_and_balance_contract §1): the member's level must be
+        # in the duty's level set; a pool (several levels) is filled normally, and only a duty
+        # with no level at all is unresolved and never auto-filled.
+        required_calls = required_call_levels(slot, rule, slot_groups)
+        if not required_calls:
             skipped += 1
             review += 1
             add_event(
@@ -211,11 +215,13 @@ def _run_safe_auto_fill(
                 slot=slot,
                 action=ACTION_SKIPPED,
                 severity="warning",
-                reason="Safe Auto-Fill left this slot open because its required call level is ambiguous.",
+                reason=call_level_missing_message(rule.label if rule else slot.duty_type)
+                + ". Safe Auto-Fill left this slot open.",
                 details={
                     "slot_id": str(slot.id),
                     "strict_call_level": True,
-                    "required_call_levels": sorted(required_calls),
+                    "problem": "call_level_missing",
+                    "required_call_levels": [],
                     "candidate_count": len(candidates),
                 },
             )

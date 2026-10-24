@@ -1,0 +1,61 @@
+{
+  "reviewer": "leave_calendar_review specialist 8 of 10",
+  "date": "2026-10-22",
+  "scope": "Read-only frontend source audit for requirements 141, 146 and 153; no application or shared ledger edits.",
+  "verification_level": "source_only",
+  "completion_claim": false,
+  "findings": [
+    {
+      "id": "staffing-remainder-unreachable",
+      "requirement": 153,
+      "priority": "high",
+      "evidence": [
+        "frontend/src/main.ts:6276 renderUnitDaySafetyRows maps safety.unit_day_safety.slice(0, 100).",
+        "frontend/src/main.ts:6005 truthfully reports Showing first 100 of N unit-day checks, but supplies no paging, expansion or filter control for the remainder.",
+        "frontend/src/main.ts:6280 only rendered non-safe rows receive staffing review actions."
+      ],
+      "impact": "A returned warning after row 100 cannot be opened from this Unit-Day Safety table. The truncation is disclosed; this is an access gap rather than a false count.",
+      "proposed_fix": "Add bounded native pagination or an accessible expand-remaining control over the already-returned array. Preserve API ordering, statuses, counts and rule decisions; keep the displayed range and total visible. Do not fetch new data or change safety calculations.",
+      "bounded_tests": [
+        "Supply 103 deterministic unit-day rows with distinct non-safe warnings at indices 0, 99 and 102; verify access to every returned row and unchanged dates/counts/statuses.",
+        "At 320 and 1280 CSS pixels, use native keyboard activation to reach the last warning, open its exact-date review, close and restore the initiating control with its page retained.",
+        "Assert no mutation request, no array reorder and no duplicate row on forward/back navigation. Verify empty, one-row, 100-row and 103-row results."
+      ]
+    },
+    {
+      "id": "staffing-editor-loses-unit-context",
+      "requirement": 153,
+      "priority": "medium",
+      "evidence": [
+        "frontend/src/main.ts:6282 review parameters retain date, unit name and server-reported staffing counts.",
+        "frontend/src/main.ts:6294 Open Unit Management uses kind navigate target units, with no unit ID or month argument.",
+        "frontend/src/services/api.ts:1430 each unit-day row already includes unit_id, while frontend/src/main.ts:943 already supports open-unit with month and unit target.",
+        "frontend/src/main.ts:934 runReviewAction closes the review before the navigate branch optionally clicks an existing destination; a missing destination has no visible recovery."
+      ],
+      "impact": "The staffing warning can send the user to the general board rather than its affected unit editor. When the destination element is unavailable, the review closes without navigation or explanatory recovery.",
+      "proposed_fix": "For a returned non-null unit_id, reuse the existing open-unit action with that ID and rotaTemplateMonth. For a null ID, retain a clearly labelled general management destination. Validate destination availability before closing and show a recoverable explanation if unavailable. Preserve the server date and count details in the review and label the destination with the affected unit/date. Do not infer a rule identifier or threshold absent from the returned contract; any authoritative rule detail must use existing returned data.",
+      "bounded_tests": [
+        "Use two units and a non-default month; activate a warning and assert that the existing editor opens for the exact returned unit ID/month, with unchanged server counts and no save request.",
+        "Verify null-unit fallback explicitly opens the general board and never an unrelated unit.",
+        "Simulate a missing destination and rejected editor GET: keep a meaningful explanation and manual retry/close route, with no mutation replay.",
+        "At mobile and desktop widths, verify full affected date, keyboard activation, Escape and opener-focus restoration."
+      ]
+    }
+  ],
+  "positive_source_observations": [
+    "Requirement 141 already has Add leave as primary, import and monthly approval next, and secondary management/download/destructive controls in More. No source-confirmed hierarchy defect is asserted without a visual check.",
+    "Requirement 146 currently uses native day buttons and an ordinary group of aria-pressed Month/Day list switches, with hidden inactive containers. It does not advertise an incomplete ARIA grid. Native Tab/Enter semantics are appropriate; absence of arrow navigation alone is not a bug.",
+    "The pressure review already added all returned group access and existing exact-day Review day actions; those resolved gaps are not reopened here.",
+    "The monthly review already records focused refresh/error recovery and independent acknowledgement safeguards; those resolved gaps are not reopened here."
+  ],
+  "related_existing_evidence": [
+    "docs/premium-ui/reviews/leave-pressure-current.json",
+    "docs/premium-ui/reviews/monthly-leave-review-current.json"
+  ],
+  "limits": [
+    "No browser execution, screenshots, physical-device review or new runtime pass is claimed by this audit.",
+    "No backend, API, scheduling, permission or application file was edited.",
+    "Source line references describe the inspected snapshot and may drift under concurrent work.",
+    "Whole requirement acceptance remains unproven."
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "recorded_at_utc": "2026-10-22T04:47:48.531452+00:00",
+  "reviewer": "preview_rejection_artifacts_independent",
+  "requirements": [
+    186,
+    191,
+    196,
+    198,
+    247,
+    251
+  ],
+  "disposition": "bounded_pass_full_requirements_unproven",
+  "scope": "Actual shipped component functions in an isolated CSS harness; four audit/history views, three engines, two widths and two browser zones. All GETs intercepted, no live API or mutation. Intl oracle independent of production helper. No date-only scheduling/persisted semantics, physical device or native screen-reader claim.",
+  "evidence": "docs/premium-ui/qa-audit-timestamps-independent.json",
+  "evidence_sha256": "6110cd5610a0da53f9e1d7ebcfcb34884fb669e8b395b240bb37806af786edbb",
+  "source_hashes": {
+    "src/audit-time.ts": "136542cb2daec343417532d372f2e8ce01a0e6103ef6c62a7a4a8017ac8a6d15",
+    "src/workflow-import-history.ts": "9a592b0da33579e569d8d110a28e4dfc183029051d7827e8c4fa4a3af1be28ed",
+    "src/member-import-history.ts": "0357db668bac46f7c4c28c575e2f7c688b00c95671acb1f475aea0946e89ec92",
+    "src/reference-workspace.ts": "886a5e50c66c4215b021f28fe06a23b667a4f1ded368cb6ee0406e3adea066e0",
+    "src/member-bulk.ts": "e0d040ab5f9f83a090a15fe4b4b619d25e97ae8b06d86dface5b4a62231f5202",
+    "src/ui.ts": "12e79214fc4f094e9b391df88ff498cda65d3539b9d0f1da59cffc139c8e4f85"
+  },
+  "matrix_count": 12,
+  "resolution": {
+    "original_input": "2026-02-30T12:00:00Z",
+    "original_observation": "JavaScript normalized impossible date to02March2026",
+    "current_observation": "Time unavailable across all four actual components and12 matrices",
+    "additional_bounds": "2100February29 rejected;2028February29 and2000February29 preserved",
+    "limit": "Bounded Gregorian malformed-input fallback checks; not a claim to validate every possible API timestamp."
+  },
+  "source_review": [
+    "Member-import history retains explicit Asia/Kolkata, equivalent to its former Asia/Calcutta zone.",
+    "Workflow, reference and archive retain browser-local zone and now expose it.",
+    "Null completion status remains existing status fallback in import histories.",
+    "Unzoned strings are marked time zone not recorded rather than assigned an instant.",
+    "Gregorian calendar bounds reject impossible ISO dates before JavaScript can normalize them.",
+    "Archive when alias is called with one argument; no array map callback index trap.",
+    "Existing callers escape formatted text and details; no changed API or persisted date semantics.",
+    "Final runtime typeof string guard safely rejects unexpected nonstring API values before trim."
+  ],
+  "remaining_limits": [
+    "Only four identified histories are runtime-certified by this matrix; other audit surfaces remain separate acceptance work.",
+    "No physical device or native screen-reader claim.",
+    "No exhaustive date parser claim beyond declared ISO fixtures and malformed bounds."
+  ],
+  "nonstring_probe": {
+    "scope": "Direct browser helper call in each matrix, separately from typed actual-component fixtures",
+    "inputs": [
+      "number42",
+      "object",
+      "array",
+      "booleanfalse"
+    ],
+    "expected_and_observed": "Time unavailable",
+    "passed": true
+  }
+}

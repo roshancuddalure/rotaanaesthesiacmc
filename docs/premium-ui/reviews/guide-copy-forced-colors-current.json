@@ -1,0 +1,68 @@
+{
+  "recorded_at_utc": "2026-10-22T05:37:17.368467+00:00",
+  "scope": "Bounded guide/history, forced-colors selection and member clipboard fixes; full260goal remains active/incomplete.",
+  "source_sha256": {
+    "frontend/src/main.ts": "e7a7ef7ef361057d0674d04bf96b9016fb879b2f52de70cfe41326644af9fffd",
+    "frontend/src/navigation-history.ts": "7987fe6b5034c80e44708b0e46d5bf4009a1e3eabca092a5b8a31ca1afdde0b4",
+    "frontend/src/member-workspace.ts": "35cb92656ca7c8c43b1c0a6de4c51eec56ca6854fd60d420e4330be362f8f56f",
+    "frontend/src/premium-theme.css": "1cd351aa87a892afbfaff14a867bb33c318e14834b03788efa24b165ad4f8a74"
+  },
+  "fixes": [
+    {
+      "id": "guide-map-route",
+      "before": "Native #guide section fragments were interpreted as unknown application routes and opened Overview.",
+      "after": "Ten allowlisted public section URLs retain view=user-guide, focus/scroll the correct heading and preserve native deep-link/history behavior. No member IDs or private data enter URLs."
+    },
+    {
+      "id": "guide-back-scroll",
+      "before": "Nine engine/viewport cases returned from a guide shortcut with the correct heading focused thousands of pixels offscreen.",
+      "after": "Guarded manual browser scroll restoration lets existing app route positions and explicit guide destinations remain authoritative. Twelve general history cases also pass."
+    },
+    {
+      "id": "forced-colors-selected-state",
+      "before": "Eight Chromium/Firefox actual analytics contexts lost all visible difference between selected/unselected tabs after focus moved to the panel.",
+      "after": "Forced-color underline and inner outline preserve selection; outer keyboard ring remains separate. Four reproduced style families receive underlines; normal light/dark geometry unchanged in independent CSS tests."
+    },
+    {
+      "id": "member-id-copy-feedback",
+      "before": "Clipboard refusal/absence selected the ID but gave no feedback and could retain a previous Member ID copied label.",
+      "after": "Polite inline result, truthful manual-copy instructions, busy duplicate guard,8second deadline and obsolete-context/focus guards; late completion cannot alter new views or steal deliberate focus."
+    }
+  ],
+  "evidence": [
+    "docs/premium-ui/qa-guide-help-independent.json",
+    "docs/premium-ui/qa-forced-colors/selection-current.json",
+    "docs/premium-ui/reviews/forced-colors-current-style-independent.json",
+    "docs/premium-ui/qa-member-three-controls-independent.json",
+    "docs/premium-ui/qa-context-action-outcomes-independent.json",
+    "docs/premium-ui/qa-history.json"
+  ],
+  "tests": {
+    "unit": 100,
+    "build": true,
+    "guide_contexts": 9,
+    "guide_jumps": 90,
+    "guide_shortcuts": 90,
+    "guide_history_geometry_checks": 36,
+    "inline_help_workflows": 9,
+    "general_history_outcomes": 12,
+    "forced_color_actual_analytics_contexts": 12,
+    "independent_production_css_matrices": 8,
+    "member_three_control_workflows": 6,
+    "analytics_unit_context_workflows": 6
+  },
+  "scope_limits": [
+    "Member/context outcome runs predate only the final manual-scroll startup helper and retain their earlier main/navigation hashes; these are not falsely relabeled current reruns. Member-workspace hash itself matches.",
+    "Earlier144screen responsive audit predates this guide/copy/forced-colors batch; no new144matrix claim.",
+    "WebKit forced-colors emulation reports active but does not apply native palette substitution like Chromium/Firefox; actual Windows high-contrast/native assistive checks remain unverified.",
+    "Guide transport failure/hung runs retained as failures; final readiness waits distinguish real destination content from skeleton samples.",
+    "Legacy private helper entry-graph review is source-only; no additional removals in this batch.",
+    "Physical-device checks pending at user direction; screen reader/password manager/physical printing checks unverified.",
+    "No backend edits,API/policy/export changes,production operations,commit,push or deployment. Mainchunk/mixedimport warnings remain; full260acceptance incomplete."
+  ],
+  "next_acceptance": [
+    "Continue explicit current outcome overlays for remaining enabled actions and exact260item five-perspective review.",
+    "Complete representative component variant/interaction-state matrix and bounded visual review, retaining nonemulatable dependencies.",
+    "Refresh final review archive only when all acceptance gates are satisfied; sealedv2 remains historical."
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "recorded_at_utc": "2026-10-24T03:59:12.390780+00:00",
+  "reviewer": "/root/leave_cancel_scope_review",
+  "scope": "Independent read-only code and assertion review; no runtime execution by reviewer. Root records reported findings.",
+  "source_sha256": {
+    "frontend/src/main.ts": "6ebdf70eb1f3663e144c26ea4ceddcee83989a18c84b24a0e3e2a6fdc0b3dbdb",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/ui.ts": "88579ed75c8c72e4fd4e2d98508a58c42b925202362589a2469623664c2a975f",
+    "frontend/src/premium-theme.css": "559041ee03d192fcc291582bd7572e8d32004e9d5428b7e57fbbea9ba9e60f83",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86"
+  },
+  "test_sha256": "f251540eb3964a7378218b468078c3a92cab18ca68747b522b3595727fabb2c1",
+  "findings": [
+    "Original anonymous cancellation prompt lacked target identity. Exact existing LeaveRequest now supplies native plain-text member/full dates/category/slot/status/ID.",
+    "Existing main cancellation remains POST same capturedID withbody{}. Canonical memberworkspace remains bodyless POST. No API/service/permission/rule changes.",
+    "User/view/render/month/root/listener ownership guards suppress stale success/error UI after awaited mutation.",
+    "Test freshness isolation fixed by unique documentqueries; exact POST response waiter installed before heldrelease andfinished before absence assertions. Toast data-message selector is real."
+  ],
+  "limits": [
+    "No monthchange/sameroute rerender/replacement-signin case. No perID pending map or repeatedactivation across rerender certification.",
+    "Native confirmvisuals/physical/nativeAT/backend authorization/persistence outside scope."
+  ]
+}

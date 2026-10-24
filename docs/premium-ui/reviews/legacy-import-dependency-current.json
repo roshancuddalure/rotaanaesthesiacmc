@@ -1,0 +1,130 @@
+{
+  "recorded_at_utc": "2026-10-22T05:08:24.123Z",
+  "requirements": [
+    239
+  ],
+  "scope": "TypeScript-bound symbol references across application sources only. This script performs no runtime execution or deletion and makes no whole-item pass claim.",
+  "source_sha256": {
+    "src/main.ts": "8ca89ce63ddc240b6411aa26bc2236591b37df4039b71da820e48c6b672e92e4"
+  },
+  "method": "Resolve each target private function symbol with TypeScript checker; count references across source program, classify references by enclosing function. Exported/dynamic/reflection/HTML event entry risks require separate manual review.",
+  "rows": [
+    {
+      "name": "renderLeaveImportPreview",
+      "source": "src/main.ts",
+      "reference_count": 0,
+      "exported": false,
+      "disposition": "no_current_declaration_not_a_runtime_pass",
+      "note": "Compare retained pre-cleanup audit/removal ranges and build equivalence before attributing absence to safe removal."
+    },
+    {
+      "name": "renderUnitImportPreview",
+      "source": "src/main.ts",
+      "reference_count": 0,
+      "exported": false,
+      "disposition": "no_current_declaration_not_a_runtime_pass",
+      "note": "Compare retained pre-cleanup audit/removal ranges and build equivalence before attributing absence to safe removal."
+    },
+    {
+      "name": "renderUnitImportResolvers",
+      "source": "src/main.ts",
+      "line": 4250,
+      "lines": 7,
+      "exported": false,
+      "reference_count": 0,
+      "references": [],
+      "disposition": "unreferenced_private_function_candidate"
+    },
+    {
+      "name": "renderUnitImportCorrectionModal",
+      "source": "src/main.ts",
+      "line": 4258,
+      "lines": 70,
+      "exported": false,
+      "reference_count": 0,
+      "references": [],
+      "disposition": "unreferenced_private_function_candidate"
+    },
+    {
+      "name": "filteredUnitImportRows",
+      "source": "src/main.ts",
+      "line": 4098,
+      "lines": 25,
+      "exported": false,
+      "reference_count": 0,
+      "references": [],
+      "disposition": "unreferenced_private_function_candidate"
+    },
+    {
+      "name": "refreshUnitImportPreview",
+      "source": "src/main.ts",
+      "line": 4166,
+      "lines": 11,
+      "exported": false,
+      "reference_count": 9,
+      "references": [
+        {
+          "source": "src/main.ts",
+          "line": 8507,
+          "owner": "(callback/module)",
+          "usage": "direct_call"
+        },
+        {
+          "source": "src/main.ts",
+          "line": 8727,
+          "owner": "(callback/module)",
+          "usage": "direct_call"
+        },
+        {
+          "source": "src/main.ts",
+          "line": 8737,
+          "owner": "(callback/module)",
+          "usage": "direct_call"
+        },
+        {
+          "source": "src/main.ts",
+          "line": 8757,
+          "owner": "(callback/module)",
+          "usage": "direct_call"
+        },
+        {
+          "source": "src/main.ts",
+          "line": 8776,
+          "owner": "(callback/module)",
+          "usage": "direct_call"
+        },
+        {
+          "source": "src/main.ts",
+          "line": 8812,
+          "owner": "(callback/module)",
+          "usage": "direct_call"
+        },
+        {
+          "source": "src/main.ts",
+          "line": 9893,
+          "owner": "(callback/module)",
+          "usage": "direct_call"
+        },
+        {
+          "source": "src/main.ts",
+          "line": 9899,
+          "owner": "(callback/module)",
+          "usage": "direct_call"
+        },
+        {
+          "source": "src/main.ts",
+          "line": 9905,
+          "owner": "(callback/module)",
+          "usage": "direct_call"
+        }
+      ],
+      "disposition": "retained_dependency_review_required"
+    }
+  ],
+  "retained_boundaries": [
+    "Do not delete shared API exports, import-report helpers, month draft/reset guards or delegated branches merely because two renderers were unreferenced.",
+    "Current leave/unit toolbar invokes operational-import; preview/report/apply outcome evidence is separate.",
+    "Pre-cleanup zero-reference renderer audit is retained separately. Build equivalence and current normalized report suite cover the bounded cleanup; other helpers and delegated branches remain retained pending full entry-graph review."
+  ],
+  "completion_claim": false
+}

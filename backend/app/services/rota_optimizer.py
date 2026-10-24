@@ -16,6 +16,7 @@ from app.services.rota_candidates import (
     add_provisional_assignment,
     slot_candidates_with_context,
     candidate_context,
+    context_targets,
 )
 from app.services.rota_safety import assignment_indexes, rule_for_slot
 
@@ -254,6 +255,12 @@ def solve_month(
     # Convex load costs discourage concentrating assignments. Normalize by compatible
     # opportunities; missing historical coverage is handled neutrally by existing scoring.
     load_costs, weekend_costs, night_costs, holiday_costs = [], [], [], []
+    # Equal duties within a call level (docs/limits_callevel_fairness_contract.md 2): the sum
+    # of (month duties - call-level target)^2 over members, all campuses together. The n-th
+    # extra duty adds 2(base+n) - 1 - 2*target (x100); campus plays no part here.
+    equality_costs = []
+    targets = context_targets(db, context)
+    level_of = {p: c.get("call_level") for rows in candidates.values() for p, c in rows.items()}
     for person, rows in by_person.items():
         for category, predicate, costs in [
             ("total", lambda s: True, load_costs),
@@ -278,6 +285,13 @@ def solve_month(
                 costs.append(
                     threshold * max(1, round((2 * (base + n) - 1) * 100 / max(1, len(rows))))
                 )
+                if category == "total":
+                    target = targets.get(level_of.get(person))
+                    if target is None:
+                        target = context.average_assignments
+                    equality_costs.append(
+                        threshold * round((2 * (base + n) - 1 - 2 * target) * 100)
+                    )
     burden = sum(load_costs)
     weekends = sum(weekend_costs)
     nights = sum(night_costs)
@@ -307,6 +321,7 @@ def solve_month(
                     model.add(together >= var + other - 1)
                     spacing.append(together * (8 - days))
     tiers += [
+        ("call_level_equality", sum(equality_costs)),
         ("weekend_burden", weekends),
         ("night_burden", nights),
         ("holiday_burden", sum(holiday_costs)),
@@ -379,6 +394,17 @@ def solve_month(
         pref = sum(preferences.get(f"{s}:{p}", 0) for s, p in choices.items())
         if mode == "preferences":
             result.append(pref)
+        equality = 0
+        for person, rows in by_person.items():
+            target = targets.get(level_of.get(person))
+            if target is None:
+                target = context.average_assignments
+            baseline = len(context.assignments_by_person.get(UUID(person), []))
+            count = sum(choices.get(s) == person for s, _ in rows)
+            equality += sum(
+                round((2 * (baseline + n) - 1 - 2 * target) * 100) for n in range(1, count + 1)
+            )
+        result.append(equality)
         result.extend(costs)
         ranked = sum(
             candidates[s][p]["score_parts"].get("burden", 0) * weights["burden"]
@@ -470,6 +496,21 @@ def solve_month(
         costs = [preferences.get(f"{s}:{p}", 0) for p in candidates[s]]
         pref_lower += min(costs if full_coverage else [0, *costs])
     bounds["spacing_history"] = rank_lower
+    # Equality tier lower bound: with every possible slot covered, each duty costs at least
+    # the cheapest candidate's first-duty increment (increments only grow with n).
+    equality_lower = None
+    if full_coverage:
+        equality_lower = 0
+        for s in possible:
+            increments = []
+            for p in candidates[s]:
+                target = targets.get(level_of.get(p))
+                if target is None:
+                    target = context.average_assignments
+                base = len(context.assignments_by_person.get(UUID(p), []))
+                increments.append(round((2 * (base + 1) - 1 - 2 * target) * 100))
+            equality_lower += min(increments)
+    bounds["call_level_equality"] = equality_lower
     bounds["preferences"] = pref_lower
     solver = cp_model.CpSolver()
     solver.parameters.num_search_workers = 1

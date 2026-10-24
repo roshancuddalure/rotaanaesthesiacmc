@@ -36,6 +36,9 @@ def source_database(tmp_path):
         with engine.begin() as db:
             db.execute(text("CREATE TABLE alembic_version (version_num VARCHAR(32) PRIMARY KEY)"))
             db.execute(text("INSERT INTO alembic_version VALUES ('20261020_0025')"))
+            # Minimal parents for migrations that reference application tables (0029).
+            for parent in ("persons", "units", "rota_periods"):
+                db.execute(text(f"CREATE TABLE {parent} (id UUID PRIMARY KEY)"))
             db.execute(text("CREATE TABLE sentinel (id SERIAL PRIMARY KEY, value TEXT NOT NULL)"))
             db.execute(
                 text(
@@ -79,13 +82,13 @@ def test_backup_restore_migrate_and_clean_exactly(source_database):
     assert manifest["restore_verified"]["application_rows"] == 3
     assert manifest["restore_verified"]["all_table_hashes_match"]
     assert manifest["restore_verified"]["all_sequence_values_match"]
-    assert manifest["final_migration"] == ["20261021_0028"]
+    assert manifest["final_migration"] == ["20261022_0029"]
     with engine.connect() as db:
         assert db.scalar(text("SELECT count(*) FROM sentinel")) == 0
         assert db.scalar(text("SELECT count(*) FROM child")) == 0
         assert db.scalar(text("SELECT last_value FROM sentinel_id_seq")) == 1
         assert not db.scalar(text("SELECT is_called FROM sentinel_id_seq"))
-        assert db.scalar(text("SELECT version_num FROM alembic_version")) == "20261021_0028"
+        assert db.scalar(text("SELECT version_num FROM alembic_version")) == "20261022_0029"
         assert db.scalar(text("SELECT count(*) FROM member_merges")) == 0
     # The shipped restore helper must refuse the existing schema, then restore
     # the original exact contents into a separate empty database.

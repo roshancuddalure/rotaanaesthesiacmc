@@ -1,0 +1,26 @@
+{
+  "recorded_at_utc": "2026-10-24T01:37:12.462082+00:00",
+  "reviewer": "/root/member_duplicate_source_review",
+  "scope": "Independent read-only source review of Members creation confirmation relevance and guarded focused-draft restoration. No runtime tests run by reviewer, no broad/native AT certification.",
+  "source_sha256": {
+    "frontend/src/main.ts": "93eebef4269de921331c843211094321582d241e6af186172339f1ae26b52b9e"
+  },
+  "findings": [
+    "Confirmed stale near-duplicate prompt after navigation and retained-draft focus loss in original source; root reproduced both in before.json.",
+    "Updated callback runs before native confirm; Members operation/view generation checks reject stale prompts.",
+    "Focus restoration captures live input selection and checks operation/view/render ownership and BODY focus; no new actionable defect found in changed code."
+  ],
+  "open_source_finding": {
+    "status": "needs runtime reproduction",
+    "scope": "Unit import member creation catch displays intentional cancellation as an error; untouched this batch.",
+    "subsequent_disposition": {
+      "recorded_at_utc": "2026-10-24T01:50:35.202509+00:00",
+      "status": "unreachable_from_current_UI",
+      "evidence": [
+        "docs/premium-ui/reviews/inline-member-selection-source-review.json",
+        "docs/premium-ui/legacy-import-entry-graph-current.json"
+      ],
+      "reason": "Only legacy delegated selector remains; visible import calls createMemberInline."
+    }
+  }
+}

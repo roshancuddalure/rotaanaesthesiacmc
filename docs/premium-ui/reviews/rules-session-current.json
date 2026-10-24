@@ -1,0 +1,32 @@
+{
+  "reviewer": "rules_session_review",
+  "reviewed_at_utc": "2026-10-22T17:11:09.543Z",
+  "status": "accepted_for_bounded_rules_session_lifecycle",
+  "scope": "Connected dirty protection, detached-root lifecycle, session disposal and ignored late checks only; not whole-plan acceptance.",
+  "reviewed_files_sha256": {
+    "frontend/src/rota-rules.ts": "c34342b13df315ddff27bcba19cd495fd21918ab6f2f982257cd8e5a1955efff",
+    "frontend/src/main.ts": "fd1f64396078917a7dc7807e4ec27d45cb4c4da922473ee2bad6c1aaa58fd5d5",
+    "frontend/tests/premium-rules-session-independent.browser.mjs": "958cca03bcb532ef3b1c44c6b094cf670c5a55eeb966db5bb6e30b95e697ca00"
+  },
+  "tests_executed": [
+    {
+      "command": "node tests/premium-rules-session-independent.browser.mjs",
+      "result": "5 independent browser outcomes passed",
+      "artifact": "docs/premium-ui/qa-rules-session-independent.json"
+    }
+  ],
+  "verified": [
+    "Old missing-isConnected predicate reproduces false dirty state after detaching root using response-only source substitution.",
+    "Connected dirty editor prevents synthetic unload and refuses declined real navigation at 320/1280px.",
+    "Detached root no longer prevents synthetic unload; disposal clears pending debounce.",
+    "Genuinely in-flight old check cannot repaint detached editor after disposal or leak into newly rendered editor.",
+    "Actual sign-out and explicit same-route new-account sign-in restore clean authoritative rules at 320/1280px.",
+    "Main invokes disposal only from private-session reset; no rules payload, endpoint or backend source edit in the reviewed fix."
+  ],
+  "required_fixes": [],
+  "limitations": [
+    "Chromium emulation; physical devices and actual operating-system browser unload dialogs not verified.",
+    "API reads/checks/authentication intercepted; no backend persistence verification or production mutation.",
+    "Review covers lifecycle fix only; other rule functionality covered by separate suites."
+  ]
+}

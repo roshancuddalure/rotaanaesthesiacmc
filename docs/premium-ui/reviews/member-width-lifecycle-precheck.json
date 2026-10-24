@@ -1,0 +1,73 @@
+{
+  "recorded_at_utc": "2026-10-22T05:57:33.047534+00:00",
+  "reviewer": "auth_form_independent_tests",
+  "scope": "Pre-implementation independent source/test review of upcoming actual dialog-width rail orientation. No source edits or browser execution. Root implementation not yet frozen/inspected.",
+  "completion_claim": false,
+  "source_sha256": {
+    "frontend/src/member-workspace.ts": "8eedae4e0ccff851730aa1e203f52b0023407bf93482f491b0238314590c6e31",
+    "frontend/tests/premium-accessibility-review.browser.mjs": "a074f03a9de3ef2140e22caa64d75c4ddb61ec6e0f583918c0a1adb0080fa379",
+    "frontend/tests/premium-profile-rail-independent.browser.mjs": "6945dcf6e4abf88333a7b68a1266a96c2f0f0a455c2a73531a246bab8cb285a0",
+    "frontend/tests/premium-workspace-recovery.browser.mjs": "189a359e6d3c979ffc35683f9d663d55bd0b3c14a84faf3604fb8aa4eac2b99e",
+    "frontend/tests/premium-container-reflow-independent.browser.mjs": "d2ded026b23b1cc70331a47a2d3bd2ed2c0f3dfb4eeb3aa61b46b8f88239cc19"
+  },
+  "test_changes_required": [
+    {
+      "source": "frontend/tests/premium-accessibility-review.browser.mjs:30",
+      "issue": "Arrow choice and orientation expected from viewport,not actual dialogwidth.",
+      "change": "Wait rail orientation matches measured dialog.clientWidth>700 then use matching horizontal/vertical key. Add1280viewport360dialog case."
+    },
+    {
+      "source": "frontend/tests/premium-profile-rail-independent.browser.mjs:19",
+      "issue": "844/1280viewport assumed vertical afterresize.",
+      "change": "Assert measured actual dialog threshold, then verify selectedtab fullyvisible on correctaxis afterResizeObserver settles; actualclient699/700/701 androundtrip."
+    },
+    {
+      "source": "frontend/tests/premium-workspace-recovery.browser.mjs:52",
+      "issue": "Desktopviewport shortcircuits reveal assertion even if actualdialognarrow.",
+      "change": "Read railaria-orientation,assert Xbounds forhorizontal/Ybounds forvertical; neverbypassbyviewport."
+    },
+    {
+      "source": "frontend/tests/premium-container-reflow-independent.browser.mjs:22",
+      "issue": "Narrow360 scenario recordsgeometry but noorientation/keyboard/draftoutcome assertions.",
+      "change": "Constrained360actualdialog in1280viewport musthorizontal,ArrowRight changesselectedpanel/focus;expandto>700 andArrowDown; retaineditedfield/caret/draft/activepanel,zeroAPIwrites."
+    }
+  ],
+  "lifecycle_risks_to_verify": [
+    {
+      "risk": "ResizeObserver feedbackloop",
+      "check": "Attribute/class changes should notwrite widthunconditionally; guardaxis/class/ariaupdates,observeonlydialog;no ResizeObserverlooperror duringreflow/textspacing."
+    },
+    {
+      "risk": "Observer firesbeforetabrailrender",
+      "check": "syncorientationafterdialogrender and aftershowModal; observerinitialcallbackalone mayprecedefullprofileHTML,so render/keyhandling mustderivecurrentwidthtoo."
+    },
+    {
+      "risk": "Directremove/accountreset skipsclose event",
+      "check": "DisconnectResizeObserverandresize/visualViewportlisteners onbothnativecloseanddirectbodyremoval;queuedcallbacks mustearlyreturn disconnectedclosed;removingdialog mustnotstealfocus."
+    },
+    {
+      "risk": "RepeatedfitViewport stealingfocus",
+      "check": "ResizeObserver shouldreveal selectedrail locally only; do notfocusselectedtab duringusereditingfield/visualkeyboardresize;retainfieldvalue/selection and userfocus."
+    },
+    {
+      "risk": "CSS/JS threshold mismatch",
+      "check": "Use sameCSSquery widthbox/threshold700. clientWidth includespadding vscontainerquerycontentbox canmismatcharound699/700/701;measure actualcomputedlayout versusARIA atboundaries,bothbrowserengines."
+    },
+    {
+      "risk": "Viewport mobilefit behavior inadvertentlytiedtocomponentwidth",
+      "check": "visualViewportfullheight/top safearea should remainviewport-specific;onlyraillayout/keyaxis becomecomponent-specific."
+    }
+  ],
+  "targeted_rerun_order": [
+    "New narrowdialog orientation/draft/resizeobservercleanup cases first",
+    "premium-accessibility-review andpremium-profile-rail-independent adaptedexpectations",
+    "premium-workspace-recovery andmember-workspace currentpending/validation/save/dirtyguards",
+    "premium-member-linked-actions-independent andthree-controls-independent actualnestedrecord/focus lifecycle",
+    "Containerreflow36scenarios after sourcefreeze;fullresponsive144 onlyafterintegration"
+  ],
+  "limits": [
+    "Source review cannot prove actualResizeObserverimplementationcorrectness.",
+    "No current productbugclaimed fromtestswhoseexpectations willbeoutdated.",
+    "Physicaldevice/browserzoom/screenreaderpending separately."
+  ]
+}

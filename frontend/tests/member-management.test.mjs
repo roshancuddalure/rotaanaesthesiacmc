@@ -30,7 +30,7 @@ async function compiledModule(filename) {
   let compiled = ts.transpileModule(source, {
     compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2020 },
   }).outputText.replace('"./services/api"', JSON.stringify(apiModule));
-  for (const local of ["ui", "member-import"]) {
+  for (const local of ["ui", "member-import", "audit-time"]) {
     if (compiled.includes(`"./${local}"`))
       compiled = compiled.replace(`"./${local}"`, JSON.stringify(await compiledModule(`${local}.ts`)));
   }
@@ -96,6 +96,9 @@ test("CSV review requires call approval, stays reviewed on filtering, and refres
 });
 
 test("import history displays prior batches and readable source changes", async () => {
+  const originalDocument = globalThis.document;
+  globalThis.document = { activeElement: null, body: {}, addEventListener() {}, removeEventListener() {} };
+  try {
   const detail = { innerHTML: "" };
   const status = { textContent: "" };
   const button = { dataset: { memberBatch: "batch-id" }, disabled: false };
@@ -119,9 +122,13 @@ test("import history displays prior batches and readable source changes", async 
   assert.match(detail.innerHTML, /explicitly approved/);
   assert.equal(button.disabled, false);
   assert.equal(status.textContent, "");
+  } finally { globalThis.document = originalDocument; }
 });
 
 test("past-duty corrections need approval and update visible coverage after apply", async () => {
+  const originalDocument = globalThis.document;
+  globalThis.document = { activeElement: null, body: {}, addEventListener() {}, removeEventListener() {} };
+  try {
   const host = { innerHTML: "", isConnected: true };
   const calls = [];
   let saved = false;
@@ -174,14 +181,21 @@ test("past-duty corrections need approval and update visible coverage after appl
   assert.equal(calls.at(-1).options.confirm_corrections, true);
   assert.match(host.innerHTML, /duties.xls/);
   assert.match(host.innerHTML, /future candidate scoring now use/);
+  } finally { globalThis.document = originalDocument; }
 });
 
 test("HOD profile shows attributed comments and saves a dated promotion with reason", async () => {
-  const dialog = { innerHTML: "", isConnected: true, setAttribute() {}, showModal() {}, addEventListener() {},
-    remove() { this.isConnected = false; }, close() {} };
+  const dialog = { innerHTML: "", isConnected: true, open: false, scrollTop: 0,
+    setAttribute() {}, showModal() { this.open = true; }, addEventListener() {},
+    querySelectorAll() { return []; }, querySelector() { return null; },
+    remove() { this.isConnected = false; }, close() { this.open = false; } };
   const previousDocument = globalThis.document;
   const previousFormData = globalThis.FormData;
-  globalThis.document = { getElementById: () => null, createElement: () => dialog, body: { append() {} } };
+  const previousWindow = globalThis.window;
+  const previousObserver = globalThis.MutationObserver;
+  globalThis.document = { getElementById: () => null, createElement: () => dialog, body: { append() {} }, addEventListener() {}, removeEventListener() {} };
+  globalThis.window = { addEventListener() {}, removeEventListener() {} };
+  globalThis.MutationObserver = class { observe() {} disconnect() {} };
   globalThis.FormData = class { constructor(form) { this.form = form; } get(key) { return this.form.values[key]; } };
   const profile = {
     member: { id: "person", canonical_name: "Profile Doctor", active_status: "active", call_level: "1ST_CALL", aliases: [], designations: [] },
@@ -202,9 +216,13 @@ test("HOD profile shows attributed comments and saves a dated promotion with rea
     assert.match(dialog.innerHTML, /Effective from/);
     assert.ok(!dialog.innerHTML.includes('data-profile-form="details"'));
     await dialog.onsubmit({ preventDefault() {}, target: { dataset: { profileForm: "call" },
+      querySelectorAll() { return Object.entries(this.values).map(([name,value])=>({name,value})); },
       values: { call_level: "2ND_CALL", effective_from: "2026-11-01", reason: "HOD training approval" } } });
     assert.deepEqual(saved, ["person", "2ND_CALL", "2026-11-01", "HOD training approval"]);
     assert.equal(refreshed, 1);
     assert.match(dialog.innerHTML, /linked data refreshed/);
-  } finally { globalThis.document = previousDocument; globalThis.FormData = previousFormData; }
+  } finally {
+    globalThis.document = previousDocument; globalThis.FormData = previousFormData;
+    globalThis.window = previousWindow; globalThis.MutationObserver = previousObserver;
+  }
 });

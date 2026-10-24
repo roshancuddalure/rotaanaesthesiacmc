@@ -1,0 +1,76 @@
+{
+  "recorded_at_utc": "2026-10-22T17:36:41.375190+00:00",
+  "completion_claim": false,
+  "requirements": [
+    13,
+    106,
+    108,
+    208,
+    209,
+    219,
+    258
+  ],
+  "scope": "Accessible member sorting and roster-only updates with preserved selection/drafts.",
+  "source_sha256": {
+    "frontend/src/main.ts": "d6ce7e11cf0b0bcb50f5cc2cc205298920b9fb79f281d80a1e82fcd72712bd40",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "ab09eb81f09cf2a5ebcafabffdfaaa6ea5ac7b3910bbe70d5f19a735c4ad340a"
+  },
+  "before": {
+    "report": "docs/premium-ui/qa-member-sort-before.json",
+    "findings": [
+      "At320px no visible sort controls; tableheaders hidden withmobilecardlayout.",
+      "At1280px keyboardheadersortlostfocusafterfullpagerender.",
+      "Calllevels sortedstoredvalues whiledisplay/filterusedreturnedeffectivevalues: visible3rd/2nd/1st orderforascendingfixture."
+    ]
+  },
+  "changes": [
+    "Visible nativeSortmembers selector exposesexistingname/calllevel/status ascending/descending choices acrossmobileanddesktop.",
+    "Callleveldisplayorderingusesalreadyreturnedeffectivelevel withsamebaselinefallbackasrow/filter. No promotion/eligibility/assignment ordata change.",
+    "Sort updates only roster rows/cards/counts and sort controls. Existing Addmemberform/importworkspaceDOM,searchfilter andselectedSet retained. StableheaderIDs preservekeyboardfocus;aria-sort/textindicator synchronizewithselector."
+  ],
+  "checks": {
+    "sort_contexts": 18,
+    "engines": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "widths": [
+      320,
+      769,
+      1280
+    ],
+    "themes": [
+      "light",
+      "dark"
+    ],
+    "sort_orders_per_context": 6,
+    "existing_member_profile_csv_workflows": 10,
+    "unit_tests": 100,
+    "build_exit_code": 0,
+    "build_inputs_held": true
+  },
+  "evidence": [
+    "docs/premium-ui/qa-member-sort-before.json",
+    "docs/premium-ui/qa-member-sort.json",
+    "tmp/premium-member-sort-regression.log",
+    "docs/premium-ui/contracts/member-sort-current.json",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+  ],
+  "test": "frontend/tests/premium-member-sort.browser.mjs",
+  "test_sha256": "030e09f4a65ffdf3bec4da9db309838db586d6b23caac01248920eca9f192f7e",
+  "visual_review": {
+    "reviewer": "rootimplementer,notindependent",
+    "screenshot": "docs/premium-ui/screenshots/member-sort/sort-320-light.png",
+    "finding": "Native Sortmembers control remainsvisibleandfitsmobilepanel; existingfilterchips,qualitysummary andrecordlistretainreadablelayout."
+  },
+  "limitations": [
+    "Four-member fixturechecksbaseline/effectiveleveldifferencesandonearchivedmember. Otherlevels/locales/collationties/missingvalues/largecollectionsnotexhaustivelycertified.",
+    "Alphabeticalcalllevellabelorderingretained; no newclinicalpriorityorderorbackendnormalizationruleintroduced.",
+    "NewfixtureGETonlyandassertsnoextrareadsfromsorting. Existing10memberregressioninterceptsedit/importmutations. No actualpersistence/eligibility/selecteddeleteexecutioninnewtest.",
+    "ImporthostidentityandAddmemberdraftpreserved;notanexecutedpartiallycompletedworkbookimport/savejourneyforeachsort. ExistingCSVregressionsprovidesboundedadditionalcoverage.",
+    "Keyboardfocus/nativecontrolsandaria-sortDOMchecked;no actualscreenreader/physical/nativeinputcertification. Adminfixtureonly;otherroleentriesremainseparateacceptance.",
+    "No backend/API-contract/permission/scheduling/data/export/productionchanges. Earlier144/tenfamilywavehistoricalafterlocalchanges;full260goalactive/incomplete."
+  ]
+}

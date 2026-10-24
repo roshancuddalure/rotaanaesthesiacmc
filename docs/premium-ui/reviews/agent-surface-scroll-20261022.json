@@ -1,0 +1,93 @@
+{
+  "reviewer": "surface_scroll_review",
+  "date": "2026-10-22",
+  "scope": "Source-only bounded audit of requirements 10, 50, 51, 53, 101, 103. No application source or shared acceptance evidence edited.",
+  "requirements": [
+    10,
+    50,
+    51,
+    53,
+    101,
+    103
+  ],
+  "completion_proven": false,
+  "findings": [
+    {
+      "id": "scroll-disclosure-refresh",
+      "priority": "high",
+      "requirements": [
+        53,
+        103
+      ],
+      "finding": "Keyboard scroll-region enhancement is not refreshed when a pre-rendered native details disclosure opens. The closed reference comparison table has no explicit tabindex, while the observer only watches child-list changes and the other refresh trigger is window resize. Opening details changes its open attribute, so a previously hidden overflowing comparison can remain without the application-provided keyboard scroll region.",
+      "source": [
+        {
+          "path": "frontend/src/main.ts",
+          "lines": "2739-2757",
+          "evidence": "Reference Comparison is inside details, with table-panel and no explicit tabindex."
+        },
+        {
+          "path": "frontend/src/main.ts",
+          "lines": "10026-10046",
+          "evidence": "Actual-overflow check, childList-only MutationObserver, resize refresh; no native toggle subscription found."
+        }
+      ],
+      "safe_fix": "Schedule the existing overflow-label helper after native details toggle events using a capturing listener, scoped to the opened disclosure. Retain the existing requestAnimationFrame coalescing and preserve author-provided tabindex/accessible names. Avoid a broad attributes observer that can self-trigger on helper writes.",
+      "tests": [
+        "Render a closed details with a genuine wide comparison; open using keyboard without resizing or inserting children; assert an accessible, focusable scroll region appears.",
+        "In Chromium, Firefox and WebKit at 320px, Tab to the region and ArrowRight; assert scrollLeft advances and document width does not overflow.",
+        "Verify existing explicit region names/tabindex stay unchanged and opening a non-overflowing disclosure adds no needless tab stop."
+      ],
+      "limits": "Source-confirmed missing refresh path. Browser reproduction and actual overflow at each route remain unperformed; this is not a certified runtime defect."
+    },
+    {
+      "id": "legacy-profile-dynamic-viewport",
+      "priority": "medium",
+      "requirements": [
+        50,
+        51
+      ],
+      "finding": "The legacy member profile dialog retains max-height:90vh only. Premium mobile rules add dvh to person-modal and member-workspace, but do not add a dynamic viewport cap to member-profile-dialog. Its mobile behavior can therefore lag the available browser viewport during browser chrome changes.",
+      "source": [
+        {
+          "path": "frontend/src/styles.css",
+          "lines": "4936",
+          "evidence": "member-profile-dialog max-height:90vh; overflow:auto."
+        },
+        {
+          "path": "frontend/src/premium-theme.css",
+          "lines": "241-248",
+          "evidence": "Legacy dialog gets shared surface styling and border, with no viewport sizing override."
+        },
+        {
+          "path": "frontend/src/premium-theme.css",
+          "lines": "458-467",
+          "evidence": "Neighboring modal families have vh/dvh and safe-area treatments; legacy profile omitted."
+        },
+        {
+          "path": "frontend/index.html",
+          "lines": "5",
+          "evidence": "Viewport meta lacks viewport-fit=cover; actual safe-area behavior should be verified before making global claims."
+        }
+      ],
+      "safe_fix": "Keep the existing vh declaration and add a later scoped dvh maximum-height to the legacy profile dialog. Subtract safe-area insets if necessary after a focused layout check; avoid changing document-wide viewport-fit as part of this narrow fix.",
+      "tests": [
+        "Open the legacy profile with every disclosure expanded at 320px and short landscape height; resize viewport downward and assert dialog bounds, final editable field and Close remain reachable through its single scroll container.",
+        "Verify 100%/200% text and long names in three browser engines, with native modal focus and Escape behavior unchanged.",
+        "Treat browser-emulated safe areas and physical Safari chrome/keyboard as separate evidence; physical checks remain pending."
+      ],
+      "limits": "Source inconsistency is confirmed. Actual mobile browser chrome and virtual keyboard obstruction are unverified, and no physical device result is claimed."
+    }
+  ],
+  "additional_bounded_observations": [
+    "Reusable surfaces currently have shared visual styling, but this review did not establish a complete surface taxonomy or table comparison-versus-record inventory (items 10 and 101).",
+    "Member workspace deliberately has a content scroller plus navigation rail; compute footer can independently scroll at small widths (styles.css:4989). Whether these are justified requires workflow-specific reachability checks; do not remove them from a source-only audit."
+  ],
+  "validation": {
+    "source_review": true,
+    "runtime_tests": false,
+    "backend_changes": false,
+    "real_mutations": false,
+    "application_edits": false
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "recorded_at_utc": "2026-10-22T10:45:39.528867+00:00",
+  "requirements": [
+    201,
+    208,
+    211,
+    221,
+    224,
+    231,
+    232,
+    233,
+    236,
+    242,
+    251
+  ],
+  "completion_claim": false,
+  "scope": "Independent bootstrap appearance-load failure recovery. Initial failed app stylesheet and late resource errors; bounded built-app tests.",
+  "source_sha256": {
+    "frontend/public/frontend-bootstrap.js": "a7b977d63f9f82ad6416a652de74adfe817044372217c8e0ddbce4259c4904b1"
+  },
+  "confirmed_before": "Built app with404mainCSS reached frontendReady=true while recoveryPanels=0. Previous bootstrap show() ignored failures after readiness and did not inspect settled initial stylesheet failure.",
+  "change": "Appearance recovery is independent of entry readiness. Initial settled stylesheet scan detects missing sheets or missing required semantic token for the shipped index stylesheet; stylesheet resource errors also show a deduplicated notice. Standalone inline presentation remains readable without app CSS. Reload uses native confirmation; Keepworking dismisses only the notice. No auto reload, retry, persisted draft or mutation.",
+  "evidence": [
+    "docs/premium-ui/qa-stylesheet-recovery.json",
+    "docs/premium-ui/qa-stylesheet-recovery-before.json",
+    "docs/premium-ui/qa-production-chunk-recovery.json",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+  ],
+  "checks": {
+    "built_stylesheet_failure_workflows": 6,
+    "healthy_browser_controls": 3,
+    "production_lazy_chunk_regression": 1,
+    "unit_tests": 100,
+    "build_exit": 0,
+    "build_inputs_unchanged": true
+  },
+  "visual_review": {
+    "path": "docs/premium-ui/screenshots/recovery/styles-320.png",
+    "observed": "320px notice readable with complete message and two reachable controls; standalone neutral background/border. Actual app without its CSS remains degraded."
+  },
+  "limits": [
+    "Uses shipped index stylesheet filename convention and semantic token; does not detect every partial CSS corruption, unsupported CSS feature or pixel-level styling failure.",
+    "Late network errors are aborted real requests; initial app stylesheet returns404text/css. Browsers can expose empty sheet objects forHTTPerrors, hence token fallback.",
+    "Healthy checks cover three engines; no physical-device/native-screenreader or allasset certification.",
+    "Agent followup failed due usage limit; this batch implemented/tested/reviewed locally by root, not independently signed off by another agent. At least6specialists participated earlier; fullgoal remains incomplete.",
+    "No backend/API-contract/permission/scheduling/persisted-data/export-content changes, production operation or deployment. Known prior native month-picker and concurrent rules-suite limitations retained."
+  ]
+}

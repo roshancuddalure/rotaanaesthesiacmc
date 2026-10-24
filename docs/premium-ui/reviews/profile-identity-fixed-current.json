@@ -1,0 +1,53 @@
+{
+  "recorded_at_utc": "2026-10-22T13:13:04.251095+00:00",
+  "completion_claim": false,
+  "requirements": [
+    121,
+    126,
+    133
+  ],
+  "source_sha256": {
+    "frontend/src/member-profile.ts": "6c98cd791a4ee592f1dc945d20ab3e7b512c6f3f00378f266de71a76f868bb73",
+    "frontend/src/member-workspace.ts": "7d21be986985cfad36c4497aa0059adc94881f994c634ed8e496e683b2301c8c",
+    "frontend/src/styles.css": "e5e5802b5cdef146b542fcfafc1b2040f232898cafaa89dcf30554235da140b5",
+    "frontend/src/premium-theme.css": "c5d2653ab6c46fadb54a904a7a1bab406831eca8b361ab3c03d806980dbefb0e"
+  },
+  "scope": "Bounded profile identity display corrections after specialist reproduction.",
+  "changes": [
+    "Filter existing designation history using returned profile.today with inclusive date boundaries; retain original ordering tie-breaker. No record or eligibility changes.",
+    "Only null ends_on/effective_to display Ongoing; other null scalar history values display Not recorded. Zero, false and empty strings remain unchanged.",
+    "Legacy header identity column wraps long names without pushing Close; legacy dialog retains vh fallback with added dvh cap."
+  ],
+  "checks": {
+    "identity_contexts": 6,
+    "engines": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "widths": [
+      320,
+      1280
+    ],
+    "designation_histories_per_context": 6,
+    "legacy_profile_field_regressions": 6,
+    "unit_tests": 100,
+    "production_build_exit_code": 0,
+    "build_inputs_held": true,
+    "progress_window_regressions": 6
+  },
+  "evidence": [
+    "docs/premium-ui/qa-profile-identity-fixed.json",
+    "docs/premium-ui/reviews/agent-profile-identity-20261022.json",
+    "docs/premium-ui/qa-progress-window.json",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+  ],
+  "test": "frontend/tests/premium-profile-identity.browser.mjs",
+  "test_sha256": "f25d6c6102b714773c73349b9c0ab966cc3c3dc6f1b755ccc9cdc3592cffa967",
+  "limitations": [
+    "Identity GET fixtures only; production prevalence and persistence unproven. Existing six profile-field regression workflows use intercepted writes.",
+    "Six light-theme identity contexts, no new physical-device, software-keyboard or native screen-reader checks. dvh style added; browser chrome behavior unverified.",
+    "Specialist before-report hashes are intentionally retained as historical after fixes. Root implemented and tested; no independent post-fix sign-off claimed.",
+    "Only this frontend batch makes no backend/API-contract/permission/scheduling/export/production changes. Shared worktree contains concurrent work. Full260 goal incomplete."
+  ]
+}

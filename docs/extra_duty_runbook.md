@@ -16,7 +16,7 @@ After **Build template** and **Autoassign members**, some duties may still be op
 1. Rota Template → **Extra-duty layer** → **Preview extra duties**.
 2. Read the table. It shows, for each duty, who would get it, which limits are exceeded, and why that person was chosen. Duties that cannot be filled are listed with the reason.
 3. Tick **I reviewed these extra duties** → **Apply extra duties**.
-4. Review → Publish as usual. Covered hard blocks now appear as warnings to confirm, not blockers.
+4. Review → Publish as usual. Covered hard blocks now appear as warnings to confirm, not blockers. So do duties filled earlier whose unit became short-staffed on that day only because of the extra duties. Duties nobody can legally take stay as blockers.
 5. **Download audit report** (HTML or Excel) for the audit file. The HTML version prints cleanly to PDF.
 
 ## When something goes wrong

@@ -1,0 +1,71 @@
+{
+  "recorded_at_utc": "2026-10-22T17:05:17.417661+00:00",
+  "completion_claim": false,
+  "requirements": [
+    37,
+    38,
+    208,
+    209,
+    219,
+    258
+  ],
+  "source_sha256": {
+    "frontend/src/decorative-icons.ts": "7e2d11356114e96f242435a2cd7cb7bc24cdc1787142e864e1cf053f92c373d7",
+    "frontend/src/main.ts": "fd1f64396078917a7dc7807e4ec27d45cb4c4da922473ee2bad6c1aaa58fd5d5",
+    "frontend/src/limits.ts": "f7c040de08fd0a593e1e071d7c09b2696344b9b85bbcd836f5367b49e4ef8db6",
+    "frontend/src/rota-rules.ts": "1e26165098b8f8b528d47207329a65f0acf17a324e79f814a02484caa582f92e",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "93b8094fac78c6fd494cf674dd5c9240c87c1419342cabc3aa59ef3cac8355ff"
+  },
+  "scope": "Consolidate existing shell/rules/Limits decorative SVGs and font star into local shared family.",
+  "changes": [
+    "Eight local glyphs use common24viewBox,2unit rounded currentColor strokes and nofill. Shared helper escapes CSSclass insertion and always hides icons from assistive technology/focus.",
+    "Mainmenu/close, ruleslock/warning/check/chevron/search and Limitsstar/warning retain existing sizing/state classes and adjacent labels. Fontdependent Limitsstar replaced by SVG.",
+    "No handlers, accessible control labels, action gates, API methods, request bodies, calculations or persisted values changed."
+  ],
+  "checks": {
+    "icon_contexts": 12,
+    "engines": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "themes": [
+      "light",
+      "dark"
+    ],
+    "widths": [
+      320,
+      1280
+    ],
+    "shared_glyphs": 8,
+    "existing_limits_assertions": 177,
+    "existing_rules_assertions": 20,
+    "existing_shell_outcome_workflows": 8,
+    "unit_tests": 100,
+    "production_build_exit_code": 0,
+    "held_build_inputs": true
+  },
+  "evidence": [
+    "docs/premium-ui/qa-icons.json",
+    "docs/premium-ui/icon-contract.md",
+    "tmp/premium-limits-icon-current.log",
+    "tmp/premium-rules-icon-current.log",
+    "tmp/premium-shell-icon-current.log",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+  ],
+  "test": "frontend/tests/premium-icons.browser.mjs",
+  "test_sha256": "ac6cfd28d8c0655229ea0ebc8ba2b8a2cec74eddb9504af9cdfd41d39261c195",
+  "visual_review": {
+    "reviewer": "root implementer,notindependent",
+    "screenshot": "docs/premium-ui/screenshots/icons/family-320-dark.png",
+    "finding": "All eight stroked glyphs legible, aligned with labels and contained within mobile panel; originalcontrol geometry retained."
+  },
+  "limits": [
+    "Gallery is a controlled stylefixture of sharedhelper, not all operational Limits/rules placements. Actualshellmobilemenu/close/focus checked in same12contexts; existing suites supply bounded operational coverage.",
+    "Size assertions allow0.1px floatinggeometry tolerance around24px; no integerpixel assumption. No remote resources in testedcontexts.",
+    "All prior inlineSVG literals in three migratedmodules replaced, not every Unicode textsymbol appwide. Icon-only control names remain unchanged; full37acceptance unproven.",
+    "Existing module suites lack complete per-run dependency-hold declarations. Newiconreport declares heldsourcefiles andbuildholdsallrecordedinputs. No wholeworktree equivalence inferred.",
+    "Physical/nativeassistive andfresh independentreview pending. Thisfrontendbatch has no backend/API-contract/permission/scheduling/data/export/productionchanges. Full260goalactive/incomplete."
+  ]
+}

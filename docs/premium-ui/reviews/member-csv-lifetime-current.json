@@ -1,0 +1,57 @@
+{
+  "recorded_at_utc": "2026-10-22T11:15:47.347725+00:00",
+  "requirements": [
+    123,
+    131,
+    134,
+    135,
+    136,
+    137,
+    138,
+    139,
+    140,
+    208,
+    212,
+    221,
+    223,
+    225,
+    227,
+    228,
+    242,
+    258
+  ],
+  "completion_claim": false,
+  "scope": "MemberCSV import file/preview/apply context preservation, pending feedback and safe manualretry. Boundedsixbrowserfixtureworkflows plus correction/rosterregressions.",
+  "source_sha256": {
+    "frontend/src/member-workspace.ts": "39811b05c9d45f4f5fec88452c7ddfae5d1c471d366838309aac80ee32eab514"
+  },
+  "evidence": [
+    "docs/premium-ui/qa-member-csv-lifetime.json",
+    "docs/premium-ui/qa-member-csv-lifetime-before.json",
+    "docs/premium-ui/qa-member-csv-correction-independent.json",
+    "docs/premium-ui/qa-member-roster-bulk-independent.json",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+  ],
+  "confirmed_before": "LatefileAcolumn503 overwrotefileBstatus; file/modecontrolsremainedenabled duringpreview/apply, allowingoldApplycompletiontosupersedenewfilecontext. Baseline records oldErrorShown=true/pendingPreview=false/pendingApply=false.",
+  "change": [
+    "Fileinspectionupdates requirematchingsequence/file/dialog. Newfileselectionresetsapplied/discardstate.",
+    "Preview snapshots unchangedmultipartpayload before sharedcontrollock; staleinspectioninvalidated; completionrequiresliveoriginalfile.",
+    "Apply usesexactoriginalpreviewID/filecontext, locksoriginalnativecontrols, preservesunchangedexcluded/archivepayload, andrestoresownedfocusonrefusal orresultaction/headingonsuccess.",
+    "Noautomaticmutationreplay; manualretryandcompletedcallbackremainexistingbehavior. Newfileaftercompletionagainrequiresdiscardconfirmation."
+  ],
+  "checks": {
+    "member_csv_lifetime_workflows": 6,
+    "csv_correction_regressions": 6,
+    "roster_sync_regressions": 6,
+    "unit_tests": 100,
+    "build_exit": 0,
+    "build_inputs_unchanged": true
+  },
+  "limits": [
+    "Newlifetimefixtureusescreate_only mode; separaterosterregressioncoversarchive-onlyselection/exactpayloads. Notallmodes/realfiles/backendpersistence.",
+    "Disablednativefileinputs were inspected, never bypassedprogrammatically inacceptancecases. Baseline recordsoldenabledraceonly.",
+    "Prior144screenmatrixandoldermember-workspacesnapshotreportsremainhistoricalafterthislocalmodulechange.",
+    "Independentagents unavailableafterusage limit; thisbatch rootimplementation/localverification. Physical/nativeassistive andknownrules/nativepickerlimitations remain.",
+    "No backend/API-contract/permission/scheduling/persisted-semantics/export-content or productionchanges. Full260goalactive/incomplete."
+  ]
+}

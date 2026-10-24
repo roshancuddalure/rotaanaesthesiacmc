@@ -35,7 +35,7 @@ try {
     let previews = 0;
     let staleNext = false;
     await page.route("**/__admin-delete-test", (route) =>
-      route.fulfill({ contentType: "text/html", body: '<html lang="en"><head><title>Admin delete test</title><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/src/styles.css"></head><body></body></html>' }));
+      route.fulfill({ contentType: "text/html", body: '<html lang="en"><head><title>Admin delete test</title><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/src/styles.css"><link rel="stylesheet" href="/src/premium-theme.css"></head><body></body></html>' }));
     await page.route("**/api/v1/**", async (route) => {
       const req = route.request();
       const path = new URL(req.url()).pathname;

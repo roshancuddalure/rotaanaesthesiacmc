@@ -50,11 +50,13 @@ function sectionHtml(section: PreviewSection): string {
   return `<section class="admin-preview__section">
     <h3>${badge(String(section.rows.length), section.tone)} ${esc(section.title)}</h3>
     <p class="muted-text">${esc(section.note)}</p>
-    <div class="table-scroll"><table>
+    <p class="comparison-scroll-cue">If columns extend beyond this panel, scroll horizontally. Keyboard: focus the table region and use the arrow keys.</p>
+    <div class="table-scroll admin-preview__scroll" role="region" tabindex="0" aria-label="${esc(section.title)}: proposed member changes"><table>
+      <caption>${esc(section.title)}: proposed member changes</caption>
       <thead><tr><th scope="col">Name</th><th scope="col">Change</th><th scope="col">Why</th></tr></thead>
       <tbody>${shown.map((row) => {
         const t = rowText(row);
-        return `<tr><td>${esc(t.name)}</td><td>${esc(t.change)}</td><td>${esc(t.detail)}</td></tr>`;
+        return `<tr><th scope="row">${esc(t.name)}</th><td>${esc(t.change)}</td><td>${esc(t.detail)}</td></tr>`;
       }).join("")}</tbody>
     </table></div>
     ${section.rows.length > shown.length ? `<p class="muted-text">Showing the first ${shown.length} of ${section.rows.length}.</p>` : ""}
@@ -65,6 +67,7 @@ export async function reviewAndApply<T extends ReviewedPreview>(tool: ReviewedTo
   const dialog = workspaceDialog(tool.title, "admin-preview");
   let preview: T | undefined;
   let busy = false;
+  let loading = false;
   let message = "";
   const close = () => {
     if (busy) return;
@@ -72,12 +75,14 @@ export async function reviewAndApply<T extends ReviewedPreview>(tool: ReviewedTo
     dialog.remove();
   };
   const render = () => {
+    if (!dialog.isConnected) return;
     const sections = preview ? tool.sections(preview) : [];
     const changes = preview ? tool.changeCount(preview) : 0;
     dialog.innerHTML = `<header class="mw-header"><div><h2>${esc(tool.title)}</h2><p>${esc(tool.intro)}</p></div>
         <button type="button" data-close aria-label="Close ${esc(tool.title)}">×</button></header>
       <div class="mw-content">
-        ${!preview ? `<p role="status">Preparing the preview… nothing has been changed.</p>`
+        ${!preview ? loading ? `<p role="status">Preparing the preview… nothing has been changed.</p>`
+          : `<section role="alert"><h3>Could not prepare the preview</h3><p>Nothing has been changed. Try preparing the preview again.</p><button type="button" class="primary" data-retry-preview>Try again</button></section>`
           : sections.some((s) => s.rows.length) ? sections.map(sectionHtml).join("")
           : emptyState({ title: "Nothing to change", body: "Every member already matches." })}
         <div class="admin-preview__actions">
@@ -89,15 +94,23 @@ export async function reviewAndApply<T extends ReviewedPreview>(tool: ReviewedTo
       </div>`;
   };
   const load = async () => {
+    if (loading || !dialog.open) return;
+    loading = true;
     preview = undefined;
+    message = "";
     render();
     try {
-      preview = await tool.run();
+      const result = await tool.run();
+      if (!dialog.open) return;
+      preview = result;
       message = tool.changeCount(preview) ? "Review the changes, then confirm. Nothing changes until you do." : "";
     } catch (error) {
+      if (!dialog.open) return;
       message = error instanceof Error ? error.message : "Could not prepare the preview";
+    } finally {
+      loading = false;
     }
-    render();
+    if (dialog.open) render();
   };
   dialog.addEventListener("cancel", (event) => {
     event.preventDefault();
@@ -107,6 +120,10 @@ export async function reviewAndApply<T extends ReviewedPreview>(tool: ReviewedTo
     const target = event.target as HTMLElement;
     if (target.closest("[data-close]")) {
       close();
+      return;
+    }
+    if (target.closest("[data-retry-preview]")) {
+      if (!busy) await load();
       return;
     }
     if (!target.closest("[data-confirm]") || !preview?.preview_token || busy) return;

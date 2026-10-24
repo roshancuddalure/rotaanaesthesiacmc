@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-22",
+  "scope": "Rules saved-version audit timestamp presentation only; specialist implementation of rules-history-mixed-date-zone finding",
+  "finding": "Previously the raw ISO calendar date was combined with browser-local time, showing 21 Oct 04:30 for the 22 Oct 04:30 local instant in Asia/Kolkata. A baseline browser reproduced it.",
+  "changes": [
+    "Use existing formatAuditTimestamp for saved_at instants in history and existing restore confirmation/success wording",
+    "Explicit Saved at label",
+    "Retain effective policy dates/version IDs/compare direction/current badge and original escaped server values"
+  ],
+  "evidence": [
+    "docs/premium-ui/qa-rules-history-time-before.json",
+    "docs/premium-ui/qa-rules-history-time.json",
+    "docs/premium-ui/reviews/rules-history-time-source-delta.json"
+  ],
+  "checks": {
+    "baseline_browser_reproduction": 1,
+    "current_browser_workflows": 24,
+    "engines": [
+      "Chromium",
+      "Firefox",
+      "WebKit"
+    ],
+    "timezones": [
+      "Asia/Kolkata (Intl may canonicalize to Asia/Calcutta)",
+      "America/Los_Angeles"
+    ],
+    "widths": [
+      320,
+      1280
+    ],
+    "themes": [
+      "light",
+      "dark"
+    ],
+    "tagged_axe_violations": 0,
+    "page_or_dialog_horizontal_overflow": 0,
+    "escaped_server_labels": true,
+    "invalid_missing_unzoned_truthful": true,
+    "compare_current_badge_preserved": true,
+    "restore_cancel_no_request": true,
+    "mocked_restore_503_exact_version_and_revision": true,
+    "no_automatic_restore_replay": true,
+    "source_hashes_held": true,
+    "exact_reverse_of_scoped_edits_matches_baseline": true
+  },
+  "application_source_sha256": {
+    "frontend/src/rota-rules.ts": "53f349740e6b7f93000354fbd3acf518af25d93a05438a077f11fb377c5c51b4",
+    "frontend/src/audit-time.ts": "136542cb2daec343417532d372f2e8ce01a0e6103ef6c62a7a4a8017ac8a6d15"
+  },
+  "files_written": [
+    "frontend/src/rota-rules.ts",
+    "frontend/tests/premium-rules-history-time.browser.mjs",
+    "docs/premium-ui/qa-rules-history-time-before.json",
+    "docs/premium-ui/qa-rules-history-time.json",
+    "docs/premium-ui/reviews/rules-history-time-source-delta.json",
+    "docs/premium-ui/reviews/rules-history-time-current.json"
+  ],
+  "limitations": [
+    "All API calls intercepted; restore mocked as 503. No backend writes, backend correctness or scheduling certification.",
+    "Isolated actual rules module and history; does not certify the whole app shell, permissions or roles.",
+    "No physical devices. No full requirement 181/182 or 260-item completion claimed.",
+    "Build and wider regressions delegated to root after concurrent source edits settle.",
+    "Existing local lifecycle test provides the deterministic rules fixture; this is not a backend contract test."
+  ]
+}

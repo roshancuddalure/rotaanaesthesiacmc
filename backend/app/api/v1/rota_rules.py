@@ -19,12 +19,15 @@ from app.models import UserAccount
 from app.services.rota_rules import (
     DutyCountLimits,
     DutyRule,
+    ExtraDutyRules,
+    FairnessRules,
     RestRules,
     RotaPhaseOneRules,
     RotaRulesInvalid,
     UnitStaffingRules,
     get_phase_one_rules,
 )
+from app.services.limits import limits_locked_detail, locked_limit_changes
 from app.services.rota_rules_admin import (
     StaleRules,
     check_rules,
@@ -35,6 +38,7 @@ from app.services.rota_rules_admin import (
     restore_version,
     rules_revision,
     save_rules_with_history,
+    unit_summaries,
     version_detail,
 )
 
@@ -59,15 +63,29 @@ class RuleGroupRead(BaseModel):
     members: int
 
 
+class RuleUnitRead(BaseModel):
+    """A unit the Rota Rules page can pick for Units allowed / excluded (writes ``id``)."""
+
+    id: str
+    code: str
+    name: str
+    campus: str | None
+    active: bool
+
+
 class RotaPhaseOneRulesRead(BaseModel):
     rule_version: RuleVersionRead
     duty_rules: list[DutyRule]
     duty_count_limits: DutyCountLimits
     rest_rules: RestRules
     unit_staffing_rules: UnitStaffingRules
+    # Limit sections are read-only here; they change only through /v1/admin/limits.
+    fairness_rules: FairnessRules
+    extra_duty_rules: ExtraDutyRules
     notes: str | None
     revision: str
     groups: list[RuleGroupRead]
+    units: list[RuleUnitRead]
 
 
 class RotaPhaseOneRulesWrite(RotaPhaseOneRules):
@@ -96,9 +114,12 @@ def rules_to_read(db: Session, rule_version, rules: RotaPhaseOneRules) -> RotaPh
         duty_count_limits=rules.duty_count_limits,
         rest_rules=rules.rest_rules,
         unit_staffing_rules=rules.unit_staffing_rules,
+        fairness_rules=rules.fairness_rules,
+        extra_duty_rules=rules.extra_duty_rules,
         notes=rules.notes,
         revision=rules_revision(rules),
         groups=[RuleGroupRead(**row) for row in group_summaries(db)],
+        units=[RuleUnitRead(**row) for row in unit_summaries(db)],
     )
 
 
@@ -150,6 +171,12 @@ def update_phase_one_rota_rules(
     admin: UserAccount = Depends(require_admin),
     db: Session = Depends(get_db),
 ) -> RotaPhaseOneRulesRead:
+    # Limit sections are kept as stored (save_rules_with_history); a payload that sends
+    # different values is refused so nobody thinks a limit was changed here.
+    _version, stored = get_phase_one_rules(db)
+    locked = locked_limit_changes(stored, payload)
+    if locked:
+        raise HTTPException(status_code=403, detail=limits_locked_detail(locked))
     try:
         rule_version, rules = save_rules_with_history(
             db, payload.rules(), user=admin, base_revision=payload.base_revision

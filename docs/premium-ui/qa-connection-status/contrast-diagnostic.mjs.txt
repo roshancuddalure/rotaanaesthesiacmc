@@ -1,0 +1,5 @@
+import{webkit}from'playwright';import AxeBuilder from'@axe-core/playwright';
+const browser=await webkit.launch(),context=await browser.newContext({viewport:{width:320,height:844},colorScheme:'dark',reducedMotion:'reduce'}),page=await context.newPage();
+await page.addInitScript(()=>localStorage.setItem('duty_rota_auth_token','contrast-fixture'));
+await page.route('**/api/**',async route=>{const u=new URL(route.request().url());return route.fulfill({response:await route.fetch({url:'http://127.0.0.1:8032'+u.pathname+u.search})});});
+try{await page.goto('http://127.0.0.1:5197');await page.locator('#connection-checker[data-state=checked]').waitFor();await page.locator('#connection-checker summary').click();const a=await new AxeBuilder({page}).include('#connection-checker').withTags(['wcag2a','wcag2aa','wcag21a','wcag21aa','wcag22aa']).analyze();console.log(JSON.stringify(a.violations.map(v=>({id:v.id,nodes:v.nodes.map(n=>({target:n.target,summary:n.failureSummary,html:n.html}))})),null,2));await page.screenshot({path:'../docs/premium-ui/qa-connection-status/contrast-webkit-dark.png'});}finally{await browser.close();}

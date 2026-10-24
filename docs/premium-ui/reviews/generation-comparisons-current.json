@@ -1,0 +1,83 @@
+{
+  "recorded_at_utc": "2026-10-23T13:57:20.784873+00:00",
+  "completion_claim": false,
+  "requirements": [
+    173,
+    208,
+    209,
+    219,
+    258
+  ],
+  "scope": "Shared quick/whole-month reported workload comparison and read-only whole-month alternative summary beside existing selector.",
+  "source_sha256": {
+    "frontend/src/rota-compute.ts": "e5f967e6166e2ace9352983a468002d45850188d8811363230305d7597fb70ab",
+    "frontend/src/rota-intelligence.ts": "bda7257a3cafdcf6c4122575cc454abb1623f27dbd13950ea1d61260a23bb79b",
+    "frontend/src/generation-comparison.ts": "1ab0ada55fa8e4c581424c5ea3da441752fbdee1c9994d75466d48c16383da55",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "a51d3731437add9b423392be8a8fa671f17c11b894521abb10ce537d3b30eed6"
+  },
+  "changes": [
+    "Replace dense range/mean sentences with labeled native table columns. Narrow layouts use existing stacked-row pattern with visible field labels and explicit row-header/caption layout.",
+    "Show all whole-month alternatives in original server order, with uncovered/changes/status and text marking the selected alternative. Existing selector, select endpoint/index/revision, reasons, warnings and selected objective evidence unchanged.",
+    "Retain workload disclosure open state during alternative selection/rerender. Numeric rendering keeps reported zero/large/decimal values and labels missing/nonfinite values Not reported without new aggregate calculations.",
+    "Screenshot inspection found mobile caption collapsed during implementation; scoped caption width/display corrected and geometry regression added."
+  ],
+  "checks": {
+    "comparison_contexts": 24,
+    "engines": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "widths": [
+      320,
+      1280
+    ],
+    "themes": "dark320/light1280",
+    "kinds": [
+      "quick member review",
+      "whole-month review"
+    ],
+    "fixtures": [
+      "reported includingzero/large/decimal values",
+      "defensive missingmean/rangemax"
+    ],
+    "values": "Exact three row ranges/means; zero remains0,1234567 remainsreportedvalue,2.5 unchanged; missing is Notreported. No derivedburden/ranking.",
+    "alternatives": "Three server alternatives preserve order/count/status including HTML-like text; native selection index2/revision7 sends exact existing POST. Selected third alternative has distinct objective value99/proventrue, parsedJSON asserted unchanged. Reasons,blocked-by-leave text and current disclosure state retained.",
+    "mobile_caption_geometry": true,
+    "scoped_axe_checks": 24,
+    "tagged_axe_violations": 0,
+    "generation_regressions": 21,
+    "unit_tests": 100,
+    "build_exit_code": 0,
+    "build_inputs_held": true,
+    "static_inventories": "Style/action write/check pass; source integrity only."
+  },
+  "evidence": [
+    "docs/premium-ui/qa-generation-comparisons.json",
+    "docs/premium-ui/qa-generation-comparisons-before.json",
+    "docs/premium-ui/qa-generation-actions-comparison-batch.json",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+  ],
+  "test": "frontend/tests/premium-generation-comparisons.browser.mjs",
+  "test_sha256": "7d5664b41c023891e182ca95f652e4bb5a073c576a357a4fdafa095d449ba12c",
+  "screenshots": [
+    "docs/premium-ui/screenshots/comparisons/workload-320-before.png",
+    "docs/premium-ui/screenshots/comparisons/workload-320.png",
+    "docs/premium-ui/screenshots/comparisons/workload-1280.png"
+  ],
+  "visual_review": {
+    "reviewer": "rootimplementer,notindependent",
+    "finding": "Inspected320darkbefore/after: captionnowfullwidth,measureandcurrent/proposedrange/meanlabelslegibleinstackedcard;footerseparate. Longfirstrowusesexistingcontentscroll."
+  },
+  "limitations": [
+    "Root implementer review, not independent signoff.",
+    "24contexts cover stated workloads/alternatives, not all engine/job states,roles,objectives or candidate card comparison surfaces. Full173 remains open.",
+    "Missing numeric fixtures are defensive, not claims normal API omits fields. No scoring/burden computation or server eligibility changes.",
+    "Comparison tests scopeaxe toworkloaddisclosure; alternative values/evidence asserted but not a claim full-dialog axe coverage in all states.",
+    "Before artifact documents caption defect during implementation; it is not an original pre-project visual baseline.",
+    "All requests intercepted; alternative selection changes only mocked proposal state. No actual generation/apply/publish/backend writes or calculation/export equivalence certified.",
+    "No native screen-reader/physical checks. Full260 and samefixture workflow/calculation/export equivalence remain open.",
+    "Only frontend generationcomparison helper,compute/intelligence presentation and scoped CSS changed in this batch; concurrent backend work preserved."
+  ]
+}

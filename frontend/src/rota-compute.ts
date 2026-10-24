@@ -4,10 +4,13 @@ import { ComputeWorker, RecoveringCompute, preference, savePreference, resetPref
 import { COMPUTE_VERSION } from "./compute-protocol";
 import type { ComputeMode, Workload } from "./compute-device";
 import { conflictsFromError, showProposalConflict } from "./compute-conflict";
+import { retainActionFocus } from "./ui";
+import { generationReversalScope } from "./generation-reversal-scope";
+import { workloadComparison } from "./generation-comparison";
 
 type Engine = "server" | "local_gpu";
 type Decision = { slot_id: string; date: string; duty: string; unit: string; action: string;
-  person_id: string | null; person_name: string | null; reason: string; score: number | null };
+  person_id: string | null; person_name: string | null; reason: string; score: number | null; forced?: boolean };
 interface Burden { members: number; before: Record<string, {min: number; max: number; mean: number}>; after: Record<string, {min: number; max: number; mean: number}> }
 interface Job { burden: Burden; id: string; month: string; status: string; engine: Engine; revision: number;
   processed: number; total: number; proposed: number; unresolved: number; decisions: Decision[];
@@ -32,38 +35,67 @@ const start = (month: string, engine: Engine, templateOptions?: object) => post<
 const step = (job: Job, extra: object = {}) => post<Job>(`jobs/${job.id}/step`, { revision: job.revision, ...extra });
 
 export async function renderComputeSettings(host: HTMLElement) {
+  host.innerHTML = '<section class="panel" aria-busy="true" aria-label="Loading compute settings"><h2>Compute Settings</h2><p role="status">Loading compute settings...</p></section>';
   let testWorker: ComputeWorker | undefined;
   let busy = false;
   let workload: Workload = "members";
   let month = new Date().toISOString().slice(0, 7);
-  let status = "Local computation is off until you enable it on this browser.";
+  let status = preference().enabled
+    ? "Browser device preferences loaded. Review the selected mode and readiness before computing."
+    : "Local computation is off until you enable it on this browser.";
   let caps: Capabilities;
   try { caps = await capabilities(); }
-  catch (error) { host.textContent = error instanceof Error ? error.message : "Unable to load compute settings"; return; }
+  catch (error) {
+    if (!host.isConnected) return;
+    host.innerHTML = `<section class="panel"><h2>Compute Settings</h2><p role="alert">${escape(error instanceof Error ? error.message : "Unable to load compute settings")}</p><button type="button" data-compute-retry>Try again</button></section>`;
+    host.querySelector<HTMLButtonElement>('[data-compute-retry]')!.onclick = () => { void renderComputeSettings(host); };
+    return;
+  }
   function gpuSummary(p: ReturnType<typeof preference>) {
     const webgpu = "gpu" in navigator;
     const using = !caps.enabled ? "Compute disabled" : !p.enabled || p.mode === "server" || !caps.browser_gpu || !webgpu ? "Server"
       : p.mode === "local_gpu" ? "This computer's GPU (pilot), server fallback" : "Automatic (GPU only when proven faster)";
     const step = (done: boolean, text: string) => `<li class="${done ? "done" : ""}"><span aria-hidden="true">${done ? "✓" : "○"}</span> ${text}${done ? '<span class="visually-hidden"> (done)</span>' : ""}</li>`;
     return `<div class="compute-summary"><p><strong>Generation on this browser uses: ${escape(using)}</strong></p>
-      ${!webgpu ? "<p>This browser does not offer WebGPU. Use a recent Chrome or Edge to compute on this computer's GPU.</p>" : ""}
+      ${!webgpu ? "<p>This browser does not offer WebGPU.</p>" : ""}
+      <details class="compute-help"><summary>GPU setup checklist</summary>
+      ${!webgpu ? "<p>Use a recent Chrome or Edge to compute on this computer's GPU.</p>" : ""}
       <p>To use this computer's GPU:</p><ol class="compute-steps">
-      ${step(caps.browser_gpu, "Browser GPU allowed by the deployment (server setting BROWSER_GPU_ENABLED)")}
+      ${step(caps.browser_gpu, "Browser GPU allowed by your deployment administrator")}
       ${step(webgpu, "Browser supports WebGPU")}
       ${step(p.enabled, "Tick <em>Allow GPU computation on this browser</em> below")}
       ${step(p.enabled && p.mode !== "server", "Set <em>Compute mode</em> to <em>Prefer local GPU</em> (or Automatic after comparing)")}
       ${step(!!p.test?.parity && !p.test.software, "Test Device passes (also checked automatically before each run)")}
-      </ol><p class="hint">You can also choose Server or GPU in each generator window under <em>Where to compute</em>.</p></div>`;
+      </ol><p class="hint">You can also choose Server or GPU in each generator window under <em>Where to compute</em>.</p></details></div>`;
   }
   function render() {
     if (!host.isConnected) return;
+    const focused = document.activeElement instanceof HTMLElement && host.contains(document.activeElement)
+      ? document.activeElement : undefined;
+    const controls = ["data-compute-enable", "data-compute-mode", "data-compute-power", "data-compute-month",
+      "data-compute-workload", "data-compute-test", "data-compute-reset", "data-compute-diagnostics", "data-compute-compare"];
+    const focusControl = controls.find(attribute => focused?.hasAttribute(attribute));
+    const focusSummary = focused?.matches("summary") ? focused.textContent : undefined;
+    const openHelp = new Set([...host.querySelectorAll<HTMLDetailsElement>("details[open]")]
+      .map(details => details.querySelector("summary")?.textContent));
     const p = preference();
+    const comparisonReason = busy ? "Wait for the current device test or comparison to finish."
+      : !caps.enabled ? "Reviewed compute is disabled by the deployment administrator."
+      : !caps.browser_gpu ? "Browser GPU comparison is disabled by the deployment administrator."
+      : !p.enabled ? "Enable GPU computation on this browser before comparing engines."
+      : !p.test?.supported ? "Run Test Device first. A supported device result is required before comparison."
+      : p.test.software ? "The device test reported a software adapter. Use server computation; comparison requires a hardware adapter."
+      : workload === "template" && (!caps.template_compute || !caps.template_gpu) ? "Template GPU comparison is unavailable in this deployment. Choose another workload or use server computation."
+      : workload === "optimizer" && !caps.optimizer_gpu ? "Optimiser GPU comparison is unavailable in this deployment. Choose another workload or use server computation."
+      : workload !== "members" && !p.test.kernel_checks?.[workload] ? "Run Test Device again to verify the selected workload's numeric kernel before comparison."
+      : "Ready to compare the selected workload and draft month. Review the comparison scope below before starting.";
     host.innerHTML = `<section class="panel compute-settings"><h2>Compute Settings</h2>
       <p>Use this computer for optional rota scoring. Other computers keep their own settings.
       Keep this page open while computing. Server computation is always the fallback.</p>
       ${gpuSummary(p)}
       ${!caps.enabled ? '<p role="status">Reviewed compute is disabled by the deployment administrator.</p>' : ""}
       ${!caps.browser_gpu ? '<p role="status">Browser GPU is disabled by the deployment administrator.</p>' : ""}
+      <h3>Device preferences</h3>
       <label><input type="checkbox" data-compute-enable ${p.enabled ? "checked" : ""}
         ${!caps.enabled || !caps.browser_gpu || busy ? "disabled" : ""}> Allow GPU computation on this browser</label>
       <label>Compute mode<select data-compute-mode ${busy ? "disabled" : ""}>
@@ -75,6 +107,10 @@ export async function renderComputeSettings(host: HTMLElement) {
         <option value="high-performance" ${p.power === "high-performance" ? "selected" : ""}>Prefer performance</option>
         <option value="low-power" ${p.power === "low-power" ? "selected" : ""}>Prefer power saving</option>
       </select></label>
+      <h3>Test this browser's GPU</h3>
+      <div class="registry-actions"><button type="button" class="primary" data-compute-test ${busy || !caps.browser_gpu || !caps.enabled ? "disabled" : ""}>Test Device</button>
+      <button type="button" class="icon-button" data-compute-reset ${busy ? "disabled" : ""}>Reset device settings</button></div>
+      <details class="compute-help"><summary>GPU selection and Automatic mode explained</summary>
       <p>This is a browser hint. WebGPU cannot list every installed GPU or select NVIDIA by name.
       Chrome on Windows may ignore this preference and keep using its assigned GPU.</p>
       <details><summary>NVIDIA or another GPU is missing</summary>
@@ -87,14 +123,14 @@ export async function renderComputeSettings(host: HTMLElement) {
       <p>Automatic uses the server unless an exact-result comparison on this device proves local execution
       is at least 20% faster, including network, transfer and validation time. Three runs per engine include cold GPU startup and full schedule validation. Results expire after seven days or when rota data changes.</p>
       <p>Small workloads stay on the server in Automatic mode. Prefer GPU can run supported numeric stages for testing; whole-month constraints and final validation stay on the server.</p>
-      <div class="registry-actions"><button type="button" data-compute-test ${busy || !caps.browser_gpu || !caps.enabled ? "disabled" : ""}>Test Device</button>
-      <button type="button" data-compute-reset ${busy ? "disabled" : ""}>Reset device settings</button></div>
+      </details>
       ${p.test ? `<div class="compute-diagnostics"><p>Browser-selected GPU: ${escape(p.test.adapter)}. Exact score check: ${p.test.parity ? "passed" : "failed"}.
       ${p.test.software ? "Fallback adapter detected; rota generation will use the server." : "Browser reports a hardware adapter."}</p>
       <dl><dt>Vendor</dt><dd>${escape(p.test.vendor || "Information unavailable")}</dd><dt>Architecture</dt><dd>${escape(p.test.architecture || "Information unavailable")}</dd>
       <dt>Device</dt><dd>${escape(p.test.device || "Information unavailable")}</dd><dt>Description</dt><dd>${escape(p.test.description || "Information unavailable")}</dd></dl>
       <p>Browser privacy settings may hide details. The current GPU is checked again before local generation.</p></div>` : "<p>No current device test. Test Device to check browser GPU availability.</p>"}
-      <button type="button" data-compute-diagnostics>Download GPU diagnostics</button>
+      <button type="button" class="icon-button" data-compute-diagnostics>Download GPU diagnostics</button>
+      <h3>Compare generation workloads</h3>
       <label>Draft month for comparison<input type="month" data-compute-month value="${month}" ${busy ? "disabled" : ""}></label>
       <label>Generation workload<select data-compute-workload ${busy ? "disabled" : ""}>
         <option value="members" ${workload==="members"?"selected":""}>Quick member assignment</option>
@@ -102,10 +138,11 @@ export async function renderComputeSettings(host: HTMLElement) {
         <option value="optimizer" ${workload==="optimizer"?"selected":""}>Whole-month optimiser assistance</option>
       </select></label>
       <div class="compute-readiness" aria-label="Kernel readiness">${(["members","template","optimizer"] as Workload[]).map(w=>`<p>${w==="members"?"Member scoring":w==="template"?"Template allocation":"Optimiser assistance"}: ${p.test?.kernel_checks?.[w]?"Exact kernel test passed":"Retest required"}. ${p.proofs?.[w]?.parity?"Workload comparison available":"No current workload comparison"}.</p>`).join("")}</div>
-      <button type="button" data-compute-compare ${busy || !p.enabled || !p.test?.supported || p.test.software || !caps.enabled || !caps.browser_gpu ||
+      <button type="button" class="primary" data-compute-compare aria-describedby="compute-comparison-help" ${busy || !p.enabled || !p.test?.supported || p.test.software || !caps.enabled || !caps.browser_gpu ||
         workload==="template" && (!caps.template_compute || !caps.template_gpu) || workload==="optimizer" && !caps.optimizer_gpu ||
         workload!=="members" && !p.test?.kernel_checks?.[workload] ? "disabled" : ""}>Compare engines on this month</button>
       <p>Comparison creates and cancels six proposals. It never applies assignments or publishes a rota.</p>
+      <p id="compute-comparison-help" data-compute-comparison-help>${escape(comparisonReason)}</p>
       ${p.proof ? `<p>Last comparison: server ${(p.proof.server_ms / 1000).toFixed(2)} s;
       local ${(p.proof.local_ms / 1000).toFixed(2)} s; matching decisions: ${p.proof.parity ? "yes" : "no"}.</p>` : ""}
       <p role="status" aria-live="polite" data-compute-status>${escape(status)}</p></section>`;
@@ -114,6 +151,14 @@ export async function renderComputeSettings(host: HTMLElement) {
       const summary=document.createElement("summary");summary.textContent="Comparison stage timings";
       const pre=document.createElement("pre");pre.textContent=JSON.stringify(p.proofs[workload]!.stage_timings,null,2);
       details.append(summary,pre);host.querySelector(".compute-settings")!.append(details);
+    }
+    host.querySelectorAll<HTMLDetailsElement>("details").forEach(details => {
+      if (openHelp.has(details.querySelector("summary")?.textContent)) details.open = true;
+    });
+    if (focused && document.activeElement === document.body) {
+      const replacement = focusControl ? host.querySelector<HTMLElement>(`[${focusControl}]`)
+        : [...host.querySelectorAll<HTMLElement>("summary")].find(summary => summary.textContent === focusSummary);
+      replacement?.focus({ preventScroll: true });
     }
   }
   render();
@@ -144,6 +189,11 @@ export async function renderComputeSettings(host: HTMLElement) {
     if (button.matches("[data-compute-reset]")) { resetPreference(); status = "Device settings reset. GPU computation is off."; render(); return; }
     if (!button.matches("[data-compute-test], [data-compute-compare]")) return;
     const month = host.querySelector<HTMLInputElement>("[data-compute-month]")!.value;
+    const actionSelector = button.matches("[data-compute-test]") ? "[data-compute-test]" : "[data-compute-compare]";
+    const restoreActionFocus = retainActionFocus(host, button, () =>
+      host.querySelector<HTMLElement>(`${actionSelector}:not(:disabled)`)
+        ?? host.querySelector<HTMLElement>("[data-compute-test]:not(:disabled)")
+        ?? host.querySelector<HTMLElement>("[data-compute-reset]:not(:disabled)"));
     busy = true; status = "Testing…"; render();
     try {
       testWorker = new ComputeWorker();
@@ -203,7 +253,7 @@ export async function renderComputeSettings(host: HTMLElement) {
           : "Results differed. Automatic mode will use the server.";
       } else status = "Device test passed. This confirms exact scoring support; it does not promise a faster rota run.";
     } catch (error) { invalidateDevice(); status = `${error instanceof Error ? error.message : "Device test failed"} Server computation remains available.`; }
-    finally { testWorker?.close(); busy = false; render(); }
+    finally { testWorker?.close(); busy = false; render(); restoreActionFocus(); }
   };
   const observer = new MutationObserver(() => {
     if (!host.isConnected || !host.querySelector(".compute-settings")) { testWorker?.close(); observer.disconnect(); }
@@ -211,10 +261,10 @@ export async function renderComputeSettings(host: HTMLElement) {
   observer.observe(document.body, { childList: true, subtree: true });
 }
 
-export async function openRotaCompute(month: string, admin: boolean, onApplied: () => void, templateOptions?: object) {
+export async function openRotaCompute(month: string, admin: boolean, onApplied: () => void, templateOptions?: object, fallbackFocus?: () => HTMLElement | null) {
   const isTemplate = !!templateOptions;
   const title = isTemplate ? "Preview template allocation" : "Autoassign members - quick safe fill";
-  const dialog = workspaceDialog(title, "compute-workspace");
+  const dialog = workspaceDialog(title, "compute-workspace", fallbackFocus);
   let job: Job | undefined;
   let running = false;
   let closed = false;
@@ -257,36 +307,44 @@ export async function openRotaCompute(month: string, admin: boolean, onApplied: 
       ${option("local_gpu", "This computer's GPU — pilot", "Scores candidates on this browser's graphics card. The server re-checks every result and takes over automatically if the GPU fails.", !!blocked)}
       ${option("auto", "Automatic", "Uses the GPU only after Compare engines in Compute Settings shows it is faster for this month.", !!blocked)}
       <p class="hint">${escape(blocked || "This choice is saved for this browser only. Other computers keep their own setting.")}</p>
-      <button type="button" class="link-button" data-open-compute-settings>Open Compute Settings (test device, power, compare)</button></fieldset>`;
+      <button type="button" class="link-button" data-open-compute-settings ${admin ? "" : 'disabled aria-describedby="compute-settings-access-help"'}>Open Compute Settings (test device, power, compare)</button>
+      ${admin ? "" : '<p class="hint" id="compute-settings-access-help">Compute Settings is available to administrators. You can continue with server computation in this window.</p>'}</fieldset>`;
   }
   function render() {
     if (closed) return;
+    const reversalOpen = dialog.querySelector<HTMLDetailsElement>("[data-reversal-review]")?.open ?? false;
+    const workloadOpen = dialog.querySelector<HTMLDetailsElement>("[data-workload-comparison]")?.open ?? false;
     const focused = dialog.contains(document.activeElement)
       ? document.activeElement?.getAttributeNames().find(name => name.startsWith("data-")) : undefined;
+    const focusedEngine = focused === "data-engine-choice"
+      ? (document.activeElement as HTMLInputElement).value : undefined;
     const active = job && ["queued", "running"].includes(job.status);
+    const stateLabels: Record<string, string> = { queued: "Queued", running: "Generating proposal", completed: "Ready for review", applied: "Applied to draft", cancelled: "Cancelled", failed: "Failed", reverted: "Reversed" };
+    const stateLabel = job ? stateLabels[job.status] || `Status: ${job.status}` : "";
     dialog.innerHTML = `<header class="mw-header"><div><h2>${escape(title)}</h2><p>${escape(month)} · ${job ? escape(job.engine === "server" ? "Server" : "GPU-assisted") : "Ready"}</p></div>
       <button type="button" data-close aria-label="Close compute review">Close</button></header>
       <div class="mw-content"><p>${isTemplate ? "Units are allocated to duties; no people are assigned. Forced allocations remain marked for review." : "Existing assignments are preserved. Proposed choices are saved only after review and final server validation."}</p>
-      <p role="status" aria-live="polite">${escape(notice || job?.error || (job ? job.status : "Choose Generate to prepare a proposal."))}</p>
-      ${job ? `<p>Requested: ${job.requested_engine==="local_gpu"?"Prefer GPU":"Server"}. Running: ${job.engine==="local_gpu"?"GPU-assisted":"Server"}. ${escape(job.fallback_reason || "")}</p><progress max="${Math.max(1, job.total)}" value="${job.processed}" aria-label="Generation progress"></progress>
+      ${job ? `<p data-job-state role="status" aria-live="polite" aria-atomic="true"><strong>${escape(stateLabel)}</strong></p>` : ""}
+      <p role="status" aria-live="polite">${escape(notice && notice !== job?.error ? notice : !job ? "Choose Generate to prepare a proposal." : "")}</p>
+      ${job?.error ? `<p role="alert" data-job-error>${escape(job.error)}</p>` : ""}
+      ${job ? `<p>Requested: ${job.requested_engine==="local_gpu"?"Prefer GPU":"Server"}. Running: ${job.engine==="local_gpu"?"GPU-assisted":"Server"}. ${escape(job.fallback_reason || "")}</p>${active ? `<progress ${Number.isFinite(job.total) && job.total > 0 ? `max="${job.total}" value="${job.processed}"` : ""} aria-label="Generation progress"></progress>` : ""}
       <p>${job.processed} of ${job.total} slots checked · ${job.proposed} proposed · ${job.unresolved} need review</p>
       <p>${job.metrics.gpu_frames_verified || 0} GPU batches verified by the server.</p><p>Planning: ${(job.metrics.planning_ms / 1000).toFixed(2)} s on server; this session: ${(elapsed / 1000).toFixed(2)} s.</p>
-      ${job.burden && !isTemplate ? `<details><summary>Workload comparison across ${job.burden.members} active posted members</summary><p>Current and proposed monthly duties per member. Safety rules are checked separately.</p>
-      <dl>${[["total", "All duties"], ["hours24", "24-hour duties"], ["weekend24", "Weekend 24-hour duties"]].map(([key,label]) => `<dt>${label}</dt><dd>Current: ${job!.burden.before[key].min} to ${job!.burden.before[key].max} (mean ${job!.burden.before[key].mean}). Proposed: ${job!.burden.after[key].min} to ${job!.burden.after[key].max} (mean ${job!.burden.after[key].mean}).</dd>`).join("")}</dl></details>` : ""}
+      ${job.burden && !isTemplate ? workloadComparison(`Workload comparison across ${job.burden.members} active posted members`, job.burden, workloadOpen) : ""}
       <div class="table-scroll" tabindex="0" aria-label="Proposed rota changes"><table><thead><tr><th>Date / duty</th><th>Proposal</th><th>Reason</th></tr></thead><tbody>
       ${job.decisions.map(d => `<tr><td data-label="Date / duty">${escape(d.date)}<small>${escape(d.unit)} · ${escape(d.duty)}</small></td>
-      <td data-label="Proposal">${escape(isTemplate ? d.unit : d.person_name || d.action)}</td><td data-label="Reason">${escape(d.reason)}</td></tr>`).join("")}</tbody></table></div>` : ""}
+      <td data-label="Proposal">${escape(isTemplate ? d.unit : d.person_name || d.action)}${isTemplate && d.forced === true ? '<small data-forced-allocation><strong>Forced allocation &middot; Review required</strong></small>' : ""}</td><td data-label="Reason">${escape(d.reason)}</td></tr>`).join("")}</tbody></table></div>` : ""}
       ${!job || ["failed", "cancelled", "applied", "reverted"].includes(job.status) ? engineChoice() : ""}
+      ${job?.status === "applied" ? `<details data-reversal-review ${reversalOpen ? "open" : ""}><summary>Reverse this generation</summary>${generationReversalScope(job, month, isTemplate ? "template" : "members")}<p>Available only if this draft and its inputs have not changed since apply. Template reversal is blocked after people are assigned.</p><label><input type="checkbox" data-reversal-confirm> I want to reverse this generation after validation</label><button type="button" data-revert disabled>Validate and reverse</button></details>` : ""}
       </div><footer class="mw-footer">
       ${!job || ["failed", "cancelled", "applied", "reverted"].includes(job.status) ? '<button type="button" class="primary" data-generate>Generate proposal</button>' : ""}
       ${active && !running ? '<button type="button" class="primary" data-resume>Continue generation</button>' : ""}
       ${active && !running && job?.engine === "local_gpu" ? '<button type="button" data-server-fallback>Continue on server</button>' : ""}
       ${active || job?.status === "completed" ? '<button type="button" data-cancel>Cancel proposal</button>' : ""}
       ${job?.status === "completed" ? '<label><input type="checkbox" data-review-confirm> I reviewed the proposed changes and unresolved slots</label><button type="button" class="primary" data-apply disabled>Apply reviewed draft</button>' : ""}
-      ${job?.status === "applied" ? '<details><summary>Reverse this generation</summary><p>Available only if this draft and its inputs have not changed since apply. Template reversal is blocked after people are assigned.</p><label><input type="checkbox" data-reversal-confirm> I want to reverse this generation after validation</label><button type="button" data-revert disabled>Validate and reverse</button></details>' : ""}
       ${job?.decisions.length ? '<button type="button" data-download>Download report</button>' : ""}
       </footer>`;
-    if (focused) dialog.querySelector<HTMLButtonElement>(`[${focused}]`)?.focus({ preventScroll: true });
+    if (focused) dialog.querySelector<HTMLElement>(`[${focused === "data-revert" && job?.status === "applied" ? "data-reversal-confirm" : focused}]${focusedEngine ? `[value="${CSS.escape(focusedEngine)}"]` : ""}`)?.focus({ preventScroll: true });
   }
   async function run() {
     if (!job || running) return;
@@ -356,13 +414,22 @@ export async function openRotaCompute(month: string, admin: boolean, onApplied: 
     if (!button) return;
     if (button.matches("[data-close]")) { closed = true; running = false; worker?.close(); dialog.close(); dialog.remove(); return; }
     if (button.matches("[data-open-compute-settings]")) {
-      dialog.close(); document.querySelector<HTMLElement>('[data-view="compute-settings"]')?.click(); return;
+      const destination = document.querySelector<HTMLElement>('[data-view="compute-settings"]');
+      if (!admin || !destination) {
+        notice = !admin ? "Compute Settings is available to administrators. Server computation remains available here."
+          : "Compute Settings is unavailable here. Open it from Admin tools when available.";
+        render(); return;
+      }
+      dialog.close(); destination.click(); return;
     }
     if (button.matches("[data-download]")) {
       const url = URL.createObjectURL(new Blob([JSON.stringify({ ...job, session_elapsed_ms: elapsed }, null, 2)], { type: "application/json" }));
       const link = document.createElement("a"); link.href = url; link.download = `rota-compute-${month}.json`; link.click(); URL.revokeObjectURL(url); return;
     }
     if (actionBusy) return;
+    const restoreReversalFocus = button.matches("[data-revert]")
+      ? retainActionFocus(dialog, button, () => dialog.querySelector<HTMLElement>("[data-reversal-confirm]") ?? dialog.querySelector<HTMLElement>("[data-generate]"))
+      : undefined;
     actionBusy = true;
     button.disabled = true;
     let handedOff = false;
@@ -405,13 +472,13 @@ export async function openRotaCompute(month: string, admin: boolean, onApplied: 
       }
       notice = error instanceof Error ? error.message : "Unable to complete this action";
     }
-    finally { if (!handedOff) { actionBusy = false; render(); } }
+    finally { if (!handedOff) { actionBusy = false; render(); } restoreReversalFocus?.(!handedOff); }
   };
   render();
 }
 
-export function openAutoassign(month: string, admin: boolean, onApplied: () => void) {
-  const dialog = workspaceDialog("Autoassign members", "compute-workspace");
+export function openAutoassign(month: string, admin: boolean, onApplied: () => void, fallbackFocus?: () => HTMLElement | null) {
+  const dialog = workspaceDialog("Autoassign members", "compute-workspace", fallbackFocus);
   dialog.innerHTML = `<header class="mw-header"><div><h2>Autoassign members</h2><p>${escape(month)} · Choose a planning method</p></div><button data-close>Close</button></header>
     <div class="mw-content generation-methods"><article><h3>Quick safe fill</h3><p>Fill open duties in order using eligible members. Preserves existing assignments. Uses your Compute Settings for numeric scoring.</p><button class="primary" data-quick>Prepare quick draft</button></article>
     <article><h3>Whole-month optimisation</h3><p>Balance the month with staffing, leave and rest constraints. Review alternatives or explicitly allow selected repairs.</p><button class="primary" data-optimize>Optimise the month</button></article></div>
@@ -421,7 +488,7 @@ export function openAutoassign(month: string, admin: boolean, onApplied: () => v
     const button=(event.target as HTMLElement).closest("button"); if(!button)return;
     if(button.hasAttribute("data-close")){dialog.close();return;}
     dialog.close();
-    if(button.hasAttribute("data-quick")) await openRotaCompute(month,admin,onApplied);
-    else if(button.hasAttribute("data-optimize")) await (await import("./rota-intelligence")).openIntelligentRota(month,admin,onApplied);
+    if(button.hasAttribute("data-quick")) await openRotaCompute(month,admin,onApplied,undefined,fallbackFocus);
+    else if(button.hasAttribute("data-optimize")) await (await import("./rota-intelligence")).openIntelligentRota(month,admin,onApplied,fallbackFocus);
   };
 }

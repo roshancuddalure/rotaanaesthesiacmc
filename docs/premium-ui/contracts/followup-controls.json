@@ -1,0 +1,86 @@
+{
+  "recorded_at_utc": "2026-10-21T15:14:40.854455+00:00",
+  "contracts": [
+    {
+      "selector_family": "#member-filter-panel",
+      "source_inventory_ids": [],
+      "expected_outcome": "Native disclosure toggles position/call filters; collapsed state survives filter rerender.",
+      "evidence": "docs/premium-ui/qa-member-filters.json",
+      "verification_scope": "1280/390/320 light and dark; admin-like intercepted data",
+      "status": "passed_bounded_outcomes",
+      "limitation": "No blanket certification of all roles, records, failures, browser engines or backend semantics."
+    },
+    {
+      "selector_family": "[data-remove-member-filter]",
+      "source_inventory_ids": [
+        "main-ts::-callback-::31dc35512306"
+      ],
+      "expected_outcome": "Removing each displayed search/status/position/call summary changes the matching names and restores that filter default.",
+      "evidence": "docs/premium-ui/qa-member-filters.json",
+      "verification_scope": "Same six width/theme cases; status default remains active",
+      "status": "passed_bounded_outcomes",
+      "limitation": "No blanket certification of all roles, records, failures, browser engines or backend semantics."
+    },
+    {
+      "selector_family": "#clear-member-filters",
+      "source_inventory_ids": [
+        "main-ts::renderMembersView::68c254c9a644"
+      ],
+      "expected_outcome": "Reset restores active status, all positions/calls, empty search and name ascending order.",
+      "evidence": "docs/premium-ui/qa-member-filters.json",
+      "verification_scope": "Existing reset contract retained; search/name results asserted",
+      "status": "passed_bounded_outcomes",
+      "limitation": "No blanket certification of all roles, records, failures, browser engines or backend semantics."
+    },
+    {
+      "selector_family": "[data-retry-mappings]",
+      "source_inventory_ids": [
+        "main-ts::renderMappings::ca7e33ef6ce7"
+      ],
+      "expected_outcome": "After503 load one explicit retry displays returned mappings and removes failure panel; no automatic loop.",
+      "evidence": "docs/premium-ui/qa-mappings.json",
+      "verification_scope": "390/1280 mocked read failure; cross-engine reports separate",
+      "status": "passed_bounded_outcomes",
+      "limitation": "No blanket certification of all roles, records, failures, browser engines or backend semantics."
+    },
+    {
+      "selector_family": "[data-retry-accounts]",
+      "source_inventory_ids": [
+        "main-ts::renderAccounts::9597199d29c6"
+      ],
+      "expected_outcome": "After503 list read retry renders account controls and escaped failure text never becomes markup.",
+      "evidence": "docs/premium-ui/qa-accounts.json",
+      "verification_scope": "320/390/1280, GET-only real fixture reads; writes mocked",
+      "status": "passed_bounded_outcomes",
+      "limitation": "No blanket certification of all roles, records, failures, browser engines or backend semantics."
+    },
+    {
+      "selector_family": "#create-account",
+      "source_inventory_ids": [
+        "main-ts::renderAccounts::8c7ded19f4e7"
+      ],
+      "expected_outcome": "409 retains entered values; retry submits exact values; fresh mocked GET shows account. Repeated submit sends one pending mutation; late success preserves changed destination.",
+      "evidence": "docs/premium-ui/qa-accounts.json",
+      "verification_scope": "Three widths; does not prove backend authorization/persistence",
+      "status": "passed_bounded_outcomes",
+      "limitation": "No blanket certification of all roles, records, failures, browser engines or backend semantics."
+    },
+    {
+      "selector_family": "[data-account-recovery]",
+      "source_inventory_ids": [
+        "main-ts::-callback-::b42b8a9202e6",
+        "main-ts::-callback-::b42b8a9202e6::2"
+      ],
+      "expected_outcome": "Cancellation sends no request;503 permits explicit retry; returned mock token+expiry appear in prompt. Inactive/superadmin exclusions retained for computer admin.",
+      "evidence": "docs/premium-ui/qa-accounts.json",
+      "verification_scope": "Three widths; TEST token only; no real account mutation",
+      "status": "passed_bounded_outcomes",
+      "limitation": "No blanket certification of all roles, records, failures, browser engines or backend semantics."
+    }
+  ],
+  "source_hashes": {
+    "frontend/src/main.ts": "661780938f629c374299058f7436fe657dba79892e03992a08f04d6c1283677a",
+    "frontend/src/premium-theme.css": "05eab8b2e5893177fa73990b6b5c02e337ba5c4ec22b667153804b48ebb7f3c2",
+    "frontend/src/services/api.ts": "2dafb9ea3d5e972ecc3bd0f988c4714e97d00ccf7c13769f15b9858c9577fa0e"
+  }
+}

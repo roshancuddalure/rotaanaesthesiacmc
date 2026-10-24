@@ -1,0 +1,57 @@
+{
+  "reviewer": "review_package_independent",
+  "recorded_at_utc": "2026-10-22T04:21:54.924794+00:00",
+  "method": "Read-only inspection of requirements259/260, review/rollback notes, baseline manifest, current git status and frontend build configuration. No application edits or execution/deployment claim.",
+  "requirements": [
+    {
+      "item_id": 259,
+      "status": "partial",
+      "facts": [
+        "Review/rollback document exists and accurately warns against blanket restoration of shared files.",
+        "A concrete standalone review artifact and tamper/freshness validation are still upcoming in this review."
+      ],
+      "completion_needed": [
+        "Produce current review ZIP and external archive SHA256.",
+        "Validate archive entries and referenced assets, prove source/build binding, include explicit unresolved acceptance list.",
+        "Stage a prospective selective patch workflow against exact reviewed snapshot; do not describe frozen baseline as directly restorable."
+      ]
+    },
+    {
+      "item_id": 260,
+      "status": "pending",
+      "facts": [
+        "Current verification explicitly says active_incomplete; release acceptance and physical/screen-reader coverage are not complete."
+      ],
+      "completion_needed": [
+        "Complete item-specific acceptance and current independent perspectives.",
+        "Deliver evidence pack with release summary and deployment/backend approval gates retained."
+      ]
+    }
+  ],
+  "packager_acceptance": [
+    "Use an explicit allowlist: built dist tree and minimal reviewed metadata. Do not recursively package repository/docs/tmp.",
+    "Reject filesystem symlinks/reparse points and archive names with traversal, absolute paths, drive prefixes, backslashes or duplicate normalized names.",
+    "Record SHA256 and byte length for every payload entry, with the manifest itself omitted from its own digest list; publish archive SHA256 externally.",
+    "Verify emitted local asset references and required recovery bootstrap, CSV templates and compute worker exist.",
+    "Freshly build with fingerprinted inputs unchanged before/after build and packaging. Rehash dist before/after capture. A source hash taken after an arbitrary old build is insufficient.",
+    "Reject environment/auth/database/log/screenshot/source payloads by default. Hashing lockfile/source is metadata, not permission to include contents.",
+    "Keep archive evidence self-contained: referenced metadata in ZIP or clearly mark external evidence pointers as unavailable offline.",
+    "Verify malformed/tampered archive, unexpected file, missing asset and source drift fail closed without mutating source or production."
+  ],
+  "rollback_limitations": [
+    "Current git status includes concurrent backend and shared frontend work. Whole-file baseline restore or git reset would destroy unrelated changes.",
+    "The frozen manifest is comparison evidence only. A patch must identify exact reviewed UI hunks and require manual overlap review; a content hash cannot establish ownership.",
+    "A built artifact can be rolled back only to a separately retained exact prior frontend artifact with verified backend/API compatibility and hosting policy; no prior release artifact was established in this review.",
+    "Staging the prospective patch is a future local review aid, not a verified live rollback or deployment authorization.",
+    "Existing HTML revalidation, immutable hashed assets and old-asset retention are hosting dependencies; no backend/hosting edits are within scope."
+  ],
+  "source_hashes": {
+    "docs/premium_frontend_upgrade_plan_2026-10-21.md": "03e15be7620d680cfd9385d91e584fa0c49e64a6b5c93505ac19cac008b63a7b",
+    "docs/premium-ui/review-build-and-rollback.md": "866cc981ecacaba210c850bdea509c79672b9f8ac0820cb7102a952de8bfd0c3",
+    "tmp/premium-ui-baseline-20261021T130359Z/manifest.json": "327ee4bd80f1c861e81a2d33b40ae0688579bacd8b44a034a7dc9407b78fd8e8",
+    "frontend/package.json": "ffe9013939b064e599618659a57564e2d3133c92541318ad5648419193a2eb0f",
+    "frontend/package-lock.json": "77ffcdb3df327939d212e77b0231775b3be4534b2a222c6e48836d23fcc0abed",
+    "frontend/vite.config.ts": "888554ca400c108436a9680b4a62f5507f94c8bfe6cc1b0b19caf1797f41ef88"
+  },
+  "snapshot_warning": "Hashes bind only the inspected inputs at review time. Current source is shared and can change; final packager source and artifact require their own independent validation."
+}

@@ -1,0 +1,69 @@
+{
+  "recorded_at_utc": "2026-10-22T12:53:34.226916+00:00",
+  "requirements": [
+    54,
+    55,
+    87,
+    92,
+    94,
+    142,
+    143,
+    208,
+    209,
+    212,
+    219,
+    223,
+    225,
+    228,
+    258
+  ],
+  "completion_claim": false,
+  "source_sha256": {
+    "frontend/src/leave-approval.ts": "42e5a47751ae081d1b97108209c7a2b53272985251d153aa065f7718f43e544f",
+    "frontend/src/ui.ts": "12e79214fc4f094e9b391df88ff498cda65d3539b9d0f1da59cffc139c8e4f85",
+    "frontend/src/styles.css": "e5e5802b5cdef146b542fcfafc1b2040f232898cafaa89dcf30554235da140b5",
+    "frontend/src/premium-theme.css": "ff2aee7148e54e4e40aae847189110cf3d9228d90fabffbd63a3449a1e1a935d"
+  },
+  "scope": "Monthly leave approval review keyboard recovery, long mobile review, full date ranges and acknowledgement safeguards.",
+  "confirmed_before": "Actual Chromium320 failedpreviewrefresh leftBODYfocused; fullcrossmonthdates already rendered. Baseline fixture intercepted allrequests.",
+  "change": [
+    "Use existing retainActionFocus around explicit preview refresh and approval. Owned refresh success/failure restores Refresh; approval failure restores the required next action, Refresh.",
+    "Retain meaningful current data-control focus through render, so a deliberately focused Close button during pending refresh survives its result.",
+    "Do not retain approval acknowledgements after fresh preview: existing reviewed-token/reset rules, month/count/scope and approval body remain unchanged. No approval replay added."
+  ],
+  "checks": {
+    "monthly_review_workflows": 6,
+    "long_fixture_requests_per_review": 18,
+    "affected_duties_per_review": 2,
+    "scoped_axe_surfaces": 6,
+    "tagged_axe_violations": 0,
+    "leave_list_regression_layouts": 12,
+    "leave_status_regression_layouts": 2,
+    "existing_generation_and_approval_workflows": 21,
+    "unit_tests": 100,
+    "build_exit_code": 0,
+    "build_inputs_held": true
+  },
+  "evidence": [
+    "docs/premium-ui/qa-monthly-leave-review.json",
+    "docs/premium-ui/qa-monthly-leave-review-before.json",
+    "docs/premium-ui/qa-leave-list.json",
+    "docs/premium-ui/qa-leave-independent-review.json",
+    "docs/premium-ui/qa-generation-actions-current.json",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+  ],
+  "test_sha256": "a74030383a9104084b59c6e7a27f5158ddce903af9a9deaf6562eb09c911e093",
+  "visual_review": {
+    "reviewer": "root implementer,notindependent",
+    "screenshot": "docs/premium-ui/screenshots/leave/monthly-review-320.png",
+    "result": "Long mobile review keeps duty acknowledgement and final confirmation above footer; explanatory scope and18-requestapprovalbutton readable."
+  },
+  "limitations": [
+    "All approval-preview and approve-month POST requests intercepted. Unknown approval503 requires a new preview and fresh acknowledgement; no actual backend approval/persistence claim.",
+    "Six3engine320/1280 lighttheme fixtures with18requests/twoduties; exactOct29-Dec3fullrange andNovembertokenpayload asserted. Othercounts,roles/permissions,individualleaveapproval,allerrorcodes andrealdata remain separate acceptance.",
+    "Preview retry is an existing POST read/review operation, not a GET. It doesnot replay the approval mutation. Tests keep the original API methods and shapes.",
+    "Existing leave-list/status and21generation suites were rerun; reports lack some complete runtime source-hold declarations and are not wholeworktree certification.",
+    "Axe/geometry cover stated openmodal, not physicalsoftwarekeyboards,realprinting or nativeassistivetechnology. Physical/native/newindependentreview pending; broad144matrixhistorical.",
+    "No backend/API-contract/permission/scheduling/persisted-data/export-content/production changes made. Full260goalactive/incomplete; no whole requirement completion."
+  ]
+}

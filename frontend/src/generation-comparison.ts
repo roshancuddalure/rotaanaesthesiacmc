@@ -1,0 +1,14 @@
+const escape = (value: unknown) => String(value ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
+type Range = { min: number; max: number; mean: number };
+type Burden = { members: number; before: Record<string, Range>; after: Record<string, Range> };
+const number = (value: number | undefined) => typeof value === "number" && Number.isFinite(value) ? String(value) : "Not reported";
+const scrollCue = '<p class="comparison-scroll-cue">If columns extend beyond this panel, scroll horizontally. Keyboard: focus the table region and use the arrow keys.</p>';
+
+/** Present reported values only; ranking, eligibility and objectives stay server-owned. */
+export function workloadComparison(title: string, burden: Burden, open = false) {
+  return `<details data-workload-comparison ${open ? "open" : ""}><summary>${escape(title)}</summary><p>${escape(burden.members)} active posted members. Counts include preserved assignments. Safety rules are checked separately.</p>${scrollCue}<div class="table-scroll generation-comparison" role="region" tabindex="0" aria-label="Current and proposed workload comparison"><table><caption>Reported monthly duties per member</caption><thead><tr><th scope="col">Measure</th><th scope="col">Current range</th><th scope="col">Proposed range</th><th scope="col">Current mean</th><th scope="col">Proposed mean</th></tr></thead><tbody>${[["total", "All duties"], ["hours24", "24-hour duties"], ["weekend24", "Weekend 24-hour duties"]].map(([key, label]) => `<tr><th scope="row">${label}</th><td data-label="Current range">${number(burden.before[key]?.min)} to ${number(burden.before[key]?.max)}</td><td data-label="Proposed range">${number(burden.after[key]?.min)} to ${number(burden.after[key]?.max)}</td><td data-label="Current mean">${number(burden.before[key]?.mean)}</td><td data-label="Proposed mean">${number(burden.after[key]?.mean)}</td></tr>`).join("")}</tbody></table></div></details>`;
+}
+
+export function alternativeComparison(alternatives: Array<{ uncovered: number; changed: number; status: string }>, selected: number) {
+  return `${scrollCue}<div class="table-scroll generation-comparison" role="region" tabindex="0" aria-label="Whole-month alternatives comparison"><table><caption>Whole-month alternatives reported by the server</caption><thead><tr><th scope="col">Alternative</th><th scope="col">Uncovered</th><th scope="col">Changes</th><th scope="col">Status</th></tr></thead><tbody>${alternatives.map((alternative, index) => `<tr ${index === selected ? 'aria-current="true"' : ""}><th scope="row">${index + 1}${index === selected ? " (selected)" : ""}</th><td data-label="Uncovered">${number(alternative.uncovered)}</td><td data-label="Changes">${number(alternative.changed)}</td><td data-label="Status">${escape(alternative.status)}</td></tr>`).join("")}</tbody></table></div>`;
+}

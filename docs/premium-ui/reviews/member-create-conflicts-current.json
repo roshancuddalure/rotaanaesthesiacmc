@@ -1,0 +1,61 @@
+{
+  "recorded_at_utc": "2026-10-24T01:37:12.462082+00:00",
+  "completion_claim": false,
+  "scope": "Frontend Members near-duplicate confirmation lifetime and focused retained-draft continuity after successful creation.",
+  "requirements": [
+    69,
+    86,
+    87,
+    93,
+    225,
+    230,
+    241,
+    242,
+    243,
+    246
+  ],
+  "source_sha256": {
+    "frontend/src/main.ts": "93eebef4269de921331c843211094321582d241e6af186172339f1ae26b52b9e",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/premium-theme.css": "bbdf4ef4dc05d3850d94be50569177e850ab5bbac8376c20a1cadf13ead9162e"
+  },
+  "baseline_evidence": "docs/premium-ui/qa-member-create-conflicts/before.json",
+  "changes": [
+    "Near-duplicate confirmation checks initiating operation and view generation before opening; server refusal and explicit distinct-person request bodies unchanged.",
+    "After successful Members refresh, restore current focused name input and selection only while operation/view/render remain current and focus has not moved elsewhere."
+  ],
+  "checks": {
+    "conflict_development_contexts": 48,
+    "conflict_production_contexts": 48,
+    "pending_regression_development_contexts": 12,
+    "pending_regression_production_contexts": 12,
+    "unit_tests_passed": 104,
+    "build_passed": true,
+    "build_inputs_held": true,
+    "static_inventory_checks": true
+  },
+  "evidence": [
+    "docs/premium-ui/qa-member-create-conflicts/report-development.json",
+    "docs/premium-ui/qa-member-create-conflicts/report-production.json",
+    "docs/premium-ui/qa-member-create-conflicts/report-extra-development.json",
+    "docs/premium-ui/qa-member-create-conflicts/report-extra-production.json",
+    "docs/premium-ui/qa-member-create-pending/report-development.json",
+    "docs/premium-ui/qa-member-create-pending/report-production.json",
+    "docs/premium-ui/qa-member-create-conflicts/consolidated.json",
+    "docs/premium-ui/qa-member-create-conflicts/before.json",
+    "docs/premium-ui/reviews/member-create-conflicts-source-review.json",
+    "docs/premium-ui/reviews/member-create-conflicts-test-review.json",
+    "frontend/tests/premium-member-create-conflicts.browser.mjs",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json",
+    "tmp/premium-member-create-conflicts-unit.log"
+  ],
+  "limitations": [
+    "Fixture computer-admin only;403 is deliberately injected recovery behavior, not proof of backend authorization or all-role behavior.",
+    "No new backend/API contract/permission/scheduling/export-content edits by this batch; concurrent backend modifications remain separately present.",
+    "Actual native confirmation dialogs are exercised by Playwright accept/dismiss; physical devices and native screen-reader behavior remain pending.",
+    "Client operation ownership does not provide cross-tab/reload/server idempotency or mutation cancellation.",
+    "Two source/test specialists reviewed this batch; their reviews are bounded and do not certify every action or all260 requirements.",
+    "Earlier creation/sort/filter and broad integration reports retain their own historical source hashes; focused current tests do not refresh them.",
+    "Unit import intentional-cancellation error feedback remains a separately recorded source finding awaiting runtime reproduction."
+  ]
+}

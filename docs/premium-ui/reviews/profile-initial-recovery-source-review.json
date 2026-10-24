@@ -1,0 +1,16 @@
+{
+  "recorded_at_utc": "2026-10-24T02:07:12.578521+00:00",
+  "reviewer": "/root/profile_mobile_visual_findings",
+  "scope": "Independent read-only initial-load source review. No tests or fixture changes run by reviewer.",
+  "source_sha256": {
+    "frontend/src/member-workspace.ts": "4ddb7efade2d5886e8d62dc5fa7225eb2448b02c4be37ebb0ce474b5d3562c41",
+    "frontend/src/workspace-load-state.ts": "cdd0e323d7e83e6e668a381bbfcc37cad4726b1193ac5de31d5f14e03eecd9c6"
+  },
+  "findings": [
+    "Confirmed initial loading lacked explicit Close and failure lacked Retry.",
+    "Shared error helper disables retry immediately; old dialog closes before replacement is opened with all six original arguments.",
+    "Initial success/error require connected/open ownership; queued old close cannot steal focus from new dialog.",
+    "Existing GET path,permissions and save behavior untouched; no blocking source issue found."
+  ],
+  "limit": "Source review does not certify every profile control/native AT/all-role behavior."
+}

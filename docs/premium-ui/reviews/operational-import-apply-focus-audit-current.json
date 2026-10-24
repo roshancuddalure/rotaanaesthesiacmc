@@ -1,0 +1,59 @@
+{
+  "recorded_at_utc": "2026-10-22T10:23:25.922Z",
+  "requirements": [
+    135,
+    136,
+    137,
+    138,
+    139,
+    140,
+    212,
+    223
+  ],
+  "scope": "Actual Leave/Units toolbar; hold old columns A, inspect B, ignore old503; preview/apply B intercepted, verify actual native controls locked; return503, preserve draft and disabled states; explicit manualretry exactpayload success; select newC, decline discard then accept. No backend writes; disabled file inputs are never programmatically bypassed. Main snapshot drift recorded separately.",
+  "source_hashes_start": {
+    "src/operational-import.ts": "df4a05990852315814104b91382db2d6cdfc1736c320c7fd959e81a26efbd2f3",
+    "src/member-workspace.ts": "74f9c688b2c4e4e703f8bee347bbee3ec4f3e1085005647efca7c75b9789179b",
+    "src/main.ts": "8099e2182e25a65e48a138ea172210af5ae81eefe8e7b14c4aedb7a615fc791f"
+  },
+  "source_hashes_end": {
+    "src/operational-import.ts": "df4a05990852315814104b91382db2d6cdfc1736c320c7fd959e81a26efbd2f3",
+    "src/member-workspace.ts": "74f9c688b2c4e4e703f8bee347bbee3ec4f3e1085005647efca7c75b9789179b",
+    "src/main.ts": "8099e2182e25a65e48a138ea172210af5ae81eefe8e7b14c4aedb7a615fc791f"
+  },
+  "main_changed": false,
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "kind": "leave",
+      "failure_focus": {
+        "tag": "BODY",
+        "apply": false,
+        "inside": false
+      },
+      "stale_columns_failure_ignored": true,
+      "current_file_mapping_retained": true,
+      "pending_apply_all_native_controls_locked": true,
+      "file_B_preserved_during_apply": true,
+      "refusal_restores_original_disabled_states": true,
+      "refusal_draft_retained": true,
+      "automatic_replay": 0,
+      "manual_retry_requests": 1,
+      "exact_apply_payload_preserved": true,
+      "new_file_C_discard_prompt_after_completion": true,
+      "discard_rejection_retains_C": true,
+      "intercepted_apply_requests": 2,
+      "javascript_errors": [],
+      "navigations": [
+        "http://127.0.0.1:5197/#view=leave"
+      ]
+    }
+  ],
+  "verified": [
+    "Old inspection error cannot replace current mapping status.",
+    "Pending Apply locks native controls, refusal restores draft and manual retry exactpayload, no automatic replay.",
+    "A new file after completed Apply restores discard confirmation and preserves draft on rejection."
+  ],
+  "completion_claim": false
+}

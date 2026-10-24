@@ -1,0 +1,151 @@
+{
+  "storage": "disposable-sqlite-memory",
+  "fixture_people": [
+    [
+      "4f22f910-1ee4-4ff9-96cb-1baeff611a70",
+      "Spare Two"
+    ],
+    [
+      "8b2cdbb6-fd6a-4a53-ba7d-a43446359cf5",
+      "Spare One"
+    ],
+    [
+      "afbce048-9f20-4027-89a6-c7fcc99017e9",
+      "Safe Member"
+    ],
+    [
+      "b7d04568-211f-4ed7-8445-254863f0db86",
+      "Blocked Member"
+    ]
+  ],
+  "fixture_units": [
+    [
+      "fe3dafcf-48dd-4ef2-a749-eab0c20cd924",
+      "Unit I"
+    ]
+  ],
+  "slots": [
+    {
+      "key": [
+        "2026-05-01",
+        "MAIN_1ST_24HR",
+        "Unit I",
+        "1ST_CALL",
+        "UNIT_I:primary"
+      ],
+      "starts_at": "2026-05-01T08:00:00",
+      "ends_at": "2026-05-02T08:00:00",
+      "is_24hr": true,
+      "max_assignees": 1,
+      "source": "phase4_template",
+      "template_status": "ready",
+      "template_reason": "Unit leave pressure is within configured limits.",
+      "notes": "Main 1st Call generated for Unit I. Unit leave pressure is within configured limits."
+    },
+    {
+      "key": [
+        "2026-05-02",
+        "MAIN_1ST_24HR",
+        "Unit I",
+        "1ST_CALL",
+        "UNIT_I:primary"
+      ],
+      "starts_at": "2026-05-02T08:00:00",
+      "ends_at": "2026-05-03T08:00:00",
+      "is_24hr": true,
+      "max_assignees": 1,
+      "source": "phase4_template",
+      "template_status": "needs_review",
+      "template_reason": "Forced minimal-damage allocation: all candidate units were hard blocked; Unit I was selected as the least damaging and fairest unit. 75% of the unit is unavailable, meeting hard block threshold 40%.",
+      "notes": "Main 1st Call forced to Unit I. Forced minimal-damage allocation: all candidate units were hard blocked; Unit I was selected as the least damaging and fairest unit. 75% of the unit is unavailable, meeting hard block threshold 40%."
+    },
+    {
+      "key": [
+        "2026-05-03",
+        "MAIN_1ST_24HR",
+        "Unit I",
+        "1ST_CALL",
+        "UNIT_I:primary"
+      ],
+      "starts_at": "2026-05-03T08:00:00",
+      "ends_at": "2026-05-04T08:00:00",
+      "is_24hr": true,
+      "max_assignees": 1,
+      "source": "phase4_template",
+      "template_status": "needs_review",
+      "template_reason": "Forced minimal-damage allocation: all candidate units were hard blocked; Unit I was selected as the least damaging and fairest unit. 50% of the unit is unavailable, meeting hard block threshold 40%.",
+      "notes": "Main 1st Call forced to Unit I. Forced minimal-damage allocation: all candidate units were hard blocked; Unit I was selected as the least damaging and fairest unit. 50% of the unit is unavailable, meeting hard block threshold 40%."
+    },
+    {
+      "key": [
+        "2026-05-04",
+        "MAIN_1ST_24HR",
+        "Unit I",
+        "1ST_CALL",
+        "UNIT_I:primary"
+      ],
+      "starts_at": "2026-05-04T08:00:00",
+      "ends_at": "2026-05-05T08:00:00",
+      "is_24hr": true,
+      "max_assignees": 1,
+      "source": "phase4_template",
+      "template_status": "needs_review",
+      "template_reason": "Forced minimal-damage allocation: all candidate units were hard blocked; Unit I was selected as the least damaging and fairest unit. 50% of the unit is unavailable, meeting hard block threshold 40%.",
+      "notes": "Main 1st Call forced to Unit I. Forced minimal-damage allocation: all candidate units were hard blocked; Unit I was selected as the least damaging and fairest unit. 50% of the unit is unavailable, meeting hard block threshold 40%."
+    }
+  ],
+  "assignments": [
+    {
+      "slot": [
+        "2026-05-01",
+        "MAIN_1ST_24HR",
+        "Unit I",
+        "1ST_CALL",
+        "UNIT_I:primary"
+      ],
+      "person": "Blocked Member",
+      "status": "assigned",
+      "source": "reviewed_compute_draft",
+      "override_reason": null
+    },
+    {
+      "slot": [
+        "2026-05-02",
+        "MAIN_1ST_24HR",
+        "Unit I",
+        "1ST_CALL",
+        "UNIT_I:primary"
+      ],
+      "person": "Safe Member",
+      "status": "assigned",
+      "source": "reviewed_compute_draft",
+      "override_reason": null
+    },
+    {
+      "slot": [
+        "2026-05-03",
+        "MAIN_1ST_24HR",
+        "Unit I",
+        "1ST_CALL",
+        "UNIT_I:primary"
+      ],
+      "person": "Spare One",
+      "status": "assigned",
+      "source": "reviewed_compute_draft",
+      "override_reason": null
+    },
+    {
+      "slot": [
+        "2026-05-04",
+        "MAIN_1ST_24HR",
+        "Unit I",
+        "1ST_CALL",
+        "UNIT_I:primary"
+      ],
+      "person": "Spare Two",
+      "status": "assigned",
+      "source": "reviewed_compute_draft",
+      "override_reason": null
+    }
+  ]
+}

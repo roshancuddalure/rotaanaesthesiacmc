@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-10-24T04:54:04.908689+00:00",
+  "scope": "Bounded conflict recovery assertions; no full requirement completion.",
+  "entries": [
+    {
+      "suite": "frontend/tests/premium-rules-conflict-lifetime.browser.mjs",
+      "sha256": "89dc1468de6b337d903e28a53147d40c6c077f4267a8a554f5299d372a08ba7d",
+      "source_inspected": true,
+      "execution_verified": true,
+      "execution_verification_scope": "Root final6 contexts9 subscenarios each; source/test held. Independent read-only result review.",
+      "screens": [
+        "Exported Rota Rules editor",
+        "Review rule changes dialog"
+      ],
+      "contexts": {
+        "engines": [
+          "chromium",
+          "firefox",
+          "webkit"
+        ],
+        "widths": [
+          320,
+          1280
+        ],
+        "fixture": "Locally fulfilled API; paused clock"
+      },
+      "assertion_groups": [
+        {
+          "action": "Dismiss held recovery GET",
+          "selector": "Native review buttons; [data-text-field=label]; [data-part=status]",
+          "outcome": "Late success/error cannot replace draft, steal focus, repaint closed review or change saved revision.",
+          "source_lines": [
+            58,
+            77,
+            78,
+            79,
+            80,
+            83
+          ],
+          "evidence_class": "native_editor_locally_intercepted_get_post_put_with_held_response",
+          "report_paths": [
+            "docs/premium-ui/qa-rules-conflict-lifetime.json"
+          ]
+        },
+        {
+          "action": "Retry current failed recovery",
+          "selector": "Native review buttons; [data-text-field=label]; [data-part=status]",
+          "outcome": "503 remains visible and save disabled until explicit retry; recovery succeeds without automatic repeated PUT.",
+          "source_lines": [
+            49,
+            51,
+            52,
+            53,
+            72,
+            93
+          ],
+          "evidence_class": "native_editor_locally_intercepted_get_post_put_with_held_response",
+          "report_paths": [
+            "docs/premium-ui/qa-rules-conflict-lifetime.json"
+          ]
+        },
+        {
+          "action": "Dismiss during rebased validation",
+          "selector": "Native review buttons; [data-text-field=label]; [data-part=status]",
+          "outcome": "Parent continuation cannot repaint dismissed review after held validation; new draft retains rebased revision.",
+          "source_lines": [
+            49,
+            62,
+            63,
+            67,
+            69
+          ],
+          "evidence_class": "native_editor_locally_intercepted_get_post_put_with_held_response",
+          "report_paths": [
+            "docs/premium-ui/qa-rules-conflict-lifetime.json"
+          ]
+        },
+        {
+          "action": "Recover current reload/rebase",
+          "selector": "Native review buttons; [data-text-field=label]; [data-part=status]",
+          "outcome": "Explicit recovery preserves latest server-owned limits and saves with rev-2.",
+          "source_lines": [
+            32,
+            91,
+            93
+          ],
+          "evidence_class": "native_editor_locally_intercepted_get_post_put_with_held_response",
+          "report_paths": [
+            "docs/premium-ui/qa-rules-conflict-lifetime.json"
+          ]
+        },
+        {
+          "action": "Contract and snapshot isolation",
+          "selector": "Native review buttons; [data-text-field=label]; [data-part=status]",
+          "outcome": "Exact full check body and duty-rules-only PUT, all locally fulfilled, source/test unchanged.",
+          "source_lines": [
+            32,
+            36,
+            100
+          ],
+          "evidence_class": "native_editor_locally_intercepted_get_post_put_with_held_response",
+          "report_paths": [
+            "docs/premium-ui/qa-rules-conflict-lifetime.json"
+          ]
+        }
+      ],
+      "limitations": [
+        "Development-module local fixtures only; all API intercepted, exact existing GET/check/PUT contracts asserted. No real persistence, production-bundle, native assistive-technology or physical-device certification.",
+        "Detached-page recovery, timeout/abort and held rebased-check503 remain untested. Separate confirmed-save fallback GET lifetime/recovery gap remains queued.",
+        "All61 table candidates classified at source level, including previously missed interpolated opening tag; no per-table runtime acceptance inferred.",
+        "Requirements182/225 and101 remain partial; all260 requirements remain an active incomplete goal. No backend changes by this batch; concurrent backend work preserved. No commit/push/deploy."
+      ]
+    }
+  ]
+}

@@ -43,7 +43,7 @@ try {
     let staleOnce = false;
     let mergedOnce = false;
     await page.route("**/__duplicates-test", (route) =>
-      route.fulfill({ contentType: "text/html", body: '<html lang="en"><head><title>t</title><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/src/styles.css"></head><body></body></html>' }));
+      route.fulfill({ contentType: "text/html", body: '<html lang="en"><head><title>t</title><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/src/styles.css"><link rel="stylesheet" href="/src/premium-theme.css"></head><body></body></html>' }));
     await page.route("**/api/v1/**", async (route) => {
       const req = route.request();
       const path = new URL(req.url()).pathname;
@@ -187,7 +187,7 @@ try {
   const page = await context.newPage();
   let calls = 0;
   await page.route("**/__duplicates-test", (route) =>
-    route.fulfill({ contentType: "text/html", body: '<html lang="en"><head><title>t</title><link rel="stylesheet" href="/src/styles.css"></head><body></body></html>' }));
+    route.fulfill({ contentType: "text/html", body: '<html lang="en"><head><title>t</title><link rel="stylesheet" href="/src/styles.css"><link rel="stylesheet" href="/src/premium-theme.css"></head><body></body></html>' }));
   await page.route("**/api/v1/admin/members/suspected-duplicates", (route) => {
     calls += 1;
     return calls === 1 ? route.fulfill({ status: 500, json: { detail: "Database unavailable" } }) : route.fulfill({ json: [] });

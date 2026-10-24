@@ -1,0 +1,827 @@
+{
+  "createdAt": "2026-10-21T17:53:36.193Z",
+  "scope": "Measured actual Chromium app with GET-only intercepted October month, 10 units, 50/500/2000 unique people and postings, 320/1280 CSS pixels, 3 fresh contexts each. Read-to-board is fetch response resolution until complete expected DOM and two animation frames; includes test observation overhead. Interaction capture until two animation frames includes handler and frame waiting; not INP or physical-device latency. Long tasks cover page lifetime including shell and fixture fetches. No CPU/network throttling, no backend persistence, no production bundle or cross-browser performance claim. No global performance threshold asserted.",
+  "sources": {
+    "main.ts": "a3f5bfb13b8a160b1b85142ad6ebf179eabdbe75536f93dc2cf4174bcf0f7b73",
+    "premium-theme.css": "24c4755fa0ed1a48dfebfe6b52a10f41a1dae5802fd89ad3c1cce02194438acb",
+    "unit-board-filters.ts": "cbbab1d287ebf9aa493a3aaf1e80d9e088d875d31425204ec9fe6e08a683a3b6"
+  },
+  "summaries": [
+    {
+      "count": 50,
+      "width": 320,
+      "samples": 3,
+      "readToBoardMs": {
+        "min": 159.39999997615814,
+        "median": 165.69999998807907,
+        "max": 165.80000001192093
+      },
+      "searchMs": {
+        "min": 16.19999998807907,
+        "median": 17.900000005960464,
+        "max": 26.30000001192093
+      },
+      "campusFilterMs": {
+        "min": 11.400000005960464,
+        "median": 14.599999994039536,
+        "max": 18.899999976158142
+      },
+      "domElements": 1411,
+      "longTaskCount": [
+        1,
+        2,
+        2
+      ],
+      "longTaskMaxMs": [
+        60,
+        67,
+        85
+      ]
+    },
+    {
+      "count": 50,
+      "width": 1280,
+      "samples": 3,
+      "readToBoardMs": {
+        "min": 195.40000000596046,
+        "median": 209.5,
+        "max": 248
+      },
+      "searchMs": {
+        "min": 17.900000005960464,
+        "median": 19.69999998807907,
+        "max": 34
+      },
+      "campusFilterMs": {
+        "min": 27.200000017881393,
+        "median": 37.39999997615814,
+        "max": 40
+      },
+      "domElements": 1411,
+      "longTaskCount": [
+        4,
+        2,
+        2
+      ],
+      "longTaskMaxMs": [
+        161,
+        121,
+        112
+      ]
+    },
+    {
+      "count": 500,
+      "width": 320,
+      "samples": 3,
+      "readToBoardMs": {
+        "min": 186.5,
+        "median": 201.40000000596046,
+        "max": 211.7999999821186
+      },
+      "searchMs": {
+        "min": 17.299999982118607,
+        "median": 24.900000005960464,
+        "max": 28.80000001192093
+      },
+      "campusFilterMs": {
+        "min": 16.099999994039536,
+        "median": 22.299999982118607,
+        "max": 34.099999994039536
+      },
+      "domElements": 3214,
+      "longTaskCount": [
+        3,
+        3,
+        4
+      ],
+      "longTaskMaxMs": [
+        113,
+        102,
+        114
+      ]
+    },
+    {
+      "count": 500,
+      "width": 1280,
+      "samples": 3,
+      "readToBoardMs": {
+        "min": 312.59999999403954,
+        "median": 491.09999999403954,
+        "max": 647.9000000059605
+      },
+      "searchMs": {
+        "min": 55.70000001788139,
+        "median": 67.09999999403954,
+        "max": 88.5
+      },
+      "campusFilterMs": {
+        "min": 48.900000005960464,
+        "median": 53.099999994039536,
+        "max": 100.09999999403954
+      },
+      "domElements": 3214,
+      "longTaskCount": [
+        4,
+        7,
+        6
+      ],
+      "longTaskMaxMs": [
+        204,
+        436,
+        287
+      ]
+    },
+    {
+      "count": 2000,
+      "width": 320,
+      "samples": 3,
+      "readToBoardMs": {
+        "min": 595.9000000059605,
+        "median": 629.7000000178814,
+        "max": 746.6999999880791
+      },
+      "searchMs": {
+        "min": 32.20000001788139,
+        "median": 47.400000005960464,
+        "max": 51.5
+      },
+      "campusFilterMs": {
+        "min": 36.20000001788139,
+        "median": 39.400000005960464,
+        "max": 41.79999998211861
+      },
+      "domElements": 9214,
+      "longTaskCount": [
+        5,
+        6,
+        5
+      ],
+      "longTaskMaxMs": [
+        525,
+        427,
+        401
+      ]
+    },
+    {
+      "count": 2000,
+      "width": 1280,
+      "samples": 3,
+      "readToBoardMs": {
+        "min": 557.5,
+        "median": 665,
+        "max": 846.7999999821186
+      },
+      "searchMs": {
+        "min": 60.89999997615814,
+        "median": 64.60000002384186,
+        "max": 77
+      },
+      "campusFilterMs": {
+        "min": 64,
+        "median": 67.19999998807907,
+        "max": 104.5
+      },
+      "domElements": 9214,
+      "longTaskCount": [
+        8,
+        6,
+        6
+      ],
+      "longTaskMaxMs": [
+        563,
+        464,
+        366
+      ]
+    }
+  ],
+  "samples": [
+    {
+      "count": 50,
+      "width": 320,
+      "sample": 1,
+      "readToBoardMs": 159.39999997615814,
+      "domElements": 1411,
+      "memberChips": 50,
+      "postingRows": 50,
+      "overflow": false,
+      "searchMs": 26.30000001192093,
+      "campusFilterMs": 14.599999994039536,
+      "longTasksSupported": true,
+      "longTasks": [
+        {
+          "startTime": 198.60000002384186,
+          "duration": 60
+        }
+      ],
+      "errors": [],
+      "writes": [],
+      "monthReads": 1
+    },
+    {
+      "count": 50,
+      "width": 320,
+      "sample": 2,
+      "readToBoardMs": 165.80000001192093,
+      "domElements": 1411,
+      "memberChips": 50,
+      "postingRows": 50,
+      "overflow": false,
+      "searchMs": 16.19999998807907,
+      "campusFilterMs": 18.899999976158142,
+      "longTasksSupported": true,
+      "longTasks": [
+        {
+          "startTime": 182.5,
+          "duration": 67
+        },
+        {
+          "startTime": 417.5,
+          "duration": 60
+        }
+      ],
+      "errors": [],
+      "writes": [],
+      "monthReads": 1
+    },
+    {
+      "count": 50,
+      "width": 320,
+      "sample": 3,
+      "readToBoardMs": 165.69999998807907,
+      "domElements": 1411,
+      "memberChips": 50,
+      "postingRows": 50,
+      "overflow": false,
+      "searchMs": 17.900000005960464,
+      "campusFilterMs": 11.400000005960464,
+      "longTasksSupported": true,
+      "longTasks": [
+        {
+          "startTime": 253.19999998807907,
+          "duration": 85
+        },
+        {
+          "startTime": 511.7999999821186,
+          "duration": 76
+        }
+      ],
+      "errors": [],
+      "writes": [],
+      "monthReads": 1
+    },
+    {
+      "count": 50,
+      "width": 1280,
+      "sample": 1,
+      "readToBoardMs": 248,
+      "domElements": 1411,
+      "memberChips": 50,
+      "postingRows": 50,
+      "overflow": false,
+      "searchMs": 34,
+      "campusFilterMs": 40,
+      "longTasksSupported": true,
+      "longTasks": [
+        {
+          "startTime": 207.19999998807907,
+          "duration": 69
+        },
+        {
+          "startTime": 470.7999999821186,
+          "duration": 161
+        },
+        {
+          "startTime": 770.5999999940395,
+          "duration": 54
+        },
+        {
+          "startTime": 953.2999999821186,
+          "duration": 51
+        }
+      ],
+      "errors": [],
+      "writes": [],
+      "monthReads": 1
+    },
+    {
+      "count": 50,
+      "width": 1280,
+      "sample": 2,
+      "readToBoardMs": 209.5,
+      "domElements": 1411,
+      "memberChips": 50,
+      "postingRows": 50,
+      "overflow": false,
+      "searchMs": 19.69999998807907,
+      "campusFilterMs": 37.39999997615814,
+      "longTasksSupported": true,
+      "longTasks": [
+        {
+          "startTime": 191.5,
+          "duration": 64
+        },
+        {
+          "startTime": 428.40000000596046,
+          "duration": 121
+        }
+      ],
+      "errors": [],
+      "writes": [],
+      "monthReads": 1
+    },
+    {
+      "count": 50,
+      "width": 1280,
+      "sample": 3,
+      "readToBoardMs": 195.40000000596046,
+      "domElements": 1411,
+      "memberChips": 50,
+      "postingRows": 50,
+      "overflow": false,
+      "searchMs": 17.900000005960464,
+      "campusFilterMs": 27.200000017881393,
+      "longTasksSupported": true,
+      "longTasks": [
+        {
+          "startTime": 171,
+          "duration": 65
+        },
+        {
+          "startTime": 403,
+          "duration": 112
+        }
+      ],
+      "errors": [],
+      "writes": [],
+      "monthReads": 1
+    },
+    {
+      "count": 500,
+      "width": 320,
+      "sample": 1,
+      "readToBoardMs": 201.40000000596046,
+      "domElements": 3214,
+      "memberChips": 500,
+      "postingRows": 50,
+      "overflow": false,
+      "searchMs": 28.80000001192093,
+      "campusFilterMs": 22.299999982118607,
+      "longTasksSupported": true,
+      "longTasks": [
+        {
+          "startTime": 168.7000000178814,
+          "duration": 56
+        },
+        {
+          "startTime": 392.80000001192093,
+          "duration": 113
+        },
+        {
+          "startTime": 628.5,
+          "duration": 56
+        }
+      ],
+      "errors": [],
+      "writes": [],
+      "monthReads": 1
+    },
+    {
+      "count": 500,
+      "width": 320,
+      "sample": 2,
+      "readToBoardMs": 186.5,
+      "domElements": 3214,
+      "memberChips": 500,
+      "postingRows": 50,
+      "overflow": false,
+      "searchMs": 17.299999982118607,
+      "campusFilterMs": 16.099999994039536,
+      "longTasksSupported": true,
+      "longTasks": [
+        {
+          "startTime": 148.09999999403954,
+          "duration": 52
+        },
+        {
+          "startTime": 360.80000001192093,
+          "duration": 102
+        },
+        {
+          "startTime": 569.0999999940395,
+          "duration": 54
+        }
+      ],
+      "errors": [],
+      "writes": [],
+      "monthReads": 1
+    },
+    {
+      "count": 500,
+      "width": 320,
+      "sample": 3,
+      "readToBoardMs": 211.7999999821186,
+      "domElements": 3214,
+      "memberChips": 500,
+      "postingRows": 50,
+      "overflow": false,
+      "searchMs": 24.900000005960464,
+      "campusFilterMs": 34.099999994039536,
+      "longTasksSupported": true,
+      "longTasks": [
+        {
+          "startTime": 171.7999999821186,
+          "duration": 69
+        },
+        {
+          "startTime": 426,
+          "duration": 114
+        },
+        {
+          "startTime": 685.8999999761581,
+          "duration": 100
+        },
+        {
+          "startTime": 1025.8999999761581,
+          "duration": 85
+        }
+      ],
+      "errors": [],
+      "writes": [],
+      "monthReads": 1
+    },
+    {
+      "count": 500,
+      "width": 1280,
+      "sample": 1,
+      "readToBoardMs": 312.59999999403954,
+      "domElements": 3214,
+      "memberChips": 500,
+      "postingRows": 50,
+      "overflow": false,
+      "searchMs": 55.70000001788139,
+      "campusFilterMs": 48.900000005960464,
+      "longTasksSupported": true,
+      "longTasks": [
+        {
+          "startTime": 204.59999999403954,
+          "duration": 77
+        },
+        {
+          "startTime": 503.09999999403954,
+          "duration": 204
+        },
+        {
+          "startTime": 905.0999999940395,
+          "duration": 91
+        },
+        {
+          "startTime": 1214.7999999821186,
+          "duration": 83
+        }
+      ],
+      "errors": [],
+      "writes": [],
+      "monthReads": 1
+    },
+    {
+      "count": 500,
+      "width": 1280,
+      "sample": 2,
+      "readToBoardMs": 647.9000000059605,
+      "domElements": 3214,
+      "memberChips": 500,
+      "postingRows": 50,
+      "overflow": false,
+      "searchMs": 88.5,
+      "campusFilterMs": 100.09999999403954,
+      "longTasksSupported": true,
+      "longTasks": [
+        {
+          "startTime": 242.09999999403954,
+          "duration": 118
+        },
+        {
+          "startTime": 641.1999999880791,
+          "duration": 72
+        },
+        {
+          "startTime": 713.6999999880791,
+          "duration": 436
+        },
+        {
+          "startTime": 1321.2999999821186,
+          "duration": 75
+        },
+        {
+          "startTime": 1489.2999999821186,
+          "duration": 162
+        },
+        {
+          "startTime": 1723,
+          "duration": 81
+        },
+        {
+          "startTime": 2116.399999976158,
+          "duration": 257
+        }
+      ],
+      "errors": [],
+      "writes": [],
+      "monthReads": 1
+    },
+    {
+      "count": 500,
+      "width": 1280,
+      "sample": 3,
+      "readToBoardMs": 491.09999999403954,
+      "domElements": 3214,
+      "memberChips": 500,
+      "postingRows": 50,
+      "overflow": false,
+      "searchMs": 67.09999999403954,
+      "campusFilterMs": 53.099999994039536,
+      "longTasksSupported": true,
+      "longTasks": [
+        {
+          "startTime": 374.09999999403954,
+          "duration": 131
+        },
+        {
+          "startTime": 821,
+          "duration": 94
+        },
+        {
+          "startTime": 916.2000000178814,
+          "duration": 287
+        },
+        {
+          "startTime": 1339.0999999940395,
+          "duration": 60
+        },
+        {
+          "startTime": 1461.7000000178814,
+          "duration": 98
+        },
+        {
+          "startTime": 1776.9000000059605,
+          "duration": 108
+        }
+      ],
+      "errors": [],
+      "writes": [],
+      "monthReads": 1
+    },
+    {
+      "count": 2000,
+      "width": 320,
+      "sample": 1,
+      "readToBoardMs": 746.6999999880791,
+      "domElements": 9214,
+      "memberChips": 2000,
+      "postingRows": 50,
+      "overflow": false,
+      "searchMs": 47.400000005960464,
+      "campusFilterMs": 41.79999998211861,
+      "longTasksSupported": true,
+      "longTasks": [
+        {
+          "startTime": 188.2999999821186,
+          "duration": 70
+        },
+        {
+          "startTime": 463.39999997615814,
+          "duration": 94
+        },
+        {
+          "startTime": 558.1999999880791,
+          "duration": 525
+        },
+        {
+          "startTime": 1350.7999999821186,
+          "duration": 273
+        },
+        {
+          "startTime": 2457.399999976158,
+          "duration": 205
+        }
+      ],
+      "errors": [],
+      "writes": [],
+      "monthReads": 1
+    },
+    {
+      "count": 2000,
+      "width": 320,
+      "sample": 2,
+      "readToBoardMs": 629.7000000178814,
+      "domElements": 9214,
+      "memberChips": 2000,
+      "postingRows": 50,
+      "overflow": false,
+      "searchMs": 51.5,
+      "campusFilterMs": 36.20000001788139,
+      "longTasksSupported": true,
+      "longTasks": [
+        {
+          "startTime": 196.80000001192093,
+          "duration": 65
+        },
+        {
+          "startTime": 446.5,
+          "duration": 102
+        },
+        {
+          "startTime": 549,
+          "duration": 427
+        },
+        {
+          "startTime": 1221.6000000238419,
+          "duration": 287
+        },
+        {
+          "startTime": 1509.6000000238419,
+          "duration": 51
+        },
+        {
+          "startTime": 2257.4000000059605,
+          "duration": 203
+        }
+      ],
+      "errors": [],
+      "writes": [],
+      "monthReads": 1
+    },
+    {
+      "count": 2000,
+      "width": 320,
+      "sample": 3,
+      "readToBoardMs": 595.9000000059605,
+      "domElements": 9214,
+      "memberChips": 2000,
+      "postingRows": 50,
+      "overflow": false,
+      "searchMs": 32.20000001788139,
+      "campusFilterMs": 39.400000005960464,
+      "longTasksSupported": true,
+      "longTasks": [
+        {
+          "startTime": 193,
+          "duration": 77
+        },
+        {
+          "startTime": 485.90000000596046,
+          "duration": 93
+        },
+        {
+          "startTime": 579.5,
+          "duration": 401
+        },
+        {
+          "startTime": 1192.9000000059605,
+          "duration": 215
+        },
+        {
+          "startTime": 2061.5999999940395,
+          "duration": 200
+        }
+      ],
+      "errors": [],
+      "writes": [],
+      "monthReads": 1
+    },
+    {
+      "count": 2000,
+      "width": 1280,
+      "sample": 1,
+      "readToBoardMs": 846.7999999821186,
+      "domElements": 9214,
+      "memberChips": 2000,
+      "postingRows": 50,
+      "overflow": false,
+      "searchMs": 77,
+      "campusFilterMs": 104.5,
+      "longTasksSupported": true,
+      "longTasks": [
+        {
+          "startTime": 207.5,
+          "duration": 71
+        },
+        {
+          "startTime": 484.30000001192093,
+          "duration": 133
+        },
+        {
+          "startTime": 618,
+          "duration": 563
+        },
+        {
+          "startTime": 1364.9000000059605,
+          "duration": 65
+        },
+        {
+          "startTime": 1523.6000000238419,
+          "duration": 335
+        },
+        {
+          "startTime": 1859.4000000059605,
+          "duration": 50
+        },
+        {
+          "startTime": 1967.800000011921,
+          "duration": 75
+        },
+        {
+          "startTime": 2745,
+          "duration": 183
+        }
+      ],
+      "errors": [],
+      "writes": [],
+      "monthReads": 1
+    },
+    {
+      "count": 2000,
+      "width": 1280,
+      "sample": 2,
+      "readToBoardMs": 665,
+      "domElements": 9214,
+      "memberChips": 2000,
+      "postingRows": 50,
+      "overflow": false,
+      "searchMs": 60.89999997615814,
+      "campusFilterMs": 67.19999998807907,
+      "longTasksSupported": true,
+      "longTasks": [
+        {
+          "startTime": 166.09999999403954,
+          "duration": 58
+        },
+        {
+          "startTime": 381,
+          "duration": 90
+        },
+        {
+          "startTime": 471.59999999403954,
+          "duration": 464
+        },
+        {
+          "startTime": 1085.4000000059605,
+          "duration": 52
+        },
+        {
+          "startTime": 1208.4000000059605,
+          "duration": 260
+        },
+        {
+          "startTime": 2128.0999999940395,
+          "duration": 173
+        }
+      ],
+      "errors": [],
+      "writes": [],
+      "monthReads": 1
+    },
+    {
+      "count": 2000,
+      "width": 1280,
+      "sample": 3,
+      "readToBoardMs": 557.5,
+      "domElements": 9214,
+      "memberChips": 2000,
+      "postingRows": 50,
+      "overflow": false,
+      "searchMs": 64.60000002384186,
+      "campusFilterMs": 64,
+      "longTasksSupported": true,
+      "longTasks": [
+        {
+          "startTime": 204.7999999821186,
+          "duration": 59
+        },
+        {
+          "startTime": 425.69999998807907,
+          "duration": 70
+        },
+        {
+          "startTime": 496.40000000596046,
+          "duration": 366
+        },
+        {
+          "startTime": 1015.9000000059605,
+          "duration": 55
+        },
+        {
+          "startTime": 1126,
+          "duration": 230
+        },
+        {
+          "startTime": 2013.4000000059605,
+          "duration": 174
+        }
+      ],
+      "errors": [],
+      "writes": [],
+      "monthReads": 1
+    }
+  ]
+}

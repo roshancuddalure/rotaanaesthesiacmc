@@ -1,0 +1,84 @@
+{
+  "reviewer": "table_selection_review, specialist 7 of 10",
+  "date": "2026-10-22",
+  "scope": "Read-only source audit of pending 105,106,107,108,109,113; no application edits or browser executions. Two bounded gaps prioritized; no whole-item certification.",
+  "source_sha256": {
+    "frontend/src/reference-workspace.ts": "b0e111f78ff245eb94254c7c1d2fe1ebfa0224eda7a6c8d6ef83c1dc5f32a7de",
+    "frontend/src/recycle-bin.ts": "38d88c102310a0078db30cdacb860f28bd512cf73456fac7461452ccbe7ba944",
+    "frontend/src/main.ts": "367ac6a5fb23c8cdc2159086d8bec58da86c4e42f0e69ce33d9305062e2c40f9",
+    "frontend/tests/recycle-bin.browser.mjs": "a68e246932e2b1f39780752213c5d8f443d27e92e6ae72c2285d789f323202d4"
+  },
+  "existing_behavior_preserved": [
+    "main.ts:1941 and 3182-3183 already expose direction using aria-sort; do not report sort semantics absent globally.",
+    "recycle-bin.ts:232-233,243,269 already implement checked/mixed select-all state and explicit shown-row scope. Lines238 and263 distinguish truncated shown rows from whole-month deletion. Lines324-331 restore selected checkbox focus after render.",
+    "reference-workspace.ts:376-377 overrides the earlier unit input handler with combined query/status filtering; the apparent duplicate handler does not mean search ignores status. Search filters existing nodes, preserving the search input."
+  ],
+  "findings": [
+    {
+      "id": "reference-no-match-feedback",
+      "requirements": [
+        109
+      ],
+      "severity": "medium",
+      "paths": [
+        {
+          "path": "frontend/src/reference-workspace.ts",
+          "lines": [
+            325,
+            356,
+            360,
+            368,
+            376,
+            595,
+            641,
+            645
+          ]
+        }
+      ],
+      "finding": "Both unit and reference label searches only hide unmatched buttons. The initial empty message is rendered only when the fetched collection is empty. A nonempty loaded collection with zero matches therefore has no visible no-results explanation or announced result count. Unit status changes can produce the same blank list.",
+      "safe_fix": "Add a dedicated result-status element outside each filtered list. After existing local filtering, count visible buttons and render escaped query-independent text such as No units match these filters, or N units shown. Retain separate initial-empty/load-error states and preserve nodes, input focus, current editor draft, search behavior and all API calls. Do not add a debounce timer without measured need for this bounded local list.",
+      "bounded_tests": [
+        "Load nonempty fixtures; unmatched query shows explicit zero-result message and live result count; clearing restores every original button.",
+        "Unit query plus active/archived filter reports actual visible count; no-match state differs from initial empty collection.",
+        "Typing and clearing retain input focus/caret, editor draft and no extra API calls; test 320 and1280 in Chromium, Firefox and WebKit.",
+        "Initial failed GET remains the original error/retry state; a zero result must never replace that failure."
+      ]
+    },
+    {
+      "id": "recorded-past-selection-announcement",
+      "requirements": [
+        106,
+        107
+      ],
+      "severity": "medium",
+      "paths": [
+        {
+          "path": "frontend/src/recycle-bin.ts",
+          "lines": [
+            243,
+            258,
+            262,
+            265,
+            269,
+            324,
+            331
+          ]
+        }
+      ],
+      "finding": "Selection count appears in Delete selected (N), while the existing role=status paragraph contains only notice and is empty during checkbox selection. Thus there is no dedicated live selection count. Mixed state and scope already exist and should be preserved. This is an announcement gap, not evidence of incorrect deletion scope.",
+      "safe_fix": "Place a stable polite, atomic selection summary describing N selected of M shown in the month near the existing toolbar; keep deletion outcome notice separate. Preserve the selected Set, native indeterminate state, explicit shown-row select-all label, whole-month action and request payloads. Avoid automatic live announcements of the entire table.",
+      "bounded_tests": [
+        "With three shown rows, keyboard-select one: row focus retained, header mixed, summary reads 1 selected of3shown. Select-all and clear update count and native mixed state correctly.",
+        "With truncated=true, summary explicitly scopes to shown rows and leaves whole-month action separate; no API mutation needed to test selection presentation.",
+        "Change month clears selection according to existing behavior; held loading and error states never claim old rows selected in a newly requested month.",
+        "Intercept optional confirmation actions to assert existing selected-ID versus month payload unchanged; do not execute real delete calls."
+      ]
+    }
+  ],
+  "limits": [
+    "Source-only findings, not runtime failures reproduced in this audit.",
+    "No native screen-reader announcement or physical-device validation.",
+    "No exhaustive tables/actions inventory or all-role certification.",
+    "Requirements105,108,113 remain unassessed beyond existing safeguards noted above."
+  ]
+}

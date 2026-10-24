@@ -1,0 +1,72 @@
+{
+  "recorded_at_utc": "2026-10-22T10:01:02.959066+00:00",
+  "requirements": [
+    17,
+    18,
+    123,
+    125,
+    131,
+    134,
+    135,
+    136,
+    137,
+    140,
+    155,
+    184,
+    186,
+    187,
+    188,
+    197,
+    200,
+    208,
+    212,
+    221,
+    223,
+    225,
+    227,
+    228,
+    229,
+    230,
+    258
+  ],
+  "completion_claim": false,
+  "scope": "Account administration response contexts, canonical field validation and mapping save feedback; bounded frontend outcomes plus CSV correction verification.",
+  "source_sha256": {
+    "frontend/src/main.ts": "6f7287fe95b1e9a11e327c2e47f5df86c1d49c79cd74c182198bf1c15e12df6c",
+    "frontend/src/member-workspace.ts": "74f9c688b2c4e4e703f8bee347bbee3ec4f3e1085005647efca7c75b9789179b",
+    "frontend/src/reference-workspace.ts": "cdb698e422a5d94d5332ed082631c70cca6a36d79c558997552ee510d01ba120",
+    "frontend/src/form-validation.ts": "a6d6cfa746f502cf05e5f4f1e1acade1c7ca82b592a497d98b79661854783a93"
+  },
+  "changes": [
+    "Confirmed recovery prompt exposed its response after leaving Accounts. Recovery/create completion now checks exact actor, view, render, connected control and shell lifetime; pending recovery duplicate blocked. Existing confirmations and request payloads preserved.",
+    "Confirmed account creation followed by failed list read now explicitly reports creation success and offers GET-only list retry; stale create form removed.",
+    "Canonical member local validation clears owned stale hints on edit. Structured422 errors associate actual fields using existing shared validation helper, including a visible destination for cross-tab errors. Existing409 comparison retained.",
+    "Mapping creation visibly marks saving, disables pending controls with a wait explanation and restores original controls/draft on refusal; request body captured before locking fields."
+  ],
+  "evidence": [
+    "docs/premium-ui/qa-account-admin-lifetime.json",
+    "docs/premium-ui/qa-member-csv-correction-independent.json",
+    "docs/premium-ui/reviews/member-validation-fixed-current.json",
+    "docs/premium-ui/reviews/member-validation-indexed-current.json",
+    "docs/premium-ui/reviews/mapping-pending-finish-current.json",
+    "docs/premium-ui/qa-account-admin-before.json",
+    "docs/premium-ui/reviews/account-admin-review-current.json"
+  ],
+  "checks": {
+    "account_admin_workflows": 6,
+    "csv_correction_workflows": 6,
+    "canonical_validation_workflows": 12,
+    "mapping_pending_contexts": 12,
+    "canonical_save_regressions": 6,
+    "account_profile_regressions": 6,
+    "unit_tests": 100,
+    "production_build_exit": 0
+  },
+  "limits": [
+    "All mutations intercepted in fixtures. Exact payload/manual retry/GET results do not certify production persistence or authorization enforcement.",
+    "Earlier reports retain exact source snapshots; read each recorded hash and bounded scope. Shared inventory certifies no runtime actions by itself.",
+    "Physical-device/native screen-reader checks pending per existing disposition.",
+    "No UI-team backend, API-contract, permission, scheduling, persisted-semantics or export-content changes; concurrent work preserved.",
+    "Full260goal remains active/incomplete; no commit/push/deploy."
+  ]
+}

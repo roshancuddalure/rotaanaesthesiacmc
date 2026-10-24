@@ -1,0 +1,91 @@
+{
+  "recorded_at_utc": "2026-10-23T14:52:48.645293+00:00",
+  "completion_claim": false,
+  "requirements": [
+    23,
+    25,
+    208,
+    209,
+    219,
+    258
+  ],
+  "scope": "Rendered navy framing/content and decorative champagne versus semantic warning palette on common shell/Limits/profile surfaces.",
+  "source_sha256": {
+    "frontend/src/main.ts": "87e8234cf013acaafa18af0ed1be542c873a310e4c64c6bd2a848d1a09f8376e",
+    "frontend/src/limits.ts": "f7c040de08fd0a593e1e071d7c09b2696344b9b85bbcd836f5367b49e4ef8db6",
+    "frontend/src/member-workspace.ts": "15f504eee18a641172e05386ff351b16b87948cf08bcb280390ea2ed250c1887",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "014c7fbfdb0317ced196268700971c381882d2e20eeffe33ea8d685b7fef2270"
+  },
+  "before": {
+    "report": "docs/premium-ui/qa-royal-palette-before.json",
+    "finding": "Darksidebargradientfixedrgb23/29/56whileactive--color-sidebaranddialogheaderrgb16/20/39. Limitsmainidentitytextalreadyresolvedtoreadablesecondarycolor;no contrastbugclaimedfixedthere."
+  },
+  "changes": [
+    "Sidebar gradient now uses active navy token plus a theme-specific depth token. Light palette values retained; dark frame follows intended navy family and existing header token.",
+    "Verified current decorative brandborder uses champagne and Limits warningbadge uses separate semantic text/background tokens with explicit label/title. Those existing warning colors and label meanings were already correct and unchanged.",
+    "Visual contract records gradient/token mapping and bounds of current palette evidence."
+  ],
+  "checks": {
+    "palette_contexts": 12,
+    "engines": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "widths": [
+      320,
+      1280
+    ],
+    "themes": [
+      "light",
+      "dark"
+    ],
+    "surfaces": [
+      "actual sidebar/brand",
+      "actual Limits hero/semantic legend",
+      "actual canonical profile header"
+    ],
+    "computed_mapping": "Active navy appears in sidebar gradient; native header matchesdialogheader token; content equalscontentsurface anddiffersfromheader; brandborder equalschampagne; warningtext/background equalwarningtokens anddifferfrombrandborder.",
+    "scoped_limits_hero_axe_checks": 12,
+    "tagged_axe_violations": 0,
+    "native_focus_and_route": "Limits active route and profileClose openerreturn preserved; GET-only palettefixture.",
+    "existing_limits_browser_checks": 177,
+    "unit_tests": 100,
+    "build_exit_code": 0,
+    "build_inputs_held": true,
+    "static_inventories": "Style/action write/check match; static integrity only."
+  },
+  "evidence": [
+    "docs/premium-ui/qa-royal-palette-before.json",
+    "docs/premium-ui/qa-royal-palette.json",
+    "docs/premium-ui/qa-limits-palette-batch.json",
+    "docs/premium-ui/visual-contract.md",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+  ],
+  "test": "frontend/tests/premium-royal-palette.browser.mjs",
+  "test_sha256": "9147947e1f1f1064b85090a2394a23bdd2da2d6858782383158071ebedfaffad",
+  "screenshots": [
+    "docs/premium-ui/screenshots/palette/limits-light-320.png",
+    "docs/premium-ui/screenshots/palette/limits-dark-320.png",
+    "docs/premium-ui/screenshots/palette/limits-light-1280.png",
+    "docs/premium-ui/screenshots/palette/limits-dark-1280.png"
+  ],
+  "visual_review": {
+    "reviewer": "rootimplementer,notindependent",
+    "artifacts": [
+      "docs/premium-ui/screenshots/palette/limits-light-1280.png",
+      "docs/premium-ui/screenshots/palette/limits-dark-1280.png"
+    ],
+    "finding": "Lightpanelsremainwhiteagainstnavy;darkpaneltoneisdistinctfromdarkerframe. Brandborderthin/decorative;warningpillhasamberfill,explicitlabelandexplanatorytext. No allsurface design signoff."
+  },
+  "limitations": [
+    "Root implementer review, not fresh independent signoff.",
+    "PalettefixturesoverrideUIrole tosuperadmin while disposableLimitsresponsemayremainreadonly. This tests presentation, not backend authorization.",
+    "Onlydeclaredshell/Limits/profile surfaces andstates; no everylegacycolor/hover/focus/forcedcolor check. Warning/decorativecolor token distinction pluslabels is not quantitative whole-app hue certification.",
+    "12axechecks scopedtoLimitshero; no blanketnav/dark/wholeapplication accessibilitycertification.",
+    "Existing177Limitschecks use intercepted mutations; no actual limits/policy/backend edits. Existingregression lacks ownsourcehold; new12reportholdsdeclaredfiles andbuildholdsinputs.",
+    "Mobile screenshots captured but onlydesktoplight/dark inspectedthisbatch. No nativeAT/physicaldevicecertification.",
+    "OnlyfrontendpremiumCSS anddocumentation changedthisbatch; no API/permissions/scheduling/persisteddata/exportcontent changes. Concurrentworkpreserved;full23/25/all260/samefixtureequivalenceopen."
+  ]
+}

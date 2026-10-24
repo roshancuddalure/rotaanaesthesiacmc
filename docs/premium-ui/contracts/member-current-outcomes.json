@@ -1,0 +1,3072 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-10-22T05:18:57.913326+00:00",
+  "requirements": [
+    17,
+    18,
+    258
+  ],
+  "completion_claim": false,
+  "scope": "Documentation-only bounded member-family reconciliation. All114historical contracts retained; explicit assertions mapped separately from report source freshness. No tests run/no source edits.",
+  "historical_contract_sha256": "117e8eae4948be49e71500d8b690d2bd6dc7bb8b5a2e1412890d3de4b500e2f7",
+  "review_current_sources": {
+    "frontend/src/member-workspace.ts": "21cbb5ae116f3abae60bcc09d35d3d4ae028424d6acbdd421a79749606632e14",
+    "frontend/src/member-profile.ts": "abe02a8cd2cac967585db38fc62748fc7984d559ee1b16e0f189f860e6616ba2",
+    "frontend/src/record-workspace.ts": "0443d0f51c27e462efa3a27397d2016398b8fc888c578436cd45410a5a6dadf1",
+    "frontend/src/reference-workspace.ts": "886a5e50c66c4215b021f28fe06a23b667a4f1ded368cb6ee0406e3adea066e0",
+    "frontend/src/operational-import.ts": "555fc9b45a2e3024ecc705f9a553e3efe053b816988dda67607bca76cc8a232a"
+  },
+  "counts": {
+    "contracts": 114,
+    "with_explicit_bounded_assertions": 114,
+    "full_contracts_certified": 0
+  },
+  "method": [
+    "Read actual assertion bodies in premium-member-actions,record-validation,workspace-unload and current analytics/member-open tests; source selectors/suite names alone excluded.",
+    "Retain old member contracts as historical; do not infer all clauses passed from bounded subset or test count.",
+    "Hash each linked report and test; compare declared report source hashes where available; absent hashes remain recorded evidence,not current-source pass.",
+    "No browser jobs added while root guide audit runs. Remaining controls labeled source-enabled, current runtime re-observation pending."
+  ],
+  "reports": {
+    "docs/premium-ui/member-actions-results.json": {
+      "sha256": "bc07f4d569ecb689a2032bde6fc2c905b6a6b846a6af0a4700b9b1ece0453ca1",
+      "freshness": {
+        "status": "no_comparable_declared_source_hashes",
+        "files": []
+      }
+    },
+    "docs/premium-ui/qa-context-action-outcomes-independent.json": {
+      "sha256": "bb6957842e500dc066c9dbe6581b90df0bbfcf5f27ee4a6f755120e9ef7c1049",
+      "freshness": {
+        "status": "source_matches_declared_files_only",
+        "files": [
+          {
+            "path": "frontend/src/main.ts",
+            "matches": true
+          },
+          {
+            "path": "frontend/src/member-workspace.ts",
+            "matches": true
+          },
+          {
+            "path": "frontend/src/navigation-history.ts",
+            "matches": true
+          }
+        ]
+      }
+    },
+    "docs/premium-ui/qa-record-validation.json": {
+      "sha256": "a2eb59ff974fdb5892871127a6cd16afabff134b631ee21ea848ab75ea86b72d",
+      "freshness": {
+        "status": "no_comparable_declared_source_hashes",
+        "files": []
+      }
+    },
+    "docs/premium-ui/qa-workspace-unload-independent.json": {
+      "sha256": "7e4faddb3ab367eab633ab5678f8006ca0fc240e67cc5a7f6b9de5b58a445d36",
+      "freshness": {
+        "status": "no_comparable_declared_source_hashes",
+        "files": []
+      }
+    },
+    "docs/premium-ui/qa-member-three-controls-independent.json": {
+      "sha256": "f9a967c0ec6d68bf20de3bf1d894bb81fe363a29c52073b155cf6f6ce7bfb672",
+      "freshness": {
+        "status": "Source hashes declared at successful run, may differ after coordinator changes; compare individually.",
+        "files": {
+          "src/main.ts": "9b9f4bbd0df59f70fcd0e1b5f63aa71bdb91c4d8648a22498d0165d6fd881e64",
+          "src/member-workspace.ts": "35cb92656ca7c8c43b1c0a6de4c51eec56ca6854fd60d420e4330be362f8f56f",
+          "src/reference-workspace.ts": "886a5e50c66c4215b021f28fe06a23b667a4f1ded368cb6ee0406e3adea066e0"
+        }
+      }
+    },
+    "docs/premium-ui/qa-member-duplicates-entry-independent.json": {
+      "sha256": "27c37c53bebc854eef838f91414dc88cd339170ad1bd01d2959cb8fdb95dafd2",
+      "freshness": {
+        "status": "Declared main/member source hashes matched at terminal suite completion;lateredits may invalidate",
+        "source_sha256": {
+          "src/main.ts": "e7a7ef7ef361057d0674d04bf96b9016fb879b2f52de70cfe41326644af9fffd",
+          "src/member-workspace.ts": "35cb92656ca7c8c43b1c0a6de4c51eec56ca6854fd60d420e4330be362f8f56f"
+        }
+      }
+    },
+    "docs/premium-ui/qa-member-linked-actions-independent.json": {
+      "sha256": "b36f78f2904571ddb10dc2327f660a2785649a508d2af16bb289a8cb33c89eb2",
+      "freshness": {
+        "status": "Declaredsourcehashesmatchedatsuccessfulruncompletion",
+        "source_sha256": {
+          "src/main.ts": "72c0b8291d77271848ec32a13a10b4373938dec256112bc3ddab9caf121d0e42",
+          "src/member-workspace.ts": "fb70b958851874f5f66cd1e4c579a8b78beb30116dbba262a7af7a48dfb71c36",
+          "src/record-workspace.ts": "0443d0f51c27e462efa3a27397d2016398b8fc888c578436cd45410a5a6dadf1"
+        }
+      }
+    },
+    "docs/premium-ui/qa-member-csv-choice-independent.json": {
+      "sha256": "d91a21c00e963fcce993d499e2dee99b1dca84f06fc693f7ddac190d6c19acd3",
+      "freshness": {
+        "status": "Sourcehashesmatchedterminalsuccessfulrun",
+        "source_sha256": {
+          "src/main.ts": "72c0b8291d77271848ec32a13a10b4373938dec256112bc3ddab9caf121d0e42",
+          "src/member-workspace.ts": "8eedae4e0ccff851730aa1e203f52b0023407bf93482f491b0238314590c6e31"
+        }
+      }
+    },
+    "docs/premium-ui/qa-member-roster-bulk-independent.json": {
+      "sha256": "b640a47125325cfcab1db93f6b154ba7a11efd6af10d1b209662b9903e5349b6",
+      "freshness": {
+        "status": "Sourcehashesmatchedterminalrun",
+        "source_sha256": {
+          "src/main.ts": "6cc938e2bd2a2214f42d672fcf91d198a67b0ac1b5072c4b1a164eee94886e65",
+          "src/member-workspace.ts": "8eedae4e0ccff851730aa1e203f52b0023407bf93482f491b0238314590c6e31"
+        }
+      }
+    },
+    "docs/premium-ui/qa-member-save-independent.json": {
+      "sha256": "a4cf0bb6b76ddb02b44af7c1d7a627bbb51027c0095d86ee64432a5d79329223",
+      "freshness": {
+        "status": "Main/memberhashesmatchedthroughterminalextendedrun",
+        "source_sha256": {
+          "src/main.ts": "4e1e9d4effaea1c7b353ee1c27e11e752013a38561d195e198c2d968e7b248ba",
+          "src/member-workspace.ts": "435634629297141da1f95850471d16026096168e2c0e5280f2e2f2ba3fc10f3b"
+        }
+      }
+    },
+    "docs/premium-ui/qa-member-csv-correction-independent.json": {
+      "sha256": "8eaf1a9376de7b57b704694f6ad558077953ff030da76828080315e2119e4804",
+      "freshness": {
+        "status": "Main/memberhashesmatchedthroughsuccessfulterminalrun",
+        "source_sha256": {
+          "src/main.ts": "6f7287fe95b1e9a11e327c2e47f5df86c1d49c79cd74c182198bf1c15e12df6c",
+          "src/member-workspace.ts": "435634629297141da1f95850471d16026096168e2c0e5280f2e2f2ba3fc10f3b"
+        }
+      }
+    },
+    "docs/premium-ui/qa-inline-member-choice-independent.json": {
+      "sha256": "f46035c74f60221861ca576a00166889cbf973f50e2c9cdaf632f4b636b17df3",
+      "freshness": {
+        "status": "Fourappsourcehashesmatchedterminalfinalrun",
+        "source_sha256": {
+          "src/main.ts": "edfe6342f7fea0cfbf155ecc3636410897aa104a5623728c2010c7121348529a",
+          "src/member-workspace.ts": "74f9c688b2c4e4e703f8bee347bbee3ec4f3e1085005647efca7c75b9789179b",
+          "src/record-workspace.ts": "0443d0f51c27e462efa3a27397d2016398b8fc888c578436cd45410a5a6dadf1",
+          "src/operational-import.ts": "555fc9b45a2e3024ecc705f9a553e3efe053b816988dda67607bca76cc8a232a"
+        }
+      }
+    },
+    "docs/premium-ui/qa-record-new-unit-independent.json": {
+      "sha256": "2dca317cc18223f0c2cb93d2c07722f2b14c26ddd9a20a2723ead19068e0526e",
+      "freshness": {
+        "status": "Fourappsourcehashesmatchedterminalrun",
+        "source_sha256": {
+          "src/main.ts": "8099e2182e25a65e48a138ea172210af5ae81eefe8e7b14c4aedb7a615fc791f",
+          "src/member-workspace.ts": "74f9c688b2c4e4e703f8bee347bbee3ec4f3e1085005647efca7c75b9789179b",
+          "src/record-workspace.ts": "0443d0f51c27e462efa3a27397d2016398b8fc888c578436cd45410a5a6dadf1",
+          "src/reference-workspace.ts": "3c3f30aa049973ce9403636ef8a6bb8312c29f9af630e5cd37350f5d67d86691"
+        }
+      }
+    },
+    "docs/premium-ui/qa-reference-meaning-fields.json": {
+      "sha256": "8c59ea52211817e834e76ddbebadbf53d1e1023d5fcce88e02b2fabf51aa7c78",
+      "freshness": {
+        "status": "matching_declared_sources_only",
+        "files": [
+          {
+            "source": "frontend/src/reference-workspace.ts",
+            "recorded_sha256": "b0e111f78ff245eb94254c7c1d2fe1ebfa0224eda7a6c8d6ef83c1dc5f32a7de",
+            "current_sha256": "b0e111f78ff245eb94254c7c1d2fe1ebfa0224eda7a6c8d6ef83c1dc5f32a7de",
+            "matches": true
+          }
+        ]
+      }
+    },
+    "docs/premium-ui/qa-csv-template-artifacts.json": {
+      "sha256": "7b83fb76a24f4bb3cc20773912a4f192f826e2edafa435031f0aec6673d3e4e4",
+      "freshness": {
+        "status": "matching_declared_sources_only",
+        "files": [
+          {
+            "source": "frontend/src/member-workspace.ts",
+            "recorded_sha256": "74f9c688b2c4e4e703f8bee347bbee3ec4f3e1085005647efca7c75b9789179b",
+            "current_sha256": "74f9c688b2c4e4e703f8bee347bbee3ec4f3e1085005647efca7c75b9789179b",
+            "matches": true
+          },
+          {
+            "source": "frontend/src/operational-import.ts",
+            "recorded_sha256": "cc9cf665de88de0def1c43d917ccb69fc056033df98675964cc7a7c49e05d0b1",
+            "current_sha256": "cc9cf665de88de0def1c43d917ccb69fc056033df98675964cc7a7c49e05d0b1",
+            "matches": true
+          }
+        ]
+      }
+    },
+    "docs/premium-ui/qa-inline-member-create.json": {
+      "sha256": "b3f1e38e821a07bd64da52463d55145f51b60b6d56db06b4e0a61d60a5451d73",
+      "freshness": {
+        "status": "matching_declared_sources_only",
+        "files": [
+          {
+            "source": "frontend/src/operational-import.ts",
+            "recorded_sha256": "3b01e14cbdbbb3c1a9bd2c0c1ea519ce4787170697e3ae34aba446014374df2a",
+            "current_sha256": "3b01e14cbdbbb3c1a9bd2c0c1ea519ce4787170697e3ae34aba446014374df2a",
+            "matches": true
+          }
+        ]
+      }
+    },
+    "docs/premium-ui/qa-import-review-pager.json": {
+      "sha256": "1e35b88473b854e9dd60b3710e48c6791cbde7eab3ead9138a46232acc19a9e5",
+      "freshness": {
+        "status": "matching_declared_sources_only",
+        "files": [
+          {
+            "source": "frontend/src/operational-import.ts",
+            "recorded_sha256": "a1d735a8e841fe2119ffa47f66b216bfc369dbe28799bcb6d014a2cc9fbdf830",
+            "current_sha256": "a1d735a8e841fe2119ffa47f66b216bfc369dbe28799bcb6d014a2cc9fbdf830",
+            "matches": true
+          }
+        ]
+      }
+    },
+    "docs/premium-ui/qa-record-reference-refresh.json": {
+      "sha256": "3ef817458dd9760c78b075ffe4ea388dad248117fae291ec14c85538e3af78bf",
+      "freshness": {
+        "status": "matching_declared_sources_only",
+        "files": [
+          {
+            "source": "frontend/src/record-workspace.ts",
+            "recorded_sha256": "f53fd32448f962156a7ff795dd34e6a0e0aa48ed82d9183354676cbceea8e904",
+            "current_sha256": "f53fd32448f962156a7ff795dd34e6a0e0aa48ed82d9183354676cbceea8e904",
+            "matches": true
+          }
+        ]
+      }
+    },
+    "docs/premium-ui/qa-member-csv-lifetime.json": {
+      "sha256": "6533e17fc1a22bce0c73a9dac87fade90d48508cfa2ceed45928e5dbe620e417",
+      "freshness": {
+        "status": "matching_declared_sources_only",
+        "files": [
+          {
+            "source": "frontend/src/member-workspace.ts",
+            "recorded_sha256": "39811b05c9d45f4f5fec88452c7ddfae5d1c471d366838309aac80ee32eab514",
+            "current_sha256": "39811b05c9d45f4f5fec88452c7ddfae5d1c471d366838309aac80ee32eab514",
+            "matches": true
+          }
+        ]
+      }
+    },
+    "docs/premium-ui/qa-import-candidate-choice.json": {
+      "sha256": "b8e2c4cd7b3ca34e12b9cd5d31e7235c6ab448019a2c9b314f5f7bcaf7f2f7c5",
+      "freshness": {
+        "status": "matching_declared_sources_only",
+        "files": [
+          {
+            "source": "frontend/src/operational-import.ts",
+            "recorded_sha256": "838afc1e32c4f0fa271eaa451423753d0054cdef6f3295da9e812257eb6d4e27",
+            "current_sha256": "838afc1e32c4f0fa271eaa451423753d0054cdef6f3295da9e812257eb6d4e27",
+            "matches": true
+          }
+        ]
+      }
+    },
+    "docs/premium-ui/qa-import-created-unit.json": {
+      "sha256": "d2d61d3004de3511456d1579240a0796b969e91cc8ab350c85e7dfac206b5b2d",
+      "freshness": {
+        "status": "matching_declared_sources_only",
+        "files": [
+          {
+            "source": "frontend/src/operational-import.ts",
+            "recorded_sha256": "838afc1e32c4f0fa271eaa451423753d0054cdef6f3295da9e812257eb6d4e27",
+            "current_sha256": "838afc1e32c4f0fa271eaa451423753d0054cdef6f3295da9e812257eb6d4e27",
+            "matches": true
+          },
+          {
+            "source": "frontend/src/reference-workspace.ts",
+            "recorded_sha256": "b0e111f78ff245eb94254c7c1d2fe1ebfa0224eda7a6c8d6ef83c1dc5f32a7de",
+            "current_sha256": "b0e111f78ff245eb94254c7c1d2fe1ebfa0224eda7a6c8d6ef83c1dc5f32a7de",
+            "matches": true
+          }
+        ]
+      }
+    },
+    "docs/premium-ui/qa-import-reference-controls.json": {
+      "sha256": "a740f7f4e838cbc0a623238f05b3f60b69592950819781596499010f1ae3ccff",
+      "freshness": {
+        "status": "matching_declared_sources_only",
+        "files": [
+          {
+            "source": "frontend/src/operational-import.ts",
+            "recorded_sha256": "838afc1e32c4f0fa271eaa451423753d0054cdef6f3295da9e812257eb6d4e27",
+            "current_sha256": "838afc1e32c4f0fa271eaa451423753d0054cdef6f3295da9e812257eb6d4e27",
+            "matches": true
+          },
+          {
+            "source": "frontend/src/reference-workspace.ts",
+            "recorded_sha256": "b0e111f78ff245eb94254c7c1d2fe1ebfa0224eda7a6c8d6ef83c1dc5f32a7de",
+            "current_sha256": "b0e111f78ff245eb94254c7c1d2fe1ebfa0224eda7a6c8d6ef83c1dc5f32a7de",
+            "matches": true
+          }
+        ]
+      }
+    },
+    "docs/premium-ui/qa-member-csv-candidate.json": {
+      "sha256": "cf84b65533008c288eed3bd6797d0e1fdae356de8c8a74b1a4f73722ef783746",
+      "freshness": {
+        "status": "matching_declared_sources_only",
+        "files": [
+          {
+            "source": "frontend/src/member-workspace.ts",
+            "recorded_sha256": "b2fc5d0237378dd8c4a635a69b29043fa3f95de6ee65fad1d99dd13b47ba4ecc",
+            "current_sha256": "b2fc5d0237378dd8c4a635a69b29043fa3f95de6ee65fad1d99dd13b47ba4ecc",
+            "matches": true
+          }
+        ]
+      }
+    },
+    "docs/premium-ui/qa-legacy-profile-fields.json": {
+      "sha256": "0da423737ce2ed5520c8b8b3245ddcdaed9c78b3580307714a9a0c20701dbb79",
+      "freshness": {
+        "status": "matching_declared_sources_only",
+        "files": [
+          {
+            "source": "frontend/src/member-profile.ts",
+            "recorded_sha256": "ab676605aab62d4463d680d204e862df6aa087fb1a5bc3260536aad4ce93c3e0",
+            "current_sha256": "ab676605aab62d4463d680d204e862df6aa087fb1a5bc3260536aad4ce93c3e0",
+            "matches": true
+          },
+          {
+            "source": "frontend/src/services/api.ts",
+            "recorded_sha256": "856c23cfa4f93d6ba589b275b6f8e1fd7a013e726827f1f5a8f8f84432721199",
+            "current_sha256": "856c23cfa4f93d6ba589b275b6f8e1fd7a013e726827f1f5a8f8f84432721199",
+            "matches": true
+          },
+          {
+            "source": "frontend/src/styles.css",
+            "recorded_sha256": "645b00bf7cc07246f257ec5c90015b6d273a0b212478672ce098684d282385e4",
+            "current_sha256": "645b00bf7cc07246f257ec5c90015b6d273a0b212478672ce098684d282385e4",
+            "matches": true
+          },
+          {
+            "source": "frontend/src/premium-theme.css",
+            "recorded_sha256": "ff2aee7148e54e4e40aae847189110cf3d9228d90fabffbd63a3449a1e1a935d",
+            "current_sha256": "ff2aee7148e54e4e40aae847189110cf3d9228d90fabffbd63a3449a1e1a935d",
+            "matches": true
+          }
+        ]
+      }
+    },
+    "docs/premium-ui/qa-record-close.json": {
+      "sha256": "877c11358ba4a374ef894b30f1e14e7334996474e7e5cbd22fe6c51cdf2ef47f",
+      "freshness": {
+        "status": "matching_declared_sources_only",
+        "files": [
+          {
+            "source": "frontend/src/record-workspace.ts",
+            "recorded_sha256": "f53fd32448f962156a7ff795dd34e6a0e0aa48ed82d9183354676cbceea8e904",
+            "current_sha256": "f53fd32448f962156a7ff795dd34e6a0e0aa48ed82d9183354676cbceea8e904",
+            "matches": true
+          },
+          {
+            "source": "frontend/src/workspace-load-state.ts",
+            "recorded_sha256": "6e6b71134b14d499e1f292482796acbe4c57ce3066de0d5a482a9911a2cbee34",
+            "current_sha256": "6e6b71134b14d499e1f292482796acbe4c57ce3066de0d5a482a9911a2cbee34",
+            "matches": true
+          }
+        ]
+      }
+    },
+    "docs/premium-ui/qa-member-history-retry.json": {
+      "sha256": "b6e3405c292981a92bdedfdfac829c51e73c265f5699cd8af23fd9dd6a9c0da6",
+      "freshness": {
+        "status": "matching_declared_sources_only",
+        "files": [
+          {
+            "source": "frontend/src/member-workspace.ts",
+            "recorded_sha256": "3a7b2300bf74eecf53e151908791d87fdcc1c21aebc3a270a5fb57b9d7379ee8",
+            "current_sha256": "3a7b2300bf74eecf53e151908791d87fdcc1c21aebc3a270a5fb57b9d7379ee8",
+            "matches": true
+          }
+        ]
+      }
+    }
+  },
+  "tests": {
+    "frontend/tests/premium-context-action-outcomes-independent.browser.mjs": "fd1e99a8b67ebc3a6af9b8a5a3ac80e398f158965c138458fbbcf9beaa840545",
+    "frontend/tests/premium-member-actions.browser.mjs": "d33be3d8a1f98b8fdbb6a8b1e0416f5a78be7831f992af80293397b11b4dbdde",
+    "frontend/tests/premium-record-validation.browser.mjs": "4123fdc3b13afcf3f2c33f7a2a7b56ef150b20b24c52c0d9ecda3b09712ba87d",
+    "frontend/tests/premium-workspace-unload-independent.browser.mjs": "b6b170bb2080719a7e8bb7d724f980deccc9f02db3ec3acf67f9bb582e20f9cc",
+    "frontend/tests/premium-member-three-controls-independent.browser.mjs": "ef43e98b1ff44017f02ca3a4d9f3e60ab35ed3c3f94a9ef829cf1cf2d27813e0",
+    "frontend/tests/premium-member-duplicates-entry-independent.browser.mjs": "d1d22a4fcdf8faced711e50cd4a4cd2109ac1cbfd12b119020be133ff069d59a",
+    "frontend/tests/premium-member-linked-actions-independent.browser.mjs": "46b52b54f94c2866a8d6eab0e54e1284a7343fd6434cf52f048a31d3a42b4368",
+    "frontend/tests/premium-member-csv-choice-independent.browser.mjs": "2d6f0c929d6752e6a95a8d1407140281041afe0cbf3977d27e0b7739d389f75a",
+    "frontend/tests/premium-member-roster-bulk-independent.browser.mjs": "b279d180ff3fe41e9576ec907938b312adfbd27ac6367cb91aaef0447ecf06d7",
+    "frontend/tests/premium-member-save-independent.browser.mjs": "753af1a87b35a369c37bbea84e30b0d441518991293ca7112c0651b491e4349d",
+    "frontend/tests/premium-member-csv-correction-independent.browser.mjs": "5008bee972b7ccba863a3fc4beddfac43f77faa2171bcbd5e79b486da3b45581",
+    "frontend/tests/premium-inline-member-choice-independent.browser.mjs": "cb3244f7240b7f3396c48da1c5579d75b5a2a258c57a7418aa0672ab0b7296ad",
+    "frontend/tests/premium-record-new-unit-independent.browser.mjs": "6005e73fca75417729ac4fe346720a74b995e8b74f5f2b1fade178b9918649e4",
+    "frontend/tests/premium-reference-meaning-fields.browser.mjs": "0fdee0a212f6d1632113131cfa6ee32826c9c3d7dd379dc14cec55711deefa07",
+    "frontend/tests/premium-csv-template-artifacts.browser.mjs": "e856a4e04a9f7cf5adf42abfd1539c700249246a8e0c5e9bff851c104bc148f7",
+    "frontend/tests/premium-inline-member-create.browser.mjs": "0dae62c203a226f4d0c49939988eae0637e48f53bdaeab468c295f663b7487be",
+    "frontend/tests/premium-import-review-pager.browser.mjs": "6758d3942ab91ed608968423a9e9f1a7f3766880d8c5ca0c5d3122b01ce85010",
+    "frontend/tests/premium-record-reference-refresh.browser.mjs": "e75234570fb4159281d08056bdc1e50ae579a86119687342e6c469babfd11983",
+    "frontend/tests/premium-member-csv-lifetime.browser.mjs": "dd8cc6e20253e597af1c1edb76543b9d4e821c0acee0e6155e5c2d40f6e76d45",
+    "frontend/tests/premium-import-candidate-choice.browser.mjs": "b20dd97cbd33229ed8f40b4b510510e92cb1f5b8e357a46c1a7938ddc02440f5",
+    "frontend/tests/premium-import-created-unit.browser.mjs": "d93862290aa1a23d46560f86abd1ab02cbe6abf5c382574381e73c1ee9086394",
+    "frontend/tests/premium-import-reference-controls.browser.mjs": "9eeac286624ce8cc85e1104a15208e595b061744732e9a3530e1567636e0bc86",
+    "frontend/tests/premium-record-close.browser.mjs": "5b9db59aa4daa2901e97d3914ed24e45c1255b2510fa9705c5b5e5ac7165cd8c",
+    "frontend/tests/premium-legacy-profile-fields.browser.mjs": "653db5e528c0adc5952241497b5b415e739fdd204682d785e6829609e15d989e",
+    "frontend/tests/premium-member-csv-candidate.browser.mjs": "d16d4ef5cbe3aa484a39ddb76516602c57edea7a89ab43c33b07845cafeb4ce9",
+    "frontend/tests/premium-member-history-retry.browser.mjs": "62c2e6276948383352830dbd577bec7399ff90dcf2ec6b2d111775a99dff3cb1"
+  },
+  "items": [
+    {
+      "contract_id": "member-workspace-001",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-close]",
+      "historical_status": "existing-assertions",
+      "candidate_inventory_ids": [
+        "member-workspace-ts::render::8344e4732b2a",
+        "member-workspace-ts::openMemberCsvImport::8344e4732b2a"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-context-action-outcomes-independent.browser.mjs",
+          "assertion_source": "frontend/tests/premium-context-action-outcomes-independent.browser.mjs:61",
+          "assertion_anchor": "assert.equal(await member.locator('[role=tab][aria-selected=true]')",
+          "report": "docs/premium-ui/qa-context-action-outcomes-independent.json",
+          "verified_outcome": "Analytics exact member target opens duties tab and close restores analytics opener focus.",
+          "limits": "Only canonical duties-entry/close context; not all tabs/drafts/roles."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-workspace-002",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-edit]",
+      "historical_status": "existing-assertions",
+      "candidate_inventory_ids": [
+        "member-workspace-ts::-callback-::c7ebbfb7f18b",
+        "member-workspace-ts::render::ed76e3a2fc19"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-save-independent.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-save-independent.browser.mjs:36",
+          "report": "docs/premium-ui/qa-member-save-independent.json",
+          "verified_outcome": "Edit enablescurrentidentityfieldswithsavedvalues.",
+          "limits": "Threeengines320/1280;allPUTintercepted,freshGETfixtureonly;noactualserverpersistence/permissioncertification."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-workspace-003",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-cancel-edit]",
+      "historical_status": "existing-assertions",
+      "candidate_inventory_ids": [
+        "member-workspace-ts::render::66786d07b0c5"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-save-independent.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-save-independent.browser.mjs:38",
+          "report": "docs/premium-ui/qa-member-save-independent.json",
+          "verified_outcome": "DirtyCancelrejectretainsdraft/noPUT;acceptresetssavedidentity/read-onlystate.",
+          "limits": "Threeengines320/1280;allPUTintercepted,freshGETfixtureonly;noactualserverpersistence/permissioncertification."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-workspace-004",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "#mw-form button[type=submit]",
+      "historical_status": "partial-current-run",
+      "candidate_inventory_ids": [],
+      "inventory_mapping_note": "Original contract ID retained; no unambiguous attribute-family inventory match",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:200",
+          "assertion_anchor": "assert.equal(workspaceSave.preserve_previous_name,false)",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Actual saved fixture payload preserves false old-name option, empty aliases after remove,exact one dated call change; reopen date retained.",
+          "limits": "Canonical save clause only; not all validation/serverconflict/permission cases."
+        },
+        {
+          "test": "frontend/tests/premium-member-save-independent.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-save-independent.browser.mjs:50",
+          "report": "docs/premium-ui/qa-member-save-independent.json",
+          "verified_outcome": "SecondrenamePUTsameID+revision thenoriginalanalyticslinkkeyboardreopenssameupdatedidentity;immutableprevious/nextboundarypreservedafterrepeatedinvalidations.",
+          "limits": "Threeengines320/1280;allPUTintercepted,freshGETfixtureonly;noactualserverpersistence/permissioncertification."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-workspace-005",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-tab]",
+      "historical_status": "existing-assertions",
+      "candidate_inventory_ids": [
+        "member-workspace-ts::content::49e98a3be37f",
+        "member-workspace-ts::content::0787a1337c9e",
+        "member-workspace-ts::content::00cf55e0fc6c",
+        "member-workspace-ts::-callback-::50387550d7ac"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-context-action-outcomes-independent.browser.mjs",
+          "assertion_source": "frontend/tests/premium-context-action-outcomes-independent.browser.mjs:61",
+          "assertion_anchor": "assert.equal(await member.locator('[role=tab][aria-selected=true]')",
+          "report": "docs/premium-ui/qa-context-action-outcomes-independent.json",
+          "verified_outcome": "Analytics exact member target opens duties tab and close restores analytics opener focus.",
+          "limits": "Only canonical duties-entry/close context; not all tabs/drafts/roles."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-workspace-006",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-tab-link]",
+      "historical_status": "passed-current-run",
+      "candidate_inventory_ids": [
+        "member-workspace-ts::content::49e98a3be37f",
+        "member-workspace-ts::content::0787a1337c9e",
+        "member-workspace-ts::content::00cf55e0fc6c"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:176",
+          "assertion_anchor": "assert.equal(await dlg.locator('[data-tab=\"names\"]').getAttribute",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Names shortcut selects associated Names tab.",
+          "limits": "Tab selection asserted; shortcut focus not independently asserted here."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-workspace-007",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-prev],button[data-next]",
+      "historical_status": "existing-assertions",
+      "candidate_inventory_ids": [
+        "member-workspace-ts::render::f2bca99e8c8d",
+        "member-workspace-ts::render::2ba864dd279c"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-linked-actions-independent.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-linked-actions-independent.browser.mjs:61",
+          "report": "docs/premium-ui/qa-member-linked-actions-independent.json",
+          "verified_outcome": "DirtyPreviousrejectpreservesdraft/noGET;acceptedPreviousexact29thenNext30,boundarydisabled/member/monthretained.",
+          "limits": "Threebrowserengines320/1280;oneintercepted503cancel/case,0backendwrites. Keyboardentryfocus notWebKitpointerfocusclaim."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-workspace-008",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-copy-member-id]",
+      "historical_status": "untested",
+      "candidate_inventory_ids": [
+        "member-workspace-ts::content::4960064c4fa0"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-three-controls-independent.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-three-controls-independent.browser.mjs:58",
+          "report": "docs/premium-ui/qa-member-three-controls-independent.json",
+          "verified_outcome": "Exact ID copied;denied/unsupported feedback resetslabel/selectsfocus;pendingduplicatesguarded,movedfocuspreserved,tab/closedlateignored,8sdeadline recovers.",
+          "limits": "Three browser engines320/1280;clipboardmocked/noOSphysicalscreenreaderclaim;GETonlyfixture."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-workspace-009",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "input[data-preserve-name]",
+      "historical_status": "passed-current-run",
+      "candidate_inventory_ids": [
+        "member-workspace-ts::content::b24131195bf9"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:200",
+          "assertion_anchor": "assert.equal(workspaceSave.preserve_previous_name,false)",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Actual saved fixture payload preserves false old-name option, empty aliases after remove,exact one dated call change; reopen date retained.",
+          "limits": "Canonical save clause only; not all validation/serverconflict/permission cases."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-workspace-010",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "[data-field=canonical_name],[data-field=active_status],[data-field=call_level]",
+      "historical_status": "partial-existing-assertions",
+      "candidate_inventory_ids": [
+        "member-workspace-ts::content::2a6d19de39c3",
+        "member-workspace-ts::content::f4646b6103e8",
+        "member-workspace-ts::content::80b8fd1ca25d"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-save-independent.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-save-independent.browser.mjs:45",
+          "report": "docs/premium-ui/qa-member-save-independent.json",
+          "verified_outcome": "Cross-tabname/status/callvaluesexactfullPUT;membershipconfirmcancel0PUT;503retainsdraft/manualretry;GETreopenidentity/status/callmatches.",
+          "limits": "Threeengines320/1280;allPUTintercepted,freshGETfixtureonly;noactualserverpersistence/permissioncertification."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-workspace-011",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "textarea[data-aliases]",
+      "historical_status": "partial-existing-assertions",
+      "candidate_inventory_ids": [
+        "member-workspace-ts::content::482eee19afa1"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:200",
+          "assertion_anchor": "assert.equal(workspaceSave.preserve_previous_name,false)",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Actual saved fixture payload preserves false old-name option, empty aliases after remove,exact one dated call change; reopen date retained.",
+          "limits": "Canonical save clause only; not all validation/serverconflict/permission cases."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-workspace-012",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-remove-alias]",
+      "historical_status": "passed-current-run",
+      "candidate_inventory_ids": [
+        "member-workspace-ts::-callback-::43dee29265ff"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:200",
+          "assertion_anchor": "assert.equal(workspaceSave.preserve_previous_name,false)",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Actual saved fixture payload preserves false old-name option, empty aliases after remove,exact one dated call change; reopen date retained.",
+          "limits": "Canonical save clause only; not all validation/serverconflict/permission cases."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-workspace-013",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-add-designation-row]",
+      "historical_status": "partial-current-run",
+      "candidate_inventory_ids": [
+        "member-workspace-ts::designationEditor::bb11857eba67"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:183",
+          "assertion_anchor": "assert.equal(await dlg.locator('[data-remove-designation]').count(),2)",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Adding position increments collection; removing last row returns count1 with no immediate PUT.",
+          "limits": "No all designation field/payload acceptance claim."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-workspace-014",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-remove-designation]",
+      "historical_status": "passed-current-run",
+      "candidate_inventory_ids": [
+        "member-workspace-ts::-callback-::a23bfb28c598"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:183",
+          "assertion_anchor": "assert.equal(await dlg.locator('[data-remove-designation]').count(),2)",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Adding position increments collection; removing last row returns count1 with no immediate PUT.",
+          "limits": "No all designation field/payload acceptance claim."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-workspace-015",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "[data-d]",
+      "historical_status": "partial-current-run",
+      "candidate_inventory_ids": [
+        "member-workspace-ts::openMemberWorkspace::e27f3a38b943",
+        "member-workspace-ts::-callback-::e28ddf80616e",
+        "member-workspace-ts::-callback-::12a62788b5bc",
+        "member-workspace-ts::-callback-::3a950b0c6810",
+        "member-workspace-ts::-callback-::a1620decdf35",
+        "member-workspace-ts::history::f422df41fe4b",
+        "member-workspace-ts::history::4875a27a7efb"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-save-independent.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-save-independent.browser.mjs:45",
+          "report": "docs/premium-ui/qa-member-save-independent.json",
+          "verified_outcome": "Designationandnotesdraft survivescross-tabs andfullPUTfixture;GETreopen displayssavedposition.",
+          "limits": "Threeengines320/1280;allPUTintercepted,freshGETfixtureonly;noactualserverpersistence/permissioncertification."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-workspace-016",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-add-call-change]",
+      "historical_status": "passed-current-run",
+      "candidate_inventory_ids": [
+        "member-workspace-ts::scheduledCalls::ffe0395e68e3"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:200",
+          "assertion_anchor": "assert.equal(workspaceSave.preserve_previous_name,false)",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Actual saved fixture payload preserves false old-name option, empty aliases after remove,exact one dated call change; reopen date retained.",
+          "limits": "Canonical save clause only; not all validation/serverconflict/permission cases."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-workspace-017",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-remove-call-change]",
+      "historical_status": "passed-current-run",
+      "candidate_inventory_ids": [
+        "member-workspace-ts::-callback-::faf8e9790a45"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:200",
+          "assertion_anchor": "assert.equal(workspaceSave.preserve_previous_name,false)",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Actual saved fixture payload preserves false old-name option, empty aliases after remove,exact one dated call change; reopen date retained.",
+          "limits": "Canonical save clause only; not all validation/serverconflict/permission cases."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-workspace-018",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "[data-call-change]",
+      "historical_status": "passed-current-run",
+      "candidate_inventory_ids": [
+        "member-workspace-ts::-callback-::b7ddef6abf5e",
+        "member-workspace-ts::-callback-::3a7264a4c425",
+        "member-workspace-ts::-callback-::05f7896c4a71"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:200",
+          "assertion_anchor": "assert.equal(workspaceSave.preserve_previous_name,false)",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Actual saved fixture payload preserves false old-name option, empty aliases after remove,exact one dated call change; reopen date retained.",
+          "limits": "Canonical save clause only; not all validation/serverconflict/permission cases."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-workspace-019",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-manage-profile-references]",
+      "historical_status": "untested",
+      "candidate_inventory_ids": [
+        "member-workspace-ts::content::380beccc53be"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-three-controls-independent.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-three-controls-independent.browser.mjs:66",
+          "report": "docs/premium-ui/qa-member-three-controls-independent.json",
+          "verified_outcome": "Canonicalprofileopensdesignationcatalog;ClosefocusreturnsandRolestabretained;boardrolehidesaction.",
+          "limits": "Three browser engines320/1280;clipboardmocked/noOSphysicalscreenreaderclaim;GETonlyfixture."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-workspace-020",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "input[data-duty-from],input[data-duty-until]",
+      "historical_status": "untested",
+      "candidate_inventory_ids": [
+        "member-workspace-ts::history::f422df41fe4b",
+        "member-workspace-ts::history::4875a27a7efb"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-three-controls-independent.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-three-controls-independent.browser.mjs:44",
+          "report": "docs/premium-ui/qa-member-three-controls-independent.json",
+          "verified_outcome": "Inclusive dateboundaries,reverseemptyrange/reset,oneGETlocalfilter,member/monthpreserved.",
+          "limits": "Three browser engines320/1280;clipboardmocked/noOSphysicalscreenreaderclaim;GETonlyfixture."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-workspace-021",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-add-record],button[data-edit-record]",
+      "historical_status": "untested",
+      "candidate_inventory_ids": [
+        "member-workspace-ts::-callback-::c7ebbfb7f18b",
+        "member-workspace-ts::content::ea07dff923e4",
+        "member-workspace-ts::content::ea07dff923e4::2"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-linked-actions-independent.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-linked-actions-independent.browser.mjs:46",
+          "report": "docs/premium-ui/qa-member-linked-actions-independent.json",
+          "verified_outcome": "CanonicalAddPostingexactpersonid;EditLeaveexactrecordGET/dates/type/slot/status/notes;keyboardnestedClose restoresactionfocus,noeditorwrites.",
+          "limits": "Threebrowserengines320/1280;oneintercepted503cancel/case,0backendwrites. Keyboardentryfocus notWebKitpointerfocusclaim."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-workspace-022",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-cancel-profile-leave]",
+      "historical_status": "untested",
+      "candidate_inventory_ids": [
+        "member-workspace-ts::-callback-::1b3d9ae2c592"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-linked-actions-independent.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-linked-actions-independent.browser.mjs:55",
+          "report": "docs/premium-ui/qa-member-linked-actions-independent.json",
+          "verified_outcome": "CancelledconfirmnoPOST;acceptedcancelPOST503refusal;explicitRetryfreshleaveGETexact+1withoutPOSTreplay restoresrecord. Acceptedcancellationsuccessnotcovered.",
+          "limits": "Threebrowserengines320/1280;oneintercepted503cancel/case,0backendwrites. Keyboardentryfocus notWebKitpointerfocusclaim."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-workspace-023",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-retry]",
+      "historical_status": "existing-assertions",
+      "candidate_inventory_ids": [
+        "member-workspace-ts::history::56bb75e41634",
+        "member-workspace-ts::content::4b07dcfb278d"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-history-retry.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-history-retry.browser.mjs",
+          "assertion_anchor": "button[data-retry]",
+          "report": "docs/premium-ui/qa-member-history-retry.json",
+          "verified_outcome": "Actual member activity503/GETretry renders exact before/after history for original member; owned focus returns activity tab, newer details focus preserved; switching back uses confirmed cache.12fixtures,0writes.",
+          "limits": "Activity only; all requests intercepted, no whole-contract/server/physical acceptance."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-workspace-024",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-retry-duplicates]",
+      "historical_status": "untested",
+      "candidate_inventory_ids": [
+        "member-workspace-ts::content::4b07dcfb278d"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-duplicates-entry-independent.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-duplicates-entry-independent.browser.mjs:43",
+          "report": "docs/premium-ui/qa-member-duplicates-entry-independent.json",
+          "verified_outcome": "503duplicate GET error thenkeyboardmanualretry loads exactcandidate;exact2reads.",
+          "limits": "Threebrowserengines320/1280,GETonlyfixtures;acceptedmerge/serverpersistence/lifetimeunverified."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-workspace-025",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-merge-source]",
+      "historical_status": "untested",
+      "candidate_inventory_ids": [
+        "member-workspace-ts::-callback-::54da5f01766d"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-duplicates-entry-independent.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-duplicates-entry-independent.browser.mjs:51",
+          "report": "docs/premium-ui/qa-member-duplicates-entry-independent.json",
+          "verified_outcome": "Mergecancel sends0writes;dirtydraftblocksmerge withalert/preservesdraft;comparison shows exactsurvivor/sourcealiases/designationdates/callhistory. Acceptedmerge remainsuntested.",
+          "limits": "Threebrowserengines320/1280,GETonlyfixtures;acceptedmerge/serverpersistence/lifetimeunverified."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-workspace-026",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-dismiss]",
+      "historical_status": "untested",
+      "candidate_inventory_ids": [
+        "member-workspace-ts::openMemberWorkspace::e27f3a38b943"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-duplicates-entry-independent.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-duplicates-entry-independent.browser.mjs:38",
+          "report": "docs/premium-ui/qa-member-duplicates-entry-independent.json",
+          "verified_outcome": "Initialprofile503escapedalert;keyboardDismissremovesdialog/restoresanalyticsopenerfocus;manualreopen success.",
+          "limits": "Threebrowserengines320/1280,GETonlyfixtures;acceptedmerge/serverpersistence/lifetimeunverified."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-workspace-027",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-close] (CSV dialog)",
+      "historical_status": "partial-existing-assertions",
+      "candidate_inventory_ids": [
+        "member-workspace-ts::render::8344e4732b2a",
+        "member-workspace-ts::openMemberCsvImport::8344e4732b2a"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-workspace-unload-independent.browser.mjs",
+          "assertion_source": "frontend/tests/premium-workspace-unload-independent.browser.mjs:78",
+          "assertion_anchor": "assert.equal(await dialog.count(),1,kind+' rejected Close keeps dialog')",
+          "report": "docs/premium-ui/qa-workspace-unload-independent.json",
+          "verified_outcome": "Member and operational CSV selectedfile beforepreview survives rejectedClose/Escape; accepteddiscard removesdialog withoutsave.",
+          "limits": "Synthetic beforeunload separately labeled; no nativeprompt guarantee."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-workspace-028",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "a[href=\"/templates/department-members.csv\"],a[href=\"/templates/department-members-example.csv\"]",
+      "historical_status": "partial-existing-assertions",
+      "candidate_inventory_ids": [],
+      "inventory_mapping_note": "Original contract ID retained; no unambiguous attribute-family inventory match",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-csv-template-artifacts.browser.mjs",
+          "assertion_source": "frontend/tests/premium-csv-template-artifacts.browser.mjs",
+          "assertion_anchor": "exactArtifactBytes",
+          "report": "docs/premium-ui/qa-csv-template-artifacts.json",
+          "verified_outcome": "Nativekeyboard blank/examplememberCSVdownloads exactcurrentpublicbytes+filename;fileinputstays empty.",
+          "limits": "Six3engine320/1280 fixture contexts only; no full contract/backend persistence certification."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-workspace-029",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "input[type=file] (CSV dialog)",
+      "historical_status": "partial-existing-assertions",
+      "candidate_inventory_ids": [],
+      "inventory_mapping_note": "Original contract ID retained; no unambiguous attribute-family inventory match",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-csv-lifetime.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-csv-lifetime.browser.mjs",
+          "assertion_anchor": "previewLocksPayloadContext",
+          "report": "docs/premium-ui/qa-member-csv-lifetime.json",
+          "verified_outcome": "FileB/previewmodecontextlocked; staleAerrorignored; exactApply503/manualretry andnewfilediscardguard retained.",
+          "limits": "Six3engine320/1280 create-onlyfixtures, nofullcontract/backendcertification."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-workspace-030",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "[data-map-column]",
+      "historical_status": "untested",
+      "candidate_inventory_ids": [
+        "member-workspace-ts::-callback-::31917eea956f"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-csv-correction-independent.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-csv-correction-independent.browser.mjs:37",
+          "report": "docs/premium-ui/qa-member-csv-correction-independent.json",
+          "verified_outcome": "CustomheadersFulltitle/Rolelabel exactmappingcanonical_name/call_level carriedinitial+retrypreview.",
+          "limits": "3engines320/1280actualMembersentry;allpreviewPOSTfullyintercepted;noapply/serverpersistence/allCSVcasesclaim."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-workspace-031",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "form button[type=submit] (CSV dialog)",
+      "historical_status": "existing-assertions",
+      "candidate_inventory_ids": [],
+      "inventory_mapping_note": "Original contract ID retained; no unambiguous attribute-family inventory match",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-csv-lifetime.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-csv-lifetime.browser.mjs",
+          "assertion_anchor": "previewLocksPayloadContext",
+          "report": "docs/premium-ui/qa-member-csv-lifetime.json",
+          "verified_outcome": "FileB/previewmodecontextlocked; staleAerrorignored; exactApply503/manualretry andnewfilediscardguard retained.",
+          "limits": "Six3engine320/1280 create-onlyfixtures, nofullcontract/backendcertification."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-workspace-032",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-archive-all],button[data-archive-none]",
+      "historical_status": "untested",
+      "candidate_inventory_ids": [
+        "member-workspace-ts::renderRosterPreview::a3f9cc84ee2c",
+        "member-workspace-ts::renderRosterPreview::fd0a59600b34"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-roster-bulk-independent.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-roster-bulk-independent.browser.mjs:45",
+          "report": "docs/premium-ui/qa-member-roster-bulk-independent.json",
+          "verified_outcome": "Tickall/Untickall alterexactmissingmemberIDs andarchive-onlyapplyblocker.",
+          "limits": "3engines320/1280allCSVPOSTintercepted,noactualarchive/persistence/rolecertification."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-workspace-033",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "input[data-archive]",
+      "historical_status": "untested",
+      "candidate_inventory_ids": [
+        "member-workspace-ts::renderRosterPreview::a3f9cc84ee2c",
+        "member-workspace-ts::renderRosterPreview::fd0a59600b34",
+        "member-workspace-ts::-callback-::548ab1328d5e"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-roster-bulk-independent.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-roster-bulk-independent.browser.mjs:47",
+          "report": "docs/premium-ui/qa-member-roster-bulk-independent.json",
+          "verified_outcome": "Individualmissingmember selectionexactID,applycancelemits0POST,503retainsselection/excludedrow,manualretryexactexcluded+archive_missing payload.",
+          "limits": "3engines320/1280allCSVPOSTintercepted,noactualarchive/persistence/rolecertification."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-workspace-034",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "input[data-include]",
+      "historical_status": "existing-assertions",
+      "candidate_inventory_ids": [
+        "member-workspace-ts::rowHtml::4a2620087fea"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-roster-bulk-independent.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-roster-bulk-independent.browser.mjs",
+          "assertion_anchor": "assert.deepEqual(applies,[{excluded:[2],archive_missing:",
+          "report": "docs/premium-ui/qa-member-roster-bulk-independent.json",
+          "verified_outcome": "NativeInclude row2unchecked changesblocker; archive-onlyApply exactexcluded[2] persists after503/manualretry.",
+          "limits": "Sixrostersyncfixturecases only, notallrowactions/modes."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-workspace-035",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-pick-member]",
+      "historical_status": "existing-assertions",
+      "candidate_inventory_ids": [],
+      "inventory_mapping_note": "Original contract ID retained; no unambiguous attribute-family inventory match",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-csv-candidate.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-csv-candidate.browser.mjs",
+          "assertion_anchor": "button[data-pick-member]",
+          "report": "docs/premium-ui/qa-member-csv-candidate.json",
+          "verified_outcome": "Actual exact memberB selection503/retry, corrected row2 only, row3 exclusion/archive choices retained; row focus, defaults, explicit Apply503payload and replacement-file reset asserted in12cases.",
+          "limits": "Stated fixture/browser cases only; no full contract, server persistence, independent or physical acceptance."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-workspace-036",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-csv-distinct]",
+      "historical_status": "untested",
+      "candidate_inventory_ids": [
+        "member-workspace-ts::rowHtml::262e689759c9"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-csv-choice-independent.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-csv-choice-independent.browser.mjs:44",
+          "report": "docs/premium-ui/qa-member-csv-choice-independent.json",
+          "verified_outcome": "Differentperson keyboardactivation sends exactrow2_confirm_distinctyes/memberidblank andrefreshesdistinctstate.",
+          "limits": "3engines320/1280actualapp;previewPOSTfullyintercepted;noapply/persistence/rolecertification."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-workspace-037",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-csv-undo]",
+      "historical_status": "untested",
+      "candidate_inventory_ids": [
+        "member-workspace-ts::rowHtml::d9718b0ecdf8"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-csv-choice-independent.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-csv-choice-independent.browser.mjs:47",
+          "report": "docs/premium-ui/qa-member-csv-choice-independent.json",
+          "verified_outcome": "Undo sends exactemptychoice correction,restorespossibleduplicate state withoutapply.",
+          "limits": "3engines320/1280actualapp;previewPOSTfullyintercepted;noapply/persistence/rolecertification."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-workspace-038",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-csv-review-member]",
+      "historical_status": "untested",
+      "candidate_inventory_ids": [
+        "member-workspace-ts::-callback-::fe2d26258059",
+        "member-workspace-ts::-callback-::338889403689"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-csv-choice-independent.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-csv-choice-independent.browser.mjs:51",
+          "report": "docs/premium-ui/qa-member-csv-choice-independent.json",
+          "verified_outcome": "Reviewprofile opens exactcandidateIDGET/detailsidentity;close restoresrowreviewfocus;file/mode/previewretained.",
+          "limits": "3engines320/1280actualapp;previewPOSTfullyintercepted;noapply/persistence/rolecertification."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-workspace-039",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "[data-row][data-key]",
+      "historical_status": "existing-assertions",
+      "candidate_inventory_ids": [
+        "member-workspace-ts::-callback-::e28ddf80616e",
+        "member-workspace-ts::-callback-::12a62788b5bc",
+        "member-workspace-ts::-callback-::3a950b0c6810",
+        "member-workspace-ts::-callback-::a1620decdf35",
+        "member-workspace-ts::-callback-::b7ddef6abf5e",
+        "member-workspace-ts::-callback-::3a7264a4c425",
+        "member-workspace-ts::-callback-::05f7896c4a71",
+        "member-workspace-ts::-callback-::bf3345a5c13d"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-csv-correction-independent.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-csv-correction-independent.browser.mjs:38",
+          "report": "docs/premium-ui/qa-member-csv-correction-independent.json",
+          "verified_outcome": "Row2namecorrectionstalespreview;Applyrefuseswith0mutation;503refreshkeepsinputandmapping.",
+          "limits": "3engines320/1280actualMembersentry;allpreviewPOSTfullyintercepted;noapply/serverpersistence/allCSVcasesclaim."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-workspace-040",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-refresh]",
+      "historical_status": "existing-assertions",
+      "candidate_inventory_ids": [
+        "member-workspace-ts::actions::43e824225d41"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-csv-correction-independent.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-csv-correction-independent.browser.mjs:42",
+          "report": "docs/premium-ui/qa-member-csv-correction-independent.json",
+          "verified_outcome": "Keyboardmanualrefreshafter503sendsexactretainedrowcorrectionandmapping;newpreviewvisible,threepreviewPOSTonly.",
+          "limits": "3engines320/1280actualMembersentry;allpreviewPOSTfullyintercepted;noapply/serverpersistence/allCSVcasesclaim."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-workspace-041",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-report]",
+      "historical_status": "partial-existing-assertions",
+      "candidate_inventory_ids": [
+        "member-workspace-ts::actions::67ea00c9b56b"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-csv-correction-independent.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-csv-correction-independent.browser.mjs:45",
+          "report": "docs/premium-ui/qa-member-csv-correction-independent.json",
+          "verified_outcome": "Actualdownloadexactfilename/BOM/CRLF/header/rowcontent;quotesandcommaescaped,leadingequalsformula prefixedapostrophe.",
+          "limits": "3engines320/1280actualMembersentry;allpreviewPOSTfullyintercepted;noapply/serverpersistence/allCSVcasesclaim."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-workspace-042",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-apply]",
+      "historical_status": "existing-assertions",
+      "candidate_inventory_ids": [
+        "member-workspace-ts::actions::bcab43224755"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-csv-lifetime.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-csv-lifetime.browser.mjs",
+          "assertion_anchor": "previewLocksPayloadContext",
+          "report": "docs/premium-ui/qa-member-csv-lifetime.json",
+          "verified_outcome": "FileB/previewmodecontextlocked; staleAerrorignored; exactApply503/manualretry andnewfilediscardguard retained.",
+          "limits": "Six3engine320/1280 create-onlyfixtures, nofullcontract/backendcertification."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-workspace-043",
+      "module": "frontend/src/member-workspace.ts",
+      "selector": "button[data-result-member]",
+      "historical_status": "untested",
+      "candidate_inventory_ids": [
+        "member-workspace-ts::-callback-::0e13eda9784f"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-roster-bulk-independent.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-roster-bulk-independent.browser.mjs:53",
+          "report": "docs/premium-ui/qa-member-roster-bulk-independent.json",
+          "verified_outcome": "Completedresultbutton opens exactreturnedmemberGET/identity,Closerestoresresultactionfocus/completioncontext.",
+          "limits": "3engines320/1280allCSVPOSTintercepted,noactualarchive/persistence/rolecertification."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-profile-001",
+      "module": "frontend/src/member-profile.ts",
+      "selector": "[data-profile-close]",
+      "historical_status": "passed-current-run",
+      "candidate_inventory_ids": [
+        "member-profile-ts::openMemberProfile::ff422bf1b31b",
+        "member-profile-ts::render::ff422bf1b31b",
+        "member-profile-ts::openMemberProfile::ff422bf1b31b::2"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:155",
+          "assertion_anchor": "assert.equal(await page.locator('#opener')",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Legacy Close detaches dialog/restores opener; saved name verified on reopen.",
+          "limits": "Does not establish all dirty-close combinations."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-profile-002",
+      "module": "frontend/src/member-profile.ts",
+      "selector": "[data-profile-form=call] button[type=submit]",
+      "historical_status": "passed-current-run",
+      "candidate_inventory_ids": [
+        "member-profile-ts::render::0c0b74f4c97d",
+        "member-profile-ts::render::8cd197c9f718",
+        "member-profile-ts::render::db8e13d7d28c",
+        "member-profile-ts::render::08c7ea70114c",
+        "member-profile-ts::render::3cac959b3681"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:105",
+          "assertion_anchor": "assert.deepEqual(requests.find(x=>x.path.endsWith('/call-changes'))",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Exact call-level/effective-date/reason request and returned reason visible.",
+          "limits": "Mocked API,not backend persistence."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-profile-003",
+      "module": "frontend/src/member-profile.ts",
+      "selector": "[data-profile-form=designation] button",
+      "historical_status": "passed-current-run",
+      "candidate_inventory_ids": [
+        "member-profile-ts::render::0c0b74f4c97d",
+        "member-profile-ts::render::8cd197c9f718",
+        "member-profile-ts::render::db8e13d7d28c",
+        "member-profile-ts::render::08c7ea70114c",
+        "member-profile-ts::render::3cac959b3681"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:159",
+          "assertion_anchor": "assert.equal(profile.member.designations[0].designation",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Designation visible and retained fixture/reopen; alias text visible after action.",
+          "limits": "No exact alias/designation full payload assertion; bounded returned-state only."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-profile-004",
+      "module": "frontend/src/member-profile.ts",
+      "selector": "[data-profile-form=alias] button",
+      "historical_status": "passed-current-run",
+      "candidate_inventory_ids": [
+        "member-profile-ts::render::0c0b74f4c97d",
+        "member-profile-ts::render::8cd197c9f718",
+        "member-profile-ts::render::db8e13d7d28c",
+        "member-profile-ts::render::08c7ea70114c",
+        "member-profile-ts::render::3cac959b3681"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:159",
+          "assertion_anchor": "assert.equal(profile.member.designations[0].designation",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Designation visible and retained fixture/reopen; alias text visible after action.",
+          "limits": "No exact alias/designation full payload assertion; bounded returned-state only."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-profile-005",
+      "module": "frontend/src/member-profile.ts",
+      "selector": "[data-profile-form=comment] button",
+      "historical_status": "passed-current-run",
+      "candidate_inventory_ids": [
+        "member-profile-ts::render::0c0b74f4c97d",
+        "member-profile-ts::render::8cd197c9f718",
+        "member-profile-ts::render::db8e13d7d28c",
+        "member-profile-ts::render::08c7ea70114c",
+        "member-profile-ts::render::3cac959b3681"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:123",
+          "assertion_anchor": "assert.equal(profile.comments.length,0)",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Comment503retains draft; keyboard failed-submit focus and deliberate newer focus preserved; retry one returned comment.",
+          "limits": "Legacy profile only; actual server persistence unproved."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-profile-006",
+      "module": "frontend/src/member-profile.ts",
+      "selector": "[data-profile-form=details] button",
+      "historical_status": "passed-current-run",
+      "candidate_inventory_ids": [
+        "member-profile-ts::render::0c0b74f4c97d",
+        "member-profile-ts::render::8cd197c9f718",
+        "member-profile-ts::render::db8e13d7d28c",
+        "member-profile-ts::render::08c7ea70114c",
+        "member-profile-ts::render::3cac959b3681"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:150",
+          "assertion_anchor": "assert.equal(fresh.member.canonical_name",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Independent intercepted GET verifies saved canonical name and historical status; reopen same name.",
+          "limits": "Mocked independent read,not server persistence."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-profile-007",
+      "module": "frontend/src/member-profile.ts",
+      "selector": "details > summary",
+      "historical_status": "partial-current-run",
+      "candidate_inventory_ids": [],
+      "inventory_mapping_note": "Original contract ID retained; no unambiguous attribute-family inventory match",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-legacy-profile-fields.browser.mjs",
+          "assertion_source": "frontend/tests/premium-legacy-profile-fields.browser.mjs",
+          "assertion_anchor": "details > summary",
+          "report": "docs/premium-ui/qa-legacy-profile-fields.json",
+          "verified_outcome": "Three actual summary controls opened by keyboard; their content/open states survive form save/re-render,6browser/width cases.",
+          "limits": "Stated fixture/browser cases only; no full contract, server persistence, independent or physical acceptance."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "member-profile-008",
+      "module": "frontend/src/member-profile.ts",
+      "selector": "[data-profile-form] input,[data-profile-form] select,[data-profile-form] textarea",
+      "historical_status": "partial-current-run",
+      "candidate_inventory_ids": [
+        "member-profile-ts::render::0c0b74f4c97d",
+        "member-profile-ts::render::8cd197c9f718",
+        "member-profile-ts::render::db8e13d7d28c",
+        "member-profile-ts::render::08c7ea70114c",
+        "member-profile-ts::render::3cac959b3681"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-legacy-profile-fields.browser.mjs",
+          "assertion_source": "frontend/tests/premium-legacy-profile-fields.browser.mjs",
+          "assertion_anchor": "[data-profile-form] input,[data-profile-form] select,[data-profile-form] textarea",
+          "report": "docs/premium-ui/qa-legacy-profile-fields.json",
+          "verified_outcome": "All5form field groups edited/submitted with exact payloads and mocked readbacks; failed details save preserves values/sibling alias, explicit retry, scheduled call/current level and escaped comment asserted.",
+          "limits": "Stated fixture/browser cases only; no full contract, server persistence, independent or physical acceptance."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "record-workspace-001",
+      "module": "frontend/src/record-workspace.ts",
+      "selector": "[data-close]",
+      "historical_status": "untested",
+      "candidate_inventory_ids": [
+        "record-workspace-ts::render::8344e4732b2a",
+        "record-workspace-ts::render::8344e4732b2a::2"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-record-close.browser.mjs",
+          "assertion_source": "frontend/tests/premium-record-close.browser.mjs",
+          "assertion_anchor": "[data-close]",
+          "report": "docs/premium-ui/qa-record-close.json",
+          "verified_outcome": "Actual header/footer/Escape close: pristine/search-only no prompt, dirty decline retains context, accepted discard closes/restores opener; pending review blocks close and503retainsnotes,0saves;12cases.",
+          "limits": "Stated fixture/browser cases only; no full contract, server persistence, independent or physical acceptance."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "record-workspace-002",
+      "module": "frontend/src/record-workspace.ts",
+      "selector": "[data-member-search]",
+      "historical_status": "untested",
+      "candidate_inventory_ids": [
+        "record-workspace-ts::render::7cae22f7d11e"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-inline-member-choice-independent.browser.mjs",
+          "assertion_source": "frontend/tests/premium-inline-member-choice-independent.browser.mjs:35",
+          "report": "docs/premium-ui/qa-inline-member-choice-independent.json",
+          "verified_outcome": "Membersearchhidesunrelatedoptionsandresetrestorespickablechoices.",
+          "limits": "Threeengines320/1280;resolvePOSTintercepted;allotherGETfixture;nocreate/restore/recordsaveaccepted."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "record-workspace-003",
+      "module": "frontend/src/record-workspace.ts",
+      "selector": "[name=person_id]",
+      "historical_status": "passed-current-run",
+      "candidate_inventory_ids": [],
+      "inventory_mapping_note": "Original contract ID retained; no unambiguous attribute-family inventory match",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:353",
+          "assertion_anchor": "assert.equal(savedRecord.review_token",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Leavepreview never writes;editingnotes invalidates save;secondpreview token+personid+notes sent on save.",
+          "limits": "Date/type/slot/status selector families only tested as described separately."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "record-workspace-004",
+      "module": "frontend/src/record-workspace.ts",
+      "selector": "[data-new-member]",
+      "historical_status": "untested",
+      "candidate_inventory_ids": [
+        "record-workspace-ts::render::44a979f9b2fe"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-inline-member-choice-independent.browser.mjs",
+          "assertion_source": "frontend/tests/premium-inline-member-choice-independent.browser.mjs:36",
+          "report": "docs/premium-ui/qa-inline-member-choice-independent.json",
+          "verified_outcome": "ActualleaveAddrecordNewmember nestedcreatoropenswithoutlosingouterdates/notes.",
+          "limits": "Threeengines320/1280;resolvePOSTintercepted;allotherGETfixture;nocreate/restore/recordsaveaccepted."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "record-workspace-005",
+      "module": "frontend/src/record-workspace.ts",
+      "selector": "[data-new-unit]",
+      "historical_status": "existing-assertions",
+      "candidate_inventory_ids": [
+        "record-workspace-ts::render::8b6e927ad9df"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-record-new-unit-independent.browser.mjs",
+          "assertion_source": "frontend/tests/premium-record-new-unit-independent.browser.mjs:35",
+          "report": "docs/premium-ui/qa-record-new-unit-independent.json",
+          "verified_outcome": "ActualpostingNewunit opensnestedregistry withoutlosingouterdraft.",
+          "limits": "3engines320/1280unitPOSTmocked;no postingapply/serverpersistence/permissioncertification."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "record-workspace-006",
+      "module": "frontend/src/record-workspace.ts",
+      "selector": "[data-references]",
+      "historical_status": "untested",
+      "candidate_inventory_ids": [
+        "record-workspace-ts::render::23bd58073775"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-record-reference-refresh.browser.mjs",
+          "assertion_source": "frontend/tests/premium-record-reference-refresh.browser.mjs",
+          "assertion_anchor": "allRecordSelectionsDatesNotesPreserved",
+          "report": "docs/premium-ui/qa-record-reference-refresh.json",
+          "verified_outcome": "NestedManagecatalog exactreferenceSave→delayedoptionsGET keepsmember/leavetype/slot/status/dates/notes,caret/searchfilter andnestedfocus.",
+          "limits": "18Addleavefixturecases; record-save/APIpersistence andallkinds notcertified."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "record-workspace-007",
+      "module": "frontend/src/record-workspace.ts",
+      "selector": "[name=unit_id],[name=posting_type]",
+      "historical_status": "existing-assertions",
+      "candidate_inventory_ids": [],
+      "inventory_mapping_note": "Original contract ID retained; no unambiguous attribute-family inventory match",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-record-new-unit-independent.browser.mjs",
+          "assertion_source": "frontend/tests/premium-record-new-unit-independent.browser.mjs:42",
+          "report": "docs/premium-ui/qa-record-new-unit-independent.json",
+          "verified_outcome": "NewunitexactIDselected/focused,posted3RD_CALL/member/dates/notes retained,no postingwrite.",
+          "limits": "3engines320/1280unitPOSTmocked;no postingapply/serverpersistence/permissioncertification."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "record-workspace-008",
+      "module": "frontend/src/record-workspace.ts",
+      "selector": "[name=leave_type],[name=leave_slot],[name=status]",
+      "historical_status": "partial-current-run",
+      "candidate_inventory_ids": [],
+      "inventory_mapping_note": "Original contract ID retained; no unambiguous attribute-family inventory match",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-record-reference-refresh.browser.mjs",
+          "assertion_source": "frontend/tests/premium-record-reference-refresh.browser.mjs",
+          "assertion_anchor": "allRecordSelectionsDatesNotesPreserved",
+          "report": "docs/premium-ui/qa-record-reference-refresh.json",
+          "verified_outcome": "NestedManagecatalog exactreferenceSave→delayedoptionsGET keepsmember/leavetype/slot/status/dates/notes,caret/searchfilter andnestedfocus.",
+          "limits": "18Addleavefixturecases; record-save/APIpersistence andallkinds notcertified."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "record-workspace-009",
+      "module": "frontend/src/record-workspace.ts",
+      "selector": "[name=starts_on],[name=ends_on],[name=notes]",
+      "historical_status": "passed-current-run",
+      "candidate_inventory_ids": [],
+      "inventory_mapping_note": "Original contract ID retained; no unambiguous attribute-family inventory match",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:353",
+          "assertion_anchor": "assert.equal(savedRecord.review_token",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Leavepreview never writes;editingnotes invalidates save;secondpreview token+personid+notes sent on save.",
+          "limits": "Date/type/slot/status selector families only tested as described separately."
+        },
+        {
+          "test": "frontend/tests/premium-record-validation.browser.mjs",
+          "assertion_source": "frontend/tests/premium-record-validation.browser.mjs:52",
+          "assertion_anchor": "assert.deepEqual(saves[0]",
+          "report": "docs/premium-ui/qa-record-validation.json",
+          "verified_outcome": "Structured date error associated; keyboard error link focuses field; editclear/repreview permits exact token+correcteddate payload once.",
+          "limits": "ThreeChromium widths; mock only."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "record-workspace-010",
+      "module": "frontend/src/record-workspace.ts",
+      "selector": "form button[type=submit]",
+      "historical_status": "passed-current-run",
+      "candidate_inventory_ids": [],
+      "inventory_mapping_note": "Original contract ID retained; no unambiguous attribute-family inventory match",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:353",
+          "assertion_anchor": "assert.equal(savedRecord.review_token",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Leavepreview never writes;editingnotes invalidates save;secondpreview token+personid+notes sent on save.",
+          "limits": "Date/type/slot/status selector families only tested as described separately."
+        },
+        {
+          "test": "frontend/tests/premium-record-validation.browser.mjs",
+          "assertion_source": "frontend/tests/premium-record-validation.browser.mjs:52",
+          "assertion_anchor": "assert.deepEqual(saves[0]",
+          "report": "docs/premium-ui/qa-record-validation.json",
+          "verified_outcome": "Structured date error associated; keyboard error link focuses field; editclear/repreview permits exact token+correcteddate payload once.",
+          "limits": "ThreeChromium widths; mock only."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "record-workspace-011",
+      "module": "frontend/src/record-workspace.ts",
+      "selector": "[data-save]",
+      "historical_status": "partial-current-run",
+      "candidate_inventory_ids": [
+        "record-workspace-ts::render::b5579d8ed3c0"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:353",
+          "assertion_anchor": "assert.equal(savedRecord.review_token",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Leavepreview never writes;editingnotes invalidates save;secondpreview token+personid+notes sent on save.",
+          "limits": "Date/type/slot/status selector families only tested as described separately."
+        },
+        {
+          "test": "frontend/tests/premium-record-validation.browser.mjs",
+          "assertion_source": "frontend/tests/premium-record-validation.browser.mjs:52",
+          "assertion_anchor": "assert.deepEqual(saves[0]",
+          "report": "docs/premium-ui/qa-record-validation.json",
+          "verified_outcome": "Structured date error associated; keyboard error link focuses field; editclear/repreview permits exact token+correcteddate payload once.",
+          "limits": "ThreeChromium widths; mock only."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "reference-workspace-001",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "[data-close]",
+      "historical_status": "passed-current-run",
+      "candidate_inventory_ids": [
+        "reference-workspace-ts::openMappingCreator::8344e4732b2a",
+        "reference-workspace-ts::openMappingCreator::8344e4732b2a::2",
+        "reference-workspace-ts::loadActivity::8344e4732b2a",
+        "reference-workspace-ts::render::8344e4732b2a",
+        "reference-workspace-ts::render::8344e4732b2a::2",
+        "reference-workspace-ts::render::8344e4732b2a::3",
+        "reference-workspace-ts::render::8344e4732b2a::4"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:252",
+          "assertion_anchor": "assert.equal(await dlg.locator('[name=label]').inputValue(),'Unsaved reference')",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Cancelled discard retains reference label/noPUT; accepted discard removes dialogs.",
+          "limits": "Catalog close semantics only,not every shared close context."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "reference-workspace-002",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "[data-kind]",
+      "historical_status": "untested",
+      "candidate_inventory_ids": [
+        "reference-workspace-ts::render::2be5413d8f00"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-reference-meaning-fields.browser.mjs",
+          "assertion_source": "frontend/tests/premium-reference-meaning-fields.browser.mjs",
+          "assertion_anchor": "declinedSectionSwitchRetainsKindAndDraft",
+          "report": "docs/premium-ui/qa-reference-meaning-fields.json",
+          "verified_outcome": "Rejected section switch keeps kind/draft, accepted switch loads actual new section.",
+          "limits": "Six3engine320/1280 fixture contexts only; no full contract/backend persistence certification."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "reference-workspace-003",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "[data-search] (catalog)",
+      "historical_status": "passed-current-run",
+      "candidate_inventory_ids": [
+        "reference-workspace-ts::render::140c4d3ab3a2",
+        "reference-workspace-ts::render::140c4d3ab3a2::2"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:226",
+          "assertion_anchor": "assert.deepEqual(catalogs.leave_type.find",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Catalog search hides/nonmatching; select sets readonly key; create study leave and exact aliases visible in mocked read list.",
+          "limits": "Partial-fields only,not whole referencebehavior payload."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "reference-workspace-004",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "[data-key]",
+      "historical_status": "passed-current-run",
+      "candidate_inventory_ids": [
+        "reference-workspace-ts::-callback-::7786519f4005"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:226",
+          "assertion_anchor": "assert.deepEqual(catalogs.leave_type.find",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Catalog search hides/nonmatching; select sets readonly key; create study leave and exact aliases visible in mocked read list.",
+          "limits": "Partial-fields only,not whole referencebehavior payload."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "reference-workspace-005",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "[data-new] (catalog)",
+      "historical_status": "passed-current-run",
+      "candidate_inventory_ids": [
+        "reference-workspace-ts::render::7dc6f680abb6",
+        "reference-workspace-ts::render::7dc6f680abb6::2"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:226",
+          "assertion_anchor": "assert.deepEqual(catalogs.leave_type.find",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Catalog search hides/nonmatching; select sets readonly key; create study leave and exact aliases visible in mocked read list.",
+          "limits": "Partial-fields only,not whole referencebehavior payload."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "reference-workspace-006",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "form button[type=submit] (catalog)",
+      "historical_status": "partial-current-run",
+      "candidate_inventory_ids": [],
+      "inventory_mapping_note": "Original contract ID retained; no unambiguous attribute-family inventory match",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:226",
+          "assertion_anchor": "assert.deepEqual(catalogs.leave_type.find",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Catalog search hides/nonmatching; select sets readonly key; create study leave and exact aliases visible in mocked read list.",
+          "limits": "Partial-fields only,not whole referencebehavior payload."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "reference-workspace-007",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "[name=key],[name=label],[name=aliases],[name=active]",
+      "historical_status": "partial-current-run",
+      "candidate_inventory_ids": [],
+      "inventory_mapping_note": "Original contract ID retained; no unambiguous attribute-family inventory match",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:226",
+          "assertion_anchor": "assert.deepEqual(catalogs.leave_type.find",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Catalog search hides/nonmatching; select sets readonly key; create study leave and exact aliases visible in mocked read list.",
+          "limits": "Partial-fields only,not whole referencebehavior payload."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "reference-workspace-008",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "[name=maps_to]",
+      "historical_status": "untested",
+      "candidate_inventory_ids": [],
+      "inventory_mapping_note": "Original contract ID retained; no unambiguous attribute-family inventory match",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-reference-meaning-fields.browser.mjs",
+          "assertion_source": "frontend/tests/premium-reference-meaning-fields.browser.mjs",
+          "assertion_anchor": "meaningExactPayload",
+          "report": "docs/premium-ui/qa-reference-meaning-fields.json",
+          "verified_outcome": "Operational meaning, aliases and label serialize exactly;503 retains draft; manualretry repeats exactPUT.",
+          "limits": "Six3engine320/1280 fixture contexts only; no full contract/backend persistence certification."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "reference-workspace-009",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "[name=group],[name=duration_hours],[name=start_time],[name=end_time],[name=allowed_call_levels]",
+      "historical_status": "untested",
+      "candidate_inventory_ids": [],
+      "inventory_mapping_note": "Original contract ID retained; no unambiguous attribute-family inventory match",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-reference-meaning-fields.browser.mjs",
+          "assertion_source": "frontend/tests/premium-reference-meaning-fields.browser.mjs",
+          "assertion_anchor": "dutyBehaviorControlsExactPayload",
+          "report": "docs/premium-ui/qa-reference-meaning-fields.json",
+          "verified_outcome": "Dutyfamily/duration/times/multi-call selection serialize exactexistingbehavior includingderivedis24hr.",
+          "limits": "Six3engine320/1280 fixture contexts only; no full contract/backend persistence certification."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "reference-workspace-010",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "[name=counts_in_main_24hr],[name=is_mandatory],[name=blocks_elective_same_day],[name=blocks_elective_next_day]",
+      "historical_status": "untested",
+      "candidate_inventory_ids": [],
+      "inventory_mapping_note": "Original contract ID retained; no unambiguous attribute-family inventory match",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-reference-meaning-fields.browser.mjs",
+          "assertion_source": "frontend/tests/premium-reference-meaning-fields.browser.mjs",
+          "assertion_anchor": "preservedExistingRequestTransform",
+          "report": "docs/premium-ui/qa-reference-meaning-fields.json",
+          "verified_outcome": "Allfourcheckboxes serialize exactintendedbooleans, fixturecallback/readrefresh twice.",
+          "limits": "Six3engine320/1280 fixture contexts only; no full contract/backend persistence certification."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "reference-workspace-011",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "[data-reference-history]",
+      "historical_status": "passed-current-run",
+      "candidate_inventory_ids": [
+        "reference-workspace-ts::render::dbb08dda09eb"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:231",
+          "assertion_anchor": "assert.ok(requests.some(x=>x.path==='/api/v1/normalization/activity'))",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Reference/unit history open and returned Historical label visible.",
+          "limits": "Reference history GET target entity not exact asserted for each caller."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "reference-workspace-012",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "[data-add-mapping]",
+      "historical_status": "partial-current-run",
+      "candidate_inventory_ids": [
+        "reference-workspace-ts::render::6021da08b569"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:234",
+          "assertion_anchor": "assert.equal(await dlg.locator('[name=aliases]').evaluate",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Catalog Add mapping action focuses alias editor.",
+          "limits": "This existing action is aliasfocus,not server mapping creation."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "reference-workspace-013",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "[name=mapping_type]",
+      "historical_status": "passed-current-run",
+      "candidate_inventory_ids": [],
+      "inventory_mapping_note": "Original contract ID retained; no unambiguous attribute-family inventory match",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:247",
+          "assertion_anchor": "assert.deepEqual(mappings[0]",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Unit mapping kind loads unit destination,search hides option; exact mappingtype/source/target/notes/status/label payload on save; dialog closes.",
+          "limits": "No real mapping persistence/permissions claim."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "reference-workspace-014",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "[data-find]",
+      "historical_status": "passed-current-run",
+      "candidate_inventory_ids": [
+        "reference-workspace-ts::openMappingCreator::70460115628c"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:247",
+          "assertion_anchor": "assert.deepEqual(mappings[0]",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Unit mapping kind loads unit destination,search hides option; exact mappingtype/source/target/notes/status/label payload on save; dialog closes.",
+          "limits": "No real mapping persistence/permissions claim."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "reference-workspace-015",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "[name=source_label],[name=target_key],[name=notes] (mapping)",
+      "historical_status": "passed-current-run",
+      "candidate_inventory_ids": [],
+      "inventory_mapping_note": "Original contract ID retained; no unambiguous attribute-family inventory match",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:247",
+          "assertion_anchor": "assert.deepEqual(mappings[0]",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Unit mapping kind loads unit destination,search hides option; exact mappingtype/source/target/notes/status/label payload on save; dialog closes.",
+          "limits": "No real mapping persistence/permissions claim."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "reference-workspace-016",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "form button[type=submit] (mapping)",
+      "historical_status": "untested",
+      "candidate_inventory_ids": [],
+      "inventory_mapping_note": "Original contract ID retained; no unambiguous attribute-family inventory match",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:247",
+          "assertion_anchor": "assert.deepEqual(mappings[0]",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Unit mapping kind loads unit destination,search hides option; exact mappingtype/source/target/notes/status/label payload on save; dialog closes.",
+          "limits": "No real mapping persistence/permissions claim."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "reference-workspace-017",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "[data-search] (units)",
+      "historical_status": "passed-current-run",
+      "candidate_inventory_ids": [
+        "reference-workspace-ts::render::140c4d3ab3a2",
+        "reference-workspace-ts::render::140c4d3ab3a2::2"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:262",
+          "assertion_anchor": "assert.equal(await dlg.locator('[data-select-unit]:visible').count(),0)",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Search/status filters change visible unit count; selected unit history opens; new month reflected in displayed membership count text.",
+          "limits": "Month exact request path and all units not asserted here."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "reference-workspace-018",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "[data-unit-status]",
+      "historical_status": "passed-current-run",
+      "candidate_inventory_ids": [
+        "reference-workspace-ts::render::5521657dac0f"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:262",
+          "assertion_anchor": "assert.equal(await dlg.locator('[data-select-unit]:visible').count(),0)",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Search/status filters change visible unit count; selected unit history opens; new month reflected in displayed membership count text.",
+          "limits": "Month exact request path and all units not asserted here."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "reference-workspace-019",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "[data-unit-month]",
+      "historical_status": "passed-current-run",
+      "candidate_inventory_ids": [
+        "reference-workspace-ts::render::a9a2220d1cdc"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:262",
+          "assertion_anchor": "assert.equal(await dlg.locator('[data-select-unit]:visible').count(),0)",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Search/status filters change visible unit count; selected unit history opens; new month reflected in displayed membership count text.",
+          "limits": "Month exact request path and all units not asserted here."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "reference-workspace-020",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "[data-select-unit]",
+      "historical_status": "passed-current-run",
+      "candidate_inventory_ids": [
+        "reference-workspace-ts::-callback-::3e9939d79b17"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:262",
+          "assertion_anchor": "assert.equal(await dlg.locator('[data-select-unit]:visible').count(),0)",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Search/status filters change visible unit count; selected unit history opens; new month reflected in displayed membership count text.",
+          "limits": "Month exact request path and all units not asserted here."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "reference-workspace-021",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "[data-new] (units)",
+      "historical_status": "untested",
+      "candidate_inventory_ids": [
+        "reference-workspace-ts::render::7dc6f680abb6",
+        "reference-workspace-ts::render::7dc6f680abb6::2"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-record-new-unit-independent.browser.mjs",
+          "assertion_source": "frontend/tests/premium-record-new-unit-independent.browser.mjs:36",
+          "report": "docs/premium-ui/qa-record-new-unit-independent.json",
+          "verified_outcome": "AddUnitdirtyresetrejectkeepsfields/0POST;acceptclearsprefill/namefocus.",
+          "limits": "3engines320/1280unitPOSTmocked;no postingapply/serverpersistence/permissioncertification."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "reference-workspace-022",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "[data-unit-history]",
+      "historical_status": "passed-current-run",
+      "candidate_inventory_ids": [
+        "reference-workspace-ts::render::07fa3c19c802"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:231",
+          "assertion_anchor": "assert.ok(requests.some(x=>x.path==='/api/v1/normalization/activity'))",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Reference/unit history open and returned Historical label visible.",
+          "limits": "Reference history GET target entity not exact asserted for each caller."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "reference-workspace-023",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "[name=name],[name=campus],[name=code] (units)",
+      "historical_status": "partial-existing-assertions",
+      "candidate_inventory_ids": [],
+      "inventory_mapping_note": "Original contract ID retained; no unambiguous attribute-family inventory match",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-record-new-unit-independent.browser.mjs",
+          "assertion_source": "frontend/tests/premium-record-new-unit-independent.browser.mjs:40",
+          "report": "docs/premium-ui/qa-record-new-unit-independent.json",
+          "verified_outcome": "Name/campus/code503retained;manualretry exactunitPOSTtwice;newunitreturnedtoouterposting.",
+          "limits": "3engines320/1280unitPOSTmocked;no postingapply/serverpersistence/permissioncertification."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "reference-workspace-024",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "[name=minimum_free_people],[data-call-minimum]",
+      "historical_status": "passed-current-run",
+      "candidate_inventory_ids": [
+        "reference-workspace-ts::-callback-::fda9652a5259"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:276",
+          "assertion_anchor": "assert.deepEqual(units[0].call_minimums",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Saved minimum2,callminimum Second3 and notes retained fixture; saved indicator reached.",
+          "limits": "Aliases input is filled but exact saved alias not asserted;active_status change not tested; bounded notes/minimum subset."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "reference-workspace-025",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "[name=aliases],[name=notes],[name=active_status] (units)",
+      "historical_status": "untested",
+      "candidate_inventory_ids": [],
+      "inventory_mapping_note": "Original contract ID retained; no unambiguous attribute-family inventory match",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:276",
+          "assertion_anchor": "assert.deepEqual(units[0].call_minimums",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Saved minimum2,callminimum Second3 and notes retained fixture; saved indicator reached.",
+          "limits": "Aliases input is filled but exact saved alias not asserted;active_status change not tested; bounded notes/minimum subset."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "reference-workspace-026",
+      "module": "frontend/src/reference-workspace.ts",
+      "selector": "#registry-unit-form button[type=submit]",
+      "historical_status": "partial-current-run",
+      "candidate_inventory_ids": [],
+      "inventory_mapping_note": "Original contract ID retained; no unambiguous attribute-family inventory match",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:276",
+          "assertion_anchor": "assert.deepEqual(units[0].call_minimums",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Saved minimum2,callminimum Second3 and notes retained fixture; saved indicator reached.",
+          "limits": "Aliases input is filled but exact saved alias not asserted;active_status change not tested; bounded notes/minimum subset."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "operational-import-001",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[data-close]",
+      "historical_status": "untested",
+      "candidate_inventory_ids": [
+        "operational-import-ts::createMemberInline::8344e4732b2a",
+        "operational-import-ts::openOperationalImport::8344e4732b2a"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-workspace-unload-independent.browser.mjs",
+          "assertion_source": "frontend/tests/premium-workspace-unload-independent.browser.mjs:78",
+          "assertion_anchor": "assert.equal(await dialog.count(),1,kind+' rejected Close keeps dialog')",
+          "report": "docs/premium-ui/qa-workspace-unload-independent.json",
+          "verified_outcome": "Member and operational CSV selectedfile beforepreview survives rejectedClose/Escape; accepteddiscard removesdialog withoutsave.",
+          "limits": "Synthetic beforeunload separately labeled; no nativeprompt guarantee."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "operational-import-002",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[data-use-existing]",
+      "historical_status": "untested",
+      "candidate_inventory_ids": [
+        "operational-import-ts::-callback-::61fd222d9f74"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-inline-member-choice-independent.browser.mjs",
+          "assertion_source": "frontend/tests/premium-inline-member-choice-independent.browser.mjs:42",
+          "report": "docs/premium-ui/qa-inline-member-choice-independent.json",
+          "verified_outcome": "UseexistingactivecandidateGET503manualretryexact+2reads selectsexactID,returnsouterrecordfocusandretainsdates/notes/month,noCreatePOST.",
+          "limits": "Threeengines320/1280;resolvePOSTintercepted;allotherGETfixture;nocreate/restore/recordsaveaccepted."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "operational-import-003",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[data-review-existing]",
+      "historical_status": "untested",
+      "candidate_inventory_ids": [
+        "operational-import-ts::-callback-::ac917c72a096"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-inline-member-choice-independent.browser.mjs",
+          "assertion_source": "frontend/tests/premium-inline-member-choice-independent.browser.mjs:38",
+          "report": "docs/premium-ui/qa-inline-member-choice-independent.json",
+          "verified_outcome": "ArchivedcandidateReviewexactprofileIDGET,detailsproposedactive;cancelnoPUTandreturnexistingcreatornamecontext.",
+          "limits": "Threeengines320/1280;resolvePOSTintercepted;allotherGETfixture;nocreate/restore/recordsaveaccepted."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "operational-import-004",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[name=canonical_name],[name=call_level] (inline creation)",
+      "historical_status": "untested",
+      "candidate_inventory_ids": [],
+      "inventory_mapping_note": "Original contract ID retained; no unambiguous attribute-family inventory match",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-inline-member-create.browser.mjs",
+          "assertion_source": "frontend/tests/premium-inline-member-create.browser.mjs",
+          "assertion_anchor": "manualRetryExactPayload",
+          "report": "docs/premium-ui/qa-inline-member-create.json",
+          "verified_outcome": "Namedmember/callfields retained throughheld503; exactmanualretry; pendingnativecontrols andduplicatesguard; callbackonceexactID.",
+          "limits": "Six3engine320/1280 fixturecontexts, nofullcontract/backendcertification."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "operational-import-005",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "form button[type=submit] (inline creation)",
+      "historical_status": "untested",
+      "candidate_inventory_ids": [],
+      "inventory_mapping_note": "Original contract ID retained; no unambiguous attribute-family inventory match",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-inline-member-create.browser.mjs",
+          "assertion_source": "frontend/tests/premium-inline-member-create.browser.mjs",
+          "assertion_anchor": "manualRetryExactPayload",
+          "report": "docs/premium-ui/qa-inline-member-create.json",
+          "verified_outcome": "Namedmember/callfields retained throughheld503; exactmanualretry; pendingnativecontrols andduplicatesguard; callbackonceexactID.",
+          "limits": "Six3engine320/1280 fixturecontexts, nofullcontract/backendcertification."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "operational-import-006",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "a[download]",
+      "historical_status": "untested",
+      "candidate_inventory_ids": [],
+      "inventory_mapping_note": "Original contract ID retained; no unambiguous attribute-family inventory match",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-csv-template-artifacts.browser.mjs",
+          "assertion_source": "frontend/tests/premium-csv-template-artifacts.browser.mjs",
+          "assertion_anchor": "monthFileContextPreserved",
+          "report": "docs/premium-ui/qa-csv-template-artifacts.json",
+          "verified_outcome": "Nativekeyboard leave/unit blank/exampleCSVdownloads exactbytes/filename;month/fileunchanged.",
+          "limits": "Six3engine320/1280 fixture contexts only; no full contract/backend persistence certification."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "operational-import-007",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[data-manage-import-references]",
+      "historical_status": "untested",
+      "candidate_inventory_ids": [
+        "operational-import-ts::openOperationalImport::a87b773bb070"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-import-reference-controls.browser.mjs",
+          "assertion_source": "frontend/tests/premium-import-reference-controls.browser.mjs",
+          "assertion_anchor": "[data-manage-import-references]",
+          "report": "docs/premium-ui/qa-import-reference-controls.json",
+          "verified_outcome": "Both unit and leave import control opens the matching reference section; GET503 retry, PUT503 retry with exact unchanged payload, stable key, close/opener focus, draft retained and Apply blocked.",
+          "limits": "12 fixture cases each; intercepted requests, no full contract or server persistence certification."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "operational-import-008",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[data-settings] [name=month],[data-settings] [name=mode],[data-settings] [name=date_format]",
+      "historical_status": "untested",
+      "candidate_inventory_ids": [
+        "operational-import-ts::openOperationalImport::277978774269"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-import-candidate-choice.browser.mjs",
+          "assertion_source": "frontend/tests/premium-import-candidate-choice.browser.mjs",
+          "assertion_anchor": "[data-settings] [name=month],[data-settings] [name=mode],[data-settings] [name=date_format]",
+          "report": "docs/premium-ui/qa-import-candidate-choice.json",
+          "verified_outcome": "Actualmonth/mode/dateformatcontrols changed; multipartfinalmonth2026-10/modeupdate_matching/dateformatDMYasserted.",
+          "limits": "Six3engine320/1280unitimportfixtures, notfullcontract/backendcertification."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "operational-import-009",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[data-settings] input[type=file]",
+      "historical_status": "partial-existing-assertions",
+      "candidate_inventory_ids": [
+        "operational-import-ts::openOperationalImport::277978774269"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-import-candidate-choice.browser.mjs",
+          "assertion_source": "frontend/tests/premium-import-candidate-choice.browser.mjs",
+          "assertion_anchor": "[data-settings] input[type=file]",
+          "report": "docs/premium-ui/qa-import-candidate-choice.json",
+          "verified_outcome": "Actualcandidate.csvFilecontent/name verified; columns/previewrequests include filename; nowirebytesclaim.",
+          "limits": "Six3engine320/1280unitimportfixtures, notfullcontract/backendcertification."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "operational-import-010",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[data-settings] button[type=submit]",
+      "historical_status": "existing-assertions",
+      "candidate_inventory_ids": [
+        "operational-import-ts::openOperationalImport::277978774269"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-import-candidate-choice.browser.mjs",
+          "assertion_source": "frontend/tests/premium-import-candidate-choice.browser.mjs",
+          "assertion_anchor": "[data-settings] button[type=submit]",
+          "report": "docs/premium-ui/qa-import-candidate-choice.json",
+          "verified_outcome": "NativePreviewbuttonrendersreturnedtwo-rowreview andsettings/mappingpayloadasserted.",
+          "limits": "Six3engine320/1280unitimportfixtures, notfullcontract/backendcertification."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "operational-import-011",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[data-map]",
+      "historical_status": "untested",
+      "candidate_inventory_ids": [
+        "operational-import-ts::-callback-::df5cad5c6eec"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-import-candidate-choice.browser.mjs",
+          "assertion_source": "frontend/tests/premium-import-candidate-choice.browser.mjs",
+          "assertion_anchor": "[data-map]",
+          "report": "docs/premium-ui/qa-import-candidate-choice.json",
+          "verified_outcome": "Wronginitialcolumnsuggestioncorrectedthroughactualselect; finalmapping{Name:member_name}asserted.",
+          "limits": "Six3engine320/1280unitimportfixtures, notfullcontract/backendcertification."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "operational-import-012",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[data-include]",
+      "historical_status": "partial-current-run",
+      "candidate_inventory_ids": [
+        "operational-import-ts::rowHtml::b0cbbc7d1ad7"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:334",
+          "assertion_anchor": "assert.deepEqual(requests.find(x=>x.path.endsWith('/import-1/apply')).body",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Uncheckedrow4andacknowledge produce exact excluded/warnings apply payload; cancelledconfirm noapply; accepted returns complete.",
+          "limits": "Mocked mutation only; no server persistence/later history check."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "operational-import-013",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[data-pick-member]",
+      "historical_status": "untested",
+      "candidate_inventory_ids": [],
+      "inventory_mapping_note": "Original contract ID retained; no unambiguous attribute-family inventory match",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-import-candidate-choice.browser.mjs",
+          "assertion_source": "frontend/tests/premium-import-candidate-choice.browser.mjs",
+          "assertion_anchor": "[data-pick-member]",
+          "report": "docs/premium-ui/qa-import-candidate-choice.json",
+          "verified_outcome": "NativecandidateBeta choice503blocksApply; explicitretryexactrow2person_id androw3unchanged.",
+          "limits": "Six3engine320/1280unitimportfixtures, notfullcontract/backendcertification."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "operational-import-014",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[data-review-candidate]",
+      "historical_status": "untested",
+      "candidate_inventory_ids": [
+        "operational-import-ts::-callback-::6224227e343d"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-import-candidate-choice.browser.mjs",
+          "assertion_source": "frontend/tests/premium-import-candidate-choice.browser.mjs",
+          "assertion_anchor": "[data-review-candidate]",
+          "report": "docs/premium-ui/qa-import-candidate-choice.json",
+          "verified_outcome": "Archivedcandidateopens exactGET/profile/proposedactive; closeconfirmsdiscard withnoPUTandopenerfocusreturn.",
+          "limits": "Six3engine320/1280unitimportfixtures, notfullcontract/backendcertification."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "operational-import-015",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[data-find-member],[data-find-unit]",
+      "historical_status": "untested",
+      "candidate_inventory_ids": [
+        "operational-import-ts::rowHtml::8b27c10ed68f",
+        "operational-import-ts::rowHtml::e1ed3cc5acb4"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-import-candidate-choice.browser.mjs",
+          "assertion_source": "frontend/tests/premium-import-candidate-choice.browser.mjs",
+          "assertion_anchor": "[data-find-member],[data-find-unit]",
+          "report": "docs/premium-ui/qa-import-candidate-choice.json",
+          "verified_outcome": "Member/unitsearch hidesunrelatedunselectedoptions whilepreservingcurrentselection.",
+          "limits": "Six3engine320/1280unitimportfixtures, notfullcontract/backendcertification."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "operational-import-016",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[data-row][data-field]",
+      "historical_status": "partial-current-run",
+      "candidate_inventory_ids": [
+        "operational-import-ts::rowHtml::353293c98981",
+        "operational-import-ts::rowHtml::2e0d6fe21ad7",
+        "operational-import-ts::rowHtml::6244f5d3bacc",
+        "operational-import-ts::rowHtml::909cb50d0426",
+        "operational-import-ts::rowHtml::e56c852ff0e2",
+        "operational-import-ts::-callback-::bbd392acbc1c",
+        "operational-import-ts::rowHtml::c74944e2202a",
+        "operational-import-ts::rowHtml::8521377a9abd"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-import-review-pager.browser.mjs",
+          "assertion_source": "frontend/tests/premium-import-review-pager.browser.mjs",
+          "assertion_anchor": "correctionExclusionFileMonthRetained",
+          "report": "docs/premium-ui/qa-import-review-pager.json",
+          "verified_outcome": "NativeEnter/Space across3pages, exact25/25/1rowboundaries, enabledpagerfocus andpreserveddatecorrection/exclusion/file/month withoutrequests.",
+          "limits": "Twelve3engine320/1280 leave/unitfixtures; nofullcontractcertification."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "operational-import-017",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[data-create-member]",
+      "historical_status": "passed-current-run",
+      "candidate_inventory_ids": [
+        "operational-import-ts::rowHtml::975a29700844"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:307",
+          "assertion_anchor": "assert.deepEqual(importSettings.at(-1).corrections,{'CSV:2'",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Repeated exact-label member/unit corrections affect rows2/3; rejected repeat no corrections; inlinecreate corrects row4 target id;refresh yields normalized read.",
+          "limits": "Does not certify all unrelated CSV row controls."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "operational-import-018",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[data-create-unit]",
+      "historical_status": "untested",
+      "candidate_inventory_ids": [
+        "operational-import-ts::rowHtml::efafedc44b79"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-import-created-unit.browser.mjs",
+          "assertion_source": "frontend/tests/premium-import-created-unit.browser.mjs",
+          "assertion_anchor": "[data-create-unit]",
+          "report": "docs/premium-ui/qa-import-created-unit.json",
+          "verified_outcome": "Actual Create unit -> POST503/manualretry -> successful creation -> choicesGET503/read-onlyretry; exact row correction, date/file retained, visible recovery/row focus; duplicate activation ignored and old choices cannot mutate a replacement file.",
+          "limits": "12 fixture cases each; intercepted requests, no full contract or server persistence certification."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "operational-import-019",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[data-repeat-member]",
+      "historical_status": "passed-current-run",
+      "candidate_inventory_ids": [
+        "operational-import-ts::rowHtml::b6ab0b3a7fd9"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:307",
+          "assertion_anchor": "assert.deepEqual(importSettings.at(-1).corrections,{'CSV:2'",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Repeated exact-label member/unit corrections affect rows2/3; rejected repeat no corrections; inlinecreate corrects row4 target id;refresh yields normalized read.",
+          "limits": "Does not certify all unrelated CSV row controls."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "operational-import-020",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[data-repeat-unit]",
+      "historical_status": "passed-current-run",
+      "candidate_inventory_ids": [
+        "operational-import-ts::rowHtml::51d317f2db5a"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:307",
+          "assertion_anchor": "assert.deepEqual(importSettings.at(-1).corrections,{'CSV:2'",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Repeated exact-label member/unit corrections affect rows2/3; rejected repeat no corrections; inlinecreate corrects row4 target id;refresh yields normalized read.",
+          "limits": "Does not certify all unrelated CSV row controls."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "operational-import-021",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[data-page]",
+      "historical_status": "existing-assertions",
+      "candidate_inventory_ids": [
+        "operational-import-ts::renderReview::96571f6b326d",
+        "operational-import-ts::renderReview::f0f71febdf77"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-import-review-pager.browser.mjs",
+          "assertion_source": "frontend/tests/premium-import-review-pager.browser.mjs",
+          "assertion_anchor": "correctionExclusionFileMonthRetained",
+          "report": "docs/premium-ui/qa-import-review-pager.json",
+          "verified_outcome": "NativeEnter/Space across3pages, exact25/25/1rowboundaries, enabledpagerfocus andpreserveddatecorrection/exclusion/file/month withoutrequests.",
+          "limits": "Twelve3engine320/1280 leave/unitfixtures; nofullcontractcertification."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "operational-import-022",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[data-refresh]",
+      "historical_status": "passed-current-run",
+      "candidate_inventory_ids": [
+        "operational-import-ts::renderReview::43e824225d41"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:307",
+          "assertion_anchor": "assert.deepEqual(importSettings.at(-1).corrections,{'CSV:2'",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Repeated exact-label member/unit corrections affect rows2/3; rejected repeat no corrections; inlinecreate corrects row4 target id;refresh yields normalized read.",
+          "limits": "Does not certify all unrelated CSV row controls."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "operational-import-023",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[data-report]",
+      "historical_status": "passed-current-run",
+      "candidate_inventory_ids": [
+        "operational-import-ts::renderReview::67ea00c9b56b"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:319",
+          "assertion_anchor": "assert.equal(rowReport.suggestedFilename()",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Normalization download correct filename/header/row labels; completed report includes Yes.",
+          "limits": "CSV artifact bounded fixture content,not all escaping or export semantics."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "operational-import-024",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[data-acknowledge]",
+      "historical_status": "passed-current-run",
+      "candidate_inventory_ids": [
+        "operational-import-ts::renderReview::9a648e25e699"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:334",
+          "assertion_anchor": "assert.deepEqual(requests.find(x=>x.path.endsWith('/import-1/apply')).body",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Uncheckedrow4andacknowledge produce exact excluded/warnings apply payload; cancelledconfirm noapply; accepted returns complete.",
+          "limits": "Mocked mutation only; no server persistence/later history check."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "operational-import-025",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[data-apply]",
+      "historical_status": "partial-current-run",
+      "candidate_inventory_ids": [
+        "operational-import-ts::renderReview::bcab43224755"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:334",
+          "assertion_anchor": "assert.deepEqual(requests.find(x=>x.path.endsWith('/import-1/apply')).body",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Uncheckedrow4andacknowledge produce exact excluded/warnings apply payload; cancelledconfirm noapply; accepted returns complete.",
+          "limits": "Mocked mutation only; no server persistence/later history check."
+        }
+      ],
+      "full_contract_pass": false
+    },
+    {
+      "contract_id": "operational-import-026",
+      "module": "frontend/src/operational-import.ts",
+      "selector": "[data-download-completed-report]",
+      "historical_status": "passed-current-run",
+      "candidate_inventory_ids": [
+        "operational-import-ts::-callback-::c2ca159c9602"
+      ],
+      "inventory_mapping_note": "Attribute-family candidates,not one-to-one runtime certification",
+      "disposition": "explicit_bounded_assertions_linked",
+      "evidence": [
+        {
+          "test": "frontend/tests/premium-member-actions.browser.mjs",
+          "assertion_source": "frontend/tests/premium-member-actions.browser.mjs:319",
+          "assertion_anchor": "assert.equal(rowReport.suggestedFilename()",
+          "report": "docs/premium-ui/member-actions-results.json",
+          "verified_outcome": "Normalization download correct filename/header/row labels; completed report includes Yes.",
+          "limits": "CSV artifact bounded fixture content,not all escaping or export semantics."
+        }
+      ],
+      "full_contract_pass": false
+    }
+  ],
+  "limitations": [
+    "No whole requirement or role/mutation/backendpersistence certification.",
+    "Some linked reports have no recorded source hashes; assertions exist but rerun/current-source claim unavailable.",
+    "Legacy member-profile actions stay clearly separate from canonical member-workspace.",
+    "Top3enabled claims source-based only; actual runtime enabled-state presence must be confirmed before outcome tests."
+  ],
+  "top_three_remaining_at_review_snapshot": [
+    {
+      "contract_id": "member-workspace-008",
+      "label": "Copy member ID",
+      "selector": "button[data-copy-member-id]",
+      "source": "frontend/src/member-workspace.ts:405",
+      "source_occurrences": [
+        405,
+        475
+      ],
+      "context": "Details tab,current canonical member loaded; button has no disabled condition.",
+      "enabled_evidence_level": "Current source enabled markup and reachable tab already exercised by recorded profile tests; runtime enabled state not re-observed during this documentation-only pass.",
+      "next_test": "Mock clipboard available/denied/absent;assert exactmemberid copied or visiblemanualcopyfallback, no mutation, keyboardfocus preserved."
+    },
+    {
+      "contract_id": "member-workspace-019",
+      "label": "Manage designations and aliases",
+      "selector": "button[data-manage-profile-references]",
+      "source": "frontend/src/member-workspace.ts:407",
+      "source_occurrences": [
+        407,
+        548
+      ],
+      "context": "Roles tab,admin=true; button enabled by markup,opens designationcatalog.",
+      "enabled_evidence_level": "Current source enabled markup and reachable tab already exercised by recorded profile tests; runtime enabled state not re-observed during this documentation-only pass.",
+      "next_test": "Activate through canonicalprofile;assert designationcatalog initialkind not leave_type;Close restoresprofilecontext/draft, no unintendedsave."
+    },
+    {
+      "contract_id": "member-workspace-020",
+      "label": "Duty history date range",
+      "selector": "input[data-duty-from],input[data-duty-until]",
+      "source": "frontend/src/member-workspace.ts:368",
+      "source_occurrences": [
+        368,
+        553,
+        559
+      ],
+      "context": "Duties tab; From/Until inputs enabled by markup.",
+      "enabled_evidence_level": "Current source enabled markup and reachable tab already exercised by recorded profile tests; runtime enabled state not re-observed during this documentation-only pass.",
+      "next_test": "Supply recordsinside/outsidebothbounds;changebounds viaactualdateinputs;assert exactvisiblehistory/range and officialanalysisdistinction;reverse/emptydate and monthfilter handling;noAPIwrite."
+    }
+  ],
+  "top_three_followup": {
+    "recorded_at_utc": "2026-10-22T05:27:46.141772+00:00",
+    "report": "docs/premium-ui/qa-member-three-controls-independent.json",
+    "status": "Allthree now have bounded actualapp outcomes; historical top3 retained, not current unresolved list.",
+    "baseline_findings_archived": "docs/premium-ui/qa-member-three-controls-before-copy-feedback.json",
+    "source_sha256": {
+      "src/main.ts": "9b9f4bbd0df59f70fcd0e1b5f63aa71bdb91c4d8648a22498d0165d6fd881e64",
+      "src/member-workspace.ts": "35cb92656ca7c8c43b1c0a6de4c51eec56ca6854fd60d420e4330be362f8f56f",
+      "src/reference-workspace.ts": "886a5e50c66c4215b021f28fe06a23b667a4f1ded368cb6ee0406e3adea066e0"
+    }
+  },
+  "latest_duplicates_followup": {
+    "recorded_at_utc": "2026-10-22T05:40:15.463346+00:00",
+    "report": "docs/premium-ui/qa-member-duplicates-entry-independent.json",
+    "status": "sixboundedactualappworkflows terminalexit0",
+    "full_contract_pass": false
+  },
+  "latest_csv_choice_followup": {
+    "recorded_at_utc": "2026-10-22T09:15:17.116378+00:00",
+    "report": "docs/premium-ui/qa-member-csv-choice-independent.json",
+    "cases": 6,
+    "full_contract_pass": false
+  },
+  "latest_reference_template_followup": {
+    "recorded_at_utc": "2026-10-22T10:50:26.302044+00:00",
+    "reports": [
+      "docs/premium-ui/qa-reference-meaning-fields.json",
+      "docs/premium-ui/qa-csv-template-artifacts.json"
+    ],
+    "scope": "Six new contract-specific bounded mappings; no app changes. Original review metadata retained as historical."
+  },
+  "latest_inline_create_followup": {
+    "recorded_at_utc": "2026-10-22T10:54:11.288136+00:00",
+    "report": "docs/premium-ui/qa-inline-member-create.json",
+    "scope": "Boundedtwoadditionalcontracts; historicreviewmetadata retained."
+  },
+  "latest_review_pager_followup": {
+    "recorded_at_utc": "2026-10-22T10:57:38.833560+00:00",
+    "report": "docs/premium-ui/qa-import-review-pager.json"
+  },
+  "latest_record_reference_followup": {
+    "recorded_at_utc": "2026-10-22T11:09:48.956737+00:00",
+    "report": "docs/premium-ui/qa-record-reference-refresh.json"
+  },
+  "latest_member_csv_lifetime_followup": {
+    "recorded_at_utc": "2026-10-22T11:15:47.347725+00:00",
+    "report": "docs/premium-ui/qa-member-csv-lifetime.json"
+  },
+  "latest_import_candidate_followup": {
+    "recorded_at_utc": "2026-10-22T11:28:19.201905+00:00",
+    "report": "docs/premium-ui/qa-import-candidate-choice.json"
+  },
+  "latest_inline_unit_reference_followup": {
+    "recorded_at_utc": "2026-10-22T11:38:04.378373+00:00",
+    "review": "docs/premium-ui/reviews/import-unit-reference-current.json"
+  },
+  "latest_candidate_profile_close_followup": {
+    "recorded_at_utc": "2026-10-22T12:06:49.225018+00:00",
+    "review": "docs/premium-ui/reviews/member-candidate-profile-close-current.json"
+  },
+  "latest_history_retry_followup": {
+    "recorded_at_utc": "2026-10-22T12:20:08.067087+00:00",
+    "review": "docs/premium-ui/reviews/progress-window-history-retry-current.json"
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "recorded_at_utc": "2026-10-22T17:20:03.417796+00:00",
+  "completion_claim": false,
+  "requirements": [
+    20,
+    65,
+    208,
+    209,
+    219,
+    258
+  ],
+  "scope": "Responsive header wrapping and current visual-direction baseline documentation.",
+  "source_sha256": {
+    "frontend/src/main.ts": "fd1f64396078917a7dc7807e4ec27d45cb4c4da922473ee2bad6c1aaa58fd5d5",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "c8735b125b0aeb78f9d7ab1712b4e12a33443bc38a3c11050c1e3f36016c497f"
+  },
+  "before": {
+    "report": "docs/premium-ui/qa-header-wrap-before.json",
+    "finding": "Actual769pxChromium header with long account name/local28pxtext squeezedtitle to4.6px despite zero horizontal pageoverflow."
+  },
+  "changes": [
+    "Allow header groups to wrap globally, not only below768px; bound tools to available width and permit their controls to wrap.",
+    "Avatar retains30pxnormalminimum and grows with enlargedtext, preventing initials from exceedingfixedcircle. Accessibleaccountname,ellipsisbehavior andmenucontrols unchanged.",
+    "Record current royal palette/type/elevation/geometry/workflow contract and later-change policy. Documentedafterimplementation, not retroactive proof offreeze-before-styling oruserapprovalofexacttokens."
+  ],
+  "checks": {
+    "header_contexts": 30,
+    "engines": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "widths": [
+      320,
+      390,
+      769,
+      1024,
+      1280
+    ],
+    "text": "normal/local28pxoverride",
+    "existing_shell_outcome_workflows": 8,
+    "unit_tests": 100,
+    "build_exit_code": 0,
+    "build_inputs_held": true,
+    "new_geometry_assertions": [
+      "Title/month/account wholly insideviewport andmutuallynonoverlapping",
+      "Avatarcontentfitsitsbox",
+      "Accountmenuremainsinsideviewport",
+      "NativeEnter/Escapeopens/closesmenuandrestoresopener",
+      "Fullaccessibleaccountnameretainedandselectedmonthunchanged",
+      "NoextraAPIrequestsfrommenuactions"
+    ]
+  },
+  "evidence": [
+    "docs/premium-ui/qa-header-wrap-before.json",
+    "docs/premium-ui/qa-header-wrap.json",
+    "tmp/premium-shell-header-current.log",
+    "docs/premium-ui/visual-contract.md",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+  ],
+  "visual_contract_sha256": "1d2a0c10470becef3ee65aaf9073d966497c4226875ba7bf6891299f7ca38e92",
+  "test": "frontend/tests/premium-header-wrap.browser.mjs",
+  "test_sha256": "83cd884f0a7d5cdb30078ea82ff4808da7ee257411ef9c96f8afca3aa1ccbf2e",
+  "visual_review": {
+    "reviewer": "rootimplementer,notindependent",
+    "screenshot": "docs/premium-ui/screenshots/header/wrap-769.png",
+    "finding": "Previouslysqueezedtitlefullyreadable;monthandlargeinitialswrapwithoutoverlap. Atstresssizeaccountmayoccupyseparaterow."
+  },
+  "limitations": [
+    "ActualLeaveheaderwithlongaccountfixtureandfivewidths;notallroutes/roles/locales/titlelengths. Otherheadersneedseparateacceptance.",
+    "Local28pxtextoverride isnot200%browserzoom/OStextscaling orphysicaldevice. Native monthpicker content/keyboardnotcertified.",
+    "Headerfixturelightthemeonly;existing8shellworkflowsprovidezboundedinteractioncoverage,notalltheme/rolevariants. No newwholepageaxeclaim.",
+    "Visualcontract iscurrentimplementationguidance;fullpalette/elevationconsolidationandbodyuppercaseaudit remainopen. No retroactiveplanningmilestoneclaimed.",
+    "GET-onlydisposableAPIandinterceptedexisting shellmutations; no backend/API-contract/permission/scheduling/data/export/productionchanges. Broad144/tenfamilywavehistoricalafterlocaledits. Physical/native/independent/full260acceptancepending."
+  ]
+}

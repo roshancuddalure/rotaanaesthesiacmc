@@ -1,0 +1,618 @@
+{
+  "recorded_at_utc": "2026-10-24T04:50:16.099Z",
+  "source_sha256": {
+    "frontend/src/rota-rules.ts": "36f1b9f69ebd81a0180f3cfc45c21aba0d3e4496bc73bbde1f8072093e337c3f",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "559041ee03d192fcc291582bd7572e8d32004e9d5428b7e57fbbea9ba9e60f83",
+    "frontend/src/member-workspace.ts": "4ddb7efade2d5886e8d62dc5fa7225eb2448b02c4be37ebb0ce474b5d3562c41",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/ui.ts": "88579ed75c8c72e4fd4e2d98508a58c42b925202362589a2469623664c2a975f",
+    "frontend/src/audit-time.ts": "136542cb2daec343417532d372f2e8ce01a0e6103ef6c62a7a4a8017ac8a6d15",
+    "frontend/src/decorative-icons.ts": "7e2d11356114e96f242435a2cd7cb7bc24cdc1787142e864e1cf053f92c373d7"
+  },
+  "test_sha256": "89dc1468de6b337d903e28a53147d40c6c077f4267a8a554f5299d372a08ba7d",
+  "probe": false,
+  "scope": "Six browser contexts, nine isolated scenarios each unless probe; actual exported editor, all API locally fulfilled, exact save/check bodies. Covers recovery GET lifetime after native Escape or Keep editing, current error/retry, current reload/rebase and dismissal during rebased validation. No persisted server data, physical-device, native-AT or full-application certification.",
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "subcases": [
+        {
+          "scenario": "reload-late-success",
+          "draft_focus_status_and_closed_dom_retained": true,
+          "original_revision_and_guard_context_retained": true,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-1"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "reload-late-error",
+          "draft_focus_status_and_closed_dom_retained": true,
+          "original_revision_and_guard_context_retained": true,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-1"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "review-late-success",
+          "draft_focus_status_and_closed_dom_retained": true,
+          "original_revision_and_guard_context_retained": true,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-1"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "review-late-error",
+          "draft_focus_status_and_closed_dom_retained": true,
+          "original_revision_and_guard_context_retained": true,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-1"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "reload-current",
+          "explicit_recovery_and_save_succeeded": true,
+          "server_limits_preserved": true,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-2"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "review-current",
+          "explicit_recovery_and_save_succeeded": true,
+          "server_limits_preserved": true,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-2"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "reload-open-error-retry",
+          "explicit_recovery_and_save_succeeded": true,
+          "server_limits_preserved": true,
+          "current_error_visible_until_explicit_recovery_retry": true,
+          "exact_recovery_gets": 3,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-2"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "review-open-error-retry",
+          "explicit_recovery_and_save_succeeded": true,
+          "server_limits_preserved": true,
+          "current_error_visible_until_explicit_recovery_retry": true,
+          "exact_recovery_gets": 3,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-2"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "review-close-during-recheck",
+          "post_check_parent_continuation_cannot_repaint_closed_review": true,
+          "new_draft_focus_and_status_retained": true,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-2"
+          ],
+          "forwarded_mutations": 0
+        }
+      ]
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "subcases": [
+        {
+          "scenario": "reload-late-success",
+          "draft_focus_status_and_closed_dom_retained": true,
+          "original_revision_and_guard_context_retained": true,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-1"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "reload-late-error",
+          "draft_focus_status_and_closed_dom_retained": true,
+          "original_revision_and_guard_context_retained": true,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-1"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "review-late-success",
+          "draft_focus_status_and_closed_dom_retained": true,
+          "original_revision_and_guard_context_retained": true,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-1"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "review-late-error",
+          "draft_focus_status_and_closed_dom_retained": true,
+          "original_revision_and_guard_context_retained": true,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-1"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "reload-current",
+          "explicit_recovery_and_save_succeeded": true,
+          "server_limits_preserved": true,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-2"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "review-current",
+          "explicit_recovery_and_save_succeeded": true,
+          "server_limits_preserved": true,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-2"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "reload-open-error-retry",
+          "explicit_recovery_and_save_succeeded": true,
+          "server_limits_preserved": true,
+          "current_error_visible_until_explicit_recovery_retry": true,
+          "exact_recovery_gets": 3,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-2"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "review-open-error-retry",
+          "explicit_recovery_and_save_succeeded": true,
+          "server_limits_preserved": true,
+          "current_error_visible_until_explicit_recovery_retry": true,
+          "exact_recovery_gets": 3,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-2"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "review-close-during-recheck",
+          "post_check_parent_continuation_cannot_repaint_closed_review": true,
+          "new_draft_focus_and_status_retained": true,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-2"
+          ],
+          "forwarded_mutations": 0
+        }
+      ]
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "subcases": [
+        {
+          "scenario": "reload-late-success",
+          "draft_focus_status_and_closed_dom_retained": true,
+          "original_revision_and_guard_context_retained": true,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-1"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "reload-late-error",
+          "draft_focus_status_and_closed_dom_retained": true,
+          "original_revision_and_guard_context_retained": true,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-1"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "review-late-success",
+          "draft_focus_status_and_closed_dom_retained": true,
+          "original_revision_and_guard_context_retained": true,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-1"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "review-late-error",
+          "draft_focus_status_and_closed_dom_retained": true,
+          "original_revision_and_guard_context_retained": true,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-1"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "reload-current",
+          "explicit_recovery_and_save_succeeded": true,
+          "server_limits_preserved": true,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-2"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "review-current",
+          "explicit_recovery_and_save_succeeded": true,
+          "server_limits_preserved": true,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-2"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "reload-open-error-retry",
+          "explicit_recovery_and_save_succeeded": true,
+          "server_limits_preserved": true,
+          "current_error_visible_until_explicit_recovery_retry": true,
+          "exact_recovery_gets": 3,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-2"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "review-open-error-retry",
+          "explicit_recovery_and_save_succeeded": true,
+          "server_limits_preserved": true,
+          "current_error_visible_until_explicit_recovery_retry": true,
+          "exact_recovery_gets": 3,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-2"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "review-close-during-recheck",
+          "post_check_parent_continuation_cannot_repaint_closed_review": true,
+          "new_draft_focus_and_status_retained": true,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-2"
+          ],
+          "forwarded_mutations": 0
+        }
+      ]
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "subcases": [
+        {
+          "scenario": "reload-late-success",
+          "draft_focus_status_and_closed_dom_retained": true,
+          "original_revision_and_guard_context_retained": true,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-1"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "reload-late-error",
+          "draft_focus_status_and_closed_dom_retained": true,
+          "original_revision_and_guard_context_retained": true,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-1"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "review-late-success",
+          "draft_focus_status_and_closed_dom_retained": true,
+          "original_revision_and_guard_context_retained": true,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-1"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "review-late-error",
+          "draft_focus_status_and_closed_dom_retained": true,
+          "original_revision_and_guard_context_retained": true,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-1"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "reload-current",
+          "explicit_recovery_and_save_succeeded": true,
+          "server_limits_preserved": true,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-2"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "review-current",
+          "explicit_recovery_and_save_succeeded": true,
+          "server_limits_preserved": true,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-2"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "reload-open-error-retry",
+          "explicit_recovery_and_save_succeeded": true,
+          "server_limits_preserved": true,
+          "current_error_visible_until_explicit_recovery_retry": true,
+          "exact_recovery_gets": 3,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-2"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "review-open-error-retry",
+          "explicit_recovery_and_save_succeeded": true,
+          "server_limits_preserved": true,
+          "current_error_visible_until_explicit_recovery_retry": true,
+          "exact_recovery_gets": 3,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-2"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "review-close-during-recheck",
+          "post_check_parent_continuation_cannot_repaint_closed_review": true,
+          "new_draft_focus_and_status_retained": true,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-2"
+          ],
+          "forwarded_mutations": 0
+        }
+      ]
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "subcases": [
+        {
+          "scenario": "reload-late-success",
+          "draft_focus_status_and_closed_dom_retained": true,
+          "original_revision_and_guard_context_retained": true,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-1"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "reload-late-error",
+          "draft_focus_status_and_closed_dom_retained": true,
+          "original_revision_and_guard_context_retained": true,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-1"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "review-late-success",
+          "draft_focus_status_and_closed_dom_retained": true,
+          "original_revision_and_guard_context_retained": true,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-1"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "review-late-error",
+          "draft_focus_status_and_closed_dom_retained": true,
+          "original_revision_and_guard_context_retained": true,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-1"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "reload-current",
+          "explicit_recovery_and_save_succeeded": true,
+          "server_limits_preserved": true,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-2"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "review-current",
+          "explicit_recovery_and_save_succeeded": true,
+          "server_limits_preserved": true,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-2"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "reload-open-error-retry",
+          "explicit_recovery_and_save_succeeded": true,
+          "server_limits_preserved": true,
+          "current_error_visible_until_explicit_recovery_retry": true,
+          "exact_recovery_gets": 3,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-2"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "review-open-error-retry",
+          "explicit_recovery_and_save_succeeded": true,
+          "server_limits_preserved": true,
+          "current_error_visible_until_explicit_recovery_retry": true,
+          "exact_recovery_gets": 3,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-2"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "review-close-during-recheck",
+          "post_check_parent_continuation_cannot_repaint_closed_review": true,
+          "new_draft_focus_and_status_retained": true,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-2"
+          ],
+          "forwarded_mutations": 0
+        }
+      ]
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "subcases": [
+        {
+          "scenario": "reload-late-success",
+          "draft_focus_status_and_closed_dom_retained": true,
+          "original_revision_and_guard_context_retained": true,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-1"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "reload-late-error",
+          "draft_focus_status_and_closed_dom_retained": true,
+          "original_revision_and_guard_context_retained": true,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-1"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "review-late-success",
+          "draft_focus_status_and_closed_dom_retained": true,
+          "original_revision_and_guard_context_retained": true,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-1"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "review-late-error",
+          "draft_focus_status_and_closed_dom_retained": true,
+          "original_revision_and_guard_context_retained": true,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-1"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "reload-current",
+          "explicit_recovery_and_save_succeeded": true,
+          "server_limits_preserved": true,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-2"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "review-current",
+          "explicit_recovery_and_save_succeeded": true,
+          "server_limits_preserved": true,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-2"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "reload-open-error-retry",
+          "explicit_recovery_and_save_succeeded": true,
+          "server_limits_preserved": true,
+          "current_error_visible_until_explicit_recovery_retry": true,
+          "exact_recovery_gets": 3,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-2"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "review-open-error-retry",
+          "explicit_recovery_and_save_succeeded": true,
+          "server_limits_preserved": true,
+          "current_error_visible_until_explicit_recovery_retry": true,
+          "exact_recovery_gets": 3,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-2"
+          ],
+          "forwarded_mutations": 0
+        },
+        {
+          "scenario": "review-close-during-recheck",
+          "post_check_parent_continuation_cannot_repaint_closed_review": true,
+          "new_draft_focus_and_status_retained": true,
+          "exact_put_revisions": [
+            "rev-1",
+            "rev-2"
+          ],
+          "forwarded_mutations": 0
+        }
+      ]
+    }
+  ]
+}

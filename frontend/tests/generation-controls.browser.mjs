@@ -8,7 +8,7 @@ const report={date:new Date().toISOString(),comparisons:[],workflows:[]};
 async function pageAt(width=390) {
  const context=await browser.newContext({viewport:{width,height:900}}),page=await context.newPage(),errors=[];
  page.on('pageerror',e=>errors.push(e.message));
- await page.route('**/__controls',r=>r.fulfill({contentType:'text/html',body:'<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/src/styles.css"></head><body><main id="host"></main></body></html>'}));
+ await page.route('**/__controls',r=>r.fulfill({contentType:'text/html',body:'<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/src/styles.css"><link rel="stylesheet" href="/src/premium-theme.css"></head><body><main id="host"></main></body></html>'}));
  await page.route('**/api/**',async r=>{const u=new URL(r.request().url()),response=await r.fetch({url:api+u.pathname+u.search});await r.fulfill({response});});
  await page.goto(base+'/__controls');return {context,page,errors};
 }

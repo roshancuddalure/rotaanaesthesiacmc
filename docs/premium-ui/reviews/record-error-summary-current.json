@@ -1,0 +1,69 @@
+{
+  "recorded_at_utc": "2026-10-22T17:54:15.713271+00:00",
+  "completion_claim": false,
+  "requirements": [
+    91,
+    92,
+    208,
+    209,
+    212,
+    219,
+    258
+  ],
+  "scope": "Leave/posting editor structured-error hint IDs and actionable summary presentation only.",
+  "source_sha256": {
+    "frontend/src/record-workspace.ts": "aff5fa264638bad4448e8e0c42434e6245b4dbe55b970e0b026a05d2631b9bec",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "4f61aa58b92229b0854e528cb90664a7ef7fa2d11dc2a6d2e94b3b797187ac01"
+  },
+  "before": {
+    "report": "docs/premium-ui/qa-record-error-summary-before.json",
+    "finding": "Two structured errors for the same end-date field produced duplicate DOM hint IDs. Summary buttons used raw ends on instead of the visible Until label."
+  },
+  "changes": [
+    "Use a distinct hint ID for each structured field error, retaining all descriptions and original guidance.",
+    "Build actionable summary labels from the visible field label, excluding controls and described guidance.",
+    "Retain unmapped structured messages as plain-text summary rows without guessing an affected field. Existing20detailcap,focusownership,requestvalues,reviewtoken andsavegates unchanged."
+  ],
+  "checks": {
+    "error_summary_contexts": 12,
+    "engines": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "widths": [
+      320,
+      1280
+    ],
+    "editors": [
+      "leave",
+      "posting"
+    ],
+    "scoped_tagged_axe_checks": 12,
+    "tagged_axe_violations": 0,
+    "existing_validation_save_contract_workflows": 3,
+    "existing_record_close_recovery_workflows": 12,
+    "unit_tests": 100,
+    "build_exit_code": 0,
+    "build_inputs_held": true,
+    "source_inventories": "Style/action inventories refreshed and match; static integrity only."
+  },
+  "evidence": [
+    "docs/premium-ui/qa-record-error-summary-before.json",
+    "docs/premium-ui/qa-record-error-summary.json",
+    "docs/premium-ui/qa-record-validation.json",
+    "docs/premium-ui/qa-record-close.json",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+  ],
+  "test": "frontend/tests/premium-record-error-summary.browser.mjs",
+  "test_sha256": "4b7a41b53293959db6f2dc5e1b1f98edb3d075f7ec92e87edbf9134c4d7be399",
+  "limitations": [
+    "Root implementer verification, not independent signoff.",
+    "Multiple422 details are intercepted defensive fixtures, not a claim about frequency in production. No backend writes.",
+    "12 error contexts use default light theme; not a full color/role/form matrix. Native assistive speech and physical devices remain pending.",
+    "Existing validation regression includes intercepted successful save payload assertions; this does not prove actual backend equivalence.",
+    "Native required-field client coverage and full90/91 certification remain open. Existing narrower checks are not all260 acceptance.",
+    "Only frontend record-workspace presentation changed in this batch; concurrent backend work preserved. No API,permissions,scheduling,persistedsemantics or export changes."
+  ]
+}

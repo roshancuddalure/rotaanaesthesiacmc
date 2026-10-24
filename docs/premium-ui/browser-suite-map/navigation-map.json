@@ -1,0 +1,634 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-10-24T03:58:03.358979+00:00",
+  "scope": "Docs-only inspection of five existing history, role and session suites. Retained runtime evidence only; no fresh test execution, app/test edits or whole-item acceptance.",
+  "source_inspection_method": "Read complete current scripts and retained raw reports. Anchors are exact current test-script line numbers or inclusive ranges; compare declared source hashes where present. Unsealed reports do not prove current runtime.",
+  "entries": [
+    {
+      "suite": "frontend/tests/premium-history.browser.mjs",
+      "sha256": "62733cf131cc58206028d0ceb085cf0114e19f3e17e077d3189c8f072f390bf2",
+      "source_inspected": true,
+      "execution_verified": true,
+      "execution_verification_scope": "Inspected retained12 rows: four passed workflows for each of three engines. No report timestamp, source hashes or script hash; historical unsealed outcome evidence only.",
+      "screens": [
+        "Leave",
+        "Units",
+        "Overview"
+      ],
+      "contexts": {
+        "engines": [
+          "chromium",
+          "firefox",
+          "webkit"
+        ],
+        "viewport": "1280x720",
+        "month": "2026-05",
+        "environment": "development default5197; MEMBER_TEST_URL override possible, not recorded in report",
+        "fixture": "GET-only disposable8031 default; PREMIUM_TEST_API override possible",
+        "workflows": 12
+      },
+      "assertion_groups": [
+        {
+          "action": "initial-deep-link",
+          "selector": "/#view=leave; [data-add-operational-record=\"leave\"]; #working-month",
+          "outcome": "Leave entry control appears, browser scrollRestoration is manual and month input equals2026-05.",
+          "source_lines": [
+            [
+              23,
+              27
+            ]
+          ],
+          "evidence_class": "fixture_read_and_screen_presence",
+          "report_paths": [
+            "docs/premium-ui/qa-history.json"
+          ]
+        },
+        {
+          "action": "back-forward-and-reload",
+          "selector": "[data-view=\"units\"]; All postings; browser Back/Forward/reload",
+          "outcome": "Actual browser Back reaches Leave control/hash; Forward and reload reach Units All postings/hash. Does not inspect posting rows.",
+          "source_lines": [
+            [
+              28,
+              38
+            ]
+          ],
+          "evidence_class": "fixture_read_and_local_interaction",
+          "report_paths": [
+            "docs/premium-ui/qa-history.json"
+          ]
+        },
+        {
+          "action": "overview-scroll-restoration",
+          "selector": "[data-view=\"overview\"]; Duty workload at a glance; scrollY",
+          "outcome": "Waits loaded Overview and skeleton removal, programmatically scrolls to positive position, navigates Leave, then Back restores Overview scroll within3px.",
+          "source_lines": [
+            [
+              39,
+              52
+            ]
+          ],
+          "evidence_class": "local_interaction_and_geometry",
+          "report_paths": [
+            "docs/premium-ui/qa-history.json"
+          ]
+        },
+        {
+          "action": "get-only-and-page-errors",
+          "selector": "**/api/**; pageerror",
+          "outcome": "Every API request must be GET before forwarding; final pageerror array is empty for each engine.",
+          "source_lines": [
+            [
+              18,
+              22
+            ],
+            52
+          ],
+          "evidence_class": "fixture_read_boundary",
+          "report_paths": [
+            "docs/premium-ui/qa-history.json"
+          ]
+        }
+      ],
+      "limitations": [
+        "No test execution by mapper. Retained report has no test-script hash; current inspected assertions are not cryptographically bound to execution. No native assistive technology or physical-device evidence.",
+        "Desktop only; no explicit theme matrix, role matrix, slow-route race, focus restoration, large datasets or full browser-navigation coverage.",
+        "Scroll is programmatically set; this does not test touch gestures, virtual keyboard, every scroll container or live native history across app upgrades."
+      ],
+      "retained_report_inspection": {
+        "path": "docs/premium-ui/qa-history.json",
+        "sha256": "897cd0a2d97ec22a61b0084d6326033d8a289a9b397af1356b3a8838cd52216c",
+        "rows": 12,
+        "fresh_execution_performed": false
+      },
+      "declared_source_freshness": []
+    },
+    {
+      "suite": "frontend/tests/premium-history-recovery.browser.mjs",
+      "sha256": "0689a0410f438236f62ffcc41fca7260196469c23d90f9fee0c29842525ad7f2",
+      "source_inspected": true,
+      "execution_verified": true,
+      "execution_verification_scope": "Inspected six retained rows: retry/empty geometry true in every row; late_month_guard true only in three workflow rows, false means inapplicable for member rows. No source/test hash or timestamp binding.",
+      "screens": [
+        "Isolated workflow leave import history",
+        "Isolated member import history"
+      ],
+      "contexts": {
+        "engine": "chromium",
+        "widths": [
+          320,
+          390,
+          1280
+        ],
+        "height": 800,
+        "kinds": [
+          "workflow",
+          "member"
+        ],
+        "months": [
+          "2026-10 initial",
+          "2026-01 held workflow",
+          "2026-11 replacement workflow"
+        ],
+        "environment": "development direct /src imports into intercepted/__history_review page",
+        "fixture": "All API GETs locally fulfilled with503 or empty JSON",
+        "workflows": 6
+      },
+      "assertion_groups": [
+        {
+          "action": "escaped-failure-and-deliberate-retry",
+          "selector": "Import history unavailable; Try again; #history",
+          "outcome": "First synthetic503 containing img markup renders no img and makes exactly one request. Explicit Try again reaches correct empty guidance and total attempts2.",
+          "source_lines": [
+            [
+              13,
+              18
+            ],
+            [
+              29,
+              36
+            ]
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-history-recovery.json"
+          ]
+        },
+        {
+          "action": "empty-history-reflow",
+          "selector": "#history table; No imports yet; No member imports recorded yet.",
+          "outcome": "No table in empty history; empty guidance bounding box fits viewport horizontally and document has no horizontal overflow.",
+          "source_lines": [
+            [
+              34,
+              40
+            ]
+          ],
+          "evidence_class": "geometry",
+          "report_paths": [
+            "docs/premium-ui/qa-history-recovery.json"
+          ]
+        },
+        {
+          "action": "held-older-workflow-month",
+          "selector": "#history; window.__mountHistory",
+          "outcome": "After held January request then fresh November mount, releasing older request leaves November text present and January absent. Applies only workflow contexts.",
+          "source_lines": [
+            [
+              41,
+              51
+            ]
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-history-recovery.json"
+          ]
+        },
+        {
+          "action": "read-boundary-and-errors",
+          "selector": "**/api/**; pageerror",
+          "outcome": "Every intercepted API request asserted GET and locally fulfilled; no forwarded mutation. Each context final pageerror array empty.",
+          "source_lines": [
+            [
+              13,
+              18
+            ],
+            53
+          ],
+          "evidence_class": "intercepted_read_boundary",
+          "report_paths": [
+            "docs/premium-ui/qa-history-recovery.json"
+          ]
+        }
+      ],
+      "limitations": [
+        "No test execution by mapper. Retained report has no test-script hash; current inspected assertions are not cryptographically bound to execution. No native assistive technology or physical-device evidence.",
+        "Direct module mounting in synthetic host is not actual app navigation, production-bundle verification or end-to-end CSV import.",
+        "Only empty success data; no populated table, pagination, comparison, rollback, download or import mutation outcome.",
+        "Late response checked after100ms; workflow only, not every error race or component disposal. No axe or native keyboard assertions."
+      ],
+      "retained_report_inspection": {
+        "path": "docs/premium-ui/qa-history-recovery.json",
+        "sha256": "976fa4f9a0d6c896dbdb4377cf4c5e3213bb0abaa60647b880ad593f31066a86",
+        "rows": 6,
+        "fresh_execution_performed": false
+      },
+      "declared_source_freshness": []
+    },
+    {
+      "suite": "frontend/tests/premium-role-navigation.browser.mjs",
+      "sha256": "7a59de7e407b3472a2134efd9c56d6151b30ee153b8a28ec2a4f35a3f6bdef36",
+      "source_inspected": true,
+      "execution_verified": true,
+      "execution_verification_scope": "Inspected24 retained role/engine/width rows with empty errors, zero tagged notice axe findings and declared outcomes. Retained main.ts and premium-theme.css hashes differ from current; navigation-history.ts and styles.css match. Historical source-scoped result, not current full runtime.",
+      "screens": [
+        "Sidebar",
+        "Mobile More",
+        "Unavailable-route notice",
+        "Overview",
+        "Members",
+        "Leave",
+        "Units",
+        "User guide"
+      ],
+      "contexts": {
+        "engines": [
+          "chromium",
+          "firefox",
+          "webkit"
+        ],
+        "widths": [
+          320,
+          1280
+        ],
+        "height": 900,
+        "roles": [
+          "rota_board_member",
+          "hod",
+          "computer_admin",
+          "superadmin"
+        ],
+        "reduced_motion": "reduce",
+        "month": "2026-05",
+        "environment": "hardcoded development5197",
+        "fixture": "auth/me locally fulfilled with role; other GETs disposable8031",
+        "workflows": 24
+      },
+      "assertion_groups": [
+        {
+          "action": "role-sidebar-inventory",
+          "selector": ".sidebar [data-view]",
+          "outcome": "Ordered sidebar list equals ten workflow routes plus existing admin routes for computer_admin, and limits plus admin routes for superadmin; no admin route for mocked HOD/board member.",
+          "source_lines": [
+            [
+              9,
+              11
+            ],
+            [
+              20,
+              24
+            ]
+          ],
+          "evidence_class": "intercepted_identity_and_screen_presence",
+          "report_paths": [
+            "docs/premium-ui/qa-role-navigation.json"
+          ]
+        },
+        {
+          "action": "unknown-link-keyboard-recovery",
+          "selector": "#route-availability-notice; Continue to Overview; #section-title",
+          "outcome": "Unknown hash explains Overview fallback; scoped tagged axe zero; keyboard Enter dismisses notice, sets overview hash and focuses section title.",
+          "source_lines": [
+            [
+              25,
+              28
+            ]
+          ],
+          "evidence_class": "local_interaction_and_automated_accessibility",
+          "report_paths": [
+            "docs/premium-ui/qa-role-navigation.json"
+          ]
+        },
+        {
+          "action": "mobile-more-inventory",
+          "selector": "#mobile-more; [data-mobile-more-view]",
+          "outcome": "At320, actual More opens and ordered destinations equal expected sidebar routes excluding four primary routes; Escape pressed, but no explicit dismissal/focus assertion.",
+          "source_lines": [
+            29
+          ],
+          "evidence_class": "local_interaction",
+          "report_paths": [
+            "docs/premium-ui/qa-role-navigation.json"
+          ]
+        },
+        {
+          "action": "restricted-or-invalid-link",
+          "selector": "#route-availability-notice; .sidebar [data-view=overview]",
+          "outcome": "Hash change to role-restricted accounts/limits or superadmin invalid-section yields appropriate notice; Overview aria-current stays page; no new path including/accounts or/limits.",
+          "source_lines": [
+            [
+              30,
+              31
+            ]
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-role-navigation.json"
+          ]
+        },
+        {
+          "action": "existing-operational-visibility",
+          "selector": "Members create/import; Leave mass approval/add/import; Units add department/posting",
+          "outcome": "Actual navigation marks destination active; Members creation/import visibility follows admin gate; Leave approval follows admin gate while add/import remain; Units department add follows admin gate while posting add remains. These controls are counted, not activated.",
+          "source_lines": [
+            [
+              12,
+              13
+            ],
+            [
+              32,
+              34
+            ]
+          ],
+          "evidence_class": "screen_presence",
+          "report_paths": [
+            "docs/premium-ui/qa-role-navigation.json"
+          ]
+        },
+        {
+          "action": "month-and-notice-state",
+          "selector": "#working-month; #working-month-field; #route-availability-notice",
+          "outcome": "Members navigation clears prior notice; Leave/Units month remains2026-05; User guide month field hidden; final errors empty and all requests GET.",
+          "source_lines": [
+            [
+              32,
+              35
+            ]
+          ],
+          "evidence_class": "fixture_read_and_local_interaction",
+          "report_paths": [
+            "docs/premium-ui/qa-role-navigation.json"
+          ]
+        },
+        {
+          "action": "declared-source-hold",
+          "selector": "main.ts/navigation-history.ts/styles.css/premium-theme.css hashes",
+          "outcome": "Test compares four source hashes before/after; retained snapshot is historical with current main/CSS mismatch. Does not hash own test script or all runtime dependencies.",
+          "source_lines": [
+            [
+              7,
+              8
+            ],
+            39
+          ],
+          "evidence_class": "source_snapshot",
+          "report_paths": [
+            "docs/premium-ui/qa-role-navigation.json"
+          ]
+        }
+      ],
+      "limitations": [
+        "No test execution by mapper. Retained report has no test-script hash; current inspected assertions are not cryptographically bound to execution. No native assistive technology or physical-device evidence.",
+        "Existing frontend visibility policy only; no backend authorization, real identity/account roles, mutation permission, every destination content or action certification.",
+        "Baseline branch has one HOD320 Chromium observation and is excluded here.",
+        "Only scoped route-notice tagged axe audit; no whole-app WCAG claim. Desktop mobileMoreMatches false means not assessed.",
+        "Protected read assertion examines new /accounts or /limits paths only; does not prove absence of all other reads."
+      ],
+      "retained_report_inspection": {
+        "path": "docs/premium-ui/qa-role-navigation.json",
+        "sha256": "c1580d852adb5397dfb42d2d796b83647410df00b7f7e8309c29c0606ce91f35",
+        "rows": 24,
+        "fresh_execution_performed": false
+      },
+      "declared_source_freshness": [
+        {
+          "path": "frontend/src/main.ts",
+          "retained_sha256": "88fdedaa7f8aace6b343dd3347cacf4316ef5ca82123111698a48b564cf9edbc",
+          "current_sha256": "6ebdf70eb1f3663e144c26ea4ceddcee83989a18c84b24a0e3e2a6fdc0b3dbdb",
+          "matches_current": false
+        },
+        {
+          "path": "frontend/src/navigation-history.ts",
+          "retained_sha256": "7987fe6b5034c80e44708b0e46d5bf4009a1e3eabca092a5b8a31ca1afdde0b4",
+          "current_sha256": "7987fe6b5034c80e44708b0e46d5bf4009a1e3eabca092a5b8a31ca1afdde0b4",
+          "matches_current": true
+        },
+        {
+          "path": "frontend/src/styles.css",
+          "retained_sha256": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+          "current_sha256": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+          "matches_current": true
+        },
+        {
+          "path": "frontend/src/premium-theme.css",
+          "retained_sha256": "e1f99f30fc0bb0e1c84fa3972824058712d68ea842697ee71777d1dd51d6cfba",
+          "current_sha256": "559041ee03d192fcc291582bd7572e8d32004e9d5428b7e57fbbea9ba9e60f83",
+          "matches_current": false
+        }
+      ]
+    },
+    {
+      "suite": "frontend/tests/premium-signed-out-navigation.browser.mjs",
+      "sha256": "11a9d1ee0f11e4a426eb61b016ad6b07ad157296a6e4bb2d41144a32a3151693",
+      "source_inspected": true,
+      "execution_verified": true,
+      "execution_verification_scope": "Inspected six retained rows, all declared outcomes true and errors empty. Retained single main.ts source hash differs from current. No exact test-script binding; historical execution only.",
+      "screens": [
+        "Signed-out Login",
+        "Forgot password tab"
+      ],
+      "contexts": {
+        "engines": [
+          "chromium",
+          "firefox",
+          "webkit"
+        ],
+        "widths": [
+          320,
+          1280
+        ],
+        "height": 900,
+        "environment": "hardcoded development5197",
+        "initial_hash": "#view=accounts",
+        "fixture": "Any API request must be GET auth/me, locally fulfilled401; no token seeded",
+        "workflows": 6
+      },
+      "assertion_groups": [
+        {
+          "action": "protected-shell-absence-and-autocomplete",
+          "selector": "#login-form; .sidebar,.mobile-bottom-nav,#route-availability-notice,#working-month; #login-username/#login-password",
+          "outcome": "Accounts hash reaches login; protected shell/month/notice controls absent; autocomplete values exactly username/current-password.",
+          "source_lines": [
+            12
+          ],
+          "evidence_class": "screen_presence",
+          "report_paths": [
+            "docs/premium-ui/qa-signed-out-navigation.json"
+          ]
+        },
+        {
+          "action": "keyboard-auth-tabs",
+          "selector": "[data-auth-tab=forgot]; #forgot-form; [data-auth-tab=signin]",
+          "outcome": "Focused forgot tab Enter shows forgot form; focused signin tab Enter returns login. No requests to other paths and final errors empty.",
+          "source_lines": [
+            13
+          ],
+          "evidence_class": "local_interaction",
+          "report_paths": [
+            "docs/premium-ui/qa-signed-out-navigation.json"
+          ]
+        },
+        {
+          "action": "signed-out-read-boundary",
+          "selector": "**/api/**",
+          "outcome": "Every observed API request must be GET /api/v1/auth/me and is locally401-fulfilled; no forwarded writes or protected reads.",
+          "source_lines": [
+            11,
+            13
+          ],
+          "evidence_class": "intercepted_read_boundary",
+          "report_paths": [
+            "docs/premium-ui/qa-signed-out-navigation.json"
+          ]
+        },
+        {
+          "action": "single-source-hold",
+          "selector": "frontend/src/main.ts SHA",
+          "outcome": "Compares main.ts before/after and records initial SHA; retained SHA is now stale; no all-dependency or script hold.",
+          "source_lines": [
+            5,
+            17
+          ],
+          "evidence_class": "source_snapshot",
+          "report_paths": [
+            "docs/premium-ui/qa-signed-out-navigation.json"
+          ]
+        }
+      ],
+      "limitations": [
+        "No test execution by mapper. Retained report has no test-script hash; current inspected assertions are not cryptographically bound to execution. No native assistive technology or physical-device evidence.",
+        "No actual credentials, sign-in submission, password recovery submission/email or identity-provider authorization.",
+        "Only visible signed-out controls and tab transitions, no authentication accessibility audit, keyboard focus return or form validation.",
+        "Request boundary permits auth/me only but test does not require an exact count or that any request occurred."
+      ],
+      "retained_report_inspection": {
+        "path": "docs/premium-ui/qa-signed-out-navigation.json",
+        "sha256": "8a31c790090d8fecfae4b880089fe3b45f3497c9522b3ec77a4428179af36701",
+        "rows": 6,
+        "fresh_execution_performed": false
+      },
+      "declared_source_freshness": [
+        {
+          "path": "frontend/src/main.ts",
+          "retained_sha256": "74e072cea72b83cfc2b7fb069a8dc038096e1e0f656a55ce0866ad16e5e63bde",
+          "current_sha256": "6ebdf70eb1f3663e144c26ea4ceddcee83989a18c84b24a0e3e2a6fdc0b3dbdb",
+          "matches_current": false
+        }
+      ]
+    },
+    {
+      "suite": "frontend/tests/premium-session-expiry.browser.mjs",
+      "sha256": "7fcbf544c09165f5ae69e08bea591cfcb54558ee378e3e51eada9646001a5303",
+      "source_inspected": true,
+      "execution_verified": true,
+      "execution_verification_scope": "Inspected three retained rows with all declared recovery outcomes true. No timestamp, source hashes or script hash; historical unsealed mocked-auth execution only.",
+      "screens": [
+        "Accounts creation form",
+        "Inline session-expiry recovery",
+        "Login"
+      ],
+      "contexts": {
+        "engine": "chromium",
+        "widths": [
+          320,
+          390,
+          1280
+        ],
+        "height": 850,
+        "environment": "development default5197, MEMBER_TEST_URL override possible",
+        "fixture": "Accounts/signin locally fulfilled; other GETs disposable8031 default UX_AUDIT_API override; synthetic credentials only",
+        "workflows": 3
+      },
+      "assertion_groups": [
+        {
+          "action": "401-keeps-draft-and-blocks-repeat",
+          "selector": "#account-form; #session-expiry-recovery; Create",
+          "outcome": "Initial create receives simulated401; display name/password stay in inputs. Collapsing recovery then submitting again makes no second captured account request; one notice reopens with explicit refusal.",
+          "source_lines": [
+            [
+              32,
+              47
+            ]
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-session-expiry.json"
+          ]
+        },
+        {
+          "action": "decline-or-accept-signin",
+          "selector": "Sign in again; browser confirm dialog",
+          "outcome": "Declining confirmation keeps account form/display draft and makes no signin. Accepting removes form/recovery; account request count remains1.",
+          "source_lines": [
+            [
+              48,
+              53
+            ]
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-session-expiry.json"
+          ]
+        },
+        {
+          "action": "reauthentication-does-not-replay",
+          "selector": "#login-submit; #account-form",
+          "outcome": "Exact synthetic signin payload asserted by route; after explicit login accounts form returns, signin count1, write count still1, username blank.",
+          "source_lines": [
+            [
+              15,
+              17
+            ],
+            [
+              54,
+              58
+            ]
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-session-expiry.json"
+          ]
+        },
+        {
+          "action": "explicit-resubmit-renewed-token",
+          "selector": "Create; Account created; intercepted /auth/accounts",
+          "outcome": "Only manual refill/create yields second account request and success toast; request carries Bearer expiry-renewed and body equals original. Does not assert persisted fresh readback.",
+          "source_lines": [
+            [
+              19,
+              25
+            ],
+            [
+              59,
+              62
+            ]
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-session-expiry.json"
+          ]
+        },
+        {
+          "action": "no-unmocked-write-forwarded",
+          "selector": "**/api/**; pageerror",
+          "outcome": "Signin/accounts are locally fulfilled; all remaining API requests asserted GET before forwarding. Final pageerror array empty.",
+          "source_lines": [
+            [
+              13,
+              30
+            ],
+            62
+          ],
+          "evidence_class": "fixture_read_boundary",
+          "report_paths": [
+            "docs/premium-ui/qa-session-expiry.json"
+          ]
+        }
+      ],
+      "limitations": [
+        "No test execution by mapper. Retained report has no test-script hash; current inspected assertions are not cryptographically bound to execution. No native assistive technology or physical-device evidence.",
+        "401 is locally simulated on account creation; no real identity provider, server session expiration, permission enforcement or database account creation.",
+        "Password stays in unsent DOM draft until deliberate sign-in confirmation; this is not storage security certification or proof for all forms.",
+        "Final successful account response is intercepted and toast/count checked, without persisted GET-readback assertion.",
+        "Request method for locally intercepted signin/accounts writes is not separately asserted; payload/token/count asserted. No broad role/theme/axe matrix."
+      ],
+      "retained_report_inspection": {
+        "path": "docs/premium-ui/qa-session-expiry.json",
+        "sha256": "56aaaa5f18414aa234b6c9cc652964e37b4c43247e0146477feb07e64a7b9ddb",
+        "rows": 3,
+        "fresh_execution_performed": false
+      },
+      "declared_source_freshness": []
+    }
+  ]
+}

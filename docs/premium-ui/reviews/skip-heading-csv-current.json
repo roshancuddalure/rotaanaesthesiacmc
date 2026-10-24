@@ -1,0 +1,32 @@
+{
+  "recorded_at_utc": "2026-10-22T09:20:21.995555+00:00",
+  "completion_claim": false,
+  "scope": "Bounded frontend keyboard navigation, legacy heading semantics and CSV choice outcomes; full260 remains active/incomplete.",
+  "source_sha256": {
+    "frontend/src/main.ts": "6cc938e2bd2a2214f42d672fcf91d198a67b0ac1b5072c4b1a164eee94886e65",
+    "frontend/src/member-profile.ts": "baaa14f543938e47b2f79c531a7b259874b9c197e1fa02922c85542ae87c5baf"
+  },
+  "changes": [
+    "Confirmed keyboard skip link from Leave/Units formerly replaced the route with Overview. Abort-owned click handling now focuses and scrolls the current section heading without hash/history mutation.",
+    "Legacy populated posting/leave subsection headings now h3 siblings, preserving data and native disclosure behavior."
+  ],
+  "evidence": [
+    "docs/premium-ui/qa-skip-content-independent.json",
+    "docs/premium-ui/reviews/heading-structure-current.json",
+    "docs/premium-ui/qa-member-csv-choice-independent.json",
+    "docs/premium-ui/qa-skip-content-before.json"
+  ],
+  "checks": {
+    "skip_keyboard_workflows": 12,
+    "component_heading_samples": 7,
+    "csv_choice_workflows": 6,
+    "unit_tests": 100,
+    "production_build_exit": 0
+  },
+  "limits": [
+    "CSV report predates the separate main.ts skip handler; retain its exact original snapshot rather than claiming a refreshed test.",
+    "Browser emulation accepted by user; physical-device, native screen-reader and other physical checks remain pending.",
+    "Concurrent backend/limits/superadmin work preserved. This UI batch makes no backend or production edits.",
+    "No full260 completion, all-action certification, commit, push or deployment claim."
+  ]
+}

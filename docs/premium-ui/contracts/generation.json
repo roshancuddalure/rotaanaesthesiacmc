@@ -1,0 +1,2392 @@
+{
+  "schema_version": 1,
+  "scope": "Frontend-only generation/compute/extra-duty/monthly-leave and main review/publish controls. Source inventory is not blanket functional certification.",
+  "test_api_mode": "All mutations and companion calls mocked. Full-app publishing journeys forward fixture GET requests only; no live mutations.",
+  "reviewed_existing_suites": [
+    "compute.browser.mjs",
+    "compute-conflict.browser.mjs",
+    "extra-duty.browser.mjs",
+    "generation-compute.browser.mjs",
+    "generation-controls.browser.mjs",
+    "intelligence.browser.mjs",
+    "leave-approval.browser.mjs",
+    "webgpu-recovery.browser.mjs"
+  ],
+  "actions": [
+    {
+      "id": "rota-compute:[data-compute-retry]:45",
+      "module": "rota-compute",
+      "selector": "[data-compute-retry]",
+      "label_template": "Try again",
+      "source": "frontend/src/rota-compute.ts:45",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Failed readiness load retries, then renders controls or recoverable error.",
+      "expected_request_or_no_write": "GET capabilities; no operational changes.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:131"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-compute:[data-compute-test]:96",
+      "module": "rota-compute",
+      "selector": "[data-compute-test]",
+      "label_template": "Test Device",
+      "source": "frontend/src/rota-compute.ts:96",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Visible real adapter/kernel selftest result; disabled unsupported or busy.",
+      "expected_request_or_no_write": "Fixed local shader only; no assignments or credentials sent to GPU.",
+      "verification_status": "requires exact assertion mapping; source inventory is not a pass",
+      "evidence": [],
+      "prerequisite_feedback_followup": {
+        "recorded_at_utc": "2026-10-22T12:30:42.053377+00:00",
+        "review": "docs/premium-ui/reviews/compute-prerequisites-current.json",
+        "reports": [
+          "docs/premium-ui/qa-compute-prerequisites.json",
+          "docs/premium-ui/qa-compute-test-feedback.json"
+        ],
+        "status": "bounded_feedback_assertions_only",
+        "limit": "No real GPU or actual comparison execution; existing verification_status retained."
+      }
+    },
+    {
+      "id": "rota-compute:[data-compute-reset]:97",
+      "module": "rota-compute",
+      "selector": "[data-compute-reset]",
+      "label_template": "Reset device settings",
+      "source": "frontend/src/rota-compute.ts:97",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Local GPU disabled and browser proofs/settings cleared.",
+      "expected_request_or_no_write": "Local storage only; no operational writes.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:137"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-compute:[data-compute-diagnostics]:103",
+      "module": "rota-compute",
+      "selector": "[data-compute-diagnostics]",
+      "label_template": "Download GPU diagnostics",
+      "source": "frontend/src/rota-compute.ts:103",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Downloads meaningful privacy-safe device diagnostics JSON.",
+      "expected_request_or_no_write": "No operational mutation or secrets in artifact.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:136"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-compute:[data-compute-compare]:111",
+      "module": "rota-compute",
+      "selector": "[data-compute-compare]",
+      "label_template": "Compare engines on this month",
+      "source": "frontend/src/rota-compute.ts:111",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Six-run comparison preserves operational records and records exact parity.",
+      "expected_request_or_no_write": "Start/cancel benchmark proposals only; never apply.",
+      "verification_status": "requires exact assertion mapping; source inventory is not a pass",
+      "evidence": [],
+      "prerequisite_feedback_followup": {
+        "recorded_at_utc": "2026-10-22T12:30:42.053377+00:00",
+        "review": "docs/premium-ui/reviews/compute-prerequisites-current.json",
+        "reports": [
+          "docs/premium-ui/qa-compute-prerequisites.json",
+          "docs/premium-ui/qa-compute-test-feedback.json"
+        ],
+        "status": "bounded_feedback_assertions_only",
+        "limit": "No real GPU or actual comparison execution; existing verification_status retained."
+      }
+    },
+    {
+      "id": "rota-compute:[data-close]:249",
+      "module": "rota-compute",
+      "selector": "[data-close]",
+      "label_template": "Close",
+      "source": "frontend/src/rota-compute.ts:249",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Close active workspace and restore opener; while committed apply/undo is active honor existing close guard.",
+      "expected_request_or_no_write": "No apply/revert/approve request caused by close.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:43",
+        "frontend/tests/premium-generation-actions.browser.mjs:44",
+        "frontend/tests/premium-generation-actions.browser.mjs:51",
+        "frontend/tests/premium-generation-actions.browser.mjs:103",
+        "frontend/tests/premium-generation-actions.browser.mjs:116",
+        "frontend/tests/premium-generation-actions.browser.mjs:125",
+        "frontend/tests/premium-generation-actions.browser.mjs:146",
+        "frontend/tests/premium-generation-actions.browser.mjs:161"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-compute:[data-open-compute-settings]:266",
+      "module": "rota-compute",
+      "selector": "[data-open-compute-settings]",
+      "label_template": "Open Compute Settings (test device, power, compare)",
+      "source": "frontend/src/rota-compute.ts:266",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Closes review and navigates to Compute Settings.",
+      "expected_request_or_no_write": "No operational writes.",
+      "verification_status": "requires exact assertion mapping; source inventory is not a pass",
+      "evidence": [],
+      "entrypoint_followup": {
+        "recorded_at_utc": "2026-10-22T12:43:02.240115+00:00",
+        "review": "docs/premium-ui/reviews/generation-entrypoints-current.json",
+        "report": "docs/premium-ui/qa-generation-entrypoints.json",
+        "status": "bounded_entry_or_restriction_assertions_only",
+        "limit": "No whole action contract/hardware/generation certification; original historical verification status retained."
+      }
+    },
+    {
+      "id": "rota-compute:[data-close]:274",
+      "module": "rota-compute",
+      "selector": "[data-close]",
+      "label_template": "Close",
+      "source": "frontend/src/rota-compute.ts:249",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Close active workspace and restore opener; while committed apply/undo is active honor existing close guard.",
+      "expected_request_or_no_write": "No apply/revert/approve request caused by close.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:43",
+        "frontend/tests/premium-generation-actions.browser.mjs:44",
+        "frontend/tests/premium-generation-actions.browser.mjs:51",
+        "frontend/tests/premium-generation-actions.browser.mjs:103",
+        "frontend/tests/premium-generation-actions.browser.mjs:116",
+        "frontend/tests/premium-generation-actions.browser.mjs:125",
+        "frontend/tests/premium-generation-actions.browser.mjs:146",
+        "frontend/tests/premium-generation-actions.browser.mjs:161"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-compute:[data-generate]:287",
+      "module": "rota-compute",
+      "selector": "[data-generate]",
+      "label_template": "Generate proposal",
+      "source": "frontend/src/rota-compute.ts:287",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Start proposal, show progress and completed review; assignments remain unapplied.",
+      "expected_request_or_no_write": "POST jobs exact selected month/options; repeated activation one start; step uses latest revision; validate before review.",
+      "verification_status": "requires exact assertion mapping; source inventory is not a pass",
+      "evidence": []
+    },
+    {
+      "id": "rota-compute:[data-resume]:288",
+      "module": "rota-compute",
+      "selector": "[data-resume]",
+      "label_template": "Continue generation",
+      "source": "frontend/src/rota-compute.ts:288",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Resume existing job using current revision, never create duplicate proposal.",
+      "expected_request_or_no_write": "POST step with revision and canonical GPU token or fallback; validate completed job.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:146"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-compute:[data-server-fallback]:289",
+      "module": "rota-compute",
+      "selector": "[data-server-fallback]",
+      "label_template": "Continue on server",
+      "source": "frontend/src/rota-compute.ts:289",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Continue existing interrupted job on server with visible actual engine.",
+      "expected_request_or_no_write": "POST step {revision,fallback:true}; no duplicate start/apply.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:125"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-compute:[data-cancel]:290",
+      "module": "rota-compute",
+      "selector": "[data-cancel]",
+      "label_template": "Cancel proposal",
+      "source": "frontend/src/rota-compute.ts:290",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Cancel proposal and explain assignments preserved, including already-applied race.",
+      "expected_request_or_no_write": "POST cancel {}, not apply/revert.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:51",
+        "frontend/tests/premium-generation-actions.browser.mjs:146"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-compute:[data-apply]:291",
+      "module": "rota-compute",
+      "selector": "[data-apply]",
+      "label_template": "Apply reviewed draft",
+      "source": "frontend/src/rota-compute.ts:291",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Disabled until explicit review, then saved counts and callback after confirmed response.",
+      "expected_request_or_no_write": "POST jobs/:id/apply {revision}; no publish; no retry with unknown outcome.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:33",
+        "frontend/tests/premium-generation-actions.browser.mjs:37",
+        "frontend/tests/premium-generation-actions.browser.mjs:44",
+        "frontend/tests/premium-generation-actions.browser.mjs:103"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-compute:[data-revert]:292",
+      "module": "rota-compute",
+      "selector": "[data-revert]",
+      "label_template": "Validate and reverse",
+      "source": "frontend/src/rota-compute.ts:292",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Explicit review required; successful reversal message and refreshed owning screen.",
+      "expected_request_or_no_write": "POST reversal-check {revision} before revert {revision}; conflict must not issue revert.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:38",
+        "frontend/tests/premium-generation-actions.browser.mjs:39",
+        "frontend/tests/premium-generation-actions.browser.mjs:40",
+        "frontend/tests/premium-generation-actions.browser.mjs:44",
+        "frontend/tests/premium-generation-actions.browser.mjs:103"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-compute:[data-download]:293",
+      "module": "rota-compute",
+      "selector": "[data-download]",
+      "label_template": "Download report",
+      "source": "frontend/src/rota-compute.ts:293",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Download JSON with selected month and meaningful proposal/decisions.",
+      "expected_request_or_no_write": "No operational mutation; verify filename and JSON contents.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:35",
+        "frontend/tests/premium-generation-actions.browser.mjs:44",
+        "frontend/tests/premium-generation-actions.browser.mjs:98"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-compute:[data-close]:421",
+      "module": "rota-compute",
+      "selector": "[data-close]",
+      "label_template": "Close",
+      "source": "frontend/src/rota-compute.ts:249",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Close active workspace and restore opener; while committed apply/undo is active honor existing close guard.",
+      "expected_request_or_no_write": "No apply/revert/approve request caused by close.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:43",
+        "frontend/tests/premium-generation-actions.browser.mjs:44",
+        "frontend/tests/premium-generation-actions.browser.mjs:51",
+        "frontend/tests/premium-generation-actions.browser.mjs:103",
+        "frontend/tests/premium-generation-actions.browser.mjs:116",
+        "frontend/tests/premium-generation-actions.browser.mjs:125",
+        "frontend/tests/premium-generation-actions.browser.mjs:146",
+        "frontend/tests/premium-generation-actions.browser.mjs:161"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-compute:[data-quick]:422",
+      "module": "rota-compute",
+      "selector": "[data-quick]",
+      "label_template": "Prepare quick draft",
+      "source": "frontend/src/rota-compute.ts:422",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Chooser closes and opens quick-safe-fill workspace for same month.",
+      "expected_request_or_no_write": "Read capabilities/recent jobs only until generate.",
+      "verification_status": "requires exact assertion mapping; source inventory is not a pass",
+      "evidence": [],
+      "entrypoint_followup": {
+        "recorded_at_utc": "2026-10-22T12:43:02.240115+00:00",
+        "review": "docs/premium-ui/reviews/generation-entrypoints-current.json",
+        "report": "docs/premium-ui/qa-generation-entrypoints.json",
+        "status": "bounded_entry_or_restriction_assertions_only",
+        "limit": "No whole action contract/hardware/generation certification; original historical verification status retained."
+      }
+    },
+    {
+      "id": "rota-compute:[data-optimize]:423",
+      "module": "rota-compute",
+      "selector": "[data-optimize]",
+      "label_template": "Optimise the month",
+      "source": "frontend/src/rota-compute.ts:423",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Chooser closes and opens intelligent workspace for same month.",
+      "expected_request_or_no_write": "Read setup/recent jobs only until generate.",
+      "verification_status": "requires exact assertion mapping; source inventory is not a pass",
+      "evidence": [],
+      "entrypoint_followup": {
+        "recorded_at_utc": "2026-10-22T12:43:02.240115+00:00",
+        "review": "docs/premium-ui/reviews/generation-entrypoints-current.json",
+        "report": "docs/premium-ui/qa-generation-entrypoints.json",
+        "status": "bounded_entry_or_restriction_assertions_only",
+        "limit": "No whole action contract/hardware/generation certification; original historical verification status retained."
+      }
+    },
+    {
+      "id": "rota-intelligence:[data-close]:47",
+      "module": "rota-intelligence",
+      "selector": "[data-close]",
+      "label_template": "Close",
+      "source": "frontend/src/rota-intelligence.ts:47",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Close active workspace and restore opener; while committed apply/undo is active honor existing close guard.",
+      "expected_request_or_no_write": "No apply/revert/approve request caused by close.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:43",
+        "frontend/tests/premium-generation-actions.browser.mjs:44",
+        "frontend/tests/premium-generation-actions.browser.mjs:51",
+        "frontend/tests/premium-generation-actions.browser.mjs:103",
+        "frontend/tests/premium-generation-actions.browser.mjs:116",
+        "frontend/tests/premium-generation-actions.browser.mjs:125",
+        "frontend/tests/premium-generation-actions.browser.mjs:146",
+        "frontend/tests/premium-generation-actions.browser.mjs:161"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-intelligence:[data-close]:65",
+      "module": "rota-intelligence",
+      "selector": "[data-close]",
+      "label_template": "Close",
+      "source": "frontend/src/rota-intelligence.ts:47",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Close active workspace and restore opener; while committed apply/undo is active honor existing close guard.",
+      "expected_request_or_no_write": "No apply/revert/approve request caused by close.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:43",
+        "frontend/tests/premium-generation-actions.browser.mjs:44",
+        "frontend/tests/premium-generation-actions.browser.mjs:51",
+        "frontend/tests/premium-generation-actions.browser.mjs:103",
+        "frontend/tests/premium-generation-actions.browser.mjs:116",
+        "frontend/tests/premium-generation-actions.browser.mjs:125",
+        "frontend/tests/premium-generation-actions.browser.mjs:146",
+        "frontend/tests/premium-generation-actions.browser.mjs:161"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-intelligence:[data-tab]:66",
+      "module": "rota-intelligence",
+      "selector": "[data-tab]",
+      "label_template": "${t[0].toUpperCase()+t.slice(1)}",
+      "source": "frontend/src/rota-intelligence.ts:66",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Control must achieve its named action and preserve errors/recovery/context. Detailed contract below.",
+      "expected_request_or_no_write": "See control-specific expectations; close, download, local settings and review confirmations must not apply operational changes.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:99"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-intelligence:[data-save-calendar]:73",
+      "module": "rota-intelligence",
+      "selector": "[data-save-calendar]",
+      "label_template": "Save reviewed calendar",
+      "source": "frontend/src/rota-intelligence.ts:73",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Shows returned holiday dates and regeneration notice.",
+      "expected_request_or_no_write": "POST calendar {dates:trimmedNonemptyCommaSeparatedValues}; preserves backend validation.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:96"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-intelligence:[data-add-preference]:78",
+      "module": "rota-intelligence",
+      "selector": "[data-add-preference]",
+      "label_template": "Add preference",
+      "source": "frontend/src/rota-intelligence.ts:78",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Local preference count increments without assigning members.",
+      "expected_request_or_no_write": "Preference {slot_id,person_id,penalty} only sent in explicit generation.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:95"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-intelligence:[data-generate]:80",
+      "module": "rota-intelligence",
+      "selector": "[data-generate]",
+      "label_template": "Generate intelligent draft",
+      "source": "frontend/src/rota-intelligence.ts:80",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Start proposal, show progress and completed review; assignments remain unapplied.",
+      "expected_request_or_no_write": "POST jobs exact selected month/options; repeated activation one start; step uses latest revision; validate before review.",
+      "verification_status": "requires exact assertion mapping; source inventory is not a pass",
+      "evidence": []
+    },
+    {
+      "id": "rota-intelligence:[data-resume]:81",
+      "module": "rota-intelligence",
+      "selector": "[data-resume]",
+      "label_template": "Resume generation",
+      "source": "frontend/src/rota-intelligence.ts:81",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Resume existing job using current revision, never create duplicate proposal.",
+      "expected_request_or_no_write": "POST step with revision and canonical GPU token or fallback; validate completed job.",
+      "verification_status": "requires exact assertion mapping; source inventory is not a pass",
+      "evidence": []
+    },
+    {
+      "id": "rota-intelligence:[data-continue-server]:81",
+      "module": "rota-intelligence",
+      "selector": "[data-continue-server]",
+      "label_template": "Continue on server",
+      "source": "frontend/src/rota-intelligence.ts:81",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Continue optimization with server recovery and current revision.",
+      "expected_request_or_no_write": "POST step {revision,fallback:true} then validated run loop.",
+      "verification_status": "requires exact assertion mapping; source inventory is not a pass",
+      "evidence": []
+    },
+    {
+      "id": "rota-intelligence:[data-teach-slot]:87",
+      "module": "rota-intelligence",
+      "selector": "[data-teach-slot]",
+      "label_template": "Teach this decision",
+      "source": "frontend/src/rota-intelligence.ts:87",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Teaching tab opens with clicked duty selected.",
+      "expected_request_or_no_write": "No write until teaching form submit.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:99"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-intelligence:[data-more]:88",
+      "module": "rota-intelligence",
+      "selector": "[data-more]",
+      "label_template": "=3?'disabled':''}>Find another alternative",
+      "source": "frontend/src/rota-intelligence.ts:88",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Adds alternative, shows returned status, maintains selected month.",
+      "expected_request_or_no_write": "POST intelligence/jobs/:id/alternative {revision,index:0}.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:97"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-intelligence:[data-apply]:88",
+      "module": "rota-intelligence",
+      "selector": "[data-apply]",
+      "label_template": "Apply reviewed draft",
+      "source": "frontend/src/rota-intelligence.ts:88",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Disabled until explicit review, then saved counts and callback after confirmed response.",
+      "expected_request_or_no_write": "POST jobs/:id/apply {revision}; no publish; no retry with unknown outcome.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:33",
+        "frontend/tests/premium-generation-actions.browser.mjs:37",
+        "frontend/tests/premium-generation-actions.browser.mjs:44",
+        "frontend/tests/premium-generation-actions.browser.mjs:103"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-intelligence:[data-revert]:89",
+      "module": "rota-intelligence",
+      "selector": "[data-revert]",
+      "label_template": "Validate and reverse",
+      "source": "frontend/src/rota-intelligence.ts:89",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Explicit review required; successful reversal message and refreshed owning screen.",
+      "expected_request_or_no_write": "POST reversal-check {revision} before revert {revision}; conflict must not issue revert.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:38",
+        "frontend/tests/premium-generation-actions.browser.mjs:39",
+        "frontend/tests/premium-generation-actions.browser.mjs:40",
+        "frontend/tests/premium-generation-actions.browser.mjs:44",
+        "frontend/tests/premium-generation-actions.browser.mjs:103"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-intelligence:[data-cancel]:90",
+      "module": "rota-intelligence",
+      "selector": "[data-cancel]",
+      "label_template": "Cancel proposal",
+      "source": "frontend/src/rota-intelligence.ts:90",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Cancel proposal and explain assignments preserved, including already-applied race.",
+      "expected_request_or_no_write": "POST cancel {}, not apply/revert.",
+      "verification_status": "isolated browser assertion present; latest test-run result must be checked",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:51"
+      ]
+    },
+    {
+      "id": "rota-intelligence:[data-download]:90",
+      "module": "rota-intelligence",
+      "selector": "[data-download]",
+      "label_template": "Download evidence",
+      "source": "frontend/src/rota-intelligence.ts:90",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Download JSON with selected month and meaningful proposal/decisions.",
+      "expected_request_or_no_write": "No operational mutation; verify filename and JSON contents.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:35",
+        "frontend/tests/premium-generation-actions.browser.mjs:44",
+        "frontend/tests/premium-generation-actions.browser.mjs:98"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-intelligence:[data-teaching-form] button:95",
+      "module": "rota-intelligence",
+      "selector": "[data-teaching-form] button",
+      "label_template": "Save teaching example",
+      "source": "frontend/src/rota-intelligence.ts:1",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Teaching example saved-for-review notice and refreshed example list; form draft retained during unrelated tab changes.",
+      "expected_request_or_no_write": "POST intelligence/jobs/:id/examples {slot_id,kind,preferred_person_id|null,reason,note}, then GET teaching.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:99"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-intelligence:[data-load-teaching]:96",
+      "module": "rota-intelligence",
+      "selector": "[data-load-teaching]",
+      "label_template": "Refresh examples",
+      "source": "frontend/src/rota-intelligence.ts:96",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Refresh examples and show returned statuses.",
+      "expected_request_or_no_write": "GET teaching; no approval.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:100"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-intelligence:[data-history-months]:96",
+      "module": "rota-intelligence",
+      "selector": "[data-history-months]",
+      "label_template": "Choose historical examples",
+      "source": "frontend/src/rota-intelligence.ts:96",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Historical selector and prepare control appear from returned months.",
+      "expected_request_or_no_write": "GET history-months.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:101"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-intelligence:[data-prepare-history]:96",
+      "module": "rota-intelligence",
+      "selector": "[data-prepare-history]",
+      "label_template": "Prepare unverified references",
+      "source": "frontend/src/rota-intelligence.ts:96",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Shows prepared/unverified count and updated examples.",
+      "expected_request_or_no_write": "POST teaching/history {month:selectedHistoricalMonth}, then GET teaching.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:101"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-intelligence:[data-approve-example]:97",
+      "module": "rota-intelligence",
+      "selector": "[data-approve-example]",
+      "label_template": "Approve reviewed example",
+      "source": "frontend/src/rota-intelligence.ts:97",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Example approved after server confirmation.",
+      "expected_request_or_no_write": "POST teaching/:id/approve {historical_context_verified}; then GET teaching.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:100"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-intelligence:[data-reject-example]:97",
+      "module": "rota-intelligence",
+      "selector": "[data-reject-example]",
+      "label_template": "Exclude from future training",
+      "source": "frontend/src/rota-intelligence.ts:97",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Excluded status shown after server confirmation.",
+      "expected_request_or_no_write": "POST teaching/:id/reject {}, then GET teaching.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:100"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-intelligence:[data-ask]:103",
+      "module": "rota-intelligence",
+      "selector": "[data-ask]",
+      "label_template": "Ask local assistant",
+      "source": "frontend/src/rota-intelligence.ts:103",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Disabled until local opt-in/pairing; suggestion or recoverable local-unavailable error.",
+      "expected_request_or_no_write": "GET assistant-context same month/instruction; POST loopback suggest with transient pairing; no direct scheduling write.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:115",
+        "frontend/tests/premium-generation-actions.browser.mjs:116"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-intelligence:[data-use-suggestion]:104",
+      "module": "rota-intelligence",
+      "selector": "[data-use-suggestion]",
+      "label_template": "Use suggested planning mode",
+      "source": "frontend/src/rota-intelligence.ts:104",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Suggested planning mode selected, safety policies unchanged.",
+      "expected_request_or_no_write": "Local state only until separate generation.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:116"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-intelligence:[data-load-learning]:105",
+      "module": "rota-intelligence",
+      "selector": "[data-load-learning]",
+      "label_template": "Refresh versions",
+      "source": "frontend/src/rota-intelligence.ts:105",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Version list refreshed.",
+      "expected_request_or_no_write": "GET learning.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:102"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-intelligence:[data-propose-learning]:105",
+      "module": "rota-intelligence",
+      "selector": "[data-propose-learning]",
+      "label_template": "Prepare candidate version",
+      "source": "frontend/src/rota-intelligence.ts:105",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Candidate version shown without automatically activating.",
+      "expected_request_or_no_write": "POST learning {}, then GET learning.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:102"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-intelligence:[data-evaluate]:107",
+      "module": "rota-intelligence",
+      "selector": "[data-evaluate]",
+      "label_template": "Evaluate on held-out months",
+      "source": "frontend/src/rota-intelligence.ts:107",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Returned held-out evaluation appears.",
+      "expected_request_or_no_write": "POST learning/:id/evaluate {months:trimmedCommaSeparatedMonths}; GET learning.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:99"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-intelligence:[data-activate]:107",
+      "module": "rota-intelligence",
+      "selector": "[data-activate]",
+      "label_template": "Activate evaluated version",
+      "source": "frontend/src/rota-intelligence.ts:107",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Evaluated candidate active only after response.",
+      "expected_request_or_no_write": "POST learning/:id/activate {}, GET learning; no assignments.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:99"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-intelligence:[data-rollback]:107",
+      "module": "rota-intelligence",
+      "selector": "[data-rollback]",
+      "label_template": "Restore this version",
+      "source": "frontend/src/rota-intelligence.ts:107",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Previously activated version restored after confirmation.",
+      "expected_request_or_no_write": "POST learning/:id/rollback {}, GET learning.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:99"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "compute-conflict:[data-close]:41",
+      "module": "compute-conflict",
+      "selector": "[data-close]",
+      "label_template": "Close",
+      "source": "frontend/src/compute-conflict.ts:41",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Close active workspace and restore opener; while committed apply/undo is active honor existing close guard.",
+      "expected_request_or_no_write": "No apply/revert/approve request caused by close.",
+      "verification_status": "passed existing isolated browser assertions",
+      "evidence": [
+        "frontend/tests/compute-conflict.browser.mjs:99",
+        "frontend/tests/compute-conflict.browser.mjs:101"
+      ],
+      "limitations": "Mocked API frontend evidence only; download tests assert filename/auth/format, not binary workbook semantics."
+    },
+    {
+      "id": "compute-conflict:[data-conflict-open]:51",
+      "module": "compute-conflict",
+      "selector": "[data-conflict-open]",
+      "label_template": "${c.status === \"completed\" ? \"Open it to review or apply\" : \"Resume it\"}",
+      "source": "frontend/src/compute-conflict.ts:51",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Resume correct stage and saved month/options.",
+      "expected_request_or_no_write": "Read full job if template options missing; no mutation until explicit action.",
+      "verification_status": "passed existing isolated browser assertions",
+      "evidence": [
+        "frontend/tests/compute-conflict.browser.mjs:109",
+        "frontend/tests/compute-conflict.browser.mjs:110"
+      ],
+      "limitations": "Mocked API frontend evidence only; download tests assert filename/auth/format, not binary workbook semantics."
+    },
+    {
+      "id": "compute-conflict:[data-conflict-cancel]:53",
+      "module": "compute-conflict",
+      "selector": "[data-conflict-cancel]",
+      "label_template": "Yes, discard it${c.month === month ? ` and start ${escape(stageName(stage))}` : \"\"}",
+      "source": "frontend/src/compute-conflict.ts:53",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Cancel owned proposal then retry requested stage; already-applied race preserved.",
+      "expected_request_or_no_write": "POST compute/jobs/:id/cancel {}; no apply.",
+      "verification_status": "passed existing isolated browser assertions",
+      "evidence": [
+        "frontend/tests/compute-conflict.browser.mjs:72",
+        "frontend/tests/compute-conflict.browser.mjs:74"
+      ],
+      "limitations": "Mocked API frontend evidence only; download tests assert filename/auth/format, not binary workbook semantics."
+    },
+    {
+      "id": "compute-conflict:[data-conflict-keep]:54",
+      "module": "compute-conflict",
+      "selector": "[data-conflict-keep]",
+      "label_template": "Keep it",
+      "source": "frontend/src/compute-conflict.ts:54",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Dismiss discard confirmation and keep proposal.",
+      "expected_request_or_no_write": "No cancel/apply request.",
+      "verification_status": "passed existing isolated browser assertions",
+      "evidence": [
+        "frontend/tests/compute-conflict.browser.mjs:68",
+        "frontend/tests/compute-conflict.browser.mjs:69"
+      ],
+      "limitations": "Mocked API frontend evidence only; download tests assert filename/auth/format, not binary workbook semantics."
+    },
+    {
+      "id": "compute-conflict:[data-conflict-ask]:55",
+      "module": "compute-conflict",
+      "selector": "[data-conflict-ask]",
+      "label_template": "Cancel it",
+      "source": "frontend/src/compute-conflict.ts:55",
+      "roles": [
+        "admin",
+        "authorized operational user; GPU admin-only"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Explicit discard confirmation appears with Keep option.",
+      "expected_request_or_no_write": "No cancellation yet.",
+      "verification_status": "passed existing isolated browser assertions",
+      "evidence": [
+        "frontend/tests/compute-conflict.browser.mjs:67",
+        "frontend/tests/compute-conflict.browser.mjs:70"
+      ],
+      "limitations": "Mocked API frontend evidence only; download tests assert filename/auth/format, not binary workbook semantics."
+    },
+    {
+      "id": "extra-duty:[data-audit-report]:136",
+      "module": "extra-duty",
+      "selector": "[data-audit-report]",
+      "label_template": "Download audit report (HTML)",
+      "source": "frontend/src/extra-duty.ts:136",
+      "roles": [
+        "admin"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Control must achieve its named action and preserve errors/recovery/context. Detailed contract below.",
+      "expected_request_or_no_write": "See control-specific expectations; close, download, local settings and review confirmations must not apply operational changes.",
+      "verification_status": "passed existing isolated browser assertions",
+      "evidence": [
+        "frontend/tests/extra-duty.browser.mjs:194",
+        "frontend/tests/extra-duty.browser.mjs:196"
+      ],
+      "limitations": "Mocked API frontend evidence only; download tests assert filename/auth/format, not binary workbook semantics."
+    },
+    {
+      "id": "extra-duty:[data-audit-report]:137",
+      "module": "extra-duty",
+      "selector": "[data-audit-report]",
+      "label_template": "Download audit report (Excel)",
+      "source": "frontend/src/extra-duty.ts:136",
+      "roles": [
+        "admin"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Control must achieve its named action and preserve errors/recovery/context. Detailed contract below.",
+      "expected_request_or_no_write": "See control-specific expectations; close, download, local settings and review confirmations must not apply operational changes.",
+      "verification_status": "passed existing isolated browser assertions",
+      "evidence": [
+        "frontend/tests/extra-duty.browser.mjs:194",
+        "frontend/tests/extra-duty.browser.mjs:196"
+      ],
+      "limitations": "Mocked API frontend evidence only; download tests assert filename/auth/format, not binary workbook semantics."
+    },
+    {
+      "id": "extra-duty:[data-open-fill-all]:396",
+      "module": "extra-duty",
+      "selector": "[data-open-fill-all]",
+      "label_template": "Fill remaining duties (all units)",
+      "source": "frontend/src/extra-duty.ts:396",
+      "roles": [
+        "admin"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Control must achieve its named action and preserve errors/recovery/context. Detailed contract below.",
+      "expected_request_or_no_write": "See control-specific expectations; close, download, local settings and review confirmations must not apply operational changes.",
+      "verification_status": "requires exact assertion mapping; source inventory is not a pass",
+      "evidence": []
+    },
+    {
+      "id": "extra-duty:[data-extra-undo]:423",
+      "module": "extra-duty",
+      "selector": "[data-extra-undo]",
+      "label_template": "Undo this batch",
+      "source": "frontend/src/extra-duty.ts:423",
+      "roles": [
+        "admin"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Control must achieve its named action and preserve errors/recovery/context. Detailed contract below.",
+      "expected_request_or_no_write": "See control-specific expectations; close, download, local settings and review confirmations must not apply operational changes.",
+      "verification_status": "passed existing isolated browser assertions",
+      "evidence": [
+        "frontend/tests/extra-duty.browser.mjs:203",
+        "frontend/tests/extra-duty.browser.mjs:204",
+        "frontend/tests/extra-duty.browser.mjs:205"
+      ],
+      "limitations": "Mocked API frontend evidence only; download tests assert filename/auth/format, not binary workbook semantics."
+    },
+    {
+      "id": "extra-duty:[data-undo-keep]:437",
+      "module": "extra-duty",
+      "selector": "[data-undo-keep]",
+      "label_template": "Close this message",
+      "source": "frontend/src/extra-duty.ts:437",
+      "roles": [
+        "admin"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Control must achieve its named action and preserve errors/recovery/context. Detailed contract below.",
+      "expected_request_or_no_write": "See control-specific expectations; close, download, local settings and review confirmations must not apply operational changes.",
+      "verification_status": "passed existing isolated browser assertions",
+      "evidence": [
+        "frontend/tests/extra-duty.browser.mjs:207"
+      ],
+      "limitations": "Mocked API frontend evidence only; download tests assert filename/auth/format, not binary workbook semantics."
+    },
+    {
+      "id": "extra-duty:[data-undo-confirm]:439",
+      "module": "extra-duty",
+      "selector": "[data-undo-confirm]",
+      "label_template": "Yes, undo this batch",
+      "source": "frontend/src/extra-duty.ts:439",
+      "roles": [
+        "admin"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Control must achieve its named action and preserve errors/recovery/context. Detailed contract below.",
+      "expected_request_or_no_write": "See control-specific expectations; close, download, local settings and review confirmations must not apply operational changes.",
+      "verification_status": "passed existing isolated browser assertions",
+      "evidence": [
+        "frontend/tests/extra-duty.browser.mjs:214",
+        "frontend/tests/extra-duty.browser.mjs:215"
+      ],
+      "limitations": "Mocked API frontend evidence only; download tests assert filename/auth/format, not binary workbook semantics."
+    },
+    {
+      "id": "extra-duty:[data-undo-keep]:440",
+      "module": "extra-duty",
+      "selector": "[data-undo-keep]",
+      "label_template": "Keep it",
+      "source": "frontend/src/extra-duty.ts:437",
+      "roles": [
+        "admin"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Control must achieve its named action and preserve errors/recovery/context. Detailed contract below.",
+      "expected_request_or_no_write": "See control-specific expectations; close, download, local settings and review confirmations must not apply operational changes.",
+      "verification_status": "passed existing isolated browser assertions",
+      "evidence": [
+        "frontend/tests/extra-duty.browser.mjs:207"
+      ],
+      "limitations": "Mocked API frontend evidence only; download tests assert filename/auth/format, not binary workbook semantics."
+    },
+    {
+      "id": "extra-duty:[data-extra-repreview]:447",
+      "module": "extra-duty",
+      "selector": "[data-extra-repreview]",
+      "label_template": "Preview again",
+      "source": "frontend/src/extra-duty.ts:450",
+      "roles": [
+        "admin"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Control must achieve its named action and preserve errors/recovery/context. Detailed contract below.",
+      "expected_request_or_no_write": "See control-specific expectations; close, download, local settings and review confirmations must not apply operational changes.",
+      "verification_status": "passed existing isolated browser assertions",
+      "evidence": [
+        "frontend/tests/extra-duty.browser.mjs:156",
+        "frontend/tests/extra-duty.browser.mjs:157"
+      ],
+      "limitations": "Mocked API frontend evidence only; download tests assert filename/auth/format, not binary workbook semantics."
+    },
+    {
+      "id": "extra-duty:[data-extra-repreview]:448",
+      "module": "extra-duty",
+      "selector": "[data-extra-repreview]",
+      "label_template": "Try again",
+      "source": "frontend/src/extra-duty.ts:450",
+      "roles": [
+        "admin"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Control must achieve its named action and preserve errors/recovery/context. Detailed contract below.",
+      "expected_request_or_no_write": "See control-specific expectations; close, download, local settings and review confirmations must not apply operational changes.",
+      "verification_status": "passed existing isolated browser assertions",
+      "evidence": [
+        "frontend/tests/extra-duty.browser.mjs:156",
+        "frontend/tests/extra-duty.browser.mjs:157"
+      ],
+      "limitations": "Mocked API frontend evidence only; download tests assert filename/auth/format, not binary workbook semantics."
+    },
+    {
+      "id": "extra-duty:[data-extra-close]:466",
+      "module": "extra-duty",
+      "selector": "[data-extra-close]",
+      "label_template": "Close",
+      "source": "frontend/src/extra-duty.ts:469",
+      "roles": [
+        "admin"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Control must achieve its named action and preserve errors/recovery/context. Detailed contract below.",
+      "expected_request_or_no_write": "See control-specific expectations; close, download, local settings and review confirmations must not apply operational changes.",
+      "verification_status": "passed existing isolated browser assertions",
+      "evidence": [
+        "frontend/tests/extra-duty.browser.mjs:221",
+        "frontend/tests/extra-duty.browser.mjs:222",
+        "frontend/tests/extra-duty.browser.mjs:229"
+      ],
+      "limitations": "Mocked API frontend evidence only; download tests assert filename/auth/format, not binary workbook semantics."
+    },
+    {
+      "id": "extra-duty:[data-extra-close]:472",
+      "module": "extra-duty",
+      "selector": "[data-extra-close]",
+      "label_template": "Cancel",
+      "source": "frontend/src/extra-duty.ts:469",
+      "roles": [
+        "admin"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Control must achieve its named action and preserve errors/recovery/context. Detailed contract below.",
+      "expected_request_or_no_write": "See control-specific expectations; close, download, local settings and review confirmations must not apply operational changes.",
+      "verification_status": "passed existing isolated browser assertions",
+      "evidence": [
+        "frontend/tests/extra-duty.browser.mjs:221",
+        "frontend/tests/extra-duty.browser.mjs:222",
+        "frontend/tests/extra-duty.browser.mjs:229"
+      ],
+      "limitations": "Mocked API frontend evidence only; download tests assert filename/auth/format, not binary workbook semantics."
+    },
+    {
+      "id": "extra-duty:[data-extra-apply]:473",
+      "module": "extra-duty",
+      "selector": "[data-extra-apply]",
+      "label_template": "${busy === \"apply\" ? \"Applying…\" : all ? \"Apply\" : \"Apply extra duties\"}",
+      "source": "frontend/src/extra-duty.ts:476",
+      "roles": [
+        "admin"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Control must achieve its named action and preserve errors/recovery/context. Detailed contract below.",
+      "expected_request_or_no_write": "See control-specific expectations; close, download, local settings and review confirmations must not apply operational changes.",
+      "verification_status": "passed existing isolated browser assertions",
+      "evidence": [
+        "frontend/tests/extra-duty.browser.mjs:146",
+        "frontend/tests/extra-duty.browser.mjs:148",
+        "frontend/tests/extra-duty.browser.mjs:152",
+        "frontend/tests/extra-duty.browser.mjs:157",
+        "frontend/tests/extra-duty.browser.mjs:182",
+        "frontend/tests/extra-duty.browser.mjs:183"
+      ],
+      "limitations": "Mocked API frontend evidence only; download tests assert filename/auth/format, not binary workbook semantics."
+    },
+    {
+      "id": "extra-duty:[data-close]:481",
+      "module": "extra-duty",
+      "selector": "[data-close]",
+      "label_template": "Close",
+      "source": "frontend/src/extra-duty.ts:485",
+      "roles": [
+        "admin"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Close active workspace and restore opener; while committed apply/undo is active honor existing close guard.",
+      "expected_request_or_no_write": "No apply/revert/approve request caused by close.",
+      "verification_status": "requires exact assertion mapping; source inventory is not a pass",
+      "evidence": []
+    },
+    {
+      "id": "extra-duty:[data-fb-reload]:689",
+      "module": "extra-duty",
+      "selector": "[data-fb-reload]",
+      "label_template": "Try again",
+      "source": "frontend/src/extra-duty.ts:695",
+      "roles": [
+        "admin"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Read retry loads the unit editor; Discard restores saved order without PUT; failed save retains edits and enables retry.",
+      "expected_request_or_no_write": "GET unit-fallbacks; Discard sends no PUT; explicit Save PUT includes exact ordered fallback_unit_ids.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:154"
+      ]
+    },
+    {
+      "id": "extra-duty:[data-fb-up]:713",
+      "module": "extra-duty",
+      "selector": "[data-fb-up]",
+      "label_template": "Move up",
+      "source": "frontend/src/extra-duty.ts:719",
+      "roles": [
+        "admin"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Control must achieve its named action and preserve errors/recovery/context. Detailed contract below.",
+      "expected_request_or_no_write": "See control-specific expectations; close, download, local settings and review confirmations must not apply operational changes.",
+      "verification_status": "passed existing isolated browser assertions",
+      "evidence": [
+        "frontend/tests/extra-duty.browser.mjs:262",
+        "frontend/tests/extra-duty.browser.mjs:267"
+      ],
+      "limitations": "Mocked API frontend evidence only; download tests assert filename/auth/format, not binary workbook semantics."
+    },
+    {
+      "id": "extra-duty:[data-fb-down]:714",
+      "module": "extra-duty",
+      "selector": "[data-fb-down]",
+      "label_template": "Move down",
+      "source": "frontend/src/extra-duty.ts:720",
+      "roles": [
+        "admin"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Control must achieve its named action and preserve errors/recovery/context. Detailed contract below.",
+      "expected_request_or_no_write": "See control-specific expectations; close, download, local settings and review confirmations must not apply operational changes.",
+      "verification_status": "passed existing isolated browser assertions",
+      "evidence": [
+        "frontend/tests/extra-duty.browser.mjs:267"
+      ],
+      "limitations": "Mocked API frontend evidence only; download tests assert filename/auth/format, not binary workbook semantics."
+    },
+    {
+      "id": "extra-duty:[data-fb-remove]:715",
+      "module": "extra-duty",
+      "selector": "[data-fb-remove]",
+      "label_template": "Remove",
+      "source": "frontend/src/extra-duty.ts:721",
+      "roles": [
+        "admin"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Control must achieve its named action and preserve errors/recovery/context. Detailed contract below.",
+      "expected_request_or_no_write": "See control-specific expectations; close, download, local settings and review confirmations must not apply operational changes.",
+      "verification_status": "passed existing isolated browser assertions",
+      "evidence": [
+        "frontend/tests/extra-duty.browser.mjs:276"
+      ],
+      "limitations": "Mocked API frontend evidence only; download tests assert filename/auth/format, not binary workbook semantics."
+    },
+    {
+      "id": "extra-duty:[data-fb-add]:720",
+      "module": "extra-duty",
+      "selector": "[data-fb-add]",
+      "label_template": "Add to the end",
+      "source": "frontend/src/extra-duty.ts:726",
+      "roles": [
+        "admin"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Control must achieve its named action and preserve errors/recovery/context. Detailed contract below.",
+      "expected_request_or_no_write": "See control-specific expectations; close, download, local settings and review confirmations must not apply operational changes.",
+      "verification_status": "passed existing isolated browser assertions",
+      "evidence": [
+        "frontend/tests/extra-duty.browser.mjs:267",
+        "frontend/tests/extra-duty.browser.mjs:273"
+      ],
+      "limitations": "Mocked API frontend evidence only; download tests assert filename/auth/format, not binary workbook semantics."
+    },
+    {
+      "id": "extra-duty:[data-fb-save]:721",
+      "module": "extra-duty",
+      "selector": "[data-fb-save]",
+      "label_template": "${busy ? \"Saving…\" : \"Save order\"}",
+      "source": "frontend/src/extra-duty.ts:727",
+      "roles": [
+        "admin"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Control must achieve its named action and preserve errors/recovery/context. Detailed contract below.",
+      "expected_request_or_no_write": "See control-specific expectations; close, download, local settings and review confirmations must not apply operational changes.",
+      "verification_status": "passed existing isolated browser assertions",
+      "evidence": [
+        "frontend/tests/extra-duty.browser.mjs:260",
+        "frontend/tests/extra-duty.browser.mjs:273"
+      ],
+      "limitations": "Mocked API frontend evidence only; download tests assert filename/auth/format, not binary workbook semantics."
+    },
+    {
+      "id": "extra-duty:[data-fb-reset]:722",
+      "module": "extra-duty",
+      "selector": "[data-fb-reset]",
+      "label_template": "Discard changes",
+      "source": "frontend/src/extra-duty.ts:728",
+      "roles": [
+        "admin"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Read retry loads the unit editor; Discard restores saved order without PUT; failed save retains edits and enables retry.",
+      "expected_request_or_no_write": "GET unit-fallbacks; Discard sends no PUT; explicit Save PUT includes exact ordered fallback_unit_ids.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:154"
+      ]
+    },
+    {
+      "id": "leave-approval:[data-close]:17",
+      "module": "leave-approval",
+      "selector": "[data-close]",
+      "label_template": "Close",
+      "source": "frontend/src/leave-approval.ts:17",
+      "roles": [
+        "admin"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Close active workspace and restore opener; while committed apply/undo is active honor existing close guard.",
+      "expected_request_or_no_write": "No apply/revert/approve request caused by close.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:43",
+        "frontend/tests/premium-generation-actions.browser.mjs:44",
+        "frontend/tests/premium-generation-actions.browser.mjs:51",
+        "frontend/tests/premium-generation-actions.browser.mjs:103",
+        "frontend/tests/premium-generation-actions.browser.mjs:116",
+        "frontend/tests/premium-generation-actions.browser.mjs:125",
+        "frontend/tests/premium-generation-actions.browser.mjs:146",
+        "frontend/tests/premium-generation-actions.browser.mjs:161"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence.",
+      "monthly_review_followup": {
+        "recorded_at_utc": "2026-10-22T12:53:34.226916+00:00",
+        "review": "docs/premium-ui/reviews/monthly-leave-review-current.json",
+        "report": "docs/premium-ui/qa-monthly-leave-review.json",
+        "status": "bounded_monthly_review_outcomes",
+        "limit": "18rowfixture/3engines2widths,allPOSTmocked; original historical verification status retained."
+      }
+    },
+    {
+      "id": "leave-approval:[data-refresh]:25",
+      "module": "leave-approval",
+      "selector": "[data-refresh]",
+      "label_template": "Refresh review",
+      "source": "frontend/src/leave-approval.ts:25",
+      "roles": [
+        "admin"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Re-fetch review, clear prior acknowledgements/token, keep actionable failure.",
+      "expected_request_or_no_write": "POST approval-preview {month}; no approval.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:63",
+        "frontend/tests/premium-generation-actions.browser.mjs:64"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence.",
+      "monthly_review_followup": {
+        "recorded_at_utc": "2026-10-22T12:53:34.226916+00:00",
+        "review": "docs/premium-ui/reviews/monthly-leave-review-current.json",
+        "report": "docs/premium-ui/qa-monthly-leave-review.json",
+        "status": "bounded_monthly_review_outcomes",
+        "limit": "18rowfixture/3engines2widths,allPOSTmocked; original historical verification status retained."
+      }
+    },
+    {
+      "id": "leave-approval:[data-approve]:25",
+      "module": "leave-approval",
+      "selector": "[data-approve]",
+      "label_template": "${applying ? 'Approving...' : `Approve all ${review?.pending_count ?? ''} pending requests`}",
+      "source": "frontend/src/leave-approval.ts:25",
+      "roles": [
+        "admin"
+      ],
+      "month": "selected month captured at modal open; settings comparison uses explicit month input",
+      "expected_ui": "Requires all review/affected-duty acknowledgements; success count+close; stale failure disables until refresh.",
+      "expected_request_or_no_write": "POST approve-month {month,review_token,acknowledge_duties}; exact token; no assignment removal.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:61",
+        "frontend/tests/premium-generation-actions.browser.mjs:62",
+        "frontend/tests/premium-generation-actions.browser.mjs:63",
+        "frontend/tests/premium-generation-actions.browser.mjs:64",
+        "frontend/tests/premium-generation-actions.browser.mjs:161"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence.",
+      "monthly_review_followup": {
+        "recorded_at_utc": "2026-10-22T12:53:34.226916+00:00",
+        "review": "docs/premium-ui/reviews/monthly-leave-review-current.json",
+        "report": "docs/premium-ui/qa-monthly-leave-review.json",
+        "status": "bounded_monthly_review_outcomes",
+        "limit": "18rowfixture/3engines2widths,allPOSTmocked; original historical verification status retained."
+      }
+    },
+    {
+      "id": "rota-compute:[data-engine-choice]",
+      "module": "rota-compute",
+      "selector": "[data-engine-choice]",
+      "source": "frontend/src/rota-compute.ts:259",
+      "roles": [
+        "authorized operator; role-limited controls remain role-limited"
+      ],
+      "month": "selected month captured by owning workspace",
+      "expected_ui": "State changes immediately or after returned response; selected value must survive relevant rerenders and be included in intended request only.",
+      "expected_request_or_no_write": "Local configuration does not mutate assignments; review inputs only gate subsequent explicit apply.",
+      "verification_status": "requires exact assertion mapping",
+      "evidence": [],
+      "entrypoint_followup": {
+        "recorded_at_utc": "2026-10-22T12:43:02.240115+00:00",
+        "review": "docs/premium-ui/reviews/generation-entrypoints-current.json",
+        "report": "docs/premium-ui/qa-generation-entrypoints.json",
+        "status": "bounded_entry_or_restriction_assertions_only",
+        "limit": "No whole action contract/hardware/generation certification; original historical verification status retained."
+      },
+      "native_radio_followup": {
+        "recorded_at_utc": "2026-10-22T12:47:26.985917+00:00",
+        "review": "docs/premium-ui/reviews/engine-radio-current.json",
+        "report": "docs/premium-ui/qa-engine-radio.json",
+        "test": "frontend/tests/premium-engine-radio.browser.mjs",
+        "status": "bounded_actual_radio_outcomes",
+        "limit": "UIpresencefixture,noactualGPU/jobcreation; original historical verification status retained."
+      }
+    },
+    {
+      "id": "rota-compute:[data-review-confirm]",
+      "module": "rota-compute",
+      "selector": "[data-review-confirm]",
+      "source": "frontend/src/rota-compute.ts:291",
+      "roles": [
+        "authorized operator; role-limited controls remain role-limited"
+      ],
+      "month": "selected month captured by owning workspace",
+      "expected_ui": "State changes immediately or after returned response; selected value must survive relevant rerenders and be included in intended request only.",
+      "expected_request_or_no_write": "Local configuration does not mutate assignments; review inputs only gate subsequent explicit apply.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:32",
+        "frontend/tests/premium-generation-actions.browser.mjs:37",
+        "frontend/tests/premium-generation-actions.browser.mjs:44"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-compute:[data-reversal-confirm]",
+      "module": "rota-compute",
+      "selector": "[data-reversal-confirm]",
+      "source": "frontend/src/rota-compute.ts:292",
+      "roles": [
+        "authorized operator; role-limited controls remain role-limited"
+      ],
+      "month": "selected month captured by owning workspace",
+      "expected_ui": "State changes immediately or after returned response; selected value must survive relevant rerenders and be included in intended request only.",
+      "expected_request_or_no_write": "Local configuration does not mutate assignments; review inputs only gate subsequent explicit apply.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:40",
+        "frontend/tests/premium-generation-actions.browser.mjs:44",
+        "frontend/tests/premium-generation-actions.browser.mjs:103"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-compute:[data-compute-enable]",
+      "module": "rota-compute",
+      "selector": "[data-compute-enable]",
+      "source": "frontend/src/rota-compute.ts:73",
+      "roles": [
+        "authorized operator; role-limited controls remain role-limited"
+      ],
+      "month": "selected month captured by owning workspace",
+      "expected_ui": "State changes immediately or after returned response; selected value must survive relevant rerenders and be included in intended request only.",
+      "expected_request_or_no_write": "Local configuration does not mutate assignments; review inputs only gate subsequent explicit apply.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:131",
+        "frontend/tests/premium-generation-actions.browser.mjs:132",
+        "frontend/tests/premium-generation-actions.browser.mjs:137"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-compute:[data-compute-mode]",
+      "module": "rota-compute",
+      "selector": "[data-compute-mode]",
+      "source": "frontend/src/rota-compute.ts:75",
+      "roles": [
+        "authorized operator; role-limited controls remain role-limited"
+      ],
+      "month": "selected month captured by owning workspace",
+      "expected_ui": "State changes immediately or after returned response; selected value must survive relevant rerenders and be included in intended request only.",
+      "expected_request_or_no_write": "Local configuration does not mutate assignments; review inputs only gate subsequent explicit apply.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:132",
+        "frontend/tests/premium-generation-actions.browser.mjs:137"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-compute:[data-compute-power]",
+      "module": "rota-compute",
+      "selector": "[data-compute-power]",
+      "source": "frontend/src/rota-compute.ts:79",
+      "roles": [
+        "authorized operator; role-limited controls remain role-limited"
+      ],
+      "month": "selected month captured by owning workspace",
+      "expected_ui": "State changes immediately or after returned response; selected value must survive relevant rerenders and be included in intended request only.",
+      "expected_request_or_no_write": "Local configuration does not mutate assignments; review inputs only gate subsequent explicit apply.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:134"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-compute:[data-compute-month]",
+      "module": "rota-compute",
+      "selector": "[data-compute-month]",
+      "source": "frontend/src/rota-compute.ts:104",
+      "roles": [
+        "authorized operator; role-limited controls remain role-limited"
+      ],
+      "month": "selected month captured by owning workspace",
+      "expected_ui": "State changes immediately or after returned response; selected value must survive relevant rerenders and be included in intended request only.",
+      "expected_request_or_no_write": "Local configuration does not mutate assignments; review inputs only gate subsequent explicit apply.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:135"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-compute:[data-compute-workload]",
+      "module": "rota-compute",
+      "selector": "[data-compute-workload]",
+      "source": "frontend/src/rota-compute.ts:105",
+      "roles": [
+        "authorized operator; role-limited controls remain role-limited"
+      ],
+      "month": "selected month captured by owning workspace",
+      "expected_ui": "State changes immediately or after returned response; selected value must survive relevant rerenders and be included in intended request only.",
+      "expected_request_or_no_write": "Local configuration does not mutate assignments; review inputs only gate subsequent explicit apply.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:135"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-intelligence:[data-tab]",
+      "module": "rota-intelligence",
+      "selector": "[data-tab]",
+      "source": "frontend/src/rota-intelligence.ts:66",
+      "roles": [
+        "authorized operator; role-limited controls remain role-limited"
+      ],
+      "month": "selected month captured by owning workspace",
+      "expected_ui": "State changes immediately or after returned response; selected value must survive relevant rerenders and be included in intended request only.",
+      "expected_request_or_no_write": "Local configuration does not mutate assignments; review inputs only gate subsequent explicit apply.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:99"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-intelligence:[data-mode]",
+      "module": "rota-intelligence",
+      "selector": "[data-mode]",
+      "source": "frontend/src/rota-intelligence.ts:69",
+      "roles": [
+        "authorized operator; role-limited controls remain role-limited"
+      ],
+      "month": "selected month captured by owning workspace",
+      "expected_ui": "State changes immediately or after returned response; selected value must survive relevant rerenders and be included in intended request only.",
+      "expected_request_or_no_write": "Local configuration does not mutate assignments; review inputs only gate subsequent explicit apply.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:94",
+        "frontend/tests/premium-generation-actions.browser.mjs:116"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-intelligence:[data-seconds]",
+      "module": "rota-intelligence",
+      "selector": "[data-seconds]",
+      "source": "frontend/src/rota-intelligence.ts:70",
+      "roles": [
+        "authorized operator; role-limited controls remain role-limited"
+      ],
+      "month": "selected month captured by owning workspace",
+      "expected_ui": "State changes immediately or after returned response; selected value must survive relevant rerenders and be included in intended request only.",
+      "expected_request_or_no_write": "Local configuration does not mutate assignments; review inputs only gate subsequent explicit apply.",
+      "verification_status": "requires exact assertion mapping",
+      "evidence": []
+    },
+    {
+      "id": "rota-intelligence:[data-lock]",
+      "module": "rota-intelligence",
+      "selector": "[data-lock]",
+      "source": "frontend/src/rota-intelligence.ts:76",
+      "roles": [
+        "authorized operator; role-limited controls remain role-limited"
+      ],
+      "month": "selected month captured by owning workspace",
+      "expected_ui": "State changes immediately or after returned response; selected value must survive relevant rerenders and be included in intended request only.",
+      "expected_request_or_no_write": "Local configuration does not mutate assignments; review inputs only gate subsequent explicit apply.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:94"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-intelligence:[data-repair]",
+      "module": "rota-intelligence",
+      "selector": "[data-repair]",
+      "source": "frontend/src/rota-intelligence.ts:77",
+      "roles": [
+        "authorized operator; role-limited controls remain role-limited"
+      ],
+      "month": "selected month captured by owning workspace",
+      "expected_ui": "State changes immediately or after returned response; selected value must survive relevant rerenders and be included in intended request only.",
+      "expected_request_or_no_write": "Local configuration does not mutate assignments; review inputs only gate subsequent explicit apply.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:94"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-intelligence:[data-pref-slot]",
+      "module": "rota-intelligence",
+      "selector": "[data-pref-slot]",
+      "source": "frontend/src/rota-intelligence.ts:78",
+      "roles": [
+        "authorized operator; role-limited controls remain role-limited"
+      ],
+      "month": "selected month captured by owning workspace",
+      "expected_ui": "State changes immediately or after returned response; selected value must survive relevant rerenders and be included in intended request only.",
+      "expected_request_or_no_write": "Local configuration does not mutate assignments; review inputs only gate subsequent explicit apply.",
+      "verification_status": "requires exact assertion mapping",
+      "evidence": []
+    },
+    {
+      "id": "rota-intelligence:[data-pref-person]",
+      "module": "rota-intelligence",
+      "selector": "[data-pref-person]",
+      "source": "frontend/src/rota-intelligence.ts:78",
+      "roles": [
+        "authorized operator; role-limited controls remain role-limited"
+      ],
+      "month": "selected month captured by owning workspace",
+      "expected_ui": "State changes immediately or after returned response; selected value must survive relevant rerenders and be included in intended request only.",
+      "expected_request_or_no_write": "Local configuration does not mutate assignments; review inputs only gate subsequent explicit apply.",
+      "verification_status": "requires exact assertion mapping",
+      "evidence": []
+    },
+    {
+      "id": "rota-intelligence:[data-pref-cost]",
+      "module": "rota-intelligence",
+      "selector": "[data-pref-cost]",
+      "source": "frontend/src/rota-intelligence.ts:78",
+      "roles": [
+        "authorized operator; role-limited controls remain role-limited"
+      ],
+      "month": "selected month captured by owning workspace",
+      "expected_ui": "State changes immediately or after returned response; selected value must survive relevant rerenders and be included in intended request only.",
+      "expected_request_or_no_write": "Local configuration does not mutate assignments; review inputs only gate subsequent explicit apply.",
+      "verification_status": "requires exact assertion mapping",
+      "evidence": []
+    },
+    {
+      "id": "rota-intelligence:[data-alternative]",
+      "module": "rota-intelligence",
+      "selector": "[data-alternative]",
+      "source": "frontend/src/rota-intelligence.ts:85",
+      "roles": [
+        "authorized operator; role-limited controls remain role-limited"
+      ],
+      "month": "selected month captured by owning workspace",
+      "expected_ui": "State changes immediately or after returned response; selected value must survive relevant rerenders and be included in intended request only.",
+      "expected_request_or_no_write": "Local configuration does not mutate assignments; review inputs only gate subsequent explicit apply.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:97"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-intelligence:[data-confirm]",
+      "module": "rota-intelligence",
+      "selector": "[data-confirm]",
+      "source": "frontend/src/rota-intelligence.ts:88",
+      "roles": [
+        "authorized operator; role-limited controls remain role-limited"
+      ],
+      "month": "selected month captured by owning workspace",
+      "expected_ui": "State changes immediately or after returned response; selected value must survive relevant rerenders and be included in intended request only.",
+      "expected_request_or_no_write": "Local configuration does not mutate assignments; review inputs only gate subsequent explicit apply.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:61",
+        "frontend/tests/premium-generation-actions.browser.mjs:63",
+        "frontend/tests/premium-generation-actions.browser.mjs:64",
+        "frontend/tests/premium-generation-actions.browser.mjs:103"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-intelligence:[data-reversal-confirm]",
+      "module": "rota-intelligence",
+      "selector": "[data-reversal-confirm]",
+      "source": "frontend/src/rota-intelligence.ts:89",
+      "roles": [
+        "authorized operator; role-limited controls remain role-limited"
+      ],
+      "month": "selected month captured by owning workspace",
+      "expected_ui": "State changes immediately or after returned response; selected value must survive relevant rerenders and be included in intended request only.",
+      "expected_request_or_no_write": "Local configuration does not mutate assignments; review inputs only gate subsequent explicit apply.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:40",
+        "frontend/tests/premium-generation-actions.browser.mjs:44",
+        "frontend/tests/premium-generation-actions.browser.mjs:103"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-intelligence:[data-local-enabled]",
+      "module": "rota-intelligence",
+      "selector": "[data-local-enabled]",
+      "source": "frontend/src/rota-intelligence.ts:99",
+      "roles": [
+        "authorized operator; role-limited controls remain role-limited"
+      ],
+      "month": "selected month captured by owning workspace",
+      "expected_ui": "State changes immediately or after returned response; selected value must survive relevant rerenders and be included in intended request only.",
+      "expected_request_or_no_write": "Local configuration does not mutate assignments; review inputs only gate subsequent explicit apply.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:115"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-intelligence:[data-local-token]",
+      "module": "rota-intelligence",
+      "selector": "[data-local-token]",
+      "source": "frontend/src/rota-intelligence.ts:100",
+      "roles": [
+        "authorized operator; role-limited controls remain role-limited"
+      ],
+      "month": "selected month captured by owning workspace",
+      "expected_ui": "State changes immediately or after returned response; selected value must survive relevant rerenders and be included in intended request only.",
+      "expected_request_or_no_write": "Local configuration does not mutate assignments; review inputs only gate subsequent explicit apply.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:115"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-intelligence:[data-local-port]",
+      "module": "rota-intelligence",
+      "selector": "[data-local-port]",
+      "source": "frontend/src/rota-intelligence.ts:101",
+      "roles": [
+        "authorized operator; role-limited controls remain role-limited"
+      ],
+      "month": "selected month captured by owning workspace",
+      "expected_ui": "State changes immediately or after returned response; selected value must survive relevant rerenders and be included in intended request only.",
+      "expected_request_or_no_write": "Local configuration does not mutate assignments; review inputs only gate subsequent explicit apply.",
+      "verification_status": "requires exact assertion mapping",
+      "evidence": []
+    },
+    {
+      "id": "rota-intelligence:[data-instruction]",
+      "module": "rota-intelligence",
+      "selector": "[data-instruction]",
+      "source": "frontend/src/rota-intelligence.ts:103",
+      "roles": [
+        "authorized operator; role-limited controls remain role-limited"
+      ],
+      "month": "selected month captured by owning workspace",
+      "expected_ui": "State changes immediately or after returned response; selected value must survive relevant rerenders and be included in intended request only.",
+      "expected_request_or_no_write": "Local configuration does not mutate assignments; review inputs only gate subsequent explicit apply.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:115"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-intelligence:[data-heldout]",
+      "module": "rota-intelligence",
+      "selector": "[data-heldout]",
+      "source": "frontend/src/rota-intelligence.ts:106",
+      "roles": [
+        "authorized operator; role-limited controls remain role-limited"
+      ],
+      "month": "selected month captured by owning workspace",
+      "expected_ui": "State changes immediately or after returned response; selected value must survive relevant rerenders and be included in intended request only.",
+      "expected_request_or_no_write": "Local configuration does not mutate assignments; review inputs only gate subsequent explicit apply.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:102"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence."
+    },
+    {
+      "id": "rota-intelligence:[data-history-month]",
+      "module": "rota-intelligence",
+      "selector": "[data-history-month]",
+      "source": "frontend/src/rota-intelligence.ts:96",
+      "roles": [
+        "authorized operator; role-limited controls remain role-limited"
+      ],
+      "month": "selected month captured by owning workspace",
+      "expected_ui": "State changes immediately or after returned response; selected value must survive relevant rerenders and be included in intended request only.",
+      "expected_request_or_no_write": "Local configuration does not mutate assignments; review inputs only gate subsequent explicit apply.",
+      "verification_status": "isolated browser assertion present; latest test-run result must be checked",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:101"
+      ]
+    },
+    {
+      "id": "rota-intelligence:[data-verify-history]",
+      "module": "rota-intelligence",
+      "selector": "[data-verify-history]",
+      "source": "frontend/src/rota-intelligence.ts:97",
+      "roles": [
+        "authorized operator; role-limited controls remain role-limited"
+      ],
+      "month": "selected month captured by owning workspace",
+      "expected_ui": "State changes immediately or after returned response; selected value must survive relevant rerenders and be included in intended request only.",
+      "expected_request_or_no_write": "Local configuration does not mutate assignments; review inputs only gate subsequent explicit apply.",
+      "verification_status": "requires exact assertion mapping",
+      "evidence": []
+    },
+    {
+      "id": "leave-approval:[data-confirm]",
+      "module": "leave-approval",
+      "selector": "[data-confirm]",
+      "source": "frontend/src/leave-approval.ts:24",
+      "roles": [
+        "authorized operator; role-limited controls remain role-limited"
+      ],
+      "month": "selected month captured by owning workspace",
+      "expected_ui": "State changes immediately or after returned response; selected value must survive relevant rerenders and be included in intended request only.",
+      "expected_request_or_no_write": "Local configuration does not mutate assignments; review inputs only gate subsequent explicit apply.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:61",
+        "frontend/tests/premium-generation-actions.browser.mjs:63",
+        "frontend/tests/premium-generation-actions.browser.mjs:64",
+        "frontend/tests/premium-generation-actions.browser.mjs:103"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence.",
+      "monthly_review_followup": {
+        "recorded_at_utc": "2026-10-22T12:53:34.226916+00:00",
+        "review": "docs/premium-ui/reviews/monthly-leave-review-current.json",
+        "report": "docs/premium-ui/qa-monthly-leave-review.json",
+        "status": "bounded_monthly_review_outcomes",
+        "limit": "18rowfixture/3engines2widths,allPOSTmocked; original historical verification status retained."
+      }
+    },
+    {
+      "id": "leave-approval:[data-duty-ack]",
+      "module": "leave-approval",
+      "selector": "[data-duty-ack]",
+      "source": "frontend/src/leave-approval.ts:23",
+      "roles": [
+        "authorized operator; role-limited controls remain role-limited"
+      ],
+      "month": "selected month captured by owning workspace",
+      "expected_ui": "State changes immediately or after returned response; selected value must survive relevant rerenders and be included in intended request only.",
+      "expected_request_or_no_write": "Local configuration does not mutate assignments; review inputs only gate subsequent explicit apply.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:61",
+        "frontend/tests/premium-generation-actions.browser.mjs:63",
+        "frontend/tests/premium-generation-actions.browser.mjs:64"
+      ],
+      "limitations": "All requests mocked; this proves frontend behavior and exact request contracts, not database persistence.",
+      "monthly_review_followup": {
+        "recorded_at_utc": "2026-10-22T12:53:34.226916+00:00",
+        "review": "docs/premium-ui/reviews/monthly-leave-review-current.json",
+        "report": "docs/premium-ui/qa-monthly-leave-review.json",
+        "status": "bounded_monthly_review_outcomes",
+        "limit": "18rowfixture/3engines2widths,allPOSTmocked; original historical verification status retained."
+      }
+    },
+    {
+      "id": "extra-duty:[data-extra-reviewed]",
+      "module": "extra-duty",
+      "selector": "[data-extra-reviewed]",
+      "source": "frontend/src/extra-duty.ts:472",
+      "roles": [
+        "authorized operator; role-limited controls remain role-limited"
+      ],
+      "month": "selected month captured by owning workspace",
+      "expected_ui": "State changes immediately or after returned response; selected value must survive relevant rerenders and be included in intended request only.",
+      "expected_request_or_no_write": "Local configuration does not mutate assignments; review inputs only gate subsequent explicit apply.",
+      "verification_status": "passed existing isolated browser assertions",
+      "evidence": [
+        "frontend/tests/extra-duty.browser.mjs:146",
+        "frontend/tests/extra-duty.browser.mjs:148",
+        "frontend/tests/extra-duty.browser.mjs:157"
+      ],
+      "limitations": "Mocked API frontend evidence only; download tests assert filename/auth/format, not binary workbook semantics."
+    },
+    {
+      "id": "extra-duty:[data-fb-select]",
+      "module": "extra-duty",
+      "selector": "[data-fb-select]",
+      "source": "frontend/src/extra-duty.ts:724",
+      "roles": [
+        "authorized operator; role-limited controls remain role-limited"
+      ],
+      "month": "selected month captured by owning workspace",
+      "expected_ui": "State changes immediately or after returned response; selected value must survive relevant rerenders and be included in intended request only.",
+      "expected_request_or_no_write": "Local configuration does not mutate assignments; review inputs only gate subsequent explicit apply.",
+      "verification_status": "passed existing isolated browser assertions",
+      "evidence": [
+        "frontend/tests/extra-duty.browser.mjs:263",
+        "frontend/tests/extra-duty.browser.mjs:267"
+      ],
+      "limitations": "Mocked API frontend evidence only; download tests assert filename/auth/format, not binary workbook semantics."
+    },
+    {
+      "id": "main:#generate-rota-template",
+      "module": "main-generation-review-publish",
+      "selector": "#generate-rota-template",
+      "source": "frontend/src/main.ts:6523",
+      "roles": [
+        "existing permitted role; publish approval remains HOD/admin"
+      ],
+      "month": "explicit selected month for generation/review/publish; boundary changes must discard stale responses",
+      "expected_ui": "See displayed label and existing source handler; opens correct context, filters actual records, or displays confirmed mutation/export outcome.",
+      "expected_request_or_no_write": "Existing API payload and domain semantics must remain identical. Cancellation sends no destructive or publish request.",
+      "verification_status": "unmapped in this subtask; root coverage audit required",
+      "evidence": []
+    },
+    {
+      "id": "main:[data-early-build]",
+      "module": "main-generation-review-publish",
+      "selector": "[data-early-build]",
+      "source": "frontend/src/main.ts:6459",
+      "roles": [
+        "existing permitted role; publish approval remains HOD/admin"
+      ],
+      "month": "explicit selected month for generation/review/publish; boundary changes must discard stale responses",
+      "expected_ui": "See displayed label and existing source handler; opens correct context, filters actual records, or displays confirmed mutation/export outcome.",
+      "expected_request_or_no_write": "Existing API payload and domain semantics must remain identical. Cancellation sends no destructive or publish request.",
+      "verification_status": "unmapped in this subtask; root coverage audit required",
+      "evidence": []
+    },
+    {
+      "id": "main:#run-safe-auto-fill",
+      "module": "main-generation-review-publish",
+      "selector": "#run-safe-auto-fill",
+      "source": "frontend/src/main.ts:6459",
+      "roles": [
+        "existing permitted role; publish approval remains HOD/admin"
+      ],
+      "month": "explicit selected month for generation/review/publish; boundary changes must discard stale responses",
+      "expected_ui": "See displayed label and existing source handler; opens correct context, filters actual records, or displays confirmed mutation/export outcome.",
+      "expected_request_or_no_write": "Existing API payload and domain semantics must remain identical. Cancellation sends no destructive or publish request.",
+      "verification_status": "unmapped in this subtask; root coverage audit required",
+      "evidence": []
+    },
+    {
+      "id": "main:#run-intelligent-rota",
+      "module": "main-generation-review-publish",
+      "selector": "#run-intelligent-rota",
+      "source": "frontend/src/main.ts:6525",
+      "roles": [
+        "existing permitted role; publish approval remains HOD/admin"
+      ],
+      "month": "explicit selected month for generation/review/publish; boundary changes must discard stale responses",
+      "expected_ui": "See displayed label and existing source handler; opens correct context, filters actual records, or displays confirmed mutation/export outcome.",
+      "expected_request_or_no_write": "Existing API payload and domain semantics must remain identical. Cancellation sends no destructive or publish request.",
+      "verification_status": "unmapped in this subtask; root coverage audit required",
+      "evidence": []
+    },
+    {
+      "id": "main:#download-eagle-eye-export",
+      "module": "main-generation-review-publish",
+      "selector": "#download-eagle-eye-export",
+      "source": "frontend/src/main.ts:6529",
+      "roles": [
+        "existing permitted role; publish approval remains HOD/admin"
+      ],
+      "month": "explicit selected month for generation/review/publish; boundary changes must discard stale responses",
+      "expected_ui": "See displayed label and existing source handler; opens correct context, filters actual records, or displays confirmed mutation/export outcome.",
+      "expected_request_or_no_write": "Existing API payload and domain semantics must remain identical. Cancellation sends no destructive or publish request.",
+      "verification_status": "unmapped in this subtask; root coverage audit required",
+      "evidence": []
+    },
+    {
+      "id": "main:#download-call-wise-template-export",
+      "module": "main-generation-review-publish",
+      "selector": "#download-call-wise-template-export",
+      "source": "frontend/src/main.ts:6530",
+      "roles": [
+        "existing permitted role; publish approval remains HOD/admin"
+      ],
+      "month": "explicit selected month for generation/review/publish; boundary changes must discard stale responses",
+      "expected_ui": "See displayed label and existing source handler; opens correct context, filters actual records, or displays confirmed mutation/export outcome.",
+      "expected_request_or_no_write": "Existing API payload and domain semantics must remain identical. Cancellation sends no destructive or publish request.",
+      "verification_status": "unmapped in this subtask; root coverage audit required",
+      "evidence": []
+    },
+    {
+      "id": "main:#clear-rota-template-cache",
+      "module": "main-generation-review-publish",
+      "selector": "#clear-rota-template-cache",
+      "source": "frontend/src/main.ts:6426",
+      "roles": [
+        "existing permitted role; publish approval remains HOD/admin"
+      ],
+      "month": "explicit selected month for generation/review/publish; boundary changes must discard stale responses",
+      "expected_ui": "See displayed label and existing source handler; opens correct context, filters actual records, or displays confirmed mutation/export outcome.",
+      "expected_request_or_no_write": "Existing API payload and domain semantics must remain identical. Cancellation sends no destructive or publish request.",
+      "verification_status": "unmapped in this subtask; root coverage audit required",
+      "evidence": []
+    },
+    {
+      "id": "main:#clear-rota-template-with-assignments",
+      "module": "main-generation-review-publish",
+      "selector": "#clear-rota-template-with-assignments",
+      "source": "frontend/src/main.ts:6427",
+      "roles": [
+        "existing permitted role; publish approval remains HOD/admin"
+      ],
+      "month": "explicit selected month for generation/review/publish; boundary changes must discard stale responses",
+      "expected_ui": "See displayed label and existing source handler; opens correct context, filters actual records, or displays confirmed mutation/export outcome.",
+      "expected_request_or_no_write": "Existing API payload and domain semantics must remain identical. Cancellation sends no destructive or publish request.",
+      "verification_status": "unmapped in this subtask; root coverage audit required",
+      "evidence": []
+    },
+    {
+      "id": "main:[data-rota-overview-mode]",
+      "module": "main-generation-review-publish",
+      "selector": "[data-rota-overview-mode]",
+      "source": "frontend/src/main.ts:5969",
+      "roles": [
+        "existing permitted role; publish approval remains HOD/admin"
+      ],
+      "month": "explicit selected month for generation/review/publish; boundary changes must discard stale responses",
+      "expected_ui": "See displayed label and existing source handler; opens correct context, filters actual records, or displays confirmed mutation/export outcome.",
+      "expected_request_or_no_write": "Existing API payload and domain semantics must remain identical. Cancellation sends no destructive or publish request.",
+      "verification_status": "unmapped in this subtask; root coverage audit required",
+      "evidence": []
+    },
+    {
+      "id": "main:[data-rota-day]",
+      "module": "main-generation-review-publish",
+      "selector": "[data-rota-day]",
+      "source": "frontend/src/main.ts:5665",
+      "roles": [
+        "existing permitted role; publish approval remains HOD/admin"
+      ],
+      "month": "explicit selected month for generation/review/publish; boundary changes must discard stale responses",
+      "expected_ui": "See displayed label and existing source handler; opens correct context, filters actual records, or displays confirmed mutation/export outcome.",
+      "expected_request_or_no_write": "Existing API payload and domain semantics must remain identical. Cancellation sends no destructive or publish request.",
+      "verification_status": "unmapped in this subtask; root coverage audit required",
+      "evidence": []
+    },
+    {
+      "id": "main:[data-rota-day-modal-nav]",
+      "module": "main-generation-review-publish",
+      "selector": "[data-rota-day-modal-nav]",
+      "source": "frontend/src/main.ts:6280",
+      "roles": [
+        "existing permitted role; publish approval remains HOD/admin"
+      ],
+      "month": "explicit selected month for generation/review/publish; boundary changes must discard stale responses",
+      "expected_ui": "See displayed label and existing source handler; opens correct context, filters actual records, or displays confirmed mutation/export outcome.",
+      "expected_request_or_no_write": "Existing API payload and domain semantics must remain identical. Cancellation sends no destructive or publish request.",
+      "verification_status": "unmapped in this subtask; root coverage audit required",
+      "evidence": []
+    },
+    {
+      "id": "main:[data-rota-day-view-mode]",
+      "module": "main-generation-review-publish",
+      "selector": "[data-rota-day-view-mode]",
+      "source": "frontend/src/main.ts:6287",
+      "roles": [
+        "existing permitted role; publish approval remains HOD/admin"
+      ],
+      "month": "explicit selected month for generation/review/publish; boundary changes must discard stale responses",
+      "expected_ui": "See displayed label and existing source handler; opens correct context, filters actual records, or displays confirmed mutation/export outcome.",
+      "expected_request_or_no_write": "Existing API payload and domain semantics must remain identical. Cancellation sends no destructive or publish request.",
+      "verification_status": "unmapped in this subtask; root coverage audit required",
+      "evidence": []
+    },
+    {
+      "id": "main:[data-rota-review-filter]",
+      "module": "main-generation-review-publish",
+      "selector": "[data-rota-review-filter]",
+      "source": "frontend/src/main.ts:6684",
+      "roles": [
+        "existing permitted role; publish approval remains HOD/admin"
+      ],
+      "month": "explicit selected month for generation/review/publish; boundary changes must discard stale responses",
+      "expected_ui": "See displayed label and existing source handler; opens correct context, filters actual records, or displays confirmed mutation/export outcome.",
+      "expected_request_or_no_write": "Existing API payload and domain semantics must remain identical. Cancellation sends no destructive or publish request.",
+      "verification_status": "unmapped in this subtask; root coverage audit required",
+      "evidence": []
+    },
+    {
+      "id": "main:[data-open-rota-review-slot]",
+      "module": "main-generation-review-publish",
+      "selector": "[data-open-rota-review-slot]",
+      "source": "frontend/src/main.ts:6752",
+      "roles": [
+        "existing permitted role; publish approval remains HOD/admin"
+      ],
+      "month": "explicit selected month for generation/review/publish; boundary changes must discard stale responses",
+      "expected_ui": "See displayed label and existing source handler; opens correct context, filters actual records, or displays confirmed mutation/export outcome.",
+      "expected_request_or_no_write": "Existing API payload and domain semantics must remain identical. Cancellation sends no destructive or publish request.",
+      "verification_status": "unmapped in this subtask; root coverage audit required",
+      "evidence": []
+    },
+    {
+      "id": "main:[data-load-review-slot-candidates]",
+      "module": "main-generation-review-publish",
+      "selector": "[data-load-review-slot-candidates]",
+      "source": "frontend/src/main.ts:6791",
+      "roles": [
+        "existing permitted role; publish approval remains HOD/admin"
+      ],
+      "month": "explicit selected month for generation/review/publish; boundary changes must discard stale responses",
+      "expected_ui": "See displayed label and existing source handler; opens correct context, filters actual records, or displays confirmed mutation/export outcome.",
+      "expected_request_or_no_write": "Existing API payload and domain semantics must remain identical. Cancellation sends no destructive or publish request.",
+      "verification_status": "unmapped in this subtask; root coverage audit required",
+      "evidence": []
+    },
+    {
+      "id": "main:[data-accept-review-issue]",
+      "module": "main-generation-review-publish",
+      "selector": "[data-accept-review-issue]",
+      "source": "frontend/src/main.ts:6831",
+      "roles": [
+        "existing permitted role; publish approval remains HOD/admin"
+      ],
+      "month": "explicit selected month for generation/review/publish; boundary changes must discard stale responses",
+      "expected_ui": "See displayed label and existing source handler; opens correct context, filters actual records, or displays confirmed mutation/export outcome.",
+      "expected_request_or_no_write": "Existing API payload and domain semantics must remain identical. Cancellation sends no destructive or publish request.",
+      "verification_status": "unmapped in this subtask; root coverage audit required",
+      "evidence": []
+    },
+    {
+      "id": "main:[data-close-review-slot-modal]",
+      "module": "main-generation-review-publish",
+      "selector": "[data-close-review-slot-modal]",
+      "source": "frontend/src/main.ts:6850",
+      "roles": [
+        "existing permitted role; publish approval remains HOD/admin"
+      ],
+      "month": "explicit selected month for generation/review/publish; boundary changes must discard stale responses",
+      "expected_ui": "See displayed label and existing source handler; opens correct context, filters actual records, or displays confirmed mutation/export outcome.",
+      "expected_request_or_no_write": "Existing API payload and domain semantics must remain identical. Cancellation sends no destructive or publish request.",
+      "verification_status": "unmapped in this subtask; root coverage audit required",
+      "evidence": []
+    },
+    {
+      "id": "main:[data-close-review-action]",
+      "module": "main-generation-review-publish",
+      "selector": "[data-close-review-action]",
+      "source": "frontend/src/main.ts:702",
+      "roles": [
+        "existing permitted role; publish approval remains HOD/admin"
+      ],
+      "month": "explicit selected month for generation/review/publish; boundary changes must discard stale responses",
+      "expected_ui": "See displayed label and existing source handler; opens correct context, filters actual records, or displays confirmed mutation/export outcome.",
+      "expected_request_or_no_write": "Existing API payload and domain semantics must remain identical. Cancellation sends no destructive or publish request.",
+      "verification_status": "unmapped in this subtask; root coverage audit required",
+      "evidence": []
+    },
+    {
+      "id": "main:#rota-review-month",
+      "module": "main-generation-review-publish",
+      "selector": "#rota-review-month",
+      "source": "frontend/src/main.ts:9691",
+      "roles": [
+        "existing permitted role; publish approval remains HOD/admin"
+      ],
+      "month": "explicit selected month for generation/review/publish; boundary changes must discard stale responses",
+      "expected_ui": "See displayed label and existing source handler; opens correct context, filters actual records, or displays confirmed mutation/export outcome.",
+      "expected_request_or_no_write": "Existing API payload and domain semantics must remain identical. Cancellation sends no destructive or publish request.",
+      "verification_status": "unmapped in this subtask; root coverage audit required",
+      "evidence": []
+    },
+    {
+      "id": "main:#rota-publish-month",
+      "module": "main-generation-review-publish",
+      "selector": "#rota-publish-month",
+      "source": "frontend/src/main.ts:9701",
+      "roles": [
+        "existing permitted role; publish approval remains HOD/admin"
+      ],
+      "month": "explicit selected month for generation/review/publish; boundary changes must discard stale responses",
+      "expected_ui": "See displayed label and existing source handler; opens correct context, filters actual records, or displays confirmed mutation/export outcome.",
+      "expected_request_or_no_write": "Existing API payload and domain semantics must remain identical. Cancellation sends no destructive or publish request.",
+      "verification_status": "unmapped in this subtask; root coverage audit required",
+      "evidence": []
+    },
+    {
+      "id": "main:#rota-publish-form button[type=\"submit\"]",
+      "module": "main-generation-review-publish",
+      "selector": "#rota-publish-form button[type=\"submit\"]",
+      "source": "frontend/src/main.ts:1",
+      "roles": [
+        "existing permitted role; publish approval remains HOD/admin"
+      ],
+      "month": "explicit selected month for generation/review/publish; boundary changes must discard stale responses",
+      "expected_ui": "Requires approval note; dismissed confirmation sends no publish. Confirmed publish refreshes visible approval; export retrieves exact returned mock bytes and filename.",
+      "expected_request_or_no_write": "POST rota-publish/publish?month=2026-05 {confirm_warnings:true,approval_note:...}; export GET selected month; no forwarded mutations.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:183",
+        "frontend/tests/premium-generation-actions.browser.mjs:185",
+        "frontend/tests/premium-generation-actions.browser.mjs:186"
+      ]
+    },
+    {
+      "id": "main:#download-rota-export",
+      "module": "main-generation-review-publish",
+      "selector": "#download-rota-export",
+      "source": "frontend/src/main.ts:7385",
+      "roles": [
+        "existing permitted role; publish approval remains HOD/admin"
+      ],
+      "month": "explicit selected month for generation/review/publish; boundary changes must discard stale responses",
+      "expected_ui": "Requires approval note; dismissed confirmation sends no publish. Confirmed publish refreshes visible approval; export retrieves exact returned mock bytes and filename.",
+      "expected_request_or_no_write": "POST rota-publish/publish?month=2026-05 {confirm_warnings:true,approval_note:...}; export GET selected month; no forwarded mutations.",
+      "verification_status": "passed isolated frontend outcome contract",
+      "evidence": [
+        "frontend/tests/premium-generation-actions.browser.mjs:182",
+        "frontend/tests/premium-generation-actions.browser.mjs:186",
+        "frontend/tests/premium-generation-actions.browser.mjs:188",
+        "frontend/tests/premium-generation-actions.browser.mjs:189"
+      ]
+    }
+  ],
+  "source_hashes": {
+    "rota-compute": "57e1a1e99b68c34018ca0d3e025c6fb999c24339a78036b427bd195f81f72fd2",
+    "rota-intelligence": "20789db85cd70f6e52fe8a00a83d273d8a217d89a6cf9ff454e3e71d5fcda461",
+    "compute-conflict": "e4ebee1da46f77084e734bee7ec213d708ce1e4ed167a4d1fd9b8809dab3747c",
+    "extra-duty": "841f1aa1f8254f75073babdac0bdd27c275c889e26328d1fdb5e8f724b549e5d",
+    "leave-approval": "958c346f26bcd1e3c95ef7d361ab61aef354d224877b1c8dd7c763201e6547de"
+  },
+  "known_remaining_evidence": [
+    "Remaining main review/generation controls need exact assertions; publishing now has note/cancel/confirm/reload/download coverage at390 and1280.",
+    "GPU test/benchmark controls need final hardware evidence from dedicated existing suites.",
+    "All mutation responses are mocked; database persistence and scheduling equivalence require separate disposable integration evidence.",
+    "Physical device checks remain pending at user direction."
+  ],
+  "test_runs": [
+    {
+      "command": "MEMBER_TEST_URL=http://127.0.0.1:5197 node tests/premium-generation-actions.browser.mjs",
+      "result": "19 isolated workflows passed",
+      "observed_at_utc": "2026-10-21T14:28:08Z",
+      "live_mutations": 0
+    },
+    {
+      "command": "MEMBER_TEST_URL=http://127.0.0.1:5197 node tests/compute-conflict.browser.mjs",
+      "result": "all checks passed",
+      "live_api_calls": 0
+    },
+    {
+      "command": "MEMBER_TEST_URL=http://127.0.0.1:5197 node tests/extra-duty.browser.mjs",
+      "result": "63 checks passed",
+      "live_api_calls": 0
+    }
+  ],
+  "test_source_sha256": "a51e3ad3316c81192d4d0388a9c3b8b69f63346ee882f3902af3ce5c127a7250",
+  "latest_integrated_run": {
+    "workflows": 21,
+    "result": "passed",
+    "evidence": "docs/premium-ui/generation-actions-results.json",
+    "log": "tmp/premium-ui-current-generation-actions.log",
+    "limit": "Controls require exact outcome mapping; this rerun is not blanket certification."
+  }
+}

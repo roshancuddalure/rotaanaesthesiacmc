@@ -1,0 +1,196 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-10-24T04:29:05.162718+00:00",
+  "scope": "Currentboundeddiagnosticsprivacy/copyassertionmap;notallrequirementacceptance.",
+  "entries": [
+    {
+      "suite": "frontend/tests/premium-diagnostics-hierarchy.browser.mjs",
+      "sha256": "c7573eea16f8e3c5a4ba2a9ee8e605c257d3091578f905a49aab6ebbae76cd66",
+      "source_inspected": true,
+      "execution_verified": true,
+      "execution_verification_scope": "Root ran12dev+12prodcontexts,currentfourapplicationfiles+scriptheld. Independentreviewcheckeddevrawreport. No native clipboard or real profile persistence.",
+      "screens": [
+        "Actual diagnostics",
+        "Members search draft",
+        "Account profile",
+        "Signed-out login"
+      ],
+      "contexts": {
+        "engines": [
+          "chromium",
+          "firefox",
+          "webkit"
+        ],
+        "widths": [
+          320,
+          1280
+        ],
+        "themes": [
+          "light",
+          "dark"
+        ],
+        "role": "RAMfixturecomputeradmin",
+        "environments": [
+          "development5197",
+          "productionpreview5198"
+        ]
+      },
+      "assertion_groups": [
+        {
+          "action": "Retry failed diagnostics read",
+          "selector": "[data-retry-diagnostics]",
+          "outcome": "Fixed safe read error; explicit GET recovery displays actual summary.",
+          "source_lines": [
+            35,
+            36,
+            37,
+            39
+          ],
+          "evidence_class": "intercepted_get_failure_and_recovery",
+          "report_paths": [
+            "docs/premium-ui/qa-diagnostics-hierarchy/report-development-privacy.json",
+            "docs/premium-ui/qa-diagnostics-hierarchy/report-production-privacy.json"
+          ]
+        },
+        {
+          "action": "Inspect aggregate groups",
+          "selector": ".diagnostics-counts",
+          "outcome": "Known numeric counts and zero retained; unknown labels anonymous; private markers absent from DOM.",
+          "source_lines": [
+            13,
+            15,
+            16,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45
+          ],
+          "evidence_class": "literal_fixture_display_and_privacy_oracle",
+          "report_paths": [
+            "docs/premium-ui/qa-diagnostics-hierarchy/report-development-privacy.json",
+            "docs/premium-ui/qa-diagnostics-hierarchy/report-production-privacy.json"
+          ]
+        },
+        {
+          "action": "Open/copy shared JSON and manual fallback",
+          "selector": ".diagnostics-raw > summary;#copy-diagnostics;#diagnostics-pre",
+          "outcome": "Exact independent safe JSON copied; failure selects same safe text; native disclosure closes.",
+          "source_lines": [
+            46,
+            47,
+            48,
+            49,
+            50,
+            51
+          ],
+          "evidence_class": "synthetic_clipboard_exact_bytes_and_native_disclosure",
+          "report_paths": [
+            "docs/premium-ui/qa-diagnostics-hierarchy/report-development-privacy.json",
+            "docs/premium-ui/qa-diagnostics-hierarchy/report-production-privacy.json"
+          ]
+        },
+        {
+          "action": "Inspect rule/build disclosures",
+          "selector": ".diagnostics-rules > summary;Support details",
+          "outcome": "Only rule count displayed; build details available; scoped axe/overflow pass.",
+          "source_lines": [
+            52,
+            53,
+            54,
+            55
+          ],
+          "evidence_class": "native_disclosure_and_scoped_accessibility_geometry",
+          "report_paths": [
+            "docs/premium-ui/qa-diagnostics-hierarchy/report-development-privacy.json",
+            "docs/premium-ui/qa-diagnostics-hierarchy/report-production-privacy.json"
+          ]
+        },
+        {
+          "action": "Repeated pending copy then actual navigation",
+          "selector": "#copy-diagnostics;sidebar/mobileMore Members",
+          "outcome": "One clipboard call despite repeated Enter; delivered success/failure cannot alter new route draft/focus/toasts.",
+          "source_lines": [
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            27,
+            59,
+            60,
+            61,
+            62,
+            63
+          ],
+          "evidence_class": "delivered_synthetic_clipboard_route_ownership",
+          "report_paths": [
+            "docs/premium-ui/qa-diagnostics-hierarchy/report-development-privacy.json",
+            "docs/premium-ui/qa-diagnostics-hierarchy/report-production-privacy.json"
+          ]
+        },
+        {
+          "action": "New focus and account update while copying",
+          "selector": "#copy-diagnostics;Support details;#profile-submit",
+          "outcome": "New focus/selection preserved on reject; exact intercepted profile PUTs replace account object, original copy control reenabled after delivered success/failure.",
+          "source_lines": [
+            35,
+            65,
+            66,
+            71
+          ],
+          "evidence_class": "actual_profile_ui_with_intercepted_put_and_delivered_clipboard",
+          "report_paths": [
+            "docs/premium-ui/qa-diagnostics-hierarchy/report-development-privacy.json",
+            "docs/premium-ui/qa-diagnostics-hierarchy/report-production-privacy.json"
+          ]
+        },
+        {
+          "action": "Close disclosure or sign out before rejected copy",
+          "selector": ".diagnostics-raw > summary;#sign-out",
+          "outcome": "Hidden pre not focused; login draft/focus and notifications preserved after delivered failure.",
+          "source_lines": [
+            27,
+            67,
+            70
+          ],
+          "evidence_class": "native_disclosure_and_signed_out_lifetime",
+          "report_paths": [
+            "docs/premium-ui/qa-diagnostics-hierarchy/report-development-privacy.json",
+            "docs/premium-ui/qa-diagnostics-hierarchy/report-production-privacy.json"
+          ]
+        },
+        {
+          "action": "Missing data and integrity gates",
+          "selector": "Whole suite",
+          "outcome": "Missing metrics unreported; all source/test hashes held; only exact profile PUT allowed locally, zero forwarded.",
+          "source_lines": [
+            10,
+            11,
+            35,
+            68,
+            69,
+            71,
+            72,
+            75
+          ],
+          "evidence_class": "source_test_integrity_and_intercepted_request_gate",
+          "report_paths": [
+            "docs/premium-ui/qa-diagnostics-hierarchy/report-development-privacy.json",
+            "docs/premium-ui/qa-diagnostics-hierarchy/report-production-privacy.json"
+          ]
+        }
+      ],
+      "limitations": [
+        "Syntheticclipboard anddiagnosticserror/summaryGETs;twoexistingprofilePUTs/contextlocallyintercepted;no mutationforwarded.",
+        "No OSclipboard,backendprivacyenforcement,realprofilepersistence,physical/nativeAT orwholeappWCAG certification.",
+        "Beforeprobe uses earlier script snapshotandrawresponse intentionally; notafterresult oractualproductionleak."
+      ]
+    }
+  ]
+}

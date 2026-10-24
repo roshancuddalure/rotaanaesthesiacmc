@@ -1,0 +1,1192 @@
+{
+  "requirements": [
+    45,
+    46
+  ],
+  "scope": "Actual openAutoassign chooser at1280 viewport with test-only dialog width340, then injected presentation candidate and no-container intrinsic fallback. This constrained host is not current default production dialog size. Existing narrow viewport and member descendant container queries are not missing. Six engine/theme cases, no API. No app edits.",
+  "source_hashes": {
+    "frontend/src/rota-compute.ts": "de62a5a603b5e7a578c81f8abe4fd89e19ef435c5ee0db1a9a9fb4f5bd20636f",
+    "frontend/src/member-workspace.ts": "35cb92656ca7c8c43b1c0a6de4c51eec56ca6854fd60d420e4330be362f8f56f",
+    "frontend/src/premium-theme.css": "1cd351aa87a892afbfaff14a867bb33c318e14834b03788efa24b165ad4f8a74",
+    "frontend/src/styles.css": "ab9087e56579fb8920ea02d1482209a71101f9650787a9086d73c5dd84af20f8"
+  },
+  "finding": "generation-methods is itself mw-content container; an element cannot query itself. Existing container rule therefore applies to descendant member fields/summary but not this chooser. Constrained chooser stays2columns with long headings/buttons; no overflow or broken action reproduced.",
+  "candidate": {
+    "intrinsic_fallback": ".compute-workspace > .generation-methods { grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr)); }",
+    "named_container": "@supports(container-type:inline-size){ .compute-workspace { container:compute-methods / inline-size; } @container compute-methods (max-width:480px){ .generation-methods { grid-template-columns:minmax(0,1fr); } }}",
+    "limit": "Optional readability improvement only; validate full chooser actions and CSS containment/fallback support before shipping. Named parent relies on existing explicit dialog width."
+  },
+  "results": [
+    {
+      "engine": "chromium",
+      "scheme": "light",
+      "viewport": 1280,
+      "constrainedDialogWidth": 340,
+      "wideBefore": {
+        "dialog": 1120,
+        "content": 1103,
+        "scroll": 1103,
+        "columns": "519.5px 519.5px",
+        "article": [
+          {
+            "width": 519.5,
+            "headingHeight": 23.390625,
+            "buttonHeight": 44
+          },
+          {
+            "width": 519.5,
+            "headingHeight": 23.390625,
+            "buttonHeight": 44
+          }
+        ]
+      },
+      "narrowBefore": {
+        "dialog": 340,
+        "content": 323,
+        "scroll": 323,
+        "columns": "129.5px 129.5px",
+        "article": [
+          {
+            "width": 129.5,
+            "headingHeight": 46.78125,
+            "buttonHeight": 92.390625
+          },
+          {
+            "width": 129.5,
+            "headingHeight": 93.5625,
+            "buttonHeight": 92.390625
+          }
+        ]
+      },
+      "narrowFallback": {
+        "dialog": 340,
+        "content": 323,
+        "scroll": 323,
+        "columns": "275px",
+        "article": [
+          {
+            "width": 275,
+            "headingHeight": 23.390625,
+            "buttonHeight": 44
+          },
+          {
+            "width": 275,
+            "headingHeight": 23.390625,
+            "buttonHeight": 44
+          }
+        ]
+      },
+      "narrowNamed": {
+        "dialog": 340,
+        "content": 323,
+        "scroll": 323,
+        "columns": "275px",
+        "article": [
+          {
+            "width": 275,
+            "headingHeight": 23.390625,
+            "buttonHeight": 44
+          },
+          {
+            "width": 275,
+            "headingHeight": 23.390625,
+            "buttonHeight": 44
+          }
+        ]
+      },
+      "wideAfter": {
+        "dialog": 1120,
+        "content": 1103,
+        "scroll": 1103,
+        "columns": "519.5px 519.5px 0px 0px",
+        "article": [
+          {
+            "width": 519.5,
+            "headingHeight": 23.390625,
+            "buttonHeight": 44
+          },
+          {
+            "width": 519.5,
+            "headingHeight": 23.390625,
+            "buttonHeight": 44
+          }
+        ]
+      },
+      "boundaries": [
+        {
+          "requestedWidth": 440,
+          "dialog": 440,
+          "content": 423,
+          "scroll": 423,
+          "columns": "375px",
+          "article": [
+            {
+              "width": 375,
+              "headingHeight": 23.390625,
+              "buttonHeight": 44
+            },
+            {
+              "width": 375,
+              "headingHeight": 23.390625,
+              "buttonHeight": 44
+            }
+          ]
+        },
+        {
+          "requestedWidth": 480,
+          "dialog": 480,
+          "content": 463,
+          "scroll": 463,
+          "columns": "415px",
+          "article": [
+            {
+              "width": 415,
+              "headingHeight": 23.390625,
+              "buttonHeight": 44
+            },
+            {
+              "width": 415,
+              "headingHeight": 23.390625,
+              "buttonHeight": 44
+            }
+          ]
+        },
+        {
+          "requestedWidth": 520,
+          "dialog": 520,
+          "content": 503,
+          "scroll": 503,
+          "columns": "455px",
+          "article": [
+            {
+              "width": 455,
+              "headingHeight": 23.390625,
+              "buttonHeight": 44
+            },
+            {
+              "width": 455,
+              "headingHeight": 23.390625,
+              "buttonHeight": 44
+            }
+          ]
+        },
+        {
+          "requestedWidth": 1120,
+          "dialog": 1120,
+          "content": 1103,
+          "scroll": 1103,
+          "columns": "519.5px 519.5px 0px 0px",
+          "article": [
+            {
+              "width": 519.5,
+              "headingHeight": 23.390625,
+              "buttonHeight": 44
+            },
+            {
+              "width": 519.5,
+              "headingHeight": 23.390625,
+              "buttonHeight": 44
+            }
+          ]
+        }
+      ],
+      "mobile": {
+        "dialog": 320,
+        "content": 305,
+        "scroll": 305,
+        "columns": "273px",
+        "article": [
+          {
+            "width": 273,
+            "headingHeight": 23.390625,
+            "buttonHeight": 44
+          },
+          {
+            "width": 273,
+            "headingHeight": 23.390625,
+            "buttonHeight": 44
+          }
+        ]
+      },
+      "real_close_action": true,
+      "api_requests": 0,
+      "javascript_errors": []
+    },
+    {
+      "engine": "chromium",
+      "scheme": "dark",
+      "viewport": 1280,
+      "constrainedDialogWidth": 340,
+      "wideBefore": {
+        "dialog": 1120,
+        "content": 1103,
+        "scroll": 1103,
+        "columns": "519.5px 519.5px",
+        "article": [
+          {
+            "width": 519.5,
+            "headingHeight": 23.390625,
+            "buttonHeight": 44
+          },
+          {
+            "width": 519.5,
+            "headingHeight": 23.390625,
+            "buttonHeight": 44
+          }
+        ]
+      },
+      "narrowBefore": {
+        "dialog": 340,
+        "content": 323,
+        "scroll": 323,
+        "columns": "129.5px 129.5px",
+        "article": [
+          {
+            "width": 129.5,
+            "headingHeight": 46.78125,
+            "buttonHeight": 92.390625
+          },
+          {
+            "width": 129.5,
+            "headingHeight": 93.5625,
+            "buttonHeight": 92.390625
+          }
+        ]
+      },
+      "narrowFallback": {
+        "dialog": 340,
+        "content": 323,
+        "scroll": 323,
+        "columns": "275px",
+        "article": [
+          {
+            "width": 275,
+            "headingHeight": 23.390625,
+            "buttonHeight": 44
+          },
+          {
+            "width": 275,
+            "headingHeight": 23.390625,
+            "buttonHeight": 44
+          }
+        ]
+      },
+      "narrowNamed": {
+        "dialog": 340,
+        "content": 323,
+        "scroll": 323,
+        "columns": "275px",
+        "article": [
+          {
+            "width": 275,
+            "headingHeight": 23.390625,
+            "buttonHeight": 44
+          },
+          {
+            "width": 275,
+            "headingHeight": 23.390625,
+            "buttonHeight": 44
+          }
+        ]
+      },
+      "wideAfter": {
+        "dialog": 1120,
+        "content": 1103,
+        "scroll": 1103,
+        "columns": "519.5px 519.5px 0px 0px",
+        "article": [
+          {
+            "width": 519.5,
+            "headingHeight": 23.390625,
+            "buttonHeight": 44
+          },
+          {
+            "width": 519.5,
+            "headingHeight": 23.390625,
+            "buttonHeight": 44
+          }
+        ]
+      },
+      "boundaries": [
+        {
+          "requestedWidth": 440,
+          "dialog": 440,
+          "content": 423,
+          "scroll": 423,
+          "columns": "375px",
+          "article": [
+            {
+              "width": 375,
+              "headingHeight": 23.390625,
+              "buttonHeight": 44
+            },
+            {
+              "width": 375,
+              "headingHeight": 23.390625,
+              "buttonHeight": 44
+            }
+          ]
+        },
+        {
+          "requestedWidth": 480,
+          "dialog": 480,
+          "content": 463,
+          "scroll": 463,
+          "columns": "415px",
+          "article": [
+            {
+              "width": 415,
+              "headingHeight": 23.390625,
+              "buttonHeight": 44
+            },
+            {
+              "width": 415,
+              "headingHeight": 23.390625,
+              "buttonHeight": 44
+            }
+          ]
+        },
+        {
+          "requestedWidth": 520,
+          "dialog": 520,
+          "content": 503,
+          "scroll": 503,
+          "columns": "455px",
+          "article": [
+            {
+              "width": 455,
+              "headingHeight": 23.390625,
+              "buttonHeight": 44
+            },
+            {
+              "width": 455,
+              "headingHeight": 23.390625,
+              "buttonHeight": 44
+            }
+          ]
+        },
+        {
+          "requestedWidth": 1120,
+          "dialog": 1120,
+          "content": 1103,
+          "scroll": 1103,
+          "columns": "519.5px 519.5px 0px 0px",
+          "article": [
+            {
+              "width": 519.5,
+              "headingHeight": 23.390625,
+              "buttonHeight": 44
+            },
+            {
+              "width": 519.5,
+              "headingHeight": 23.390625,
+              "buttonHeight": 44
+            }
+          ]
+        }
+      ],
+      "mobile": {
+        "dialog": 320,
+        "content": 305,
+        "scroll": 305,
+        "columns": "273px",
+        "article": [
+          {
+            "width": 273,
+            "headingHeight": 23.390625,
+            "buttonHeight": 44
+          },
+          {
+            "width": 273,
+            "headingHeight": 23.390625,
+            "buttonHeight": 44
+          }
+        ]
+      },
+      "real_close_action": true,
+      "api_requests": 0,
+      "javascript_errors": []
+    },
+    {
+      "engine": "firefox",
+      "scheme": "light",
+      "viewport": 1280,
+      "constrainedDialogWidth": 340,
+      "wideBefore": {
+        "dialog": 1120,
+        "content": 1118,
+        "scroll": 1118,
+        "columns": "527px 527px",
+        "article": [
+          {
+            "width": 527,
+            "headingHeight": 23.400009155273438,
+            "buttonHeight": 44
+          },
+          {
+            "width": 527,
+            "headingHeight": 23.400009155273438,
+            "buttonHeight": 44
+          }
+        ]
+      },
+      "narrowBefore": {
+        "dialog": 340,
+        "content": 338,
+        "scroll": 338,
+        "columns": "137px 137px",
+        "article": [
+          {
+            "width": 137,
+            "headingHeight": 46.80000305175781,
+            "buttonHeight": 92.39999389648438
+          },
+          {
+            "width": 137,
+            "headingHeight": 93.60000610351562,
+            "buttonHeight": 92.39999389648438
+          }
+        ]
+      },
+      "narrowFallback": {
+        "dialog": 340,
+        "content": 338,
+        "scroll": 338,
+        "columns": "290px",
+        "article": [
+          {
+            "width": 290,
+            "headingHeight": 23.400009155273438,
+            "buttonHeight": 44
+          },
+          {
+            "width": 290,
+            "headingHeight": 23.399993896484375,
+            "buttonHeight": 44
+          }
+        ]
+      },
+      "narrowNamed": {
+        "dialog": 340,
+        "content": 338,
+        "scroll": 338,
+        "columns": "290px",
+        "article": [
+          {
+            "width": 290,
+            "headingHeight": 23.400009155273438,
+            "buttonHeight": 44
+          },
+          {
+            "width": 290,
+            "headingHeight": 23.399993896484375,
+            "buttonHeight": 44
+          }
+        ]
+      },
+      "wideAfter": {
+        "dialog": 1120,
+        "content": 1118,
+        "scroll": 1118,
+        "columns": "527px 527px 0px 0px",
+        "article": [
+          {
+            "width": 527,
+            "headingHeight": 23.400009155273438,
+            "buttonHeight": 44
+          },
+          {
+            "width": 527,
+            "headingHeight": 23.400009155273438,
+            "buttonHeight": 44
+          }
+        ]
+      },
+      "boundaries": [
+        {
+          "requestedWidth": 440,
+          "dialog": 440,
+          "content": 438,
+          "scroll": 438,
+          "columns": "390px",
+          "article": [
+            {
+              "width": 390,
+              "headingHeight": 23.400009155273438,
+              "buttonHeight": 44
+            },
+            {
+              "width": 390,
+              "headingHeight": 23.399993896484375,
+              "buttonHeight": 44
+            }
+          ]
+        },
+        {
+          "requestedWidth": 480,
+          "dialog": 480,
+          "content": 478,
+          "scroll": 478,
+          "columns": "430px",
+          "article": [
+            {
+              "width": 430,
+              "headingHeight": 23.400009155273438,
+              "buttonHeight": 44
+            },
+            {
+              "width": 430,
+              "headingHeight": 23.399993896484375,
+              "buttonHeight": 44
+            }
+          ]
+        },
+        {
+          "requestedWidth": 520,
+          "dialog": 520,
+          "content": 518,
+          "scroll": 518,
+          "columns": "227px 227px",
+          "article": [
+            {
+              "width": 227,
+              "headingHeight": 23.400009155273438,
+              "buttonHeight": 44
+            },
+            {
+              "width": 227,
+              "headingHeight": 46.80000305175781,
+              "buttonHeight": 44
+            }
+          ]
+        },
+        {
+          "requestedWidth": 1120,
+          "dialog": 1120,
+          "content": 1118,
+          "scroll": 1118,
+          "columns": "527px 527px 0px 0px",
+          "article": [
+            {
+              "width": 527,
+              "headingHeight": 23.400009155273438,
+              "buttonHeight": 44
+            },
+            {
+              "width": 527,
+              "headingHeight": 23.400009155273438,
+              "buttonHeight": 44
+            }
+          ]
+        }
+      ],
+      "mobile": {
+        "dialog": 320,
+        "content": 320,
+        "scroll": 320,
+        "columns": "288px",
+        "article": [
+          {
+            "width": 288,
+            "headingHeight": 23.400009155273438,
+            "buttonHeight": 44
+          },
+          {
+            "width": 288,
+            "headingHeight": 23.399993896484375,
+            "buttonHeight": 44
+          }
+        ]
+      },
+      "real_close_action": true,
+      "api_requests": 0,
+      "javascript_errors": []
+    },
+    {
+      "engine": "firefox",
+      "scheme": "dark",
+      "viewport": 1280,
+      "constrainedDialogWidth": 340,
+      "wideBefore": {
+        "dialog": 1120,
+        "content": 1118,
+        "scroll": 1118,
+        "columns": "527px 527px",
+        "article": [
+          {
+            "width": 527,
+            "headingHeight": 23.400009155273438,
+            "buttonHeight": 44
+          },
+          {
+            "width": 527,
+            "headingHeight": 23.400009155273438,
+            "buttonHeight": 44
+          }
+        ]
+      },
+      "narrowBefore": {
+        "dialog": 340,
+        "content": 338,
+        "scroll": 338,
+        "columns": "137px 137px",
+        "article": [
+          {
+            "width": 137,
+            "headingHeight": 46.80000305175781,
+            "buttonHeight": 92.39999389648438
+          },
+          {
+            "width": 137,
+            "headingHeight": 93.60000610351562,
+            "buttonHeight": 92.39999389648438
+          }
+        ]
+      },
+      "narrowFallback": {
+        "dialog": 340,
+        "content": 338,
+        "scroll": 338,
+        "columns": "290px",
+        "article": [
+          {
+            "width": 290,
+            "headingHeight": 23.400009155273438,
+            "buttonHeight": 44
+          },
+          {
+            "width": 290,
+            "headingHeight": 23.399993896484375,
+            "buttonHeight": 44
+          }
+        ]
+      },
+      "narrowNamed": {
+        "dialog": 340,
+        "content": 338,
+        "scroll": 338,
+        "columns": "290px",
+        "article": [
+          {
+            "width": 290,
+            "headingHeight": 23.400009155273438,
+            "buttonHeight": 44
+          },
+          {
+            "width": 290,
+            "headingHeight": 23.399993896484375,
+            "buttonHeight": 44
+          }
+        ]
+      },
+      "wideAfter": {
+        "dialog": 1120,
+        "content": 1118,
+        "scroll": 1118,
+        "columns": "527px 527px 0px 0px",
+        "article": [
+          {
+            "width": 527,
+            "headingHeight": 23.400009155273438,
+            "buttonHeight": 44
+          },
+          {
+            "width": 527,
+            "headingHeight": 23.400009155273438,
+            "buttonHeight": 44
+          }
+        ]
+      },
+      "boundaries": [
+        {
+          "requestedWidth": 440,
+          "dialog": 440,
+          "content": 438,
+          "scroll": 438,
+          "columns": "390px",
+          "article": [
+            {
+              "width": 390,
+              "headingHeight": 23.400009155273438,
+              "buttonHeight": 44
+            },
+            {
+              "width": 390,
+              "headingHeight": 23.399993896484375,
+              "buttonHeight": 44
+            }
+          ]
+        },
+        {
+          "requestedWidth": 480,
+          "dialog": 480,
+          "content": 478,
+          "scroll": 478,
+          "columns": "430px",
+          "article": [
+            {
+              "width": 430,
+              "headingHeight": 23.400009155273438,
+              "buttonHeight": 44
+            },
+            {
+              "width": 430,
+              "headingHeight": 23.399993896484375,
+              "buttonHeight": 44
+            }
+          ]
+        },
+        {
+          "requestedWidth": 520,
+          "dialog": 520,
+          "content": 518,
+          "scroll": 518,
+          "columns": "227px 227px",
+          "article": [
+            {
+              "width": 227,
+              "headingHeight": 23.400009155273438,
+              "buttonHeight": 44
+            },
+            {
+              "width": 227,
+              "headingHeight": 46.80000305175781,
+              "buttonHeight": 44
+            }
+          ]
+        },
+        {
+          "requestedWidth": 1120,
+          "dialog": 1120,
+          "content": 1118,
+          "scroll": 1118,
+          "columns": "527px 527px 0px 0px",
+          "article": [
+            {
+              "width": 527,
+              "headingHeight": 23.400009155273438,
+              "buttonHeight": 44
+            },
+            {
+              "width": 527,
+              "headingHeight": 23.400009155273438,
+              "buttonHeight": 44
+            }
+          ]
+        }
+      ],
+      "mobile": {
+        "dialog": 320,
+        "content": 320,
+        "scroll": 320,
+        "columns": "288px",
+        "article": [
+          {
+            "width": 288,
+            "headingHeight": 23.400009155273438,
+            "buttonHeight": 44
+          },
+          {
+            "width": 288,
+            "headingHeight": 23.399993896484375,
+            "buttonHeight": 44
+          }
+        ]
+      },
+      "real_close_action": true,
+      "api_requests": 0,
+      "javascript_errors": []
+    },
+    {
+      "engine": "webkit",
+      "scheme": "light",
+      "viewport": 1280,
+      "constrainedDialogWidth": 340,
+      "wideBefore": {
+        "dialog": 1120,
+        "content": 1118,
+        "scroll": 1118,
+        "columns": "527px 527px",
+        "article": [
+          {
+            "width": 527,
+            "headingHeight": 23.390625,
+            "buttonHeight": 44
+          },
+          {
+            "width": 527,
+            "headingHeight": 23.390625,
+            "buttonHeight": 44
+          }
+        ]
+      },
+      "narrowBefore": {
+        "dialog": 340,
+        "content": 338,
+        "scroll": 338,
+        "columns": "137px 137px",
+        "article": [
+          {
+            "width": 137,
+            "headingHeight": 46.78125,
+            "buttonHeight": 92.390625
+          },
+          {
+            "width": 137,
+            "headingHeight": 93.5625,
+            "buttonHeight": 92.390625
+          }
+        ]
+      },
+      "narrowFallback": {
+        "dialog": 340,
+        "content": 338,
+        "scroll": 338,
+        "columns": "290px",
+        "article": [
+          {
+            "width": 290,
+            "headingHeight": 23.390625,
+            "buttonHeight": 44
+          },
+          {
+            "width": 290,
+            "headingHeight": 23.390625,
+            "buttonHeight": 44
+          }
+        ]
+      },
+      "narrowNamed": {
+        "dialog": 340,
+        "content": 338,
+        "scroll": 338,
+        "columns": "290px",
+        "article": [
+          {
+            "width": 290,
+            "headingHeight": 23.390625,
+            "buttonHeight": 44
+          },
+          {
+            "width": 290,
+            "headingHeight": 23.390625,
+            "buttonHeight": 44
+          }
+        ]
+      },
+      "wideAfter": {
+        "dialog": 1120,
+        "content": 1118,
+        "scroll": 1118,
+        "columns": "527px 527px 0px 0px",
+        "article": [
+          {
+            "width": 527,
+            "headingHeight": 23.390625,
+            "buttonHeight": 44
+          },
+          {
+            "width": 527,
+            "headingHeight": 23.390625,
+            "buttonHeight": 44
+          }
+        ]
+      },
+      "boundaries": [
+        {
+          "requestedWidth": 440,
+          "dialog": 440,
+          "content": 438,
+          "scroll": 438,
+          "columns": "390px",
+          "article": [
+            {
+              "width": 390,
+              "headingHeight": 23.390625,
+              "buttonHeight": 44
+            },
+            {
+              "width": 390,
+              "headingHeight": 23.390625,
+              "buttonHeight": 44
+            }
+          ]
+        },
+        {
+          "requestedWidth": 480,
+          "dialog": 480,
+          "content": 478,
+          "scroll": 478,
+          "columns": "430px",
+          "article": [
+            {
+              "width": 430,
+              "headingHeight": 23.390625,
+              "buttonHeight": 44
+            },
+            {
+              "width": 430,
+              "headingHeight": 23.390625,
+              "buttonHeight": 44
+            }
+          ]
+        },
+        {
+          "requestedWidth": 520,
+          "dialog": 520,
+          "content": 518,
+          "scroll": 518,
+          "columns": "227px 227px",
+          "article": [
+            {
+              "width": 227,
+              "headingHeight": 23.390625,
+              "buttonHeight": 44
+            },
+            {
+              "width": 227,
+              "headingHeight": 46.78125,
+              "buttonHeight": 44
+            }
+          ]
+        },
+        {
+          "requestedWidth": 1120,
+          "dialog": 1120,
+          "content": 1118,
+          "scroll": 1118,
+          "columns": "527px 527px 0px 0px",
+          "article": [
+            {
+              "width": 527,
+              "headingHeight": 23.390625,
+              "buttonHeight": 44
+            },
+            {
+              "width": 527,
+              "headingHeight": 23.390625,
+              "buttonHeight": 44
+            }
+          ]
+        }
+      ],
+      "mobile": {
+        "dialog": 320,
+        "content": 320,
+        "scroll": 320,
+        "columns": "288px",
+        "article": [
+          {
+            "width": 288,
+            "headingHeight": 23.390625,
+            "buttonHeight": 44
+          },
+          {
+            "width": 288,
+            "headingHeight": 23.390625,
+            "buttonHeight": 44
+          }
+        ]
+      },
+      "real_close_action": true,
+      "api_requests": 0,
+      "javascript_errors": []
+    },
+    {
+      "engine": "webkit",
+      "scheme": "dark",
+      "viewport": 1280,
+      "constrainedDialogWidth": 340,
+      "wideBefore": {
+        "dialog": 1120,
+        "content": 1118,
+        "scroll": 1118,
+        "columns": "527px 527px",
+        "article": [
+          {
+            "width": 527,
+            "headingHeight": 23.390625,
+            "buttonHeight": 44
+          },
+          {
+            "width": 527,
+            "headingHeight": 23.390625,
+            "buttonHeight": 44
+          }
+        ]
+      },
+      "narrowBefore": {
+        "dialog": 340,
+        "content": 338,
+        "scroll": 338,
+        "columns": "137px 137px",
+        "article": [
+          {
+            "width": 137,
+            "headingHeight": 46.78125,
+            "buttonHeight": 92.390625
+          },
+          {
+            "width": 137,
+            "headingHeight": 93.5625,
+            "buttonHeight": 92.390625
+          }
+        ]
+      },
+      "narrowFallback": {
+        "dialog": 340,
+        "content": 338,
+        "scroll": 338,
+        "columns": "290px",
+        "article": [
+          {
+            "width": 290,
+            "headingHeight": 23.390625,
+            "buttonHeight": 44
+          },
+          {
+            "width": 290,
+            "headingHeight": 23.390625,
+            "buttonHeight": 44
+          }
+        ]
+      },
+      "narrowNamed": {
+        "dialog": 340,
+        "content": 338,
+        "scroll": 338,
+        "columns": "290px",
+        "article": [
+          {
+            "width": 290,
+            "headingHeight": 23.390625,
+            "buttonHeight": 44
+          },
+          {
+            "width": 290,
+            "headingHeight": 23.390625,
+            "buttonHeight": 44
+          }
+        ]
+      },
+      "wideAfter": {
+        "dialog": 1120,
+        "content": 1118,
+        "scroll": 1118,
+        "columns": "527px 527px 0px 0px",
+        "article": [
+          {
+            "width": 527,
+            "headingHeight": 23.390625,
+            "buttonHeight": 44
+          },
+          {
+            "width": 527,
+            "headingHeight": 23.390625,
+            "buttonHeight": 44
+          }
+        ]
+      },
+      "boundaries": [
+        {
+          "requestedWidth": 440,
+          "dialog": 440,
+          "content": 438,
+          "scroll": 438,
+          "columns": "390px",
+          "article": [
+            {
+              "width": 390,
+              "headingHeight": 23.390625,
+              "buttonHeight": 44
+            },
+            {
+              "width": 390,
+              "headingHeight": 23.390625,
+              "buttonHeight": 44
+            }
+          ]
+        },
+        {
+          "requestedWidth": 480,
+          "dialog": 480,
+          "content": 478,
+          "scroll": 478,
+          "columns": "430px",
+          "article": [
+            {
+              "width": 430,
+              "headingHeight": 23.390625,
+              "buttonHeight": 44
+            },
+            {
+              "width": 430,
+              "headingHeight": 23.390625,
+              "buttonHeight": 44
+            }
+          ]
+        },
+        {
+          "requestedWidth": 520,
+          "dialog": 520,
+          "content": 518,
+          "scroll": 518,
+          "columns": "227px 227px",
+          "article": [
+            {
+              "width": 227,
+              "headingHeight": 23.390625,
+              "buttonHeight": 44
+            },
+            {
+              "width": 227,
+              "headingHeight": 46.78125,
+              "buttonHeight": 44
+            }
+          ]
+        },
+        {
+          "requestedWidth": 1120,
+          "dialog": 1120,
+          "content": 1118,
+          "scroll": 1118,
+          "columns": "527px 527px 0px 0px",
+          "article": [
+            {
+              "width": 527,
+              "headingHeight": 23.390625,
+              "buttonHeight": 44
+            },
+            {
+              "width": 527,
+              "headingHeight": 23.390625,
+              "buttonHeight": 44
+            }
+          ]
+        }
+      ],
+      "mobile": {
+        "dialog": 320,
+        "content": 320,
+        "scroll": 320,
+        "columns": "288px",
+        "article": [
+          {
+            "width": 288,
+            "headingHeight": 23.390625,
+            "buttonHeight": 44
+          },
+          {
+            "width": 288,
+            "headingHeight": 23.390625,
+            "buttonHeight": 44
+          }
+        ]
+      },
+      "real_close_action": true,
+      "api_requests": 0,
+      "javascript_errors": []
+    }
+  ],
+  "completion_claim": false
+}

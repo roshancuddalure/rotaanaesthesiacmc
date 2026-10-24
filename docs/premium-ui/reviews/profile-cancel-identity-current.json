@@ -1,0 +1,55 @@
+{
+  "created_at": "2026-10-22T13:17:58.051369+00:00",
+  "review": "Profile leave cancellation target clarity",
+  "finding": "validation-recovery-01 (member-workspace path only)",
+  "source_sha256": {
+    "frontend/src/member-workspace.ts": "1ad430526796ce276b1c1c4e5d9233a4aeeb312279bd7e28b3172851dc503d35"
+  },
+  "changes": [
+    "Resolve the clicked leave ID against the already-loaded member leave records before native confirmation; refuse an unavailable target without guessing.",
+    "Native plain-text confirmation names the selected member, full recorded start/end ISO dates, category and stable record ID.",
+    "Retain availability consequence and existing-duty warning; clarify retained history."
+  ],
+  "preserved_contracts": [
+    "Existing cancel endpoint interpolates the same clicked dataset ID.",
+    "POST method with no body; existing button pending state, leave/activity cache invalidation, success history read and error rendering unchanged.",
+    "Existing role gates and changed callbacks unchanged."
+  ],
+  "tests": {
+    "report": "docs/premium-ui/qa-profile-cancel-identity.json",
+    "command": "node tests/premium-profile-cancel-identity.browser.mjs",
+    "workflows": 6,
+    "engines": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "widths": [
+      320,
+      1280
+    ],
+    "assertions": [
+      "Three overlapping/cross-month exact native target confirmations; each dismissal emits zero writes.",
+      "HTML-like member/category values remain native text; no injected image.",
+      "Accepted cancellation503 sends exact selected ID with no body; explicit GET retry does not replay mutation.",
+      "Second selected target accepted sends exact ID with no body, success read refreshes cancellation status and leaves sibling records untouched.",
+      "Simulated unavailable target refuses before native confirm or POST.",
+      "Existing changed callback count remains zero, existing history reads remain initial/read-retry/success-refresh.",
+      "No page errors."
+    ]
+  },
+  "limitations": [
+    "All requests intercepted; mutation outcomes are fixture-supplied. No production writes or backend enforcement certification.",
+    "Viewport emulation does not certify physical native confirmation rendering or mobile operating-system prompt behavior.",
+    "Main leave-list confirmation owned separately by root; this report covers member workspace only.",
+    "No whole requirement, whole frontend or whole worktree/backend equivalence certification."
+  ],
+  "completion_status": "bounded_evidence_only",
+  "regression": {
+    "command": "node tests/premium-member-history-retry.browser.mjs",
+    "workflows": 12,
+    "result": "passed",
+    "report": "docs/premium-ui/qa-member-history-retry.json",
+    "scope": "Existing member history503/held GET retry, exact member history, owned/newer focus, 3engines320/1280. All mocked GET-only."
+  }
+}

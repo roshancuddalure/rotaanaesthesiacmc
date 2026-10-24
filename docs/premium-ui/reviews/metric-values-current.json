@@ -1,0 +1,78 @@
+{
+  "recorded_at_utc": "2026-10-22T17:43:43.537631+00:00",
+  "completion_claim": false,
+  "requirements": [
+    117,
+    208,
+    209,
+    219,
+    258
+  ],
+  "scope": "Shared metric-card missing-value defense and Overview/Analysis formatted numeric summaries.",
+  "source_sha256": {
+    "frontend/src/main.ts": "e830e809bd6be86db4570b493b6013a0db4ddd1a78b4f1935419a3ea8469b984",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "4f61aa58b92229b0854e528cb90664a7ef7fa2d11dc2a6d2e94b3b797187ac01"
+  },
+  "before": {
+    "report": "docs/premium-ui/qa-metric-values-before.json",
+    "finding": "Omittedweekendpercentageandnullaveragerenderedasundefined%andnull. DirecttoLocaleStringonmissingformattedtotalsalsolackednullguard."
+  },
+  "changes": [
+    "SharedmetricCardrendersnull/undefined/empty/nonfinitenumericvaluesasNotreportedwithreadabletexttreatment,keepingactualzeroandvalidvaluesunchanged.",
+    "OverviewandAnalysisformattedtotalsusefinite-numberformatterthatretainsexistinglocaleformat;percentageinterpolationnowrequiresfinitevalue. No derivedcount/percentagecalculationschanged.",
+    "Metriclabels,context/helpcontrolsandlayoutremainunchanged;missingcountisnotcoercedtozero."
+  ],
+  "checks": {
+    "metric_contexts": 48,
+    "engines": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "widths": [
+      320,
+      1280
+    ],
+    "themes": [
+      "light",
+      "dark"
+    ],
+    "fixtures": [
+      "zero",
+      "partial",
+      "missing-totals",
+      "large"
+    ],
+    "scoped_missing_metric_axe_checks": 12,
+    "tagged_axe_violations": 0,
+    "existing_analysis_tab_workflows": 12,
+    "existing_chart_workflows": 12,
+    "existing_manual_app_load_recovery": 1,
+    "unit_tests": 100,
+    "build_exit_code": 0,
+    "build_inputs_held": true
+  },
+  "evidence": [
+    "docs/premium-ui/qa-metric-values-before.json",
+    "docs/premium-ui/qa-metric-values.json",
+    "docs/premium-ui/qa-analysis-tabs.json",
+    "docs/premium-ui/qa-analysis-charts.json",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+  ],
+  "test": "frontend/tests/premium-metric-values.browser.mjs",
+  "test_sha256": "3a86dea8028370d06533efc1779131f603516d264dd80b915b454232283608b7",
+  "visual_review": {
+    "reviewer": "rootimplementer,notindependent",
+    "screenshot": "docs/premium-ui/screenshots/metrics/missing-320-dark.png",
+    "finding": "Reportedzeroesremainnumeric;missingpercentage/averageclearlyreadNotreported,withhelpcontrolsreadableandnoclipping."
+  },
+  "limitations": [
+    "Missingrequiredfieldsaredefensiveinterceptedfixtures,notclaimnormalserverresponsesomitthosefieldsoraggregateconsistency.",
+    "Sharedhelpercoversrawmissingvalues;callerswithexplicitzerodefaults/stringinterpolationoutsidethechangedanalysisfieldsretainexistingsemanticsandneedindividualcontractaudit. Full117notcertified.",
+    "Nonnumericvalidstringsarestillescapedtext;thishelperdoesnotparse/normalizebackendrecordsorvalidateallsummarycontracts. No backendcalculation/exportcontentchanges.",
+    "Metrichelpkeyboard/Overview-to-Analysisnavigationtested;nativeATspeechandphysicaldevicesnotcertified. Axeonlystated12missingmetricsurfaces.",
+    "Existinganalysisregressionslackcompleteper-runsource/dependencyholddeclarations;new48reportholdsdeclaredfilesandbuildholdsrecordedinputs.",
+    "No backend/API-contract/permissions/scheduling/persisteddata/productionchanges. Broad144/tenfamilywavehistoricalafterlocaledits;freshindependent/native/full260acceptanceopen."
+  ]
+}

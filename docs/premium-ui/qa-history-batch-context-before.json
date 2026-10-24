@@ -1,0 +1,22 @@
+{
+  "source_sha256": {
+    "frontend/src/workflow-import-history.ts": "9a592b0da33579e569d8d110a28e4dfc183029051d7827e8c4fa4a3af1be28ed"
+  },
+  "scope": "Actual exported import history with two fixture batches. GET only; failed batch switch must preserve current row/page target, explicit successful retry changes it. Three engines320/1280; no backendwrites or persisteddata change.",
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "observed": {
+        "nextRequest": "/api/v1/imports/leave/history/B?offset=50",
+        "heading": "A.csv",
+        "rows": "Source\tOriginal\tNormalized\tOutcome\nCSV / 2\t\n{\n  \"name\": \"A source 0\"\n}\n\t\n{\n  \"canonical_name\": \"A member 0\"\n}\n\t\n{\n  \"action\": \"created\"\n}"
+      },
+      "failedBatchPreservesPaginationIdentity": false,
+      "keyboardBoundaryPreviousCorrect": false,
+      "explicitRetrySelectsNewBatch": false,
+      "selectedMonth": "2026-10",
+      "writes": 0
+    }
+  ]
+}

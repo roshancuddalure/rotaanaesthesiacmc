@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "reviewer": "eligibility_save_acceptance",
+  "reviewed_at_utc": "2026-10-22T02:48:42.321548+00:00",
+  "status": "accepted_for_bounded_eligibility_save_recovery_scope",
+  "scope": "Independent source review and execution of existing eligibility-save browser suite. Frontend request and UI acceptance only; not backend, whole-plan, physical-device or full accessibility acceptance.",
+  "reviewed_files_sha256": {
+    "frontend/src/main.ts": "893122d30a39ae361e3c79b92590e531dfc1f44408bad435909c36cab01e5006",
+    "frontend/src/services/api.ts": "b7dbea6efa9fb16febcb7aa6baaf6c488c75175635f503eb417f338e80a5551f",
+    "frontend/tests/premium-eligibility-save.browser.mjs": "42cefc19a9aa94bbee3de848f6893c505ec14f9d727fb1459f7b45d96dfa1daa",
+    "docs/premium-ui/qa-eligibility-save.json": "514a28dcd905efff750792473435a5b96e55be76bf489f899a28c1d8ffa6934d"
+  },
+  "tests_executed": [
+    {
+      "command": "node tests/premium-eligibility-save.browser.mjs",
+      "cwd": "frontend",
+      "base_url": "http://127.0.0.1:5197",
+      "read_only_fixture_api": "http://127.0.0.1:8031",
+      "result": "6 extended workflows passed: Chromium, Firefox and WebKit at 320 and 1280 CSS pixels. Each workflow intercepted ten mutation requests; zero fixture mutation requests and zero page errors. Original actions use real controls; duplicate and cross-form submissions use synthetic submit events. Main source SHA256 is asserted unchanged from run start to finish."
+    }
+  ],
+  "verified": [
+    "Source comparison with HEAD confirms unchanged create/update payload fields and membership dates/null fields. Browser assertions verify POST group creation, PUT group update including existing key, and PUT membership envelope with effective_from and null effective_to/notes.",
+    "Both forms are synchronously locked during either group or membership mutation. Synthetic duplicate submits and cross-form submits in both directions produce no additional request.",
+    "Rejected group update preserves name draft and restores the call selector. Rejected membership update preserves selected person and effective date; wrong-parent-call member remains disabled after restoration.",
+    "Confirmed group and membership mutations followed by GET503 display saved-but-unavailable heading with correct completion context. Manual retries restore saved group/membership without increasing mutation count; wrong-call member remains disabled.",
+    "Pending membership save followed by actual overview navigation does not repaint eligibility forms after reply. Pending group save followed by opening another group preserves the newer group. Pending save followed by actual sign-out leaves login visible after network continuation.",
+    "Source guard includes submitting user identity, view generation, render generation, active route and connected form before applying success/error results. Lock restoration only touches connected original controls and restores their prior disabled state.",
+    "Held group mutations released as422 refusals after actual overview navigation or opening another group neither replace the new page/draft nor show the stale failure notification. Both responses are flushed before checking outcomes."
+  ],
+  "required_fixes": [],
+  "remaining_limits": [
+    "Request interception proves frontend request shape and recovery behavior, not real database persistence, backend permission enforcement or server-side duplicate handling.",
+    "Account lifecycle coverage is sign-out, not a second-account sign-in while the mutation remains pending. Network timeout and uncertain-write reconciliation variants were not separately exercised by this suite.",
+    "Late422 refusal after route/group navigation is exercised for group updates; late membership failure and transport500 variants are source-reviewed through the same guard but not separately exercised.",
+    "No physical-device, manual screen-reader, complete responsive geometry, contrast or axe acceptance is claimed from this focused suite.",
+    "Reviewer extended only the browser test and evidence/review documents. No app source or backend edits. All mutation requests were intercepted; only GETs reached the disposable fixture API."
+  ],
+  "evidence": "docs/premium-ui/qa-eligibility-save.json"
+}

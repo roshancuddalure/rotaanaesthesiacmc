@@ -26,7 +26,11 @@ router = APIRouter()
 
 class PublishPayload(BaseModel):
     confirm_warnings: bool = False
-    approval_note: str
+    # Optional only with ``superadmin_override`` (the service requires it otherwise).
+    approval_note: str = ""
+    # docs/superadmin_override_contract.md section 2: superadmin only (403), reason 5-500 chars.
+    superadmin_override: bool = False
+    override_reason: str | None = None
 
 
 class RotaPublishMonthRead(BaseModel):
@@ -35,10 +39,15 @@ class RotaPublishMonthRead(BaseModel):
     rule_version: dict[str, object]
     summary: dict[str, object]
     can_publish: bool
+    # True when blockers exist and the signed-in user is a superadmin (computed server-side).
+    can_superadmin_override: bool = False
     requires_warning_confirmation: bool
     checks: list[dict[str, str]]
     blockers: list[dict[str, str]]
     warnings: list[dict[str, str]]
+    over_limit_people: list[dict[str, object]] = []
+    superadmin_allocations: list[dict[str, object]] = []
+    call_level_spread: list[dict[str, object]] = []
     latest_publish: dict[str, object] | None
 
 
@@ -49,12 +58,12 @@ def publish_http_error(exc: RotaPublishError) -> HTTPException:
 @router.get("/rota-publish/month")
 def get_rota_publish_month(
     month: str,
-    _user: UserAccount = Depends(current_user),
+    user: UserAccount = Depends(current_user),
     db: Session = Depends(get_db),
 ) -> RotaPublishMonthRead:
     try:
         month_bounds(month)
-        result = rota_publish_checklist(db, month)
+        result = rota_publish_checklist(db, month, user)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     return RotaPublishMonthRead(**result)
@@ -75,6 +84,8 @@ def publish_rota(
             approved_by=user,
             confirm_warnings=payload.confirm_warnings,
             approval_note=payload.approval_note,
+            superadmin_override=payload.superadmin_override,
+            override_reason=payload.override_reason,
         )
     except RotaPublishError as exc:
         raise publish_http_error(exc) from exc

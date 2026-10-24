@@ -1,0 +1,37 @@
+{
+  "createdAt": "2026-10-22T10:11:06.997978+00:00",
+  "status": "bounded_unit_count_draft_recovery_verified",
+  "source_sha256": "3c3f30aa049973ce9403636ef8a6bb8312c29f9af630e5cd37350f5d67d86691",
+  "implementation_scope": [
+    "Count month GET updates existing count labels and count metadata only; retains editor DOM, revision, drafts, focus and selection.",
+    "Explicit previous confirmed month during pending/error; read-only manual retry; latest response wins; closed dialog ignores late reads.",
+    "Existing dirty-discard confirmation retained; accepted discard occurs immediately, before asynchronous read.",
+    "Successful existing save/readback resets confirmed count-state and invalidates older count reads. Existing mutation controls remain locked."
+  ],
+  "verification": [
+    {
+      "command": "node tests/premium-unit-month-draft-finish.browser.mjs",
+      "result": "PASS6 workflows,3 engines320/1280, start/end source hashes match",
+      "evidence": "docs/premium-ui/reviews/unit-month-draft-finish-current.json"
+    },
+    {
+      "command": "node tests/premium-normalized-save-independent.browser.mjs",
+      "result": "PASS15 workflows on final source, request interception only",
+      "evidence": "docs/premium-ui/qa-normalized-save-independent.json"
+    },
+    {
+      "command": "node tests/premium-reference-current-record.browser.mjs",
+      "result": "PASS24 workflows3engines2themes2widthsunit+catalog; start/end sourcehashes match finalsource",
+      "evidence": "docs/premium-ui/reviews/reference-current-record-current.json"
+    },
+    {
+      "command": "npx.cmd tsc --noEmit",
+      "result": "Reference workspace has no diagnostics. Full check blocked by3 concurrent rota-rules.ts TS2367 comparisons at451/907/1381; not changed by this agent."
+    }
+  ],
+  "limits": [
+    "No backend writes, API contract changes or backend source edits.",
+    "Unit editor contains no date fields. Name, campus, code, aliases, notes and minimum fields tested.",
+    "Physical device and native assistive technology checks pending."
+  ]
+}

@@ -177,10 +177,16 @@ def test_check_two_groups_give_both_levels(api) -> None:
     _read, body = body_of(client)
     rule(body, "MAIN_PAC_3RD").update(active=True, allowed_call_levels=["3RD_CALL"],
                                       allowed_cluster_keys=["pac_sr", "pac_senior"])
-    duty = check(client, body)["duties"]["MAIN_PAC_3RD"]
+    result = check(client, body)
+    duty = result["duties"]["MAIN_PAC_3RD"]
     assert duty["effective_call_levels"] == ["3RD_CALL", "4TH_CALL"]
+    # Two levels = a pool (call_level_pool_and_balance_contract 1): both levels eligible, an info note.
     assert duty["eligible_now"] == 2
     assert duty["eligible_by_level"] == {"3RD_CALL": 1, "4TH_CALL": 1}
+    assert any(p["code"] == "call_level_pool" and p["duty_key"] == "MAIN_PAC_3RD"
+               and p["severity"] == "info" for p in result["problems"])
+    assert not [p for p in result["problems"] if p["code"] in {"call_level_not_single", "call_level_missing"}
+                and p["duty_key"] == "MAIN_PAC_3RD"]
 
 
 def test_get_has_revision_and_group_counts(api) -> None:
@@ -219,11 +225,12 @@ def test_save_with_errors_returns_422_listing_all(api) -> None:
 def test_save_with_warnings_only_succeeds(api) -> None:
     client, _sessions, _state = api
     read, body = body_of(client)
-    body["unit_staffing_rules"].update(warning_unavailable_percent=60, hard_block_unavailable_percent=10)
+    # Limits can no longer change here (Limits API); a duplicate label is a warning-only save.
+    rule(body, "MAIN_PAC_SENIOR")["label"] = rule(body, "MAIN_PAC_3RD")["label"]
     res = client.put(RULES, json=body)
     assert res.status_code == 200, res.text
     saved = res.json()
-    assert saved["unit_staffing_rules"]["hard_block_unavailable_percent"] == 10
+    assert rule(saved, "MAIN_PAC_SENIOR")["label"] == rule(saved, "MAIN_PAC_3RD")["label"]
     assert saved["revision"] != read["revision"] and saved["groups"]
 
 
@@ -360,6 +367,7 @@ PAC_TWO_GROUPS = {"MAIN_PAC_3RD": {"active": True, "allowed_call_levels": ["3RD_
 
 
 def test_template_multi_level_duty_slot_unstamped_and_both_levels_eligible() -> None:
+    """A pool duty's slot is not stamped; its pool (3rd + 4th call groups) is read from the rule."""
     engine, sessions = new_sessions()
     slots, ids, _unit = template_world(sessions, PAC_TWO_GROUPS)
     slot_id, level = slots["MAIN_PAC_3RD"]

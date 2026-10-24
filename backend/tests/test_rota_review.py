@@ -244,3 +244,151 @@ def test_rota_review_api_dashboard_and_exchange_request() -> None:
         )
         assert exchange_response.status_code == 200
         assert exchange_response.json()["status"] == EXCHANGE_PENDING
+
+
+def test_rota_review_counts_members_over_individual_limits() -> None:
+    """docs/extra_duty_fill_all_contract.md §6: summary.over_limit_members + over_limit_people."""
+    from app.models import RuleSetting
+    from app.services.rota_rules import PHASE_ONE_SETTING_KEY, get_phase_one_rules
+
+    engine = create_engine("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(engine)
+
+    with Session(engine) as session:
+        seed_review_context(session)
+        result = rota_review_month(session, "2026-05")
+        assert result["summary"]["over_limit_members"] == 0
+        assert result["over_limit_people"] == []
+
+        member = session.scalar(select(Person).where(Person.canonical_name == "Assigned Member"))
+        open_slot = session.scalar(select(DutySlot).where(DutySlot.slot_label == "UNIT_I:primary-extra"))
+        session.add(DutyAssignment(duty_slot=open_slot, person=member, source="safe_auto_fill_draft"))
+        _version, rules = get_phase_one_rules(session)
+        rules.duty_count_limits.max_same_group_per_month = 1
+        rules.duty_count_limits.max_same_campus_per_month = 1
+        setting = session.scalar(select(RuleSetting).where(RuleSetting.key == PHASE_ONE_SETTING_KEY))
+        setting.value = rules.model_dump(mode="json")
+        session.commit()
+
+        result = rota_review_month(session, "2026-05")
+        assert result["summary"]["over_limit_members"] == 1
+        person = result["over_limit_people"][0]
+        assert person["person_name"] == "Assigned Member"
+        assert person["month_duties"] == 2
+        assert {item["code"] for item in person["limits"]} == {
+            "monthly_same_group_limit",
+            "monthly_same_campus_limit",
+        }
+        assert all((item["actual"], item["limit"]) == (2, 1) for item in person["limits"])
+
+
+def test_individual_limit_breaches_uses_shared_extra_duty_helper(monkeypatch) -> None:
+    """rota_review delegates to app.services.extra_duty.individual_limit_breaches."""
+    from app.services import extra_duty
+    from app.services import rota_review as review
+
+    sentinel = [{"person_id": "p", "person_name": "Shared", "limits": []}]
+    monkeypatch.setattr(extra_duty, "individual_limit_breaches", lambda db, month, rules=None: sentinel)
+    assert review.individual_limit_breaches(None, "2026-05") == sentinel
+
+
+# ---------------------------------------------------------------------------------------------
+# docs/superadmin_override_contract.md section 2: superadmin allocations are warnings
+# ---------------------------------------------------------------------------------------------
+
+
+def _superadmin_world(session: Session, *, source: str = "superadmin_allocation"):
+    """A unit with nobody posted (so the slot is hard blocked) held by an unposted 3rd-call member."""
+    from app.models import ExtraDutyBatch, ExtraDutyRecord
+
+    seed_superadmin(session)
+    unit = Unit(code="EMPTY", name="Empty Unit", campus="MAIN")
+    outsider = Person(canonical_name="Outside Third", call_level="3RD_CALL")
+    session.add_all([unit, outsider])
+    session.flush()
+    period, scope = monthly_setup(session, "2026-05")
+    scope.is_locked = True
+    starts_at, ends_at = duty_bounds(date(2026, 5, 6))
+    slot = DutySlot(
+        rota_period=period, unit=unit, duty_date=date(2026, 5, 6), duty_type="MAIN_1ST_24HR",
+        call_level="1ST_CALL", slot_label="EMPTY:primary", starts_at=starts_at, ends_at=ends_at,
+        is_24hr=True, source="phase4_template",
+    )
+    session.add(slot)
+    session.flush()
+    assignment = DutyAssignment(
+        duty_slot=slot, person=outsider, status="assigned", source=source,
+        override_reason="Superadmin allocation: Nobody else available",
+    )
+    session.add(assignment)
+    session.flush()
+    if source == "superadmin_allocation":
+        batch = ExtraDutyBatch(
+            rota_period_id=period.id, month="2026-05", status="applied", plan_hash="s" * 64,
+            context_hash="c" * 64, created_by_name="Rota Chief",
+            summary={"mode": "superadmin_allocation", "filled": 1, "ledger_records": 1, "by": "Rota Chief",
+                     "reason": "Nobody else available", "post_publish": False},
+            decisions=[], before_image=[],
+        )
+        session.add(batch)
+        session.flush()
+        session.add(ExtraDutyRecord(
+            batch_id=batch.id, person_id=outsider.id, assignment_id=assignment.id, slot_id=slot.id,
+            month="2026-05", duty_date=slot.duty_date, duty_type=slot.duty_type, home_unit_id=unit.id,
+            assigned_unit_id=unit.id, fallback_used=False,
+            overridden_rules=["superadmin_allocation", "call_level_mismatch", "not_posted"],
+            reason="Superadmin allocation by Rota Chief: Nobody else available", status="active",
+        ))
+    session.commit()
+    return slot
+
+
+def test_superadmin_allocation_is_a_warning_not_a_hard_block() -> None:
+    from app.services.rota_publish import rota_publish_checklist
+
+    engine = create_engine("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(engine)
+    with Session(engine) as session:
+        slot = _superadmin_world(session)
+        review = rota_review_month(session, "2026-05")
+        item = next(i for i in review["review_items"] if i["slot"]["id"] == str(slot.id))
+        codes = [issue["code"] for issue in item["issues"]]
+        # A 3rd-call member on a 1st-call duty: the crossing is a separate warning (limits contract 1).
+        assert codes == ["superadmin_allocation", "superadmin_cross_level"]
+        assert item["issues"][1]["severity"] == "warning"
+        assert item["issues"][1]["message"].startswith("Call level crossed by superadmin")
+        assert review["summary"]["superadmin_cross_level_items"] == 1
+        assert review["summary"]["call_level_mismatch_items"] == 0
+        issue = item["issues"][0]
+        assert issue["severity"] == "warning"
+        assert issue["message"].startswith("Superadmin allocation by Rota Chief: Nobody else available")
+        assert item["severity"] == "warning"
+        assert review["summary"]["superadmin_allocations"] == 1
+        assert review["summary"]["hard_blocked_items"] == 0
+        row = review["superadmin_allocations"][0]
+        assert row["person_name"] == "Outside Third" and row["by"] == "Rota Chief"
+        assert row["reason"] == "Nobody else available" and row["post_publish"] is False
+        assert "call_level_mismatch" in row["overridden_rules"]
+
+        checklist = rota_publish_checklist(session, "2026-05")
+        assert all(b["title"] != "Hard safety blockers" for b in checklist["blockers"])
+        warning = next(w for w in checklist["warnings"] if w["title"] == "Superadmin allocations")
+        assert "2026-05-06 MAIN_1ST_24HR: Outside Third (by Rota Chief)" in warning["detail"]
+
+        # It can be accepted like the other warnings.
+        user = seed_superadmin(session)
+        accept_review_issue(session, slot_id=slot.id, issue_code="superadmin_allocation", note="OK", decided_by=user)
+        accept_review_issue(session, slot_id=slot.id, issue_code="superadmin_cross_level", note="OK", decided_by=user)
+        review = rota_review_month(session, "2026-05")
+        assert review["summary"]["unresolved_warning_items"] == 0
+
+
+def test_same_assignment_without_superadmin_source_stays_hard_blocked() -> None:
+    engine = create_engine("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(engine)
+    with Session(engine) as session:
+        slot = _superadmin_world(session, source="manual_rota_board")
+        review = rota_review_month(session, "2026-05")
+        item = next(i for i in review["review_items"] if i["slot"]["id"] == str(slot.id))
+        assert "hard_blocked" in [issue["code"] for issue in item["issues"]]
+        assert review["summary"]["superadmin_allocations"] == 0

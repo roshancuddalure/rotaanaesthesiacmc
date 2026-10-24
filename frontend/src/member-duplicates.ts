@@ -15,6 +15,7 @@ import {
   type SuspectedDuplicatePerson,
 } from "./services/api";
 import { badge, codeLabel, emptyState, esc, type Tone } from "./ui";
+import { formatAuditTimestamp } from "./audit-time";
 
 const TITLE = "Possible duplicate members";
 
@@ -89,7 +90,7 @@ function previewHtml(preview: MergePreview, keptName: string, otherName: string)
 function mergesHtml(merges: MemberMergeRecord[]): string {
   if (!merges.length) return "";
   return `<details class="dup-history"><summary>Recent merges (${merges.length})</summary><ul>${merges.slice(0, 30).map((m) => `<li>
-      <span>${esc(m.source_names.join(", "))} → ${esc(m.target_name)} · ${esc(new Date(m.merged_at).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" }))} · ${esc(m.operator_name)}</span>
+      <span>${esc(m.source_names.join(", "))} → ${esc(m.target_name)} · ${esc(formatAuditTimestamp(m.merged_at))} · ${esc(m.operator_name)}</span>
       ${m.undone_at ? badge("Undone", "neutral") : `<button type="button" class="icon-button btn-sm" data-undo-merge="${esc(m.merge_id)}">Undo merge</button>`}
     </li>`).join("")}</ul></details>`;
 }

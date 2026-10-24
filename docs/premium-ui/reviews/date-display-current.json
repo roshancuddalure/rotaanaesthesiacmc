@@ -1,0 +1,89 @@
+{
+  "recorded_at_utc": "2026-10-23T15:12:40.805540+00:00",
+  "completion_claim": false,
+  "requirements": [
+    113,
+    208,
+    209,
+    212,
+    219,
+    258
+  ],
+  "scope": "Read-only canonical profile calendar values and publication/archive audit timestamps; preserve ISO edit state, numeric precision and unit text.",
+  "source_sha256": {
+    "frontend/src/main.ts": "dfd3746fd11d696d1be6f668e8f69b92914b8a53e4f5210c1a1d2e38d3641176",
+    "frontend/src/member-workspace.ts": "b39d53795adcbe1d850aeb3cf20f71bd78f4a48a4280e7f9e7e9cff2f796e50c",
+    "frontend/src/ui.ts": "88579ed75c8c72e4fd4e2d98508a58c42b925202362589a2469623664c2a975f",
+    "frontend/src/audit-time.ts": "136542cb2daec343417532d372f2e8ce01a0e6103ef6c62a7a4a8017ac8a6d15",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "318db78d306c37a50969306ca78ef7e9c0f7676ee6337ab4ca8fc7650fb4a72b"
+  },
+  "changes": [
+    "Add strict read-only calendar formatter: exactISOdate validation and UTC date-only display viaexisting dMMM yyyy formatter; malformed values retained ratherthan normalized. Generic profile date/start/end/effective fields and nonediting designation dates use it.",
+    "Publish approval and member archive timestamps use existing audit formatter, retaining browser-zone policy while explicitly labeling the zone. Unzoned server values remain raw withzone-not-recorded; invalid/missinginstantsTimeunavailable.",
+    "Align profile detail/audit digits with existing tabular-number treatment; no rounding, count recomputation, unit renaming or request/export date changes.",
+    "Workload regression exposed a1pixel name-heading scroll region lacking keyboardfocus. Increase name line spacing and use actual scrollHeight>clientHeight with no1pixel exemption. Expanded header fixture verifies real1pixel scroll state and removalofunnecessary tabindex whenfit.",
+    "Updated only existing display-text expectations for readabledates; native cancellation ISOcontext, exacttargets/payloads and dateeditinput expectations remainunchanged."
+  ],
+  "checks": {
+    "date_contexts": 18,
+    "engines": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "widths": [
+      320,
+      1280
+    ],
+    "zones": [
+      "UTC",
+      "Asia/Kolkata",
+      "America/Los_Angeles"
+    ],
+    "locales": [
+      "en-GB",
+      "en-US"
+    ],
+    "calendar": "Same1Nov2026 acrosszones, leap29Feb2028, Dec/Jan crossyear, invalid2026-02-30 unchanged andnullendOngoing.",
+    "values": "Unit MainUnitIV,0,1234.5,false?No preserved. Editor starts_on2026-11-01/ends_onblank/personIDunchanged, exactexistingGETtarget, no mutation.",
+    "audit": "Fourpublicationvalues percontext: validZ instant correctzone/date/time, unzonedexplicitlymarked, invaliddate/missinginstantTimeunavailable. DesktopinvalidarchivealsoTimeunavailable.",
+    "identity_regressions": 6,
+    "cancellation_target_regressions": 6,
+    "workload_link_regressions": 12,
+    "expanded_header_regressions": 18,
+    "workload_scoped_axe_checks": 12,
+    "header_scoped_axe_checks": 18,
+    "tagged_axe_violations": 0,
+    "browser_total": 60,
+    "unit_tests": 100,
+    "build_exit_code": 0,
+    "build_inputs_held": true,
+    "static_inventories": "Style/action write/check match; source integrity only."
+  },
+  "evidence": [
+    "docs/premium-ui/qa-date-display.json",
+    "docs/premium-ui/qa-profile-identity-fixed.json",
+    "docs/premium-ui/qa-profile-cancel-identity.json",
+    "docs/premium-ui/qa-profile-workload-links.json",
+    "docs/premium-ui/qa-profile-header-space.json",
+    "docs/premium-ui/visual-contract.md",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+  ],
+  "tests": {
+    "frontend/tests/premium-date-display.browser.mjs": "207608750fcd3f1c79be48d1ee43e39a49fc57b963b8c6bf18c3e89301e0baf5",
+    "frontend/tests/premium-profile-header-space.browser.mjs": "57cef908fc3fe44576a1b6055ba4bde5a34390fceaac7a6c88f94e0846baa359",
+    "frontend/tests/premium-profile-identity.browser.mjs": "b38bbc43cd061fe9a458b897f052459d20d61dd3579791f9045ba8f69fde13fd",
+    "frontend/tests/premium-profile-cancel-identity.browser.mjs": "b42e5c406e9c0bebd95853bcee552a296c963fe5901aa6953ce0da9055f0f6d5",
+    "frontend/tests/premium-profile-workload-links.browser.mjs": "cc9c019a31b42d1b71cb7a28f9e8f30fe29593fdd60f012d1471e01e82fa46f5"
+  },
+  "limitations": [
+    "Root implementer verification, not independent signoff.",
+    "Read-only formatting scope is mapped canonical profile fields/designations, publication approval and archive text; allapp dates/monthlabels/countlocale/unitformat variants remain unverified. Full113open.",
+    "Timezonefixtures are display checks only. Scheduling/effective-date comparisons still use unchanged raw record values and backend rules; no business timezone change.",
+    "New date18 contexts are defaultlight. Existingworkload/headerregressions include dark320/lightdesktop; no complete theme/role/nativeATspeech/physical matrix.",
+    "Published approval and archive values are intercepted fixtures, no actualpublication/archive. CancellationregressionPOSTs are intercepted and verify exact existingtargetrequests.",
+    "Onepixelheading failure was observed during regression withscroll54/client53 andnotabindex; no stored before-source snapshot of that failing attempt retained. Newreal1pixelfixture explicitly proves keyboardmetadata nowupdates.",
+    "No export contents or numeric calculations changed/certified; samefixtureequivalence/full260remainopen. Onlyfrontenddisplayhelpers/main/profile/CSS andrelatedUItestexpectations/docs changed; concurrentbackendworkpreserved."
+  ]
+}

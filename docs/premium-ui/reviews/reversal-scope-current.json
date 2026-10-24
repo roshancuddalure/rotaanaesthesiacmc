@@ -1,0 +1,79 @@
+{
+  "recorded_at_utc": "2026-10-22T18:27:35.229403+00:00",
+  "completion_claim": false,
+  "requirements": [
+    177,
+    208,
+    209,
+    219,
+    258
+  ],
+  "scope": "Generation reversal identity and revision context, scrollable confirmation and failed-attempt recovery in quick/member, template and whole-month review.",
+  "source_sha256": {
+    "frontend/src/rota-compute.ts": "095435724643edd6ffc698ac71ac04ecc4d0849b32781422e90740afdc63d732",
+    "frontend/src/rota-intelligence.ts": "6580aa2582ed51f97f1f34aa7c712102de8790b9819e23835bfdd629b59262b8",
+    "frontend/src/generation-reversal-scope.ts": "4f5ce7136076e2b9ab3f07f91405083a7955425f19ebc7b8cdd1e6e22108e2af",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "e6db76e6ac5bd7454c46c06946ca58d63161839c790a7303d3ac2948d2fbd092"
+  },
+  "changes": [
+    "Shared presentation helper shows exact existing generation ID, selected month, job revision and change type; no browser-derived reversal eligibility.",
+    "Move compute reversal details from sticky footer into scrollable content. Intelligent review retains existing content placement; both reviews preserve expanded details after failure.",
+    "Keep existing fresh unchecked acknowledgement after failed attempts. Restore owned reversal focus to that confirmation; keep original validation-then-revert endpoints, revision payloads and callbacks."
+  ],
+  "checks": {
+    "reversal_contexts": 18,
+    "engines": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "widths": [
+      320,
+      1280
+    ],
+    "viewport_height": 700,
+    "kinds": [
+      "members",
+      "template",
+      "intelligent"
+    ],
+    "refusals": [
+      "409 reversal-check failure",
+      "503 revert could not be confirmed"
+    ],
+    "contract": "No revert after failed validation; no automatic retry after unconfirmed reversal; each explicit retry rechecks revision8; successful reversal invokes existing callback once. Exactly5 interceptedPOSTs across3 attempts.",
+    "long_id_wrap_and_confirmation_above_footer": true,
+    "scoped_axe_checks": 18,
+    "tagged_axe_violations": 0,
+    "existing_generation_workflows": 21,
+    "unit_tests": 100,
+    "build_exit_code": 0,
+    "build_inputs_held": true,
+    "static_inventories": "Style/action sources refreshed and match; static integrity only."
+  },
+  "evidence": [
+    "docs/premium-ui/qa-reversal-scope.json",
+    "docs/premium-ui/qa-generation-actions-reversal-batch.json",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+  ],
+  "test": "frontend/tests/premium-reversal-scope.browser.mjs",
+  "test_sha256": "c8eea2096d318325eaf3f13033b49c541bd4e0d8c0f9567d1f98302df42b407c",
+  "screenshots": [
+    "docs/premium-ui/screenshots/reversal/scope-320.png",
+    "docs/premium-ui/screenshots/reversal/scope-1280.png"
+  ],
+  "visual_review": {
+    "reviewer": "rootimplementer,notindependent",
+    "artifact": "docs/premium-ui/screenshots/reversal/scope-320.png",
+    "finding": "LongjobIDwraps,jobrevisionlegible,confirmationandreversalbuttonaboveseparatefooter. Contentcanbescolledwhileheader/footerremainvisible."
+  },
+  "limitations": [
+    "Root implementer review, not independent signoff.",
+    "18contexts are defaultlight, applied-job fixtures only. Otherstates/roles/themes and each server unavailable reason remain unverified beyond supplied refusalcopy.",
+    "All reversal requests intercepted; no real reversal, backend eligibility/conflict correctness or production changes.",
+    "Shared helper escapes displayedjobidentity by source; maliciousjobID fixture not newly exercised.",
+    "No native assistive speech/physical checks. All177/full260 and samefixture workflow/calculation/export equivalence remain open.",
+    "Only frontend rota-compute/rota-intelligence/shared helper/premium CSS changed this batch. Existing API contracts/permissions/scheduling/persistence/export contents preserved; concurrent backend work untouched."
+  ]
+}

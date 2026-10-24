@@ -1,8 +1,19 @@
 """Independent strict-rule check of one month's rota (docs/extra_duty_contract.md, section 7).
 
 Read-only. Checks every active assignment of the month: active member, posted to the duty's
-unit, call level and groups, leave (all active statuses), no double booking, rest after 24-hour
+unit, duty allowed for the unit (the duty's allowed/excluded unit rules, code ``unit_rule``),
+call level and groups, leave (all active statuses), no double booking, rest after 24-hour
 duties (including neighbouring months) and slot capacity.
+
+An assignment backed by an active extra-duty ledger record with ``unposted_member`` (fill-all,
+docs/extra_duty_fill_all_contract.md section 3) is exempt from the posted-to-unit check only,
+and only while the member has no posting at all on that date; every other check still applies.
+The number of such exempted assignments is printed under the check table.
+
+A superadmin allocation (``source == "superadmin_allocation"``) is exempt from the call level
+and groups, duty-allowed-for-unit, posted-to-unit and active-member checks; never from leave,
+rest, double booking or capacity. Their count is printed as well, and each one that crosses call
+level is listed under "Call level crossed by superadmin" (never hidden).
 
 usage (from backend/):
     .venv/Scripts/python.exe ../tools/extra_duty_verify.py --month 2026-05 [--database-url URL] [--json]
@@ -32,6 +43,18 @@ def render(result: dict) -> str:
     for check in result["checks"]:
         mark = "PASS" if check["passed"] else "FAIL"
         lines.append(f"  [{mark}] {check['name']}: {check['violations']} violation(s) in {check['checked']} checked")
+    if result.get("unposted_exempt"):
+        lines.append(f"  ({result['unposted_exempt']} assignment(s) ledgered as 'no posting this month' were exempt from the posting check only)")
+    if result.get("superadmin_exempt"):
+        lines.append(f"  ({result['superadmin_exempt']} superadmin allocation(s) were exempt from the call level, groups, unit rule, posting and active-member checks; leave, rest, double booking and capacity still apply)")
+    if result.get("superadmin_cross_level"):
+        lines.append("")
+        lines.append(f"Call level crossed by superadmin ({len(result['superadmin_cross_level'])}):")
+        for v in result["superadmin_cross_level"]:
+            lines.append(
+                f"  {v['duty_date']}  {v['duty_type']:<18} {v['person_name'] or v['person_id']}: "
+                f"{v['message']}  (slot {v['slot_id']})"
+            )
     if result["violations"]:
         lines.append("")
         lines.append("Violations:")

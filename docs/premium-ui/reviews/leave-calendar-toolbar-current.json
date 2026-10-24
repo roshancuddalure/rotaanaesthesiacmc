@@ -1,0 +1,66 @@
+{
+  "recorded_at_utc": "2026-10-22T17:50:20.781655+00:00",
+  "completion_claim": false,
+  "requirements": [
+    141,
+    146,
+    208,
+    209,
+    219,
+    258
+  ],
+  "scope": "Existing native leave calendar and toolbar acceptance checks; no application code edits in this batch.",
+  "source_sha256": {
+    "frontend/src/main.ts": "e830e809bd6be86db4570b493b6013a0db4ddd1a78b4f1935419a3ea8469b984",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "4f61aa58b92229b0854e528cb90664a7ef7fa2d11dc2a6d2e94b3b797187ac01",
+    "frontend/src/leave-approval.ts": "42e5a47751ae081d1b97108209c7a2b53272985251d153aa065f7718f43e544f",
+    "frontend/src/record-workspace.ts": "f53fd32448f962156a7ff795dd34e6a0e0aa48ed82d9183354676cbceea8e904",
+    "frontend/src/operational-import.ts": "838afc1e32c4f0fa271eaa451423753d0054cdef6f3295da9e812257eb6d4e27"
+  },
+  "changes": [
+    "Added bounded calendar boundary and toolbar outcome regression tests. Existing application behavior passed without a UI patch."
+  ],
+  "checks": {
+    "calendar_boundary_contexts": 24,
+    "calendar_days": [
+      28,
+      29,
+      30,
+      31
+    ],
+    "engines": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "widths": [
+      320,
+      1280
+    ],
+    "toolbar_contexts": 6,
+    "existing_populated_day_list_contexts": 12,
+    "existing_monthly_approval_recovery_contexts": 6,
+    "all_contexts": 48,
+    "calendar_keyboard": "Every native day button chronological Tab; full weekday/date/month/year labels; empty padding hidden and unfocusable; day review Enter/Escape restores exact opener in month/list.",
+    "toolbar": "Add existing editor and CSV import open, pristine closes restore opener, selected import month retained, native More toggles, both downloadable CSV resources return200 with required headers, main toolbar controls44px.",
+    "writes": "New tests and populated calendar GET-only. Monthly review uses intercepted POSTs including failed approval; no backend writes."
+  },
+  "evidence": [
+    "docs/premium-ui/qa-leave-calendar-boundaries.json",
+    "docs/premium-ui/qa-leave-toolbar.json",
+    "docs/premium-ui/qa-leave-list.json",
+    "docs/premium-ui/qa-monthly-leave-review.json"
+  ],
+  "tests": {
+    "frontend/tests/premium-leave-calendar-boundaries.browser.mjs": "1f8e7dcbbaf8c771634f6cf44cfa2d7e86edb39de05b35c8d843de048b99d6c6",
+    "frontend/tests/premium-leave-toolbar.browser.mjs": "0ccb6db81d64b3f9ff5534221de4465c9a525f9875968265ade15a41b9b9ffc9"
+  },
+  "limitations": [
+    "Root implementer verification, not fresh independent signoff.",
+    "Calendar dark320/light1280; not every theme/width combination. Existing populated list has separate broader contexts.",
+    "Toolbar admin fixture only; permissions and destructive actions not newly certified. CSV resources/header checks do not certify parsing or OS save dialogs.",
+    "Native screen readers and physical devices pending. All260 acceptance and same-fixture calculations/exports equivalence remain open.",
+    "No app source changes this batch; previous build/unit evidence retained without claiming a fresh build run."
+  ]
+}

@@ -1,0 +1,208 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-10-22T04:45:53.947675+00:00",
+  "reviewer": "auth_form_independent_tests",
+  "requirements": [
+    258
+  ],
+  "completion_claim": false,
+  "scope": "Five current enabled controls prioritized from old contracts after reconciliation against newer exact assertion sources. Does not alter inventory runtime_passed=0 or certify full requirement258.",
+  "method": [
+    "Read admin, members, generation and followup-controls contract schemas/statuses; old pending statuses were treated as leads rather than proof of missing tests.",
+    "Search exact selector tokens and current role labels across all top-level frontend/tests/*.mjs; inspect relevant browser assertions and current delegated handlers. A suite filename or a clicked button alone was not treated as outcome evidence.",
+    "Confirm actual shipped controls visible and enabled at320/1280 using actual app computer_admin fixture shell. Candidate actions deliberately remain unactivated; setup edits remain local and eligibility POST is intercepted.",
+    "Map each candidate to current action-inventory stable ID and current render/handler locations; leave original contract and inventory statuses untouched."
+  ],
+  "inputs": {
+    "docs/premium-ui/contracts/admin.json": "32fbdae82ddd6bf999f8e8ff6150a48e81226814cc9fdb8fe6afbeb365c955e1",
+    "docs/premium-ui/contracts/members.json": "117e8eae4948be49e71500d8b690d2bd6dc7bb8b5a2e1412890d3de4b500e2f7",
+    "docs/premium-ui/contracts/generation.json": "ad926e8610386985ad32b5469bcc17e4fa575a9827797a4ff381f9d93159c15b",
+    "docs/premium-ui/contracts/followup-controls.json": "b8864ca38c577b37ff5753db4f5c1c19f449892e7423539d76e30a2829f3b7d1",
+    "docs/premium-ui/action-inventory.json": "1856cf563677452ba9569577694f59009e602e935871dcd210f5ecc04fb457bd",
+    "frontend/src/rota-rules.ts": "9ab07f99341e188675b9ec3718c6e55eb9bd4746def03ef27f6fce9b28a8b3d5"
+  },
+  "test_sources_scanned": 104,
+  "assertion_sources_inspected": {
+    "frontend/tests/rota-rules.browser.mjs": "febfc5a6bf312034c3e651957f0e9397c0b4087ba5f8f08b6162b7a7ed59032f",
+    "frontend/tests/premium-rules-session-independent.browser.mjs": "958cca03bcb532ef3b1c44c6b094cf670c5a55eeb966db5bb6e30b95e697ca00",
+    "frontend/tests/premium-past-actions.browser.mjs": "b8cc77b14842263dd5e4a5ddfefe9646b5eaa9b9ddb1eb9cfe0bef802a04f098",
+    "frontend/tests/premium-member-actions.browser.mjs": "d33be3d8a1f98b8fdbb6a8b1e0416f5a78be7831f992af80293397b11b4dbdde",
+    "frontend/tests/premium-generation-actions.browser.mjs": "0ce92a53c8d02feb4dd669ca9471f2cd080f30fc1d5a2c4e58c3e8eb4e94af18",
+    "frontend/tests/compute.browser.mjs": "08115612b05221387f30e42e1d6e1a4856501de4a321047004c24e277dbc8bac",
+    "frontend/tests/generation-compute.browser.mjs": "ef27c35a1c248cadccd33e99faf4bd97c7c1b894cf7fd8cf28f2282b3c5ead3e",
+    "frontend/tests/premium-auth-forms-independent.browser.mjs": "74c0bd64f2a1143d429bafe186a11cdb4c10deec2f82e4e00cefad244430421a"
+  },
+  "excluded_historical_leads": [
+    {
+      "selectors": [
+        "[data-past-resolve-row]"
+      ],
+      "why": "Newer premium-past-actions.browser.mjs76-78 asserts Undo member choice exact resolution, Skip action, and keyboard Include action; old admin pending entries do not justify reopening these as untested."
+    },
+    {
+      "selectors": [
+        "#create-account",
+        "[data-account-recovery]",
+        "[data-retry-accounts]"
+      ],
+      "why": "followup-controls plus inspected premium-accounts has exact create payload/error retained draft/readback and recovery confirm/retry; not reopened from historical admin pending entries."
+    },
+    {
+      "selectors": [
+        "[data-tab-link]"
+      ],
+      "why": "Member contract already links premium-member-actions exact target/focus outcomes; no inference of absence from historical remaining-control list."
+    },
+    {
+      "selectors": [
+        "[data-compute-test]",
+        "[data-compute-compare]"
+      ],
+      "why": "Newer compute.browser.mjs uses actual Test Device and comparison controls, with result/parity assertions; hardware/source freshness remains separately bounded, so not listed as absent solely from generation contract pending status."
+    },
+    {
+      "selectors": [
+        "[data-optimize]",
+        "[data-continue-server]"
+      ],
+      "why": "No exact literal assertions found, but runtime reachability/enabled prerequisites were not established in this review; excluded from five rather than promoting source-only candidates."
+    }
+  ],
+  "items": [
+    {
+      "requirement": 258,
+      "candidate_stable_id": "rota-rules-ts::pageHtml::3053ae7b0b35",
+      "contract_id": "rota-rules-ts::pageHtml::3053ae7b0b35",
+      "selector": "[data-expand-all]",
+      "label": "Expand all",
+      "source": "frontend/src/rota-rules.ts:1655",
+      "handler_source": "frontend/src/rota-rules.ts:1732",
+      "role": "computer_admin; visibility is not server authorization",
+      "context": {
+        "route": "#view=rota-rules",
+        "widths_observed": [
+          320,
+          1280
+        ],
+        "month": "Rules workspace is not month-scoped; fixture GET document current rules",
+        "setup": "Loaded rules with multiple duty records"
+      },
+      "presence_evidence": "docs/premium-ui/qa-enabled-action-presence.json",
+      "presence_result": "visible_and_enabled_but_not_activated",
+      "outcome_status": "no_explicit_concrete_outcome_assertion_found_in_inspected_tests",
+      "existing_contract_status": "contract_defined_runtime_pending",
+      "next_test": "With several matching duties and a narrowed filter, activate by keyboard; assert every matching editor expands and nonmatching duties remain filtered, draft values unchanged and no save request."
+    },
+    {
+      "requirement": 258,
+      "candidate_stable_id": "rota-rules-ts::pageHtml::d7b33c60a139",
+      "contract_id": "rota-rules-ts::pageHtml::d7b33c60a139",
+      "selector": "[data-collapse-all]",
+      "label": "Collapse all",
+      "source": "frontend/src/rota-rules.ts:1656",
+      "handler_source": "frontend/src/rota-rules.ts:1738",
+      "role": "computer_admin; visibility is not server authorization",
+      "context": {
+        "route": "#view=rota-rules",
+        "widths_observed": [
+          320,
+          1280
+        ],
+        "month": "Rules workspace is not month-scoped; fixture GET document current rules",
+        "setup": "Loaded rules with multiple duty records"
+      },
+      "presence_evidence": "docs/premium-ui/qa-enabled-action-presence.json",
+      "presence_result": "visible_and_enabled_but_not_activated",
+      "outcome_status": "no_explicit_concrete_outcome_assertion_found_in_inspected_tests",
+      "existing_contract_status": "contract_defined_runtime_pending",
+      "next_test": "Open several duty editors and change one unsaved field; activate Collapse all; assert all editor bodies collapse, edits survive reopening, category filters survive and no save request."
+    },
+    {
+      "requirement": 258,
+      "candidate_stable_id": "rota-rules-ts::editorHtml::dc3de307517b",
+      "contract_id": "rota-rules-ts::editorHtml::dc3de307517b",
+      "selector": "[data-reset-duty]",
+      "label": "Reset this duty",
+      "source": "frontend/src/rota-rules.ts:804",
+      "handler_source": "frontend/src/rota-rules.ts:1739",
+      "role": "computer_admin; visibility is not server authorization",
+      "context": {
+        "route": "#view=rota-rules",
+        "widths_observed": [
+          320,
+          1280
+        ],
+        "month": "Rules workspace is not month-scoped; fixture GET document current rules",
+        "setup": "Changed one live duty label without saving"
+      },
+      "presence_evidence": "docs/premium-ui/qa-enabled-action-presence.json",
+      "presence_result": "visible_and_enabled_but_not_activated",
+      "outcome_status": "no_explicit_concrete_outcome_assertion_found_in_inspected_tests",
+      "existing_contract_status": "contract_defined_runtime_pending",
+      "next_test": "Edit two duties and a guardrail. Reset only one duty; assert its saved fields restored, other duty and guardrail remain changed, focus moves to that duty toggle, save dock count reflects remaining changes and no PUT is sent."
+    },
+    {
+      "requirement": 258,
+      "candidate_stable_id": "rota-rules-ts::listHtml::d2a59370fcd2",
+      "contract_id": "rota-rules-ts::listHtml::d2a59370fcd2",
+      "selector": "[data-clear-filters]",
+      "label": "Show all duties",
+      "source": "frontend/src/rota-rules.ts:824",
+      "handler_source": "frontend/src/rota-rules.ts:1722",
+      "role": "computer_admin; visibility is not server authorization",
+      "context": {
+        "route": "#view=rota-rules",
+        "widths_observed": [
+          320,
+          1280
+        ],
+        "month": "Rules workspace is not month-scoped; fixture GET document current rules",
+        "setup": "Unmatched duty search"
+      },
+      "presence_evidence": "docs/premium-ui/qa-enabled-action-presence.json",
+      "presence_result": "visible_and_enabled_but_not_activated",
+      "outcome_status": "no_explicit_concrete_outcome_assertion_found_in_inspected_tests",
+      "existing_contract_status": "contract_defined_runtime_pending",
+      "next_test": "Set nondefault filter plus unmatched search. Activate empty-state Show all duties; assert search clears, filter returns All, complete expected duty keys return, search receives focus, draft survives and no save request."
+    },
+    {
+      "requirement": 258,
+      "candidate_stable_id": "rota-rules-ts::dockHtml::72ce8eb1bfd0",
+      "contract_id": "rota-rules-ts::dockHtml::72ce8eb1bfd0",
+      "selector": "[data-discard]",
+      "label": "Discard",
+      "source": "frontend/src/rota-rules.ts:907",
+      "handler_source": "frontend/src/rota-rules.ts:1746",
+      "role": "computer_admin; visibility is not server authorization",
+      "context": {
+        "route": "#view=rota-rules",
+        "widths_observed": [
+          320,
+          1280
+        ],
+        "month": "Rules workspace is not month-scoped; fixture GET document current rules",
+        "setup": "Changed one live duty label without saving"
+      },
+      "presence_evidence": "docs/premium-ui/qa-enabled-action-presence.json",
+      "presence_result": "visible_and_enabled_but_not_activated",
+      "outcome_status": "no_explicit_concrete_outcome_assertion_found_in_inspected_tests",
+      "existing_contract_status": "contract_defined_runtime_pending",
+      "next_test": "Edit multiple duties and guardrails. Reject confirmation and verify every draft retained/no PUT; accept confirmation then verify all saved values restored, dirty/save dock clears, status and focus correct, saved server fixture unchanged."
+    }
+  ],
+  "limitations": [
+    "Search absence is bounded repository evidence; dynamic or indirect coverage can exist. Next tests must assert actual outcomes before any pass status.",
+    "Only Chromium320/1280 presence observed, computer_admin role, fixture rules; no action outcomes, other roles, engines, forced colors, physical devices or real rule persistence certified.",
+    "No app/backend edits or backend writes; only test and review artifacts added.",
+    "Current source hashes are snapshot evidence; later edits can invalidate locations or presence."
+  ],
+  "later_outcome_followups": [
+    {
+      "recorded_at_utc": "2026-10-22T05:05:13.154397+00:00",
+      "status": "five_candidates_now_have_bounded_outcome_evidence",
+      "contract": "docs/premium-ui/contracts/rules-local-current.json",
+      "report": "docs/premium-ui/qa-rules-local-actions-independent.json",
+      "limit": "Original presence-only findings above retained as historical snapshot; no whole258completion."
+    }
+  ]
+}

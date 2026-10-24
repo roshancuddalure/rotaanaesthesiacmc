@@ -28,7 +28,8 @@ from app.models import (
     RotaPeriod,
     Unit,
 )
-from app.services.extra_duty_verify import CHECKS, check_month
+from app.models.extra_duty import ExtraDutyBatch, ExtraDutyRecord
+from app.services.extra_duty_verify import CHECKS, STRICT_CODES, check_month
 from app.services.rota_rules import get_phase_one_rules
 from app.services.rota_setup import monthly_setup
 
@@ -39,6 +40,7 @@ CHECK_NAMES = [
     "No double booking",
     "Call level and groups",
     "Posted to the duty's unit",
+    "Duty allowed for unit",
     "Slot capacity",
     "Active members",
 ]
@@ -63,6 +65,11 @@ def make_slot(
     source: str = "phase4_template",
 ) -> DutySlot:
     starts_at = datetime.combine(day, time(hour=hour))
+    if call_level is None and duty_type in {"RC_12HR", "RC_CO_12HR", "OT_DAY", "CB_CO_12HR"}:
+        # These duties have no call level in the default rules; under strict call level
+        # (docs/limits_callevel_fairness_contract.md section 1) such a duty is unresolved and
+        # refused for everyone, so these rest/leave fixtures stamp the slot 1st call.
+        call_level = "1ST_CALL"
     slot = DutySlot(
         rota_period=period,
         unit=unit,
@@ -248,7 +255,8 @@ def test_each_violation_is_detected_with_its_code(world):
     assert full[0]["person_name"] in {"Full A", "Full B"}
 
     by_name = {c["name"]: c for c in result["checks"]}
-    assert not any(c["passed"] for c in result["checks"])
+    # No unit rules are set here; "Duty allowed for unit" is covered by test_unit_rule_is_strict.
+    assert not any(c["passed"] for c in result["checks"] if c["name"] != "Duty allowed for unit")
     assert by_name["Slot capacity"]["violations"] == 1
     assert by_name["Leave respected"]["violations"] == 4
     sample = result["violations"][0]
@@ -299,6 +307,152 @@ def test_rest_across_adjacent_months(world):
     rules.rest_rules.minimum_gap_after_24hr_hours = 36
     strict = check_month(db, MONTH, rules=rules)
     assert codes_for(strict, morning) == {"rest_gap"}
+
+
+def ledger(db: Session, period: RotaPeriod, assignment: DutyAssignment, codes: list[str], status: str = "active") -> ExtraDutyRecord:
+    batch = ExtraDutyBatch(rota_period_id=period.id, month=MONTH, plan_hash="h", context_hash="c")
+    db.add(batch)
+    db.flush()
+    slot = assignment.duty_slot
+    record = ExtraDutyRecord(
+        batch_id=batch.id, person_id=assignment.person_id, assignment_id=assignment.id, slot_id=slot.id,
+        month=MONTH, duty_date=slot.duty_date, duty_type=slot.duty_type, home_unit_id=slot.unit_id,
+        assigned_unit_id=slot.unit_id, overridden_rules=codes, status=status,
+    )
+    db.add(record)
+    db.flush()
+    return record
+
+
+def test_unit_rule_is_strict(world):
+    db, period, u1, u2 = world
+    a = make_person(db, "Allowed Unit", u1)
+    b = make_person(db, "Blocked Unit", u2)
+    s_ok = make_slot(db, period, u1, date(2026, 5, 2))
+    s_bad = make_slot(db, period, u2, date(2026, 5, 2))
+    assign(db, s_ok, a)
+    assign(db, s_bad, b)
+    db.commit()
+    assert "unit_rule" in STRICT_CODES
+
+    _v, rules = get_phase_one_rules(db)
+    assert check_month(db, MONTH, rules=rules)["ok"]  # no unit rules: everything allowed
+
+    rules.duty_rules_by_key["MAIN_1ST_24HR"].allowed_units = [str(u1.id)]
+    result = check_month(db, MONTH, rules=rules)
+    assert codes_for(result, s_ok) == set()
+    assert codes_for(result, s_bad) == {"unit_rule"}
+    hit = next(v for v in result["violations"] if v["code"] == "unit_rule")
+    assert hit["check"] == "Duty allowed for unit" and "Unit II" in hit["message"]
+    by_name = {c["name"]: c for c in result["checks"]}
+    assert by_name["Duty allowed for unit"] == {"name": "Duty allowed for unit", "passed": False, "checked": 2, "violations": 1}
+
+    # Excluded by a legacy code token; excluded wins over allowed.
+    rules.duty_rules_by_key["MAIN_1ST_24HR"].allowed_units = []
+    rules.duty_rules_by_key["MAIN_1ST_24HR"].excluded_units = ["unit_i"]
+    result = check_month(db, MONTH, rules=rules)
+    assert codes_for(result, s_ok) == {"unit_rule"}
+    assert codes_for(result, s_bad) == set()
+
+
+def test_unposted_ledger_exempts_only_the_posting_check(world):
+    db, period, u1, _u2 = world
+    free = make_person(db, "No Posting", None)
+    on_leave = make_person(db, "No Posting On Leave", None)
+    wrong_level = make_person(db, "No Posting Second", None, "2ND_CALL")
+    posted_elsewhere = make_person(db, "Posted Elsewhere", _u2)
+    plain = make_person(db, "No Posting No Ledger", None)
+    voided = make_person(db, "No Posting Voided", None)
+    slots = {name: make_slot(db, period, u1, date(2026, 5, 3 + i)) for i, name in
+             enumerate(["free", "leave", "level", "elsewhere", "plain", "voided"])}
+    db.add(LeaveRequest(person=on_leave, leave_type="ANNUAL_LEAVE", leave_slot="FULL_DAY",
+                        starts_on=slots["leave"].duty_date, ends_on=slots["leave"].duty_date, status="approved"))
+    rows = {
+        "free": assign(db, slots["free"], free),
+        "leave": assign(db, slots["leave"], on_leave),
+        "level": assign(db, slots["level"], wrong_level),
+        "elsewhere": assign(db, slots["elsewhere"], posted_elsewhere),
+        "plain": assign(db, slots["plain"], plain),
+        "voided": assign(db, slots["voided"], voided),
+    }
+    for key in ("free", "leave", "level", "elsewhere"):
+        ledger(db, period, rows[key], ["unposted_member"])
+    ledger(db, period, rows["plain"], ["fallback_unit"])
+    ledger(db, period, rows["voided"], ["unposted_member"], status="voided")
+    db.commit()
+
+    result = check_month(db, MONTH)
+    assert codes_for(result, slots["free"]) == set()
+    assert codes_for(result, slots["leave"]) == {"leave"}
+    assert codes_for(result, slots["level"]) == {"call_level_mismatch"}
+    assert codes_for(result, slots["elsewhere"]) == {"not_in_unit"}  # the ledger claim is false
+    assert codes_for(result, slots["plain"]) == {"not_in_unit"}
+    assert codes_for(result, slots["voided"]) == {"not_in_unit"}
+    assert result["unposted_exempt"] == 4
+
+    # Unit rules still apply to an exempt assignment.
+    _v, rules = get_phase_one_rules(db)
+    rules.duty_rules_by_key["MAIN_1ST_24HR"].excluded_units = [str(u1.id)]
+    strict = check_month(db, MONTH, rules=rules)
+    assert codes_for(strict, slots["free"]) == {"unit_rule"}
+
+
+def test_superadmin_allocation_exempts_only_the_allowed_checks(world):
+    """Superadmin override contract §1: exempt from call level/groups, unit rule, posting and
+    active member; never from leave, rest, double booking or capacity."""
+    db, period, u1, u2 = world
+    second = make_person(db, "SA Second Call", u2, "2ND_CALL")  # wrong level, other unit
+    unposted = make_person(db, "SA Unposted", None)
+    inactive = make_person(db, "SA Inactive", u1)
+    inactive.active_status = "archived"
+    on_leave = make_person(db, "SA On Leave", u2, "2ND_CALL")
+    rester = make_person(db, "SA Rester", u1)
+    doubled = make_person(db, "SA Doubled", u1)
+    filler = make_person(db, "SA Filler", u1)
+    manual_wrong = make_person(db, "Manual Wrong Level", u2, "2ND_CALL")
+    slots = {name: make_slot(db, period, u1, date(2026, 5, 3 + 2 * i)) for i, name in
+             enumerate(["second", "unposted", "inactive", "leave", "rest", "double", "full", "manual"])}
+    db.add(LeaveRequest(person=on_leave, leave_type="ANNUAL_LEAVE", leave_slot="FULL_DAY",
+                        starts_on=slots["leave"].duty_date, ends_on=slots["leave"].duty_date, status="approved"))
+    rows = {}
+    for key, person in [("second", second), ("unposted", unposted), ("inactive", inactive), ("leave", on_leave),
+                        ("rest", rester), ("double", doubled), ("full", filler)]:
+        rows[key] = assign(db, slots[key], person)
+        rows[key].source = "superadmin_allocation"
+    assign(db, slots["manual"], manual_wrong)  # not a superadmin allocation: still checked
+    # Rest: a 24-hour duty the day before the superadmin allocation.
+    assign(db, make_slot(db, period, u1, slots["rest"].duty_date - timedelta(days=1), label="rest-prev"), rester)
+    # Double booking: a same-day duty.
+    assign(db, make_slot(db, period, u2, slots["double"].duty_date, "OT_DAY", hours=8, label="dbl"), doubled)
+    # Capacity: a second active person on a one-person slot.
+    assign(db, slots["full"], make_person(db, "SA Second Filler", u1))
+    db.commit()
+
+    _v, rules = get_phase_one_rules(db)
+    rules.duty_rules_by_key["MAIN_1ST_24HR"].excluded_units = [str(u2.id)]  # u1 allowed; harmless
+    result = check_month(db, MONTH)
+    assert codes_for(result, slots["second"]) == set()
+    assert codes_for(result, slots["unposted"]) == set()
+    assert codes_for(result, slots["inactive"]) == set()
+    assert codes_for(result, slots["leave"]) == {"leave"}
+    assert "post_24hr_rest" in codes_for(result, slots["rest"])
+    assert "same_day_duty" in codes_for(result, slots["double"])
+    assert "slot_full" in codes_for(result, slots["full"])
+    assert codes_for(result, slots["manual"]) == {"call_level_mismatch", "not_in_unit"}
+    assert result["superadmin_exempt"] == 7
+
+    # The duty's unit rules are waived too.
+    rules.duty_rules_by_key["MAIN_1ST_24HR"].excluded_units = [str(u1.id)]
+    strict = check_month(db, MONTH, rules=rules)
+    assert codes_for(strict, slots["second"]) == set()
+    assert "unit_rule" in codes_for(strict, slots["manual"])
+
+
+def test_cli_prints_superadmin_exempt_count():
+    cli = load_cli()
+    result = {"month": MONTH, "checked": 1, "checks": [], "violations": [], "ok": True,
+              "unposted_exempt": 0, "superadmin_exempt": 2}
+    assert "2 superadmin allocation(s) were exempt" in cli.render(result)
 
 
 def test_check_is_read_only(world):

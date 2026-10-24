@@ -1,0 +1,42 @@
+{
+  "recorded_at_utc": "2026-10-24T09:30:07.925504+00:00",
+  "scope": "Static source preservation only; no runtime certification or acceptance decision.",
+  "manifest": "tmp/profile-dates-before/manifest.json",
+  "manifest_sha256": "a771a209e9ead10840516c217142c6e62e3035215f161c7f4d93e11cd35f6ab4",
+  "isolated_patch_sha256": "7839baa0710dd673dd18bbde4e940622c9ad6b52b1e3d112646bcb8e9f1b9b8c",
+  "files": [
+    {
+      "source": "frontend/src/member-workspace.ts",
+      "before_sha256": "f8d3fd385b0cfe01af3c9205b97fddb9029531f8c01df7e3a1476e48b4bd0fa0",
+      "current_sha256": "4cd1fe34531f6471fb35266b39e7cfac11b64060c2eb598d04c5e6d33d58d8c6",
+      "before_bytes": 86543,
+      "current_bytes": 91267
+    },
+    {
+      "source": "frontend/src/premium-theme.css",
+      "before_sha256": "1bc9a00703846ecfedfe93e205765f7a27d2e5d7511978a0938002e6da903e4e",
+      "current_sha256": "c7eb4a8a412de17077ecca014fa907a7d87b637c64d1b987424728befa130fb6",
+      "before_bytes": 48344,
+      "current_bytes": 49148
+    }
+  ],
+  "checks": {
+    "member-workspace.ts:original_bytes_match_manifest": true,
+    "member-workspace.ts:current_bytes_match_held_snapshot": true,
+    "premium-theme.css:original_bytes_match_manifest": true,
+    "premium-theme.css:current_bytes_match_held_snapshot": true,
+    "whole_diff_matches_recorded_isolated_patch": true,
+    "editing_branch_exact_text": true,
+    "generic_row_formatter_exact_text": true,
+    "member_header_exact_text": true,
+    "overview_exact_text": true,
+    "css_existing_prefix_exact_bytes": true
+  },
+  "passed": true,
+  "limitations": [
+    "Only the two declared frontend files are compared.",
+    "Whole-diff agreement proves the recorded bounded diff, not semantic correctness.",
+    "The original header and overview retain their prior nullable-effective-call fallback.",
+    "No test, build, backend, API, persistence, native assistive technology or physical-device execution occurs."
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "recorded_at_utc": "2026-10-24T09:30:07.925504+00:00",
+  "completion_claim": false,
+  "scope": "Read-only dated call timeline and date-aware posting/leave cards with unchanged record edits.",
+  "source_sha256": {
+    "frontend/src/member-workspace.ts": "4cd1fe34531f6471fb35266b39e7cfac11b64060c2eb598d04c5e6d33d58d8c6",
+    "frontend/src/record-workspace.ts": "aff5fa264638bad4448e8e0c42434e6245b4dbe55b970e0b026a05d2631b9bec",
+    "frontend/src/ui.ts": "88579ed75c8c72e4fd4e2d98508a58c42b925202362589a2469623664c2a975f",
+    "frontend/src/audit-time.ts": "136542cb2daec343417532d372f2e8ce01a0e6103ef6c62a7a4a8017ac8a6d15",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "c7eb4a8a412de17077ecca014fa907a7d87b637c64d1b987424728befa130fb6",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/workspace-load-state.ts": "cdd0e323d7e83e6e668a381bbfcc37cad4726b1193ac5de31d5f14e03eecd9c6"
+  },
+  "test_sha256": "f140d5c0299cf56ad589f4c312434c49bd5364af5d1471d7d1f6d344e25b1d35",
+  "checks": {
+    "new_date_card_contexts": 7,
+    "posting_fixtures_per_context": 6,
+    "leave_fixtures_per_context": 6,
+    "date_display_regression_contexts": 18,
+    "indexed_validation_workflows": 6,
+    "cancel_target_workflows": 6,
+    "legacy_field_workflows": 6,
+    "member_profile_reference_record_workflows": 18,
+    "production_ram_profile_save_readback_contexts": 6,
+    "tab_keyboard_regression_contexts": 6,
+    "tab_count_role_workflows": 12,
+    "all_browser_contexts_and_workflows": 85,
+    "unit_tests_passed": 110,
+    "held_build_passed": true,
+    "new_fixture_operational_writes": 0
+  },
+  "changes": [
+    "Sortcopiedschedulewrappersforreadtimeline;retainoriginaldraftorder/indicesandeditingbranch.",
+    "Showformattedvaliddates,future/recorded/invalid/missinglabels, server-returnedeffectivevalue andexplicitdevicecomparisondate.",
+    "Postingheadingsincludeunit/type;leaveapprovalstateisshownseparatelyfromdate-onlystate.Fullrangesanduniquerecordcontextdescriptionsretainexactedit/cancelIDs."
+  ],
+  "independent_review": {
+    "reviewer": "/root/profile_dates_semantics_review",
+    "method": "Read-onlybefore/currentpatch/APIsemantics/rawtest/sourcehashaudit; noauthoring/execution",
+    "outcome": "No blockingcontractissue;7currentcontexts/12recordspercase,exactnonfirstrecordGET/editor/focus,0writes/errors. Supports129atpresentation/editoridentityscope;128keepPartialuntillegacytransitioncoverage."
+  },
+  "root_review": [
+    "Readentireisolateddiffandstrictcalendarhelpers;originaleditingbranch/genericformatter/header/overviewexactpreservationproof10checks passed.",
+    "Inspected320timeline/1280leaveactualscreenshots; source/headerknownnullablefallbackrecordedseparately.",
+    "Readnew7contextassertionsandfreshproduction6case independentlypersistedGET/reopen/concurrencyresults;otherregressionsscopedbytheiractualfixture."
+  ],
+  "evidence": [
+    "docs/premium-ui/qa-profile-date-cards.json",
+    "docs/premium-ui/qa-profile-persistence/report.json",
+    "docs/premium-ui/qa-date-display.json",
+    "docs/premium-ui/reviews/member-validation-indexed-current.json",
+    "docs/premium-ui/qa-profile-cancel-identity.json",
+    "docs/premium-ui/qa-legacy-profile-fields.json",
+    "docs/premium-ui/member-actions-results.json",
+    "docs/premium-ui/qa-profile-tabs-complete.json",
+    "docs/premium-ui/qa-profile-tab-status.json",
+    "docs/premium-ui/reviews/profile-date-source-preservation.json",
+    "tmp/premium-profile-date-cards-development.log",
+    "tmp/premium-profile-date-cards-persistence-regression.log",
+    "tmp/premium-profile-date-cards-actions-regression.log",
+    "tmp/premium-profile-date-cards-actions-old-read-control.log",
+    "tmp/premium-profile-date-cards-tabs-regression.log",
+    "tmp/premium-profile-date-cards-status-regression.log",
+    "tmp/premium-profile-date-cards-unit.log",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json",
+    "docs/premium-ui/screenshots/profile-dates/timeline-320.png",
+    "docs/premium-ui/screenshots/profile-dates/leave-1280.png"
+  ],
+  "limitations": [
+    "New7contexts=3engines320/1280plusChromium320CSSrootfont200%,AsiaKolkatafixedclock24Oct2026. Noactualbrowserzoom/nativeAT/physical/fullthemecrossproductclaim. AllnewAPIreadsfulfilledlocally; adminpresentationfixtureonly.",
+    "Realproduction-bundle6profilecases useactualAPIservices backedonlybydisposableSQLiteRAM; pendingrepeatguard, independentGET/reopen,revision409andbothcomparisonchoices/linkedrecordpreservation verified. Notallroles/profilecontrolsorproductionconcurrency.",
+    "Read-onlytimelineusesvalidatedlocalcalendarposition withvisibledevicecomparisondate; itdoesnotderivehistoricalassignment/effectivelevelorbackendpolicy. Legacyexplicitfrom/to/scheduledtransitionsnotnewlycovered, so128remainspartial.",
+    "Preexistingheader/overviewuseeffective_call_level||basefallback;explicitnullcanthereforedifferfromnewhonesttimelineUnassignedparagraph. Header122/133needsseparatefix/coverage;thisbatchpreservedthosebytesandmakesnobroaderidentityclaim.",
+    "Genericdetailfields retained, includingzero/false/emptynotes; originaledit/save/actionhandlersunchanged. Oldmember-actionread-modeinputassertion revisedtotimeline+enter-editexactrawinput afterintentionalpresentationchange; firstfailedlogretained.",
+    "No backend/API/permission/scheduling/persisted/exportcontractchangesbythisbatch. No commit/push/deploy."
+  ]
+}

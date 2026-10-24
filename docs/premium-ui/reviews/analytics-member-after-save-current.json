@@ -1,0 +1,34 @@
+{
+  "recorded_at_utc": "2026-10-22T09:34:51.728033+00:00",
+  "status": "reproduced_requires_frontend_fix",
+  "scope": "ActualChromium320analytics?canonicalmember;allPUTintercepted,noDBwrites",
+  "test": "frontend/tests/premium-member-save-independent.browser.mjs:47",
+  "steps": [
+    "AnalyticsPersonnel openContextPerson30",
+    "Editname/status/call/designation,503save retainsdraft",
+    "RetryPUTmocksuccess,Closeprofile",
+    "ActivateexistinganalyticsPerson30link"
+  ],
+  "observed": {
+    "url": "#view=analysis",
+    "visible_name_controls": 16,
+    "profile_dialogs": 0,
+    "profile_GET_count": 1
+  },
+  "cause": "Successfulmutation notifyDataChange invalidates analysis=null while existing analyticsDOM retained; openAnalysisPersonModal uses analysis?.people toresolve clickedname andreturnswithouttarget.",
+  "source_sha256": {
+    "frontend/src/main.ts": "ebb675e071cfa7df8f1ea0821b2e6a5054bbc214e24cf5e30b4d1a6ff08062f6",
+    "frontend/src/member-workspace.ts": "435634629297141da1f95850471d16026096168e2c0e5280f2e2f2ba3fc10f3b"
+  },
+  "remaining": "Sourcehashfreeze andsixenginewidthrerun aftercoordinatorfix;currenttestsnotfullpass",
+  "followup": {
+    "recorded_at_utc": "2026-10-22T09:38:34.114136+00:00",
+    "status": "coordinatorfixverified_six_bounded_extended_workflows",
+    "report": "docs/premium-ui/qa-member-save-independent.json",
+    "observed": "ExacttargetGETaftertwo save/close/reopen cycles viaoriginalanalyticalDOMbutton;updatedsavedname/status/call/positionandimmutableboundary retained.",
+    "source_sha256": {
+      "src/main.ts": "4e1e9d4effaea1c7b353ee1c27e11e752013a38561d195e198c2d968e7b248ba",
+      "src/member-workspace.ts": "435634629297141da1f95850471d16026096168e2c0e5280f2e2f2ba3fc10f3b"
+    }
+  }
+}

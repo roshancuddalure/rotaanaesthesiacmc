@@ -232,3 +232,23 @@ def test_rota_assignment_api_assigns_and_clears_slot() -> None:
         )
         assert clear_response.status_code == 200
         assert clear_response.json()["status"] == "cleared"
+
+
+def test_manual_assignment_reuses_cancelled_row_for_same_person() -> None:
+    """One row per (slot, person): a cancelled row (e.g. replaced by a superadmin allocation)
+    is reactivated instead of inserting a duplicate."""
+    engine = create_engine("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(engine)
+
+    with Session(engine) as session:
+        _unit, _blocked, available, slot = seed_manual_assignment_context(session)
+        old = DutyAssignment(duty_slot=slot, person=available, status="cancelled", source="manual")
+        session.add(old)
+        session.commit()
+
+        result = assign_person_to_slot(session, slot_id=slot.id, person_id=available.id)
+
+        assert result["status"] == "assigned"
+        assert result["assignment"]["id"] == str(old.id)
+        assert session.query(DutyAssignment).count() == 1
+        assert session.get(DutyAssignment, old.id).status == "assigned"

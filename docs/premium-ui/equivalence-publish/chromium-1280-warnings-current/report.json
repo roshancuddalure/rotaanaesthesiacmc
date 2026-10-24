@@ -1,0 +1,942 @@
+{
+  "label": "current",
+  "initial": {
+    "storage": "disposable-sqlite-memory",
+    "periods": [
+      [
+        "May 2026",
+        "draft"
+      ]
+    ],
+    "approvals": [],
+    "checklist": {
+      "month": "2026-05",
+      "rota_period": {
+        "id": "b294faa2-9d5c-4b91-9cb2-f0ccc3fb9004",
+        "name": "May 2026",
+        "starts_on": "2026-05-01",
+        "ends_on": "2026-05-31",
+        "status": "draft"
+      },
+      "rule_version": {
+        "id": "1e259384-7f40-44b4-9e65-f1767fd68250",
+        "name": "Rota generator default rules"
+      },
+      "summary": {
+        "total_slots": 2,
+        "assigned_slots": 2,
+        "open_slots": 0,
+        "review_items": 0,
+        "hard_blocked_items": 0,
+        "accepted_review_items": 0,
+        "unresolved_warning_items": 0,
+        "override_assignments": 0,
+        "extra_duty_records": 0,
+        "extra_duty_exception_items": 0,
+        "exchange_requests": 0,
+        "pending_exchange_requests": 0,
+        "fairness_call_levels": 1,
+        "over_assigned_people": 0,
+        "under_assigned_people": 0,
+        "over_limit_members": 1,
+        "superadmin_allocations": 0,
+        "call_level_mismatch_items": 0,
+        "superadmin_cross_level_items": 0
+      },
+      "can_publish": true,
+      "can_superadmin_override": false,
+      "requires_warning_confirmation": true,
+      "checks": [
+        {
+          "status": "clear",
+          "title": "Monthly unit scope",
+          "detail": "Monthly unit scope is locked."
+        },
+        {
+          "status": "clear",
+          "title": "Generated slots",
+          "detail": "2 slot(s) generated."
+        },
+        {
+          "status": "clear",
+          "title": "Open slots",
+          "detail": "All generated slots have assignments."
+        },
+        {
+          "status": "clear",
+          "title": "Hard safety blockers",
+          "detail": "No hard-blocked review items remain."
+        },
+        {
+          "status": "clear",
+          "title": "Exchange requests",
+          "detail": "No pending exchange approvals remain."
+        },
+        {
+          "status": "clear",
+          "title": "Call level mismatches",
+          "detail": "Every duty is held at its call level."
+        }
+      ],
+      "blockers": [],
+      "warnings": [
+        {
+          "status": "warning",
+          "title": "Members over their individual limit",
+          "detail": "1 member(s) above an individual duty limit: Assigned Member (24-hour 2/1)"
+        },
+        {
+          "status": "warning",
+          "title": "Duty totals uneven within a call level",
+          "detail": "1st call: 0 to 2 duties (gap 2, allowed 1, target 0.67) - Totals are uneven without a leave or extra-duty reason: rest after 24-hour duties, other blocks or manual changes. Re-run auto-fill or review the members below the target.. Run Balance duties on Rota Template."
+        }
+      ],
+      "over_limit_people": [
+        {
+          "person_id": "222cd034-7709-47b5-a36f-c7c6240e5305",
+          "person_name": "Assigned Member",
+          "call_level": "1ST_CALL",
+          "home_unit_name": "Unit I",
+          "month_duties": 2,
+          "month_24hr": 2,
+          "limits": [
+            {
+              "code": "monthly_24hr_limit",
+              "label": "24-hour",
+              "limit": 1,
+              "actual": 2
+            }
+          ]
+        }
+      ],
+      "superadmin_allocations": [],
+      "call_level_spread": [
+        {
+          "call_level": "1ST_CALL",
+          "label": "1st call",
+          "slots": 2,
+          "member_count": 3,
+          "target": 0.67,
+          "min": 0,
+          "max": 2,
+          "gap": 2,
+          "allowed_gap": 1,
+          "ok": false,
+          "explained": false,
+          "reason": "Totals are uneven without a leave or extra-duty reason: rest after 24-hour duties, other blocks or manual changes. Re-run auto-fill or review the members below the target.",
+          "reasons": [
+            {
+              "code": "uneven",
+              "message": "Totals are uneven without a leave or extra-duty reason: rest after 24-hour duties, other blocks or manual changes. Re-run auto-fill or review the members below the target."
+            }
+          ],
+          "members": [
+            {
+              "person_id": "8c2b63e2-7b37-40d4-bbe8-c2c2bc137ab8",
+              "name": "Cover One",
+              "duties": 0,
+              "extra_duties": 0,
+              "diff_from_target": -0.67,
+              "available_days": 31,
+              "leave_days": 0,
+              "posted_days": 31,
+              "unit_id": "047f3b30-3167-4753-bfe4-7b0d202e3d12",
+              "unit_open_slots": 0
+            },
+            {
+              "person_id": "2dd9ed14-945a-4e10-b622-d5afc35dbfb2",
+              "name": "Cover Two",
+              "duties": 0,
+              "extra_duties": 0,
+              "diff_from_target": -0.67,
+              "available_days": 31,
+              "leave_days": 0,
+              "posted_days": 31,
+              "unit_id": "047f3b30-3167-4753-bfe4-7b0d202e3d12",
+              "unit_open_slots": 0
+            },
+            {
+              "person_id": "222cd034-7709-47b5-a36f-c7c6240e5305",
+              "name": "Assigned Member",
+              "duties": 2,
+              "extra_duties": 0,
+              "diff_from_target": 1.33,
+              "available_days": 31,
+              "leave_days": 0,
+              "posted_days": 31,
+              "unit_id": "047f3b30-3167-4753-bfe4-7b0d202e3d12",
+              "unit_open_slots": 0
+            }
+          ]
+        }
+      ],
+      "latest_publish": null
+    }
+  },
+  "saved": {
+    "storage": "disposable-sqlite-memory",
+    "periods": [
+      [
+        "May 2026",
+        "published"
+      ]
+    ],
+    "approvals": [
+      {
+        "status": "published",
+        "confirmed_warnings": true,
+        "approval_note": "Synthetic board reviewed May 2026.",
+        "approved_by_user_id": "d6fde736-af6d-46f4-a0cb-9746010c4275",
+        "summary": {
+          "checklist": {
+            "month": "2026-05",
+            "rota_period": {
+              "id": "b294faa2-9d5c-4b91-9cb2-f0ccc3fb9004",
+              "name": "May 2026",
+              "starts_on": "2026-05-01",
+              "ends_on": "2026-05-31",
+              "status": "draft"
+            },
+            "rule_version": {
+              "id": "1e259384-7f40-44b4-9e65-f1767fd68250",
+              "name": "Rota generator default rules"
+            },
+            "summary": {
+              "total_slots": 2,
+              "assigned_slots": 2,
+              "open_slots": 0,
+              "review_items": 0,
+              "hard_blocked_items": 0,
+              "accepted_review_items": 0,
+              "unresolved_warning_items": 0,
+              "override_assignments": 0,
+              "extra_duty_records": 0,
+              "extra_duty_exception_items": 0,
+              "exchange_requests": 0,
+              "pending_exchange_requests": 0,
+              "fairness_call_levels": 1,
+              "over_assigned_people": 0,
+              "under_assigned_people": 0,
+              "over_limit_members": 1,
+              "superadmin_allocations": 0,
+              "call_level_mismatch_items": 0,
+              "superadmin_cross_level_items": 0
+            },
+            "can_publish": true,
+            "can_superadmin_override": false,
+            "requires_warning_confirmation": true,
+            "checks": [
+              {
+                "status": "clear",
+                "title": "Monthly unit scope",
+                "detail": "Monthly unit scope is locked."
+              },
+              {
+                "status": "clear",
+                "title": "Generated slots",
+                "detail": "2 slot(s) generated."
+              },
+              {
+                "status": "clear",
+                "title": "Open slots",
+                "detail": "All generated slots have assignments."
+              },
+              {
+                "status": "clear",
+                "title": "Hard safety blockers",
+                "detail": "No hard-blocked review items remain."
+              },
+              {
+                "status": "clear",
+                "title": "Exchange requests",
+                "detail": "No pending exchange approvals remain."
+              },
+              {
+                "status": "clear",
+                "title": "Call level mismatches",
+                "detail": "Every duty is held at its call level."
+              }
+            ],
+            "blockers": [],
+            "warnings": [
+              {
+                "status": "warning",
+                "title": "Members over their individual limit",
+                "detail": "1 member(s) above an individual duty limit: Assigned Member (24-hour 2/1)"
+              },
+              {
+                "status": "warning",
+                "title": "Duty totals uneven within a call level",
+                "detail": "1st call: 0 to 2 duties (gap 2, allowed 1, target 0.67) - Totals are uneven without a leave or extra-duty reason: rest after 24-hour duties, other blocks or manual changes. Re-run auto-fill or review the members below the target.. Run Balance duties on Rota Template."
+              }
+            ],
+            "over_limit_people": [
+              {
+                "person_id": "222cd034-7709-47b5-a36f-c7c6240e5305",
+                "person_name": "Assigned Member",
+                "call_level": "1ST_CALL",
+                "home_unit_name": "Unit I",
+                "month_duties": 2,
+                "month_24hr": 2,
+                "limits": [
+                  {
+                    "code": "monthly_24hr_limit",
+                    "label": "24-hour",
+                    "limit": 1,
+                    "actual": 2
+                  }
+                ]
+              }
+            ],
+            "superadmin_allocations": [],
+            "call_level_spread": [
+              {
+                "call_level": "1ST_CALL",
+                "label": "1st call",
+                "slots": 2,
+                "member_count": 3,
+                "target": 0.67,
+                "min": 0,
+                "max": 2,
+                "gap": 2,
+                "allowed_gap": 1,
+                "ok": false,
+                "explained": false,
+                "reason": "Totals are uneven without a leave or extra-duty reason: rest after 24-hour duties, other blocks or manual changes. Re-run auto-fill or review the members below the target.",
+                "reasons": [
+                  {
+                    "code": "uneven",
+                    "message": "Totals are uneven without a leave or extra-duty reason: rest after 24-hour duties, other blocks or manual changes. Re-run auto-fill or review the members below the target."
+                  }
+                ],
+                "members": [
+                  {
+                    "person_id": "8c2b63e2-7b37-40d4-bbe8-c2c2bc137ab8",
+                    "name": "Cover One",
+                    "duties": 0,
+                    "extra_duties": 0,
+                    "diff_from_target": -0.67,
+                    "available_days": 31,
+                    "leave_days": 0,
+                    "posted_days": 31,
+                    "unit_id": "047f3b30-3167-4753-bfe4-7b0d202e3d12",
+                    "unit_open_slots": 0
+                  },
+                  {
+                    "person_id": "2dd9ed14-945a-4e10-b622-d5afc35dbfb2",
+                    "name": "Cover Two",
+                    "duties": 0,
+                    "extra_duties": 0,
+                    "diff_from_target": -0.67,
+                    "available_days": 31,
+                    "leave_days": 0,
+                    "posted_days": 31,
+                    "unit_id": "047f3b30-3167-4753-bfe4-7b0d202e3d12",
+                    "unit_open_slots": 0
+                  },
+                  {
+                    "person_id": "222cd034-7709-47b5-a36f-c7c6240e5305",
+                    "name": "Assigned Member",
+                    "duties": 2,
+                    "extra_duties": 0,
+                    "diff_from_target": 1.33,
+                    "available_days": 31,
+                    "leave_days": 0,
+                    "posted_days": 31,
+                    "unit_id": "047f3b30-3167-4753-bfe4-7b0d202e3d12",
+                    "unit_open_slots": 0
+                  }
+                ]
+              }
+            ],
+            "latest_publish": null
+          },
+          "approved_by": "Synthetic board reviewer",
+          "approved_by_user_id": "d6fde736-af6d-46f4-a0cb-9746010c4275"
+        }
+      }
+    ],
+    "checklist": {
+      "month": "2026-05",
+      "rota_period": {
+        "id": "b294faa2-9d5c-4b91-9cb2-f0ccc3fb9004",
+        "name": "May 2026",
+        "starts_on": "2026-05-01",
+        "ends_on": "2026-05-31",
+        "status": "published"
+      },
+      "rule_version": {
+        "id": "1e259384-7f40-44b4-9e65-f1767fd68250",
+        "name": "Rota generator default rules"
+      },
+      "summary": {
+        "total_slots": 2,
+        "assigned_slots": 2,
+        "open_slots": 0,
+        "review_items": 0,
+        "hard_blocked_items": 0,
+        "accepted_review_items": 0,
+        "unresolved_warning_items": 0,
+        "override_assignments": 0,
+        "extra_duty_records": 0,
+        "extra_duty_exception_items": 0,
+        "exchange_requests": 0,
+        "pending_exchange_requests": 0,
+        "fairness_call_levels": 1,
+        "over_assigned_people": 0,
+        "under_assigned_people": 0,
+        "over_limit_members": 1,
+        "superadmin_allocations": 0,
+        "call_level_mismatch_items": 0,
+        "superadmin_cross_level_items": 0
+      },
+      "can_publish": true,
+      "can_superadmin_override": false,
+      "requires_warning_confirmation": true,
+      "checks": [
+        {
+          "status": "clear",
+          "title": "Monthly unit scope",
+          "detail": "Monthly unit scope is locked."
+        },
+        {
+          "status": "clear",
+          "title": "Generated slots",
+          "detail": "2 slot(s) generated."
+        },
+        {
+          "status": "clear",
+          "title": "Open slots",
+          "detail": "All generated slots have assignments."
+        },
+        {
+          "status": "clear",
+          "title": "Hard safety blockers",
+          "detail": "No hard-blocked review items remain."
+        },
+        {
+          "status": "clear",
+          "title": "Exchange requests",
+          "detail": "No pending exchange approvals remain."
+        },
+        {
+          "status": "clear",
+          "title": "Call level mismatches",
+          "detail": "Every duty is held at its call level."
+        }
+      ],
+      "blockers": [],
+      "warnings": [
+        {
+          "status": "warning",
+          "title": "Members over their individual limit",
+          "detail": "1 member(s) above an individual duty limit: Assigned Member (24-hour 2/1)"
+        },
+        {
+          "status": "warning",
+          "title": "Duty totals uneven within a call level",
+          "detail": "1st call: 0 to 2 duties (gap 2, allowed 1, target 0.67) - Totals are uneven without a leave or extra-duty reason: rest after 24-hour duties, other blocks or manual changes. Re-run auto-fill or review the members below the target.. Run Balance duties on Rota Template."
+        }
+      ],
+      "over_limit_people": [
+        {
+          "person_id": "222cd034-7709-47b5-a36f-c7c6240e5305",
+          "person_name": "Assigned Member",
+          "call_level": "1ST_CALL",
+          "home_unit_name": "Unit I",
+          "month_duties": 2,
+          "month_24hr": 2,
+          "limits": [
+            {
+              "code": "monthly_24hr_limit",
+              "label": "24-hour",
+              "limit": 1,
+              "actual": 2
+            }
+          ]
+        }
+      ],
+      "superadmin_allocations": [],
+      "call_level_spread": [
+        {
+          "call_level": "1ST_CALL",
+          "label": "1st call",
+          "slots": 2,
+          "member_count": 3,
+          "target": 0.67,
+          "min": 0,
+          "max": 2,
+          "gap": 2,
+          "allowed_gap": 1,
+          "ok": false,
+          "explained": false,
+          "reason": "Totals are uneven without a leave or extra-duty reason: rest after 24-hour duties, other blocks or manual changes. Re-run auto-fill or review the members below the target.",
+          "reasons": [
+            {
+              "code": "uneven",
+              "message": "Totals are uneven without a leave or extra-duty reason: rest after 24-hour duties, other blocks or manual changes. Re-run auto-fill or review the members below the target."
+            }
+          ],
+          "members": [
+            {
+              "person_id": "8c2b63e2-7b37-40d4-bbe8-c2c2bc137ab8",
+              "name": "Cover One",
+              "duties": 0,
+              "extra_duties": 0,
+              "diff_from_target": -0.67,
+              "available_days": 31,
+              "leave_days": 0,
+              "posted_days": 31,
+              "unit_id": "047f3b30-3167-4753-bfe4-7b0d202e3d12",
+              "unit_open_slots": 0
+            },
+            {
+              "person_id": "2dd9ed14-945a-4e10-b622-d5afc35dbfb2",
+              "name": "Cover Two",
+              "duties": 0,
+              "extra_duties": 0,
+              "diff_from_target": -0.67,
+              "available_days": 31,
+              "leave_days": 0,
+              "posted_days": 31,
+              "unit_id": "047f3b30-3167-4753-bfe4-7b0d202e3d12",
+              "unit_open_slots": 0
+            },
+            {
+              "person_id": "222cd034-7709-47b5-a36f-c7c6240e5305",
+              "name": "Assigned Member",
+              "duties": 2,
+              "extra_duties": 0,
+              "diff_from_target": 1.33,
+              "available_days": 31,
+              "leave_days": 0,
+              "posted_days": 31,
+              "unit_id": "047f3b30-3167-4753-bfe4-7b0d202e3d12",
+              "unit_open_slots": 0
+            }
+          ]
+        }
+      ],
+      "latest_publish": {
+        "rota_period_id": "b294faa2-9d5c-4b91-9cb2-f0ccc3fb9004",
+        "approved_by": "Synthetic board reviewer",
+        "status": "published",
+        "confirmed_warnings": true,
+        "approval_note": "Synthetic board reviewed May 2026.",
+        "summary": {
+          "checklist": {
+            "month": "2026-05",
+            "rota_period": {
+              "id": "b294faa2-9d5c-4b91-9cb2-f0ccc3fb9004",
+              "name": "May 2026",
+              "starts_on": "2026-05-01",
+              "ends_on": "2026-05-31",
+              "status": "draft"
+            },
+            "rule_version": {
+              "id": "1e259384-7f40-44b4-9e65-f1767fd68250",
+              "name": "Rota generator default rules"
+            },
+            "summary": {
+              "total_slots": 2,
+              "assigned_slots": 2,
+              "open_slots": 0,
+              "review_items": 0,
+              "hard_blocked_items": 0,
+              "accepted_review_items": 0,
+              "unresolved_warning_items": 0,
+              "override_assignments": 0,
+              "extra_duty_records": 0,
+              "extra_duty_exception_items": 0,
+              "exchange_requests": 0,
+              "pending_exchange_requests": 0,
+              "fairness_call_levels": 1,
+              "over_assigned_people": 0,
+              "under_assigned_people": 0,
+              "over_limit_members": 1,
+              "superadmin_allocations": 0,
+              "call_level_mismatch_items": 0,
+              "superadmin_cross_level_items": 0
+            },
+            "can_publish": true,
+            "can_superadmin_override": false,
+            "requires_warning_confirmation": true,
+            "checks": [
+              {
+                "status": "clear",
+                "title": "Monthly unit scope",
+                "detail": "Monthly unit scope is locked."
+              },
+              {
+                "status": "clear",
+                "title": "Generated slots",
+                "detail": "2 slot(s) generated."
+              },
+              {
+                "status": "clear",
+                "title": "Open slots",
+                "detail": "All generated slots have assignments."
+              },
+              {
+                "status": "clear",
+                "title": "Hard safety blockers",
+                "detail": "No hard-blocked review items remain."
+              },
+              {
+                "status": "clear",
+                "title": "Exchange requests",
+                "detail": "No pending exchange approvals remain."
+              },
+              {
+                "status": "clear",
+                "title": "Call level mismatches",
+                "detail": "Every duty is held at its call level."
+              }
+            ],
+            "blockers": [],
+            "warnings": [
+              {
+                "status": "warning",
+                "title": "Members over their individual limit",
+                "detail": "1 member(s) above an individual duty limit: Assigned Member (24-hour 2/1)"
+              },
+              {
+                "status": "warning",
+                "title": "Duty totals uneven within a call level",
+                "detail": "1st call: 0 to 2 duties (gap 2, allowed 1, target 0.67) - Totals are uneven without a leave or extra-duty reason: rest after 24-hour duties, other blocks or manual changes. Re-run auto-fill or review the members below the target.. Run Balance duties on Rota Template."
+              }
+            ],
+            "over_limit_people": [
+              {
+                "person_id": "222cd034-7709-47b5-a36f-c7c6240e5305",
+                "person_name": "Assigned Member",
+                "call_level": "1ST_CALL",
+                "home_unit_name": "Unit I",
+                "month_duties": 2,
+                "month_24hr": 2,
+                "limits": [
+                  {
+                    "code": "monthly_24hr_limit",
+                    "label": "24-hour",
+                    "limit": 1,
+                    "actual": 2
+                  }
+                ]
+              }
+            ],
+            "superadmin_allocations": [],
+            "call_level_spread": [
+              {
+                "call_level": "1ST_CALL",
+                "label": "1st call",
+                "slots": 2,
+                "member_count": 3,
+                "target": 0.67,
+                "min": 0,
+                "max": 2,
+                "gap": 2,
+                "allowed_gap": 1,
+                "ok": false,
+                "explained": false,
+                "reason": "Totals are uneven without a leave or extra-duty reason: rest after 24-hour duties, other blocks or manual changes. Re-run auto-fill or review the members below the target.",
+                "reasons": [
+                  {
+                    "code": "uneven",
+                    "message": "Totals are uneven without a leave or extra-duty reason: rest after 24-hour duties, other blocks or manual changes. Re-run auto-fill or review the members below the target."
+                  }
+                ],
+                "members": [
+                  {
+                    "person_id": "8c2b63e2-7b37-40d4-bbe8-c2c2bc137ab8",
+                    "name": "Cover One",
+                    "duties": 0,
+                    "extra_duties": 0,
+                    "diff_from_target": -0.67,
+                    "available_days": 31,
+                    "leave_days": 0,
+                    "posted_days": 31,
+                    "unit_id": "047f3b30-3167-4753-bfe4-7b0d202e3d12",
+                    "unit_open_slots": 0
+                  },
+                  {
+                    "person_id": "2dd9ed14-945a-4e10-b622-d5afc35dbfb2",
+                    "name": "Cover Two",
+                    "duties": 0,
+                    "extra_duties": 0,
+                    "diff_from_target": -0.67,
+                    "available_days": 31,
+                    "leave_days": 0,
+                    "posted_days": 31,
+                    "unit_id": "047f3b30-3167-4753-bfe4-7b0d202e3d12",
+                    "unit_open_slots": 0
+                  },
+                  {
+                    "person_id": "222cd034-7709-47b5-a36f-c7c6240e5305",
+                    "name": "Assigned Member",
+                    "duties": 2,
+                    "extra_duties": 0,
+                    "diff_from_target": 1.33,
+                    "available_days": 31,
+                    "leave_days": 0,
+                    "posted_days": 31,
+                    "unit_id": "047f3b30-3167-4753-bfe4-7b0d202e3d12",
+                    "unit_open_slots": 0
+                  }
+                ]
+              }
+            ],
+            "latest_publish": null
+          },
+          "approved_by": "Synthetic board reviewer",
+          "approved_by_user_id": "d6fde736-af6d-46f4-a0cb-9746010c4275"
+        },
+        "published_with_override": false,
+        "override_reason": null,
+        "override_by": null
+      }
+    }
+  },
+  "rota_before": {
+    "storage": "disposable-sqlite-memory",
+    "slot_id_map": {
+      "90c39f60-b654-46b6-9f71-2eaf3f012bfc": [
+        "2026-05-02",
+        "MAIN_1ST_24HR",
+        "Unit I",
+        "1ST_CALL",
+        "UNIT_I:primary"
+      ],
+      "d6cf04e0-b8de-4712-9598-7ecf1f8bff74": [
+        "2026-05-09",
+        "MAIN_1ST_24HR",
+        "Unit I",
+        "1ST_CALL",
+        "UNIT_I:primary"
+      ]
+    },
+    "fixture_people": [
+      [
+        "222cd034-7709-47b5-a36f-c7c6240e5305",
+        "Assigned Member"
+      ],
+      [
+        "2dd9ed14-945a-4e10-b622-d5afc35dbfb2",
+        "Cover Two"
+      ],
+      [
+        "8c2b63e2-7b37-40d4-bbe8-c2c2bc137ab8",
+        "Cover One"
+      ]
+    ],
+    "fixture_units": [
+      [
+        "047f3b30-3167-4753-bfe4-7b0d202e3d12",
+        "Unit I"
+      ]
+    ],
+    "slots": [
+      {
+        "key": [
+          "2026-05-02",
+          "MAIN_1ST_24HR",
+          "Unit I",
+          "1ST_CALL",
+          "UNIT_I:primary"
+        ],
+        "starts_at": "2026-05-02T08:00:00",
+        "ends_at": "2026-05-03T08:00:00",
+        "is_24hr": true,
+        "max_assignees": 1,
+        "source": "phase4_template",
+        "template_status": "ready",
+        "template_reason": null,
+        "notes": null
+      },
+      {
+        "key": [
+          "2026-05-09",
+          "MAIN_1ST_24HR",
+          "Unit I",
+          "1ST_CALL",
+          "UNIT_I:primary"
+        ],
+        "starts_at": "2026-05-09T08:00:00",
+        "ends_at": "2026-05-10T08:00:00",
+        "is_24hr": true,
+        "max_assignees": 1,
+        "source": "phase4_template",
+        "template_status": "ready",
+        "template_reason": null,
+        "notes": null
+      }
+    ],
+    "assignments": [
+      {
+        "slot": [
+          "2026-05-02",
+          "MAIN_1ST_24HR",
+          "Unit I",
+          "1ST_CALL",
+          "UNIT_I:primary"
+        ],
+        "person": "Assigned Member",
+        "status": "assigned",
+        "source": "safe_auto_fill_draft",
+        "override_reason": null
+      },
+      {
+        "slot": [
+          "2026-05-09",
+          "MAIN_1ST_24HR",
+          "Unit I",
+          "1ST_CALL",
+          "UNIT_I:primary"
+        ],
+        "person": "Assigned Member",
+        "status": "assigned",
+        "source": "safe_auto_fill_draft",
+        "override_reason": null
+      }
+    ]
+  },
+  "rota_after": {
+    "storage": "disposable-sqlite-memory",
+    "slot_id_map": {
+      "90c39f60-b654-46b6-9f71-2eaf3f012bfc": [
+        "2026-05-02",
+        "MAIN_1ST_24HR",
+        "Unit I",
+        "1ST_CALL",
+        "UNIT_I:primary"
+      ],
+      "d6cf04e0-b8de-4712-9598-7ecf1f8bff74": [
+        "2026-05-09",
+        "MAIN_1ST_24HR",
+        "Unit I",
+        "1ST_CALL",
+        "UNIT_I:primary"
+      ]
+    },
+    "fixture_people": [
+      [
+        "222cd034-7709-47b5-a36f-c7c6240e5305",
+        "Assigned Member"
+      ],
+      [
+        "2dd9ed14-945a-4e10-b622-d5afc35dbfb2",
+        "Cover Two"
+      ],
+      [
+        "8c2b63e2-7b37-40d4-bbe8-c2c2bc137ab8",
+        "Cover One"
+      ]
+    ],
+    "fixture_units": [
+      [
+        "047f3b30-3167-4753-bfe4-7b0d202e3d12",
+        "Unit I"
+      ]
+    ],
+    "slots": [
+      {
+        "key": [
+          "2026-05-02",
+          "MAIN_1ST_24HR",
+          "Unit I",
+          "1ST_CALL",
+          "UNIT_I:primary"
+        ],
+        "starts_at": "2026-05-02T08:00:00",
+        "ends_at": "2026-05-03T08:00:00",
+        "is_24hr": true,
+        "max_assignees": 1,
+        "source": "phase4_template",
+        "template_status": "ready",
+        "template_reason": null,
+        "notes": null
+      },
+      {
+        "key": [
+          "2026-05-09",
+          "MAIN_1ST_24HR",
+          "Unit I",
+          "1ST_CALL",
+          "UNIT_I:primary"
+        ],
+        "starts_at": "2026-05-09T08:00:00",
+        "ends_at": "2026-05-10T08:00:00",
+        "is_24hr": true,
+        "max_assignees": 1,
+        "source": "phase4_template",
+        "template_status": "ready",
+        "template_reason": null,
+        "notes": null
+      }
+    ],
+    "assignments": [
+      {
+        "slot": [
+          "2026-05-02",
+          "MAIN_1ST_24HR",
+          "Unit I",
+          "1ST_CALL",
+          "UNIT_I:primary"
+        ],
+        "person": "Assigned Member",
+        "status": "assigned",
+        "source": "safe_auto_fill_draft",
+        "override_reason": null
+      },
+      {
+        "slot": [
+          "2026-05-09",
+          "MAIN_1ST_24HR",
+          "Unit I",
+          "1ST_CALL",
+          "UNIT_I:primary"
+        ],
+        "person": "Assigned Member",
+        "status": "assigned",
+        "source": "safe_auto_fill_draft",
+        "override_reason": null
+      }
+    ]
+  },
+  "approval_instants": [
+    "2026-10-23T17:34:42.271956"
+  ],
+  "requests": [
+    {
+      "method": "POST",
+      "path": "/api/v1/rota-publish/publish",
+      "query": "month=2026-05",
+      "status": 409,
+      "payload": {
+        "format": "json",
+        "value": {
+          "confirm_warnings": false,
+          "approval_note": "Synthetic board reviewed May 2026."
+        }
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rota-publish/publish",
+      "query": "month=2026-05",
+      "status": 200,
+      "payload": {
+        "format": "json",
+        "value": {
+          "confirm_warnings": true,
+          "approval_note": "Synthetic board reviewed May 2026."
+        }
+      }
+    }
+  ],
+  "errors": [],
+  "confirmations": [
+    "Publish May 2026 as final?",
+    "Publish May 2026 as final?",
+    "Publish May 2026 as final?"
+  ]
+}

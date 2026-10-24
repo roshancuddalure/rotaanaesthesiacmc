@@ -1,0 +1,86 @@
+{
+  "recorded_at_utc": "2026-10-22T17:58:52.272424+00:00",
+  "completion_claim": false,
+  "requirements": [
+    90,
+    92,
+    132,
+    208,
+    209,
+    219,
+    258
+  ],
+  "scope": "Four editor native validation acceptance and canonical member-profile monthly workload shortcuts using existing cached duty-date filters.",
+  "source_sha256": {
+    "frontend/src/record-workspace.ts": "aff5fa264638bad4448e8e0c42434e6245b4dbe55b970e0b026a05d2631b9bec",
+    "frontend/src/reference-workspace.ts": "93ba8a2d765f43f0fb220586393b3a1cdf6cb944d9fb1ebd26290028a450208e",
+    "frontend/src/form-validation.ts": "a6d6cfa746f502cf05e5f4f1e1acade1c7ca82b592a497d98b79661854783a93",
+    "frontend/src/member-workspace.ts": "de306e42702a496adb312b8c552c73541a6de15cfb4b895b03785c3e9dafe808",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "4f61aa58b92229b0854e528cb90664a7ef7fa2d11dc2a6d2e94b3b797187ac01"
+  },
+  "changes": [
+    "Added per-month Review duty records buttons beside existing monthly24hour aggregates. They set existing From/Until filters to UTC month boundaries and focus From.",
+    "Added Show all duty records to reset existing local filters and restore focus to From. Official aggregates, mixed published/draft rows and existing profile drafts remain unchanged.",
+    "Added native validation acceptance tests; no application client rules changed. Existing ongoing posting end-date omission remains allowed."
+  ],
+  "checks": {
+    "native_validation_contexts": 24,
+    "native_families": [
+      "leave",
+      "posting",
+      "mapping creation",
+      "unit creation"
+    ],
+    "native_assertions": "Required member/start/leave end/name/mapping source/destination and existing unit nonnegative/integer number validity; keyboard submission focuses invalid field and causes no API requests. Restored valid fields still require server422 review and preserve notes.",
+    "workload_contexts": 12,
+    "engines": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "widths": [
+      320,
+      1280
+    ],
+    "workload_roles": [
+      "admin fixture",
+      "view-only fixture"
+    ],
+    "workload_month_days": [
+      28,
+      29,
+      30,
+      31
+    ],
+    "workload_themes": "dark320/light1280",
+    "scoped_axe_checks": 12,
+    "tagged_axe_violations": 0,
+    "indexed_member_validation_and_conflict_regressions": 6,
+    "member_history_recovery_regressions": 12,
+    "unit_tests": 100,
+    "build_exit_code": 0,
+    "build_inputs_held": true,
+    "static_inventories": "Refreshed style/action sources match; not runtime button certification."
+  },
+  "evidence": [
+    "docs/premium-ui/qa-native-validation.json",
+    "docs/premium-ui/qa-profile-workload-links.json",
+    "docs/premium-ui/reviews/member-validation-indexed-current.json",
+    "docs/premium-ui/qa-member-history-retry.json",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+  ],
+  "tests": {
+    "frontend/tests/premium-native-validation.browser.mjs": "1e7b10b43960b592ead14b8abcc6de4704eb552f2c208f8d41c255f4e55a8828",
+    "frontend/tests/premium-profile-workload-links.browser.mjs": "6a41d3e1bd2ba2522c50f0ae3ce46be40ee59855eaeaf29ddb0c6ed58f6ebb35"
+  },
+  "limitations": [
+    "Root implementer verification, not fresh independent approval.",
+    "Native checks cover only declared four forms and fields; all-app client validation remains unproven. Business date-range and scheduling validation remain server authority.",
+    "Workload buttons filter all existing duty records for the month; official aggregates can use a different published/historical scope. Tests retain this distinction and do not claim row counts equal official totals.",
+    "View-only fixture checks UI gates, not backend authorization; all requests intercepted and no real operational writes.",
+    "No visual screenshot review or native AT/physical-device certification in this batch.12 scoped axe checks do not prove all assistive behavior.",
+    "Only frontend member-workspace presentation/navigation changed. No backend/API/permission/scheduling/persisted-data/export changes; concurrent work preserved.",
+    "Broad matrix/full same-fixture workflow/calculation/export equivalence and full260 acceptance remain open."
+  ]
+}

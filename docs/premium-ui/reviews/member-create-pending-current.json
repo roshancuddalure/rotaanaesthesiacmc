@@ -1,0 +1,64 @@
+{
+  "recorded_at_utc": "2026-10-24T01:27:21.191617+00:00",
+  "scope": "Frontend member-create pending ownership, repeat suppression, refusal recovery and late completion boundaries.",
+  "completion_claim": false,
+  "requirements": [
+    86,
+    87,
+    93,
+    225,
+    230,
+    241,
+    242,
+    243,
+    246
+  ],
+  "source_sha256": {
+    "frontend/src/main.ts": "1078a054ac37469f241f8063d9221ada08a69c8553950f119026e739991accc7",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "bbdf4ef4dc05d3850d94be50569177e850ab5bbac8376c20a1cadf13ead9162e",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+  },
+  "baseline": {
+    "duplicate_post_attempts": 2,
+    "server_mutations": 0,
+    "evidence": "docs/premium-ui/qa-member-create-pending/before.json"
+  },
+  "changes": [
+    "Pending operation guard survives actual DOM form replacement; native busy/disabled control and named unsaved-draft status.",
+    "Explicit retry restores original action after failure; unchanged real API body and independent saved-member read-back.",
+    "Late completion preserves current route; sign-out clears operation ownership and prevents stale completion UI."
+  ],
+  "checks": {
+    "pending_development_contexts": 12,
+    "pending_production_contexts": 12,
+    "creation_development_regression_contexts": 15,
+    "sort_contexts": 18,
+    "filter_light_dark_workflows": 6,
+    "unit_tests_passed": 104,
+    "build_passed": true,
+    "build_inputs_held": true
+  },
+  "evidence": [
+    "docs/premium-ui/qa-member-create-pending/report-development-before-conflicts.json",
+    "docs/premium-ui/qa-member-create-pending/report-production-before-conflicts.json",
+    "docs/premium-ui/qa-member-create-disclosure/report.json",
+    "docs/premium-ui/qa-member-create-pending/before.json",
+    "frontend/tests/premium-member-create-pending.browser.mjs",
+    "frontend/tests/premium-member-create-disclosure.browser.mjs",
+    "docs/premium-ui/qa-member-sort.json",
+    "docs/premium-ui/qa-member-filters.json",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json",
+    "tmp/premium-member-create-pending-unit.log"
+  ],
+  "limitations": [
+    "Current pending scenarios are fixture computer-admin, three engines and widths320/1280. Creation regression additionally covers390/768/769 on development. Historical creation production report predates this guard.",
+    "Client guard covers one current page/session operation; no cross-tab or reload idempotency, automatic mutation retry, server cancellation or rollback is claimed.",
+    "Native screen-reader announcement/focus behavior and physical devices remain pending; role=status markup is not proof of an actual announcement.",
+    "Every role, near-duplicate confirmation, full cross-account sign-in and production concurrency remain unassessed in this batch.",
+    "Two requested fresh specialist reviews failed at model capacity; no new independent sign-off claimed. Earlier multi-agent work is retained.",
+    "No backend/API/permission/scheduling/export-content edits by this batch. Concurrent backend changes remain separately present in the working tree.",
+    "Focused current gates do not refresh every historical integrated suite or certify all260 requirements."
+  ],
+  "snapshot_note": "Historical pre-conflict-fix source; original pending reports preserved under before-conflicts filenames. Current pending regression evidence is in member-create-conflicts-current.json."
+}

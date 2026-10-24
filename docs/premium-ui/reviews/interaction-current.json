@@ -1,0 +1,3001 @@
+{
+  "schema_version": 1,
+  "perspective": "interaction/outcome",
+  "reviewer": "action_contracts_generation",
+  "review_scope": "All 260 approved requirements reviewed from the interaction and outcome perspective. No application or backend edits. Evidence proves only its stated scope.",
+  "recorded_at_utc": "2026-10-21T14:29:39.489189+00:00",
+  "status_meanings": {
+    "verified_bounded": "Requirement-specific evidence inspected; stated limitations still apply.",
+    "partial": "Some evidence exists but full acceptance is unproven.",
+    "pending": "The required integrated result is not established.",
+    "dependency": "External verification remains pending as explicitly recorded."
+  },
+  "source_hashes": {
+    "docs/premium-ui/action-inventory.json": "3690385f235432b304062a170702c58b8f1b8e444c9b5aa7d4534c65bc6eba88",
+    "docs/premium-ui/admin-action-results.json": "853bc65d8b809ce12aed9d8b03ddf2053ef37cc1d635cb084d5518a7bb00d39e",
+    "docs/premium-ui/contracts/generation.json": "d2c7c8603adc6ed25eea8912688731f4899b9b50db072a6975f02a9e369e06e7",
+    "docs/premium-ui/design-system.md": "d5647ef0a3d880a2c03ac085d8ee2a0de0534def6d1560f59fa552269951b963",
+    "docs/premium-ui/qa-production-chunk-recovery.json": "8d9578936abc0ba315c49ebb1491c949828d59567183fc94a03c3c15057ecb0b",
+    "docs/premium-ui/qa-responsive/report.json": "bd90b547587f888cfe6636ffa9a22ba4ab7cf57317f6ef780a3b596527f2f77a",
+    "docs/premium-ui/verification-current.json": "dddd87b937c8415adbc1b711dc0e382ae6d44da0dfcd7cdf71596f1bef2752f9",
+    "docs/premium_frontend_upgrade_plan_2026-10-21.md": "03e15be7620d680cfd9385d91e584fa0c49e64a6b5c93505ac19cac008b63a7b",
+    "frontend/src/extra-duty.ts": "841f1aa1f8254f75073babdac0bdd27c275c889e26328d1fdb5e8f724b549e5d",
+    "frontend/src/frontend-runtime.ts": "45efce04e229e0bdcbc84de4c9570dd9c04877b2adb869269a6e40ff68b12a01",
+    "frontend/src/leave-approval.ts": "958c346f26bcd1e3c95ef7d361ab61aef354d224877b1c8dd7c763201e6547de",
+    "frontend/src/main.ts": "0bf6f480ecbcae14cbbb34f9acd95e169b3329beb460570499c0cbbcb2443ab0",
+    "frontend/src/member-workspace.ts": "0d4f0649aa8b7d20c24ec33a4b429b2d48c5f99e4948282bd34cadc5255e70aa",
+    "frontend/src/premium-theme.css": "70e500921dc2a5ba93a4ad736278d2c06e2b802ebe40164dd9b8de56f6801374",
+    "frontend/src/rota-compute.ts": "57e1a1e99b68c34018ca0d3e025c6fb999c24339a78036b427bd195f81f72fd2",
+    "frontend/src/rota-intelligence.ts": "20789db85cd70f6e52fe8a00a83d273d8a217d89a6cf9ff454e3e71d5fcda461",
+    "frontend/src/services/api.ts": "6c149bad83052b764112660cbb02d30815b630eaf01032488e5862426655d1f3",
+    "frontend/src/ui.ts": "96861522236cd0c901608ec9e53a4a5fade7c35c200572adc6ad05d3a5e02be6",
+    "frontend/tests/compute-conflict.browser.mjs": "061d8554323c47947f7234f5eae524c1617761b711888645db1e46a2e7b2ada1",
+    "frontend/tests/extra-duty.browser.mjs": "bc6634bcd5f2e4f3f1461fcb5c31658d092b930c9f75342e1be94155e79cb6c3",
+    "frontend/tests/premium-admin-actions.browser.mjs": "6573ce7edd558340fca7a83a089107a83813f4a3a86b790b13bae37ccbc47ea7",
+    "frontend/tests/premium-generation-actions.browser.mjs": "bfcddae85d61c40d230ba2d6107042dd83bfe25f7143053830f2a10a8659d582",
+    "frontend/tests/premium-member-actions.browser.mjs": "b266aad58f8dbe8c2de33d16914de2ff76f0cd5baa30a7fc3ce866104e2b8183",
+    "frontend/tests/premium-shell.browser.mjs": "ce4b8b7c8776918c7bf4f65cb4a8295a9d3ec79993b30429b53b0f42612ab2a4"
+  },
+  "items": [
+    {
+      "item_id": 1,
+      "requirement": "Inventory every frontend screen, modal, drawer, menu, rail, embedded report and role-dependent entry point before redesign.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "docs/premium-ui/action-inventory.json",
+        "docs/premium-ui/contracts/generation.json"
+      ],
+      "gap": "Inventory contains source controls but exact outcomes are incomplete; generation contract retains explicit unmapped main controls."
+    },
+    {
+      "item_id": 2,
+      "requirement": "Record the current source snapshot and concurrent changes so unrelated work remains intact throughout implementation.",
+      "status": "verified_bounded",
+      "interaction_finding": "Task boundary snapshot exists; this review makes no backend edits.",
+      "evidence": [
+        "docs/premium-ui/action-inventory.json",
+        "docs/premium-ui/contracts/generation.json"
+      ],
+      "gap": "Final root boundary hash comparison must match task-start baseline."
+    },
+    {
+      "item_id": 3,
+      "requirement": "Catalogue every button, link, submit control, tab and clickable card with a stable action identifier.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "docs/premium-ui/action-inventory.json",
+        "docs/premium-ui/contracts/generation.json"
+      ],
+      "gap": "Inventory contains source controls but exact outcomes are incomplete; generation contract retains explicit unmapped main controls."
+    },
+    {
+      "item_id": 4,
+      "requirement": "Record each action's role, selected month, target record and prerequisites in one searchable interaction register.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "docs/premium-ui/action-inventory.json",
+        "docs/premium-ui/contracts/generation.json"
+      ],
+      "gap": "Inventory contains source controls but exact outcomes are incomplete; generation contract retains explicit unmapped main controls."
+    },
+    {
+      "item_id": 5,
+      "requirement": "Define observable success outcomes for each action, including navigation, changed results, saved values or downloaded artifacts.",
+      "status": "partial",
+      "interaction_finding": "125 generation/compute/leave/extra/main control contracts record explicit UI and request/no-write outcomes.",
+      "evidence": [
+        "docs/premium-ui/action-inventory.json",
+        "docs/premium-ui/contracts/generation.json"
+      ],
+      "gap": "22 main controls still require direct outcomes; remaining domains need their own contract inventory."
+    },
+    {
+      "item_id": 6,
+      "requirement": "Identify controls that only appear functional, recording confirmed no-op behavior separately from untested or permission-blocked states.",
+      "status": "partial",
+      "interaction_finding": "Tests reject silent outcomes for covered controls and inventory explicitly labels untested controls.",
+      "evidence": [
+        "docs/premium-ui/action-inventory.json",
+        "docs/premium-ui/contracts/generation.json"
+      ],
+      "gap": "No blanket proof every enabled control has a verified action."
+    },
+    {
+      "item_id": 7,
+      "requirement": "Map every available action to its existing handler and API contract without inventing unsupported backend capabilities.",
+      "status": "partial",
+      "interaction_finding": "Generation contracts map existing endpoints and exact bodies, without backend changes.",
+      "evidence": [
+        "docs/premium-ui/action-inventory.json",
+        "docs/premium-ui/contracts/generation.json"
+      ],
+      "gap": "Finish remaining domain/control handler mapping."
+    },
+    {
+      "item_id": 8,
+      "requirement": "Capture baseline screenshots with settled fixtures/fonts, reduced animation and defined scroll positions across populated, empty and failed-request states.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "docs/premium-ui/action-inventory.json",
+        "docs/premium-ui/contracts/generation.json"
+      ],
+      "gap": "Inventory contains source controls but exact outcomes are incomplete; generation contract retains explicit unmapped main controls."
+    },
+    {
+      "item_id": 9,
+      "requirement": "Inventory existing design tokens, hard-coded colors, duplicate selectors and inline layout exceptions before consolidating styles.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "docs/premium-ui/action-inventory.json",
+        "docs/premium-ui/contracts/generation.json"
+      ],
+      "gap": "Inventory contains source controls but exact outcomes are incomplete; generation contract retains explicit unmapped main controls."
+    },
+    {
+      "item_id": 10,
+      "requirement": "Classify reusable surfaces into pages, panels, record cards, tables, editors, dialogs and contextual overlays.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "docs/premium-ui/action-inventory.json",
+        "docs/premium-ui/contracts/generation.json"
+      ],
+      "gap": "Inventory contains source controls but exact outcomes are incomplete; generation contract retains explicit unmapped main controls."
+    },
+    {
+      "item_id": 11,
+      "requirement": "Establish representative fixtures containing long names, missing values, large counts, mixed statuses and boundary dates.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "docs/premium-ui/action-inventory.json",
+        "docs/premium-ui/contracts/generation.json"
+      ],
+      "gap": "Inventory contains source controls but exact outcomes are incomplete; generation contract retains explicit unmapped main controls."
+    },
+    {
+      "item_id": 12,
+      "requirement": "Document current permission-dependent visibility for admins, department heads, board members and signed-out users.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "docs/premium-ui/action-inventory.json",
+        "docs/premium-ui/contracts/generation.json"
+      ],
+      "gap": "Inventory contains source controls but exact outcomes are incomplete; generation contract retains explicit unmapped main controls."
+    },
+    {
+      "item_id": 13,
+      "requirement": "Identify protected workflow invariants, including selected-month continuity, assignment preservation, reviewed imports and explicit publishing.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "docs/premium-ui/action-inventory.json",
+        "docs/premium-ui/contracts/generation.json"
+      ],
+      "gap": "Inventory contains source controls but exact outcomes are incomplete; generation contract retains explicit unmapped main controls."
+    },
+    {
+      "item_id": 14,
+      "requirement": "Record current bundle sizes, render timings, layout shifts and long tasks on documented test hardware.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "docs/premium-ui/action-inventory.json",
+        "docs/premium-ui/contracts/generation.json"
+      ],
+      "gap": "Inventory contains source controls but exact outcomes are incomplete; generation contract retains explicit unmapped main controls."
+    },
+    {
+      "item_id": 15,
+      "requirement": "Establish a defect register that separates verified bugs, design improvements, historical findings and open investigation questions.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "docs/premium-ui/action-inventory.json",
+        "docs/premium-ui/contracts/generation.json"
+      ],
+      "gap": "Inventory contains source controls but exact outcomes are incomplete; generation contract retains explicit unmapped main controls."
+    },
+    {
+      "item_id": 16,
+      "requirement": "Define accessible component states before implementation: default, hover, focus, selected, disabled, busy, error and success.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "docs/premium-ui/action-inventory.json",
+        "docs/premium-ui/contracts/generation.json"
+      ],
+      "gap": "Inventory contains source controls but exact outcomes are incomplete; generation contract retains explicit unmapped main controls."
+    },
+    {
+      "item_id": 17,
+      "requirement": "Map every existing browser suite to the screens, states and actions it actually verifies.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "docs/premium-ui/action-inventory.json",
+        "docs/premium-ui/contracts/generation.json"
+      ],
+      "gap": "Inventory contains source controls but exact outcomes are incomplete; generation contract retains explicit unmapped main controls."
+    },
+    {
+      "item_id": 18,
+      "requirement": "Define objective pass conditions and supporting evidence for every numbered upgrade before marking it complete.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "docs/premium-ui/action-inventory.json",
+        "docs/premium-ui/contracts/generation.json"
+      ],
+      "gap": "Inventory contains source controls but exact outcomes are incomplete; generation contract retains explicit unmapped main controls."
+    },
+    {
+      "item_id": 19,
+      "requirement": "Prioritize broken actions, inaccessible controls, hidden content and lost drafts ahead of purely decorative refinements.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "docs/premium-ui/action-inventory.json",
+        "docs/premium-ui/contracts/generation.json"
+      ],
+      "gap": "Inventory contains source controls but exact outcomes are incomplete; generation contract retains explicit unmapped main controls."
+    },
+    {
+      "item_id": 20,
+      "requirement": "Freeze the approved visual direction and workflow contracts before broad styling begins, documenting later scope changes explicitly.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "docs/premium-ui/action-inventory.json",
+        "docs/premium-ui/contracts/generation.json"
+      ],
+      "gap": "Inventory contains source controls but exact outcomes are incomplete; generation contract retains explicit unmapped main controls."
+    },
+    {
+      "item_id": 21,
+      "requirement": "Consolidate competing token definitions into one documented semantic system while preserving intentional component-specific variations.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/design-system.md"
+      ],
+      "gap": "Visual/source state needs final outcome regression: color/shape changes alone cannot prove button action continuity."
+    },
+    {
+      "item_id": 22,
+      "requirement": "Introduce a shared semantic-color map separating brand identity, interaction feedback, scheduling status, chart categories and destructive actions.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/design-system.md"
+      ],
+      "gap": "Visual/source state needs final outcome regression: color/shape changes alone cannot prove button action continuity."
+    },
+    {
+      "item_id": 23,
+      "requirement": "Apply royal navy consistently to navigation and workspace framing without darkening every content container.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/design-system.md"
+      ],
+      "gap": "Visual/source state needs final outcome regression: color/shape changes alone cannot prove button action continuity."
+    },
+    {
+      "item_id": 24,
+      "requirement": "Use violet for primary actions and active selection, with measured hover, pressed and focus variants.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/design-system.md"
+      ],
+      "gap": "Visual/source state needs final outcome regression: color/shape changes alone cannot prove button action continuity."
+    },
+    {
+      "item_id": 25,
+      "requirement": "Reserve champagne accents for identity details and separators, keeping warning indicators visually distinct from decoration.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/design-system.md"
+      ],
+      "gap": "Visual/source state needs final outcome regression: color/shape changes alone cannot prove button action continuity."
+    },
+    {
+      "item_id": 26,
+      "requirement": "Retain burgundy as a controlled accent and preserve unmistakable danger styling for destructive operations.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/design-system.md"
+      ],
+      "gap": "Visual/source state needs final outcome regression: color/shape changes alone cannot prove button action continuity."
+    },
+    {
+      "item_id": 27,
+      "requirement": "Define complete light and dark mappings for surfaces, borders, input fields, overlays and disabled states.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/design-system.md"
+      ],
+      "gap": "Visual/source state needs final outcome regression: color/shape changes alone cannot prove button action continuity."
+    },
+    {
+      "item_id": 28,
+      "requirement": "Measure actual state/theme pairings: 4.5:1 normal text, 3:1 large text and applicable essential non-text graphics.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/design-system.md"
+      ],
+      "gap": "Visual/source state needs final outcome regression: color/shape changes alone cannot prove button action continuity."
+    },
+    {
+      "item_id": 29,
+      "requirement": "Establish a clear typography scale for page titles, panel headings, field labels, body text and metadata.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/design-system.md"
+      ],
+      "gap": "Visual/source state needs final outcome regression: color/shape changes alone cannot prove button action continuity."
+    },
+    {
+      "item_id": 30,
+      "requirement": "Increase sustained-reading text where cramped typography currently makes operational guidance difficult to scan comfortably.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/design-system.md"
+      ],
+      "gap": "Visual/source state needs final outcome regression: color/shape changes alone cannot prove button action continuity."
+    },
+    {
+      "item_id": 31,
+      "requirement": "Use tabular numerals for workload totals, dates, percentages, capacity, runtime and comparison columns.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/design-system.md"
+      ],
+      "gap": "Visual/source state needs final outcome regression: color/shape changes alone cannot prove button action continuity."
+    },
+    {
+      "item_id": 32,
+      "requirement": "Standardize line heights and paragraph widths so explanations remain readable inside both wide panels and narrow dialogs.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/design-system.md"
+      ],
+      "gap": "Visual/source state needs final outcome regression: color/shape changes alone cannot prove button action continuity."
+    },
+    {
+      "item_id": 33,
+      "requirement": "Replace decorative uppercase paragraphs with sentence case while retaining short, purposeful section labels where useful.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/design-system.md"
+      ],
+      "gap": "Visual/source state needs final outcome regression: color/shape changes alone cannot prove button action continuity."
+    },
+    {
+      "item_id": 34,
+      "requirement": "Define consistent spacing tokens for page gutters, card padding, field groups, toolbars and stacked mobile actions.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/design-system.md"
+      ],
+      "gap": "Visual/source state needs final outcome regression: color/shape changes alone cannot prove button action continuity."
+    },
+    {
+      "item_id": 35,
+      "requirement": "Establish distinct radius tokens for fields, cards, dialogs and status chips instead of indiscriminate pill shapes.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/design-system.md"
+      ],
+      "gap": "Visual/source state needs final outcome regression: color/shape changes alone cannot prove button action continuity."
+    },
+    {
+      "item_id": 36,
+      "requirement": "Limit elevation to a small documented hierarchy separating ordinary panels, menus and blocking dialogs.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/design-system.md"
+      ],
+      "gap": "Visual/source state needs final outcome regression: color/shape changes alone cannot prove button action continuity."
+    },
+    {
+      "item_id": 37,
+      "requirement": "Standardize one icon family, optical sizing, stroke weight and alignment with adjacent text and controls.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/design-system.md"
+      ],
+      "gap": "Visual/source state needs final outcome regression: color/shape changes alone cannot prove button action continuity."
+    },
+    {
+      "item_id": 38,
+      "requirement": "Provide reliable local font and icon fallbacks so blocked resources cannot erase labels or alter control usability.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/design-system.md"
+      ],
+      "gap": "Visual/source state needs final outcome regression: color/shape changes alone cannot prove button action continuity."
+    },
+    {
+      "item_id": 39,
+      "requirement": "Define restrained motion durations and a reduced-motion alternative for every nonessential transition or loading treatment.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/design-system.md"
+      ],
+      "gap": "Visual/source state needs final outcome regression: color/shape changes alone cannot prove button action continuity."
+    },
+    {
+      "item_id": 40,
+      "requirement": "Create a component reference specifying control heights, icon sizes, radii, spacing and every interaction state in both themes.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/design-system.md"
+      ],
+      "gap": "Visual/source state needs final outcome regression: color/shape changes alone cannot prove button action continuity."
+    },
+    {
+      "item_id": 41,
+      "requirement": "Establish supported viewport and input-mode ranges before assigning breakpoints to individual components or entire pages.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/qa-responsive/report.json"
+      ],
+      "gap": "Bounded geometry screenshots do not prove all actions remain reachable or actionable at every zoom/height/keyboard state."
+    },
+    {
+      "item_id": 42,
+      "requirement": "Replace disconnected page-width rules with a shell grid supporting wide boards and comfortably bounded reading panels.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/qa-responsive/report.json"
+      ],
+      "gap": "Bounded geometry screenshots do not prove all actions remain reachable or actionable at every zoom/height/keyboard state."
+    },
+    {
+      "item_id": 43,
+      "requirement": "Use fluid gutters with minimum and maximum limits so layouts breathe without wasting space on smaller screens.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/qa-responsive/report.json"
+      ],
+      "gap": "Bounded geometry screenshots do not prove all actions remain reachable or actionable at every zoom/height/keyboard state."
+    },
+    {
+      "item_id": 44,
+      "requirement": "Give shrinking Grid and Flexbox children explicit minimum-size rules to prevent long content expanding entire pages.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/qa-responsive/report.json"
+      ],
+      "gap": "Bounded geometry screenshots do not prove all actions remain reachable or actionable at every zoom/height/keyboard state."
+    },
+    {
+      "item_id": 45,
+      "requirement": "Introduce size container queries where panels change width independently of the browser window or navigation state.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/qa-responsive/report.json"
+      ],
+      "gap": "Bounded geometry screenshots do not prove all actions remain reachable or actionable at every zoom/height/keyboard state."
+    },
+    {
+      "item_id": 46,
+      "requirement": "Keep functional media-query or intrinsic-layout fallbacks for components when container-query support is unavailable.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/qa-responsive/report.json"
+      ],
+      "gap": "Bounded geometry screenshots do not prove all actions remain reachable or actionable at every zoom/height/keyboard state."
+    },
+    {
+      "item_id": 47,
+      "requirement": "Resolve the 700–768px transition band deliberately, testing every breakpoint immediately below, at and above its threshold.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/qa-responsive/report.json"
+      ],
+      "gap": "Bounded geometry screenshots do not prove all actions remain reachable or actionable at every zoom/height/keyboard state."
+    },
+    {
+      "item_id": 48,
+      "requirement": "Make comfortable density the default; permit documented compact variants for comparison data rather than cramped editors and guidance.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/qa-responsive/report.json"
+      ],
+      "gap": "Bounded geometry screenshots do not prove all actions remain reachable or actionable at every zoom/height/keyboard state."
+    },
+    {
+      "item_id": 49,
+      "requirement": "Replace arbitrary fixed heights with content-driven sizing except where a bounded scrolling region is genuinely necessary.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/qa-responsive/report.json"
+      ],
+      "gap": "Bounded geometry screenshots do not prove all actions remain reachable or actionable at every zoom/height/keyboard state."
+    },
+    {
+      "item_id": 50,
+      "requirement": "Use dynamic viewport sizing for full-height mobile surfaces, retaining a stable fallback for older browser behavior.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/qa-responsive/report.json"
+      ],
+      "gap": "Bounded geometry screenshots do not prove all actions remain reachable or actionable at every zoom/height/keyboard state."
+    },
+    {
+      "item_id": 51,
+      "requirement": "Add safe-area insets to bottom navigation, sticky actions, drawer edges and full-screen mobile dialogs.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/qa-responsive/report.json"
+      ],
+      "gap": "Bounded geometry screenshots do not prove all actions remain reachable or actionable at every zoom/height/keyboard state."
+    },
+    {
+      "item_id": 52,
+      "requirement": "Reserve clearance for actual sticky dimensions, proving the final review row and validation errors scroll fully above wrapped controls.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/qa-responsive/report.json"
+      ],
+      "gap": "Bounded geometry screenshots do not prove all actions remain reachable or actionable at every zoom/height/keyboard state."
+    },
+    {
+      "item_id": 53,
+      "requirement": "Define a single primary scroll container for each screen or dialog, allowing nested scrolling only when explicitly justified.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/qa-responsive/report.json"
+      ],
+      "gap": "Bounded geometry screenshots do not prove all actions remain reachable or actionable at every zoom/height/keyboard state."
+    },
+    {
+      "item_id": 54,
+      "requirement": "Ensure focused fields remain visible when software keyboards, browser chrome or orientation changes reduce usable screen height.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/qa-responsive/report.json"
+      ],
+      "gap": "Bounded geometry screenshots do not prove all actions remain reachable or actionable at every zoom/height/keyboard state."
+    },
+    {
+      "item_id": 55,
+      "requirement": "Reflow toolbar groups by task importance so primary actions remain reachable before optional filters and report tools.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/qa-responsive/report.json"
+      ],
+      "gap": "Bounded geometry screenshots do not prove all actions remain reachable or actionable at every zoom/height/keyboard state."
+    },
+    {
+      "item_id": 56,
+      "requirement": "Wrap long names, error messages and translated-style labels without displacing close buttons, badges or action menus.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/qa-responsive/report.json"
+      ],
+      "gap": "Bounded geometry screenshots do not prove all actions remain reachable or actionable at every zoom/height/keyboard state."
+    },
+    {
+      "item_id": 57,
+      "requirement": "Replace unnecessary nested borders with spacing and tonal surface changes that make parent-child relationships immediately clear.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/qa-responsive/report.json"
+      ],
+      "gap": "Bounded geometry screenshots do not prove all actions remain reachable or actionable at every zoom/height/keyboard state."
+    },
+    {
+      "item_id": 58,
+      "requirement": "Preserve mixed-card alignment without truncating essential names, date ranges or warnings; allow discoverable truncation only for secondary metadata.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/qa-responsive/report.json"
+      ],
+      "gap": "Bounded geometry screenshots do not prove all actions remain reachable or actionable at every zoom/height/keyboard state."
+    },
+    {
+      "item_id": 59,
+      "requirement": "Support browser zoom and increased text size without hiding actions, truncating essential information or forcing page-level sideways scrolling.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/qa-responsive/report.json"
+      ],
+      "gap": "Bounded geometry screenshots do not prove all actions remain reachable or actionable at every zoom/height/keyboard state."
+    },
+    {
+      "item_id": 60,
+      "requirement": "Add deliberate local scrolling affordances only to comparison regions whose information cannot meaningfully reflow into cards.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/qa-responsive/report.json"
+      ],
+      "gap": "Bounded geometry screenshots do not prove all actions remain reachable or actionable at every zoom/height/keyboard state."
+    },
+    {
+      "item_id": 61,
+      "requirement": "Refine desktop navigation into clear workflow and administrative groups, keeping frequent operational tasks easy to locate.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/main.ts",
+        "frontend/tests/premium-shell.browser.mjs"
+      ],
+      "gap": "Shell/browser suites prove selected journeys only; final route/month/role matrix still needs exact action coverage."
+    },
+    {
+      "item_id": 62,
+      "requirement": "Standardize expanded, compact and mobile drawer states with predictable widths, labels and active-state treatment.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/main.ts",
+        "frontend/tests/premium-shell.browser.mjs"
+      ],
+      "gap": "Shell/browser suites prove selected journeys only; final route/month/role matrix still needs exact action coverage."
+    },
+    {
+      "item_id": 63,
+      "requirement": "Keep the selected month prominent and consistent wherever month-scoped leave, units, generation, review or publishing is shown.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/main.ts",
+        "frontend/tests/premium-shell.browser.mjs"
+      ],
+      "gap": "Shell/browser suites prove selected journeys only; final route/month/role matrix still needs exact action coverage."
+    },
+    {
+      "item_id": 64,
+      "requirement": "Present connection and save status truthfully, avoiding decorative green indicators without corresponding evidence of current availability.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/main.ts",
+        "frontend/tests/premium-shell.browser.mjs"
+      ],
+      "gap": "Shell/browser suites prove selected journeys only; final route/month/role matrix still needs exact action coverage."
+    },
+    {
+      "item_id": 65,
+      "requirement": "Align page title, month controls and account actions so the header remains balanced when text wraps.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/main.ts",
+        "frontend/tests/premium-shell.browser.mjs"
+      ],
+      "gap": "Shell/browser suites prove selected journeys only; final route/month/role matrix still needs exact action coverage."
+    },
+    {
+      "item_id": 66,
+      "requirement": "Make mobile primary navigation comfortable for touch and protect it from device safe areas and browser controls.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/main.ts",
+        "frontend/tests/premium-shell.browser.mjs"
+      ],
+      "gap": "Shell/browser suites prove selected journeys only; final route/month/role matrix still needs exact action coverage."
+    },
+    {
+      "item_id": 67,
+      "requirement": "Organize the mobile More surface into scan-friendly groups with clear current location and a reachable close action.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/main.ts",
+        "frontend/tests/premium-shell.browser.mjs"
+      ],
+      "gap": "Shell/browser suites prove selected journeys only; final route/month/role matrix still needs exact action coverage."
+    },
+    {
+      "item_id": 68,
+      "requirement": "Prevent account menus, mobile navigation, contextual menus and modal overlays from competing for focus or stacking unpredictably.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/main.ts",
+        "frontend/tests/premium-shell.browser.mjs"
+      ],
+      "gap": "Shell/browser suites prove selected journeys only; final route/month/role matrix still needs exact action coverage."
+    },
+    {
+      "item_id": 69,
+      "requirement": "Restore focus to the correct opener after closing drawers or menus, including after responsive layout changes.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/main.ts",
+        "frontend/tests/premium-shell.browser.mjs"
+      ],
+      "gap": "Shell/browser suites prove selected journeys only; final route/month/role matrix still needs exact action coverage."
+    },
+    {
+      "item_id": 70,
+      "requirement": "Clear obsolete drawer overlays, body scroll locks and inert state when resizing, preserving normal desktop pointer and keyboard access.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/main.ts",
+        "frontend/tests/premium-shell.browser.mjs"
+      ],
+      "gap": "Shell/browser suites prove selected journeys only; final route/month/role matrix still needs exact action coverage."
+    },
+    {
+      "item_id": 71,
+      "requirement": "Add destination focus and accessible route announcements without disrupting deliberate in-page user focus or data entry.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/main.ts",
+        "frontend/tests/premium-shell.browser.mjs"
+      ],
+      "gap": "Shell/browser suites prove selected journeys only; final route/month/role matrix still needs exact action coverage."
+    },
+    {
+      "item_id": 72,
+      "requirement": "Preserve relevant filters, selected tabs and scroll position when returning from a record or profile detail view.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/main.ts",
+        "frontend/tests/premium-shell.browser.mjs"
+      ],
+      "gap": "Shell/browser suites prove selected journeys only; final route/month/role matrix still needs exact action coverage."
+    },
+    {
+      "item_id": 73,
+      "requirement": "Provide frontend navigation history where appropriate so Back returns meaningfully without losing unsaved operational context.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/main.ts",
+        "frontend/tests/premium-shell.browser.mjs"
+      ],
+      "gap": "Shell/browser suites prove selected journeys only; final route/month/role matrix still needs exact action coverage."
+    },
+    {
+      "item_id": 74,
+      "requirement": "Preserve or safely reject deep links using existing frontend routing capabilities, avoiding unsupported server-route assumptions.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/main.ts",
+        "frontend/tests/premium-shell.browser.mjs"
+      ],
+      "gap": "Shell/browser suites prove selected journeys only; final route/month/role matrix still needs exact action coverage."
+    },
+    {
+      "item_id": 75,
+      "requirement": "Make unsaved-change handling consistent across navigation, month switches, modal dismissal and browser unload boundaries.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/main.ts",
+        "frontend/tests/premium-shell.browser.mjs"
+      ],
+      "gap": "Shell/browser suites prove selected journeys only; final route/month/role matrix still needs exact action coverage."
+    },
+    {
+      "item_id": 76,
+      "requirement": "Clearly explain role-limited navigation while retaining server permissions as the authority for every protected action.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/main.ts",
+        "frontend/tests/premium-shell.browser.mjs"
+      ],
+      "gap": "Shell/browser suites prove selected journeys only; final route/month/role matrix still needs exact action coverage."
+    },
+    {
+      "item_id": 77,
+      "requirement": "Provide a useful not-found or unavailable-section state with a safe route back to accessible workflows.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/main.ts",
+        "frontend/tests/premium-shell.browser.mjs"
+      ],
+      "gap": "Shell/browser suites prove selected journeys only; final route/month/role matrix still needs exact action coverage."
+    },
+    {
+      "item_id": 78,
+      "requirement": "Give help and user-guide links contextual destinations rather than sending every question to one generic page.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/main.ts",
+        "frontend/tests/premium-shell.browser.mjs"
+      ],
+      "gap": "Shell/browser suites prove selected journeys only; final route/month/role matrix still needs exact action coverage."
+    },
+    {
+      "item_id": 79,
+      "requirement": "Refine login and recovery while supporting password managers, autofill and paste, preserving appropriate autocomplete and accessible authentication behavior.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/main.ts",
+        "frontend/tests/premium-shell.browser.mjs"
+      ],
+      "gap": "Shell/browser suites prove selected journeys only; final route/month/role matrix still needs exact action coverage."
+    },
+    {
+      "item_id": 80,
+      "requirement": "Test navigation with rapid switching, slow responses and repeated month changes to confirm the final destination remains authoritative.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/main.ts",
+        "frontend/tests/premium-shell.browser.mjs"
+      ],
+      "gap": "Shell/browser suites prove selected journeys only; final route/month/role matrix still needs exact action coverage."
+    },
+    {
+      "item_id": 81,
+      "requirement": "Standardize primary, secondary, tertiary and destructive button variants with consistent sizing, icons and interaction states.",
+      "status": "partial",
+      "interaction_finding": "Shared control styles are retained; 19 sampled browser workflows verify meaningful outcomes.",
+      "evidence": [
+        "frontend/src/ui.ts",
+        "frontend/src/frontend-runtime.ts",
+        "frontend/tests/premium-admin-actions.browser.mjs"
+      ],
+      "gap": "Other controls and interaction variants still require exact verification."
+    },
+    {
+      "item_id": 82,
+      "requirement": "Ensure every visible button either performs its specified action or exposes a clear explanation when unavailable.",
+      "status": "partial",
+      "interaction_finding": "Generation workflows, conflict controls and 63 extra-duty checks verify activation and resulting state.",
+      "evidence": [
+        "frontend/src/ui.ts",
+        "frontend/src/frontend-runtime.ts",
+        "frontend/tests/premium-admin-actions.browser.mjs"
+      ],
+      "gap": "These suites do not cover every visible button in the application."
+    },
+    {
+      "item_id": 83,
+      "requirement": "Give icon-only buttons meaningful accessible names and optional tooltips that work with keyboard focus and touch.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/ui.ts",
+        "frontend/src/frontend-runtime.ts",
+        "frontend/tests/premium-admin-actions.browser.mjs"
+      ],
+      "gap": "Shared control recovery assertions cover sampled modules; complete all inventoried action contracts and failed mutation recovery before universal acceptance."
+    },
+    {
+      "item_id": 84,
+      "requirement": "Use native button/link semantics and prohibit nested interactive cards or controls, keeping each action's target unambiguous.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/ui.ts",
+        "frontend/src/frontend-runtime.ts",
+        "frontend/tests/premium-admin-actions.browser.mjs"
+      ],
+      "gap": "Shared control recovery assertions cover sampled modules; complete all inventoried action contracts and failed mutation recovery before universal acceptance."
+    },
+    {
+      "item_id": 85,
+      "requirement": "Keep ordinary actions visually distinct from destructive or irreversible operations, especially inside compact menus and sticky footers.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/ui.ts",
+        "frontend/src/frontend-runtime.ts",
+        "frontend/tests/premium-admin-actions.browser.mjs"
+      ],
+      "gap": "Shared control recovery assertions cover sampled modules; complete all inventoried action contracts and failed mutation recovery before universal acceptance."
+    },
+    {
+      "item_id": 86,
+      "requirement": "Register delegated handlers once, guard in-flight mutations against repeated activation and prevent duplicate submissions after reauthentication.",
+      "status": "partial",
+      "interaction_finding": "Existing extra-duty test asserts exact single apply body after dblclick; other mutation paths require coverage.",
+      "evidence": [
+        "frontend/src/ui.ts",
+        "frontend/src/frontend-runtime.ts",
+        "frontend/tests/premium-admin-actions.browser.mjs"
+      ],
+      "gap": "No universal per-action duplicate protection proof."
+    },
+    {
+      "item_id": 87,
+      "requirement": "Restore original button text and availability after failures without leaving the interface permanently disabled or deceptively successful.",
+      "status": "partial",
+      "interaction_finding": "Fallback-order save failure retains edits and enables retry; failed readiness reads recover.",
+      "evidence": [
+        "frontend/src/ui.ts",
+        "frontend/src/frontend-runtime.ts",
+        "frontend/tests/premium-admin-actions.browser.mjs"
+      ],
+      "gap": "Other editors require their own failure-state assertions."
+    },
+    {
+      "item_id": 88,
+      "requirement": "Standardize fields, selects, checkboxes, radios and date inputs without removing useful native platform behavior.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/ui.ts",
+        "frontend/src/frontend-runtime.ts",
+        "frontend/tests/premium-admin-actions.browser.mjs"
+      ],
+      "gap": "Shared control recovery assertions cover sampled modules; complete all inventoried action contracts and failed mutation recovery before universal acceptance."
+    },
+    {
+      "item_id": 89,
+      "requirement": "Keep labels persistently visible, provide format guidance and associate validation messages with their specific form fields.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/ui.ts",
+        "frontend/src/frontend-runtime.ts",
+        "frontend/tests/premium-admin-actions.browser.mjs"
+      ],
+      "gap": "Shared control recovery assertions cover sampled modules; complete all inventoried action contracts and failed mutation recovery before universal acceptance."
+    },
+    {
+      "item_id": 90,
+      "requirement": "Validate predictable client-side errors early while preserving server validation as the final source of operational truth.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/ui.ts",
+        "frontend/src/frontend-runtime.ts",
+        "frontend/tests/premium-admin-actions.browser.mjs"
+      ],
+      "gap": "Shared control recovery assertions cover sampled modules; complete all inventoried action contracts and failed mutation recovery before universal acceptance."
+    },
+    {
+      "item_id": 91,
+      "requirement": "Move focus to actionable validation summaries when appropriate, and link each summary entry to its affected field.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/ui.ts",
+        "frontend/src/frontend-runtime.ts",
+        "frontend/tests/premium-admin-actions.browser.mjs"
+      ],
+      "gap": "Shared control recovery assertions cover sampled modules; complete all inventoried action contracts and failed mutation recovery before universal acceptance."
+    },
+    {
+      "item_id": 92,
+      "requirement": "Preserve entered values after validation, network or permission errors unless sensitive information requires deliberate clearing.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/ui.ts",
+        "frontend/src/frontend-runtime.ts",
+        "frontend/tests/premium-admin-actions.browser.mjs"
+      ],
+      "gap": "Shared control recovery assertions cover sampled modules; complete all inventoried action contracts and failed mutation recovery before universal acceptance."
+    },
+    {
+      "item_id": 93,
+      "requirement": "Distinguish confirmed saved state, unsaved edits, pending requests and uncertain mutation outcomes throughout all editors.",
+      "status": "partial",
+      "interaction_finding": "Generation review is disabled until explicit acknowledgement and apply is distinct from publish.",
+      "evidence": [
+        "frontend/src/ui.ts",
+        "frontend/src/frontend-runtime.ts",
+        "frontend/tests/premium-admin-actions.browser.mjs"
+      ],
+      "gap": "Uncertain mutation outcome reconciliation must be verified per remaining mutation."
+    },
+    {
+      "item_id": 94,
+      "requirement": "Replace transient-only critical feedback with persistent inline notices that remain until resolved or explicitly dismissed.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/ui.ts",
+        "frontend/src/frontend-runtime.ts",
+        "frontend/tests/premium-admin-actions.browser.mjs"
+      ],
+      "gap": "Shared control recovery assertions cover sampled modules; complete all inventoried action contracts and failed mutation recovery before universal acceptance."
+    },
+    {
+      "item_id": 95,
+      "requirement": "Add named toast dismissal, restrained announcements and duplicate suppression; pause noncritical expiry on hover/focus and retain consequential feedback inline.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/ui.ts",
+        "frontend/src/frontend-runtime.ts",
+        "frontend/tests/premium-admin-actions.browser.mjs"
+      ],
+      "gap": "Shared control recovery assertions cover sampled modules; complete all inventoried action contracts and failed mutation recovery before universal acceptance."
+    },
+    {
+      "item_id": 96,
+      "requirement": "Replace title-only help spans with semantic help controls exposing readable guidance through keyboard and touch interaction.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/ui.ts",
+        "frontend/src/frontend-runtime.ts",
+        "frontend/tests/premium-admin-actions.browser.mjs"
+      ],
+      "gap": "Shared control recovery assertions cover sampled modules; complete all inventoried action contracts and failed mutation recovery before universal acceptance."
+    },
+    {
+      "item_id": 97,
+      "requirement": "Standardize loading skeleton dimensions to reduce layout shifts when summaries, cards and form content arrive.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/ui.ts",
+        "frontend/src/frontend-runtime.ts",
+        "frontend/tests/premium-admin-actions.browser.mjs"
+      ],
+      "gap": "Shared control recovery assertions cover sampled modules; complete all inventoried action contracts and failed mutation recovery before universal acceptance."
+    },
+    {
+      "item_id": 98,
+      "requirement": "Provide useful empty states explaining what is missing, why it matters and which available action resolves it.",
+      "status": "partial",
+      "interaction_finding": "An empty monthly leave review disables approval and closes without a write.",
+      "evidence": [
+        "frontend/src/ui.ts",
+        "frontend/src/frontend-runtime.ts",
+        "frontend/tests/premium-admin-actions.browser.mjs"
+      ],
+      "gap": "Verify remaining sections and role-dependent empty states."
+    },
+    {
+      "item_id": 99,
+      "requirement": "Separate destructive confirmation from routine acknowledgement, clearly naming the target record, month and expected consequence.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/ui.ts",
+        "frontend/src/frontend-runtime.ts",
+        "frontend/tests/premium-admin-actions.browser.mjs"
+      ],
+      "gap": "Shared control recovery assertions cover sampled modules; complete all inventoried action contracts and failed mutation recovery before universal acceptance."
+    },
+    {
+      "item_id": 100,
+      "requirement": "Verify form cancellation, Escape and outside-click rules preserve drafts and never accidentally trigger submit or destructive actions.",
+      "status": "partial",
+      "interaction_finding": "Publish confirmation dismissal and workspace closure have explicit no-write assertions.",
+      "evidence": [
+        "frontend/src/ui.ts",
+        "frontend/src/frontend-runtime.ts",
+        "frontend/tests/premium-admin-actions.browser.mjs"
+      ],
+      "gap": "Verify remaining dirty editors and cancellation boundaries."
+    },
+    {
+      "item_id": 101,
+      "requirement": "Classify each existing table as a comparison grid or record list before choosing its mobile representation.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/main.ts",
+        "frontend/src/premium-theme.css"
+      ],
+      "gap": "Filtering/sorting and download semantics require record-level assertions; screenshots and table presence do not prove correct ordering/results."
+    },
+    {
+      "item_id": 102,
+      "requirement": "Remove blanket wide-table assumptions from record lists that can retain full meaning through responsive labeled cards.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/main.ts",
+        "frontend/src/premium-theme.css"
+      ],
+      "gap": "Filtering/sorting and download semantics require record-level assertions; screenshots and table presence do not prove correct ordering/results."
+    },
+    {
+      "item_id": 103,
+      "requirement": "Keep genuine comparison tables locally scrollable with discoverable horizontal-scroll cues and keyboard-accessible regions.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/main.ts",
+        "frontend/src/premium-theme.css"
+      ],
+      "gap": "Filtering/sorting and download semantics require record-level assertions; screenshots and table presence do not prove correct ordering/results."
+    },
+    {
+      "item_id": 104,
+      "requirement": "Preserve captions and header relationships; expose exactly one accessible interactive representation when desktop tables and mobile cards coexist.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/main.ts",
+        "frontend/src/premium-theme.css"
+      ],
+      "gap": "Filtering/sorting and download semantics require record-level assertions; screenshots and table presence do not prove correct ordering/results."
+    },
+    {
+      "item_id": 105,
+      "requirement": "Keep essential identity, status and actions visible without requiring hover or reaching a distant off-screen column.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/main.ts",
+        "frontend/src/premium-theme.css"
+      ],
+      "gap": "Filtering/sorting and download semantics require record-level assertions; screenshots and table presence do not prove correct ordering/results."
+    },
+    {
+      "item_id": 106,
+      "requirement": "Standardize row selection, mixed checkbox state, select-all scope and announced counts across filtered and paginated record sets.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/main.ts",
+        "frontend/src/premium-theme.css"
+      ],
+      "gap": "Filtering/sorting and download semantics require record-level assertions; screenshots and table presence do not prove correct ordering/results."
+    },
+    {
+      "item_id": 107,
+      "requirement": "Clearly distinguish selecting visible rows, all filtered rows and all monthly records before any bulk action.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/main.ts",
+        "frontend/src/premium-theme.css"
+      ],
+      "gap": "Filtering/sorting and download semantics require record-level assertions; screenshots and table presence do not prove correct ordering/results."
+    },
+    {
+      "item_id": 108,
+      "requirement": "Expose sort direction visually and through aria-sort, verifying records actually reorder according to the selected header.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/main.ts",
+        "frontend/src/premium-theme.css"
+      ],
+      "gap": "Filtering/sorting and download semantics require record-level assertions; screenshots and table presence do not prove correct ordering/results."
+    },
+    {
+      "item_id": 109,
+      "requirement": "Debounce search appropriately, preserve input focus and distinguish no results from an unloaded or failed dataset.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/main.ts",
+        "frontend/src/premium-theme.css"
+      ],
+      "gap": "Filtering/sorting and download semantics require record-level assertions; screenshots and table presence do not prove correct ordering/results."
+    },
+    {
+      "item_id": 110,
+      "requirement": "Make active filters visible as removable summaries with a reliable reset action and meaningful result count.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/main.ts",
+        "frontend/src/premium-theme.css"
+      ],
+      "gap": "Filtering/sorting and download semantics require record-level assertions; screenshots and table presence do not prove correct ordering/results."
+    },
+    {
+      "item_id": 111,
+      "requirement": "Consolidate dense mobile filters into an expandable panel while keeping applied-filter count visible in the main toolbar.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/main.ts",
+        "frontend/src/premium-theme.css"
+      ],
+      "gap": "Filtering/sorting and download semantics require record-level assertions; screenshots and table presence do not prove correct ordering/results."
+    },
+    {
+      "item_id": 112,
+      "requirement": "Preserve filtering, sorting and pagination when opening details or recovering from an unrelated optional report failure.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/main.ts",
+        "frontend/src/premium-theme.css"
+      ],
+      "gap": "Filtering/sorting and download semantics require record-level assertions; screenshots and table presence do not prove correct ordering/results."
+    },
+    {
+      "item_id": 113,
+      "requirement": "Align dates, numbers and units consistently, avoiding mixed formats that complicate scanning or workload comparisons.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/main.ts",
+        "frontend/src/premium-theme.css"
+      ],
+      "gap": "Filtering/sorting and download semantics require record-level assertions; screenshots and table presence do not prove correct ordering/results."
+    },
+    {
+      "item_id": 114,
+      "requirement": "Differentiate row hover, selection, keyboard focus and warning states using more than subtle background color changes.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/main.ts",
+        "frontend/src/premium-theme.css"
+      ],
+      "gap": "Filtering/sorting and download semantics require record-level assertions; screenshots and table presence do not prove correct ordering/results."
+    },
+    {
+      "item_id": 115,
+      "requirement": "Introduce pagination or measured virtualization only where representative datasets demonstrate a real rendering or navigation problem.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/main.ts",
+        "frontend/src/premium-theme.css"
+      ],
+      "gap": "Filtering/sorting and download semantics require record-level assertions; screenshots and table presence do not prove correct ordering/results."
+    },
+    {
+      "item_id": 116,
+      "requirement": "Provide accessible nonvirtualized summaries or navigation where virtualization would otherwise hide content from assistive technology.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/main.ts",
+        "frontend/src/premium-theme.css"
+      ],
+      "gap": "Filtering/sorting and download semantics require record-level assertions; screenshots and table presence do not prove correct ordering/results."
+    },
+    {
+      "item_id": 117,
+      "requirement": "Simplify metric tiles into consistent value, label, context and optional comparison layouts with honest missing-data treatment.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/main.ts",
+        "frontend/src/premium-theme.css"
+      ],
+      "gap": "Filtering/sorting and download semantics require record-level assertions; screenshots and table presence do not prove correct ordering/results."
+    },
+    {
+      "item_id": 118,
+      "requirement": "Use chart palettes and legends that remain understandable in dark mode, grayscale and common color-vision differences.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/main.ts",
+        "frontend/src/premium-theme.css"
+      ],
+      "gap": "Filtering/sorting and download semantics require record-level assertions; screenshots and table presence do not prove correct ordering/results."
+    },
+    {
+      "item_id": 119,
+      "requirement": "Provide readable table or text equivalents for charts and ensure drill-down controls expose their destination and result.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/main.ts",
+        "frontend/src/premium-theme.css"
+      ],
+      "gap": "Filtering/sorting and download semantics require record-level assertions; screenshots and table presence do not prove correct ordering/results."
+    },
+    {
+      "item_id": 120,
+      "requirement": "Preserve analysis calculations and export values while improving presentation, readability and actionable links to underlying records.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/main.ts",
+        "frontend/src/premium-theme.css"
+      ],
+      "gap": "Filtering/sorting and download semantics require record-level assertions; screenshots and table presence do not prove correct ordering/results."
+    },
+    {
+      "item_id": 121,
+      "requirement": "Consolidate profile entry points into a coherent visual experience while preserving currently available role-specific actions.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/member-workspace.ts",
+        "frontend/tests/premium-member-actions.browser.mjs"
+      ],
+      "gap": "Member/import suites need final exact mapping against current snapshot, including negative apply/cancel and persisted read-back."
+    },
+    {
+      "item_id": 122,
+      "requirement": "Make member identity, designation, effective call level and active status clear before secondary history or administrative metadata.",
+      "status": "partial",
+      "interaction_finding": "Profile identity hierarchy exists in the retained member workspace and related tests.",
+      "evidence": [
+        "frontend/src/member-workspace.ts",
+        "frontend/tests/premium-member-actions.browser.mjs"
+      ],
+      "gap": "Verify names, designation, effective call level and status in the final profile states; this generator subtask does not certify profiles."
+    },
+    {
+      "item_id": 123,
+      "requirement": "Preserve desktop rails and mobile tabs, automatically revealing the active tab without stealing focus and providing discoverable scroll cues.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/member-workspace.ts",
+        "frontend/tests/premium-member-actions.browser.mjs"
+      ],
+      "gap": "Member/import suites need final exact mapping against current snapshot, including negative apply/cancel and persisted read-back."
+    },
+    {
+      "item_id": 124,
+      "requirement": "Standardize tab labels, counts and ordering across overview, postings, leave, duties, history and administrative sections.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/member-workspace.ts",
+        "frontend/tests/premium-member-actions.browser.mjs"
+      ],
+      "gap": "Member/import suites need final exact mapping against current snapshot, including negative apply/cancel and persisted read-back."
+    },
+    {
+      "item_id": 125,
+      "requirement": "Preserve tablist/tab/tabpanel relationships, roving focus and orientation-aware navigation while keeping ordinary page navigation available.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/member-workspace.ts",
+        "frontend/tests/premium-member-actions.browser.mjs"
+      ],
+      "gap": "Member/import suites need final exact mapping against current snapshot, including negative apply/cancel and persisted read-back."
+    },
+    {
+      "item_id": 126,
+      "requirement": "Keep the identity header compact while allowing full names and designations to wrap without overlapping close controls.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/member-workspace.ts",
+        "frontend/tests/premium-member-actions.browser.mjs"
+      ],
+      "gap": "Member/import suites need final exact mapping against current snapshot, including negative apply/cancel and persisted read-back."
+    },
+    {
+      "item_id": 127,
+      "requirement": "Surface unsaved changes and validation errors on their relevant tabs so hidden form problems remain discoverable.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/member-workspace.ts",
+        "frontend/tests/premium-member-actions.browser.mjs"
+      ],
+      "gap": "Member/import suites need final exact mapping against current snapshot, including negative apply/cancel and persisted read-back."
+    },
+    {
+      "item_id": 128,
+      "requirement": "Present dated promotions and call-level changes as a readable timeline with clear scheduled-versus-effective distinctions.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/member-workspace.ts",
+        "frontend/tests/premium-member-actions.browser.mjs"
+      ],
+      "gap": "Member/import suites need final exact mapping against current snapshot, including negative apply/cancel and persisted read-back."
+    },
+    {
+      "item_id": 129,
+      "requirement": "Reflow posting and leave histories into date-aware mobile cards while keeping edit actions adjacent to the affected record.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/member-workspace.ts",
+        "frontend/tests/premium-member-actions.browser.mjs"
+      ],
+      "gap": "Member/import suites need final exact mapping against current snapshot, including negative apply/cancel and persisted read-back."
+    },
+    {
+      "item_id": 130,
+      "requirement": "Separate member-facing information from administrator metadata through hierarchy and progressive disclosure rather than hidden essential context.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/member-workspace.ts",
+        "frontend/tests/premium-member-actions.browser.mjs"
+      ],
+      "gap": "Member/import suites need final exact mapping against current snapshot, including negative apply/cancel and persisted read-back."
+    },
+    {
+      "item_id": 131,
+      "requirement": "Standardize add, edit, save and cancel patterns across profile sections so users do not relearn each editor.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/member-workspace.ts",
+        "frontend/tests/premium-member-actions.browser.mjs"
+      ],
+      "gap": "Member/import suites need final exact mapping against current snapshot, including negative apply/cancel and persisted read-back."
+    },
+    {
+      "item_id": 132,
+      "requirement": "Keep workload summaries compact and readable, linking to actual duties using existing supported detail or report views.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/member-workspace.ts",
+        "frontend/tests/premium-member-actions.browser.mjs"
+      ],
+      "gap": "Member/import suites need final exact mapping against current snapshot, including negative apply/cancel and persisted read-back."
+    },
+    {
+      "item_id": 133,
+      "requirement": "Show missing designation, unknown history and unassigned values honestly instead of presenting misleading zeroes or placeholder identities.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/member-workspace.ts",
+        "frontend/tests/premium-member-actions.browser.mjs"
+      ],
+      "gap": "Member/import suites need final exact mapping against current snapshot, including negative apply/cancel and persisted read-back."
+    },
+    {
+      "item_id": 134,
+      "requirement": "Make aliases and member-matching choices understandable, with explicit selection results and clear differences between existing and new people.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/member-workspace.ts",
+        "frontend/tests/premium-member-actions.browser.mjs"
+      ],
+      "gap": "Member/import suites need final exact mapping against current snapshot, including negative apply/cancel and persisted read-back."
+    },
+    {
+      "item_id": 135,
+      "requirement": "Give CSV upload, column mapping, row review and apply stages consistent progress indicators and recovery affordances.",
+      "status": "partial",
+      "interaction_finding": "Existing import suites exercise the reviewed multistage workflow.",
+      "evidence": [
+        "frontend/src/member-workspace.ts",
+        "frontend/tests/premium-member-actions.browser.mjs"
+      ],
+      "gap": "Map each CSV mapping, resolution and apply action to its current assertion."
+    },
+    {
+      "item_id": 136,
+      "requirement": "Preserve selected files and mappings after recoverable errors where browser permissions and current API semantics allow it.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/member-workspace.ts",
+        "frontend/tests/premium-member-actions.browser.mjs"
+      ],
+      "gap": "Member/import suites need final exact mapping against current snapshot, including negative apply/cancel and persisted read-back."
+    },
+    {
+      "item_id": 137,
+      "requirement": "Highlight unresolved, duplicate and invalid import rows without letting decorative badges overwhelm the information needed to correct them.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/member-workspace.ts",
+        "frontend/tests/premium-member-actions.browser.mjs"
+      ],
+      "gap": "Member/import suites need final exact mapping against current snapshot, including negative apply/cancel and persisted read-back."
+    },
+    {
+      "item_id": 138,
+      "requirement": "Explain import modes and scope before apply, using current server preview results rather than frontend assumptions.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/member-workspace.ts",
+        "frontend/tests/premium-member-actions.browser.mjs"
+      ],
+      "gap": "Member/import suites need final exact mapping against current snapshot, including negative apply/cancel and persisted read-back."
+    },
+    {
+      "item_id": 139,
+      "requirement": "Keep import preview and apply actions reachable on phones while ensuring sticky footers cannot obscure final review rows.",
+      "status": "partial",
+      "interaction_finding": "Approval review completes at widths 320, 390 and 1280.",
+      "evidence": [
+        "frontend/src/member-workspace.ts",
+        "frontend/tests/premium-member-actions.browser.mjs"
+      ],
+      "gap": "Importer final-row and footer geometry require importer-specific evidence."
+    },
+    {
+      "item_id": 140,
+      "requirement": "Verify member saves, CSV apply, rejection downloads and history reopening through actual results and persisted read-back.",
+      "status": "partial",
+      "interaction_finding": "Member/import tests exist independently; this review only directly verified generation/leave/extra contracts.",
+      "evidence": [
+        "frontend/src/member-workspace.ts",
+        "frontend/tests/premium-member-actions.browser.mjs"
+      ],
+      "gap": "Do not infer persisted import/member saves from mocked generator suite."
+    },
+    {
+      "item_id": 141,
+      "requirement": "Refine the leave toolbar around add, import and monthly approval, keeping secondary management tools visually subordinate.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/leave-approval.ts",
+        "frontend/src/main.ts",
+        "frontend/tests/premium-generation-actions.browser.mjs"
+      ],
+      "gap": "Monthly approval has exact token/month/ack frontend evidence; other unit/leave actions require their individual current-suite mapping."
+    },
+    {
+      "item_id": 142,
+      "requirement": "Preserve individual leave approval while making monthly pending counts, review scope and affected-duty acknowledgements clear.",
+      "status": "partial",
+      "interaction_finding": "Monthly leave acknowledgements and stale review recovery pass with mocked APIs.",
+      "evidence": [
+        "frontend/src/leave-approval.ts",
+        "frontend/src/main.ts",
+        "frontend/tests/premium-generation-actions.browser.mjs"
+      ],
+      "gap": "Link individual approval role checks and persisted read-back separately."
+    },
+    {
+      "item_id": 143,
+      "requirement": "Present full date ranges for cross-month leave so monthly approval cannot appear narrower than its actual effect.",
+      "status": "verified_bounded",
+      "interaction_finding": "The monthly approval fixture includes a request spanning April 29 through May 2.",
+      "evidence": [
+        "frontend/src/leave-approval.ts",
+        "frontend/src/main.ts",
+        "frontend/tests/premium-generation-actions.browser.mjs"
+      ],
+      "gap": "Visual readability of the complete range needs independent responsive review."
+    },
+    {
+      "item_id": 144,
+      "requirement": "Offer useful phone day/list navigation alongside the month calendar without changing leave counts or blocking semantics.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/leave-approval.ts",
+        "frontend/src/main.ts",
+        "frontend/tests/premium-generation-actions.browser.mjs"
+      ],
+      "gap": "Monthly approval has exact token/month/ack frontend evidence; other unit/leave actions require their individual current-suite mapping."
+    },
+    {
+      "item_id": 145,
+      "requirement": "Use clear textual status cues for approved, pending, imported-review, cancelled and rejected leave in every representation.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/leave-approval.ts",
+        "frontend/src/main.ts",
+        "frontend/tests/premium-generation-actions.browser.mjs"
+      ],
+      "gap": "Monthly approval has exact token/month/ack frontend evidence; other unit/leave actions require their individual current-suite mapping."
+    },
+    {
+      "item_id": 146,
+      "requirement": "Give calendars keyboard behavior matching their actual semantics; never add grid roles without the complete interaction pattern.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/leave-approval.ts",
+        "frontend/src/main.ts",
+        "frontend/tests/premium-generation-actions.browser.mjs"
+      ],
+      "gap": "Monthly approval has exact token/month/ack frontend evidence; other unit/leave actions require their individual current-suite mapping."
+    },
+    {
+      "item_id": 147,
+      "requirement": "Distinguish unavailable members from merely pending leave warnings using the existing returned status and safety information.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/leave-approval.ts",
+        "frontend/src/main.ts",
+        "frontend/tests/premium-generation-actions.browser.mjs"
+      ],
+      "gap": "Monthly approval has exact token/month/ack frontend evidence; other unit/leave actions require their individual current-suite mapping."
+    },
+    {
+      "item_id": 148,
+      "requirement": "Reflow leave-pressure summaries into readable unit and call-level groups without duplicating every explanatory paragraph.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/leave-approval.ts",
+        "frontend/src/main.ts",
+        "frontend/tests/premium-generation-actions.browser.mjs"
+      ],
+      "gap": "Monthly approval has exact token/month/ack frontend evidence; other unit/leave actions require their individual current-suite mapping."
+    },
+    {
+      "item_id": 149,
+      "requirement": "Improve unit-board hierarchy so campus, unit identity, staffing groups and dated assignments remain easy to scan.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/leave-approval.ts",
+        "frontend/src/main.ts",
+        "frontend/tests/premium-generation-actions.browser.mjs"
+      ],
+      "gap": "Monthly approval has exact token/month/ack frontend evidence; other unit/leave actions require their individual current-suite mapping."
+    },
+    {
+      "item_id": 150,
+      "requirement": "Keep create-unit and add-member actions visible at the relevant unit context, preserving existing normalized reference workflows.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/leave-approval.ts",
+        "frontend/src/main.ts",
+        "frontend/tests/premium-generation-actions.browser.mjs"
+      ],
+      "gap": "Monthly approval has exact token/month/ack frontend evidence; other unit/leave actions require their individual current-suite mapping."
+    },
+    {
+      "item_id": 151,
+      "requirement": "Present dated unit membership changes without visually implying that a future posting is already effective today.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/leave-approval.ts",
+        "frontend/src/main.ts",
+        "frontend/tests/premium-generation-actions.browser.mjs"
+      ],
+      "gap": "Monthly approval has exact token/month/ack frontend evidence; other unit/leave actions require their individual current-suite mapping."
+    },
+    {
+      "item_id": 152,
+      "requirement": "Standardize unit filters, expansion states and per-unit counts across desktop boards and mobile stacked cards.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/leave-approval.ts",
+        "frontend/src/main.ts",
+        "frontend/tests/premium-generation-actions.browser.mjs"
+      ],
+      "gap": "Monthly approval has exact token/month/ack frontend evidence; other unit/leave actions require their individual current-suite mapping."
+    },
+    {
+      "item_id": 153,
+      "requirement": "Make staffing warnings actionable through existing editors while keeping the authoritative rule and affected date visible.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/leave-approval.ts",
+        "frontend/src/main.ts",
+        "frontend/tests/premium-generation-actions.browser.mjs"
+      ],
+      "gap": "Monthly approval has exact token/month/ack frontend evidence; other unit/leave actions require their individual current-suite mapping."
+    },
+    {
+      "item_id": 154,
+      "requirement": "Improve long unit-member lists through measured pagination or expansion without concealing missing staffing or leave conflicts.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/leave-approval.ts",
+        "frontend/src/main.ts",
+        "frontend/tests/premium-generation-actions.browser.mjs"
+      ],
+      "gap": "Monthly approval has exact token/month/ack frontend evidence; other unit/leave actions require their individual current-suite mapping."
+    },
+    {
+      "item_id": 155,
+      "requirement": "Align normalized reference pickers and inline creation dialogs with the same label, validation and save conventions.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/leave-approval.ts",
+        "frontend/src/main.ts",
+        "frontend/tests/premium-generation-actions.browser.mjs"
+      ],
+      "gap": "Monthly approval has exact token/month/ack frontend evidence; other unit/leave actions require their individual current-suite mapping."
+    },
+    {
+      "item_id": 156,
+      "requirement": "Preserve clear distinction between adding a reference value, assigning a person and editing an existing dated record.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/leave-approval.ts",
+        "frontend/src/main.ts",
+        "frontend/tests/premium-generation-actions.browser.mjs"
+      ],
+      "gap": "Monthly approval has exact token/month/ack frontend evidence; other unit/leave actions require their individual current-suite mapping."
+    },
+    {
+      "item_id": 157,
+      "requirement": "Keep imported record corrections attached to their original preview row, with visible completion and unresolved-state indicators.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/leave-approval.ts",
+        "frontend/src/main.ts",
+        "frontend/tests/premium-generation-actions.browser.mjs"
+      ],
+      "gap": "Monthly approval has exact token/month/ack frontend evidence; other unit/leave actions require their individual current-suite mapping."
+    },
+    {
+      "item_id": 158,
+      "requirement": "Standardize cancellation and deletion confirmations so removing a record never resembles merely closing its editor.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/leave-approval.ts",
+        "frontend/src/main.ts",
+        "frontend/tests/premium-generation-actions.browser.mjs"
+      ],
+      "gap": "Monthly approval has exact token/month/ack frontend evidence; other unit/leave actions require their individual current-suite mapping."
+    },
+    {
+      "item_id": 159,
+      "requirement": "Refresh dependent leave and unit views after confirmed mutations without discarding unrelated unsaved edits or chosen filters.",
+      "status": "partial",
+      "interaction_finding": "Confirmed apply/reversal callbacks verified; failed approvals leave callback unset.",
+      "evidence": [
+        "frontend/src/leave-approval.ts",
+        "frontend/src/main.ts",
+        "frontend/tests/premium-generation-actions.browser.mjs"
+      ],
+      "gap": "Dependent invalidation and unrelated-draft preservation require final integrated domain journeys."
+    },
+    {
+      "item_id": 160,
+      "requirement": "Verify all record-level and monthly actions against their actual selected-month and selected-unit context on desktop and mobile.",
+      "status": "partial",
+      "interaction_finding": "The approval payload contains the exact month and reviewed token at three widths.",
+      "evidence": [
+        "frontend/src/leave-approval.ts",
+        "frontend/src/main.ts",
+        "frontend/tests/premium-generation-actions.browser.mjs"
+      ],
+      "gap": "Other record-level and unit actions require their own checks."
+    },
+    {
+      "item_id": 161,
+      "requirement": "Present setup, template allocation, member assignment, review and publishing as clear operational stages with truthful readiness cues.",
+      "status": "partial",
+      "interaction_finding": "Existing stages are preserved and main publishing controls have sampled outcome tests.",
+      "evidence": [
+        "frontend/src/rota-compute.ts",
+        "frontend/src/rota-intelligence.ts",
+        "frontend/tests/premium-generation-actions.browser.mjs"
+      ],
+      "gap": "A complete integrated setup-to-publish journey remains required."
+    },
+    {
+      "item_id": 162,
+      "requirement": "Keep selected month, unit scope and draft/published status visible throughout generation and review without excessive header height.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/rota-compute.ts",
+        "frontend/src/rota-intelligence.ts",
+        "frontend/tests/premium-generation-actions.browser.mjs"
+      ],
+      "gap": "Mocked generator tests prove exact payload/UI contracts but do not prove database persistence, scheduling equivalence or real hardware outcomes."
+    },
+    {
+      "item_id": 163,
+      "requirement": "Explain disabled generation prerequisites beside the action instead of requiring users to discover them in another screen.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/rota-compute.ts",
+        "frontend/src/rota-intelligence.ts",
+        "frontend/tests/premium-generation-actions.browser.mjs"
+      ],
+      "gap": "Mocked generator tests prove exact payload/UI contracts but do not prove database persistence, scheduling equivalence or real hardware outcomes."
+    },
+    {
+      "item_id": 164,
+      "requirement": "Maintain essential generation actions while optional reports load or fail, preserving the existing nonblocking foundation.",
+      "status": "partial",
+      "interaction_finding": "The generation-controls suite includes optional-report failure while Build remains available.",
+      "evidence": [
+        "frontend/src/rota-compute.ts",
+        "frontend/src/rota-intelligence.ts",
+        "frontend/tests/premium-generation-actions.browser.mjs"
+      ],
+      "gap": "Link the final current run; assertion source alone is not runtime evidence."
+    },
+    {
+      "item_id": 165,
+      "requirement": "Give template proposals a balanced review layout showing units, dates, forced choices and unresolved work before apply.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/rota-compute.ts",
+        "frontend/src/rota-intelligence.ts",
+        "frontend/tests/premium-generation-actions.browser.mjs"
+      ],
+      "gap": "Mocked generator tests prove exact payload/UI contracts but do not prove database persistence, scheduling equivalence or real hardware outcomes."
+    },
+    {
+      "item_id": 166,
+      "requirement": "Make quick Autoassign and whole-month planning distinct choices, with concise explanations of preservation and repair behavior.",
+      "status": "partial",
+      "interaction_finding": "The conflict suite verifies navigation to the correct generation stage.",
+      "evidence": [
+        "frontend/src/rota-compute.ts",
+        "frontend/src/rota-intelligence.ts",
+        "frontend/tests/premium-generation-actions.browser.mjs"
+      ],
+      "gap": "Final quick-fill and whole-month integrated read-back remain required."
+    },
+    {
+      "item_id": 167,
+      "requirement": "Surface current engine, requested preference, measured readiness and fallback reason without implying GPU acceleration guarantees.",
+      "status": "partial",
+      "interaction_finding": "Existing-revision server fallback and browser preference persistence pass.",
+      "evidence": [
+        "frontend/src/rota-compute.ts",
+        "frontend/src/rota-intelligence.ts",
+        "frontend/tests/premium-generation-actions.browser.mjs"
+      ],
+      "gap": "Link actual engine and Intel/NVIDIA evidence to the final source snapshot."
+    },
+    {
+      "item_id": 168,
+      "requirement": "Simplify compute diagnostics into a clear summary with expandable technical evidence, preserving meaningful hardware and benchmark details.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/rota-compute.ts",
+        "frontend/src/rota-intelligence.ts",
+        "frontend/tests/premium-generation-actions.browser.mjs"
+      ],
+      "gap": "Mocked generator tests prove exact payload/UI contracts but do not prove database persistence, scheduling equivalence or real hardware outcomes."
+    },
+    {
+      "item_id": 169,
+      "requirement": "Present generation progress as queued, working, review-ready or failed according to actual returned states, avoiding invented percentages.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/rota-compute.ts",
+        "frontend/src/rota-intelligence.ts",
+        "frontend/tests/premium-generation-actions.browser.mjs"
+      ],
+      "gap": "Mocked generator tests prove exact payload/UI contracts but do not prove database persistence, scheduling equivalence or real hardware outcomes."
+    },
+    {
+      "item_id": 170,
+      "requirement": "Preserve resume, cancel and server-fallback controls during recoverable GPU or network interruption using existing job capabilities.",
+      "status": "partial",
+      "interaction_finding": "Paused resume, current revision validation and explicit server fallback pass without a new job.",
+      "evidence": [
+        "frontend/src/rota-compute.ts",
+        "frontend/src/rota-intelligence.ts",
+        "frontend/tests/premium-generation-actions.browser.mjs"
+      ],
+      "gap": "Hardware-specific interruption requires the dedicated fault suite."
+    },
+    {
+      "item_id": 171,
+      "requirement": "Keep review confirmation, unresolved counts and primary apply actions visible without covering final proposed decisions on phones.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/rota-compute.ts",
+        "frontend/src/rota-intelligence.ts",
+        "frontend/tests/premium-generation-actions.browser.mjs"
+      ],
+      "gap": "Mocked generator tests prove exact payload/UI contracts but do not prove database persistence, scheduling equivalence or real hardware outcomes."
+    },
+    {
+      "item_id": 172,
+      "requirement": "Display hard blockers, warnings and accepted exceptions through distinct text, icon and grouping treatments with actionable explanations.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/rota-compute.ts",
+        "frontend/src/rota-intelligence.ts",
+        "frontend/tests/premium-generation-actions.browser.mjs"
+      ],
+      "gap": "Mocked generator tests prove exact payload/UI contracts but do not prove database persistence, scheduling equivalence or real hardware outcomes."
+    },
+    {
+      "item_id": 173,
+      "requirement": "Make assignment alternatives and workload comparisons easier to compare without obscuring server-provided eligibility or objective evidence.",
+      "status": "verified_bounded",
+      "interaction_finding": "The optimizer adds an alternative, selects index 1 at revision 8 and applies revision 9.",
+      "evidence": [
+        "frontend/src/rota-compute.ts",
+        "frontend/src/rota-intelligence.ts",
+        "frontend/tests/premium-generation-actions.browser.mjs"
+      ],
+      "gap": "This verifies frontend contracts with mocked responses, not solver quality."
+    },
+    {
+      "item_id": 174,
+      "requirement": "Preserve locks, selected repair scope and member preferences across responsive reflow and recoverable frontend errors.",
+      "status": "partial",
+      "interaction_finding": "Lock/repair exclusivity and local preference counts pass through actual controls.",
+      "evidence": [
+        "frontend/src/rota-compute.ts",
+        "frontend/src/rota-intelligence.ts",
+        "frontend/tests/premium-generation-actions.browser.mjs"
+      ],
+      "gap": "Verify the eventual generation payload after responsive and recovery transitions."
+    },
+    {
+      "item_id": 175,
+      "requirement": "Give long rota grids a usable narrow-screen day/list alternative while retaining deliberate comparison scrolling where needed.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/rota-compute.ts",
+        "frontend/src/rota-intelligence.ts",
+        "frontend/tests/premium-generation-actions.browser.mjs"
+      ],
+      "gap": "Mocked generator tests prove exact payload/UI contracts but do not prove database persistence, scheduling equivalence or real hardware outcomes."
+    },
+    {
+      "item_id": 176,
+      "requirement": "Integrate extra-duty proposals, verification, undo and audit reports into the shared review visual language without altering calculations.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/rota-compute.ts",
+        "frontend/src/rota-intelligence.ts",
+        "frontend/tests/premium-generation-actions.browser.mjs"
+      ],
+      "gap": "Mocked generator tests prove exact payload/UI contracts but do not prove database persistence, scheduling equivalence or real hardware outcomes."
+    },
+    {
+      "item_id": 177,
+      "requirement": "Keep reviewed reversal actions clearly scoped to their applied generation or batch, exposing conflicts and unavailable-state explanations.",
+      "status": "verified_bounded",
+      "interaction_finding": "Members and templates apply revision 7, check revision 8 and revert revision 8; optimizer uses revisions 9 and 10.",
+      "evidence": [
+        "frontend/src/rota-compute.ts",
+        "frontend/src/rota-intelligence.ts",
+        "frontend/tests/premium-generation-actions.browser.mjs"
+      ],
+      "gap": "Backend reversal conflict correctness remains outside this frontend change."
+    },
+    {
+      "item_id": 178,
+      "requirement": "Make publishing visually distinct from saving a draft, with accurate consequences, prerequisites and existing server confirmation behavior.",
+      "status": "partial",
+      "interaction_finding": "Main publishing requires a note, preserves cancellation and sends the exact confirmed month and body.",
+      "evidence": [
+        "frontend/src/rota-compute.ts",
+        "frontend/src/rota-intelligence.ts",
+        "frontend/tests/premium-generation-actions.browser.mjs"
+      ],
+      "gap": "Finish the role/blocker matrix and complete integrated generation journey."
+    },
+    {
+      "item_id": 179,
+      "requirement": "Improve export menus and download feedback, verifying filenames, formats and actual nonempty artifacts before reporting success.",
+      "status": "partial",
+      "interaction_finding": "JSON contents and filenames are verified; mocked Excel bytes reach the browser unchanged.",
+      "evidence": [
+        "frontend/src/rota-compute.ts",
+        "frontend/src/rota-intelligence.ts",
+        "frontend/tests/premium-generation-actions.browser.mjs"
+      ],
+      "gap": "Real workbook content equivalence needs separate artifact evidence."
+    },
+    {
+      "item_id": 180,
+      "requirement": "Verify complete setup-to-export journeys and confirm equivalent API payloads, outcomes and export content after presentation changes.",
+      "status": "partial",
+      "interaction_finding": "Tests preserve existing request contracts and mock all mutation responses.",
+      "evidence": [
+        "frontend/src/rota-compute.ts",
+        "frontend/src/rota-intelligence.ts",
+        "frontend/tests/premium-generation-actions.browser.mjs"
+      ],
+      "gap": "Mocks cannot establish scheduling or persisted export equivalence."
+    },
+    {
+      "item_id": 181,
+      "requirement": "Refine rules editing into clearly grouped sections with consistent headings, summaries, unsaved markers and sticky-save behavior.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/tests/premium-admin-actions.browser.mjs",
+        "docs/premium-ui/admin-action-results.json"
+      ],
+      "gap": "Admin action suite covers sampled tools; exact current administrative controls and role states must be mapped independently."
+    },
+    {
+      "item_id": 182,
+      "requirement": "Keep effective dates, rule versions and validation results visually distinct so configuration history cannot be mistaken for current policy.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/tests/premium-admin-actions.browser.mjs",
+        "docs/premium-ui/admin-action-results.json"
+      ],
+      "gap": "Admin action suite covers sampled tools; exact current administrative controls and role states must be mapped independently."
+    },
+    {
+      "item_id": 183,
+      "requirement": "Improve eligibility-group search and membership presentation without changing group normalization, dates or eligibility semantics.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/tests/premium-admin-actions.browser.mjs",
+        "docs/premium-ui/admin-action-results.json"
+      ],
+      "gap": "Admin action suite covers sampled tools; exact current administrative controls and role states must be mapped independently."
+    },
+    {
+      "item_id": 184,
+      "requirement": "Standardize reference mappings with readable source-to-target relationships and clear reviewed, unresolved and inactive indicators.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/tests/premium-admin-actions.browser.mjs",
+        "docs/premium-ui/admin-action-results.json"
+      ],
+      "gap": "Admin action suite covers sampled tools; exact current administrative controls and role states must be mapped independently."
+    },
+    {
+      "item_id": 185,
+      "requirement": "Make past-duty import steps consistent with operational CSV workflows while retaining their distinct historical-data explanations.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/tests/premium-admin-actions.browser.mjs",
+        "docs/premium-ui/admin-action-results.json"
+      ],
+      "gap": "Admin action suite covers sampled tools; exact current administrative controls and role states must be mapped independently."
+    },
+    {
+      "item_id": 186,
+      "requirement": "Present import history and rejection reports with reliable filtering, readable timestamps and working download controls.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/tests/premium-admin-actions.browser.mjs",
+        "docs/premium-ui/admin-action-results.json"
+      ],
+      "gap": "Admin action suite covers sampled tools; exact current administrative controls and role states must be mapped independently."
+    },
+    {
+      "item_id": 187,
+      "requirement": "Give login-account management clear role descriptions and pending/error feedback without implying frontend visibility enforces authorization.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/tests/premium-admin-actions.browser.mjs",
+        "docs/premium-ui/admin-action-results.json"
+      ],
+      "gap": "Admin action suite covers sampled tools; exact current administrative controls and role states must be mapped independently."
+    },
+    {
+      "item_id": 188,
+      "requirement": "Distinguish account activation, role changes and password-related actions through explicit labels and appropriately scoped confirmations.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/tests/premium-admin-actions.browser.mjs",
+        "docs/premium-ui/admin-action-results.json"
+      ],
+      "gap": "Admin action suite covers sampled tools; exact current administrative controls and role states must be mapped independently."
+    },
+    {
+      "item_id": 189,
+      "requirement": "Improve diagnostics readability with a short service summary and expandable technical information that avoids unnecessary personal data.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/tests/premium-admin-actions.browser.mjs",
+        "docs/premium-ui/admin-action-results.json"
+      ],
+      "gap": "Admin action suite covers sampled tools; exact current administrative controls and role states must be mapped independently."
+    },
+    {
+      "item_id": 190,
+      "requirement": "Make unavailable diagnostics recoverable without turning unrelated operational screens into error pages or blank placeholders.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/tests/premium-admin-actions.browser.mjs",
+        "docs/premium-ui/admin-action-results.json"
+      ],
+      "gap": "Admin action suite covers sampled tools; exact current administrative controls and role states must be mapped independently."
+    },
+    {
+      "item_id": 191,
+      "requirement": "Refine recycle-bin cards and tables so record type, deletion context, restore scope and conflicts are immediately understandable.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/tests/premium-admin-actions.browser.mjs",
+        "docs/premium-ui/admin-action-results.json"
+      ],
+      "gap": "Admin action suite covers sampled tools; exact current administrative controls and role states must be mapped independently."
+    },
+    {
+      "item_id": 192,
+      "requirement": "Verify restore and permanent-delete controls independently, keeping their consequences and supported backend capabilities clearly separated.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/tests/premium-admin-actions.browser.mjs",
+        "docs/premium-ui/admin-action-results.json"
+      ],
+      "gap": "Admin action suite covers sampled tools; exact current administrative controls and role states must be mapped independently."
+    },
+    {
+      "item_id": 193,
+      "requirement": "Provide coherent help guidance for common tasks, linked directly from the section where users encounter difficulty.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/tests/premium-admin-actions.browser.mjs",
+        "docs/premium-ui/admin-action-results.json"
+      ],
+      "gap": "Admin action suite covers sampled tools; exact current administrative controls and role states must be mapped independently."
+    },
+    {
+      "item_id": 194,
+      "requirement": "Update in-app documentation and screenshots only after the corresponding approved interface is implemented and verified.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/tests/premium-admin-actions.browser.mjs",
+        "docs/premium-ui/admin-action-results.json"
+      ],
+      "gap": "Admin action suite covers sampled tools; exact current administrative controls and role states must be mapped independently."
+    },
+    {
+      "item_id": 195,
+      "requirement": "Keep developer-only implementation details out of operational guidance unless users need them to make an informed choice.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/tests/premium-admin-actions.browser.mjs",
+        "docs/premium-ui/admin-action-results.json"
+      ],
+      "gap": "Admin action suite covers sampled tools; exact current administrative controls and role states must be mapped independently."
+    },
+    {
+      "item_id": 196,
+      "requirement": "Standardize date, time, month and numeric formatting while preserving explicit timezone context for recorded audit events.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/tests/premium-admin-actions.browser.mjs",
+        "docs/premium-ui/admin-action-results.json"
+      ],
+      "gap": "Admin action suite covers sampled tools; exact current administrative controls and role states must be mapped independently."
+    },
+    {
+      "item_id": 197,
+      "requirement": "Ensure admin-only menus remain absent for unauthorized roles and handle server refusals without confusing fake success states.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/tests/premium-admin-actions.browser.mjs",
+        "docs/premium-ui/admin-action-results.json"
+      ],
+      "gap": "Admin action suite covers sampled tools; exact current administrative controls and role states must be mapped independently."
+    },
+    {
+      "item_id": 198,
+      "requirement": "Support long labels and unavailable optional data consistently across settings, reports, history and account surfaces.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/tests/premium-admin-actions.browser.mjs",
+        "docs/premium-ui/admin-action-results.json"
+      ],
+      "gap": "Admin action suite covers sampled tools; exact current administrative controls and role states must be mapped independently."
+    },
+    {
+      "item_id": 199,
+      "requirement": "Review print and printable-report presentation separately, retaining meaningful content while removing interactive navigation chrome.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/tests/premium-admin-actions.browser.mjs",
+        "docs/premium-ui/admin-action-results.json"
+      ],
+      "gap": "Admin action suite covers sampled tools; exact current administrative controls and role states must be mapped independently."
+    },
+    {
+      "item_id": 200,
+      "requirement": "Verify every administrative action using disposable authorized fixtures and document actions requiring APIs beyond the approved frontend scope.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/tests/premium-admin-actions.browser.mjs",
+        "docs/premium-ui/admin-action-results.json"
+      ],
+      "gap": "Admin action suite covers sampled tools; exact current administrative controls and role states must be mapped independently."
+    },
+    {
+      "item_id": 201,
+      "requirement": "Target WCAG 2.2 AA through component checks and complete workflow review, retaining the application's existing accessible foundations.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/ui.ts",
+        "frontend/src/member-workspace.ts",
+        "docs/premium-ui/qa-responsive/report.json"
+      ],
+      "gap": "Accessibility must retain behavior outcomes across keyboard and assistive journeys; automated axe/geometry alone is insufficient."
+    },
+    {
+      "item_id": 202,
+      "requirement": "Measure ordinary text contrast, meaningful graphical contrast and focus visibility for every theme and interactive state.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/ui.ts",
+        "frontend/src/member-workspace.ts",
+        "docs/premium-ui/qa-responsive/report.json"
+      ],
+      "gap": "Accessibility must retain behavior outcomes across keyboard and assistive journeys; automated axe/geometry alone is insufficient."
+    },
+    {
+      "item_id": 203,
+      "requirement": "Keep statuses understandable without color by combining text, grouping, icons and explicit explanatory labels.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/ui.ts",
+        "frontend/src/member-workspace.ts",
+        "docs/premium-ui/qa-responsive/report.json"
+      ],
+      "gap": "Accessibility must retain behavior outcomes across keyboard and assistive journeys; automated axe/geometry alone is insufficient."
+    },
+    {
+      "item_id": 204,
+      "requirement": "Preserve the skip link and semantic landmarks, ensuring route changes expose an understandable heading and focused destination.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/ui.ts",
+        "frontend/src/member-workspace.ts",
+        "docs/premium-ui/qa-responsive/report.json"
+      ],
+      "gap": "Accessibility must retain behavior outcomes across keyboard and assistive journeys; automated axe/geometry alone is insufficient."
+    },
+    {
+      "item_id": 205,
+      "requirement": "Use a documented heading hierarchy within pages, dialogs and nested panels without decorative heading-level jumps.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/ui.ts",
+        "frontend/src/member-workspace.ts",
+        "docs/premium-ui/qa-responsive/report.json"
+      ],
+      "gap": "Accessibility must retain behavior outcomes across keyboard and assistive journeys; automated axe/geometry alone is insufficient."
+    },
+    {
+      "item_id": 206,
+      "requirement": "Consolidate legacy overlay dialogs into an accessible shared lifecycle with correct initial focus, containment and restoration.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/ui.ts",
+        "frontend/src/member-workspace.ts",
+        "docs/premium-ui/qa-responsive/report.json"
+      ],
+      "gap": "Accessibility must retain behavior outcomes across keyboard and assistive journeys; automated axe/geometry alone is insufficient."
+    },
+    {
+      "item_id": 207,
+      "requirement": "Ensure only the top active overlay handles Escape, preventing unrelated dialogs or drafts from closing simultaneously.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/ui.ts",
+        "frontend/src/member-workspace.ts",
+        "docs/premium-ui/qa-responsive/report.json"
+      ],
+      "gap": "Accessibility must retain behavior outcomes across keyboard and assistive journeys; automated axe/geometry alone is insufficient."
+    },
+    {
+      "item_id": 208,
+      "requirement": "Keep focus visible and unobscured beneath sticky headers, bottom navigation, action footers and software keyboards.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/ui.ts",
+        "frontend/src/member-workspace.ts",
+        "docs/premium-ui/qa-responsive/report.json"
+      ],
+      "gap": "Accessibility must retain behavior outcomes across keyboard and assistive journeys; automated axe/geometry alone is insufficient."
+    },
+    {
+      "item_id": 209,
+      "requirement": "Preserve native keyboard behaviors for buttons, fields, menus, tabs, selects and date controls rather than intercepting keys unnecessarily.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/ui.ts",
+        "frontend/src/member-workspace.ts",
+        "docs/premium-ui/qa-responsive/report.json"
+      ],
+      "gap": "Accessibility must retain behavior outcomes across keyboard and assistive journeys; automated axe/geometry alone is insufficient."
+    },
+    {
+      "item_id": 210,
+      "requirement": "Make row menus and help popovers usable without hover, with predictable opening, closing and focus return behavior.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/ui.ts",
+        "frontend/src/member-workspace.ts",
+        "docs/premium-ui/qa-responsive/report.json"
+      ],
+      "gap": "Accessibility must retain behavior outcomes across keyboard and assistive journeys; automated axe/geometry alone is insufficient."
+    },
+    {
+      "item_id": 211,
+      "requirement": "Prefer 44px touch controls; enforce WCAG AA 24-by-24 CSS-pixel minimum targets or valid exceptions with verified spacing.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/ui.ts",
+        "frontend/src/member-workspace.ts",
+        "docs/premium-ui/qa-responsive/report.json"
+      ],
+      "gap": "Accessibility must retain behavior outcomes across keyboard and assistive journeys; automated axe/geometry alone is insufficient."
+    },
+    {
+      "item_id": 212,
+      "requirement": "Associate labels, hints, required states and error descriptions, apply aria-invalid accurately and announce validation outcomes without excessive interruption.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/ui.ts",
+        "frontend/src/member-workspace.ts",
+        "docs/premium-ui/qa-responsive/report.json"
+      ],
+      "gap": "Accessibility must retain behavior outcomes across keyboard and assistive journeys; automated axe/geometry alone is insufficient."
+    },
+    {
+      "item_id": 213,
+      "requirement": "Keep loading and success announcements concise, avoiding repeated whole-page announcements during polling or background invalidation.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/ui.ts",
+        "frontend/src/member-workspace.ts",
+        "docs/premium-ui/qa-responsive/report.json"
+      ],
+      "gap": "Accessibility must retain behavior outcomes across keyboard and assistive journeys; automated axe/geometry alone is insufficient."
+    },
+    {
+      "item_id": 214,
+      "requirement": "Support 200% zoom, 400% reflow scenarios and enlarged text without losing core tasks or essential information.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/ui.ts",
+        "frontend/src/member-workspace.ts",
+        "docs/premium-ui/qa-responsive/report.json"
+      ],
+      "gap": "Accessibility must retain behavior outcomes across keyboard and assistive journeys; automated axe/geometry alone is insufficient."
+    },
+    {
+      "item_id": 215,
+      "requirement": "Respect reduced-motion preferences and ensure no essential understanding depends on animation, shimmer or timed transitions.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/ui.ts",
+        "frontend/src/member-workspace.ts",
+        "docs/premium-ui/qa-responsive/report.json"
+      ],
+      "gap": "Accessibility must retain behavior outcomes across keyboard and assistive journeys; automated axe/geometry alone is insufficient."
+    },
+    {
+      "item_id": 216,
+      "requirement": "Test forced-colors and high-contrast modes, preserving control boundaries, selection states and visible keyboard focus.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/ui.ts",
+        "frontend/src/member-workspace.ts",
+        "docs/premium-ui/qa-responsive/report.json"
+      ],
+      "gap": "Accessibility must retain behavior outcomes across keyboard and assistive journeys; automated axe/geometry alone is insufficient."
+    },
+    {
+      "item_id": 217,
+      "requirement": "Make comparison scrolling, tab rails and embedded reports keyboard reachable and clearly named when separate regions are necessary.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/ui.ts",
+        "frontend/src/member-workspace.ts",
+        "docs/premium-ui/qa-responsive/report.json"
+      ],
+      "gap": "Accessibility must retain behavior outcomes across keyboard and assistive journeys; automated axe/geometry alone is insufficient."
+    },
+    {
+      "item_id": 218,
+      "requirement": "Record NVDA/Chrome and VoiceOver/Safari walkthroughs for key workflows, identifying unavailable real-device checks as dependencies rather than passes.",
+      "status": "dependency",
+      "interaction_finding": "The user selected emulation and explicitly left physical checks pending.",
+      "evidence": [
+        "frontend/src/ui.ts",
+        "frontend/src/member-workspace.ts",
+        "docs/premium-ui/qa-responsive/report.json"
+      ],
+      "gap": "Physical assistive-technology combinations were not performed by this agent."
+    },
+    {
+      "item_id": 219,
+      "requirement": "Confirm touch-screen and keyboard task parity, documenting unavoidable native-platform differences rather than disguising missing actions.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/ui.ts",
+        "frontend/src/member-workspace.ts",
+        "docs/premium-ui/qa-responsive/report.json"
+      ],
+      "gap": "Accessibility must retain behavior outcomes across keyboard and assistive journeys; automated axe/geometry alone is insufficient."
+    },
+    {
+      "item_id": 220,
+      "requirement": "Resolve or explicitly assess all applicable WCAG A/AA failures; combine automated findings with manual verification rather than relying on severity alone.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/ui.ts",
+        "frontend/src/member-workspace.ts",
+        "docs/premium-ui/qa-responsive/report.json"
+      ],
+      "gap": "Accessibility must retain behavior outcomes across keyboard and assistive journeys; automated axe/geometry alone is insufficient."
+    },
+    {
+      "item_id": 221,
+      "requirement": "Centralize consistent request-state presentation while preserving the existing API helper and supported server error details.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/frontend-runtime.ts",
+        "frontend/src/services/api.ts",
+        "docs/premium-ui/qa-production-chunk-recovery.json"
+      ],
+      "gap": "Recovery suites cover bounded injected failures; audit remaining action lifecycle boundaries and uncertainty after in-flight mutations."
+    },
+    {
+      "item_id": 222,
+      "requirement": "Distinguish cancellation, deadlines and server refusal; a frontend timeout or abort never proves server processing stopped or rolled back.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/frontend-runtime.ts",
+        "frontend/src/services/api.ts",
+        "docs/premium-ui/qa-production-chunk-recovery.json"
+      ],
+      "gap": "Recovery suites cover bounded injected failures; audit remaining action lifecycle boundaries and uncertainty after in-flight mutations."
+    },
+    {
+      "item_id": 223,
+      "requirement": "Preserve structured field errors and provide safe fallback messages for HTML error pages, invalid JSON or empty responses.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/frontend-runtime.ts",
+        "frontend/src/services/api.ts",
+        "docs/premium-ui/qa-production-chunk-recovery.json"
+      ],
+      "gap": "Recovery suites cover bounded injected failures; audit remaining action lifecycle boundaries and uncertainty after in-flight mutations."
+    },
+    {
+      "item_id": 224,
+      "requirement": "Prevent failed requests from clearing useful loaded content or replacing an entire working screen unnecessarily.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/frontend-runtime.ts",
+        "frontend/src/services/api.ts",
+        "docs/premium-ui/qa-production-chunk-recovery.json"
+      ],
+      "gap": "Recovery suites cover bounded injected failures; audit remaining action lifecycle boundaries and uncertainty after in-flight mutations."
+    },
+    {
+      "item_id": 225,
+      "requirement": "Track request/refresh generations, account, route, month and dialog lifetime so older same-screen responses cannot overwrite newer results.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/frontend-runtime.ts",
+        "frontend/src/services/api.ts",
+        "docs/premium-ui/qa-production-chunk-recovery.json"
+      ],
+      "gap": "Recovery suites cover bounded injected failures; audit remaining action lifecycle boundaries and uncertainty after in-flight mutations."
+    },
+    {
+      "item_id": 226,
+      "requirement": "Keep safe cached data visibly marked as stale and avoid silently presenting it as the latest saved state.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/frontend-runtime.ts",
+        "frontend/src/services/api.ts",
+        "docs/premium-ui/qa-production-chunk-recovery.json"
+      ],
+      "gap": "Recovery suites cover bounded injected failures; audit remaining action lifecycle boundaries and uncertainty after in-flight mutations."
+    },
+    {
+      "item_id": 227,
+      "requirement": "Preserve unsaved form values during refresh prompts and data invalidation without storing sensitive records persistently by default.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/frontend-runtime.ts",
+        "frontend/src/services/api.ts",
+        "docs/premium-ui/qa-production-chunk-recovery.json"
+      ],
+      "gap": "Recovery suites cover bounded injected failures; audit remaining action lifecycle boundaries and uncertainty after in-flight mutations."
+    },
+    {
+      "item_id": 228,
+      "requirement": "Bound suitable read retries, honor retry guidance and stop obsolete contexts; never blindly replay uncertain mutations.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/frontend-runtime.ts",
+        "frontend/src/services/api.ts",
+        "docs/premium-ui/qa-production-chunk-recovery.json"
+      ],
+      "gap": "Recovery suites cover bounded injected failures; audit remaining action lifecycle boundaries and uncertainty after in-flight mutations."
+    },
+    {
+      "item_id": 229,
+      "requirement": "Reconcile uncertain save outcomes using existing read-back or idempotency capabilities, explaining when safe reconciliation is unavailable.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/frontend-runtime.ts",
+        "frontend/src/services/api.ts",
+        "docs/premium-ui/qa-production-chunk-recovery.json"
+      ],
+      "gap": "Recovery suites cover bounded injected failures; audit remaining action lifecycle boundaries and uncertainty after in-flight mutations."
+    },
+    {
+      "item_id": 230,
+      "requirement": "Handle session expiration, cross-tab sign-out and permission changes centrally while retaining safe context and avoiding repeated failed mutation loops.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/frontend-runtime.ts",
+        "frontend/src/services/api.ts",
+        "docs/premium-ui/qa-production-chunk-recovery.json"
+      ],
+      "gap": "Recovery suites cover bounded injected failures; audit remaining action lifecycle boundaries and uncertainty after in-flight mutations."
+    },
+    {
+      "item_id": 231,
+      "requirement": "Provide minimal HTML/bootstrap recovery even when the entry script fails, with safe error text and a working Retry path.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/frontend-runtime.ts",
+        "frontend/src/services/api.ts",
+        "docs/premium-ui/qa-production-chunk-recovery.json"
+      ],
+      "gap": "Recovery suites cover bounded injected failures; audit remaining action lifecycle boundaries and uncertainty after in-flight mutations."
+    },
+    {
+      "item_id": 232,
+      "requirement": "Handle Vite preload errors and missing dynamic chunks with a controlled update prompt that protects unsaved work.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/frontend-runtime.ts",
+        "frontend/src/services/api.ts",
+        "docs/premium-ui/qa-production-chunk-recovery.json"
+      ],
+      "gap": "Recovery suites cover bounded injected failures; audit remaining action lifecycle boundaries and uncertainty after in-flight mutations."
+    },
+    {
+      "item_id": 233,
+      "requirement": "Detect repeated recovery attempts and prevent infinite reload loops, especially during prolonged outages or unavailable new assets.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/frontend-runtime.ts",
+        "frontend/src/services/api.ts",
+        "docs/premium-ui/qa-production-chunk-recovery.json"
+      ],
+      "gap": "Recovery suites cover bounded injected failures; audit remaining action lifecycle boundaries and uncertainty after in-flight mutations."
+    },
+    {
+      "item_id": 234,
+      "requirement": "Include a build identity in artifacts and expandable support diagnostics, keeping development identifiers out of prominent operational headings.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/frontend-runtime.ts",
+        "frontend/src/services/api.ts",
+        "docs/premium-ui/qa-production-chunk-recovery.json"
+      ],
+      "gap": "Recovery suites cover bounded injected failures; audit remaining action lifecycle boundaries and uncertainty after in-flight mutations."
+    },
+    {
+      "item_id": 235,
+      "requirement": "Inspect HTML revalidation, immutable hashed assets and previous-release retention as hosting dependencies without silently modifying server infrastructure.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/frontend-runtime.ts",
+        "frontend/src/services/api.ts",
+        "docs/premium-ui/qa-production-chunk-recovery.json"
+      ],
+      "gap": "Recovery suites cover bounded injected failures; audit remaining action lifecycle boundaries and uncertainty after in-flight mutations."
+    },
+    {
+      "item_id": 236,
+      "requirement": "Detect missing styles, failed optional modules and unavailable fonts or icons, providing readable reduced-capability presentation where feasible.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/frontend-runtime.ts",
+        "frontend/src/services/api.ts",
+        "docs/premium-ui/qa-production-chunk-recovery.json"
+      ],
+      "gap": "Recovery suites cover bounded injected failures; audit remaining action lifecycle boundaries and uncertainty after in-flight mutations."
+    },
+    {
+      "item_id": 237,
+      "requirement": "Reduce unnecessary broad rerenders and duplicate requests through measured, context-aware invalidation rather than indiscriminate caching.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/frontend-runtime.ts",
+        "frontend/src/services/api.ts",
+        "docs/premium-ui/qa-production-chunk-recovery.json"
+      ],
+      "gap": "Recovery suites cover bounded injected failures; audit remaining action lifecycle boundaries and uncertainty after in-flight mutations."
+    },
+    {
+      "item_id": 238,
+      "requirement": "Split expensive optional frontend modules where evidence supports it, resolving conflicting static/dynamic imports without changing operational contracts.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/frontend-runtime.ts",
+        "frontend/src/services/api.ts",
+        "docs/premium-ui/qa-production-chunk-recovery.json"
+      ],
+      "gap": "Recovery suites cover bounded injected failures; audit remaining action lifecycle boundaries and uncertainty after in-flight mutations."
+    },
+    {
+      "item_id": 239,
+      "requirement": "Remove obsolete selectors, orphan handlers and unreachable UI paths only after action-inventory and regression evidence establish safety.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/frontend-runtime.ts",
+        "frontend/src/services/api.ts",
+        "docs/premium-ui/qa-production-chunk-recovery.json"
+      ],
+      "gap": "Recovery suites cover bounded injected failures; audit remaining action lifecycle boundaries and uncertainty after in-flight mutations."
+    },
+    {
+      "item_id": 240,
+      "requirement": "Guard storage and versioned preferences; preserve CSP/worker isolation and redact tokens, pairing secrets and member data from diagnostics.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "frontend/src/frontend-runtime.ts",
+        "frontend/src/services/api.ts",
+        "docs/premium-ui/qa-production-chunk-recovery.json"
+      ],
+      "gap": "Recovery suites cover bounded injected failures; audit remaining action lifecycle boundaries and uncertainty after in-flight mutations."
+    },
+    {
+      "item_id": 241,
+      "requirement": "Require outcome assertions and fail unexpected loaders/errors/requests, while explicitly distinguishing deliberately injected failures from recovery defects.",
+      "status": "partial",
+      "interaction_finding": "Tests reject unmocked mutation requests and assert resulting state and bodies.",
+      "evidence": [
+        "docs/premium-ui/verification-current.json",
+        "docs/premium-ui/contracts/generation.json"
+      ],
+      "gap": "Apply the same strict failure accounting to the remaining suites."
+    },
+    {
+      "item_id": 242,
+      "requirement": "Test real pointer and keyboard activation for correct destination, context and focus, without forced or evaluated-click bypasses.",
+      "status": "verified_bounded",
+      "interaction_finding": "New action tests use actual pointer and keyboard activation without forced clicks or DOM click bypass.",
+      "evidence": [
+        "docs/premium-ui/verification-current.json",
+        "docs/premium-ui/contracts/generation.json"
+      ],
+      "gap": "Audit the remaining test inventory separately."
+    },
+    {
+      "item_id": 243,
+      "requirement": "Test saves through returned values and fresh GET or reload read-back, avoiding stale client caches and production mutations.",
+      "status": "partial",
+      "interaction_finding": "Fallback order uses fresh mocked GET read-back; publishing is reopened after reload.",
+      "evidence": [
+        "docs/premium-ui/verification-current.json",
+        "docs/premium-ui/contracts/generation.json"
+      ],
+      "gap": "Mock read-back is not proof of database persistence."
+    },
+    {
+      "item_id": 244,
+      "requirement": "Test filters, sorts, tabs and pagination against meaningful content changes and preserved state across detail-view round trips.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "docs/premium-ui/verification-current.json",
+        "docs/premium-ui/contracts/generation.json"
+      ],
+      "gap": "Evidence exists across suites, but final integrated snapshot/action register and independent review/dependency closure remain incomplete."
+    },
+    {
+      "item_id": 245,
+      "requirement": "Test downloads by validating names, formats and expected content, including failure handling for blocked or empty downloads.",
+      "status": "partial",
+      "interaction_finding": "Generated JSON includes meaningful decisions and month; mocked Excel bytes remain unchanged.",
+      "evidence": [
+        "docs/premium-ui/verification-current.json",
+        "docs/premium-ui/contracts/generation.json"
+      ],
+      "gap": "Real workbook semantics and empty/download-failure cases remain required."
+    },
+    {
+      "item_id": 246,
+      "requirement": "Prove repeated activation sends one mutation and dismissal sends none, using existing read-back or audit capabilities without new backend instrumentation.",
+      "status": "partial",
+      "interaction_finding": "Extra-duty double activation sends one request; dismissed publish confirmation sends none.",
+      "evidence": [
+        "docs/premium-ui/verification-current.json",
+        "docs/premium-ui/contracts/generation.json"
+      ],
+      "gap": "Map other mutation and destructive-confirmation actions individually."
+    },
+    {
+      "item_id": 247,
+      "requirement": "Cover loading, empty, populated, invalid/empty responses, restricted storage, reordered requests, permission denial, offline, timeout and recovery states.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "docs/premium-ui/verification-current.json",
+        "docs/premium-ui/contracts/generation.json"
+      ],
+      "gap": "Evidence exists across suites, but final integrated snapshot/action register and independent review/dependency closure remain incomplete."
+    },
+    {
+      "item_id": 248,
+      "requirement": "Test widths and heights, including 320×568, 390×844, 844×390, 1024×768 and 1280×720, plus breakpoint edges.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "docs/premium-ui/verification-current.json",
+        "docs/premium-ui/contracts/generation.json"
+      ],
+      "gap": "Evidence exists across suites, but final integrated snapshot/action register and independent review/dependency closure remain incomplete."
+    },
+    {
+      "item_id": 249,
+      "requirement": "Check document overflow, local scroll regions, sticky-content occlusion and touch-target geometry alongside visual screenshot comparisons.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "docs/premium-ui/verification-current.json",
+        "docs/premium-ui/contracts/generation.json"
+      ],
+      "gap": "Evidence exists across suites, but final integrated snapshot/action register and independent review/dependency closure remain incomplete."
+    },
+    {
+      "item_id": 250,
+      "requirement": "Exercise old tabs with missing UI chunks, styles and compute-worker assets, confirming draft protection, isolation and bounded recovery.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "docs/premium-ui/verification-current.json",
+        "docs/premium-ui/contracts/generation.json"
+      ],
+      "gap": "Evidence exists across suites, but final integrated snapshot/action register and independent review/dependency closure remain incomplete."
+    },
+    {
+      "item_id": 251,
+      "requirement": "Run Chromium, Firefox and WebKit coverage where supported, separating emulated browser checks from actual-device verification claims.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "docs/premium-ui/verification-current.json",
+        "docs/premium-ui/contracts/generation.json"
+      ],
+      "gap": "Evidence exists across suites, but final integrated snapshot/action register and independent review/dependency closure remain incomplete."
+    },
+    {
+      "item_id": 252,
+      "requirement": "Record real-device keyboard-open editing, tab switching and rotation with unsaved drafts, including device/browser details and native-control behavior.",
+      "status": "dependency",
+      "interaction_finding": "The user requested emulation with physical checks marked pending.",
+      "evidence": [
+        "docs/premium-ui/verification-current.json",
+        "docs/premium-ui/contracts/generation.json"
+      ],
+      "gap": "Physical keyboard-open editing, tab changes and phone rotation remain pending."
+    },
+    {
+      "item_id": 253,
+      "requirement": "Compare light, dark, reduced-motion and forced-colors states, investigating meaningful differences instead of accepting screenshots automatically.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "docs/premium-ui/verification-current.json",
+        "docs/premium-ui/contracts/generation.json"
+      ],
+      "gap": "Evidence exists across suites, but final integrated snapshot/action register and independent review/dependency closure remain incomplete."
+    },
+    {
+      "item_id": 254,
+      "requirement": "Re-run existing member, leave, normalization, rules, generation, compute, import, navigation, extra-duty and recycle-bin regressions.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "docs/premium-ui/verification-current.json",
+        "docs/premium-ui/contracts/generation.json"
+      ],
+      "gap": "Evidence exists across suites, but final integrated snapshot/action register and independent review/dependency closure remain incomplete."
+    },
+    {
+      "item_id": 255,
+      "requirement": "Verify workflow equivalence using the same fixtures and approved existing API contracts, confirming presentation changes preserve calculations and exports.",
+      "status": "partial",
+      "interaction_finding": "Relevant implementation or bounded prior evidence exists; no universal action-outcome acceptance inferred.",
+      "evidence": [
+        "docs/premium-ui/verification-current.json",
+        "docs/premium-ui/contracts/generation.json"
+      ],
+      "gap": "Evidence exists across suites, but final integrated snapshot/action register and independent review/dependency closure remain incomplete."
+    },
+    {
+      "item_id": 256,
+      "requirement": "Require visual-design, responsive, accessibility, reliability and interaction-test review for every numbered item before completion sign-off.",
+      "status": "partial",
+      "interaction_finding": "This independent review records all 260 requirements with bounded evidence and explicit gaps.",
+      "evidence": [
+        "docs/premium-ui/verification-current.json",
+        "docs/premium-ui/contracts/generation.json"
+      ],
+      "gap": "The other specialist reviews and integration remain required."
+    },
+    {
+      "item_id": 257,
+      "requirement": "Link each item to files, outcomes, screenshots and source/build snapshots; record passed, failed, blocked, untested or justified not-applicable status.",
+      "status": "partial",
+      "interaction_finding": "Generation contracts distinguish verified frontend behavior from unmapped controls and hardware evidence.",
+      "evidence": [
+        "docs/premium-ui/verification-current.json",
+        "docs/premium-ui/contracts/generation.json"
+      ],
+      "gap": "Integrate all 260 item statuses into the root traceability register."
+    },
+    {
+      "item_id": 258,
+      "requirement": "Run type checks, production build and integrated tests; permit no unexplained untested enabled actions in the final snapshot's ledger.",
+      "status": "pending",
+      "interaction_finding": "This agent has not established the final integrated build and complete action snapshot.",
+      "evidence": [
+        "docs/premium-ui/verification-current.json",
+        "docs/premium-ui/contracts/generation.json"
+      ],
+      "gap": "Run final type checks, build and integrated suites after closing action gaps."
+    },
+    {
+      "item_id": 259,
+      "requirement": "Prepare a concrete review build, rollback instructions and an unresolved-issue list before requesting any separate deployment approval.",
+      "status": "pending",
+      "interaction_finding": "The review build, rollback notes and issue pack are root deliverables.",
+      "evidence": [
+        "docs/premium-ui/verification-current.json",
+        "docs/premium-ui/contracts/generation.json"
+      ],
+      "gap": "Validate the final snapshot and retain the deployment approval gate."
+    },
+    {
+      "item_id": 260,
+      "requirement": "Deliver the completed evidence pack and release summary, retaining approval gates for deployment or any proposed backend expansion.",
+      "status": "pending",
+      "interaction_finding": "Frontend tests and contracts are delivered; the full evidence pack remains active.",
+      "evidence": [
+        "docs/premium-ui/verification-current.json",
+        "docs/premium-ui/contracts/generation.json"
+      ],
+      "gap": "Complete all requirements and explicitly handle dependencies before goal completion."
+    }
+  ]
+}

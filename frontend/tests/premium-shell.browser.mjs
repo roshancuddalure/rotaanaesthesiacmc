@@ -1,0 +1,135 @@
+import assert from 'node:assert/strict';
+import { chromium } from 'playwright';
+const base = process.env.MEMBER_TEST_URL || 'http://127.0.0.1:5197';
+const api = process.env.UX_AUDIT_API || 'http://127.0.0.1:8031';
+const browser = await chromium.launch({ headless: true, ...(process.env.MEMBER_TEST_BROWSER ? { executablePath: process.env.MEMBER_TEST_BROWSER } : {}) });
+let passed = 0;
+try {
+  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  const errors = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await page.addInitScript(() => localStorage.setItem('duty_rota_auth_token', 'premium-shell'));
+  let user;
+  let profileWrites = 0;
+  await page.route('**/api/**', async (route) => {
+    const url = new URL(route.request().url());
+    if (url.pathname.endsWith('/auth/sign-in')) return route.fulfill({ json: { token: 'premium-shell', user } });
+    if (url.pathname.endsWith('/auth/me') && route.request().method() === 'PUT') {
+      profileWrites++;
+      return route.fulfill({ json: { ...user, ...route.request().postDataJSON() } });
+    }
+    const response = await route.fetch({ url: api + url.pathname + url.search });
+    if (url.pathname.endsWith('/auth/me')) user = await response.json();
+    return route.fulfill({ response });
+  });
+  await page.goto(base);
+  await page.locator('#view-root').waitFor();
+  const help = page.locator('[data-help]').first();
+  await help.waitFor();
+  await help.focus();
+  await page.keyboard.press('Enter');
+  assert.equal(await help.getAttribute('aria-expanded'), 'true');
+  assert.equal(await page.locator('[data-help-content]').count(), 1);
+  await page.keyboard.press('Escape');
+  assert.equal(await help.getAttribute('aria-expanded'), 'false');
+  assert.equal(await page.locator('[data-help-content]').count(), 0);
+  passed++;
+  await page.locator('[data-view="leave"]').first().click();
+  assert.equal(await page.locator('#section-title').evaluate((el) => el === document.activeElement), true);
+  passed++;
+  await page.locator('#account-menu-button').click();
+  await page.locator('#profile').click();
+  await page.locator('#profile-modal').waitFor();
+  assert.equal(await page.locator('#app').evaluate((el) => el.inert), true);
+  await page.locator('#profile-submit').focus();
+  await page.keyboard.press('Tab');
+  assert.equal(await page.locator('#profile-modal').evaluate((el) => el.contains(document.activeElement)), true);
+  await page.locator('#profile-submit').focus();
+  // Exercise the legacy overlay stack without calling controls behind an inert surface.
+  await page.evaluate(() => {
+    const top = document.createElement('div');
+    top.className = 'modal-backdrop';
+    top.id = 'review-action-modal';
+    top.innerHTML = '<section role="dialog" aria-modal="true" aria-label="Nested review"><button type="button">Review detail</button></section>';
+    document.body.append(top);
+  });
+  await page.locator('#review-action-modal button').focus();
+  await page.waitForFunction(() => document.querySelector('#profile-modal').inert);
+  assert.equal(await page.locator('#review-action-modal').evaluate(el => el.inert), false, 'Only top legacy dialog remains interactive');
+  await page.keyboard.press('Escape');
+  await page.locator('#review-action-modal').waitFor({ state: 'detached' });
+  assert.equal(await page.locator('#profile-modal').count(), 1, 'Escape preserves underlying profile');
+  assert.equal(await page.locator('#profile-modal').evaluate(el => el.inert), false, 'Closing upper overlay restores lower dialog');
+  assert.equal(await page.locator('#profile-submit').evaluate(el => el === document.activeElement), true, 'Nested dismissal restores exact underlying opener');
+  await page.keyboard.press('Escape');
+  await page.locator('#profile-modal').waitFor({ state: 'detached' });
+  assert.equal(await page.locator('#app').evaluate((el) => el.inert), false);
+  assert.equal(await page.locator('#account-menu-button').evaluate((el) => el === document.activeElement), true);
+  passed++;
+  // Reauthentication rebuilds view roots but cannot accumulate document form handlers.
+  for (let i = 0; i < 2; i++) {
+    await page.locator('#account-menu-button').click();
+    await page.locator('#sign-out').click();
+    await page.locator('#login-username').fill('shell-test');
+    await page.locator('#login-password').fill('test-password');
+    await page.locator('#login-submit').click();
+    await page.locator('#view-root').waitFor();
+  }
+  await page.locator('#account-menu-button').click();
+  await page.locator('#profile').click();
+  await page.locator('#profile-display-name').fill('Profile action verified');
+  await page.locator('#profile-submit').click();
+  await page.locator('#profile-modal').waitFor({ state: 'detached' });
+  assert.equal(profileWrites, 1, 'exactly one profile mutation after repeated sign-ins');
+  passed++;
+  await page.evaluate(async () => {
+    const { announceToast } = await import('/src/ui-feedback.ts');
+    announceToast('Persistent failure <img src=x onerror=alert(1)>', 'error');
+    announceToast('Persistent failure <img src=x onerror=alert(1)>', 'error');
+  });
+  const errorToast = page.locator('.toast.error');
+  assert.equal(await errorToast.count(), 1);
+  assert.equal(await errorToast.locator('img').count(), 0);
+  await page.waitForTimeout(7500);
+  assert.equal(await errorToast.count(), 1);
+  await errorToast.getByRole('button', { name: 'Dismiss notification' }).click();
+  assert.equal(await errorToast.count(), 0);
+  passed++;
+  await page.setViewportSize({ width: 390, height: 700 });
+  await page.locator('#sidebar-toggle').click();
+  assert.equal(await page.locator('.content').evaluate((el) => el.inert), true);
+  await page.locator('.sidebar [data-view]').last().focus();
+  await page.keyboard.press('Tab');
+  assert.equal(await page.locator('.sidebar').evaluate((el) => el.contains(document.activeElement)), true);
+  await page.keyboard.press('Escape');
+  assert.equal(await page.locator('.content').evaluate((el) => el.inert), false);
+  assert.equal(await page.locator('#sidebar-toggle').getAttribute('aria-expanded'), 'false');
+  passed++;
+  await page.locator('#mobile-more').click();
+  await page.locator('#mobile-more-menu').waitFor();
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.locator('#mobile-more-menu').waitFor({ state: 'detached' });
+  assert.equal(await page.locator('#app').evaluate((el) => el.inert), false);
+  assert.equal(await page.locator('#mobile-more').getAttribute('aria-expanded'), 'false');
+  passed++;
+  assert.deepEqual(errors, []);
+  await page.close();
+  const recovery = await browser.newPage();
+  await recovery.addInitScript(() => localStorage.setItem('duty_rota_auth_token', 'premium-shell'));
+  let failHealth = true;
+  await recovery.route('**/api/**', async (route) => {
+    const url = new URL(route.request().url());
+    if (failHealth && url.pathname.includes('health')) return route.fulfill({ status: 503, json: { detail: 'Unavailable <img src=x onerror=alert(1)>' } });
+    return route.fulfill({ response: await route.fetch({ url: api + url.pathname + url.search }) });
+  });
+  await recovery.goto(base);
+  await recovery.locator('[data-startup-retry]').waitFor();
+  assert.equal(await recovery.locator('#view-root img').count(), 0, 'startup errors are escaped');
+  failHealth = false;
+  await recovery.locator('[data-startup-retry]').click();
+  await recovery.locator('[data-startup-retry]').waitFor({ state: 'detached' });
+  await recovery.locator('#view-root [aria-busy="true"]').waitFor({ state: 'detached' });
+  passed++;
+  await recovery.close();
+  console.log(`Premium shell: ${passed} outcome workflows passed`);
+} finally { await browser.close(); }

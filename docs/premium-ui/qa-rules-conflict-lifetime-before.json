@@ -1,0 +1,32 @@
+{
+  "recorded_at_utc": "2026-10-24T04:44:47.070Z",
+  "source_sha256": {
+    "frontend/src/rota-rules.ts": "90e39db263cdbf3b9a2618798b82e1c791d6b3e87b8d961fa78d987731ce7cd1",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "559041ee03d192fcc291582bd7572e8d32004e9d5428b7e57fbbea9ba9e60f83",
+    "frontend/src/member-workspace.ts": "4ddb7efade2d5886e8d62dc5fa7225eb2448b02c4be37ebb0ce474b5d3562c41",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/ui.ts": "88579ed75c8c72e4fd4e2d98508a58c42b925202362589a2469623664c2a975f",
+    "frontend/src/audit-time.ts": "136542cb2daec343417532d372f2e8ce01a0e6103ef6c62a7a4a8017ac8a6d15",
+    "frontend/src/decorative-icons.ts": "7e2d11356114e96f242435a2cd7cb7bc24cdc1787142e864e1cf053f92c373d7"
+  },
+  "test_sha256": "90db0e04e255a72183cc3b05adca34cf1b2fd23ac4bdb1bf55a934741c42e70a",
+  "probe": true,
+  "scope": "Six browser contexts, six isolated scenarios each unless probe; actual exported editor, all API locally fulfilled, exact save/check bodies. Covers recovery GET lifetime after native Escape or Keep editing and current reload/rebase. No persisted server data, physical-device, native-AT or full-application certification.",
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "subcases": [
+        {
+          "scenario": "reload-late-success",
+          "defect_reproduced": true,
+          "new_draft_clobbered": true,
+          "actual_label": "Latest server label",
+          "exact_put_base_revision": "rev-1",
+          "forwarded_mutations": 0
+        }
+      ]
+    }
+  ]
+}

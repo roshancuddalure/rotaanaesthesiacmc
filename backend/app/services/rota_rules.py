@@ -15,7 +15,7 @@ Which settings are actually enforced (see handbook B2):
 from __future__ import annotations
 
 from datetime import date
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field, PrivateAttr, field_validator, model_validator
 from sqlalchemy import select
@@ -143,11 +143,37 @@ class UnitStaffingRules(BaseModel):
     # Hard block below warning is reported as a ``guardrail`` warning (never blocks a save).
 
 
+class FairnessRules(BaseModel):
+    """Equal duties within a call level (docs/limits_callevel_fairness_contract.md section 2)."""
+
+    max_gap_within_call_level: int = Field(default=1, ge=0, le=10)
+    target_mode: Literal["auto"] = "auto"
+
+
+class ExtraDutyRules(BaseModel):
+    """Extra-duty justice ledger settings (read by ``extra_duty.ledger_balance``)."""
+
+    justice_lookback_months: int = Field(default=12, ge=1, le=36)
+
+
+# The "limit sections": stored in the rules JSON but changed only through the Limits API
+# (app/services/limits.py); Rota Rules saves keep the stored values.
+LIMIT_SECTIONS = (
+    "duty_count_limits",
+    "rest_rules",
+    "unit_staffing_rules",
+    "fairness_rules",
+    "extra_duty_rules",
+)
+
+
 class RotaPhaseOneRules(BaseModel):
     duty_rules: list[DutyRule]
     duty_count_limits: DutyCountLimits = Field(default_factory=DutyCountLimits)
     rest_rules: RestRules = Field(default_factory=RestRules)
     unit_staffing_rules: UnitStaffingRules = Field(default_factory=UnitStaffingRules)
+    fairness_rules: FairnessRules = Field(default_factory=FairnessRules)
+    extra_duty_rules: ExtraDutyRules = Field(default_factory=ExtraDutyRules)
     notes: str | None = None
     _groups: dict | None = PrivateAttr(default=None)
 

@@ -1,0 +1,60 @@
+{
+  "recorded_at_utc": "2026-10-22T16:53:45.540967+00:00",
+  "completion_claim": false,
+  "requirements": [
+    169,
+    208,
+    209,
+    212,
+    219,
+    258
+  ],
+  "source_sha256": {
+    "frontend/src/rota-compute.ts": "f001062313a60bff0ed807fd82565f2d440fd130683d955b64c5f1967256e1bf",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "7259da3c1865080978f547ece2320762d4a2b9ec83d2422ba686bad17b67bc28"
+  },
+  "scope": "Compute proposal server-state presentation only; generation scheduling and state transitions unchanged.",
+  "changes": [
+    "Dedicated polite atomic server-state label maps queued,running,completed,applied,cancelled,failed,reverted to clear workflow labels; completed means Ready for review, applied means Applied to draft.",
+    "Unknown returned state remains visible as escaped raw status without invented meaning. Notices/error/fallback text no longer erase the dedicated state label.",
+    "Progress appears only for active queued/running jobs. A positive finite returned total retains exact max/value; unknown or zero total uses indeterminate native progress. Reported processed/total/proposed/unresolved text unchanged.",
+    "Polling, worker preparation, generation/apply/revert/cancel requests, review acknowledgements and action gates unchanged."
+  ],
+  "checks": {
+    "state_cases": 48,
+    "returned_states": 8,
+    "engines": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "widths": [
+      320,
+      1280
+    ],
+    "completed_review_scoped_axe_checks": 6,
+    "tagged_axe_violations": 0,
+    "forced_template_regressions": 12,
+    "generation_approval_publish_regressions": 21,
+    "total_bounded_workflows": 81,
+    "unit_tests": 100,
+    "build_exit_code": 0,
+    "held_build_inputs": true
+  },
+  "evidence": [
+    "docs/premium-ui/qa-generation-state.json",
+    "docs/premium-ui/qa-template-forced-current.json",
+    "docs/premium-ui/qa-generation-actions-current.json",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+  ],
+  "test": "frontend/tests/premium-generation-state.browser.mjs",
+  "test_sha256": "aad8f977fc5637b27302fef58e4e13c56893c78f4776dbc40e1bc2ab32fcc265",
+  "limitations": [
+    "Known resumable/review/applied statuses supplied through recentGET. Failed/cancelled/reverted/unknown states supplied as defensive mocked create responses; not a claim the real server creates proposals directly in those states.",
+    "New fixture checks exact returned state/error/fallback coexistence, native progress attributes and unchanged Apply/Cancel/Reversal visibility; existing21workflow suite checks intercepted exact revision bodies and real action outcomes.",
+    "All mutation calls intercepted. No actual generation/GPU/backend scheduling/persistence or state-transition correctness certified.",
+    "Scoped axe checks cover completed review in six contexts, not all48states. Light-theme status fixtures; forced12regression covers both themes. Physical/native/fresh independent checks pending.",
+    "Current matching hashes certify only declared files, not all omitted dependencies or whole-worktree equivalence. Full260goal active/incomplete. This batch makes no backend/API-contract/permissions/scheduling/data/export/production changes."
+  ]
+}

@@ -34,6 +34,8 @@ For a person P and slot S, P is strictly feasible only if **all** hold:
 
 `unit_safety_hard_block`, `unit_safety_review`, `monthly_24hr_limit`, `monthly_weekend_24hr_limit`, `monthly_same_group_limit`, `monthly_same_campus_limit`, and fairness (equal duties). These are the codes `validate_assignment` already emits, except the strict codes above. A candidate's `overridden_rules` = the codes from `validate_assignment(...)` issues that are in this list.
 
+A fallback assignment always adds the pseudo-code `fallback_unit` (decision 21 Oct 2026: covering for another unit is a special allocation), so it always gets a ledger record.
+
 If the chosen person breaks **no** rule (`overridden_rules == []`), the assignment is made with `ledger = false` and no ledger record is written. Everything else gets a ledger record.
 
 ### 1.3 Algorithm (`plan_extra_duties`)
@@ -151,7 +153,7 @@ Setting: `extra_duty_layer_enabled: bool = True` in `app/core/config.py` (env `E
 
 ## 5. Publish and review integration
 
-In `rota_review.review_items`: if a slot's `hard_blocked` issue exists **and** the slot has an active assignment with an active extra-duty record, emit a `warning` issue `extra_duty_exception` ("Covered by the extra-duty layer: <person>; rules overridden: …") instead of the `error` `hard_blocked`. The publish checklist then treats it as a warning needing confirmation, not a blocker, and adds the line "Extra duties (ledger): N".
+In `rota_review.review_items`: if a slot's `hard_blocked` issue exists **and** the slot has an active assignment with an active extra-duty record, emit a `warning` issue `extra_duty_exception` ("Covered by the extra-duty layer: <person>; rules overridden: …") instead of the `error` `hard_blocked`. Knock-on effect (added 21 Oct 2026 after the end-to-end run): a *filled* slot that is hard-blocked on a (unit, day) — or the day after — where the layer placed a ledgered extra duty is also an `extra_duty_exception` warning ("Unit staffing limit exceeded on this day because the extra-duty layer used this unit's members"), because the owner approved exceeding unit staffing through this layer. Open slots and slots elsewhere stay `hard_blocked` errors. The publish checklist then treats it as a warning needing confirmation, not a blocker, and adds the line "Extra duties (ledger): N".
 
 ## 6. 360° audit report (`app/services/rota_report_360.py`)
 
@@ -191,7 +193,7 @@ Written **only from section 1.1 of this contract**, not from `extra_duty.py`. `c
 - Member profile: an **Extra duties** section listing that person's ledger rows (active and void).
 - The Rota Review / Publish page: **Download audit report** buttons (HTML, Excel) for the month.
 - Unit Management: per-unit **Fallback units** ordered list editor (`/unit-fallbacks`).
-- Plain-word labels for codes: `unit_safety_hard_block` "Unit short-staffed (hard block)", `unit_safety_review` "Unit staffing warning", `monthly_24hr_limit` "Over monthly 24-hour limit", `monthly_weekend_24hr_limit` "Over weekend 24-hour limit", `monthly_same_group_limit` "Over monthly limit for this duty type", `monthly_same_campus_limit` "Over monthly limit for this campus".
+- Plain-word labels for codes: `unit_safety_hard_block` "Unit short-staffed (hard block)", `unit_safety_review` "Unit staffing warning", `monthly_24hr_limit` "Over monthly 24-hour limit", `monthly_weekend_24hr_limit` "Over weekend 24-hour limit", `monthly_same_group_limit` "Over monthly limit for this duty type", `monthly_same_campus_limit` "Over monthly limit for this campus", `fallback_unit` "Covered a duty for another unit".
 
 ## 9. Tests (minimum)
 

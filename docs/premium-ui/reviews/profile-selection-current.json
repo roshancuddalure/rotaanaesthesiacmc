@@ -1,0 +1,75 @@
+{
+  "recorded_at_utc": "2026-10-22T09:39:10.148451+00:00",
+  "requirements": [
+    17,
+    18,
+    123,
+    125,
+    131,
+    140,
+    150,
+    155,
+    156,
+    159,
+    176,
+    186,
+    187,
+    188,
+    196,
+    198,
+    202,
+    203,
+    208,
+    209,
+    211,
+    217,
+    225,
+    227,
+    230,
+    258
+  ],
+  "completion_claim": false,
+  "scope": "Account/profile response lifetime, canonical member-save reopening, reference current-record indication and remaining audit timestamp presentation; bounded frontend outcomes.",
+  "source_sha256": {
+    "frontend/src/main.ts": "4e1e9d4effaea1c7b353ee1c27e11e752013a38561d195e198c2d968e7b248ba",
+    "frontend/src/member-workspace.ts": "435634629297141da1f95850471d16026096168e2c0e5280f2e2f2ba3fc10f3b",
+    "frontend/src/reference-workspace.ts": "bf924e605843510533907d43e15c21bebbb09ab69bc0116629b9bdfea523d847",
+    "frontend/src/premium-theme.css": "bcc2724e2cddb917981a75ead94392a5d5847eee0a26d90075f68478d586a488",
+    "frontend/src/extra-duty.ts": "3d8ff0ac0f1178ce80d042b003a364a5b68e2ca8a6dd52881b7fe3d4209ca3c1"
+  },
+  "changes": [
+    "Confirmed delayed old account-profile save closed a reopened dialog and showed stale success. Exact form/dialog/operator/abort lifetime guards now precede user-state and UI updates; pending duplicate guard and busy state added. Payload unchanged.",
+    "Confirmed Analytics member links became inert after successful save invalidated analysis cache. WeakMap binds each surviving rendered button to its immutable member ID/navigation IDs before invalidation; reopening still GETs fresh profile data. First same-name match behavior retained.",
+    "Existing unit/reference buttons now identify the exact edited record with aria-current and a persistent underline; create mode clears the indication.",
+    "Canonical Activity and extra-duty run timestamps use shared formatting with explicit browser timezone and truthful invalid/missing fallback. Raw datetime/month values and extra-duty logic preserved."
+  ],
+  "evidence": [
+    "docs/premium-ui/qa-account-profile-lifetime.json",
+    "docs/premium-ui/qa-member-save-independent.json",
+    "docs/premium-ui/qa-canonical-extra-timestamps.json",
+    "docs/premium-ui/reviews/reference-current-record-current.json",
+    "docs/premium-ui/qa-account-profile-before.json",
+    "docs/premium-ui/reviews/analytics-member-after-save-current.json",
+    "docs/premium-ui/reviews/account-profile-lifetime-review-current.json",
+    "docs/premium-ui/reviews/analytics-member-cache-review-current.json"
+  ],
+  "checks": {
+    "account_profile_workflows": 6,
+    "canonical_save_workflows": 6,
+    "current_record_workflows": 24,
+    "timestamp_matrices": 12,
+    "shared_auth_workflows": 18,
+    "shell_workflows": 8,
+    "unit_tests": 100,
+    "build_exit": 0
+  },
+  "limits": [
+    "Mutations intercepted; exact payloads and independent fixture readback checked, not production persistence.",
+    "Signed-out account-profile test closes the old dialog before signout, so it does not independently isolate every lifetime predicate. Independent source review records this limit.",
+    "A timestamp unknown-type compile error was caught by integrated build, corrected with a truthful string/type guard, and TypeScript plus12timestamp matrices rerun.",
+    "An auth test was interrupted by Vite reload during source edits; rerun on frozen owned sources.",
+    "Earlier reports retain their original hashes. Source-matched evidence proves only its recorded files and bounded contexts.",
+    "No UI-team backend/API-contract/permission/scheduling/export-content changes; concurrent work preserved.",
+    "Physical-device and native screen-reader checks pending. Full260goal remains active/incomplete; no push/deploy."
+  ]
+}

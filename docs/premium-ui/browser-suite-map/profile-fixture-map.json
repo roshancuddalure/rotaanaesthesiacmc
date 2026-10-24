@@ -1,0 +1,609 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-10-24T03:41:31.078723+00:00",
+  "scope": "Documentation-only assertion mapping of five existing profile/leave/staffing/rules fixture suites. Historical report review does not establish current runtime acceptance.",
+  "source_inspection_method": "Complete current scripts read; source_lines list exact test-script line anchors. Retained report rows and declared source hash freshness inspected, not rerun.",
+  "entries": [
+    {
+      "suite": "frontend/tests/premium-profile-identity.browser.mjs",
+      "sha256": "7a24abf5fbd748db50be32f0cc3b1f3b0c4955e8f61647a8c1710f0959025a6b",
+      "source_inspected": true,
+      "execution_verified": true,
+      "execution_verification_scope": "Root inspected complete current script and fresh six-context report/log. Browser clock explicitly fixed to 22 October 2026 to match existing boundary fixtures. Fresh execution passed on held current app sources; report format does not contain its own test digest.",
+      "screens": [
+        "Isolated canonical member workspace",
+        "Isolated legacy member profile"
+      ],
+      "contexts": {
+        "engines": [
+          "chromium",
+          "firefox",
+          "webkit"
+        ],
+        "widths": [
+          320,
+          1280
+        ],
+        "height": 900,
+        "environment": "development http://127.0.0.1:5197",
+        "cases": 6,
+        "role": "canonical canManage=false; legacy rota_board_member",
+        "fixture": "GET-intercepted module fixtures; browser clock and legacy server today both 22 October 2026."
+      },
+      "retained_report_source_matches_at_inspection": {
+        "frontend/src/member-profile.ts": true,
+        "frontend/src/member-workspace.ts": true,
+        "frontend/src/styles.css": true,
+        "frontend/src/premium-theme.css": true
+      },
+      "assertion_groups": [
+        {
+          "action": "workspace-identity-history",
+          "selector": "dialog.member-workspace; .mw-header; [data-tab=postings]; .mw-history dl",
+          "outcome": "Current position text exists in workspace content but not header; header contains Unassigned; history maps null unit/notes to Not recorded, null end to Ongoing, preserves0/No/empty string exactly.",
+          "source_lines": [
+            12,
+            13,
+            15,
+            17,
+            18
+          ],
+          "evidence_class": "intercepted_read_and_local_interaction",
+          "report_paths": [
+            "docs/premium-ui/qa-profile-identity-fixed.json"
+          ]
+        },
+        {
+          "action": "legacy-current-position-and-long-name",
+          "selector": "#legacy; #member-profile-dialog .member-profile-header",
+          "outcome": "Keyboard opens legacy profile; current position shown, future2099 position absent; long heading does not overlap close, header/dialog have no horizontal overflow.",
+          "source_lines": [
+            19
+          ],
+          "evidence_class": "geometry_and_intercepted_read",
+          "report_paths": [
+            "docs/premium-ui/qa-profile-identity-fixed.json"
+          ]
+        },
+        {
+          "action": "designation-date-boundaries",
+          "selector": ".member-profile-header p; [data-profile-close]",
+          "outcome": "Five reopened variants test past-only/future-only/empty => Designation not recorded; ending/starting today retain designation. Rendered header contains no img.",
+          "source_lines": [
+            20,
+            21,
+            22,
+            23,
+            24,
+            25
+          ],
+          "evidence_class": "intercepted_read_and_local_interaction",
+          "report_paths": [
+            "docs/premium-ui/qa-profile-identity-fixed.json"
+          ]
+        },
+        {
+          "action": "profile-close-and-source-hold",
+          "selector": "[data-profile-close]; #legacy",
+          "outcome": "Close restores exact synthetic opener; pageerrors empty. Declared four files held before/after historical run.",
+          "source_lines": [
+            5,
+            26,
+            29
+          ],
+          "evidence_class": "local_interaction_and_source_snapshot",
+          "report_paths": [
+            "docs/premium-ui/qa-profile-identity-fixed.json"
+          ]
+        }
+      ],
+      "limitations": [
+        "No canonical edit/save or shell route reachability assertion.",
+        "Canonical header designation remains absent; this regression explicitly records that remaining gap.",
+        "No explicit theme/zoom/axe/native assistive-technology, physical-device or production-bundle certification.",
+        "Fresh execution log: tmp/premium-profile-effective-identity-regression.log. Raw report lacks its own test digest; no backend persistence or full-requirement acceptance claim."
+      ]
+    },
+    {
+      "suite": "frontend/tests/premium-staffing-review.browser.mjs",
+      "sha256": "1a4c0cd7e631fe69b012b992af4cbd329b25ac41f7d40c437e006ef4a962e880",
+      "source_inspected": true,
+      "execution_verified": true,
+      "execution_verification_scope": "Inspected retained 6-row report and its scope/results; historical evidence only. No new execution. Report has no test SHA; mapped current script cannot be cryptographically bound to retained run. At inspection not all declared source hashes match current worktree.",
+      "screens": [
+        "Detailed template Unit-Day Safety",
+        "Resolve Unit-Day Safety modal",
+        "Unit Management editor/board"
+      ],
+      "contexts": {
+        "engines": [
+          "chromium",
+          "firefox",
+          "webkit"
+        ],
+        "widths": [
+          320,
+          1280
+        ],
+        "height": 900,
+        "environment": "development http://127.0.0.1:5197",
+        "cases": 6,
+        "month": "2026-11",
+        "fixture": "GET-only; safety103 rows and unit management mocked, other GETs loopback8031; detailed template setting"
+      },
+      "retained_report_source_matches_at_inspection": {
+        "frontend/src/main.ts": false,
+        "frontend/src/styles.css": true,
+        "frontend/src/premium-theme.css": false
+      },
+      "assertion_groups": [
+        {
+          "action": "all-safety-rows-native-disclosure",
+          "selector": ".staffing-primary tbody tr; .staffing-remainder > summary",
+          "outcome": "100primary plus3remaining rows; Enter opens native remaining disclosure; summary height>=44; complete103 rendered date/unit/slot/count fields equal returned order including null-unit fallback; no img.",
+          "source_lines": [
+            8,
+            9,
+            18,
+            19
+          ],
+          "evidence_class": "intercepted_read_local_interaction_and_geometry",
+          "report_paths": [
+            "docs/premium-ui/qa-staffing-review.json"
+          ]
+        },
+        {
+          "action": "comparison-local-scroll",
+          "selector": ".staffing-primary",
+          "outcome": "Second column width>=180; at320 keyboard ArrowRight produces horizontal scroll and tabindex0 while document has no horizontal overflow.",
+          "source_lines": [
+            19
+          ],
+          "evidence_class": "geometry_and_local_interaction",
+          "report_paths": [
+            "docs/premium-ui/qa-staffing-review.json"
+          ]
+        },
+        {
+          "action": "exact-review-close-focus",
+          "selector": ".staffing-remainder tbody tr:last-child button; #review-action-modal",
+          "outcome": "Last remaining-row Enter opens Resolve Unit-Day Safety with exact2026-11-13; Escape returns exact row action focus and retains open disclosure.",
+          "source_lines": [
+            20
+          ],
+          "evidence_class": "local_interaction",
+          "report_paths": [
+            "docs/premium-ui/qa-staffing-review.json"
+          ]
+        },
+        {
+          "action": "remaining-disclosure-axe",
+          "selector": ".staffing-remainder",
+          "outcome": "Scoped tagged axe yields no violations; does not audit every modal/screen.",
+          "source_lines": [
+            21
+          ],
+          "evidence_class": "automated_accessibility",
+          "report_paths": [
+            "docs/premium-ui/qa-staffing-review.json"
+          ]
+        },
+        {
+          "action": "unit-destination-and-read-retry",
+          "selector": "[data-review-action-kind=\"open-unit\"]; #unit-management-modal; Try again",
+          "outcome": "Exact selected unit editor and same November month with exact month GET; after clean reload mocked unit503 yields recovery and no stale modal, explicit Try again reaches board search.",
+          "source_lines": [
+            22,
+            23,
+            24
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-staffing-review.json"
+          ]
+        },
+        {
+          "action": "null-unit-missing-destination-and-board",
+          "selector": "Open Unit Management (no unit recorded); [data-view=\"units\"]",
+          "outcome": "Synthetic removal of units navigation keeps review modal and shows destination-unavailable toast. After clean reload fallback reaches board without guessed unit modal.",
+          "source_lines": [
+            25,
+            26
+          ],
+          "evidence_class": "intercepted_read_and_injected_dom_recovery",
+          "report_paths": [
+            "docs/premium-ui/qa-staffing-review.json"
+          ]
+        },
+        {
+          "action": "boundary-counts-no-writes-and-hold",
+          "selector": ".staffing-remainder; .staffing-primary tbody tr",
+          "outcome": "For0/1/100rows no remainder, primary row count max(n,1); document overflow false and pageerrors empty. All API methods required GET; declared files held historical run.",
+          "source_lines": [
+            15,
+            26,
+            27,
+            30
+          ],
+          "evidence_class": "intercepted_read_and_source_snapshot",
+          "report_paths": [
+            "docs/premium-ui/qa-staffing-review.json"
+          ]
+        }
+      ],
+      "limitations": [
+        "No validation of backend safety calculations, assignments or unit persistence.",
+        "No explicit dark-theme or empty-unit destination-permission matrix.",
+        "103rows fixture reuses one unit except one null-unit row; not full diversity of operational safety states.",
+        "Historical retained report; no current runtime acceptance, real persistence, physical-device, native assistive-technology or production-bundle certification.",
+        "Mapper inspected source and retained report only; no new browser execution or full requirement acceptance."
+      ]
+    },
+    {
+      "suite": "frontend/tests/premium-leave-pressure.browser.mjs",
+      "sha256": "930c4781459244b6a9005eff64557dec9353e88e0453f478241b9a20440ba3d5",
+      "source_inspected": true,
+      "execution_verified": true,
+      "execution_verification_scope": "Inspected retained 12-row report and its scope/results; historical evidence only. No new execution. Report has no test SHA; mapped current script cannot be cryptographically bound to retained run. At inspection not all declared source hashes match current worktree.",
+      "screens": [
+        "Leave pressure disclosure",
+        "Existing Leave day modal"
+      ],
+      "contexts": {
+        "engines": [
+          "chromium",
+          "firefox",
+          "webkit"
+        ],
+        "widths": [
+          320,
+          1280
+        ],
+        "height": 900,
+        "environment": "development http://127.0.0.1:5197",
+        "cases": 12,
+        "themes": [
+          "light",
+          "dark"
+        ],
+        "month": "2026-11",
+        "fixture": "Pressure/calendar GETs intercepted; other GETs loopback8031;12unitgroups,6callgroups,9days"
+      },
+      "retained_report_source_matches_at_inspection": {
+        "frontend/src/main.ts": false,
+        "frontend/src/styles.css": false,
+        "frontend/src/premium-theme.css": false
+      },
+      "assertion_groups": [
+        {
+          "action": "remaining-unit-groups-and-counts",
+          "selector": ".leave-pressure-details; [data-pressure-group=units] details summary; [data-pressure-group=calls]",
+          "outcome": "Enter opens pressure/remaining disclosures;8initial visible unit counts become12; exact ordered key/count pairs and six call counts preserved; no img or nested panel.",
+          "source_lines": [
+            18,
+            19,
+            21
+          ],
+          "evidence_class": "intercepted_read_and_local_interaction",
+          "report_paths": [
+            "docs/premium-ui/qa-leave-pressure.json"
+          ]
+        },
+        {
+          "action": "top-seven-pressure-days",
+          "selector": "[data-pressure-day]; [data-pressure-total]; [data-pressure-blocking]",
+          "outcome": "Exactly7days matching reverse9-day fixture top7; exact total/blocking values; approved/blocking and pending-review explanatory wording; no document overflow.",
+          "source_lines": [
+            9,
+            10,
+            11,
+            12,
+            21
+          ],
+          "evidence_class": "intercepted_read_and_geometry",
+          "report_paths": [
+            "docs/premium-ui/qa-leave-pressure.json"
+          ]
+        },
+        {
+          "action": "day-review-context-no-requests",
+          "selector": "[data-pressure-day=\"2026-11-09\"] [data-leave-day]; #leave-day-modal",
+          "outcome": "Keyboard review opens9Nov2026 with Approved/Requested/Imported Pending Review labels, no additional API request; Escape restores row opener and retains unit disclosure and November month.",
+          "source_lines": [
+            22
+          ],
+          "evidence_class": "local_interaction",
+          "report_paths": [
+            "docs/premium-ui/qa-leave-pressure.json"
+          ]
+        },
+        {
+          "action": "scoped-pressure-accessibility",
+          "selector": ".leave-pressure-details",
+          "outcome": "Scoped tagged axe zero violations in populated pressure state.",
+          "source_lines": [
+            23
+          ],
+          "evidence_class": "automated_accessibility",
+          "report_paths": [
+            "docs/premium-ui/qa-leave-pressure.json"
+          ]
+        },
+        {
+          "action": "empty-pressure-and-source-hold",
+          "selector": ".leave-pressure-details; [data-pressure-day]; [data-pressure-key]",
+          "outcome": "After reload with empty pressure reports truthful month-empty message, no pressure controls/keys and two empty group messages; pageerrors empty, all API methods GET, declared files held historical run.",
+          "source_lines": [
+            18,
+            23,
+            26
+          ],
+          "evidence_class": "intercepted_read_and_source_snapshot",
+          "report_paths": [
+            "docs/premium-ui/qa-leave-pressure.json"
+          ]
+        }
+      ],
+      "limitations": [
+        "Counts are frontend presentation of synthetic pressure/calendar reports; backend aggregate consistency and real leave workflow not assessed.",
+        "No leave approval/save outcome. Baseline mode is separate historical before evidence and excluded here.",
+        "No manual error/refetch failure or delayed-route ownership scenario.",
+        "Historical retained report; no current runtime acceptance, real persistence, physical-device, native assistive-technology or production-bundle certification.",
+        "Mapper inspected source and retained report only; no new browser execution or full requirement acceptance."
+      ]
+    },
+    {
+      "suite": "frontend/tests/premium-monthly-leave-review.browser.mjs",
+      "sha256": "a74030383a9104084b59c6e7a27f5158ddce903af9a9deaf6562eb09c911e093",
+      "source_inspected": true,
+      "execution_verified": true,
+      "execution_verification_scope": "Inspected retained 6-row report and its scope/results; historical evidence only. No new execution. Report has no test SHA; mapped current script cannot be cryptographically bound to retained run. At inspection not all declared source hashes match current worktree.",
+      "screens": [
+        "Isolated monthly leave approval dialog"
+      ],
+      "contexts": {
+        "engines": [
+          "chromium",
+          "firefox",
+          "webkit"
+        ],
+        "widths": [
+          320,
+          1280
+        ],
+        "height": 900,
+        "environment": "development http://127.0.0.1:5197",
+        "cases": 6,
+        "month": "2026-11",
+        "fixture": "18requests including Oct29-Dec3 plus2affected duties; all POST calls locally intercepted, approval always503; synthetic module opener"
+      },
+      "retained_report_source_matches_at_inspection": {
+        "frontend/src/leave-approval.ts": true,
+        "frontend/src/ui.ts": true,
+        "frontend/src/styles.css": true,
+        "frontend/src/premium-theme.css": false
+      },
+      "assertion_groups": [
+        {
+          "action": "cross-month-full-date-review",
+          "selector": "#open; dialog[aria-label=\"Approve monthly leave\"]; tbody tr",
+          "outcome": "Keyboard opens actual module; visible full29Oct2026/3Dec2026 range and explanation approval does not remove/reassign duties.",
+          "source_lines": [
+            14,
+            16,
+            17,
+            18
+          ],
+          "evidence_class": "intercepted_read_and_local_interaction",
+          "report_paths": [
+            "docs/premium-ui/qa-monthly-leave-review.json"
+          ]
+        },
+        {
+          "action": "preview-failure-and-newer-focus",
+          "selector": "[data-refresh]; [data-close]",
+          "outcome": "Held second preview503 restores refresh focus; keyboard refresh held third preview then deliberate Close focus survives successful render.",
+          "source_lines": [
+            19,
+            20
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-monthly-leave-review.json"
+          ]
+        },
+        {
+          "action": "independent-confirmations-footer-clearance",
+          "selector": "[data-confirm]; [data-duty-ack]; [data-approve]; .mw-footer",
+          "outcome": "Approve disabled initially and after confirmation alone; independent duty ack enables; both acknowledgement rectangles finish above footer boundary.",
+          "source_lines": [
+            20
+          ],
+          "evidence_class": "local_interaction_and_geometry",
+          "report_paths": [
+            "docs/premium-ui/qa-monthly-leave-review.json"
+          ]
+        },
+        {
+          "action": "monthly-dialog-scoped-axe",
+          "selector": "dialog.leave-approval-workspace",
+          "outcome": "Scoped tagged axe yields zero violations after confirmations.",
+          "source_lines": [
+            21
+          ],
+          "evidence_class": "automated_accessibility",
+          "report_paths": [
+            "docs/premium-ui/qa-monthly-leave-review.json"
+          ]
+        },
+        {
+          "action": "uncertain-approval-no-replay",
+          "selector": "[data-approve]; [data-refresh]; [data-close]",
+          "outcome": "One intercepted503 approve-month uses exact November/review-3/acknowledge_duties payload; no approval callback, approve disabled, old confirmation removed, focus refresh. Explicit refresh requires fresh unchecked confirmations and never repeats approval; close returns opener, no pageerrors.",
+          "source_lines": [
+            17,
+            22
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-monthly-leave-review.json"
+          ]
+        },
+        {
+          "action": "monthly-source-hold",
+          "selector": "declared leave-approval/ui/styles/premium hashes",
+          "outcome": "Four declared files unchanged during historical run; report links original source scope.",
+          "source_lines": [
+            7,
+            8,
+            26
+          ],
+          "evidence_class": "source_snapshot",
+          "report_paths": [
+            "docs/premium-ui/qa-monthly-leave-review.json"
+          ]
+        }
+      ],
+      "limitations": [
+        "No successful approval or persistent status/readback test; approval failure is deliberately mocked.",
+        "Preview is POST although semantically a review read; all requests locally fulfilled, not forwarded mutations.",
+        "Default dialog handler dismisses browser confirmations; accept variable remainsfalse.",
+        "Isolated module entry does not establish admin permission enforcement or shell control visibility.",
+        "No explicit dark-theme or month-change/session-lifetime matrix.",
+        "Historical retained report; no current runtime acceptance, real persistence, physical-device, native assistive-technology or production-bundle certification.",
+        "Mapper inspected source and retained report only; no new browser execution or full requirement acceptance."
+      ]
+    },
+    {
+      "suite": "frontend/tests/premium-rules-history-time.browser.mjs",
+      "sha256": "f283baf998a6a795f13d63225de3770a9f669c0125dd87e7666e16a8e7ce0df4",
+      "source_inspected": true,
+      "execution_verified": true,
+      "execution_verification_scope": "Inspected retained 24-row report and its scope/results; historical evidence only. No new execution. Report has no test SHA; mapped current script cannot be cryptographically bound to retained run. At inspection not all declared source hashes match current worktree.",
+      "screens": [
+        "Isolated Rota Rules page",
+        "Rota rules history dialog",
+        "Restore confirmation"
+      ],
+      "contexts": {
+        "engines": [
+          "chromium",
+          "firefox",
+          "webkit"
+        ],
+        "widths": [
+          320,
+          1280
+        ],
+        "height": 900,
+        "environment": "development http://127.0.0.1:5197",
+        "cases": 24,
+        "themes": [
+          "light",
+          "dark"
+        ],
+        "timezones": [
+          "Asia/Kolkata",
+          "America/Los_Angeles"
+        ],
+        "fixture": "All API intercepted; doc constructed from rules-session-independent script;5timestamp variants; restore503"
+      },
+      "retained_report_source_matches_at_inspection": {
+        "frontend/src/rota-rules.ts": false,
+        "frontend/src/audit-time.ts": true
+      },
+      "assertion_groups": [
+        {
+          "action": "audit-instants-and-missing-zones",
+          "selector": "[data-act=history]; .rr-history__head strong",
+          "outcome": "History labels equal shared formatter output plus independent exact regex instant expectations in India/LosAngeles; unzoned says timezone not recorded, invalid/empty => Time unavailable; no img; exactly one Current badge.",
+          "source_lines": [
+            9,
+            10,
+            11,
+            12,
+            26,
+            27,
+            28,
+            31,
+            32,
+            33
+          ],
+          "evidence_class": "intercepted_read_and_display_assertion",
+          "report_paths": [
+            "docs/premium-ui/qa-rules-history-time.json"
+          ]
+        },
+        {
+          "action": "compare-current-and-cancel-restore",
+          "selector": "[data-compare=\"version-1\"]; [data-restore=\"version-1\"]; [data-restore-cancel]",
+          "outcome": "Compare shows same-as-current and aria-expanded true; restore confirmation contains matching timestamp; keyboard cancel removes confirmation, zero restore requests and returns exact restore focus.",
+          "source_lines": [
+            34,
+            35,
+            36
+          ],
+          "evidence_class": "local_interaction",
+          "report_paths": [
+            "docs/premium-ui/qa-rules-history-time.json"
+          ]
+        },
+        {
+          "action": "restore503-exact-version-revision",
+          "selector": "[data-restore-confirm]",
+          "outcome": "Explicit confirm issues exactly one intercepted version-1 restorePOST with exact base_revision;503 text visible, confirmation gone, current timestamp retained. No automatic second restore observed within scenario.",
+          "source_lines": [
+            18,
+            19,
+            37
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-rules-history-time.json"
+          ]
+        },
+        {
+          "action": "history-accessibility-overflow-close",
+          "selector": "dialog.rr-dialog; [data-close]",
+          "outcome": "Scoped tagged axe zero violations; no page/dialog horizontal overflow; explicit close detaches dialog and pageerrors empty.",
+          "source_lines": [
+            38,
+            39
+          ],
+          "evidence_class": "geometry_and_automated_accessibility",
+          "report_paths": [
+            "docs/premium-ui/qa-rules-history-time.json"
+          ]
+        },
+        {
+          "action": "rules-time-source-hold",
+          "selector": "rota-rules/audit-time declared hashes",
+          "outcome": "Two declared source files held historical run; stylesheet and fixture dependency hashes not included.",
+          "source_lines": [
+            7,
+            8,
+            45
+          ],
+          "evidence_class": "source_snapshot",
+          "report_paths": [
+            "docs/premium-ui/qa-rules-history-time.json"
+          ]
+        }
+      ],
+      "limitations": [
+        "No successful restore, persisted rule readback or scheduling correctness assertion.",
+        "Shared formatter equality alone is not independent oracle; exact regex covers one UTC instant in each timezone, other timestamp cases have narrower assertions.",
+        "All routes intercepted; /check method not constrained in its branch and synthetic validation body returned.",
+        "Current script dynamically extracts fixture source via Function; fixture script/CSS not in historical two-file hash hold.",
+        "Baseline mode is separate old mixed-date reproduction, excluded from current mapped outcomes.",
+        "Historical retained report; no current runtime acceptance, real persistence, physical-device, native assistive-technology or production-bundle certification.",
+        "Mapper inspected source and retained report only; no new browser execution or full requirement acceptance."
+      ]
+    }
+  ],
+  "latest_profile_identity_reinspection": {
+    "recorded_at_utc": "2026-10-24T09:48:52.433327+00:00",
+    "reviewer": "/root",
+    "change": "Only fixed browser clock line added; all prior fixtures/assertions retained. Anchor offsets reinspected against complete source."
+  }
+}

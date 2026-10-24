@@ -50,7 +50,7 @@ try {
     await page.route("**/__normalization-test", (route) =>
       route.fulfill({
         contentType: "text/html",
-        body: '<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/src/styles.css"></head><body><button id="opener">Open editor</button></body></html>',
+        body: '<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/src/styles.css"><link rel="stylesheet" href="/src/premium-theme.css"></head><body><button id="opener">Open editor</button></body></html>',
       }),
     );
     await page.route("**/api/v1/**", async (route) => {
@@ -193,6 +193,7 @@ try {
     await editor
       .getByRole("button", { name: "Save reviewed changes", exact: true })
       .waitFor();
+    await page.waitForFunction(() => document.querySelector("dialog.record-workspace [data-save]")?.disabled === false);
     assert.equal(await editor.locator("[data-save]").isDisabled(), false);
     await editor.locator("[name=notes]").fill("Changed after review");
     assert.equal(await editor.locator("[data-save]").isDisabled(), true);

@@ -1,0 +1,96 @@
+{
+  "recorded_at_utc": "2026-10-22T11:54:52.762429+00:00",
+  "requirements": [
+    9,
+    22,
+    30,
+    41,
+    42,
+    43,
+    44,
+    48,
+    54,
+    55,
+    61,
+    63,
+    81,
+    82,
+    161,
+    162,
+    208,
+    209,
+    219,
+    237,
+    238,
+    239,
+    258
+  ],
+  "completion_claim": false,
+  "scope": "Overview intrinsic workflow tile layout and source style inventory; no changes to stage navigation, values, roles or calculations.",
+  "source_sha256": {
+    "frontend/src/main.ts": "74e072cea72b83cfc2b7fb069a8dc038096e1e0f656a55ce0866ad16e5e63bde",
+    "frontend/src/styles.css": "645b00bf7cc07246f257ec5c90015b6d273a0b212478672ce098684d282385e4",
+    "frontend/src/premium-theme.css": "ff2aee7148e54e4e40aae847189110cf3d9228d90fabffbd63a3449a1e1a935d"
+  },
+  "before": "Actual Chromium320 Template label split over2lines in a127px button. Baseline report records label rectangles; prior role screenshot independently exposed the visible issue.",
+  "change": [
+    "Replace fixed4-column/2-column viewport rules with auto-fit columns sized to the actual panel. Keep the button text track shrinkable and natural-height. No nowrap, hidden label or reduced text.",
+    "Add PostCSS/TypeScript-AST inventory of CSS tokens, literal color declarations, repeated selectors, inline fragments and runtime style expressions with source hashes/scopes. No declarations removed or consolidated."
+  ],
+  "checks": {
+    "overview_layouts": 30,
+    "keyboard_stage_outcomes": 120,
+    "local_enlarged_text_layouts": 6,
+    "tagged_axe_surfaces": 30,
+    "tagged_axe_violations": 0,
+    "role_navigation_regression_layouts": 24,
+    "shell_geometry_regressions": 15,
+    "unit_tests": 100,
+    "build_exit_code": 0,
+    "build_inputs_held": true,
+    "style_inventory_source_check": "passed"
+  },
+  "inventory_counts": {
+    "css_files": 3,
+    "typescript_files": 45,
+    "custom_property_definitions": 308,
+    "unique_custom_properties": 104,
+    "color_declaration_candidates": 487,
+    "non_token_color_declaration_candidates": 239,
+    "selector_rules": 2573,
+    "duplicate_selector_groups": 149,
+    "inline_style_fragments": 19,
+    "runtime_style_expressions": 8,
+    "runtime_passes": 0
+  },
+  "evidence": [
+    "docs/premium-ui/qa-overview-steps.json",
+    "docs/premium-ui/qa-overview-steps-before.json",
+    "docs/premium-ui/style-inventory.json",
+    "docs/premium-ui/style-inventory.md",
+    "docs/premium-ui/qa-role-navigation.json",
+    "docs/premium-ui/qa-geometry.json",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+  ],
+  "tests": {
+    "frontend/tests/premium-overview-steps.browser.mjs": "b1387141616969e851fd3ad1f2010066dfc5867dc103a349998c5d70f62260ab",
+    "frontend/tests/premium-style-inventory.mjs": "a6f10f1a036f7c3065e08ff9b19f3cc7c21c6b3a2dcb4d3945cb64b0f7e1a252",
+    "frontend/tests/premium-role-navigation.browser.mjs": "7a59de7e407b3472a2134efd9c56d6151b30ee153b8a28ec2a4f35a3f6bdef36"
+  },
+  "visual_review": {
+    "reviewer": "root implementer, not independent",
+    "screenshots": [
+      "docs/premium-ui/screenshots/overview/steps-320-light.png",
+      "docs/premium-ui/screenshots/overview/steps-320-dark-large-text.png"
+    ],
+    "result": "Template intact; all stage labels readable; larger text expands natural tile height."
+  },
+  "limitations": [
+    "Actual-app stage navigation uses a disposable GET-only fixture. Opening a stage and retaining month is verified; generation, assignment or publish mutations are not certified by these checks.",
+    "Local32/28px label/state text override tests local enlargement, not real browser zoom, OS font scaling, software keyboards or physical devices.",
+    "Axe covers the Overview month panel in stated themes/widths; no whole-application/native assistive-technology certification.",
+    "Style inventory is source discovery, not a dead-code/contrast/reachability/cascade analyzer. Named-color grammar and interpolation/alias/external-source limits documented.",
+    "Prior independent reviews retain their original snapshots; new independent reviewer usage limit remains. Physical/native checks pending at user request.",
+    "144 broad responsive matrix remains historical after local CSS/main changes. No whole requirement or full260 completion claim. No backend/API/permission/scheduling/persisted semantics/export-content/production changes."
+  ]
+}

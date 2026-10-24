@@ -1,0 +1,30 @@
+{
+  "recorded_at_utc": "2026-10-24T01:30:18.170Z",
+  "scope": "Observed stale near-duplicate dialog and retained-draft focus loss before frontend fixes.",
+  "source_sha256": {
+    "frontend/src/main.ts": "1078a054ac37469f241f8063d9221ada08a69c8553950f119026e739991accc7",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/premium-theme.css": "bbdf4ef4dc05d3850d94be50569177e850ab5bbac8376c20a1cadf13ead9162e"
+  },
+  "whole_requirement_completion_proven": false,
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "variant": "near-navigate",
+      "stale_confirmation_dialogs": 1,
+      "observed": true
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "variant": "draft-focus",
+      "focus_after_save": {
+        "id": "",
+        "tag": "BODY"
+      },
+      "draft_retained": true,
+      "observed": true
+    }
+  ]
+}

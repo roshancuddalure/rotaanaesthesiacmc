@@ -75,6 +75,14 @@ export function formatDate(value: string | Date | null | undefined, options: { w
   return (options.weekday === false ? SHORT_FORMAT : DAY_FORMAT).format(date).replace(",", "");
 }
 
+/** Read-only calendar values: preserve malformed input rather than rolling it to another date. */
+export function formatCalendarDate(value: string): string {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value) || value.startsWith("0000-")) return value;
+  const date = new Date(`${value}T00:00:00Z`);
+  if (!Number.isFinite(date.getTime()) || date.toISOString().slice(0, 10) !== value) return value;
+  return formatDate(date, { weekday: false });
+}
+
 /** `2026-10` -> `October 2026`. */
 export function formatMonth(month: string | null | undefined): string {
   const match = String(month ?? "").match(/^(\d{4})-(\d{2})/);
@@ -230,4 +238,20 @@ export function applyBlocker(rows: { key: string; issues: string[]; label: strin
   if (!blocked.length) return "";
   const first = blocked[0];
   return `${blocked.length} ${blocked.length === 1 ? "row needs" : "rows need"} a decision before applying. First: ${first.label} — ${first.issues[0]}. Choose the member, fix the row, or untick Include.`;
+}
+
+/** Restore an action replaced by an async render, unless the user moved focus. */
+export function retainActionFocus(host: HTMLElement, trigger: HTMLElement, replacement: () => HTMLElement | null) {
+  const ownedFocus = document.activeElement === trigger;
+  let moved = false;
+  const trackFocus = (event: FocusEvent) => {
+    if (event.target !== trigger && event.target !== document.body) moved = true;
+  };
+  document.addEventListener("focusin", trackFocus);
+  return (restore = true) => {
+    document.removeEventListener("focusin", trackFocus);
+    if (!restore || !ownedFocus || moved || !host.isConnected) return;
+    if (document.activeElement !== document.body && document.activeElement !== trigger) return;
+    replacement()?.focus();
+  };
 }

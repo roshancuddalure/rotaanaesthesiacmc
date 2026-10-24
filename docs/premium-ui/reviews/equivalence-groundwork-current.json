@@ -1,0 +1,40 @@
+{
+  "recorded_at_utc": "2026-10-23T15:20:25.607742+00:00",
+  "completion_claim": false,
+  "requirements": [
+    255
+  ],
+  "scope": "Offline verification tooling and bounded numeric calculation comparison; historical workbook evidence is explicitly historical.",
+  "source_sha256": {
+    "tools/frontend_equivalence_artifacts.py": "31a3b946f5f7abf843beec907089034c2c9a66cfc3779f3afdf829fbcf6c8127",
+    "tools/test_frontend_equivalence_artifacts.py": "af4a604814214233c686492111362810799305dd2b1d2efafcaad832d8da0dda",
+    "frontend/tests/premium-numeric-equivalence.mjs": "3ff5d6a6bee4079e084d8dbe58d766f821946a7a5b0ece2cc6372d13bff66606",
+    "frontend/src/compute-protocol.ts": "d9dff1ad6ddda42e63da02dc6dd3d322f3cdc17fe824698e578a38cfcc57e1a5"
+  },
+  "checks": {
+    "artifact_negative_control_tests": 11,
+    "numeric_fixtures": 1038,
+    "accepted_numeric_cases": 1027,
+    "rejected_invalid_cases": 11,
+    "historical_comparisons": [
+      "desktop",
+      "390px"
+    ]
+  },
+  "findings": [
+    "Captured pre-upgrade numeric protocol matches its manifest and is byte-identical to current protocol. Deterministic fixtures agree; accepted cases additionally match independent BigInt sum and lexicographic references.",
+    "Historical original/updated desktop and mobile recorded requests/outcomes and workbook cells, dimensions, formulas and cached values compare equal under stricter exact checks.",
+    "New offline comparator detects extra columns/rows/sheets, formula changes, generated-text changes, zero versus blank, request revision changes, runtime errors and empty/missing artifacts. No database connections or timestamp/cell exclusions."
+  ],
+  "limits": [
+    "Historical workflow runs predate current batch and cannot certify current workflow equivalence.",
+    "Numeric functions are CPU executions; actual WebGPU hardware, complete scheduling, assignments, imports, publish, persisted state and current exports remain outside this comparison.",
+    "Existing workflow recorder normalizes multipart files to lengths and UUID paths; current test design must add exact file-content digests and explicit generated-ID mapping rather than infer equality.",
+    "All 260 items still need complete perspective acceptance; no new independent agent signoff in this batch."
+  ],
+  "evidence": [
+    "docs/premium-ui/reviews/numeric-equivalence-current.json",
+    "docs/premium-ui/reviews/historical-artifact-comparison-desktop.json",
+    "docs/premium-ui/reviews/historical-artifact-comparison-mobile.json"
+  ]
+}

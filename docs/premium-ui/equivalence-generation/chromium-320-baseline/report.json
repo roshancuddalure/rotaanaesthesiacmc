@@ -1,0 +1,126 @@
+{
+  "label": "baseline",
+  "steps": [
+    "template preview protected",
+    "template applied",
+    "member preview protected",
+    "members applied",
+    "populated eagle eye exported without writes",
+    "members reversed",
+    "eagle eye exported"
+  ],
+  "semantic_assertions": {
+    "template_preview_entire_state_unchanged": true,
+    "member_preview_entire_state_unchanged": true,
+    "requested_duty_scope_and_bounds": true,
+    "seeded_member_identity_posting_and_leave_eligibility": true,
+    "member_apply_preserves_template_fields_and_ids": true,
+    "saved_assignments_exactly_match_reviewed_proposal": true,
+    "member_reversal_exact_template_only_snapshot": true,
+    "populated_export_exact_state_unchanged": true
+  },
+  "errors": [],
+  "mutations": [
+    {
+      "method": "POST",
+      "path": "/api/v1/rota-compute/jobs",
+      "query": "",
+      "body": {
+        "month": "2026-05",
+        "engine": "server",
+        "kind": "template",
+        "template_options": {
+          "duty_keys": [
+            "MAIN_1ST_24HR"
+          ],
+          "starts_on": "2026-05-01",
+          "ends_on": "2026-05-04",
+          "replace_existing": true
+        }
+      },
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rota-compute/jobs/<template-job-1>/step",
+      "query": "",
+      "body": {
+        "revision": 0
+      },
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rota-compute/jobs/<template-job-1>/validate",
+      "query": "",
+      "body": {
+        "revision": 1
+      },
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rota-compute/jobs/<template-job-1>/apply",
+      "query": "",
+      "body": {
+        "revision": 1
+      },
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rota-compute/jobs",
+      "query": "",
+      "body": {
+        "month": "2026-05",
+        "engine": "server"
+      },
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rota-compute/jobs/<members-job-2>/step",
+      "query": "",
+      "body": {
+        "revision": 0
+      },
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rota-compute/jobs/<members-job-2>/validate",
+      "query": "",
+      "body": {
+        "revision": 1
+      },
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rota-compute/jobs/<members-job-2>/apply",
+      "query": "",
+      "body": {
+        "revision": 1
+      },
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rota-compute/jobs/<members-job-2>/reversal-check",
+      "query": "",
+      "body": {
+        "revision": 2
+      },
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rota-compute/jobs/<members-job-2>/revert",
+      "query": "",
+      "body": {
+        "revision": 2
+      },
+      "status": 200
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "recorded_at_utc": "2026-10-24T01:50:35.202509+00:00",
+  "reviewer": "/root/unit_import_legacy_reachability",
+  "scope": "Independent read-only source review. No tests or fixture resets run; no whole-app/native AT certification.",
+  "source_sha256": {
+    "frontend/src/operational-import.ts": "9e11514d205d71049e2f0baa10f005def74941e0b90584a9c84b968f9ae19dfc",
+    "frontend/src/main.ts": "93eebef4269de921331c843211094321582d241e6af186172339f1ae26b52b9e"
+  },
+  "findings": [
+    "Legacy main.ts data-unit-import-create-member has no current markup producer; visible import uses operational-import.ts createMemberInline. Legacy cancellation feedback is not a current visible UI defect.",
+    "Separate name-edit sequence correctly rejects obsolete existing-member success/error, including change-back, without invalidating call-level edits or name blur alone.",
+    "Focus captured immediately before synchronous result repaint preserves exact member ID and use/review action; handlers rebound before restoration. Missing candidate falls back to name. Focus outside candidate root is untouched.",
+    "No blocking finding in updated source; GET and POST semantics unchanged."
+  ]
+}

@@ -1,7 +1,11 @@
 """Publish checklist, publish action and the final rota Excel export.
 
-Blockers: scope not locked, no slots, open slots, hard-blocked items, pending exchanges.
-Warnings (unaccepted review items, overrides) require ``confirm_warnings``.
+Blockers: scope not locked, no slots, open slots, hard-blocked items, pending exchanges, call
+level mismatches. Warnings (unaccepted review items, overrides, uneven duty totals within a
+call level) require ``confirm_warnings``.
+A superadmin may publish anyway (docs/superadmin_override_contract.md section 2): blockers and
+warning confirmation are skipped, a reason is required and recorded in the approval summary.
+Open slots are always listed as "Unfilled" in the export.
 Note (handbook B1): publishing does not lock the month or snapshot the rota.
 """
 
@@ -15,13 +19,19 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
 from app.models import DutySlot, RotaPublishApproval, UserAccount
-from app.services.rota_review import rota_review_month
+from app.services.fairness_targets import call_level_spread
+from app.services.rota_review import over_limit_detail, rota_review_month
 from app.services.rota_rules import get_phase_one_rules
 from app.services.rota_safety import month_safety
 from app.services.rota_setup import monthly_setup
 from app.services.rota_template import template_slots_for_period
 
 PUBLISHED_STATUS = "published"
+SUPERADMIN_ROLE = "superadmin"
+UNFILLED_LABEL = "Unfilled"
+OVERRIDE_REASON_MIN = 5
+OVERRIDE_REASON_MAX = 500
+SUPERADMIN_DETAIL_NAMES = 5
 
 
 class RotaPublishError(ValueError):
@@ -43,6 +53,7 @@ def latest_publish_approval(db: Session, rota_period_id: object) -> RotaPublishA
 def publish_approval_to_dict(approval: RotaPublishApproval | None) -> dict[str, object] | None:
     if approval is None:
         return None
+    summary = approval.summary if isinstance(approval.summary, dict) else {}
     return {
         "id": str(approval.id),
         "rota_period_id": str(approval.rota_period_id),
@@ -52,6 +63,9 @@ def publish_approval_to_dict(approval: RotaPublishApproval | None) -> dict[str, 
         "approval_note": approval.approval_note,
         "summary": approval.summary,
         "created_at": approval.created_at.isoformat(),
+        "published_with_override": bool(summary.get("published_with_override")),
+        "override_reason": summary.get("override_reason"),
+        "override_by": summary.get("override_by"),
     }
 
 
@@ -59,7 +73,44 @@ def checklist_item(status: str, title: str, detail: str) -> dict[str, str]:
     return {"status": status, "title": title, "detail": detail}
 
 
-def rota_publish_checklist(db: Session, month: str) -> dict[str, object]:
+def superadmin_allocation_detail(rows: list[dict[str, object]]) -> str:
+    """Checklist text for the superadmin allocations, at most five then "and N more"."""
+    parts = []
+    for row in rows[:SUPERADMIN_DETAIL_NAMES]:
+        text = f"{row.get('duty_date')} {row.get('duty_type')}: {row.get('person_name')}"
+        if row.get("by"):
+            text += f" (by {row['by']})"
+        parts.append(text)
+    detail = f"{len(rows)} slot(s) allocated by a superadmin, overriding rota rules: " + ", ".join(parts)
+    if len(rows) > SUPERADMIN_DETAIL_NAMES:
+        detail += f" and {len(rows) - SUPERADMIN_DETAIL_NAMES} more"
+    return detail
+
+
+def uneven_spread_detail(rows: list[dict[str, object]]) -> str:
+    """Checklist text for call levels whose duty totals differ by more than the allowed gap."""
+    parts = []
+    for row in rows:
+        target = row.get("target")
+        text = (
+            f"{row.get('label')}: {row.get('min')} to {row.get('max')} duties "
+            f"(gap {row.get('gap')}, allowed {row.get('allowed_gap')}"
+            + (f", target {target:.2f}" if isinstance(target, (int, float)) else "")
+            + ")"
+        )
+        if row.get("reason"):
+            text += f" - {row['reason']}"
+        parts.append(text)
+    return "; ".join(parts)
+
+
+def is_superadmin(user: UserAccount | None) -> bool:
+    return user is not None and getattr(user, "role", None) == SUPERADMIN_ROLE
+
+
+def rota_publish_checklist(db: Session, month: str, user: UserAccount | None = None) -> dict[str, object]:
+    """``user`` (optional) only sets ``can_superadmin_override``: true when blockers exist and
+    the user is a superadmin (superadmin contract section 2)."""
     period, scope = monthly_setup(db, month)
     rule_version, _rules = get_phase_one_rules(db)
     review = rota_review_month(db, month)
@@ -105,6 +156,21 @@ def rota_publish_checklist(db: Session, month: str) -> dict[str, object]:
     else:
         checks.append(checklist_item("clear", "Exchange requests", "No pending exchange approvals remain."))
 
+    # docs/limits_callevel_fairness_contract.md 2: a member whose call level no longer matches
+    # the duty (review issue ``call_level_changed``) blocks publishing.
+    mismatches = int(summary.get("call_level_mismatch_items", 0) or 0)
+    if mismatches > 0:
+        blockers.append(
+            checklist_item(
+                "blocked",
+                "Call level mismatches",
+                f"{mismatches} assignment(s) are held by a member whose call level no longer matches "
+                "the duty. Reassign them in Review.",
+            )
+        )
+    else:
+        checks.append(checklist_item("clear", "Call level mismatches", "Every duty is held at its call level."))
+
     warning_items = int(summary.get("unresolved_warning_items", max(0, int(summary["review_items"]) - int(summary["hard_blocked_items"]))))
     if warning_items:
         warnings.append(
@@ -133,6 +199,45 @@ def rota_publish_checklist(db: Session, month: str) -> dict[str, object]:
             )
         )
 
+    # docs/superadmin_override_contract.md section 2: a warning, never a blocker.
+    superadmin_rows = list(review.get("superadmin_allocations") or [])
+    if superadmin_rows:
+        warnings.append(
+            checklist_item("warning", "Superadmin allocations", superadmin_allocation_detail(superadmin_rows))
+        )
+
+    # docs/extra_duty_fill_all_contract.md §6: a warning, never a blocker.
+    over_limit_people = list(review.get("over_limit_people") or [])
+    if over_limit_people:
+        warnings.append(
+            checklist_item("warning", "Members over their individual limit", over_limit_detail(over_limit_people))
+        )
+
+    # docs/limits_callevel_fairness_contract.md 2: a warning, never a blocker.
+    spread = call_level_spread(db, month, _rules)
+    uneven = [row for row in spread if not row["ok"]]
+    if uneven:
+        detail = uneven_spread_detail(uneven)
+        # docs/call_level_pool_and_balance_contract.md section 2: point at Balance duties when it can help.
+        try:
+            from app.services.balance_duties import movable_count
+
+            if movable_count(db, month) > 0:
+                detail += ". Run Balance duties on Rota Template."
+        except Exception:  # noqa: BLE001 - the hint is optional; never block the checklist
+            pass
+        warnings.append(
+            checklist_item("warning", "Duty totals uneven within a call level", detail)
+        )
+    elif spread:
+        checks.append(
+            checklist_item(
+                "clear",
+                "Duty totals within a call level",
+                "Every call level is within the allowed gap.",
+            )
+        )
+
     approval = latest_publish_approval(db, period.id)
     return {
         "month": month,
@@ -146,10 +251,14 @@ def rota_publish_checklist(db: Session, month: str) -> dict[str, object]:
         "rule_version": {"id": str(rule_version.id), "name": rule_version.name},
         "summary": summary,
         "can_publish": not blockers,
+        "can_superadmin_override": bool(blockers) and is_superadmin(user),
         "requires_warning_confirmation": bool(warnings),
         "checks": checks,
         "blockers": blockers,
         "warnings": warnings,
+        "over_limit_people": over_limit_people,
+        "superadmin_allocations": superadmin_rows,
+        "call_level_spread": spread,
         "latest_publish": publish_approval_to_dict(approval),
     }
 
@@ -160,21 +269,61 @@ def publish_rota_month(
     month: str,
     approved_by: UserAccount,
     confirm_warnings: bool,
-    approval_note: str,
+    approval_note: str | None,
+    superadmin_override: bool = False,
+    override_reason: str | None = None,
 ) -> dict[str, object]:
     """Record a publish approval after the checklist passes.
+
+    ``superadmin_override`` (superadmin contract section 2): a superadmin may publish with
+    blockers and unconfirmed warnings; ``override_reason`` (5-500 characters) is required and the
+    approval summary records ``published_with_override``, the reason, who, the open slots, the
+    blockers and the number of unconfirmed warnings. 403 for anyone else.
 
     KNOWN ISSUES (handbook B1, B11): only the checklist is stored - not the assignments or the
     rule set - and nothing prevents later edits, regeneration or clearing of a published month.
     """
-    note = approval_note.strip()
-    if not note:
+    note = (approval_note or "").strip()
+    if superadmin_override:
+        if not is_superadmin(approved_by):
+            raise RotaPublishError("Only a superadmin can publish anyway", status_code=403)
+        reason = (override_reason or "").strip()
+        if not OVERRIDE_REASON_MIN <= len(reason) <= OVERRIDE_REASON_MAX:
+            raise RotaPublishError(
+                f"A reason of {OVERRIDE_REASON_MIN}-{OVERRIDE_REASON_MAX} characters is required to publish anyway",
+                status_code=422,
+            )
+    elif not note:
         raise RotaPublishError("Approval note is required")
-    checklist = rota_publish_checklist(db, month)
-    if checklist["blockers"]:
-        raise RotaPublishError("Cannot publish until checklist blockers are resolved", status_code=409)
-    if checklist["requires_warning_confirmation"] and not confirm_warnings:
-        raise RotaPublishError("Confirm remaining warnings and overrides before publishing", status_code=409)
+    checklist = rota_publish_checklist(db, month, approved_by)
+    override_summary: dict[str, object] = {}
+    if superadmin_override:
+        blockers = [
+            {"title": item.get("title"), "detail": item.get("detail")} for item in checklist["blockers"]
+        ]
+        warnings_unconfirmed = 0 if confirm_warnings else len(checklist["warnings"])
+        open_slots = int(checklist["summary"].get("open_slots") or 0)
+        by = approved_by.display_name
+        override_summary = {
+            "published_with_override": True,
+            "override_reason": reason,
+            "override_by": by,
+            "override_by_user_id": str(approved_by.id),
+            "open_slots": open_slots,
+            "blockers": blockers,
+            "warnings_unconfirmed": warnings_unconfirmed,
+        }
+        sentence = (
+            f"Published with superadmin override by {by}: {reason}. "
+            f"{open_slots} open slot(s) listed as Unfilled; {len(blockers)} blocker(s) and "
+            f"{warnings_unconfirmed} unconfirmed warning(s) at publish."
+        )
+        note = f"{note}\n\n{sentence}" if note else sentence
+    else:
+        if checklist["blockers"]:
+            raise RotaPublishError("Cannot publish until checklist blockers are resolved", status_code=409)
+        if checklist["requires_warning_confirmation"] and not confirm_warnings:
+            raise RotaPublishError("Confirm remaining warnings and overrides before publishing", status_code=409)
 
     period, _scope = monthly_setup(db, month)
     approval = RotaPublishApproval(
@@ -187,12 +336,13 @@ def publish_rota_month(
             "checklist": checklist,
             "approved_by": approved_by.display_name,
             "approved_by_user_id": str(approved_by.id),
+            **override_summary,
         },
     )
     period.status = PUBLISHED_STATUS
     db.add(approval)
     db.commit()
-    return rota_publish_checklist(db, month)
+    return rota_publish_checklist(db, month, approved_by)
 
 
 def safe_cell(value: Any) -> str | int | float | bool | None:
@@ -239,8 +389,8 @@ def assignment_rows(slots: list[DutySlot]) -> list[list[Any]]:
                     slot.unit.code if slot.unit else "",
                     slot.duty_type,
                     slot.slot_label,
-                    "",
-                    "",
+                    UNFILLED_LABEL,
+                    slot.call_level,
                     "",
                     "",
                     slot.template_status,
@@ -257,14 +407,34 @@ def assignment_rows(slots: list[DutySlot]) -> list[list[Any]]:
                     slot.unit.code if slot.unit else "",
                     slot.duty_type,
                     slot.slot_label,
-                    assignment.person.canonical_name,
-                    assignment.person.call_level,
+                    assignment.person.canonical_name if assignment.person else str(assignment.person_id),
+                    assignment.person.call_level if assignment.person else None,
                     assignment.source,
                     assignment.override_reason,
                     slot.template_status,
                     slot.template_reason,
                 ]
             )
+    return rows
+
+
+def unfilled_rows(slots: list[DutySlot]) -> list[list[Any]]:
+    """Open slots (no active assignment), listed so a published rota never hides them."""
+    rows: list[list[Any]] = []
+    for slot in slots:
+        if any(a.status.lower() in {"assigned", "draft", "confirmed"} for a in slot.assignments):
+            continue
+        rows.append(
+            [
+                slot.duty_date.isoformat(),
+                slot.duty_date.strftime("%A"),
+                slot.unit.name if slot.unit else "",
+                slot.duty_type,
+                slot.slot_label,
+                slot.call_level,
+                UNFILLED_LABEL,
+            ]
+        )
     return rows
 
 
@@ -427,6 +597,13 @@ def final_rota_export(db: Session, month: str) -> tuple[str, bytes]:
         ["Published by", checklist["latest_publish"]["approved_by"]],
         ["Published at", checklist["latest_publish"]["created_at"]],
         ["Approval note", checklist["latest_publish"]["approval_note"]],
+        [
+            "Published with superadmin override",
+            "Yes" if checklist["latest_publish"].get("published_with_override") else "No",
+        ],
+        ["Override reason", checklist["latest_publish"].get("override_reason")],
+        ["Override by", checklist["latest_publish"].get("override_by")],
+        ["Superadmin allocations", checklist["summary"].get("superadmin_allocations", 0)],
         ["Total slots", checklist["summary"]["total_slots"]],
         ["Assigned slots", checklist["summary"]["assigned_slots"]],
         ["Open slots", checklist["summary"]["open_slots"]],
@@ -464,6 +641,12 @@ def final_rota_export(db: Session, month: str) -> tuple[str, bytes]:
             "Template Reason",
         ],
         assignment_rows(slots),
+    )
+    write_rows(
+        workbook,
+        "Unfilled",
+        ["Date", "Day", "Unit", "Duty", "Slot Label", "Call Level", "Status"],
+        unfilled_rows(slots),
     )
     write_rows(
         workbook,

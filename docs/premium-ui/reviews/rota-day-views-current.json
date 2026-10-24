@@ -1,0 +1,82 @@
+{
+  "recorded_at_utc": "2026-10-22T18:08:03.949796+00:00",
+  "completion_claim": false,
+  "requirements": [
+    175,
+    208,
+    209,
+    212,
+    219,
+    258
+  ],
+  "scope": "Rota day compact-list readability, view switch semantics and existing shell overlay lifecycle; preserve existing action handler dispatch for the day overlay only.",
+  "source_sha256": {
+    "frontend/src/main.ts": "dea0de97fbb19c434a94245a87cdd984598c40fd011977c875aa930eb05cbe36",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "e545e63f720e4794d39bf55e73d0a622d842429592ea313ec824c2c78604c1c4",
+    "frontend/src/shell-accessibility.ts": "47a8302e3272e90162d995f2e1d91a36c94116c76a97f5e62b2ecc31de79efc9"
+  },
+  "before": {
+    "report": "docs/premium-ui/qa-rota-day-views-before.json",
+    "finding": "320pxactualpopulatedday: nestedoverlaydidnotparticipateinshellkeyboardhandling;switchselectedstatenullandfocuslost;compactcallhiddenandlongnametruncated."
+  },
+  "changes": [
+    "Place day popup in body so existing shell overlay inert/focus/Escape handling applies. Narrow click bridge forwards only day-overlay actions to their original handler; other view-root delegation unchanged.",
+    "Keep the overlay root during day navigation; view switches update only view content and pressed/selected state, retaining the switch focus.",
+    "Wrap full duty/unit/member text and show call level in mobile compact list; stacked narrow layout. Header text uses existing inverse token against navy."
+  ],
+  "checks": {
+    "day_view_contexts": 6,
+    "engines": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "widths": [
+      320,
+      1280
+    ],
+    "themes": "dark320/light1280",
+    "view_modes": [
+      "full",
+      "compact",
+      "eagle"
+    ],
+    "native_switch_state_and_focus": true,
+    "next_day_boundary_and_original_calendar_opener_escape_return": true,
+    "manual_assignment": "No-selection blocks POST; exact existing slot endpoint/person/replace/reason payload intercepted503. Selection/reason retained and action reenabled, no replay.",
+    "scoped_axe_checks": 6,
+    "tagged_axe_violations": 0,
+    "generation_regressions": 21,
+    "generation_regression_evidence": "Observed current console result from node tests/premium-generation-actions.browser.mjs:21 isolated workflows passed; command does not persist its own JSON. Not a new whole-action certification.",
+    "staffing_regressions": 6,
+    "unit_tests": 100,
+    "build_exit_code": 0,
+    "build_inputs_held": true,
+    "static_inventories": "Style/action write/check pass; source integrity only."
+  },
+  "evidence": [
+    "docs/premium-ui/qa-rota-day-views-before.json",
+    "docs/premium-ui/qa-rota-day-views.json",
+    "docs/premium-ui/qa-staffing-review.json",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+  ],
+  "test": "frontend/tests/premium-rota-day-views.browser.mjs",
+  "test_sha256": "a73f424c30e0b6ca7eb5d6ad30339f2ed0f84ee4c7235e4a8cb88caf9b8b31e2",
+  "screenshots": [
+    "docs/premium-ui/screenshots/rota-day/compact-320.png",
+    "docs/premium-ui/screenshots/rota-day/compact-1280.png"
+  ],
+  "visual_review": {
+    "reviewer": "rootimplementer,notindependent",
+    "artifact": "docs/premium-ui/screenshots/rota-day/compact-320.png",
+    "finding": "Fullunbrokenunit/membertextwraps,calllevelvisible,viewswitcheswrapandshowfocus. Longfixtureextendsbelowviewportandusesexistingmodalbodyscroll."
+  },
+  "limitations": [
+    "Cached10candidatefixture avoids late candidate replacement; held/failed/late candidate GET focus and manual-draft preservation remain a separate required recovery audit.",
+    "Day calendar,mode and next-day path tested; short month overview and every slot action/role not newly certified. Eagle view intentionally remains duty/unit comparison, Full remains assignment controls.",
+    "Assignment refusal is intercepted; no real backend writes or scheduling/candidate/calculation/persistence/export equivalence claim.",
+    "No physical/native screen-reader or independent signoff. Full175 and full260 acceptance remain open.",
+    "Only frontend main.ts and premium-theme.css changed in this batch; concurrent backend/functionality changes preserved."
+  ]
+}

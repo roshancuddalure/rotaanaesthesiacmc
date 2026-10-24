@@ -1,0 +1,54 @@
+{
+  "source_sha256": {
+    "frontend/src/operational-import.ts": "19eb80ff6a2edad3c524ed604c8d6d2c961f73014a2af041a7cdcae23510c52b",
+    "frontend/src/reference-workspace.ts": "b0e111f78ff245eb94254c7c1d2fe1ebfa0224eda7a6c8d6ef83c1dc5f32a7de"
+  },
+  "scope": "Actual normalized import -> Create unit -> intercepted create refusal/retry or held choices GET/new file. All writes intercepted; no server persistence claim.",
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "scenario": "retry",
+      "errors": [
+        "Choices temporarily unavailable"
+      ],
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "body": {
+            "name": "Created unit",
+            "campus": "Main",
+            "code": "CREATED",
+            "minimum_free_people": 2,
+            "aliases": [
+              "Imported unit"
+            ],
+            "notes": "Keep unit notes",
+            "active_status": "active",
+            "call_minimums": []
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "body": {
+            "name": "Created unit",
+            "campus": "Main",
+            "code": "CREATED",
+            "minimum_free_people": 2,
+            "aliases": [
+              "Imported unit"
+            ],
+            "notes": "Keep unit notes",
+            "active_status": "active",
+            "call_minimums": []
+          }
+        }
+      ],
+      "optionsReads": 1,
+      "staleApply": "true",
+      "retryVisible": 0
+    }
+  ]
+}

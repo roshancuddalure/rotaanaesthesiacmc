@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-10-22T13:11:28.833931+00:00",
+  "reviewer": "acceptance_evidence_review specialist 10/10",
+  "scope": "Read-only documentary/source audit of acceptance items 13,254,255 and ten-specialist coordination. Only this review file written. No browser execution, refresh, backend, data or production changes.",
+  "completion_claim": false,
+  "observed_counts": {
+    "requirements": 260,
+    "recorded_implementation_statuses": {
+      "partial": 207,
+      "pending": 52,
+      "dependency": 1
+    },
+    "audit_dispositions": {
+      "implementation_links_present_full_acceptance_unproven": 174,
+      "source_matched_bounded_evidence_full_requirement_unproven": 80,
+      "implementation_ledger_unpopulated_review_evidence_available": 5,
+      "explicit_dependency_requires_disposition": 1
+    },
+    "whole_requirement_completion_proven": 0,
+    "evidence_files": 309,
+    "missing_evidence_files": 0,
+    "recorded_report_snapshot_dispositions": {
+      "historical_source_differs": 101,
+      "no_frontend_hashes_declared": 75,
+      "source_matched_for_recorded_files": 25
+    }
+  },
+  "source_hashes": {
+    "docs/premium-ui/traceability.json": "5fea948e9f774d47033d49b96f67fb63669323f3a85568c700e1b2736c7d796b",
+    "docs/premium-ui/acceptance-audit-current.json": "eec9f06c2111a05a9976fe592c7a4c2b104726e38becd9a5fd479af116207afd",
+    "docs/premium-ui/verification-current.json": "16c9742253f506c9ee4334fd3d71dfc20e5c5a6ec32693b67c243fc4d70f53a5",
+    "docs/premium-ui/live-work.json": "38daed76f201d96f20548f15d79bb5991c3b9e28f0f94f87c2fdafc0ac2ecf05",
+    "tools/refresh_frontend_acceptance_evidence.py": "0509fc322e37562712e6543ffaf6fe4bfd929a4dafc56b91323ceb4b9547920b",
+    "tools/verify_frontend_build_snapshot.py": "7199cc74cef4e35d486cefd7a58ce39a3be4f43aa8fab974610f9c40f5ec546b",
+    "frontend/tests/workflow-equivalence.browser.mjs": "fe7cc6bec33b84eff20e6b76b7ea708f27204fae5e67820c9644bb51035fb091",
+    "frontend/tests/premium-export-artifacts.browser.mjs": "1fd2a22a55ac77d4cc0528f15012ba8206e2b385203f060f38c13ea57af9cbfa"
+  },
+  "gaps": [
+    {
+      "priority": 1,
+      "items": [
+        254,
+        255
+      ],
+      "classification": "current integrated regression and equivalence acceptance unproven",
+      "evidence": [
+        "docs/premium-ui/traceability.json items254/255 remain pending with empty tests/files and independent_qa pending",
+        "verification-current.json responsive.snapshot_note identifies earlier144 matrix as historical despite responsive.limit beginning Current",
+        "frontend/tests/workflow-equivalence.browser.mjs records requests but requires two separate fresh databases and later comparison; its source alone is not a completed before/after equivalence result",
+        "premium-export-artifacts.browser.mjs explicitly verifies intercepted transport bytes, not workbook calculations/content equivalence"
+      ],
+      "next_safe_checks": [
+        "After the integration source is stable, record a held-input build and run the affected profile/member suites first; then schedule one coordinated broad smoke/regression wave covering the item254 families with every suite result and source snapshot retained. Avoid concurrent edits or duplicate broad runs.",
+        "Construct a same-fixture original/current comparison in isolated disposable test systems only, with no production URL/credentials. Compare normalized request method/path/query/body, selected month, assignment IDs, reviewed-import choices and explicit publish boundary; compare workbook sheet/cell content separately from transport fixture bytes. Explicitly record known obsolete rules-suite expectations and concurrent functional differences rather than changing business logic to force a pass.",
+        "Amend ambiguous Current responsive wording to historical snapshot when root next records evidence; retain original reports and dates."
+      ],
+      "acceptance_limit": "Passing scoped suites is bounded evidence; it cannot certify every role, calculation, export or all260 requirements."
+    },
+    {
+      "priority": 2,
+      "items": [
+        13
+      ],
+      "classification": "protected invariant register and independent disposition missing",
+      "evidence": [
+        "traceability item13 is pending with empty direct files/tests and pending independent_qa",
+        "refresh_frontend_acceptance_evidence.py explicitly forces whole_requirement_completion_proven false and count0: it is a documentary freshness tool, not an acceptance sign-off engine",
+        "live-work.json distinguishes review_returned/running/queued but the specialist10 entry was still queued at read time; root must update only upon delivered review"
+      ],
+      "next_safe_checks": [
+        "Create a small explicit protected-invariant register mapping selected-month continuity, assignment preservation, reviewed-import decisions and explicit publishing to exact assertions, owning modules, roles, fixtures and current report snapshots. Link existing narrow tests where relevant and label untested variants.",
+        "Assign an independent reviewer a stable snapshot and the register; record pass/fail/not-applicable/dependency per invariant without treating ten specialist reports as ten completed implementation batches or whole acceptance.",
+        "Keep root as sole integration/evidence writer, disjoint source ownership for implementations, and bounded waves limited to available slots. Record specialist return, fix, regression and acceptance as separate states in the progress GUI."
+      ],
+      "acceptance_limit": "This ten-specialist audit can identify gaps and safe next checks; it does not sign off implementation, native assistive technology, scheduling correctness or full acceptance."
+    }
+  ],
+  "limits": [
+    "Source hashes match only recorded files and only at read time; concurrent root edits can invalidate snapshots.",
+    "Physical-device checks remain pending at user direction; emulation cannot substitute physical/native screen-reader evidence.",
+    "No assertion that every backend file is unchanged: concurrent unrelated work is present and preserved.",
+    "Current certification count0 is intentional; never derive completion from refresh hashes, test totals or number of subagents."
+  ]
+}

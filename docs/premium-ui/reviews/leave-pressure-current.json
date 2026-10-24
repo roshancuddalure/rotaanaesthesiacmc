@@ -1,0 +1,82 @@
+{
+  "recorded_at_utc": "2026-10-22T13:04:53.204125+00:00",
+  "requirements": [
+    31,
+    57,
+    98,
+    145,
+    147,
+    148
+  ],
+  "completion_claim": false,
+  "source_sha256": {
+    "frontend/src/main.ts": "367ac6a5fb23c8cdc2159086d8bec58da86c4e42f0e69ce33d9305062e2c40f9",
+    "frontend/src/styles.css": "e5e5802b5cdef146b542fcfafc1b2040f232898cafaa89dcf30554235da140b5",
+    "frontend/src/premium-theme.css": "89e37305c5efca7be5570b00676a79aa83260a8c013a65bfc62d41a242fe0823"
+  },
+  "scope": "Leave pressure responsive groups, disclosure of all returned groups, unchanged reported counts and existing day review.",
+  "confirmed_before": "Chromium 320 baseline showed only eight unit groups, three nested panels and no day-review action in the pressure summary.",
+  "changes": [
+    "Intrinsic responsive layout and tonal group surfaces replace nested panels; numeric counts use tabular figures.",
+    "First eight groups remain immediately visible; native disclosure exposes every remaining server-returned group in the original count order.",
+    "Approved/blocking and pending/review copy is explicitly scoped to this summary. Reported total and blocking counts, top-seven day ordering and underlying values remain unchanged.",
+    "Review day uses the existing day-modal event delegation, escaped labels and full-date accessible name. Empty returned pressure has a truthful message."
+  ],
+  "checks": {
+    "pressure_workflows": 12,
+    "browsers": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "widths": [
+      320,
+      1280
+    ],
+    "themes": [
+      "light",
+      "dark"
+    ],
+    "scoped_axe_violations": 0,
+    "leave_list_regressions": 12,
+    "leave_status_regressions": 2,
+    "monthly_review_regressions": 6,
+    "unit_tests": 100,
+    "build_exit_code": 0,
+    "build_inputs_held": true
+  },
+  "action_contracts": [
+    {
+      "selector": ".leave-pressure-details [data-pressure-group=units] details > summary",
+      "trigger": "Native keyboard Enter",
+      "outcome": "Eight initially visible groups expand to all twelve returned groups; exact keys/counts and HTML escaping asserted."
+    },
+    {
+      "selector": ".leave-pressure-details [data-pressure-day] [data-leave-day]",
+      "trigger": "Native keyboard Enter on November 9",
+      "outcome": "Existing exact-date modal shows Approved, Requested and Imported, Pending Review without extra requests. Escape returns focus to exact opener and retains expanded groups."
+    }
+  ],
+  "evidence": [
+    "docs/premium-ui/qa-leave-pressure.json",
+    "docs/premium-ui/qa-leave-pressure-before.json",
+    "docs/premium-ui/qa-leave-list.json",
+    "docs/premium-ui/qa-leave-independent-review.json",
+    "docs/premium-ui/qa-monthly-leave-review.json",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+  ],
+  "test_sha256": "930c4781459244b6a9005eff64557dec9353e88e0453f478241b9a20440ba3d5",
+  "visual_review": {
+    "reviewer": "root implementer; not independent",
+    "screenshot": "docs/premium-ui/screenshots/leave/pressure-320-dark.png",
+    "result": "Mobile dark summary wraps within the viewport with readable explanatory text, tonal groups and aligned counts."
+  },
+  "limitations": [
+    "GET-only pressure/calendar fixtures and disposable companion GETs. No actual backend aggregate consistency or leave mutation certification.",
+    "Three shown statuses asserted in existing day modal; cancelled/rejected status representations and all leave workflows remain separate acceptance.",
+    "Empty pressure is an empty aggregate response, not a claim that the independently supplied calendar contains no leave.",
+    "Tabular figures, nested-border cleanup and empty-state evidence cover this surface only. Full app token consistency and all actionable empty states remain unproven.",
+    "Physical devices, native assistive technology and new independent review pending. Broad 144-layout matrix remains historical.",
+    "No backend/API-contract/permission/scheduling/persisted-data/export-content/production changes in this batch. Full 260-item goal active and incomplete."
+  ]
+}

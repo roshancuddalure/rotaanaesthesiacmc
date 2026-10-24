@@ -1,0 +1,1666 @@
+{
+  "schema_version": 1,
+  "source_plan": "docs/premium_frontend_upgrade_plan_2026-10-21.md",
+  "item_range": {
+    "first": 174,
+    "last": 260,
+    "count": 87
+  },
+  "purpose": "Requirement-derived acceptance definitions only; no completion certification or ledger status changes.",
+  "evidence_policy": "Existing candidate paths were checked for existence only. Artifact content, freshness and complete requirement coverage must be adjudicated separately. Item-specific evidence is required; aggregate test counts are insufficient.",
+  "items": [
+    {
+      "item_id": 174,
+      "requirement": "Preserve locks, selected repair scope and member preferences across responsive reflow and recoverable frontend errors.",
+      "acceptance_scope": "Generation locks, repair selection and member preference controls",
+      "pass_conditions": [
+        "Set nondefault locks, repair scope and preferences; resize through mobile and desktop layouts and verify the selections remain identical.",
+        "Inject a recoverable frontend failure and recover without resetting those choices or changing the eventual request payload."
+      ],
+      "evidence_needed": [
+        "Recorded control values and request payloads before/after resize and recovery.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-intelligence-drafts.json",
+        "docs/premium-ui/qa-generation-actions-current.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for generation locks, repair selection and member preference controls, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 175,
+      "requirement": "Give long rota grids a usable narrow-screen day/list alternative while retaining deliberate comparison scrolling where needed.",
+      "acceptance_scope": "Long rota grids and the narrow-screen day/list representation",
+      "pass_conditions": [
+        "At narrow widths, reach every date, member and available row action through the day/list alternative.",
+        "Where comparison scrolling remains, keep it inside a clearly named local region without page overflow or loss of date context."
+      ],
+      "evidence_needed": [
+        "Desktop-grid/mobile-list parity fixture, scrolling and keyboard observations.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-generation-state.json",
+        "docs/premium-ui/qa-geometry.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for long rota grids and the narrow-screen day/list representation, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 176,
+      "requirement": "Integrate extra-duty proposals, verification, undo and audit reports into the shared review visual language without altering calculations.",
+      "acceptance_scope": "Extra-duty proposal, verification, undo and audit presentation",
+      "pass_conditions": [
+        "Each extra-duty stage uses the approved shared headings, status treatments, review surfaces and action hierarchy.",
+        "Run identical extra-duty fixtures before/after presentation changes and obtain equivalent calculations, verification decisions, undo results and audit records."
+      ],
+      "evidence_needed": [
+        "Stage screenshots and semantic API/result comparisons across the extra-duty journey.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-canonical-extra-timestamps.json",
+        "docs/premium-ui/qa-family-regressions-current.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for extra-duty proposal, verification, undo and audit presentation, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 177,
+      "requirement": "Keep reviewed reversal actions clearly scoped to their applied generation or batch, exposing conflicts and unavailable-state explanations.",
+      "acceptance_scope": "Generation and batch reversal review",
+      "pass_conditions": [
+        "Reversal confirmation names the exact generation or batch and its affected scope before submission.",
+        "Conflict and unavailable cases explain why reversal cannot proceed, preserve unrelated records and offer only supported recovery actions."
+      ],
+      "evidence_needed": [
+        "Real reversal success/conflict read-back and exact batch context assertions.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-generation-actions-reversal-batch.json",
+        "docs/premium-ui/qa-generation-actions-current.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for generation and batch reversal review, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 178,
+      "requirement": "Make publishing visually distinct from saving a draft, with accurate consequences, prerequisites and existing server confirmation behavior.",
+      "acceptance_scope": "Publishing versus draft saving",
+      "pass_conditions": [
+        "Draft saving and publishing have distinct labels, visual hierarchy and consequence text, with readiness conditions beside publishing.",
+        "Existing warning/blocker confirmation and server refusal behavior remain effective; rejected publication does not appear successful or change published state."
+      ],
+      "evidence_needed": [
+        "Ready, warning, blocked and unauthorized publication outcome records with persisted read-back.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-generation-actions-publish-batch.json",
+        "docs/premium-ui/qa-publish-recovery.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for publishing versus draft saving, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 179,
+      "requirement": "Improve export menus and download feedback, verifying filenames, formats and actual nonempty artifacts before reporting success.",
+      "acceptance_scope": "Export menu and download lifecycle",
+      "pass_conditions": [
+        "Export choices clearly identify supported file formats and show pending, success and recoverable failure feedback.",
+        "Only report success for a nonempty artifact whose filename and format match the requested export; reject empty or incompatible responses."
+      ],
+      "evidence_needed": [
+        "Captured filenames, MIME/signature checks, artifact bytes and empty/blocked/error recovery runs.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-export-artifacts.json",
+        "docs/premium-ui/qa-csv-template-artifacts.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for export menu and download lifecycle, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 180,
+      "requirement": "Verify complete setup-to-export journeys and confirm equivalent API payloads, outcomes and export content after presentation changes.",
+      "acceptance_scope": "Complete setup-to-export workflow equivalence",
+      "pass_conditions": [
+        "Execute setup, template allocation, member assignment, review and export with the same fixtures and selected month before/after UI changes.",
+        "Compare existing API payloads, persisted outcomes, calculations and meaningful export contents, recording every intentional normalization separately."
+      ],
+      "evidence_needed": [
+        "Paired complete journey traces, server state and parsed workbook comparisons.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-generation-actions-current.json",
+        "docs/premium-ui/qa-family-regressions-current.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for complete setup-to-export workflow equivalence, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 181,
+      "requirement": "Refine rules editing into clearly grouped sections with consistent headings, summaries, unsaved markers and sticky-save behavior.",
+      "acceptance_scope": "Rules editor grouping and save presentation",
+      "pass_conditions": [
+        "Rule sections have consistent headings, concise summaries and an accurate unsaved marker as edits change.",
+        "Sticky save controls remain reachable without obscuring the last rule or validation message on narrow and short screens."
+      ],
+      "evidence_needed": [
+        "Rules screenshots and edit/save/cancel geometry observations.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-rules-dock.json",
+        "docs/premium-ui/qa-rules-local-actions-independent.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for rules editor grouping and save presentation, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 182,
+      "requirement": "Keep effective dates, rule versions and validation results visually distinct so configuration history cannot be mistaken for current policy.",
+      "acceptance_scope": "Rules effective dates, versions and validation history",
+      "pass_conditions": [
+        "Show current effective policy distinctly from historical versions and future effective dates.",
+        "Validation outcomes identify the version or draft evaluated so a historical result cannot be read as validation of current edits."
+      ],
+      "evidence_needed": [
+        "Fixtures spanning historical/current/future rules and validation-state captures.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-rules-history-time.json",
+        "docs/premium-ui/qa-rules-local-actions-independent.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for rules effective dates, versions and validation history, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 183,
+      "requirement": "Improve eligibility-group search and membership presentation without changing group normalization, dates or eligibility semantics.",
+      "acceptance_scope": "Eligibility-group search and membership views",
+      "pass_conditions": [
+        "Search visibly changes matching eligibility groups and presents member identity and date applicability clearly.",
+        "Group normalization, membership dates and eligibility results match existing API behavior after search, edit and reload."
+      ],
+      "evidence_needed": [
+        "Search assertions, exact edit payloads and persisted membership/eligibility read-back.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-eligibility-save.json",
+        "docs/premium-ui/qa-eligibility-new-independent.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for eligibility-group search and membership views, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 184,
+      "requirement": "Standardize reference mappings with readable source-to-target relationships and clear reviewed, unresolved and inactive indicators.",
+      "acceptance_scope": "Reference mapping relationships and status",
+      "pass_conditions": [
+        "Every mapping presents readable source and target identities with distinct reviewed, unresolved and inactive text indicators.",
+        "Long names and missing targets remain understandable in both themes and narrow layouts without hiding the available mapping actions."
+      ],
+      "evidence_needed": [
+        "Status-rich mapping screenshots and actionable keyboard/pointer observations.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-import-reference-controls.json",
+        "docs/premium-ui/qa-reference-focus-states/report.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for reference mapping relationships and status, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 185,
+      "requirement": "Make past-duty import steps consistent with operational CSV workflows while retaining their distinct historical-data explanations.",
+      "acceptance_scope": "Historical past-duty import workflow",
+      "pass_conditions": [
+        "Past-duty upload, preview, correction, review and apply use the shared import interaction patterns.",
+        "Historical-data explanations and date context remain distinct, and existing historical import payloads and outcomes are preserved."
+      ],
+      "evidence_needed": [
+        "Historical CSV workflow traces and current/historical date boundary fixtures.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-past-recovery-independent.json",
+        "docs/premium-ui/qa-family-regressions-current.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for historical past-duty import workflow, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 186,
+      "requirement": "Present import history and rejection reports with reliable filtering, readable timestamps and working download controls.",
+      "acceptance_scope": "Import history and rejection reports",
+      "pass_conditions": [
+        "History filters change the displayed imports correctly and timestamps retain clear recorded-time context.",
+        "Rejection downloads produce the expected named artifact and recover visibly from unavailable or empty report responses."
+      ],
+      "evidence_needed": [
+        "History filter assertions, timestamp fixtures and parsed rejection-download artifacts.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-history.json",
+        "docs/premium-ui/qa-history-recovery.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for import history and rejection reports, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 187,
+      "requirement": "Give login-account management clear role descriptions and pending/error feedback without implying frontend visibility enforces authorization.",
+      "acceptance_scope": "Login-account management feedback and roles",
+      "pass_conditions": [
+        "Account management explains each available role and shows truthful pending, success and persistent failure feedback.",
+        "Role visibility does not claim to enforce authorization; server refusal remains visible and leaves account state unchanged."
+      ],
+      "evidence_needed": [
+        "Role-based account interaction traces, delayed failures and server read-back.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-accounts.json",
+        "docs/premium-ui/qa-account-admin-lifetime.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for login-account management feedback and roles, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 188,
+      "requirement": "Distinguish account activation, role changes and password-related actions through explicit labels and appropriately scoped confirmations.",
+      "acceptance_scope": "Account activation, role and password actions",
+      "pass_conditions": [
+        "Activation, role change and password-related controls explicitly name the operation and target account.",
+        "Confirmations describe the relevant consequence only; cancel sends no mutation and completion is verified through the supported outcome."
+      ],
+      "evidence_needed": [
+        "Separate activation/role/password success, cancellation and refusal evidence.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-accounts.json",
+        "docs/premium-ui/qa-account-admin-lifetime.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for account activation, role and password actions, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 189,
+      "requirement": "Improve diagnostics readability with a short service summary and expandable technical information that avoids unnecessary personal data.",
+      "acceptance_scope": "Diagnostics summary and technical disclosure",
+      "pass_conditions": [
+        "Diagnostics first exposes a concise service summary and keeps detailed technical output in expandable sections.",
+        "Default and expanded diagnostics avoid unnecessary member data, credentials and pairing secrets in visible or copied output."
+      ],
+      "evidence_needed": [
+        "Summary/detail visual review and diagnostic redaction inspection.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-diagnostics-hierarchy/report.json",
+        "docs/premium-ui/qa-family-regressions-current.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for diagnostics summary and technical disclosure, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 190,
+      "requirement": "Make unavailable diagnostics recoverable without turning unrelated operational screens into error pages or blank placeholders.",
+      "acceptance_scope": "Diagnostics failure isolation and recovery",
+      "pass_conditions": [
+        "Unavailable diagnostics leaves unrelated operational navigation and loaded content usable.",
+        "The diagnostics surface explains failure and exposes a working retry or supported alternative without replacing the whole application with an error."
+      ],
+      "evidence_needed": [
+        "Diagnostics outage, retry and unrelated-screen interaction traces.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-recovery-targeted.json",
+        "docs/premium-ui/qa-family-regressions-current.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for diagnostics failure isolation and recovery, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 191,
+      "requirement": "Refine recycle-bin cards and tables so record type, deletion context, restore scope and conflicts are immediately understandable.",
+      "acceptance_scope": "Recycle-bin record context",
+      "pass_conditions": [
+        "Recycle cards and tables identify record type, deletion context and the exact restore scope.",
+        "Restore conflicts and unavailable optional metadata remain understandable in narrow layouts and both themes."
+      ],
+      "evidence_needed": [
+        "Deleted-record fixtures, conflict screenshots and narrow-screen content checks.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-recycle-recovery-independent.json",
+        "docs/premium-ui/qa-past-recycle-timestamps.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for recycle-bin record context, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 192,
+      "requirement": "Verify restore and permanent-delete controls independently, keeping their consequences and supported backend capabilities clearly separated.",
+      "acceptance_scope": "Independent restore and permanent-delete contracts",
+      "pass_conditions": [
+        "Restore returns the supported record to the expected location and explains conflicts without implying permanent deletion.",
+        "Permanent delete separately names its irreversible consequence; cancellation causes no request, and unsupported capabilities are explained rather than simulated."
+      ],
+      "evidence_needed": [
+        "Disposable-fixture read-back for each operation and independent cancellation/refusal tests.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-recycle-recovery-independent.json",
+        "docs/premium-ui/admin-action-results.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for independent restore and permanent-delete contracts, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 193,
+      "requirement": "Provide coherent help guidance for common tasks, linked directly from the section where users encounter difficulty.",
+      "acceptance_scope": "Contextual task help",
+      "pass_conditions": [
+        "Common operational task guidance describes the available steps and terminology used by the implemented UI.",
+        "Help links from the relevant section open the appropriate task guidance or anchored section and retain a safe route back."
+      ],
+      "evidence_needed": [
+        "Task-to-help destination matrix and observed navigation outcomes.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-guide-help-independent.json",
+        "docs/premium-ui/qa-family-regressions-current.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for contextual task help, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 194,
+      "requirement": "Update in-app documentation and screenshots only after the corresponding approved interface is implemented and verified.",
+      "acceptance_scope": "Verified in-app documentation and screenshots",
+      "pass_conditions": [
+        "Each revised instruction and screenshot matches an implemented, verified interface state and labels.",
+        "Record the associated source/build and verification date; obsolete images or instructions are replaced or clearly historical."
+      ],
+      "evidence_needed": [
+        "Documentation-to-screen comparison with implementation verification references.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-guide-help-independent.json",
+        "docs/premium-ui/verification-current.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for verified in-app documentation and screenshots, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 195,
+      "requirement": "Keep developer-only implementation details out of operational guidance unless users need them to make an informed choice.",
+      "acceptance_scope": "Operational guidance content",
+      "pass_conditions": [
+        "Operational guidance explains user tasks and decisions in plain language without unnecessary module, endpoint or implementation details.",
+        "Technical information retained in user guidance has a documented user decision or support purpose."
+      ],
+      "evidence_needed": [
+        "Content review of guidance, empty states and contextual help.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-guide-help-independent.json",
+        "docs/premium-ui/component-state-specification.md"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for operational guidance content, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 196,
+      "requirement": "Standardize date, time, month and numeric formatting while preserving explicit timezone context for recorded audit events.",
+      "acceptance_scope": "Date, time, month and numeric display formats",
+      "pass_conditions": [
+        "Equivalent values use the shared formatting conventions across operational pages, settings and reports.",
+        "Audit events preserve explicit timezone context and boundary fixtures do not shift recorded dates incorrectly."
+      ],
+      "evidence_needed": [
+        "Formatting inventory and timezone, locale and boundary-date examples.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-date-display.json",
+        "docs/premium-ui/qa-canonical-extra-timestamps.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for date, time, month and numeric display formats, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 197,
+      "requirement": "Ensure admin-only menus remain absent for unauthorized roles and handle server refusals without confusing fake success states.",
+      "acceptance_scope": "Unauthorized administration and server refusal",
+      "pass_conditions": [
+        "Unauthorized roles cannot see admin-only menus or protected entry points.",
+        "If permissions change or a protected request is refused, show an accurate refusal, stop false success feedback and preserve safe loaded context."
+      ],
+      "evidence_needed": [
+        "Role matrix plus direct/refused protected-action traces and state read-back.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-accounts.json",
+        "docs/premium-ui/qa-recovery-targeted.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for unauthorized administration and server refusal, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 198,
+      "requirement": "Support long labels and unavailable optional data consistently across settings, reports, history and account surfaces.",
+      "acceptance_scope": "Long labels and missing optional admin data",
+      "pass_conditions": [
+        "Settings, reports, history and account surfaces wrap long essential labels without overlapping controls or losing identity.",
+        "Absent optional data uses consistent meaningful placeholders and does not suppress unrelated actions or turn the screen into an error."
+      ],
+      "evidence_needed": [
+        "Long-label/missing-value fixture screenshots and action reachability checks.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-header-wrap.json",
+        "docs/premium-ui/qa-account-form-layout.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for long labels and missing optional admin data, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 199,
+      "requirement": "Review print and printable-report presentation separately, retaining meaningful content while removing interactive navigation chrome.",
+      "acceptance_scope": "Print and printable-report presentation",
+      "pass_conditions": [
+        "Print output retains the report's meaningful headings, selected context, records and necessary totals.",
+        "Interactive navigation and controls are removed from print without clipping essential content or making print-only text unreadable."
+      ],
+      "evidence_needed": [
+        "Print media screenshots/PDF inspection with populated multi-page fixtures.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-print.json",
+        "docs/premium-ui/qa-unit-print-independent.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for print and printable-report presentation, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 200,
+      "requirement": "Verify every administrative action using disposable authorized fixtures and document actions requiring APIs beyond the approved frontend scope.",
+      "acceptance_scope": "Administrative action verification boundary",
+      "pass_conditions": [
+        "Every available administrative action has an observed authorized disposable-fixture outcome, including failure and cancellation where applicable.",
+        "Actions requiring unavailable backend APIs are listed with the missing capability and do not masquerade as implemented frontend actions."
+      ],
+      "evidence_needed": [
+        "Complete administrative action register with request/outcome/read-back and capability-gap references.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/admin-action-results.json",
+        "docs/premium-ui/contracts/admin.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for administrative action verification boundary, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 201,
+      "requirement": "Target WCAG 2.2 AA through component checks and complete workflow review, retaining the application's existing accessible foundations.",
+      "acceptance_scope": "WCAG 2.2 AA component and workflow target",
+      "pass_conditions": [
+        "Map applicable WCAG 2.2 A/AA criteria to shared components and complete operational workflows.",
+        "Verify relevant criteria using automated and manual methods, preserving existing accessible interactions and recording remaining failures explicitly."
+      ],
+      "evidence_needed": [
+        "Criterion-to-component/workflow matrix with automated and manual evidence.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-accessibility-recovery-current.json",
+        "docs/premium-ui/acceptance-audit-current.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for wcag 2.2 aa component and workflow target, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 202,
+      "requirement": "Measure ordinary text contrast, meaningful graphical contrast and focus visibility for every theme and interactive state.",
+      "acceptance_scope": "Contrast and focus across themes and states",
+      "pass_conditions": [
+        "Measure normal text at least 4.5:1, large text at least 3:1 and applicable essential non-text boundaries/graphics at least 3:1 for actual theme/state pairs.",
+        "Keyboard focus remains visually identifiable across the documented interactive states; account for applicable WCAG exceptions explicitly."
+      ],
+      "evidence_needed": [
+        "Measured foreground/background state matrix and focus screenshots for light/dark themes.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/design-system.md",
+        "docs/premium-ui/qa-recycle-theme-contrast-before.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for contrast and focus across themes and states, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 203,
+      "requirement": "Keep statuses understandable without color by combining text, grouping, icons and explicit explanatory labels.",
+      "acceptance_scope": "Status meaning independent of color",
+      "pass_conditions": [
+        "Success, warning, danger, selection and operational statuses retain understandable text, grouping or icon cues when color is unavailable.",
+        "Check representative status-rich screens in grayscale or equivalent review without losing status distinction or required explanations."
+      ],
+      "evidence_needed": [
+        "Status inventory and color-independent comprehension captures.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-generation-state.json",
+        "docs/premium-ui/qa-forced-colors/selection-current.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for status meaning independent of color, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 204,
+      "requirement": "Preserve the skip link and semantic landmarks, ensuring route changes expose an understandable heading and focused destination.",
+      "acceptance_scope": "Skip link, landmarks and route destination",
+      "pass_conditions": [
+        "The skip link reaches the main operational content and semantic landmarks identify navigation and main content.",
+        "Route changes expose the correct heading and suitable destination focus without overriding deliberate ongoing interaction."
+      ],
+      "evidence_needed": [
+        "Keyboard skip-link and route-focus traces with landmark/heading inspection.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-accessibility-recovery-current.json",
+        "docs/premium-ui/qa-family-regressions-current.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for skip link, landmarks and route destination, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 205,
+      "requirement": "Use a documented heading hierarchy within pages, dialogs and nested panels without decorative heading-level jumps.",
+      "acceptance_scope": "Heading hierarchy",
+      "pass_conditions": [
+        "Pages, dialogs and nested panels use a documented heading outline based on content structure.",
+        "Inspect rendered heading levels and accessible dialog names to eliminate decorative jumps and missing parent context."
+      ],
+      "evidence_needed": [
+        "Rendered heading outlines for each surface class and manual structure review.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/component-state-specification.md",
+        "docs/premium-ui/qa-accessibility-recovery-current.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for heading hierarchy, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 206,
+      "requirement": "Consolidate legacy overlay dialogs into an accessible shared lifecycle with correct initial focus, containment and restoration.",
+      "acceptance_scope": "Accessible shared overlay lifecycle",
+      "pass_conditions": [
+        "Legacy and native overlay surfaces follow shared initial-focus, focus-containment and close behavior.",
+        "Closing restores focus to an appropriate surviving opener, including when the opener rerenders or the viewport changes."
+      ],
+      "evidence_needed": [
+        "Overlay inventory and keyboard open/tab/close/restoration traces.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-dialog-close-focus.json",
+        "docs/premium-ui/qa-accessibility-recovery-current.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for accessible shared overlay lifecycle, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 207,
+      "requirement": "Ensure only the top active overlay handles Escape, preventing unrelated dialogs or drafts from closing simultaneously.",
+      "acceptance_scope": "Top-overlay Escape ownership",
+      "pass_conditions": [
+        "With nested overlays open, Escape affects only the top active overlay.",
+        "Underlying dialogs and drafts retain their state and remain usable after the top overlay closes."
+      ],
+      "evidence_needed": [
+        "Nested-dialog Escape traces with draft and mutation assertions.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-dialog-close-focus.json",
+        "docs/premium-ui/qa-accessibility-recovery-current.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for top-overlay escape ownership, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 208,
+      "requirement": "Keep focus visible and unobscured beneath sticky headers, bottom navigation, action footers and software keyboards.",
+      "acceptance_scope": "Unobscured focused controls",
+      "pass_conditions": [
+        "Keyboard focus is visible and not hidden under sticky headers, bottom navigation or action footers.",
+        "Short viewport and keyboard-reduced viewport checks keep the active field and its relevant validation reachable by scrolling."
+      ],
+      "evidence_needed": [
+        "Focus rectangles, sticky-region geometry and reduced-height editing observations.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-browser-zoom-current/report.json",
+        "docs/premium-ui/qa-container-reflow-independent.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for unobscured focused controls, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 209,
+      "requirement": "Preserve native keyboard behaviors for buttons, fields, menus, tabs, selects and date controls rather than intercepting keys unnecessarily.",
+      "acceptance_scope": "Native keyboard interaction",
+      "pass_conditions": [
+        "Buttons, text/date fields, selects, menus and tabs retain the expected native or documented semantic keyboard behaviors.",
+        "Application key handling does not suppress normal text editing, selection, activation or date-control behavior."
+      ],
+      "evidence_needed": [
+        "Control-class keyboard matrix including Enter, Space, arrows, Tab and Escape as applicable.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-accessibility-recovery-current.json",
+        "docs/premium-ui/qa-family-regressions-current.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for native keyboard interaction, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 210,
+      "requirement": "Make row menus and help popovers usable without hover, with predictable opening, closing and focus return behavior.",
+      "acceptance_scope": "Menus and help without hover",
+      "pass_conditions": [
+        "Row menus and help popovers open and expose their content with keyboard and touch activation.",
+        "Close and dismissal return focus predictably, and no essential help or menu action requires hover."
+      ],
+      "evidence_needed": [
+        "Pointer, touch and keyboard opening/closing traces with focus return.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-dialog-close-focus.json",
+        "docs/premium-ui/qa-guide-help-independent.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for menus and help without hover, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 211,
+      "requirement": "Prefer 44px touch controls; enforce WCAG AA 24-by-24 CSS-pixel minimum targets or valid exceptions with verified spacing.",
+      "acceptance_scope": "Touch-target geometry",
+      "pass_conditions": [
+        "Prefer 44 CSS-pixel controls in the component system and measure actual interactive hit regions.",
+        "Targets meet the applicable 24-by-24 CSS-pixel AA minimum or a documented valid exception with verified spacing."
+      ],
+      "evidence_needed": [
+        "Measured control rectangles, neighboring target spacing and exception rationale.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-geometry.json",
+        "docs/premium-ui/qa-container-reflow-independent.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for touch-target geometry, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 212,
+      "requirement": "Associate labels, hints, required states and error descriptions, apply aria-invalid accurately and announce validation outcomes without excessive interruption.",
+      "acceptance_scope": "Field semantics and validation feedback",
+      "pass_conditions": [
+        "Inputs programmatically associate persistent labels, hints, required states and field-specific errors; aria-invalid reflects current validity.",
+        "Validation moves or announces focus appropriately without repeated disruptive announcements, and correction clears obsolete error semantics."
+      ],
+      "evidence_needed": [
+        "Accessible name/description/invalid-state snapshots and keyboard validation traces.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-accessibility-recovery-current.json",
+        "docs/premium-ui/component-state-specification.md"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for field semantics and validation feedback, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 213,
+      "requirement": "Keep loading and success announcements concise, avoiding repeated whole-page announcements during polling or background invalidation.",
+      "acceptance_scope": "Concise live announcements",
+      "pass_conditions": [
+        "Loading and success live messages identify the relevant operation without announcing entire page content.",
+        "Polling, repeated invalidation and background refresh avoid duplicate or excessive live-region updates."
+      ],
+      "evidence_needed": [
+        "Live-region mutation traces and manual announcement review of polling/loading/success flows.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-accessibility-recovery-current.json",
+        "docs/premium-ui/qa-editor-skeleton.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for concise live announcements, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 214,
+      "requirement": "Support 200% zoom, 400% reflow scenarios and enlarged text without losing core tasks or essential information.",
+      "acceptance_scope": "Zoom, reflow and enlarged text",
+      "pass_conditions": [
+        "At 200% zoom and 400% reflow scenarios, core actions and essential information remain available without unjustified page-level horizontal scrolling.",
+        "Enlarged text and narrow/short dialogs preserve editable content, error messages and reachable close/save actions."
+      ],
+      "evidence_needed": [
+        "Actual zoom settings plus viewport/reflow/text-spacing task checks and screenshots.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-browser-zoom-current/report.json",
+        "docs/premium-ui/qa-container-reflow-independent.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for zoom, reflow and enlarged text, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 215,
+      "requirement": "Respect reduced-motion preferences and ensure no essential understanding depends on animation, shimmer or timed transitions.",
+      "acceptance_scope": "Reduced motion",
+      "pass_conditions": [
+        "Reduced-motion preference removes or substantially reduces nonessential movement, shimmer and transitions.",
+        "Operational meaning, loading feedback and completion remain understandable when animation is disabled."
+      ],
+      "evidence_needed": [
+        "Computed motion-state comparisons and workflow observations with reduced motion enabled.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-unit-motion.json",
+        "docs/premium-ui/qa-accessibility-recovery-current.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for reduced motion, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 216,
+      "requirement": "Test forced-colors and high-contrast modes, preserving control boundaries, selection states and visible keyboard focus.",
+      "acceptance_scope": "Forced colors and high contrast",
+      "pass_conditions": [
+        "In forced-colors/high-contrast mode, input/button boundaries and keyboard focus remain visible.",
+        "Selected tabs, filters and status controls retain distinct text or system-color cues without relying on suppressed backgrounds."
+      ],
+      "evidence_needed": [
+        "Forced-color screenshots and keyboard/selection state comparisons.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-forced-colors/selection-current.json",
+        "docs/premium-ui/qa-accessibility-recovery-current.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for forced colors and high contrast, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 217,
+      "requirement": "Make comparison scrolling, tab rails and embedded reports keyboard reachable and clearly named when separate regions are necessary.",
+      "acceptance_scope": "Keyboard-accessible local scrolling and rails",
+      "pass_conditions": [
+        "Necessary comparison scroll regions, tab rails and embedded reports have clear accessible names and keyboard reachability.",
+        "Keyboard users can reach offscreen content and actions, then leave each region without a trap."
+      ],
+      "evidence_needed": [
+        "Named-region inspection and scroll/rail keyboard task traces.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-container-reflow-independent.json",
+        "docs/premium-ui/qa-accessibility-recovery-current.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for keyboard-accessible local scrolling and rails, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 218,
+      "requirement": "Record NVDA/Chrome and VoiceOver/Safari walkthroughs for key workflows, identifying unavailable real-device checks as dependencies rather than passes.",
+      "acceptance_scope": "Native assistive-technology walkthrough evidence",
+      "pass_conditions": [
+        "Record key-workflow NVDA/Chrome and VoiceOver/Safari walkthroughs with platform, versions, tasks and observed results.",
+        "Unavailable native assistive-technology sessions remain explicitly pending/dependent and are never inferred from axe or browser emulation."
+      ],
+      "evidence_needed": [
+        "Actual native screen-reader walkthrough logs; unavailable sessions documented separately.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/acceptance-audit-current.json",
+        "docs/premium-ui/verification-current.json"
+      ],
+      "remaining_gap": "Actual native screen-reader walkthrough records are still required; this definition does not convert unavailable sessions to a pass.",
+      "procedural_exception": "Native NVDA/Chrome and VoiceOver/Safari evidence remains pending unless actually performed. Automated accessibility and browser emulation cannot replace these walkthroughs."
+    },
+    {
+      "item_id": 219,
+      "requirement": "Confirm touch-screen and keyboard task parity, documenting unavoidable native-platform differences rather than disguising missing actions.",
+      "acceptance_scope": "Touch and keyboard task parity",
+      "pass_conditions": [
+        "For each operational task, keyboard and touch users can reach the same available outcomes and recovery actions.",
+        "Document unavoidable native-control differences with their supported interaction path rather than omitting an action."
+      ],
+      "evidence_needed": [
+        "Task-by-input-mode outcome matrix and justified native-platform differences.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-family-regressions-current.json",
+        "docs/premium-ui/qa-accessibility-recovery-current.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for touch and keyboard task parity, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 220,
+      "requirement": "Resolve or explicitly assess all applicable WCAG A/AA failures; combine automated findings with manual verification rather than relying on severity alone.",
+      "acceptance_scope": "Applicable WCAG findings disposition",
+      "pass_conditions": [
+        "Every applicable WCAG A/AA finding has a correction or explicit criterion-specific assessment with supporting evidence.",
+        "Manual keyboard/structure/interaction results complement automated scans; severity labels alone do not justify ignoring a failure."
+      ],
+      "evidence_needed": [
+        "Complete findings register with criterion applicability, resolution and manual verification.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-accessibility-recovery-current.json",
+        "docs/premium-ui/acceptance-audit-current.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for applicable wcag findings disposition, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 221,
+      "requirement": "Centralize consistent request-state presentation while preserving the existing API helper and supported server error details.",
+      "acceptance_scope": "Consistent request-state presentation",
+      "pass_conditions": [
+        "Shared pending, success, failure and retry treatments consistently identify the current operation across migrated workflows.",
+        "Existing API-helper behavior and supported server error details remain available without changing request contracts."
+      ],
+      "evidence_needed": [
+        "Request-state component reference and representative success/failure workflow captures.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-recovery-targeted.json",
+        "docs/premium-ui/component-state-specification.md"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for consistent request-state presentation, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 222,
+      "requirement": "Distinguish cancellation, deadlines and server refusal; a frontend timeout or abort never proves server processing stopped or rolled back.",
+      "acceptance_scope": "Cancellation, timeout and refusal semantics",
+      "pass_conditions": [
+        "UI messages distinguish user cancellation, client deadline and explicit server refusal.",
+        "A timed-out or aborted mutation is described as potentially processed until supported read-back resolves it; no false rollback guarantee or automatic replay appears."
+      ],
+      "evidence_needed": [
+        "Injected abort/deadline/refusal traces and corresponding operation-state copy.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-export-artifacts.json",
+        "docs/premium-ui/qa-recovery-targeted.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for cancellation, timeout and refusal semantics, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 223,
+      "requirement": "Preserve structured field errors and provide safe fallback messages for HTML error pages, invalid JSON or empty responses.",
+      "acceptance_scope": "Structured and malformed error responses",
+      "pass_conditions": [
+        "Supported structured field errors retain their field associations and meaningful server details.",
+        "HTML error pages, malformed JSON and empty responses produce safe readable fallback messages without raw markup or a crashed screen."
+      ],
+      "evidence_needed": [
+        "Response-shape matrix with rendered field/summary errors and sanitization inspection.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-recovery-targeted.json",
+        "docs/premium-ui/qa-export-artifacts.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for structured and malformed error responses, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 224,
+      "requirement": "Prevent failed requests from clearing useful loaded content or replacing an entire working screen unnecessarily.",
+      "acceptance_scope": "Failure preserves working loaded content",
+      "pass_conditions": [
+        "Refresh or optional-request failure keeps useful previously loaded records and controls visible.",
+        "The affected region explains its failure and recovery path without replacing an unrelated functioning screen."
+      ],
+      "evidence_needed": [
+        "Loaded-then-failed request traces with content and action continuity assertions.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-history-recovery.json",
+        "docs/premium-ui/qa-editor-load.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for failure preserves working loaded content, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 225,
+      "requirement": "Track request/refresh generations, account, route, month and dialog lifetime so older same-screen responses cannot overwrite newer results.",
+      "acceptance_scope": "Response ownership across request contexts",
+      "pass_conditions": [
+        "Older responses cannot overwrite a newer request/refresh in the same screen or a different account, route, month or dialog lifetime.",
+        "Exercise reordered completion and dismissal/navigation during requests, verifying the final active context alone receives results and feedback."
+      ],
+      "evidence_needed": [
+        "Delayed/reordered request traces and exact visible state/request context assertions.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-account-profile-lifetime.json",
+        "docs/premium-ui/qa-inline-member-selection-lifetime/report.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for response ownership across request contexts, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 226,
+      "requirement": "Keep safe cached data visibly marked as stale and avoid silently presenting it as the latest saved state.",
+      "acceptance_scope": "Stale cached content labeling",
+      "pass_conditions": [
+        "When safe cached content is shown after refresh failure or age expiry, identify it visibly as stale with relevant context.",
+        "A stale cached view never implies a newly confirmed saved state and offers a supported refresh/reconciliation path."
+      ],
+      "evidence_needed": [
+        "Cache/stale/refresh state transitions with timestamp or source labeling observations.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-recovery-targeted.json",
+        "docs/premium-ui/qa-history-recovery.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for stale cached content labeling, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 227,
+      "requirement": "Preserve unsaved form values during refresh prompts and data invalidation without storing sensitive records persistently by default.",
+      "acceptance_scope": "Draft retention during invalidation",
+      "pass_conditions": [
+        "Refresh prompts and data invalidation preserve unsaved form values or obtain explicit informed discard before replacing them.",
+        "Sensitive records are not persisted by default to durable browser storage merely to retain a draft."
+      ],
+      "evidence_needed": [
+        "Draft snapshots across invalidation plus storage inspection.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-intelligence-drafts.json",
+        "docs/premium-ui/qa-inline-member-selection-lifetime/report.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for draft retention during invalidation, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 228,
+      "requirement": "Bound suitable read retries, honor retry guidance and stop obsolete contexts; never blindly replay uncertain mutations.",
+      "acceptance_scope": "Safe bounded read retry",
+      "pass_conditions": [
+        "Only suitable reads retry within explicit attempt/time bounds, respecting supported retry guidance and stopping obsolete contexts.",
+        "Uncertain mutations are never automatically replayed as a generic recovery action."
+      ],
+      "evidence_needed": [
+        "Request-count/timing traces for transient reads, obsolete context cancellation and uncertain writes.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-recovery-targeted.json",
+        "docs/premium-ui/qa-session-fixture-recovery-rerun.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for safe bounded read retry, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 229,
+      "requirement": "Reconcile uncertain save outcomes using existing read-back or idempotency capabilities, explaining when safe reconciliation is unavailable.",
+      "acceptance_scope": "Uncertain-save reconciliation",
+      "pass_conditions": [
+        "Use existing authoritative read-back or supported idempotency to determine whether an uncertain save committed before offering another mutation.",
+        "If safe reconciliation is unavailable, explain the uncertainty and supported next step without claiming success, rollback or inventing backend guarantees."
+      ],
+      "evidence_needed": [
+        "Dropped/held response scenarios with fresh-state comparison or explicit capability limitation.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-member-save-independent.json",
+        "docs/premium-ui/qa-publish-recovery.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for uncertain-save reconciliation, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 230,
+      "requirement": "Handle session expiration, cross-tab sign-out and permission changes centrally while retaining safe context and avoiding repeated failed mutation loops.",
+      "acceptance_scope": "Session and permission lifecycle recovery",
+      "pass_conditions": [
+        "Expiration, cross-tab sign-out and role changes invalidate obsolete protected operation ownership centrally.",
+        "Retain only safe context, show truthful access state and prevent repeated mutation loops or late private feedback after sign-out."
+      ],
+      "evidence_needed": [
+        "Session/cross-tab/permission transitions with request counts and private-data leakage checks.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-session-fixture-recovery-rerun.json",
+        "docs/premium-ui/qa-account-admin-lifetime.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for session and permission lifecycle recovery, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 231,
+      "requirement": "Provide minimal HTML/bootstrap recovery even when the entry script fails, with safe error text and a working Retry path.",
+      "acceptance_scope": "Entry-script/bootstrap failure recovery",
+      "pass_conditions": [
+        "If the entry script cannot load or execute, minimal HTML presents readable safe recovery guidance.",
+        "Retry works after the resource is restored and does not require the failed application bundle to render or activate the recovery control."
+      ],
+      "evidence_needed": [
+        "Production entry-script failure/restoration tests inspecting static HTML fallback and Retry.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-recovery.json",
+        "docs/premium-ui/qa-recovery-targeted.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for entry-script/bootstrap failure recovery, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 232,
+      "requirement": "Handle Vite preload errors and missing dynamic chunks with a controlled update prompt that protects unsaved work.",
+      "acceptance_scope": "Vite preload and missing chunk recovery",
+      "pass_conditions": [
+        "Missing dynamic chunks and Vite preload failures trigger a controlled update/recovery prompt.",
+        "Unsaved work is protected by deferring or confirming disruptive reload; successful recovery loads available assets without duplicate work."
+      ],
+      "evidence_needed": [
+        "Built-asset fault injection with unsaved drafts and observed prompt/retry behavior.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-production-chunk-recovery.json",
+        "docs/premium-ui/qa-recovery-targeted.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for vite preload and missing chunk recovery, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 233,
+      "requirement": "Detect repeated recovery attempts and prevent infinite reload loops, especially during prolonged outages or unavailable new assets.",
+      "acceptance_scope": "Bounded recovery attempts",
+      "pass_conditions": [
+        "Repeated entry/chunk/style recovery failures stop after a documented bound rather than causing an automatic reload loop.",
+        "The stopped recovery state explains the continuing outage and allows deliberate safe retry after restoration."
+      ],
+      "evidence_needed": [
+        "Persistent outage navigation/reload counts and recovery-after-restoration trace.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-production-chunk-recovery.json",
+        "docs/premium-ui/qa-stylesheet-recovery.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for bounded recovery attempts, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 234,
+      "requirement": "Include a build identity in artifacts and expandable support diagnostics, keeping development identifiers out of prominent operational headings.",
+      "acceptance_scope": "Build identity placement",
+      "pass_conditions": [
+        "Review artifacts and support diagnostics expose the same attributable build identity.",
+        "Development identifiers remain in expandable support information rather than prominent operational headings."
+      ],
+      "evidence_needed": [
+        "Artifact manifest/support diagnostics identity comparison and screen review.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/review-build-current.json",
+        "docs/premium-ui/qa-diagnostics-hierarchy/report.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for build identity placement, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 235,
+      "requirement": "Inspect HTML revalidation, immutable hashed assets and previous-release retention as hosting dependencies without silently modifying server infrastructure.",
+      "acceptance_scope": "Hosting cache and prior-asset dependencies",
+      "pass_conditions": [
+        "Inspect and record actual or unavailable evidence for HTML revalidation, immutable hashed assets and previous-release asset retention.",
+        "Document hosting requirements and responsible deployment follow-up without changing server infrastructure under frontend approval."
+      ],
+      "evidence_needed": [
+        "Header/hosting configuration inspection and explicit unresolved asset-retention dependencies.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/review-build-and-rollback.md",
+        "docs/premium-ui/review-build-current.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for hosting cache and prior-asset dependencies, then supply missing evidence against each pass condition.",
+      "procedural_exception": "Hosting infrastructure changes are outside approved frontend scope. Inspect/document hosting dependencies and retain any unavailable deployment evidence as unresolved."
+    },
+    {
+      "item_id": 236,
+      "requirement": "Detect missing styles, failed optional modules and unavailable fonts or icons, providing readable reduced-capability presentation where feasible.",
+      "acceptance_scope": "Missing style/module/font/icon degradation",
+      "pass_conditions": [
+        "Unavailable styles or optional modules yield readable reduced-capability presentation or a clear supported recovery path.",
+        "Unavailable fonts and icons cannot erase essential labels or make operational controls unusable."
+      ],
+      "evidence_needed": [
+        "Resource-blocking matrix, fallback screenshots and successful retry/control observations.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-stylesheet-recovery.json",
+        "docs/premium-ui/qa-icons.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for missing style/module/font/icon degradation, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 237,
+      "requirement": "Reduce unnecessary broad rerenders and duplicate requests through measured, context-aware invalidation rather than indiscriminate caching.",
+      "acceptance_scope": "Measured context-aware invalidation",
+      "pass_conditions": [
+        "Measure rerender and request behavior for representative data changes before and after targeted invalidation changes.",
+        "Reduce unnecessary broad work while retaining fresh affected data and avoiding unrelated draft loss or stale silently cached results."
+      ],
+      "evidence_needed": [
+        "Comparable request/rerender counts and fresh-data/draft-preservation assertions.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-family-regressions-current.json",
+        "docs/premium-ui/qa-intelligence-drafts.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for measured context-aware invalidation, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 238,
+      "requirement": "Split expensive optional frontend modules where evidence supports it, resolving conflicting static/dynamic imports without changing operational contracts.",
+      "acceptance_scope": "Evidence-driven optional module splitting",
+      "pass_conditions": [
+        "Identify expensive optional frontend modules using bundle/load evidence and split only where that evidence supports the change.",
+        "Resolve conflicting static/dynamic imports and verify loading/error fallbacks without changing operational request or result contracts."
+      ],
+      "evidence_needed": [
+        "Bundle/import analysis, build output and optional-module load/failure regressions.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/verification-current.json",
+        "docs/premium-ui/qa-production-chunk-recovery.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for evidence-driven optional module splitting, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 239,
+      "requirement": "Remove obsolete selectors, orphan handlers and unreachable UI paths only after action-inventory and regression evidence establish safety.",
+      "acceptance_scope": "Safe obsolete-code cleanup",
+      "pass_conditions": [
+        "Candidates for removal are shown to be obsolete through the action inventory, selector/handler references and reachable-path analysis.",
+        "Relevant regressions confirm no enabled action or responsive state loses its handler or styling after removal."
+      ],
+      "evidence_needed": [
+        "Removal rationale, references/diff and affected-action regression outcomes.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/action-inventory.json",
+        "docs/premium-ui/style-inventory.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for safe obsolete-code cleanup, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 240,
+      "requirement": "Guard storage and versioned preferences; preserve CSP/worker isolation and redact tokens, pairing secrets and member data from diagnostics.",
+      "acceptance_scope": "Storage, worker/CSP and diagnostic security boundaries",
+      "pass_conditions": [
+        "Blocked/corrupt/version-mismatched preferences recover safely, with sensitive records and credentials excluded from diagnostic output.",
+        "Frontend changes preserve existing CSP and worker isolation boundaries; secrets, tokens and pairing data are redacted from logs/copy/export paths."
+      ],
+      "evidence_needed": [
+        "Restricted-storage/version tests, CSP/worker review and diagnostic redaction samples.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-recovery-targeted.json",
+        "docs/premium-ui/backend-boundary.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for storage, worker/csp and diagnostic security boundaries, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 241,
+      "requirement": "Require outcome assertions and fail unexpected loaders/errors/requests, while explicitly distinguishing deliberately injected failures from recovery defects.",
+      "acceptance_scope": "Outcome-based suite failures",
+      "pass_conditions": [
+        "Tests assert each operation's specified observable outcome and fail unexpected loaders, errors and requests.",
+        "Deliberately injected failures are labeled and must pass explicit recovery assertions rather than being silently ignored."
+      ],
+      "evidence_needed": [
+        "Suite assertion inspection and reports distinguishing expected injected errors from unexpected failures.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-family-regressions-current.json",
+        "docs/premium-ui/verification-current.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for outcome-based suite failures, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 242,
+      "requirement": "Test real pointer and keyboard activation for correct destination, context and focus, without forced or evaluated-click bypasses.",
+      "acceptance_scope": "Real activation and focus verification",
+      "pass_conditions": [
+        "Pointer and keyboard tests activate visible reachable controls and assert correct destination, record/month context and focus behavior.",
+        "No forced/evaluated-click bypass is used to claim user reachability; any diagnostic-only programmatic actions are explicitly separate."
+      ],
+      "evidence_needed": [
+        "Test source review plus observable pointer/keyboard action traces.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-family-regressions-current.json",
+        "docs/premium-ui/qa-dialog-close-focus.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for real activation and focus verification, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 243,
+      "requirement": "Test saves through returned values and fresh GET or reload read-back, avoiding stale client caches and production mutations.",
+      "acceptance_scope": "Authoritative save verification",
+      "pass_conditions": [
+        "Save tests compare returned values with the submitted intent and confirm persisted state through fresh GET or reload.",
+        "Use disposable authorized fixtures, avoid relying on stale client cache and do not mutate production to obtain evidence."
+      ],
+      "evidence_needed": [
+        "Exact payload/response and independent persisted read-back records.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-member-save-independent.json",
+        "docs/premium-ui/qa-eligibility-save.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for authoritative save verification, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 244,
+      "requirement": "Test filters, sorts, tabs and pagination against meaningful content changes and preserved state across detail-view round trips.",
+      "acceptance_scope": "Meaningful filters, sorts, tabs and pagination",
+      "pass_conditions": [
+        "Each filter, sort, tab and pagination test proves a meaningful change in visible content or order rather than only styling.",
+        "Relevant selection/filter/page state survives detail-view round trips according to its defined contract."
+      ],
+      "evidence_needed": [
+        "Multi-record fixtures, ordered result assertions and detail return-state checks.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-member-sort.json",
+        "docs/premium-ui/qa-member-filters.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for meaningful filters, sorts, tabs and pagination, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 245,
+      "requirement": "Test downloads by validating names, formats and expected content, including failure handling for blocked or empty downloads.",
+      "acceptance_scope": "Download artifact assertions",
+      "pass_conditions": [
+        "Download tests validate the filename, supported format and meaningful expected content rather than just the download event.",
+        "Blocked, empty or invalid downloads show recoverable failure without reporting artifact success."
+      ],
+      "evidence_needed": [
+        "Captured artifacts parsed against expected fixture content and failure traces.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-export-artifacts.json",
+        "docs/premium-ui/qa-csv-template-artifacts.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for download artifact assertions, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 246,
+      "requirement": "Prove repeated activation sends one mutation and dismissal sends none, using existing read-back or audit capabilities without new backend instrumentation.",
+      "acceptance_scope": "Mutation duplication and cancellation proof",
+      "pass_conditions": [
+        "Repeated activation while pending sends exactly one intended mutation and produces one persisted effect.",
+        "Dismissing or declining a reviewed action sends no unintended mutation, verified using existing request/read-back/audit capabilities."
+      ],
+      "evidence_needed": [
+        "Held mutation request counts, resulting state and dismissal zero-request assertions.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-inline-member-create.json",
+        "docs/premium-ui/qa-generation-actions-current.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for mutation duplication and cancellation proof, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 247,
+      "requirement": "Cover loading, empty, populated, invalid/empty responses, restricted storage, reordered requests, permission denial, offline, timeout and recovery states.",
+      "acceptance_scope": "State and failure matrix",
+      "pass_conditions": [
+        "Document and exercise applicable loading, empty, populated, malformed/empty response, restricted storage, reordered request, permission, offline and timeout states.",
+        "Each exercised failure has an asserted supported recovery path; unsupported combinations are explained rather than counted as passed."
+      ],
+      "evidence_needed": [
+        "Workflow-by-state coverage matrix and injection/recovery reports.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-accessibility-recovery-current.json",
+        "docs/premium-ui/qa-recovery-targeted.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for state and failure matrix, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 248,
+      "requirement": "Test widths and heights, including 320×568, 390×844, 844×390, 1024×768 and 1280×720, plus breakpoint edges.",
+      "acceptance_scope": "Viewport dimensions and breakpoint edges",
+      "pass_conditions": [
+        "Run documented workflow checks at 320×568, 390×844, 844×390, 1024×768 and 1280×720.",
+        "Test immediately below, at and above each relevant layout breakpoint, including reduced-height editing and review surfaces."
+      ],
+      "evidence_needed": [
+        "Explicit width/height/breakpoint matrix with task outcomes and captures.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-geometry.json",
+        "docs/premium-ui/qa-container-reflow-independent.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for viewport dimensions and breakpoint edges, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 249,
+      "requirement": "Check document overflow, local scroll regions, sticky-content occlusion and touch-target geometry alongside visual screenshot comparisons.",
+      "acceptance_scope": "Geometry and screenshot comparison",
+      "pass_conditions": [
+        "Measure document overflow, intentional local scroll regions, sticky-content occlusion and actual interactive target bounds.",
+        "Compare settled fixture screenshots before/after changes and investigate content loss or meaningful unexplained visual differences."
+      ],
+      "evidence_needed": [
+        "Geometry metrics plus matched-fixture screenshots and reviewed differences.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-geometry.json",
+        "docs/premium-ui/qa-header-wrap.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for geometry and screenshot comparison, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 250,
+      "requirement": "Exercise old tabs with missing UI chunks, styles and compute-worker assets, confirming draft protection, isolation and bounded recovery.",
+      "acceptance_scope": "Old-tab missing asset recovery",
+      "pass_conditions": [
+        "Exercise an already-open tab when UI chunks, styles or compute-worker assets become unavailable.",
+        "Protect drafts, preserve worker isolation and bound retry/reload behavior while presenting a usable supported recovery path."
+      ],
+      "evidence_needed": [
+        "Old-build tab asset fault injection, draft/isolation assertions and retry counts.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-production-chunk-recovery.json",
+        "docs/premium-ui/qa-stylesheet-recovery.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for old-tab missing asset recovery, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 251,
+      "requirement": "Run Chromium, Firefox and WebKit coverage where supported, separating emulated browser checks from actual-device verification claims.",
+      "acceptance_scope": "Three-engine coverage and claim limits",
+      "pass_conditions": [
+        "Run supported workflow coverage in Chromium, Firefox and WebKit, recording engine versions and meaningful unsupported cases.",
+        "Label desktop emulation separately from actual-device verification; no emulated run certifies physical keyboard or native control behavior."
+      ],
+      "evidence_needed": [
+        "Per-engine matrix with environment metadata and explicitly separated device status.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-family-regressions-current.json",
+        "docs/premium-ui/verification-current.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for three-engine coverage and claim limits, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 252,
+      "requirement": "Record real-device keyboard-open editing, tab switching and rotation with unsaved drafts, including device/browser details and native-control behavior.",
+      "acceptance_scope": "Physical-device editing and rotation checks",
+      "pass_conditions": [
+        "When available, record device/browser details and native keyboard-open editing, tab switching and rotation with an unsaved draft.",
+        "Until performed, mark physical checks pending under the user's emulation selection; browser emulation does not satisfy this physical-device item."
+      ],
+      "evidence_needed": [
+        "Actual-device walkthrough recording or explicit user-directed pending status.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/verification-current.json",
+        "docs/premium-ui/acceptance-audit-current.json"
+      ],
+      "remaining_gap": "Physical-device checks remain pending by user direction; emulation may support other items but cannot close this item.",
+      "procedural_exception": "The user selected browser emulation and instructed that physical-device checks remain pending. This exception authorizes continuing frontend work; it does not certify physical-device behavior."
+    },
+    {
+      "item_id": 253,
+      "requirement": "Compare light, dark, reduced-motion and forced-colors states, investigating meaningful differences instead of accepting screenshots automatically.",
+      "acceptance_scope": "Theme and preference comparisons",
+      "pass_conditions": [
+        "Compare corresponding light, dark, reduced-motion and forced-colors workflow states with settled matching fixtures.",
+        "Investigate meaningful differences in visibility, selection, motion or usability instead of treating image generation as automatic approval."
+      ],
+      "evidence_needed": [
+        "Matched preference/theme captures with reviewed differences and interaction outcomes.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-forced-colors/selection-current.json",
+        "docs/premium-ui/qa-unit-motion.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for theme and preference comparisons, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 254,
+      "requirement": "Re-run existing member, leave, normalization, rules, generation, compute, import, navigation, extra-duty and recycle-bin regressions.",
+      "acceptance_scope": "Existing family regression rerun",
+      "pass_conditions": [
+        "Run the existing member, leave, normalization, rules, generation, compute, import, navigation, extra-duty and recycle-bin regressions against the final candidate.",
+        "Record actual family coverage, failures and corrected reruns without relabeling an older full run as current evidence."
+      ],
+      "evidence_needed": [
+        "Final-source suite matrix and retained original failure/rerun logs.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-family-regressions-current.json",
+        "docs/premium-ui/verification-current.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for existing family regression rerun, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 255,
+      "requirement": "Verify workflow equivalence using the same fixtures and approved existing API contracts, confirming presentation changes preserve calculations and exports.",
+      "acceptance_scope": "Same-fixture behavioral equivalence",
+      "pass_conditions": [
+        "Compare presentation changes against the approved existing API contracts using identical fixtures and relevant role/month context.",
+        "Confirm calculations, persisted workflow outcomes and export contents remain equivalent; justify any evidence normalization precisely."
+      ],
+      "evidence_needed": [
+        "Paired baseline/current request, state, calculation and parsed-artifact comparison reports.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-generation-actions-current.json",
+        "docs/premium-ui/backend-boundary.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for same-fixture behavioral equivalence, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 256,
+      "requirement": "Require visual-design, responsive, accessibility, reliability and interaction-test review for every numbered item before completion sign-off.",
+      "acceptance_scope": "Per-item five-perspective sign-off",
+      "pass_conditions": [
+        "Every numbered upgrade receives visual-design, responsive, accessibility, reliability and interaction-test review outcomes with supporting evidence.",
+        "Reviewers explicitly record pass, required change, justified not-applicable or dependency; planning participation is not implementation sign-off."
+      ],
+      "evidence_needed": [
+        "260-item reviewer matrix with review scope, source snapshots and findings disposition.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/traceability.json",
+        "docs/premium-ui/agent-workstreams-current.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for per-item five-perspective sign-off, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 257,
+      "requirement": "Link each item to files, outcomes, screenshots and source/build snapshots; record passed, failed, blocked, untested or justified not-applicable status.",
+      "acceptance_scope": "Per-item traceability and honest status",
+      "pass_conditions": [
+        "Each numbered item links its relevant files, observed outcomes, screenshots and source/build snapshot.",
+        "Assign evidence-supported passed, failed, blocked, untested or justified not-applicable status without converting aggregate green suites into item completion."
+      ],
+      "evidence_needed": [
+        "Validated item-to-artifact links and status/freshness audit.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/traceability.json",
+        "docs/premium-ui/verification-current.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for per-item traceability and honest status, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 258,
+      "requirement": "Run type checks, production build and integrated tests; permit no unexplained untested enabled actions in the final snapshot's ledger.",
+      "acceptance_scope": "Final type/build/integration and action ledger",
+      "pass_conditions": [
+        "The final candidate passes type checking, production build and the applicable integrated tests with attributable source/build hashes.",
+        "Every enabled action in that snapshot's register has outcome evidence or an explicit justified explanation; no unexplained untested enabled action remains."
+      ],
+      "evidence_needed": [
+        "Final command logs, held-source build manifest and complete action-outcome ledger reconciliation.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/verification-current.json",
+        "docs/premium-ui/action-inventory.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for final type/build/integration and action ledger, then supply missing evidence against each pass condition.",
+      "procedural_exception": null
+    },
+    {
+      "item_id": 259,
+      "requirement": "Prepare a concrete review build, rollback instructions and an unresolved-issue list before requesting any separate deployment approval.",
+      "acceptance_scope": "Review build, rollback and unresolved issues",
+      "pass_conditions": [
+        "Prepare a concrete attributable review build with verified artifact integrity, actionable rollback instructions and an unresolved-issue list.",
+        "Differentiate a review archive from a proven deployed rollback artifact and keep deployment approval separate."
+      ],
+      "evidence_needed": [
+        "Sealed review archive verification, rollback prerequisites and reviewed unresolved-issue register.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/review-build-current.json",
+        "docs/premium-ui/review-build-and-rollback.md"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for review build, rollback and unresolved issues, then supply missing evidence against each pass condition.",
+      "procedural_exception": "Preparation of a review build is authorized; deployment remains subject to separate approval. Do not claim the archive is a proven deployed rollback release."
+    },
+    {
+      "item_id": 260,
+      "requirement": "Deliver the completed evidence pack and release summary, retaining approval gates for deployment or any proposed backend expansion.",
+      "acceptance_scope": "Final evidence delivery and release summary",
+      "pass_conditions": [
+        "Deliver the complete item-linked evidence pack and release summary with actual outcomes, limits and remaining dependencies.",
+        "Retain separate approval gates for deployment or backend expansion; neither is implied by frontend review completion."
+      ],
+      "evidence_needed": [
+        "Final evidence index, release summary, unresolved limits and explicit approval boundaries.",
+        "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/review-build-current.json",
+        "docs/premium-ui/verification-current.json"
+      ],
+      "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for final evidence delivery and release summary, then supply missing evidence against each pass condition.",
+      "procedural_exception": "Frontend implementation approval does not authorize deployment or backend expansion; retain these approval boundaries in the delivered summary."
+    }
+  ]
+}

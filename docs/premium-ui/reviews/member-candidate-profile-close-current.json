@@ -1,0 +1,91 @@
+{
+  "recorded_at_utc": "2026-10-22T12:06:49.225018+00:00",
+  "requirements": [
+    17,
+    18,
+    93,
+    94,
+    127,
+    128,
+    129,
+    130,
+    131,
+    134,
+    135,
+    136,
+    137,
+    138,
+    139,
+    140,
+    155,
+    156,
+    157,
+    158,
+    160,
+    208,
+    209,
+    212,
+    219,
+    223,
+    225,
+    227,
+    228,
+    258
+  ],
+  "completion_claim": false,
+  "source_sha256": {
+    "frontend/src/member-workspace.ts": "b2fc5d0237378dd8c4a635a69b29043fa3f95de6ee65fad1d99dd13b47ba4ecc",
+    "frontend/src/member-profile.ts": "ab676605aab62d4463d680d204e862df6aa087fb1a5bc3260536aad4ce93c3e0",
+    "frontend/src/services/api.ts": "856c23cfa4f93d6ba589b275b6f8e1fd7a013e726827f1f5a8f8f84432721199",
+    "frontend/src/styles.css": "645b00bf7cc07246f257ec5c90015b6d273a0b212478672ce098684d282385e4",
+    "frontend/src/premium-theme.css": "ff2aee7148e54e4e40aae847189110cf3d9228d90fabffbd63a3449a1e1a935d",
+    "frontend/src/record-workspace.ts": "f53fd32448f962156a7ff795dd34e6a0e0aa48ed82d9183354676cbceea8e904",
+    "frontend/src/workspace-load-state.ts": "6e6b71134b14d499e1f292482796acbe4c57ce3066de0d5a482a9911a2cbee34"
+  },
+  "scope": "Member CSV explicit review-state preservation and candidate focus; legacy profile fields/disclosures and record-editor close outcomes.",
+  "confirmed_before": "Actual Chromium320 roster fixture: candidate preview503/retry reset explicit row3 exclusion and missing-member archive selection, and keyboard focus did not return to the row. All requests intercepted; baseline did not Apply.",
+  "change": [
+    "Keep per-file maps of explicit row Include and missing-member Archive decisions. Reapply them after preview render; untouched unresolved/resolved rows retain their existing default behavior.",
+    "Track bulk archive Tick/Untick decisions without recording automatic row defaults as explicit choices. Clear both maps when choosing another file.",
+    "Candidate/distinct/undo preview calls now supply their original row as owned-focus replacement; success prefers that row Edit summary, normal refresh retains existing behavior. Failure retains the original action.",
+    "No legacy-profile or record-editor source change. New tests exercise existing form fields, disclosures and close/discard behavior."
+  ],
+  "checks": {
+    "candidate_workflows": 12,
+    "legacy_profile_workflows": 6,
+    "legacy_successful_form_readbacks": 30,
+    "record_close_workflows": 12,
+    "csv_lifetime_regressions": 6,
+    "csv_correction_regressions": 6,
+    "csv_distinct_undo_profile_regressions": 6,
+    "roster_bulk_regressions": 6,
+    "unit_tests": 100,
+    "build_exit_code": 0,
+    "build_inputs_held": true
+  },
+  "evidence": [
+    "docs/premium-ui/qa-member-csv-candidate.json",
+    "docs/premium-ui/qa-legacy-profile-fields.json",
+    "docs/premium-ui/qa-record-close.json",
+    "docs/premium-ui/qa-member-csv-candidate-before.json",
+    "docs/premium-ui/qa-member-csv-lifetime.json",
+    "docs/premium-ui/qa-member-csv-correction-independent.json",
+    "docs/premium-ui/qa-member-csv-choice-independent.json",
+    "docs/premium-ui/qa-member-roster-bulk-independent.json",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+  ],
+  "tests": {
+    "frontend/tests/premium-member-csv-candidate.browser.mjs": "d16d4ef5cbe3aa484a39ddb76516602c57edea7a89ab43c33b07845cafeb4ce9",
+    "frontend/tests/premium-legacy-profile-fields.browser.mjs": "653db5e528c0adc5952241497b5b415e739fdd204682d785e6829609e15d989e",
+    "frontend/tests/premium-record-close.browser.mjs": "5b9db59aa4daa2901e97d3914ed24e45c1255b2510fa9705c5b5e5ac7165cd8c"
+  },
+  "limitations": [
+    "All test preview/apply/profile mutation requests are intercepted. Exact request shape and UI/mock readback verified; no backend/production persistence or permissions certification.",
+    "CSV fixtures cover two rows in create_only/roster_sync at320/1280 in3engines. Other modes, every archive/member conflict and large files remain separate acceptance.",
+    "Legacy profile checks use an admin fixture, five form groups and three disclosures. Other roles and all failure/lifetime variants remain separate; no independent current review claim.",
+    "Record close checks cover posting/leave add editors, clean/search-only/dirty states and held503preview. Synthetic beforeunload verifies registration cleanup, not a native exit prompt or software keyboard.",
+    "No new broad visual or axe matrix is claimed. Existing144matrix remains historical; physical/native checks pending and new independent review limited by agent usage.",
+    "113/114 historical member-family contracts will have explicit bounded assertion links; zero full contracts certified. This is not progress percentage or full260 completion.",
+    "No backend/API/permission/scheduling/persisted semantics/export-content/deployment/production changes made for this batch."
+  ]
+}

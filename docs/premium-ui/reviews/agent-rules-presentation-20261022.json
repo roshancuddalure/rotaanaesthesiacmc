@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "reviewer": "rules_presentation_review specialist 9 of 10",
+  "date": "2026-10-22",
+  "scope": "Read-only frontend source audit of requirements 181 and 182; no application or shared-ledger edits",
+  "source_hashes": {
+    "frontend/src/rota-rules.ts": "cee7024308a1623dd69fd21c8e822ed4cb7b5d5a413dc4ab2ab8a5a4f9e19204",
+    "frontend/src/styles.css": "e5e5802b5cdef146b542fcfafc1b2040f232898cafaa89dcf30554235da140b5",
+    "frontend/src/ui.ts": "12e79214fc4f094e9b391df88ff498cda65d3539b9d0f1da59cffc139c8e4f85",
+    "frontend/src/audit-time.ts": "136542cb2daec343417532d372f2e8ce01a0e6103ef6c62a7a4a8017ac8a6d15"
+  },
+  "findings": [
+    {
+      "id": "rules-history-mixed-date-zone",
+      "requirement": 182,
+      "confidence": "confirmed source composition defect; browser reproduction pending",
+      "sources": [
+        "frontend/src/rota-rules.ts:1478",
+        "frontend/src/rota-rules.ts:1482",
+        "frontend/src/rota-rules.ts:1523",
+        "frontend/src/rota-rules.ts:1533",
+        "frontend/src/ui.ts:59",
+        "frontend/src/ui.ts:66",
+        "frontend/src/audit-time.ts:2"
+      ],
+      "finding": "History formatWhen combines formatDate(iso), which preserves the raw ISO calendar date via a UTC-only calendar helper, with TIME_FORMAT.format(new Date(iso)), which uses browser-local time. Near midnight, the displayed date and time describe different days; no zone is displayed. For saved_at 2026-10-21T23:00:00Z in Asia/Kolkata the current composition is 21 Oct 2026, 04:30 while the local instant is 22 Oct 2026, 04:30.",
+      "safe_frontend_proposal": "Use the existing formatAuditTimestamp helper for saved-at history instants and restore-confirmation wording. Label Saved at clearly; retain Current badge, revision comparison, escaped text, compare direction and original saved_at. Do not introduce effective-date scheduling inputs: the version contract exposes saved_at, not an effective policy date.",
+      "bounded_tests": [
+        "History fixtures at UTC/local midnight in Asia/Kolkata and America/Los_Angeles; same instant has coherent date/time and explicit zone.",
+        "Invalid/missing/unzoned values render existing truthful helper fallbacks and never prevent review.",
+        "Compare, close, restore confirmation cancel and exact original version-id request remain unchanged; restore mutations mocked.",
+        "Three-engine 320/1280 light/dark wrapping and axe for long explicit timezone text."
+      ]
+    },
+    {
+      "id": "rules-save-dock-fixed-clearance",
+      "requirement": 181,
+      "confidence": "source-backed responsive risk; no runtime occlusion proven",
+      "sources": [
+        "frontend/src/styles.css:6630",
+        "frontend/src/styles.css:6639",
+        "frontend/src/styles.css:6693",
+        "frontend/src/styles.css:6702",
+        "frontend/src/rota-rules.ts:1691"
+      ],
+      "finding": "The sticky rr-dock can wrap save actions and variable status text, while the view reserves a fixed 120px bottom clearance. Its actual size is not measured here. This leaves final editor controls and validation text without a demonstrated clearance guarantee at narrow width, large text or long status messages. Existing grouped categories, summaries, unsaved markers and review/save flow should be preserved.",
+      "safe_frontend_proposal": "First reproduce with a long dirty editor and wrapped status/actions at 320px and large text. If overlap occurs, reserve actual dock height plus safe-area using scoped CSS custom property updated by ResizeObserver with disposal cleanup, or adopt a non-occluding layout. Keep submit/check/revision/draft behavior untouched.",
+      "bounded_tests": [
+        "At 320x568 and 844x390 plus desktop, dirty one final duty field, expand final editor and scroll last input and validation message fully above actual dock bounding box.",
+        "Keyboard focus and elementFromPoint show final field and Review and save are visible and operable; compare before/after.",
+        "Wrap long status text and increase text to 200%; test light/dark and reduced motion.",
+        "Check stale 409 and invalid 422 review flows retain exact payload, draft, revision and no automatic mutation replay; mock writes."
+      ]
+    }
+  ],
+  "limitations": [
+    "Source audit only; no browser suites, build or hardware checks performed by this specialist.",
+    "No backend/API/calculation/permission/scheduling edits. No whole-requirement completion asserted.",
+    "Existing call-pool eligibility contract and known obsolete single-call-level test remain unchanged."
+  ],
+  "files_written": [
+    "docs/premium-ui/reviews/agent-rules-presentation-20261022.json"
+  ]
+}

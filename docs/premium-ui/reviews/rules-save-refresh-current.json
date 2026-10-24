@@ -1,0 +1,68 @@
+{
+  "recorded_at_utc": "2026-10-24T08:14:59.153570+00:00",
+  "completion_claim": false,
+  "scope": "Confirmed Rota Rules save is distinguished from subsequent read failure; visible GET-only recovery and later-edit preservation.",
+  "source_sha256": {
+    "frontend/src/rota-rules.ts": "21c76de1e2db86e75b778c088a558a9bfb859fd1ef6b683e627c594ec3d5966a",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "559041ee03d192fcc291582bd7572e8d32004e9d5428b7e57fbbea9ba9e60f83",
+    "frontend/src/member-workspace.ts": "4ddb7efade2d5886e8d62dc5fa7225eb2448b02c4be37ebb0ce474b5d3562c41",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/ui.ts": "88579ed75c8c72e4fd4e2d98508a58c42b925202362589a2469623664c2a975f",
+    "frontend/src/audit-time.ts": "136542cb2daec343417532d372f2e8ce01a0e6103ef6c62a7a4a8017ac8a6d15",
+    "frontend/src/decorative-icons.ts": "7e2d11356114e96f242435a2cd7cb7bc24cdc1787142e864e1cf053f92c373d7"
+  },
+  "test_sha256": "44b7fcadb6d88040829e153536f675bc26144c6760336d215a237a8e2916bcd3",
+  "checks": {
+    "save_refresh_browser_contexts": 6,
+    "save_refresh_scenarios_per_context": 8,
+    "save_refresh_subscenarios_within_six_contexts": 48,
+    "conflict_regression_contexts": 6,
+    "conflict_subscenarios_within_six_contexts": 54,
+    "validation_lifetime_regression_contexts": 6,
+    "total_browser_contexts": 18,
+    "additional_existing_contract_checks": 20,
+    "unit_tests_passed": 110,
+    "held_build_passed": true,
+    "forwarded_mutation_requests": 0
+  },
+  "changes": [
+    "Retain per-page confirmed-save state across review dismissal; block repeated PUT until authoritative details are loaded.",
+    "Dedicated refresh failure feedback and GET-only retry; reject incomplete/non-array rule documents without discarding edits.",
+    "Guard late responses by page, review, operation, read sequence, draft and revision.",
+    "Preserve only post-submission field edits, including change-back, over authoritative server data; untouched guard values adopt refreshed server values.",
+    "Explicit authoritative applySaved clears obsolete recovery ownership, including existing History restore/reload paths."
+  ],
+  "independent_review": {
+    "reviewer": "/root/rules_conflict_source",
+    "mode": "Read-only held source/test review, no executions",
+    "outcome": "No blocking concern. Verified exact contracts, field-delta adoption, change-back, malformed read handling, Array.isArray full-PUT detection and applySaved ownership clearing.",
+    "limitations": [
+      "New suite uses exported development-module editor in locally intercepted API fixtures, three engines at320/1280; no real persistence/auth, production-bundle, native-AT or physical-device certification.",
+      "History supersession, malformed PUT envelope and complete PUT response after dismissed review are independently source-reviewed, not explicitly runtime exercised by the new suite."
+    ]
+  },
+  "root_review": [
+    "Rejected initial whole-draft preservation because it retained obsolete server limits; replaced with submitted-snapshot field deltas and authoritative guard48 assertions.",
+    "Required malformed GET handling and safe non-array PUT fallback; native history supersession remains an explicit runtime gap."
+  ],
+  "evidence": [
+    "docs/premium-ui/qa-rules-save-refresh.json",
+    "docs/premium-ui/qa-rules-conflict-lifetime.json",
+    "docs/premium-ui/qa-rules-conflict-lifetime-before-save-refresh.json",
+    "docs/premium-ui/qa-rules-validation-lifetime.json",
+    "docs/premium-ui/qa-rules-validation-lifetime-before-save-refresh.json",
+    "tmp/premium-rules-save-refresh-development.log",
+    "tmp/premium-rules-save-refresh-conflict-regression.log",
+    "tmp/premium-rules-save-refresh-validation-regression.log",
+    "tmp/premium-rules-save-refresh-contract-regression.log",
+    "tmp/premium-rules-save-refresh-unit.log",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+  ],
+  "limitations": [
+    "New suite uses exported development-module editor in locally intercepted API fixtures, three engines at320/1280; no real persistence/auth, production-bundle, native-AT or physical-device certification.",
+    "History supersession, malformed PUT envelope and complete PUT response after dismissed review are independently source-reviewed, not explicitly runtime exercised by the new suite.",
+    "Read ownership guards do not certify all network timeout/abort or authentication transitions. No full requirement182/225 completion inferred.",
+    "No backend/API/permission/scheduling/persistence/export contract change by this batch; concurrent work preserved. No commit/push/deploy."
+  ]
+}

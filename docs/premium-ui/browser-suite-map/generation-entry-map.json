@@ -1,0 +1,847 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-10-24T03:50:10.935943+00:00",
+  "scope": "Documentation-only inspected assertion map for five generation/entry/publication suites. No runtime or application changes; no whole requirement acceptance.",
+  "source_inspection_method": "Read all complete current scripts and retained report rows. Exact source_lines refer to test script. Programmatic report checks inspect every row for pageerrors/explicit passed:false; snapshots compare only declared application files. No report seals a test-script hash.",
+  "entries": [
+    {
+      "suite": "frontend/tests/premium-generation-actions.browser.mjs",
+      "sha256": "61516647df90722ff86ac2394fc4f2f0b390d6c8ebdb46392c93e9b8735a5c9e",
+      "source_inspected": true,
+      "execution_verified": true,
+      "execution_verification_scope": "Inspected complete retained JSON report with 21 rows and current complete script; no new execution. Retained rows indicate successful terminal outcomes under their recorded fixture scopes. Report has no test-script SHA; correspondence to this exact current script is not independently sealed. Declared application hash comparisons below do not establish freshness beyond declared files.",
+      "screens": [
+        "Isolated compute members/template dialogs",
+        "Intelligent rota tabs",
+        "Monthly leave approval",
+        "Compute Settings",
+        "Unit fallback editor",
+        "Actual rota review/publish pages"
+      ],
+      "contexts": {
+        "engines": [
+          "chromium"
+        ],
+        "widths": [
+          320,
+          390,
+          1280
+        ],
+        "isolated_height": 850,
+        "full_app_height": 900,
+        "month": "2026-05",
+        "retained_workflows": 21,
+        "themes": "not explicitly parameterized",
+        "routing": "Isolated exported modules: every API call fulfilled. Actual review/publish: explicit mutation/export fixtures; remaining GETs only forwarded to loopback8031."
+      },
+      "assertion_groups": [
+        {
+          "action": "compute-review-download-apply-reverse",
+          "selector": "[data-download];[data-review-confirm];[data-apply];[data-reversal-confirm];[data-revert];[data-close]",
+          "outcome": "Both proposal kinds at3widths: disabled apply before acknowledgement; JSON filename/month/person/status; exact apply revision7, reversal-check/revert revision8 and prerequisite; one apply/one revert and callbacks1/2; close removes dialog, no pageerrors.",
+          "source_lines": [
+            [
+              22,
+              43
+            ]
+          ],
+          "evidence_class": "intercepted_outcome_and_download_bytes",
+          "report_paths": [
+            "docs/premium-ui/qa-generation-actions-current.json"
+          ]
+        },
+        {
+          "action": "cancel-proposal-without-apply",
+          "selector": "[data-cancel];[data-close]",
+          "outcome": "Cancel returns cancelled text; exactly one cancel, no apply, dialog closed and no pageerrors.",
+          "source_lines": [
+            [
+              46,
+              51
+            ]
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-generation-actions-current.json"
+          ]
+        },
+        {
+          "action": "monthly-leave-conflict-review-refresh",
+          "selector": "[data-confirm];[data-duty-ack];[data-approve];[data-refresh]",
+          "outcome": "Both acknowledgements gate approval.409disables approval/no callback; explicit refresh resets confirmation; exact month/token1 then token2/acknowledge_duties payloads;2previews/2attempts and approved callback1 after success, at3widths.",
+          "source_lines": [
+            [
+              53,
+              66
+            ]
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-generation-actions-current.json"
+          ]
+        },
+        {
+          "action": "intelligence-configuration-alternative-evidence",
+          "selector": "[data-mode];[data-lock];[data-repair];[data-add-preference];[data-save-calendar];[data-more];[data-alternative];[data-download]",
+          "outcome": "Repair/lock mutually clear, preference summary1, exact saved holiday dates; alternative revision7/index0 then selection revision8/index1; download filename and selected index1.",
+          "source_lines": [
+            [
+              69,
+              85
+            ],
+            [
+              91,
+              97
+            ]
+          ],
+          "evidence_class": "intercepted_outcome_and_download_bytes",
+          "report_paths": [
+            "docs/premium-ui/qa-generation-actions-current.json"
+          ]
+        },
+        {
+          "action": "intelligence-teaching-learning-apply-reverse",
+          "selector": "[data-teach-slot];[data-approve-example];[data-reject-example];[data-prepare-history];[data-propose-learning];[data-evaluate];[data-activate];[data-rollback];[data-confirm];[data-apply];[data-revert]",
+          "outcome": "Teaching slot/note payload, approve/reject fixture states, unverified historical preparation summary; heldout month evaluation and candidate activation/rollback fixture states; acknowledged apply revision9 and revert revision10 with callbacks1/2. Learning activate/rollback bodies are not independently asserted.",
+          "source_lines": [
+            [
+              79,
+              90
+            ],
+            [
+              98,
+              103
+            ]
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-generation-actions-current.json"
+          ]
+        },
+        {
+          "action": "assistant-optin-failure-retry-use",
+          "selector": "[data-local-enabled];[data-local-token];[data-instruction];[data-ask];[data-use-suggestion]",
+          "outcome": "Ask disabled until local opt-in and token/instruction; intercepted loopback pairing header/instruction/context exact;503visible then explicit retry/suggestion, preferences mode selected; ordinary Generate enabled, no API POST/apply.",
+          "source_lines": [
+            [
+              106,
+              115
+            ]
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-generation-actions-current.json"
+          ]
+        },
+        {
+          "action": "explicit-server-fallback",
+          "selector": "[data-server-fallback]",
+          "outcome": "Existing revision3 step with fallback:true and validation revision4; ready-for-review text, one step/no apply.",
+          "source_lines": [
+            [
+              118,
+              124
+            ]
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-generation-actions-current.json"
+          ]
+        },
+        {
+          "action": "compute-settings-read-retry-local-storage-diagnostics-reset",
+          "selector": "[data-compute-retry];[data-compute-enable];[data-compute-mode];[data-compute-power];[data-compute-month];[data-compute-workload];[data-compute-diagnostics];[data-compute-reset]",
+          "outcome": "503read retry; local mode auto/power low-power stored;month retains2026-06;compare disabled;JSON diagnostics avoids two named secret keys;reset disabled local/servermode;GETonly API. Does not prove exhaustive secret redaction.",
+          "source_lines": [
+            [
+              127,
+              137
+            ]
+          ],
+          "evidence_class": "intercepted_outcome_and_local_storage",
+          "report_paths": [
+            "docs/premium-ui/qa-generation-actions-current.json"
+          ]
+        },
+        {
+          "action": "paused-resume-validate-cancel",
+          "selector": "[data-resume];[data-cancel]",
+          "outcome": "Revision3 resume step then revision4validate; ready review; zero new job POST, cancelled text/no apply.",
+          "source_lines": [
+            [
+              140,
+              146
+            ]
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-generation-actions-current.json"
+          ]
+        },
+        {
+          "action": "fallback-order-read-save-recovery-discard",
+          "selector": "[data-fb-reload];[data-fb-add];[data-fb-reset];[data-fb-save]",
+          "outcome": "Read503explicitretry; unsaved second unit reset with no PUT; save503 retains2rows and enabled retry; exact ordered unit ids;2save attempts and fresh mocked readback2rows.",
+          "source_lines": [
+            [
+              149,
+              157
+            ]
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-generation-actions-current.json"
+          ]
+        },
+        {
+          "action": "empty-leave-close",
+          "selector": "[data-approve];[data-close]",
+          "outcome": "Zero pending shows empty text/disabled approve;close detaches and no approve-month call.",
+          "source_lines": [
+            [
+              160,
+              163
+            ]
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-generation-actions-current.json"
+          ]
+        },
+        {
+          "action": "review-filter-slot-candidates-decision",
+          "selector": "[data-rota-review-filter];[data-open-rota-review-slot];[data-accept-review-issue];[data-close-review-slot-modal]",
+          "outcome": "Actual app at390/1280: allslotIDset exact, hard1/override0;selected slot loads empty suggestions once with limit20;cancelled note no write;accepted exact issue_code/note and accepted-by text, one intercepted decision.",
+          "source_lines": [
+            [
+              178,
+              179
+            ],
+            [
+              188,
+              199
+            ]
+          ],
+          "evidence_class": "fixture_read_and_intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-generation-actions-current.json"
+          ]
+        },
+        {
+          "action": "publish-required-note-confirm-readback-download",
+          "selector": "#rota-publish-form;#publish-approval-note;#publish-confirm-warnings;#download-rota-export",
+          "outcome": "Disabled export initially; missing note/cancel confirmation no POST; exact month/body one intercepted publication; reload returns approved hash route and mocked note/export enabled; exact synthetic download filename/bytes. No real publish/readback persistence.",
+          "source_lines": [
+            [
+              180,
+              181
+            ],
+            [
+              200,
+              209
+            ]
+          ],
+          "evidence_class": "fixture_read_and_intercepted_outcome_and_download_bytes",
+          "report_paths": [
+            "docs/premium-ui/qa-generation-actions-current.json"
+          ]
+        }
+      ],
+      "retained_report": {
+        "path": "docs/premium-ui/qa-generation-actions-current.json",
+        "sha256": "ff19cde63d9710b69ddb84c250939a652045f9cf94819b121a495346979a4fba",
+        "row_count": 21,
+        "declared_application_hash_comparison": {},
+        "current_declared_application_scope": false,
+        "test_script_sha_retained": false
+      },
+      "limitations": [
+        "No new runtime execution by this mapping agent; historical retained outcomes are not current whole-app certification.",
+        "No actual GPU/NVIDIA computation, physical-device or native screen-reader verification.",
+        "Direct development /src imports do not establish production bundle behavior.",
+        "No script or application hash hold in this suite/report; retained21 workflows are historical evidence only.",
+        "Spreadsheet download uses synthetic PK-prefix bytes; checks exact mocked bytes, not a valid workbook or export contents correctness.",
+        "Settings storage checks are browser-local choices; mocked save readback is not operational database persistence."
+      ]
+    },
+    {
+      "suite": "frontend/tests/premium-generation-state.browser.mjs",
+      "sha256": "aad8f977fc5637b27302fef58e4e13c56893c78f4776dbc40e1bc2ab32fcc265",
+      "source_inspected": true,
+      "execution_verified": true,
+      "execution_verification_scope": "Inspected complete retained JSON report with 48 rows and current complete script; no new execution. Retained rows indicate successful terminal outcomes under their recorded fixture scopes. Report has no test-script SHA; correspondence to this exact current script is not independently sealed. Declared application hash comparisons below do not establish freshness beyond declared files.",
+      "screens": [
+        "Compute proposal dialog returned states"
+      ],
+      "contexts": {
+        "engines": [
+          "chromium",
+          "firefox",
+          "webkit"
+        ],
+        "widths": [
+          320,
+          1280
+        ],
+        "height": 900,
+        "reduced_motion": "reduce",
+        "states": [
+          "queued",
+          "running",
+          "completed",
+          "applied",
+          "failed",
+          "cancelled",
+          "reverted",
+          "future_<img src=x>"
+        ],
+        "cases": 48,
+        "month": "2026-11",
+        "routing": "Every API call intercepted; no forwarded requests."
+      },
+      "assertion_groups": [
+        {
+          "action": "returned-state-escaping-errors-fallback",
+          "selector": "[data-job-state];[data-job-error];dialog.compute-workspace",
+          "outcome": "Eight exact returned labels; raw hostile text in error/fallback remains text with zero img/script elements, errors and fallback coexist.",
+          "source_lines": [
+            [
+              8,
+              8
+            ],
+            [
+              18,
+              21
+            ]
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-generation-state.json"
+          ]
+        },
+        {
+          "action": "truthful-progress-and-action-gates",
+          "selector": "progress;[data-apply];[data-revert];[data-cancel]",
+          "outcome": "Queued native progress indeterminate/no max/value;running3of7;none terminal. Counts0of0or3of7 retained. Apply exists only completed and disabled;revert only applied;cancel queued/running/completed.",
+          "source_lines": [
+            [
+              22,
+              23
+            ]
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-generation-state.json"
+          ]
+        },
+        {
+          "action": "completed-axe-close-focus-and-call-boundary",
+          "selector": "dialog.compute-workspace;[data-close];#open",
+          "outcome": "Completed tagged axe0; no document overflow; known states no createPOST/other4states one intercepted createPOST;native Enter close detaches and restores opener, no pageerrors.",
+          "source_lines": [
+            [
+              24,
+              27
+            ]
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-generation-state.json"
+          ]
+        }
+      ],
+      "retained_report": {
+        "path": "docs/premium-ui/qa-generation-state.json",
+        "sha256": "0e2f711050cace2941b18d12d6d8767bf25724810c778454794b902d08e65baf",
+        "row_count": 48,
+        "declared_application_hash_comparison": {
+          "frontend/src/rota-compute.ts": {
+            "retained_sha256": "f001062313a60bff0ed807fd82565f2d440fd130683d955b64c5f1967256e1bf",
+            "current_sha256": "e5f967e6166e2ace9352983a468002d45850188d8811363230305d7597fb70ab",
+            "matches": false
+          },
+          "frontend/src/styles.css": {
+            "retained_sha256": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+            "current_sha256": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+            "matches": true
+          },
+          "frontend/src/premium-theme.css": {
+            "retained_sha256": "7259da3c1865080978f547ece2320762d4a2b9ec83d2422ba686bad17b67bc28",
+            "current_sha256": "559041ee03d192fcc291582bd7572e8d32004e9d5428b7e57fbbea9ba9e60f83",
+            "matches": false
+          }
+        },
+        "current_declared_application_scope": false,
+        "test_script_sha_retained": false
+      },
+      "limitations": [
+        "No new runtime execution by this mapping agent; historical retained outcomes are not current whole-app certification.",
+        "No actual GPU/NVIDIA computation, physical-device or native screen-reader verification.",
+        "Direct development /src imports do not establish production bundle behavior.",
+        "Failed/cancelled/reverted/unknown states supplied by mocked create responses, not proof server legitimately creates these states.",
+        "Only completed state receives scoped tagged axe,6audits; other state accessibility not audited.",
+        "Retained report backendWrites:0 describes no forwarded backend mutation; mocked create POSTs do occur."
+      ]
+    },
+    {
+      "suite": "frontend/tests/premium-generation-entrypoints.browser.mjs",
+      "sha256": "af3ef26c86e59f813224bd979ba96681a2147add56ee72d60b9b2bb415001144",
+      "source_inspected": true,
+      "execution_verified": true,
+      "execution_verification_scope": "Inspected complete retained JSON report with 12 rows and current complete script; no new execution. Retained rows indicate successful terminal outcomes under their recorded fixture scopes. Report has no test-script SHA; correspondence to this exact current script is not independently sealed. Declared application hash comparisons below do not establish freshness beyond declared files.",
+      "screens": [
+        "Autoassign chooser",
+        "Quick safe fill",
+        "Compute Settings",
+        "Intelligent generator"
+      ],
+      "contexts": {
+        "engines": [
+          "chromium",
+          "firefox",
+          "webkit"
+        ],
+        "widths": [
+          320,
+          1280
+        ],
+        "height": 900,
+        "reduced_motion": "reduce",
+        "roles": [
+          "rota_board_member",
+          "computer_admin"
+        ],
+        "month": "2026-11",
+        "cases": 12,
+        "routing": "Generation/auth reads intercepted; all other requests asserted GET and forwarded to loopback8031."
+      },
+      "assertion_groups": [
+        {
+          "action": "quick-chooser-exact-month-engine-restrictions",
+          "selector": "[data-quick];[data-engine-choice]",
+          "outcome": "Native Enter chooses quick;chooser detached/proposal month2026-11;server checked/local_gpu and auto disabled.",
+          "source_lines": [
+            [
+              22,
+              23
+            ]
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-generation-entrypoints.json"
+          ]
+        },
+        {
+          "action": "compute-settings-role-destination-or-explanation",
+          "selector": "[data-open-compute-settings];#compute-settings-access-help;[data-compute-enable]",
+          "outcome": "Admin keyboard settings opens actual settings route and heading. Board-member button disabled with administrators explanation/aria-describedby, scoped axe0;close retains user-guide.",
+          "source_lines": [
+            [
+              25,
+              26
+            ]
+          ],
+          "evidence_class": "fixture_read_and_intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-generation-entrypoints.json"
+          ]
+        },
+        {
+          "action": "missing-settings-destination-retains-proposal",
+          "selector": "[data-open-compute-settings];[data-view=compute-settings]",
+          "outcome": "Admin navigation nodes deliberately removed;settings click shows unavailable guidance and keeps proposal alive.",
+          "source_lines": [
+            [
+              27,
+              27
+            ]
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-generation-entrypoints.json"
+          ]
+        },
+        {
+          "action": "whole-month-chooser-read-contract",
+          "selector": "[data-optimize];[data-mode];#working-month",
+          "outcome": "Native Enter whole month opens balanced intelligent dialog with exact month;workingmonth unchanged;0callbacks;GET capability/jobs/setup exact query;compute jobs GET count3admin/2board;no pageerrors.",
+          "source_lines": [
+            [
+              28,
+              29
+            ]
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-generation-entrypoints.json"
+          ]
+        }
+      ],
+      "retained_report": {
+        "path": "docs/premium-ui/qa-generation-entrypoints.json",
+        "sha256": "17b724e83733a8751e32753a0f3e372e4027db7dcf4790e502481be22ad67c2f",
+        "row_count": 12,
+        "declared_application_hash_comparison": {
+          "frontend/src/rota-compute.ts": {
+            "retained_sha256": "2f34d4c6dc8654cdf258891e7873075eb8424f4e0884953ca60eb7b1018184af",
+            "current_sha256": "e5f967e6166e2ace9352983a468002d45850188d8811363230305d7597fb70ab",
+            "matches": false
+          },
+          "frontend/src/rota-intelligence.ts": {
+            "retained_sha256": "ab0155910cd3f9cf7729154df1205bceaa21c89fa808ec0abe89374335107317",
+            "current_sha256": "bda7257a3cafdcf6c4122575cc454abb1623f27dbd13950ea1d61260a23bb79b",
+            "matches": false
+          },
+          "frontend/src/main.ts": {
+            "retained_sha256": "74e072cea72b83cfc2b7fb069a8dc038096e1e0f656a55ce0866ad16e5e63bde",
+            "current_sha256": "fcc39d763c0c5b3d0e3551215c301c7d0691b2b9d071b53b079e73f7de7bb501",
+            "matches": false
+          },
+          "frontend/src/styles.css": {
+            "retained_sha256": "e5e5802b5cdef146b542fcfafc1b2040f232898cafaa89dcf30554235da140b5",
+            "current_sha256": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+            "matches": false
+          },
+          "frontend/src/premium-theme.css": {
+            "retained_sha256": "ff2aee7148e54e4e40aae847189110cf3d9228d90fabffbd63a3449a1e1a935d",
+            "current_sha256": "559041ee03d192fcc291582bd7572e8d32004e9d5428b7e57fbbea9ba9e60f83",
+            "matches": false
+          }
+        },
+        "current_declared_application_scope": false,
+        "test_script_sha_retained": false
+      },
+      "limitations": [
+        "No new runtime execution by this mapping agent; historical retained outcomes are not current whole-app certification.",
+        "No actual GPU/NVIDIA computation, physical-device or native screen-reader verification.",
+        "Direct development /src imports do not establish production bundle behavior.",
+        "Requested premium-generation-controls.browser.mjs and premium-generation-entry-controls.browser.mjs do not exist. This actual closest suite maps chooser/settings controls only.",
+        "Chooser opened through exported openAutoassign, so this is not proof of every shell generation launcher wiring.",
+        "No job generation/apply/publish; real GPU and server permission enforcement not tested.",
+        "Scoped axe only board-member proposal,6audits; admin settings/intelligent not axe-audited."
+      ]
+    },
+    {
+      "suite": "frontend/tests/premium-template-forced.browser.mjs",
+      "sha256": "db73375e53d3b71d158c9f55430ff164609cd5870ac7c07a7922653997dac7a6",
+      "source_inspected": true,
+      "execution_verified": true,
+      "execution_verification_scope": "Inspected complete retained JSON report with 12 rows and current complete script; no new execution. Retained rows indicate successful terminal outcomes under their recorded fixture scopes. Report has no test-script SHA; correspondence to this exact current script is not independently sealed. Declared application hash comparisons below do not establish freshness beyond declared files.",
+      "screens": [
+        "Template allocation proposal",
+        "Members quick safe fill proposal"
+      ],
+      "contexts": {
+        "engines": [
+          "chromium",
+          "firefox",
+          "webkit"
+        ],
+        "widths": [
+          320,
+          1280
+        ],
+        "height": 900,
+        "themes": [
+          "light",
+          "dark"
+        ],
+        "reduced_motion": "reduce",
+        "month": "2026-11",
+        "cases": 12,
+        "routing": "Auth/job/capabilities and one permitted applyPOST intercepted; remaining GETs forwarded to loopback8031."
+      },
+      "assertion_groups": [
+        {
+          "action": "forced-flag-only-text-order-preservation",
+          "selector": "[data-forced-allocation];tbody tr;[data-label=Proposal];[data-label=Reason]",
+          "outcome": "Exactly one marker on forced===true template row;false/absent flags no inference.3rows retain input dates/unit/reason order;no img/script;summary counts exact.",
+          "source_lines": [
+            [
+              9,
+              9
+            ],
+            [
+              28,
+              31
+            ]
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-template-forced-current.json"
+          ]
+        },
+        {
+          "action": "table-focus-responsive-tagged-axe",
+          "selector": ".table-scroll;dialog.compute-workspace",
+          "outcome": "Table region accepts focus/ArrowDown;document no horizontal overflow; scoped tagged axe0 in12contexts.",
+          "source_lines": [
+            [
+              32,
+              34
+            ]
+          ],
+          "evidence_class": "local_interaction_and_scoped_axe",
+          "report_paths": [
+            "docs/premium-ui/qa-template-forced-current.json"
+          ]
+        },
+        {
+          "action": "acknowledged-apply-exact-revision-and-close",
+          "selector": "[data-review-confirm];[data-apply];[data-close]",
+          "outcome": "Initiallydisabled/noPOST;Space acknowledges,Enterapply;one intercepted revision27apply and callback1;template completion message;Enterclose detaches.",
+          "source_lines": [
+            [
+              17,
+              17
+            ],
+            [
+              36,
+              38
+            ]
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-template-forced-current.json"
+          ]
+        },
+        {
+          "action": "member-mode-no-forced-marker",
+          "selector": "dialog.compute-workspace;[data-forced-allocation]",
+          "outcome": "Reopens same returned decisions as members mode;0markers and3rows,close detaches/no pageerrors.",
+          "source_lines": [
+            [
+              39,
+              40
+            ]
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-template-forced-current.json"
+          ]
+        }
+      ],
+      "retained_report": {
+        "path": "docs/premium-ui/qa-template-forced-current.json",
+        "sha256": "8c5f8679620bc0160fe6db3015166152d2605b4974f15004181647ca3c2e1f81",
+        "row_count": 12,
+        "declared_application_hash_comparison": {
+          "frontend/src/rota-compute.ts": {
+            "retained_sha256": "f001062313a60bff0ed807fd82565f2d440fd130683d955b64c5f1967256e1bf",
+            "current_sha256": "e5f967e6166e2ace9352983a468002d45850188d8811363230305d7597fb70ab",
+            "matches": false
+          }
+        },
+        "current_declared_application_scope": false,
+        "test_script_sha_retained": false
+      },
+      "limitations": [
+        "No new runtime execution by this mapping agent; historical retained outcomes are not current whole-app certification.",
+        "No actual GPU/NVIDIA computation, physical-device or native screen-reader verification.",
+        "Direct development /src imports do not establish production bundle behavior.",
+        "Declared source hold covers only rota-compute.ts, not styles/shell/import dependencies.",
+        "ArrowDown sent to focused table but actual scroll displacement is not asserted.",
+        "Member rendering check proves absence of forced markers/rowcount only, not every member field."
+      ]
+    },
+    {
+      "suite": "frontend/tests/premium-publish-recovery.browser.mjs",
+      "sha256": "f7ff59c279e8ccced338fe4b961db8c6973f957a8ecfac9730f35615662171a3",
+      "source_inspected": true,
+      "execution_verified": true,
+      "execution_verification_scope": "Inspected complete retained JSON report with 42 rows and current complete script; no new execution. Retained rows indicate successful terminal outcomes under their recorded fixture scopes. Report has no test-script SHA; correspondence to this exact current script is not independently sealed. Declared application hash comparisons below do not establish freshness beyond declared files.",
+      "screens": [
+        "Actual rota publish page",
+        "User guide late navigation",
+        "Working month selection"
+      ],
+      "contexts": {
+        "engines": [
+          "chromium",
+          "firefox",
+          "webkit"
+        ],
+        "widths": [
+          320,
+          1280
+        ],
+        "height": 900,
+        "reduced_motion": "reduce",
+        "month": "2026-11",
+        "scenarios": [
+          "refused",
+          "confirmed-read-failure",
+          "initial-read-failure",
+          "late-navigation",
+          "late-month",
+          "view-only",
+          "blocked"
+        ],
+        "cases": 42,
+        "routing": "Publish POST and checklist GET intercepted; remaining requests GET only loopback8031, with synthetic role/permissions."
+      },
+      "assertion_groups": [
+        {
+          "action": "initial-checklist-read-retry-focus",
+          "selector": "[data-retry-publish];#publish-approval-note",
+          "outcome": "Initial503 retry via Enter increases checklist GET count, restores form/focus to note with zero publishPOST.",
+          "source_lines": [
+            [
+              18,
+              18
+            ],
+            [
+              22,
+              22
+            ]
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-publish-recovery.json"
+          ]
+        },
+        {
+          "action": "month-consequence-permission-blocker-disabled",
+          "selector": "#publish-disabled-reason;#rota-publish-form;#download-rota-export",
+          "outcome": "November consequence and draft-vs-published explanation;exportdisabled before approval. View-only/blocked submitdisabled with exact reason;view-onlynote disabled/no confirmation.",
+          "source_lines": [
+            [
+              24,
+              26
+            ]
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-publish-recovery.json"
+          ]
+        },
+        {
+          "action": "required-note-cancel-and-pending-duplicate",
+          "selector": "#publish-approval-note;#publish-confirm-warnings;#rota-publish-form",
+          "outcome": "Missing note sets aria-invalid/focus withoutPOST;editingclears invalid. Native confirmation cancelled retains note/noPOST. Accepted native submit makes busy;synthetic duplicate yields total1POST/2confirmations;exact month and note/warning payload.",
+          "source_lines": [
+            [
+              16,
+              16
+            ],
+            [
+              28,
+              32
+            ]
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-publish-recovery.json"
+          ]
+        },
+        {
+          "action": "refused-publication-draft-retained-no-replay",
+          "selector": "#rota-publish-form;#publish-approval-note;#publish-confirm-warnings",
+          "outcome": "503unconfirmed status retains note/ack;submitre-enabled,busycleared,exportdisabled;checklistreadsunchanged, no automatic retry.",
+          "source_lines": [
+            [
+              36,
+              38
+            ]
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-publish-recovery.json"
+          ]
+        },
+        {
+          "action": "confirmed-write-read-failure-read-only-recovery",
+          "selector": "[data-retry-publish=confirmed];#download-rota-export",
+          "outcome": "Successful interceptedPOST followed checklist503 shows confirmed-publication caution, removes form;explicitGET retry enables/focuses export and restores note;publishPOSTcount stays1.",
+          "source_lines": [
+            [
+              18,
+              18
+            ],
+            [
+              39,
+              39
+            ]
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-publish-recovery.json"
+          ]
+        },
+        {
+          "action": "late-route-and-month-no-current-success",
+          "selector": "#working-month;#guide-checklist;#publish-approval-note",
+          "outcome": "While publishheld switch actual route/month;late completion leaves guide route/formabsent orDecember selection/blanknote/disabledexport, and no Final rota published toast.",
+          "source_lines": [
+            [
+              33,
+              42
+            ]
+          ],
+          "evidence_class": "intercepted_outcome",
+          "report_paths": [
+            "docs/premium-ui/qa-publish-recovery.json"
+          ]
+        },
+        {
+          "action": "responsive-errors-and-scoped-axe",
+          "selector": "#view-root",
+          "outcome": "Allcontexts documentnooverflow/nopageerrors;Chromium refused/confirmedreadfail taggedaxe0only.",
+          "source_lines": [
+            [
+              44,
+              46
+            ]
+          ],
+          "evidence_class": "local_interaction_and_scoped_axe",
+          "report_paths": [
+            "docs/premium-ui/qa-publish-recovery.json"
+          ]
+        }
+      ],
+      "retained_report": {
+        "path": "docs/premium-ui/qa-publish-recovery.json",
+        "sha256": "0c5584a3e711fa28b34d084fe8fae9f93becd5dd44658fbed2791670a2e673a1",
+        "row_count": 42,
+        "declared_application_hash_comparison": {
+          "frontend/src/main.ts": {
+            "retained_sha256": "87e8234cf013acaafa18af0ed1be542c873a310e4c64c6bd2a848d1a09f8376e",
+            "current_sha256": "fcc39d763c0c5b3d0e3551215c301c7d0691b2b9d071b53b079e73f7de7bb501",
+            "matches": false
+          },
+          "frontend/src/ui.ts": {
+            "retained_sha256": "12e79214fc4f094e9b391df88ff498cda65d3539b9d0f1da59cffc139c8e4f85",
+            "current_sha256": "88579ed75c8c72e4fd4e2d98508a58c42b925202362589a2469623664c2a975f",
+            "matches": false
+          },
+          "frontend/src/services/api.ts": {
+            "retained_sha256": "aa2c18465d33286850509e7ad19bf810ffcbc88758008c60aedb8294b52f9e8f",
+            "current_sha256": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+            "matches": false
+          },
+          "frontend/src/styles.css": {
+            "retained_sha256": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+            "current_sha256": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+            "matches": true
+          },
+          "frontend/src/premium-theme.css": {
+            "retained_sha256": "e6db76e6ac5bd7454c46c06946ca58d63161839c790a7303d3ac2948d2fbd092",
+            "current_sha256": "559041ee03d192fcc291582bd7572e8d32004e9d5428b7e57fbbea9ba9e60f83",
+            "matches": false
+          }
+        },
+        "current_declared_application_scope": false,
+        "test_script_sha_retained": false
+      },
+      "limitations": [
+        "No new runtime execution by this mapping agent; historical retained outcomes are not current whole-app certification.",
+        "No actual GPU/NVIDIA computation, physical-device or native screen-reader verification.",
+        "Direct development /src imports do not establish production bundle behavior.",
+        "Publication state is in-test memory; no actual publication, server permission enforcement, persistent storage or export download checked.",
+        "Duplicate submission uses synthetic submit dispatch after native initial submit, not repeated native activation.",
+        "Late completion tests use networkidle after response; not exhaustive response/handler scheduling race proof.",
+        "Axe scoped to Chromium refused/confirmed-read-failure only,4audits; not all42states."
+      ]
+    }
+  ]
+}

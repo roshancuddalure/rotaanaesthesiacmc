@@ -1,0 +1,71 @@
+{
+  "recorded_at_utc": "2026-10-22T17:13:27.683857+00:00",
+  "completion_claim": false,
+  "requirements": [
+    50,
+    53,
+    181,
+    208,
+    209,
+    219,
+    258
+  ],
+  "scope": "Responsive rules save dock and review-opener focus only.",
+  "source_sha256": {
+    "frontend/src/rota-rules.ts": "c34342b13df315ddff27bcba19cd495fd21918ab6f2f982257cd8e5a1955efff",
+    "frontend/src/decorative-icons.ts": "7e2d11356114e96f242435a2cd7cb7bc24cdc1787142e864e1cf053f92c373d7",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "908e1408787a5d3f176c7e790f1e73095c7fa6dc614df97d6d1b2db8b41ef408"
+  },
+  "reproduced_before": {
+    "report": "docs/premium-ui/qa-rules-dock-before.json",
+    "finding": "Chromium320x568 local28px text made dock690px tall,top-134px and obscured finalDone control;844x390 dock302px likewise obscured it. Normaltext anddesktopcases unaffected in six baseline contexts."
+  },
+  "changes": [
+    "Observe existing dockheight and visualviewport/window resizing. When dock exceeds40%ofavailableheight, put it in ordinary documentflow; otherwise retain originalsticky behavior. No added nested scroller.",
+    "ResizeObserver-unavailable fallback is ordinaryflow. Observer/listeners/animationframe cleaned on disposal,newrender or observedpage detachment. Preserve editor DOM and focus during resize.",
+    "Review modal closes to current Review&save replacement only when ownedfocus fell toBODY, editor stillconnected/dirty and no newer meaningful focus exists. Existing validation had replaced old opener; no review/save payload changes."
+  ],
+  "checks": {
+    "dock_contexts": 20,
+    "engines": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "viewports": [
+      "320x568",
+      "844x390",
+      "1280x900"
+    ],
+    "text": "normal and local28pxoverride,notbrowserzoom",
+    "no_observer_fallback_contexts": 2,
+    "existing_rules_assertions": 20,
+    "existing_lifecycle_outcomes": 5,
+    "unit_tests": 100,
+    "build_exit_code": 0,
+    "build_inputs_held": true
+  },
+  "evidence": [
+    "docs/premium-ui/qa-rules-dock-before.json",
+    "docs/premium-ui/qa-rules-dock.json",
+    "docs/premium-ui/qa-rules-session-independent.json",
+    "tmp/premium-rules-dock-regression.log",
+    "tmp/premium-rules-session-current.log",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+  ],
+  "test": "frontend/tests/premium-rules-dock.browser.mjs",
+  "test_sha256": "c4342ddf2170caf5b439c12496f4fb3f445bb1e391624d5503c3c1524d86faf6",
+  "visual_review": {
+    "reviewer": "rootimplementer,notindependent",
+    "screenshot": "docs/premium-ui/screenshots/rules-dock/large-320.png",
+    "finding": "Long save summary follows editor in flow; large Review&save andDiscard remain reachable. No overlapping sticky layer in reproduced scenario."
+  },
+  "limits": [
+    "Local28pxtextoverride is bounded stressfixture,notOS200%text/actualbrowserzoom. Lightthemefixtures;normaldarkrulesregression passed separately.",
+    "GETandread/checkPOSTfixtures only in newdocktest;no savedrules. Existingrulesregression intercepts409/validation/save/version payloads. No backend scheduling correctness certification.",
+    "Native ResizeObserver wrapper delegates to original and tracks dockdisconnect; twoChromiumfallbackcontexts remove API. Physicalkeyboard/browserchrome/visualviewport occlusion remains pending.",
+    "Focus-recovery test covers ordinaryReview/Escape andnewerfocus guarded in source,not everyGoTofield/stale/savecompletion combination. Existing20checks provide bounded broaderreviewflow.",
+    "Earlier144matrix andtenfamilysnapshot remainhistorical aftertheseedits. Freshindependent/native/full181/full260acceptance open. No backend/API/permissions/scheduling/data/export/production changes inthisbatch."
+  ]
+}

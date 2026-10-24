@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "reviewer": "mapping_scan_independent_tests",
+  "reviewed_at_utc": "2026-10-22T03:10:58.074087+00:00",
+  "status": "accepted_for_bounded_intelligence_draft_and_lifetime_scope",
+  "scope": "Independent source review plus existing 36 actual-component draft workflows rerun, and 12 newly authored paired-assistant lifetime cases. This is not full-plan, backend, model or GPU acceptance.",
+  "reviewed_files_sha256": {
+    "frontend/src/rota-intelligence.ts": "ab0155910cd3f9cf7729154df1205bceaa21c89fa808ec0abe89374335107317",
+    "frontend/src/workspace-load-state.ts": "6e6b71134b14d499e1f292482796acbe4c57ce3066de0d5a482a9911a2cbee34",
+    "frontend/src/frontend-runtime.ts": "45efce04e229e0bdcbc84de4c9570dd9c04877b2adb869269a6e40ff68b12a01",
+    "frontend/tests/premium-intelligence-drafts.browser.mjs": "0f317b7d1ffaa40a63145e1c65ea0cfaf7df53ff8e12d80c34b1fb48c7661a17",
+    "frontend/tests/premium-intelligence-assistant-lifetime-independent.browser.mjs": "a8ef0953638a94fb3d3add81fb990329743c0ec799b91fe6d33d4ec0245f0375"
+  },
+  "tests_executed": [
+    {
+      "command": "node tests/premium-intelligence-drafts.browser.mjs",
+      "result": "36 passed across Chromium, Firefox and WebKit at 320/1280px; stable start/end source and test hashes."
+    },
+    {
+      "command": "node tests/premium-intelligence-assistant-lifetime-independent.browser.mjs",
+      "result": "12 passed across three engines at 320/1280px; held assistant-context followed by direct removal or actual confirmed Close causes zero loopback requests, zero subsequent private requests, no dialog resurrection or page errors."
+    }
+  ],
+  "verified_runtime": [
+    "Holiday dates, held-out months, pending preference fields, assistant instruction and teaching explanation survive tab rerenders.",
+    "Dirty drafts cancel synthetic beforeunload; declined native Close and Escape preserve drafts; accepted discard removes dialog and unload handler.",
+    "Confirmed calendar, teaching and apply submissions use expected exact payloads and clear the submitted dirty baseline. A failed teaching-list read after a confirmed teaching POST does not make the confirmed submission dirty again.",
+    "Pending calendar request is guarded by confirmation; accepted Close safely ignores its late result.",
+    "Direct removal during setup or jobs GET starts no follow-up API request.",
+    "Pairing token and instruction entered using actual controls: terminating workspace while assistant-context is held prevents forwarding context or pairing token to local companion, for both direct removal and confirmed Close."
+  ],
+  "verified_by_source_review": [
+    "API URL prefixes, GET/POST selection, serialized payload construction and deadlines are unchanged by request-helper renaming; no backend, scheduling, compute-score or export-format implementation edits are introduced in this patch.",
+    "Calendar updates submitted baseline and only replaces draft if current draft equals submitted string. Teaching compares submitted FormData snapshot against current form or retained draft before clearing dirty. Held-out evaluation stores submitted string baseline. Apply stores pre-await planning snapshot; subsequent changes therefore remain dirty. These newer-edit comparisons were inspected in source; the 36 runtime cases do not simulate all concurrent-newer-edit combinations.",
+    "Workspace Close ends lifetime synchronously, aborts compute lifetime and closes GPU helper; close event and body-child removal observer also end lifetime. Local API wrappers require an open, connected workspace. Direct assistant fetch has a post-context open/connected/lifetime guard.",
+    "Safe session-storage wrapper preserves key names and successful-storage values while providing existing app fallback behavior when storage is unavailable."
+  ],
+  "resolved_findings": [
+    {
+      "id": "assistant-context-late-loopback",
+      "finding": "An assistant-context GET resolving after dialog removal could initiate a new local companion POST with its pairing token.",
+      "resolution": "Root added explicit lifetime/open/connected check after context await; new 12-case independent suite proves no companion request after termination."
+    },
+    {
+      "id": "queued-close-window",
+      "finding": "Native close event is asynchronous, leaving a narrow window before closed was set.",
+      "resolution": "Root ends lifetime synchronously on accepted Close and rejects API calls when dialog.open is false; actual confirmed-Close cases pass."
+    }
+  ],
+  "required_fixes": [],
+  "remaining_limits": [
+    "All requests in these draft suites are intercepted; frontend payload/UI behavior is proven, not server persistence, model quality or hardware compute correctness.",
+    "Newer-edit baseline comparisons are source-reviewed; exhaustive interleavings of editing during all mutation paths remain untested.",
+    "Synthetic beforeunload verifies handler predicate and cleanup only, not an actual browser-exit prompt.",
+    "Draft suite uses actual modules in a source-style harness, not complete signed-in app navigation. Root separately reports six full-app intelligence regressions; those are not rerun or certified by this reviewer.",
+    "Physical-device and actual screen-reader checks pending. No app source or backend edits by this reviewer."
+  ],
+  "evidence": [
+    "docs/premium-ui/qa-intelligence-drafts.json",
+    "docs/premium-ui/qa-intelligence-assistant-lifetime-independent.json"
+  ]
+}

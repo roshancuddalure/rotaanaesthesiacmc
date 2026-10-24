@@ -1,0 +1,20 @@
+{
+  "recorded_at_utc": "2026-10-24T01:37:12.462082+00:00",
+  "reviewer": "/root/member_conflict_test_review",
+  "scope": "Independent read-only test/assertion and development-report assessment; reviewer ran no tests or fixture resets. Production reports verified by root, not independent reviewer.",
+  "test_sha256": "24e84357ca498248a04413ec2f49211f01dade955ea5fa7f3809c2e51477672f",
+  "source_sha256": {
+    "frontend/src/main.ts": "93eebef4269de921331c843211094321582d241e6af186172339f1ae26b52b9e",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/premium-theme.css": "bbdf4ef4dc05d3850d94be50569177e850ab5bbac8376c20a1cadf13ead9162e"
+  },
+  "evidence": [
+    "docs/premium-ui/qa-member-create-conflicts/report-development.json",
+    "docs/premium-ui/qa-member-create-conflicts/report-extra-development.json"
+  ],
+  "findings": [
+    "36 development rows substantiate duplicate/refusal/retry and actual saved-member readback within declared fixture scope.",
+    "Reviewer-requested near-return and deliberately moved focus cases added;12 extra development rows match current script hash and cover both guards.",
+    "No blocking issue found within bounded scope; initial near-navigate saved flag requires explicit correction in consolidated evidence."
+  ]
+}

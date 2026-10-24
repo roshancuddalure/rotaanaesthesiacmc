@@ -1,0 +1,71 @@
+{
+  "recorded_at_utc": "2026-10-22T06:02:07.772029+00:00",
+  "requirements": [
+    45,
+    46,
+    47,
+    49,
+    54,
+    56,
+    59,
+    68,
+    69,
+    72,
+    123,
+    125,
+    201,
+    206,
+    207,
+    208,
+    209,
+    212,
+    214,
+    217,
+    225,
+    227,
+    242,
+    247,
+    248,
+    249,
+    251
+  ],
+  "scope": "Canonical member rail responds to actual container layout; bounded cross-engine width/keyboard/draft/teardown evidence, not full260acceptance.",
+  "source_sha256": {
+    "frontend/src/member-workspace.ts": "8eedae4e0ccff851730aa1e203f52b0023407bf93482f491b0238314590c6e31",
+    "frontend/src/premium-theme.css": "260c1c636fd69597399d9c350236340f017121f143c57cecd24d9ed7a4d27afa",
+    "frontend/src/styles.css": "da3024d0ff821ce265a5cc65f3415223b43bbfe4ed01a06fc0cb6ceea1312892"
+  },
+  "change": "Named inline-size member-profile container applies only to noncompute dialogs with a direct mw-layout. At contentwidth700orless, rail becomes horizontal and layout stacked; original viewportmedia fallback remains. Keyboard axis and ARIA follow computed rail flex direction rather than viewport assumptions. Optional ResizeObserver resynchronizes orientation/reveal; no focus movement. Native close/directremoval clean up observers andviewportlisteners.",
+  "evidence": [
+    "docs/premium-ui/qa-member-container-independent.json",
+    "docs/premium-ui/qa-workspace-resize-cleanup.json",
+    "docs/premium-ui/qa-profile-rail-independent.json",
+    "docs/premium-ui/qa-accessibility-review.json",
+    "docs/premium-ui/reviews/member-width-existing-regressions-current.json"
+  ],
+  "checks": {
+    "member_engine_observer_workflows": 6,
+    "actual_width_configurations": 36,
+    "workspace_teardown_engine_removal_cases": 6,
+    "existing_accessibility_checks": 4,
+    "existing_short_rail_resize_workflows": 2,
+    "existing_workspace_recovery_workflows": 12,
+    "unit": 100,
+    "build": true
+  },
+  "limits": [
+    "No ResizeObserver fallback uses window resize events; it does not claim detecting arbitrary independent parent changes in a browser lackingResizeObserver. Keyboard always follows actual rendered CSS direction.",
+    "Container contentwidth differs from outerborderbox; tests exercise actualcontent700and701 rather than assumingrequestedCSSwidth equalscontentwidth.",
+    "Queued teardown callbacks are explicitly synthetic; native observers/listeners instrumented and actualclose/removal performed.",
+    "No scheduling,API,permissions,persistedsemantics or exports changed. Compute containername untouched.",
+    "Physicaldevice/softwarekeyboard/nativeassistive checks pending; emulated viewport/reflow/keyboard only.",
+    "Earlierfull144screenmatrix/sourcehashreports historical after thischange. Full260goal remainsactive/incomplete; no push/deploy/productionoperations."
+  ],
+  "followup": "Narrow360profile field readability is measured by the independent targeted followup; earlier105–120pxbaseline is retained in qa-container-reflow-independent.json.",
+  "targeted_readability_followup": {
+    "evidence": "docs/premium-ui/qa-member-container-cleanup-independent.json",
+    "scope": "Three additional engine checks overlap teardown evidence and are not added to primary cleanupcount.",
+    "observed": "At360pxdialog, fields311pxChromium/326pxFirefox-WebKit versus previous105–120pxbaseline. Nativeobserverdirectremovalcleanup andexplicitlatecallbackinertness independentlyconfirmed."
+  },
+  "concurrent_snapshot_note": "Passed build is the recorded integrated snapshot; concurrent limits.ts changed afterward. Member-profile/CSS bounded reports retain exact matching source hashes. No final whole-worktree buildfreeze claimed."
+}

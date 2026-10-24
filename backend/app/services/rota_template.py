@@ -47,7 +47,7 @@ from app.models import (
 )
 from app.services.leave import ACTIVE_LEAVE_STATUSES, date_range, leave_requests_for_month, month_bounds
 from app.services.rota_call_levels import inferred_call_levels_from_duty_type, normalize_call_level
-from app.services.rota_eligibility import effective_call_levels
+from app.services.rota_eligibility import call_level_missing_message, effective_call_levels
 from app.services.rota_rules import DutyRule, RotaPhaseOneRules, get_phase_one_rules
 from app.services.rota_setup import SCOPE_INCLUDED, monthly_setup
 
@@ -465,7 +465,8 @@ def required_calls_for_rule(rule: DutyRule) -> set[str]:
 
 
 def required_call_for_rule(rule: DutyRule) -> str | None:
-    """The single effective call level, or ``None`` for multi-level (or unknown) duties."""
+    """The single effective call level (for slot stamping), or ``None`` for a pool or an
+    unresolved duty."""
     levels = required_calls_for_rule(rule)
     return next(iter(levels)) if len(levels) == 1 else None
 
@@ -1446,9 +1447,15 @@ def generate_empty_template(
                 else selected.reason
             )
             # New templates only (contract 21 Oct 2026): stamp the slot with the duty's single
-            # effective call level; a multi-level duty (e.g. groups of 3rd and 4th call) gets
-            # no call level, so eligibility follows the rule rather than the duty's name.
+            # effective call level; a pool duty (e.g. 3rd and 4th call) stays unstamped
+            # (call_level NULL) and its pool is read from the rule
+            # (call_level_pool_and_balance_contract §1). Pool slots are filled normally.
             slot_call_level = required_call_for_rule(rule)
+            if not required_calls_for_rule(rule):
+                # Strict call level: a duty with no level at all is unresolved; its slot is
+                # created but never auto-filled and stays open with the reason.
+                status = NEEDS_REVIEW
+                reason = f"{call_level_missing_message(rule.label)}. Left open: {reason}"
             slot_group = duty_group_for_rule(rule, rule.key)
             slot_call = slot_call_level or required_call_bucket_for_rule(rule, rule.key)
             slot_group_call = group_call_bucket(slot_group, slot_call)

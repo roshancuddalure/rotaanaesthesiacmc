@@ -1,0 +1,70 @@
+{
+  "recorded_at_utc": "2026-10-24T04:28:31.985793+00:00",
+  "completion_claim": false,
+  "scope": "Frontendshareablediagnosticsprivacyandownedclipboardrecovery,withoutbackend/API/persisted/exportchanges.",
+  "requirements": [
+    87,
+    92,
+    93,
+    189,
+    225,
+    227,
+    230,
+    240,
+    241,
+    242,
+    243,
+    246
+  ],
+  "source_sha256": {
+    "frontend/src/main.ts": "658711ebf2ce8b26094131a5f1e4fe383d9ff98f6d0fc3dc5e9961fba44ac983",
+    "frontend/src/diagnostics-summary.ts": "2ff6394f8659735796af81a155592034537507b69c380a6351292c5d6f44e5e7",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/premium-theme.css": "559041ee03d192fcc291582bd7572e8d32004e9d5428b7e57fbbea9ba9e60f83"
+  },
+  "checks": {
+    "development_contexts": 12,
+    "production_contexts": 12,
+    "shell_regression_workflows": 8,
+    "total_browser_contexts_and_workflows": 32,
+    "unit_tests_passed": 110,
+    "new_projection_unit_tests": 6,
+    "scoped_tagged_axe_findings": 0,
+    "forwarded_mutation_requests": 0,
+    "intercepted_same_account_profile_puts_per_context": 2,
+    "held_build_passed": true,
+    "inventories_passed": true
+  },
+  "changes": [
+    "Projectonlysupportedaggregatefields;technicalknownlabelsretained,unknownlabelsanonymizedwithcountsintact;rulecountonly;unsupportedfields excluded.",
+    "Useprojectionforallvisible/copy/manualselectionpaths;fixedsafereadfailurewithretry;labelprivacyboundaryexplicitly.",
+    "Pendingcopyblocksrepeat;newfocus/pointeractionandcloseddisclosurepreventfallbackfocussteal;lateview/sessionfeedbacksuppressed;originalbuttonrecoversafteraccountobjectreplacement."
+  ],
+  "evidence": [
+    "docs/premium-ui/qa-diagnostics-hierarchy/report-development-privacy.json",
+    "docs/premium-ui/qa-diagnostics-hierarchy/report-production-privacy.json",
+    "docs/premium-ui/qa-diagnostics-hierarchy/before-privacy-probe.json",
+    "docs/premium-ui/qa-diagnostics-hierarchy/report-before-privacy.json",
+    "docs/premium-ui/reviews/diagnostics-privacy-independent.json",
+    "frontend/src/diagnostics-summary.ts",
+    "frontend/tests/diagnostics-summary.test.mjs",
+    "docs/premium-ui/diagnostics-sharing-policy.md",
+    "tmp/premium-diagnostics-privacy-unit.log",
+    "tmp/premium-diagnostics-privacy-shell.log",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+  ],
+  "manual_visual_review": [
+    "Root inspected320darkfullpagecapture:all5groups/readablecounts/withheldlabels,wrappedprivacy/rulecounttext,reachabledisclosuresandcontainedlayout. Representativecaptureonly."
+  ],
+  "limitations": [
+    "Beforeprobe establishes arbitraryfuture-response exposurewithsyntheticmarkers,notobservedproductionleak. Currentserverdiagnosticsareaggregates.",
+    "Anonymousadditionalcategorylabels areperresponsepositions,notstableidentifiers;everyreportednumericcountretainedwithoutcoercion/summing. Unknownfield/ruletext exclusion isdeliberateandexplained.",
+    "All24browsercontexts useintercepteddiagnosticsGETs andsyntheticclipboard;twoexistingprofilePUTs percontext locallyintercepted,allothermutationsrefused. Zero writes forwarded;no realprofilepersistence/nativeOSclipboard certification.",
+    "Scopedaxeappliesdiagnosticsviewonly;notwholeappWCAG,nativeAT orphysicaldevices.",
+    "Readerrorcontainsfixedsafe explanationandretry;rawserverdetails aredeliberatelyexcluded. Permission/API/backend/exportcontracts unchanged.",
+    "Firstafterrun failedbeforeappbecause reviewservershadexited;verifiedmissingportsandrestartedownedisolatedservices. Earlierrawreport andbeforeprobe retained.",
+    "Terminalmessage no writes predatesinterceptedprofilecaseaddition;rawreports honestlyrecord2attemptedlocalPUTs and0forwarded/context. Do notclaimzeroattemptedmutations.",
+    "Copydoesnotcancelunderlyingclipboardpromise onnavigation; latefeedback/focus suppressed andoriginalcontrolreleased. Browserpermissions/OSclipboard remainseparate.",
+    "Full260acceptanceincomplete. Threeauditsreviewall260/521conditionsbutrecommendationsarenotautomaticalsignoffs."
+  ]
+}

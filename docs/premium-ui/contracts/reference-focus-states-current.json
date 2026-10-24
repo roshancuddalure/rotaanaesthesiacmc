@@ -1,0 +1,66 @@
+{
+  "recorded_at_utc": "2026-10-23T18:54:22.245732+00:00",
+  "scope": "Bounded isolated reference variants; not operational runtime inventory certification.",
+  "report": "docs/premium-ui/qa-reference-focus-states/report.json",
+  "contexts": 16,
+  "actions": [
+    {
+      "selector": "[data-reference-variant=\"primary\"]",
+      "states": [
+        "sequential_keyboard_focus",
+        "local_keyboard_activation",
+        "disabled_tab_exclusion",
+        "busy_disabled"
+      ],
+      "outcome": "passed16contexts"
+    },
+    {
+      "selector": "[data-reference-variant=\"secondary\"]",
+      "states": [
+        "sequential_keyboard_focus",
+        "local_keyboard_activation",
+        "disabled_tab_exclusion",
+        "busy_disabled"
+      ],
+      "outcome": "passed16contexts"
+    },
+    {
+      "selector": "[data-reference-variant=\"quiet\"]",
+      "states": [
+        "sequential_keyboard_focus",
+        "local_keyboard_activation",
+        "disabled_tab_exclusion",
+        "busy_disabled"
+      ],
+      "outcome": "passed16contexts"
+    },
+    {
+      "selector": "[data-reference-variant=\"danger\"]",
+      "states": [
+        "sequential_keyboard_focus",
+        "local_keyboard_activation",
+        "disabled_tab_exclusion",
+        "busy_disabled"
+      ],
+      "outcome": "passed16contexts"
+    }
+  ],
+  "tabs": {
+    "selectors": [
+      "#reference-tab-ready",
+      "#reference-tab-recovery"
+    ],
+    "states": [
+      "sequential_focus",
+      "manual_arrow_then_space_selection",
+      "ShiftTab_return",
+      "forced_colors_selected_distinction"
+    ],
+    "outcome": "passed16contexts"
+  },
+  "limitations": [
+    "Reference computed outlines/selection are bounded, not pixel contrast or every operational control. Firefox native scroll-rail keyboard stop and underline selection cue are explicitly recognized.",
+    "Native AT, physical devices, native Windows highcontrast and submitted saves at actual zoom remain pending.",
+    "Source holds cover declared files, not complete environment/browser reproducibility. Existing build assets unchanged; no rebuild or repack required for test-only changes."
+  ]
+}

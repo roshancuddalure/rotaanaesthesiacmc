@@ -1,0 +1,98 @@
+{
+  "review": "Specialist 6/10: validation and recovery",
+  "created_at": "2026-10-22T13:09:15.267037+00:00",
+  "scope": "Frontend read-only source audit; no browser runtime verification; no app source, backend, API, database or operational changes.",
+  "runtime_verified": false,
+  "source_sha256": {
+    "frontend/src/main.ts": "367ac6a5fb23c8cdc2159086d8bec58da86c4e42f0e69ce33d9305062e2c40f9",
+    "frontend/src/member-workspace.ts": "7d21be986985cfad36c4497aa0059adc94881f994c634ed8e496e683b2301c8c",
+    "frontend/src/form-validation.ts": "a6d6cfa746f502cf05e5f4f1e1acade1c7ca82b592a497d98b79661854783a93",
+    "frontend/src/services/api.ts": "aa2c18465d33286850509e7ad19bf810ffcbc88758008c60aedb8294b52f9e8f"
+  },
+  "findings": [
+    {
+      "id": "validation-recovery-01",
+      "requirements": [
+        99
+      ],
+      "priority": "high",
+      "title": "Leave cancellation confirmation does not identify the selected record",
+      "source": [
+        {
+          "path": "frontend/src/main.ts",
+          "lines": [
+            8785,
+            8787,
+            8790
+          ]
+        },
+        {
+          "path": "frontend/src/member-workspace.ts",
+          "lines": [
+            689,
+            695,
+            702
+          ]
+        }
+      ],
+      "source_confirmed_behavior": "Both cancellation paths identify the POST target by its record ID, but the native confirmation says only this leave record or this leave. Multiple similar requests or cross-month records cannot be distinguished in the confirmation. The main list copy also omits the existing-duties consequence already present in the profile path.",
+      "existing_protections": "Both paths require an explicit native confirmation and preserve history; the profile path already explains that existing duties remain assigned. Do not replace or weaken these safeguards.",
+      "safe_frontend_fix": "Resolve the existing selected leave object before confirmation and include its member name, full start/end dates, leave category and stable record identifier when useful. State that history and existing duties remain, while availability changes after cancellation. Use literal native confirm text, preserve the existing endpoint, exact ID and method, and refuse an unavailable target rather than guessing.",
+      "bounded_tests": [
+        "Use two overlapping records for one member and a cross-month record; assert each native dialog names the exact selected target and complete date range.",
+        "Dismiss confirmation: zero POSTs and unchanged UI. Accept: exactly one POST with the original target ID and existing refresh behavior.",
+        "HTML-like member/category values remain inert native text; long target names remain readable.",
+        "Inject refusal/network failure and verify no success copy or automatic replay; preserve the existing retry path."
+      ]
+    },
+    {
+      "id": "validation-recovery-02",
+      "requirements": [
+        222
+      ],
+      "priority": "medium",
+      "title": "A read timeout recommends clearing generated draft duties without identifying the read-only failure",
+      "source": [
+        {
+          "path": "frontend/src/main.ts",
+          "lines": [
+            308,
+            311,
+            6423,
+            6428,
+            6430,
+            6431,
+            6432,
+            7085
+          ]
+        }
+      ],
+      "source_confirmed_behavior": "withTimeout rejects a Promise after its timer but does not cancel its underlying read. Its shared copy recommends Fast load mode or clearing generated draft duties for every caller, including optional allocation/safety/suggestion/history reads and Rota Review. That is an unnecessarily destructive recommendation for a read failure and does not distinguish a local wait limit from server processing.",
+      "existing_protections": "All current withTimeout callers are reads; render tickets guard stale view commits, optional reports use allSettled, and generation can remain available. The central API already distinguishes caller AbortError from typed timeout and does not replay mutations. Do not infer a mutation rollback bug from this helper.",
+      "safe_frontend_fix": "Replace only the shared error wording with a statement that this screen stopped waiting for the named report, the server may still be processing, and no saved duties were changed by this read. Offer explicit refresh/retry of the report; mention Fast load only where that control actually exists. Retain deadlines, methods, render guards and scheduling behavior. Do not introduce draft-clearing, auto retry, abort assumptions or a new backend contract.",
+      "bounded_tests": [
+        "Hold a Rota Review GET beyond its local deadline and assert truthful read-specific message with no suggestion to clear duties and zero mutations.",
+        "Hold one optional generation report beyond its deadline; core generation readiness remains usable, warning identifies that report, and saved assignments are untouched.",
+        "Release the held response after timeout or navigation; verify no late view overwrite and no claim of server cancellation or rollback.",
+        "Inject a normal server refusal separately and assert its distinct existing error message remains intact."
+      ]
+    }
+  ],
+  "checked_existing_validation": {
+    "requirements": [
+      90,
+      91
+    ],
+    "paths": [
+      "frontend/src/form-validation.ts:21",
+      "frontend/src/form-validation.ts:43",
+      "frontend/src/form-validation.ts:48",
+      "frontend/src/form-validation.ts:65",
+      "frontend/src/member-workspace.ts:198",
+      "frontend/src/record-workspace.ts:142",
+      "frontend/src/reference-workspace.ts:397"
+    ],
+    "assessment": "Shared form validation already adds an actionable list, field aria-invalid/describedby hints, expands details before field focus and conditionally moves summary focus. Member draft validation and record validation already have additional local protections. No blanket missing-summary finding is justified from this source audit; whole-app coverage remains unverified."
+  },
+  "acceptance_status": "Actionable source-confirmed recommendations only; no requirement certified."
+}

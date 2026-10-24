@@ -1,0 +1,329 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-10-21T18:23:01.865113+00:00",
+  "reviewer": "action_acceptance_gaps_current",
+  "scope": "Bounded primary-action acceptance audit:9 specific findings,1 fixed+independently verified and8 remaining source/evidence gaps; not whole260 acceptance.",
+  "method": "Inspected four contracts, source inventory, traceability/current evidence, all frontend test text for targeted handlers/selectors, plus concrete listed suites. Sourceinventory means discovery only. Reproduced New-group failure with real browser button against disposable fixture GETs.",
+  "safety": {
+    "app_source_edits": 0,
+    "backend_writes": 0,
+    "production_operations": 0,
+    "mutation_calls": 0,
+    "test_and_document_changes": "This reviewer wrote one read-only browser test plus two evidence JSON files; no app source changes."
+  },
+  "recognized_existing_evidence": [
+    "Account creation/recovery3 responsive workflows already assert exact payload, failure draft retention, cancellation, role visibility, duplicate prevention and late completion; stale admin contract labels alone do not reopen those as missing.",
+    "Mapping editor and initial recovery already have Chromium/Firefox/WebKit exact assertions.",
+    "Normalized unit/reference create/save/structured validation/confirmed-save GET-only recovery and shared unload protections have focused recent evidence; not repeated here as missing.",
+    "Archive undo and recycle restore/purge have bounded browser outcomes, despite older pending labels.",
+    "Rota rules compare/restore and generation review/apply/reversal/publish have bounded browser outcomes; no blanket pending finding based on old inventory."
+  ],
+  "runtime_reproduction": {
+    "date": "2026-10-21",
+    "url": "http://127.0.0.1:5197/#view=call-clusters",
+    "fixture_api": "http://127.0.0.1:8031",
+    "engines": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "action": "real pointer click #new-call-cluster after populated form",
+    "before": {
+      "id": "ef1a41f5-5aa1-41da-89aa-aa22f06232ba",
+      "name": "3rd Call A",
+      "save_label": "Save Group"
+    },
+    "after": {
+      "id": "ef1a41f5-5aa1-41da-89aa-aa22f06232ba",
+      "name": "3rd Call A",
+      "save_label": "Save Group"
+    },
+    "outcome": "All3 retain same existing form; expected blank new form unmet.",
+    "non_get_requests": 0,
+    "page_errors": [],
+    "snapshot": "Historical before root New-flow fix; does not describe final current behavior."
+  },
+  "findings": [
+    {
+      "id": "eligibility-new-existing",
+      "priority": 1,
+      "status": "fixed_and_independently_verified_bounded",
+      "source": [
+        "frontend/src/main.ts:5038",
+        "frontend/src/main.ts:8686"
+      ],
+      "selectors": [
+        "#new-call-cluster",
+        "#call-cluster-id",
+        "#save-call-cluster"
+      ],
+      "roles": [
+        "computer_admin",
+        "superadmin"
+      ],
+      "prerequisites": "At least one existing eligibility group; open #view=call-clusters.",
+      "expected": "New opens an empty Create Eligibility Group form with empty hidden id; subsequent reviewed submission creates rather than edits.",
+      "existing_test_gap": "No browser test references #new-call-cluster; admin contract explicitly runtime pending.",
+      "next_acceptance": "Empty-list and existing-list New; cancel/discard dirty edit; create exact payload and fresh GET; original group unchanged.",
+      "observed_before_fix": "Real New click retains existing id/name and Save Group label on Chromium, Firefox and WebKit. Handler nulls selection, renderer automatically selects first existing group again.",
+      "current_outcome": "Root added explicit createNew mode. Independent actual-app real clicks/keyboard in Chromium,Firefox,WebKit at320/1280 now reach empty id/name/description with Create Group and disabled Save Members. Opening existing row restores unchanged fields; second New works; reload shows original group. Zero mutation calls or page errors.",
+      "current_evidence": "docs/premium-ui/qa-eligibility-new-independent.json",
+      "remaining": "Dirty-group discard/new disposition and exact create/save mutations remain unverified here; separate findings2/3 retain scope."
+    },
+    {
+      "id": "eligibility-group-save",
+      "priority": 2,
+      "status": "runtime_unverified_source_risk",
+      "source": [
+        "frontend/src/main.ts:8174",
+        "frontend/src/main.ts:8191"
+      ],
+      "selectors": [
+        "#call-cluster-form",
+        "#save-call-cluster"
+      ],
+      "roles": [
+        "computer_admin",
+        "superadmin"
+      ],
+      "prerequisites": "Existing group selected or working New form after prior defect fix.",
+      "expected": "One explicit save sends exact existing payload, retains draft on failure, preserves immutable key for update, and cannot repaint another destination/account after delayed completion.",
+      "observed": "Handler has neither disabled-submit early return nor captured account/view guard; awaits mutation then unconditionally renderCallClusters. Accounts handler immediately above has both protections. This is source risk, not runtime reproduction of race.",
+      "existing_test_gap": "No browser test references createCallCluster/updateCallCluster or group save selector. No exact group mutation payload/runtime negative-outcome evidence located.",
+      "next_acceptance": "Held save plus Enter; 422/503 draft retention; confirmed save then failed read; navigation/signout while held; exact POST versus PUT and stable key."
+    },
+    {
+      "id": "eligibility-members-save",
+      "priority": 3,
+      "status": "runtime_unverified_source_risk",
+      "source": [
+        "frontend/src/main.ts:8202",
+        "frontend/src/main.ts:8217"
+      ],
+      "selectors": [
+        "#call-cluster-members-form",
+        "#save-call-cluster-members",
+        "[data-cluster-member]",
+        "#cluster-effective-from"
+      ],
+      "roles": [
+        "computer_admin",
+        "superadmin"
+      ],
+      "prerequisites": "Existing group plus active same-call and wrong-call members.",
+      "expected": "Save Members updates exact intended group and selected member ids/effective dates once; filtered selections survive; disabled wrong-call choices stay unchanged; failures preserve choices.",
+      "observed": "Handler serializes checked inputs, awaits update then unconditionally rerenders. No disabled-submit or account/view guard; same source risk as group save.",
+      "existing_test_gap": "No runtime suite references Save Members selector or updateCallClusterMembers. Source contract pending.",
+      "next_acceptance": "Filtered/hidden checked members; explicit effective date; wrong-call disabled; duplicate activation; error retention; held completion after group switch/navigation/account reset."
+    },
+    {
+      "id": "past-initial-recovery",
+      "priority": 4,
+      "status": "source_confirmed_missing_recovery",
+      "source": [
+        "frontend/src/past-duties.ts:44",
+        "frontend/src/past-duties.ts:49"
+      ],
+      "selectors": [
+        "past-duty host initial error state (no retry selector currently)"
+      ],
+      "roles": [
+        "computer_admin",
+        "superadmin"
+      ],
+      "prerequisites": "Opening past-duty screen; either initial status or members GET fails.",
+      "expected": "Escaped descriptive alert with explicit read-only retry that mounts working controls, no import/save replay, and does not repaint abandoned screen.",
+      "observed": "Initial catch renders plain escaped panel text and returns. No alert role or retry action exists in this branch.",
+      "existing_test_gap": "Only member-management unit test mounts this module; its initial reads always succeed. Broad responsive screen checks are not error/retry outcomes.",
+      "next_acceptance": "Status failure and members failure independently; manual retry restores controls once; close/navigation before held read; keyboard focus and no writes."
+    },
+    {
+      "id": "past-confirmed-apply-readback",
+      "priority": 5,
+      "status": "source_confirmed_misleading_error_path",
+      "source": [
+        "frontend/src/past-duties.ts:218",
+        "frontend/src/past-duties.ts:224"
+      ],
+      "selectors": [
+        "[data-past=\"apply\"]"
+      ],
+      "roles": [
+        "computer_admin",
+        "superadmin"
+      ],
+      "prerequisites": "Reviewed valid preview; apply succeeds; subsequent getPastDutyStatus fails.",
+      "expected": "Keep confirmed saved/replayed outcome, explicitly distinguish failed GET refresh, offer read-only retry and never repeat import automatically.",
+      "observed": "Apply clears preview and sets success message, then awaits status in same try. Rejected GET overwrites success message with generic error in catch, losing visible confirmed-save outcome.",
+      "existing_test_gap": "Synthetic member-management test proves preview_hash and correction confirmation on successful happy path only; no actual browser apply or apply-success/read-failure test.",
+      "next_acceptance": "Mock exact reviewed FormData/hash; hold/apply duplicate prevention; successful apply then503 status; saved indicator survives; GET-only retry; replayed result and uncertain mutation distinguishable."
+    },
+    {
+      "id": "past-review-resolver",
+      "priority": 6,
+      "status": "runtime_unverified",
+      "source": [
+        "frontend/src/past-duties.ts:106",
+        "frontend/src/past-duties.ts:175"
+      ],
+      "selectors": [
+        "[data-past=\"inspect\"]",
+        "[data-past=\"preview\"]",
+        "[data-pick-member]",
+        "[data-past-resolve-row]",
+        "[data-past=\"apply\"]"
+      ],
+      "roles": [
+        "computer_admin",
+        "superadmin"
+      ],
+      "prerequisites": "Local .xls/.xlsx fixture with ambiguous member, correction, skip row and parser warning.",
+      "expected": "Inspect creates worksheet mapping; preview reflects selected sheet/header/month; choosing/undoing member or skip/include re-previews; changed input invalidates reviewed hash and confirmations; blocked apply sends no mutation.",
+      "observed": "Workflow exists in source, but real browser controls/keyboard/modal-free table/phone reflow not exercised in located tests.",
+      "existing_test_gap": "member-management.test.mjs uses fabricated host.innerHTML and calls host.onclick/onchange directly; it is useful serialized-state coverage but does not certify native file input, resolver action hit targets or browser rendering.",
+      "next_acceptance": "Real setInputFiles and pointer/keyboard at320/390/1280 in3 engines; exact FormData options; stale preview blocker; open Edit row retained; no accidental apply."
+    },
+    {
+      "id": "past-download-outcomes",
+      "priority": 7,
+      "status": "runtime_unverified",
+      "source": [
+        "frontend/src/past-duties.ts:202",
+        "frontend/src/past-duties.ts:205"
+      ],
+      "selectors": [
+        "[data-past=\"template\"]",
+        "[data-past=\"rejected\"]"
+      ],
+      "roles": [
+        "computer_admin",
+        "superadmin"
+      ],
+      "prerequisites": "Past-duty screen; rejected export additionally needs preview rows.",
+      "expected": "Native download event with unchanged expected filename/content; rejected rows correspond exactly to reviewed preview; errors recover without clearing file/preview.",
+      "observed": "Template uses Blob/object URL and detached anchor; rejected uses shared exporter. No browser download evidence for these controls located.",
+      "existing_test_gap": "Synthetic test asserts exporter delegation rows+filename only. No actual template/rejected download event or artifact-content assertion.",
+      "next_acceptance": "Capture downloads, verify filenames and existing-format fixture content without changing export semantics; repeated activation; failed template read; object URL lifecycle."
+    },
+    {
+      "id": "past-policy-history",
+      "priority": 8,
+      "status": "runtime_unverified",
+      "source": [
+        "frontend/src/past-duties.ts:138",
+        "frontend/src/past-duties.ts:199",
+        "frontend/src/past-duties.ts:208"
+      ],
+      "selectors": [
+        "[data-past=\"save-policy\"]",
+        "[data-policy]",
+        "[data-past-batch]"
+      ],
+      "roles": [
+        "computer_admin",
+        "superadmin"
+      ],
+      "prerequisites": "Nonempty policy/version history and import batch rows.",
+      "expected": "Policy save preserves exact enabled/weights/effective-date contract and shows recoverable validation failure; View Rows loads exact batch and escapes source/normalized values without changing upload review.",
+      "observed": "Controls exist; no browser outcome assertions located. Policy fields are not inside native form, so min/max metadata alone does not prove pre-submit validation.",
+      "existing_test_gap": "Synthetic past-duty test supplies policy but never activates save-policy or past batch. Existing import-history tests target different member/operational imports.",
+      "next_acceptance": "Exact existing PUT body; nonfinite/out-of-range feedback using existing backend errors without changing policy rules; failure retains inputs; batchGET failure/retry and safe markup; switching batches cannot reveal stale rows."
+    },
+    {
+      "id": "mapping-historical-scan",
+      "priority": 9,
+      "status": "runtime_unverified",
+      "source": [
+        "frontend/src/main.ts:9378"
+      ],
+      "selectors": [
+        "#scan-mappings"
+      ],
+      "roles": [
+        "computer_admin",
+        "superadmin"
+      ],
+      "prerequisites": "Mappings screen with existing unsaved mapping edits and source scan available.",
+      "expected": "One deliberate scan invokes existing API, refreshes resulting rows while retaining correct operator/destination context, clearly separates successful scan from failed readback, and retains drafts according to explicit existing policy.",
+      "observed": "Handler awaits scan then loadMappings and shows success. Existing guarded loader helps response ordering; scan operation itself has no captured destination/account in handler.",
+      "existing_test_gap": "premium-mappings tests cover editor save, failed save, exact payload/readback, search and initial load retry; no test references #scan-mappings. admin contract runtime pending.",
+      "next_acceptance": "Mock scan only, never actual production scan; exact request; repeat click; scan success/GET failure; navigation or signout while held; no mutation replay; explicit unsaved-edit disposition."
+    }
+  ],
+  "inspected_source_sha256": {
+    "frontend/src/main.ts": "40f274a9e760f31614666012b224199915615f0778ce2c0d5fe01d9310b9e4ee",
+    "frontend/src/past-duties.ts": "90d2a793a49426b4bbaea6329c50d3b5a1772c7983b5f8c29bdfd3eaf1fe671a",
+    "frontend/src/services/api.ts": "b7dbea6efa9fb16febcb7aa6baaf6c488c75175635f503eb417f338e80a5551f",
+    "frontend/tests/member-management.test.mjs": "9b59b443d07663bf85762b252dcf5534c6c21ff31723b18953ad6fd7096bc1fe",
+    "frontend/tests/premium-mappings.browser.mjs": "cc86dfdbbf16d69cbd07ebbfe324eaac96c03b690aeaee7f6850281ddf2c376a",
+    "frontend/tests/premium-accounts.browser.mjs": "23a4adaa5f32ff6809a0a84afed886d6a6f29ed35298cfc7337cdcb2b7738ac0",
+    "frontend/tests/premium-admin-actions.browser.mjs": "6573ce7edd558340fca7a83a089107a83813f4a3a86b790b13bae37ccbc47ea7",
+    "frontend/tests/member-bulk.browser.mjs": "9cfb7f081fee1ee31a59462829e948902bf419a965dca7b54289eab12c289581",
+    "frontend/tests/recycle-bin.browser.mjs": "a68e246932e2b1f39780752213c5d8f443d27e92e6ae72c2285d789f323202d4",
+    "frontend/tests/rota-rules.browser.mjs": "febfc5a6bf312034c3e651957f0e9397c0b4087ba5f8f08b6162b7a7ed59032f",
+    "frontend/tests/premium-generation-actions.browser.mjs": "0ce92a53c8d02feb4dd669ca9471f2cd080f30fc1d5a2c4e58c3e8eb4e94af18",
+    "docs/premium-ui/contracts/admin.json": "32fbdae82ddd6bf999f8e8ff6150a48e81226814cc9fdb8fe6afbeb365c955e1",
+    "docs/premium-ui/contracts/generation.json": "ad926e8610386985ad32b5469bcc17e4fa575a9827797a4ff381f9d93159c15b",
+    "docs/premium-ui/contracts/members.json": "117e8eae4948be49e71500d8b690d2bd6dc7bb8b5a2e1412890d3de4b500e2f7",
+    "docs/premium-ui/contracts/followup-controls.json": "b8864ca38c577b37ff5753db4f5c1c19f449892e7423539d76e30a2829f3b7d1",
+    "docs/premium-ui/action-inventory.json": "473727f087cb93b680c9368b85831a3ccb3a96b2f9603e6dae7d8c5e90e0f15f",
+    "docs/premium-ui/traceability.json": "3f0bacd08f890bc5043ce0eb334088efae2977ee5b5bd47b1c28eae63a8c1919",
+    "docs/premium-ui/verification-current.json": "dd9e6197f2ad62bbc33b4f35867102a471cd3dc1bf94acbfc228abe935498711",
+    "frontend/tests/premium-eligibility-new-independent.browser.mjs": "a2a13664ea94c5a4b4e60ae4838dd2fd699e1e249745ff9d285c0f12989e9401",
+    "docs/premium-ui/qa-eligibility-new-independent.json": "af239cc3e7208646dbc66eff83ee4d9fde384056e981217d254540f1f37cc69a"
+  },
+  "limitations": [
+    "Only New group was exercised live by this review; all other findings explicitly classify source path or missing runtime evidence.",
+    "No backend validation/persistence certification; no production requests.",
+    "Physical devices and actual screen readers were not used.",
+    "Concurrent source changes after recorded hashes require targeted rerun; do not silently treat this as current after edits.",
+    "Older action-contract pending counts are known to lag recent evidence; findings were independently cross-checked instead of treating counts as failures."
+  ],
+  "original_inspection_source_sha256": {
+    "frontend/src/main.ts": "40f274a9e760f31614666012b224199915615f0778ce2c0d5fe01d9310b9e4ee",
+    "frontend/src/past-duties.ts": "90d2a793a49426b4bbaea6329c50d3b5a1772c7983b5f8c29bdfd3eaf1fe671a",
+    "frontend/src/services/api.ts": "b7dbea6efa9fb16febcb7aa6baaf6c488c75175635f503eb417f338e80a5551f",
+    "frontend/tests/member-management.test.mjs": "9b59b443d07663bf85762b252dcf5534c6c21ff31723b18953ad6fd7096bc1fe",
+    "frontend/tests/premium-mappings.browser.mjs": "cc86dfdbbf16d69cbd07ebbfe324eaac96c03b690aeaee7f6850281ddf2c376a",
+    "frontend/tests/premium-accounts.browser.mjs": "23a4adaa5f32ff6809a0a84afed886d6a6f29ed35298cfc7337cdcb2b7738ac0",
+    "frontend/tests/premium-admin-actions.browser.mjs": "6573ce7edd558340fca7a83a089107a83813f4a3a86b790b13bae37ccbc47ea7",
+    "frontend/tests/member-bulk.browser.mjs": "9cfb7f081fee1ee31a59462829e948902bf419a965dca7b54289eab12c289581",
+    "frontend/tests/recycle-bin.browser.mjs": "a68e246932e2b1f39780752213c5d8f443d27e92e6ae72c2285d789f323202d4",
+    "frontend/tests/rota-rules.browser.mjs": "febfc5a6bf312034c3e651957f0e9397c0b4087ba5f8f08b6162b7a7ed59032f",
+    "frontend/tests/premium-generation-actions.browser.mjs": "0ce92a53c8d02feb4dd669ca9471f2cd080f30fc1d5a2c4e58c3e8eb4e94af18",
+    "docs/premium-ui/contracts/admin.json": "32fbdae82ddd6bf999f8e8ff6150a48e81226814cc9fdb8fe6afbeb365c955e1",
+    "docs/premium-ui/contracts/generation.json": "ad926e8610386985ad32b5469bcc17e4fa575a9827797a4ff381f9d93159c15b",
+    "docs/premium-ui/contracts/members.json": "117e8eae4948be49e71500d8b690d2bd6dc7bb8b5a2e1412890d3de4b500e2f7",
+    "docs/premium-ui/contracts/followup-controls.json": "b8864ca38c577b37ff5753db4f5c1c19f449892e7423539d76e30a2829f3b7d1",
+    "docs/premium-ui/action-inventory.json": "473727f087cb93b680c9368b85831a3ccb3a96b2f9603e6dae7d8c5e90e0f15f",
+    "docs/premium-ui/traceability.json": "d1712a232bc00ae60b189796272fdce1b893dcb264332e155691b68464622464",
+    "docs/premium-ui/verification-current.json": "dd9e6197f2ad62bbc33b4f35867102a471cd3dc1bf94acbfc228abe935498711"
+  },
+  "post_fix_regression": {
+    "test": "frontend/tests/premium-eligibility-new-independent.browser.mjs",
+    "report": "docs/premium-ui/qa-eligibility-new-independent.json",
+    "result": "6 browser/width outcomes passed",
+    "engines": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "widths": [
+      320,
+      1280
+    ],
+    "mutation_calls": 0,
+    "page_errors": 0,
+    "scope": "Existing-group New flow only; no create/save mutation certification."
+  },
+  "followup_recorded_at_utc": "2026-10-22T02:52:19.032347+00:00",
+  "followup_evidence": {
+    "past_recovery": "docs/premium-ui/qa-past-recovery-independent.json",
+    "past_actions": "docs/premium-ui/qa-past-actions.json",
+    "eligibility_save": "docs/premium-ui/qa-eligibility-save.json",
+    "notification_layout": "docs/premium-ui/qa-notification-layout-independent.json",
+    "eligibility_review": "docs/premium-ui/reviews/eligibility-save-current.json",
+    "mapping_scan": "docs/premium-ui/qa-mapping-scan-independent.json"
+  },
+  "followup_note": "Historical source observations retained. Current bounded eligibility/past reports and36mapping scan workflows address their stated gaps; broader action/role/item acceptance still pending."
+}

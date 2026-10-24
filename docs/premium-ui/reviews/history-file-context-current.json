@@ -1,0 +1,44 @@
+{
+  "recorded_at_utc": "2026-10-22T10:26:41.236872+00:00",
+  "completion_claim": false,
+  "scope": "Import batch pagination identity, file inspection/apply contexts, nonpersisted mapping search and nested unit creation. Bounded frontend verification.",
+  "source_sha256": {
+    "frontend/src/workflow-import-history.ts": "6af21b09f48bb6632ac7afb78759884d4aa0e9750d520f48be0c79ea3d4b5cf5",
+    "frontend/src/operational-import.ts": "cc9cf665de88de0def1c43d917ccb69fc056033df98675964cc7a7c49e05d0b1",
+    "frontend/src/reference-workspace.ts": "b0e111f78ff245eb94254c7c1d2fe1ebfa0224eda7a6c8d6ef83c1dc5f32a7de"
+  },
+  "changes": [
+    "Confirmed failed batch B selection retained batch A rows while its Next requested B. Selected ID now changes only after the new rows load successfully; GET failures retain A target and pagination.",
+    "Old-file column inspection completion is ignored unless its file, sequence and dialog still match. Applying locks existing controls and snapshots its unchanged payload before locking. Completion checks exact preview/file/draft lifetime; new file after completed apply restores discard protection.",
+    "Find destination search no longer marks the mapping draft dirty. Named persisted controls retain existing discard protection."
+  ],
+  "evidence": [
+    "docs/premium-ui/qa-history-batch-context.json",
+    "docs/premium-ui/qa-record-new-unit-independent.json",
+    "docs/premium-ui/reviews/mapping-options-finish-current.json",
+    "docs/premium-ui/reviews/operational-import-file-race-fixed-current.json",
+    "docs/premium-ui/qa-history-batch-context-before.json",
+    "docs/premium-ui/reviews/operational-import-file-race-audit-current.json",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json",
+    "docs/premium-ui/reviews/operational-import-keyboard-fixed-current.json",
+    "docs/premium-ui/qa-preview-rejections.json"
+  ],
+  "checks": {
+    "history_batch_context_workflows": 6,
+    "nested_new_unit_workflows": 6,
+    "mapping_search_context_workflows": 6,
+    "import_file_apply_workflows": 12,
+    "existing_import_refresh_workflows": 12,
+    "existing_history_recovery_workflows": 6,
+    "unit_tests": 100,
+    "production_build_exit": 0
+  },
+  "limits": [
+    "History pagination fixture covers shared leave-kind implementation with two batches, not every history kind/server condition.",
+    "Nested-unit report retains its original reference source snapshot; later mapping-only changes do not retroactively refresh that runtime result.",
+    "No automatic mutation replay; test writes intercepted, not production persistence/authorization certification.",
+    "Known Chromium native month-picker noncancelable Escape and concurrent rules-test expectation remain separately unresolved; no all-action/full260pass.",
+    "No UI-team backend/API-contract/permission/scheduling/persisted-semantics/export-content changes; concurrent work preserved.",
+    "Physical-device/nativeassistive checks pending. Full260goal active/incomplete; no commit/push/deploy."
+  ]
+}

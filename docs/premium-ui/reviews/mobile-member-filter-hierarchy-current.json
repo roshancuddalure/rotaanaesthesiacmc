@@ -1,0 +1,159 @@
+{
+  "recorded_at_utc": "2026-10-23T19:57:46.384074+00:00",
+  "completion_claim": false,
+  "requirements": [
+    19,
+    49,
+    55,
+    59,
+    63,
+    72,
+    73,
+    82,
+    100,
+    112,
+    113,
+    121,
+    124,
+    208,
+    209,
+    241,
+    242,
+    244,
+    247,
+    248,
+    249,
+    251,
+    253,
+    255,
+    257,
+    258,
+    259
+  ],
+  "scope": "Compact first-use mobile member filter disclosure, preserving explicit native disclosure choices and existing filter/search results across rerender, resize, profile and routes. Frontend presentation-state change only.",
+  "changed_application_files": [
+    "frontend/src/main.ts"
+  ],
+  "implementation": [
+    "Choose initial disclosure state at first Members render: closed at<=768px,open above768px.",
+    "In-memory native toggle choice retained; existing panel snapshot preserved on rerender.",
+    "Read current open property synchronously before leaving Members, avoiding deferred-toggle timing loss.",
+    "No filter values,payloads,permissions,savedrecords,styles or backend behavior changed."
+  ],
+  "checks": {
+    "development_contexts": 15,
+    "production_contexts": 15,
+    "engines": 3,
+    "widths": [
+      320,
+      390,
+      768,
+      769,
+      1280
+    ],
+    "existing_light_dark_filter_workflows": 6,
+    "unit_tests_passed": 104,
+    "build_passed": true,
+    "build_inputs_held": true,
+    "static_inventory_checks": true
+  },
+  "before": {
+    "report": "docs/premium-ui/qa-mobile-member-filters/before.json",
+    "320px_initial_open": true,
+    "320px_member_section_top": 1326.28125
+  },
+  "measurements": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "initial_member_section_top": 1214.28125,
+      "expanded_member_section_top": 1326.28125,
+      "saved_height": 112
+    },
+    {
+      "engine": "chromium",
+      "width": 390,
+      "initial_member_section_top": 1073.53125,
+      "expanded_member_section_top": 1167.21875,
+      "saved_height": 93.6875
+    },
+    {
+      "engine": "chromium",
+      "width": 768,
+      "initial_member_section_top": 790.5625,
+      "expanded_member_section_top": 850.5625,
+      "saved_height": 60
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "initial_member_section_top": 1214.9000244140625,
+      "expanded_member_section_top": 1326.9000244140625,
+      "saved_height": 112
+    },
+    {
+      "engine": "firefox",
+      "width": 390,
+      "initial_member_section_top": 1074.0999755859375,
+      "expanded_member_section_top": 1167.800048828125,
+      "saved_height": 93.7000732421875
+    },
+    {
+      "engine": "firefox",
+      "width": 768,
+      "initial_member_section_top": 790.5999755859375,
+      "expanded_member_section_top": 850.5999755859375,
+      "saved_height": 60
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "initial_member_section_top": 1218.28125,
+      "expanded_member_section_top": 1340.28125,
+      "saved_height": 122
+    },
+    {
+      "engine": "webkit",
+      "width": 390,
+      "initial_member_section_top": 1077.53125,
+      "expanded_member_section_top": 1176.21875,
+      "saved_height": 98.6875
+    },
+    {
+      "engine": "webkit",
+      "width": 768,
+      "initial_member_section_top": 793.5625,
+      "expanded_member_section_top": 858.5625,
+      "saved_height": 65
+    }
+  ],
+  "source_sha256": {
+    "frontend/src/main.ts": "3360b757336cf77ce48b80f7d20a613c781cd745d242de555b8d53b56b8d6717",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "e1f99f30fc0bb0e1c84fa3972824058712d68ea842697ee71777d1dd51d6cfba"
+  },
+  "evidence": [
+    "frontend/src/main.ts",
+    "frontend/tests/premium-mobile-member-filters.browser.mjs",
+    "frontend/tests/premium-member-filters.browser.mjs",
+    "docs/premium-ui/qa-mobile-member-filters/report-development.json",
+    "docs/premium-ui/qa-mobile-member-filters/report-production.json",
+    "docs/premium-ui/qa-member-filters.json",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json",
+    "tmp/premium-mobile-member-filters-unit.log"
+  ],
+  "manual_visual_review": [
+    "Current Chromium320 full-page compact roster capture; controls and applied-count guidance remain visible."
+  ],
+  "prototype_findings": [
+    "Initial test used Overview eyebrow as heading; corrected to actual destination heading.",
+    "First production prototype exposed delayed native toggle event losing route-roundtrip choice; fixed by synchronous capture before route teardown and rerun in both environments."
+  ],
+  "limitations": [
+    "Saves112-122px at320px;firstmember remains below initial phone viewport. This is one hierarchy improvement,not complete above-fold roster redesign.",
+    "All operational filter tests use intercepted memberfixture or real readonlyRAM; no production writes.",
+    "In-memory presentation choice only,not persisted across fullreload or account changes.",
+    "No nativeAT/physicaldevice certification;not every role/filterstate or every possible navigation boundary.",
+    "Historical integrated reports retain source freshness; current focused unit/build/filter gates do not certify entire260plan."
+  ]
+}

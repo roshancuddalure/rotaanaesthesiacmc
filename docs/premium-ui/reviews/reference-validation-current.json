@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "reviewer": "reference_validation_review",
+  "reviewed_at_utc": "2026-10-21T16:45:37.796175+00:00",
+  "status": "accepted_for_bounded_reference_validation_scope",
+  "scope": "Independent mobile-emulation structured validation refusal review of unit registry, duty reference catalog, mapping creator and shared form helper.",
+  "reviewed_files_sha256": {
+    "frontend/src/form-validation.ts": "a6d6cfa746f502cf05e5f4f1e1acade1c7ca82b592a497d98b79661854783a93",
+    "frontend/src/reference-workspace.ts": "f694abcd75c27493cd4c223711d3b096f08c7c5e63438eae8724c1dfd2b8b64f",
+    "frontend/tests/premium-reference-validation-independent.browser.mjs": "60563906fe3788468545a51acb12d6a668efb3dd4072a389dea295f0109af9b4"
+  },
+  "tests_executed": [
+    {
+      "command": "node tests/premium-reference-validation-independent.browser.mjs",
+      "result": "9 passed: Chromium, Firefox and WebKit, each at 390x844, three scenarios per browser."
+    }
+  ],
+  "verified": [
+    "Submitted filtered call_minimums index 0 associates only the populated 3RD_CALL input, never the generic minimum; unknown index 99 remains summary-only.",
+    "Keyboard summary link opens collapsed call-minimum details before focusing the invalid field.",
+    "Editing clears server markers and only generated description references, retaining an existing aria-describedby help reference.",
+    "Nested behavior.duration_hours associates with its existing duty duration control; intercepted payload preserves numeric duration and eligible-call selection.",
+    "Delayed mapping refusal preserves a newer notes focus and entered draft; original imported spelling, target key, reviewed status and target label remain in the one intercepted mutation.",
+    "Error messages containing script markup render as text, with no injected script nodes and no runtime page errors.",
+    "Source inspection found unchanged request paths and mutation bodies; helper limits DOM effects to current connected open-dialog forms and tears down temporary focus tracking in finally."
+  ],
+  "resolved_findings": [
+    {
+      "finding": "Error links could not focus call-minimum inputs within collapsed details.",
+      "resolution": "Root updated links to open ancestor details. Independent regression was reproduced before fix and passed in all three browser engines afterward."
+    }
+  ],
+  "required_fixes": [],
+  "remaining_limits": [
+    "All mutations are intercepted 422 refusals; no backend persistence, permission or scheduling correctness is claimed.",
+    "Independent runtime dimensions are 390x844 only; root maintains separate responsive coverage.",
+    "Physical-device and actual screen-reader checks remain pending.",
+    "This review does not establish completion of all 260 approved upgrades."
+  ],
+  "evidence": [
+    "frontend/tests/premium-reference-validation-independent.browser.mjs",
+    "docs/premium-ui/qa-reference-validation-independent.json"
+  ]
+}

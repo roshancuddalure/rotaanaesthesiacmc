@@ -233,10 +233,10 @@ def test_service_errors_map_to_contract_shape(api, service, monkeypatch):
     conflict = {"job_id": "j1", "kind": "rota", "status": "running", "processed": 1, "total": 9,
                 "owned": False, "operator_name": "Other"}
 
-    def preview(db, month, user):
+    def preview(db, month, user, mode="standard"):
         raise make_error(service, "proposal_active", "A proposal is active.", 409, conflict)
 
-    def apply(db, month, token, plan_hash, user):
+    def apply(db, month, token, plan_hash, user, mode="standard"):
         raise make_error(service, "bad_token", "Token mismatch.", 403)
 
     def undo(db, batch_id, user, dry_run=False):
@@ -282,7 +282,7 @@ def report_module(monkeypatch):
         import app.services as services_pkg
 
         monkeypatch.setattr(services_pkg, "rota_report_360", module, raising=False)
-    monkeypatch.setattr(module, "build_report_data", lambda db, month: {"meta": {"month": month}}, raising=False)
+    monkeypatch.setattr(module, "build_report_data", lambda db, month, **kw: {"meta": {"month": month, **kw}}, raising=False)
     monkeypatch.setattr(module, "render_html", lambda data: "<html>ok</html>", raising=False)
     monkeypatch.setattr(module, "render_xlsx", lambda data: b"PK\x03\x04xlsx", raising=False)
     return module
@@ -520,3 +520,119 @@ def test_hook_without_records_is_a_no_op(session):
 
     assert void_extra_duty_records(session, [], "cleared") == 0
     assert void_extra_duty_records(session, [uuid4()], "cleared") == 0
+
+
+# --------------------------------------------------------------------------- real services (when present)
+
+
+def test_real_preview_on_unprepared_month_is_a_contract_409(api, service):
+    if service.ExtraDutyError is _StubExtraDutyError:
+        pytest.skip("app.services.extra_duty not available")
+    client, sessions, _state = api
+    with sessions() as db:
+        seed_month(db)
+    response = client.post(f"{BASE}/preview", json={"month": MONTH})
+    assert response.status_code == 409, response.text
+    detail = response.json()["detail"]
+    assert detail["code"] in {"scope_unlocked", "nothing_to_fill", "not_draft"}
+    assert detail["message"]
+
+
+def test_real_html_report_renders(api):
+    try:
+        from app.services import rota_report_360  # noqa: F401
+    except ImportError:
+        pytest.skip("app.services.rota_report_360 not available")
+    client, sessions, _state = api
+    with sessions() as db:
+        seed_month(db)
+    response = client.get(f"{BASE}/report", params={"month": MONTH, "format": "html"})
+    assert response.status_code == 200, response.text
+    assert "<html" in response.text.lower()
+    assert response.headers["content-disposition"].endswith(f'audit-report-{MONTH}.html"')
+
+
+def test_filled_slot_stretched_by_extra_duty_is_a_warning(session, service, monkeypatch):
+    """A normally filled slot that became hard-blocked because extra duties used its unit's
+    members that day (or rested them the day after) is the approved staffing override, not a blocker."""
+    from app.services import rota_review
+    from app.services.rota_review import rota_review_month
+
+    seeded = seed_month(session)
+    add_record(session, seeded["period"].id, seeded["assignment"], seeded["slot"])
+    neighbours = []
+    for day in (date(2026, 5, 4), date(2026, 5, 5), date(2026, 5, 7)):
+        start, end = bounds(day)
+        slot = DutySlot(rota_period=seeded["period"], unit=seeded["unit"], duty_date=day, duty_type="MAIN_1ST_24HR",
+                        call_level="1ST_CALL", slot_label=f"UNIT_I:{day.day}", starts_at=start, ends_at=end,
+                        is_24hr=True, source="phase4_template")
+        session.add(slot)
+        session.flush()
+        session.add(DutyAssignment(duty_slot=slot, person=seeded["second"], status="assigned", source="safe_auto_fill_draft"))
+        neighbours.append(slot)
+    session.commit()
+    monkeypatch.setattr(rota_review, "month_safety", lambda db, month: {"slots": [
+        {"slot_id": str(s.id), "safety_status": "hard_blocked", "reasons": ["Unit I is short-staffed."]}
+        for s in [seeded["slot"], *neighbours]]})
+    review = rota_review_month(session, MONTH)
+    same_day, next_day, later = (slot_issue_codes(review, s.id) for s in neighbours)
+    assert same_day[0] == "warning" and "extra_duty_exception" in same_day[1]
+    assert "Unit staffing limit exceeded" in same_day[1]["extra_duty_exception"]["message"]
+    assert next_day[0] == "warning" and "extra_duty_exception" in next_day[1]
+    assert later[0] == "error" and "hard_blocked" in later[1]
+    assert review["summary"]["hard_blocked_items"] == 1
+
+
+# --------------------------------------------------------------------------- fill-all mode
+
+
+def test_mode_is_passed_through_and_validated(api, service, monkeypatch):
+    client, _sessions, _state = api
+    seen = []
+    monkeypatch.setattr(service, "preview", lambda db, month, user, mode="standard": seen.append(("preview", mode)) or {"mode": mode})
+    monkeypatch.setattr(service, "apply", lambda db, month, token, plan_hash, user, mode="standard": seen.append(("apply", mode)) or {"mode": mode})
+    assert client.post(f"{BASE}/preview", json={"month": MONTH}).json() == {"mode": "standard"}
+    assert client.post(f"{BASE}/preview", json={"month": MONTH, "mode": "all_units"}).json() == {"mode": "all_units"}
+    body = {"month": MONTH, "token": "t", "plan_hash": "h", "mode": "all_units"}
+    assert client.post(f"{BASE}/apply", json=body).json() == {"mode": "all_units"}
+    assert seen == [("preview", "standard"), ("preview", "all_units"), ("apply", "all_units")]
+    assert client.post(f"{BASE}/preview", json={"month": MONTH, "mode": "everything"}).status_code == 422
+
+
+def test_apply_with_other_mode_is_stale_preview_over_http(api, service):
+    if service.ExtraDutyError is _StubExtraDutyError:
+        pytest.skip("app.services.extra_duty not available")
+    client, sessions, state = api
+    with sessions() as db:
+        from app.models import MonthlyGenerationScopeUnit
+        from app.services.rota_rules import get_phase_one_rules
+
+        get_phase_one_rules(db)
+        unit = Unit(code="UNIT_I", name="Unit I", campus="MAIN")
+        db.add(unit)
+        person = Person(canonical_name="Alpha", call_level="1ST_CALL")
+        db.add(person)
+        db.flush()
+        db.add(PersonPosting(person=person, unit=unit, posting_type="1ST_CALL", starts_on=date(2026, 1, 1), source="unit_board"))
+        period, scope = monthly_setup(db, MONTH)
+        db.add(MonthlyGenerationScopeUnit(scope=scope, unit=unit, status="included"))
+        scope.is_locked = True
+        starts, ends = bounds(date(2026, 5, 10))
+        db.add(DutySlot(rota_period=period, unit=unit, duty_date=date(2026, 5, 10), duty_type="MAIN_1ST_24HR",
+                        call_level="1ST_CALL", slot_label="s", starts_at=starts, ends_at=ends, is_24hr=True,
+                        source="phase4_template"))
+        admin = state["user"]
+        db.add(UserAccount(id=admin.id, username=admin.username, display_name=admin.display_name,
+                           role=admin.role, password_hash="x"))
+        db.commit()
+    preview = client.post(f"{BASE}/preview", json={"month": MONTH, "mode": "all_units"})
+    assert preview.status_code == 200, preview.text
+    plan = preview.json()
+    assert plan["mode"] == "all_units" and plan["summary"]["mode"] == "all_units"
+    assert {"over_limit_people", "unfilled_causes", "diagnostics"} <= set(plan)
+    stale = client.post(f"{BASE}/apply", json={"month": MONTH, "token": plan["token"], "plan_hash": plan["plan_hash"]})
+    assert stale.status_code == 409 and stale.json()["detail"]["code"] == "stale_preview"
+    applied = client.post(f"{BASE}/apply", json={"month": MONTH, "token": plan["token"],
+                                                  "plan_hash": plan["plan_hash"], "mode": "all_units"})
+    assert applied.status_code == 200, applied.text
+    assert applied.json()["mode"] == "all_units" and applied.json()["summary"]["filled"] == 1

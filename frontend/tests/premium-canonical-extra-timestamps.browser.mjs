@@ -1,0 +1,26 @@
+import assert from 'node:assert/strict';
+import {readFile,writeFile} from 'node:fs/promises';
+import {createHash} from 'node:crypto';
+import {chromium,firefox,webkit} from 'playwright';
+const base=process.env.MEMBER_TEST_URL||'http://127.0.0.1:5197',results=[];
+const times=['2026-10-22T00:15:00Z','2026-10-22T05:45:00+05:30','2026-02-30T12:00:00Z',null,'2026-10-22T00:15:00','2028-02-29T12:00:00Z'];
+const member={id:'member',canonical_name:'Dr Activity',active_status:'active',call_level:'2ND_CALL',aliases:[],designations:[],revision:'one'};
+const hashes=async()=>Object.fromEntries(await Promise.all(['member-workspace.ts','extra-duty.ts','audit-time.ts'].map(async name=>['frontend/src/'+name,createHash('sha256').update(await readFile(new URL('../src/'+name,import.meta.url))).digest('hex')])));
+const initial=await hashes();
+async function verify(page,locator,zone){const text=await locator.allTextContents();assert.equal(text.length,6);for(const index of [0,1,5]){const expected=await page.evaluate(({value,zone})=>new Intl.DateTimeFormat('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23',timeZone:zone,timeZoneName:'longOffset'}).format(new Date(value)),{value:times[index],zone});assert.ok(text[index].includes(expected));assert.ok(text[index].includes('('+zone+')'));}for(const index of [2,3])assert.match(text[index],/Time unavailable/);assert.match(text[4],/time zone not recorded/);}
+for(const[engine,type]of Object.entries({chromium,firefox,webkit})){const browser=await type.launch();try{for(const width of [320,1280])for(const timezoneId of ['UTC','America/Los_Angeles']){
+ const context=await browser.newContext({viewport:{width,height:850},timezoneId}),page=await context.newPage(),errors=[],requests=[];page.on('pageerror',error=>errors.push(error.message));
+ await page.route('**/__canonical-extra-time',route=>route.fulfill({contentType:'text/html',body:'<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/src/styles.css"><link rel="stylesheet" href="/src/premium-theme.css"></head><body></body></html>'}));
+ await page.route('**/api/**',route=>{const request=route.request(),path=new URL(request.url()).pathname;assert.equal(request.method(),'GET');requests.push(path);
+  if(path==='/api/v1/admin/member-workspace/member')return route.fulfill({json:{member,impact:{}}});
+  if(path==='/api/v1/admin/member-workspace/member/activity')return route.fulfill({json:{rows:times.map((created_at,index)=>({action:'profile_updated',operator:'Reviewer',created_at,details:{before:{name:'Old'},after:{name:'Updated '+index}}}))}});
+  if(path==='/api/v1/extra-duty/status')return route.fulfill({json:{enabled:true,month:'2026-10',open_slots:0,batches:times.map((created_at,index)=>({id:'batch-'+index,status:'undone',created_at,created_by_name:'Reviewer',summary:{filled:1,ledger_records:1}}))}});
+  if(path==='/api/v1/extra-duty/unit-fallbacks')return route.fulfill({json:[]});throw new Error('Unexpected GET '+path);
+ });
+ await page.goto(base+'/__canonical-extra-time');await page.evaluate(async()=>{await(await import('/src/member-workspace.ts')).openMemberWorkspace('member',true,()=>{});});await page.getByRole('tab',{name:'Activity',exact:true}).click();await page.locator('.mw-history time').first().waitFor();await verify(page,page.locator('.mw-history time'),timezoneId);
+ assert.deepEqual(await page.locator('.mw-history time').evaluateAll(nodes=>nodes.map(node=>node.getAttribute('datetime'))),times.map(value=>value??''),'Original datetime attributes preserved');
+ await page.locator('dialog [data-close]').first().click();await page.locator('dialog').waitFor({state:'detached'});
+ await page.evaluate(async()=>{await(await import('/src/extra-duty.ts')).openExtraDuty('2026-10',()=>{});});await page.locator('.extra-duty-batches li').first().waitFor();await verify(page,page.locator('.extra-duty-batches li > div > span'),timezoneId);assert.match(await page.locator('dialog').innerText(),/2026-10|October 2026/);assert.equal(await page.locator('dialog').evaluate(node=>node.scrollWidth<=node.clientWidth+1),true);await page.getByRole('button',{name:'Close extra-duty layer',exact:true}).click();assert.deepEqual(errors,[]);
+ results.push({engine,width,timezoneId,canonical_activity_and_extra_batch_browser_zone:true,equivalent_offsets_near_midnight:true,invalid_missing_unzoned_and_leap_fallback:true,raw_datetime_attributes_preserved:true,month_unchanged:true,real_close_actions:true,mutations:0,intercepted_gets:requests.length,javascript_errors:errors});await context.close();
+}}finally{await browser.close();}}
+assert.deepEqual(await hashes(),initial,'Source changed');await writeFile('../docs/premium-ui/qa-canonical-extra-timestamps.json',JSON.stringify({scope:'Actual canonical member Activity and extra-duty run history,3engines×2widths×2browserzones. All GETs intercepted,extra-duty open_slots0 intentionally avoids proposalPOST. Existing browser-local policy retained with visible zone; raw datetime/month unchanged. No scheduling/API/native-device claim.',source_hashes:initial,results},null,2)+'\n');console.log(`${results.length} canonical/extra timestamp matrices passed`);

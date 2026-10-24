@@ -1,0 +1,9 @@
+{
+  "scope": "Exact Compare button disabled-expression text compared with initial frozen source; no whole-module equivalence claim.",
+  "source_sha256": {
+    "frontend/src/rota-compute.ts": "714d23a2f27dc8a62974de89c08f130cac3a552bc2b719cf826f0b83350728d3"
+  },
+  "baseline_source_sha256": "129a0a808e459804d3a4a912669f3f78f83129ddcf4b2ba606bd68d8a5dc19d5",
+  "disabled_predicate_unchanged": true,
+  "expression": "busy || !p.enabled || !p.test?.supported || p.test.software || !caps.enabled || !caps.browser_gpu ||\n        workload===\"template\" && (!caps.template_compute || !caps.template_gpu) || workload===\"optimizer\" && !caps.optimizer_gpu ||\n        workload!==\"members\" && !p.test?.kernel_checks?.[workload] "
+}

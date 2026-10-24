@@ -1,0 +1,772 @@
+{
+  "recorded_at_utc": "2026-10-24T03:55:07.640Z",
+  "target_url": "http://127.0.0.1:5197",
+  "test_sha256": "f251540eb3964a7378218b468078c3a92cab18ca68747b522b3595727fabb2c1",
+  "source_sha256": {
+    "frontend/src/main.ts": "6ebdf70eb1f3663e144c26ea4ceddcee83989a18c84b24a0e3e2a6fdc0b3dbdb",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/ui.ts": "88579ed75c8c72e4fd4e2d98508a58c42b925202362589a2469623664c2a975f",
+    "frontend/src/premium-theme.css": "559041ee03d192fcc291582bd7572e8d32004e9d5428b7e57fbbea9ba9e60f83",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86"
+  },
+  "scope": "Actual fullshell Leave screen, native confirmation and keyboard row menus in three engines, two widths and themes. Synthetic overlapping and cross-month leave rows. GET requests not intercepted locally forward only to RAM fixture 8032. All mutations locally intercepted; exact existing POST {} contract. Missing-target refusal uses explicit synthetic DOM corruption. No backend enforcement, physical device, native prompt visual appearance or assistive technology certification.",
+  "whole_requirement_completion_proven": false,
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "scheme": "light",
+      "passed": true,
+      "native_confirmation_text": [
+        "Cancel leave for Dr <img src=x onerror=\"window.leaveCancelInjected=true\"> Long exact member name?\nFrom: 29 Oct 2026\nUntil: 3 Dec 2026\nCategory: Annual Leave\nSlot: Full Day\nStatus: Approved\nRecord ID: cross-month\n\nHistory is retained. Existing duties remain assigned and may need review.",
+        "Cancel leave for Dr <img src=x onerror=\"window.leaveCancelInjected=true\"> Long exact member name?\nFrom: 1 Nov 2026\nUntil: 8 Nov 2026\nCategory: Casual <Img Src=X>\nSlot: Morning\nStatus: Requested\nRecord ID: overlap-two\n\nHistory is retained. Existing duties remain assigned and may need review.",
+        "Cancel leave for Dr <img src=x onerror=\"window.leaveCancelInjected=true\"> Long exact member name?\nFrom: 1 Nov 2026\nUntil: 9 Nov 2026\nCategory: Sick Leave\nSlot: Afternoon\nStatus: Imported, Pending Review\nRecord ID: overlap-three\n\nHistory is retained. Existing duties remain assigned and may need review."
+      ],
+      "declined_mutation_count": 0,
+      "exact_mutations": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/overlap-two/cancel",
+          "body": "{}"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/overlap-two/cancel",
+          "body": "{}"
+        }
+      ],
+      "failed_mutation_not_automatically_replayed": true,
+      "explicit_same_target_retry": true,
+      "successful_get_refresh": true,
+      "sibling_records_unchanged": true,
+      "html_like_values_inert": true,
+      "synthetic_missing_target_refused": true,
+      "late_result_cases": [
+        {
+          "departure": "members",
+          "response": 200,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        },
+        {
+          "departure": "members",
+          "response": 503,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        },
+        {
+          "departure": "signout",
+          "response": 200,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        },
+        {
+          "departure": "signout",
+          "response": 503,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        }
+      ],
+      "total_intercepted_mutations": 6,
+      "forwarded_mutation_requests": 0,
+      "page_errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "scheme": "dark",
+      "passed": true,
+      "native_confirmation_text": [
+        "Cancel leave for Dr <img src=x onerror=\"window.leaveCancelInjected=true\"> Long exact member name?\nFrom: 29 Oct 2026\nUntil: 3 Dec 2026\nCategory: Annual Leave\nSlot: Full Day\nStatus: Approved\nRecord ID: cross-month\n\nHistory is retained. Existing duties remain assigned and may need review.",
+        "Cancel leave for Dr <img src=x onerror=\"window.leaveCancelInjected=true\"> Long exact member name?\nFrom: 1 Nov 2026\nUntil: 8 Nov 2026\nCategory: Casual <Img Src=X>\nSlot: Morning\nStatus: Requested\nRecord ID: overlap-two\n\nHistory is retained. Existing duties remain assigned and may need review.",
+        "Cancel leave for Dr <img src=x onerror=\"window.leaveCancelInjected=true\"> Long exact member name?\nFrom: 1 Nov 2026\nUntil: 9 Nov 2026\nCategory: Sick Leave\nSlot: Afternoon\nStatus: Imported, Pending Review\nRecord ID: overlap-three\n\nHistory is retained. Existing duties remain assigned and may need review."
+      ],
+      "declined_mutation_count": 0,
+      "exact_mutations": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/overlap-two/cancel",
+          "body": "{}"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/overlap-two/cancel",
+          "body": "{}"
+        }
+      ],
+      "failed_mutation_not_automatically_replayed": true,
+      "explicit_same_target_retry": true,
+      "successful_get_refresh": true,
+      "sibling_records_unchanged": true,
+      "html_like_values_inert": true,
+      "synthetic_missing_target_refused": true,
+      "late_result_cases": [
+        {
+          "departure": "members",
+          "response": 200,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        },
+        {
+          "departure": "members",
+          "response": 503,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        },
+        {
+          "departure": "signout",
+          "response": 200,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        },
+        {
+          "departure": "signout",
+          "response": 503,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        }
+      ],
+      "total_intercepted_mutations": 6,
+      "forwarded_mutation_requests": 0,
+      "page_errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "scheme": "light",
+      "passed": true,
+      "native_confirmation_text": [
+        "Cancel leave for Dr <img src=x onerror=\"window.leaveCancelInjected=true\"> Long exact member name?\nFrom: 29 Oct 2026\nUntil: 3 Dec 2026\nCategory: Annual Leave\nSlot: Full Day\nStatus: Approved\nRecord ID: cross-month\n\nHistory is retained. Existing duties remain assigned and may need review.",
+        "Cancel leave for Dr <img src=x onerror=\"window.leaveCancelInjected=true\"> Long exact member name?\nFrom: 1 Nov 2026\nUntil: 8 Nov 2026\nCategory: Casual <Img Src=X>\nSlot: Morning\nStatus: Requested\nRecord ID: overlap-two\n\nHistory is retained. Existing duties remain assigned and may need review.",
+        "Cancel leave for Dr <img src=x onerror=\"window.leaveCancelInjected=true\"> Long exact member name?\nFrom: 1 Nov 2026\nUntil: 9 Nov 2026\nCategory: Sick Leave\nSlot: Afternoon\nStatus: Imported, Pending Review\nRecord ID: overlap-three\n\nHistory is retained. Existing duties remain assigned and may need review."
+      ],
+      "declined_mutation_count": 0,
+      "exact_mutations": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/overlap-two/cancel",
+          "body": "{}"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/overlap-two/cancel",
+          "body": "{}"
+        }
+      ],
+      "failed_mutation_not_automatically_replayed": true,
+      "explicit_same_target_retry": true,
+      "successful_get_refresh": true,
+      "sibling_records_unchanged": true,
+      "html_like_values_inert": true,
+      "synthetic_missing_target_refused": true,
+      "late_result_cases": [
+        {
+          "departure": "members",
+          "response": 200,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        },
+        {
+          "departure": "members",
+          "response": 503,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        },
+        {
+          "departure": "signout",
+          "response": 200,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        },
+        {
+          "departure": "signout",
+          "response": 503,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        }
+      ],
+      "total_intercepted_mutations": 6,
+      "forwarded_mutation_requests": 0,
+      "page_errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "scheme": "dark",
+      "passed": true,
+      "native_confirmation_text": [
+        "Cancel leave for Dr <img src=x onerror=\"window.leaveCancelInjected=true\"> Long exact member name?\nFrom: 29 Oct 2026\nUntil: 3 Dec 2026\nCategory: Annual Leave\nSlot: Full Day\nStatus: Approved\nRecord ID: cross-month\n\nHistory is retained. Existing duties remain assigned and may need review.",
+        "Cancel leave for Dr <img src=x onerror=\"window.leaveCancelInjected=true\"> Long exact member name?\nFrom: 1 Nov 2026\nUntil: 8 Nov 2026\nCategory: Casual <Img Src=X>\nSlot: Morning\nStatus: Requested\nRecord ID: overlap-two\n\nHistory is retained. Existing duties remain assigned and may need review.",
+        "Cancel leave for Dr <img src=x onerror=\"window.leaveCancelInjected=true\"> Long exact member name?\nFrom: 1 Nov 2026\nUntil: 9 Nov 2026\nCategory: Sick Leave\nSlot: Afternoon\nStatus: Imported, Pending Review\nRecord ID: overlap-three\n\nHistory is retained. Existing duties remain assigned and may need review."
+      ],
+      "declined_mutation_count": 0,
+      "exact_mutations": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/overlap-two/cancel",
+          "body": "{}"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/overlap-two/cancel",
+          "body": "{}"
+        }
+      ],
+      "failed_mutation_not_automatically_replayed": true,
+      "explicit_same_target_retry": true,
+      "successful_get_refresh": true,
+      "sibling_records_unchanged": true,
+      "html_like_values_inert": true,
+      "synthetic_missing_target_refused": true,
+      "late_result_cases": [
+        {
+          "departure": "members",
+          "response": 200,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        },
+        {
+          "departure": "members",
+          "response": 503,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        },
+        {
+          "departure": "signout",
+          "response": 200,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        },
+        {
+          "departure": "signout",
+          "response": 503,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        }
+      ],
+      "total_intercepted_mutations": 6,
+      "forwarded_mutation_requests": 0,
+      "page_errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "scheme": "light",
+      "passed": true,
+      "native_confirmation_text": [
+        "Cancel leave for Dr <img src=x onerror=\"window.leaveCancelInjected=true\"> Long exact member name?\nFrom: 29 Oct 2026\nUntil: 3 Dec 2026\nCategory: Annual Leave\nSlot: Full Day\nStatus: Approved\nRecord ID: cross-month\n\nHistory is retained. Existing duties remain assigned and may need review.",
+        "Cancel leave for Dr <img src=x onerror=\"window.leaveCancelInjected=true\"> Long exact member name?\nFrom: 1 Nov 2026\nUntil: 8 Nov 2026\nCategory: Casual <Img Src=X>\nSlot: Morning\nStatus: Requested\nRecord ID: overlap-two\n\nHistory is retained. Existing duties remain assigned and may need review.",
+        "Cancel leave for Dr <img src=x onerror=\"window.leaveCancelInjected=true\"> Long exact member name?\nFrom: 1 Nov 2026\nUntil: 9 Nov 2026\nCategory: Sick Leave\nSlot: Afternoon\nStatus: Imported, Pending Review\nRecord ID: overlap-three\n\nHistory is retained. Existing duties remain assigned and may need review."
+      ],
+      "declined_mutation_count": 0,
+      "exact_mutations": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/overlap-two/cancel",
+          "body": "{}"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/overlap-two/cancel",
+          "body": "{}"
+        }
+      ],
+      "failed_mutation_not_automatically_replayed": true,
+      "explicit_same_target_retry": true,
+      "successful_get_refresh": true,
+      "sibling_records_unchanged": true,
+      "html_like_values_inert": true,
+      "synthetic_missing_target_refused": true,
+      "late_result_cases": [
+        {
+          "departure": "members",
+          "response": 200,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        },
+        {
+          "departure": "members",
+          "response": 503,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        },
+        {
+          "departure": "signout",
+          "response": 200,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        },
+        {
+          "departure": "signout",
+          "response": 503,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        }
+      ],
+      "total_intercepted_mutations": 6,
+      "forwarded_mutation_requests": 0,
+      "page_errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "scheme": "dark",
+      "passed": true,
+      "native_confirmation_text": [
+        "Cancel leave for Dr <img src=x onerror=\"window.leaveCancelInjected=true\"> Long exact member name?\nFrom: 29 Oct 2026\nUntil: 3 Dec 2026\nCategory: Annual Leave\nSlot: Full Day\nStatus: Approved\nRecord ID: cross-month\n\nHistory is retained. Existing duties remain assigned and may need review.",
+        "Cancel leave for Dr <img src=x onerror=\"window.leaveCancelInjected=true\"> Long exact member name?\nFrom: 1 Nov 2026\nUntil: 8 Nov 2026\nCategory: Casual <Img Src=X>\nSlot: Morning\nStatus: Requested\nRecord ID: overlap-two\n\nHistory is retained. Existing duties remain assigned and may need review.",
+        "Cancel leave for Dr <img src=x onerror=\"window.leaveCancelInjected=true\"> Long exact member name?\nFrom: 1 Nov 2026\nUntil: 9 Nov 2026\nCategory: Sick Leave\nSlot: Afternoon\nStatus: Imported, Pending Review\nRecord ID: overlap-three\n\nHistory is retained. Existing duties remain assigned and may need review."
+      ],
+      "declined_mutation_count": 0,
+      "exact_mutations": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/overlap-two/cancel",
+          "body": "{}"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/overlap-two/cancel",
+          "body": "{}"
+        }
+      ],
+      "failed_mutation_not_automatically_replayed": true,
+      "explicit_same_target_retry": true,
+      "successful_get_refresh": true,
+      "sibling_records_unchanged": true,
+      "html_like_values_inert": true,
+      "synthetic_missing_target_refused": true,
+      "late_result_cases": [
+        {
+          "departure": "members",
+          "response": 200,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        },
+        {
+          "departure": "members",
+          "response": 503,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        },
+        {
+          "departure": "signout",
+          "response": 200,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        },
+        {
+          "departure": "signout",
+          "response": 503,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        }
+      ],
+      "total_intercepted_mutations": 6,
+      "forwarded_mutation_requests": 0,
+      "page_errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "scheme": "light",
+      "passed": true,
+      "native_confirmation_text": [
+        "Cancel leave for Dr <img src=x onerror=\"window.leaveCancelInjected=true\"> Long exact member name?\nFrom: 29 Oct 2026\nUntil: 3 Dec 2026\nCategory: Annual Leave\nSlot: Full Day\nStatus: Approved\nRecord ID: cross-month\n\nHistory is retained. Existing duties remain assigned and may need review.",
+        "Cancel leave for Dr <img src=x onerror=\"window.leaveCancelInjected=true\"> Long exact member name?\nFrom: 1 Nov 2026\nUntil: 8 Nov 2026\nCategory: Casual <Img Src=X>\nSlot: Morning\nStatus: Requested\nRecord ID: overlap-two\n\nHistory is retained. Existing duties remain assigned and may need review.",
+        "Cancel leave for Dr <img src=x onerror=\"window.leaveCancelInjected=true\"> Long exact member name?\nFrom: 1 Nov 2026\nUntil: 9 Nov 2026\nCategory: Sick Leave\nSlot: Afternoon\nStatus: Imported, Pending Review\nRecord ID: overlap-three\n\nHistory is retained. Existing duties remain assigned and may need review."
+      ],
+      "declined_mutation_count": 0,
+      "exact_mutations": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/overlap-two/cancel",
+          "body": "{}"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/overlap-two/cancel",
+          "body": "{}"
+        }
+      ],
+      "failed_mutation_not_automatically_replayed": true,
+      "explicit_same_target_retry": true,
+      "successful_get_refresh": true,
+      "sibling_records_unchanged": true,
+      "html_like_values_inert": true,
+      "synthetic_missing_target_refused": true,
+      "late_result_cases": [
+        {
+          "departure": "members",
+          "response": 200,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        },
+        {
+          "departure": "members",
+          "response": 503,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        },
+        {
+          "departure": "signout",
+          "response": 200,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        },
+        {
+          "departure": "signout",
+          "response": 503,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        }
+      ],
+      "total_intercepted_mutations": 6,
+      "forwarded_mutation_requests": 0,
+      "page_errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "scheme": "dark",
+      "passed": true,
+      "native_confirmation_text": [
+        "Cancel leave for Dr <img src=x onerror=\"window.leaveCancelInjected=true\"> Long exact member name?\nFrom: 29 Oct 2026\nUntil: 3 Dec 2026\nCategory: Annual Leave\nSlot: Full Day\nStatus: Approved\nRecord ID: cross-month\n\nHistory is retained. Existing duties remain assigned and may need review.",
+        "Cancel leave for Dr <img src=x onerror=\"window.leaveCancelInjected=true\"> Long exact member name?\nFrom: 1 Nov 2026\nUntil: 8 Nov 2026\nCategory: Casual <Img Src=X>\nSlot: Morning\nStatus: Requested\nRecord ID: overlap-two\n\nHistory is retained. Existing duties remain assigned and may need review.",
+        "Cancel leave for Dr <img src=x onerror=\"window.leaveCancelInjected=true\"> Long exact member name?\nFrom: 1 Nov 2026\nUntil: 9 Nov 2026\nCategory: Sick Leave\nSlot: Afternoon\nStatus: Imported, Pending Review\nRecord ID: overlap-three\n\nHistory is retained. Existing duties remain assigned and may need review."
+      ],
+      "declined_mutation_count": 0,
+      "exact_mutations": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/overlap-two/cancel",
+          "body": "{}"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/overlap-two/cancel",
+          "body": "{}"
+        }
+      ],
+      "failed_mutation_not_automatically_replayed": true,
+      "explicit_same_target_retry": true,
+      "successful_get_refresh": true,
+      "sibling_records_unchanged": true,
+      "html_like_values_inert": true,
+      "synthetic_missing_target_refused": true,
+      "late_result_cases": [
+        {
+          "departure": "members",
+          "response": 200,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        },
+        {
+          "departure": "members",
+          "response": 503,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        },
+        {
+          "departure": "signout",
+          "response": 200,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        },
+        {
+          "departure": "signout",
+          "response": 503,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        }
+      ],
+      "total_intercepted_mutations": 6,
+      "forwarded_mutation_requests": 0,
+      "page_errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "scheme": "light",
+      "passed": true,
+      "native_confirmation_text": [
+        "Cancel leave for Dr <img src=x onerror=\"window.leaveCancelInjected=true\"> Long exact member name?\nFrom: 29 Oct 2026\nUntil: 3 Dec 2026\nCategory: Annual Leave\nSlot: Full Day\nStatus: Approved\nRecord ID: cross-month\n\nHistory is retained. Existing duties remain assigned and may need review.",
+        "Cancel leave for Dr <img src=x onerror=\"window.leaveCancelInjected=true\"> Long exact member name?\nFrom: 1 Nov 2026\nUntil: 8 Nov 2026\nCategory: Casual <Img Src=X>\nSlot: Morning\nStatus: Requested\nRecord ID: overlap-two\n\nHistory is retained. Existing duties remain assigned and may need review.",
+        "Cancel leave for Dr <img src=x onerror=\"window.leaveCancelInjected=true\"> Long exact member name?\nFrom: 1 Nov 2026\nUntil: 9 Nov 2026\nCategory: Sick Leave\nSlot: Afternoon\nStatus: Imported, Pending Review\nRecord ID: overlap-three\n\nHistory is retained. Existing duties remain assigned and may need review."
+      ],
+      "declined_mutation_count": 0,
+      "exact_mutations": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/overlap-two/cancel",
+          "body": "{}"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/overlap-two/cancel",
+          "body": "{}"
+        }
+      ],
+      "failed_mutation_not_automatically_replayed": true,
+      "explicit_same_target_retry": true,
+      "successful_get_refresh": true,
+      "sibling_records_unchanged": true,
+      "html_like_values_inert": true,
+      "synthetic_missing_target_refused": true,
+      "late_result_cases": [
+        {
+          "departure": "members",
+          "response": 200,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        },
+        {
+          "departure": "members",
+          "response": 503,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        },
+        {
+          "departure": "signout",
+          "response": 200,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        },
+        {
+          "departure": "signout",
+          "response": 503,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        }
+      ],
+      "total_intercepted_mutations": 6,
+      "forwarded_mutation_requests": 0,
+      "page_errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "scheme": "dark",
+      "passed": true,
+      "native_confirmation_text": [
+        "Cancel leave for Dr <img src=x onerror=\"window.leaveCancelInjected=true\"> Long exact member name?\nFrom: 29 Oct 2026\nUntil: 3 Dec 2026\nCategory: Annual Leave\nSlot: Full Day\nStatus: Approved\nRecord ID: cross-month\n\nHistory is retained. Existing duties remain assigned and may need review.",
+        "Cancel leave for Dr <img src=x onerror=\"window.leaveCancelInjected=true\"> Long exact member name?\nFrom: 1 Nov 2026\nUntil: 8 Nov 2026\nCategory: Casual <Img Src=X>\nSlot: Morning\nStatus: Requested\nRecord ID: overlap-two\n\nHistory is retained. Existing duties remain assigned and may need review.",
+        "Cancel leave for Dr <img src=x onerror=\"window.leaveCancelInjected=true\"> Long exact member name?\nFrom: 1 Nov 2026\nUntil: 9 Nov 2026\nCategory: Sick Leave\nSlot: Afternoon\nStatus: Imported, Pending Review\nRecord ID: overlap-three\n\nHistory is retained. Existing duties remain assigned and may need review."
+      ],
+      "declined_mutation_count": 0,
+      "exact_mutations": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/overlap-two/cancel",
+          "body": "{}"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/overlap-two/cancel",
+          "body": "{}"
+        }
+      ],
+      "failed_mutation_not_automatically_replayed": true,
+      "explicit_same_target_retry": true,
+      "successful_get_refresh": true,
+      "sibling_records_unchanged": true,
+      "html_like_values_inert": true,
+      "synthetic_missing_target_refused": true,
+      "late_result_cases": [
+        {
+          "departure": "members",
+          "response": 200,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        },
+        {
+          "departure": "members",
+          "response": 503,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        },
+        {
+          "departure": "signout",
+          "response": 200,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        },
+        {
+          "departure": "signout",
+          "response": 503,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        }
+      ],
+      "total_intercepted_mutations": 6,
+      "forwarded_mutation_requests": 0,
+      "page_errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "scheme": "light",
+      "passed": true,
+      "native_confirmation_text": [
+        "Cancel leave for Dr <img src=x onerror=\"window.leaveCancelInjected=true\"> Long exact member name?\nFrom: 29 Oct 2026\nUntil: 3 Dec 2026\nCategory: Annual Leave\nSlot: Full Day\nStatus: Approved\nRecord ID: cross-month\n\nHistory is retained. Existing duties remain assigned and may need review.",
+        "Cancel leave for Dr <img src=x onerror=\"window.leaveCancelInjected=true\"> Long exact member name?\nFrom: 1 Nov 2026\nUntil: 8 Nov 2026\nCategory: Casual <Img Src=X>\nSlot: Morning\nStatus: Requested\nRecord ID: overlap-two\n\nHistory is retained. Existing duties remain assigned and may need review.",
+        "Cancel leave for Dr <img src=x onerror=\"window.leaveCancelInjected=true\"> Long exact member name?\nFrom: 1 Nov 2026\nUntil: 9 Nov 2026\nCategory: Sick Leave\nSlot: Afternoon\nStatus: Imported, Pending Review\nRecord ID: overlap-three\n\nHistory is retained. Existing duties remain assigned and may need review."
+      ],
+      "declined_mutation_count": 0,
+      "exact_mutations": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/overlap-two/cancel",
+          "body": "{}"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/overlap-two/cancel",
+          "body": "{}"
+        }
+      ],
+      "failed_mutation_not_automatically_replayed": true,
+      "explicit_same_target_retry": true,
+      "successful_get_refresh": true,
+      "sibling_records_unchanged": true,
+      "html_like_values_inert": true,
+      "synthetic_missing_target_refused": true,
+      "late_result_cases": [
+        {
+          "departure": "members",
+          "response": 200,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        },
+        {
+          "departure": "members",
+          "response": 503,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        },
+        {
+          "departure": "signout",
+          "response": 200,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        },
+        {
+          "departure": "signout",
+          "response": 503,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        }
+      ],
+      "total_intercepted_mutations": 6,
+      "forwarded_mutation_requests": 0,
+      "page_errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "scheme": "dark",
+      "passed": true,
+      "native_confirmation_text": [
+        "Cancel leave for Dr <img src=x onerror=\"window.leaveCancelInjected=true\"> Long exact member name?\nFrom: 29 Oct 2026\nUntil: 3 Dec 2026\nCategory: Annual Leave\nSlot: Full Day\nStatus: Approved\nRecord ID: cross-month\n\nHistory is retained. Existing duties remain assigned and may need review.",
+        "Cancel leave for Dr <img src=x onerror=\"window.leaveCancelInjected=true\"> Long exact member name?\nFrom: 1 Nov 2026\nUntil: 8 Nov 2026\nCategory: Casual <Img Src=X>\nSlot: Morning\nStatus: Requested\nRecord ID: overlap-two\n\nHistory is retained. Existing duties remain assigned and may need review.",
+        "Cancel leave for Dr <img src=x onerror=\"window.leaveCancelInjected=true\"> Long exact member name?\nFrom: 1 Nov 2026\nUntil: 9 Nov 2026\nCategory: Sick Leave\nSlot: Afternoon\nStatus: Imported, Pending Review\nRecord ID: overlap-three\n\nHistory is retained. Existing duties remain assigned and may need review."
+      ],
+      "declined_mutation_count": 0,
+      "exact_mutations": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/overlap-two/cancel",
+          "body": "{}"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/overlap-two/cancel",
+          "body": "{}"
+        }
+      ],
+      "failed_mutation_not_automatically_replayed": true,
+      "explicit_same_target_retry": true,
+      "successful_get_refresh": true,
+      "sibling_records_unchanged": true,
+      "html_like_values_inert": true,
+      "synthetic_missing_target_refused": true,
+      "late_result_cases": [
+        {
+          "departure": "members",
+          "response": 200,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        },
+        {
+          "departure": "members",
+          "response": 503,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        },
+        {
+          "departure": "signout",
+          "response": 200,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        },
+        {
+          "departure": "signout",
+          "response": 503,
+          "no_stale_toast": true,
+          "no_leave_refresh": true,
+          "new_view_or_login_preserved": true
+        }
+      ],
+      "total_intercepted_mutations": 6,
+      "forwarded_mutation_requests": 0,
+      "page_errors": []
+    }
+  ]
+}

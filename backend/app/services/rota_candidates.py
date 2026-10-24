@@ -15,7 +15,6 @@ from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime, time, timedelta
 from types import SimpleNamespace
-from math import floor
 from time import perf_counter
 from uuid import UUID, uuid4
 
@@ -57,6 +56,23 @@ CANDIDATE_ELIGIBLE = "eligible"
 CANDIDATE_REVIEW = "needs_review"
 CANDIDATE_BLOCKED = "blocked"
 
+# Ranking tiers folded into one integer score (docs/limits_callevel_fairness_contract.md 2):
+# a tight candidate (an individual limit or a unit staffing hard block would be hit) always
+# ranks after a non-tight one; then the distance below the call-level target dominates (one
+# duty = EQUALITY_WEIGHT); the remaining soft burden only breaks ties. Keeping it one sum keeps
+# the browser GPU kernel (which sums the score parts) in parity with the server order.
+TIGHT_WEIGHT = 100_000_000
+EQUALITY_WEIGHT = 100_000
+TIGHT_CODES = frozenset(
+    {
+        "monthly_24hr_limit",
+        "monthly_weekend_24hr_limit",
+        "monthly_same_group_limit",
+        "monthly_same_campus_limit",
+        "unit_safety_hard_block",
+    }
+)
+
 
 @dataclass
 class CandidateContext:
@@ -75,6 +91,8 @@ class CandidateContext:
     nearby_assignments: dict
     people: dict
     timings: dict
+    # ``{call_level: slots / members}`` for the month (fairness_targets), loaded on first use.
+    fairness_targets: dict | None = None
 
 
 def candidate_context(db: Session, month: str) -> CandidateContext:
@@ -245,15 +263,26 @@ def candidate_score(
     slot_safety_status: str,
     validation: dict[str, object],
     rules: RotaPhaseOneRules,
+    target: float | None = None,
+    tight: bool | None = None,
 ) -> tuple[int, dict[str, int]]:
     """Penalty score for a candidate (lower = better) and its components for display.
 
-    Weights: status (eligible 0 / review 35 / blocked 1000), same weekday-or-weekend type x30,
-    total duties x6, 24h x10, weekend 24h x12, same family x5, same campus x2, above-average
-    load x7 per duty, rest gap below the rule 80 (or within +12h 15), slot staffing 10/25,
-    override needed 20. Note the "burden" part already includes same_day_type and weekend,
-    so those are counted twice in the total.
+    Ranking order (docs/limits_callevel_fairness_contract.md section 2), as weight tiers:
+    1. tight (an individual limit or a unit staffing hard block would be hit): +100,000,000
+       in ``validation``;
+    2. distance from the call-level target (month duties, all campuses, minus ``target``):
+       ``fairness`` = 100,000 per duty, so the member furthest below target ranks first (the
+       fewest month duties within one call level). Without a target the month average is used;
+    3. soft burden as a tie-break: same weekday-or-weekend type x30, total duties x6, 24h x10,
+       weekend 24h x12, same family x5, rest gap below the rule 80 (or within +12h 15), slot
+       staffing 10/25, override needed 20; same campus x2 only for a tight candidate (campus
+       is considered only once hard limits are reached).
+    Status (eligible 0 / review 35 / blocked 1000) is also sorted first by the callers. Note the
+    "burden" part already includes same_day_type and weekend, so those count twice.
     """
+    if tight is None:
+        tight = is_tight(validation)
     status_penalty = {CANDIDATE_ELIGIBLE: 0, CANDIDATE_REVIEW: 35, CANDIDATE_BLOCKED: 1000}[status]
     burden_penalty = (
         counts["same_day_type"] * 30
@@ -261,9 +290,12 @@ def candidate_score(
         + counts["total_24hr"] * 10
         + counts["weekend_24hr"] * 12
         + counts["same_group"] * 5
-        + counts["same_campus"] * 2
+        + (counts["same_campus"] * 2 if tight else 0)
     )
-    fairness_penalty = max(0, counts["total_assignments"] - floor(average_assignments)) * 7
+    reference = average_assignments if target is None else target
+    fairness_penalty = round((counts["total_assignments"] - reference) * 1000) * (
+        EQUALITY_WEIGHT // 1000
+    )
     rest_penalty = 0
     if rest_gap_hours is not None:
         minimum_rest = rules.rest_rules.minimum_gap_after_24hr_hours
@@ -276,7 +308,9 @@ def candidate_score(
         staffing_penalty = 10
     elif slot_safety_status == SAFETY_HARD_BLOCK:
         staffing_penalty = 25
-    validation_penalty = 20 if validation.get("requires_override") else 0
+    validation_penalty = (20 if validation.get("requires_override") else 0) + (
+        TIGHT_WEIGHT if tight else 0
+    )
     parts = {
         "status": status_penalty,
         "same_day_type": counts["same_day_type"] * 30,
@@ -288,6 +322,28 @@ def candidate_score(
         "validation": validation_penalty,
     }
     return sum(parts.values()), parts
+
+
+def is_tight(validation: dict[str, object]) -> bool:
+    """A hard limit would be hit: an individual duty limit or a unit staffing hard block."""
+    return any(
+        isinstance(item, dict) and item.get("code") in TIGHT_CODES
+        for item in validation.get("issues", [])
+    )
+
+
+def context_targets(db: Session, context: CandidateContext) -> dict:
+    """The month's call-level targets, computed once per context from its preloaded data."""
+    if context.fairness_targets is None:
+        from app.services.fairness_targets import target_by_level
+
+        try:
+            context.fairness_targets = target_by_level(
+                db, context.month, context.rules, postings=context.postings, leaves=context.leaves
+            )
+        except Exception:  # noqa: BLE001 - ranking must not fail on a reporting helper
+            context.fairness_targets = {}
+    return context.fairness_targets
 
 
 def candidate_reasons(
@@ -388,6 +444,9 @@ def candidate_to_dict(
         ),
         slot,
     )
+    call_level = safety_row.get("call_level") or person.call_level
+    target = context_targets(db, context).get(call_level)
+    tight = is_tight(validation)
     score, score_parts = candidate_score(
         status=status,
         counts=counts,
@@ -396,6 +455,8 @@ def candidate_to_dict(
         slot_safety_status=str(validation["slot_safety"]["safety_status"]),
         validation=validation,
         rules=context.rules,
+        target=target,
+        tight=tight,
     )
     historical = historical_score(context.history, person_id, slot)
     score_parts["historical_fairness"] = historical["penalty"]
@@ -404,9 +465,14 @@ def candidate_to_dict(
     return {
         "person_id": str(person.id),
         "person_name": person.canonical_name,
-        "call_level": safety_row.get("call_level") or person.call_level,
+        "call_level": call_level,
         "posting_type": safety_row.get("posting_type"),
         "candidate_status": status,
+        "tight": tight,
+        "call_level_target": None if target is None else round(target, 2),
+        "target_distance": None
+        if target is None
+        else round(counts["total_assignments"] - target, 2),
         "rank_score": score,
         "score_parts": score_parts,
         "requires_override": bool(validation.get("requires_override")),
@@ -416,6 +482,15 @@ def candidate_to_dict(
         "history": historical,
         "rest_gap_hours": None if rest_gap_hours is None else round(rest_gap_hours, 1),
         "reasons": [historical["reason"]]
+        + (
+            [
+                f"Call-level target this month: {target:.2f} duties; this member has "
+                f"{counts['total_assignments']} ({counts['total_assignments'] - target:+.2f})."
+            ]
+            if target is not None
+            else []
+        )
+        + (["A hard limit would be hit (individual limit or unit staffing)."] if tight else [])
         + candidate_reasons(
             status=status,
             safety_row=safety_row,

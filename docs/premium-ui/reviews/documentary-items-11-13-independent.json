@@ -1,0 +1,249 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-10-24T03:39:21.156591+00:00",
+  "reviewer": "/root/documentary_acceptance_next",
+  "independence": "Source/documentary review by specialist; no application changes or test execution by this reviewer.",
+  "scope": "Narrow documentary acceptance of original approved items11 and13 only. Does not certify current operational runtime, full workflow equivalence, unrelated UI requirements or completion of the260-item programme.",
+  "items": [
+    {
+      "item_id": 11,
+      "requirement": "Establish representative fixtures containing long names, missing values, large counts, mixed statuses and boundary dates.",
+      "result": "documentary_pass",
+      "conditions": [
+        {
+          "condition": "Provide concrete fixtures covering long names, missing values, large counts, mixed statuses and boundary dates",
+          "result": "satisfied",
+          "evidence": "docs/premium-ui/representative-fixtures.md; inspected fixture/assertion anchors below"
+        },
+        {
+          "condition": "Link fixture definitions to their assertion locations and document synthetic/disposable scope",
+          "result": "satisfied",
+          "evidence": "docs/premium-ui/representative-fixtures.md; inspected fixture/assertion anchors below"
+        }
+      ],
+      "reason": "Concrete established fixture families cover every requested condition, link scripts/assertions and distinguish intercepted/disposable inputs from production records."
+    },
+    {
+      "item_id": 13,
+      "requirement": "Identify protected workflow invariants, including selected-month continuity, assignment preservation, reviewed imports and explicit publishing.",
+      "result": "documentary_pass",
+      "conditions": [
+        {
+          "condition": "Identify selected-month continuity, assignment preservation, reviewed imports and explicit publication/apply boundaries",
+          "result": "satisfied",
+          "evidence": "docs/premium-ui/protected-workflow-invariants.json#/invariants"
+        },
+        {
+          "condition": "Link each invariant to affected frontend modules and its planned or existing verification evidence",
+          "result": "satisfied",
+          "evidence": "docs/premium-ui/protected-workflow-invariants.json#/invariants"
+        }
+      ],
+      "reason": "All four named invariant families have explicit contracts, affected modules, tests, concrete planned/existing assertions and bounded verification limitations."
+    }
+  ],
+  "fixture_source_inspection": [
+    {
+      "path": "frontend/tests/premium-profile-identity.browser.mjs",
+      "fixture_lines": [
+        11,
+        14,
+        19,
+        23
+      ],
+      "assertion_lines": [
+        17,
+        18,
+        24
+      ],
+      "conditions": [
+        "long identities",
+        "missing values",
+        "boundary dates"
+      ],
+      "inspection": "Long repeated surname; null unit/notes/end date; zero/false/empty; past/future/starts-today/ends-today designation variants with exact presentation and geometry assertions.",
+      "sha256": "b38bbc43cd061fe9a458b897f052459d20d61dd3579791f9045ba8f69fde13fd"
+    },
+    {
+      "path": "frontend/tests/premium-staffing-review.browser.mjs",
+      "fixture_lines": [
+        9,
+        13,
+        15
+      ],
+      "assertion_lines": [
+        18,
+        19,
+        20
+      ],
+      "conditions": [
+        "large counts",
+        "boundary collection sizes"
+      ],
+      "inspection": "103 synthetic rows split100+3; exact represented values and final review target checked; further count variants remain in the script.",
+      "sha256": "1a4c0cd7e631fe69b012b992af4cbd329b25ac41f7d40c437e006ef4a962e880"
+    },
+    {
+      "path": "frontend/tests/premium-leave-pressure.browser.mjs",
+      "fixture_lines": [
+        18
+      ],
+      "assertion_lines": [
+        21,
+        22
+      ],
+      "conditions": [
+        "large counts",
+        "mixed statuses"
+      ],
+      "inspection": "Twelve unit groups/six call groups/nine days; exact server-returned counts/order and Approved/Requested/Imported, Pending Review labels asserted.",
+      "sha256": "930c4781459244b6a9005eff64557dec9353e88e0453f478241b9a20440ba3d5"
+    },
+    {
+      "path": "frontend/tests/premium-monthly-leave-review.browser.mjs",
+      "fixture_lines": [
+        14,
+        17
+      ],
+      "assertion_lines": [
+        18,
+        20,
+        22
+      ],
+      "conditions": [
+        "long identities",
+        "large counts",
+        "mixed statuses",
+        "boundary dates"
+      ],
+      "inspection": "18 intercepted requests with October29-December3 range, requested/imported statuses, full-date and independent acknowledgement assertions.",
+      "sha256": "a74030383a9104084b59c6e7a27f5158ddce903af9a9deaf6562eb09c911e093"
+    },
+    {
+      "path": "frontend/tests/premium-rules-history-time.browser.mjs",
+      "fixture_lines": [
+        11,
+        12,
+        14
+      ],
+      "assertion_lines": [],
+      "conditions": [
+        "boundary dates",
+        "missing timestamp values"
+      ],
+      "inspection": "Offset day-boundary, unzoned/missing/invalid timestamps and two named timezones are concrete fixture definitions; no execution claimed.",
+      "sha256": "f283baf998a6a795f13d63225de3770a9f669c0125dd87e7666e16a8e7ce0df4"
+    }
+  ],
+  "invariant_source_inspection": [
+    {
+      "id": "selected-month-continuity",
+      "contract": "Navigation, retries and review actions retain the explicitly selected working month. Requests and confirmations identify that same month.",
+      "modules": [
+        "frontend/src/main.ts",
+        "frontend/src/leave-approval.ts",
+        "frontend/src/rota-compute.ts"
+      ],
+      "tests": [
+        "frontend/tests/premium-read-deadline.browser.mjs",
+        "frontend/tests/premium-generation-actions.browser.mjs",
+        "frontend/tests/premium-monthly-leave-review.browser.mjs"
+      ],
+      "assertions": [
+        "Read deadline retry checks working-month 2026-11 and every rota-review GET query.",
+        "Generation fixtures check selected month in requests, review tokens and downloads.",
+        "Monthly approval fixture checks exact month/review token/acknowledgement body."
+      ],
+      "status_note": "Documented evidence/verification references inspected; status freshness and operational assertions are not newly certified."
+    },
+    {
+      "id": "assignment-preservation-and-explicit-apply",
+      "contract": "Opening, reviewing and closing a proposal cannot apply it. Existing reviewed apply/reversal boundaries and revision payloads stay unchanged. Presentation must not recompute assignments.",
+      "modules": [
+        "frontend/src/rota-compute.ts",
+        "frontend/src/rota-intelligence.ts"
+      ],
+      "tests": [
+        "frontend/tests/premium-generation-actions.browser.mjs",
+        "frontend/tests/premium-template-forced.browser.mjs",
+        "frontend/tests/premium-generation-equivalence.browser.mjs",
+        "frontend/tests/premium-optimizer-equivalence.browser.mjs"
+      ],
+      "assertions": [
+        "Forced-label fixture asserts no POST before review acknowledgement, exact revision27 apply and callback once.",
+        "Existing generation suite checks exact apply/revert bodies and callbacks; assistant suggestion has no assignment or policy write.",
+        "Fresh48 real optimizer UI runs compare distinct alternatives, objectives/proof flags/burden, exact requests, locks, selected repair, preferences, saved history and reversal restoration; preview/selection do not save."
+      ],
+      "status_note": "Documented evidence/verification references inspected; status freshness and operational assertions are not newly certified."
+    },
+    {
+      "id": "reviewed-import-decisions",
+      "contract": "Candidate identity, row exclusions, roster choices and selected import context survive permitted preview refreshes. A stale preview cannot be applied; a new file starts a new review lifetime.",
+      "modules": [
+        "frontend/src/member-workspace.ts",
+        "frontend/src/operational-import.ts"
+      ],
+      "tests": [
+        "frontend/tests/premium-member-csv-lifetime.browser.mjs",
+        "frontend/tests/premium-member-csv-choice-independent.browser.mjs",
+        "frontend/tests/premium-import-candidate-choice.browser.mjs",
+        "frontend/tests/premium-import-equivalence.browser.mjs"
+      ],
+      "assertions": [
+        "CSV lifetime test checks selected-file bytes, pending-control locks, exact retry payload and one completion callback.",
+        "Candidate choice test checks corrections, mapping/date-format retention and stale Apply disabled state.",
+        "Fresh real-API runs cover all3member/all3operational CSVmodes: received byte hashes, exact payloads, refreshed exclusions, selected missing-member archive, refusal/no-write boundaries and replacement interval preservation on3engines320/1280."
+      ],
+      "status_note": "Documented evidence/verification references inspected; status freshness and operational assertions are not newly certified."
+    },
+    {
+      "id": "explicit-publishing",
+      "contract": "Generating or saving a draft does not publish. Publishing retains its explicit review/confirmation, selected month and existing request boundary.",
+      "modules": [
+        "frontend/src/main.ts",
+        "frontend/src/rota-compute.ts",
+        "frontend/src/rota-intelligence.ts"
+      ],
+      "tests": [
+        "frontend/tests/premium-generation-actions.browser.mjs",
+        "frontend/tests/premium-publish-equivalence.browser.mjs"
+      ],
+      "assertions": [
+        "Publish fixtures require a note, dismiss confirmation without a POST, then accept with exact selected-month body.",
+        "Generation apply fixtures preserve existing Not published result text and separate publish journey.",
+        "Fresh fullapp3engine320/1280 ready/warnings/blocked/viewer403 pairs prove note/refusal/acknowledgement/authority/persistence boundaries, preserved rota and one-cell-validated final workbook equality."
+      ],
+      "status_note": "Documented evidence/verification references inspected; status freshness and operational assertions are not newly certified."
+    }
+  ],
+  "inspected_sha256": {
+    "docs/premium-ui/acceptance-criteria/items-001-086.json": "5f84ff2a0927e6f67f8e09d326e5874bb49e27b6c1752ad6443c5a4b8ccb0625",
+    "docs/premium-ui/representative-fixtures.md": "7b021148d271d359571ab7a33529e4601004ad492bd3695c3df23255511a1035",
+    "docs/premium-ui/protected-workflow-invariants.json": "9ac423c229075902fa4d77f8cf8088d80552ea0d056b7f5a50acd010fdf046c5",
+    "frontend/src/leave-approval.ts": "42e5a47751ae081d1b97108209c7a2b53272985251d153aa065f7718f43e544f",
+    "frontend/src/main.ts": "fcc39d763c0c5b3d0e3551215c301c7d0691b2b9d071b53b079e73f7de7bb501",
+    "frontend/src/member-workspace.ts": "4ddb7efade2d5886e8d62dc5fa7225eb2448b02c4be37ebb0ce474b5d3562c41",
+    "frontend/src/operational-import.ts": "9e11514d205d71049e2f0baa10f005def74941e0b90584a9c84b968f9ae19dfc",
+    "frontend/src/rota-compute.ts": "e5f967e6166e2ace9352983a468002d45850188d8811363230305d7597fb70ab",
+    "frontend/src/rota-intelligence.ts": "bda7257a3cafdcf6c4122575cc454abb1623f27dbd13950ea1d61260a23bb79b",
+    "frontend/tests/premium-generation-actions.browser.mjs": "61516647df90722ff86ac2394fc4f2f0b390d6c8ebdb46392c93e9b8735a5c9e",
+    "frontend/tests/premium-generation-equivalence.browser.mjs": "aa2d5e37e0e130f7b191f3262f901077116e6e84933500375de134718ee1cf34",
+    "frontend/tests/premium-import-candidate-choice.browser.mjs": "b20dd97cbd33229ed8f40b4b510510e92cb1f5b8e357a46c1a7938ddc02440f5",
+    "frontend/tests/premium-import-equivalence.browser.mjs": "6e87aa634db43078b66ad94728215fceade8bd7270f781a6cfbb2808be20d9d0",
+    "frontend/tests/premium-member-csv-choice-independent.browser.mjs": "2d6f0c929d6752e6a95a8d1407140281041afe0cbf3977d27e0b7739d389f75a",
+    "frontend/tests/premium-member-csv-lifetime.browser.mjs": "dd8cc6e20253e597af1c1edb76543b9d4e821c0acee0e6155e5c2d40f6e76d45",
+    "frontend/tests/premium-monthly-leave-review.browser.mjs": "a74030383a9104084b59c6e7a27f5158ddce903af9a9deaf6562eb09c911e093",
+    "frontend/tests/premium-optimizer-equivalence.browser.mjs": "fd5ee8c7e4039aa43459af0ad7eb35cf20e2545fe4a2584d34b5047e8fa91e83",
+    "frontend/tests/premium-publish-equivalence.browser.mjs": "ad830c1e42205f7923a11d89d9e205e99b6cc181a4256566492263423c18517e",
+    "frontend/tests/premium-read-deadline.browser.mjs": "a68fa021f24ec505e9fbaef9d45e6463e0ba1fd05f2d2c30245a4b4f0af5205f",
+    "frontend/tests/premium-template-forced.browser.mjs": "db73375e53d3b71d158c9f55430ff164609cd5870ac7c07a7922653997dac7a6"
+  },
+  "limits": [
+    "No tests executed, no screenshots reviewed and no production actions performed in this documentary audit.",
+    "Historical reports retain their own source snapshots; matching references do not turn their runtime results into current certification.",
+    "Physical-device and native-assistive checks are separate requirements and are not necessary to certify these two definition deliverables.",
+    "This reviewer does not mutate the traceability ledger or goal status."
+  ],
+  "runtime_completion_certified": false,
+  "programme_completion_certified": false
+}

@@ -1,0 +1,88 @@
+{
+  "reviewer": "motion_fallback_review (specialist 5 of 10)",
+  "recorded_at_utc": "2026-10-22T13:08:43.915728+00:00",
+  "scope": "Read-only frontend source audit; only this review artifact written. No browser execution, backend edits, shared ledger edits or requirement certification.",
+  "requirement_ids": [
+    38,
+    39,
+    215
+  ],
+  "source_sha256": {
+    "frontend/src/main.ts": "367ac6a5fb23c8cdc2159086d8bec58da86c4e42f0e69ce33d9305062e2c40f9",
+    "frontend/src/styles.css": "e5e5802b5cdef146b542fcfafc1b2040f232898cafaa89dcf30554235da140b5",
+    "frontend/src/premium-theme.css": "c5d2653ab6c46fadb54a904a7a1bab406831eca8b361ab3c03d806980dbefb0e",
+    "frontend/index.html": "9cbe12c0bc3b352739bd9c96e6137678927a6bf40685c63c4421a527702e709a",
+    "frontend/src/rota-rules.ts": "cee7024308a1623dd69fd21c8e822ed4cb7b5d5a413dc4ab2ab8a5a4f9e19204",
+    "frontend/src/limits.ts": "bda2282d83716df03daa043fa46c395d3d8c1c2969a4de1f159fc992408ab925"
+  },
+  "existing_protections": [
+    {
+      "path": "frontend/src/styles.css",
+      "line": 165,
+      "finding": "Body uses Inter followed by local ui-sans-serif/system-ui/platform fonts and sans-serif. No @font-face or external font stylesheet found in examined CSS/index; Inter is optional rather than required for readable labels."
+    },
+    {
+      "path": "frontend/src/styles.css",
+      "line": 175,
+      "finding": "Universal reduced-motion rule limits animation duration/iteration, transition duration and sets scroll-behavior:auto!important."
+    },
+    {
+      "path": "frontend/src/premium-theme.css",
+      "line": 530,
+      "finding": "Universal reduced-motion override disables CSS animation and transitions including pseudo-elements."
+    },
+    {
+      "path": "frontend/src/rota-rules.ts",
+      "line": 203,
+      "finding": "Operational icons here are inline SVG with aria-hidden/focusable=false; no icon-font request is needed."
+    },
+    {
+      "path": "frontend/src/limits.ts",
+      "line": 625,
+      "finding": "Existing scroll behavior already branches on reducedMotion(), providing a local implementation pattern."
+    }
+  ],
+  "source_confirmed_gaps": [
+    {
+      "id": "explicit-unit-scroll-motion",
+      "severity": "medium",
+      "requirement_ids": [
+        39,
+        215
+      ],
+      "path": "frontend/src/main.ts",
+      "line": 4309,
+      "finding": "scrollUnitAssignmentIntoView explicitly requests behavior:smooth without checking reduced-motion. CSS scroll-behavior:auto does not replace an explicit JavaScript smooth request.",
+      "safe_fix": "Use matchMedia(\"(prefers-reduced-motion: reduce)\").matches ? \"auto\" : \"smooth\" for this existing scroll request. Keep assignment selection, target, centering, highlight lifecycle and scheduling data unchanged.",
+      "verification": [
+        "Run the real unit-row reveal action with reducedMotion:reduce and instrument scrollIntoView to assert behavior:auto plus the exact existing assignment target.",
+        "Repeat with no-preference and assert smooth, same target and block:center.",
+        "Assert target row remains identifiable and operable with computed CSS animation/transition disabled; no request/payload changes."
+      ],
+      "limits": "Source-confirmed missing preference branch; no real-browser reproduction performed in this audit."
+    },
+    {
+      "id": "undefined-mono-fallback",
+      "severity": "low",
+      "requirement_ids": [
+        38
+      ],
+      "path": "frontend/src/styles.css",
+      "line": 500,
+      "finding": "readonly-field uses font-family:var(--font-mono) without a fallback. No --font-mono definition exists in current src/public CSS; declaration becomes invalid and inherits the proportional body font. Other mono uses already provide ui-monospace,monospace fallbacks.",
+      "safe_fix": "Add var(--font-mono, ui-monospace, monospace) at this declaration, consistent with member-match__raw and archive-all__phrase. Avoid downloading fonts or changing field semantics.",
+      "verification": [
+        "On an actual readonly field, assert computed font-family includes monospace with --font-mono absent; block external font requests.",
+        "At 320px, long identifier wraps within the field and has no page overflow; label/copy action remains accessible.",
+        "Verify light/dark and 200% text do not clip the value."
+      ],
+      "limits": "This is a typography consistency gap; existing inherited fallback remains readable. No claim that labels disappear or control functionality currently fails."
+    }
+  ],
+  "unverified": [
+    "All icon-only controls have accessible names across every operational state.",
+    "Reduced-motion browser behavior for every dialog/loading treatment.",
+    "Physical device and assistive technology checks."
+  ],
+  "whole_requirement_completion_proven": false
+}

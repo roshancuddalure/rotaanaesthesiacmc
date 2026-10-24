@@ -1,0 +1,73 @@
+{
+  "recorded_at_utc": "2026-10-22T16:50:35.015758+00:00",
+  "completion_claim": false,
+  "requirements": [
+    106,
+    107,
+    109,
+    208,
+    209,
+    212,
+    215,
+    219,
+    258
+  ],
+  "source_sha256": {
+    "frontend/src/reference-workspace.ts": "93ba8a2d765f43f0fb220586393b3a1cdf6cb944d9fb1ebd26290028a450208e",
+    "frontend/src/recycle-bin.ts": "7d2e02cd9f198999e2c7eaf788218ed3164781b39536176a63180a92c65ffc17",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "7259da3c1865080978f547ece2320762d4a2b9ec83d2422ba686bad17b67bc28"
+  },
+  "scope": "Reference search results and recorded-past shown-row selection feedback with preserved workflow scope.",
+  "changes": [
+    "Unit and reference lists expose polite atomic result counts, explicit no-match text and distinct initial-empty/read-failure states. Existing local node filtering and combined unit status filter retained.",
+    "Removed the earlier unit-search assignment that was immediately overwritten by the combined filter; the single effective handler remains.",
+    "Recorded past duties expose selected-of-shown month-specific live summary, with explicit truncated shown-row scope. Existing selected Set, native mixed checkbox, focus, whole-month action, endpoints and delete payloads unchanged.",
+    "Scoped recorded-past/recycle destructive controls stop interpolating backgrounds during theme switches, avoiding measured dark-theme contrast failure. Normal transform transition remains."
+  ],
+  "checks": {
+    "new_search_selection_workflows": 18,
+    "three_engines": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "widths": [
+      320,
+      1280
+    ],
+    "existing_reference_current_record_workflows": 24,
+    "existing_recycle_selected_delete_widths": 2,
+    "total_bounded_workflows": 44,
+    "unit_tests": 100,
+    "build_exit_code": 0,
+    "build_inputs_held": true
+  },
+  "contrast_before": {
+    "report": "docs/premium-ui/qa-recycle-theme-contrast-before.json",
+    "ratio": 3.74,
+    "foreground": "#ffb8c8",
+    "background": "#5e626f",
+    "context": "Dark theme switch in original existing regression; recorded targets include destructive controls. Not a claim that all settled palette colors failed."
+  },
+  "evidence": [
+    "docs/premium-ui/qa-search-selection.json",
+    "docs/premium-ui/reviews/reference-current-record-current.json",
+    "docs/premium-ui/qa-recycle-theme-contrast-before.json",
+    "tmp/premium-recycle-current.log",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+  ],
+  "tests": [
+    "frontend/tests/premium-search-selection.browser.mjs",
+    "frontend/tests/premium-reference-current-record.browser.mjs",
+    "frontend/tests/recycle-bin.browser.mjs"
+  ],
+  "limitations": [
+    "New search/selection fixtures are GET-only; original recycle regression intercepts preview/delete/restore/purge and checks exact selected IDs versus month boundaries. No actual database deletion or production calls.",
+    "Live-region DOM semantics and text checked; actual NVDA/VoiceOver announcement timing unverified. Physical/native assistive checks pending.",
+    "No-result paths cover two-choice fixtures and active/archived combination; large-list performance, every catalog kind, role and keyboard input method remain separate acceptance.",
+    "New selection fixture covers ready/loading/month-change scope, not all failure/refresh/confirmation variants. Existing two-width recycle workflow provides bounded mutation-contract coverage, not all backend enforcement.",
+    "Reference24regression source hashes held; original recycle suite has no complete dependency-hold declaration. No whole-worktree certification inferred.",
+    "This batch makes no backend/API-contract/permission/scheduling/persisted-data/export-content/production changes. Full260goal active/incomplete."
+  ]
+}

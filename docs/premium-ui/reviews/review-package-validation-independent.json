@@ -1,0 +1,62 @@
+{
+  "reviewer": "review_package_independent",
+  "recorded_at_utc": "2026-10-22T04:24:09.119146+00:00",
+  "script_sha256": "bf3f931475fdcbffb6ec1ad6d8c6ed40633292ee31a2586c50f9f5939e3e5fb7",
+  "results": [
+    {
+      "case": "actual_v2_archive_and_current_source_binding",
+      "result": "pass",
+      "archive": "D:\\Coding\\Duty Rota software\\tmp\\premium-frontend-review-20261022-v2.zip",
+      "sha256": "28e52f21fd1d4aac21db97cb8897e30434790d51b6e960afdfaaa7799a63ad89",
+      "entries_verified": 15,
+      "status": "review_only_incomplete"
+    },
+    {
+      "case": "unexpected_log",
+      "result": "pass_rejected",
+      "reason": "Unexpected archive entry: site/private.log"
+    },
+    {
+      "case": "traversal",
+      "result": "pass_rejected",
+      "reason": "Unsafe archive entry: site/../outside.js"
+    },
+    {
+      "case": "noncanonical",
+      "result": "pass_rejected",
+      "reason": "Unsafe archive entry: site//frontend-bootstrap.js"
+    },
+    {
+      "case": "symlink",
+      "result": "pass_rejected",
+      "reason": "Nonregular archive entry: site/frontend-bootstrap.js"
+    },
+    {
+      "case": "corruption",
+      "result": "pass_rejected",
+      "reason": "Artifact integrity failure: site/frontend-bootstrap.js"
+    },
+    {
+      "case": "duplicate",
+      "result": "pass_rejected",
+      "reason": "Duplicate entries or missing manifest"
+    },
+    {
+      "case": "missing_dynamic_chunk",
+      "result": "pass_rejected",
+      "reason": "Build references a missing chunk: site/assets/rota-intelligence-DI3ys3tn.js"
+    },
+    {
+      "case": "missing_worker",
+      "result": "pass_rejected",
+      "reason": "Build references a missing chunk: site/assets/compute-worker-COt4ss8Q.js"
+    }
+  ],
+  "scope": "Actual ZIP read-only validation and independent synthetic malformed ZIP probes. Synthetic ZIPs remain in tmp. No build/deploy/backend action in this review.",
+  "limits": [
+    "Archive SHA must be obtained from separately trusted channel; self-consistent manifest is integrity checking, not authenticity.",
+    "No previous production release artifact or live rollback compatibility established.",
+    "Negative probes do not certify all possible malicious archives; this verifier is for bounded local review artifacts.",
+    "Full260 acceptance, physical devices and native screen-reader checks remain incomplete."
+  ]
+}

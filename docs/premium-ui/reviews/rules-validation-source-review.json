@@ -1,0 +1,19 @@
+{
+  "recorded_at_utc": "2026-10-24T04:41:33.449670+00:00",
+  "reviewer": "/root/acceptance_runtime_generation",
+  "scope": "Independent read-only source audit; no edits or executions during this review. Root records returned findings.",
+  "source_sha256": {
+    "frontend/src/rota-rules.ts": "90e39db263cdbf3b9a2618798b82e1c791d6b3e87b8d961fa78d987731ce7cd1"
+  },
+  "findings": [
+    "Confirmed old response could mark edited draft current during400msdebounce because sequence changedonlyatnewrequest.",
+    "Immediate draftversion/sequence invalidation beforepaintandrequest-capturedversion rejectobsolete success/error; obsolete result returnsnull.",
+    "Review consumer checks livepage,connected/opendialog,localreviewsequence,currentdraft/request beforephase/focus;Retryfeedbackalsoowned.",
+    "applySaved/rebase invalidatesbeforepainting. Existingvalidation andsavepayloadfunctions unchanged. No newblockingregression found."
+  ],
+  "remaining_gaps": [
+    "Some old warning/head summary counts rely on global previous-check context; fuller per-row stale labeling remains useful.",
+    "Existing conflict-recovery GET handlers for stale Reviewagain/Reload can applyafterdialogclose/newedit; newvalidationtestdoesnotcoverthis separateawaitedGETrace. Guard/testnext.",
+    "This audit didnotexecute tests or certify effective-date/history policy semantics."
+  ]
+}

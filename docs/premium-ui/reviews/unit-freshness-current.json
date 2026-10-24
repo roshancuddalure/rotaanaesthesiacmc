@@ -1,0 +1,39 @@
+{
+    "reviewer":  "unit_stale_review",
+    "status":  "accepted_for_bounded_unit_board_read_recovery_scope",
+    "reviewed_utc":  "2026-10-21T17:19:25.2628328Z",
+    "scope":  "Frontend-only unit board freshness, same-month stale fallback, delayed filter edits, failed next-month load, and two Chromium sign-out/sign-in cache checks",
+    "source_hashes":  {
+                          "frontend/src/unit-board-filters.ts":  "1364ee52ab03cc0e4ae0eb2f95065dbaa513285d50c7fc39c2e57ee72a87de21",
+                          "frontend/src/main.ts":  "a555f7df6f1606b4f5220c05767bf86e1e5149fec539c5f2d45adf928f83c5bb"
+                      },
+    "test":  "frontend/tests/premium-unit-freshness-independent.browser.mjs",
+    "evidence":  "docs/premium-ui/qa-unit-freshness-independent.json",
+    "results":  {
+                    "cross_browser_workflows":  6,
+                    "widths":  [
+                                   320,
+                                   1280
+                               ],
+                    "engines":  [
+                                    "Chromium",
+                                    "Firefox",
+                                    "WebKit"
+                                ],
+                    "account_switch_subchecks":  2,
+                    "backend_writes":  0
+                },
+    "findings_resolved":  [
+                              "Private reset now clears unit cache and increments outstanding read generation in resetPrivateSessionView, rather than only clearing loaded-month marker.",
+                              "Startup now renders linked non-overview destination after sign-in even if old activeView equals destination."
+                          ],
+    "required_fixes":  [
+
+                       ],
+    "limitations":  [
+                        "Network responses are intercepted; backend persistence and permissions are not certified.",
+                        "No physical-device or actual screen-reader verification.",
+                        "Sign-out/sign-in cache checks cover Chromium only.",
+                        "Not a whole-plan completion claim."
+                    ]
+}

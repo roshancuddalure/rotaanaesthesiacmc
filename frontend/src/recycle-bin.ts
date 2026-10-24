@@ -9,6 +9,7 @@ import {
   type AdminDeleteKind, type RecordedPastDuty, type RecycleBinBatch, type RecycleRestoreResult,
 } from "./services/api";
 import { badge, codeLabel, emptyState, esc, formatDate, formatMonth } from "./ui";
+import { formatAuditTimestamp } from "./audit-time";
 
 const KIND_LABEL: Record<AdminDeleteKind, [string, string]> = {
   member: ["Member", "members"],
@@ -23,10 +24,7 @@ function kindText(kind: string, count: number): string {
 }
 
 function when(value: string | null | undefined): string {
-  if (!value) return "—";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return formatDate(value, { weekday: false });
-  return date.toLocaleString("en-GB", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", timeZone: "Asia/Calcutta" });
+  return formatAuditTimestamp(value, "Asia/Kolkata");
 }
 
 function messageOf(error: unknown, fallback: string): string {
@@ -72,68 +70,132 @@ export async function renderRecycleBin(root: HTMLElement): Promise<void> {
   const outcomes = new Map<string, Outcome>();
   let busy = false;
   let notice = "";
+  let loaded = false;
+  let loadError = "";
+  let refreshRequired = false;
+  let retired = false;
+  const alive = () => !retired && host.isConnected && root.contains(host);
+  const removal = new MutationObserver((records) => {
+    if (!host.isConnected || records.some((record) => [...record.removedNodes].some((node) => node === host || node.contains(host)))) {
+      retired = true;
+      removal.disconnect();
+    }
+  });
+  removal.observe(document.body, { childList: true, subtree: true });
+
+  // Replacing a focused action temporarily moves focus to the body. Restore it only
+  // while the user has not deliberately moved into another part of the application.
+  function focusAfterAction() {
+    let owned = host.contains(document.activeElement);
+    const moved = (event: FocusEvent) => {
+      if (event.target !== document.body && !host.contains(event.target as Node)) owned = false;
+    };
+    document.addEventListener("focusin", moved);
+    return (selector: string) => {
+      document.removeEventListener("focusin", moved);
+      if (!owned || !alive() || (document.activeElement !== document.body && !host.contains(document.activeElement))) return;
+      const target = host.querySelector<HTMLElement>(selector);
+      if (target && !target.matches("button, input, select, textarea, a[href]")) target.setAttribute("tabindex", "-1");
+      target?.focus();
+    };
+  }
 
   const intro = `<section class="panel"><h3>Recycle bin</h3>
     <p>Deleted members, leave, unit postings and past duties stay here for 30 days. Restore puts them back as they were; after 30 days they are removed for good.</p></section>`;
 
   function render() {
-    if (!host.isConnected) return;
+    if (!alive()) return;
+    if (!loaded) {
+      host.innerHTML = `${intro}<section class="panel" ${loadError ? 'role="alert"' : ""}>
+        ${loadError ? `<h3>Could not load the recycle bin</h3><p>${esc(loadError)}</p><button type="button" class="primary" data-rb-retry ${busy ? "disabled" : ""}>Try again</button>` : '<p role="status">Loading the recycle bin…</p>'}
+      </section>`;
+      return;
+    }
+    const missingOutcomes = [...outcomes].filter(([id]) => !batches.some((batch) => batch.batch_id === id));
     host.innerHTML = `${intro}
       <section class="panel" aria-labelledby="rb-list-title">
         <div class="table-caption"><h3 id="rb-list-title">Deleted in the last 30 days</h3><span class="table-caption__count">${batches.length} ${batches.length === 1 ? "entry" : "entries"}</span></div>
         <p class="rb-notice" role="status">${esc(notice)}</p>
+        ${refreshRequired ? `<div class="rb-refresh" ${loadError ? 'role="alert"' : 'role="status"'}>
+          <h4>${loadError ? "The action finished, but the list could not be refreshed" : "Refreshing the recycle bin…"}</h4>
+          <p>Action results below are confirmed. The displayed list has not been refreshed; restore and delete controls are unavailable until a fresh list is loaded.</p>
+          ${loadError ? `<p>${esc(loadError)}</p><button type="button" class="primary" data-rb-retry ${busy ? "disabled" : ""}>Refresh list</button><p>Refresh only reloads the list. It does not repeat a restore or delete.</p>` : ""}
+        </div>` : ""}
+        ${missingOutcomes.map(([, outcome]) => `<div class="rb-batch__outcome is-${outcome.tone}" role="status"><p>${esc(outcome.text)}</p>${outcome.failed?.length ? `<ul>${outcome.failed.map((item) => `<li><strong>${esc(item.label)}</strong>: ${esc(item.reason)}</li>`).join("")}</ul>` : ""}</div>`).join("")}
         ${batches.length
-          ? `<ul class="rb-list">${batches.map((batch) => batchCard(batch, outcomes.get(batch.batch_id), busy)).join("")}</ul>`
-          : emptyState({ title: "Nothing deleted in the last 30 days", body: "Items you delete from Members, Leave, Units or Past duties appear here." })}
+          ? `<ul class="rb-list">${batches.map((batch) => batchCard(batch, outcomes.get(batch.batch_id), busy || refreshRequired)).join("")}</ul>`
+          : refreshRequired ? '<p>Awaiting a fresh list.</p>' : emptyState({ title: "Nothing deleted in the last 30 days", body: "Items you delete from Members, Leave, Units or Past duties appear here." })}
       </section>`;
   }
 
   async function load() {
-    host.innerHTML = `${intro}<section class="panel"><p role="status">Loading the recycle bin…</p></section>`;
-    try {
-      batches = await getRecycleBin();
-    } catch (error) {
-      if (!host.isConnected) return;
-      host.innerHTML = `${intro}<section class="panel" role="alert"><h3>Could not load the recycle bin</h3>
-        <p>${esc(messageOf(error, "The recycle bin could not be loaded."))}</p>
-        <button type="button" class="primary" data-rb-retry>Try again</button></section>`;
-      return;
-    }
+    if (busy || !alive()) return;
+    const restoreFocus = focusAfterAction();
+    busy = true;
+    loadError = "";
     render();
+    try {
+      const fresh = await getRecycleBin();
+      if (!alive()) return;
+      batches = fresh;
+      loaded = true;
+      refreshRequired = false;
+    } catch (error) {
+      if (!alive()) return;
+      loadError = messageOf(error, "The recycle bin could not be loaded.");
+    } finally {
+      busy = false;
+      render();
+      restoreFocus(loadError ? "[data-rb-retry]" : "#rb-list-title");
+    }
   }
 
   async function act(batchId: string, kind: "restore" | "purge") {
     const batch = batches.find((item) => item.batch_id === batchId);
-    if (!batch || busy) return;
+    if (!batch || busy || refreshRequired || !alive()) return;
     if (kind === "purge" && !window.confirm(`Delete ${kindText(batch.kind, batch.count)} forever? This cannot be undone.`)) return;
+    const restoreFocus = focusAfterAction();
     busy = true;
     notice = "";
     render();
     try {
       if (kind === "restore") {
         const result = await restoreRecycleBatch(batchId);
+        if (!alive()) return;
         const failed = result.failed ?? [];
         outcomes.set(batchId, {
           tone: failed.length ? (result.restored ? "warning" : "danger") : "success",
           text: `Restored ${result.restored} of ${batch.count}.${failed.length ? ` ${failed.length} could not be restored:` : ""}`,
           failed,
         });
+        notice = `Restore finished: ${result.restored} of ${batch.count} restored.${failed.length ? ` ${failed.length} could not be restored; see the details below.` : ""}`;
       } else {
         const result = await purgeRecycleBatch(batchId);
+        if (!alive()) return;
         outcomes.delete(batchId);
         batches = batches.filter((item) => item.batch_id !== batchId);
         notice = `Deleted forever: ${kindText(batch.kind, result.purged ?? batch.count)}.`;
       }
-      try { batches = await getRecycleBin(); } catch { /* keep the current list */ }
+      refreshRequired = true;
+      loadError = "";
+      render();
+      try {
+        const fresh = await getRecycleBin();
+        if (!alive()) return;
+        batches = fresh;
+        refreshRequired = false;
+      } catch (error) {
+        if (!alive()) return;
+        loadError = messageOf(error, "The recycle bin could not be refreshed.");
+      }
     } catch (error) {
+      if (!alive()) return;
       outcomes.set(batchId, { tone: "danger", text: messageOf(error, kind === "restore" ? "Restore failed." : "Delete failed.") });
     } finally {
       busy = false;
       render();
-      const focusTarget = host.querySelector<HTMLElement>(`[data-rb-batch="${CSS.escape(batchId)}"] .rb-batch__outcome`)
-        ?? host.querySelector<HTMLElement>("#rb-list-title");
-      focusTarget?.setAttribute("tabindex", "-1");
-      focusTarget?.focus();
+      const outcomeSelector = `[data-rb-batch="${CSS.escape(batchId)}"] .rb-batch__outcome`;
+      restoreFocus(refreshRequired ? "[data-rb-retry]" : host.querySelector(outcomeSelector) ? outcomeSelector : ".rb-notice");
     }
   }
 
@@ -200,6 +262,7 @@ export async function mountRecordedPastDuties(host: HTMLElement, defaultMonth: s
         <button type="button" class="icon-button danger-button btn-sm" data-rec="delete-selected" ${selected.size && !busy ? "" : "disabled"}>Delete selected (${selected.size})</button>
         <button type="button" class="icon-button danger-button btn-sm" data-rec="delete-month" ${state === "ready" && items.length && !busy ? "" : "disabled"}>Delete all past duties for ${esc(monthName)}…</button>
       </div>
+      <p data-rec-selection role="status" aria-live="polite" aria-atomic="true">${state === "ready" ? `${selected.size} selected of ${items.length} shown for ${esc(monthName)}${truncated ? ". Selection covers only the shown rows; the whole-month action is separate." : "."}` : ""}</p>
       <p class="rec-past__status" role="status">${esc(notice)}</p>
       ${body}
     </section>`;

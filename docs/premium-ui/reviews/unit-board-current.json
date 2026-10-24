@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "reviewer": "unit_board_review",
+  "reviewed_at_utc": "2026-10-21T16:57:05.373634+00:00",
+  "scope": "Independent bounded frontend unit-board review supporting items 149?152; partial related evidence for 153?154. No whole-plan acceptance.",
+  "status": "accepted_for_bounded_unit_board_filter_and_date_scope",
+  "reviewed_files_sha256": {
+    "frontend/src/main.ts": "4b4ff38be2edc4751cd488549522159a2f19fdc5e77608438996f652eb1a29c0",
+    "frontend/src/unit-board-filters.ts": "1364ee52ab03cc0e4ae0eb2f95065dbaa513285d50c7fc39c2e57ee72a87de21",
+    "frontend/src/premium-theme.css": "4bf8a20d17452b542be773aa1932b662e0e820e5983cc7ee880c0dee080fb259",
+    "frontend/tests/premium-unit-board-independent.browser.mjs": "5cc13b7f12edc0d20205d238ecab6064758680be5db2beae28aaae9c8cb2ad38"
+  },
+  "required_fixes": [],
+  "verified": [
+    "Search and campus filters classify matching unit groups and corresponding table rows without API writes.",
+    "Special postings retaining a unit id use the special group in table and cards.",
+    "A real campus named special is distinct from special-posting filter.",
+    "Null or missing-listed-unit regular postings remain visible in an explicit review group, including when the active unit catalog is empty.",
+    "No-match filters expose empty guidance; Clear restores all rows and search focus.",
+    "Regular, special and unresolved cards expose full dates and current/upcoming/past posting text relative to today; monthly availability remains explicitly month-scoped.",
+    "Source comparison shows only presentation grouping, display labels and local filters in reviewed changes; existing API calls, monthly metrics and staffing calculations remain unchanged.",
+    "Direct Add unit toolbar uses existing data-add-department-unit handler and existing admin visibility guard."
+  ],
+  "tests_executed": [
+    {
+      "command": "node tests/premium-unit-board-independent.browser.mjs",
+      "result": "6 passed: Chromium, Firefox and WebKit at 320 and 1280px; fixed date 21 October 2026, intercepted month data, no mutations forwarded",
+      "report": "docs/premium-ui/qa-unit-board-independent.json"
+    }
+  ],
+  "remaining_limits": [
+    "This is not full completion evidence for items 149?154. Long member-list measured pagination/expansion and broader per-unit actions/warning clarity still need their own evidence.",
+    "Physical device and actual screen-reader checks remain pending.",
+    "No persistence or backend behavior tested; fixture GET responses were used for unit month data.",
+    "Full role matrix and all dated boundary/timezone combinations were not independently executed here; current posting endpoint comparisons are inclusive and use local today."
+  ]
+}

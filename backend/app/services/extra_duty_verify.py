@@ -13,14 +13,29 @@ Check                 Codes                                       Rule (contract
 ====================  ==========================================  ==============================
 Active members        ``inactive_member``                         person is active
 Posted to the ...     ``not_in_unit``                             posting to slot unit on date
+                                                                  (exempt: active ledger record
+                                                                  with ``unposted_member`` AND no
+                                                                  posting at all on the date)
+Duty allowed for unit ``unit_rule``                               ``rota_template.rule_applies_to_unit``
+                                                                  for the slot's final unit
 Call level and groups ``call_level_mismatch``,                    ``rota_eligibility.eligibility``
-                      ``call_subgroup_mismatch``
+                      ``call_level_unresolved``,                  (strict: the member's level must
+                      ``call_subgroup_mismatch``                  be in the duty's level set; a
+                                                                  pool allows each of its levels)
 Leave respected       ``leave``                                   no active-status leave blocking
 No double booking     ``same_day_duty``                           same-day block / time overlap
 Rest after 24-hour    ``post_24hr_rest``, ``pre_24hr_rest``,      next-day blocks both ways and
 duty                  ``rest_gap``                                the 24h minimum gap (any month)
 Slot capacity         ``slot_full``                               active <= ``max_assignees``
 ====================  ==========================================  ==============================
+
+Superadmin allocations (``source == "superadmin_allocation"``, docs/superadmin_override_contract.md
+§1) are exempt from the call level and groups, duty-allowed-for-unit, posted-to-unit and
+active-member checks. They are NOT exempt from leave, rest, double booking or slot capacity.
+The exempted count is reported as ``superadmin_exempt``. Superadmin allocations that cross call
+level are not hidden: they are listed as ``superadmin_cross_level`` (with
+``superadmin_cross_level_count``); every other source must hold a level inside the duty's level
+set (docs/call_level_pool_and_balance_contract.md section 1).
 
 Pure read-only: everything is preloaded with a handful of queries inside ``no_autoflush``; nothing
 is added, flushed or committed (rules are loaded without ``get_phase_one_rules``' first-run writes).
@@ -45,11 +60,13 @@ from app.models import (
     PersonCallClusterMembership,
     PersonPosting,
     RotaPeriod,
+    Unit,
 )
+from app.models.extra_duty import ExtraDutyRecord
 from app.services.leave import ACTIVE_LEAVE_STATUSES, month_bounds
 from app.services.rota_eligibility import (
-    CODE_CALL_LEVEL,
     eligibility,
+    eligibility_issue_code,
     load_groups_by_key,
 )
 from app.services.rota_rules import RotaPhaseOneRules
@@ -61,8 +78,25 @@ from app.services.rota_safety import (
     rules_groups,
     slot_leave_blocks,
 )
+from app.services.rota_template import rule_applies_to_unit
 
 ACTIVE_ASSIGNMENT_STATUSES = {"assigned", "draft", "confirmed"}
+# Ledger code that exempts an assignment from the posted-to-unit check only (fill-all contract §3).
+UNPOSTED_LEDGER_CODE = "unposted_member"
+# Assignment source of a superadmin allocation (superadmin override contract §1).
+SUPERADMIN_SOURCE = "superadmin_allocation"
+# Checks a superadmin allocation is exempt from. Leave, rest, double booking and capacity stay.
+SUPERADMIN_EXEMPT_CODES = frozenset(
+    {
+        "inactive_member",
+        "not_in_unit",
+        "unit_rule",
+        "call_level_mismatch",
+        "call_level_unresolved",
+        "call_subgroup_mismatch",
+    }
+)
+CALL_LEVEL_CODES = frozenset({"call_level_mismatch", "call_level_unresolved"})
 # Periods whose slots count as recorded duties for neighbouring-month rest checks.
 _CONTEXT_PERIOD_STATUSES = {"draft", "historical", "approved", "published", "finalized"}
 _PHASE4_SOURCE = "phase4_template"
@@ -71,8 +105,9 @@ CHECKS: list[tuple[str, tuple[str, ...]]] = [
     ("Leave respected", ("leave",)),
     ("Rest after 24-hour duty", ("post_24hr_rest", "pre_24hr_rest", "rest_gap")),
     ("No double booking", ("same_day_duty",)),
-    ("Call level and groups", ("call_level_mismatch", "call_subgroup_mismatch")),
+    ("Call level and groups", ("call_level_mismatch", "call_level_unresolved", "call_subgroup_mismatch")),
     ("Posted to the duty's unit", ("not_in_unit",)),
+    ("Duty allowed for unit", ("unit_rule",)),
     ("Slot capacity", ("slot_full",)),
     ("Active members", ("inactive_member",)),
 ]
@@ -162,6 +197,24 @@ class MonthState:
     duties_by_person: dict[UUID, list[_Duty]] = field(default_factory=dict)
     active_by_slot: dict[UUID, list[_Duty]] = field(default_factory=dict)
     month_assignments: list[DutyAssignment] = field(default_factory=list)
+    units: dict[UUID, Unit] = field(default_factory=dict)
+    # Assignment ids backed by an active ledger record whose overridden_rules has ``unposted_member``.
+    unposted_assignment_ids: set = field(default_factory=set)
+    # Assignment ids whose source is a superadmin allocation (exempt per SUPERADMIN_EXEMPT_CODES).
+    superadmin_assignment_ids: set = field(default_factory=set)
+    _flags: dict = field(default_factory=dict)
+
+    def _slot_flags(self, slot: DutySlot) -> tuple[Any, bool, bool]:
+        """(rule, blocks same day, blocks next day) per duty type and 24h flag, memoised."""
+        key = (slot.duty_type, bool(slot.is_24hr))
+        flags = self._flags.get(key)
+        if flags is None:
+            flags = self._flags[key] = (
+                rule_for_slot(slot, self.rules),
+                duty_blocks_same_day(slot, self.rules),
+                previous_day_24hr_blocks(slot, self.rules),
+            )
+        return flags
 
     # -- mutation for hypothetical plans (tests replay a planner's decisions) -----------------
 
@@ -194,11 +247,27 @@ class MonthState:
         *,
         exclude_key: Any = None,
         check_capacity: bool = True,
+        unposted_ok: bool = False,
+        superadmin: bool = False,
     ) -> list[tuple[str, str]]:
         """Strict blockers for ``person`` taking ``slot`` in ``unit_id`` -> [(code, message)].
 
         ``exclude_key`` is the person's own assignment on ``slot`` when checking an existing one.
+        ``unposted_ok`` (a ledgered ``unposted_member`` placement) waives the posted-to-unit
+        check only, and only while the member has no posting at all covering the date; every
+        other check still applies.
+        ``superadmin`` (a superadmin allocation) drops ``SUPERADMIN_EXEMPT_CODES`` from the
+        result; leave, rest, double booking and capacity still apply.
         """
+        if superadmin:
+            return [
+                item
+                for item in self.blockers(
+                    person_id, slot, unit_id, exclude_key=exclude_key,
+                    check_capacity=check_capacity, unposted_ok=unposted_ok,
+                )
+                if item[0] not in SUPERADMIN_EXEMPT_CODES
+            ]
         problems: list[tuple[str, str]] = []
         person = self.persons.get(person_id)
         day = slot.duty_date
@@ -209,14 +278,26 @@ class MonthState:
         contexts = self.contexts(person_id, day)
         in_unit = [c for c in contexts if unit_id is not None and c.unit_id == unit_id]
         if not in_unit:
-            problems.append(("not_in_unit", f"Not posted to the duty's unit on {day.isoformat()}."))
+            if not unposted_ok:
+                problems.append(("not_in_unit", f"Not posted to the duty's unit on {day.isoformat()}."))
+            elif contexts:
+                problems.append(("not_in_unit", f"Recorded as having no posting, but posted to another unit on {day.isoformat()}."))
+
+        # Unit rules of the duty (allowed / excluded units), on the slot's final unit.
+        rule = self._slot_flags(slot)[0]
+        if rule is not None and (rule.allowed_units or rule.excluded_units):
+            unit = self.units.get(unit_id) if unit_id is not None else None
+            if unit is None:
+                problems.append(("unit_rule", "Duty not allowed for this unit: the duty has unit rules but no known unit."))
+            elif not rule_applies_to_unit(rule, unit):
+                problems.append(("unit_rule", f"Duty not allowed for this unit: {rule.label} is not allowed in {unit.name}."))
         if person is not None:
             context = in_unit[0] if in_unit else (
                 contexts[0] if contexts else MemberContext(person=person, unit_id=unit_id, posting_type=person.call_level or "", day=day)
             )
-            decision = eligibility(context, slot, rule_for_slot(slot, self.rules), self.groups)
+            decision = eligibility(context, slot, self._slot_flags(slot)[0], self.groups)
             if not decision.eligible:
-                code = "call_level_mismatch" if decision.code == CODE_CALL_LEVEL else "call_subgroup_mismatch"
+                code = eligibility_issue_code(decision)
                 problems.append((code, decision.reason or "Not eligible for this duty."))
 
         # Leave (every active status is a strict block).
@@ -227,19 +308,19 @@ class MonthState:
                 )
 
         # Other active duties of the person.
-        slot_same_day = duty_blocks_same_day(slot, self.rules)
-        slot_next_day = previous_day_24hr_blocks(slot, self.rules)
+        _rule, slot_same_day, slot_next_day = self._slot_flags(slot)
         for other in self.duties_by_person.get(person_id, []):
             if other.slot.id == slot.id or (exclude_key is not None and other.key == exclude_key):
                 continue
             o = other.slot
             label = f"{o.duty_type} on {o.duty_date.isoformat()}"
             overlap = o.starts_at < slot.ends_at and slot.starts_at < o.ends_at
-            if o.duty_date == day and (slot_same_day or duty_blocks_same_day(o, self.rules)):
+            _o_rule, o_same_day, o_next_day = self._slot_flags(o)
+            if o.duty_date == day and (slot_same_day or o_same_day):
                 problems.append(("same_day_duty", f"Also on {label} the same day."))
             elif overlap:
                 problems.append(("same_day_duty", f"Time overlaps {label}."))
-            if o.duty_date == day - timedelta(days=1) and previous_day_24hr_blocks(o, self.rules):
+            if o.duty_date == day - timedelta(days=1) and o_next_day:
                 problems.append(("post_24hr_rest", f"Resting after {label}."))
             if slot_next_day and o.duty_date == day + timedelta(days=1):
                 problems.append(("pre_24hr_rest", f"This duty blocks the next day, but they have {label}."))
@@ -354,6 +435,15 @@ def load_month_state(db: Session, month: str, rules: RotaPhaseOneRules | None = 
         ):
             if (leave.status or "").lower() in ACTIVE_LEAVE_STATUSES:
                 leaves_by_person[leave.person_id].append(leave)
+        units = {unit.id: unit for unit in db.scalars(select(Unit))}
+        month_assignment_ids = {a.id for a in month_assignments}
+        unposted_ids: set = set()
+        if month_assignment_ids:
+            for record in db.scalars(
+                select(ExtraDutyRecord).where(ExtraDutyRecord.month == month, ExtraDutyRecord.status == "active")
+            ):
+                if record.assignment_id in month_assignment_ids and UNPOSTED_LEDGER_CODE in (record.overridden_rules or []):
+                    unposted_ids.add(record.assignment_id)
 
     state = MonthState(
         month=month,
@@ -368,6 +458,9 @@ def load_month_state(db: Session, month: str, rules: RotaPhaseOneRules | None = 
         postings_by_person=dict(postings_by_person),
         leaves_by_person=dict(leaves_by_person),
         month_assignments=month_assignments,
+        units=units,
+        unposted_assignment_ids=unposted_ids,
+        superadmin_assignment_ids={a.id for a in month_assignments if a.source == SUPERADMIN_SOURCE},
     )
     for a in month_assignments:
         duty = _Duty(key=a.id, slot=a.duty_slot, person_id=a.person_id, in_month=True)
@@ -412,8 +505,29 @@ def check_state(state: MonthState, assignment_ids: Iterable[UUID] | None = None)
     for a in targets:
         slot = a.duty_slot
         person = state.persons.get(a.person_id)
-        for code, message in state.blockers(a.person_id, slot, slot.unit_id, exclude_key=a.id, check_capacity=False):
+        for code, message in state.blockers(
+            a.person_id, slot, slot.unit_id, exclude_key=a.id, check_capacity=False,
+            unposted_ok=a.id in state.unposted_assignment_ids,
+            superadmin=a.id in state.superadmin_assignment_ids,
+        ):
             violations.append(_violation(slot, a.person_id, person, code, message))
+
+    # Superadmin allocations that cross call level: exempt, but counted and listed.
+    cross_level = []
+    for a in targets:
+        if a.id not in state.superadmin_assignment_ids:
+            continue
+        slot = a.duty_slot
+        for code, message in state.blockers(
+            a.person_id, slot, slot.unit_id, exclude_key=a.id, check_capacity=False
+        ):
+            if code in CALL_LEVEL_CODES:
+                item = _violation(slot, a.person_id, state.persons.get(a.person_id), code, message)
+                item.update(code="superadmin_cross_level", check="Call level crossed by superadmin",
+                            assignment_id=str(a.id))
+                cross_level.append(item)
+                break
+    cross_level.sort(key=lambda v: (v["duty_date"], v["duty_type"], v["slot_id"], v["person_id"] or ""))
 
     # Capacity, once per slot: the latest assignment(s) over the limit are named.
     checked_slots = {a.duty_slot_id: a.duty_slot for a in targets}
@@ -441,6 +555,10 @@ def check_state(state: MonthState, assignment_ids: Iterable[UUID] | None = None)
         "checked": len(targets),
         "violations": violations,
         "checks": checks,
+        "unposted_exempt": sum(1 for a in targets if a.id in state.unposted_assignment_ids),
+        "superadmin_exempt": sum(1 for a in targets if a.id in state.superadmin_assignment_ids),
+        "superadmin_cross_level": cross_level,
+        "superadmin_cross_level_count": len(cross_level),
     }
 
 
@@ -453,7 +571,12 @@ def check_month(
     """Check every active assignment of ``month`` against the strict rules (contract 1.1).
 
     Returns ``{month, ok, checked, violations: [{slot_id, person_id, person_name, duty_date,
-    duty_type, code, check, message}], checks: [{name, passed, checked, violations}]}``.
+    duty_type, code, check, message}], checks: [{name, passed, checked, violations}],
+    unposted_exempt: int, superadmin_exempt: int, superadmin_cross_level: [violation-shaped
+    items with code ``superadmin_cross_level`` and ``assignment_id``],
+    superadmin_cross_level_count: int}`` (assignments waived from the posted-to-unit check only,
+    and superadmin allocations waived from the call level/groups, unit rule, posting and
+    active-member checks; those crossing call level are listed, not hidden).
     Read-only.
     """
     return check_state(load_month_state(db, month, rules), assignment_ids)

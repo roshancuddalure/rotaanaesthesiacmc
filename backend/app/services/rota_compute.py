@@ -31,7 +31,8 @@ from app.services.rota_candidates import (
     slot_candidates_with_context,
     add_provisional_assignment,
 )
-from app.services.rota_safety import required_call_levels, rule_for_slot, rules_groups
+from app.services.rota_eligibility import required_call_levels
+from app.services.rota_safety import rule_for_slot, rules_groups
 from app.services.rota_setup import monthly_setup
 
 ACTIVE = {"queued", "running", "completed"}
@@ -299,6 +300,8 @@ def prepare_context(db, job, state):
 
 def choose_candidates(db, slot, context):
     row = slot_candidates_with_context(db, slot=slot, context=context)
+    # Strict call level (call_level_pool_and_balance_contract §1): the member's level must be in
+    # the duty's level set (a pool allows each of its levels); a duty with no level stays open.
     calls = required_call_levels(
         slot, rule_for_slot(slot, context.rules), rules_groups(context.rules, slot)
     )

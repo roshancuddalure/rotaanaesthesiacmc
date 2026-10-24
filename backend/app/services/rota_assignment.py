@@ -1,7 +1,7 @@
 """Manual assignment validation and persistence (also used by auto-fill and exchanges).
 
 ``validate_assignment`` returns ``clear`` / ``needs_override`` / ``blocked``:
-- blocked: slot already full (without replace), call-level mismatch, subgroup mismatch.
+- blocked: slot already full (without replace), call-level mismatch or unresolved call level, subgroup mismatch.
 - needs_override: inactive member, not posted to the unit, safety blockers, unit staffing
   warnings, monthly count limits.
 Assignments that need an override must carry an ``override_reason``.
@@ -22,6 +22,7 @@ from app.services.rota_safety import (
     ACTIVE_ASSIGNMENT_STATUSES,
     SAFETY_HARD_BLOCK,
     SAFETY_WARNING,
+    MemberContext,
     assignment_indexes,
     assignments_for_safety,
     leaves_by_day_and_person,
@@ -31,7 +32,12 @@ from app.services.rota_safety import (
     rules_groups,
     slot_safety,
 )
-from app.services.rota_eligibility import CODE_CALL_LEVEL, eligibility
+from app.services.rota_eligibility import (
+    CODE_CALL_LEVEL,
+    CODE_CALL_LEVEL_UNRESOLVED,
+    eligibility,
+    eligibility_issue_code,
+)
 from app.services.extra_duty_hooks import void_extra_duty_records
 from app.services.rota_template import PHASE4_SLOT_SOURCE
 
@@ -376,19 +382,25 @@ def validate_assignment(
                 "This member is not assigned to this unit for the slot date.",
             )
         )
+        # Strict call level (limits_callevel_fairness_contract §1): an override for "not in
+        # unit" must never let a member of another call level through.
+        other_contexts = [c for c in day_contexts if c.person.id == person.id] or [
+            MemberContext(person, slot.unit_id, person.call_level or "", slot.duty_date)
+        ]
+        groups = rules_groups(rules, slot, other_contexts)
+        decision = eligibility(other_contexts[0], slot, rule, groups)
+        if decision.code in {CODE_CALL_LEVEL, CODE_CALL_LEVEL_UNRESOLVED}:
+            validation_issues.append(
+                issue("blocked", eligibility_issue_code(decision), f"{decision.reason}.")
+            )
     else:
         # One eligibility function for every path (rota_eligibility, contract 21 Oct 2026).
         groups = rules_groups(rules, slot, person_contexts)
         decisions = [eligibility(context, slot, rule, groups) for context in person_contexts]
         if not any(decision.eligible for decision in decisions):
             decision = decisions[0]
-            code = (
-                "call_level_mismatch"
-                if decision.code == CODE_CALL_LEVEL
-                else "call_subgroup_mismatch"
-            )
             validation_issues.append(
-                issue("blocked", code, f"{decision.reason}.")
+                issue("blocked", eligibility_issue_code(decision), f"{decision.reason}.")
             )
 
     hard_people, warning_people = selected_person_safety(safety, person.id)
@@ -524,14 +536,26 @@ def assign_person_to_slot(
             db.delete(assignment)
         db.flush()
 
-    assignment = DutyAssignment(
-        duty_slot=slot,
-        person=person,
-        status="assigned",
-        source=source,
-        override_reason=clean_override,
+    # The table allows one row per (slot, person); a cancelled/inactive row for this person
+    # (e.g. replaced by a superadmin allocation or the optimiser) is reused, not duplicated.
+    inactive_row = next(
+        (a for a in slot.assignments if a.person_id == person.id and not active_assignment(a)),
+        None,
     )
-    db.add(assignment)
+    if inactive_row is not None:
+        assignment = inactive_row
+        assignment.status = "assigned"
+        assignment.source = source
+        assignment.override_reason = clean_override
+    else:
+        assignment = DutyAssignment(
+            duty_slot=slot,
+            person=person,
+            status="assigned",
+            source=source,
+            override_reason=clean_override,
+        )
+        db.add(assignment)
     if commit:
         db.commit()
     else:

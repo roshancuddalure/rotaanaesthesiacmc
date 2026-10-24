@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "reviewer": "editor_load_review",
+  "reviewed_at_utc": "2026-10-21T16:39:38.464Z",
+  "status": "accepted_for_bounded_mapping_read_recovery_scope",
+  "scope": "Independent mapping read-failure recovery, draft retention and request-order/lifetime source review; root covers separate record/unit/catalog/activity browser workflows.",
+  "reviewed_files_sha256": {
+    "frontend/src/reference-workspace.ts": "39b89c120e62e5a6c40af539ab4d1981d6baaa2a6945b626532d4ad87dacbf4a",
+    "frontend/src/record-workspace.ts": "d76ba93dd783d3dcc252a838cf736cf980674b7d173b6c5ebd3e10f659fa20a9",
+    "frontend/src/workspace-load-state.ts": "3ec96adc616b2aac884717c4c1e8feb416690c8ce8191cae2f5728647a77ba37",
+    "frontend/tests/premium-editor-load-independent.browser.mjs": "cbfaa7a9655863a46245f38537271963541d5b2f6c003b44dba2ec5bbc58c329"
+  },
+  "tests_executed": [
+    {
+      "command": "node tests/premium-editor-load-independent.browser.mjs",
+      "result": "8 passed at widths320 and1280 with real pointer/keyboard interactions and intercepted API routes"
+    }
+  ],
+  "verified": [
+    "Failed destination read keeps target and Save disabled with escaped error and explicit retry.",
+    "Enter on retry performs only GET; source spelling, notes and search remain in same form.",
+    "Category sequence guard prevents earlier duty destinations replacing current unit destinations.",
+    "Closed dialog ignores late destination reply, remains absent and restores opener.",
+    "New shared read-failure helper uses explicit manual retry; inspected record, unit, activity and catalog callers replay GET loads, not writes.",
+    "Keyboard retry success focuses the enabled destination; moving focus to notes during delayed retry is preserved.",
+    "Shared workspaceLoading focus restorer checks dialog ownership and current body/dialog focus, then selects editable fields before fallback Close; inspected source only for full-editor routes."
+  ],
+  "required_fixes": [],
+  "advisories": [],
+  "remaining_limits": [
+    "Independent runtime coverage here is mapping only. Root reports broader initial-read retry workflows separately.",
+    "Writes were intercepted and none occurred; no persistence or production claim.",
+    "Physical-device and actual screen-reader checks pending."
+  ],
+  "resolved_findings": [
+    {
+      "finding": "Retry success initially lost focused control; first proposed destination focus ran while disabled.",
+      "resolution": "Focus moved after destination readiness enables target in guarded finally. Independently verified keyboard retry and newer notes-focus preservation."
+    }
+  ]
+}

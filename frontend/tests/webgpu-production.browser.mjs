@@ -35,8 +35,9 @@ try {
     await page.locator("[data-cancel]").click(); await page.getByText("Proposal cancelled.", { exact: false }).waitFor();
     await page.locator('[data-close]').click();
     await fetch(base+'/__fixture/template',{method:'POST'});
-    await page.reload();await page.getByRole('heading',{name:'Duty workload at a glance',exact:true}).waitFor();
-    await page.locator('[data-view="rota-template"]').first().evaluate(b=>b.click());
+    // Approved frontend history now retains the current section across reload.
+    await page.reload();
+    assert.match(page.url(), /#view=rota-template$/);
     await page.getByText('Template Generation Settings',{exact:true}).waitFor();
     await page.locator('.template-settings-panel > summary').click();
     await page.locator('#template-start').fill('2026-05-01');await page.locator('#template-end').fill('2026-05-04');

@@ -1,0 +1,45 @@
+{
+  "recorded_at_utc": "2026-10-22T10:57:38.833560+00:00",
+  "requirements": [
+    135,
+    136,
+    137,
+    139,
+    140,
+    208,
+    209,
+    217,
+    227,
+    242,
+    258
+  ],
+  "completion_claim": false,
+  "scope": "Normalized importer review pagination keyboard/context preservation; bounded51rowcomponent fixtures, no API or business behavior change.",
+  "source_sha256": {
+    "frontend/src/operational-import.ts": "a1d735a8e841fe2119ffa47f66b216bfc369dbe28799bcb6d014a2cc9fbdf830"
+  },
+  "evidence": [
+    "docs/premium-ui/qa-import-review-pager.json",
+    "docs/premium-ui/qa-import-review-pager-before.json",
+    "docs/premium-ui/reviews/operational-import-keyboard-fixed-current.json",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+  ],
+  "confirmed_before": "Actual nativeEnterNext page changed rowlist but leftdocument.activeElement=BODY outside importer.",
+  "change": "Use existingretainActionFocus around synchronous reviewrerender. Prefer same enabledpagerdirection, otherwise enabledoppositedirection atfirst/lastpage. Ignore disabledpageractivation. Row slicing and correction/exclusion/data handling unchanged.",
+  "checks": {
+    "pager_workflows": 12,
+    "page_transitions_per_workflow": 4,
+    "review_rows_fixture": 51,
+    "refresh_recovery_regressions": 12,
+    "unit_tests": 100,
+    "build_exit": 0,
+    "build_inputs_unchanged": true
+  },
+  "limits": [
+    "Actualexportedcomponentfixtures ratherthan allroutes; selectedmonth/file/rows preserved but no userfile/backendpersistence certification.",
+    "No extra requests while paging; fixturecolumns/preview fullyintercepted, Apply never invoked.",
+    "Pointercheckbox uncheck fixture initially hit scroll-on-blur interaction; finaltest uses native keyboardSpace ratherthan forcedclick. No productchange made for that testsetupissue.",
+    "Independentagent review unavailable afterreportedusage limit. Physical/nativeassistive checks pending; prior nativepicker/rules-test limitations retained.",
+    "No backend/API-contract/permissions/scheduling/persisted-data/export-content or productionchanges. Full260goal remains active/incomplete."
+  ]
+}

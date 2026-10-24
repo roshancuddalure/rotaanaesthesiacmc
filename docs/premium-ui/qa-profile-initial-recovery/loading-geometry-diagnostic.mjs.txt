@@ -1,0 +1,6 @@
+import {firefox}from'playwright';
+const browser=await firefox.launch(),page=await browser.newPage({viewport:{width:320,height:844},colorScheme:'light',reducedMotion:'reduce'});
+let release;const gate=new Promise(r=>release=r);
+await page.addInitScript(()=>{localStorage.setItem('duty_rota_auth_token','diagnostic');localStorage.setItem('duty_rota_working_month','2026-05');});
+await page.route('**/api/**',async route=>{const u=new URL(route.request().url());if(/member-workspace\/[^/]+$/.test(u.pathname))await gate;return route.fulfill({response:await route.fetch({url:'http://127.0.0.1:8032'+u.pathname+u.search})});});
+try{await page.goto('http://127.0.0.1:5197/#view=leave');const open=page.locator('[data-open-member]:visible').first();await open.focus();await page.keyboard.press('Enter');const close=page.locator('[data-load-close]');await close.waitFor();console.log(JSON.stringify(await close.evaluate(el=>({box:el.getBoundingClientRect().toJSON(),minHeight:getComputedStyle(el).minHeight,minWidth:getComputedStyle(el).minWidth,transform:getComputedStyle(el.closest('dialog')).transform})),null,2));}finally{release();await page.waitForLoadState('networkidle');await browser.close();}

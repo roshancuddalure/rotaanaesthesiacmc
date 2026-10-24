@@ -1,0 +1,143 @@
+{
+  "recorded_at_utc": "2026-10-22T05:05:13.154397+00:00",
+  "scope": "Bounded current outcome overlay; static inventory remains source-only. Original contract/review snapshots retained.",
+  "summary": {
+    "current_bounded_actions": 5,
+    "engine_width_workflows": 6,
+    "whole_requirement_completion": false
+  },
+  "actions": [
+    {
+      "inventory_action_id": "rota-rules-ts::pageHtml::3053ae7b0b35",
+      "selector": "[data-expand-all]",
+      "label": "Expand all",
+      "role": "computer_admin; visibility is not server authorization",
+      "context": {
+        "route": "#view=rota-rules",
+        "widths_observed": [
+          320,
+          1280
+        ],
+        "month": "Rules workspace is not month-scoped; fixture GET document current rules",
+        "setup": "Loaded rules with multiple duty records"
+      },
+      "expected_outcome": "With several matching duties and a narrowed filter, activate by keyboard; assert every matching editor expands and nonmatching duties remain filtered, draft values unchanged and no save request.",
+      "runtime_status": "passed_mocked_outcome",
+      "test": "frontend/tests/premium-rules-local-actions-independent.browser.mjs",
+      "evidence": "docs/premium-ui/qa-rules-local-actions-independent.json",
+      "source_sha256": {
+        "src/rota-rules.ts": "9ab07f99341e188675b9ec3718c6e55eb9bd4746def03ef27f6fce9b28a8b3d5",
+        "src/main.ts": "4075cf124ccb72af7ff983c459139d963ba29075cc3b3de5617659959ac40906"
+      },
+      "scope": "Five local-only controls, computer_admin, deterministic three-duty fixture; Chromium/Firefox/WebKit320/1280. Eligibility checks intercepted; zero saves/backend writes. Does not certify all role/persistence/API cases."
+    },
+    {
+      "inventory_action_id": "rota-rules-ts::pageHtml::d7b33c60a139",
+      "selector": "[data-collapse-all]",
+      "label": "Collapse all",
+      "role": "computer_admin; visibility is not server authorization",
+      "context": {
+        "route": "#view=rota-rules",
+        "widths_observed": [
+          320,
+          1280
+        ],
+        "month": "Rules workspace is not month-scoped; fixture GET document current rules",
+        "setup": "Loaded rules with multiple duty records"
+      },
+      "expected_outcome": "Open several duty editors and change one unsaved field; activate Collapse all; assert all editor bodies collapse, edits survive reopening, category filters survive and no save request.",
+      "runtime_status": "passed_mocked_outcome",
+      "test": "frontend/tests/premium-rules-local-actions-independent.browser.mjs",
+      "evidence": "docs/premium-ui/qa-rules-local-actions-independent.json",
+      "source_sha256": {
+        "src/rota-rules.ts": "9ab07f99341e188675b9ec3718c6e55eb9bd4746def03ef27f6fce9b28a8b3d5",
+        "src/main.ts": "4075cf124ccb72af7ff983c459139d963ba29075cc3b3de5617659959ac40906"
+      },
+      "scope": "Five local-only controls, computer_admin, deterministic three-duty fixture; Chromium/Firefox/WebKit320/1280. Eligibility checks intercepted; zero saves/backend writes. Does not certify all role/persistence/API cases."
+    },
+    {
+      "inventory_action_id": "rota-rules-ts::editorHtml::dc3de307517b",
+      "selector": "[data-reset-duty]",
+      "label": "Reset this duty",
+      "role": "computer_admin; visibility is not server authorization",
+      "context": {
+        "route": "#view=rota-rules",
+        "widths_observed": [
+          320,
+          1280
+        ],
+        "month": "Rules workspace is not month-scoped; fixture GET document current rules",
+        "setup": "Changed one live duty label without saving"
+      },
+      "expected_outcome": "Edit two duties and a guardrail. Reset only one duty; assert its saved fields restored, other duty and guardrail remain changed, focus moves to that duty toggle, save dock count reflects remaining changes and no PUT is sent.",
+      "runtime_status": "passed_mocked_outcome",
+      "test": "frontend/tests/premium-rules-local-actions-independent.browser.mjs",
+      "evidence": "docs/premium-ui/qa-rules-local-actions-independent.json",
+      "source_sha256": {
+        "src/rota-rules.ts": "9ab07f99341e188675b9ec3718c6e55eb9bd4746def03ef27f6fce9b28a8b3d5",
+        "src/main.ts": "4075cf124ccb72af7ff983c459139d963ba29075cc3b3de5617659959ac40906"
+      },
+      "scope": "Five local-only controls, computer_admin, deterministic three-duty fixture; Chromium/Firefox/WebKit320/1280. Eligibility checks intercepted; zero saves/backend writes. Does not certify all role/persistence/API cases."
+    },
+    {
+      "inventory_action_id": "rota-rules-ts::listHtml::d2a59370fcd2",
+      "selector": "[data-clear-filters]",
+      "label": "Show all duties",
+      "role": "computer_admin; visibility is not server authorization",
+      "context": {
+        "route": "#view=rota-rules",
+        "widths_observed": [
+          320,
+          1280
+        ],
+        "month": "Rules workspace is not month-scoped; fixture GET document current rules",
+        "setup": "Unmatched duty search"
+      },
+      "expected_outcome": "Set nondefault filter plus unmatched search. Activate empty-state Show all duties; assert search clears, filter returns All, complete expected duty keys return, search receives focus, draft survives and no save request.",
+      "runtime_status": "passed_mocked_outcome",
+      "test": "frontend/tests/premium-rules-local-actions-independent.browser.mjs",
+      "evidence": "docs/premium-ui/qa-rules-local-actions-independent.json",
+      "source_sha256": {
+        "src/rota-rules.ts": "9ab07f99341e188675b9ec3718c6e55eb9bd4746def03ef27f6fce9b28a8b3d5",
+        "src/main.ts": "4075cf124ccb72af7ff983c459139d963ba29075cc3b3de5617659959ac40906"
+      },
+      "scope": "Five local-only controls, computer_admin, deterministic three-duty fixture; Chromium/Firefox/WebKit320/1280. Eligibility checks intercepted; zero saves/backend writes. Does not certify all role/persistence/API cases."
+    },
+    {
+      "inventory_action_id": "rota-rules-ts::dockHtml::72ce8eb1bfd0",
+      "selector": "[data-discard]",
+      "label": "Discard",
+      "role": "computer_admin; visibility is not server authorization",
+      "context": {
+        "route": "#view=rota-rules",
+        "widths_observed": [
+          320,
+          1280
+        ],
+        "month": "Rules workspace is not month-scoped; fixture GET document current rules",
+        "setup": "Changed one live duty label without saving"
+      },
+      "expected_outcome": "Edit multiple duties and guardrails. Reject confirmation and verify every draft retained/no PUT; accept confirmation then verify all saved values restored, dirty/save dock clears, status and focus correct, saved server fixture unchanged.",
+      "runtime_status": "passed_mocked_outcome",
+      "test": "frontend/tests/premium-rules-local-actions-independent.browser.mjs",
+      "evidence": "docs/premium-ui/qa-rules-local-actions-independent.json",
+      "source_sha256": {
+        "src/rota-rules.ts": "9ab07f99341e188675b9ec3718c6e55eb9bd4746def03ef27f6fce9b28a8b3d5",
+        "src/main.ts": "4075cf124ccb72af7ff983c459139d963ba29075cc3b3de5617659959ac40906"
+      },
+      "scope": "Five local-only controls, computer_admin, deterministic three-duty fixture; Chromium/Firefox/WebKit320/1280. Eligibility checks intercepted; zero saves/backend writes. Does not certify all role/persistence/API cases."
+    }
+  ],
+  "regression": {
+    "reproduced": "Rules generic data-filter bubbles to document mapping filter, replacing rules view with mappings.",
+    "fix": "Scope mappings handler to active mappings workspace and owned viewRoot. Existing rules filter semantics unchanged.",
+    "source": "frontend/src/main.ts",
+    "mapping_editor_regressions": 10,
+    "mapping_scan_regressions": 36
+  },
+  "limitations": [
+    "Five current action overlays are not all902source candidates.",
+    "Main-source hashes in older reports can differ; do not infer those reports reran.",
+    "Physical device/native screen-reader checks pending."
+  ]
+}

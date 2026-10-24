@@ -1,0 +1,1734 @@
+{
+  "schema_version": 1,
+  "plan": "docs/premium_frontend_upgrade_plan_2026-10-21.md",
+  "range": {
+    "first": 87,
+    "last": 173,
+    "count": 87
+  },
+  "purpose": "Requirement-specific acceptance conditions for the approved frontend plan; definition artifact only, no completion claim.",
+  "scope_policy": "Preserve each original requirement. Source/design definitions need relevant source or definition evidence; interaction, persistence and artifact claims need corresponding actual outcomes. Physical-device and native assistive-technology checks remain separately dispositioned when relevant, rather than prerequisites imposed on unrelated narrow source requirements.",
+  "completion_claim": false,
+  "existing_evidence_policy": "Candidate paths were checked to exist when this file was prepared. Candidates are discovery links only: their report scope, results and source freshness must be inspected before any acceptance decision.",
+  "items": [
+    {
+      "item_id": 87,
+      "requirement": "Restore original button text and availability after failures without leaving the interface permanently disabled or deceptively successful.",
+      "acceptance_scope": "Failure recovery for buttons in each affected action family",
+      "pass_conditions": [
+        "After validation, network or permission failure the original label and appropriate enabled state return.",
+        "Only an authoritative success response permits a successful terminal presentation; an uncertain request retains truthful recovery guidance."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/admin-action-results.json",
+        "docs/premium-ui/reviews/inline-member-selection-lifetime-current.json",
+        "docs/premium-ui/contracts/inline-member-selection-current.json",
+        "docs/premium-ui/reviews/inline-member-selection-source-review.json",
+        "docs/premium-ui/reviews/inline-member-selection-test-review.json"
+      ],
+      "remaining_gap": "Exercise remaining action-family failure paths rather than inferring recovery from shared button styling."
+    },
+    {
+      "item_id": 88,
+      "requirement": "Standardize fields, selects, checkboxes, radios and date inputs without removing useful native platform behavior.",
+      "acceptance_scope": "Shared form-control presentation and preserved native input interaction",
+      "pass_conditions": [
+        "Fields, selects, checkboxes, radios and date inputs follow the shared visual sizing and state conventions.",
+        "Native keyboard selection, date entry, focus and platform affordances remain usable at supported layouts."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/engine-radio-current.json",
+        "docs/premium-ui/qa-engine-radio.json",
+        "docs/premium-ui/reviews/compute-focus-current.json",
+        "docs/premium-ui/qa-compute-focus.json"
+      ],
+      "remaining_gap": "Review all control types and scoped computed styles; do not replace native interaction merely for visual uniformity."
+    },
+    {
+      "item_id": 89,
+      "requirement": "Keep labels persistently visible, provide format guidance and associate validation messages with their specific form fields.",
+      "acceptance_scope": "Field labels, format instructions and programmatic error association",
+      "pass_conditions": [
+        "Each editable control retains a visible meaningful label after entry.",
+        "Required format guidance and field errors are connected to their affected controls through appropriate accessible relationships."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-operational-states-independent.json"
+      ],
+      "remaining_gap": "Inventory field-level associations and verify error states in the affected forms."
+    },
+    {
+      "item_id": 90,
+      "requirement": "Validate predictable client-side errors early while preserving server validation as the final source of operational truth.",
+      "acceptance_scope": "Predictable local validation with server authority preserved",
+      "pass_conditions": [
+        "Known local input errors are explained before sending a request when determinable without duplicating operational rules.",
+        "Server validation failures remain visible and actionable even when client checks passed."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/native-validation-workload-current.json",
+        "docs/premium-ui/qa-native-validation.json"
+      ],
+      "remaining_gap": "Demonstrate local invalid cases and a server-only rejection for affected editor families."
+    },
+    {
+      "item_id": 91,
+      "requirement": "Move focus to actionable validation summaries when appropriate, and link each summary entry to its affected field.",
+      "acceptance_scope": "Actionable validation summaries and field destinations",
+      "pass_conditions": [
+        "Forms needing a summary render a persistent summary with actionable error entries.",
+        "Activating each entry focuses or reveals its associated invalid field, including fields behind tabs or scroll regions."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/record-error-summary-current.json",
+        "docs/premium-ui/qa-record-error-summary.json"
+      ],
+      "remaining_gap": "Identify forms needing summaries and verify their field destinations; a summary is not required for every trivial single-field form."
+    },
+    {
+      "item_id": 92,
+      "requirement": "Preserve entered values after validation, network or permission errors unless sensitive information requires deliberate clearing.",
+      "acceptance_scope": "Draft retention after unsuccessful submission",
+      "pass_conditions": [
+        "Entered nonsensitive values survive validation, network and permission failures.",
+        "Any sensitive value deliberately cleared is identified by the form policy and does not silently discard unrelated fields."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "frontend/tests/premium-reference-validation.browser.mjs",
+        "frontend/tests/premium-reference-validation-independent.browser.mjs",
+        "frontend/src/form-validation.ts",
+        "frontend/src/reference-workspace.ts",
+        "docs/premium-ui/reviews/member-create-disclosure-current.json"
+      ],
+      "remaining_gap": "Verify representative error classes for each affected editor and explicitly document sensitive-field clearing."
+    },
+    {
+      "item_id": 93,
+      "requirement": "Distinguish confirmed saved state, unsaved edits, pending requests and uncertain mutation outcomes throughout all editors.",
+      "acceptance_scope": "Truthful editor state and mutation uncertainty",
+      "pass_conditions": [
+        "Editors visibly distinguish unsaved edits, active requests and confirmed saved values.",
+        "Lost or ambiguous mutation responses never claim rollback or confirmation; recovery checks existing state before repeating consequential work."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "frontend/tests/premium-editor-load.browser.mjs",
+        "frontend/tests/premium-editor-load-independent.browser.mjs",
+        "frontend/tests/premium-unit-save-recovery.browser.mjs",
+        "frontend/tests/premium-normalized-save-independent.browser.mjs",
+        "frontend/tests/premium-workspace-unload-independent.browser.mjs"
+      ],
+      "remaining_gap": "Map editor state transitions, including uncertain response and subsequent read-back, across editor families."
+    },
+    {
+      "item_id": 94,
+      "requirement": "Replace transient-only critical feedback with persistent inline notices that remain until resolved or explicitly dismissed.",
+      "acceptance_scope": "Persistent consequential feedback",
+      "pass_conditions": [
+        "Critical validation, permission and uncertain-save feedback remains inline until resolved or explicitly dismissed.",
+        "A toast timeout or navigation within the editor cannot silently remove the only explanation of an unresolved condition."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "frontend/tests/premium-reference-validation.browser.mjs",
+        "frontend/tests/premium-reference-validation-independent.browser.mjs",
+        "frontend/src/form-validation.ts",
+        "frontend/src/reference-workspace.ts",
+        "docs/premium-ui/reviews/monthly-leave-review-current.json"
+      ],
+      "remaining_gap": "Check consequential failure surfaces and their persistence/recovery boundaries."
+    },
+    {
+      "item_id": 95,
+      "requirement": "Add named toast dismissal, restrained announcements and duplicate suppression; pause noncritical expiry on hover/focus and retain consequential feedback inline.",
+      "acceptance_scope": "Toast lifecycle, dismissal and restrained announcements",
+      "pass_conditions": [
+        "Every dismissible toast has a named dismissal action and duplicate notifications are suppressed.",
+        "Noncritical expiry pauses during pointer hover or keyboard focus and announcements follow the intended urgency.",
+        "Consequential outcomes also remain available inline rather than relying solely on the toast."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "frontend/tests/premium-notification-layout-independent.browser.mjs",
+        "frontend/tests/premium-recycle-recovery-independent.browser.mjs",
+        "frontend/src/ui-feedback.ts",
+        "frontend/src/premium-theme.css",
+        "frontend/src/recycle-bin.ts"
+      ],
+      "remaining_gap": "Verify duplicate, hover, focus, dismissal and inline-companion behavior in the shared notification component."
+    },
+    {
+      "item_id": 96,
+      "requirement": "Replace title-only help spans with semantic help controls exposing readable guidance through keyboard and touch interaction.",
+      "acceptance_scope": "Semantic keyboard and touch help controls",
+      "pass_conditions": [
+        "Help is activated through semantic controls with meaningful accessible names rather than title-only spans.",
+        "Keyboard and touch users can expose, read and close the guidance without losing their place."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/compute-focus-current.json",
+        "docs/premium-ui/qa-compute-focus.json"
+      ],
+      "remaining_gap": "Inventory remaining title-only guidance and verify shared disclosure interaction."
+    },
+    {
+      "item_id": 97,
+      "requirement": "Standardize loading skeleton dimensions to reduce layout shifts when summaries, cards and form content arrive.",
+      "acceptance_scope": "Consistent loading geometry for summaries, cards and forms",
+      "pass_conditions": [
+        "Skeleton variants reserve dimensions appropriate to the content they replace.",
+        "Loading-to-content comparisons show controlled layout movement without hiding usable controls or misrepresenting loaded data."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/loading-shapes-current.json",
+        "docs/premium-ui/qa-loading-shapes.json",
+        "docs/premium-ui/qa-editor-skeleton.json"
+      ],
+      "remaining_gap": "Compare representative loading/content geometries for each shared skeleton variant."
+    },
+    {
+      "item_id": 98,
+      "requirement": "Provide useful empty states explaining what is missing, why it matters and which available action resolves it.",
+      "acceptance_scope": "Actionable empty states",
+      "pass_conditions": [
+        "Empty states explain what data is absent and why it matters for the current task.",
+        "An available resolving action leads to the correct existing workflow; restricted or unavailable actions are not offered deceptively."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/leave-pressure-current.json",
+        "docs/premium-ui/qa-leave-pressure.json"
+      ],
+      "remaining_gap": "Cover first-use, filtered-empty and genuinely absent-data states separately where their remedies differ."
+    },
+    {
+      "item_id": 99,
+      "requirement": "Separate destructive confirmation from routine acknowledgement, clearly naming the target record, month and expected consequence.",
+      "acceptance_scope": "Destructive confirmations with explicit scope",
+      "pass_conditions": [
+        "Destructive or irreversible confirmations name the record or month and explain the expected consequence.",
+        "Routine acknowledgement remains visually and verbally distinct from destructive consent."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/specialist-integration-current.json"
+      ],
+      "remaining_gap": "Inventory consequential confirmations and inspect target/month naming before activation."
+    },
+    {
+      "item_id": 100,
+      "requirement": "Verify form cancellation, Escape and outside-click rules preserve drafts and never accidentally trigger submit or destructive actions.",
+      "acceptance_scope": "Safe form dismissal and cancellation boundaries",
+      "pass_conditions": [
+        "Cancel, Escape and outside interaction follow the documented draft-retention or explicit-discard rule for each form.",
+        "None of these dismissal paths submits a form or executes a destructive action."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "frontend/tests/premium-workspace-unload-independent.browser.mjs",
+        "frontend/tests/premium-history-focus-independent.browser.mjs",
+        "frontend/tests/premium-past-recovery-independent.browser.mjs",
+        "frontend/tests/premium-past-actions.browser.mjs",
+        "frontend/tests/premium-intelligence-drafts.browser.mjs"
+      ],
+      "remaining_gap": "Verify applicable dismissal paths with dirty and pending forms; do not assume all dialogs intentionally permit outside dismissal."
+    },
+    {
+      "item_id": 101,
+      "requirement": "Classify each existing table as a comparison grid or record list before choosing its mobile representation.",
+      "acceptance_scope": "Table classification before mobile representation choice",
+      "pass_conditions": [
+        "Every existing table is recorded as a comparison grid or record list, with a short rationale based on its information relationships.",
+        "The selected mobile representation follows that classification or records a justified exception."
+      ],
+      "evidence_needed": [
+        "A complete relevant inventory or measured applicability decision addressing the conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/record-table-names-current.json",
+        "docs/premium-ui/reviews/current-family-matrix-wave.json",
+        "docs/premium-ui/qa-family-regressions-current.json",
+        "docs/premium-ui/qa-responsive/report.json",
+        "docs/premium-ui/surface-taxonomy.md"
+      ],
+      "remaining_gap": "Complete the table inventory and explicit classification; screenshots of a few tables cannot substitute for this definition artifact."
+    },
+    {
+      "item_id": 102,
+      "requirement": "Remove blanket wide-table assumptions from record lists that can retain full meaning through responsive labeled cards.",
+      "acceptance_scope": "Record-list mobile reflow",
+      "pass_conditions": [
+        "Record lists that retain meaning as cards avoid blanket minimum widths and page-level horizontal scrolling.",
+        "Mobile labeled records preserve their essential values and operations relative to the desktop source."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-mappings.json"
+      ],
+      "remaining_gap": "Identify remaining record-list tables inheriting wide minimums and verify meaningful card parity."
+    },
+    {
+      "item_id": 103,
+      "requirement": "Keep genuine comparison tables locally scrollable with discoverable horizontal-scroll cues and keyboard-accessible regions.",
+      "acceptance_scope": "Intentional comparison-table scrolling",
+      "pass_conditions": [
+        "Genuine comparison grids scroll locally with a discoverable cue that more columns exist.",
+        "The scroll region is keyboard reachable and named without forcing the entire document sideways."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/staffing-review-current.json",
+        "docs/premium-ui/qa-staffing-review.json",
+        "docs/premium-ui/reviews/specialist-integration-current.json"
+      ],
+      "remaining_gap": "Check each comparison family for local overflow, cue visibility and keyboard scrolling."
+    },
+    {
+      "item_id": 104,
+      "requirement": "Preserve captions and header relationships; expose exactly one accessible interactive representation when desktop tables and mobile cards coexist.",
+      "acceptance_scope": "Table relationships and single accessible interactive representation",
+      "pass_conditions": [
+        "Comparison tables retain meaningful captions or names and correct header-to-cell relationships.",
+        "Where desktop and mobile versions coexist, only the intended representation exposes interactive controls to accessibility and keyboard navigation."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-mappings.json",
+        "docs/premium-ui/reviews/record-table-names-current.json"
+      ],
+      "remaining_gap": "Verify representation switching and structural relationships, including breakpoint boundaries."
+    },
+    {
+      "item_id": 105,
+      "requirement": "Keep essential identity, status and actions visible without requiring hover or reaching a distant off-screen column.",
+      "acceptance_scope": "Essential record information and reachable actions",
+      "pass_conditions": [
+        "Identity, status and primary record actions remain perceivable in the chosen desktop and mobile representation.",
+        "Essential controls are available without hover and without a distant off-screen action column."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/browser-zoom-profile-current.json",
+        "docs/premium-ui/qa-browser-zoom-before/report.json",
+        "docs/premium-ui/qa-browser-zoom-current/report.json",
+        "docs/premium-ui/qa-browser-zoom-current/short-viewport-dark-profile.png",
+        "docs/premium-ui/qa-browser-zoom-current/README.md"
+      ],
+      "remaining_gap": "Review long-content and narrow layouts for record families with essential actions."
+    },
+    {
+      "item_id": 106,
+      "requirement": "Standardize row selection, mixed checkbox state, select-all scope and announced counts across filtered and paginated record sets.",
+      "acceptance_scope": "Consistent selection semantics across filtered and paginated lists",
+      "pass_conditions": [
+        "Row selection, header mixed state and selected counts agree with the actual selected records.",
+        "Filtering or pagination preserves or clears selection according to an explicit consistent rule, with announced counts when selection changes."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/member-sort-current.json",
+        "docs/premium-ui/qa-member-sort.json",
+        "docs/premium-ui/reviews/search-selection-current.json",
+        "docs/premium-ui/qa-search-selection.json"
+      ],
+      "remaining_gap": "Enumerate bulk-select lists and verify selection identity, mixed state and count through filter/page transitions."
+    },
+    {
+      "item_id": 107,
+      "requirement": "Clearly distinguish selecting visible rows, all filtered rows and all monthly records before any bulk action.",
+      "acceptance_scope": "Explicit bulk selection scope",
+      "pass_conditions": [
+        "Before a bulk action the interface states whether scope is visible rows, all filtered results or all records for the selected month.",
+        "The resulting selected IDs or existing monthly endpoint context matches that stated scope."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/search-selection-current.json",
+        "docs/premium-ui/qa-search-selection.json"
+      ],
+      "remaining_gap": "Verify each bulk-selection mode and refusal path against its actual request or no-request result."
+    },
+    {
+      "item_id": 108,
+      "requirement": "Expose sort direction visually and through aria-sort, verifying records actually reorder according to the selected header.",
+      "acceptance_scope": "Sort feedback and real ordering",
+      "pass_conditions": [
+        "Sortable table headers expose visual direction and correct aria-sort state.",
+        "Actual displayed records follow the selected order, including direction reversal and meaningful tie behavior."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/member-sort-current.json",
+        "docs/premium-ui/qa-member-sort.json"
+      ],
+      "remaining_gap": "Verify sortable tables separately from select-based sort controls, which do not require aria-sort on a nonexistent header."
+    },
+    {
+      "item_id": 109,
+      "requirement": "Debounce search appropriately, preserve input focus and distinguish no results from an unloaded or failed dataset.",
+      "acceptance_scope": "Search responsiveness, focus and dataset state",
+      "pass_conditions": [
+        "Search is debounced where workload warrants it and typing retains input focus.",
+        "No-match results are distinguished from loading or failed data, and superseded results cannot overwrite the current query."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/search-selection-current.json",
+        "docs/premium-ui/qa-search-selection.json"
+      ],
+      "remaining_gap": "Measure affected search behavior with rapid typing and delayed results rather than prescribing a debounce for every local list."
+    },
+    {
+      "item_id": 110,
+      "requirement": "Make active filters visible as removable summaries with a reliable reset action and meaningful result count.",
+      "acceptance_scope": "Visible active-filter summaries and reliable reset",
+      "pass_conditions": [
+        "Active filters are represented by understandable removable summaries and an accurate result count.",
+        "Removing one summary or resetting all filters changes both the controls and results consistently."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-member-filters.json"
+      ],
+      "remaining_gap": "Verify each filter family with combined filters, zero matches and reset."
+    },
+    {
+      "item_id": 111,
+      "requirement": "Consolidate dense mobile filters into an expandable panel while keeping applied-filter count visible in the main toolbar.",
+      "acceptance_scope": "Mobile filter disclosure with visible applied count",
+      "pass_conditions": [
+        "Dense optional mobile filters occupy an expandable panel while the main toolbar shows the applied-filter count.",
+        "Opening, closing and reflow preserve chosen filters and leave primary actions accessible."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-member-filters.json"
+      ],
+      "remaining_gap": "Verify the disclosure count and retained applied values in affected mobile toolbars."
+    },
+    {
+      "item_id": 112,
+      "requirement": "Preserve filtering, sorting and pagination when opening details or recovering from an unrelated optional report failure.",
+      "acceptance_scope": "List state preservation through detail and optional-report recovery",
+      "pass_conditions": [
+        "Opening and returning from details preserves relevant filters, sorting and pagination.",
+        "Failure or recovery of an unrelated optional report does not reset those choices or the primary record list."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "frontend/tests/premium-unit-board.browser.mjs",
+        "frontend/tests/premium-unit-freshness.browser.mjs",
+        "frontend/tests/premium-unit-freshness-independent.browser.mjs",
+        "frontend/tests/premium-unit-cache-session.browser.mjs",
+        "frontend/tests/premium-unit-performance.browser.mjs"
+      ],
+      "remaining_gap": "Cover each affected list's return path and optional-report failure boundary."
+    },
+    {
+      "item_id": 113,
+      "requirement": "Align dates, numbers and units consistently, avoiding mixed formats that complicate scanning or workload comparisons.",
+      "acceptance_scope": "Consistent date, number and unit presentation",
+      "pass_conditions": [
+        "Comparable dates, numeric values and units use deliberate consistent formatting and alignment.",
+        "Precision, zero values and unit identities remain intact; display formatting does not change request values."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/mobile-member-filter-hierarchy-current.json",
+        "docs/premium-ui/reviews/date-display-current.json",
+        "docs/premium-ui/qa-date-display.json"
+      ],
+      "remaining_gap": "Inventory comparable fields and verify formatting against representative exact values."
+    },
+    {
+      "item_id": 114,
+      "requirement": "Differentiate row hover, selection, keyboard focus and warning states using more than subtle background color changes.",
+      "acceptance_scope": "Distinct hover, selection, focus and warning states",
+      "pass_conditions": [
+        "Row states remain distinguishable through explicit indicators or borders as well as color.",
+        "Keyboard focus remains visible when combined with selection or a warning, including forced-color presentation."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-forced-colors/selection-current.json",
+        "docs/premium-ui/reviews/guide-copy-forced-colors-current.json"
+      ],
+      "remaining_gap": "Verify combined row states in light/dark and forced-color rendering where those states exist."
+    },
+    {
+      "item_id": 115,
+      "requirement": "Introduce pagination or measured virtualization only where representative datasets demonstrate a real rendering or navigation problem.",
+      "acceptance_scope": "Measured justification for pagination or virtualization",
+      "pass_conditions": [
+        "Representative dataset measurements identify a concrete rendering or navigation problem before adding pagination or virtualization.",
+        "The chosen strategy resolves the measured issue while preserving access to all records and their actions."
+      ],
+      "evidence_needed": [
+        "A complete relevant inventory or measured applicability decision addressing the conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "frontend/tests/premium-unit-performance.browser.mjs",
+        "frontend/tests/premium-unit-pagination-independent.browser.mjs",
+        "frontend/tests/premium-unit-members-independent.browser.mjs",
+        "frontend/tests/premium-history-focus-independent.browser.mjs",
+        "frontend/tests/premium-unit-print-independent.browser.mjs"
+      ],
+      "remaining_gap": "Retain dataset size and before/after measurements; absence of a measured problem supports retaining the existing simpler list.",
+      "procedural_exception": "Conditional addition: if representative measurements show no rendering/navigation problem, record a justified decision to retain the existing list rather than introducing pagination or virtualization."
+    },
+    {
+      "item_id": 116,
+      "requirement": "Provide accessible nonvirtualized summaries or navigation where virtualization would otherwise hide content from assistive technology.",
+      "acceptance_scope": "Accessible access when virtualization is used",
+      "pass_conditions": [
+        "Any virtualized content has a usable nonvirtualized summary or navigation path covering records hidden by windowing.",
+        "That path preserves meaningful record identity, counts and reachable destinations."
+      ],
+      "evidence_needed": [
+        "A complete relevant inventory or measured applicability decision addressing the conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "frontend/tests/premium-unit-performance.browser.mjs",
+        "frontend/tests/premium-unit-pagination-independent.browser.mjs",
+        "frontend/tests/premium-unit-members-independent.browser.mjs",
+        "frontend/src/main.ts",
+        "frontend/src/unit-board-filters.ts"
+      ],
+      "remaining_gap": "Determine whether actual virtualization exists; if absent record that the conditional requirement is not triggered.",
+      "procedural_exception": "Applies only where virtualization is actually used. A source-backed finding that no virtualization exists is a valid not-triggered disposition, not a demand to introduce virtualization."
+    },
+    {
+      "item_id": 117,
+      "requirement": "Simplify metric tiles into consistent value, label, context and optional comparison layouts with honest missing-data treatment.",
+      "acceptance_scope": "Honest, consistent metric tiles",
+      "pass_conditions": [
+        "Metric tiles consistently separate value, label and relevant context or comparison.",
+        "Missing, unknown or unavailable values are labeled honestly and are not converted into fabricated zeroes."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/metric-values-current.json",
+        "docs/premium-ui/qa-metric-values.json"
+      ],
+      "remaining_gap": "Review tile variants with real zero, missing value, failure and optional comparison cases."
+    },
+    {
+      "item_id": 118,
+      "requirement": "Use chart palettes and legends that remain understandable in dark mode, grayscale and common color-vision differences.",
+      "acceptance_scope": "Chart meaning beyond palette",
+      "pass_conditions": [
+        "Chart series have clear textual labels or legends that remain distinguishable in dark mode, grayscale and common color-vision conditions.",
+        "Color is not the sole channel for the chart distinctions users need to interpret."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "frontend/tests/premium-analysis-charts.browser.mjs",
+        "frontend/tests/premium-analysis-independent-review.browser.mjs",
+        "frontend/src/analysis-charts.ts",
+        "frontend/src/main.ts",
+        "frontend/src/premium-theme.css"
+      ],
+      "remaining_gap": "Inspect actual legends/encodings and representative rendering under the specified viewing conditions."
+    },
+    {
+      "item_id": 119,
+      "requirement": "Provide readable table or text equivalents for charts and ensure drill-down controls expose their destination and result.",
+      "acceptance_scope": "Chart equivalents and meaningful drill-down",
+      "pass_conditions": [
+        "Every chart has a readable text or table equivalent containing its meaningful values.",
+        "Drill-down controls identify their destination and open the relevant underlying results or records."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "frontend/tests/premium-analysis-charts.browser.mjs",
+        "frontend/tests/premium-analysis-independent-review.browser.mjs",
+        "frontend/src/analysis-charts.ts",
+        "frontend/src/main.ts",
+        "frontend/src/premium-theme.css"
+      ],
+      "remaining_gap": "Verify equivalent data and actual drill-down destinations, rather than merely checking that a button exists."
+    },
+    {
+      "item_id": 120,
+      "requirement": "Preserve analysis calculations and export values while improving presentation, readability and actionable links to underlying records.",
+      "acceptance_scope": "Preserved analysis and export semantics",
+      "pass_conditions": [
+        "Improved analysis presentation retains the same calculations and exact export values for equivalent source data.",
+        "Links to underlying records resolve to the correct existing context and do not alter the analysis dataset."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Equivalent fixtures, actual existing requests/results and independent persisted or artifact read-back where the condition asserts a mutation/export outcome."
+      ],
+      "existing_evidence_candidates": [
+        "frontend/tests/premium-analysis-charts.browser.mjs",
+        "frontend/tests/premium-analysis-independent-review.browser.mjs",
+        "frontend/src/analysis-charts.ts",
+        "frontend/src/main.ts",
+        "frontend/src/premium-theme.css"
+      ],
+      "remaining_gap": "Compare before/after analysis results and exported values using identical fixtures and verify selected links."
+    },
+    {
+      "item_id": 121,
+      "requirement": "Consolidate profile entry points into a coherent visual experience while preserving currently available role-specific actions.",
+      "acceptance_scope": "Coherent member-profile entry experience",
+      "pass_conditions": [
+        "Member entry points share a recognizable identity, navigation and edit hierarchy.",
+        "Existing role-specific actions remain available only in their existing authorized contexts."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/mobile-member-filter-hierarchy-current.json",
+        "docs/premium-ui/reviews/profile-persistence-actual-zoom-current.json",
+        "docs/premium-ui/reviews/profile-persistence-actions-current.json",
+        "docs/premium-ui/qa-profile-persistence/report.json",
+        "docs/premium-ui/contracts/member-profile-persistence-current.json"
+      ],
+      "remaining_gap": "Inventory actual profile entry points and compare their supported actions without inventing new permissions."
+    },
+    {
+      "item_id": 122,
+      "requirement": "Make member identity, designation, effective call level and active status clear before secondary history or administrative metadata.",
+      "acceptance_scope": "Primary member identity hierarchy",
+      "pass_conditions": [
+        "Name, designation, effective call level and active status are clear before secondary metadata.",
+        "Values reflect returned identity/effective-date information rather than guessed or future-effective state."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-member-linked-actions-independent.json",
+        "docs/premium-ui/reviews/reflow-linked-recovery-current.json",
+        "docs/premium-ui/qa-member-duplicates-entry-independent.json",
+        "docs/premium-ui/reviews/gallery-duplicates-current.json",
+        "docs/premium-ui/qa-member-three-controls-independent.json"
+      ],
+      "remaining_gap": "Inspect normal, long-name, future-change and missing-identity fixtures in profile headers."
+    },
+    {
+      "item_id": 123,
+      "requirement": "Preserve desktop rails and mobile tabs, automatically revealing the active tab without stealing focus and providing discoverable scroll cues.",
+      "acceptance_scope": "Responsive profile rails and active-tab reveal",
+      "pass_conditions": [
+        "Desktop rails and mobile tabs preserve the selected section during reflow.",
+        "The active tab is revealed without unwanted focus changes, with a discoverable cue when more tabs are off screen."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "frontend/tests/premium-analysis-tabs.browser.mjs",
+        "frontend/tests/premium-analysis-navigation-independent.browser.mjs",
+        "frontend/tests/premium-profile-rail-independent.browser.mjs",
+        "frontend/src/main.ts",
+        "frontend/src/member-workspace.ts"
+      ],
+      "remaining_gap": "Verify active-tab visibility through selection, resize and constrained panel widths."
+    },
+    {
+      "item_id": 124,
+      "requirement": "Standardize tab labels, counts and ordering across overview, postings, leave, duties, history and administrative sections.",
+      "acceptance_scope": "Consistent member-section labels and counts",
+      "pass_conditions": [
+        "Overview, postings, leave, duties, history and administrative sections use deliberate consistent labels and ordering.",
+        "Displayed counts agree with the section's actual scope and do not imply missing or unloaded data are zero."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/mobile-member-filter-hierarchy-current.json",
+        "docs/premium-ui/reviews/profile-persistence-actual-zoom-current.json",
+        "docs/premium-ui/reviews/profile-persistence-actions-current.json",
+        "docs/premium-ui/qa-profile-persistence/report.json",
+        "docs/premium-ui/contracts/member-profile-persistence-current.json"
+      ],
+      "remaining_gap": "Define the section vocabulary and compare actual labels/counts across profile entry variants."
+    },
+    {
+      "item_id": 125,
+      "requirement": "Preserve tablist/tab/tabpanel relationships, roving focus and orientation-aware navigation while keeping ordinary page navigation available.",
+      "acceptance_scope": "Complete tab interaction semantics",
+      "pass_conditions": [
+        "Tablist, tabs and panels expose correct relationships, selected state and a single roving tab stop.",
+        "Arrow-key behavior follows horizontal or vertical orientation, while Tab continues to ordinary page controls."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "frontend/tests/premium-analysis-tabs.browser.mjs",
+        "frontend/tests/premium-analysis-navigation-independent.browser.mjs",
+        "frontend/tests/premium-profile-rail-independent.browser.mjs",
+        "frontend/src/main.ts",
+        "frontend/src/member-workspace.ts"
+      ],
+      "remaining_gap": "Verify both orientations, activation policy and panel focus destinations after responsive changes."
+    },
+    {
+      "item_id": 126,
+      "requirement": "Keep the identity header compact while allowing full names and designations to wrap without overlapping close controls.",
+      "acceptance_scope": "Compact, resilient identity header",
+      "pass_conditions": [
+        "Full names and designations wrap without overlap with close controls or essential status.",
+        "The header remains compact enough to leave usable content space at supported narrow widths and reduced heights."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/profile-identity-fixed-current.json",
+        "docs/premium-ui/qa-profile-identity-fixed.json"
+      ],
+      "remaining_gap": "Use long-identity and enlarged-text geometry rather than accepting no document overflow alone."
+    },
+    {
+      "item_id": 127,
+      "requirement": "Surface unsaved changes and validation errors on their relevant tabs so hidden form problems remain discoverable.",
+      "acceptance_scope": "Discoverable tab-specific drafts and errors",
+      "pass_conditions": [
+        "Tabs containing unsaved edits or validation errors expose meaningful markers.",
+        "Users can reach the affected section and field from those markers or the validation flow."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "frontend/tests/premium-intelligence-drafts.browser.mjs",
+        "frontend/src/rota-intelligence.ts",
+        "docs/premium-ui/reviews/profile-persistence-actual-zoom-current.json",
+        "docs/premium-ui/reviews/profile-persistence-actions-current.json",
+        "docs/premium-ui/qa-profile-persistence/report.json"
+      ],
+      "remaining_gap": "Verify hidden-tab validation and dirty markers through edits, tab changes and failed saves."
+    },
+    {
+      "item_id": 128,
+      "requirement": "Present dated promotions and call-level changes as a readable timeline with clear scheduled-versus-effective distinctions.",
+      "acceptance_scope": "Dated promotion and call-level timeline",
+      "pass_conditions": [
+        "Timeline entries show dates and readable transitions for promotions/call-level changes.",
+        "Scheduled future changes are distinguished from changes effective at the displayed date."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/profile-persistence-actual-zoom-current.json",
+        "docs/premium-ui/reviews/profile-persistence-actions-current.json",
+        "docs/premium-ui/qa-profile-persistence/report.json",
+        "docs/premium-ui/contracts/member-profile-persistence-current.json",
+        "docs/premium-ui/runtime-action-coverage-current.json"
+      ],
+      "remaining_gap": "Compare timeline labels with dated returned records, including past, current and future entries."
+    },
+    {
+      "item_id": 129,
+      "requirement": "Reflow posting and leave histories into date-aware mobile cards while keeping edit actions adjacent to the affected record.",
+      "acceptance_scope": "Mobile posting and leave history records",
+      "pass_conditions": [
+        "Posting and leave histories reflow into readable date-aware cards on narrow screens.",
+        "Each edit action remains adjacent to and acts on the corresponding dated record."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "frontend/tests/premium-unit-members-independent.browser.mjs",
+        "frontend/tests/premium-unit-performance.browser.mjs",
+        "frontend/src/unit-member-lists.ts",
+        "frontend/src/main.ts",
+        "frontend/src/premium-theme.css"
+      ],
+      "remaining_gap": "Verify long histories, cross-month ranges and selected-record editor identity."
+    },
+    {
+      "item_id": 130,
+      "requirement": "Separate member-facing information from administrator metadata through hierarchy and progressive disclosure rather than hidden essential context.",
+      "acceptance_scope": "Member information versus administrative metadata hierarchy",
+      "pass_conditions": [
+        "Primary member information is distinguished from administrative metadata through labels, grouping and progressive disclosure.",
+        "Essential context remains discoverable and existing role-limited metadata/actions remain correctly scoped."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/member-candidate-profile-close-current.json",
+        "docs/premium-ui/qa-member-csv-candidate.json",
+        "docs/premium-ui/qa-legacy-profile-fields.json",
+        "docs/premium-ui/qa-record-close.json"
+      ],
+      "remaining_gap": "Inspect both information layers across existing profile variants and authorized role contexts."
+    },
+    {
+      "item_id": 131,
+      "requirement": "Standardize add, edit, save and cancel patterns across profile sections so users do not relearn each editor.",
+      "acceptance_scope": "Consistent profile section editing patterns",
+      "pass_conditions": [
+        "Add, edit, save and cancel use consistent labels, placement and draft/pending/error conventions across profile sections.",
+        "Each operation retains its existing target record and confirmation or discard behavior."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/profile-persistence-actual-zoom-current.json",
+        "docs/premium-ui/reviews/profile-persistence-actions-current.json",
+        "docs/premium-ui/qa-profile-persistence/report.json",
+        "docs/premium-ui/contracts/member-profile-persistence-current.json",
+        "docs/premium-ui/runtime-action-coverage-current.json"
+      ],
+      "remaining_gap": "Map section editors and verify their actual save/cancel outcomes rather than enforcing identical fields."
+    },
+    {
+      "item_id": 132,
+      "requirement": "Keep workload summaries compact and readable, linking to actual duties using existing supported detail or report views.",
+      "acceptance_scope": "Compact workload summary with supported destinations",
+      "pass_conditions": [
+        "Workload summaries present readable compact counts with honest scope.",
+        "Links open actual duties or existing supported reports for the correct member and period."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/native-validation-workload-current.json",
+        "docs/premium-ui/qa-profile-workload-links.json"
+      ],
+      "remaining_gap": "Compare summary values and follow workload destinations using populated fixtures."
+    },
+    {
+      "item_id": 133,
+      "requirement": "Show missing designation, unknown history and unassigned values honestly instead of presenting misleading zeroes or placeholder identities.",
+      "acceptance_scope": "Honest unknown and unassigned profile values",
+      "pass_conditions": [
+        "Missing designation, unknown history and unassigned values have explicit understandable labels.",
+        "They are not replaced by misleading numeric zeroes, fabricated identities or implied known history."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/profile-identity-fixed-current.json",
+        "docs/premium-ui/qa-profile-identity-fixed.json"
+      ],
+      "remaining_gap": "Inspect missing, empty and genuinely zero cases separately."
+    },
+    {
+      "item_id": 134,
+      "requirement": "Make aliases and member-matching choices understandable, with explicit selection results and clear differences between existing and new people.",
+      "acceptance_scope": "Understandable aliases and matching choices",
+      "pass_conditions": [
+        "Aliases and matching candidates show enough identity information to distinguish existing people from new-person creation.",
+        "Selecting or clearing a match visibly states the resulting identity, with stale lookups unable to overwrite the current choice."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/profile-persistence-actual-zoom-current.json",
+        "docs/premium-ui/reviews/profile-persistence-actions-current.json",
+        "docs/premium-ui/qa-profile-persistence/report.json",
+        "docs/premium-ui/contracts/member-profile-persistence-current.json",
+        "docs/premium-ui/runtime-action-coverage-current.json"
+      ],
+      "remaining_gap": "Verify candidate changes, no-match creation and late-response ownership in actual matching flows."
+    },
+    {
+      "item_id": 135,
+      "requirement": "Give CSV upload, column mapping, row review and apply stages consistent progress indicators and recovery affordances.",
+      "acceptance_scope": "Consistent CSV stage progress and recovery",
+      "pass_conditions": [
+        "Upload, column mapping, row review and apply stages have clear current/completed stage indicators.",
+        "Recoverable failure explains the next safe action without implying that unconfirmed apply succeeded."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "frontend/tests/premium-workspace-unload-independent.browser.mjs",
+        "frontend/src/workspace-load-state.ts",
+        "frontend/src/record-workspace.ts",
+        "frontend/src/reference-workspace.ts",
+        "frontend/src/member-workspace.ts"
+      ],
+      "remaining_gap": "Compare member CSV stage transitions and failures against the existing preview/apply API flow."
+    },
+    {
+      "item_id": 136,
+      "requirement": "Preserve selected files and mappings after recoverable errors where browser permissions and current API semantics allow it.",
+      "acceptance_scope": "Recoverable CSV selection and mapping retention",
+      "pass_conditions": [
+        "Selected file and mapping choices survive recoverable errors within the browser's permitted lifetime.",
+        "When retention is impossible or intentionally discarded, the user receives explicit guidance before repeating work."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "frontend/tests/premium-editor-load.browser.mjs",
+        "frontend/tests/premium-editor-load-independent.browser.mjs",
+        "frontend/src/reference-workspace.ts",
+        "frontend/src/record-workspace.ts",
+        "frontend/src/workspace-load-state.ts"
+      ],
+      "remaining_gap": "Verify preview, mapping and apply failures and document browser-imposed retention boundaries."
+    },
+    {
+      "item_id": 137,
+      "requirement": "Highlight unresolved, duplicate and invalid import rows without letting decorative badges overwhelm the information needed to correct them.",
+      "acceptance_scope": "Correctable unresolved, duplicate and invalid rows",
+      "pass_conditions": [
+        "Import rows clearly distinguish unresolved, duplicate and invalid conditions with readable explanations.",
+        "Correction controls and essential row information remain usable without decorative status badges obscuring them."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/member-candidate-profile-close-current.json",
+        "docs/premium-ui/qa-member-csv-candidate.json",
+        "docs/premium-ui/qa-legacy-profile-fields.json",
+        "docs/premium-ui/qa-record-close.json",
+        "docs/premium-ui/qa-import-created-unit.json"
+      ],
+      "remaining_gap": "Review all row-state variants with long labels and narrow layouts."
+    },
+    {
+      "item_id": 138,
+      "requirement": "Explain import modes and scope before apply, using current server preview results rather than frontend assumptions.",
+      "acceptance_scope": "Import modes and scope grounded in server preview",
+      "pass_conditions": [
+        "Before apply, the interface explains the selected import mode and affected scope using current preview data.",
+        "Changing file, mode or review inputs invalidates or refreshes stale preview authority as required by existing semantics."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/member-candidate-profile-close-current.json",
+        "docs/premium-ui/qa-member-csv-candidate.json",
+        "docs/premium-ui/qa-legacy-profile-fields.json",
+        "docs/premium-ui/qa-record-close.json",
+        "docs/premium-ui/qa-import-candidate-choice.json"
+      ],
+      "remaining_gap": "Compare displayed mode/scope and apply context with actual server preview results and invalidation behavior."
+    },
+    {
+      "item_id": 139,
+      "requirement": "Keep import preview and apply actions reachable on phones while ensuring sticky footers cannot obscure final review rows.",
+      "acceptance_scope": "Reachable mobile import review and apply",
+      "pass_conditions": [
+        "Preview navigation and apply/review actions remain keyboard and touch reachable on phones.",
+        "The final review row, corrections and validation messages can scroll above actual wrapped sticky controls."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-sticky-review.json",
+        "docs/premium-ui/reviews/member-candidate-profile-close-current.json",
+        "docs/premium-ui/qa-member-csv-candidate.json",
+        "docs/premium-ui/qa-legacy-profile-fields.json",
+        "docs/premium-ui/qa-record-close.json"
+      ],
+      "remaining_gap": "Measure last-row and focused-error rectangles against the actual footer at narrow widths and reduced heights."
+    },
+    {
+      "item_id": 140,
+      "requirement": "Verify member saves, CSV apply, rejection downloads and history reopening through actual results and persisted read-back.",
+      "acceptance_scope": "Actual member/import persistence and downloaded rejections",
+      "pass_conditions": [
+        "Member saves and CSV apply produce the intended persisted records verified by subsequent reads.",
+        "Rejection downloads contain the expected nonempty artifact and history reopening reflects the saved import outcome."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Equivalent fixtures, actual existing requests/results and independent persisted or artifact read-back where the condition asserts a mutation/export outcome."
+      ],
+      "existing_evidence_candidates": [
+        "frontend/tests/premium-past-recovery-independent.browser.mjs",
+        "frontend/tests/premium-past-actions.browser.mjs",
+        "frontend/tests/premium-preview-rejections.browser.mjs",
+        "frontend/src/past-duties.ts",
+        "docs/premium-ui/reviews/profile-persistence-actual-zoom-current.json"
+      ],
+      "remaining_gap": "Exercise these actual outcomes on disposable data; isolated intercepted success responses are insufficient for persisted claims."
+    },
+    {
+      "item_id": 141,
+      "requirement": "Refine the leave toolbar around add, import and monthly approval, keeping secondary management tools visually subordinate.",
+      "acceptance_scope": "Leave-toolbar primary hierarchy",
+      "pass_conditions": [
+        "Add, import and monthly approval are visually prominent in the leave toolbar.",
+        "Secondary management actions remain available through a subordinate, understandable grouping on desktop and mobile."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/leave-calendar-toolbar-current.json",
+        "docs/premium-ui/qa-leave-calendar-boundaries.json",
+        "docs/premium-ui/qa-leave-toolbar.json"
+      ],
+      "remaining_gap": "Review the actual action order and narrow-layout geometry without changing leave operations."
+    },
+    {
+      "item_id": 142,
+      "requirement": "Preserve individual leave approval while making monthly pending counts, review scope and affected-duty acknowledgements clear.",
+      "acceptance_scope": "Individual and monthly leave approval clarity",
+      "pass_conditions": [
+        "Individual approval remains functional alongside monthly approval.",
+        "Monthly pending count, review scope and affected-duty acknowledgements match the selected month and existing preview data."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Equivalent fixtures, actual existing requests/results and independent persisted or artifact read-back where the condition asserts a mutation/export outcome."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/monthly-leave-review-current.json",
+        "docs/premium-ui/qa-monthly-leave-review.json"
+      ],
+      "remaining_gap": "Verify individual and monthly paths, refusal/acknowledgement and authoritative result read-back."
+    },
+    {
+      "item_id": 143,
+      "requirement": "Present full date ranges for cross-month leave so monthly approval cannot appear narrower than its actual effect.",
+      "acceptance_scope": "Complete cross-month approval date ranges",
+      "pass_conditions": [
+        "Monthly leave review shows each affected leave's full start/end range, including dates outside the selected month.",
+        "Confirmation explains effects beyond that month when the existing operation affects the entire record."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Equivalent fixtures, actual existing requests/results and independent persisted or artifact read-back where the condition asserts a mutation/export outcome."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/monthly-leave-review-current.json",
+        "docs/premium-ui/qa-monthly-leave-review.json"
+      ],
+      "remaining_gap": "Verify a populated cross-month leave case against the actual approved record and retained range."
+    },
+    {
+      "item_id": 144,
+      "requirement": "Offer useful phone day/list navigation alongside the month calendar without changing leave counts or blocking semantics.",
+      "acceptance_scope": "Phone leave day/list alternative without semantic change",
+      "pass_conditions": [
+        "Phone users can navigate useful day/list views alongside the month calendar.",
+        "Equivalent source data yields unchanged leave counts and blocking decisions across representations."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "frontend/tests/premium-leave-list.browser.mjs",
+        "frontend/tests/premium-leave-independent-review.browser.mjs",
+        "frontend/src/main.ts",
+        "frontend/src/premium-theme.css"
+      ],
+      "remaining_gap": "Compare populated calendar/day/list results, selected day and month-boundary cases."
+    },
+    {
+      "item_id": 145,
+      "requirement": "Use clear textual status cues for approved, pending, imported-review, cancelled and rejected leave in every representation.",
+      "acceptance_scope": "Explicit leave statuses in every representation",
+      "pass_conditions": [
+        "Approved, pending, imported-review, cancelled and rejected leave carry clear textual status cues wherever represented.",
+        "Statuses correspond to returned values and remain understandable without relying on color alone."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/leave-pressure-current.json",
+        "docs/premium-ui/qa-leave-pressure.json"
+      ],
+      "remaining_gap": "Inventory calendar, list, card and review representations and check applicable statuses."
+    },
+    {
+      "item_id": 146,
+      "requirement": "Give calendars keyboard behavior matching their actual semantics; never add grid roles without the complete interaction pattern.",
+      "acceptance_scope": "Calendar semantics matched by keyboard interaction",
+      "pass_conditions": [
+        "Calendar controls use native semantics or a complete keyboard model appropriate to their actual role.",
+        "Any grid-role calendar implements required focus movement and selection behavior rather than adding decorative grid roles."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/leave-calendar-toolbar-current.json",
+        "docs/premium-ui/qa-leave-calendar-boundaries.json",
+        "docs/premium-ui/qa-leave-toolbar.json"
+      ],
+      "remaining_gap": "Inspect role assignments and verify the interaction model in supported calendar layouts."
+    },
+    {
+      "item_id": 147,
+      "requirement": "Distinguish unavailable members from merely pending leave warnings using the existing returned status and safety information.",
+      "acceptance_scope": "Unavailable versus pending-warning distinction",
+      "pass_conditions": [
+        "Returned unavailable/blocking states and pending leave warnings are clearly differentiated in text and treatment.",
+        "The displayed rule/safety context remains faithful to returned information and does not treat warnings as confirmed absence."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/leave-pressure-current.json",
+        "docs/premium-ui/qa-leave-pressure.json"
+      ],
+      "remaining_gap": "Use otherwise comparable approved/unavailable and pending-warning fixtures."
+    },
+    {
+      "item_id": 148,
+      "requirement": "Reflow leave-pressure summaries into readable unit and call-level groups without duplicating every explanatory paragraph.",
+      "acceptance_scope": "Readable grouped leave pressure",
+      "pass_conditions": [
+        "Pressure summaries group unit and call-level information with readable counts and warnings.",
+        "Shared explanations are consolidated without losing group-specific meaning or hiding returned groups."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/leave-pressure-current.json",
+        "docs/premium-ui/qa-leave-pressure.json"
+      ],
+      "remaining_gap": "Compare all returned groups/counts and long-content layouts with the source data."
+    },
+    {
+      "item_id": 149,
+      "requirement": "Improve unit-board hierarchy so campus, unit identity, staffing groups and dated assignments remain easy to scan.",
+      "acceptance_scope": "Unit-board information hierarchy",
+      "pass_conditions": [
+        "Campus, unit identity, staffing groups and dated assignments have a clear scan order.",
+        "Narrow cards preserve the same essential unit and staffing context as desktop boards."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "frontend/tests/premium-unit-board.browser.mjs",
+        "frontend/tests/premium-unit-members-independent.browser.mjs",
+        "frontend/tests/premium-unit-performance.browser.mjs",
+        "frontend/src/unit-board-filters.ts",
+        "frontend/src/main.ts"
+      ],
+      "remaining_gap": "Inspect representative multiple-campus units, long names and populated staffing groups."
+    },
+    {
+      "item_id": 150,
+      "requirement": "Keep create-unit and add-member actions visible at the relevant unit context, preserving existing normalized reference workflows.",
+      "acceptance_scope": "Contextual unit creation and member addition",
+      "pass_conditions": [
+        "Create-unit and add-member entry points are visible where users manage the relevant unit context.",
+        "They open the existing normalized reference/assignment workflow with the correct context and existing permissions."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "frontend/tests/premium-unit-board.browser.mjs",
+        "frontend/src/unit-board-filters.ts",
+        "frontend/src/main.ts",
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/reviews/inline-member-selection-lifetime-current.json"
+      ],
+      "remaining_gap": "Verify actual launch destinations and selected unit/reference identity."
+    },
+    {
+      "item_id": 151,
+      "requirement": "Present dated unit membership changes without visually implying that a future posting is already effective today.",
+      "acceptance_scope": "Effective versus future unit membership",
+      "pass_conditions": [
+        "Dated membership changes visibly distinguish future postings from those effective today or at the displayed date.",
+        "Counts and labels do not imply a scheduled posting is already current."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "frontend/tests/premium-unit-board.browser.mjs",
+        "frontend/src/unit-board-filters.ts",
+        "frontend/src/main.ts",
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/qa-unit-board.json"
+      ],
+      "remaining_gap": "Compare past/current/future posting fixtures and displayed date context."
+    },
+    {
+      "item_id": 152,
+      "requirement": "Standardize unit filters, expansion states and per-unit counts across desktop boards and mobile stacked cards.",
+      "acceptance_scope": "Consistent unit-board filters, expansion and counts",
+      "pass_conditions": [
+        "Desktop boards and mobile cards expose equivalent filtering and per-unit count meanings.",
+        "Chosen filters and expansion states behave predictably across reflow and return navigation."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "frontend/tests/premium-unit-board.browser.mjs",
+        "frontend/src/unit-board-filters.ts",
+        "frontend/src/main.ts",
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/reviews/unit-month-draft-finish-current.json"
+      ],
+      "remaining_gap": "Verify filter results, collapsed summaries and retained choices across desktop/mobile transitions."
+    },
+    {
+      "item_id": 153,
+      "requirement": "Make staffing warnings actionable through existing editors while keeping the authoritative rule and affected date visible.",
+      "acceptance_scope": "Actionable staffing warnings with rule/date context",
+      "pass_conditions": [
+        "Warnings show the authoritative rule and affected date alongside the staffing issue.",
+        "Existing editor links open the relevant unit/member/date context without guessing a new operational remedy."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/staffing-review-current.json",
+        "docs/premium-ui/qa-staffing-review.json"
+      ],
+      "remaining_gap": "Follow representative warning actions and compare their destinations with returned warning data."
+    },
+    {
+      "item_id": 154,
+      "requirement": "Improve long unit-member lists through measured pagination or expansion without concealing missing staffing or leave conflicts.",
+      "acceptance_scope": "Measured long-list disclosure preserving safety context",
+      "pass_conditions": [
+        "Long unit-member lists use expansion or pagination justified by representative list measurements.",
+        "All members remain reachable and missing-staffing or leave-conflict indicators remain visible in summary or expanded context."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "frontend/tests/premium-unit-board.browser.mjs",
+        "frontend/tests/premium-unit-performance.browser.mjs",
+        "frontend/tests/premium-unit-pagination-independent.browser.mjs",
+        "frontend/tests/premium-unit-members-independent.browser.mjs",
+        "frontend/tests/premium-unit-print-independent.browser.mjs"
+      ],
+      "remaining_gap": "Retain performance/navigation measurements and verify safety indicators outside the initially visible slice."
+    },
+    {
+      "item_id": 155,
+      "requirement": "Align normalized reference pickers and inline creation dialogs with the same label, validation and save conventions.",
+      "acceptance_scope": "Consistent normalized picker and inline-create forms",
+      "pass_conditions": [
+        "Reference pickers and inline creation dialogs share clear labels, field validation and save/cancel conventions.",
+        "Existing normalized values and newly created values remain distinguishable and selected only after authoritative save."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "frontend/tests/premium-editor-load.browser.mjs",
+        "frontend/tests/premium-editor-load-independent.browser.mjs",
+        "frontend/tests/premium-reference-validation.browser.mjs",
+        "frontend/tests/premium-reference-validation-independent.browser.mjs",
+        "frontend/tests/premium-unit-save-recovery.browser.mjs"
+      ],
+      "remaining_gap": "Verify supported reference types with validation, failed create and successful selection recovery."
+    },
+    {
+      "item_id": 156,
+      "requirement": "Preserve clear distinction between adding a reference value, assigning a person and editing an existing dated record.",
+      "acceptance_scope": "Distinct reference creation, person assignment and dated editing",
+      "pass_conditions": [
+        "Action labels and editor context clearly identify whether the user is adding a reference, assigning a person or editing an existing dated record.",
+        "Each action targets its existing record type and date scope without presenting one operation as another."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/inline-member-selection-lifetime-current.json",
+        "docs/premium-ui/contracts/inline-member-selection-current.json",
+        "docs/premium-ui/reviews/inline-member-selection-source-review.json",
+        "docs/premium-ui/reviews/inline-member-selection-test-review.json",
+        "docs/premium-ui/qa-inline-member-selection-lifetime/report-development.json"
+      ],
+      "remaining_gap": "Inspect and activate the three workflow categories with exact request/context evidence."
+    },
+    {
+      "item_id": 157,
+      "requirement": "Keep imported record corrections attached to their original preview row, with visible completion and unresolved-state indicators.",
+      "acceptance_scope": "Import corrections retain original row identity",
+      "pass_conditions": [
+        "Corrections remain attached to their originating preview row through rerender, matching and retry.",
+        "Completion and unresolved indicators reflect that row's latest authoritative review state."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/inline-member-selection-lifetime-current.json",
+        "docs/premium-ui/contracts/inline-member-selection-current.json",
+        "docs/premium-ui/reviews/inline-member-selection-source-review.json",
+        "docs/premium-ui/reviews/inline-member-selection-test-review.json",
+        "docs/premium-ui/qa-inline-member-selection-lifetime/report-development.json"
+      ],
+      "remaining_gap": "Verify multiple similar rows, late candidate responses and correction/review updates without cross-row leakage."
+    },
+    {
+      "item_id": 158,
+      "requirement": "Standardize cancellation and deletion confirmations so removing a record never resembles merely closing its editor.",
+      "acceptance_scope": "Distinct cancellation and deletion confirmation",
+      "pass_conditions": [
+        "Closing/cancelling an editor is labeled and handled differently from cancelling or deleting its record.",
+        "Consequential record removal names the target and consequence before the existing operation executes."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/member-candidate-profile-close-current.json",
+        "docs/premium-ui/qa-member-csv-candidate.json",
+        "docs/premium-ui/qa-legacy-profile-fields.json",
+        "docs/premium-ui/qa-record-close.json",
+        "docs/premium-ui/reviews/operational-token-audit-current.json"
+      ],
+      "remaining_gap": "Verify editor close, explicit refusal and confirmed record cancellation/deletion as separate paths."
+    },
+    {
+      "item_id": 159,
+      "requirement": "Refresh dependent leave and unit views after confirmed mutations without discarding unrelated unsaved edits or chosen filters.",
+      "acceptance_scope": "Dependent refresh preserving unrelated drafts and filters",
+      "pass_conditions": [
+        "Confirmed leave/unit/reference mutations refresh their relevant dependent views.",
+        "Unrelated unsaved edits and chosen filters survive those refreshes, and failed read-back does not repeat the mutation."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Equivalent fixtures, actual existing requests/results and independent persisted or artifact read-back where the condition asserts a mutation/export outcome."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-import-created-unit.json",
+        "docs/premium-ui/qa-import-reference-controls.json",
+        "docs/premium-ui/reviews/import-unit-reference-current.json",
+        "docs/premium-ui/qa-record-reference-refresh.json",
+        "docs/premium-ui/reviews/record-reference-refresh-current.json"
+      ],
+      "remaining_gap": "Verify actual mutation followed by dependency refresh and recoverable read failure."
+    },
+    {
+      "item_id": 160,
+      "requirement": "Verify all record-level and monthly actions against their actual selected-month and selected-unit context on desktop and mobile.",
+      "acceptance_scope": "Actual selected context for leave and unit actions",
+      "pass_conditions": [
+        "Each record-level and monthly action uses its visibly selected month and unit context on desktop and mobile.",
+        "Results or subsequent reads confirm the intended records changed and other context records remained untouched."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Equivalent fixtures, actual existing requests/results and independent persisted or artifact read-back where the condition asserts a mutation/export outcome."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/member-candidate-profile-close-current.json",
+        "docs/premium-ui/qa-member-csv-candidate.json",
+        "docs/premium-ui/qa-legacy-profile-fields.json",
+        "docs/premium-ui/qa-record-close.json",
+        "docs/premium-ui/qa-import-created-unit.json"
+      ],
+      "remaining_gap": "Build the action/context matrix from existing controls and exercise its real outcomes on disposable data."
+    },
+    {
+      "item_id": 161,
+      "requirement": "Present setup, template allocation, member assignment, review and publishing as clear operational stages with truthful readiness cues.",
+      "acceptance_scope": "Truthful operational stages",
+      "pass_conditions": [
+        "Setup, template allocation, member assignment, review and publishing are presented as distinct understandable stages.",
+        "Readiness indicators derive from actual available state and do not mark incomplete stages complete."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/generation-entrypoints-current.json",
+        "docs/premium-ui/qa-generation-entrypoints.json",
+        "docs/premium-ui/reviews/overview-style-inventory-current.json",
+        "docs/premium-ui/qa-overview-steps.json",
+        "docs/premium-ui/style-inventory.json"
+      ],
+      "remaining_gap": "Compare stage labels/links/readiness across representative incomplete, ready and published fixtures."
+    },
+    {
+      "item_id": 162,
+      "requirement": "Keep selected month, unit scope and draft/published status visible throughout generation and review without excessive header height.",
+      "acceptance_scope": "Persistent concise generation context",
+      "pass_conditions": [
+        "Selected month, unit scope and draft/published status remain visible during generation and review.",
+        "Headers wrap compactly without concealing primary content or misreporting a changed context."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/generation-entrypoints-current.json",
+        "docs/premium-ui/qa-generation-entrypoints.json",
+        "docs/premium-ui/reviews/overview-style-inventory-current.json",
+        "docs/premium-ui/qa-overview-steps.json",
+        "docs/premium-ui/style-inventory.json"
+      ],
+      "remaining_gap": "Inspect each stage at narrow widths with long unit scope and differing publication states."
+    },
+    {
+      "item_id": 163,
+      "requirement": "Explain disabled generation prerequisites beside the action instead of requiring users to discover them in another screen.",
+      "acceptance_scope": "Local generation prerequisite explanations",
+      "pass_conditions": [
+        "A disabled generation action has an adjacent understandable explanation of unmet prerequisites.",
+        "The explanation reflects current state and offers an existing resolving destination where available."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/generation-entrypoints-current.json",
+        "docs/premium-ui/qa-generation-entrypoints.json",
+        "docs/premium-ui/reviews/compute-prerequisites-current.json",
+        "docs/premium-ui/qa-compute-prerequisites.json",
+        "docs/premium-ui/qa-compute-test-feedback.json"
+      ],
+      "remaining_gap": "Verify each actual prerequisite and its restoration after the required state changes."
+    },
+    {
+      "item_id": 164,
+      "requirement": "Maintain essential generation actions while optional reports load or fail, preserving the existing nonblocking foundation.",
+      "acceptance_scope": "Optional-report isolation from generation actions",
+      "pass_conditions": [
+        "Optional reports load and fail without disabling otherwise available essential generation actions.",
+        "Recovery retries the optional read rather than repeating or resetting primary generation work."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/optional-generation-current.json",
+        "docs/premium-ui/qa-optional-generation.json"
+      ],
+      "remaining_gap": "Delay/fail optional reports while exercising primary action launch and preserved review state."
+    },
+    {
+      "item_id": 165,
+      "requirement": "Give template proposals a balanced review layout showing units, dates, forced choices and unresolved work before apply.",
+      "acceptance_scope": "Complete template proposal review",
+      "pass_conditions": [
+        "Review presents units, dates, forced choices and unresolved work before apply with clear hierarchy.",
+        "The layout exposes all proposed decisions and does not change their values or silently omit rows."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/repair-preservation-and-action-register-current.json",
+        "docs/premium-ui/reviews/specialist-integration-current.json"
+      ],
+      "remaining_gap": "Compare populated proposal data with rendered review on desktop/mobile and inspect forced/unresolved cases."
+    },
+    {
+      "item_id": 166,
+      "requirement": "Make quick Autoassign and whole-month planning distinct choices, with concise explanations of preservation and repair behavior.",
+      "acceptance_scope": "Distinct Autoassign and whole-month planning choices",
+      "pass_conditions": [
+        "Quick Autoassign and whole-month planning have distinct labels and concise explanations.",
+        "Preservation and repair behavior is described accurately according to existing modes and launch context."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/generation-entrypoints-current.json",
+        "docs/premium-ui/qa-generation-entrypoints.json"
+      ],
+      "remaining_gap": "Verify both visible launchers and mode explanations against the current generation contracts."
+    },
+    {
+      "item_id": 167,
+      "requirement": "Surface current engine, requested preference, measured readiness and fallback reason without implying GPU acceleration guarantees.",
+      "acceptance_scope": "Honest compute preference, readiness and fallback",
+      "pass_conditions": [
+        "The UI distinguishes requested engine preference from currently measured or selected engine readiness.",
+        "Fallback reasons are explicit and no device detection, preference or benchmark is presented as a guarantee of GPU acceleration."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "frontend/tests/premium-compute-hierarchy.browser.mjs",
+        "frontend/src/rota-compute.ts",
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/reviews/engine-radio-current.json",
+        "docs/premium-ui/qa-engine-radio.json"
+      ],
+      "remaining_gap": "Inspect unsupported, unavailable, successful measurement and fallback states with returned evidence."
+    },
+    {
+      "item_id": 168,
+      "requirement": "Simplify compute diagnostics into a clear summary with expandable technical evidence, preserving meaningful hardware and benchmark details.",
+      "acceptance_scope": "Readable compute summary with technical disclosure",
+      "pass_conditions": [
+        "Compute diagnostics show a concise meaningful summary before expandable technical details.",
+        "Hardware identity, limits and benchmark results remain available with honest missing/failed measurements."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "frontend/tests/premium-compute-hierarchy.browser.mjs",
+        "frontend/src/rota-compute.ts",
+        "frontend/src/premium-theme.css",
+        "docs/premium-ui/reviews/compute-focus-current.json",
+        "docs/premium-ui/qa-compute-focus.json"
+      ],
+      "remaining_gap": "Verify disclosure interaction and retained diagnostic values without requiring an actual NVIDIA adapter for layout acceptance."
+    },
+    {
+      "item_id": 169,
+      "requirement": "Present generation progress as queued, working, review-ready or failed according to actual returned states, avoiding invented percentages.",
+      "acceptance_scope": "Generation progress tied to actual state",
+      "pass_conditions": [
+        "Queued, working, review-ready and failed presentations correspond to actual returned job states.",
+        "The frontend does not invent numeric progress or announce completion before a review/result is available."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/generation-state-current.json",
+        "docs/premium-ui/qa-generation-state.json"
+      ],
+      "remaining_gap": "Drive controlled returned-state transitions, including delayed/error states, and compare visible progress."
+    },
+    {
+      "item_id": 170,
+      "requirement": "Preserve resume, cancel and server-fallback controls during recoverable GPU or network interruption using existing job capabilities.",
+      "acceptance_scope": "Recoverable existing job controls",
+      "pass_conditions": [
+        "Resume, cancel and server-fallback controls remain available when supported by the current job state and capabilities.",
+        "GPU or network interruption preserves job identity and truthful recovery without claiming an unsupported server cancellation or duplicate job completion."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/compute-prerequisites-current.json",
+        "docs/premium-ui/qa-compute-prerequisites.json",
+        "docs/premium-ui/qa-compute-test-feedback.json"
+      ],
+      "remaining_gap": "Exercise supported interruption/recovery branches and compare actual existing capability/state responses."
+    },
+    {
+      "item_id": 171,
+      "requirement": "Keep review confirmation, unresolved counts and primary apply actions visible without covering final proposed decisions on phones.",
+      "acceptance_scope": "Mobile generation review clearance and confirmation",
+      "pass_conditions": [
+        "Unresolved counts, review confirmation and primary apply action remain perceivable and reachable on phones.",
+        "Every final proposed decision can scroll clear of the actual review controls, including wrapped labels and errors."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-sticky-review.json",
+        "docs/premium-ui/reviews/generation-launchers-and-export-outcomes-current.json"
+      ],
+      "remaining_gap": "Measure populated long reviews and final decision/action bounds at narrow widths and reduced height."
+    },
+    {
+      "item_id": 172,
+      "requirement": "Display hard blockers, warnings and accepted exceptions through distinct text, icon and grouping treatments with actionable explanations.",
+      "acceptance_scope": "Distinct blockers, warnings and exceptions",
+      "pass_conditions": [
+        "Hard blockers, warnings and accepted exceptions use distinct explicit text, icons and grouping.",
+        "Explanations show the affected issue and an existing actionable destination or resolution when one is supported."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/generation-launchers-and-export-outcomes-current.json",
+        "docs/premium-ui/reviews/specialist-integration-current.json"
+      ],
+      "remaining_gap": "Inspect each returned severity/exception state and verify applicable action destinations."
+    },
+    {
+      "item_id": 173,
+      "requirement": "Make assignment alternatives and workload comparisons easier to compare without obscuring server-provided eligibility or objective evidence.",
+      "acceptance_scope": "Comparable assignment alternatives and workload evidence",
+      "pass_conditions": [
+        "Alternatives and workload comparisons align relevant member, duty and workload details for meaningful comparison.",
+        "Server eligibility, objective evidence and rejection reasons remain visible and associated with the correct alternative."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/repair-preservation-and-action-register-current.json",
+        "docs/premium-ui/reviews/generation-launchers-and-export-outcomes-current.json",
+        "docs/premium-ui/reviews/independent-outcomes-strengthened-current.json",
+        "docs/premium-ui/reviews/optimizer-equivalence-current.json",
+        "docs/premium-ui/equivalence-optimizer/report.json"
+      ],
+      "remaining_gap": "Compare actual populated alternatives with returned eligibility/objective data and narrow-layout disclosure."
+    }
+  ]
+}

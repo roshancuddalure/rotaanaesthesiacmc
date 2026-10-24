@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "reviewer": "normalized_save_review",
+  "reviewed_at_utc": "2026-10-21T17:08:08.116011+00:00",
+  "status": "accepted_for_bounded_normalized_save_recovery_scope",
+  "scope": "Independent native-dialog unit/reference confirmed-save readback recovery, mutation locking and refusal restoration. Not whole-plan or backend acceptance.",
+  "reviewed_files_sha256": {
+    "frontend/src/reference-workspace.ts": "a83a8597b446c28b93f4096dfd898f617b7424bda927cb4c357d40a827a00d67",
+    "frontend/src/workspace-load-state.ts": "79d495ce9c585ff82f6eed807de6ee23a3fb96ac9165b6faa32c9d6453505fd8",
+    "frontend/tests/premium-normalized-save-independent.browser.mjs": "b9e961d20f1bc5452274c861b53aa1ed0cb15fd14f0ad97cf1bdc16af0ccff08"
+  },
+  "tests_executed": [
+    {
+      "command": "node tests/premium-normalized-save-independent.browser.mjs",
+      "result": "15 workflows passed across Chromium, Firefox and WebKit: original9 pending-write/refusal/readback workflows plus6 held-read Close/late-reply checks."
+    }
+  ],
+  "verified": [
+    "Unit delayed PUT locks inputs, selects, textareas and all buttons; Escape cannot dismiss during mutation.",
+    "Unit structured422 keeps submitted draft, restores previously enabled controls, preserves previously disabled notes and does not steal newer deliberate guidance-link focus.",
+    "Unit and reference confirmed PUT followed by two GET503 responses show explicit saved guidance and GET-only manual retry; one PUT total across failure and recovery.",
+    "No completion callback while readback fails; exactly one callback after successful manual readback.",
+    "Unit revision and reference version/label payload fields remain preserved; no injected scripts or page errors.",
+    "Close works during a held read-only unit manual refresh and reference post-save refresh. Successful late GET replies do not resurrect a removed dialog or fire completion callbacks."
+  ],
+  "remaining_limits": [
+    "Browser request interception proves frontend request behavior and displayed outcomes, not backend persistence.",
+    "Newer focus test inserts a native guidance link into the fixture to provide a meaningful destination while form controls are locked. Safari requires explicit keyboard Tab to focus a link after pointer activation.",
+    "Physical-device and manual screen-reader checks pending.",
+    "No app source or backend edits by this reviewer."
+  ],
+  "required_fixes": [],
+  "evidence": "docs/premium-ui/qa-normalized-save-independent.json",
+  "resolved_findings": [
+    {
+      "id": "readback-loading-close",
+      "finding": "Read-only unit refresh loading Close was enabled but busy guard prevented dismissal.",
+      "resolution": "Read-only loading Close now clears busy before existing close path. Final6 cross-browser heldGET scenarios verify actual pointer dismissal and late reply suppression. Mutation-phase locks remain verified in all15flows."
+    }
+  ]
+}

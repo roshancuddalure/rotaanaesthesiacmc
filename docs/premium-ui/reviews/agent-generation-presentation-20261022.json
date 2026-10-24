@@ -1,0 +1,72 @@
+{
+  "review": "Generation presentation specialist: source-only bounded audit",
+  "date": "2026-10-22",
+  "requirements_reviewed": [
+    164,
+    165,
+    169,
+    172,
+    173,
+    177,
+    178
+  ],
+  "scope": "Read-only frontend review; backend service inspected solely to verify existing response fields. No runtime checks or application changes.",
+  "source_sha256": {
+    "frontend/src/rota-compute.ts": "2f34d4c6dc8654cdf258891e7873075eb8424f4e0884953ca60eb7b1018184af",
+    "backend/app/services/rota_compute.py": "69ff35945cb4ecfef438a63a54f09564ca378aba53a5794e7d9649a8a0fc752c",
+    "backend/app/services/template_compute.py": "4af940687d6b047712f5680692f9145f7a035eefe369a6f173c9f68edf3efece"
+  },
+  "findings": [
+    {
+      "id": "generation-template-forced-cue",
+      "priority": "high",
+      "requirements": [
+        165,
+        172
+      ],
+      "source_locations": [
+        "frontend/src/rota-compute.ts:10",
+        "frontend/src/rota-compute.ts:16",
+        "frontend/src/rota-compute.ts:328",
+        "backend/app/services/template_compute.py:256",
+        "backend/app/services/template_compute.py:261",
+        "backend/app/services/rota_compute.py:112"
+      ],
+      "observed": "The template response decisions include forced, and unresolved counts forced decisions. Frontend Decision omits forced; its template proposal cell shows unit and the reason cell only reason text. No dedicated forced label or grouping is rendered, despite introductory text saying forced allocations remain marked for review. A reason may explain a forced choice, but no consistent explicit forced marker is guaranteed by this renderer.",
+      "safe_action": "Add optional forced:boolean to the frontend response type and an escaped textual Forced allocation / Review required marker driven only by the returned true flag. Keep every original row, order, reason, date, unit and counts. Use a scoped tonal status treatment with text and icon; allow long reasons to wrap on mobile. Missing flag must not infer eligibility or a safe result. Do not change summary calculations, proposal creation, confirmations or apply requests.",
+      "proposed_tests": [
+        "GET-only completed template fixture with forced true, forced false and absent flag: exact marker only for true; original counts/order/reasons unchanged.",
+        "Three engines at 320 and 1280 pixels in light/dark; long unit/reason strings escape HTML and have no page overflow; keyboard table access and scoped axe.",
+        "Intercept apply only if a separate mock contract test is required: unchanged job id/revision and checkbox prerequisite; no real writes."
+      ]
+    },
+    {
+      "id": "generation-status-labels",
+      "priority": "high",
+      "requirements": [
+        169
+      ],
+      "source_locations": [
+        "frontend/src/rota-compute.ts:317",
+        "frontend/src/rota-compute.ts:321",
+        "frontend/src/rota-compute.ts:322",
+        "frontend/src/rota-compute.ts:333",
+        "frontend/src/rota-compute.ts:336",
+        "frontend/src/rota-compute.ts:387"
+      ],
+      "observed": "The live status falls back to the raw job.status string. In particular completed is shown even though this state means the proposal awaits review/apply, not that draft assignment is saved. The same progress element is emitted for every job state, including zero-total queued jobs via max(1,total). A notice or job.error supersedes that raw status, so an important returned state can disappear from the status line.",
+      "safe_action": "Present a separate server-state label: queued -> Queued, running -> Generating proposal, completed -> Ready for review, applied -> Applied to draft, cancelled -> Cancelled, failed -> Failed, reverted -> Reversed. Keep notices/errors separate and escaped. Unknown states must remain visible without invented meaning. Retain exact processed/total numerals; use indeterminate progress while queued with no total instead of implying numeric completion. Do not alter polling, state transitions, eligibility, timings, action visibility or write requests.",
+      "proposed_tests": [
+        "GET-only fixtures for each returned state plus unknown status; assert state label and original error/fallback text coexist.",
+        "Queued zero-total is indeterminate; running positive-total retains exact returned progress and count text; completed says review-ready without saying published.",
+        "Preserve existing Generate/Continue/Cancel/Apply/Reversal gates and native checkbox activation; assert no unexpected requests across three engines/mobile-desktop."
+      ]
+    }
+  ],
+  "other_requirements": "164,173,177,178 were inspected for context only; no acceptance or gap-free assertion. Existing apply copy explicitly says draft not published, reversal is revision-checked, and final publish remains separate in main.ts.",
+  "limits": [
+    "No browser execution in this audit.",
+    "No backend, API or scheduling change proposed.",
+    "No requirement fully certified; proposed tests are not executed evidence."
+  ]
+}

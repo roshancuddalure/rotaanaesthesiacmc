@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "reviewer": "session_expiry_review",
+  "reviewed_at_utc": "2026-10-21T15:46:38.038019+00:00",
+  "scope": "Independent bounded review of session expiry and auth-generation response isolation for approved items197,225,230,240,246,247; not whole-plan acceptance",
+  "status": "accepted_for_bounded_session_expiry_scope",
+  "reviewed_files_sha256": {
+    "frontend/src/services/api.ts": "b7dbea6efa9fb16febcb7aa6baaf6c488c75175635f503eb417f338e80a5551f",
+    "frontend/src/main.ts": "785095a6abdd9861ae8d9becf3fd8d8dc316335105ccce341d0e597a1750e6be",
+    "frontend/src/member-workspace.ts": "ac143a52b499b8b7d7296ee4d164f4223c6ca1bf570134b6cef2f1f2c8cbbe37",
+    "frontend/src/operational-import.ts": "c2f5330a831e4ee75003b39b68a5da0a598d8dde265964573bf6af86d28a1a9a",
+    "frontend/src/extra-duty.ts": "75dadfc96c8a30c65f85488d4fc4f0914af1e69f077bc76a2b6173ff310ebfc9",
+    "frontend/tests/premium-session-dialog.browser.mjs": "96fe42f36286c3024e48b5047380a41356f570cf558163ddba350f072597a0ad",
+    "frontend/src/premium-theme.css": "be8bf231d2fd66dd0925db182235ec287fa947f50315b0cf3a1d09b154f07faf",
+    "frontend/tests/frontend-runtime.test.mjs": "7c119962e142a88d905cdf1ab6bd0314241078eb5e3a5856f14454c474dda3d6",
+    "frontend/tests/premium-session-expiry.browser.mjs": "7fcbf544c09165f5ae69e08bea591cfcb54558ee378e3e51eada9646001a5303"
+  },
+  "verified": [
+    "Current-session protected401 emits one token-free expiry event and prevents repeated authenticated JSON or multipart submissions until explicit sign-in.",
+    "403 and bad-sign-in401 remain ordinary refusals and do not expire the existing account.",
+    "Successful API JSON, multipart and six API-module blob downloads reject obsolete account-generation results before and after decoding.",
+    "Sign-in action requires confirmation; declining preserves the account draft, while explicit sign-in never replays the refused operation.",
+    "Four formerly direct import fetches now use requestMultipartJSON with unchanged paths and FormData; no manual multipart Content-Type boundary introduced.",
+    "Audit report download now uses requestDownload shared in-memory/safe-storage auth context and before/after-body generation checks; filename and blob remain sourced unchanged.",
+    "errorForSession rechecks generation after parsing error details for JSON, upload and download paths.",
+    "No authenticated raw fetch remains outside services/api.ts; separate loopback model pairing request intentionally unchanged.",
+    "Session recovery node moves into the current native dialog and survives profile rerender; pointer and keyboard decline retain note; closing dialog returns notice into content flow.",
+    "Repeated session-expired errors now appear as deduplicated text-only rolealert paragraphs in recovery and reopen its disclosure; no duplicate floatingerror toast blocks the account recovery pointer path.",
+    "Shared multipart preview malformed200 and network failures now become actionable sanitized ApiRequestError messages; current test confirms no retry."
+  ],
+  "tests_executed": [
+    {
+      "command": "node --test tests/frontend-runtime.test.mjs",
+      "result": "22 passed independently on finalreview snapshot, including slow private-error-body rejection, exact multipart FormData preservation, safe malformedpreview and network errors, no replay"
+    },
+    {
+      "command": "node tests/premium-session-dialog.browser.mjs",
+      "result": "3 passed independently on finalreview snapshot: real member-profile native dialog320/390/1280, intercepted comment401, actual pointer and Enter decline preserve draft, recovery survives rerender and returns to.content afterClose"
+    },
+    {
+      "command": "node tests/premium-session-expiry.browser.mjs",
+      "result": "3 passed independently on finalreview snapshot:320/390/1280 account draft preservation, repeated network submission blocked, recovery disclosure opens for new inline refusal, actualpointer explicit decline and reauthentication, no automatic replay"
+    }
+  ],
+  "remaining_limits": [
+    "Permission/menu changes across every role and work area are not proven by this review.",
+    "Route, month and all dialog-specific request ordering remain broader than auth-generation checks.",
+    "Physical devices pending as requested; no manual screen-reader or production claims.",
+    "No backend source or API contract edits by this reviewer. Browser write requests were intercepted; fixture calls were GET only.",
+    "Legacy modal recovery placement inspected in observer source but not independently exercised in this reviewer browser suite.",
+    "Queued member-workspace close focus-race patch was not independently exercised in this session-expiry-specific review; root reported separate coverage. No claim for that flow is derived from these22unit+6browser workflows."
+  ],
+  "resolved_findings": [
+    {
+      "id": "native-dialog-recovery",
+      "finding": "Body-appended recovery aside is outside native modal top-layer interaction. Profile comment401 retains draft but leaves sign-in recovery outside native dialog. Legacy modal keyboard trap also excludes body notice.",
+      "root_notified": true,
+      "status": "resolved in inspected frontend source and independently revalidated within stated bounded coverage"
+    },
+    {
+      "id": "remaining-direct-fetches",
+      "finding": "Member CSV columns/preview, operational import columns/preview and extra-duty audit download bypass central auth expiry/generation handling; audit download uses unguarded raw localStorage.",
+      "root_notified": true,
+      "status": "resolved in inspected frontend source and independently revalidated within stated bounded coverage"
+    },
+    {
+      "id": "error-body-generation",
+      "finding": "All three API response readers check account generation before decoding error bodies but do not recheck after awaiterrorFromResponse; old error detail can reject into a newer session after slow body decoding.",
+      "root_notified": true,
+      "status": "resolved in inspected frontend source and independently revalidated within stated bounded coverage"
+    },
+    {
+      "id": "account-recovery-toast-occlusion",
+      "finding": "After blocked repeated account submission320px, persistent error toast overlays recovery summary and intercepts realpointer. Existing test times out. Explicitly dismissing accessible notification is a legitimate recovery step, but that path has not yet been verified by this reviewer.",
+      "root_notified": true,
+      "status": "resolved in inspected frontend source and independently revalidated within stated bounded coverage"
+    }
+  ],
+  "required_fixes": [],
+  "acceptance_note": "The four reported session-expiry findings are resolved for the inspected snapshot. Broader numbereditems197/225/230/240/246/247 remain partial where they exceed central transport and the six current mocked browser workflows; this artifact does not mark any entire plan item or all260 complete.",
+  "snapshot_rechecks": [
+    {
+      "checked_at_utc": "2026-10-21T15:56:37.451879+00:00",
+      "file": "frontend/src/extra-duty.ts",
+      "previous_sha256": "8ecbec8897d10e055d117bb123d5962425411f4ac8bd419f03dc582c5e65d832",
+      "current_sha256": "75dadfc96c8a30c65f85488d4fc4f0914af1e69f077bc76a2b6173ff310ebfc9",
+      "method": "Read current downloadAuditReport and requestDownload import, inspect token/filename/blob path, rg authenticated fetch/storage use in this module; independently rerun MEMBER_TEST_URL=http://127.0.0.1:5197 node tests/extra-duty.browser.mjs.",
+      "result": "66 checks passed, including actual HTML/Excel download filenames and exact bearer/month/format request assertions. No direct fetch or raw localStorage remains in current extra-duty.ts. downloadAuditReport still delegates unchanged path+signal to shared requestDownload and uses unchanged returned blob/filename/fallback.",
+      "boundary": "Concurrent edits elsewhere in extra-duty.ts were preserved. This source-hash refresh certifies the inspected audit download method and the existing66-check suite scope only; it does not independently certify all concurrently changed functions, domain behavior or backend source. Earlier session isolation helper tests remain tied to their recorded unchanged sources."
+    }
+  ]
+}
