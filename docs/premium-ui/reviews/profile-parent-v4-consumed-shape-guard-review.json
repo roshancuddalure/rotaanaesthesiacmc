@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-09T07:37:42.132682+00:00",
+  "reviewer": "/root/profile_payload_guard",
+  "scope": "Scratch consumed response-shape guards for retained Units/Leave parent refresh only; no applied source edits or browser execution.",
+  "baseline_candidate": "tmp/profile-parent-refresh-v3/main.ts",
+  "baseline_candidate_sha256": "d088ee577eb723d682ba759a0af10cb63f511ab898ae9f36267ca99930c7503e",
+  "proposed_fragment": "tmp/profile-parent-v4-shape-guard/guards.fragment.ts",
+  "proposed_main": "tmp/profile-parent-v4-shape-guard/main.ts",
+  "verification": "tmp/profile-parent-v4-shape-guard/verification.json",
+  "verification_summary": {
+    "pure_cases_passed": 29,
+    "full_virtual_typecheck_diagnostics": 0,
+    "application_changed": false
+  },
+  "integration": [
+    "Insert helper fragment before profileParentReadSequence in the rebased profile parent proposal.",
+    "Inside the existing owned Units GET path, call assertProfileUnitReadShape(result) after read ownership checks and before result.month or any unitManagement/units/unitAssignments assignment.",
+    "Inside the existing owned Leave Promise.all path, call assertProfileLeaveReadShape(calendar, requests, pressure, month) before calendar.month/calendar.summary.month/pressure.month checks or any leaveCalendar/leaveRequests/leavePressure assignment.",
+    "Preserve the existing month identity checks, current/owned gates, cache invalidation, error notice and GET-only retry. Existing Array.isArray(requests) check becomes redundant but may remain.",
+    "This scratch main is based on V3/B0 and must be rebased onto the final applied stage source. Do not copy it over current main.ts directly."
+  ],
+  "consumed_fields": {
+    "Units root": [
+      "units[]",
+      "assignments[]",
+      "unit_summaries[]",
+      "unit_call_minimums[]",
+      "validation_issues[]; missing or non-array collections would throw or silently corrupt shared state"
+    ],
+    "Unit object": [
+      "id/name strings for matches, escaped names and modal navigation; campus nullable text for filters; minimum_free_people finite number for settings value and retained input context"
+    ],
+    "Posting": [
+      "id/posting_type/starts_on strings; nested person.id/canonical_name strings and nullable person.call_level; nullable unit uses consumed Unit shape; ends_on/notes/effective_call_level nullable text; source/active_status/unconsumed fields are not required"
+    ],
+    "Unit summaries": [
+      "unit_id string; assigned_members/people_with_leave/leave_days checked only when non-null, because existing unavailable presentation intentionally tolerates absent counts; no eligibility/range/integer/sum policy is added"
+    ],
+    "Call rules": [
+      "unit_id/call_level strings; assigned_members/minimum_free_people/max_allowed finite numbers for labels and input bounds; no new bound policy"
+    ],
+    "Validation issues": [
+      "severity/code/message strings; person_id/unit_id/posting_id nullable text; severity not enumerated so forward labels survive"
+    ],
+    "Leave summary": [
+      "valid actual ISO starts_on/ends_on loop bounds within the selected monthly calendar, ordered to prevent malformed or unbounded date loops; total_requests/people_on_leave/total_leave_days finite numbers; call_level_counts/unit_counts numeric maps; busiest_day nullable date/count object"
+    ],
+    "Leave calendar": [
+      "days object with array values; each entry needs person_name/status/leave_type/leave_slot strings used by split/localeCompare/status labels; unit/posting_type/call_level nullable text"
+    ],
+    "Leave requests": [
+      "array; each row needs id/status/leave_type/leave_slot/starts_on/ends_on strings; person.id/canonical_name and nullable person.call_level; days finite number; dates may span adjacent months and status/type labels are unrestricted"
+    ],
+    "Leave pressure": [
+      "unit_totals/call_level_totals numeric maps; days array with date string and total_people/blocking_people finite numbers; unused blockers/day.entries/day.unit_counts/start/end are not required"
+    ]
+  },
+  "boundary_notes": [
+    "Read shape validation does not normalize responses, mutate payloads, establish scheduling eligibility, constrain server enums, or add API/backend contracts.",
+    "All three Leave responses validate before any one is committed. Malformed JSON-200 takes the existing saved-but-stale error route with manual GET retry; no mutation replay.",
+    "Monthly calendar loop bounds are constrained to the requested month because this endpoint paints one month and existing loops otherwise accept unbounded or invalid response dates. Cross-month leave requests/posting periods remain accepted.",
+    "Optional absent monthly Unit counts remain accepted. Existing board aggregate leave_days reduction may still produce NaN when such counts are absent; that is a separate existing renderer issue, not grounds to reject a snapshot which intentionally supports unavailable per-unit counts.",
+    "This is not a full server schema validator and does not prove renderer exception atomicity after validated data is committed. Actual malformed-response browser checks and an independent review remain required before integration acceptance."
+  ],
+  "files": {
+    "tmp/profile-parent-v4-shape-guard/guards.fragment.ts": {
+      "sha256": "172b2125212d6885241b2928fe3b357904d9dda245af50e90e5d5e8077e9cafb"
+    },
+    "tmp/profile-parent-v4-shape-guard/verify.mjs": {
+      "sha256": "60c6586f43ef6381b07673209401a8343194d8b24ac52454b4bf39d39712d28a"
+    },
+    "tmp/profile-parent-v4-shape-guard/main.ts": {
+      "sha256": "ffbab53ecbc15e87d2c6bb45c28281c8e438de537b0fe95c51d42af8dc3b284e"
+    },
+    "tmp/profile-parent-v4-shape-guard/verification.json": {
+      "sha256": "190f3b9b094dcf2dc062874c3e138acca558df8e5f99ee1b584a0818b14c6a80"
+    },
+    "frontend/src/services/api.ts": {
+      "sha256": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+    }
+  }
+}

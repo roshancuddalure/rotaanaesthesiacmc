@@ -1,0 +1,68 @@
+{
+  "recorded_at_utc": "2026-10-31T01:17:50.819857+00:00",
+  "reviewer": "/root/optional164_v5_metric_diagnostic",
+  "application_changed": false,
+  "completion_claim": false,
+  "candidate_sha256": "976b51d938cb890366cc1e78934faf6acc2c87a31c3fc6358e06fa323c5d3427",
+  "before_sha256": "2798e0cbbf61b1a473695f99f9f56b57c3ad249c9987abe00421f4a50e2731eb",
+  "sourceproof": {
+    "path": "docs/premium-ui/reviews/optional164-v6-rebase-sourceproof.json",
+    "sha256": "358d58a7dba03962a9fab5789d0f715b12b0c079fd8600e073022543ab7c0dd8",
+    "terminal_exit_code": 0
+  },
+  "exact_rebase": "All ordered V5 edits apply to2798 and reverse exactly. Normalized V6 differs from frozen V5 only by the preserved readiness classification line; candidate uses uniform CRLF like application baseline.",
+  "application_script": {
+    "path": "tmp/apply_optional164_v6.py",
+    "sha256": "b7ba7ad30fadcf0e1cb9093a178967b66f3c3884bb7806b31c30f1aa356ddc98",
+    "run": false
+  },
+  "tests_prepared_not_run": [
+    {
+      "path": "frontend/tests/premium-optional164-v6-integrated.browser.mjs",
+      "sha256": "f92fbe458081b03dc90cf98906db495a2c0a3090277d05e23f1235c23faaf89a"
+    },
+    {
+      "path": "frontend/tests/premium-optional164-v6-focus-integrated.browser.mjs",
+      "sha256": "c99db975ca296476f3e784d1b11c14b4eab64f2519348dd9a4e8f745dc183f7a"
+    },
+    {
+      "path": "frontend/tests/premium-optional164-v6-malformed-integrated.browser.mjs",
+      "sha256": "dcab77de849dcdd2d2331fcb5610bd40ae631a1a7d6fecb00e44acf77e3d2130"
+    },
+    {
+      "path": "frontend/tests/premium-optional164-v6-held-primary-integrated.browser.mjs",
+      "sha256": "eae9130796247c4409da62277ef6e54c10e16c6484a7e2bbe7f78498012e1300"
+    }
+  ],
+  "requirement": "Maintain essential generation actions while optional reports load or fail, preserving the existing nonblocking foundation.",
+  "pass_conditions": [
+    "Optional reports load and fail without disabling otherwise available essential generation actions.",
+    "Recovery retries the optional read rather than repeating or resetting primary generation work."
+  ],
+  "conditions": [
+    {
+      "condition": "Optional reports load and fail without disabling otherwise available essential generation actions.",
+      "current_evidence": "V5 30 normal +24 focus author contexts and24 independent malformed contexts preserve available Build button after optional failures and throughout recovery. Frozen source retains early Build/Autoassign while initial optional reads are pending. Prior historical42contexts exercised dialogs under held reads, but on older source snapshots.",
+      "status": "Applied V6 held-primary42 and normal30 checks pending; whole condition not yet accepted.",
+      "prepared_test": "frontend/tests/premium-optional164-v6-held-primary-integrated.browser.mjs",
+      "prepared_coverage": "Native early Build, Autoassign chooser, Quick safe fill and Whole-month optimisation dialogs; hold all four optional reads, fail them, preserve open dialog, retained month and focus; late deadline responses, route departure and newer focus. GET-only, no generation execution."
+    },
+    {
+      "condition": "Recovery retries the optional read rather than repeating or resetting primary generation work.",
+      "current_evidence": "Independent V5 24 malformed contexts verify failed-subset GET-only recovery, primary GET count1 and exact primary form nodes/edited values. Author30 normal+24 focus cover two rounds/subset retry and account/route/month guards. Source exact effects parity confirms no primary mutation/storage expression change.",
+      "status": "Applied V6 normal30/focus24/malformed24 checks pending; whole condition not yet accepted.",
+      "prepared_tests": [
+        "frontend/tests/premium-optional164-v6-integrated.browser.mjs",
+        "frontend/tests/premium-optional164-v6-focus-integrated.browser.mjs",
+        "frontend/tests/premium-optional164-v6-malformed-integrated.browser.mjs"
+      ]
+    }
+  ],
+  "v5_runtime_applicability": "V5 scratch reports remain valid evidence for identical optional-report recovery logic: the sole normalized V5-to-V6 delta is the separately tested readiness classification line outside renderRotaTemplate/optional helpers; CRLF has no semantic effect. This is bounded applicability, not a relabeling of V5 runtime as applied V6 runtime. Fresh applied tests are required.",
+  "surface_boundaries": [
+    "Rota Template consumes four optional reports: allocation statistics, safety, member suggestions, auto-fill history. Fast load deliberately reads only allocation statistics and skips other reports; no fresh fast-mode-specific test is included in these four copies.",
+    "No certification of Review/Publish page optional data consumers, separate standalone compute/intelligence report consumers, export data, scheduling policy, real backend generation execution, GPU hardware, persisted proposal Apply, published or non-admin combinations. These are outside this narrow retry implementation; requirement164 itself is bounded to preserving otherwise available essential generation actions.",
+    "A passed held-primary test proves action launch/dialog state, not computation outcome. Root must inspect whether additional actual generation outcomes are needed for the intended requirement before whole acceptance."
+  ],
+  "recommendation": "Review and run guarded application step only while2798 is current; if application changes first, rebase again. Run all four applied browser copies, appropriate unit/build checks and prior-item applicability before accepting requirement164. No backend/service/API/policy/data/export edits."
+}

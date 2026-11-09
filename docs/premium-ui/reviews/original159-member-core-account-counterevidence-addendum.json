@@ -1,0 +1,12 @@
+{
+  "recorded_at_utc": "2026-11-09T08:03:22.425455+00:00",
+  "reviewer": "/root/profile_parent_final_audit",
+  "corrects": "original159-retained-parent-extension-design-v1.json member_core_follow_on.additional_owner_risk and proposed account-read repair",
+  "source_sha256": {
+    "frontend\\src\\services\\api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+  },
+  "counterevidence": "services/api.ts request captures authGeneration at320, rejects changed session after fetch at343 and again after JSON decoding at351. Therefore absence of local onMemberWorkspaceChanged account guard alone does not establish old-account members/audit global data commit.",
+  "disposition": "Account-change private-global-commit concern remains investigation only; do not add redundant guard repairs without actual uncovered callback-owner race. Existing API generation protection must be preserved.",
+  "still_valid_gap": "Core member names/call/designation/status changes can leave mounted Unit/Leave snapshots stale because existing changed callback only repaints active Members. Require actual accepted core mutation then parent-name/call readback diagnostic, separately from unsupported account-leak allegation.",
+  "limits": "Read-only source counterevidence correction, no runtime execution or account vulnerability claim."
+}

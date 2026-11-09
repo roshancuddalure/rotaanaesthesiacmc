@@ -1,0 +1,62 @@
+{
+  "recorded_at_utc": "2026-11-03T07:59:12.837064+00:00",
+  "reviewer": "/root/profile_parent_refresh_audit",
+  "application_changed": false,
+  "acceptance_ledger_changed": false,
+  "decision": "Keep original159 partial. Confirmed nested member-profile operational mutations do not refresh the underlying current Units/Leave DOM.",
+  "runtime_contexts": 4,
+  "runtime_exit_code": 0,
+  "runtime_command": "node tests/premium-profile-parent-refresh-independent.browser.mjs",
+  "scope": "Actual signed-in application navigation and actual profile/editor controllers, Chromium320/1280. All mutations intercepted locally, remainingGET fixture8031. Terminal0 means diagnostic reproduction, not correct product behavior.",
+  "findings": [
+    {
+      "operation": "Posting edit through member profile opened from Unit modal",
+      "actual": "Profile history refreshes to saved NEW notes. Closing profile leaves same underlying Unit posting DOM node with OLD notes, no unit-management GET. Existing unsaved fallback3 and Royal board search remain, selectedmonthNovember unchanged. Explicit board refresh GET shows saved NEW notes.",
+      "consequence": "The visible unit posting context contradicts the saved profile record until user explicitly refreshes."
+    },
+    {
+      "operation": "Cancel leave through member profile opened from current Leave list",
+      "actual": "Profile history shows Cancelled. Closing profile exposes unchanged Approved parent Leave row/card, no Leave requests GET. Daylist selection and November retained. Explicit route reload GET shows Cancelled.",
+      "consequence": "Current parent status remains misleading after the nested mutation completes."
+    }
+  ],
+  "source_cause": [
+    "member-workspace.ts record saved callback deletes cache[key]/cache.activity/errors[key] and calls loadTab only. It does not notify the parent operational view.",
+    "Profile cancellation likewise refreshes only its own leave cache/tab. The changed(member) callback is for member details/roles; neither operational mutation invokes it.",
+    "Main global onDataChange invalidates Units and other caches but does not repaint current Units/Leave DOM. This prevents stale normal navigation, as earlier cross-view diagnostics proved, but does not refresh an already rendered parent under a native dialog."
+  ],
+  "implementation_plan": [
+    "Add a typed frontend-only operational-record notification distinct from changed(member). Carry kind and immutable member/record identity, with no backend API/schema/payload changes. Fire only once after confirmed save/cancel; do not couple it to successful profile readback. Preserve notification through profile reload/retry/member navigation wrappers.",
+    "Capture parent account, route/view sequence, render sequence, root, selected month and relevant modal identity when opening profile from either delegated profile entry path. Same-account confirmed mutation may invalidate caches even if parent ownership changed; live refresh only if original parent remains current and connected. Late close/navigation/account/month responses cannot repaint newer owners.",
+    "Refresh current parent via existing GETs, separate confirmed mutation from dependent-read failure. Error UI must say saved/cancelled but parent refresh failed and offer GET-only retry; no automatic repeated save/cancel. Profile refresh and parent refresh should have independent outcomes.",
+    "For Units, reuse the reviewed draft-preserving returned-data painter once its independent missing-unit/month/print/focus gates pass. Do not call unconditional renderUnitManagement while unsaved fallback/call fields are present: retain form/input identities, chosen unit/filter/page and values; update saved header/chips/member posting/validation/board rows or mark unavailable explicitly.",
+    "For Leave, preserve selected month, Daylist/Month selection, open day context and unrelated drafts. Commit a captured-month fresh requests/calendar/pressure response only under parent ownership; refresh current leave list/summary safely while the profile remains open, or mark parent dirty and apply on owned profile close with an explicit saved-refresh state. Avoid restoring focus into inert parent while profile owns focus.",
+    "Cover both in-view and body-delegated profile entry points, especially member profiles opened over unit modal, leave day modal and normal parent lists. Capture parent lifetime independently from changing nested profile tab/render. Do not use current profile selected member as a replacement for the original mutation target."
+  ],
+  "required_tests": [
+    "Re-run these4 scenarios as expected-correct outcomes across all3engines320/1280, preserving exact fields/month/filter and sibling rows.",
+    "Nested Add/Edit posting and Add/Edit/Cancel leave parent refresh, including mutation success/profileGETfailure/parentGETfailure with independentGET-onlyretries and exactlyone accepted mutation.",
+    "Held mutation or parent read while navigating Guide, away-return, changing month, signing out/replacing account or root; no obsolete repaint/navigation/toast/focus.",
+    "Preserve older unrelated settings/editor drafts and newer input typed during parentGET; summary/status fresh or explicit unavailable, no silent discard.",
+    "Native profile/member/tab navigation and closing parent/profile in distinct orders, with semantic focus recovery only for displaced owned controls.",
+    "Changed unit missing/call topology and print-active snapshots must inherit settings painter tests rather than be assumed from a single callback proof."
+  ],
+  "limits": [
+    "Only4Chromiumcontexts; not all actions/engines, real persistence, backend permissions or exports.",
+    "No application/backend edits or ledger/acceptance changes by this diagnostic. No whole159/260 completion claim.",
+    "Immediate parent refresh vs deferred owned-close refresh is an implementation choice, but visible stale state cannot remain silently labelled current.",
+    "Global cache invalidation/cross-route forced reads are not a complete fix for current parent DOM and must not be regressed."
+  ],
+  "source_sha256": {
+    "frontend/src/main.ts": "d13bd73108d89d6efb70a66426e6f8e9f6e50400475575b7a40cb06eef12c1bc",
+    "frontend/src/member-workspace.ts": "0ef8c1ef2234c7a50d8ca10b8aaa3998a654d452f563bd4c75531faef09d6c63",
+    "frontend/src/record-workspace.ts": "469fd6bf2e4118b15ad343d8059cd3cfb0acbc6483bea969ca5fb93488644335",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+  },
+  "evidence_sha256": {
+    "docs/premium-ui/qa-profile-parent-refresh-independent.json": "8752be4349b54089f16d34c31e785a44594405a67ef1a09482ca1b49214b8206",
+    "frontend/tests/premium-profile-parent-refresh-independent.browser.mjs": "6cc670e0783737aafa62c931f32b763120c475e805de15a9aadbeaa468158118",
+    "tmp/profile-parent-refresh-independent.log": "b6bc323fabe7b7d45b7454384da1ca9826619531e1ad4aecc9c3b1542049ac67",
+    "tmp/profile-parent-refresh-independent-exit.json": "1c74341626fae414d94d5f6f5bf6ae83aa13938e6277873bd9f05cb152f1b17b"
+  }
+}

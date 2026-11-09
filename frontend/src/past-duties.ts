@@ -1,3 +1,4 @@
+import { importRowAttention, importPreviewAuthorityText } from "./import-review-presentation";
 import {
   getMembers, getPastDutyStatus, getPastDutyHistory, pastDutyUpload, downloadPastDutyTemplate, saveHistoryFairness, downloadPreviewIssues,
   type PastDutyOptions, type PastDutyPreview, type PastDutyStatus, type MemberWorkbookInspection, type DepartmentMember,
@@ -29,6 +30,7 @@ function rowView(row: PastRow, chosen: string | undefined): MemberMatchView {
     raw: writtenName(row),
     status,
     name: matched ? String(row.normalized.name ?? "") : null,
+    selectedId: typeof row.normalized.person_id === "string" ? row.normalized.person_id : null,
     method: matched ? row.resolution_method ?? (chosen ? "member_id" : undefined) : undefined,
     reason: row.resolution_reason || "",
     warnings: row.resolution_warnings ?? [],
@@ -127,7 +129,7 @@ export async function mountPastDuties(host: HTMLElement) {
         ${options.layout === "table" ? `<div class="member-import-mapping">${inspection.fields.map(field => `<label>${escape(field.replace(/_/g," "))}<select data-past-field="${field}"><option value="">Ignore</option>${sheet?.headers.map((h,i) => `<option value="${i}" ${options.mapping[field] === i ? "selected" : ""}>${i+1}: ${escape(h)}</option>`).join("")}</select></label>`).join("")}</div>` : ""}
         <button type="button" data-past="preview" class="primary">Preview Past Duties</button>` : ""}
         ${preview ? `<p>${Object.entries(preview.counts).map(([a,c]) => `${c} ${escape(a.replace(/_/g," "))}`).join(" · ")}</p>
-        <p>Confirmed month: ${escape(preview.month)}; worksheet: ${escape(preview.sheet)}. Review dates and standard start/end times before applying. Times use local hospital time.</p>
+        <p data-import-preview-authority>${importPreviewAuthorityText(!reviewed)}</p><p>Preview month: ${escape(preview.month || "Not returned")}; worksheet: ${escape(preview.sheet || "Not returned")}. Returned row actions show new, unchanged or corrected duty records; corrections require the existing confirmation below. Review dates and standard start/end times before applying. Times use local hospital time.</p>
         ${!reviewed ? "<p>Selections changed. Preview again before applying.</p>" : ""}
         <label>Review rows <select data-past="filter">${["all","needs_review","correct","create","unchanged","skip"].map(a => `<option value="${a}" ${filter === a ? "selected" : ""}>${escape(a.replace(/_/g," "))}</option>`).join("")}</select></label>
         <button type="button" data-past="rejected">Download Rejected Rows CSV</button>
@@ -135,8 +137,8 @@ export async function mountPastDuties(host: HTMLElement) {
           const resolution = options.resolutions[row.key] ?? {};
           const skipped = row.action === "skip";
           return `<tr data-past-row-key="${escape(row.key)}"><td>${row.row}:${row.column}</td>
-          <td>${skipped ? `<p>${escape(writtenName(row) || "(blank)")} — skipped; this row will not be recorded.</p>` : memberMatch(row.key, rowView(row, resolution.person_id))}</td>
-          <td><strong>${escape(row.action.replace(/_/g, " "))}</strong>${row.conflicts.map(c => `<p>Recorded: ${escape(c.name)} (${escape(c.slot)})</p>`).join("")}${row.errors.map(e => `<p class="mw-error">${escape(e)}</p>`).join("")}</td>
+          <td>${skipped ? `<p>${escape(writtenName(row) || "(blank)")} — skipped; this row will not be recorded.</p>` : memberMatch(row.key, { ...rowView(row, resolution.person_id), pending: !reviewed })}</td>
+          <td><strong>${escape(row.action.replace(/_/g, " "))}</strong>${importRowAttention({ action: row.action, issues: row.errors, matchStatus: row.resolution_status, reason: row.resolution_reason })}${row.conflicts.map(c => `<p>Recorded: ${escape(c.name)} (${escape(c.slot)})</p>`).join("")}${row.errors.map(e => `<p class="mw-error">${escape(e)}</p>`).join("")}</td>
           <td><div class="registry-actions">${resolution.person_id ? `<button type="button" class="quiet-button" data-past-resolve-row="${escape(row.key)}" data-past-resolve="person_id" data-past-value="">Undo member choice</button>` : ""}${skipped
             ? `<button type="button" class="quiet-button" data-past-resolve-row="${escape(row.key)}" data-past-resolve="action" data-past-value="">Include this row again</button>`
             : `<button type="button" class="quiet-button" data-past-resolve-row="${escape(row.key)}" data-past-resolve="action" data-past-value="skip">Skip this row</button>`}</div>

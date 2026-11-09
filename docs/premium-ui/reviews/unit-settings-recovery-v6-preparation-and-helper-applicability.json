@@ -1,0 +1,53 @@
+{
+  "recorded_at_utc": "2026-10-31T01:23:19.969572+00:00",
+  "reviewer": "/root/unit_settings_v2_independent_review",
+  "scope": "Preparation only; application unchanged. Exact rebase of reviewed V5 recovery onto current optional164976b51. No applied runtime claims.",
+  "baseline_sha256": "976b51d938cb890366cc1e78934faf6acc2c87a31c3fc6358e06fa323c5d3427",
+  "main_candidate_sha256": "e88c69570e7faf9b4277b541e073c8bd2ca3805c23f4feead544f16770f6e07a",
+  "helper_candidate_sha256": "4cfcd55615c77fa39aa08ee57abb3e807412fb9fb6c42af71dbb86a4458ce51d",
+  "source_proof": {
+    "path": "tmp/unit-settings-recovery-v6/source-proof.json",
+    "sha256": "0f22cf2d45ebb82c77d88942ca1e168a9f30ef39fb3bc416ef1ec26bfe28fc94",
+    "full_project_typecheck_diagnostics": 0,
+    "same_original_validation_and_PUT_payload": true,
+    "only_settings_import_and_branch_changed": true,
+    "original_CRLF_preserved": true,
+    "optional164_delta_retained_exactly": true
+  },
+  "isolated_helper48_applicability": {
+    "prior_report": "docs/premium-ui/qa-unit-settings-recovery-v5-independent-helper.json",
+    "sha256": "b530fb478e34591757b54313a9534dc0b4db61bcab8583a0c7c67a2ed76fb54a",
+    "contexts": 48,
+    "rationale": "Helper byte-identical to independently executed V5; main settings branch text-identical after newline normalization, including modeled read-generation ownership adapter. Isolated helper evidence remains isolated and does not prove arbitrary main concurrent refreshes.",
+    "rerun": false
+  },
+  "prepared_applied_tests": {
+    "frontend/tests/premium-unit-settings-recovery-v6-integrated-native24.browser.mjs": {
+      "sha256": "9d3a1cd00f9382d63bf2c7066d78e8491ce1bf281d2ea7b4147a3faedc0dd5ad",
+      "planned_contexts": 24,
+      "executed": false
+    },
+    "frontend/tests/premium-unit-settings-recovery-v6-integrated-keyboard6.browser.mjs": {
+      "sha256": "65e7237121e74404074d3ea4a03b6bc06cbd0dbb3c31feb15419da72b0940f68",
+      "planned_contexts": 6,
+      "executed": false
+    },
+    "frontend/tests/premium-unit-settings-recovery-v6-integrated-stale12.browser.mjs": {
+      "sha256": "597fc33b21508495ff30823aa9da1eccedf36c2e7d93878ee2e86d15f64cd3ee",
+      "planned_contexts": 12,
+      "executed": false
+    }
+  },
+  "application_script": {
+    "path": "tmp/apply_unit_settings_recovery_v6.py",
+    "sha256": "1ec008dc86954e3c39a7742f314dd7b75fc9d519a8663d62be4369aaa5ef6858",
+    "executed": false,
+    "guards": "Exact976b51 main baseline, absent helper, full source proof, exact candidate hashes, backup before writes. Root must first complete optional runtime gates."
+  },
+  "required_after_apply": [
+    "Run prepared42 native contexts on applied5197, verify actual subprocess terminal codes.",
+    "Run unit suite and reviewed build snapshot.",
+    "Bridge prior51 acceptance by exact bounded source delta and fresh affected tests.",
+    "Adjudicate complete dependent-view inventory separately; no whole159 acceptance implied."
+  ]
+}

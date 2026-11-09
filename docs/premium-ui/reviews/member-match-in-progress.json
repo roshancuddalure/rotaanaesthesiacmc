@@ -1,0 +1,27 @@
+{
+  "recorded_at_utc": "2026-10-28T06:17:45.572488+00:00",
+  "status": "workbook_lifecycle_fix_in_progress",
+  "completion_claim": false,
+  "requirement": 134,
+  "verified_intermediate": [
+    "Four actual import adapters passed24 workflows with equal names/returned IDs/approved aliases/new-person distinction/exact preview bodies.",
+    "114 unit tests and held build passed before ownership extension.",
+    "CSVcandidate12/CSVlifetime6/importchoice6 regressions passed before extension."
+  ],
+  "evidence": [
+    "docs/premium-ui/qa-match-identity-before-ownership.json",
+    "docs/premium-ui/qa-workbook-choice-lifetime-before-ownership.json",
+    "tmp/member-match-source-proof.json",
+    "tmp/premium-match-identity-unit.log"
+  ],
+  "verified_bug": "Delayed old workbook choice preview overwrites module-global current preview after reset/remount; reproduced using actual module and native files/choices.",
+  "current_fix": "Workbook mount/reset epoch and operation ownership checks before async commits, errors, final renders and downloads. Exact request arguments/manual resolver choices stay unchanged.",
+  "remaining": [
+    "Final ownership patch hold,114-unit/build rerun.",
+    "Fresh24workflow identity suite and expanded6-context workbook lifecycle suite.",
+    "Operational file-race requires restored loopbackRAM fixture8031; prior toolbar timeout cannot count as pass.",
+    "Existing past-action regression still pending; stopped earlier owned run after long wait without pass.",
+    "Independent exact134 review, current-source binding refresh and artifact seal."
+  ],
+  "scope_limit": "All successes locally fulfilled unless stated. No backend, resolver policy, scheduling, permissions, persisted or export-content change. Full goal25/260accepted, no new134acceptance yet."
+}

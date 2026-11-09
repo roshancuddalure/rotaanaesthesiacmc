@@ -2,12 +2,12 @@
   "schema_version": 1,
   "scope": "Complete script discovery with explicitly partial assertion mapping. Integrity only; no runtime pass or whole requirement17 completion inferred.",
   "counts": {
-    "all_scripts": 254,
-    "browser_suites": 236,
-    "other_scripts": 18,
-    "assertions_mapped": 39,
-    "pending_assertion_review": 215,
-    "browser_suites_pending_assertion_review": 197
+    "all_scripts": 294,
+    "browser_suites": 275,
+    "other_scripts": 19,
+    "assertions_mapped": 75,
+    "pending_assertion_review": 219,
+    "browser_suites_pending_assertion_review": 200
   },
   "entries": [
     {
@@ -210,7 +210,7 @@
     },
     {
       "suite": "frontend/tests/member-management.test.mjs",
-      "sha256": "6979206a4280be77a4a7d30b18e110264be56fa6414ae1ad5638499ebb98ee87",
+      "sha256": "20d5b14e94c67b993f6b4888c3fec2bae301f9f11d9ac518c88f4a5eade9edb2",
       "classification": "unit_static_or_equivalence_utility",
       "classification_basis": "Outside browser naming convention; retained for discovery, not silently omitted",
       "inspection_status": "pending_assertion_review",
@@ -395,6 +395,90 @@
       "classification_basis": "Explicit .browser.mjs convention",
       "inspection_status": "pending_assertion_review",
       "mapping": null,
+      "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
+    },
+    {
+      "suite": "frontend/tests/premium-close-icon-placements.browser.mjs",
+      "sha256": "024c2d8ef4b9f2c02f50cc4107e0d61679f7a0eabab376fce5434acc660fdb97",
+      "classification": "browser_suite",
+      "classification_basis": "Explicit .browser.mjs convention",
+      "inspection_status": "assertions_mapped",
+      "mapping": {
+        "mapping": "docs/premium-ui/browser-suite-map/close-and-leave142-map.json",
+        "mapping_sha256": "58ded17d222dbd562f55ce8fff94364716be496c813bdd4aef1bfdae2e26a6aa",
+        "assertion_groups": 1
+      },
+      "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
+    },
+    {
+      "suite": "frontend/tests/premium-close-menu-inputs-after.browser.mjs",
+      "sha256": "042176d1556872137f3c00c24b63741cd8bc65ed621e161c844dc09ea73be457",
+      "classification": "browser_suite",
+      "classification_basis": "Explicit .browser.mjs convention",
+      "inspection_status": "assertions_mapped",
+      "mapping": {
+        "mapping": "docs/premium-ui/browser-suite-map/close-and-leave142-map.json",
+        "mapping_sha256": "58ded17d222dbd562f55ce8fff94364716be496c813bdd4aef1bfdae2e26a6aa",
+        "assertion_groups": 1
+      },
+      "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
+    },
+    {
+      "suite": "frontend/tests/premium-close-menu-inputs-diagnostic.browser.mjs",
+      "sha256": "5c999808c0334f8534f9fb7cb8e9ea0f4240c6dff83b549e73b464dc97fba825",
+      "classification": "browser_suite",
+      "classification_basis": "Explicit .browser.mjs convention",
+      "inspection_status": "pending_assertion_review",
+      "mapping": null,
+      "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
+    },
+    {
+      "suite": "frontend/tests/premium-close-rules-current-observer.browser.mjs",
+      "sha256": "4bff4d3386fe0a5ae839916ca081bf8fb621da42fdf0a09b2fd97a1d12865f8a",
+      "classification": "browser_suite",
+      "classification_basis": "Explicit .browser.mjs convention",
+      "inspection_status": "pending_assertion_review",
+      "mapping": null,
+      "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
+    },
+    {
+      "suite": "frontend/tests/premium-close-rules-focus-diagnostic.browser.mjs",
+      "sha256": "5a222683b8b5f24545cb31217d6164c956b2f2f6f39deb6a052464d6b3d2b076",
+      "classification": "browser_suite",
+      "classification_basis": "Explicit .browser.mjs convention",
+      "inspection_status": "pending_assertion_review",
+      "mapping": null,
+      "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
+    },
+    {
+      "suite": "frontend/tests/premium-close-rules-reveal-experiment.browser.mjs",
+      "sha256": "15b6ecb515b2b7a75149f2346cdcee4e2d2aeb0e1b11ad3ed853bbad87cc0405",
+      "classification": "browser_suite",
+      "classification_basis": "Explicit .browser.mjs convention",
+      "inspection_status": "pending_assertion_review",
+      "mapping": null,
+      "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
+    },
+    {
+      "suite": "frontend/tests/premium-close-target-focus-diagnostic.browser.mjs",
+      "sha256": "541ab0b86f1b9f7da5165844da0157ee3d3595f365ca5c287f7a9967c14b3a85",
+      "classification": "browser_suite",
+      "classification_basis": "Explicit .browser.mjs convention",
+      "inspection_status": "pending_assertion_review",
+      "mapping": null,
+      "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
+    },
+    {
+      "suite": "frontend/tests/premium-close-target-geometry.browser.mjs",
+      "sha256": "60182f3b1988e1baff4f3955984e1c8b8877cee5e3cf4573b3aa00d9f3adf488",
+      "classification": "browser_suite",
+      "classification_basis": "Explicit .browser.mjs convention",
+      "inspection_status": "assertions_mapped",
+      "mapping": {
+        "mapping": "docs/premium-ui/browser-suite-map/close-and-leave142-map.json",
+        "mapping_sha256": "58ded17d222dbd562f55ce8fff94364716be496c813bdd4aef1bfdae2e26a6aa",
+        "assertion_groups": 1
+      },
       "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
     },
     {
@@ -644,6 +728,32 @@
       "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
     },
     {
+      "suite": "frontend/tests/premium-font-family-icons-failure.browser.mjs",
+      "sha256": "fde56971ab4156c971c15d56f9ee17b45f0f7e2697967882db10b0b58beed48e",
+      "classification": "browser_suite",
+      "classification_basis": "Explicit .browser.mjs convention",
+      "inspection_status": "assertions_mapped",
+      "mapping": {
+        "mapping": "docs/premium-ui/browser-suite-map/font-resource-resilience-map.json",
+        "mapping_sha256": "f1a2dc8ee22ff1fa3596fe04d39e3988eaa5176f480052416103663b784fe318",
+        "assertion_groups": 4
+      },
+      "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
+    },
+    {
+      "suite": "frontend/tests/premium-font-resource-fallback.browser.mjs",
+      "sha256": "29a8267a0ae4eca3b611fc96273e9a9f622299fc23a22cf882fa632400919902",
+      "classification": "browser_suite",
+      "classification_basis": "Explicit .browser.mjs convention",
+      "inspection_status": "assertions_mapped",
+      "mapping": {
+        "mapping": "docs/premium-ui/browser-suite-map/font-resource-resilience-map.json",
+        "mapping_sha256": "f1a2dc8ee22ff1fa3596fe04d39e3988eaa5176f480052416103663b784fe318",
+        "assertion_groups": 3
+      },
+      "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
+    },
+    {
       "suite": "frontend/tests/premium-forced-colors-candidate-review.browser.mjs",
       "sha256": "4c3eb75cba119ef6882257fd76668482389dff956ef7ba5f4f90bfa059d9cdb6",
       "classification": "browser_suite",
@@ -664,6 +774,15 @@
     {
       "suite": "frontend/tests/premium-forced-colors-selection.browser.mjs",
       "sha256": "e77cc261b67fb445a1b17d7b871679bb732c0620c885825bf7c7c897cc2d3653",
+      "classification": "browser_suite",
+      "classification_basis": "Explicit .browser.mjs convention",
+      "inspection_status": "pending_assertion_review",
+      "mapping": null,
+      "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
+    },
+    {
+      "suite": "frontend/tests/premium-foundation-state-probe.browser.mjs",
+      "sha256": "faae69390fd632031c6ff54e451448bf4360598ac024de8c90d690a00694b508",
       "classification": "browser_suite",
       "classification_basis": "Explicit .browser.mjs convention",
       "inspection_status": "pending_assertion_review",
@@ -733,6 +852,19 @@
         "mapping": "docs/premium-ui/browser-suite-map/generation-entry-map.json",
         "mapping_sha256": "d53dd558826912c82d07eefb22b1e883602accc51331829b9a3e66e9ca705516",
         "assertion_groups": 3
+      },
+      "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
+    },
+    {
+      "suite": "frontend/tests/premium-generation-transitions.browser.mjs",
+      "sha256": "ce4000ed9d36ed6e6febdf83879abc467c676a7c273a238202f179fa7168284f",
+      "classification": "browser_suite",
+      "classification_basis": "Explicit .browser.mjs convention",
+      "inspection_status": "assertions_mapped",
+      "mapping": {
+        "mapping": "docs/premium-ui/browser-suite-map/generation-transitions-map.json",
+        "mapping_sha256": "cfeabb48b44c665bef8ce851443794cce435ff204eecbb253de3a798a55addd9",
+        "assertion_groups": 1
       },
       "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
     },
@@ -874,12 +1006,64 @@
       "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
     },
     {
+      "suite": "frontend/tests/premium-import-mobile-reachability.browser.mjs",
+      "sha256": "62552703e1ed32fc349fd3eb2b1186de420359a60b7e8455ca3d2f452f63971e",
+      "classification": "browser_suite",
+      "classification_basis": "Explicit .browser.mjs convention",
+      "inspection_status": "assertions_mapped",
+      "mapping": {
+        "mapping": "docs/premium-ui/browser-suite-map/import-review-context-and-mobile-map.json",
+        "mapping_sha256": "742ed73ad64e196e4a8f39b632ebff13fed06e38544b1adb84725e8548c117be",
+        "assertion_groups": 2
+      },
+      "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
+    },
+    {
+      "suite": "frontend/tests/premium-import-progress-recovery.browser.mjs",
+      "sha256": "2b11a9986ad64bc063ba6f2ef20fe27bc322c63dd5f7e8cc5d737b85afac575a",
+      "classification": "browser_suite",
+      "classification_basis": "Explicit .browser.mjs convention",
+      "inspection_status": "assertions_mapped",
+      "mapping": {
+        "mapping": "docs/premium-ui/browser-suite-map/import-progress-map.json",
+        "mapping_sha256": "e0fc3b0f255012ac33ec212095423e6ed6736376c601cebb7993852c32e8668f",
+        "assertion_groups": 8
+      },
+      "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
+    },
+    {
       "suite": "frontend/tests/premium-import-reference-controls.browser.mjs",
       "sha256": "9eeac286624ce8cc85e1104a15208e595b061744732e9a3530e1567636e0bc86",
       "classification": "browser_suite",
       "classification_basis": "Explicit .browser.mjs convention",
       "inspection_status": "pending_assertion_review",
       "mapping": null,
+      "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
+    },
+    {
+      "suite": "frontend/tests/premium-import-retention-boundaries.browser.mjs",
+      "sha256": "0a35a7fd3ecc05250b6164802f83633778f3fbafdbcf5306491d017b3683353f",
+      "classification": "browser_suite",
+      "classification_basis": "Explicit .browser.mjs convention",
+      "inspection_status": "assertions_mapped",
+      "mapping": {
+        "mapping": "docs/premium-ui/browser-suite-map/import-progress-map.json",
+        "mapping_sha256": "e0fc3b0f255012ac33ec212095423e6ed6736376c601cebb7993852c32e8668f",
+        "assertion_groups": 6
+      },
+      "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
+    },
+    {
+      "suite": "frontend/tests/premium-import-review-context.browser.mjs",
+      "sha256": "1ea6517beb59dcf3fe55c27bdb9ab737646ca3082097544e115031fa57c4699c",
+      "classification": "browser_suite",
+      "classification_basis": "Explicit .browser.mjs convention",
+      "inspection_status": "assertions_mapped",
+      "mapping": {
+        "mapping": "docs/premium-ui/browser-suite-map/import-review-context-and-mobile-map.json",
+        "mapping_sha256": "742ed73ad64e196e4a8f39b632ebff13fed06e38544b1adb84725e8548c117be",
+        "assertion_groups": 3
+      },
       "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
     },
     {
@@ -941,6 +1125,19 @@
       "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
     },
     {
+      "suite": "frontend/tests/premium-leave-approval-persistence.browser.mjs",
+      "sha256": "1aff8939de1b5b86b8df18c79145bf0d75055e6ece0412cbee27a0151dfc3e44",
+      "classification": "browser_suite",
+      "classification_basis": "Explicit .browser.mjs convention",
+      "inspection_status": "assertions_mapped",
+      "mapping": {
+        "mapping": "docs/premium-ui/browser-suite-map/close-and-leave142-map.json",
+        "mapping_sha256": "58ded17d222dbd562f55ce8fff94364716be496c813bdd4aef1bfdae2e26a6aa",
+        "assertion_groups": 1
+      },
+      "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
+    },
+    {
       "suite": "frontend/tests/premium-leave-calendar-boundaries.browser.mjs",
       "sha256": "1f8e7dcbbaf8c771634f6cf44cfa2d7e86edb39de05b35c8d843de048b99d6c6",
       "classification": "browser_suite",
@@ -988,7 +1185,7 @@
       "inspection_status": "assertions_mapped",
       "mapping": {
         "mapping": "docs/premium-ui/browser-suite-map/profile-fixture-map.json",
-        "mapping_sha256": "85bd1ab565a9a5e19f54b026f70cbb13de28e520f60d54c7af867a20bf03f15b",
+        "mapping_sha256": "31ed3838253dbd8a29036c44405d8a26912f73aa57e4615f0a8abdec18644d31",
         "assertion_groups": 5
       },
       "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
@@ -1040,13 +1237,13 @@
     },
     {
       "suite": "frontend/tests/premium-legacy-timeline.browser.mjs",
-      "sha256": "470fa761f0d33047cd06de1c44164926c2f106c9ec91acb689a32c73070811df",
+      "sha256": "4b3c0ebfc32f961ce894ad36a3d936d4763907e99ead2ca795f9d1f6bd2113e0",
       "classification": "browser_suite",
       "classification_basis": "Explicit .browser.mjs convention",
       "inspection_status": "assertions_mapped",
       "mapping": {
         "mapping": "docs/premium-ui/browser-suite-map/effective-identity-and-legacy-map.json",
-        "mapping_sha256": "f89ddc6841867f5542adee53c2dfac45d1d1b03644f188a635a9bf03213ffbec",
+        "mapping_sha256": "c42e44ec09ffe118e7391a311427d232414d91e3b776ca2e5e761badf0eec125",
         "assertion_groups": 5
       },
       "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
@@ -1115,8 +1312,34 @@
       "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
     },
     {
+      "suite": "frontend/tests/premium-match-identity-long.browser.mjs",
+      "sha256": "1bb0be8bfbdfcb5e3a5a470a276d2587d6010ca770806a8ade2f97ac59e4009a",
+      "classification": "browser_suite",
+      "classification_basis": "Explicit .browser.mjs convention",
+      "inspection_status": "assertions_mapped",
+      "mapping": {
+        "mapping": "docs/premium-ui/browser-suite-map/match-identity-map.json",
+        "mapping_sha256": "7f63ec9c9369c9891982cbbfda103879c571307b19af943d81d3bb8d321b3bd1",
+        "assertion_groups": 2
+      },
+      "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
+    },
+    {
+      "suite": "frontend/tests/premium-match-identity.browser.mjs",
+      "sha256": "c53f7fb5c4b0c077c33dd9aac90b61dddadf054fe6a053f8daa63d37f07105fc",
+      "classification": "browser_suite",
+      "classification_basis": "Explicit .browser.mjs convention",
+      "inspection_status": "assertions_mapped",
+      "mapping": {
+        "mapping": "docs/premium-ui/browser-suite-map/match-identity-map.json",
+        "mapping_sha256": "7f63ec9c9369c9891982cbbfda103879c571307b19af943d81d3bb8d321b3bd1",
+        "assertion_groups": 2
+      },
+      "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
+    },
+    {
       "suite": "frontend/tests/premium-member-actions.browser.mjs",
-      "sha256": "fc3fe95dc05a02a5cf3acc90846a4e90cf41714ab22d76555b621d07184b1040",
+      "sha256": "986cdbb3c3117af69a05db6ebb499c313391b4098b0a2bae5927531c08004d95",
       "classification": "browser_suite",
       "classification_basis": "Explicit .browser.mjs convention",
       "inspection_status": "pending_assertion_review",
@@ -1143,7 +1366,7 @@
     },
     {
       "suite": "frontend/tests/premium-member-container-independent.browser.mjs",
-      "sha256": "f101b2860c764483987e4cd621e9800b4ab80097d878cf19f6cd4d268d2a3591",
+      "sha256": "6643db3ee52f88c07874bce12f4fb0d414b22de7455193f95c10536160b804e9",
       "classification": "browser_suite",
       "classification_basis": "Explicit .browser.mjs convention",
       "inspection_status": "pending_assertion_review",
@@ -1285,11 +1508,15 @@
     },
     {
       "suite": "frontend/tests/premium-member-save-independent.browser.mjs",
-      "sha256": "753af1a87b35a369c37bbea84e30b0d441518991293ca7112c0651b491e4349d",
+      "sha256": "09c05dd22c41321098d58f0fc7aa2f10b7b5a53cbee7feff9e802bee91aad2c8",
       "classification": "browser_suite",
       "classification_basis": "Explicit .browser.mjs convention",
-      "inspection_status": "pending_assertion_review",
-      "mapping": null,
+      "inspection_status": "assertions_mapped",
+      "mapping": {
+        "mapping": "docs/premium-ui/browser-suite-map/profile-editor-patterns-map.json",
+        "mapping_sha256": "d709da9142116755807b2e25925ceee55a05e337d6f0d410ea17256d9ce802f7",
+        "assertion_groups": 2
+      },
       "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
     },
     {
@@ -1363,8 +1590,56 @@
       "inspection_status": "assertions_mapped",
       "mapping": {
         "mapping": "docs/premium-ui/browser-suite-map/profile-fixture-map.json",
-        "mapping_sha256": "85bd1ab565a9a5e19f54b026f70cbb13de28e520f60d54c7af867a20bf03f15b",
+        "mapping_sha256": "31ed3838253dbd8a29036c44405d8a26912f73aa57e4615f0a8abdec18644d31",
         "assertion_groups": 6
+      },
+      "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
+    },
+    {
+      "suite": "frontend/tests/premium-motion-chart-bars.browser.mjs",
+      "sha256": "cbab3965243ca4c59cb72d4e30f34437630c6c2ff4892d729156153d62d9f144",
+      "classification": "browser_suite",
+      "classification_basis": "Explicit .browser.mjs convention",
+      "inspection_status": "assertions_mapped",
+      "mapping": {
+        "mapping": "docs/premium-ui/browser-suite-map/motion039-map.json",
+        "mapping_sha256": "537ad6b7681a3e8437ba04d801cf0dec0ecec2da3a2cfd76d0b5795bd5f9ded2",
+        "assertion_groups": 1
+      },
+      "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
+    },
+    {
+      "suite": "frontend/tests/premium-motion-inventory.mjs",
+      "sha256": "9e9cfdfd2fc73ad199b7888f9ce7da7735d6774c0fdb07aba24d118008925a0d",
+      "classification": "unit_static_or_equivalence_utility",
+      "classification_basis": "Outside browser naming convention; retained for discovery, not silently omitted",
+      "inspection_status": "pending_assertion_review",
+      "mapping": null,
+      "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
+    },
+    {
+      "suite": "frontend/tests/premium-motion-pathways.browser.mjs",
+      "sha256": "624f3da225cb5871205a9c6f4282bcc7a89234187c45ea08eb877071a164ad98",
+      "classification": "browser_suite",
+      "classification_basis": "Explicit .browser.mjs convention",
+      "inspection_status": "assertions_mapped",
+      "mapping": {
+        "mapping": "docs/premium-ui/browser-suite-map/motion039-map.json",
+        "mapping_sha256": "537ad6b7681a3e8437ba04d801cf0dec0ecec2da3a2cfd76d0b5795bd5f9ded2",
+        "assertion_groups": 1
+      },
+      "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
+    },
+    {
+      "suite": "frontend/tests/premium-motion-treatments.browser.mjs",
+      "sha256": "28a134a1ff55381d4383ff346d7aff3e506015b2d6324e171ae76cc88b6af1ea",
+      "classification": "browser_suite",
+      "classification_basis": "Explicit .browser.mjs convention",
+      "inspection_status": "assertions_mapped",
+      "mapping": {
+        "mapping": "docs/premium-ui/browser-suite-map/motion039-map.json",
+        "mapping_sha256": "537ad6b7681a3e8437ba04d801cf0dec0ecec2da3a2cfd76d0b5795bd5f9ded2",
+        "assertion_groups": 1
       },
       "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
     },
@@ -1509,11 +1784,15 @@
     },
     {
       "suite": "frontend/tests/premium-past-actions.browser.mjs",
-      "sha256": "b8cc77b14842263dd5e4a5ddfefe9646b5eaa9b9ddb1eb9cfe0bef802a04f098",
+      "sha256": "ce9848e1ae323d3c622a90b45066755ede1eff9cb3e8c2cf7b156e1f7a6111a5",
       "classification": "browser_suite",
       "classification_basis": "Explicit .browser.mjs convention",
-      "inspection_status": "pending_assertion_review",
-      "mapping": null,
+      "inspection_status": "assertions_mapped",
+      "mapping": {
+        "mapping": "docs/premium-ui/browser-suite-map/match-identity-map.json",
+        "mapping_sha256": "7f63ec9c9369c9891982cbbfda103879c571307b19af943d81d3bb8d321b3bd1",
+        "assertion_groups": 2
+      },
       "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
     },
     {
@@ -1575,6 +1854,32 @@
       "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
     },
     {
+      "suite": "frontend/tests/premium-profile-cancel-pending-proof.browser.mjs",
+      "sha256": "b77b74667e4a8357f8d4b5d5eaea6e64c2cdcddfef9dc644151dfc4d10ffa38d",
+      "classification": "browser_suite",
+      "classification_basis": "Explicit .browser.mjs convention",
+      "inspection_status": "assertions_mapped",
+      "mapping": {
+        "mapping": "docs/premium-ui/browser-suite-map/profile-cancel-pending-map.json",
+        "mapping_sha256": "139f8a2493e57d5e6427cf0c8aec67542158f0087408b92b91bc149730c7f00d",
+        "assertion_groups": 2
+      },
+      "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
+    },
+    {
+      "suite": "frontend/tests/premium-profile-cancel-pending-regression.browser.mjs",
+      "sha256": "cb17e8151d53b840c51cf7ad898f646c7d05a028ad13292e5054b5a070ecf8fe",
+      "classification": "browser_suite",
+      "classification_basis": "Explicit .browser.mjs convention",
+      "inspection_status": "assertions_mapped",
+      "mapping": {
+        "mapping": "docs/premium-ui/browser-suite-map/profile-cancel-pending-map.json",
+        "mapping_sha256": "139f8a2493e57d5e6427cf0c8aec67542158f0087408b92b91bc149730c7f00d",
+        "assertion_groups": 5
+      },
+      "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
+    },
+    {
       "suite": "frontend/tests/premium-profile-date-cards.browser.mjs",
       "sha256": "f140d5c0299cf56ad589f4c312434c49bd5364af5d1471d7d1f6d344e25b1d35",
       "classification": "browser_suite",
@@ -1588,12 +1893,55 @@
       "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
     },
     {
-      "suite": "frontend/tests/premium-profile-draft-review.browser.mjs",
-      "sha256": "460ff1e959e8de41db4e94f87f27f3052c6755932817b553603623366c285073",
+      "suite": "frontend/tests/premium-profile-designation-dates.browser.mjs",
+      "sha256": "58a8080f01f4cf94b90cff97c26c67ee6351b2887f31c81b0ee24228692885e3",
       "classification": "browser_suite",
       "classification_basis": "Explicit .browser.mjs convention",
-      "inspection_status": "pending_assertion_review",
-      "mapping": null,
+      "inspection_status": "assertions_mapped",
+      "mapping": {
+        "mapping": "docs/premium-ui/browser-suite-map/profile-hierarchy-map.json",
+        "mapping_sha256": "aa805cf115dfa7982960662094e0f5c08547dcd35d4cfa4c372df566621b5e8d",
+        "assertion_groups": 1
+      },
+      "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
+    },
+    {
+      "suite": "frontend/tests/premium-profile-designation-header.browser.mjs",
+      "sha256": "d57152815989f2c1f13a5b8bc2834a81c1d8f0600aa3e1f5364dca9c87f904b4",
+      "classification": "browser_suite",
+      "classification_basis": "Explicit .browser.mjs convention",
+      "inspection_status": "assertions_mapped",
+      "mapping": {
+        "mapping": "docs/premium-ui/browser-suite-map/designation-header-map.json",
+        "mapping_sha256": "8e73ec25d19e512227c1d044135d6fde382022603df75d77f934de0fe69611b4",
+        "assertion_groups": 7
+      },
+      "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
+    },
+    {
+      "suite": "frontend/tests/premium-profile-draft-review.browser.mjs",
+      "sha256": "3dbc02db7dd57896f06bab0108b874617c28875e9c0127b1013fb0364b108bee",
+      "classification": "browser_suite",
+      "classification_basis": "Explicit .browser.mjs convention",
+      "inspection_status": "assertions_mapped",
+      "mapping": {
+        "mapping": "docs/premium-ui/browser-suite-map/profile-editor-patterns-map.json",
+        "mapping_sha256": "d709da9142116755807b2e25925ceee55a05e337d6f0d410ea17256d9ce802f7",
+        "assertion_groups": 2
+      },
+      "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
+    },
+    {
+      "suite": "frontend/tests/premium-profile-editor-actions.browser.mjs",
+      "sha256": "b70bdb9e5694ac93bcc25a9d8fecc2cea0f3ba0f5c5e3508a7a1ca20f664b2e4",
+      "classification": "browser_suite",
+      "classification_basis": "Explicit .browser.mjs convention",
+      "inspection_status": "assertions_mapped",
+      "mapping": {
+        "mapping": "docs/premium-ui/browser-suite-map/profile-editor-patterns-map.json",
+        "mapping_sha256": "d709da9142116755807b2e25925ceee55a05e337d6f0d410ea17256d9ce802f7",
+        "assertion_groups": 4
+      },
       "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
     },
     {
@@ -1604,7 +1952,7 @@
       "inspection_status": "assertions_mapped",
       "mapping": {
         "mapping": "docs/premium-ui/browser-suite-map/effective-identity-and-legacy-map.json",
-        "mapping_sha256": "f89ddc6841867f5542adee53c2dfac45d1d1b03644f188a635a9bf03213ffbec",
+        "mapping_sha256": "c42e44ec09ffe118e7391a311427d232414d91e3b776ca2e5e761badf0eec125",
         "assertion_groups": 7
       },
       "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
@@ -1619,14 +1967,27 @@
       "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
     },
     {
+      "suite": "frontend/tests/premium-profile-hierarchy.browser.mjs",
+      "sha256": "3a0476ec8162af94fe64f7567043aa2f967ce6f8fce0e0f7ceafca052a1514bd",
+      "classification": "browser_suite",
+      "classification_basis": "Explicit .browser.mjs convention",
+      "inspection_status": "assertions_mapped",
+      "mapping": {
+        "mapping": "docs/premium-ui/browser-suite-map/profile-hierarchy-map.json",
+        "mapping_sha256": "aa805cf115dfa7982960662094e0f5c08547dcd35d4cfa4c372df566621b5e8d",
+        "assertion_groups": 1
+      },
+      "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
+    },
+    {
       "suite": "frontend/tests/premium-profile-identity.browser.mjs",
-      "sha256": "7a24abf5fbd748db50be32f0cc3b1f3b0c4955e8f61647a8c1710f0959025a6b",
+      "sha256": "c2e4ca02a6fce1fcd7ad544c35a77e304210aaae6944faee1c4cca1057bbdb5e",
       "classification": "browser_suite",
       "classification_basis": "Explicit .browser.mjs convention",
       "inspection_status": "assertions_mapped",
       "mapping": {
         "mapping": "docs/premium-ui/browser-suite-map/profile-fixture-map.json",
-        "mapping_sha256": "85bd1ab565a9a5e19f54b026f70cbb13de28e520f60d54c7af867a20bf03f15b",
+        "mapping_sha256": "31ed3838253dbd8a29036c44405d8a26912f73aa57e4615f0a8abdec18644d31",
         "assertion_groups": 4
       },
       "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
@@ -1641,6 +2002,19 @@
         "mapping": "docs/premium-ui/browser-suite-map/member-actions-map.json",
         "mapping_sha256": "93f0794f10b0813736ef254f8f44800bdc3ff693179e0f67e73e35a6158c6ab2",
         "assertion_groups": 6
+      },
+      "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
+    },
+    {
+      "suite": "frontend/tests/premium-profile-metadata-state.browser.mjs",
+      "sha256": "6df211a566f848930e0bd7d50cf9d06b088261e194fde1c84d5f05826463ac59",
+      "classification": "browser_suite",
+      "classification_basis": "Explicit .browser.mjs convention",
+      "inspection_status": "assertions_mapped",
+      "mapping": {
+        "mapping": "docs/premium-ui/browser-suite-map/profile-hierarchy-map.json",
+        "mapping_sha256": "aa805cf115dfa7982960662094e0f5c08547dcd35d4cfa4c372df566621b5e8d",
+        "assertion_groups": 1
       },
       "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
     },
@@ -1668,11 +2042,89 @@
     },
     {
       "suite": "frontend/tests/premium-profile-readback.browser.mjs",
-      "sha256": "b24618fdf1183e89fe1fc711b7f10a6ca685a0d64c1d4aa423eb72c96b457940",
+      "sha256": "e1d8a7c89075496edc2d75faabbcdef0500469402e0357375edefaeea0a2ffac",
+      "classification": "browser_suite",
+      "classification_basis": "Explicit .browser.mjs convention",
+      "inspection_status": "assertions_mapped",
+      "mapping": {
+        "mapping": "docs/premium-ui/browser-suite-map/profile-editor-patterns-map.json",
+        "mapping_sha256": "d709da9142116755807b2e25925ceee55a05e337d6f0d410ea17256d9ce802f7",
+        "assertion_groups": 2
+      },
+      "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
+    },
+    {
+      "suite": "frontend/tests/premium-profile-record-patterns.browser.mjs",
+      "sha256": "5ef86af78a1442f31f047c0d21d831131515842b38c2e1556630686696faa8e7",
+      "classification": "browser_suite",
+      "classification_basis": "Explicit .browser.mjs convention",
+      "inspection_status": "assertions_mapped",
+      "mapping": {
+        "mapping": "docs/premium-ui/browser-suite-map/profile-editor-patterns-map.json",
+        "mapping_sha256": "d709da9142116755807b2e25925ceee55a05e337d6f0d410ea17256d9ce802f7",
+        "assertion_groups": 4
+      },
+      "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
+    },
+    {
+      "suite": "frontend/tests/premium-profile-record-provenance.browser.mjs",
+      "sha256": "b8a3a74a720cc3fc3e2fda104b8b5a3229e8a51537af66561d52eebfa641d56f",
+      "classification": "browser_suite",
+      "classification_basis": "Explicit .browser.mjs convention",
+      "inspection_status": "assertions_mapped",
+      "mapping": {
+        "mapping": "docs/premium-ui/browser-suite-map/profile-hierarchy-map.json",
+        "mapping_sha256": "aa805cf115dfa7982960662094e0f5c08547dcd35d4cfa4c372df566621b5e8d",
+        "assertion_groups": 1
+      },
+      "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
+    },
+    {
+      "suite": "frontend/tests/premium-profile-section-markers.browser.mjs",
+      "sha256": "01aeb17209c3c24d6e8d601cf9297640a326273ab5d44f84b82c20b1a133d556",
+      "classification": "browser_suite",
+      "classification_basis": "Explicit .browser.mjs convention",
+      "inspection_status": "assertions_mapped",
+      "mapping": {
+        "mapping": "docs/premium-ui/browser-suite-map/profile-draft-workload-map.json",
+        "mapping_sha256": "d1409e903e6600560497a61c1f1e57ddc213ed697d8ce41abfa0723ba95a4344",
+        "assertion_groups": 1
+      },
+      "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
+    },
+    {
+      "suite": "frontend/tests/premium-profile-section-state.browser.mjs",
+      "sha256": "36d6db3f30b0fd9669442a32e243d102d971a4c75f09c1566389d0250a69c01d",
+      "classification": "browser_suite",
+      "classification_basis": "Explicit .browser.mjs convention",
+      "inspection_status": "assertions_mapped",
+      "mapping": {
+        "mapping": "docs/premium-ui/browser-suite-map/profile-draft-workload-map.json",
+        "mapping_sha256": "d1409e903e6600560497a61c1f1e57ddc213ed697d8ce41abfa0723ba95a4344",
+        "assertion_groups": 1
+      },
+      "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
+    },
+    {
+      "suite": "frontend/tests/premium-profile-tab-pointer-proof.browser.mjs",
+      "sha256": "e88020be0e2a4c6f89001752e49cb2ea8c5c7e20bd45c0a3f99a087907ba8635",
       "classification": "browser_suite",
       "classification_basis": "Explicit .browser.mjs convention",
       "inspection_status": "pending_assertion_review",
       "mapping": null,
+      "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
+    },
+    {
+      "suite": "frontend/tests/premium-profile-tab-pointer.browser.mjs",
+      "sha256": "d6f849d211e6db47d56be848cec89d0f54a6bd67b3028b4aaca97bc223c02155",
+      "classification": "browser_suite",
+      "classification_basis": "Explicit .browser.mjs convention",
+      "inspection_status": "assertions_mapped",
+      "mapping": {
+        "mapping": "docs/premium-ui/browser-suite-map/profile-editor-patterns-map.json",
+        "mapping_sha256": "d709da9142116755807b2e25925ceee55a05e337d6f0d410ea17256d9ce802f7",
+        "assertion_groups": 2
+      },
       "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
     },
     {
@@ -1698,12 +2150,51 @@
       "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
     },
     {
+      "suite": "frontend/tests/premium-profile-unknown-histories.browser.mjs",
+      "sha256": "b6af1a5474b572af4314cf4720317fd86baff0c37a54caa6be3f04d083195ea0",
+      "classification": "browser_suite",
+      "classification_basis": "Explicit .browser.mjs convention",
+      "inspection_status": "assertions_mapped",
+      "mapping": {
+        "mapping": "docs/premium-ui/browser-suite-map/profile-draft-workload-map.json",
+        "mapping_sha256": "d1409e903e6600560497a61c1f1e57ddc213ed697d8ce41abfa0723ba95a4344",
+        "assertion_groups": 1
+      },
+      "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
+    },
+    {
       "suite": "frontend/tests/premium-profile-workload-links.browser.mjs",
       "sha256": "cc9c019a31b42d1b71cb7a28f9e8f30fe29593fdd60f012d1471e01e82fa46f5",
       "classification": "browser_suite",
       "classification_basis": "Explicit .browser.mjs convention",
       "inspection_status": "pending_assertion_review",
       "mapping": null,
+      "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
+    },
+    {
+      "suite": "frontend/tests/premium-profile-workload-unknown.browser.mjs",
+      "sha256": "46be3efaf14fbf7a86c5641b94369bd221c340accd8cfb6ae49d9fece586c648",
+      "classification": "browser_suite",
+      "classification_basis": "Explicit .browser.mjs convention",
+      "inspection_status": "assertions_mapped",
+      "mapping": {
+        "mapping": "docs/premium-ui/browser-suite-map/profile-draft-workload-map.json",
+        "mapping_sha256": "d1409e903e6600560497a61c1f1e57ddc213ed697d8ce41abfa0723ba95a4344",
+        "assertion_groups": 1
+      },
+      "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
+    },
+    {
+      "suite": "frontend/tests/premium-profile-workload-values.browser.mjs",
+      "sha256": "c843e673449883cde06d4b1177612081949f9bb790bedf97282f928b1e65d05a",
+      "classification": "browser_suite",
+      "classification_basis": "Explicit .browser.mjs convention",
+      "inspection_status": "assertions_mapped",
+      "mapping": {
+        "mapping": "docs/premium-ui/browser-suite-map/profile-draft-workload-map.json",
+        "mapping_sha256": "d1409e903e6600560497a61c1f1e57ddc213ed697d8ce41abfa0723ba95a4344",
+        "assertion_groups": 1
+      },
       "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
     },
     {
@@ -2005,7 +2496,7 @@
       "inspection_status": "assertions_mapped",
       "mapping": {
         "mapping": "docs/premium-ui/browser-suite-map/profile-fixture-map.json",
-        "mapping_sha256": "85bd1ab565a9a5e19f54b026f70cbb13de28e520f60d54c7af867a20bf03f15b",
+        "mapping_sha256": "31ed3838253dbd8a29036c44405d8a26912f73aa57e4615f0a8abdec18644d31",
         "assertion_groups": 5
       },
       "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
@@ -2155,7 +2646,7 @@
       "inspection_status": "assertions_mapped",
       "mapping": {
         "mapping": "docs/premium-ui/browser-suite-map/profile-fixture-map.json",
-        "mapping_sha256": "85bd1ab565a9a5e19f54b026f70cbb13de28e520f60d54c7af867a20bf03f15b",
+        "mapping_sha256": "31ed3838253dbd8a29036c44405d8a26912f73aa57e4615f0a8abdec18644d31",
         "assertion_groups": 7
       },
       "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
@@ -2345,6 +2836,19 @@
       "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
     },
     {
+      "suite": "frontend/tests/premium-workbook-choice-lifetime.browser.mjs",
+      "sha256": "d22bf755ed8c1c3974baa437b2a983a484460eafccc910b3ab735f2bceb37b2e",
+      "classification": "browser_suite",
+      "classification_basis": "Explicit .browser.mjs convention",
+      "inspection_status": "assertions_mapped",
+      "mapping": {
+        "mapping": "docs/premium-ui/browser-suite-map/match-identity-map.json",
+        "mapping_sha256": "7f63ec9c9369c9891982cbbfda103879c571307b19af943d81d3bb8d321b3bd1",
+        "assertion_groups": 2
+      },
+      "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
+    },
+    {
       "suite": "frontend/tests/premium-workspace-recovery.browser.mjs",
       "sha256": "2e9e03f4a5cac455d3a07e100896bdb322ffb9d91de5c42e8dff3885253723b4",
       "classification": "browser_suite",
@@ -2409,7 +2913,7 @@
     },
     {
       "suite": "frontend/tests/ui.test.mjs",
-      "sha256": "c0e98f73875dee231857757e5b54fed45c8fe818d83b063ec19428bde9d2b586",
+      "sha256": "298fa359856cac78dcbf868724f984b39be2c1117e47fbf0ba6bbac4214d2afd",
       "classification": "unit_static_or_equivalence_utility",
       "classification_basis": "Outside browser naming convention; retained for discovery, not silently omitted",
       "inspection_status": "pending_assertion_review",
@@ -2453,5 +2957,5 @@
       "execution_status": "Not inferred by this index; inspect mapped evidence scope and source snapshots"
     }
   ],
-  "recorded_at_utc": "2026-10-24T09:49:30.202221+00:00"
+  "recorded_at_utc": "2026-10-28T16:42:14.535853+00:00"
 }

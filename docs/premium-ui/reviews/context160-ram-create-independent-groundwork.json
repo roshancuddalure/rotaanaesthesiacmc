@@ -1,0 +1,70 @@
+{
+  "recorded_at_utc": "2026-10-30T15:20:46.649518+00:00",
+  "reviewer": "/root/context160_fixture_resume",
+  "application_backend_source_edits": false,
+  "decision": "Bounded real-RAM persistence subset verified; keep original160partial.",
+  "terminal_exit_code_observed": 0,
+  "contexts": 4,
+  "fixture_safety": {
+    "port": 5252,
+    "host": "127.0.0.1",
+    "process": 30956,
+    "storage": "sqlite+pysqlite:///:memory:",
+    "pool": "StaticPool",
+    "explicit_db_auth_overrides": true,
+    "fixture_reset_scope": "Dedicated process only; shared8031/8025 untouched.",
+    "production_db_operations": false
+  },
+  "verified": [
+    "Actual native main Unit Manage/Add member posting opens selectedunit; selected workingmonth July visible at320/1280.",
+    "Actual Addleave and posting reviews/saves use existing realAPI/services; no locallymocked POST responses.",
+    "Fresh SQLiteRAM readback proves one exact person/unit/date/notes row added; all priorrows,otherkind,members and adjacentJuneunitmanagementread unchanged.",
+    "Two mutationrequests only percase:preview+save,200statuses,originalperson/unit/date fields andnoeditidentity."
+  ],
+  "coverage_gaps": [
+    {
+      "action": "Unit and leave add",
+      "status": "Bounded actualpersistence4currentcontexts; Chromiumonly,phone/desktop,JulyselectedexplicitJuly10/11dates."
+    },
+    {
+      "action": "Existing unit/leave record Edit",
+      "status": "Currentmocked-context/sourceproof strong; actualRAM changedrecord+untouchedsiblingmatrix notrunhere."
+    },
+    {
+      "action": "Single/selected/monthly delete or posting removal",
+      "status": "15842confirmation/controllercases are locallyfulfilled; dedicatedRAMdelete/readback acrossmonth/unit notrunhere."
+    },
+    {
+      "action": "Leave individual/monthly approval",
+      "status": "Historical actualRAM8025 persistence12contextreport exists; must inspect exactsnapshot/applicability for160,notrerunorclaimedcurrenthere."
+    },
+    {
+      "action": "Leave cancellation",
+      "status": "158currentactualshell locallyfulfilled cases verifyexacttargets/refresh/siblings; realRAMcancelafterreadback notrunhere."
+    },
+    {
+      "action": "Operational unit/leave CSV import append/upsert/replace-month",
+      "status": "Historical actualRAMequivalence-import-modes intervalpreservation coverage exists; source/tests need exactcurrentapplicability or freshscopedrerun."
+    },
+    {
+      "action": "Unit registry create/edit and unitcall/month settings",
+      "status": "Normalization42+creation6localAPI sequencing scope; actualRAM independentmonth/unitsettingsmutation+readback notrunhere."
+    }
+  ],
+  "harness_correction": "First attempt expected Add posting directly inside unitcard; actualapp requires Manage unit then nested Add member posting. Preserved terminal1diagnostic; finaltestuses actualrendered path,notchangedproduct.",
+  "evidence_sha256": {
+    "docs/premium-ui/qa-context160-ram-create.json": "1a1d8f829c6105afb4ed5259f5ca840f83444ec5263e13291aea70def55b73b9",
+    "frontend/tests/premium-context160-ram-create.browser.mjs": "fa8e821e0616f2b823136dea55b6dd94d576f8481fbf7a1ae5a1816387d60a3f",
+    "tmp/context160-ram-create.log": "d014ef20e64b0d29ebcf1964ff693ffd1e637abb3f2d46edcf958f3bf5bc2674",
+    "tmp/context160-ram-create-opener-harness-diagnostic.log": "3d458cadfbbede403c13fc596d6c3a172f4b7eb628b23349a59ff531a911b87a",
+    "tmp/context160_ram_server.py": "ba10ace5417076e8fab1eadd12dc45d43ed47e57e8d2f4504b2efcf6257ba2ae",
+    "tools/frontend_equivalence_server.py": "91d35674e7072cc6b9e356c2e15103025fdbe07c3a2ea08ca1c1e1b4bc037a0a",
+    "tools/generation_smoke_server.py": "7dcf364fe3c2eb0de08d013f5a03880c785c24ccbeb571cd3acb259cfc827c08",
+    "tools/compute_smoke_server.py": "bfac642bb956b656816e6f2f32911f6f8e4abf4fb23c860b67569b70c8c87582"
+  },
+  "limitations": [
+    "Not whole160,allroles/allbrowsers/allactions,backendpolicy/persistenceoutsideRAM or productioncertification.",
+    "Sourcehashbinding declares main/record/API; runtime uses widerappdependencygraph andcurrentheldbuild remainscoordinatorgate.",
+    "Syntheticfixtureseed addscontextsiblings exclusivelyRAM; no backendproduct/source/APIcontractchanges."
+  ]
+}

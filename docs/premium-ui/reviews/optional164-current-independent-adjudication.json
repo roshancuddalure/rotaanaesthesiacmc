@@ -1,0 +1,68 @@
+{
+  "recorded_at_utc": "2026-10-31T01:26:32.881599+00:00",
+  "reviewer": "/root/optional164_v5_metric_diagnostic",
+  "application_changed": false,
+  "acceptance_ledger_changed": false,
+  "item_id": 164,
+  "requirement": "Maintain essential generation actions while optional reports load or fail, preserving the existing nonblocking foundation.",
+  "acceptance_scope": "Optional-report isolation from generation actions",
+  "pass_conditions": [
+    "Optional reports load and fail without disabling otherwise available essential generation actions.",
+    "Recovery retries the optional read rather than repeating or resetting primary generation work."
+  ],
+  "source_sha256": {
+    "frontend/src/main.ts": "976b51d938cb890366cc1e78934faf6acc2c87a31c3fc6358e06fa323c5d3427"
+  },
+  "conditions": [
+    {
+      "condition": "Optional reports load and fail without disabling otherwise available essential generation actions.",
+      "decision": "Proved within the actual requirement scope.",
+      "evidence": [
+        "docs/premium-ui/qa-optional164-v6-held-primary-integrated.json",
+        "docs/premium-ui/qa-optional164-v6-integrated-sequenced-r1.json",
+        "docs/premium-ui/qa-optional164-v6-malformed-integrated.json",
+        "docs/premium-ui/qa-optional164-v6-fastmode-independent.json"
+      ],
+      "reason": "42 actual3engine320/1280 cases hold all four optional GETs, launch native early Build/Autoassign chooser/Quick safe fill/Whole-month optimisation dialogs, then fail reads and verify otherwise available essential actions and open dialog survive. Deadline-late-response, navigation and focus variants are explicit.30 post-failure/retry and24 malformed-response cases retain available Build;6 fastmode cases retain baseline Build/Autoassign availability with only statistics read. Primary toolbar markup, permission/status disabled expressions and early-readiness/delegated entry handlers are exact to2798."
+    },
+    {
+      "condition": "Recovery retries the optional read rather than repeating or resetting primary generation work.",
+      "decision": "Proved within the actual requirement scope.",
+      "evidence": [
+        "docs/premium-ui/qa-optional164-v6-integrated-sequenced-r1.json",
+        "docs/premium-ui/qa-optional164-v6-focus-integrated-sequenced-r1.json",
+        "docs/premium-ui/qa-optional164-v6-malformed-integrated.json",
+        "docs/premium-ui/qa-optional164-v6-fastmode-independent.json"
+      ],
+      "reason": "30 actual recovery contexts verify failed-subset GET-only retries, two rounds, primary GET count, identical primary form nodes/edited dates/options and account/route/month guards.24 focus contexts preserve intentional optional-panel focus and figures node identity.24 malformed contexts reject null/wrong-shape/wrong-month successful responses and recover with only failed report rereads.6 fastmode contexts read statistics twice and skipped reports zero times, primary once; newer edits persist. All reports assert no writes. All non-get imported API, storage mutation, serialization and confirm expressions are unchanged by exact source proof; primary generation work is not repeated by recovery."
+    }
+  ],
+  "published_nonadmin_scope": "No exhaustive role/status matrix is necessary to claim this narrow isolation requirement: exact primary toolbar markup proves Build/Autoassign/optimisation gating expressions are unchanged, every other main statement including delegated handlers is unchanged, and optional retry only updates report fragments. This is source-based gating preservation, not a new permissions/security certification. Otherwise unavailable actions remain governed by existing rules.",
+  "fastmode_scope": "Fresh six contexts cover the supported one-read mode. Explicit skipped-report note remains visible. Skipped safety/candidate fallback numbers are not certified safety checks or reported as backend truth.",
+  "browser_contexts": 126,
+  "independent_operator_contexts": 6,
+  "root_operator_contexts": 120,
+  "unit_tests": 114,
+  "build_exit_code": 0,
+  "primary_toolbar_markup_and_gates_exact": true,
+  "decision": "Recommend root acceptance of the whole original164 after root inspection and successful prior51 applicability verifier. Both explicit conditions are proved; no definition is narrowed to enabled-button inspection alone. This report does not mutate the ledger or claim full260 completion.",
+  "diagnostics": "Initial12second Firefox normal click and focus navigation timeouts remain preserved. R1 uses30second action/navigation timeouts andDOMContentLoaded with exactly unchanged functional assertions. Subsequent sequenced54 contexts passed terminal0. Contention remains an unproven cause. The earlier V5 blank Suggestion slots assertion was independently proved to read a closed disclosure; visible metric assertions pass after opening it.",
+  "limits": [
+    "Tests launch generation dialogs and preserve existing preparation settings; they do not execute real computation, Apply proposals, certify eligibility, GPU hardware, persisted results or exports. Those outcomes are not required to establish optional-report isolation and primary work nonrepetition; their underlying handlers/contracts are unchanged.",
+    "No new certification of unrelated Review/Publish optional data consumers or standalone compute reports. Source confinement and unchanged other modules preserve prior scope; no requirement164 claim is expanded to those unrelated reports.",
+    "The deadline fixture accelerates only the12000ms timer to600ms; no real12second latency/performance certification.",
+    "Physical-device/native assistive-technology checks remain pending per user preference and broader goal. This exact read-isolation requirement does not impose them."
+  ],
+  "evidence_sha256": {
+    "docs/premium-ui/reviews/optional164-v6-integrated-execution.json": "2eedc4e2457902c479425c544a98acc4d96b94b01cc276eb5cb31f320d5793b6",
+    "docs/premium-ui/reviews/optional164-v6-fastmode-execution.json": "dbcbff03f17fb54c2a3d3e3284acd475cf40ed6b54b7a4f47f9d903424a75268",
+    "docs/premium-ui/reviews/optional164-v6-prior51-source-boundaries.json": "ed5ddfd9425aaeb6ca79dc823409b0f1ce22162628675063b058981cbe30ec33",
+    "docs/premium-ui/reviews/optional164-v6-rebase-sourceproof.json": "358d58a7dba03962a9fab5789d0f715b12b0c079fd8600e073022543ab7c0dd8",
+    "docs/premium-ui/acceptance-criteria/items-087-173.json": "a7bf1322bd8e08a1fddd4195095d9cc52a8867a1b8a2bda9b523917fae458576",
+    "frontend/src/main.ts": "976b51d938cb890366cc1e78934faf6acc2c87a31c3fc6358e06fa323c5d3427",
+    "docs/premium-ui/qa-optional164-v6-integrated-sequenced-r1.json": "a3cc2d99078f4269e86c3f3cdef338f5228b08e3046c92ce44aa3e101ad3a183",
+    "docs/premium-ui/qa-optional164-v6-focus-integrated-sequenced-r1.json": "eedea61cbafe15953901f749c73caeeaf4b05f91a784bcf5134043db417a238d",
+    "docs/premium-ui/qa-optional164-v6-malformed-integrated.json": "3648a1494dc010800e42bfa920079bcb9ab834d5929684961ecd360a7428d9a6",
+    "docs/premium-ui/qa-optional164-v6-held-primary-integrated.json": "3c764ff3617b40b9c1ddad2ffe4f41a66d466634f8c3dd587cde595ee1bba326"
+  }
+}

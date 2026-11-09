@@ -1,0 +1,1751 @@
+{
+  "recorded_at_utc": "2026-10-28T17:57:23.877Z",
+  "base": "http://127.0.0.1:5203",
+  "source_sha256": {
+    "frontend/src/member-profile.ts": "39f8bc4d281c9d8f3da9cad3a7ef98e4ecef1b0ba020145ca20439228fdc3df3",
+    "frontend/src/member-workspace.ts": "cca57cfbe6b48ce7022ebc65b666e2fbeb0dadaf28499bb10a2a563cbb818ef8",
+    "frontend/src/record-workspace.ts": "17bc44141dcab9c2d674602bbd9abc42fb66a7f86e22bbd2def7ace0ec1c4af8",
+    "frontend/src/member-presentation.ts": "71c8c8f7b1eadd1d02e84e3a997f3c636a3b7edb04b4bf527b19bdde223c5f60",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "9344ea87024b282475a3b9f110ce9c83bdc5dca1dc984961eefed044c2ad6065"
+  },
+  "final_source_sha256": {
+    "frontend/src/member-profile.ts": "39f8bc4d281c9d8f3da9cad3a7ef98e4ecef1b0ba020145ca20439228fdc3df3",
+    "frontend/src/member-workspace.ts": "cca57cfbe6b48ce7022ebc65b666e2fbeb0dadaf28499bb10a2a563cbb818ef8",
+    "frontend/src/record-workspace.ts": "17bc44141dcab9c2d674602bbd9abc42fb66a7f86e22bbd2def7ace0ec1c4af8",
+    "frontend/src/member-presentation.ts": "71c8c8f7b1eadd1d02e84e3a997f3c636a3b7edb04b4bf527b19bdde223c5f60",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "9344ea87024b282475a3b9f110ce9c83bdc5dca1dc984961eefed044c2ad6065"
+  },
+  "test_sha256": "509017f40f2c70f255922c10b4265a73ed40d4c4055bf4ec36d28c0e3ae302e1",
+  "candidate": {
+    "directory": "../tmp/leave-status-extra-surfaces-proposal-v2",
+    "source_sha256": {
+      "member-profile.ts": "6874284e2437402f0cb00d57841f0d4170d8ecc6f2067ad2a156e38c3b0b69f2",
+      "record-workspace.ts": "7c196c12b114c48bf2db4ee57aad7e591d8e3acc7a77cccd15abbad7c349fb8f"
+    },
+    "final_source_sha256": {
+      "member-profile.ts": "6874284e2437402f0cb00d57841f0d4170d8ecc6f2067ad2a156e38c3b0b69f2",
+      "record-workspace.ts": "7c196c12b114c48bf2db4ee57aad7e591d8e3acc7a77cccd15abbad7c349fb8f"
+    },
+    "theme_directory": "../tmp/leave141147-status-v5",
+    "theme_source_sha256": {
+      "main.ts": "b5bb65120baf6029a5e1d09e49a6c01edcb80db4e697d7810a53ece0913dc00e",
+      "premium-theme.css": "aa0d3c25681b83298cd53f45f009ed2f1f8e64b0f334903936d269c886d399d7"
+    },
+    "final_theme_source_sha256": {
+      "main.ts": "b5bb65120baf6029a5e1d09e49a6c01edcb80db4e697d7810a53ece0913dc00e",
+      "premium-theme.css": "aa0d3c25681b83298cd53f45f009ed2f1f8e64b0f334903936d269c886d399d7"
+    },
+    "limit": "Preview candidate; live source hash records identify baseline, not applied bytes. Main candidate is bound for server identity but this isolated controller test does not import main."
+  },
+  "scope": "Actual legacy profile, canonical workspace and normalized leave editor controllers, GET-only locally fulfilled fixtures. Known five states, cancelled spelling/case variants, prototype names and long/HTML-like unknown statuses; exact existing editor identity/range/session/status and clean Cancel. Actual save/approval, native AT and physical devices are separate gates.",
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "height": 900,
+      "rootPercent": 100,
+      "legacyGeometry": [
+        {
+          "text": "Approved",
+          "width": 69.53125,
+          "height": 21,
+          "parentWidth": 232,
+          "parentScrollWidth": 232,
+          "parentClientWidth": 232,
+          "dialogScrollWidth": 280,
+          "dialogClientWidth": 280,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Requested",
+          "width": 74.3125,
+          "height": 21,
+          "parentWidth": 232,
+          "parentScrollWidth": 232,
+          "parentClientWidth": 232,
+          "dialogScrollWidth": 280,
+          "dialogClientWidth": 280,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Imported, Pending Review",
+          "width": 210.734375,
+          "height": 45.796875,
+          "parentWidth": 232,
+          "parentScrollWidth": 232,
+          "parentClientWidth": 232,
+          "dialogScrollWidth": 280,
+          "dialogClientWidth": 280,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Cancelled",
+          "width": 68.40625,
+          "height": 21,
+          "parentWidth": 232,
+          "parentScrollWidth": 232,
+          "parentClientWidth": 232,
+          "dialogScrollWidth": 280,
+          "dialogClientWidth": 280,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Rejected",
+          "width": 60.3125,
+          "height": 21,
+          "parentWidth": 232,
+          "parentScrollWidth": 232,
+          "parentClientWidth": 232,
+          "dialogScrollWidth": 280,
+          "dialogClientWidth": 280,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Cancelled",
+          "width": 68.40625,
+          "height": 21,
+          "parentWidth": 232,
+          "parentScrollWidth": 232,
+          "parentClientWidth": 232,
+          "dialogScrollWidth": 280,
+          "dialogClientWidth": 280,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Approved",
+          "width": 69.53125,
+          "height": 21,
+          "parentWidth": 232,
+          "parentScrollWidth": 232,
+          "parentClientWidth": 232,
+          "dialogScrollWidth": 280,
+          "dialogClientWidth": 280,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "constructor",
+          "width": 80.40625,
+          "height": 21,
+          "parentWidth": 232,
+          "parentScrollWidth": 232,
+          "parentClientWidth": 232,
+          "dialogScrollWidth": 280,
+          "dialogClientWidth": 280,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "__proto__",
+          "width": 65.703125,
+          "height": 21,
+          "parentWidth": 232,
+          "parentScrollWidth": 232,
+          "parentClientWidth": 232,
+          "dialogScrollWidth": 280,
+          "dialogClientWidth": 280,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "toString",
+          "width": 56.125,
+          "height": 21,
+          "parentWidth": 232,
+          "parentScrollWidth": 232,
+          "parentClientWidth": 232,
+          "dialogScrollWidth": 280,
+          "dialogClientWidth": 280,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "external_review_LONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUS",
+          "width": 231.484375,
+          "height": 343.359375,
+          "parentWidth": 232,
+          "parentScrollWidth": 232,
+          "parentClientWidth": 232,
+          "dialogScrollWidth": 280,
+          "dialogClientWidth": 280,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "<img src=x onerror=\"window.leaveProfileInjected=true\">",
+          "width": 227.03125,
+          "height": 70.59375,
+          "parentWidth": 232,
+          "parentScrollWidth": 232,
+          "parentClientWidth": 232,
+          "dialogScrollWidth": 280,
+          "dialogClientWidth": 280,
+          "overflowWrap": "anywhere"
+        }
+      ],
+      "canonicalGeometry": [
+        {
+          "text": "Status: Approved",
+          "width": 254,
+          "height": 24.796875,
+          "scrollWidth": 254,
+          "clientWidth": 254,
+          "dialogScrollWidth": 320,
+          "dialogClientWidth": 320,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: Requested",
+          "width": 254,
+          "height": 24.796875,
+          "scrollWidth": 254,
+          "clientWidth": 254,
+          "dialogScrollWidth": 320,
+          "dialogClientWidth": 320,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: Imported Pending Review",
+          "width": 254,
+          "height": 24.796875,
+          "scrollWidth": 254,
+          "clientWidth": 254,
+          "dialogScrollWidth": 320,
+          "dialogClientWidth": 320,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: Cancelled",
+          "width": 254,
+          "height": 24.796875,
+          "scrollWidth": 254,
+          "clientWidth": 254,
+          "dialogScrollWidth": 320,
+          "dialogClientWidth": 320,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: Rejected",
+          "width": 254,
+          "height": 24.796875,
+          "scrollWidth": 254,
+          "clientWidth": 254,
+          "dialogScrollWidth": 320,
+          "dialogClientWidth": 320,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: Canceled",
+          "width": 254,
+          "height": 24.796875,
+          "scrollWidth": 254,
+          "clientWidth": 254,
+          "dialogScrollWidth": 320,
+          "dialogClientWidth": 320,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: APPROVED",
+          "width": 254,
+          "height": 24.796875,
+          "scrollWidth": 254,
+          "clientWidth": 254,
+          "dialogScrollWidth": 320,
+          "dialogClientWidth": 320,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: Constructor",
+          "width": 254,
+          "height": 24.796875,
+          "scrollWidth": 254,
+          "clientWidth": 254,
+          "dialogScrollWidth": 320,
+          "dialogClientWidth": 320,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status:   Proto  ",
+          "width": 254,
+          "height": 24.796875,
+          "scrollWidth": 254,
+          "clientWidth": 254,
+          "dialogScrollWidth": 320,
+          "dialogClientWidth": 320,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: ToString",
+          "width": 254,
+          "height": 24.796875,
+          "scrollWidth": 254,
+          "clientWidth": 254,
+          "dialogScrollWidth": 320,
+          "dialogClientWidth": 320,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: External Review LONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUS",
+          "width": 254,
+          "height": 396.75,
+          "scrollWidth": 254,
+          "clientWidth": 254,
+          "dialogScrollWidth": 320,
+          "dialogClientWidth": 320,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: <Img Src=X Onerror=\"Window.LeaveProfileInjected=True\">",
+          "width": 254,
+          "height": 74.390625,
+          "scrollWidth": 254,
+          "clientWidth": 254,
+          "dialogScrollWidth": 320,
+          "dialogClientWidth": 320,
+          "overflowWrap": "anywhere"
+        }
+      ],
+      "knownStatesAndCaseAliasReadable": true,
+      "unknownLegacyStatusVerbatim": true,
+      "canonicalReturnedFieldsPreserved": true,
+      "fullCrossMonthDates": true,
+      "editorExactMemberRangeSessionStatus": true,
+      "editorOperationScopedGuidance": true,
+      "pristineEditorCancelNoRefetch": true,
+      "inheritedWrappingMeasured": true,
+      "escapedText": true,
+      "exactOpenerReturn": true,
+      "calls": [
+        "/api/v1/members/leave-status-profile/profile",
+        "/api/v1/admin/member-workspace/leave-status-profile",
+        "/api/v1/admin/member-workspace/leave-status-profile/leave",
+        "/api/v1/admin/members",
+        "/api/v1/normalization/units",
+        "/api/v1/normalization/catalog/leave_type",
+        "/api/v1/normalization/catalog/leave_slot",
+        "/api/v1/normalization/catalog/leave_status",
+        "/api/v1/normalization/records/leave/leave-status-0"
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "height": 900,
+      "rootPercent": 100,
+      "legacyGeometry": [
+        {
+          "text": "Approved",
+          "width": 69.53125,
+          "height": 21,
+          "parentWidth": 800,
+          "parentScrollWidth": 800,
+          "parentClientWidth": 800,
+          "dialogScrollWidth": 848,
+          "dialogClientWidth": 848,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Requested",
+          "width": 74.3125,
+          "height": 21,
+          "parentWidth": 800,
+          "parentScrollWidth": 800,
+          "parentClientWidth": 800,
+          "dialogScrollWidth": 848,
+          "dialogClientWidth": 848,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Imported, Pending Review",
+          "width": 184.328125,
+          "height": 21,
+          "parentWidth": 800,
+          "parentScrollWidth": 800,
+          "parentClientWidth": 800,
+          "dialogScrollWidth": 848,
+          "dialogClientWidth": 848,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Cancelled",
+          "width": 68.40625,
+          "height": 21,
+          "parentWidth": 800,
+          "parentScrollWidth": 800,
+          "parentClientWidth": 800,
+          "dialogScrollWidth": 848,
+          "dialogClientWidth": 848,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Rejected",
+          "width": 60.3125,
+          "height": 21,
+          "parentWidth": 800,
+          "parentScrollWidth": 800,
+          "parentClientWidth": 800,
+          "dialogScrollWidth": 848,
+          "dialogClientWidth": 848,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Cancelled",
+          "width": 68.40625,
+          "height": 21,
+          "parentWidth": 800,
+          "parentScrollWidth": 800,
+          "parentClientWidth": 800,
+          "dialogScrollWidth": 848,
+          "dialogClientWidth": 848,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Approved",
+          "width": 69.53125,
+          "height": 21,
+          "parentWidth": 800,
+          "parentScrollWidth": 800,
+          "parentClientWidth": 800,
+          "dialogScrollWidth": 848,
+          "dialogClientWidth": 848,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "constructor",
+          "width": 80.40625,
+          "height": 21,
+          "parentWidth": 800,
+          "parentScrollWidth": 800,
+          "parentClientWidth": 800,
+          "dialogScrollWidth": 848,
+          "dialogClientWidth": 848,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "__proto__",
+          "width": 65.703125,
+          "height": 21,
+          "parentWidth": 800,
+          "parentScrollWidth": 800,
+          "parentClientWidth": 800,
+          "dialogScrollWidth": 848,
+          "dialogClientWidth": 848,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "toString",
+          "width": 56.125,
+          "height": 21,
+          "parentWidth": 800,
+          "parentScrollWidth": 800,
+          "parentClientWidth": 800,
+          "dialogScrollWidth": 848,
+          "dialogClientWidth": 848,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "external_review_LONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUS",
+          "width": 797.1875,
+          "height": 95.390625,
+          "parentWidth": 800,
+          "parentScrollWidth": 800,
+          "parentClientWidth": 800,
+          "dialogScrollWidth": 848,
+          "dialogClientWidth": 848,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "<img src=x onerror=\"window.leaveProfileInjected=true\">",
+          "width": 407.390625,
+          "height": 21,
+          "parentWidth": 800,
+          "parentScrollWidth": 800,
+          "parentClientWidth": 800,
+          "dialogScrollWidth": 848,
+          "dialogClientWidth": 848,
+          "overflowWrap": "anywhere"
+        }
+      ],
+      "canonicalGeometry": [
+        {
+          "text": "Status: Approved",
+          "width": 831,
+          "height": 24.796875,
+          "scrollWidth": 831,
+          "clientWidth": 831,
+          "dialogScrollWidth": 1118,
+          "dialogClientWidth": 1118,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: Requested",
+          "width": 831,
+          "height": 24.796875,
+          "scrollWidth": 831,
+          "clientWidth": 831,
+          "dialogScrollWidth": 1118,
+          "dialogClientWidth": 1118,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: Imported Pending Review",
+          "width": 831,
+          "height": 24.796875,
+          "scrollWidth": 831,
+          "clientWidth": 831,
+          "dialogScrollWidth": 1118,
+          "dialogClientWidth": 1118,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: Cancelled",
+          "width": 831,
+          "height": 24.796875,
+          "scrollWidth": 831,
+          "clientWidth": 831,
+          "dialogScrollWidth": 1118,
+          "dialogClientWidth": 1118,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: Rejected",
+          "width": 831,
+          "height": 24.796875,
+          "scrollWidth": 831,
+          "clientWidth": 831,
+          "dialogScrollWidth": 1118,
+          "dialogClientWidth": 1118,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: Canceled",
+          "width": 831,
+          "height": 24.796875,
+          "scrollWidth": 831,
+          "clientWidth": 831,
+          "dialogScrollWidth": 1118,
+          "dialogClientWidth": 1118,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: APPROVED",
+          "width": 831,
+          "height": 24.796875,
+          "scrollWidth": 831,
+          "clientWidth": 831,
+          "dialogScrollWidth": 1118,
+          "dialogClientWidth": 1118,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: Constructor",
+          "width": 831,
+          "height": 24.796875,
+          "scrollWidth": 831,
+          "clientWidth": 831,
+          "dialogScrollWidth": 1118,
+          "dialogClientWidth": 1118,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status:   Proto  ",
+          "width": 831,
+          "height": 24.796875,
+          "scrollWidth": 831,
+          "clientWidth": 831,
+          "dialogScrollWidth": 1118,
+          "dialogClientWidth": 1118,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: ToString",
+          "width": 831,
+          "height": 24.796875,
+          "scrollWidth": 831,
+          "clientWidth": 831,
+          "dialogScrollWidth": 1118,
+          "dialogClientWidth": 1118,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: External Review LONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUS",
+          "width": 831,
+          "height": 99.1875,
+          "scrollWidth": 831,
+          "clientWidth": 831,
+          "dialogScrollWidth": 1118,
+          "dialogClientWidth": 1118,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: <Img Src=X Onerror=\"Window.LeaveProfileInjected=True\">",
+          "width": 831,
+          "height": 24.796875,
+          "scrollWidth": 831,
+          "clientWidth": 831,
+          "dialogScrollWidth": 1118,
+          "dialogClientWidth": 1118,
+          "overflowWrap": "anywhere"
+        }
+      ],
+      "knownStatesAndCaseAliasReadable": true,
+      "unknownLegacyStatusVerbatim": true,
+      "canonicalReturnedFieldsPreserved": true,
+      "fullCrossMonthDates": true,
+      "editorExactMemberRangeSessionStatus": true,
+      "editorOperationScopedGuidance": true,
+      "pristineEditorCancelNoRefetch": true,
+      "inheritedWrappingMeasured": true,
+      "escapedText": true,
+      "exactOpenerReturn": true,
+      "calls": [
+        "/api/v1/members/leave-status-profile/profile",
+        "/api/v1/admin/member-workspace/leave-status-profile",
+        "/api/v1/admin/member-workspace/leave-status-profile/leave",
+        "/api/v1/admin/members",
+        "/api/v1/normalization/units",
+        "/api/v1/normalization/catalog/leave_type",
+        "/api/v1/normalization/catalog/leave_slot",
+        "/api/v1/normalization/catalog/leave_status",
+        "/api/v1/normalization/records/leave/leave-status-0"
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "height": 900,
+      "rootPercent": 100,
+      "legacyGeometry": [
+        {
+          "text": "Approved",
+          "width": 69.51667785644531,
+          "height": 21,
+          "parentWidth": 232,
+          "parentScrollWidth": 232,
+          "parentClientWidth": 232,
+          "dialogScrollWidth": 280,
+          "dialogClientWidth": 280,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Requested",
+          "width": 74.28334045410156,
+          "height": 21,
+          "parentWidth": 232,
+          "parentScrollWidth": 232,
+          "parentClientWidth": 232,
+          "dialogScrollWidth": 280,
+          "dialogClientWidth": 280,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Imported, Pending Review",
+          "width": 210.76666259765625,
+          "height": 45.80000305175781,
+          "parentWidth": 232,
+          "parentScrollWidth": 232,
+          "parentClientWidth": 232,
+          "dialogScrollWidth": 280,
+          "dialogClientWidth": 280,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Cancelled",
+          "width": 68.38334655761719,
+          "height": 21,
+          "parentWidth": 232,
+          "parentScrollWidth": 232,
+          "parentClientWidth": 232,
+          "dialogScrollWidth": 280,
+          "dialogClientWidth": 280,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Rejected",
+          "width": 60.30000305175781,
+          "height": 21,
+          "parentWidth": 232,
+          "parentScrollWidth": 232,
+          "parentClientWidth": 232,
+          "dialogScrollWidth": 280,
+          "dialogClientWidth": 280,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Cancelled",
+          "width": 68.38334655761719,
+          "height": 21,
+          "parentWidth": 232,
+          "parentScrollWidth": 232,
+          "parentClientWidth": 232,
+          "dialogScrollWidth": 280,
+          "dialogClientWidth": 280,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Approved",
+          "width": 69.51667785644531,
+          "height": 21,
+          "parentWidth": 232,
+          "parentScrollWidth": 232,
+          "parentClientWidth": 232,
+          "dialogScrollWidth": 280,
+          "dialogClientWidth": 280,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "constructor",
+          "width": 80.38334655761719,
+          "height": 21,
+          "parentWidth": 232,
+          "parentScrollWidth": 232,
+          "parentClientWidth": 232,
+          "dialogScrollWidth": 280,
+          "dialogClientWidth": 280,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "__proto__",
+          "width": 65.68333435058594,
+          "height": 21,
+          "parentWidth": 232,
+          "parentScrollWidth": 232,
+          "parentClientWidth": 232,
+          "dialogScrollWidth": 280,
+          "dialogClientWidth": 280,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "toString",
+          "width": 56.116668701171875,
+          "height": 21,
+          "parentWidth": 232,
+          "parentScrollWidth": 232,
+          "parentClientWidth": 232,
+          "dialogScrollWidth": 280,
+          "dialogClientWidth": 280,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "external_review_LONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUS",
+          "width": 231.48333740234375,
+          "height": 343.4000244140625,
+          "parentWidth": 232,
+          "parentScrollWidth": 232,
+          "parentClientWidth": 232,
+          "dialogScrollWidth": 280,
+          "dialogClientWidth": 280,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "<img src=x onerror=\"window.leaveProfileInjected=true\">",
+          "width": 227.0833282470703,
+          "height": 70.60000610351562,
+          "parentWidth": 232,
+          "parentScrollWidth": 232,
+          "parentClientWidth": 232,
+          "dialogScrollWidth": 280,
+          "dialogClientWidth": 280,
+          "overflowWrap": "anywhere"
+        }
+      ],
+      "canonicalGeometry": [
+        {
+          "text": "Status: Approved",
+          "width": 254,
+          "height": 24.800003051757812,
+          "scrollWidth": 254,
+          "clientWidth": 254,
+          "dialogScrollWidth": 320,
+          "dialogClientWidth": 320,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: Requested",
+          "width": 254,
+          "height": 24.800003051757812,
+          "scrollWidth": 254,
+          "clientWidth": 254,
+          "dialogScrollWidth": 320,
+          "dialogClientWidth": 320,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: Imported Pending Review",
+          "width": 254,
+          "height": 24.800003051757812,
+          "scrollWidth": 254,
+          "clientWidth": 254,
+          "dialogScrollWidth": 320,
+          "dialogClientWidth": 320,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: Cancelled",
+          "width": 254,
+          "height": 24.800003051757812,
+          "scrollWidth": 254,
+          "clientWidth": 254,
+          "dialogScrollWidth": 320,
+          "dialogClientWidth": 320,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: Rejected",
+          "width": 254,
+          "height": 24.800003051757812,
+          "scrollWidth": 254,
+          "clientWidth": 254,
+          "dialogScrollWidth": 320,
+          "dialogClientWidth": 320,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: Canceled",
+          "width": 254,
+          "height": 24.800003051757812,
+          "scrollWidth": 254,
+          "clientWidth": 254,
+          "dialogScrollWidth": 320,
+          "dialogClientWidth": 320,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: APPROVED",
+          "width": 254,
+          "height": 24.800003051757812,
+          "scrollWidth": 254,
+          "clientWidth": 254,
+          "dialogScrollWidth": 320,
+          "dialogClientWidth": 320,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: Constructor",
+          "width": 254,
+          "height": 24.800003051757812,
+          "scrollWidth": 254,
+          "clientWidth": 254,
+          "dialogScrollWidth": 320,
+          "dialogClientWidth": 320,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status:   Proto  ",
+          "width": 254,
+          "height": 24.800003051757812,
+          "scrollWidth": 254,
+          "clientWidth": 254,
+          "dialogScrollWidth": 320,
+          "dialogClientWidth": 320,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: ToString",
+          "width": 254,
+          "height": 24.800003051757812,
+          "scrollWidth": 254,
+          "clientWidth": 254,
+          "dialogScrollWidth": 320,
+          "dialogClientWidth": 320,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: External Review LONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUS",
+          "width": 254,
+          "height": 396.79998779296875,
+          "scrollWidth": 254,
+          "clientWidth": 254,
+          "dialogScrollWidth": 320,
+          "dialogClientWidth": 320,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: <Img Src=X Onerror=\"Window.LeaveProfileInjected=True\">",
+          "width": 254,
+          "height": 74.40000915527344,
+          "scrollWidth": 254,
+          "clientWidth": 254,
+          "dialogScrollWidth": 320,
+          "dialogClientWidth": 320,
+          "overflowWrap": "anywhere"
+        }
+      ],
+      "knownStatesAndCaseAliasReadable": true,
+      "unknownLegacyStatusVerbatim": true,
+      "canonicalReturnedFieldsPreserved": true,
+      "fullCrossMonthDates": true,
+      "editorExactMemberRangeSessionStatus": true,
+      "editorOperationScopedGuidance": true,
+      "pristineEditorCancelNoRefetch": true,
+      "inheritedWrappingMeasured": true,
+      "escapedText": true,
+      "exactOpenerReturn": true,
+      "calls": [
+        "/api/v1/members/leave-status-profile/profile",
+        "/api/v1/admin/member-workspace/leave-status-profile",
+        "/api/v1/admin/member-workspace/leave-status-profile/leave",
+        "/api/v1/admin/members",
+        "/api/v1/normalization/units",
+        "/api/v1/normalization/catalog/leave_type",
+        "/api/v1/normalization/catalog/leave_slot",
+        "/api/v1/normalization/catalog/leave_status",
+        "/api/v1/normalization/records/leave/leave-status-0"
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "height": 900,
+      "rootPercent": 100,
+      "legacyGeometry": [
+        {
+          "text": "Approved",
+          "width": 69.51666259765625,
+          "height": 21,
+          "parentWidth": 800,
+          "parentScrollWidth": 800,
+          "parentClientWidth": 800,
+          "dialogScrollWidth": 848,
+          "dialogClientWidth": 848,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Requested",
+          "width": 74.2833251953125,
+          "height": 21,
+          "parentWidth": 800,
+          "parentScrollWidth": 800,
+          "parentClientWidth": 800,
+          "dialogScrollWidth": 848,
+          "dialogClientWidth": 848,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Imported, Pending Review",
+          "width": 184.31666564941406,
+          "height": 21,
+          "parentWidth": 800,
+          "parentScrollWidth": 800,
+          "parentClientWidth": 800,
+          "dialogScrollWidth": 848,
+          "dialogClientWidth": 848,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Cancelled",
+          "width": 68.38333129882812,
+          "height": 21,
+          "parentWidth": 800,
+          "parentScrollWidth": 800,
+          "parentClientWidth": 800,
+          "dialogScrollWidth": 848,
+          "dialogClientWidth": 848,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Rejected",
+          "width": 60.30000305175781,
+          "height": 21,
+          "parentWidth": 800,
+          "parentScrollWidth": 800,
+          "parentClientWidth": 800,
+          "dialogScrollWidth": 848,
+          "dialogClientWidth": 848,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Cancelled",
+          "width": 68.38333129882812,
+          "height": 21,
+          "parentWidth": 800,
+          "parentScrollWidth": 800,
+          "parentClientWidth": 800,
+          "dialogScrollWidth": 848,
+          "dialogClientWidth": 848,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Approved",
+          "width": 69.51666259765625,
+          "height": 21,
+          "parentWidth": 800,
+          "parentScrollWidth": 800,
+          "parentClientWidth": 800,
+          "dialogScrollWidth": 848,
+          "dialogClientWidth": 848,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "constructor",
+          "width": 80.38333129882812,
+          "height": 21,
+          "parentWidth": 800,
+          "parentScrollWidth": 800,
+          "parentClientWidth": 800,
+          "dialogScrollWidth": 848,
+          "dialogClientWidth": 848,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "__proto__",
+          "width": 65.68333435058594,
+          "height": 21,
+          "parentWidth": 800,
+          "parentScrollWidth": 800,
+          "parentClientWidth": 800,
+          "dialogScrollWidth": 848,
+          "dialogClientWidth": 848,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "toString",
+          "width": 56.116668701171875,
+          "height": 21,
+          "parentWidth": 800,
+          "parentScrollWidth": 800,
+          "parentClientWidth": 800,
+          "dialogScrollWidth": 848,
+          "dialogClientWidth": 848,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "external_review_LONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUS",
+          "width": 797.1500244140625,
+          "height": 95.39999389648438,
+          "parentWidth": 800,
+          "parentScrollWidth": 800,
+          "parentClientWidth": 800,
+          "dialogScrollWidth": 848,
+          "dialogClientWidth": 848,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "<img src=x onerror=\"window.leaveProfileInjected=true\">",
+          "width": 407.433349609375,
+          "height": 21,
+          "parentWidth": 800,
+          "parentScrollWidth": 800,
+          "parentClientWidth": 800,
+          "dialogScrollWidth": 848,
+          "dialogClientWidth": 848,
+          "overflowWrap": "anywhere"
+        }
+      ],
+      "canonicalGeometry": [
+        {
+          "text": "Status: Approved",
+          "width": 846,
+          "height": 24.800003051757812,
+          "scrollWidth": 846,
+          "clientWidth": 846,
+          "dialogScrollWidth": 1118,
+          "dialogClientWidth": 1118,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: Requested",
+          "width": 846,
+          "height": 24.800003051757812,
+          "scrollWidth": 846,
+          "clientWidth": 846,
+          "dialogScrollWidth": 1118,
+          "dialogClientWidth": 1118,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: Imported Pending Review",
+          "width": 846,
+          "height": 24.800003051757812,
+          "scrollWidth": 846,
+          "clientWidth": 846,
+          "dialogScrollWidth": 1118,
+          "dialogClientWidth": 1118,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: Cancelled",
+          "width": 846,
+          "height": 24.800003051757812,
+          "scrollWidth": 846,
+          "clientWidth": 846,
+          "dialogScrollWidth": 1118,
+          "dialogClientWidth": 1118,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: Rejected",
+          "width": 846,
+          "height": 24.800003051757812,
+          "scrollWidth": 846,
+          "clientWidth": 846,
+          "dialogScrollWidth": 1118,
+          "dialogClientWidth": 1118,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: Canceled",
+          "width": 846,
+          "height": 24.800003051757812,
+          "scrollWidth": 846,
+          "clientWidth": 846,
+          "dialogScrollWidth": 1118,
+          "dialogClientWidth": 1118,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: APPROVED",
+          "width": 846,
+          "height": 24.800003051757812,
+          "scrollWidth": 846,
+          "clientWidth": 846,
+          "dialogScrollWidth": 1118,
+          "dialogClientWidth": 1118,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: Constructor",
+          "width": 846,
+          "height": 24.800003051757812,
+          "scrollWidth": 846,
+          "clientWidth": 846,
+          "dialogScrollWidth": 1118,
+          "dialogClientWidth": 1118,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status:   Proto  ",
+          "width": 846,
+          "height": 24.800003051757812,
+          "scrollWidth": 846,
+          "clientWidth": 846,
+          "dialogScrollWidth": 1118,
+          "dialogClientWidth": 1118,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: ToString",
+          "width": 846,
+          "height": 24.800003051757812,
+          "scrollWidth": 846,
+          "clientWidth": 846,
+          "dialogScrollWidth": 1118,
+          "dialogClientWidth": 1118,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: External Review LONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUS",
+          "width": 846,
+          "height": 99.19999694824219,
+          "scrollWidth": 846,
+          "clientWidth": 846,
+          "dialogScrollWidth": 1118,
+          "dialogClientWidth": 1118,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: <Img Src=X Onerror=\"Window.LeaveProfileInjected=True\">",
+          "width": 846,
+          "height": 24.800003051757812,
+          "scrollWidth": 846,
+          "clientWidth": 846,
+          "dialogScrollWidth": 1118,
+          "dialogClientWidth": 1118,
+          "overflowWrap": "anywhere"
+        }
+      ],
+      "knownStatesAndCaseAliasReadable": true,
+      "unknownLegacyStatusVerbatim": true,
+      "canonicalReturnedFieldsPreserved": true,
+      "fullCrossMonthDates": true,
+      "editorExactMemberRangeSessionStatus": true,
+      "editorOperationScopedGuidance": true,
+      "pristineEditorCancelNoRefetch": true,
+      "inheritedWrappingMeasured": true,
+      "escapedText": true,
+      "exactOpenerReturn": true,
+      "calls": [
+        "/api/v1/members/leave-status-profile/profile",
+        "/api/v1/admin/member-workspace/leave-status-profile",
+        "/api/v1/admin/member-workspace/leave-status-profile/leave",
+        "/api/v1/admin/members",
+        "/api/v1/normalization/units",
+        "/api/v1/normalization/catalog/leave_type",
+        "/api/v1/normalization/catalog/leave_slot",
+        "/api/v1/normalization/catalog/leave_status",
+        "/api/v1/normalization/records/leave/leave-status-0"
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "height": 900,
+      "rootPercent": 100,
+      "legacyGeometry": [
+        {
+          "text": "Approved",
+          "width": 69.5234375,
+          "height": 21,
+          "parentWidth": 232,
+          "parentScrollWidth": 232,
+          "parentClientWidth": 232,
+          "dialogScrollWidth": 280,
+          "dialogClientWidth": 280,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Requested",
+          "width": 74.3125,
+          "height": 21,
+          "parentWidth": 232,
+          "parentScrollWidth": 232,
+          "parentClientWidth": 232,
+          "dialogScrollWidth": 280,
+          "dialogClientWidth": 280,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Imported, Pending Review",
+          "width": 184.328125,
+          "height": 21,
+          "parentWidth": 232,
+          "parentScrollWidth": 232,
+          "parentClientWidth": 232,
+          "dialogScrollWidth": 280,
+          "dialogClientWidth": 280,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Cancelled",
+          "width": 68.3984375,
+          "height": 21,
+          "parentWidth": 232,
+          "parentScrollWidth": 232,
+          "parentClientWidth": 232,
+          "dialogScrollWidth": 280,
+          "dialogClientWidth": 280,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Rejected",
+          "width": 60.3125,
+          "height": 21,
+          "parentWidth": 232,
+          "parentScrollWidth": 232,
+          "parentClientWidth": 232,
+          "dialogScrollWidth": 280,
+          "dialogClientWidth": 280,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Cancelled",
+          "width": 68.3984375,
+          "height": 21,
+          "parentWidth": 232,
+          "parentScrollWidth": 232,
+          "parentClientWidth": 232,
+          "dialogScrollWidth": 280,
+          "dialogClientWidth": 280,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Approved",
+          "width": 69.5234375,
+          "height": 21,
+          "parentWidth": 232,
+          "parentScrollWidth": 232,
+          "parentClientWidth": 232,
+          "dialogScrollWidth": 280,
+          "dialogClientWidth": 280,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "constructor",
+          "width": 80.3984375,
+          "height": 21,
+          "parentWidth": 232,
+          "parentScrollWidth": 232,
+          "parentClientWidth": 232,
+          "dialogScrollWidth": 280,
+          "dialogClientWidth": 280,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "__proto__",
+          "width": 65.703125,
+          "height": 21,
+          "parentWidth": 232,
+          "parentScrollWidth": 232,
+          "parentClientWidth": 232,
+          "dialogScrollWidth": 280,
+          "dialogClientWidth": 280,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "toString",
+          "width": 56.1171875,
+          "height": 21,
+          "parentWidth": 232,
+          "parentScrollWidth": 232,
+          "parentClientWidth": 232,
+          "dialogScrollWidth": 280,
+          "dialogClientWidth": 280,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "external_review_LONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUS",
+          "width": 231.484375,
+          "height": 343.359375,
+          "parentWidth": 232,
+          "parentScrollWidth": 232,
+          "parentClientWidth": 232,
+          "dialogScrollWidth": 280,
+          "dialogClientWidth": 280,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "<img src=x onerror=\"window.leaveProfileInjected=true\">",
+          "width": 227.0234375,
+          "height": 70.59375,
+          "parentWidth": 232,
+          "parentScrollWidth": 232,
+          "parentClientWidth": 232,
+          "dialogScrollWidth": 280,
+          "dialogClientWidth": 280,
+          "overflowWrap": "anywhere"
+        }
+      ],
+      "canonicalGeometry": [
+        {
+          "text": "Status: Approved",
+          "width": 254,
+          "height": 24.796875,
+          "scrollWidth": 254,
+          "clientWidth": 254,
+          "dialogScrollWidth": 320,
+          "dialogClientWidth": 320,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: Requested",
+          "width": 254,
+          "height": 24.796875,
+          "scrollWidth": 254,
+          "clientWidth": 254,
+          "dialogScrollWidth": 320,
+          "dialogClientWidth": 320,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: Imported Pending Review",
+          "width": 254,
+          "height": 24.796875,
+          "scrollWidth": 254,
+          "clientWidth": 254,
+          "dialogScrollWidth": 320,
+          "dialogClientWidth": 320,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: Cancelled",
+          "width": 254,
+          "height": 24.796875,
+          "scrollWidth": 254,
+          "clientWidth": 254,
+          "dialogScrollWidth": 320,
+          "dialogClientWidth": 320,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: Rejected",
+          "width": 254,
+          "height": 24.796875,
+          "scrollWidth": 254,
+          "clientWidth": 254,
+          "dialogScrollWidth": 320,
+          "dialogClientWidth": 320,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: Canceled",
+          "width": 254,
+          "height": 24.796875,
+          "scrollWidth": 254,
+          "clientWidth": 254,
+          "dialogScrollWidth": 320,
+          "dialogClientWidth": 320,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: APPROVED",
+          "width": 254,
+          "height": 24.796875,
+          "scrollWidth": 254,
+          "clientWidth": 254,
+          "dialogScrollWidth": 320,
+          "dialogClientWidth": 320,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: Constructor",
+          "width": 254,
+          "height": 24.796875,
+          "scrollWidth": 254,
+          "clientWidth": 254,
+          "dialogScrollWidth": 320,
+          "dialogClientWidth": 320,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status:   Proto  ",
+          "width": 254,
+          "height": 24.796875,
+          "scrollWidth": 254,
+          "clientWidth": 254,
+          "dialogScrollWidth": 320,
+          "dialogClientWidth": 320,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: ToString",
+          "width": 254,
+          "height": 24.796875,
+          "scrollWidth": 254,
+          "clientWidth": 254,
+          "dialogScrollWidth": 320,
+          "dialogClientWidth": 320,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: External Review LONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUS",
+          "width": 254,
+          "height": 396.75,
+          "scrollWidth": 254,
+          "clientWidth": 254,
+          "dialogScrollWidth": 320,
+          "dialogClientWidth": 320,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: <Img Src=X Onerror=\"Window.LeaveProfileInjected=True\">",
+          "width": 254,
+          "height": 74.390625,
+          "scrollWidth": 254,
+          "clientWidth": 254,
+          "dialogScrollWidth": 320,
+          "dialogClientWidth": 320,
+          "overflowWrap": "anywhere"
+        }
+      ],
+      "knownStatesAndCaseAliasReadable": true,
+      "unknownLegacyStatusVerbatim": true,
+      "canonicalReturnedFieldsPreserved": true,
+      "fullCrossMonthDates": true,
+      "editorExactMemberRangeSessionStatus": true,
+      "editorOperationScopedGuidance": true,
+      "pristineEditorCancelNoRefetch": true,
+      "inheritedWrappingMeasured": true,
+      "escapedText": true,
+      "exactOpenerReturn": true,
+      "calls": [
+        "/api/v1/members/leave-status-profile/profile",
+        "/api/v1/admin/member-workspace/leave-status-profile",
+        "/api/v1/admin/member-workspace/leave-status-profile/leave",
+        "/api/v1/admin/members",
+        "/api/v1/normalization/units",
+        "/api/v1/normalization/catalog/leave_type",
+        "/api/v1/normalization/catalog/leave_slot",
+        "/api/v1/normalization/catalog/leave_status",
+        "/api/v1/normalization/records/leave/leave-status-0"
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "height": 900,
+      "rootPercent": 100,
+      "legacyGeometry": [
+        {
+          "text": "Approved",
+          "width": 69.5234375,
+          "height": 21,
+          "parentWidth": 800,
+          "parentScrollWidth": 800,
+          "parentClientWidth": 800,
+          "dialogScrollWidth": 848,
+          "dialogClientWidth": 848,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Requested",
+          "width": 74.3125,
+          "height": 21,
+          "parentWidth": 800,
+          "parentScrollWidth": 800,
+          "parentClientWidth": 800,
+          "dialogScrollWidth": 848,
+          "dialogClientWidth": 848,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Imported, Pending Review",
+          "width": 184.328125,
+          "height": 21,
+          "parentWidth": 800,
+          "parentScrollWidth": 800,
+          "parentClientWidth": 800,
+          "dialogScrollWidth": 848,
+          "dialogClientWidth": 848,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Cancelled",
+          "width": 68.3984375,
+          "height": 21,
+          "parentWidth": 800,
+          "parentScrollWidth": 800,
+          "parentClientWidth": 800,
+          "dialogScrollWidth": 848,
+          "dialogClientWidth": 848,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Rejected",
+          "width": 60.3125,
+          "height": 21,
+          "parentWidth": 800,
+          "parentScrollWidth": 800,
+          "parentClientWidth": 800,
+          "dialogScrollWidth": 848,
+          "dialogClientWidth": 848,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Cancelled",
+          "width": 68.3984375,
+          "height": 21,
+          "parentWidth": 800,
+          "parentScrollWidth": 800,
+          "parentClientWidth": 800,
+          "dialogScrollWidth": 848,
+          "dialogClientWidth": 848,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Approved",
+          "width": 69.5234375,
+          "height": 21,
+          "parentWidth": 800,
+          "parentScrollWidth": 800,
+          "parentClientWidth": 800,
+          "dialogScrollWidth": 848,
+          "dialogClientWidth": 848,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "constructor",
+          "width": 80.3984375,
+          "height": 21,
+          "parentWidth": 800,
+          "parentScrollWidth": 800,
+          "parentClientWidth": 800,
+          "dialogScrollWidth": 848,
+          "dialogClientWidth": 848,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "__proto__",
+          "width": 65.703125,
+          "height": 21,
+          "parentWidth": 800,
+          "parentScrollWidth": 800,
+          "parentClientWidth": 800,
+          "dialogScrollWidth": 848,
+          "dialogClientWidth": 848,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "toString",
+          "width": 56.1171875,
+          "height": 21,
+          "parentWidth": 800,
+          "parentScrollWidth": 800,
+          "parentClientWidth": 800,
+          "dialogScrollWidth": 848,
+          "dialogClientWidth": 848,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "external_review_LONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUSLONG_UNKNOWN_STATUS",
+          "width": 797.1796875,
+          "height": 95.390625,
+          "parentWidth": 800,
+          "parentScrollWidth": 800,
+          "parentClientWidth": 800,
+          "dialogScrollWidth": 848,
+          "dialogClientWidth": 848,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "<img src=x onerror=\"window.leaveProfileInjected=true\">",
+          "width": 407.3828125,
+          "height": 21,
+          "parentWidth": 800,
+          "parentScrollWidth": 800,
+          "parentClientWidth": 800,
+          "dialogScrollWidth": 848,
+          "dialogClientWidth": 848,
+          "overflowWrap": "anywhere"
+        }
+      ],
+      "canonicalGeometry": [
+        {
+          "text": "Status: Approved",
+          "width": 846,
+          "height": 24.796875,
+          "scrollWidth": 846,
+          "clientWidth": 846,
+          "dialogScrollWidth": 1118,
+          "dialogClientWidth": 1118,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: Requested",
+          "width": 846,
+          "height": 24.796875,
+          "scrollWidth": 846,
+          "clientWidth": 846,
+          "dialogScrollWidth": 1118,
+          "dialogClientWidth": 1118,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: Imported Pending Review",
+          "width": 846,
+          "height": 24.796875,
+          "scrollWidth": 846,
+          "clientWidth": 846,
+          "dialogScrollWidth": 1118,
+          "dialogClientWidth": 1118,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: Cancelled",
+          "width": 846,
+          "height": 24.796875,
+          "scrollWidth": 846,
+          "clientWidth": 846,
+          "dialogScrollWidth": 1118,
+          "dialogClientWidth": 1118,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: Rejected",
+          "width": 846,
+          "height": 24.796875,
+          "scrollWidth": 846,
+          "clientWidth": 846,
+          "dialogScrollWidth": 1118,
+          "dialogClientWidth": 1118,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: Canceled",
+          "width": 846,
+          "height": 24.796875,
+          "scrollWidth": 846,
+          "clientWidth": 846,
+          "dialogScrollWidth": 1118,
+          "dialogClientWidth": 1118,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: APPROVED",
+          "width": 846,
+          "height": 24.796875,
+          "scrollWidth": 846,
+          "clientWidth": 846,
+          "dialogScrollWidth": 1118,
+          "dialogClientWidth": 1118,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: Constructor",
+          "width": 846,
+          "height": 24.796875,
+          "scrollWidth": 846,
+          "clientWidth": 846,
+          "dialogScrollWidth": 1118,
+          "dialogClientWidth": 1118,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status:   Proto  ",
+          "width": 846,
+          "height": 24.796875,
+          "scrollWidth": 846,
+          "clientWidth": 846,
+          "dialogScrollWidth": 1118,
+          "dialogClientWidth": 1118,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: ToString",
+          "width": 846,
+          "height": 24.796875,
+          "scrollWidth": 846,
+          "clientWidth": 846,
+          "dialogScrollWidth": 1118,
+          "dialogClientWidth": 1118,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: External Review LONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUSLONG UNKNOWN STATUS",
+          "width": 846,
+          "height": 99.1875,
+          "scrollWidth": 846,
+          "clientWidth": 846,
+          "dialogScrollWidth": 1118,
+          "dialogClientWidth": 1118,
+          "overflowWrap": "anywhere"
+        },
+        {
+          "text": "Status: <Img Src=X Onerror=\"Window.LeaveProfileInjected=True\">",
+          "width": 846,
+          "height": 24.796875,
+          "scrollWidth": 846,
+          "clientWidth": 846,
+          "dialogScrollWidth": 1118,
+          "dialogClientWidth": 1118,
+          "overflowWrap": "anywhere"
+        }
+      ],
+      "knownStatesAndCaseAliasReadable": true,
+      "unknownLegacyStatusVerbatim": true,
+      "canonicalReturnedFieldsPreserved": true,
+      "fullCrossMonthDates": true,
+      "editorExactMemberRangeSessionStatus": true,
+      "editorOperationScopedGuidance": true,
+      "pristineEditorCancelNoRefetch": true,
+      "inheritedWrappingMeasured": true,
+      "escapedText": true,
+      "exactOpenerReturn": true,
+      "calls": [
+        "/api/v1/members/leave-status-profile/profile",
+        "/api/v1/admin/member-workspace/leave-status-profile",
+        "/api/v1/admin/member-workspace/leave-status-profile/leave",
+        "/api/v1/admin/members",
+        "/api/v1/normalization/units",
+        "/api/v1/normalization/catalog/leave_type",
+        "/api/v1/normalization/catalog/leave_slot",
+        "/api/v1/normalization/catalog/leave_status",
+        "/api/v1/normalization/records/leave/leave-status-0"
+      ],
+      "errors": []
+    }
+  ]
+}

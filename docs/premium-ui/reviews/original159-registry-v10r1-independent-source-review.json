@@ -1,0 +1,78 @@
+{
+  "reviewer": "/root/registry_source_review_v10",
+  "reviewed_at_local_date": "2026-11-09",
+  "scope": "Independent read-only source review of isolated registry V10r1. No application edits, integration approval, production verification or original159 acceptance implied.",
+  "candidate_directory": "tmp/registry-parent-refresh-v10r1",
+  "candidate_sha256": {
+    "main.ts": "ea77a0f96a9f7e168489c7c7a2315bd7e631fe02b985cfd61b8b0ab185fdb2ac",
+    "reference-workspace.ts": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd",
+    "extra-duty.ts": "96ec1451980ea1dda2ce9bc0f96401d3d3e57d78512962b81ab777d649a4a592"
+  },
+  "disposition": "revision_required_before_integration",
+  "findings": [
+    {
+      "id": "REGISTRY-V10R1-OPTIONAL-READ-COUPLING",
+      "severity": "medium",
+      "locations": ["main.ts:3336", "main.ts:9614", "extra-duty.ts:722"],
+      "basis": "source_confirmed; not independently exercised by this reviewer",
+      "problem": "An admin fallback host exists even when its initial component GET displays a disabled/unavailable error. Promise.all requires the extra-duty fallback GET to succeed before a valid unit-management result can render. A disabled feature or fallback-only failure therefore withholds otherwise valid primary unit readback after registry save.",
+      "repair": "Stage the optional read into a no-throw prepared result; after owner validation and successful primary unit rendering, report its failure as incomplete dependent refresh. Keep a GET-only retry and all existing fallback drafts. A separate local retry is optional rather than a correctness prerequisite.",
+      "required_evidence": "Disabled feature and fallback-only 503 cases: successful renamed unit visible, fallback error/draft retained, truthful incomplete-refresh notice, retry never replays registry PUT/POST. Also retain primary-read failure behavior."
+    },
+    {
+      "id": "REGISTRY-V10R1-STALE-OWNER-ACCESSIBLE-LABEL",
+      "severity": "medium",
+      "locations": ["extra-duty.ts:779", "extra-duty.ts:808"],
+      "basis": "source_confirmed; root independently identified same issue",
+      "problem": "Reference refresh updates visible owner heading and target button labels but leaves the existing ol aria-label based on old owner name. Subsequent repaintUnit also regenerates that label from the old sorted row.unit_name.",
+      "repair": "Use currentName(id) for generated owner list labels and update existing ol labels in the retained-node reference pass.",
+      "required_evidence": "Rename an owner with non-empty fallback order; check accessible list name immediately and after another actual move/remove/reset repaint."
+    },
+    {
+      "id": "REGISTRY-V10R1-STALE-EMPTY-STATE",
+      "severity": "low",
+      "locations": ["extra-duty.ts:796", "extra-duty.ts:856"],
+      "basis": "source_confirmed; root independently identified same issue",
+      "problem": "When initial fallback snapshot has no owners, adding a new owner appends its details while retaining the old No units yet paragraph.",
+      "repair": "Remove only the component-owned empty-state paragraph when actual returned owners are inserted.",
+      "required_evidence": "Create first unit through real createNew entry; returned snapshot initializes its actual order, the empty paragraph disappears, and new owner controls work."
+    },
+    {
+      "id": "REGISTRY-V10R1-MISSING-OWNER-NOTICE",
+      "severity": "low",
+      "locations": ["extra-duty.ts:850"],
+      "basis": "source_confirmed; not a demonstrated persistence failure",
+      "problem": "Missing detection counts only draft target IDs. An owner omitted from the new snapshot but not referenced by another draft gets an unavailable heading alongside a generic success notice.",
+      "repair": "Include retained owner IDs in missing-reference notice classification, without deleting their drafts or inventing an archive/save eligibility policy.",
+      "required_evidence": "A snapshot missing one owner preserves its row/order and explicitly reports incomplete references."
+    }
+  ],
+  "positive_source_observations": [
+    "Confirmed lifecycle notification occurs immediately after accepted mutation response and before the registry's own GET, so a later child readback failure cannot erase knowledge of the accepted save.",
+    "Explicit close reports parent closure only after busy/dirty refusals; native close uses an idempotent notification. Multiple accepted mutations can coalesce through the parent's changed flag.",
+    "Parent readback validates account, route/view generation, render generation, root identity, month and original modal identity, then unit request generation and response shape/month before applying globals or prepared references.",
+    "Existing saved/draft fallback maps and existing details/action controls are retained on the reference update path; newly returned owners initialize from the complete fallback GET instead of an invented empty order.",
+    "No mutation endpoint, body, permission check, authentication mechanism or backend source change is present in the reviewed patch. The new complete fallback GET is intentional additional network work and must be included in request-count expectations.",
+    "The unchanged shared request wrapper rejects account-generation changes both before and after response body decoding; lack of another local account check in the registry does not itself demonstrate a cross-account response leak.",
+    "Reference labels are assigned via textContent or escaped HTML; select options use Option construction. No new raw label HTML injection was found."
+  ],
+  "evidence_reviewed": [
+    "tmp/registry-parent-refresh-v10r1/manifest.json",
+    "tmp/registry-parent-refresh-v10r1/main.ts.patch",
+    "tmp/registry-parent-refresh-v10r1/reference-workspace.ts.patch",
+    "tmp/registry-parent-refresh-v10r1/extra-duty.ts.patch",
+    "tmp/registry-parent-refresh-v10r1/typecheck-effect-proof.json",
+    "docs/premium-ui/qa-original159-registry-v10r1-fallback-recovery.json",
+    "frontend/src/services/api.ts:319",
+    "backend/app/api/v1/extra_duty.py:39"
+  ],
+  "runtime_limitations": [
+    "Six existing candidate report cases cover rename with a dirty reordered fallback list on Chromium, Firefox and WebKit at 320 and 1280; reviewer inspected the report but did not rerun those cases.",
+    "The report scope prose says actual current application and its source_sha256 lists applied ancestors; candidate_manifest supplies the isolated source identity. A sealing receipt should explicitly distinguish candidate overlay from application integration.",
+    "Need actual coverage of first-unit creation, registry own GET recovery, primary/fallback GET failures, malformed snapshot, missing owner, filters and dirty unit settings, cancel/dirty-close refusal, multiple saves, and owner/route/month/account supersession before integration.",
+    "Existing clean fallback orders intentionally remain component-owned rather than adopting all server snapshot orders. This is a reference refresh contract, not proof of full concurrent fallback synchronization.",
+    "Repeated renderUnitFallbacks on the same live host would add another change listener capturing earlier maps. Current entry points normally construct a new host or retry an initial failure before listener attachment; no current user-triggered regression was established. Keep this as a bounded maintenance risk rather than a claimed reproduced bug.",
+    "Physical device and native assistive technology checks were not performed."
+  ],
+  "r2_design_assessment": "The proposed no-throw optional staging followed by primary paint and throwing reference commit is acceptable in principle: primary valid information can appear while existing catch presents incomplete refresh and GET-only retry. It requires exact-source runtime evidence; it is not an advance approval of unseen V10r2 bytes."
+}

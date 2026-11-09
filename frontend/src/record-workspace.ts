@@ -1,3 +1,4 @@
+import { decorativeIcon } from "./decorative-icons";
 import { request, type DepartmentMember } from "./services/api";
 import { workspaceDialog } from "./member-workspace";
 import { openUnitRegistry, openReferenceCatalog } from "./reference-workspace";
@@ -5,6 +6,7 @@ import { createMemberInline } from "./operational-import";
 import { workspaceLoading, workspaceLoadFailure, protectWorkspaceDraft } from "./workspace-load-state";
 
 type Row = Record<string, any>;
+let recordEditorContextSequence = 0;
 const esc = (v: unknown) =>
   String(v ?? "").replace(
     /[&<>"']/g,
@@ -22,6 +24,7 @@ export async function openRecordEditor(
   saved: () => void,
   initial?: Row,
 ) {
+  const referenceContextPrefix = `record-reference-${++recordEditorContextSequence}`;
   const opener = document.activeElement as HTMLElement | null;
   const dialog = workspaceDialog(
     `${identity ? "Edit" : "Add"} ${kind === "units" ? "posting" : "leave"}`,
@@ -91,15 +94,33 @@ export async function openRecordEditor(
   await loadEditor();
   function render() {
     if (!dialog.open) return;
-    const select = (field: string, label: string, items: Row[]) =>
-      `<label>${label}<select name="${field}" required>${items
-        .filter((i) => i.active)
+    const select = (field: string, label: string, items: Row[]) => {
+      const current = typeof draft[field] === "string" ? draft[field] : "";
+      const active = items.filter((item) => item.active);
+      const currentActive = active.some((item) => item.key === current);
+      const retained = items.find((item) => item.key === current);
+      const unavailableCurrent = identity && current && !currentActive;
+      const contextId = `${referenceContextPrefix}-${field}`;
+      const contextValue = retained?.label && retained.label !== current
+        ? `${retained.label} (${current})` : current;
+      const context = current && !currentActive
+        ? identity
+          ? `Recorded value: ${contextValue} (${retained ? "archived" : "unavailable"}). Preserved when unchanged; choose an active option to replace it.`
+          : `Initial value: ${contextValue} is unavailable. Choose an active option before review.`
+        : "";
+      const unavailable = unavailableCurrent
+        ? `<option value="${esc(current)}" selected disabled>${esc(retained?.label ?? current)} (${retained ? "archived" : "unavailable"}; current record)</option>`
+        : !currentActive
+          ? '<option value="" selected disabled>Choose an active option</option>'
+          : "";
+      return `<label>${label}<select name="${field}" required${context ? ` aria-describedby="${contextId}"` : ""}>${unavailable}${active
         .map(
-          (i) =>
-            `<option value="${esc(i.key)}" ${draft[field] === i.key ? "selected" : ""}>${esc(i.label)}</option>`,
+          (item) =>
+            `<option value="${esc(item.key)}" ${current === item.key ? "selected" : ""}>${esc(item.label)}</option>`,
         )
-        .join("")}</select></label>`;
-    dialog.innerHTML = `<header class="mw-header"><h2>${identity ? "Edit" : "Add"} ${kind === "units" ? "posting" : "leave"}</h2><button type="button" data-close aria-label="Close editor">×</button></header><form class="mw-content"><label>Find member<input type="search" data-member-search placeholder="Name, call level or designation"></label><label>Member<select name="person_id" required><option value="">Select member</option>${members
+        .join("")}</select></label>${context ? `<p id="${contextId}">${esc(context)}</p>` : ""}`;
+    };
+    dialog.innerHTML = `<header class="mw-header"><h2>${identity ? "Edit" : "Add"} ${kind === "units" ? "posting" : "leave"}</h2><button type="button" data-close aria-label="Close editor">${decorativeIcon("close")}</button></header><form class="mw-content"><label>Find member<input type="search" data-member-search placeholder="Name, call level or designation"></label><label>Member<select name="person_id" required><option value="">Select member</option>${members
       .filter((m) => m.active_status === "active" || m.id === draft.person_id)
       .map(
         (m) =>
@@ -120,12 +141,13 @@ export async function openRecordEditor(
             .join(
               "",
             )}</select></label>${admin ? '<button type="button" data-new-unit>Create unit</button>' : ""}<p>A dated posting may override the department default. Leave the end date blank for an ongoing posting.</p>`
-        : `${select("leave_type", "Leave type", references.leave_type)}${select("leave_slot", "Session", references.leave_slot)}${select("status", "Approval state", references.leave_status)}<p>Approved leave blocks availability. Pending leave warns. Cancelled or rejected leave does not block availability.</p>`
-    }${admin ? '<button type="button" data-references>Manage labels and mappings</button>' : ""}<label>Effective from<input name="starts_on" type="date" required value="${esc(draft.starts_on)}"></label><label>Until<input name="ends_on" type="date" ${kind === "leave" ? "required" : ""} value="${esc(draft.ends_on)}"></label><label>Notes<textarea name="notes" rows="3">${esc(draft.notes)}</textarea></label><div data-error role="alert" class="mw-error"></div><section data-review aria-live="polite"></section><footer class="mw-footer"><button type="button" data-close>Cancel</button><button type="submit">Review changes</button><button type="button" class="primary" data-save disabled>Save reviewed changes</button></footer></form>`;
+        : `${select("leave_type", "Leave type", references.leave_type)}${select("leave_slot", "Session", references.leave_slot)}${select("status", "Approval state", references.leave_status)}<p>Review the returned approval state and session before saving. Pending requests are not confirmed absence. Availability depends on the operation; use its returned blocking counts and duty safety checks.</p>`
+    }${admin ? '<button type="button" data-references>Manage labels and mappings</button>' : ""}<label>Effective from<input name="starts_on" type="date" required value="${esc(draft.starts_on)}"></label><label>Until<input name="ends_on" type="date" ${kind === "leave" ? "required" : ""} value="${esc(draft.ends_on)}"></label><label>Notes<textarea name="notes" rows="3">${esc(draft.notes)}</textarea></label><div data-error role="alert" class="mw-error"></div><section data-review aria-live="polite"></section><footer class="mw-footer profile-editor-footer"><div class="profile-editor-state"><span data-record-editor-status role="status">${identity ? "Editing record" : "New record"}</span><p class="profile-editor-scope" data-profile-save-scope>Review changes before saving this ${kind === "units" ? "posting" : "leave record"}. Cancel closes this editor.</p></div><div class="profile-editor-actions" role="group" aria-label="Record actions"><button type="button" data-close>Cancel</button><button type="submit">Review changes</button><button type="button" class="primary" data-save disabled>Save reviewed changes</button></div></footer></form>`;
     dialog
       .querySelectorAll<HTMLButtonElement>("[data-close]")
       .forEach((b) => (b.onclick = close));
     const form = dialog.querySelector<HTMLFormElement>("form")!;
+    const recordStatus = (text: string) => { dialog.querySelector<HTMLElement>("[data-record-editor-status]")!.textContent = text; };
     const clearValidation = () => {
       form.querySelectorAll('[data-server-field-error]').forEach(node => node.remove());
       form.querySelectorAll<HTMLElement>('[data-server-invalid]').forEach(field => {
@@ -190,6 +212,7 @@ export async function openRecordEditor(
       form.querySelector('[data-error]')!.textContent = '';
       read();
       dirty = true;
+      recordStatus("Unsaved changes. Review before saving.");
       draftRevision++;
       token = undefined;
       dialog.querySelector<HTMLButtonElement>("[data-save]")!.disabled = true;
@@ -224,7 +247,8 @@ export async function openRecordEditor(
       });
     dialog
       .querySelector<HTMLButtonElement>("[data-new-unit]")
-      ?.addEventListener("click", () => {
+      ?.addEventListener("click", (event) => {
+        (event.currentTarget as HTMLButtonElement).focus({ preventScroll: true });
         read();
         void openUnitRegistry(
           (unit) => {
@@ -244,7 +268,8 @@ export async function openRecordEditor(
       });
     dialog
       .querySelector<HTMLButtonElement>("[data-references]")
-      ?.addEventListener("click", () => {
+      ?.addEventListener("click", (event) => {
+        (event.currentTarget as HTMLButtonElement).focus({ preventScroll: true });
         read();
         void openReferenceCatalog(() => {
           void options().then(() => {
@@ -291,6 +316,7 @@ export async function openRecordEditor(
       const reviewButton = form.querySelector<HTMLButtonElement>("button[type=submit]")!;
       reviewButton.disabled = true;
       reviewButton.textContent = "Reviewing...";
+      recordStatus("Reviewing changes...");
       form.setAttribute("aria-busy", "true");
       let focusMoved = false;
       const trackFocus = (event: FocusEvent) => {
@@ -317,8 +343,12 @@ export async function openRecordEditor(
         dialog.querySelector<HTMLButtonElement>("[data-save]")!.disabled =
           false;
         dialog.querySelector("[data-error]")!.textContent = "";
+        recordStatus("Changes reviewed. Ready to save.");
       } catch (error) {
-        if (reviewedRevision === draftRevision) showValidation(error, !focusMoved);
+        if (reviewedRevision === draftRevision) {
+          showValidation(error, !focusMoved);
+          recordStatus("Review unsuccessful. Your edits remain here.");
+        }
       } finally {
         document.removeEventListener('focusin', trackFocus);
         busy = false;
@@ -331,6 +361,9 @@ export async function openRecordEditor(
       async () => {
         if (busy || !token) return;
         busy = true;
+        const save = dialog.querySelector<HTMLButtonElement>("[data-save]")!;
+        save.textContent = "Saving...";
+        recordStatus("Saving changes...");
         try {
           await request(`/api/v1/normalization/records/${kind}/save`, {
             method: "POST",
@@ -349,10 +382,12 @@ export async function openRecordEditor(
             error as Error
           ).message;
           token = undefined;
+          recordStatus("Save not confirmed. Changes may already have saved. Check the records before repeating Save. Your edits remain here; review again before saving.");
           dialog.querySelector<HTMLButtonElement>("[data-save]")!.disabled =
             true;
         } finally {
           busy = false;
+          if (save.isConnected) save.textContent = "Save reviewed changes";
         }
       };
   }

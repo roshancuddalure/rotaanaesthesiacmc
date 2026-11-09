@@ -1,0 +1,158 @@
+{
+  "recorded_at_utc": "2026-11-09T10:32:43.507Z",
+  "reviewer": "/root/registry_acceptance_applicability",
+  "mode": "Independent read-only exact three-file diff and AST/literal/anchor/caller review. No browser execution, app changes, ledger changes or acceptance.",
+  "source_sha256": {
+    "frontend/src/main.ts": "96ab7c4c6b14d41736ad4153313b1270677e324fcab6b11c3a5b0d8ac3e47a0b",
+    "tmp/registry-parent-refresh-v10r3/main.ts": "9f5359ad9e8014098bc12c8ed3f9e1c6b1a06d1a4f92797b7f9da24bfba6e6b8",
+    "frontend/src/reference-workspace.ts": "78c231ea1d5ab15bd3a4b5f2f8265529451a51bacc68d2a4aac1708a4be30292",
+    "tmp/registry-parent-refresh-v10r3/reference-workspace.ts": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd",
+    "frontend/src/extra-duty.ts": "52084624922de21f2a0fa478eb1ca4c883cdeb66dd1d05147d0f21fe806bc7ea",
+    "tmp/registry-parent-refresh-v10r3/extra-duty.ts": "21edb8d59249b7c5be30d59c79f4e20b350930bdc16bd097e957a9c22650855f",
+    "frontend/src/operational-import.ts": "1ccbcf4181330a5f66c59b0723ec02f878a268b6b3030aa99b177de1b7070355",
+    "frontend/src/member-workspace.ts": "105cc1d91ea4815d565ad4859fc01412cf576a3203c07834f4010e3fef7ef1a5",
+    "frontend/src/record-workspace.ts": "469fd6bf2e4118b15ad343d8059cd3cfb0acbc6483bea969ca5fb93488644335",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/premium-theme.css": "acc46b2249087f365ca855bcd9630628c390c4cdf013301daaee40ede80e55f4",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "docs/premium-ui/reviews/original159-registry-v10r3-prior54-source-analysis.json": "d4b422c19d871e5ffdba7896c255014a2767954fc319649e7bc1292403077a2b",
+    "docs/premium-ui/reviews/semantic-color-register-20261109-item022-source-map.json": "ae0071a17e03105260aa6a510807a2d2fb1e17b857d1cbf573073555d6c08f86"
+  },
+  "observed": [
+    {
+      "file": "frontend/src/main.ts",
+      "changed_top_level_functions": [
+        "createDependentParentLifecycle",
+        "bindViewEvents"
+      ],
+      "equal_literal_counts": {
+        "table": 37,
+        "form": 14
+      }
+    },
+    {
+      "file": "frontend/src/reference-workspace.ts",
+      "changed_top_level_functions": [
+        "openUnitRegistry"
+      ],
+      "equal_literal_counts": {
+        "table": 0,
+        "form": 3
+      }
+    },
+    {
+      "file": "frontend/src/extra-duty.ts",
+      "changed_top_level_functions": [
+        "renderUnitFallbacks"
+      ],
+      "equal_literal_counts": {
+        "table": 2,
+        "form": 0
+      }
+    }
+  ],
+  "conclusion": "Scoped source applicability is defensible after fresh affected-path runtime, applied unit/build and metadata/archive gates. The changed shared Units controller must not be called byte-identical.",
+  "findings": [
+    "Only three existing main/reference/fallback functional owners change. Profile/import/direct-record callers keep their existing arguments and receive no optional fallback GET. Their controller still changes await timing from one awaited GET to Promise.all([GET,undefined]); 12 bounded real caller regression contexts are prepared to exercise that common Units branch.",
+    "The previous controller owner/account/view/month/latest-read guards, result-shape validation, retained board/modal painters and focus guard retain text and ordering. Registry caller alone supplies staged complete fallback GET; r3 isolates its failure into deferred throwing commit, permitting board readback then truthful retry guidance.",
+    "Literal table/form comparisons independently reproduce main37/14, reference0/3, extra2/0. These are literal body checks, not runtime table certification. Existing61 table owner/classification decisions need fresh current source/line inventory binding after application.",
+    "All100 semantic color source-anchor text groups independently compare exact. Six main anchor locations move five lines; frozen definition stays historical. No new contrast conformance or whole color requirement acceptance follows.",
+    "New fallback label/option/status DOM deliberately changes. Exact preserved mutation/serialization expressions do not certify new control availability, focus, accessibility names, missing/new owner and GET failure behavior; those require registry runtime coverage."
+  ],
+  "fresh_runtime_before_rebinding": [
+    {
+      "items": [
+        111,
+        150,
+        152,
+        153,
+        155,
+        156,
+        158
+      ],
+      "reason": "Exercise affected actual Units registry opener/context, confirmed save vs cancel/close, dirty drafts/selected filters, board/validation readback and fallback names/options. Existing component source proofs alone do not cover newly connected lifecycle."
+    },
+    {
+      "items": [
+        129,
+        131,
+        135,
+        136,
+        138,
+        157,
+        158
+      ],
+      "reason": "Bounded source reuse of unchanged profile/direct/import controllers needs actual Units parent normal and parent503 GET-only retry smoke because their shared createDependentParentLifecycle implementation changes. Twelve Chromium320/1280 contexts prepared; this is regression coverage, not rerun of all original role/engine requirements."
+    }
+  ],
+  "source_binding_reuse_with_limits": [
+    {
+      "items": [
+        122,
+        123,
+        124,
+        125,
+        126,
+        127,
+        128,
+        130,
+        132,
+        133,
+        134,
+        137,
+        139,
+        141,
+        142,
+        143,
+        144,
+        146,
+        148,
+        149,
+        151,
+        154,
+        161,
+        164,
+        165,
+        166,
+        169
+      ],
+      "reason": "Their component renderers/controllers, tables/forms, styles and ordinary caller arguments remain exact outside scoped shared parent scheduling; retain original limited historical assertions with explicit new source chain. No new all-role/device or broader requirement certification."
+    },
+    {
+      "items": [
+        38,
+        39
+      ],
+      "reason": "Font/icon/CSS/reduced-motion files unchanged; new fallback status uses native text/controls and no animation or resource. Preserve scoped original runtime evidence through source binding; do not claim comprehensive new UI audit."
+    },
+    {
+      "items": [
+        10,
+        11,
+        13,
+        18,
+        22,
+        29,
+        34,
+        35,
+        101,
+        116,
+        235
+      ],
+      "reason": "Documentary acceptances retain exact limited definitions after changed-file attribution, current hash/line inventory and any build-artifact bindings refreshed. Item22 only defines semantics; it does not accept contrast implementation."
+    },
+    {
+      "items": [
+        259
+      ],
+      "reason": "Requires fresh review archive and pointer from held applied build; old archive cannot merely be relabelled current."
+    }
+  ],
+  "required_remaining_gates": [
+    "Run new registry candidate suite and prepared12 shared-caller regressions with actual terminal outcomes and exact source hashes.",
+    "After root-approved integration, repeat affected tests against actual frontend files; unit/build must be fresh and held.",
+    "Refresh inventory/dispositions source bindings, explicitly revalidate54 scoped wrappers with no unexplained changed hashes, run verifier, package and verify fresh review archive.",
+    "Original159 remains partial; no acceptance count increase follows from this review. Physical-device/nativeAT checks remain pending."
+  ],
+  "prepared_regression_receipt": "docs/premium-ui/reviews/original159-registry-v10r3-caller-regression-preparation.json"
+}

@@ -1,0 +1,47 @@
+{
+  "recorded_at_utc": "2026-11-03T05:13:17.561439+00:00",
+  "reviewer": "/root/mapping_parent_resume_review",
+  "mode": "Read-only source audit; no new browser tests",
+  "application_changed": false,
+  "source_sha256": {
+    "tmp/settings159-readback-regions-v3/main.ts": "c265a7a2934aa293b72dcf426d88d87409715eaf00cadb009535942a5090e4e7",
+    "tmp/settings159-readback-regions-v3/unit-board-filters.ts": "74da1aec7bef88bcf249b3092830c3fd898fca5d48323ae015ab74aa5f5b612f",
+    "frontend/src/unit-settings-recovery.ts": "4cfcd55615c77fa39aa08ee57abb3e807412fb9fb6c42af71dbb86a4458ce51d"
+  },
+  "decision": "Do not integrate V3 before removed-unit, print-active and server-added-call-level signature cases are resolved.",
+  "findings": [
+    {
+      "severity": "high",
+      "finding": "Print snapshot restores captured old posting nodes after a fresh readback replaces rows.",
+      "source": "unit-board-filters.ts startPrint stores nodes; refreshReadback calls apply without retiring restorePrint; finishPrint later restores old nodes.",
+      "direction": "Finish owned prior print materialization before fresh table/card update, apply fresh data, then start a fresh print materialization if print media remains active. Preserve filter/page/focus ownership and no additional listeners."
+    },
+    {
+      "severity": "high",
+      "finding": "Missing returned unit silently skips modal refresh; helper still announces saved and refreshed.",
+      "source": "refreshUnitModalReadback returns on !unit; helper refresh continuation then updates status/refreshed callback.",
+      "direction": "Explicit retained-draft unavailable notice/native validity blocks save; report incomplete dependent context through recoverable error and GET-only retry. Clear notice/bounds when unit returns."
+    },
+    {
+      "severity": "medium",
+      "finding": "Server-added call-level inputs alter signature used by helper hasNewDraft even when user made no edits.",
+      "source": "refreshUnitModalReadback appends new input rows during options.commit; helper compares dynamic signature immediately afterwards.",
+      "direction": "Distinguish returned topology changes from user edits; avoid falsely claiming unsaved user changes. If review is intentionally required, state topology changed rather than claiming user draft."
+    },
+    {
+      "severity": "medium",
+      "finding": "A focused header previous/next button can become disabled before active focus is captured.",
+      "source": "refreshUnitModalReadback disables navigation then captures document.activeElement.",
+      "direction": "Capture ownership before header changes; restore only owned displaced focus to a matching control or status, never steal focus from another dialog/input."
+    }
+  ],
+  "positive_checks": [
+    "WeakMap refresher reuses existing listeners rather than binding more during readback. Cleanup deletes only the matching current refresher; old root observers cannot delete a new binding.",
+    "Existing settings form and numeric input nodes/values are retained. Returned max/context updates and removed-call validity messages are scoped to exact data-unit-call-minimum identity.",
+    "Validation/member action replacements match exact data attributes for focus recovery; background board filters preserve search/campus and clamp page through existing apply."
+  ],
+  "limits": [
+    "Source findings need new candidate/runtime proof; no blanket backend or print export-content change is authorized.",
+    "No whole159 acceptance."
+  ]
+}

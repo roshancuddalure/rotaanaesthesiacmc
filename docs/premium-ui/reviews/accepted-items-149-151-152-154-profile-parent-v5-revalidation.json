@@ -1,0 +1,394 @@
+{
+  "recorded_at_utc": "2026-11-09T08:12:01.960072+00:00",
+  "scope_type": "exact_runtime_requirement",
+  "scope": "Exact original149151152154 unit hierarchy,dated membership,filter/expansion/count parity and measured long-list safety-context requirements only. Not150creation,153all warning workflows,160allmonthactions orfull260.",
+  "items": [
+    {
+      "item_id": 149,
+      "requirement": "Improve unit-board hierarchy so campus, unit identity, staffing groups and dated assignments remain easy to scan.",
+      "conditions": [
+        {
+          "condition": "Campus, unit identity, staffing groups and dated assignments have a clear scan order.",
+          "satisfied": true,
+          "evidence": [
+            "docs/premium-ui/qa-unit-card-geometry-v1-preview-integrated.json",
+            "docs/premium-ui/qa-unit-card-geometry-v2-stress-integrated.json"
+          ],
+          "rationale": "Applied card header has explicit unit identity and campus, followed by monthly record totals, warning summary and labelled call groups with each member/date/period. Nine current normal and twelve strengthened stress controller contexts assert header→coverage→group rectangle order and exact person-associated date/period text across multiple campuses,long unit/member names,special and unresolved groups. Scoped CSS fixes the observed wrapped Manage word and squeezed dates. Root visually inspected current320/1280 and enlarged-dark renderings; actual Manage/editor launch survives reflow/history. This accepts unit hierarchy, not a global visual system or every unit mutation."
+        },
+        {
+          "condition": "Narrow cards preserve the same essential unit and staffing context as desktop boards.",
+          "satisfied": true,
+          "evidence": [
+            "docs/premium-ui/qa-unit-card-geometry-v1-preview-integrated.json",
+            "docs/premium-ui/qa-unit-card-geometry-v2-stress-integrated.json",
+            "docs/premium-ui/qa-unit-expanded-return-safety-current-integrated.json"
+          ],
+          "rationale": "Same returned unit,staffing,member,date and month information appears in phone cards and desktop cards/table. Current9normal+12stress cases retain data under viewport changes, header/button containment and44px target, full date ranges and current/future/past associations.72-member current six cases keep full counts and warning context while collapsed,filtering,reflowing and returning. CSS root font and restored profile height explicitly checked; native AT/physical remain separate."
+        }
+      ]
+    },
+    {
+      "item_id": 151,
+      "requirement": "Present dated unit membership changes without visually implying that a future posting is already effective today.",
+      "conditions": [
+        {
+          "condition": "Dated membership changes visibly distinguish future postings from those effective today or at the displayed date.",
+          "satisfied": true,
+          "evidence": [
+            "docs/premium-ui/qa-unit-card-geometry-v1-preview-integrated.json",
+            "docs/premium-ui/qa-unit-card-geometry-v2-stress-integrated.json"
+          ],
+          "rationale": "Current tests bind each specific member to its own range and period at fixed21October2026: Dr Future30–31October Upcoming, Dr Earlier1–10October Past, longnamed member1–31October Current. Selected October month and full calendar year are asserted, preventing a loose somewhere-in-card status check. Source uses starts_on/ends_on versus today consistently and keeps date records unchanged. Tests across3engines at320/390/1280,root32px/short profiles prove rendered association, not scheduling correctness."
+        },
+        {
+          "condition": "Counts and labels do not imply a scheduled posting is already current.",
+          "satisfied": true,
+          "evidence": [
+            "docs/premium-ui/qa-unit-card-geometry-v1-preview-integrated.json",
+            "docs/premium-ui/qa-unit-card-geometry-v2-stress-integrated.json",
+            "docs/premium-ui/qa-unit-expanded-return-safety-current-integrated.json"
+          ],
+          "rationale": "The board says monthly postings, card monthly active-leave records and guidance explicitly separates record coverage from duty-date/session availability. Tests assert returned2assigned/1record and selected month, preserving monthly counts while one member is explicitly Upcoming. Current72member return/filter fixture likewise retains exact aggregate meaning; no client eligibility or daily staffing calculation added. Accepted scope is truthful date/count presentation, not authoritative posting/leave policy."
+        }
+      ]
+    },
+    {
+      "item_id": 152,
+      "requirement": "Standardize unit filters, expansion states and per-unit counts across desktop boards and mobile stacked cards.",
+      "conditions": [
+        {
+          "condition": "Desktop boards and mobile cards expose equivalent filtering and per-unit count meanings.",
+          "satisfied": true,
+          "evidence": [
+            "docs/premium-ui/qa-unit-card-geometry-v1-preview-integrated.json",
+            "docs/premium-ui/qa-unit-expanded-return-safety-current-integrated.json",
+            "docs/premium-ui/qa-unit-rules-pagination-regression.json"
+          ],
+          "rationale": "Current cards and desktop table share the same returned groups and count semantics. Nine geometry cases assert exact matched cards/rows,count text and stable monthly metrics through search,campus,special and unspecified filters; six current123-row desktop role cases assert allordered rows across pages,boundaries,filter reset andclamp. Six72member phone/desktop cases assert1matching of1 with72total while all72group postings remain represented in board count; original aggregate metrics unchanged."
+        },
+        {
+          "condition": "Chosen filters and expansion states behave predictably across reflow and return navigation.",
+          "satisfied": true,
+          "evidence": [
+            "docs/premium-ui/qa-unit-card-geometry-v1-preview-integrated.json",
+            "docs/premium-ui/qa-unit-card-geometry-v2-stress-integrated.json",
+            "docs/premium-ui/qa-unit-expanded-return-safety-current-integrated.json",
+            "docs/premium-ui/qa-unit-rules-pagination-regression.json"
+          ],
+          "rationale": "Actual >12 group expands12→36, then keeps a nonempty unit-name query AND North campus through actual320↔1280 reflow and Overview→history back, preserving36names,counts and both values. Hidden member71 search materializes it, reset restores deliberate36 limit, Showall reachesall72. Nine normal and12strengthened stress cases also retain selected member filters through real return navigation. Pagination six role workflows retain page/selection on refresh,reset page on filter change,restore full selection andclamp when returned rows shrink. No claim of cross-account or full reload persistence beyond these requested chosen-state operations."
+        }
+      ]
+    },
+    {
+      "item_id": 154,
+      "requirement": "Improve long unit-member lists through measured pagination or expansion without concealing missing staffing or leave conflicts.",
+      "conditions": [
+        {
+          "condition": "Long unit-member lists use expansion or pagination justified by representative list measurements.",
+          "satisfied": true,
+          "evidence": [
+            "docs/premium-ui/qa-unit-expanded-return-safety-current-integrated.json",
+            "docs/premium-ui/qa-unit-rules-pagination-regression.json",
+            "docs/premium-ui/qa-unit-performance.json"
+          ],
+          "rationale": "Original50/500/2000 people/posting development Chromium measurements,3samples per size/width, are retained as evidence for choosing bounded12 initially,+24 expansion and50table rows. They are historical and justify the disclosure design, not new production latency or uniformly faster timing. Current72-member controller cases prove that bound and exact12→36→all72 behavior; current123row table cases prove ordered50/50/23 pages and role gates. This fulfills measured disclosure selection without inventing a performance threshold."
+        },
+        {
+          "condition": "All members remain reachable and missing-staffing or leave-conflict indicators remain visible in summary or expanded context.",
+          "satisfied": true,
+          "evidence": [
+            "docs/premium-ui/qa-unit-expanded-return-safety-current-integrated.json",
+            "docs/premium-ui/qa-unit-rules-pagination-regression.json"
+          ],
+          "rationale": "Returned staffing/leave warning is explicitly tied to member/posting71 outside initial12card and50table slices. Before expansion, card1setup issue,global1warning and monthly1active-leave record remain visible. Opening issue disclosure retains full member name,20May2026 and configuredminimum2. Member71 is reachable through hidden-member search and Showall; native unit validation warning action opens/reveals its correct posting71 identity and full1–31May dates. Warning and metrics remain through filters/reflow/history. No new safety or eligibility judgement is derived from that fixture."
+        }
+      ]
+    }
+  ],
+  "requirement_scope_rationale": {
+    "149": [
+      "Applied card header has explicit unit identity and campus, followed by monthly record totals, warning summary and labelled call groups with each member/date/period. Nine current normal and twelve strengthened stress controller contexts assert header→coverage→group rectangle order and exact person-associated date/period text across multiple campuses,long unit/member names,special and unresolved groups. Scoped CSS fixes the observed wrapped Manage word and squeezed dates. Root visually inspected current320/1280 and enlarged-dark renderings; actual Manage/editor launch survives reflow/history. This accepts unit hierarchy, not a global visual system or every unit mutation.",
+      "Same returned unit,staffing,member,date and month information appears in phone cards and desktop cards/table. Current9normal+12stress cases retain data under viewport changes, header/button containment and44px target, full date ranges and current/future/past associations.72-member current six cases keep full counts and warning context while collapsed,filtering,reflowing and returning. CSS root font and restored profile height explicitly checked; native AT/physical remain separate."
+    ],
+    "151": [
+      "Current tests bind each specific member to its own range and period at fixed21October2026: Dr Future30–31October Upcoming, Dr Earlier1–10October Past, longnamed member1–31October Current. Selected October month and full calendar year are asserted, preventing a loose somewhere-in-card status check. Source uses starts_on/ends_on versus today consistently and keeps date records unchanged. Tests across3engines at320/390/1280,root32px/short profiles prove rendered association, not scheduling correctness.",
+      "The board says monthly postings, card monthly active-leave records and guidance explicitly separates record coverage from duty-date/session availability. Tests assert returned2assigned/1record and selected month, preserving monthly counts while one member is explicitly Upcoming. Current72member return/filter fixture likewise retains exact aggregate meaning; no client eligibility or daily staffing calculation added. Accepted scope is truthful date/count presentation, not authoritative posting/leave policy."
+    ],
+    "152": [
+      "Current cards and desktop table share the same returned groups and count semantics. Nine geometry cases assert exact matched cards/rows,count text and stable monthly metrics through search,campus,special and unspecified filters; six current123-row desktop role cases assert allordered rows across pages,boundaries,filter reset andclamp. Six72member phone/desktop cases assert1matching of1 with72total while all72group postings remain represented in board count; original aggregate metrics unchanged.",
+      "Actual >12 group expands12→36, then keeps a nonempty unit-name query AND North campus through actual320↔1280 reflow and Overview→history back, preserving36names,counts and both values. Hidden member71 search materializes it, reset restores deliberate36 limit, Showall reachesall72. Nine normal and12strengthened stress cases also retain selected member filters through real return navigation. Pagination six role workflows retain page/selection on refresh,reset page on filter change,restore full selection andclamp when returned rows shrink. No claim of cross-account or full reload persistence beyond these requested chosen-state operations."
+    ],
+    "154": [
+      "Original50/500/2000 people/posting development Chromium measurements,3samples per size/width, are retained as evidence for choosing bounded12 initially,+24 expansion and50table rows. They are historical and justify the disclosure design, not new production latency or uniformly faster timing. Current72-member controller cases prove that bound and exact12→36→all72 behavior; current123row table cases prove ordered50/50/23 pages and role gates. This fulfills measured disclosure selection without inventing a performance threshold.",
+      "Returned staffing/leave warning is explicitly tied to member/posting71 outside initial12card and50table slices. Before expansion, card1setup issue,global1warning and monthly1active-leave record remain visible. Opening issue disclosure retains full member name,20May2026 and configuredminimum2. Member71 is reachable through hidden-member search and Showall; native unit validation warning action opens/reveals its correct posting71 identity and full1–31May dates. Warning and metrics remain through filters/reflow/history. No new safety or eligibility judgement is derived from that fixture."
+    ]
+  },
+  "execution_evidence": [
+    {
+      "name": "geometry",
+      "report": "docs/premium-ui/qa-unit-card-geometry-v1-preview-integrated.json",
+      "report_sha256": "becc56a2c5cb9391d270c5fba77149204a492ddf6bbd9a7c9d44ea769198ef4e",
+      "test": "frontend/tests/premium-unit-card-geometry-v1-preview.browser.integrated.mjs",
+      "test_sha256": "551a62fe2f2e06c8faa4e5361c21e820194614f923c3d5cae683204554aba6e1",
+      "log": "tmp/unit-rules-integrated-geometry.log",
+      "log_sha256": "fe0a75b0fb68aa138d8ca5b8831751bf5db722d60c2ee1293c1acd4bbf8f98e3",
+      "contexts": 9,
+      "exit_code": 0
+    },
+    {
+      "name": "stress-v2",
+      "report": "docs/premium-ui/qa-unit-card-geometry-v2-stress-integrated.json",
+      "report_sha256": "1fa87e095bb782e6c8894c1433b242f5caa529e6bf343eb0ac65cd14ab86f509",
+      "test": "frontend/tests/premium-unit-card-geometry-v2-stress-integrated.browser.mjs",
+      "test_sha256": "e612b9161528a446b0eb982bd152116e1f6988d234eb806d73344669ef5195f8",
+      "log": "tmp/unit-rules-integrated-stress-v2.log",
+      "log_sha256": "aa1fcbc92cf64b5508829a76b39b11331b7f94e546e279c3bb17d55f0a522624",
+      "contexts": 12,
+      "exit_code": 0
+    },
+    {
+      "name": "expanded",
+      "report": "docs/premium-ui/qa-unit-expanded-return-safety-current-integrated.json",
+      "report_sha256": "6adbaad8ebd940ef1406c3789bbc9ff39bd20b40d11b613746561c46f372878d",
+      "test": "frontend/tests/premium-unit-expanded-return-safety-current.browser.integrated.mjs",
+      "test_sha256": "41803b9a2bcab9cf5c1ff9c7b62ccd16fc80395f4f0b26126b3fd277eec786bb",
+      "log": "tmp/unit-rules-integrated-expanded.log",
+      "log_sha256": "85d3d0ac65f5e3efd79748b01b72da59a09eac843643eb80a43017dcee4179d6",
+      "contexts": 6,
+      "exit_code": 0
+    },
+    {
+      "name": "pagination",
+      "report": "docs/premium-ui/qa-unit-rules-pagination-regression.json",
+      "report_sha256": "9d6edc04bd70bf252a8ec54a7ccc91f304ae496ab5aefe44226c9d7715e4d9c2",
+      "test": "frontend/tests/premium-unit-rules-pagination-regression.browser.mjs",
+      "test_sha256": "12999393c2866aa4278005574f721c45d1c6730a4280741f8570774e5cd5fea7",
+      "log": "tmp/unit-rules-integrated-pagination.log",
+      "log_sha256": "35e147bd120876831423ff6666c7f44b528bf856e4a6a280fc1dc11e12452b3a",
+      "contexts": 6,
+      "exit_code": 0
+    }
+  ],
+  "independent_review": {
+    "reviewer": "/root/unit_focus_source_v5",
+    "reports": [
+      "docs/premium-ui/reviews/unit149-154-independent-gap-audit.json",
+      "docs/premium-ui/reviews/unit149-154-independent-gap-audit.md"
+    ],
+    "scope_disclosure": "Independent exact-criteria/current-source/historical-evidence gap audit identified missing member-associated dates,reflow/return-expanded filters,hidden-member safety and optical containment. Root subsequently closed these gaps with current tests,CSS and visual review. This is not an independent final implementation/runtime endorsement."
+  },
+  "root_review": {
+    "reviewer": "/root",
+    "method": "Read original eight conditions and independent gap matrix. Inspect current functions,control/label semantics and all current normal/stress/expanded/pagination assertions/raw reports/terminal0 logs; match each condition to actual outcomes. Visually inspect current card renderings; disclose original stress height harness correction and historical performance scope. No acceptance inferred from a file path or test count."
+  },
+  "evidence_sha256": {
+    "docs/premium-ui/reviews/unit-rules-integrated-execution.json": "b61566b93e3671fb9538e0cea637f3e9279d9b9f045592f099024f39a38dc098",
+    "docs/premium-ui/reviews/unit-rules-prior40-applicability.json": "b344964d277e99498db978066f1cb39739a0304a0adda535ea0d8f929df0bde6",
+    "docs/premium-ui/reviews/unit149-154-independent-gap-audit.json": "c0c30e393aecd1bc6c4cc3b09aae75a3a5e38cf726f8d8b72f16454a63dc2535",
+    "docs/premium-ui/reviews/unit149-154-independent-gap-audit.md": "5da4f8b155ebd57f056a5a39de6d4e612cbb69abc2b6e95d7da08fe29c0e6e74",
+    "docs/premium-ui/acceptance-criteria/items-087-173.json": "a7bf1322bd8e08a1fddd4195095d9cc52a8867a1b8a2bda9b523917fae458576",
+    "docs/premium-ui/qa-unit-performance.json": "966038b382b5cf86706385a15d32bd94cd4d3fd2c054a357e92dbf50c2906a78",
+    "frontend/tests/premium-unit-performance.browser.mjs": "5f61e4c4273af194af2faba21df459b6818d32378d34a5dfed47b536b1c6612d",
+    "frontend/src/main.ts": "2b8f68c069e599af50a4ac1b2146a7018d6268f290b90a9949130a057dc91b43",
+    "frontend/src/unit-board-filters.ts": "1c01b57eace54e99d01205fc07273bacbfe1649c4db576763bb55768d0d33766",
+    "frontend/src/unit-member-lists.ts": "9d29fb79214cce10962f480c9efb56741cc24a5f9b98a5ad7ec539ce49eda7ac",
+    "frontend/src/premium-theme.css": "acc46b2249087f365ca855bcd9630628c390c4cdf013301daaee40ede80e55f4",
+    "docs/premium-ui/qa-rules-help-owner-v2-preview-integrated.json": "ccaf479c7bbdd1e07bc795e354d980ba7c485d7cb6d61229a735ab8ed99fd3f5",
+    "frontend/tests/premium-rules-help-owner-v2-preview.browser.integrated.mjs": "340ca3538296ec2e6d217cf07e70a0c37e2b99d3307a716e04f212fd991eb25a",
+    "tmp/unit-rules-integrated-help.log": "f98bd6b575db5101789be7aac1b11a18e75c4c98fe37df40ed07240e4c693085",
+    "docs/premium-ui/qa-unit-card-geometry-v1-preview-integrated.json": "becc56a2c5cb9391d270c5fba77149204a492ddf6bbd9a7c9d44ea769198ef4e",
+    "frontend/tests/premium-unit-card-geometry-v1-preview.browser.integrated.mjs": "551a62fe2f2e06c8faa4e5361c21e820194614f923c3d5cae683204554aba6e1",
+    "tmp/unit-rules-integrated-geometry.log": "fe0a75b0fb68aa138d8ca5b8831751bf5db722d60c2ee1293c1acd4bbf8f98e3",
+    "docs/premium-ui/qa-unit-card-geometry-v1-stress-integrated.json": "abdcbe3c663234db8ea586b98cdd4c7378ce74adfabd83a35079466b25366568",
+    "frontend/tests/premium-unit-card-geometry-v1-stress.browser.integrated.mjs": "b751425d6e976bbb1e604d40d316cf6bcaadc51efd6d5176d2882498234e0d84",
+    "tmp/unit-rules-integrated-stress.log": "aa1fcbc92cf64b5508829a76b39b11331b7f94e546e279c3bb17d55f0a522624",
+    "docs/premium-ui/qa-unit-expanded-return-safety-current-integrated.json": "6adbaad8ebd940ef1406c3789bbc9ff39bd20b40d11b613746561c46f372878d",
+    "frontend/tests/premium-unit-expanded-return-safety-current.browser.integrated.mjs": "41803b9a2bcab9cf5c1ff9c7b62ccd16fc80395f4f0b26126b3fd277eec786bb",
+    "tmp/unit-rules-integrated-expanded.log": "85d3d0ac65f5e3efd79748b01b72da59a09eac843643eb80a43017dcee4179d6",
+    "docs/premium-ui/qa-unit-rules-focus-regression.json": "3cd91f2ae0cc192cbecb4012bd873d3ec018d638c0448f4978d973fd39567302",
+    "frontend/tests/premium-unit-rules-focus-regression.browser.mjs": "0da322dda0fb36e9a9878f3095ee676b13b2b1c1523c6a77db54e066336fe729",
+    "tmp/unit-rules-integrated-focus.log": "fcf1a27fe27f8e68396a57c1cc3f2c3b476943bf15a42f034fdfe3a450841acd",
+    "docs/premium-ui/qa-unit-rules-upper-regression.json": "4624754cec2f13fc62256b1dd3dba9634ca6999dc62b45e78f104675c04208b4",
+    "frontend/tests/premium-unit-rules-upper-regression.browser.mjs": "75f8ec07bbaf0bbace69b0024985094dcac85c53fb61cf2114419ff6b9b50f11",
+    "tmp/unit-rules-integrated-upper.log": "1620869c107145da1b509d43444b3005326d80734eac173bcb03eeb0997c6039",
+    "docs/premium-ui/qa-unit-rules-adverse-regression.json": "2bd7dbb5414ca31298bf34dd54d1ef6427f6dc513665f49fee29bd812aab82f8",
+    "frontend/tests/premium-unit-rules-adverse-regression.browser.mjs": "3178b0c0d805a61be5be82c1793010e01224510660d29eaeb937a5697941a8f6",
+    "tmp/unit-rules-integrated-adverse.log": "09b5fb87938f0ece143dee35dda84a62a6e7c9b576d07fa5633b9f0f72fae429",
+    "docs/premium-ui/qa-unit-rules-pagination-regression.json": "9d6edc04bd70bf252a8ec54a7ccc91f304ae496ab5aefe44226c9d7715e4d9c2",
+    "frontend/tests/premium-unit-rules-pagination-regression.browser.mjs": "12999393c2866aa4278005574f721c45d1c6730a4280741f8570774e5cd5fea7",
+    "tmp/unit-rules-integrated-pagination.log": "35e147bd120876831423ff6666c7f44b528bf856e4a6a280fc1dc11e12452b3a",
+    "docs/premium-ui/qa-unit-card-geometry-v2-stress-integrated.json": "1fa87e095bb782e6c8894c1433b242f5caa529e6bf343eb0ac65cd14ab86f509",
+    "frontend/tests/premium-unit-card-geometry-v2-stress-integrated.browser.mjs": "e612b9161528a446b0eb982bd152116e1f6988d234eb806d73344669ef5195f8",
+    "tmp/unit-rules-integrated-stress-v2.log": "aa1fcbc92cf64b5508829a76b39b11331b7f94e546e279c3bb17d55f0a522624",
+    "docs/premium-ui/screenshots/unit-card-geometry-v1-1280.png": "aae0e191e1cd88712561a666633495f399af0adc8b13024a6fe7ceb89f0a57f8",
+    "docs/premium-ui/screenshots/unit-card-geometry-v1-320.png": "3d1dfc8a75e42836b8267d891a0b9dbbc34714eced8f5413d9c4c0ec9bd59576",
+    "docs/premium-ui/screenshots/unit-card-geometry-v1-enlarged-dark.png": "2c00934439a7828cfac101d66599c41d8f96f224d64a9fb287db7dfbb1aa95d9",
+    "docs/premium-ui/reviews/unit149151152154-acceptance.json": "1259a0de0b6e4a81f99db9bc3ce0cde2fef3a76ada9314cddeed21b4f33a259c",
+    "docs/premium-ui/reviews/unit-create-opener-prior44-applicability.json": "beb9becdae912f29d75d7e0ece480df3fddf27f488a8526ffc677f15aba5718a",
+    "docs/premium-ui/reviews/unit-create-opener-integrated-execution.json": "1fd647bba7dedd86b5421edca86c6fb18b22c7893fce3b828bccfcb2997e0779",
+    "docs/premium-ui/reviews/unit-create-opener-table-applicability.json": "e50343cec2eba2db2bd6c59fce2d8e7b1452c4040a895d2ce282b3acaf8b57d7",
+    "docs/premium-ui/reviews/accepted-items-149-151-152-154-unit-create-opener-revalidation.json": "8c62243a9c55aceb917a89a68430dce816399f78ec8413d0d62c47b809b560a3",
+    "docs/premium-ui/reviews/staffing-v2-prior44-applicability.json": "29322f258da0729d92e0d415c2b24fae460bc474e08e14015f5da1d14ab552c7",
+    "docs/premium-ui/reviews/staffing-v2-integrated-execution.json": "ffae966ecbfda6b1d09b6c7a75d768ac477d4112796028cd678cee920a06e275",
+    "docs/premium-ui/reviews/staffing-v2-table-applicability.json": "c34ecd32f777aa643e95991dda698d0f700bdb8cd18f523c97af9b5e82b96055",
+    "docs/premium-ui/reviews/accepted-items-149-151-152-154-staffing-v2-revalidation.json": "6fa893c4847a8c3c2c228358dbe112674352f749f65223fa1668b4ca64776686",
+    "docs/premium-ui/reviews/reference-recovery-combined-v1-prior48-applicability.json": "099b67aec5262174479ba9779f88ec1a24946b852386bc7a34fb4c0868822d16",
+    "docs/premium-ui/reviews/reference-recovery-combined-v1-integrated-execution.json": "e58a708a50d96bc57a1c2a516d9e4146d1a8adfe4bdca25ad830839ceab0ffd0",
+    "docs/premium-ui/reviews/reference-recovery-combined-v1-table-applicability.json": "52c5cb2753651ef2b95c9ffab3388e0189b9c4229b582c9700e9e969461b6a1b",
+    "docs/premium-ui/reviews/accepted-items-149-151-152-154-recovery-combined-v1-revalidation.json": "cb48879d0536cb9545c156881c12fc4dda5ff1f0b97790a2a8d1760da4047511",
+    "docs/premium-ui/reviews/reference159-record-owner-prior50-applicability.json": "144072fc1d6cdeb26ab36875779634ef4823952b50a9ca571878bf00be08a3a3",
+    "docs/premium-ui/reviews/reference159-record-owner-v1-integrated-execution.json": "9ad26613ba3f117b988d877e1acab18365558a056a985d5ae757c4e50c2039ed",
+    "docs/premium-ui/reviews/record-owner-v1-table-applicability.json": "5b94c14f87e53bd5cd65df76dbe68c66cb376aeb91d48696c81cdb41caba6f03",
+    "docs/premium-ui/reviews/accepted-items-149-151-152-154-record-owner-v1-revalidation.json": "4ecb6fbd6df6fa71b0f8a6dd9ba66dc43a748555257db05286c32198f5202d35",
+    "docs/premium-ui/reviews/reference159-import-owner-prior50-applicability.json": "dc9ae719dbb4cc685dce269d82405673657b7feb02c14ea905451c73069a7946",
+    "docs/premium-ui/reviews/reference159-import-owner-v1-integrated-execution.json": "c18d1cc5025805e900a13793e5c2a03790fa5617c3438747b6da4e9402469356",
+    "docs/premium-ui/reviews/import-owner-v1-table-applicability.json": "c498650fbb9a28af4ccb1a40cf684efc6bd88ca1353609a093ef85d4c434dea0",
+    "docs/premium-ui/reviews/accepted-items-149-151-152-154-import-owner-v1-revalidation.json": "ff5209b203cc5f759843699eb2c3f81ad89e339934fa35eeacf4ce47ea29d229",
+    "docs/premium-ui/reviews/reference159-monthly-delete-combined-prior51-applicability.json": "9e0c9f9fee82e7ecf3fb0dd577081185236182ae5049891b853fe5182b6177a4",
+    "docs/premium-ui/reviews/reference159-monthly-delete-combined-v1-integrated-execution.json": "e870aee829c2ace0d0300874e86aa4d56ee5d51b0fe57a2a3d59d5f100b40ed9",
+    "docs/premium-ui/reviews/monthly-delete-combined-v1-table-applicability.json": "fc7eac3ec028e1588240906ade45d3d2cb938b63209fa6aa01700f0e68ec7510",
+    "docs/premium-ui/reviews/accepted-items-149-151-152-154-monthly-delete-combined-v1-revalidation.json": "9c5a853ee903e3a8fbc834585a0ad0289a8b8bac5329b601cace5f2a97e98155",
+    "docs/premium-ui/reviews/stage161-classification-prior51-applicability.json": "e54dd60fdb9759ef40be5fcb178fe3ea9305b108fe62b494825fa80b31a09d45",
+    "docs/premium-ui/reviews/stage161-classification-integrated-execution.json": "e78524598a04e0e5330557233e7d71f93bad0010e611a8cf0c7df0585d633e29",
+    "docs/premium-ui/reviews/stage161-classification-table-applicability.json": "44b7498658cac874afcf978ba4625bb99b5f4dbf29d3916916e7c7373479f627",
+    "docs/premium-ui/reviews/accepted-items-149-151-152-154-stage161-classification-revalidation.json": "4a572fbfdbf2565b09574d86b8935fa3737602bbbbe8f7b7f60548f3ec232172",
+    "docs/premium-ui/reviews/optional164-v6-prior51-applicability.json": "f04155df8098ac33b02794bac651ac06020d5e3628b255b784161a08c469ba83",
+    "docs/premium-ui/reviews/optional164-v6-integrated-execution.json": "2eedc4e2457902c479425c544a98acc4d96b94b01cc276eb5cb31f320d5793b6",
+    "docs/premium-ui/reviews/optional164-v6-fastmode-execution.json": "dbcbff03f17fb54c2a3d3e3284acd475cf40ed6b54b7a4f47f9d903424a75268",
+    "docs/premium-ui/reviews/optional164-v6-table-applicability.json": "fe27049b04f6b10d3ff02da922075939dc7cc396b52e6e05539db786eaa450a3",
+    "docs/premium-ui/reviews/accepted-items-149-151-152-154-optional164-v6-revalidation.json": "94edc919a7d1def236f6b2c026fa6310870b57a32f29f710a2c8a4dde5da964e",
+    "docs/premium-ui/reviews/unit-settings-recovery-v6-prior52-applicability.json": "9e3a029f6425ff6af5fe307f26e781a8a9217e163b9c72b1755f4a0add65c2c8",
+    "docs/premium-ui/reviews/unit-settings-recovery-v6-integrated-execution.json": "a123b0ab1ef44bf5cf077f086c2c92e6d17308b2429db118a845a220f46c5c67",
+    "docs/premium-ui/reviews/unit-settings-recovery-v6-table-applicability.json": "a4a310318208444d5f731eb99085d3e616e562f17477653fc0cbc74422a447c9",
+    "docs/premium-ui/reviews/accepted-items-149-151-152-154-unit-settings-v6-revalidation.json": "3010032450e7196b7c126d1598fb182adcc926a9ec0e3cef3b73dd5aa520542b",
+    "docs/premium-ui/reviews/mapping-parent-v1-prior52-applicability.json": "2a4d619ffa38a20f2b3c9ea01f9c7d795cf03b69982ed445834712bf7d1051d6",
+    "docs/premium-ui/reviews/mapping-parent-v1-integrated-execution.json": "9e1a25c14666218b0c5033b8f9b77d6034b00377c0abb18936c933e68b0c79b1",
+    "docs/premium-ui/reviews/mapping-parent-v1-table-applicability.json": "1460c32aea25f9a4a6d37591e973aa6b599aa35aa28bd43f8426ccb6966620d6",
+    "docs/premium-ui/reviews/accepted-items-149-151-152-154-mapping-parent-v1-revalidation.json": "b5038f93c35b8ea891cc716d0dec1f6835e0b0202b7b076df75c452432f165f4",
+    "docs/premium-ui/reviews/settings159-v7-prior52-applicability.json": "8c8d54996a418a035ddd28c762dc16331446e9279e68c535729d77f68b3bdb36",
+    "docs/premium-ui/reviews/settings159-v7-integrated-execution.json": "ecab26160223451f8b63522d1221b626d9fac4bd799d0b527da1a0c7895c4c59",
+    "docs/premium-ui/reviews/settings159-v7-table-applicability.json": "77f55c62d43502999441cd6f62a6ef633e295c5c2147aac4406712eeb4b8a2b5",
+    "docs/premium-ui/reviews/accepted-items-149-151-152-154-settings159-v7-revalidation.json": "ed5293df10b7553a01f2438d0e2cab98fdd1ccacf3033682f30f717ff9940b96",
+    "docs/premium-ui/reviews/stage161-v9-prior52-applicability.json": "fd3f67c51e95285e2f02312c7083770a26153dc2982cc36f3c0f289d980cc559",
+    "docs/premium-ui/reviews/stage161-v9-integrated-execution.json": "2ed0829e4e11597837449827708a02cffe2f1b09d2fbfe6e8573c19d06f90ab0",
+    "docs/premium-ui/reviews/stage161-v9-table-applicability.json": "6245658dc65768099e2c83dd3ed0179957e05ed7abf5704c39a80ffdd36e609b",
+    "docs/premium-ui/reviews/accepted-items-149-151-152-154-stage161-v9-revalidation.json": "92eb6e25bbc61db2bed10e217f904f9c2558af0db559659e8e648b1abae16a48",
+    "docs/premium-ui/reviews/profile-parent-v5-prior53-applicability.json": "2b0936328b9f8d10209aebeb585460f70b4ac52ecbc614c18b41c876baf75d9d",
+    "docs/premium-ui/reviews/profile-parent-v5-integrated-execution.json": "ea3c751d8d62f1aca3edd53e40228635de44719e8f8269a7d80d2955347620bc",
+    "docs/premium-ui/reviews/profile-parent-v5-table-applicability.json": "856a344b771982807b0f0a1272f5cabc465f0c2f284f39e816a9cdaf73c79620"
+  },
+  "limitations": [
+    "Physical devices/nativeAT pending by original scope; CSS root200 is root text scaling,notbrowserzoom.",
+    "Returned warnings/counts are local fixtures; no backend authorization/persistence/scheduling policy claim.",
+    "Historical performance is design selection evidence only; no fresh production performance threshold certification.",
+    "Root current closure after independent gap audit; no final independent combined-source endorsement. Full260 and other unit/leave requirements incomplete."
+  ],
+  "unit_create_opener_revalidation": {
+    "parent": "docs/premium-ui/reviews/unit149151152154-acceptance.json",
+    "changed_evidence": [
+      "frontend/src/main.ts"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/unit-create-opener-prior44-applicability.json",
+    "scope": "Original exact requirement/condition/evidence scope retained by2line source reversal and current60app outcomes."
+  },
+  "staffing_v2_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-149-151-152-154-unit-create-opener-revalidation.json",
+    "changed_evidence": [
+      "frontend/src/main.ts",
+      "frontend/src/premium-theme.css"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/staffing-v2-prior44-applicability.json",
+    "scope": "Original requirement/condition scope retained by exact source delta and72applied outcomes; no historical test rerun invented."
+  },
+  "recovery_combined_v1_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-149-151-152-154-staffing-v2-revalidation.json",
+    "changed_evidence": [
+      "frontend/src/main.ts"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/reference-recovery-combined-v1-prior48-applicability.json",
+    "scope": "Original exactconditions retained by four-file allowlist delta and126current outcomes. Unrelated historicaltests notclaimedrerun."
+  },
+  "record_owner_v1_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-149-151-152-154-recovery-combined-v1-revalidation.json",
+    "changed_evidence": [
+      "frontend/src/main.ts"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/reference159-record-owner-prior50-applicability.json",
+    "scope": "Originalconditions retained by exactdelta/current60outcomes; unrelatedhistoricaltests notclaimedrerun."
+  },
+  "import_owner_v1_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-149-151-152-154-record-owner-v1-revalidation.json",
+    "changed_evidence": [
+      "frontend/src/main.ts"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/reference159-import-owner-prior50-applicability.json",
+    "scope": "Originalconditions retained by exactdelta/current60outcomes; unrelatedhistoricaltests notclaimedrerun."
+  },
+  "monthly_delete_combined_v1_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-149-151-152-154-import-owner-v1-revalidation.json",
+    "changed_evidence": [
+      "frontend/src/main.ts"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/reference159-monthly-delete-combined-prior51-applicability.json",
+    "scope": "Originalconditions retained by exactdelta/current54outcomes; unrelatedhistoricaltests notclaimedrerun."
+  },
+  "stage161_classification_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-149-151-152-154-monthly-delete-combined-v1-revalidation.json",
+    "changed_evidence": [
+      "frontend/src/main.ts"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/stage161-classification-prior51-applicability.json",
+    "scope": "Originalconditions retained byexactoneline/current72outcomes."
+  },
+  "optional164_v6_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-149-151-152-154-stage161-classification-revalidation.json",
+    "changed_evidence": [
+      "frontend/src/main.ts"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/optional164-v6-prior51-applicability.json",
+    "scope": "Original conditions retained by exact scoped source analysis and126 current affected-surface outcomes."
+  },
+  "unit_settings_v6_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-149-151-152-154-optional164-v6-revalidation.json",
+    "changed_evidence": [
+      "frontend/src/main.ts"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/unit-settings-recovery-v6-prior52-applicability.json",
+    "scope": "Original conditions retained by exact bounded settings source delta and44current affected-surface outcomes; isolated48helper applicability separate."
+  },
+  "mapping_parent_v1_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-149-151-152-154-unit-settings-v6-revalidation.json",
+    "changed_evidence": [
+      "frontend/src/main.ts"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/mapping-parent-v1-prior52-applicability.json",
+    "scope": "Original conditions retained by exact bounded callback source delta and42current affected-surface outcomes. No new whole159 acceptance."
+  },
+  "settings159_v7_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-149-151-152-154-mapping-parent-v1-revalidation.json",
+    "changed_evidence": [
+      "frontend/src/main.ts",
+      "frontend/src/unit-board-filters.ts"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/settings159-v7-prior52-applicability.json",
+    "scope": "Original conditions retained by exact bounded callback source delta and42current affected-surface outcomes. No new whole159 acceptance."
+  },
+  "stage161_v9_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-149-151-152-154-settings159-v7-revalidation.json",
+    "changed_evidence": [
+      "frontend/src/main.ts",
+      "frontend/src/premium-theme.css"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/stage161-v9-prior52-applicability.json",
+    "scope": "Original conditions retained by exact bounded stage/readiness source delta and168current affected-surface outcomes. Whole161 acceptance is separate; no159 acceptance."
+  },
+  "profile_parent_v5_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-149-151-152-154-stage161-v9-revalidation.json",
+    "changed_evidence": [
+      "frontend/src/main.ts"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/profile-parent-v5-prior53-applicability.json",
+    "scope": "Original condition scope retained by reviewed source delta and144 current applied parent/focus/replacement outcomes; historical evidence keeps provenance. No whole159 acceptance."
+  }
+}

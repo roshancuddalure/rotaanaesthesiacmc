@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-09T09:25:40.534824+00:00",
+  "status": "prepared_not_browser_executed_by_author",
+  "test": "frontend/tests/premium-leave-watch-count-contrast-20261109-diagnostic-r1.browser.mjs",
+  "test_sha256": "b2ef193a1c511678ab4b8905e79b518e1b33869e5510263450269493352cb130",
+  "source_sha256": {
+    "frontend/src/main.ts": "2b8f68c069e599af50a4ac1b2146a7018d6268f290b90a9949130a057dc91b43",
+    "frontend/src/member-workspace.ts": "105cc1d91ea4815d565ad4859fc01412cf576a3203c07834f4010e3fef7ef1a5",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "acc46b2249087f365ca855bcd9630628c390c4cdf013301daaee40ede80e55f4"
+  },
+  "predecessor": {
+    "test": "frontend/tests/premium-leave-watch-count-contrast-20261109-diagnostic.browser.mjs",
+    "log": "tmp/leave-watch-count-contrast-20261109-diagnostic.log",
+    "observed_result": "Root actual browser execution terminal1 on measured.largeText false assertion; observedactualtrue. This is a harness precondition failure, not a confirmed contrast defect. First test/log preserved."
+  },
+  "correction": "Remove presumednormaltext/4.5assertions. Keepactualcomputedfontsize/fontweight threshold3large or4.5normal, numericalratio and passflag for all6contexts. Preserveallmeasurements beforeaggregateapplicablecontrastgate. NoCSSfix justified until actualcomputedfontgate fails.",
+  "matrix": "3engines320/1280light, actualLeavecalendar4/10watchstate, sourceheld2b8/105cc/acc46/3069",
+  "request_boundary": "Every nonGET blocked599, GETfixtureslocal, remainingGETonlyRAM8031",
+  "run": {
+    "cwd": "frontend",
+    "command": "node tests/premium-leave-watch-count-contrast-20261109-diagnostic-r1.browser.mjs",
+    "output": "docs/premium-ui/qa-leave-watch-count-contrast-20261109-diagnostic-r1.json"
+  },
+  "syntax_check": "node --check terminal0",
+  "application_edits": false,
+  "acceptance_changes": false
+}

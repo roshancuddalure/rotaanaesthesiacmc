@@ -1,0 +1,176 @@
+{
+  "recorded_at_utc": "2026-10-29T03:52:28.863119+00:00",
+  "reviewer": "/root/unit_focus_source_v5",
+  "independent": true,
+  "scope": "Read-only exact-criteria/source/evidence gap audit for original149,151,152,154. No acceptance, application edits or fresh browser execution. Root integration may proceed separately; audited pre-focus source/test snapshot is retained.",
+  "completion_claim": false,
+  "items_accepted": [],
+  "criteria": "docs/premium-ui/acceptance-criteria/items-087-173.json",
+  "audited_source_snapshot": {
+    "frontend/src/main.ts": {
+      "snapshot": "tmp/unit149-154-independent-audit-source/frontend__src__main.ts",
+      "sha256": "cb6ee8d2bedc1401cedcda8e20e199f60bd8418e2a24baa00a373c5290a52168"
+    },
+    "frontend/src/unit-board-filters.ts": {
+      "snapshot": "tmp/unit149-154-independent-audit-source/frontend__src__unit-board-filters.ts",
+      "sha256": "b52758e18a4d6abeda57b57ef84e0614b085a317e9d3ca345e096d860ea384a3"
+    },
+    "frontend/src/unit-member-lists.ts": {
+      "snapshot": "tmp/unit149-154-independent-audit-source/frontend__src__unit-member-lists.ts",
+      "sha256": "9d29fb79214cce10962f480c9efb56741cc24a5f9b98a5ad7ec539ce49eda7ac"
+    },
+    "frontend/src/premium-theme.css": {
+      "snapshot": "tmp/unit149-154-independent-audit-source/frontend__src__premium-theme.css",
+      "sha256": "0861792fb15d7a3c6e6b1b6904d95533bb2a268157dce7216a67cb1eff86eb15"
+    },
+    "frontend/src/styles.css": {
+      "snapshot": "tmp/unit149-154-independent-audit-source/frontend__src__styles.css",
+      "sha256": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86"
+    },
+    "frontend/tests/premium-unit-board-current-reflow.browser.mjs": {
+      "snapshot": "tmp/unit149-154-independent-audit-source/frontend__tests__premium-unit-board-current-reflow.browser.mjs",
+      "sha256": "ffbaa538e608209a7480cd5ea55854aa27c9ba70c7f9313248e8d246f79d26c1"
+    }
+  },
+  "prepared_test": {
+    "source": "frontend/tests/premium-unit-board-current-reflow.browser.mjs",
+    "audited_sha256": "ffbaa538e608209a7480cd5ea55854aa27c9ba70c7f9313248e8d246f79d26c1",
+    "snapshot": "tmp/unit149-154-independent-audit-source/frontend__tests__premium-unit-board-current-reflow.browser.mjs",
+    "execution_by_this_reviewer": "not_run_per_held_source_instruction",
+    "scope": "3engines320/390/1280,multiplecampuses/longunit/member,5postings,actualreflow,overview/back,root-plannedAXE and Addunit launch."
+  },
+  "items": [
+    {
+      "item_id": 149,
+      "condition_assessments": [
+        {
+          "condition": "Campus, unit identity, staffing groups and dated assignments have a clear scan order.",
+          "finding": "Source renders unit name/campus in header, monthly record totals, setup-issue summary, then ordered staffing groups and dated member chips. Prepared test measures this scan order on the long alpha unit but not group-label/member/date associations.",
+          "status": "source_supported_rendered_current_test_pending"
+        },
+        {
+          "condition": "Narrow cards preserve the same essential unit and staffing context as desktop boards.",
+          "finding": "Current source shares the same cards/groups across breakpoints and uses wrapping names. Prepared reflow test preserves shown card/row keys and totals, checks global width and unit-title element bounds; it does not measure long member/date text containment or inspect full narrow/wide visual output.",
+          "status": "bounded_current_evidence_full_acceptance_unproven"
+        }
+      ],
+      "existing_support": [
+        "Current monthly6 board cases cover special/unresolved/no-unit catalog groups and dated cards.",
+        "Current6 long-member cases cover144 reachability, full date text and current posting label.",
+        "Prepared multiple-campus/long-unit fixture would close a previously sparse scan-order example after execution."
+      ],
+      "focused_gaps": [
+        "Associate rendered1st/2nd-call group labels with the expected member chips and dates, rather than only measuring the first group rectangle.",
+        "Inspect320 and1280 rendered hierarchy and complete long member names/date text; measure local text/element containment, not just document width/title box.",
+        "Run the prepared test on a held source and bind source/test/report/log evidence."
+      ],
+      "recommendation": "Keep149 unaccepted pending scoped rendered/optical evidence; no source defect is asserted from test gaps."
+    },
+    {
+      "item_id": 151,
+      "condition_assessments": [
+        {
+          "condition": "Dated membership changes visibly distinguish future postings from those effective today or at the displayed date.",
+          "finding": "unitMemberChips compares starts/ends with browser-local today and renders full date range plus Upcoming/Past/Current for regular,special and unresolved cards. Prepared test finds Current and Upcoming somewhere in alpha and Past somewhere in beta, without binding each label to its actual dated person.",
+          "status": "source_supported_member_association_assertions_missing"
+        },
+        {
+          "condition": "Counts and labels do not imply a scheduled posting is already current.",
+          "finding": "Unit view is labelled Monthly unit postings with selected month; current monthly coverage labels explicitly describe leave records rather than day availability. Existing18 monthly cases preserve returned counts including overlapping dated records and missing/invalid totals. Prepared test only checks metrics unchanged, not their temporal labels/count meaning.",
+          "status": "bounded_temporal_count_evidence_needs_explicit_scope_assertion"
+        }
+      ],
+      "existing_support": [
+        "Read unitMemberChips, regular/special/unresolved card callers, renderUnitAssignmentRows and renderUnitManagement.",
+        "Current monthly batch preserves original valid numbers and clearly distinguishes monthly record coverage from duty-date availability."
+      ],
+      "focused_gaps": [
+        "Assert Dr Future chip shows30–31Oct2026 and Upcoming; Dr Earlier shows1–10Oct2026 and Past; current member shows1–31Oct2026 and Current.",
+        "Assert selected October month/context and postings/monthly-record labels; future records may contribute to monthly totals without being labelled current.",
+        "The prepared report flag full_dates_and_period_labels currently overstates its assertions: exact dates are not checked. Correct assertions or narrow the flag.",
+        "Boundary/today and ongoing samples are useful focused additions where temporal wording is being certified; do not invent a new eligibility calculation."
+      ],
+      "recommendation": "Keep151 unaccepted until member-specific temporal and count-scope checks pass. No backend or date-policy edit proposed."
+    },
+    {
+      "item_id": 152,
+      "condition_assessments": [
+        {
+          "condition": "Desktop boards and mobile cards expose equivalent filtering and per-unit count meanings.",
+          "finding": "bindUnitBoardFilters applies the same group search/campus semantics and count wording to cards and50-row posting pages. Current6 member cases preserve explicit group meanings; historical pagination verifies123 ordered desktop rows and role gates. Prepared reflow test compares matching keys/counts across widths, but has no table page boundary and uses only5 postings.",
+          "status": "substantial_bounded_evidence_with_current_reflow_pending"
+        },
+        {
+          "condition": "Chosen filters and expansion states behave predictably across reflow and return navigation.",
+          "finding": "limits Map is keyed by month+unit+staffing group and survives ordinary render; filters are retained in main globals and reset in private-session cleanup. Prepared test preserves search Dr Future across viewport reflow and actual overview/back, but it has no expandable list and its campus value is empty during reflow/return.",
+          "status": "expanded_list_reflow_return_and_combined_filter_gap"
+        }
+      ],
+      "existing_support": [
+        "Current6 long-member cases verify12→36→12, all144, hidden-member search and expansion retention across filter/clear/read refresh.",
+        "Historical pagination6 cases cover page preservation on refresh, filter reset, selection and shrink clamping.",
+        "Historical print6 cases retain expanded limits and original nodes, but print is supplementary here and not a substitute for live viewport/route return."
+      ],
+      "focused_gaps": [
+        "Use a >12-member group, expand to36, choose nonempty campus plus unit-name search, then actually resize narrow↔wide and navigate overview→back. Assert same chosen filters,36 visible members and per-group count semantics after both transitions.",
+        "Use separate member-name search to materialize the last initially hidden member; clearing should restore the intentional expansion limit.",
+        "If making a current posting-page parity claim, retain ordered row/page data and current source applicability of the historical123-row proof; do not infer it from five rows."
+      ],
+      "recommendation": "Keep152 unaccepted until expansion-state and nonempty combined-filter transition outcomes are explicitly recorded."
+    },
+    {
+      "item_id": 154,
+      "condition_assessments": [
+        {
+          "condition": "Long unit-member lists use expansion or pagination justified by representative list measurements.",
+          "finding": "Representative50/500/2000 Chromium development measurements justified bounded50-row pagination and12+24 member disclosure. Historical comparisons show2000-row DOM reduction42360→1744 and read median improvements in the recorded samples;500-wide timing is not uniformly improved. These are design-selection evidence, not a fresh current production performance certificate.",
+          "status": "historical_measurement_rationale_present_current_mechanism_supported"
+        },
+        {
+          "condition": "All members remain reachable and missing-staffing or leave-conflict indicators remain visible in summary or expanded context.",
+          "finding": "Current6 member cases assert all144 members reachable and summary1setupissue/3active-leave count unchanged. Global issues are outside card/member slices by source. However the fixture warning is generic and unit-level; prepared reflow fixture has only5 rows and checks issues element visibility, not a concrete missing-staffing/leave conflict tied to a hidden member or its visible count/detail.",
+          "status": "hidden_slice_safety_signal_case_missing"
+        }
+      ],
+      "existing_support": [
+        "Current unitMemberList bounds initial render to12 and Show next adds24; Showall and member search reach every item.",
+        "Current monthly source makes record totals descriptive and unknown explicit.",
+        "Historical print proof covers all123 names, filtered61, original nodes/focus/selection and Chromium PDF text; source helpers still match, but old main/theme hashes differ and no current physical-print claim follows."
+      ],
+      "focused_gaps": [
+        "Return an explicit staffing/leave warning attached to posting/member71 outside initial12 and first50 table rows. Initially assert the member is hidden while visible card/global summary retains the warning count.",
+        "Open the existing summary/disclosure and assert the full returned message and affected date remain available; expand/search to reach the same hidden member without losing the warning.",
+        "Verify ordinary matching filters do not erase global safety summaries and initial/expanded counts retain their meanings.",
+        "Retain historical measurement files with their true limits and explicit source applicability; no need to invent universal performance thresholds or claim every timing improved."
+      ],
+      "recommendation": "Keep154 unaccepted until hidden-slice safety context is actually exercised; measured disclosure rationale and broad reachability evidence are useful but not the whole requirement."
+    }
+  ],
+  "historical_evidence_policy": [
+    "Existing passed reports retain their original engine/width/fixture/source scopes.",
+    "Current monthly member report matches audited main/filter/member modules; some other raw reports omit source hashes but are bound by the monthly execution wrapper.",
+    "Historical pagination/print helpers match current filter/member sources; old main/theme hashes differ. Retain historical scope or prove changed-render/source applicability before a current whole-item claim.",
+    "Measured performance snapshots support choosing bounded disclosure; they are not universal production/INP/physical-device speed claims."
+  ],
+  "next_execution_gate": "Await root held-source notification before fresh browser runs. Address meaningful assertions in a new/current test version; preserve the audited prepared script snapshot and do not reinterpret unrun tests as passes.",
+  "evidence_sha256": {
+    "docs/premium-ui/acceptance-criteria/items-087-173.json": "a7bf1322bd8e08a1fddd4195095d9cc52a8867a1b8a2bda9b523917fae458576",
+    "tmp/unit149-154-independent-audit-source/manifest.json": "d911a7ea499861674de56211b20eb066dc0538faaeefa8a407690cd1f812f66b",
+    "docs/premium-ui/qa-unit-board-monthly-v3-integrated.json": "7824d0c393b05915017f7e693192423da938a60ad12a2e736e42a9b809ba6420",
+    "docs/premium-ui/qa-unit-members-monthly-v3-integrated.json": "da75a497025bef025e48279fa40724b5e1973246fa22f1f58e630715c9da4e0a",
+    "docs/premium-ui/reviews/unit-monthly-v3-integrated-execution.json": "5b3d70e49f799b5253656fe79c7d7b2cc86757f37bfc543a5ed57c2f46997efa",
+    "docs/premium-ui/qa-unit-monthly-v3-integrated.json": "e728c9942e212225d2715d7692604190d32eaef3bb18ce3d0b9b69f67c1d86d4",
+    "docs/premium-ui/qa-unit-pagination-independent.json": "5f3c2dcd465126c45e939bfd709c6913ea0acae1ca0110818e175a89aa13f137",
+    "docs/premium-ui/qa-unit-print-independent.json": "83ca545a23e69fedcfcf02a3117ffcca0e608b726a62d866047270f6fe3b32b3",
+    "docs/premium-ui/qa-unit-performance.json": "966038b382b5cf86706385a15d32bd94cd4d3fd2c054a357e92dbf50c2906a78",
+    "docs/premium-ui/qa-unit-member-performance-comparison.json": "4867acf1f29156e79c0aa3465bb53ab95b568fba834b97e3cbce00e7c3b5a6c0",
+    "frontend/tests/premium-unit-members-monthly-v3-integrated.browser.mjs": "3bfa23c7263121d6dc748ee7fa8513bdb70d8aaa5bd8f98cf72d08979f34f318",
+    "frontend/tests/premium-unit-pagination-independent.browser.mjs": "1381103cc51d7e40e098a804876d9bd53a6f3733a5f707232205e4252e9c8a56",
+    "frontend/tests/premium-unit-print-independent.browser.mjs": "6a2757d04b3bcada65027a8710acdf1d7a02a02e69482c1bf0399d11cb88ced8"
+  },
+  "limits": [
+    "No current runtime/optical pass or failure asserted by this documentary audit.",
+    "No app/backend/API/rule/permission/persistence/export or current acceptance changes.",
+    "Physical/nativeAT remain separately pending; no new unrelated hard gate imposed on these four original criteria."
+  ]
+}

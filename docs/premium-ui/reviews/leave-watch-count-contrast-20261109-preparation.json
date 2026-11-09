@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-09T09:18:37.312874+00:00",
+  "status": "prepared_not_executed",
+  "scope": "N02 Leave calendar watch-count actual renderer contrast only; six3engine320/1280light contexts",
+  "test": "frontend/tests/premium-leave-watch-count-contrast-20261109-diagnostic.browser.mjs",
+  "test_sha256": "f6f523da22f3ee0510e8d910fcb3bc920143d7951c3903bcea95bb497a954c7e",
+  "source_sha256": {
+    "frontend/src/main.ts": "2b8f68c069e599af50a4ac1b2146a7018d6268f290b90a9949130a057dc91b43",
+    "frontend/src/member-workspace.ts": "105cc1d91ea4815d565ad4859fc01412cf576a3203c07834f4010e3fef7ef1a5",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "acc46b2249087f365ca855bcd9630628c390c4cdf013301daaee40ede80e55f4",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+  },
+  "source_proof": {
+    "renderer": "frontend/src/main.ts:3913 renderLeaveCalendarDays",
+    "classification": "busiest=max(calendar entry counts); share=entries.length/busiest; high >=.75; watch >=.4; normal otherwise",
+    "actual_markup": "button.leave-day-card.leave-pressure-watch > strong.leave-day-card__count; main.ts:3933?3936",
+    "fixture": "2026-11-05 four approved unique people;2026-11-06 ten approved unique people;14matching requests/members; watch share.4,high share1",
+    "style": "styles.css:6128?6148, premium-theme.css light warning token",
+    "expected_candidate": "12px normal text; arithmetic3.5378:1 requires actual computed confirmation"
+  },
+  "execution_policy": {
+    "not_run": true,
+    "execute_only_after_root_releases_browser_load": true,
+    "command": "node tests/premium-leave-watch-count-contrast-20261109-diagnostic.browser.mjs",
+    "cwd": "frontend",
+    "source_guard": "exact main2b8/member105cc/CSSacc46/styles3069; fail before browser on mismatch",
+    "expected_behavior": "Retain all six diagnostic measurements before aggregate4.5:1 assertion; actual failedcontrast exitsnonzero with evidence, not a harnesspass.",
+    "request_boundary": "Every nonGET intercepted599, neverforwarded; GET fixtures locallyfulfilled, remainingGET forwarded onlyRAM8031",
+    "output": "docs/premium-ui/qa-leave-watch-count-contrast-20261109-diagnostic.json mustnotalreadyexist"
+  },
+  "measurement": "Computed font size/weight chooses4.5normal or3large; compositeRGBA foreground and opaque-backgroundancestorlayers; reject relevant gradients/filter/opacity ratherthanclaimpixelmeasurement; noCSS overrides.",
+  "limitations": [
+    "No browserexecutionyet",
+    "NoCSS/application/backend edits",
+    "No other decorative icons or wholeitem28coverage",
+    "Sourcehashchange requires inspectedrebase, not blindrehash"
+  ]
+}

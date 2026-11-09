@@ -1,0 +1,5471 @@
+{
+  "recorded_at_utc": "2026-10-29T01:07:23.861Z",
+  "source_sha256": {
+    "src/import-review-presentation.ts": "4371d8a267480de774dbe32232cdeead69c041d8803bdcc9d9b24d5c7d13f8a9",
+    "src/member-import.ts": "d985f4aefa5bfdd71b6f0a53995a8c63b3c827639158ec584b97e72f14ced061",
+    "src/member-workspace.ts": "0ef8c1ef2234c7a50d8ca10b8aaa3998a654d452f563bd4c75531faef09d6c63",
+    "src/operational-import.ts": "6f9a3e6e40a3faa63c3a023c15e56e1a9ee22e46a734247bd085954e3e9340e1",
+    "src/past-duties.ts": "659bc4a927a8d4efbaf0ab0050941262555319e3fbc1ca85064332435ea32bd1",
+    "src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "src/ui.ts": "680d7830bca8826b46b6f1dc2c0d064d2a3a2e16fb41188d2c323de6bccf85b2",
+    "src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "src/premium-theme.css": "b34613418086c715ed4eee37ddfc115daccffecc5399772078ef2076de620868",
+    "tests/premium-leave-status-import-regression-v4-integrated.browser.mjs": "f7ee9f44c09936f5c8aa22ec166f2632f367163399a50bd29d981bfcf9c47289"
+  },
+  "candidate": {
+    "path": "src/operational-import.ts",
+    "sha256": "6f9a3e6e40a3faa63c3a023c15e56e1a9ee22e46a734247bd085954e3e9340e1",
+    "base": "http://127.0.0.1:5197"
+  },
+  "scope": "Two actual operational import components (leave/units), collapsedmissingstatus/staleness cues plus native file/correction controls and intercepted requests in three engines at320/1280. Scope variants and returned-mode authority. No Apply persistence, production endpoint or physical-device claim.",
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "surface": "leave",
+      "invalidFieldGeometry": {
+        "x": 33,
+        "y": 507.65625,
+        "width": 239,
+        "height": 44
+      },
+      "rowSpecificAttention": true,
+      "returnedModeDifferentFromInput": true,
+      "scopeVariants": [
+        "main",
+        "empty",
+        "omitted",
+        "null",
+        "object",
+        "string"
+      ],
+      "freshEligibilityProbes": [
+        {
+          "pathname": "/api/v1/import-review/operational-reviewed/apply",
+          "method": "POST",
+          "contentType": "application/json",
+          "body": {
+            "excluded": [],
+            "acknowledge_warnings": true
+          }
+        }
+      ],
+      "nativeCorrectionStaleBlockedApply": true,
+      "modeInvalidation": true,
+      "nativeReplacementClearsAuthority": true,
+      "preview503RetainsStaleAuthority": true,
+      "manualRetry": true,
+      "escapedFullServerIssue": true,
+      "unexpectedWrites": 0,
+      "actualBackendWrites": 0,
+      "previewRequests": [
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "append"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "update_matching"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "omitted",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "null",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "object",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "string",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-omitted",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-null",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-unknown",
+          "returnedMode": "<img src=x onerror=alert(1)>"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-adversarial",
+          "returnedMode": "__proto__"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-adversarial",
+          "returnedMode": "constructor"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-adversarial",
+          "returnedMode": "toString"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "update_matching",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        }
+      ]
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "surface": "units",
+      "invalidFieldGeometry": {
+        "x": 33,
+        "y": 520.6875,
+        "width": 239,
+        "height": 44
+      },
+      "rowSpecificAttention": true,
+      "returnedModeDifferentFromInput": true,
+      "scopeVariants": [
+        "main",
+        "empty",
+        "omitted",
+        "null",
+        "object",
+        "string"
+      ],
+      "freshEligibilityProbes": [
+        {
+          "pathname": "/api/v1/import-review/operational-reviewed/apply",
+          "method": "POST",
+          "contentType": "application/json",
+          "body": {
+            "excluded": [],
+            "acknowledge_warnings": true
+          }
+        }
+      ],
+      "nativeCorrectionStaleBlockedApply": true,
+      "modeInvalidation": true,
+      "nativeReplacementClearsAuthority": true,
+      "preview503RetainsStaleAuthority": true,
+      "manualRetry": true,
+      "escapedFullServerIssue": true,
+      "unexpectedWrites": 0,
+      "actualBackendWrites": 0,
+      "previewRequests": [
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "append"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "update_matching"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "omitted",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "null",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "object",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "string",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-omitted",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-null",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-unknown",
+          "returnedMode": "<img src=x onerror=alert(1)>"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-adversarial",
+          "returnedMode": "__proto__"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-adversarial",
+          "returnedMode": "constructor"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-adversarial",
+          "returnedMode": "toString"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "update_matching",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        }
+      ]
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "surface": "leave",
+      "invalidFieldGeometry": {
+        "x": 122,
+        "y": 481.484375,
+        "width": 246.25,
+        "height": 44
+      },
+      "rowSpecificAttention": true,
+      "returnedModeDifferentFromInput": true,
+      "scopeVariants": [
+        "main",
+        "empty",
+        "omitted",
+        "null",
+        "object",
+        "string"
+      ],
+      "freshEligibilityProbes": [
+        {
+          "pathname": "/api/v1/import-review/operational-reviewed/apply",
+          "method": "POST",
+          "contentType": "application/json",
+          "body": {
+            "excluded": [],
+            "acknowledge_warnings": true
+          }
+        }
+      ],
+      "nativeCorrectionStaleBlockedApply": true,
+      "modeInvalidation": true,
+      "nativeReplacementClearsAuthority": true,
+      "preview503RetainsStaleAuthority": true,
+      "manualRetry": true,
+      "escapedFullServerIssue": true,
+      "unexpectedWrites": 0,
+      "actualBackendWrites": 0,
+      "previewRequests": [
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "append"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "update_matching"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "omitted",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "null",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "object",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "string",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-omitted",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-null",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-unknown",
+          "returnedMode": "<img src=x onerror=alert(1)>"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-adversarial",
+          "returnedMode": "__proto__"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-adversarial",
+          "returnedMode": "constructor"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-adversarial",
+          "returnedMode": "toString"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "update_matching",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        }
+      ]
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "surface": "units",
+      "invalidFieldGeometry": {
+        "x": 122,
+        "y": 481.109375,
+        "width": 246.25,
+        "height": 44
+      },
+      "rowSpecificAttention": true,
+      "returnedModeDifferentFromInput": true,
+      "scopeVariants": [
+        "main",
+        "empty",
+        "omitted",
+        "null",
+        "object",
+        "string"
+      ],
+      "freshEligibilityProbes": [
+        {
+          "pathname": "/api/v1/import-review/operational-reviewed/apply",
+          "method": "POST",
+          "contentType": "application/json",
+          "body": {
+            "excluded": [],
+            "acknowledge_warnings": true
+          }
+        }
+      ],
+      "nativeCorrectionStaleBlockedApply": true,
+      "modeInvalidation": true,
+      "nativeReplacementClearsAuthority": true,
+      "preview503RetainsStaleAuthority": true,
+      "manualRetry": true,
+      "escapedFullServerIssue": true,
+      "unexpectedWrites": 0,
+      "actualBackendWrites": 0,
+      "previewRequests": [
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "append"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "update_matching"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "omitted",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "null",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "object",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "string",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-omitted",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-null",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-unknown",
+          "returnedMode": "<img src=x onerror=alert(1)>"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-adversarial",
+          "returnedMode": "__proto__"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-adversarial",
+          "returnedMode": "constructor"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-adversarial",
+          "returnedMode": "toString"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "update_matching",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        }
+      ]
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "surface": "leave",
+      "invalidFieldGeometry": {
+        "x": 33,
+        "y": 507.70001220703125,
+        "width": 254,
+        "height": 44
+      },
+      "rowSpecificAttention": true,
+      "returnedModeDifferentFromInput": true,
+      "scopeVariants": [
+        "main",
+        "empty",
+        "omitted",
+        "null",
+        "object",
+        "string"
+      ],
+      "freshEligibilityProbes": [
+        {
+          "pathname": "/api/v1/import-review/operational-reviewed/apply",
+          "method": "POST",
+          "contentType": "application/json",
+          "body": {
+            "excluded": [],
+            "acknowledge_warnings": true
+          }
+        }
+      ],
+      "nativeCorrectionStaleBlockedApply": true,
+      "modeInvalidation": true,
+      "nativeReplacementClearsAuthority": true,
+      "preview503RetainsStaleAuthority": true,
+      "manualRetry": true,
+      "escapedFullServerIssue": true,
+      "unexpectedWrites": 0,
+      "actualBackendWrites": 0,
+      "previewRequests": [
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "append"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "update_matching"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "omitted",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "null",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "object",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "string",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-omitted",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-null",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-unknown",
+          "returnedMode": "<img src=x onerror=alert(1)>"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-adversarial",
+          "returnedMode": "__proto__"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-adversarial",
+          "returnedMode": "constructor"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-adversarial",
+          "returnedMode": "toString"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "update_matching",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        }
+      ]
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "surface": "units",
+      "invalidFieldGeometry": {
+        "x": 33,
+        "y": 520.7000122070312,
+        "width": 254,
+        "height": 44
+      },
+      "rowSpecificAttention": true,
+      "returnedModeDifferentFromInput": true,
+      "scopeVariants": [
+        "main",
+        "empty",
+        "omitted",
+        "null",
+        "object",
+        "string"
+      ],
+      "freshEligibilityProbes": [
+        {
+          "pathname": "/api/v1/import-review/operational-reviewed/apply",
+          "method": "POST",
+          "contentType": "application/json",
+          "body": {
+            "excluded": [],
+            "acknowledge_warnings": true
+          }
+        }
+      ],
+      "nativeCorrectionStaleBlockedApply": true,
+      "modeInvalidation": true,
+      "nativeReplacementClearsAuthority": true,
+      "preview503RetainsStaleAuthority": true,
+      "manualRetry": true,
+      "escapedFullServerIssue": true,
+      "unexpectedWrites": 0,
+      "actualBackendWrites": 0,
+      "previewRequests": [
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "append"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "update_matching"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "omitted",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "null",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "object",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "string",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-omitted",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-null",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-unknown",
+          "returnedMode": "<img src=x onerror=alert(1)>"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-adversarial",
+          "returnedMode": "__proto__"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-adversarial",
+          "returnedMode": "constructor"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-adversarial",
+          "returnedMode": "toString"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "update_matching",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        }
+      ]
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "surface": "leave",
+      "invalidFieldGeometry": {
+        "x": 122,
+        "y": 481.79998779296875,
+        "width": 250,
+        "height": 44
+      },
+      "rowSpecificAttention": true,
+      "returnedModeDifferentFromInput": true,
+      "scopeVariants": [
+        "main",
+        "empty",
+        "omitted",
+        "null",
+        "object",
+        "string"
+      ],
+      "freshEligibilityProbes": [
+        {
+          "pathname": "/api/v1/import-review/operational-reviewed/apply",
+          "method": "POST",
+          "contentType": "application/json",
+          "body": {
+            "excluded": [],
+            "acknowledge_warnings": true
+          }
+        }
+      ],
+      "nativeCorrectionStaleBlockedApply": true,
+      "modeInvalidation": true,
+      "nativeReplacementClearsAuthority": true,
+      "preview503RetainsStaleAuthority": true,
+      "manualRetry": true,
+      "escapedFullServerIssue": true,
+      "unexpectedWrites": 0,
+      "actualBackendWrites": 0,
+      "previewRequests": [
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "append"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "update_matching"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "omitted",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "null",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "object",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "string",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-omitted",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-null",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-unknown",
+          "returnedMode": "<img src=x onerror=alert(1)>"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-adversarial",
+          "returnedMode": "__proto__"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-adversarial",
+          "returnedMode": "constructor"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-adversarial",
+          "returnedMode": "toString"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "update_matching",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        }
+      ]
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "surface": "units",
+      "invalidFieldGeometry": {
+        "x": 122,
+        "y": 481.3999938964844,
+        "width": 250,
+        "height": 44.000030517578125
+      },
+      "rowSpecificAttention": true,
+      "returnedModeDifferentFromInput": true,
+      "scopeVariants": [
+        "main",
+        "empty",
+        "omitted",
+        "null",
+        "object",
+        "string"
+      ],
+      "freshEligibilityProbes": [
+        {
+          "pathname": "/api/v1/import-review/operational-reviewed/apply",
+          "method": "POST",
+          "contentType": "application/json",
+          "body": {
+            "excluded": [],
+            "acknowledge_warnings": true
+          }
+        }
+      ],
+      "nativeCorrectionStaleBlockedApply": true,
+      "modeInvalidation": true,
+      "nativeReplacementClearsAuthority": true,
+      "preview503RetainsStaleAuthority": true,
+      "manualRetry": true,
+      "escapedFullServerIssue": true,
+      "unexpectedWrites": 0,
+      "actualBackendWrites": 0,
+      "previewRequests": [
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "append"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "update_matching"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "omitted",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "null",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "object",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "string",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-omitted",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-null",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-unknown",
+          "returnedMode": "<img src=x onerror=alert(1)>"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-adversarial",
+          "returnedMode": "__proto__"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-adversarial",
+          "returnedMode": "constructor"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-adversarial",
+          "returnedMode": "toString"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "update_matching",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        }
+      ]
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "surface": "leave",
+      "invalidFieldGeometry": {
+        "x": 33,
+        "y": 506.65625,
+        "width": 254,
+        "height": 44
+      },
+      "rowSpecificAttention": true,
+      "returnedModeDifferentFromInput": true,
+      "scopeVariants": [
+        "main",
+        "empty",
+        "omitted",
+        "null",
+        "object",
+        "string"
+      ],
+      "freshEligibilityProbes": [
+        {
+          "pathname": "/api/v1/import-review/operational-reviewed/apply",
+          "method": "POST",
+          "contentType": "application/json",
+          "body": {
+            "excluded": [],
+            "acknowledge_warnings": true
+          }
+        }
+      ],
+      "nativeCorrectionStaleBlockedApply": true,
+      "modeInvalidation": true,
+      "nativeReplacementClearsAuthority": true,
+      "preview503RetainsStaleAuthority": true,
+      "manualRetry": true,
+      "escapedFullServerIssue": true,
+      "unexpectedWrites": 0,
+      "actualBackendWrites": 0,
+      "previewRequests": [
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "append"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "update_matching"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "omitted",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "null",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "object",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "string",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-omitted",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-null",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-unknown",
+          "returnedMode": "<img src=x onerror=alert(1)>"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-adversarial",
+          "returnedMode": "__proto__"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-adversarial",
+          "returnedMode": "constructor"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-adversarial",
+          "returnedMode": "toString"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "update_matching",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        }
+      ]
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "surface": "units",
+      "invalidFieldGeometry": {
+        "x": 33,
+        "y": 520.6875,
+        "width": 254,
+        "height": 44
+      },
+      "rowSpecificAttention": true,
+      "returnedModeDifferentFromInput": true,
+      "scopeVariants": [
+        "main",
+        "empty",
+        "omitted",
+        "null",
+        "object",
+        "string"
+      ],
+      "freshEligibilityProbes": [
+        {
+          "pathname": "/api/v1/import-review/operational-reviewed/apply",
+          "method": "POST",
+          "contentType": "application/json",
+          "body": {
+            "excluded": [],
+            "acknowledge_warnings": true
+          }
+        }
+      ],
+      "nativeCorrectionStaleBlockedApply": true,
+      "modeInvalidation": true,
+      "nativeReplacementClearsAuthority": true,
+      "preview503RetainsStaleAuthority": true,
+      "manualRetry": true,
+      "escapedFullServerIssue": true,
+      "unexpectedWrites": 0,
+      "actualBackendWrites": 0,
+      "previewRequests": [
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "append"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "update_matching"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "omitted",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "null",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "object",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "string",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-omitted",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-null",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-unknown",
+          "returnedMode": "<img src=x onerror=alert(1)>"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-adversarial",
+          "returnedMode": "__proto__"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-adversarial",
+          "returnedMode": "constructor"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-adversarial",
+          "returnedMode": "toString"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "update_matching",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        }
+      ]
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "surface": "leave",
+      "invalidFieldGeometry": {
+        "x": 122,
+        "y": 484.984375,
+        "width": 250,
+        "height": 47.5
+      },
+      "rowSpecificAttention": true,
+      "returnedModeDifferentFromInput": true,
+      "scopeVariants": [
+        "main",
+        "empty",
+        "omitted",
+        "null",
+        "object",
+        "string"
+      ],
+      "freshEligibilityProbes": [
+        {
+          "pathname": "/api/v1/import-review/operational-reviewed/apply",
+          "method": "POST",
+          "contentType": "application/json",
+          "body": {
+            "excluded": [],
+            "acknowledge_warnings": true
+          }
+        }
+      ],
+      "nativeCorrectionStaleBlockedApply": true,
+      "modeInvalidation": true,
+      "nativeReplacementClearsAuthority": true,
+      "preview503RetainsStaleAuthority": true,
+      "manualRetry": true,
+      "escapedFullServerIssue": true,
+      "unexpectedWrites": 0,
+      "actualBackendWrites": 0,
+      "previewRequests": [
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "append"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "update_matching"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "omitted",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "null",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "object",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "string",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-omitted",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-null",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-unknown",
+          "returnedMode": "<img src=x onerror=alert(1)>"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-adversarial",
+          "returnedMode": "__proto__"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-adversarial",
+          "returnedMode": "constructor"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-adversarial",
+          "returnedMode": "toString"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "update_matching",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        }
+      ]
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "surface": "units",
+      "invalidFieldGeometry": {
+        "x": 122,
+        "y": 484.609375,
+        "width": 250,
+        "height": 47.5
+      },
+      "rowSpecificAttention": true,
+      "returnedModeDifferentFromInput": true,
+      "scopeVariants": [
+        "main",
+        "empty",
+        "omitted",
+        "null",
+        "object",
+        "string"
+      ],
+      "freshEligibilityProbes": [
+        {
+          "pathname": "/api/v1/import-review/operational-reviewed/apply",
+          "method": "POST",
+          "contentType": "application/json",
+          "body": {
+            "excluded": [],
+            "acknowledge_warnings": true
+          }
+        }
+      ],
+      "nativeCorrectionStaleBlockedApply": true,
+      "modeInvalidation": true,
+      "nativeReplacementClearsAuthority": true,
+      "preview503RetainsStaleAuthority": true,
+      "manualRetry": true,
+      "escapedFullServerIssue": true,
+      "unexpectedWrites": 0,
+      "actualBackendWrites": 0,
+      "previewRequests": [
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "append"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "update_matching"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "main",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "omitted",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "null",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "object",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "string",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-omitted",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-null",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-unknown",
+          "returnedMode": "<img src=x onerror=alert(1)>"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-adversarial",
+          "returnedMode": "__proto__"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-adversarial",
+          "returnedMode": "constructor"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "mode-adversarial",
+          "returnedMode": "toString"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {},
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "append",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        },
+        {
+          "options": {
+            "date_format": "auto",
+            "mapping": {
+              "Name": "member_name"
+            },
+            "corrections": {
+              "CSV:2": {
+                "starts_on": "2026-09-04"
+              }
+            },
+            "repeated": {
+              "members": {},
+              "units": {}
+            },
+            "excluded": []
+          },
+          "mode": "update_matching",
+          "month": "2026-10",
+          "variant": "empty",
+          "returnedMode": "replace_month"
+        }
+      ]
+    }
+  ]
+}

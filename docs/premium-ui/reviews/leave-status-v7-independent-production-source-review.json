@@ -1,0 +1,90 @@
+{
+  "reviewer": "/root/remaining_icons_independent",
+  "recorded_at_utc": "2026-10-28T22:59:30.933206+00:00",
+  "candidate": "tmp/leave-status-v7",
+  "decision": "pass_bounded_production_source_gate_runtime_still_required",
+  "integration_gate": "requires_actual_v7_native_and_helper_fallback_lifecycle_results",
+  "application_changed_by_reviewer": false,
+  "items_accepted": [],
+  "source_check": {
+    "path": "docs/premium-ui/reviews/leave-status-v7-independent-source-check.json",
+    "sha256": "2879ece0496d994e0e39b09be47c75ae1471dca60abd0358db9a879017ae6685",
+    "passed": true
+  },
+  "delta_check": {
+    "path": "docs/premium-ui/reviews/leave-status-v7-independent-delta-check.json",
+    "sha256": "c718f03d950b20c85949811b9d8f18467bc29c7ac117d29b45e877db4aef8de4",
+    "passed": true
+  },
+  "candidate_sha256": {
+    "main.ts": "cefb30a235398c3a00d77279b81b8b37a0a1c6206c73f30e4e914af94fab0f03",
+    "premium-theme.css": "aa0d3c25681b83298cd53f45f009ed2f1f8e64b0f334903936d269c886d399d7",
+    "leave-calendar-focus.ts": "93bc00fb0c753ef342412e2f58730126d17918c09edfd6f3e58f72b43d1cc2b3"
+  },
+  "v6_findings_resolved": [
+    "LEAVE-FOCUS-CANCEL-001 cleanupclearedbeforeguardednativecancel",
+    "LEAVE-FOCUS-NO-RAF-002 missingRAFhonestfallback",
+    "LEAVE-FOCUS-DEADLINE-003 deadlinewithoutstablecompletionhonestfallback"
+  ],
+  "existing_effects_parity": {
+    "expressions": 154,
+    "assigned_handlers": 3,
+    "other_functions": 330,
+    "exceptions_removed_for_comparison": [
+      "newhelperimport",
+      "AbortSignalownedhelperinstallation",
+      "intentionaldayopenerfocus"
+    ]
+  },
+  "opener_repair": {
+    "source": "existingdata-leave-dayintentionalactivationbranch",
+    "effect": "focus exactintentionalopenerwithpreventScrollbeforeexistingmodalopen",
+    "launchers": [
+      "monthcalendar",
+      "Daylist",
+      "pressureReviewday"
+    ],
+    "diagnostic": {
+      "path": "docs/premium-ui/reviews/leave-pointer-opener-v6-diagnostic-review.json",
+      "sha256": "13067b29862c54524cc2f9a9fdd82bb65696ef68fc03a53b1bb2fd3b8eaed25a",
+      "all_artifact_hashes_verified": true,
+      "raw_before_wrong_opener": 4,
+      "raw_response_repair_exact_opener": 4
+    },
+    "limit": "Responseexperiment notintegratedpass; actualv7matrixrequired"
+  },
+  "new_motion_lifecycle_exception": "Newscopedinput/focuslisteners andboundedmonotonicRAF; instant horizontal scrollBywithscrollLeftfallback; nohelperfocuscalls/verticalscroll/timers/API/persistence. Actualcomputedring/fullgeometry stability andnormal/reducedmotion needfresh evidence.",
+  "runtime_required": [
+    "actualfullnativev7normal/stressallengine/theme/layoutmatrix",
+    "actualmodulemissingthrowingRAF/cancelRAF/scrollBy/scrollLeftfallback",
+    "deadlinemovingcurrentlyfitandhelpresetonlystable",
+    "newfocus/manualinsideoutsideintent/abort/disconnect/hidden/inert/rerendercleanup",
+    "month/list/pressurelaunchercloseexactopener",
+    "existingleaveandprioracceptanceregressionsplusheldunit/build"
+  ],
+  "global145147_next_work": [
+    {
+      "source": "frontend/src/reference-workspace.ts:608",
+      "gap": "unqualifiedpendingwarnsmappingguidance"
+    },
+    {
+      "source": "frontend/src/member-workspace.ts:616",
+      "gap": "inventoryactualsession/statusguidancewithoutall-dayabsenceoruniversalpendingassignabilityinference"
+    },
+    {
+      "source": "frontend/src/leave-approval.ts:24",
+      "gap": "pending-onlyrepresentationexplicitruntimeapplicabilityknownunknownmissing"
+    },
+    {
+      "source": "frontend/src/operational-import.ts:494",
+      "gap": "rawstatusinputincollapsedEditrow; examineactualreturnedvalues/after/omissionsbeforeaddingdisplaylabel; preserveeditablecodesanddonotinventdefaultorconflateimportreadinesswithapproval"
+    }
+  ],
+  "narrative": "docs/premium-ui/reviews/leave-status-v7-independent-production-source-review.md",
+  "limits": [
+    "No actualv7runtime claim bythissourcegate.",
+    "No whole145147/calendar-onlyscope substitution.",
+    "No app/backend/database/service/ledger edits byreviewer.",
+    "Physicaldevice/nativeATpending."
+  ]
+}

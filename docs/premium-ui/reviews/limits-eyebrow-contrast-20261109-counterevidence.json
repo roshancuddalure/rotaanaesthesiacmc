@@ -1,0 +1,689 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-09T09:38:33.503051+00:00",
+  "reviewer": "theme_foundation_closeout source/evidence audit; root executed browser diagnostic",
+  "scope": "N04 boundedactualLimits hero/history/saveheader eyebrowcounterevidence; no whole28acceptance",
+  "decision": "All36actualpairingspassnormaltext4.5. Literalchampagneonwhitecandidate isnotactualcomputedcolor/background inthesecontexts. NoCSSfix needed.",
+  "execution": {
+    "report": "docs/premium-ui/qa-limits-eyebrow-contrast-20261109-diagnostic.json",
+    "report_sha256": "f4b958df7bc0955151e33c4dbfd4b2d33feba925b936361621c1732432fc3e65",
+    "test": "frontend/tests/premium-limits-eyebrow-contrast-20261109-diagnostic.browser.mjs",
+    "test_sha256": "c1bc74765f7efb5caf66e5d2d2d1fff56ec3c528ee9f36cc9cc940acf8e494d4",
+    "log": "tmp/limits-eyebrow-contrast-20261109-diagnostic.log",
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "log_note": "Emptylog isconsistentwithsilenttestcompletion; evidenceisstructuredreport+rootobservedterminal0, notemptylogalone.",
+    "contexts": 12,
+    "measurements": 36,
+    "matrix": "3engines320/1280lightdark",
+    "saved_mutations_attempted": 0,
+    "preview_only_POST_locally_fulfilled": 12,
+    "remainingnonGETforwarded": 0
+  },
+  "cascade": {
+    "candidate_literal": {
+      "source": "frontend/src/styles.css:7045",
+      "selector": ".limits-eyebrow",
+      "color": "var(--royal-champagne)",
+      "status": "Lowerspecificity thanactualhero/headerparagraphselectors"
+    },
+    "actual_hero": {
+      "source": "frontend/src/styles.css:7050",
+      "selector": ".limits-hero__text p",
+      "color": "var(--color-text-secondary)",
+      "light_ratio": 7.5597298619286715,
+      "dark_ratio": 9.916623244393135
+    },
+    "actual_dialogs": {
+      "source": "frontend/src/styles.css:5471",
+      "selector": ".mw-header p",
+      "note": "Specificity0,1,1 beats .limits-eyebrow0,1,0 and premium-theme.css:277 :where(header...) p0,0,1. Actual computed rgb201,212,227 confirms this higher-specificity source, not champagne.",
+      "computed_colors": [
+        "rgb(201, 212, 227)"
+      ]
+    }
+  },
+  "historical_source_sha256": {
+    "src/main.ts": "7ab96e2109aec76f027bbd80bc9535ee40c0eaacc4040eea3261e4b4c8e3d2d6",
+    "src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "src/premium-theme.css": "acc46b2249087f365ca855bcd9630628c390c4cdf013301daaee40ede80e55f4",
+    "src/limits.ts": "f7c040de08fd0a593e1e071d7c09b2696344b9b85bbcd836f5367b49e4ef8db6",
+    "src/member-workspace.ts": "105cc1d91ea4815d565ad4859fc01412cf576a3203c07834f4010e3fef7ef1a5"
+  },
+  "current_source_sha256": {
+    "frontend/src/main.ts": "7ab96e2109aec76f027bbd80bc9535ee40c0eaacc4040eea3261e4b4c8e3d2d6",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "acc46b2249087f365ca855bcd9630628c390c4cdf013301daaee40ede80e55f4",
+    "frontend/src/limits.ts": "f7c040de08fd0a593e1e071d7c09b2696344b9b85bbcd836f5367b49e4ef8db6",
+    "frontend/src/member-workspace.ts": "105cc1d91ea4815d565ad4859fc01412cf576a3203c07834f4010e3fef7ef1a5"
+  },
+  "current_byteexact_dependencies": {
+    "frontend/src/main.ts": "7ab96e2109aec76f027bbd80bc9535ee40c0eaacc4040eea3261e4b4c8e3d2d6",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "acc46b2249087f365ca855bcd9630628c390c4cdf013301daaee40ede80e55f4",
+    "frontend/src/limits.ts": "f7c040de08fd0a593e1e071d7c09b2696344b9b85bbcd836f5367b49e4ef8db6",
+    "frontend/src/member-workspace.ts": "105cc1d91ea4815d565ad4859fc01412cf576a3203c07834f4010e3fef7ef1a5"
+  },
+  "applicability": "Reportexecuted7abmain. SharedCSS,Limitscontrollerandmembermodule unchangedcurrentwherelisted. Main mayadvanceforunrelatedprofile repair; no blindreportrehashorclaimfreshbrowserexecution. Limits rendering livesinsourceheldlimits.ts.",
+  "samples": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "theme": "light",
+      "surface": "hero",
+      "color": "rgb(79, 83, 106)",
+      "effective_background": [
+        255,
+        255,
+        255,
+        1
+      ],
+      "fontSize": 12,
+      "fontWeight": 800,
+      "threshold": 4.5,
+      "ratio": 7.5597298619286715
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "theme": "light",
+      "surface": "history-dialog-header",
+      "color": "rgb(201, 212, 227)",
+      "effective_background": [
+        23,
+        29,
+        56,
+        1
+      ],
+      "fontSize": 12,
+      "fontWeight": 800,
+      "threshold": 4.5,
+      "ratio": 11.037815919196728
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "theme": "light",
+      "surface": "save-dialog-header",
+      "color": "rgb(201, 212, 227)",
+      "effective_background": [
+        23,
+        29,
+        56,
+        1
+      ],
+      "fontSize": 12,
+      "fontWeight": 800,
+      "threshold": 4.5,
+      "ratio": 11.037815919196728
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "theme": "dark",
+      "surface": "hero",
+      "color": "rgb(205, 200, 221)",
+      "effective_background": [
+        27,
+        32,
+        51,
+        1
+      ],
+      "fontSize": 12,
+      "fontWeight": 800,
+      "threshold": 4.5,
+      "ratio": 9.916623244393135
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "theme": "dark",
+      "surface": "history-dialog-header",
+      "color": "rgb(201, 212, 227)",
+      "effective_background": [
+        16,
+        20,
+        39,
+        1
+      ],
+      "fontSize": 12,
+      "fontWeight": 800,
+      "threshold": 4.5,
+      "ratio": 12.167983774250553
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "theme": "dark",
+      "surface": "save-dialog-header",
+      "color": "rgb(201, 212, 227)",
+      "effective_background": [
+        16,
+        20,
+        39,
+        1
+      ],
+      "fontSize": 12,
+      "fontWeight": 800,
+      "threshold": 4.5,
+      "ratio": 12.167983774250553
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "theme": "light",
+      "surface": "hero",
+      "color": "rgb(79, 83, 106)",
+      "effective_background": [
+        255,
+        255,
+        255,
+        1
+      ],
+      "fontSize": 12,
+      "fontWeight": 800,
+      "threshold": 4.5,
+      "ratio": 7.5597298619286715
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "theme": "light",
+      "surface": "history-dialog-header",
+      "color": "rgb(201, 212, 227)",
+      "effective_background": [
+        23,
+        29,
+        56,
+        1
+      ],
+      "fontSize": 12,
+      "fontWeight": 800,
+      "threshold": 4.5,
+      "ratio": 11.037815919196728
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "theme": "light",
+      "surface": "save-dialog-header",
+      "color": "rgb(201, 212, 227)",
+      "effective_background": [
+        23,
+        29,
+        56,
+        1
+      ],
+      "fontSize": 12,
+      "fontWeight": 800,
+      "threshold": 4.5,
+      "ratio": 11.037815919196728
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "theme": "dark",
+      "surface": "hero",
+      "color": "rgb(205, 200, 221)",
+      "effective_background": [
+        27,
+        32,
+        51,
+        1
+      ],
+      "fontSize": 12,
+      "fontWeight": 800,
+      "threshold": 4.5,
+      "ratio": 9.916623244393135
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "theme": "dark",
+      "surface": "history-dialog-header",
+      "color": "rgb(201, 212, 227)",
+      "effective_background": [
+        16,
+        20,
+        39,
+        1
+      ],
+      "fontSize": 12,
+      "fontWeight": 800,
+      "threshold": 4.5,
+      "ratio": 12.167983774250553
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "theme": "dark",
+      "surface": "save-dialog-header",
+      "color": "rgb(201, 212, 227)",
+      "effective_background": [
+        16,
+        20,
+        39,
+        1
+      ],
+      "fontSize": 12,
+      "fontWeight": 800,
+      "threshold": 4.5,
+      "ratio": 12.167983774250553
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "theme": "light",
+      "surface": "hero",
+      "color": "rgb(79, 83, 106)",
+      "effective_background": [
+        255,
+        255,
+        255,
+        1
+      ],
+      "fontSize": 12,
+      "fontWeight": 800,
+      "threshold": 4.5,
+      "ratio": 7.5597298619286715
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "theme": "light",
+      "surface": "history-dialog-header",
+      "color": "rgb(201, 212, 227)",
+      "effective_background": [
+        23,
+        29,
+        56,
+        1
+      ],
+      "fontSize": 12,
+      "fontWeight": 800,
+      "threshold": 4.5,
+      "ratio": 11.037815919196728
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "theme": "light",
+      "surface": "save-dialog-header",
+      "color": "rgb(201, 212, 227)",
+      "effective_background": [
+        23,
+        29,
+        56,
+        1
+      ],
+      "fontSize": 12,
+      "fontWeight": 800,
+      "threshold": 4.5,
+      "ratio": 11.037815919196728
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "theme": "dark",
+      "surface": "hero",
+      "color": "rgb(205, 200, 221)",
+      "effective_background": [
+        27,
+        32,
+        51,
+        1
+      ],
+      "fontSize": 12,
+      "fontWeight": 800,
+      "threshold": 4.5,
+      "ratio": 9.916623244393135
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "theme": "dark",
+      "surface": "history-dialog-header",
+      "color": "rgb(201, 212, 227)",
+      "effective_background": [
+        16,
+        20,
+        39,
+        1
+      ],
+      "fontSize": 12,
+      "fontWeight": 800,
+      "threshold": 4.5,
+      "ratio": 12.167983774250553
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "theme": "dark",
+      "surface": "save-dialog-header",
+      "color": "rgb(201, 212, 227)",
+      "effective_background": [
+        16,
+        20,
+        39,
+        1
+      ],
+      "fontSize": 12,
+      "fontWeight": 800,
+      "threshold": 4.5,
+      "ratio": 12.167983774250553
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "theme": "light",
+      "surface": "hero",
+      "color": "rgb(79, 83, 106)",
+      "effective_background": [
+        255,
+        255,
+        255,
+        1
+      ],
+      "fontSize": 12,
+      "fontWeight": 800,
+      "threshold": 4.5,
+      "ratio": 7.5597298619286715
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "theme": "light",
+      "surface": "history-dialog-header",
+      "color": "rgb(201, 212, 227)",
+      "effective_background": [
+        23,
+        29,
+        56,
+        1
+      ],
+      "fontSize": 12,
+      "fontWeight": 800,
+      "threshold": 4.5,
+      "ratio": 11.037815919196728
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "theme": "light",
+      "surface": "save-dialog-header",
+      "color": "rgb(201, 212, 227)",
+      "effective_background": [
+        23,
+        29,
+        56,
+        1
+      ],
+      "fontSize": 12,
+      "fontWeight": 800,
+      "threshold": 4.5,
+      "ratio": 11.037815919196728
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "theme": "dark",
+      "surface": "hero",
+      "color": "rgb(205, 200, 221)",
+      "effective_background": [
+        27,
+        32,
+        51,
+        1
+      ],
+      "fontSize": 12,
+      "fontWeight": 800,
+      "threshold": 4.5,
+      "ratio": 9.916623244393135
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "theme": "dark",
+      "surface": "history-dialog-header",
+      "color": "rgb(201, 212, 227)",
+      "effective_background": [
+        16,
+        20,
+        39,
+        1
+      ],
+      "fontSize": 12,
+      "fontWeight": 800,
+      "threshold": 4.5,
+      "ratio": 12.167983774250553
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "theme": "dark",
+      "surface": "save-dialog-header",
+      "color": "rgb(201, 212, 227)",
+      "effective_background": [
+        16,
+        20,
+        39,
+        1
+      ],
+      "fontSize": 12,
+      "fontWeight": 800,
+      "threshold": 4.5,
+      "ratio": 12.167983774250553
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "theme": "light",
+      "surface": "hero",
+      "color": "rgb(79, 83, 106)",
+      "effective_background": [
+        255,
+        255,
+        255,
+        1
+      ],
+      "fontSize": 12,
+      "fontWeight": 800,
+      "threshold": 4.5,
+      "ratio": 7.5597298619286715
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "theme": "light",
+      "surface": "history-dialog-header",
+      "color": "rgb(201, 212, 227)",
+      "effective_background": [
+        23,
+        29,
+        56,
+        1
+      ],
+      "fontSize": 12,
+      "fontWeight": 800,
+      "threshold": 4.5,
+      "ratio": 11.037815919196728
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "theme": "light",
+      "surface": "save-dialog-header",
+      "color": "rgb(201, 212, 227)",
+      "effective_background": [
+        23,
+        29,
+        56,
+        1
+      ],
+      "fontSize": 12,
+      "fontWeight": 800,
+      "threshold": 4.5,
+      "ratio": 11.037815919196728
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "theme": "dark",
+      "surface": "hero",
+      "color": "rgb(205, 200, 221)",
+      "effective_background": [
+        27,
+        32,
+        51,
+        1
+      ],
+      "fontSize": 12,
+      "fontWeight": 800,
+      "threshold": 4.5,
+      "ratio": 9.916623244393135
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "theme": "dark",
+      "surface": "history-dialog-header",
+      "color": "rgb(201, 212, 227)",
+      "effective_background": [
+        16,
+        20,
+        39,
+        1
+      ],
+      "fontSize": 12,
+      "fontWeight": 800,
+      "threshold": 4.5,
+      "ratio": 12.167983774250553
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "theme": "dark",
+      "surface": "save-dialog-header",
+      "color": "rgb(201, 212, 227)",
+      "effective_background": [
+        16,
+        20,
+        39,
+        1
+      ],
+      "fontSize": 12,
+      "fontWeight": 800,
+      "threshold": 4.5,
+      "ratio": 12.167983774250553
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "theme": "light",
+      "surface": "hero",
+      "color": "rgb(79, 83, 106)",
+      "effective_background": [
+        255,
+        255,
+        255,
+        1
+      ],
+      "fontSize": 12,
+      "fontWeight": 800,
+      "threshold": 4.5,
+      "ratio": 7.5597298619286715
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "theme": "light",
+      "surface": "history-dialog-header",
+      "color": "rgb(201, 212, 227)",
+      "effective_background": [
+        23,
+        29,
+        56,
+        1
+      ],
+      "fontSize": 12,
+      "fontWeight": 800,
+      "threshold": 4.5,
+      "ratio": 11.037815919196728
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "theme": "light",
+      "surface": "save-dialog-header",
+      "color": "rgb(201, 212, 227)",
+      "effective_background": [
+        23,
+        29,
+        56,
+        1
+      ],
+      "fontSize": 12,
+      "fontWeight": 800,
+      "threshold": 4.5,
+      "ratio": 11.037815919196728
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "theme": "dark",
+      "surface": "hero",
+      "color": "rgb(205, 200, 221)",
+      "effective_background": [
+        27,
+        32,
+        51,
+        1
+      ],
+      "fontSize": 12,
+      "fontWeight": 800,
+      "threshold": 4.5,
+      "ratio": 9.916623244393135
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "theme": "dark",
+      "surface": "history-dialog-header",
+      "color": "rgb(201, 212, 227)",
+      "effective_background": [
+        16,
+        20,
+        39,
+        1
+      ],
+      "fontSize": 12,
+      "fontWeight": 800,
+      "threshold": 4.5,
+      "ratio": 12.167983774250553
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "theme": "dark",
+      "surface": "save-dialog-header",
+      "color": "rgb(201, 212, 227)",
+      "effective_background": [
+        16,
+        20,
+        39,
+        1
+      ],
+      "fontSize": 12,
+      "fontWeight": 800,
+      "threshold": 4.5,
+      "ratio": 12.167983774250553
+    }
+  ],
+  "limitations": [
+    "Onlyhero/history/saveheadereyebrows measured, notallLimitspairings oroperationalcontrols",
+    "Minimalonefieldfixture verifiesactualcontrollercontexts butnotallLimitsbehavior",
+    "No whole28/25/21acceptance",
+    "No physical/nativeAT checks"
+  ],
+  "application_mutations": false,
+  "acceptance_changes": false
+}

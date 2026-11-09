@@ -1,0 +1,26 @@
+{
+  "recorded_at_utc": "2026-10-31T01:16:03.393385+00:00",
+  "reviewer": "/root/unit_settings_v2_independent_review",
+  "candidate_sha256": {
+    "main.ts": "54a6849b644984698858f07c072961b47368d48cbe8bb77a8538e3973a0d29d4",
+    "unit-settings-recovery.ts": "fb9d376edbe6c4007ec7499bb8d0c113aabdf6788af96811dd8c4a6e52658403"
+  },
+  "baseline_sha256": "2798e0cbbf61b1a473695f99f9f56b57c3ad249c9987abe00421f4a50e2731eb",
+  "source_checks": {
+    "only_import_and_unit_settings_branch_changed": true,
+    "existing_unit_id_numeric_validation_exact": true,
+    "existing_update_payload_exact": true,
+    "month_captured_from_same_original_expression": true,
+    "lifetime_guard_separate_from_read_generation": true,
+    "stale_same_account_cache_invalidation_only": true
+  },
+  "runtime_diagnostic": {
+    "test": "frontend/tests/premium-unit-settings-recovery-independent-helper.browser.mjs",
+    "test_sha256": "d72a00f5cb0f0a408d11f3c98b9f3b3e784d82576e231fa91a3db2d167a09d67",
+    "log": "tmp/unit-settings-recovery-v3-independent-helper-r3.log",
+    "scope": "Isolated actual Chromium320 browser, imported frozen V3 helper, native form with production-like display rule. Not main-view workflow. Six preceding scenarios passed; seventh confirms lost focus after GET-only retry succeeds with newer unsaved draft.",
+    "failure": "helper hides focused retry before testing activeElement===state.retry; status focus fallback does not execute, focus falls to BODY",
+    "recommendation": "Do not apply V3 unchanged. Capture focus ownership before hiding retry, preserve newer focus movement, rerun all meaningful native workflows and helper isolation checks."
+  },
+  "whole_requirement_159_accepted": false
+}

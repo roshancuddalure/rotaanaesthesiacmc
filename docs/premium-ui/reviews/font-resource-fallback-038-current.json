@@ -1,0 +1,22 @@
+{
+  "recorded_at_utc": "2026-10-28T15:32:04.820990+00:00",
+  "scope": "Original38 font/icon resource resilience; whole37/39 remain open.",
+  "checks": {
+    "font_contexts": 36,
+    "font_declarations": 6,
+    "shared_svg_families": 8,
+    "unit_tests": 114,
+    "held_build": true
+  },
+  "acceptance": "docs/premium-ui/reviews/font-resource-fallback-038-acceptance.json",
+  "independent_review": "docs/premium-ui/reviews/font-resource-fallback-038-peer-final-review.json",
+  "motion_repair": "docs/premium-ui/reviews/motion039-target-reveal-current.json",
+  "limitations": [
+    "No production external resource currently exists to fail; these tests inject controlled optional resource failures without changing deployed stacks.",
+    "Failed Georgia webfont does not establish OS-font removal; generic and installed-font combinations are environment dependent.",
+    "All shared SVG families and all explicit CSS family declarations are covered; this does not certify every operational icon placement/alignment required by separate37.",
+    "CSS root200 is not browser zoom or universal enlargement of fixed-pixel labels. Existing40×44 menu target remains a separate refinement.",
+    "Physical device, software keyboard and native AT checks remain unperformed.",
+    "The real archive control is enabled but never activated; no persistence/authorization certification."
+  ]
+}

@@ -1,0 +1,2342 @@
+{
+  "recorded_at_utc": "2026-10-30T11:27:00.479Z",
+  "reviewer": "/root/dependent159_remaining_callback_audit",
+  "scope": "Read-only diagnostic of actual main normalized Addposting/Addleave save callback.24states:3engines320/1280×units/leave×sameview/guide navigation during held local save. Only preview/save POSTs locallyfulfilled; other mutations rejected and GETlocalRAM. Test asserts observed defect,not accepted behavior. No product changes.",
+  "test_sha256": "89340296babdf2e2c44b781c7b6ccf1507a4cd8601d165f3a644c2d090b53177",
+  "source_sha256": {
+    "frontend/src/main.ts": "d71d357b2cb2128249b0f76f7ddbbc9c1dff73fee208c9497b73953bc0820212",
+    "frontend/src/record-workspace.ts": "469fd6bf2e4118b15ad343d8059cd3cfb0acbc6483bea969ca5fb93488644335",
+    "frontend/src/operational-import.ts": "00a6339fb0bd56dcae64ec05cb79ad041364a502ee207dec71c95106b2c20ce8",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+  },
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "kind": "units",
+      "scenario": "same-view",
+      "outcome": {
+        "hash": "#view=units",
+        "title": [
+          "Monthly unit postings"
+        ],
+        "guide": 0,
+        "unitBoard": 1,
+        "leaveControls": 0,
+        "readsBefore": 1,
+        "readsAfter": 2
+      },
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        }
+      ],
+      "errors": [],
+      "lateRepaintObserved": false
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "kind": "units",
+      "scenario": "navigate-guide",
+      "outcome": {
+        "hash": "#view=user-guide",
+        "title": [
+          "Monthly unit postings"
+        ],
+        "guide": 0,
+        "unitBoard": 1,
+        "leaveControls": 0,
+        "readsBefore": 1,
+        "readsAfter": 2
+      },
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        }
+      ],
+      "errors": [],
+      "lateRepaintObserved": true
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "kind": "leave",
+      "scenario": "same-view",
+      "outcome": {
+        "hash": "#view=leave",
+        "title": [
+          "Leave calendar and availability"
+        ],
+        "guide": 0,
+        "unitBoard": 0,
+        "leaveControls": 1,
+        "readsBefore": 4,
+        "readsAfter": 8
+      },
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_slot"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_status"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/save"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        }
+      ],
+      "errors": [],
+      "lateRepaintObserved": false
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "kind": "leave",
+      "scenario": "navigate-guide",
+      "outcome": {
+        "hash": "#view=user-guide",
+        "title": [
+          "Leave calendar and availability"
+        ],
+        "guide": 0,
+        "unitBoard": 0,
+        "leaveControls": 1,
+        "readsBefore": 4,
+        "readsAfter": 8
+      },
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_slot"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_status"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/save"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        }
+      ],
+      "errors": [],
+      "lateRepaintObserved": true
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "kind": "units",
+      "scenario": "same-view",
+      "outcome": {
+        "hash": "#view=units",
+        "title": [
+          "Monthly unit postings"
+        ],
+        "guide": 0,
+        "unitBoard": 1,
+        "leaveControls": 0,
+        "readsBefore": 1,
+        "readsAfter": 2
+      },
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        }
+      ],
+      "errors": [],
+      "lateRepaintObserved": false
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "kind": "units",
+      "scenario": "navigate-guide",
+      "outcome": {
+        "hash": "#view=user-guide",
+        "title": [
+          "Monthly unit postings"
+        ],
+        "guide": 0,
+        "unitBoard": 1,
+        "leaveControls": 0,
+        "readsBefore": 1,
+        "readsAfter": 2
+      },
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        }
+      ],
+      "errors": [],
+      "lateRepaintObserved": true
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "kind": "leave",
+      "scenario": "same-view",
+      "outcome": {
+        "hash": "#view=leave",
+        "title": [
+          "Leave calendar and availability"
+        ],
+        "guide": 0,
+        "unitBoard": 0,
+        "leaveControls": 1,
+        "readsBefore": 4,
+        "readsAfter": 8
+      },
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_slot"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_status"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/save"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        }
+      ],
+      "errors": [],
+      "lateRepaintObserved": false
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "kind": "leave",
+      "scenario": "navigate-guide",
+      "outcome": {
+        "hash": "#view=user-guide",
+        "title": [
+          "Leave calendar and availability"
+        ],
+        "guide": 0,
+        "unitBoard": 0,
+        "leaveControls": 1,
+        "readsBefore": 4,
+        "readsAfter": 8
+      },
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_slot"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_status"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/save"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        }
+      ],
+      "errors": [],
+      "lateRepaintObserved": true
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "kind": "units",
+      "scenario": "same-view",
+      "outcome": {
+        "hash": "#view=units",
+        "title": [
+          "Monthly unit postings"
+        ],
+        "guide": 0,
+        "unitBoard": 1,
+        "leaveControls": 0,
+        "readsBefore": 1,
+        "readsAfter": 2
+      },
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        }
+      ],
+      "errors": [],
+      "lateRepaintObserved": false
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "kind": "units",
+      "scenario": "navigate-guide",
+      "outcome": {
+        "hash": "#view=user-guide",
+        "title": [
+          "Monthly unit postings"
+        ],
+        "guide": 0,
+        "unitBoard": 1,
+        "leaveControls": 0,
+        "readsBefore": 1,
+        "readsAfter": 2
+      },
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        }
+      ],
+      "errors": [],
+      "lateRepaintObserved": true
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "kind": "leave",
+      "scenario": "same-view",
+      "outcome": {
+        "hash": "#view=leave",
+        "title": [
+          "Leave calendar and availability"
+        ],
+        "guide": 0,
+        "unitBoard": 0,
+        "leaveControls": 1,
+        "readsBefore": 4,
+        "readsAfter": 8
+      },
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_slot"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_status"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/save"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        }
+      ],
+      "errors": [],
+      "lateRepaintObserved": false
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "kind": "leave",
+      "scenario": "navigate-guide",
+      "outcome": {
+        "hash": "#view=user-guide",
+        "title": [
+          "Leave calendar and availability"
+        ],
+        "guide": 0,
+        "unitBoard": 0,
+        "leaveControls": 1,
+        "readsBefore": 4,
+        "readsAfter": 8
+      },
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_slot"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_status"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/save"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        }
+      ],
+      "errors": [],
+      "lateRepaintObserved": true
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "kind": "units",
+      "scenario": "same-view",
+      "outcome": {
+        "hash": "#view=units",
+        "title": [
+          "Monthly unit postings"
+        ],
+        "guide": 0,
+        "unitBoard": 1,
+        "leaveControls": 0,
+        "readsBefore": 1,
+        "readsAfter": 2
+      },
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        }
+      ],
+      "errors": [],
+      "lateRepaintObserved": false
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "kind": "units",
+      "scenario": "navigate-guide",
+      "outcome": {
+        "hash": "#view=user-guide",
+        "title": [
+          "Monthly unit postings"
+        ],
+        "guide": 0,
+        "unitBoard": 1,
+        "leaveControls": 0,
+        "readsBefore": 1,
+        "readsAfter": 2
+      },
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        }
+      ],
+      "errors": [],
+      "lateRepaintObserved": true
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "kind": "leave",
+      "scenario": "same-view",
+      "outcome": {
+        "hash": "#view=leave",
+        "title": [
+          "Leave calendar and availability"
+        ],
+        "guide": 0,
+        "unitBoard": 0,
+        "leaveControls": 1,
+        "readsBefore": 4,
+        "readsAfter": 8
+      },
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_slot"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_status"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/save"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        }
+      ],
+      "errors": [],
+      "lateRepaintObserved": false
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "kind": "leave",
+      "scenario": "navigate-guide",
+      "outcome": {
+        "hash": "#view=user-guide",
+        "title": [
+          "Leave calendar and availability"
+        ],
+        "guide": 0,
+        "unitBoard": 0,
+        "leaveControls": 1,
+        "readsBefore": 4,
+        "readsAfter": 8
+      },
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_slot"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_status"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/save"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        }
+      ],
+      "errors": [],
+      "lateRepaintObserved": true
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "kind": "units",
+      "scenario": "same-view",
+      "outcome": {
+        "hash": "#view=units",
+        "title": [
+          "Monthly unit postings"
+        ],
+        "guide": 0,
+        "unitBoard": 1,
+        "leaveControls": 0,
+        "readsBefore": 1,
+        "readsAfter": 2
+      },
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        }
+      ],
+      "errors": [],
+      "lateRepaintObserved": false
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "kind": "units",
+      "scenario": "navigate-guide",
+      "outcome": {
+        "hash": "#view=user-guide",
+        "title": [
+          "Monthly unit postings"
+        ],
+        "guide": 0,
+        "unitBoard": 1,
+        "leaveControls": 0,
+        "readsBefore": 1,
+        "readsAfter": 2
+      },
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        }
+      ],
+      "errors": [],
+      "lateRepaintObserved": true
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "kind": "leave",
+      "scenario": "same-view",
+      "outcome": {
+        "hash": "#view=leave",
+        "title": [
+          "Leave calendar and availability"
+        ],
+        "guide": 0,
+        "unitBoard": 0,
+        "leaveControls": 1,
+        "readsBefore": 4,
+        "readsAfter": 8
+      },
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_slot"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_status"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/save"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        }
+      ],
+      "errors": [],
+      "lateRepaintObserved": false
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "kind": "leave",
+      "scenario": "navigate-guide",
+      "outcome": {
+        "hash": "#view=user-guide",
+        "title": [
+          "Leave calendar and availability"
+        ],
+        "guide": 0,
+        "unitBoard": 0,
+        "leaveControls": 1,
+        "readsBefore": 4,
+        "readsAfter": 8
+      },
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_slot"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_status"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/save"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        }
+      ],
+      "errors": [],
+      "lateRepaintObserved": true
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "kind": "units",
+      "scenario": "same-view",
+      "outcome": {
+        "hash": "#view=units",
+        "title": [
+          "Monthly unit postings"
+        ],
+        "guide": 0,
+        "unitBoard": 1,
+        "leaveControls": 0,
+        "readsBefore": 1,
+        "readsAfter": 2
+      },
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        }
+      ],
+      "errors": [],
+      "lateRepaintObserved": false
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "kind": "units",
+      "scenario": "navigate-guide",
+      "outcome": {
+        "hash": "#view=user-guide",
+        "title": [
+          "Monthly unit postings"
+        ],
+        "guide": 0,
+        "unitBoard": 1,
+        "leaveControls": 0,
+        "readsBefore": 1,
+        "readsAfter": 2
+      },
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        }
+      ],
+      "errors": [],
+      "lateRepaintObserved": true
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "kind": "leave",
+      "scenario": "same-view",
+      "outcome": {
+        "hash": "#view=leave",
+        "title": [
+          "Leave calendar and availability"
+        ],
+        "guide": 0,
+        "unitBoard": 0,
+        "leaveControls": 1,
+        "readsBefore": 4,
+        "readsAfter": 8
+      },
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_slot"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_status"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/save"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        }
+      ],
+      "errors": [],
+      "lateRepaintObserved": false
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "kind": "leave",
+      "scenario": "navigate-guide",
+      "outcome": {
+        "hash": "#view=user-guide",
+        "title": [
+          "Leave calendar and availability"
+        ],
+        "guide": 0,
+        "unitBoard": 0,
+        "leaveControls": 1,
+        "readsBefore": 4,
+        "readsAfter": 8
+      },
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_slot"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_status"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/save"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        }
+      ],
+      "errors": [],
+      "lateRepaintObserved": true
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "reviewer": "/root/remaining_icons_independent",
+  "recorded_at_utc": "2026-10-28T22:50:07.038Z",
+  "passed": true,
+  "scratch": "tmp/leave-status-v6",
+  "candidate_sha256": {
+    "main.ts": "16f38415189294f32b034a497df60bfb619233850df62b094eff0b6a7a6bdc43",
+    "premium-theme.css": "aa0d3c25681b83298cd53f45f009ed2f1f8e64b0f334903936d269c886d399d7",
+    "leave-calendar-focus.ts": "347f7d10ec511d87e0f6861e592da7dc79806e1fe0546a389aa69b4e9bc93a6e"
+  },
+  "baseline_current_match": true,
+  "existing_effect_calls_identical_after_disclosed_installation_removed": 154,
+  "existing_assigned_handlers_identical": 3,
+  "other_functions_unchanged": 330,
+  "changed_existing_functions": [
+    "leaveStatusLabel",
+    "renderLeaveCalendarDays",
+    "renderLeaveDayList",
+    "renderLeaveDayModal",
+    "renderLeave"
+  ],
+  "css_prefix_preserved": true,
+  "pure_status_helpers_independently_executed": true,
+  "helper_forbidden_effect_scan_pass": true,
+  "helper_effect_expressions": [
+    "lifetime.addEventListener(\"abort\", stop, { once: true })",
+    "root.addEventListener(\"focusin\", event => {\n    stop();\n    const eventTarget = event.target;\n    if (!(eventTarget instanceof HTMLButtonElement) || !eventTarget.matches(\"[data-leave-day]\")) return;\n    const target = eventTarget;\n    const region = target.closest<HTMLElement>(\".leave-month-scroll\");\n    if (!region || !root!.contains(region) || target !== root!.ownerDocument.activeElement) return;\n    const pending = new AbortController();\n    let frame = 0, stable = 0, last = \"\";\n    const started = view!.performance.now();\n    const cancel = () => {\n      pending.abort();\n      if (frame) view!.cancelAnimationFrame(frame);\n      frame = 0;\n      if (stopPending === cancel) stopPending = undefined;\n    };\n    stopPending = cancel;\n    const intentOptions = { capture: true, once: true, signal: pending.signal };\n    for (const name of [\"pointerdown\", \"wheel\", \"keydown\"]) {\n      root!.ownerDocument.addEventListener(name, cancel, intentOptions);\n    }\n    target.addEventListener(\"focusout\", cancel, { once: true, signal: pending.signal });\n    const owns = () => !pending.signal.aborted && !lifetime.aborted\n      && root!.isConnected && region.isConnected && target.isConnected\n      && root!.contains(region) && region.contains(target)\n      && target === root!.ownerDocument.activeElement\n      && !target.closest(\"[hidden], [inert]\");\n\n    function geometry() {\n      const b = target.getBoundingClientRect(), c = region!.getBoundingClientRect();\n      const style = view!.getComputedStyle(target);\n      const ring = style.outlineStyle === \"none\" ? 0\n        : (Number.parseFloat(style.outlineWidth) || 0) + Math.max(0, Number.parseFloat(style.outlineOffset) || 0);\n      const left = c.left + region!.clientLeft, right = left + region!.clientWidth;\n      return { b, c, ring, left, right,\n        visible: b.width > 0 && b.height > 0 && c.width > 0 && c.height > 0,\n        fits: b.left - ring >= left - 0.5 && b.right + ring <= right + 0.5 };\n    }\n\n    function tick(): void {\n      frame = 0;\n      if (!owns()) { cancel(); return; }\n      try {\n        const before = geometry();\n        if (!before.visible) { cancel(); return; }\n        if (view!.performance.now() - started >= 1000) {\n          help(region!, !before.fits);\n          cancel();\n          return;\n        }\n        const margin = Math.max(5, before.ring + 1);\n        const raw = before.b.left - margin < before.left ? before.b.left - margin - before.left\n          : before.b.right + margin > before.right ? before.b.right + margin - before.right : 0;\n        const delta = raw < 0 ? Math.floor(raw) : Math.ceil(raw);\n        if (delta) {\n          try {\n            if (typeof region!.scrollBy !== \"function\") throw new Error(\"Native scroll unavailable\");\n            region!.scrollBy({ left: delta, behavior: \"instant\" });\n          } catch {\n            region!.scrollLeft += delta;\n          }\n        }\n        const after = geometry();\n        const signature = [after.b.left, after.b.right, after.b.top, after.b.bottom,\n          after.c.left, after.c.right, after.c.top, after.c.bottom,\n          region!.clientWidth, region!.clientHeight, region!.scrollLeft]\n          .map(value => Math.round(value * 100) / 100).join(\",\");\n        stable = after.fits && signature === last ? stable + 1 : 0;\n        last = signature;\n        if (stable >= 4) { help(region!, false); cancel(); return; }\n        if (typeof view!.requestAnimationFrame !== \"function\") {\n          help(region!, !after.fits);\n          cancel();\n          return;\n        }\n        frame = view!.requestAnimationFrame(tick);\n      } catch {\n        if (owns()) help(region!, true);\n        cancel();\n      }\n    }\n    tick();\n  }, { signal: lifetime })",
+    "root!.ownerDocument.addEventListener(name, cancel, intentOptions)",
+    "target.addEventListener(\"focusout\", cancel, { once: true, signal: pending.signal })"
+  ],
+  "overlay_typescript_diagnostics": 0,
+  "limits": [
+    "Source comparison and overlay compile only; actual new helper differs from injected diagnostic and needs native runtime/fallback/error/lifecycle tests.",
+    "New helper installation and its listener/RAF/instant-scroll/recovery effects are deliberate exceptions, not blanket handler parity."
+  ]
+}

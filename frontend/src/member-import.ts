@@ -1,8 +1,9 @@
+import { importRowAttention, importPreviewAuthorityText } from "./import-review-presentation";
 import {
   downloadMemberImportTemplate, memberWorkbookRequest, downloadPreviewIssues,
   type MemberImportOptions, type MemberImportPreview, type MemberWorkbookInspection,
 } from "./services/api";
-import { applyBlocker, memberMatch, type MemberMatchCandidate, type MemberMatchView } from "./ui";
+import { applyBlocker, memberMatch, memberIdentityText, importRecoveryText, steps, type MemberMatchCandidate, type MemberMatchView } from "./ui";
 
 const escape = (value: unknown) => String(value ?? "").replace(/[&<>"']/g,
   (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character]!);
@@ -24,6 +25,11 @@ let reviewed = false;
 let busy = false;
 let message = "";
 let reviewFilter = "all";
+// Invalidates async work when the singleton draft is reset or mounted elsewhere.
+let importEpoch = 0;
+let applied = false;
+let applying = false;
+const MEMBER_WORKBOOK_STEPS = ["Upload file", "Map columns", "Review rows", "Apply"];
 const openEdits = new Set<string>();
 const toggleWatched = new WeakSet<HTMLElement>();
 
@@ -56,6 +62,9 @@ function rowView(row: WorkbookRow): MemberMatchView {
     raw: writtenName(row),
     status,
     name: row.target_name,
+    selectedId: row.target_id,
+    newMember: row.action === "create" && !row.target_id,
+    pending: !reviewed,
     method: status === "matched" ? row.resolution_method ?? (choice && choice !== "new" ? "member_id" : undefined) : undefined,
     reason,
     warnings: row.resolution_warnings ?? [],
@@ -100,6 +109,8 @@ function rowActions(row: WorkbookRow): string {
 }
 
 export function resetMemberImport() {
+  importEpoch++;
+  applied = false; applying = false;
   file = undefined; inspection = undefined; preview = undefined;
   options = { sheet: "", header_row: 1, mapping: {}, resolutions: {} };
   reviewed = false; busy = false; message = "";
@@ -108,13 +119,21 @@ export function resetMemberImport() {
 }
 
 export function mountMemberImport(host: HTMLElement, refresh: () => Promise<void>) {
+  const mountedEpoch = ++importEpoch;
+  const isCurrent = () => importEpoch === mountedEpoch && host.isConnected !== false;
+  // A previous mount may have left an in-flight operation owning the busy flag.
+  busy = false; applying = false;
   function render() {
+    if (!isCurrent()) return;
     const sheet = inspection?.sheets.find((s) => s.name === options.sheet);
     const callChanges = preview?.rows.filter(row => row.action === "update" && "call_level" in row.changes).length ?? 0;
     const visibleRows = (preview?.rows.filter(row => reviewFilter === "all" || row.action === reviewFilter) ?? []) as WorkbookRow[];
     const blocker = blockerText(callChanges);
+    const stage = applied ? MEMBER_WORKBOOK_STEPS.length : applying ? 3 : preview ? 2 : inspection ? 1 : 0;
     host.innerHTML = `<details class="panel member-import" ${file ? "open" : ""}>
       <summary>Import and Review Members</summary>
+      <div data-import-steps>${steps(MEMBER_WORKBOOK_STEPS, stage)}</div>
+      <p>Files and selections are kept while this page remains open. Replacing the file resets mappings and review choices. After leaving or reloading, you may need to choose the file again.</p>
       <p>Upload CSV or Excel (up to 5 MB and 5000 rows). Every name is checked against the master list and saved aliases,
       including previously imported, historical, and archived members.</p>
       <p>Blank cells preserve existing values. Members absent from the file stay unchanged.
@@ -134,7 +153,7 @@ export function mountMemberImport(host: HTMLElement, refresh: () => Promise<void
           <select data-mi-field="${field}"><option value="">Ignore column</option>${sheet?.headers.map((header, index) =>
             `<option value="${index}" ${options.mapping[field] === index ? "selected" : ""}>${index + 1}: ${escape(header || "(blank header)")}</option>`).join("")}</select></label>`).join("")}</div>
         <button type="button" class="primary" data-mi="preview">Preview Normalized Members</button>` : ""}
-        ${preview ? `<p>${Object.entries(preview.counts).map(([action, count]) => `${count} ${escape(action.replace(/_/g, " "))}`).join(" · ")}</p>
+        ${preview ? `<section aria-label="Server import preview scope"><p>Worksheet returned by preview: <strong>${escape(preview.sheet || "Not returned")}</strong>. Member mode is not returned by this importer; review the returned row actions below.</p><p data-import-preview-authority>${importPreviewAuthorityText(!reviewed)}</p></section><p>${Object.entries(preview.counts).map(([action, count]) => `${count} ${escape(action.replace(/_/g, " "))}`).join(" · ")}</p>
         ${!reviewed ? "<p>Selections changed. Preview again to review the updated result.</p>" : ""}
         <label>Review rows <select data-mi="filter">${["all", "needs_review", "update", "create", "unchanged", "skip"].map(action =>
           `<option value="${action}" ${reviewFilter === action ? "selected" : ""}>${escape(action.replace(/_/g, " "))}</option>`).join("")}</select></label>
@@ -142,7 +161,7 @@ export function mountMemberImport(host: HTMLElement, refresh: () => Promise<void
         <div class="member-import-table"><table><thead><tr><th>File row</th><th>Member</th><th>Action / changes</th><th>Decision</th></tr></thead>
         <tbody>${visibleRows.map(row => `<tr data-mi-row-key="${row.row}"><td>${row.row}</td>
           <td>${row.action === "skip" ? `<p>${escape(writtenName(row) || "(blank)")} — skipped; this row will not be imported.</p>` : memberMatch(String(row.row), rowView(row))}</td>
-          <td><strong>${escape(row.action.replace(/_/g, " "))}</strong>
+          <td><strong>${escape(row.action.replace(/_/g, " "))}</strong>${importRowAttention({ action: row.action, issues: row.errors, matchStatus: row.resolution_status, reason: row.resolution_reason })}
             ${changes(row.changes)}
             ${row.errors.map(error => `<p class="mw-error">${escape(error)}</p>`).join("")}</td>
           <td>${rowActions(row)}
@@ -151,7 +170,7 @@ export function mountMemberImport(host: HTMLElement, refresh: () => Promise<void
             <option value="">Automatic / review required</option>
             <option value="skip" ${options.resolutions[row.row] === "skip" ? "selected" : ""}>Skip this row</option>
             <option value="new" ${options.resolutions[row.row] === "new" ? "selected" : ""}>Create as a new member</option>
-            ${row.candidates.map(candidate => `<option value="${escape(candidate.id)}" ${options.resolutions[row.row] === candidate.id ? "selected" : ""}>Match ${escape(candidate.name)}</option>`).join("")}
+            ${row.candidates.map(candidate => `<option value="${escape(candidate.id)}" ${options.resolutions[row.row] === candidate.id ? "selected" : ""}>Match ${escape(candidate.name)} · ${escape(memberIdentityText(candidate))}</option>`).join("")}
           </select></label>
           <div><strong>Original</strong>${details(row.raw)}</div>
           <div><strong>Normalized</strong>${details(row.normalized)}</div></details></td></tr>`).join("")}</tbody></table></div>
@@ -168,6 +187,7 @@ export function mountMemberImport(host: HTMLElement, refresh: () => Promise<void
   if (typeof host.addEventListener === "function" && !toggleWatched.has(host)) {
     toggleWatched.add(host);
     host.addEventListener("toggle", (event) => {
+      if (host.isConnected === false) return;
       const panel = event.target as HTMLDetailsElement;
       const key = panel.dataset?.miEdit;
       if (!key) return;
@@ -176,44 +196,66 @@ export function mountMemberImport(host: HTMLElement, refresh: () => Promise<void
   }
 
   async function run(action: string) {
+    if (!isCurrent()) return;
+    const requestedFile = file;
+    const requestedOptions = options;
+    const ownsOperation = () => isCurrent() && file === requestedFile && options === requestedOptions;
+    if (action === "inspect" || action === "preview") applied = false;
+    applying = action === "apply";
     busy = true; message = ""; render();
     try {
       if (action === "rejected" && preview) downloadPreviewIssues(preview.rows, "member_rejected_rows.csv");
       else if (action === "template" || action === "csv-template") {
         const format = action === "csv-template" ? "csv" : "xlsx";
         const blob = await downloadMemberImportTemplate(format);
+        if (!ownsOperation()) return;
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = url; link.download = `department-members-template.${format}`; link.click();
         setTimeout(() => URL.revokeObjectURL(url), 1000);
       } else if (file && action === "inspect") {
-        inspection = await memberWorkbookRequest<MemberWorkbookInspection>("inspect", file, options);
+        const result = await memberWorkbookRequest<MemberWorkbookInspection>("inspect", file, options);
+        if (!ownsOperation()) return;
+        inspection = result;
         options.sheet = inspection.sheets[0]?.name ?? "";
         options.mapping = { ...inspection.sheets[0]?.mapping };
         options.resolutions = {}; preview = undefined; reviewed = false;
         options.confirm_call_changes = false; reviewFilter = "all";
       } else if (file && action === "preview") {
-        preview = await memberWorkbookRequest<MemberImportPreview>("preview", file, options);
+        const result = await memberWorkbookRequest<MemberImportPreview>("preview", file, options);
+        if (!ownsOperation()) return;
+        preview = result;
         options.confirm_call_changes = false;
         reviewed = true;
       } else if (file && action === "apply" && preview && reviewed) {
         const result = await memberWorkbookRequest<{ counts: Record<string, number>; replayed?: boolean }>("apply", file, options, preview.preview_hash);
-        message = result.replayed ? "This reviewed batch was already applied. No additional members were created or changed." : `Imported ${result.counts.create} new members and updated ${result.counts.update}. ${result.counts.unchanged} unchanged; ${result.counts.skip} skipped. Master list and counts refreshed.`;
+        if (!ownsOperation()) return;
+        message = result.replayed ? "This reviewed batch was already applied. No additional members were created or changed." : `Imported ${result.counts.create} new members and updated ${result.counts.update}. ${result.counts.unchanged} unchanged; ${result.counts.skip} skipped. Changes were confirmed. Return to the member list to view the saved result.`;
         reviewed = false; preview = undefined;
+        applied = true; applying = false;
         busy = false;
         await refresh();
       }
     } catch (error) {
+      if (!ownsOperation()) return;
       // Server refusals (4xx) carry a row-specific message; always show it.
       message = error instanceof Error && error.message ? error.message : "Import failed.";
+      if (action === "apply" && applied) {
+        message = `Import was confirmed, but the refreshed member view is unavailable. ${message} Return to the member list or reload to view the saved result.`;
+      } else if (["inspect", "preview", "apply"].includes(action) && file) {
+        const guidance = action === "inspect" ? "Your selected file is retained. Choose Read File and Columns to retry; replacing the file resets mapping and review choices." : importRecoveryText(action === "apply" ? "apply" : "preview");
+        message += ` ${guidance}${action === "apply" ? " Preview again before retrying Apply." : ""}`;
+      }
       if (action === "apply") reviewed = false;
     } finally {
-      busy = false; render();
+      if (ownsOperation()) { applying = false; busy = false; render(); }
     }
   }
 
   /** Record a reviewer's member decision for one file row, then preview again. */
   function choose(row: string, resolution: string) {
+    if (!isCurrent()) return;
+    applied = false;
     if (resolution) options.resolutions[row] = resolution;
     else delete options.resolutions[row];
     reviewed = false;
@@ -225,9 +267,11 @@ export function mountMemberImport(host: HTMLElement, refresh: () => Promise<void
 
   // Replacing handlers prevents duplicates when the member screen refreshes.
   host.onchange = (event) => {
+    if (!isCurrent()) return;
     const target = event.target as HTMLInputElement;
     if (target.dataset.mi === "filter") { reviewFilter = target.value; render(); return; }
     if (target.dataset.mi === "confirm-calls") { options.confirm_call_changes = target.checked; render(); return; }
+    applied = false;
     reviewed = false;
     options.confirm_call_changes = false;
     message = "";
@@ -252,6 +296,7 @@ export function mountMemberImport(host: HTMLElement, refresh: () => Promise<void
   };
 
   host.onclick = async (event) => {
+    if (!isCurrent()) return;
     const element = event.target as HTMLElement;
     if (busy) return;
     const pick = element.closest<HTMLElement>("[data-pick-member]");

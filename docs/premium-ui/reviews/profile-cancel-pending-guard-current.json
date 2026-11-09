@@ -1,0 +1,47 @@
+{
+  "recorded_at_utc": "2026-10-28T08:21:16.704387+00:00",
+  "scope": "Canonical profile Cancel while save pending; no new whole requirement accepted.",
+  "completion_claim": false,
+  "source_sha256": {
+    "frontend/src/member-workspace.ts": "2d566c17e7562cc5af00dc731ddd55387e7d013fa9dd277688d64150ab28a0c3"
+  },
+  "checks": {
+    "pending_cancel_regression": 18,
+    "section_state_regression": 6,
+    "leave_cancellation_identity_regression": 6,
+    "unit_tests": 114,
+    "held_build": true
+  },
+  "execution_evidence": [
+    {
+      "report": "docs/premium-ui/qa-profile-cancel-pending-regression.json",
+      "test": "frontend/tests/premium-profile-cancel-pending-regression.browser.mjs",
+      "exit_code": 0,
+      "contexts": 18,
+      "scope": "Actual native canonical profile edit/heldPUT, attempted keyboard interaction with disabled Cancel (no claim that disabled control receives focus), existing Close busy guard, separate503/409/success responses, retained nodes/draft and targeted finally unlock, conflict comparison/Keep my draft, idle discard decline/accept and exact original PUT. All API responses locally fulfilled; no actual backend persistence or request-abort policy claim. Immutable before-fix reproduction remains separate."
+    },
+    {
+      "report": "docs/premium-ui/qa-profile-section-state.json",
+      "test": "frontend/tests/premium-profile-section-state.browser.mjs",
+      "exit_code": 0,
+      "contexts": 6,
+      "scope": "6engine-width contexts, canonical and legacy editable profiles. Native multi-section typing/caret identity, baseline dirty markers, hidden local validation and first invalid reachability, existing loaded/error/retry descriptions, native refused/confirmed discard,12 exact local PUTs and18 local comment POSTs with failure/success/confirmed-save readback failure and GET-only recovery. All network fulfilled locally; no real persistence/backend authorization/physical device/native AT claim."
+    },
+    {
+      "report": "docs/premium-ui/qa-profile-cancel-identity.json",
+      "test": "frontend/tests/premium-profile-cancel-identity.browser.mjs",
+      "exit_code": 0,
+      "contexts": 6,
+      "scope": "Actual member workspace, native confirmation text and keyboard activation, 3 engines x 320/1280, cross-month/overlapping targets, rejection, mocked POST503, GET-only recovery and exact accepted ID/body. All API calls mocked; no backend enforcement, production changes or physical native prompt visual certification."
+    }
+  ],
+  "independent_review": "docs/premium-ui/reviews/profile-cancel-pending-guard-review.json",
+  "root_review": {
+    "reviewer": "/root",
+    "method": "Three exact byte replacements with inverse proof. Disable busy Cancel, handler entry guard and targeted finally unlock. Full request/confirmation/other source bytes retained. Current native tests retain pending draft, exact onePUT, nodes, conflict comparison and idle discard behavior."
+  },
+  "limitations": [
+    "All requests controlled locally. No actual persistence, request abort, backend or broader lifecycle certification.",
+    "Full131 remains open; no claim pending requests are cancelled on the server."
+  ]
+}

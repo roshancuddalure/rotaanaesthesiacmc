@@ -1,0 +1,112 @@
+{
+  "source_sha256": {
+    "src/rota-compute.ts": "e5f967e6166e2ace9352983a468002d45850188d8811363230305d7597fb70ab",
+    "src/rota-intelligence.ts": "bda7257a3cafdcf6c4122575cc454abb1623f27dbd13950ea1d61260a23bb79b",
+    "src/compute-device.ts": "c7083623b77132d2ace7d1a0a815ad457a695c9e381afcfd1aeb91af1a6d4eca",
+    "src/member-workspace.ts": "2d52a71134b38e6ec1b2398ddac0cd90ac85829d0bd6ba084b92c1693f2bb97d",
+    "src/workspace-load-state.ts": "cdd0e323d7e83e6e668a381bbfcc37cad4726b1193ac5de31d5f14e03eecd9c6",
+    "src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "src/premium-theme.css": "d9113665ea4657cc9d5539db9017bbce76981881b2896341155694552610f1f6",
+    "tests/premium-generation-transitions.browser.mjs": "2a1ba6f781ea3814ee51f321df90584c9851e25ca3f83ca3415732c509556c04"
+  },
+  "width": 320,
+  "kind": "template",
+  "scenario": "recover503-complete",
+  "error": "AssertionError [ERR_ASSERTION]: The input did not match the regular expression /Returned Result Member/. Input:\n\n'Preview template allocation\\n' +\n  '\\n' +\n  '2026-11 · Server\\n' +\n  '\\n' +\n  'Close\\n' +\n  '\\n' +\n  'Units are allocated to duties; no people are assigned. Forced allocations remain marked for review.\\n' +\n  '\\n' +\n  'Ready for review\\n' +\n  '\\n' +\n  'Calculating…\\n' +\n  '\\n' +\n  'Requested: Server. Running: Server.\\n' +\n  '\\n' +\n  '7 of 7 slots checked · 1 proposed · 0 need review\\n' +\n  '\\n' +\n  '0 GPU batches verified by the server.\\n' +\n  '\\n' +\n  'Planning: 0.00 s on server; this session: 0.18 s.\\n' +\n  '\\n' +\n  'Date / duty\\tProposal\\tReason\\n' +\n  '2026-11-02\\n' +\n  'UNIT I · Main duty\\n' +\n  'UNIT I\\n' +\n  'Eligible fixture choice\\n' +\n  'Cancel proposal\\n' +\n  'I reviewed the proposed changes and unresolved slots\\n' +\n  'Apply reviewed draft\\n' +\n  'Download report'\n",
+  "snapshots": [
+    {
+      "phase": "returned-queued",
+      "expectedState": "queued",
+      "progressMax": null,
+      "progressValue": null,
+      "visibleText": "Preview template allocation\n\n2026-11 · Server\n\nClose\n\nUnits are allocated to duties; no people are assigned. Forced allocations remain marked for review.\n\nQueued\n\nRequested: Server. Running: Server.\n\n0 of 0 slots checked · 0 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.00 s.\n\nDate / duty\tProposal\tReason\nContinue generation\nCancel proposal"
+    },
+    {
+      "phase": "queued-step-held",
+      "expectedState": "queued",
+      "progressMax": null,
+      "progressValue": null,
+      "visibleText": "Preview template allocation\n\n2026-11 · Server\n\nClose\n\nUnits are allocated to duties; no people are assigned. Forced allocations remain marked for review.\n\nQueued\n\nCalculating…\n\nRequested: Server. Running: Server.\n\n0 of 0 slots checked · 0 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.00 s.\n\nDate / duty\tProposal\tReason\nCancel proposal"
+    },
+    {
+      "phase": "returned-running-next-step-held",
+      "expectedState": "running",
+      "progressMax": "7",
+      "progressValue": "3",
+      "visibleText": "Preview template allocation\n\n2026-11 · Server\n\nClose\n\nUnits are allocated to duties; no people are assigned. Forced allocations remain marked for review.\n\nGenerating proposal\n\nCalculating…\n\nRequested: Server. Running: Server.\n\n3 of 7 slots checked · 0 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.05 s.\n\nDate / duty\tProposal\tReason\nCancel proposal"
+    },
+    {
+      "phase": "503-readback-held-last-known-running",
+      "expectedState": "running",
+      "progressMax": "7",
+      "progressValue": "3",
+      "visibleText": "Preview template allocation\n\n2026-11 · Server\n\nClose\n\nUnits are allocated to duties; no people are assigned. Forced allocations remain marked for review.\n\nGenerating proposal\n\nCalculating…\n\nRequested: Server. Running: Server.\n\n3 of 7 slots checked · 0 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.05 s.\n\nDate / duty\tProposal\tReason\nCancel proposal"
+    },
+    {
+      "phase": "readback-running-new-revision-next-step-held",
+      "expectedState": "running",
+      "progressMax": "7",
+      "progressValue": "4",
+      "visibleText": "Preview template allocation\n\n2026-11 · Server\n\nClose\n\nUnits are allocated to duties; no people are assigned. Forced allocations remain marked for review.\n\nGenerating proposal\n\nCalculating…\n\nRequested: Server. Running: Server.\n\n4 of 7 slots checked · 0 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.14 s.\n\nDate / duty\tProposal\tReason\nCancel proposal"
+    },
+    {
+      "phase": "completed-result-present-validation-held",
+      "expectedState": "completed",
+      "progressMax": null,
+      "progressValue": null,
+      "visibleText": "Preview template allocation\n\n2026-11 · Server\n\nClose\n\nUnits are allocated to duties; no people are assigned. Forced allocations remain marked for review.\n\nReady for review\n\nCalculating…\n\nRequested: Server. Running: Server.\n\n7 of 7 slots checked · 1 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.18 s.\n\nDate / duty\tProposal\tReason\n2026-11-02\nUNIT I · Main duty\nUNIT I\nEligible fixture choice\nCancel proposal\nI reviewed the proposed changes and unresolved slots\nApply reviewed draft\nDownload report"
+    }
+  ],
+  "calls": [
+    {
+      "method": "GET",
+      "path": "/api/v1/rota-compute/capabilities",
+      "search": "?month=2026-11"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rota-compute/jobs",
+      "search": "?month=2026-11"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rota-compute/jobs/transition-job/step",
+      "search": "",
+      "body": {
+        "revision": 1
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rota-compute/jobs/transition-job/step",
+      "search": "",
+      "body": {
+        "revision": 2
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rota-compute/jobs/transition-job",
+      "search": ""
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rota-compute/jobs/transition-job/step",
+      "search": "",
+      "body": {
+        "revision": 3
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rota-compute/jobs/transition-job/validate",
+      "search": "",
+      "body": {
+        "revision": 4
+      }
+    }
+  ],
+  "pageErrors": [],
+  "visibleText": "Open generation\nPreview template allocation\n\n2026-11 · Server\n\nClose\n\nUnits are allocated to duties; no people are assigned. Forced allocations remain marked for review.\n\nReady for review\n\nCalculating…\n\nRequested: Server. Running: Server.\n\n7 of 7 slots checked · 1 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.18 s.\n\nDate / duty\tProposal\tReason\n2026-11-02\nUNIT I · Main duty\nUNIT I\nEligible fixture choice\nCancel proposal\nI reviewed the proposed changes and unresolved slots\nApply reviewed draft\nDownload report"
+}

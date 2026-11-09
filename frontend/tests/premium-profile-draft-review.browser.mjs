@@ -69,7 +69,7 @@ try {
   await page.locator('#opener').click();await form('comment').waitFor();
   await form('alias').locator('input').fill('Unsaved sibling alias');
   await form('comment').locator('textarea').fill('Save just this comment');
-  await form('comment').getByRole('button',{name:'Add Comment',exact:true}).click();await saveStartedPromise;
+  await form('comment').getByRole('button',{name:'Add comment',exact:true}).click();await saveStartedPromise;
   await page.keyboard.press('Escape');assert.equal(await dialog.evaluate(el=>el.open),true);
   const close=dialog.getByRole('button',{name:'Close',exact:true});
   if(await close.isEnabled())await close.click();
@@ -84,7 +84,7 @@ try {
   // Error retains submitted input and offers no automatic replay.
   failed=true;saveStartedPromise=new Promise(resolve=>saveStarted=resolve);
   await form('comment').locator('textarea').fill('Preserve failed submission');
-  await form('comment').getByRole('button',{name:'Add Comment',exact:true}).click();await saveStartedPromise;
+  await form('comment').getByRole('button',{name:'Add comment',exact:true}).click();await saveStartedPromise;
   releaseSave();await form('comment').locator('fieldset:not([disabled])').waitFor();
   assert.equal(await form('comment').locator('textarea').inputValue(),'Preserve failed submission');
   assert.equal(writes.length,2);
@@ -97,7 +97,7 @@ try {
   await form('alias').locator('input').fill('Sibling before readback failure');
   await form('comment').locator('textarea').fill('Confirmed comment, readback unavailable');
   saveStartedPromise=new Promise(resolve=>saveStarted=resolve);
-  await form('comment').getByRole('button',{name:'Add Comment',exact:true}).click();await saveStartedPromise;
+  await form('comment').getByRole('button',{name:'Add comment',exact:true}).click();await saveStartedPromise;
   failReadback=true;releaseSave();
   const retry=dialog.getByRole('button',{name:'Refresh profile',exact:true});await retry.waitFor();
   await page.waitForFunction(()=>!document.querySelector('[data-profile-refresh]')?.disabled);

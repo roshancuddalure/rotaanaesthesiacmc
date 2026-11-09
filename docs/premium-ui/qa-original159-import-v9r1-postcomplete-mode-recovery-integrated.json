@@ -1,0 +1,809 @@
+{
+  "recorded_at_utc": "2026-11-09T10:06:05.177Z",
+  "author": "/root/profile_parent_final_audit",
+  "decision": "Six postcomplete mode draft protection checks passed",
+  "scope": "Six expected-correct diagnostic contexts3engines320/1280. Accept one actualCSV Unit import using native preview/apply controls; change surviving visible Operation select append?update_matching without replacing file or running preview. Existing dirtyPreview message confirms pending meaningful mode choice. Close should ask discard; harness dismisses only that prompt and expects mode/file/import review retained with no parent read. Dismiss retains pending mode/file, then acceptdiscard closes and starts exactlyoneparentGET with exactlyoneoriginalacceptedapply; prior confirmed copy truthful. Captures all failures before terminalnonzero. All POSTs locally fulfilled; this probes unchanged existing finished/dirty handling, not a demonstrated V9r1 regression or whole159.",
+  "source_sha256": {
+    "frontend/src/main.ts": "96ab7c4c6b14d41736ad4153313b1270677e324fcab6b11c3a5b0d8ac3e47a0b",
+    "frontend/src/operational-import.ts": "1ccbcf4181330a5f66c59b0723ec02f878a268b6b3030aa99b177de1b7070355",
+    "frontend/src/member-workspace.ts": "105cc1d91ea4815d565ad4859fc01412cf576a3203c07834f4010e3fef7ef1a5",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/extra-duty.ts": "52084624922de21f2a0fa478eb1ca4c883cdeb66dd1d05147d0f21fe806bc7ea"
+  },
+  "candidate_sha256": {
+    "main.ts": "96ab7c4c6b14d41736ad4153313b1270677e324fcab6b11c3a5b0d8ac3e47a0b",
+    "operational-import.ts": "1ccbcf4181330a5f66c59b0723ec02f878a268b6b3030aa99b177de1b7070355",
+    "member-workspace.ts": "105cc1d91ea4815d565ad4859fc01412cf576a3203c07834f4010e3fef7ef1a5"
+  },
+  "test_sha256": "5147011f1e68b2f995cf88e01279095d01880a07da71a64f4aacc829a5b77353",
+  "expected_contexts": 6,
+  "failed_contexts": 0,
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "kind": "units",
+      "scenario": "postcomplete-mode-draft",
+      "passed": true,
+      "observed": {
+        "modeDraft": "update_matching",
+        "chosenCSVRetained": true,
+        "dialogRetained": true,
+        "discardPromptCount": 1,
+        "parentReadsBefore": {
+          "units": 1,
+          "calendar": 0,
+          "requests": 0,
+          "pressure": 0
+        },
+        "parentReadsAfter": {
+          "units": 1,
+          "calendar": 0,
+          "requests": 0,
+          "pressure": 0
+        },
+        "acceptedApplyCount": 1
+      },
+      "confirmationDialogs": [
+        "Apply 1 reviewed rows for 2026-11?",
+        "Discard this import draft? Previously confirmed import changes remain saved. If an Apply result was uncertain, check import history before trying again.",
+        "Discard this import draft? Previously confirmed import changes remain saved. If an Apply result was uncertain, check import history before trying again."
+      ],
+      "reads": {
+        "units": 2,
+        "calendar": 0,
+        "requests": 0,
+        "pressure": 0
+      },
+      "writes": [
+        {
+          "path": "/api/v1/import-review/columns",
+          "phase": "columns",
+          "method": "POST"
+        },
+        {
+          "path": "/api/v1/import-review/units/preview",
+          "phase": "preview",
+          "method": "POST"
+        },
+        {
+          "path": "/api/v1/import-review/v8-preview-1/apply",
+          "phase": "apply",
+          "method": "POST",
+          "body": {
+            "excluded": [],
+            "acknowledge_warnings": false
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/columns",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/units/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/v8-preview-1/apply",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "kind": "units",
+      "scenario": "postcomplete-mode-draft",
+      "passed": true,
+      "observed": {
+        "modeDraft": "update_matching",
+        "chosenCSVRetained": true,
+        "dialogRetained": true,
+        "discardPromptCount": 1,
+        "parentReadsBefore": {
+          "units": 1,
+          "calendar": 0,
+          "requests": 0,
+          "pressure": 0
+        },
+        "parentReadsAfter": {
+          "units": 1,
+          "calendar": 0,
+          "requests": 0,
+          "pressure": 0
+        },
+        "acceptedApplyCount": 1
+      },
+      "confirmationDialogs": [
+        "Apply 1 reviewed rows for 2026-11?",
+        "Discard this import draft? Previously confirmed import changes remain saved. If an Apply result was uncertain, check import history before trying again.",
+        "Discard this import draft? Previously confirmed import changes remain saved. If an Apply result was uncertain, check import history before trying again."
+      ],
+      "reads": {
+        "units": 2,
+        "calendar": 0,
+        "requests": 0,
+        "pressure": 0
+      },
+      "writes": [
+        {
+          "path": "/api/v1/import-review/columns",
+          "phase": "columns",
+          "method": "POST"
+        },
+        {
+          "path": "/api/v1/import-review/units/preview",
+          "phase": "preview",
+          "method": "POST"
+        },
+        {
+          "path": "/api/v1/import-review/v8-preview-1/apply",
+          "phase": "apply",
+          "method": "POST",
+          "body": {
+            "excluded": [],
+            "acknowledge_warnings": false
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/columns",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/units/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/v8-preview-1/apply",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "kind": "units",
+      "scenario": "postcomplete-mode-draft",
+      "passed": true,
+      "observed": {
+        "modeDraft": "update_matching",
+        "chosenCSVRetained": true,
+        "dialogRetained": true,
+        "discardPromptCount": 1,
+        "parentReadsBefore": {
+          "units": 1,
+          "calendar": 0,
+          "requests": 0,
+          "pressure": 0
+        },
+        "parentReadsAfter": {
+          "units": 1,
+          "calendar": 0,
+          "requests": 0,
+          "pressure": 0
+        },
+        "acceptedApplyCount": 1
+      },
+      "confirmationDialogs": [
+        "Apply 1 reviewed rows for 2026-11?",
+        "Discard this import draft? Previously confirmed import changes remain saved. If an Apply result was uncertain, check import history before trying again.",
+        "Discard this import draft? Previously confirmed import changes remain saved. If an Apply result was uncertain, check import history before trying again."
+      ],
+      "reads": {
+        "units": 2,
+        "calendar": 0,
+        "requests": 0,
+        "pressure": 0
+      },
+      "writes": [
+        {
+          "path": "/api/v1/import-review/columns",
+          "phase": "columns",
+          "method": "POST"
+        },
+        {
+          "path": "/api/v1/import-review/units/preview",
+          "phase": "preview",
+          "method": "POST"
+        },
+        {
+          "path": "/api/v1/import-review/v8-preview-1/apply",
+          "phase": "apply",
+          "method": "POST",
+          "body": {
+            "excluded": [],
+            "acknowledge_warnings": false
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/columns",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/units/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/v8-preview-1/apply",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "kind": "units",
+      "scenario": "postcomplete-mode-draft",
+      "passed": true,
+      "observed": {
+        "modeDraft": "update_matching",
+        "chosenCSVRetained": true,
+        "dialogRetained": true,
+        "discardPromptCount": 1,
+        "parentReadsBefore": {
+          "units": 1,
+          "calendar": 0,
+          "requests": 0,
+          "pressure": 0
+        },
+        "parentReadsAfter": {
+          "units": 1,
+          "calendar": 0,
+          "requests": 0,
+          "pressure": 0
+        },
+        "acceptedApplyCount": 1
+      },
+      "confirmationDialogs": [
+        "Apply 1 reviewed rows for 2026-11?",
+        "Discard this import draft? Previously confirmed import changes remain saved. If an Apply result was uncertain, check import history before trying again.",
+        "Discard this import draft? Previously confirmed import changes remain saved. If an Apply result was uncertain, check import history before trying again."
+      ],
+      "reads": {
+        "units": 2,
+        "calendar": 0,
+        "requests": 0,
+        "pressure": 0
+      },
+      "writes": [
+        {
+          "path": "/api/v1/import-review/columns",
+          "phase": "columns",
+          "method": "POST"
+        },
+        {
+          "path": "/api/v1/import-review/units/preview",
+          "phase": "preview",
+          "method": "POST"
+        },
+        {
+          "path": "/api/v1/import-review/v8-preview-1/apply",
+          "phase": "apply",
+          "method": "POST",
+          "body": {
+            "excluded": [],
+            "acknowledge_warnings": false
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/columns",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/units/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/v8-preview-1/apply",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "kind": "units",
+      "scenario": "postcomplete-mode-draft",
+      "passed": true,
+      "observed": {
+        "modeDraft": "update_matching",
+        "chosenCSVRetained": true,
+        "dialogRetained": true,
+        "discardPromptCount": 1,
+        "parentReadsBefore": {
+          "units": 1,
+          "calendar": 0,
+          "requests": 0,
+          "pressure": 0
+        },
+        "parentReadsAfter": {
+          "units": 1,
+          "calendar": 0,
+          "requests": 0,
+          "pressure": 0
+        },
+        "acceptedApplyCount": 1
+      },
+      "confirmationDialogs": [
+        "Apply 1 reviewed rows for 2026-11?",
+        "Discard this import draft? Previously confirmed import changes remain saved. If an Apply result was uncertain, check import history before trying again.",
+        "Discard this import draft? Previously confirmed import changes remain saved. If an Apply result was uncertain, check import history before trying again."
+      ],
+      "reads": {
+        "units": 2,
+        "calendar": 0,
+        "requests": 0,
+        "pressure": 0
+      },
+      "writes": [
+        {
+          "path": "/api/v1/import-review/columns",
+          "phase": "columns",
+          "method": "POST"
+        },
+        {
+          "path": "/api/v1/import-review/units/preview",
+          "phase": "preview",
+          "method": "POST"
+        },
+        {
+          "path": "/api/v1/import-review/v8-preview-1/apply",
+          "phase": "apply",
+          "method": "POST",
+          "body": {
+            "excluded": [],
+            "acknowledge_warnings": false
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/columns",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/units/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/v8-preview-1/apply",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "kind": "units",
+      "scenario": "postcomplete-mode-draft",
+      "passed": true,
+      "observed": {
+        "modeDraft": "update_matching",
+        "chosenCSVRetained": true,
+        "dialogRetained": true,
+        "discardPromptCount": 1,
+        "parentReadsBefore": {
+          "units": 1,
+          "calendar": 0,
+          "requests": 0,
+          "pressure": 0
+        },
+        "parentReadsAfter": {
+          "units": 1,
+          "calendar": 0,
+          "requests": 0,
+          "pressure": 0
+        },
+        "acceptedApplyCount": 1
+      },
+      "confirmationDialogs": [
+        "Apply 1 reviewed rows for 2026-11?",
+        "Discard this import draft? Previously confirmed import changes remain saved. If an Apply result was uncertain, check import history before trying again.",
+        "Discard this import draft? Previously confirmed import changes remain saved. If an Apply result was uncertain, check import history before trying again."
+      ],
+      "reads": {
+        "units": 2,
+        "calendar": 0,
+        "requests": 0,
+        "pressure": 0
+      },
+      "writes": [
+        {
+          "path": "/api/v1/import-review/columns",
+          "phase": "columns",
+          "method": "POST"
+        },
+        {
+          "path": "/api/v1/import-review/units/preview",
+          "phase": "preview",
+          "method": "POST"
+        },
+        {
+          "path": "/api/v1/import-review/v8-preview-1/apply",
+          "phase": "apply",
+          "method": "POST",
+          "body": {
+            "excluded": [],
+            "acknowledge_warnings": false
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/columns",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/units/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/v8-preview-1/apply",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    }
+  ]
+}

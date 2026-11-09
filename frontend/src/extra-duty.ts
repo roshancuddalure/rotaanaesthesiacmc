@@ -715,7 +715,33 @@ export async function renderMemberExtraDuties(host: HTMLElement, personId: strin
 /* ----------------------------------------------------------------------------------------- */
 
 /** Per-unit ordered fallback list editor (GET /unit-fallbacks, PUT /unit-fallbacks/{unit_id}). */
+export type FallbackUnitReference = Readonly<{id: string; name: string}>;
+const fallbackReferenceReaders = new WeakMap<HTMLElement, (units: readonly FallbackUnitReference[]) => boolean>();
+const fallbackSnapshotReaders = new WeakMap<HTMLElement, (rows: readonly FallbackRow[]) => boolean>();
+/** Stage an existing complete fallback GET; caller commits only after its owner guard. */
+export async function prepareUnitFallbackReadback(host: HTMLElement): Promise<() => void> {
+  const snapshot = await request<FallbackRow[]>(`${API}/unit-fallbacks`, {signal: AbortSignal.timeout(15000)});
+  if (!Array.isArray(snapshot) || snapshot.some(row => !row || typeof row.unit_id !== "string"
+      || typeof row.unit_name !== "string" || !Array.isArray(row.fallbacks)
+      || row.fallbacks.some(target => !target || typeof target.unit_id !== "string"
+        || (target.unit_name != null && typeof target.unit_name !== "string")))
+      || new Set(snapshot.map(row => row.unit_id)).size !== snapshot.length)
+    throw new Error("Fallback unit references were incomplete. Refresh saved changes again.");
+  return () => {
+    if (!host.isConnected || !fallbackSnapshotReaders.get(host)?.(snapshot))
+      throw new Error("Fallback choices are not ready. Your existing draft is retained; refresh saved changes again.");
+  };
+}
+/** Update labels/options only; confirmed and draft fallback orders stay component-owned. */
+export function refreshUnitFallbackReferences(host: HTMLElement, units: readonly FallbackUnitReference[]): boolean {
+  if (!host.isConnected || !Array.isArray(units) || units.some(unit => !unit || typeof unit.id !== "string" || typeof unit.name !== "string")
+    || new Set(units.map(unit => unit.id)).size !== units.length) return false;
+  return fallbackReferenceReaders.get(host)?.(units) ?? false;
+}
+
 export async function renderUnitFallbacks(host: HTMLElement): Promise<void> {
+  fallbackReferenceReaders.delete(host);
+  fallbackSnapshotReaders.delete(host);
   const intro = `<h3 id="unit-fallbacks-title">Fallback units</h3>
     <p class="hint">When the extra-duty layer finds no one free in a unit, it tries these units in order and moves the duty there. With no list, it tries the month's other units: same campus first, then the least busy.</p>`;
   host.innerHTML = `<section class="panel extra-duty-fallbacks" aria-labelledby="unit-fallbacks-title">${intro}<p role="status">Loading fallback units…</p></section>`;
@@ -740,13 +766,17 @@ export async function renderUnitFallbacks(host: HTMLElement): Promise<void> {
   const sorted = [...rows].sort((a, b) => a.unit_name.localeCompare(b.unit_name));
   const dirty = (id: string) => JSON.stringify(draft.get(id)) !== JSON.stringify(saved.get(id));
 
+  let referenceNames: Map<string, string> | undefined;
+  const currentName = (id: string) => referenceNames && !referenceNames.has(id)
+    ? `${names.get(id) || "Unknown unit"} (not returned by latest unit read)` : names.get(id) || "Unknown unit";
+
   function unitHtml(row: FallbackRow) {
     const id = row.unit_id, list = draft.get(id) ?? [], busy = saving.has(id), note = notes.get(id);
-    const options = [...names].filter(([u]) => u !== id && !list.includes(u)).sort((a, b) => a[1].localeCompare(b[1]));
-    const name = (u: string) => names.get(u) || "Unknown unit";
+    const options = [...names].filter(([u]) => u !== id && !list.includes(u) && (!referenceNames || referenceNames.has(u))).sort((a, b) => a[1].localeCompare(b[1]));
+    const name = currentName;
     return `<details class="extra-duty-fallback-unit" data-fallback-unit="${esc(id)}" ${open.has(id) ? "open" : ""}>
-      <summary><strong>${esc(row.unit_name)}</strong><span>${list.length ? plural(list.length, "fallback unit") : "Automatic order"}${dirty(id) ? " · not saved" : ""}</span></summary>
-      ${list.length ? `<ol class="extra-duty-fallback-list" aria-label="Fallback order for ${esc(row.unit_name)}">${list.map((u, i) => `<li data-fallback-item="${esc(u)}">
+      <summary><strong>${esc(currentName(id))}</strong><span>${list.length ? plural(list.length, "fallback unit") : "Automatic order"}${dirty(id) ? " · not saved" : ""}</span></summary>
+      ${list.length ? `<ol class="extra-duty-fallback-list" aria-label="Fallback order for ${esc(currentName(id))}">${list.map((u, i) => `<li data-fallback-item="${esc(u)}">
         <span><span class="extra-duty-fallback-rank">${i + 1}</span>${esc(name(u))}</span>
         <span class="extra-duty-fallback-actions">
           <button type="button" data-fb-up="${esc(u)}" aria-label="Move ${esc(name(u))} up" ${i === 0 || busy ? "disabled" : ""}>Move up</button>
@@ -776,11 +806,82 @@ export async function renderUnitFallbacks(host: HTMLElement): Promise<void> {
     else if (focus) fresh.querySelector<HTMLElement>("summary")?.focus();
   }
   paint();
+  fallbackReferenceReaders.set(host, references => {
+    if (!host.isConnected) return false;
+    const returned = new Map(references.map(unit => [unit.id, unit.name]));
+    referenceNames = returned;
+    // Last-known labels survive removal. Never delete or reorder a saved/draft ID.
+    returned.forEach((label, id) => names.set(id, label));
+    const label = (id: string) => returned.has(id) ? returned.get(id)!
+      : `${names.get(id) || "Unknown unit"} (not returned by latest unit read)`;
+    for (const element of host.querySelectorAll<HTMLElement>("[data-fallback-unit]")) {
+      const id = element.dataset.fallbackUnit!;
+      const heading = element.querySelector<HTMLElement>(":scope > summary > strong");
+      if (heading) heading.textContent = label(id);
+      element.querySelector(".extra-duty-fallback-list")?.setAttribute("aria-label", `Fallback order for ${label(id)}`);
+      for (const item of element.querySelectorAll<HTMLElement>("[data-fallback-item]")) {
+        const target = item.dataset.fallbackItem!;
+        const text = item.querySelector<HTMLElement>(":scope > span");
+        if (text) {
+          // Keep the existing rank node and action controls, including active focus.
+          for (const child of [...text.childNodes]) if (!(child instanceof HTMLElement && child.classList.contains("extra-duty-fallback-rank"))) child.remove();
+          text.append(document.createTextNode(label(target)));
+        }
+        for (const [attribute, action] of [["data-fb-up", "Move"], ["data-fb-down", "Move"], ["data-fb-remove", "Remove"]] as const) {
+          const button = item.querySelector<HTMLButtonElement>(`[${attribute}]`);
+          if (button) button.setAttribute("aria-label", `${action} ${label(target)}${attribute === "data-fb-up" ? " up" : attribute === "data-fb-down" ? " down" : ""}`);
+        }
+      }
+      const select = element.querySelector<HTMLSelectElement>("[data-fb-select]");
+      const add = element.querySelector<HTMLButtonElement>("[data-fb-add]");
+      if (select) {
+        const selected = names.has(select.value) ? select.value : "", currentDraft = draft.get(id) ?? [];
+        const options = references.filter(unit => unit.id !== id && !currentDraft.includes(unit.id)).sort((a,b) => a.name.localeCompare(b.name));
+        select.replaceChildren(...options.map(unit => new Option(unit.name, unit.id)));
+        if (selected && !options.some(unit => unit.id === selected)) {
+          const retained = new Option(label(selected), selected); retained.disabled = true; select.prepend(retained);
+        }
+        if (selected) select.value = selected;
+        select.disabled = saving.has(id) || options.length === 0;
+        if (add) add.disabled = saving.has(id) || options.length === 0 || !returned.has(select.value);
+      }
+    }
+    let notice = host.querySelector<HTMLElement>("[data-fallback-reference-status]");
+    if (!notice) { notice = document.createElement("p"); notice.dataset.fallbackReferenceStatus = ""; notice.setAttribute("role", "status"); host.prepend(notice); }
+    const missing = [...new Set([...draft.keys(), ...[...draft.values()].flat()])].filter(id => !returned.has(id));
+    notice.textContent = missing.length
+      ? "Unit labels refreshed. Some fallback units were not returned; their saved and unsaved order is retained for review."
+      : "Unit labels and available choices refreshed. Saved and unsaved fallback orders are retained.";
+    return true;
+  });
+  fallbackSnapshotReaders.set(host, snapshot => {
+    // A complete GET supplies initial confirmed order for newly created owners.
+    // Existing saved/draft maps and their exact control nodes are never replaced.
+    for (const row of snapshot) if (!saved.has(row.unit_id)) {
+      const fresh = {unit_id: row.unit_id, unit_name: row.unit_name,
+        fallbacks: row.fallbacks.map(target => ({...target}))};
+      sorted.push(fresh);
+      saved.set(row.unit_id, fresh.fallbacks.map(target => target.unit_id));
+      draft.set(row.unit_id, fresh.fallbacks.map(target => target.unit_id));
+      host.querySelector(".extra-duty-fallbacks")?.insertAdjacentHTML("beforeend", unitHtml(fresh));
+    }
+    if (sorted.length) host.querySelector(".extra-duty-fallbacks > .extra-duty-empty")?.remove();
+    const references = snapshot.map(row => ({id: row.unit_id, name: row.unit_name}));
+    return refreshUnitFallbackReferences(host, references);
+  });
   host.addEventListener("toggle", event => {
     const details = event.target as HTMLDetailsElement;
     const id = details.dataset?.fallbackUnit;
     if (id) { if (details.open) open.add(id); else open.delete(id); }
   }, true);
+  host.addEventListener("change", event => {
+    const select = event.target;
+    if (!(select instanceof HTMLSelectElement) || !select.matches("[data-fb-select]")) return;
+    const element = select.closest<HTMLElement>("[data-fallback-unit]");
+    const id = element?.dataset.fallbackUnit;
+    const add = element?.querySelector<HTMLButtonElement>("[data-fb-add]");
+    if (add && id) add.disabled = saving.has(id) || !names.has(select.value) || Boolean(referenceNames && !referenceNames.has(select.value));
+  });
   host.onclick = async event => {
     const button = (event.target as HTMLElement).closest<HTMLButtonElement>("button");
     const unit = button?.closest<HTMLElement>("[data-fallback-unit]")?.dataset.fallbackUnit;
@@ -794,7 +895,7 @@ export async function renderUnitFallbacks(host: HTMLElement): Promise<void> {
     else if (button.dataset.fbRemove) { list.splice(list.indexOf(button.dataset.fbRemove), 1); focus = "[data-fb-select]"; }
     else if (button.matches("[data-fb-add]")) {
       const value = host.querySelector<HTMLSelectElement>(`[data-fallback-unit="${CSS.escape(unit)}"] [data-fb-select]`)?.value;
-      if (value && names.has(value) && !list.includes(value)) list.push(value);
+      if (value && names.has(value) && (!referenceNames || referenceNames.has(value)) && !list.includes(value)) list.push(value);
       focus = "[data-fb-add]";
     } else if (button.matches("[data-fb-reset]")) { draft.set(unit, [...(saved.get(unit) ?? [])]); notes.delete(unit); repaintUnit(unit, "summary"); return; }
     else if (button.matches("[data-fb-save]")) {

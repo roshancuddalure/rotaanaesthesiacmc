@@ -1,0 +1,3134 @@
+{
+  "recorded_at_utc": "2026-10-28T08:41:29.881Z",
+  "source_sha256": {
+    "src/member-workspace.ts": "6d6d361f7eb66a519423cd46c26a6af7596b0679b8443d12ae82ecbb31271c3f",
+    "src/member-profile.ts": "39f8bc4d281c9d8f3da9cad3a7ef98e4ecef1b0ba020145ca20439228fdc3df3",
+    "src/record-workspace.ts": "23a2ec5e7cc77d2ce167345496865335efda58703155f0d5cfb3ca5c23488f5c",
+    "src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "src/premium-theme.css": "f4c646977ef2cce1ef1a31e6b99de17f5749a60b3282a888ba4412b83e348516",
+    "tests/premium-profile-record-patterns.browser.mjs": "5ef86af78a1442f31f047c0d21d831131515842b38c2e1556630686696faa8e7"
+  },
+  "scope": "Execute only against reviewed final131applicationhold. Actual canonical profile→nested posting/leave add/edit, native review/save/failure/readback/discard. All API responses fulfilled locally; no real persistence/authorization claim.",
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "kind": "units",
+      "mode": "add",
+      "exactMemberAndRecord": true,
+      "previewFailureRetainsDraft": true,
+      "editsInvalidateReview": true,
+      "saveFailureRequiresReReview": true,
+      "pendingSaveBlocksClose": true,
+      "exactSaveBodies": [
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-3"
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-4"
+        }
+      ],
+      "parentHistoryReloadAndReopenReadback": true,
+      "nativeDiscardDeclineAndAccept": true,
+      "previewCalls": [
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "historyReads": 2,
+      "readbacks": [
+        {
+          "id": "units-created",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "confirms": [
+        "Discard unsaved changes?",
+        "Discard unsaved changes?",
+        "Discard unsaved changes?"
+      ],
+      "actualBackendWrites": 0
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "kind": "units",
+      "mode": "edit",
+      "exactMemberAndRecord": true,
+      "previewFailureRetainsDraft": true,
+      "editsInvalidateReview": true,
+      "saveFailureRequiresReReview": true,
+      "pendingSaveBlocksClose": true,
+      "exactSaveBodies": [
+        {
+          "identity": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-3"
+        },
+        {
+          "identity": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-4"
+        }
+      ],
+      "parentHistoryReloadAndReopenReadback": true,
+      "nativeDiscardDeclineAndAccept": true,
+      "previewCalls": [
+        {
+          "identity": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "identity": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "identity": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        },
+        {
+          "identity": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "historyReads": 2,
+      "readbacks": [
+        {
+          "id": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-01",
+            "ends_on": "2026-10-08",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Originally saved notes"
+          }
+        },
+        {
+          "id": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "confirms": [
+        "Discard unsaved changes?",
+        "Discard unsaved changes?",
+        "Discard unsaved changes?"
+      ],
+      "actualBackendWrites": 0
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "kind": "leave",
+      "mode": "add",
+      "exactMemberAndRecord": true,
+      "previewFailureRetainsDraft": true,
+      "editsInvalidateReview": true,
+      "saveFailureRequiresReReview": true,
+      "pendingSaveBlocksClose": true,
+      "exactSaveBodies": [
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-3"
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-4"
+        }
+      ],
+      "parentHistoryReloadAndReopenReadback": true,
+      "nativeDiscardDeclineAndAccept": true,
+      "previewCalls": [
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "historyReads": 2,
+      "readbacks": [
+        {
+          "id": "leave-created",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "confirms": [
+        "Discard unsaved changes?",
+        "Discard unsaved changes?",
+        "Discard unsaved changes?"
+      ],
+      "actualBackendWrites": 0
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "kind": "leave",
+      "mode": "edit",
+      "exactMemberAndRecord": true,
+      "previewFailureRetainsDraft": true,
+      "editsInvalidateReview": true,
+      "saveFailureRequiresReReview": true,
+      "pendingSaveBlocksClose": true,
+      "exactSaveBodies": [
+        {
+          "identity": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-3"
+        },
+        {
+          "identity": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-4"
+        }
+      ],
+      "parentHistoryReloadAndReopenReadback": true,
+      "nativeDiscardDeclineAndAccept": true,
+      "previewCalls": [
+        {
+          "identity": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "identity": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "identity": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        },
+        {
+          "identity": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "historyReads": 2,
+      "readbacks": [
+        {
+          "id": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-01",
+            "ends_on": "2026-10-08",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Originally saved notes"
+          }
+        },
+        {
+          "id": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "confirms": [
+        "Discard unsaved changes?",
+        "Discard unsaved changes?",
+        "Discard unsaved changes?"
+      ],
+      "actualBackendWrites": 0
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "kind": "units",
+      "mode": "add",
+      "exactMemberAndRecord": true,
+      "previewFailureRetainsDraft": true,
+      "editsInvalidateReview": true,
+      "saveFailureRequiresReReview": true,
+      "pendingSaveBlocksClose": true,
+      "exactSaveBodies": [
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-3"
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-4"
+        }
+      ],
+      "parentHistoryReloadAndReopenReadback": true,
+      "nativeDiscardDeclineAndAccept": true,
+      "previewCalls": [
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "historyReads": 2,
+      "readbacks": [
+        {
+          "id": "units-created",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "confirms": [
+        "Discard unsaved changes?",
+        "Discard unsaved changes?",
+        "Discard unsaved changes?"
+      ],
+      "actualBackendWrites": 0
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "kind": "units",
+      "mode": "edit",
+      "exactMemberAndRecord": true,
+      "previewFailureRetainsDraft": true,
+      "editsInvalidateReview": true,
+      "saveFailureRequiresReReview": true,
+      "pendingSaveBlocksClose": true,
+      "exactSaveBodies": [
+        {
+          "identity": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-3"
+        },
+        {
+          "identity": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-4"
+        }
+      ],
+      "parentHistoryReloadAndReopenReadback": true,
+      "nativeDiscardDeclineAndAccept": true,
+      "previewCalls": [
+        {
+          "identity": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "identity": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "identity": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        },
+        {
+          "identity": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "historyReads": 2,
+      "readbacks": [
+        {
+          "id": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-01",
+            "ends_on": "2026-10-08",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Originally saved notes"
+          }
+        },
+        {
+          "id": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "confirms": [
+        "Discard unsaved changes?",
+        "Discard unsaved changes?",
+        "Discard unsaved changes?"
+      ],
+      "actualBackendWrites": 0
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "kind": "leave",
+      "mode": "add",
+      "exactMemberAndRecord": true,
+      "previewFailureRetainsDraft": true,
+      "editsInvalidateReview": true,
+      "saveFailureRequiresReReview": true,
+      "pendingSaveBlocksClose": true,
+      "exactSaveBodies": [
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-3"
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-4"
+        }
+      ],
+      "parentHistoryReloadAndReopenReadback": true,
+      "nativeDiscardDeclineAndAccept": true,
+      "previewCalls": [
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "historyReads": 2,
+      "readbacks": [
+        {
+          "id": "leave-created",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "confirms": [
+        "Discard unsaved changes?",
+        "Discard unsaved changes?",
+        "Discard unsaved changes?"
+      ],
+      "actualBackendWrites": 0
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "kind": "leave",
+      "mode": "edit",
+      "exactMemberAndRecord": true,
+      "previewFailureRetainsDraft": true,
+      "editsInvalidateReview": true,
+      "saveFailureRequiresReReview": true,
+      "pendingSaveBlocksClose": true,
+      "exactSaveBodies": [
+        {
+          "identity": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-3"
+        },
+        {
+          "identity": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-4"
+        }
+      ],
+      "parentHistoryReloadAndReopenReadback": true,
+      "nativeDiscardDeclineAndAccept": true,
+      "previewCalls": [
+        {
+          "identity": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "identity": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "identity": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        },
+        {
+          "identity": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "historyReads": 2,
+      "readbacks": [
+        {
+          "id": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-01",
+            "ends_on": "2026-10-08",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Originally saved notes"
+          }
+        },
+        {
+          "id": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "confirms": [
+        "Discard unsaved changes?",
+        "Discard unsaved changes?",
+        "Discard unsaved changes?"
+      ],
+      "actualBackendWrites": 0
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "kind": "units",
+      "mode": "add",
+      "exactMemberAndRecord": true,
+      "previewFailureRetainsDraft": true,
+      "editsInvalidateReview": true,
+      "saveFailureRequiresReReview": true,
+      "pendingSaveBlocksClose": true,
+      "exactSaveBodies": [
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-3"
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-4"
+        }
+      ],
+      "parentHistoryReloadAndReopenReadback": true,
+      "nativeDiscardDeclineAndAccept": true,
+      "previewCalls": [
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "historyReads": 2,
+      "readbacks": [
+        {
+          "id": "units-created",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "confirms": [
+        "Discard unsaved changes?",
+        "Discard unsaved changes?",
+        "Discard unsaved changes?"
+      ],
+      "actualBackendWrites": 0
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "kind": "units",
+      "mode": "edit",
+      "exactMemberAndRecord": true,
+      "previewFailureRetainsDraft": true,
+      "editsInvalidateReview": true,
+      "saveFailureRequiresReReview": true,
+      "pendingSaveBlocksClose": true,
+      "exactSaveBodies": [
+        {
+          "identity": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-3"
+        },
+        {
+          "identity": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-4"
+        }
+      ],
+      "parentHistoryReloadAndReopenReadback": true,
+      "nativeDiscardDeclineAndAccept": true,
+      "previewCalls": [
+        {
+          "identity": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "identity": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "identity": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        },
+        {
+          "identity": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "historyReads": 2,
+      "readbacks": [
+        {
+          "id": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-01",
+            "ends_on": "2026-10-08",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Originally saved notes"
+          }
+        },
+        {
+          "id": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "confirms": [
+        "Discard unsaved changes?",
+        "Discard unsaved changes?",
+        "Discard unsaved changes?"
+      ],
+      "actualBackendWrites": 0
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "kind": "leave",
+      "mode": "add",
+      "exactMemberAndRecord": true,
+      "previewFailureRetainsDraft": true,
+      "editsInvalidateReview": true,
+      "saveFailureRequiresReReview": true,
+      "pendingSaveBlocksClose": true,
+      "exactSaveBodies": [
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-3"
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-4"
+        }
+      ],
+      "parentHistoryReloadAndReopenReadback": true,
+      "nativeDiscardDeclineAndAccept": true,
+      "previewCalls": [
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "historyReads": 2,
+      "readbacks": [
+        {
+          "id": "leave-created",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "confirms": [
+        "Discard unsaved changes?",
+        "Discard unsaved changes?",
+        "Discard unsaved changes?"
+      ],
+      "actualBackendWrites": 0
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "kind": "leave",
+      "mode": "edit",
+      "exactMemberAndRecord": true,
+      "previewFailureRetainsDraft": true,
+      "editsInvalidateReview": true,
+      "saveFailureRequiresReReview": true,
+      "pendingSaveBlocksClose": true,
+      "exactSaveBodies": [
+        {
+          "identity": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-3"
+        },
+        {
+          "identity": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-4"
+        }
+      ],
+      "parentHistoryReloadAndReopenReadback": true,
+      "nativeDiscardDeclineAndAccept": true,
+      "previewCalls": [
+        {
+          "identity": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "identity": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "identity": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        },
+        {
+          "identity": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "historyReads": 2,
+      "readbacks": [
+        {
+          "id": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-01",
+            "ends_on": "2026-10-08",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Originally saved notes"
+          }
+        },
+        {
+          "id": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "confirms": [
+        "Discard unsaved changes?",
+        "Discard unsaved changes?",
+        "Discard unsaved changes?"
+      ],
+      "actualBackendWrites": 0
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "kind": "units",
+      "mode": "add",
+      "exactMemberAndRecord": true,
+      "previewFailureRetainsDraft": true,
+      "editsInvalidateReview": true,
+      "saveFailureRequiresReReview": true,
+      "pendingSaveBlocksClose": true,
+      "exactSaveBodies": [
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-3"
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-4"
+        }
+      ],
+      "parentHistoryReloadAndReopenReadback": true,
+      "nativeDiscardDeclineAndAccept": true,
+      "previewCalls": [
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "historyReads": 2,
+      "readbacks": [
+        {
+          "id": "units-created",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "confirms": [
+        "Discard unsaved changes?",
+        "Discard unsaved changes?",
+        "Discard unsaved changes?"
+      ],
+      "actualBackendWrites": 0
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "kind": "units",
+      "mode": "edit",
+      "exactMemberAndRecord": true,
+      "previewFailureRetainsDraft": true,
+      "editsInvalidateReview": true,
+      "saveFailureRequiresReReview": true,
+      "pendingSaveBlocksClose": true,
+      "exactSaveBodies": [
+        {
+          "identity": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-3"
+        },
+        {
+          "identity": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-4"
+        }
+      ],
+      "parentHistoryReloadAndReopenReadback": true,
+      "nativeDiscardDeclineAndAccept": true,
+      "previewCalls": [
+        {
+          "identity": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "identity": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "identity": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        },
+        {
+          "identity": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "historyReads": 2,
+      "readbacks": [
+        {
+          "id": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-01",
+            "ends_on": "2026-10-08",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Originally saved notes"
+          }
+        },
+        {
+          "id": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "confirms": [
+        "Discard unsaved changes?",
+        "Discard unsaved changes?",
+        "Discard unsaved changes?"
+      ],
+      "actualBackendWrites": 0
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "kind": "leave",
+      "mode": "add",
+      "exactMemberAndRecord": true,
+      "previewFailureRetainsDraft": true,
+      "editsInvalidateReview": true,
+      "saveFailureRequiresReReview": true,
+      "pendingSaveBlocksClose": true,
+      "exactSaveBodies": [
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-3"
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-4"
+        }
+      ],
+      "parentHistoryReloadAndReopenReadback": true,
+      "nativeDiscardDeclineAndAccept": true,
+      "previewCalls": [
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "historyReads": 2,
+      "readbacks": [
+        {
+          "id": "leave-created",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "confirms": [
+        "Discard unsaved changes?",
+        "Discard unsaved changes?",
+        "Discard unsaved changes?"
+      ],
+      "actualBackendWrites": 0
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "kind": "leave",
+      "mode": "edit",
+      "exactMemberAndRecord": true,
+      "previewFailureRetainsDraft": true,
+      "editsInvalidateReview": true,
+      "saveFailureRequiresReReview": true,
+      "pendingSaveBlocksClose": true,
+      "exactSaveBodies": [
+        {
+          "identity": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-3"
+        },
+        {
+          "identity": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-4"
+        }
+      ],
+      "parentHistoryReloadAndReopenReadback": true,
+      "nativeDiscardDeclineAndAccept": true,
+      "previewCalls": [
+        {
+          "identity": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "identity": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "identity": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        },
+        {
+          "identity": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "historyReads": 2,
+      "readbacks": [
+        {
+          "id": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-01",
+            "ends_on": "2026-10-08",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Originally saved notes"
+          }
+        },
+        {
+          "id": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "confirms": [
+        "Discard unsaved changes?",
+        "Discard unsaved changes?",
+        "Discard unsaved changes?"
+      ],
+      "actualBackendWrites": 0
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "kind": "units",
+      "mode": "add",
+      "exactMemberAndRecord": true,
+      "previewFailureRetainsDraft": true,
+      "editsInvalidateReview": true,
+      "saveFailureRequiresReReview": true,
+      "pendingSaveBlocksClose": true,
+      "exactSaveBodies": [
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-3"
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-4"
+        }
+      ],
+      "parentHistoryReloadAndReopenReadback": true,
+      "nativeDiscardDeclineAndAccept": true,
+      "previewCalls": [
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "historyReads": 2,
+      "readbacks": [
+        {
+          "id": "units-created",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "confirms": [
+        "Discard unsaved changes?",
+        "Discard unsaved changes?",
+        "Discard unsaved changes?"
+      ],
+      "actualBackendWrites": 0
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "kind": "units",
+      "mode": "edit",
+      "exactMemberAndRecord": true,
+      "previewFailureRetainsDraft": true,
+      "editsInvalidateReview": true,
+      "saveFailureRequiresReReview": true,
+      "pendingSaveBlocksClose": true,
+      "exactSaveBodies": [
+        {
+          "identity": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-3"
+        },
+        {
+          "identity": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-4"
+        }
+      ],
+      "parentHistoryReloadAndReopenReadback": true,
+      "nativeDiscardDeclineAndAccept": true,
+      "previewCalls": [
+        {
+          "identity": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "identity": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "identity": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        },
+        {
+          "identity": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "historyReads": 2,
+      "readbacks": [
+        {
+          "id": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-01",
+            "ends_on": "2026-10-08",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Originally saved notes"
+          }
+        },
+        {
+          "id": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "confirms": [
+        "Discard unsaved changes?",
+        "Discard unsaved changes?",
+        "Discard unsaved changes?"
+      ],
+      "actualBackendWrites": 0
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "kind": "leave",
+      "mode": "add",
+      "exactMemberAndRecord": true,
+      "previewFailureRetainsDraft": true,
+      "editsInvalidateReview": true,
+      "saveFailureRequiresReReview": true,
+      "pendingSaveBlocksClose": true,
+      "exactSaveBodies": [
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-3"
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-4"
+        }
+      ],
+      "parentHistoryReloadAndReopenReadback": true,
+      "nativeDiscardDeclineAndAccept": true,
+      "previewCalls": [
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "historyReads": 2,
+      "readbacks": [
+        {
+          "id": "leave-created",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "confirms": [
+        "Discard unsaved changes?",
+        "Discard unsaved changes?",
+        "Discard unsaved changes?"
+      ],
+      "actualBackendWrites": 0
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "kind": "leave",
+      "mode": "edit",
+      "exactMemberAndRecord": true,
+      "previewFailureRetainsDraft": true,
+      "editsInvalidateReview": true,
+      "saveFailureRequiresReReview": true,
+      "pendingSaveBlocksClose": true,
+      "exactSaveBodies": [
+        {
+          "identity": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-3"
+        },
+        {
+          "identity": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-4"
+        }
+      ],
+      "parentHistoryReloadAndReopenReadback": true,
+      "nativeDiscardDeclineAndAccept": true,
+      "previewCalls": [
+        {
+          "identity": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "identity": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "identity": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        },
+        {
+          "identity": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "historyReads": 2,
+      "readbacks": [
+        {
+          "id": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-01",
+            "ends_on": "2026-10-08",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Originally saved notes"
+          }
+        },
+        {
+          "id": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "confirms": [
+        "Discard unsaved changes?",
+        "Discard unsaved changes?",
+        "Discard unsaved changes?"
+      ],
+      "actualBackendWrites": 0
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "kind": "units",
+      "mode": "add",
+      "exactMemberAndRecord": true,
+      "previewFailureRetainsDraft": true,
+      "editsInvalidateReview": true,
+      "saveFailureRequiresReReview": true,
+      "pendingSaveBlocksClose": true,
+      "exactSaveBodies": [
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-3"
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-4"
+        }
+      ],
+      "parentHistoryReloadAndReopenReadback": true,
+      "nativeDiscardDeclineAndAccept": true,
+      "previewCalls": [
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "historyReads": 2,
+      "readbacks": [
+        {
+          "id": "units-created",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "confirms": [
+        "Discard unsaved changes?",
+        "Discard unsaved changes?",
+        "Discard unsaved changes?"
+      ],
+      "actualBackendWrites": 0
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "kind": "units",
+      "mode": "edit",
+      "exactMemberAndRecord": true,
+      "previewFailureRetainsDraft": true,
+      "editsInvalidateReview": true,
+      "saveFailureRequiresReReview": true,
+      "pendingSaveBlocksClose": true,
+      "exactSaveBodies": [
+        {
+          "identity": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-3"
+        },
+        {
+          "identity": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-4"
+        }
+      ],
+      "parentHistoryReloadAndReopenReadback": true,
+      "nativeDiscardDeclineAndAccept": true,
+      "previewCalls": [
+        {
+          "identity": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "identity": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "identity": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        },
+        {
+          "identity": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "historyReads": 2,
+      "readbacks": [
+        {
+          "id": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-01",
+            "ends_on": "2026-10-08",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Originally saved notes"
+          }
+        },
+        {
+          "id": "units-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "unit-one",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "confirms": [
+        "Discard unsaved changes?",
+        "Discard unsaved changes?",
+        "Discard unsaved changes?"
+      ],
+      "actualBackendWrites": 0
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "kind": "leave",
+      "mode": "add",
+      "exactMemberAndRecord": true,
+      "previewFailureRetainsDraft": true,
+      "editsInvalidateReview": true,
+      "saveFailureRequiresReReview": true,
+      "pendingSaveBlocksClose": true,
+      "exactSaveBodies": [
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-3"
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-4"
+        }
+      ],
+      "parentHistoryReloadAndReopenReadback": true,
+      "nativeDiscardDeclineAndAccept": true,
+      "previewCalls": [
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        },
+        {
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "historyReads": 2,
+      "readbacks": [
+        {
+          "id": "leave-created",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "confirms": [
+        "Discard unsaved changes?",
+        "Discard unsaved changes?",
+        "Discard unsaved changes?"
+      ],
+      "actualBackendWrites": 0
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "kind": "leave",
+      "mode": "edit",
+      "exactMemberAndRecord": true,
+      "previewFailureRetainsDraft": true,
+      "editsInvalidateReview": true,
+      "saveFailureRequiresReReview": true,
+      "pendingSaveBlocksClose": true,
+      "exactSaveBodies": [
+        {
+          "identity": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-3"
+        },
+        {
+          "identity": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          },
+          "review_token": "token-4"
+        }
+      ],
+      "parentHistoryReloadAndReopenReadback": true,
+      "nativeDiscardDeclineAndAccept": true,
+      "previewCalls": [
+        {
+          "identity": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "identity": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Edited notes"
+          }
+        },
+        {
+          "identity": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        },
+        {
+          "identity": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "historyReads": 2,
+      "readbacks": [
+        {
+          "id": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-01",
+            "ends_on": "2026-10-08",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Originally saved notes"
+          }
+        },
+        {
+          "id": "leave-original",
+          "values": {
+            "person_id": "profile-target",
+            "starts_on": "2026-10-02",
+            "ends_on": "2026-10-09",
+            "posting_type": "2ND_CALL",
+            "unit_id": "",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "requested",
+            "notes": "Changed after review"
+          }
+        }
+      ],
+      "confirms": [
+        "Discard unsaved changes?",
+        "Discard unsaved changes?",
+        "Discard unsaved changes?"
+      ],
+      "actualBackendWrites": 0
+    }
+  ]
+}

@@ -1,0 +1,486 @@
+{
+  "recorded_at_utc": "2026-10-31T01:32:25.987Z",
+  "operator": "/root/frontend160_remaining_scope_map",
+  "scope": "Eight actual native Chromium320/1280 selected-two and selectedJuly Leave deletion preview/confirm/decline workflows. Dedicated5274 assertedRAM+existing API. Independently derived expected IDs,starts_on month boundary semantics,typedphrase/token,full SQL affected-row/recycle and unaffected sentinel readback. Not posting bulk,hidden-selection pruning,restore,whole160,crossbrowser,physical/production.",
+  "test_sha256": "b0f01148fa5da8c3a614f8cfd279fc33701ac07089fcd90980e856b72434cdf4",
+  "source_sha256": {
+    "frontend/src/main.ts": "e88c69570e7faf9b4277b541e073c8bd2ca3805c23f4feead544f16770f6e07a",
+    "frontend/src/admin-delete.ts": "7a3eb13237272ad8b44f523bea5483ebeae60fc9c8b58d92035fe15c74528979",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/member-workspace.ts": "0ef8c1ef2234c7a50d8ca10b8aaa3998a654d452f563bd4c75531faef09d6c63"
+  },
+  "results": [
+    {
+      "width": 320,
+      "mode": "selected",
+      "confirm": false,
+      "selectedMonth": "2026-07",
+      "expectedIds": [
+        "1f4b6fa7-7f38-4aba-a9b7-eb64fb98b26d",
+        "8089920f-092a-4394-a901-34f6bbaa61a6"
+      ],
+      "previewNoMutation": true,
+      "phraseGuard": false,
+      "startsJuneEndsJulyUntouched": true,
+      "startsJulyEndsAugustInScope": true,
+      "exactDeletionAndRecyclePayload": false,
+      "declineNoMutation": true,
+      "allOtherSqlRowsAndAdjacentJuneUnchanged": true,
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "status": 200,
+          "payload": {
+            "kind": "leave",
+            "ids": [
+              "1f4b6fa7-7f38-4aba-a9b7-eb64fb98b26d",
+              "8089920f-092a-4394-a901-34f6bbaa61a6"
+            ]
+          },
+          "result": {
+            "kind": "leave",
+            "count": 2,
+            "items": [
+              {
+                "id": "1f4b6fa7-7f38-4aba-a9b7-eb64fb98b26d",
+                "label": "Context Selected Member · Annual leave · 10–11 Jul 2026"
+              },
+              {
+                "id": "8089920f-092a-4394-a901-34f6bbaa61a6",
+                "label": "Context Sibling Member · Annual leave · 31 Jul – 2 Aug 2026"
+              }
+            ],
+            "blocked": [],
+            "effects": {},
+            "preview_token": "783bd13d9c747bce6882c0d9fc1b3659",
+            "confirm_phrase": null
+          }
+        }
+      ],
+      "errors": []
+    },
+    {
+      "width": 320,
+      "mode": "selected",
+      "confirm": true,
+      "selectedMonth": "2026-07",
+      "expectedIds": [
+        "6315a61c-d51d-49d2-aec8-a0af00edc57a",
+        "9df610d4-3631-4e60-85e2-dcb40b0b6d67"
+      ],
+      "previewNoMutation": true,
+      "phraseGuard": false,
+      "startsJuneEndsJulyUntouched": true,
+      "startsJulyEndsAugustInScope": true,
+      "exactDeletionAndRecyclePayload": true,
+      "declineNoMutation": false,
+      "allOtherSqlRowsAndAdjacentJuneUnchanged": true,
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "status": 200,
+          "payload": {
+            "kind": "leave",
+            "ids": [
+              "6315a61c-d51d-49d2-aec8-a0af00edc57a",
+              "9df610d4-3631-4e60-85e2-dcb40b0b6d67"
+            ]
+          },
+          "result": {
+            "kind": "leave",
+            "count": 2,
+            "items": [
+              {
+                "id": "9df610d4-3631-4e60-85e2-dcb40b0b6d67",
+                "label": "Context Selected Member · Annual leave · 10–11 Jul 2026"
+              },
+              {
+                "id": "6315a61c-d51d-49d2-aec8-a0af00edc57a",
+                "label": "Context Sibling Member · Annual leave · 31 Jul – 2 Aug 2026"
+              }
+            ],
+            "blocked": [],
+            "effects": {},
+            "preview_token": "9dc00650193ce9ac54139064ba450dfa",
+            "confirm_phrase": null
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "status": 200,
+          "payload": {
+            "kind": "leave",
+            "ids": [
+              "6315a61c-d51d-49d2-aec8-a0af00edc57a",
+              "9df610d4-3631-4e60-85e2-dcb40b0b6d67"
+            ],
+            "preview_token": "9dc00650193ce9ac54139064ba450dfa"
+          },
+          "result": {
+            "batch_id": "097ee04b-a6ca-4145-9837-5ab910216501",
+            "deleted": 2
+          }
+        }
+      ],
+      "errors": []
+    },
+    {
+      "width": 320,
+      "mode": "month",
+      "confirm": false,
+      "selectedMonth": "2026-07",
+      "expectedIds": [
+        "1a6d0e17-3c28-4fca-b9d9-f38426e005c5",
+        "27792425-3f4d-4bce-b68d-6dbfe291e6fb",
+        "3fefc4a1-80e4-4a14-a6c6-1af906dec74d"
+      ],
+      "previewNoMutation": true,
+      "phraseGuard": true,
+      "startsJuneEndsJulyUntouched": true,
+      "startsJulyEndsAugustInScope": true,
+      "exactDeletionAndRecyclePayload": false,
+      "declineNoMutation": true,
+      "allOtherSqlRowsAndAdjacentJuneUnchanged": true,
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "status": 200,
+          "payload": {
+            "kind": "leave",
+            "month": "2026-07"
+          },
+          "result": {
+            "kind": "leave",
+            "count": 3,
+            "items": [
+              {
+                "id": "3fefc4a1-80e4-4a14-a6c6-1af906dec74d",
+                "label": "Context Selected Member · Annual leave · 10–11 Jul 2026"
+              },
+              {
+                "id": "1a6d0e17-3c28-4fca-b9d9-f38426e005c5",
+                "label": "Context Sibling Member · Annual leave · 10–11 Jul 2026"
+              },
+              {
+                "id": "27792425-3f4d-4bce-b68d-6dbfe291e6fb",
+                "label": "Context Sibling Member · Annual leave · 31 Jul – 2 Aug 2026"
+              }
+            ],
+            "blocked": [],
+            "effects": {},
+            "preview_token": "a2afc9167b3382f5683fd83e79c7afc8",
+            "confirm_phrase": "DELETE LEAVE 2026-07"
+          }
+        }
+      ],
+      "errors": []
+    },
+    {
+      "width": 320,
+      "mode": "month",
+      "confirm": true,
+      "selectedMonth": "2026-07",
+      "expectedIds": [
+        "78dce9a3-522d-4b9c-930d-9b9036373702",
+        "b218b67d-2f31-4362-9ecc-bcd2893ca08b",
+        "bd578258-4ea3-42c7-a011-2f5fc8cf6c92"
+      ],
+      "previewNoMutation": true,
+      "phraseGuard": true,
+      "startsJuneEndsJulyUntouched": true,
+      "startsJulyEndsAugustInScope": true,
+      "exactDeletionAndRecyclePayload": true,
+      "declineNoMutation": false,
+      "allOtherSqlRowsAndAdjacentJuneUnchanged": true,
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "status": 200,
+          "payload": {
+            "kind": "leave",
+            "month": "2026-07"
+          },
+          "result": {
+            "kind": "leave",
+            "count": 3,
+            "items": [
+              {
+                "id": "b218b67d-2f31-4362-9ecc-bcd2893ca08b",
+                "label": "Context Selected Member · Annual leave · 10–11 Jul 2026"
+              },
+              {
+                "id": "78dce9a3-522d-4b9c-930d-9b9036373702",
+                "label": "Context Sibling Member · Annual leave · 10–11 Jul 2026"
+              },
+              {
+                "id": "bd578258-4ea3-42c7-a011-2f5fc8cf6c92",
+                "label": "Context Sibling Member · Annual leave · 31 Jul – 2 Aug 2026"
+              }
+            ],
+            "blocked": [],
+            "effects": {},
+            "preview_token": "59212a2f3132205f4cc97d0da1957c25",
+            "confirm_phrase": "DELETE LEAVE 2026-07"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "status": 200,
+          "payload": {
+            "kind": "leave",
+            "month": "2026-07",
+            "preview_token": "59212a2f3132205f4cc97d0da1957c25",
+            "confirm_phrase": "DELETE LEAVE 2026-07"
+          },
+          "result": {
+            "batch_id": "1280481d-6fc3-4821-bef0-d5f038cba43c",
+            "deleted": 3
+          }
+        }
+      ],
+      "errors": []
+    },
+    {
+      "width": 1280,
+      "mode": "selected",
+      "confirm": false,
+      "selectedMonth": "2026-07",
+      "expectedIds": [
+        "0483a813-7ba2-42f9-baef-ebbbe188f72a",
+        "9d67c1d3-86a8-45d1-8c44-132bda2d9b65"
+      ],
+      "previewNoMutation": true,
+      "phraseGuard": false,
+      "startsJuneEndsJulyUntouched": true,
+      "startsJulyEndsAugustInScope": true,
+      "exactDeletionAndRecyclePayload": false,
+      "declineNoMutation": true,
+      "allOtherSqlRowsAndAdjacentJuneUnchanged": true,
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "status": 200,
+          "payload": {
+            "kind": "leave",
+            "ids": [
+              "0483a813-7ba2-42f9-baef-ebbbe188f72a",
+              "9d67c1d3-86a8-45d1-8c44-132bda2d9b65"
+            ]
+          },
+          "result": {
+            "kind": "leave",
+            "count": 2,
+            "items": [
+              {
+                "id": "9d67c1d3-86a8-45d1-8c44-132bda2d9b65",
+                "label": "Context Selected Member · Annual leave · 10–11 Jul 2026"
+              },
+              {
+                "id": "0483a813-7ba2-42f9-baef-ebbbe188f72a",
+                "label": "Context Sibling Member · Annual leave · 31 Jul – 2 Aug 2026"
+              }
+            ],
+            "blocked": [],
+            "effects": {},
+            "preview_token": "75cb06ee227a23a700d2a7dbe370b838",
+            "confirm_phrase": null
+          }
+        }
+      ],
+      "errors": []
+    },
+    {
+      "width": 1280,
+      "mode": "selected",
+      "confirm": true,
+      "selectedMonth": "2026-07",
+      "expectedIds": [
+        "17bd879c-e7b2-468e-b4a3-265e42ff44ad",
+        "a2606d36-a5c1-4934-a7bc-6ccd4df07ec6"
+      ],
+      "previewNoMutation": true,
+      "phraseGuard": false,
+      "startsJuneEndsJulyUntouched": true,
+      "startsJulyEndsAugustInScope": true,
+      "exactDeletionAndRecyclePayload": true,
+      "declineNoMutation": false,
+      "allOtherSqlRowsAndAdjacentJuneUnchanged": true,
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "status": 200,
+          "payload": {
+            "kind": "leave",
+            "ids": [
+              "17bd879c-e7b2-468e-b4a3-265e42ff44ad",
+              "a2606d36-a5c1-4934-a7bc-6ccd4df07ec6"
+            ]
+          },
+          "result": {
+            "kind": "leave",
+            "count": 2,
+            "items": [
+              {
+                "id": "17bd879c-e7b2-468e-b4a3-265e42ff44ad",
+                "label": "Context Selected Member · Annual leave · 10–11 Jul 2026"
+              },
+              {
+                "id": "a2606d36-a5c1-4934-a7bc-6ccd4df07ec6",
+                "label": "Context Sibling Member · Annual leave · 31 Jul – 2 Aug 2026"
+              }
+            ],
+            "blocked": [],
+            "effects": {},
+            "preview_token": "1e154870871e006432ca21ad96ffdd89",
+            "confirm_phrase": null
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "status": 200,
+          "payload": {
+            "kind": "leave",
+            "ids": [
+              "17bd879c-e7b2-468e-b4a3-265e42ff44ad",
+              "a2606d36-a5c1-4934-a7bc-6ccd4df07ec6"
+            ],
+            "preview_token": "1e154870871e006432ca21ad96ffdd89"
+          },
+          "result": {
+            "batch_id": "6d698947-8dc8-4cbc-8c06-e111ed67b698",
+            "deleted": 2
+          }
+        }
+      ],
+      "errors": []
+    },
+    {
+      "width": 1280,
+      "mode": "month",
+      "confirm": false,
+      "selectedMonth": "2026-07",
+      "expectedIds": [
+        "50203b06-186b-4f67-9406-beee620f4427",
+        "b23be71e-6d7a-4bfc-86e8-ab6fe9a95afa",
+        "ce9590ae-a50f-40d3-b408-10121b75dfee"
+      ],
+      "previewNoMutation": true,
+      "phraseGuard": true,
+      "startsJuneEndsJulyUntouched": true,
+      "startsJulyEndsAugustInScope": true,
+      "exactDeletionAndRecyclePayload": false,
+      "declineNoMutation": true,
+      "allOtherSqlRowsAndAdjacentJuneUnchanged": true,
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "status": 200,
+          "payload": {
+            "kind": "leave",
+            "month": "2026-07"
+          },
+          "result": {
+            "kind": "leave",
+            "count": 3,
+            "items": [
+              {
+                "id": "50203b06-186b-4f67-9406-beee620f4427",
+                "label": "Context Selected Member · Annual leave · 10–11 Jul 2026"
+              },
+              {
+                "id": "b23be71e-6d7a-4bfc-86e8-ab6fe9a95afa",
+                "label": "Context Sibling Member · Annual leave · 10–11 Jul 2026"
+              },
+              {
+                "id": "ce9590ae-a50f-40d3-b408-10121b75dfee",
+                "label": "Context Sibling Member · Annual leave · 31 Jul – 2 Aug 2026"
+              }
+            ],
+            "blocked": [],
+            "effects": {},
+            "preview_token": "3b40362b765828a7f69f466f3282ffc8",
+            "confirm_phrase": "DELETE LEAVE 2026-07"
+          }
+        }
+      ],
+      "errors": []
+    },
+    {
+      "width": 1280,
+      "mode": "month",
+      "confirm": true,
+      "selectedMonth": "2026-07",
+      "expectedIds": [
+        "59212758-ad9f-4e5f-b83a-8d0c82a963e8",
+        "d6c34a8c-53ad-47be-9822-e6a0f4fd0354",
+        "e99c2170-ea0a-46ea-970a-730e157f2997"
+      ],
+      "previewNoMutation": true,
+      "phraseGuard": true,
+      "startsJuneEndsJulyUntouched": true,
+      "startsJulyEndsAugustInScope": true,
+      "exactDeletionAndRecyclePayload": true,
+      "declineNoMutation": false,
+      "allOtherSqlRowsAndAdjacentJuneUnchanged": true,
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "status": 200,
+          "payload": {
+            "kind": "leave",
+            "month": "2026-07"
+          },
+          "result": {
+            "kind": "leave",
+            "count": 3,
+            "items": [
+              {
+                "id": "e99c2170-ea0a-46ea-970a-730e157f2997",
+                "label": "Context Selected Member · Annual leave · 10–11 Jul 2026"
+              },
+              {
+                "id": "59212758-ad9f-4e5f-b83a-8d0c82a963e8",
+                "label": "Context Sibling Member · Annual leave · 10–11 Jul 2026"
+              },
+              {
+                "id": "d6c34a8c-53ad-47be-9822-e6a0f4fd0354",
+                "label": "Context Sibling Member · Annual leave · 31 Jul – 2 Aug 2026"
+              }
+            ],
+            "blocked": [],
+            "effects": {},
+            "preview_token": "87376b48ce6390e691192c414f1221bf",
+            "confirm_phrase": "DELETE LEAVE 2026-07"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "status": 200,
+          "payload": {
+            "kind": "leave",
+            "month": "2026-07",
+            "preview_token": "87376b48ce6390e691192c414f1221bf",
+            "confirm_phrase": "DELETE LEAVE 2026-07"
+          },
+          "result": {
+            "batch_id": "da9412ca-a856-428c-98d4-5f5e36dba911",
+            "deleted": 3
+          }
+        }
+      ],
+      "errors": []
+    }
+  ]
+}

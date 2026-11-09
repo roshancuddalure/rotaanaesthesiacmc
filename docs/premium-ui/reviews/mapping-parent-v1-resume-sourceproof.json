@@ -1,0 +1,16 @@
+{
+  "recorded_at_utc": "2026-11-03T04:59:35.207Z",
+  "reviewer": "/root/mapping_parent_resume_review",
+  "application_changed": false,
+  "actual_main_sha256": "e88c69570e7faf9b4277b541e073c8bd2ca3805c23f4feead544f16770f6e07a",
+  "candidate_sha256": "d13bd73108d89d6efb70a66426e6f8e9f6e50400475575b7a40cb06eef12c1bc",
+  "exact_callback_reverse": true,
+  "mutation_storage_confirm_serialization_calls_equal": true,
+  "typecheck_diagnostics": 0,
+  "source_assessment": "Only Add mapping parent saved callback captures account/view/render/root and calls existing loadMappings(true,current). That reader merges only dirty target_key/target_label/status/notes, retains missing dirty rows, rejects superseded reads and records error for explicit GET retry. API payload/creator/controller remain unchanged. Stale same-account confirmed POST global invalidation still occurs in unchanged API service; parent callback does not navigate or repaint another owner.",
+  "limits": [
+    "Root sourceproof is supplementary; no whole159 acceptance.",
+    "Held newer-row edit cancels pending read commit by existing mappingLoadSequence; new mapping visibility after that cancelled read requires a subsequent explicit reload.",
+    "Existing navigation loadMappings(false) can replace prior route drafts; this callback change does not certify preserving drafts across deliberate route changes."
+  ]
+}

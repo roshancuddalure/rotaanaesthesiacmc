@@ -1,0 +1,33 @@
+{
+  "recorded_at_utc": "2026-11-09T09:21:55.707914+00:00",
+  "author": "/root/profile_parent_final_audit",
+  "application_changed": false,
+  "browser_executed": false,
+  "decision": "Scratch component proposal, requires independent review/runtime before integration",
+  "candidate": "tmp/unit-fallback-reference-readback-v2/extra-duty.ts",
+  "candidate_sha256": "739c3c6e6cf3a79b82ef81f68315c58109490d487167dfa198636c8530c7d1f6",
+  "baseline_sha256": "52084624922de21f2a0fa478eb1ca4c883cdeb66dd1d05147d0f21fe806bc7ea",
+  "exact_source_replay_and_reverse": true,
+  "typecheck_diagnostics": 0,
+  "existing_request_download_serialization_confirmation_expressions_exact": true,
+  "effect_expression_count": 12,
+  "api": "refreshUnitFallbackReferences(host, readonly {id,name}[]) => boolean; returns false for missing/disconnected component, malformed/duplicateID snapshot. No GET or write; owning parent supplies validated current snapshot.",
+  "behavior": [
+    "WeakMap lifecycle entry deleted when component remount starts; entry installed after initial confirmed fallback GET renders. No global listener, new network request or retry in helper.",
+    "Updates existing owner headings, target names/rank text and action aria labels without replacing dirty row/control nodes. Existing selected fallback option retained explicitly unavailable if removed from latest snapshot.",
+    "Saved/draft Maps and order remain untouched. Returned snapshot updates name map and membership used for subsequent user-triggered repaint, preventing old labels reappearing.",
+    "Missing draft targets retain immutable IDs and last-known text with explicit unavailable wording. Existing Save payload and authoritative server validation remain unchanged. Add cannot use a target absent from current validated reference snapshot; selecting another valid option enables existing Add.",
+    "New returned target Units appear as choices for existing owner rows. New owner rows are not fabricated because confirmed fallback assignment state for them has not been returned. A later existing fallback GET readback must reconcile those rows without replacing unrelated dirty maps."
+  ],
+  "integration_notes": [
+    "Import symbol alongside renderUnitFallbacks in main only when corresponding registry retained pipeline is implemented. Call with exact owned validated Unit references after successful relevant read; no blind call from stale callback.",
+    "Current Unit management snapshot may not be complete registry membership (active/month-scoped); snapshot completeness must be declared by caller. Do not mark a Unit unavailable solely due to applying a deliberately filtered display list. Prefer existing normalization units response with known inclusion semantics or full registry snapshot.",
+    "No claim this helper fixes original159 or registry create/edit lifecycle by itself. Parent full render must first be replaced by retained coordinator.",
+    "Independent tests: real dirty order3units, rename/create/remove targets, retained selected option/focus, subsequent reorder retains new label, save payload equality, busy row heldPUT, superseded snapshot owner, malformed snapshot no DOM mutation."
+  ],
+  "limits": [
+    "No browser execution, no application changes, no endpoint/policy/scheduling/export edits.",
+    "Initial V1 intentionally retained as exploratory source with known repaint/selection limitations; V2 is current proposal only.",
+    "Snapshot guard checks structural id/name and uniqueness; membership policy/completeness belongs to confirmed existing endpoint semantics and owner, not new frontend assumptions."
+  ]
+}

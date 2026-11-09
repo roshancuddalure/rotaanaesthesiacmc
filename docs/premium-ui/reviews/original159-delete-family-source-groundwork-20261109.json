@@ -1,0 +1,91 @@
+{
+  "recorded_date": "2026-11-09",
+  "reviewer": "/root/delete159_groundwork",
+  "application_changed": false,
+  "browser_tests_executed_by_author": false,
+  "item": 159,
+  "source_sha256": {
+    "frontend/src/main.ts": "9f5359ad9e8014098bc12c8ed3f9e1c6b1a06d1a4f92797b7f9da24bfba6e6b8",
+    "frontend/src/member-workspace.ts": "105cc1d91ea4815d565ad4859fc01412cf576a3203c07834f4010e3fef7ef1a5",
+    "frontend/src/extra-duty.ts": "529e420fc05ce5bfa42655b8863e449e09e22a7c0abe9baf4db5c94c4797b8c3",
+    "frontend/src/admin-delete.ts": "7a3eb13237272ad8b44f523bea5483ebeae60fc9c8b58d92035fe15c74528979",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+  },
+  "classification": "Source-demonstrated destructive full rebuild; actual UI regression diagnostic prepared, no new runtime defect certification.",
+  "posting_delete_entries": [
+    {
+      "entry": "Unit modal posting card",
+      "selector": "#unit-management-modal [data-delete-unit-assignment]",
+      "handler_line": 10048,
+      "callback": "Clear unitEditingAssignmentId only if deleting the edited identity, then refreshUnitsAfterDelete().",
+      "responsive": "Existing mobile and desktop entry."
+    },
+    {
+      "entry": "Desktop posting row menu",
+      "selector": "[data-unit-board-row] details.row-menu > summary then [data-delete-posting]",
+      "handler_line": 10060,
+      "callback": "refreshUnitsAfterDelete",
+      "responsive": "The rendered all-postings table uses hide-mobile; do not force a hidden row control at mobile width."
+    },
+    {
+      "entry": "Desktop selected posting deletion",
+      "selector": "[data-admin-select=posting] then [data-delete-selected=posting]",
+      "handler_line": 10069,
+      "callback": "refreshUnitsAfterDelete",
+      "responsive": "Selection controls belong to the existing hide-mobile all-postings table."
+    },
+    {
+      "entry": "Whole-month posting deletion",
+      "selector": "[aria-label='Unit actions'] details.row-menu > summary then [data-delete-month=posting]",
+      "handler_line": 10078,
+      "callback": "refreshUnitsAfterDelete",
+      "responsive": "Existing mobile and desktop toolbar entry; actual typed confirmation phrase required."
+    }
+  ],
+  "shared_delete_contract": {
+    "coordinator": "main.ts:3575 runAdminDelete",
+    "confirmed_owner_guard": "Existing currentUser, activeView, viewSeq, renderSeq, viewRoot, root connectivity and selected month checks run after confirmAdminDelete returns accepted result.",
+    "selection_effect": "Only supplied target IDs are removed; a month target clears that kind's selection.",
+    "refresh": "main.ts:3570 refreshUnitsAfterDelete invalidates unit cache then preserveViewport(() => renderUnitManagement(true)).",
+    "draft_loss_mechanism": "renderUnitManagement eventually sets viewRoot.innerHTML, recreates #unit-fallbacks-host, and calls renderUnitFallbacks. Local fallback saved/draft maps and original controls are replaced by server-derived state.",
+    "preview": "POST /api/v1/admin/delete/preview with unchanged kind and ids or month.",
+    "mutation": "POST /api/v1/admin/delete with same selection plus preview_token and optional exact confirm_phrase.",
+    "no_contract_change_proposed": true
+  },
+  "diagnostic": {
+    "path": "frontend/tests/premium-original159-delete-fallback-draft-diagnostic.browser.mjs",
+    "sha256": "27cff7e324768e06dedc15135d995e00831e54c4b0ecec864d638af0f2eb17a6",
+    "syntax_check": "node --check completed with exit0; no browser execution by author.",
+    "expected_contexts": 18,
+    "dimensions": "Chromium/Firefox/WebKit; modal and month at320/1280 plus actual row/selected at1280.",
+    "fixture": "Three local units; actual fallback Move up yields unsaved C,B; Royal search and Main campus. One accepted existing reviewed posting deletion updates actual monthly response from one posting to zero.",
+    "expected_correct_outcome": "Original fallback host and row retained, dirty C,B order and enabled Save remain, filters remain, dependent monthly posting disappears, one parent GET and no delete replay.",
+    "network_safety": "All non-GET intercepted and asserted locally; exact preview/delete POST fixtures fulfilled without network; remaining GETs exclusively disposable RAM8031.",
+    "served_source_binding": "Live5197 inline Vite main source map must match held main9f5359ad. All four application hashes checked before and after.",
+    "report": "docs/premium-ui/qa-original159-delete-fallback-draft-diagnostic.json",
+    "failure_policy": "Catch and retain every context observation before final expected-correct assertion. Do not rename failed contexts as passes."
+  },
+  "leave_remaining_source_paths": [
+    {
+      "entry": "[data-delete-leave], [data-delete-selected=leave], [data-delete-month=leave]",
+      "callback": "renderLeave directly after existing accepted admin-delete result and ownership guard."
+    },
+    {
+      "entry": "[data-cancel-leave]",
+      "handler_line": 9886,
+      "callback": "Confirmed cancelLeaveRequest then renderLeave; existing account/view/render/root/month guard retained."
+    },
+    {
+      "entry": "[data-approve-month-leave]",
+      "handler_line": 10114,
+      "callback": "Monthly approval callback then void renderLeave; existing account/view/render/root/month guard retained."
+    }
+  ],
+  "leave_readback_risk": {
+    "source": "main.ts:4202 renderLeave",
+    "behavior": "Immediately replaces root with skeleton; any dependent calendar/requests/pressure failure installs empty-state instead of retaining prior parent DOM.",
+    "counterevidence": "leaveCalendarView is global and normally persists through the full render. No ordinary Day list mode-loss is established by this audit.",
+    "next_actual_diagnostic": "Two leave identities; select unrelated identity, expand pressure disclosure, choose Day list, delete target through real visible desktop row/mobile card, reject exactly one post-confirmation parent GET. Require last-known parent, surviving selected identity, disclosure and chosen view; recover with GET-only retry."
+  },
+  "acceptance": "Original159 remains partial. New runtime observations and scoped recovery repair are required; this source audit alone proves no whole-item acceptance."
+}

@@ -1,0 +1,15 @@
+{
+  "recorded_at_utc": "2026-11-09T07:44:49.479559+00:00",
+  "author": "/root/stage161_final_review",
+  "application_changed": false,
+  "browser_executed": false,
+  "diagnostic_log": "tmp/profile-parent-v4-owner-coalescing.log",
+  "diagnostic_log_sha256": "455b0203a3ef4cf13c1818040234edae6f0f2bfdf33c615fb30e6d449ecd392d",
+  "original_test": "frontend\\tests\\premium-profile-parent-v4-owner-coalescing.browser.mjs",
+  "original_test_sha256": "58c255862db3552686bd0d1f7bb7c1953f89011241ce9836b4feeaa58531e942",
+  "revised_test": "frontend\\tests\\premium-profile-parent-v4-owner-coalescing-r1.browser.mjs",
+  "revised_test_sha256": "c2be63c811df5cf4fd1a4187521557257d001374f6f24f92c0432c8d4f003b09",
+  "finding": "First-run route-away-return timeout came from a second Manage click behind the already restored selected-unit modal. Existing Units navigation retains selected unit and reopens its modal after fresh read. This is a harness precondition error, not evidence of failed parent refresh.",
+  "correction": "After returning to Units, await the restored modal posting row directly, then retain the existing exact fresh notes and total read-count assertions. No force click, product change, test deletion or weakened data/freshness assertion.",
+  "preserved_scope": "All original 36 scenarios and current/candidate hash guards retained. Unique R1 report path; original test and failure log remain unchanged."
+}

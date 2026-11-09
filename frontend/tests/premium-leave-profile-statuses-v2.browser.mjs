@@ -1,0 +1,68 @@
+import assert from 'node:assert/strict';
+import {readFile,writeFile} from 'node:fs/promises';
+import {createHash} from 'node:crypto';
+import {chromium,firefox,webkit} from 'playwright';
+
+const base=process.env.LEAVE_STATUS_BASE||'http://127.0.0.1:5197';
+assert.ok(['http://127.0.0.1:5197','http://127.0.0.1:5201','http://127.0.0.1:5202','http://127.0.0.1:5203'].includes(base));
+const engines=(process.env.LEAVE_STATUS_ENGINES||'chromium,firefox,webkit').split(',');
+const candidateDir=process.env.LEAVE_EXTRA_CANDIDATE_DIR;
+const files=['src/member-profile.ts','src/member-workspace.ts','src/record-workspace.ts','src/member-presentation.ts','src/services/api.ts','src/styles.css','src/premium-theme.css'];
+const sha=b=>createHash('sha256').update(b).digest('hex'),hashes=async()=>Object.fromEntries(await Promise.all(files.map(async p=>['frontend/'+p,sha(await readFile(p))])));
+const initial=await hashes(),testSha=sha(await readFile(new URL(import.meta.url))),results=[];
+const candidateHashes=async()=>candidateDir?Object.fromEntries(await Promise.all(['member-profile.ts','record-workspace.ts'].map(async p=>[p,sha(await readFile(candidateDir+'/'+p))]))):null;
+const initialCandidate=await candidateHashes();
+const themeCandidateDir=process.env.LEAVE_EXTRA_THEME_CANDIDATE_DIR;
+const themeHashes=async()=>themeCandidateDir?Object.fromEntries(await Promise.all(['main.ts','premium-theme.css'].map(async p=>[p,sha(await readFile(themeCandidateDir+'/'+p))]))):null;
+const initialTheme=await themeHashes();
+const statuses=['approved','requested','imported_pending_review','cancelled','rejected','canceled','APPROVED','constructor','__proto__','toString','external_review_'+ 'LONG_UNKNOWN_STATUS'.repeat(15),'<img src=x onerror="window.leaveProfileInjected=true">'];
+const member={id:'leave-status-profile',canonical_name:'Dr Profile Leave Status',active_status:'active',call_level:'1ST_CALL',effective_call_level:'1ST_CALL',revision:'one',aliases:[],designations:[],call_level_changes:[]};
+const leaves=statuses.map((status,i)=>({id:'leave-status-'+i,person_id:member.id,type:'ANNUAL_LEAVE',slot:i===0?'AM':'FULL_DAY',starts_on:'2026-05-31',ends_on:'2026-06-02',status,notes:'Returned record '+i}));
+const legacy={member,today:'2026-10-28',current_call_level:'1ST_CALL',can_manage:false,call_history:[],comments:[],postings:[],leaves:leaves.map(r=>({type:r.type,from:r.starts_on,to:r.ends_on,status:r.status})),imports:[],statistics:{official_duties:0,hours24:0,weekend_duties:0}};
+const known=new Map([['approved','Approved'],['requested','Requested'],['imported_pending_review','Imported, Pending Review'],['cancelled','Cancelled'],['canceled','Cancelled'],['rejected','Rejected']]);
+const legacyLabel=s=>known.get(s.toLowerCase())??s;
+const canonicalLabel=s=>s.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+const layouts=process.env.LEAVE_STATUS_STRESS==='1'?[{width:320,height:568,rootPercent:200},{width:390,height:320,rootPercent:100}]:[{width:320,height:900,rootPercent:100},{width:1280,height:900,rootPercent:100}];
+let failure,diagnostic;
+try{
+ for(const engine of engines){assert.ok(Object.hasOwn({chromium,firefox,webkit},engine));const browser=await({chromium,firefox,webkit}[engine]).launch();
+  try{for(const {width,height,rootPercent} of layouts){
+   const context=await browser.newContext({viewport:{width,height},colorScheme:width===320?'dark':'light',reducedMotion:'reduce'}),page=await context.newPage(),calls=[],errors=[];
+   try{
+    diagnostic={engine,width,height,rootPercent};page.on('pageerror',e=>errors.push(e.message));
+    await page.route('**/__leave-profile-statuses',r=>r.fulfill({contentType:'text/html',body:'<!doctype html><html lang="en"><head><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/src/styles.css"><link rel="stylesheet" href="/src/premium-theme.css"></head><body><button id="open">Open returned leave history</button></body></html>'}));
+    await page.route('**/api/**',r=>{const q=r.request(),u=new URL(q.url()),p=u.pathname;assert.equal(q.method(),'GET','Profile status presentation never mutates');calls.push(p+u.search);let json;
+     if(p==='/api/v1/members/'+member.id+'/profile')json=legacy;
+     else if(p==='/api/v1/admin/member-workspace/'+member.id)json={member,impact:{}};
+     else if(p==='/api/v1/admin/member-workspace/'+member.id+'/leave')json={rows:leaves};
+     else if(p==='/api/v1/admin/member-workspace/'+member.id+'/duplicates')json={rows:[]};
+     else if(p==='/api/v1/extra-duty/ledger')json=[];
+     else if(p==='/api/v1/admin/members')json=[member];
+     else if(p==='/api/v1/normalization/units')json=[];
+     else if(p==='/api/v1/normalization/records/leave/leave-status-0')json={...leaves[0],leave_type:leaves[0].type,leave_slot:leaves[0].slot};
+     else if(p.startsWith('/api/v1/normalization/catalog/')){const key=p.split('/').at(-1),values={leave_type:['ANNUAL_LEAVE'],leave_slot:['AM','PM','FULL_DAY'],leave_status:['approved','requested','imported_pending_review','cancelled','rejected']};assert.ok(Object.hasOwn(values,key));json=values[key].map(key=>({key,label:key,active:true}));}
+     else assert.fail('Unexpected profile GET '+p);return r.fulfill({json});
+    });
+    await page.goto(base+'/__leave-profile-statuses');if(rootPercent!==100)await page.evaluate(n=>{document.documentElement.style.fontSize=n+'%';},rootPercent);
+    await page.evaluate(()=>{document.querySelector('#open').onclick=()=>import('/src/member-profile.ts').then(m=>m.openMemberProfile('leave-status-profile','rota_board_member',async()=>{}));});
+    await page.locator('#open').focus();await page.keyboard.press('Enter');const old=page.getByRole('dialog',{name:'Department member profile',exact:true});const disclosure=old.locator('[data-profile-disclosure="posting-leave-history"]');await disclosure.waitFor();await disclosure.locator('summary').focus();await page.keyboard.press('Enter');assert.equal(await disclosure.evaluate(e=>e.open),true);
+    const visibleStatuses=disclosure.locator('[data-profile-leave-status]');assert.equal(await visibleStatuses.count(),statuses.length,'Explicit readable status for every returned legacy leave');
+    assert.deepEqual(await visibleStatuses.allTextContents(),statuses.map(legacyLabel));
+    const legacyGeometry=await visibleStatuses.evaluateAll(es=>es.map(e=>{const p=e.closest('p'),d=e.closest('dialog'),r=e.getBoundingClientRect(),b=p.getBoundingClientRect();return{text:e.textContent,width:r.width,height:r.height,parentWidth:b.width,parentScrollWidth:p.scrollWidth,parentClientWidth:p.clientWidth,dialogScrollWidth:d.scrollWidth,dialogClientWidth:d.clientWidth,overflowWrap:getComputedStyle(e).overflowWrap};}));
+    for(const g of legacyGeometry){assert.ok(g.width>0&&g.height>0);assert.ok(g.parentScrollWidth<=g.parentClientWidth+1,JSON.stringify(g));assert.ok(g.dialogScrollWidth<=g.dialogClientWidth+1,JSON.stringify(g));assert.equal(g.overflowWrap,'anywhere');}
+    assert.equal(await old.locator('img').count(),0);await page.keyboard.press('Escape');await old.waitFor({state:'detached'});assert.equal(await page.locator('#open').evaluate(e=>e===document.activeElement),true);
+    await page.evaluate(()=>{document.querySelector('#open').onclick=()=>import('/src/member-workspace.ts').then(m=>m.openMemberWorkspace('leave-status-profile',false,()=>{},['leave-status-profile'],'leave'));});
+    await page.keyboard.press('Enter');const current=page.getByRole('dialog',{name:'Member profile',exact:true});await current.locator('.mw-record-status').first().waitFor();assert.equal(await current.locator('.mw-history').count(),leaves.length);assert.deepEqual(await current.locator('.mw-record-status').allTextContents(),statuses.map(s=>'Status: '+canonicalLabel(s)));
+    const canonicalGeometry=await current.locator('.mw-record-status').evaluateAll(es=>es.map(e=>{const r=e.getBoundingClientRect(),d=e.closest('dialog');return{text:e.textContent,width:r.width,height:r.height,scrollWidth:e.scrollWidth,clientWidth:e.clientWidth,dialogScrollWidth:d.scrollWidth,dialogClientWidth:d.clientWidth,overflowWrap:getComputedStyle(e).overflowWrap};}));
+    for(const g of canonicalGeometry){assert.ok(g.width>0&&g.height>0);assert.ok(g.scrollWidth<=g.clientWidth+1,JSON.stringify(g));assert.ok(g.dialogScrollWidth<=g.dialogClientWidth+1,JSON.stringify(g));assert.equal(g.overflowWrap,'anywhere');}
+    for(let i=0;i<leaves.length;i++){const card=current.locator('.mw-history').nth(i);assert.deepEqual(await card.locator('.mw-record-dates time').evaluateAll(es=>es.map(e=>e.dateTime)),['2026-05-31','2026-06-02']);const status=card.locator('dl > div').filter({has:page.locator('dt',{hasText:/^status$/})});assert.equal(await status.locator('dd').textContent(),canonicalLabel(statuses[i]));}
+    const edit=current.locator('.mw-history').first().getByRole('button',{name:'Edit leave',exact:true});await edit.focus();await page.keyboard.press('Enter');const editor=page.getByRole('dialog',{name:'Edit leave',exact:true});await editor.locator('[name="starts_on"]').waitFor();assert.equal(await editor.locator('[name="person_id"]').inputValue(),member.id);assert.equal(await editor.locator('[name="status"]').inputValue(),'approved');assert.equal(await editor.locator('[name="leave_slot"]').inputValue(),'AM');assert.equal(await editor.locator('[name="starts_on"]').inputValue(),'2026-05-31');assert.equal(await editor.locator('[name="ends_on"]').inputValue(),'2026-06-02');assert.match(await editor.innerText(),/Pending requests are not confirmed absence/);assert.match(await editor.innerText(),/Availability depends on the operation/);const beforeCancel=calls.length;await editor.getByRole('button',{name:'Cancel',exact:true}).focus();await page.keyboard.press('Enter');await editor.waitFor({state:'detached'});assert.equal(await edit.evaluate(e=>e===document.activeElement),true);assert.equal(calls.length,beforeCancel,'Pristine editor cancel never refetches or writes');
+    assert.equal(await current.locator('img').count(),0);assert.equal(await page.evaluate(()=>window.leaveProfileInjected),undefined);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);const beforeClose=calls.length;await current.locator('[data-close]').focus();await page.keyboard.press('Enter');await current.waitFor({state:'detached'});assert.equal(await page.locator('#open').evaluate(e=>e===document.activeElement),true);assert.equal(calls.length,beforeClose);assert.deepEqual(errors,[]);
+    results.push({engine,width,height,rootPercent,legacyGeometry,canonicalGeometry,knownStatesAndCaseAliasReadable:true,unknownLegacyStatusVerbatim:true,canonicalReturnedFieldsPreserved:true,fullCrossMonthDates:true,editorExactMemberRangeSessionStatus:true,editorOperationScopedGuidance:true,pristineEditorCancelNoRefetch:true,inheritedWrappingMeasured:true,escapedText:true,exactOpenerReturn:true,calls,errors});
+   }finally{await context.close();}
+  }}finally{await browser.close();}
+ }
+ assert.deepEqual(await hashes(),initial);assert.deepEqual(await candidateHashes(),initialCandidate);assert.deepEqual(await themeHashes(),initialTheme);assert.equal(sha(await readFile(new URL(import.meta.url))),testSha);
+}catch(e){failure={message:e.message,stack:e.stack,diagnostic};}
+const report={recorded_at_utc:new Date().toISOString(),base,source_sha256:initial,final_source_sha256:await hashes(),test_sha256:testSha,candidate:candidateDir?{directory:candidateDir,source_sha256:initialCandidate,final_source_sha256:await candidateHashes(),theme_directory:themeCandidateDir,theme_source_sha256:initialTheme,final_theme_source_sha256:await themeHashes(),limit:'Preview candidate; live source hash records identify baseline, not applied bytes. Main candidate is bound for server identity but this isolated controller test does not import main.'}:null,scope:'Actual legacy profile, canonical workspace and normalized leave editor controllers, GET-only locally fulfilled fixtures. Known five states, cancelled spelling/case variants, prototype names and long/HTML-like unknown statuses; exact existing editor identity/range/session/status and clean Cancel. Actual save/approval, native AT and physical devices are separate gates.',results,failure};
+await writeFile('../docs/premium-ui/qa-leave-profile-statuses-v2'+(process.env.LEAVE_STATUS_STRESS==='1'?'-stress':'')+(engines.length===1?'-'+engines[0]:'')+'.json',JSON.stringify(report,null,2)+'\n');if(failure)throw new Error(failure.message);console.log('Leave profile statuses: '+results.length+' contexts / '+results.length*2+' controller workflows');

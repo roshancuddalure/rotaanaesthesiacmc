@@ -139,23 +139,26 @@ const monthCode=ts.transpileModule(monthFunction.getText(tree),{compilerOptions:
 const createMonthLifecycle=new Function('allowDiscard',`
  let leaveMonth='2026-10',unitMonth=leaveMonth,rotaSetupMonth=leaveMonth,rotaTemplateMonth=leaveMonth,rotaReviewMonth=leaveMonth,rotaPublishMonth=leaveMonth;
  let leaveImportFile={name:'leave.csv'},unitImportFile=null,leaveImportPreview={review:'pending'},unitImportPreview=null,unitImportFilter='all',unitImportSearch='',unitImportResolutions={},unitEditingAssignmentId=null,exchangeSelectedAssignmentId='',viewSeq=0;
- const fields=[{value:'2026-11'}],writes=[],prompts=[];
+ const fields=[{value:'2026-11'}],writes=[],prompts=[],interruptions=[];
  const window={confirm:message=>{prompts.push(message);return allowDiscard;}},document={querySelectorAll:()=>fields,querySelector:()=>fields[0]},safeLocalStorage={setItem:(...args)=>writes.push(args)},WORKING_MONTH_KEY='month';
- const isValidWorkingMonth=value=>/^2026-(10|11)$/.test(value),invalidateUnitManagementCache=()=>{},rejectedRotaCandidates=new Set(),paintWorkflowTracker=()=>{};
- ${monthCode};return {apply:applyWorkingMonth,state:()=>({leaveMonth,unitMonth,leaveImportFile,leaveImportPreview,viewSeq,fields,writes,prompts})};`);
+ const isValidWorkingMonth=value=>/^2026-(10|11)$/.test(value),invalidateUnitManagementCache=()=>{},rejectedRotaCandidates=new Set(),paintWorkflowTracker=()=>{},interruptWorkflowRead=()=>interruptions.push('interrupt');
+ ${monthCode};return {apply:applyWorkingMonth,state:()=>({leaveMonth,unitMonth,leaveImportFile,leaveImportPreview,viewSeq,fields,writes,prompts,interruptions})};`);
 
 test('declining a month switch preserves selected import, review, month and storage',()=>{
  const lifecycle=createMonthLifecycle(false);assert.equal(lifecycle.apply('2026-11'),false);
  const state=lifecycle.state();assert.equal(state.leaveMonth,'2026-10');assert.equal(state.unitMonth,'2026-10');
  assert.equal(state.leaveImportFile.name,'leave.csv');assert.equal(state.leaveImportPreview.review,'pending');
  assert.equal(state.viewSeq,0);assert.deepEqual(state.writes,[]);assert.equal(state.fields[0].value,'2026-10');assert.equal(state.prompts.length,1);
+ assert.deepEqual(state.interruptions,[],'Declining keeps the current workflow read');
 });
 
 test('explicitly accepting a changed month clears the old import once and applies selected context',()=>{
  const lifecycle=createMonthLifecycle(true);assert.equal(lifecycle.apply('2026-11'),true);
  const state=lifecycle.state();assert.equal(state.leaveMonth,'2026-11');assert.equal(state.unitMonth,'2026-11');assert.equal(state.leaveImportFile,null);assert.equal(state.leaveImportPreview,null);
  assert.equal(state.viewSeq,1);assert.deepEqual(state.writes,[['month','2026-11']]);assert.equal(state.prompts.length,1);
+ assert.deepEqual(state.interruptions,['interrupt'],'Accepted context change interrupts the old workflow read');
  assert.equal(lifecycle.apply('2026-11'),false);assert.equal(lifecycle.state().prompts.length,1,'No repeat discard prompt for unchanged month');
+ assert.deepEqual(lifecycle.state().interruptions,['interrupt'],'Unchanged context does not interrupt again');
 });
 
 test('every legacy month handler stops before clearing drafts when a switch is declined',async()=>{

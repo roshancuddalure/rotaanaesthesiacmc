@@ -1,0 +1,1309 @@
+{
+  "recorded_at_utc": "2026-10-28T06:27:11.924Z",
+  "reviewer": "/root/import_progress_recovery_review",
+  "scope": "Source-preservation recommendation for the previous25 acceptances following134. No acceptance parent, ledger, application or test edited.",
+  "whole_goal_completion_claim": false,
+  "source_sha256": {
+    "frontend/src/ui.ts": "a1f8e5a527d6517ac2a1037545a6449b406e3ca8e6e0f7b3f940918e6d12eddc",
+    "frontend/src/member-import.ts": "58742f27a951c8c2dea3b428c9f419b60e8882d12ec8978fd218e8fea731c5ec",
+    "frontend/src/member-workspace.ts": "340f4c9d0b6ee676bba226ca3c5e577028fb04ed0149b62a57a09f936d206b6d",
+    "frontend/src/operational-import.ts": "e112f581d096d4a8c1f81b297d989dcbac4b18327e3de8a8d218deecba060030",
+    "frontend/src/past-duties.ts": "58e3ba3344f5c99457f796151c5039629f663dd24bc40e36738283bb2030de33"
+  },
+  "baseline_to_final_declarations": [
+    {
+      "path": "frontend/src/ui.ts",
+      "baseline": "tmp/member-match-before-next134/ui.ts",
+      "before_sha256": "88579ed75c8c72e4fd4e2d98508a58c42b925202362589a2469623664c2a975f",
+      "after_sha256": "a1f8e5a527d6517ac2a1037545a6449b406e3ca8e6e0f7b3f940918e6d12eddc",
+      "changed_declarations": [
+        "MemberMatchView",
+        "candidateLine",
+        "memberMatch"
+      ],
+      "added_declarations": [
+        "memberIdentityText",
+        "MEMBER_MATCH_PENDING",
+        "updateMemberMatchPending"
+      ],
+      "unchanged_declarations": [
+        {
+          "name": "esc",
+          "sha256": "b7da2ce23e55275aff9383cc33e0ee73ccb9b75db8b6bfe08f1ce75e194192c5"
+        },
+        {
+          "name": "ACRONYMS",
+          "sha256": "cb2a6db8de90652dabaf0278538f7a65a46a6a11cc424f490edd01fbc0a3190a"
+        },
+        {
+          "name": "ROMAN",
+          "sha256": "2c9d683e0ded58e8abb9e4b7cbb60b5ddf5b7bd671c2b641bbda4a33ddad4517"
+        },
+        {
+          "name": "ORDINAL",
+          "sha256": "6f87aa4184e2a8bef1cbde99cd1e5e7c0a80d806f48d37c54ef844f502ac8da0"
+        },
+        {
+          "name": "KNOWN",
+          "sha256": "f32961942fbc4a2c39284fb5aa28242ab041d03f2eddbfaff482864fdf3207aa"
+        },
+        {
+          "name": "codeLabel",
+          "sha256": "5b0b9af2d74eeb406a3ba3eb302fec77e026c24df2e89d9c9dc9fa827afc714e"
+        },
+        {
+          "name": "DATE_RE",
+          "sha256": "7cb349fcb92834b090ffa8e752c7ab1f919856dc769ec80a8476f95ed43614ce"
+        },
+        {
+          "name": "toDate",
+          "sha256": "b13a2a0b93d1cdfcb18ee034bd29b1a5a5e2ab3e3526de75dd506d267233198c"
+        },
+        {
+          "name": "DAY_FORMAT",
+          "sha256": "e3935382b34a77598f5db9ed11c06192bea88fd9de2450601093129516cb5092"
+        },
+        {
+          "name": "SHORT_FORMAT",
+          "sha256": "fc77f913db4a4d1fb3b66813b9efa084474e04d96f9b23ae9e87084ff00dd8d5"
+        },
+        {
+          "name": "MONTH_FORMAT",
+          "sha256": "20d3feb527ab1229a0d3370d5dbce13e8f0a3344e5cb410214fd442d2de51527"
+        },
+        {
+          "name": "formatDate",
+          "sha256": "c40c0277bef2eb0b44622000a67141644fd71d8b85b227e40376a3ed00312e69"
+        },
+        {
+          "name": "formatCalendarDate",
+          "sha256": "bfbf61739d84a3419d098e7ad64263bf98987b07141c669313114f1ac8662bea"
+        },
+        {
+          "name": "formatMonth",
+          "sha256": "e9242c22f8a11f105d01d4a1709c1c3dcac888db0e3efaf16251901f391244d7"
+        },
+        {
+          "name": "formatDateRange",
+          "sha256": "ae4fd3b194294191e0208e819ec957070981fe2e7f2a47df214c6abd5348c945"
+        },
+        {
+          "name": "Tone",
+          "sha256": "820fa479f600811c980f55da782bf256eea8bcd2d3b73978057c0c08ba407098"
+        },
+        {
+          "name": "badge",
+          "sha256": "d39e2d426501dd76ba77dede6ce733003b21925e98fee24f5bdc909113c086fa"
+        },
+        {
+          "name": "emptyState",
+          "sha256": "2ec846f1fb4374d981ea1b21b043d4e875311b7971e409d72ed951ad572562ab"
+        },
+        {
+          "name": "pageSkeleton",
+          "sha256": "ef992279b4b568846b67f0dfea07fe1ee4740cdf36b5237b0406f628186502f8"
+        },
+        {
+          "name": "nextStep",
+          "sha256": "c2dbaecc1b53da597e2f8e0eded46dad8b997e3a13a2d8c070582b5dfc6d3f20"
+        },
+        {
+          "name": "steps",
+          "sha256": "29398d492c2fa8ce496b6173b491331fb707a4f2e14568028b92388a02529d62"
+        },
+        {
+          "name": "importSummary",
+          "sha256": "d69dea3f259d12ff41d29d16dc3aa3d686b285fb3b91b7777e4c393758d93c49"
+        },
+        {
+          "name": "MemberMatchCandidate",
+          "sha256": "94c7b3fe928e3b70a8673b63a89504540e0f1eb6d900ce9fb839bf42f0681f0a"
+        },
+        {
+          "name": "MATCH_METHOD",
+          "sha256": "09629480cf36adcf78d509c735d173c3b11371df5d65c9cf1c31ac51cc5f77e4"
+        },
+        {
+          "name": "matchMethodText",
+          "sha256": "2b58919f9881a7462b8d96f14c598a0d32107cbe11e550ff2891bb6b34126b25"
+        },
+        {
+          "name": "applyBlocker",
+          "sha256": "85032a0a74c11fab1b0922b44087ad9c84dbb2f8e3891ef400f63cb831b353a6"
+        },
+        {
+          "name": "retainActionFocus",
+          "sha256": "ebd84764e789f6b792d24461c770cda5d4427bb970c5a298cdee9f098f5848eb"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/member-import.ts",
+      "baseline": "tmp/member-match-before-next134/member-import.ts",
+      "before_sha256": "010ff61e931b5fdcd0bede461face32db6562e1b987782a509be1adf58fbee42",
+      "after_sha256": "58742f27a951c8c2dea3b428c9f419b60e8882d12ec8978fd218e8fea731c5ec",
+      "changed_declarations": [
+        "rowView",
+        "resetMemberImport",
+        "mountMemberImport"
+      ],
+      "added_declarations": [
+        "importEpoch"
+      ],
+      "unchanged_declarations": [
+        {
+          "name": "escape",
+          "sha256": "f1d02ed4dc54d3e8f7aeab96542640d0b94269c3e56539fd815cd0c95d379c44"
+        },
+        {
+          "name": "WorkbookRow",
+          "sha256": "c4ff7e4241f84b8e7a0858a19380ba5319539a802d608c10e2e274fadac00edd"
+        },
+        {
+          "name": "file",
+          "sha256": "5e9f835a5ea492bfb382df5e3b78bfc6599562d250f1389ec2473f31570abc82"
+        },
+        {
+          "name": "inspection",
+          "sha256": "db80c766515d9fc903a11d9de3f7d0134fa4f23a31cc95147830289e6fdfed02"
+        },
+        {
+          "name": "preview",
+          "sha256": "fdce70aa3fc1f0bffa0f4eff99f0007d86cfa0606127dd9fbac2809b8b1ad6c5"
+        },
+        {
+          "name": "options",
+          "sha256": "40afa0c1fbb03342aadf120d530a322cfd0c345154d3475e2fc3ba1cffd636f0"
+        },
+        {
+          "name": "reviewed",
+          "sha256": "8e488050b0290d5bf8bcdeaf73c93b0234a73b7a275c0430c378ed7bc2390d81"
+        },
+        {
+          "name": "busy",
+          "sha256": "331689a2f4e66fdfc0e502263e70b768a9d0aef3af8d2018ee5cda9f2a3f4e58"
+        },
+        {
+          "name": "message",
+          "sha256": "78c32b0661f0cccc16ca96a2b32911ba6b5ec387a2b932f0cceb3cd38111330f"
+        },
+        {
+          "name": "reviewFilter",
+          "sha256": "8698bbe93a38493da68e184286cd15862ec415291cea145540f8dd37f3bb03ef"
+        },
+        {
+          "name": "openEdits",
+          "sha256": "de31f349c20c236cc673f95188bc3de694cc4282b4aa067a2ab065920f0dfa9a"
+        },
+        {
+          "name": "toggleWatched",
+          "sha256": "685d672dee576244c30fd96ac92b666c0fa785de6d9fa608b30998c2e1bafea8"
+        },
+        {
+          "name": "details",
+          "sha256": "83cf32cf8c6f09eb44dcf503fa54b9f1609a2af8ef907a4626f6be6546eef2fa"
+        },
+        {
+          "name": "changes",
+          "sha256": "ebd8accdce92299b8b1bfb02d7f25c7778103d962b75163cd1fa6d65d972ad99"
+        },
+        {
+          "name": "writtenName",
+          "sha256": "d16c3531a41398b736d0848e3027924a34321369a443165b9144b8f0f02630b4"
+        },
+        {
+          "name": "rowIssues",
+          "sha256": "ca7d88656ade5b57308851d867f7c7305b6209425137fafa3c9b8aa188831a70"
+        },
+        {
+          "name": "blockerText",
+          "sha256": "90cb3d64df14a733fd5fac33a3f6d49b4b22d82cfb9a84619700ed0fed69f08c"
+        },
+        {
+          "name": "rowActions",
+          "sha256": "9488d8a1721d9f67752c6f792733fd21d0be04494b55b05dd2de0ab76c8d4aab"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/member-workspace.ts",
+      "baseline": "tmp/member-match-before-next134/member-workspace.ts",
+      "before_sha256": "bd6fac6cdfcc4c638fc03076dc18f99cf918fa1e942f63b07e0e96f5d374ed61",
+      "after_sha256": "340f4c9d0b6ee676bba226ca3c5e577028fb04ed0149b62a57a09f936d206b6d",
+      "changed_declarations": [
+        "openMemberCsvImport"
+      ],
+      "added_declarations": [],
+      "unchanged_declarations": [
+        {
+          "name": "MEMBER_IMPORT_STEPS",
+          "sha256": "d9b780812aa5676d6e49d7da948a5f02908a94230b20a193e21d9abaf3225891"
+        },
+        {
+          "name": "esc",
+          "sha256": "b0462a8f5ce357bee40149f0b78de7888915b2822a73ab18a3c69a4a5999f5e9"
+        },
+        {
+          "name": "labels",
+          "sha256": "61078d14b8bc7f5136ad702c525b845c6983d1d703af3aba9d56bb0e713acb01"
+        },
+        {
+          "name": "levels",
+          "sha256": "789a335ab208897daec85c792ea22d608b2f2d048920e6fc7db1163a0e2d7862"
+        },
+        {
+          "name": "callLabel",
+          "sha256": "3eafb1fedc98dd04c8ee41f8dfe1693c1f4fd917dc623bdf4fcc93b86a85f0bf"
+        },
+        {
+          "name": "memberCallPresentation",
+          "sha256": "2f3f912ff0c2960f05a88325028ff500365ec6587149b20be5f97eb1def19a35"
+        },
+        {
+          "name": "statusLabel",
+          "sha256": "d2e414ca4007c107e43a667ed8fd5f9424f7fdf2d3f6558a270393abd9db658b"
+        },
+        {
+          "name": "periodLabel",
+          "sha256": "e00daa932b5585512cb04c1682d8299c8d10bb56b1073f92261867d0eddf299a"
+        },
+        {
+          "name": "localCalendarToday",
+          "sha256": "6c2cedf72d9916d9c8be84c8c5feb1f5d4da577cd4206871868a05368cf88cb1"
+        },
+        {
+          "name": "memberDesignationPresentation",
+          "sha256": "a4477128e04242c9b9392e2aa1c2c4354319b39abcaed1ca0729816f5f708393"
+        },
+        {
+          "name": "recordedDateMarkup",
+          "sha256": "efeff780c1864bdc265c62122cdb7fc799ad3f9c4d4686c2a5d4dc5edeb2765d"
+        },
+        {
+          "name": "recordedRange",
+          "sha256": "77bc7c1c3fe7337aabb28f9bdfd3be6655f94a8ef66729dda5c1def3264702bc"
+        },
+        {
+          "name": "Row",
+          "sha256": "228cd751420adb30afddb42faca2cefd0265a23c5ce3671abb3c1898b7e30344"
+        },
+        {
+          "name": "Profile",
+          "sha256": "78ef0e531a492041d8b637688b1e62952e35b232500d1ca6d03133c20312b98c"
+        },
+        {
+          "name": "memberSectionCueSequence",
+          "sha256": "25e418fe9b71648a0393dd7a9ad52d99b68bc1b3238e294d2ea9db23acb1a2d8"
+        },
+        {
+          "name": "updateMemberSectionCue",
+          "sha256": "4e890914302aabb8f8335699005d18c58479eeb783e2b69bdba491af9198b766"
+        },
+        {
+          "name": "revealMemberSection",
+          "sha256": "5182171ac6f55bc627c58ead99a532beb1c09f5f223491fa583c9ae9db700c99"
+        },
+        {
+          "name": "memberSectionsVertical",
+          "sha256": "0f7a67cefa5f325dfdba7e1069c66dfdc03ca5cafe7be99b4cbbea5deeb3dbe2"
+        },
+        {
+          "name": "updateMemberIdentityScroll",
+          "sha256": "eb543b95d0e3d017fb38d36977a84d0cedd3c52fa8e9d047ae49f6a4319b5fd5"
+        },
+        {
+          "name": "workspaceDialog",
+          "sha256": "63d17d5b78bede2bfc30c16062add87be4976dce89124d334267cf02cbb8fc84"
+        },
+        {
+          "name": "openMemberWorkspace",
+          "sha256": "cb77f60db1990b9524a98ddd1aac0ce1e7b6b3c6fe8b3c38931f29795d9dd852"
+        },
+        {
+          "name": "csvExampleCueSequence",
+          "sha256": "a4b5a1f4d0fd91495055a8dcd6874433014afd2b9ae68e231bec6549d8720f37"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/operational-import.ts",
+      "baseline": "tmp/member-match-before-next134/operational-import.ts",
+      "before_sha256": "9e11514d205d71049e2f0baa10f005def74941e0b90584a9c84b968f9ae19dfc",
+      "after_sha256": "e112f581d096d4a8c1f81b297d989dcbac4b18327e3de8a8d218deecba060030",
+      "changed_declarations": [
+        "openOperationalImport"
+      ],
+      "added_declarations": [],
+      "unchanged_declarations": [
+        {
+          "name": "IMPORT_STEPS",
+          "sha256": "ad4f90e9c9066f6b467c29e6fd8c82cb94a02ecb04b9cdfe8c5d02437e7690ab"
+        },
+        {
+          "name": "Row",
+          "sha256": "83618ddd6e473bfaf3a56141ba1489c688598d890411147b573709ac40672ae0"
+        },
+        {
+          "name": "Preview",
+          "sha256": "f07d91de598605373c9d1a5345db239126d48682dbd00c7ec09ed0cd96cfcadd"
+        },
+        {
+          "name": "esc",
+          "sha256": "b0462a8f5ce357bee40149f0b78de7888915b2822a73ab18a3c69a4a5999f5e9"
+        },
+        {
+          "name": "createMemberInline",
+          "sha256": "8fb6272be708144254c77655cbf7c6a9de1130b812d8d6390f005f1f7559e40f"
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/past-duties.ts",
+      "baseline": "tmp/member-match-before-next134/past-duties.ts",
+      "before_sha256": "7c12653627145099d9785ce83788335687a850534d0af0f921a9bc29d538657c",
+      "after_sha256": "58e3ba3344f5c99457f796151c5039629f663dd24bc40e36738283bb2030de33",
+      "changed_declarations": [
+        "rowView",
+        "mountPastDuties"
+      ],
+      "added_declarations": [],
+      "unchanged_declarations": [
+        {
+          "name": "PastRow",
+          "sha256": "5445054f178de8466b793ebbf5f2327be7c8838eb0152947da22f0bdb2fb2c3f"
+        },
+        {
+          "name": "toggleListeners",
+          "sha256": "307dafade0d24a400f3960d2292289b11e3d57ed36a3313287d47602c267ad5f"
+        },
+        {
+          "name": "pastLoads",
+          "sha256": "2d840ea01e541f9a6acc40f2c998b831906b871804419b19976f1c1311a6848f"
+        },
+        {
+          "name": "writtenName",
+          "sha256": "3253825fd60df37c22222729e4c6521f64b33e01f435f03c5fc4ada2f8f88baf"
+        },
+        {
+          "name": "escape",
+          "sha256": "5f8dcc6412cb0c95b1d9143f29b815c159107b5edd6b51a7db4112991184bc24"
+        },
+        {
+          "name": "values",
+          "sha256": "0ce88c106642deb4df91ef0d2b0eca4977952ef7b6a148e06bf0e75784437e01"
+        },
+        {
+          "name": "mountRecordedSection",
+          "sha256": "b693b8cd904bbd871cf7ca980f78745ecce7e93e3941a5ca285bad42d73a7e47"
+        }
+      ]
+    }
+  ],
+  "canonical_profile_segment": {
+    "definition": "member-workspace.ts from const MEMBER_IMPORT_STEPS through before let csvExampleCueSequence; includes all profile/editor implementation, excludes changed imports and CSV importer",
+    "byte_identical": true,
+    "before_sha256": "5cd50d0a8ad8896774c794b263d6f818762305a0a8e1515508ef5e0e3e8d12f2",
+    "after_sha256": "5cd50d0a8ad8896774c794b263d6f818762305a0a8e1515508ef5e0e3e8d12f2"
+  },
+  "previous_acceptance_count": 25,
+  "items": [
+    {
+      "item_id": 10,
+      "requirement": "Classify reusable surfaces into pages, panels, record cards, tables, editors, dialogs and contextual overlays.",
+      "acceptance_review": "docs/premium-ui/reviews/accepted-items-10-29-34-35-draft-workload-revalidation.json",
+      "direct_acceptance_evidence": [
+        {
+          "path": "docs/premium-ui/reviews/accepted-items-10-29-34-35-draft-workload-revalidation.json",
+          "sha256": "433d4e81130d60b1a6803d4c0e512dc76dae3e47d38a8c25dd4e607859141aaa",
+          "changed_source_bindings": [
+            {
+              "path": "frontend/src/member-workspace.ts",
+              "recorded_sha256": "bd6fac6cdfcc4c638fc03076dc18f99cf918fa1e942f63b07e0e96f5d374ed61",
+              "current_sha256": "340f4c9d0b6ee676bba226ca3c5e577028fb04ed0149b62a57a09f936d206b6d",
+              "matches_current": false
+            }
+          ]
+        },
+        {
+          "path": "docs/premium-ui/reviews/design-role-definitions-independent.json",
+          "sha256": "36d5f26fe6bd372fdc73a962dd68c4ea43c74cc0848499baf7c61f784bb77f99",
+          "changed_source_bindings": [
+            {
+              "path": "frontend/src/member-workspace.ts",
+              "recorded_sha256": "4ddb7efade2d5886e8d62dc5fa7225eb2448b02c4be37ebb0ce474b5d3562c41",
+              "current_sha256": "340f4c9d0b6ee676bba226ca3c5e577028fb04ed0149b62a57a09f936d206b6d",
+              "matches_current": false
+            }
+          ]
+        },
+        {
+          "path": "docs/premium-ui/reviews/design-role-definitions-acceptance.json",
+          "sha256": "0af16324c494e19bb07fdf8b9819bd9d7f45655b159613a7e632b100df82307c",
+          "changed_source_bindings": [
+            {
+              "path": "frontend/src/member-workspace.ts",
+              "recorded_sha256": "4ddb7efade2d5886e8d62dc5fa7225eb2448b02c4be37ebb0ce474b5d3562c41",
+              "current_sha256": "340f4c9d0b6ee676bba226ca3c5e577028fb04ed0149b62a57a09f936d206b6d",
+              "matches_current": false
+            }
+          ]
+        }
+      ],
+      "changed_bound_paths": [
+        "frontend/src/member-workspace.ts"
+      ]
+    },
+    {
+      "item_id": 11,
+      "requirement": "Establish representative fixtures containing long names, missing values, large counts, mixed statuses and boundary dates.",
+      "acceptance_review": "docs/premium-ui/reviews/accepted-items-11-13-draft-workload-revalidation.json",
+      "direct_acceptance_evidence": [
+        {
+          "path": "docs/premium-ui/reviews/accepted-items-11-13-draft-workload-revalidation.json",
+          "sha256": "e1565ceacd951527b8a016fa58a9756064693e023c4737cb2c190b7b0cc1654d",
+          "changed_source_bindings": [
+            {
+              "path": "frontend/src/member-workspace.ts",
+              "recorded_sha256": "bd6fac6cdfcc4c638fc03076dc18f99cf918fa1e942f63b07e0e96f5d374ed61",
+              "current_sha256": "340f4c9d0b6ee676bba226ca3c5e577028fb04ed0149b62a57a09f936d206b6d",
+              "matches_current": false
+            },
+            {
+              "path": "frontend/src/operational-import.ts",
+              "recorded_sha256": "9e11514d205d71049e2f0baa10f005def74941e0b90584a9c84b968f9ae19dfc",
+              "current_sha256": "e112f581d096d4a8c1f81b297d989dcbac4b18327e3de8a8d218deecba060030",
+              "matches_current": false
+            }
+          ]
+        },
+        {
+          "path": "docs/premium-ui/reviews/documentary-items-11-13-independent.json",
+          "sha256": "b66a23b77322277fb27c2ca58ef3551c404bd43ad0131706696f6ad036367695",
+          "changed_source_bindings": [
+            {
+              "path": "frontend/src/member-workspace.ts",
+              "recorded_sha256": "4ddb7efade2d5886e8d62dc5fa7225eb2448b02c4be37ebb0ce474b5d3562c41",
+              "current_sha256": "340f4c9d0b6ee676bba226ca3c5e577028fb04ed0149b62a57a09f936d206b6d",
+              "matches_current": false
+            },
+            {
+              "path": "frontend/src/operational-import.ts",
+              "recorded_sha256": "9e11514d205d71049e2f0baa10f005def74941e0b90584a9c84b968f9ae19dfc",
+              "current_sha256": "e112f581d096d4a8c1f81b297d989dcbac4b18327e3de8a8d218deecba060030",
+              "matches_current": false
+            }
+          ]
+        },
+        {
+          "path": "docs/premium-ui/reviews/documentary-items-11-13-acceptance.json",
+          "sha256": "e272d89153a9d37aec9efa47497c39c2fb473bdb7900290b2e1e08ab5d81fc95",
+          "changed_source_bindings": [
+            {
+              "path": "frontend/src/member-workspace.ts",
+              "recorded_sha256": "4ddb7efade2d5886e8d62dc5fa7225eb2448b02c4be37ebb0ce474b5d3562c41",
+              "current_sha256": "340f4c9d0b6ee676bba226ca3c5e577028fb04ed0149b62a57a09f936d206b6d",
+              "matches_current": false
+            },
+            {
+              "path": "frontend/src/operational-import.ts",
+              "recorded_sha256": "9e11514d205d71049e2f0baa10f005def74941e0b90584a9c84b968f9ae19dfc",
+              "current_sha256": "e112f581d096d4a8c1f81b297d989dcbac4b18327e3de8a8d218deecba060030",
+              "matches_current": false
+            }
+          ]
+        }
+      ],
+      "changed_bound_paths": [
+        "frontend/src/member-workspace.ts",
+        "frontend/src/operational-import.ts"
+      ]
+    },
+    {
+      "item_id": 13,
+      "requirement": "Identify protected workflow invariants, including selected-month continuity, assignment preservation, reviewed imports and explicit publishing.",
+      "acceptance_review": "docs/premium-ui/reviews/accepted-items-11-13-draft-workload-revalidation.json",
+      "direct_acceptance_evidence": [
+        {
+          "path": "docs/premium-ui/reviews/accepted-items-11-13-draft-workload-revalidation.json",
+          "sha256": "e1565ceacd951527b8a016fa58a9756064693e023c4737cb2c190b7b0cc1654d",
+          "changed_source_bindings": [
+            {
+              "path": "frontend/src/member-workspace.ts",
+              "recorded_sha256": "bd6fac6cdfcc4c638fc03076dc18f99cf918fa1e942f63b07e0e96f5d374ed61",
+              "current_sha256": "340f4c9d0b6ee676bba226ca3c5e577028fb04ed0149b62a57a09f936d206b6d",
+              "matches_current": false
+            },
+            {
+              "path": "frontend/src/operational-import.ts",
+              "recorded_sha256": "9e11514d205d71049e2f0baa10f005def74941e0b90584a9c84b968f9ae19dfc",
+              "current_sha256": "e112f581d096d4a8c1f81b297d989dcbac4b18327e3de8a8d218deecba060030",
+              "matches_current": false
+            }
+          ]
+        },
+        {
+          "path": "docs/premium-ui/reviews/documentary-items-11-13-independent.json",
+          "sha256": "b66a23b77322277fb27c2ca58ef3551c404bd43ad0131706696f6ad036367695",
+          "changed_source_bindings": [
+            {
+              "path": "frontend/src/member-workspace.ts",
+              "recorded_sha256": "4ddb7efade2d5886e8d62dc5fa7225eb2448b02c4be37ebb0ce474b5d3562c41",
+              "current_sha256": "340f4c9d0b6ee676bba226ca3c5e577028fb04ed0149b62a57a09f936d206b6d",
+              "matches_current": false
+            },
+            {
+              "path": "frontend/src/operational-import.ts",
+              "recorded_sha256": "9e11514d205d71049e2f0baa10f005def74941e0b90584a9c84b968f9ae19dfc",
+              "current_sha256": "e112f581d096d4a8c1f81b297d989dcbac4b18327e3de8a8d218deecba060030",
+              "matches_current": false
+            }
+          ]
+        },
+        {
+          "path": "docs/premium-ui/reviews/documentary-items-11-13-acceptance.json",
+          "sha256": "e272d89153a9d37aec9efa47497c39c2fb473bdb7900290b2e1e08ab5d81fc95",
+          "changed_source_bindings": [
+            {
+              "path": "frontend/src/member-workspace.ts",
+              "recorded_sha256": "4ddb7efade2d5886e8d62dc5fa7225eb2448b02c4be37ebb0ce474b5d3562c41",
+              "current_sha256": "340f4c9d0b6ee676bba226ca3c5e577028fb04ed0149b62a57a09f936d206b6d",
+              "matches_current": false
+            },
+            {
+              "path": "frontend/src/operational-import.ts",
+              "recorded_sha256": "9e11514d205d71049e2f0baa10f005def74941e0b90584a9c84b968f9ae19dfc",
+              "current_sha256": "e112f581d096d4a8c1f81b297d989dcbac4b18327e3de8a8d218deecba060030",
+              "matches_current": false
+            }
+          ]
+        }
+      ],
+      "changed_bound_paths": [
+        "frontend/src/member-workspace.ts",
+        "frontend/src/operational-import.ts"
+      ]
+    },
+    {
+      "item_id": 18,
+      "requirement": "Define objective pass conditions and supporting evidence for every numbered upgrade before marking it complete.",
+      "acceptance_review": "docs/premium-ui/reviews/criteria-definition-18-acceptance.json",
+      "direct_acceptance_evidence": [
+        {
+          "path": "docs/premium-ui/reviews/criteria-definition-18-acceptance.json",
+          "sha256": "78e87b2e0081b1cfeffeb233db8d129ca3f9902f22ce98208c7d7a6180d11241",
+          "changed_source_bindings": []
+        },
+        {
+          "path": "docs/premium-ui/reviews/acceptance-pass-001-086.json",
+          "sha256": "4f9cb860065fc91e211beebb51e45fba6dba72dcca89441bcccf3f3ac61735db",
+          "changed_source_bindings": []
+        }
+      ],
+      "changed_bound_paths": []
+    },
+    {
+      "item_id": 29,
+      "requirement": "Establish a clear typography scale for page titles, panel headings, field labels, body text and metadata.",
+      "acceptance_review": "docs/premium-ui/reviews/accepted-items-10-29-34-35-draft-workload-revalidation.json",
+      "direct_acceptance_evidence": [
+        {
+          "path": "docs/premium-ui/reviews/accepted-items-10-29-34-35-draft-workload-revalidation.json",
+          "sha256": "433d4e81130d60b1a6803d4c0e512dc76dae3e47d38a8c25dd4e607859141aaa",
+          "changed_source_bindings": [
+            {
+              "path": "frontend/src/member-workspace.ts",
+              "recorded_sha256": "bd6fac6cdfcc4c638fc03076dc18f99cf918fa1e942f63b07e0e96f5d374ed61",
+              "current_sha256": "340f4c9d0b6ee676bba226ca3c5e577028fb04ed0149b62a57a09f936d206b6d",
+              "matches_current": false
+            }
+          ]
+        },
+        {
+          "path": "docs/premium-ui/reviews/design-role-definitions-independent.json",
+          "sha256": "36d5f26fe6bd372fdc73a962dd68c4ea43c74cc0848499baf7c61f784bb77f99",
+          "changed_source_bindings": [
+            {
+              "path": "frontend/src/member-workspace.ts",
+              "recorded_sha256": "4ddb7efade2d5886e8d62dc5fa7225eb2448b02c4be37ebb0ce474b5d3562c41",
+              "current_sha256": "340f4c9d0b6ee676bba226ca3c5e577028fb04ed0149b62a57a09f936d206b6d",
+              "matches_current": false
+            }
+          ]
+        },
+        {
+          "path": "docs/premium-ui/reviews/design-role-definitions-acceptance.json",
+          "sha256": "0af16324c494e19bb07fdf8b9819bd9d7f45655b159613a7e632b100df82307c",
+          "changed_source_bindings": [
+            {
+              "path": "frontend/src/member-workspace.ts",
+              "recorded_sha256": "4ddb7efade2d5886e8d62dc5fa7225eb2448b02c4be37ebb0ce474b5d3562c41",
+              "current_sha256": "340f4c9d0b6ee676bba226ca3c5e577028fb04ed0149b62a57a09f936d206b6d",
+              "matches_current": false
+            }
+          ]
+        }
+      ],
+      "changed_bound_paths": [
+        "frontend/src/member-workspace.ts"
+      ]
+    },
+    {
+      "item_id": 34,
+      "requirement": "Define consistent spacing tokens for page gutters, card padding, field groups, toolbars and stacked mobile actions.",
+      "acceptance_review": "docs/premium-ui/reviews/accepted-items-10-29-34-35-draft-workload-revalidation.json",
+      "direct_acceptance_evidence": [
+        {
+          "path": "docs/premium-ui/reviews/accepted-items-10-29-34-35-draft-workload-revalidation.json",
+          "sha256": "433d4e81130d60b1a6803d4c0e512dc76dae3e47d38a8c25dd4e607859141aaa",
+          "changed_source_bindings": [
+            {
+              "path": "frontend/src/member-workspace.ts",
+              "recorded_sha256": "bd6fac6cdfcc4c638fc03076dc18f99cf918fa1e942f63b07e0e96f5d374ed61",
+              "current_sha256": "340f4c9d0b6ee676bba226ca3c5e577028fb04ed0149b62a57a09f936d206b6d",
+              "matches_current": false
+            }
+          ]
+        },
+        {
+          "path": "docs/premium-ui/reviews/design-role-definitions-independent.json",
+          "sha256": "36d5f26fe6bd372fdc73a962dd68c4ea43c74cc0848499baf7c61f784bb77f99",
+          "changed_source_bindings": [
+            {
+              "path": "frontend/src/member-workspace.ts",
+              "recorded_sha256": "4ddb7efade2d5886e8d62dc5fa7225eb2448b02c4be37ebb0ce474b5d3562c41",
+              "current_sha256": "340f4c9d0b6ee676bba226ca3c5e577028fb04ed0149b62a57a09f936d206b6d",
+              "matches_current": false
+            }
+          ]
+        },
+        {
+          "path": "docs/premium-ui/reviews/design-role-definitions-acceptance.json",
+          "sha256": "0af16324c494e19bb07fdf8b9819bd9d7f45655b159613a7e632b100df82307c",
+          "changed_source_bindings": [
+            {
+              "path": "frontend/src/member-workspace.ts",
+              "recorded_sha256": "4ddb7efade2d5886e8d62dc5fa7225eb2448b02c4be37ebb0ce474b5d3562c41",
+              "current_sha256": "340f4c9d0b6ee676bba226ca3c5e577028fb04ed0149b62a57a09f936d206b6d",
+              "matches_current": false
+            }
+          ]
+        }
+      ],
+      "changed_bound_paths": [
+        "frontend/src/member-workspace.ts"
+      ]
+    },
+    {
+      "item_id": 35,
+      "requirement": "Establish distinct radius tokens for fields, cards, dialogs and status chips instead of indiscriminate pill shapes.",
+      "acceptance_review": "docs/premium-ui/reviews/accepted-items-10-29-34-35-draft-workload-revalidation.json",
+      "direct_acceptance_evidence": [
+        {
+          "path": "docs/premium-ui/reviews/accepted-items-10-29-34-35-draft-workload-revalidation.json",
+          "sha256": "433d4e81130d60b1a6803d4c0e512dc76dae3e47d38a8c25dd4e607859141aaa",
+          "changed_source_bindings": [
+            {
+              "path": "frontend/src/member-workspace.ts",
+              "recorded_sha256": "bd6fac6cdfcc4c638fc03076dc18f99cf918fa1e942f63b07e0e96f5d374ed61",
+              "current_sha256": "340f4c9d0b6ee676bba226ca3c5e577028fb04ed0149b62a57a09f936d206b6d",
+              "matches_current": false
+            }
+          ]
+        },
+        {
+          "path": "docs/premium-ui/reviews/design-role-definitions-independent.json",
+          "sha256": "36d5f26fe6bd372fdc73a962dd68c4ea43c74cc0848499baf7c61f784bb77f99",
+          "changed_source_bindings": [
+            {
+              "path": "frontend/src/member-workspace.ts",
+              "recorded_sha256": "4ddb7efade2d5886e8d62dc5fa7225eb2448b02c4be37ebb0ce474b5d3562c41",
+              "current_sha256": "340f4c9d0b6ee676bba226ca3c5e577028fb04ed0149b62a57a09f936d206b6d",
+              "matches_current": false
+            }
+          ]
+        },
+        {
+          "path": "docs/premium-ui/reviews/design-role-definitions-acceptance.json",
+          "sha256": "0af16324c494e19bb07fdf8b9819bd9d7f45655b159613a7e632b100df82307c",
+          "changed_source_bindings": [
+            {
+              "path": "frontend/src/member-workspace.ts",
+              "recorded_sha256": "4ddb7efade2d5886e8d62dc5fa7225eb2448b02c4be37ebb0ce474b5d3562c41",
+              "current_sha256": "340f4c9d0b6ee676bba226ca3c5e577028fb04ed0149b62a57a09f936d206b6d",
+              "matches_current": false
+            }
+          ]
+        }
+      ],
+      "changed_bound_paths": [
+        "frontend/src/member-workspace.ts"
+      ]
+    },
+    {
+      "item_id": 101,
+      "requirement": "Classify each existing table as a comparison grid or record list before choosing its mobile representation.",
+      "acceptance_review": "docs/premium-ui/reviews/accepted-items-101-draft-workload-revalidation.json",
+      "direct_acceptance_evidence": [
+        {
+          "path": "docs/premium-ui/reviews/accepted-items-101-draft-workload-revalidation.json",
+          "sha256": "f3cf3978ef9e5db353e3bc47f49ccda691fee0f72b6fdf57bbe72780ac7ddfc4",
+          "changed_source_bindings": [
+            {
+              "path": "frontend/src/member-import.ts",
+              "recorded_sha256": "010ff61e931b5fdcd0bede461face32db6562e1b987782a509be1adf58fbee42",
+              "current_sha256": "58742f27a951c8c2dea3b428c9f419b60e8882d12ec8978fd218e8fea731c5ec",
+              "matches_current": false
+            },
+            {
+              "path": "frontend/src/member-workspace.ts",
+              "recorded_sha256": "bd6fac6cdfcc4c638fc03076dc18f99cf918fa1e942f63b07e0e96f5d374ed61",
+              "current_sha256": "340f4c9d0b6ee676bba226ca3c5e577028fb04ed0149b62a57a09f936d206b6d",
+              "matches_current": false
+            },
+            {
+              "path": "frontend/src/past-duties.ts",
+              "recorded_sha256": "7c12653627145099d9785ce83788335687a850534d0af0f921a9bc29d538657c",
+              "current_sha256": "58e3ba3344f5c99457f796151c5039629f663dd24bc40e36738283bb2030de33",
+              "matches_current": false
+            }
+          ]
+        }
+      ],
+      "changed_bound_paths": [
+        "frontend/src/member-import.ts",
+        "frontend/src/member-workspace.ts",
+        "frontend/src/past-duties.ts"
+      ]
+    },
+    {
+      "item_id": 116,
+      "requirement": "Provide accessible nonvirtualized summaries or navigation where virtualization would otherwise hide content from assistive technology.",
+      "acceptance_review": "docs/premium-ui/reviews/accepted-items-116-draft-workload-revalidation.json",
+      "direct_acceptance_evidence": [
+        {
+          "path": "docs/premium-ui/reviews/accepted-items-116-draft-workload-revalidation.json",
+          "sha256": "87f1696e94e1f0ab5dbe007c82c0e2eadb3c544bb3ed024ed3df65db830301df",
+          "changed_source_bindings": [
+            {
+              "path": "frontend/src/member-import.ts",
+              "recorded_sha256": "010ff61e931b5fdcd0bede461face32db6562e1b987782a509be1adf58fbee42",
+              "current_sha256": "58742f27a951c8c2dea3b428c9f419b60e8882d12ec8978fd218e8fea731c5ec",
+              "matches_current": false
+            },
+            {
+              "path": "frontend/src/member-workspace.ts",
+              "recorded_sha256": "bd6fac6cdfcc4c638fc03076dc18f99cf918fa1e942f63b07e0e96f5d374ed61",
+              "current_sha256": "340f4c9d0b6ee676bba226ca3c5e577028fb04ed0149b62a57a09f936d206b6d",
+              "matches_current": false
+            },
+            {
+              "path": "frontend/src/operational-import.ts",
+              "recorded_sha256": "9e11514d205d71049e2f0baa10f005def74941e0b90584a9c84b968f9ae19dfc",
+              "current_sha256": "e112f581d096d4a8c1f81b297d989dcbac4b18327e3de8a8d218deecba060030",
+              "matches_current": false
+            },
+            {
+              "path": "frontend/src/past-duties.ts",
+              "recorded_sha256": "7c12653627145099d9785ce83788335687a850534d0af0f921a9bc29d538657c",
+              "current_sha256": "58e3ba3344f5c99457f796151c5039629f663dd24bc40e36738283bb2030de33",
+              "matches_current": false
+            },
+            {
+              "path": "frontend/src/ui.ts",
+              "recorded_sha256": "88579ed75c8c72e4fd4e2d98508a58c42b925202362589a2469623664c2a975f",
+              "current_sha256": "a1f8e5a527d6517ac2a1037545a6449b406e3ca8e6e0f7b3f940918e6d12eddc",
+              "matches_current": false
+            }
+          ]
+        },
+        {
+          "path": "docs/premium-ui/qa-unit-members-independent.json",
+          "sha256": "a2b118a1779b27a0589fde1172070332c0d564a41224c4ad9cd9d88813cca2bf",
+          "changed_source_bindings": []
+        }
+      ],
+      "changed_bound_paths": [
+        "frontend/src/member-import.ts",
+        "frontend/src/member-workspace.ts",
+        "frontend/src/operational-import.ts",
+        "frontend/src/past-duties.ts",
+        "frontend/src/ui.ts"
+      ]
+    },
+    {
+      "item_id": 122,
+      "requirement": "Make member identity, designation, effective call level and active status clear before secondary history or administrative metadata.",
+      "acceptance_review": "docs/premium-ui/reviews/accepted-items-122-126-128-130-draft-workload-revalidation.json",
+      "direct_acceptance_evidence": [
+        {
+          "path": "docs/premium-ui/reviews/accepted-items-122-126-128-130-draft-workload-revalidation.json",
+          "sha256": "821e869b182443243b04860140ece548af46803938924872b447cb34079d0d73",
+          "changed_source_bindings": [
+            {
+              "path": "frontend/src/member-workspace.ts",
+              "recorded_sha256": "bd6fac6cdfcc4c638fc03076dc18f99cf918fa1e942f63b07e0e96f5d374ed61",
+              "current_sha256": "340f4c9d0b6ee676bba226ca3c5e577028fb04ed0149b62a57a09f936d206b6d",
+              "matches_current": false
+            }
+          ]
+        }
+      ],
+      "changed_bound_paths": [
+        "frontend/src/member-workspace.ts"
+      ]
+    },
+    {
+      "item_id": 123,
+      "requirement": "Preserve desktop rails and mobile tabs, automatically revealing the active tab without stealing focus and providing discoverable scroll cues.",
+      "acceptance_review": "docs/premium-ui/reviews/accepted-items-123-124-125-draft-workload-revalidation.json",
+      "direct_acceptance_evidence": [
+        {
+          "path": "docs/premium-ui/reviews/accepted-items-123-124-125-draft-workload-revalidation.json",
+          "sha256": "9852b5b7c4d33a1ae681653d82e6646374f64962b0c525cb47743dd4203f44d2",
+          "changed_source_bindings": [
+            {
+              "path": "frontend/src/member-workspace.ts",
+              "recorded_sha256": "bd6fac6cdfcc4c638fc03076dc18f99cf918fa1e942f63b07e0e96f5d374ed61",
+              "current_sha256": "340f4c9d0b6ee676bba226ca3c5e577028fb04ed0149b62a57a09f936d206b6d",
+              "matches_current": false
+            }
+          ]
+        },
+        {
+          "path": "docs/premium-ui/reviews/analysis-navigation-current.json",
+          "sha256": "5e4e4abf9fc7de4818f3841bbbdd9438f7b983aac8e5fe71049cfbabba4cd56a",
+          "changed_source_bindings": [
+            {
+              "path": "frontend/src/member-workspace.ts",
+              "recorded_sha256": "c2d6640b336fbfb4646d60b73d77b9383e126c6ba03bd3215180dc79e5bd2c1f",
+              "current_sha256": "340f4c9d0b6ee676bba226ca3c5e577028fb04ed0149b62a57a09f936d206b6d",
+              "matches_current": false
+            }
+          ]
+        }
+      ],
+      "changed_bound_paths": [
+        "frontend/src/member-workspace.ts"
+      ]
+    },
+    {
+      "item_id": 124,
+      "requirement": "Standardize tab labels, counts and ordering across overview, postings, leave, duties, history and administrative sections.",
+      "acceptance_review": "docs/premium-ui/reviews/accepted-items-123-124-125-draft-workload-revalidation.json",
+      "direct_acceptance_evidence": [
+        {
+          "path": "docs/premium-ui/reviews/accepted-items-123-124-125-draft-workload-revalidation.json",
+          "sha256": "9852b5b7c4d33a1ae681653d82e6646374f64962b0c525cb47743dd4203f44d2",
+          "changed_source_bindings": [
+            {
+              "path": "frontend/src/member-workspace.ts",
+              "recorded_sha256": "bd6fac6cdfcc4c638fc03076dc18f99cf918fa1e942f63b07e0e96f5d374ed61",
+              "current_sha256": "340f4c9d0b6ee676bba226ca3c5e577028fb04ed0149b62a57a09f936d206b6d",
+              "matches_current": false
+            }
+          ]
+        }
+      ],
+      "changed_bound_paths": [
+        "frontend/src/member-workspace.ts"
+      ]
+    },
+    {
+      "item_id": 125,
+      "requirement": "Preserve tablist/tab/tabpanel relationships, roving focus and orientation-aware navigation while keeping ordinary page navigation available.",
+      "acceptance_review": "docs/premium-ui/reviews/accepted-items-123-124-125-draft-workload-revalidation.json",
+      "direct_acceptance_evidence": [
+        {
+          "path": "docs/premium-ui/reviews/accepted-items-123-124-125-draft-workload-revalidation.json",
+          "sha256": "9852b5b7c4d33a1ae681653d82e6646374f64962b0c525cb47743dd4203f44d2",
+          "changed_source_bindings": [
+            {
+              "path": "frontend/src/member-workspace.ts",
+              "recorded_sha256": "bd6fac6cdfcc4c638fc03076dc18f99cf918fa1e942f63b07e0e96f5d374ed61",
+              "current_sha256": "340f4c9d0b6ee676bba226ca3c5e577028fb04ed0149b62a57a09f936d206b6d",
+              "matches_current": false
+            }
+          ]
+        },
+        {
+          "path": "docs/premium-ui/reviews/analysis-navigation-current.json",
+          "sha256": "5e4e4abf9fc7de4818f3841bbbdd9438f7b983aac8e5fe71049cfbabba4cd56a",
+          "changed_source_bindings": [
+            {
+              "path": "frontend/src/member-workspace.ts",
+              "recorded_sha256": "c2d6640b336fbfb4646d60b73d77b9383e126c6ba03bd3215180dc79e5bd2c1f",
+              "current_sha256": "340f4c9d0b6ee676bba226ca3c5e577028fb04ed0149b62a57a09f936d206b6d",
+              "matches_current": false
+            }
+          ]
+        }
+      ],
+      "changed_bound_paths": [
+        "frontend/src/member-workspace.ts"
+      ]
+    },
+    {
+      "item_id": 126,
+      "requirement": "Keep the identity header compact while allowing full names and designations to wrap without overlapping close controls.",
+      "acceptance_review": "docs/premium-ui/reviews/accepted-items-122-126-128-130-draft-workload-revalidation.json",
+      "direct_acceptance_evidence": [
+        {
+          "path": "docs/premium-ui/reviews/accepted-items-122-126-128-130-draft-workload-revalidation.json",
+          "sha256": "821e869b182443243b04860140ece548af46803938924872b447cb34079d0d73",
+          "changed_source_bindings": [
+            {
+              "path": "frontend/src/member-workspace.ts",
+              "recorded_sha256": "bd6fac6cdfcc4c638fc03076dc18f99cf918fa1e942f63b07e0e96f5d374ed61",
+              "current_sha256": "340f4c9d0b6ee676bba226ca3c5e577028fb04ed0149b62a57a09f936d206b6d",
+              "matches_current": false
+            }
+          ]
+        }
+      ],
+      "changed_bound_paths": [
+        "frontend/src/member-workspace.ts"
+      ]
+    },
+    {
+      "item_id": 127,
+      "requirement": "Surface unsaved changes and validation errors on their relevant tabs so hidden form problems remain discoverable.",
+      "acceptance_review": "docs/premium-ui/reviews/profile-draft-workload-127-132-133-acceptance.json",
+      "direct_acceptance_evidence": [
+        {
+          "path": "docs/premium-ui/reviews/profile-draft-workload-127-132-133-acceptance.json",
+          "sha256": "830bf7891d8d181b4b5b3e6c12c2992fa4359da984e7ab38378a66e2895fa514",
+          "changed_source_bindings": [
+            {
+              "path": "frontend/src/member-workspace.ts",
+              "recorded_sha256": "bd6fac6cdfcc4c638fc03076dc18f99cf918fa1e942f63b07e0e96f5d374ed61",
+              "current_sha256": "340f4c9d0b6ee676bba226ca3c5e577028fb04ed0149b62a57a09f936d206b6d",
+              "matches_current": false
+            }
+          ]
+        }
+      ],
+      "changed_bound_paths": [
+        "frontend/src/member-workspace.ts"
+      ]
+    },
+    {
+      "item_id": 128,
+      "requirement": "Present dated promotions and call-level changes as a readable timeline with clear scheduled-versus-effective distinctions.",
+      "acceptance_review": "docs/premium-ui/reviews/accepted-items-122-126-128-130-draft-workload-revalidation.json",
+      "direct_acceptance_evidence": [
+        {
+          "path": "docs/premium-ui/reviews/accepted-items-122-126-128-130-draft-workload-revalidation.json",
+          "sha256": "821e869b182443243b04860140ece548af46803938924872b447cb34079d0d73",
+          "changed_source_bindings": [
+            {
+              "path": "frontend/src/member-workspace.ts",
+              "recorded_sha256": "bd6fac6cdfcc4c638fc03076dc18f99cf918fa1e942f63b07e0e96f5d374ed61",
+              "current_sha256": "340f4c9d0b6ee676bba226ca3c5e577028fb04ed0149b62a57a09f936d206b6d",
+              "matches_current": false
+            }
+          ]
+        }
+      ],
+      "changed_bound_paths": [
+        "frontend/src/member-workspace.ts"
+      ]
+    },
+    {
+      "item_id": 129,
+      "requirement": "Reflow posting and leave histories into date-aware mobile cards while keeping edit actions adjacent to the affected record.",
+      "acceptance_review": "docs/premium-ui/reviews/accepted-items-129-draft-workload-revalidation.json",
+      "direct_acceptance_evidence": [
+        {
+          "path": "docs/premium-ui/reviews/accepted-items-129-draft-workload-revalidation.json",
+          "sha256": "3105ace6b8a4e79a0453bc445df2489ee079afa2ae2128dc13386280f7162eb2",
+          "changed_source_bindings": [
+            {
+              "path": "frontend/src/member-workspace.ts",
+              "recorded_sha256": "bd6fac6cdfcc4c638fc03076dc18f99cf918fa1e942f63b07e0e96f5d374ed61",
+              "current_sha256": "340f4c9d0b6ee676bba226ca3c5e577028fb04ed0149b62a57a09f936d206b6d",
+              "matches_current": false
+            },
+            {
+              "path": "frontend/src/ui.ts",
+              "recorded_sha256": "88579ed75c8c72e4fd4e2d98508a58c42b925202362589a2469623664c2a975f",
+              "current_sha256": "a1f8e5a527d6517ac2a1037545a6449b406e3ca8e6e0f7b3f940918e6d12eddc",
+              "matches_current": false
+            }
+          ]
+        }
+      ],
+      "changed_bound_paths": [
+        "frontend/src/member-workspace.ts",
+        "frontend/src/ui.ts"
+      ]
+    },
+    {
+      "item_id": 130,
+      "requirement": "Separate member-facing information from administrator metadata through hierarchy and progressive disclosure rather than hidden essential context.",
+      "acceptance_review": "docs/premium-ui/reviews/accepted-items-122-126-128-130-draft-workload-revalidation.json",
+      "direct_acceptance_evidence": [
+        {
+          "path": "docs/premium-ui/reviews/accepted-items-122-126-128-130-draft-workload-revalidation.json",
+          "sha256": "821e869b182443243b04860140ece548af46803938924872b447cb34079d0d73",
+          "changed_source_bindings": [
+            {
+              "path": "frontend/src/member-workspace.ts",
+              "recorded_sha256": "bd6fac6cdfcc4c638fc03076dc18f99cf918fa1e942f63b07e0e96f5d374ed61",
+              "current_sha256": "340f4c9d0b6ee676bba226ca3c5e577028fb04ed0149b62a57a09f936d206b6d",
+              "matches_current": false
+            }
+          ]
+        }
+      ],
+      "changed_bound_paths": [
+        "frontend/src/member-workspace.ts"
+      ]
+    },
+    {
+      "item_id": 132,
+      "requirement": "Keep workload summaries compact and readable, linking to actual duties using existing supported detail or report views.",
+      "acceptance_review": "docs/premium-ui/reviews/profile-draft-workload-127-132-133-acceptance.json",
+      "direct_acceptance_evidence": [
+        {
+          "path": "docs/premium-ui/reviews/profile-draft-workload-127-132-133-acceptance.json",
+          "sha256": "830bf7891d8d181b4b5b3e6c12c2992fa4359da984e7ab38378a66e2895fa514",
+          "changed_source_bindings": [
+            {
+              "path": "frontend/src/member-workspace.ts",
+              "recorded_sha256": "bd6fac6cdfcc4c638fc03076dc18f99cf918fa1e942f63b07e0e96f5d374ed61",
+              "current_sha256": "340f4c9d0b6ee676bba226ca3c5e577028fb04ed0149b62a57a09f936d206b6d",
+              "matches_current": false
+            }
+          ]
+        }
+      ],
+      "changed_bound_paths": [
+        "frontend/src/member-workspace.ts"
+      ]
+    },
+    {
+      "item_id": 133,
+      "requirement": "Show missing designation, unknown history and unassigned values honestly instead of presenting misleading zeroes or placeholder identities.",
+      "acceptance_review": "docs/premium-ui/reviews/profile-draft-workload-127-132-133-acceptance.json",
+      "direct_acceptance_evidence": [
+        {
+          "path": "docs/premium-ui/reviews/profile-draft-workload-127-132-133-acceptance.json",
+          "sha256": "830bf7891d8d181b4b5b3e6c12c2992fa4359da984e7ab38378a66e2895fa514",
+          "changed_source_bindings": [
+            {
+              "path": "frontend/src/member-workspace.ts",
+              "recorded_sha256": "bd6fac6cdfcc4c638fc03076dc18f99cf918fa1e942f63b07e0e96f5d374ed61",
+              "current_sha256": "340f4c9d0b6ee676bba226ca3c5e577028fb04ed0149b62a57a09f936d206b6d",
+              "matches_current": false
+            }
+          ]
+        }
+      ],
+      "changed_bound_paths": [
+        "frontend/src/member-workspace.ts"
+      ]
+    },
+    {
+      "item_id": 143,
+      "requirement": "Present full date ranges for cross-month leave so monthly approval cannot appear narrower than its actual effect.",
+      "acceptance_review": "docs/premium-ui/reviews/accepted-items-143-146-148-draft-workload-revalidation.json",
+      "direct_acceptance_evidence": [
+        {
+          "path": "docs/premium-ui/reviews/accepted-items-143-146-148-draft-workload-revalidation.json",
+          "sha256": "f8f9b6f3bf87036b811e958d2af738cbc10d9d65df5c53c0c46ac774a789377c",
+          "changed_source_bindings": [
+            {
+              "path": "frontend/src/ui.ts",
+              "recorded_sha256": "88579ed75c8c72e4fd4e2d98508a58c42b925202362589a2469623664c2a975f",
+              "current_sha256": "a1f8e5a527d6517ac2a1037545a6449b406e3ca8e6e0f7b3f940918e6d12eddc",
+              "matches_current": false
+            }
+          ]
+        },
+        {
+          "path": "docs/premium-ui/reviews/leave-presentation-requirements-acceptance.json",
+          "sha256": "786a4a0adf666e9918d981e8a53c92bb255a37089b959d3c600c17110bc915f6",
+          "changed_source_bindings": [
+            {
+              "path": "frontend/src/ui.ts",
+              "recorded_sha256": "88579ed75c8c72e4fd4e2d98508a58c42b925202362589a2469623664c2a975f",
+              "current_sha256": "a1f8e5a527d6517ac2a1037545a6449b406e3ca8e6e0f7b3f940918e6d12eddc",
+              "matches_current": false
+            }
+          ]
+        },
+        {
+          "path": "docs/premium-ui/reviews/acceptance-runtime-leave-refresh.json",
+          "sha256": "e7bfb42f1c919fa39700119405085ef543bd54935a85da37ff04f391f6aea23b",
+          "changed_source_bindings": [
+            {
+              "path": "frontend/src/ui.ts",
+              "recorded_sha256": "88579ed75c8c72e4fd4e2d98508a58c42b925202362589a2469623664c2a975f",
+              "current_sha256": "a1f8e5a527d6517ac2a1037545a6449b406e3ca8e6e0f7b3f940918e6d12eddc",
+              "matches_current": false
+            },
+            {
+              "path": "frontend/src/ui.ts",
+              "recorded_sha256": "88579ed75c8c72e4fd4e2d98508a58c42b925202362589a2469623664c2a975f",
+              "current_sha256": "a1f8e5a527d6517ac2a1037545a6449b406e3ca8e6e0f7b3f940918e6d12eddc",
+              "matches_current": false
+            }
+          ]
+        }
+      ],
+      "changed_bound_paths": [
+        "frontend/src/ui.ts"
+      ]
+    },
+    {
+      "item_id": 146,
+      "requirement": "Give calendars keyboard behavior matching their actual semantics; never add grid roles without the complete interaction pattern.",
+      "acceptance_review": "docs/premium-ui/reviews/accepted-items-143-146-148-draft-workload-revalidation.json",
+      "direct_acceptance_evidence": [
+        {
+          "path": "docs/premium-ui/reviews/accepted-items-143-146-148-draft-workload-revalidation.json",
+          "sha256": "f8f9b6f3bf87036b811e958d2af738cbc10d9d65df5c53c0c46ac774a789377c",
+          "changed_source_bindings": [
+            {
+              "path": "frontend/src/ui.ts",
+              "recorded_sha256": "88579ed75c8c72e4fd4e2d98508a58c42b925202362589a2469623664c2a975f",
+              "current_sha256": "a1f8e5a527d6517ac2a1037545a6449b406e3ca8e6e0f7b3f940918e6d12eddc",
+              "matches_current": false
+            }
+          ]
+        },
+        {
+          "path": "docs/premium-ui/reviews/leave-presentation-requirements-acceptance.json",
+          "sha256": "786a4a0adf666e9918d981e8a53c92bb255a37089b959d3c600c17110bc915f6",
+          "changed_source_bindings": [
+            {
+              "path": "frontend/src/ui.ts",
+              "recorded_sha256": "88579ed75c8c72e4fd4e2d98508a58c42b925202362589a2469623664c2a975f",
+              "current_sha256": "a1f8e5a527d6517ac2a1037545a6449b406e3ca8e6e0f7b3f940918e6d12eddc",
+              "matches_current": false
+            }
+          ]
+        },
+        {
+          "path": "docs/premium-ui/reviews/acceptance-runtime-leave-refresh.json",
+          "sha256": "e7bfb42f1c919fa39700119405085ef543bd54935a85da37ff04f391f6aea23b",
+          "changed_source_bindings": [
+            {
+              "path": "frontend/src/ui.ts",
+              "recorded_sha256": "88579ed75c8c72e4fd4e2d98508a58c42b925202362589a2469623664c2a975f",
+              "current_sha256": "a1f8e5a527d6517ac2a1037545a6449b406e3ca8e6e0f7b3f940918e6d12eddc",
+              "matches_current": false
+            },
+            {
+              "path": "frontend/src/ui.ts",
+              "recorded_sha256": "88579ed75c8c72e4fd4e2d98508a58c42b925202362589a2469623664c2a975f",
+              "current_sha256": "a1f8e5a527d6517ac2a1037545a6449b406e3ca8e6e0f7b3f940918e6d12eddc",
+              "matches_current": false
+            }
+          ]
+        }
+      ],
+      "changed_bound_paths": [
+        "frontend/src/ui.ts"
+      ]
+    },
+    {
+      "item_id": 148,
+      "requirement": "Reflow leave-pressure summaries into readable unit and call-level groups without duplicating every explanatory paragraph.",
+      "acceptance_review": "docs/premium-ui/reviews/accepted-items-143-146-148-draft-workload-revalidation.json",
+      "direct_acceptance_evidence": [
+        {
+          "path": "docs/premium-ui/reviews/accepted-items-143-146-148-draft-workload-revalidation.json",
+          "sha256": "f8f9b6f3bf87036b811e958d2af738cbc10d9d65df5c53c0c46ac774a789377c",
+          "changed_source_bindings": [
+            {
+              "path": "frontend/src/ui.ts",
+              "recorded_sha256": "88579ed75c8c72e4fd4e2d98508a58c42b925202362589a2469623664c2a975f",
+              "current_sha256": "a1f8e5a527d6517ac2a1037545a6449b406e3ca8e6e0f7b3f940918e6d12eddc",
+              "matches_current": false
+            }
+          ]
+        },
+        {
+          "path": "docs/premium-ui/reviews/leave-presentation-requirements-acceptance.json",
+          "sha256": "786a4a0adf666e9918d981e8a53c92bb255a37089b959d3c600c17110bc915f6",
+          "changed_source_bindings": [
+            {
+              "path": "frontend/src/ui.ts",
+              "recorded_sha256": "88579ed75c8c72e4fd4e2d98508a58c42b925202362589a2469623664c2a975f",
+              "current_sha256": "a1f8e5a527d6517ac2a1037545a6449b406e3ca8e6e0f7b3f940918e6d12eddc",
+              "matches_current": false
+            }
+          ]
+        },
+        {
+          "path": "docs/premium-ui/reviews/acceptance-runtime-leave-refresh.json",
+          "sha256": "e7bfb42f1c919fa39700119405085ef543bd54935a85da37ff04f391f6aea23b",
+          "changed_source_bindings": [
+            {
+              "path": "frontend/src/ui.ts",
+              "recorded_sha256": "88579ed75c8c72e4fd4e2d98508a58c42b925202362589a2469623664c2a975f",
+              "current_sha256": "a1f8e5a527d6517ac2a1037545a6449b406e3ca8e6e0f7b3f940918e6d12eddc",
+              "matches_current": false
+            },
+            {
+              "path": "frontend/src/ui.ts",
+              "recorded_sha256": "88579ed75c8c72e4fd4e2d98508a58c42b925202362589a2469623664c2a975f",
+              "current_sha256": "a1f8e5a527d6517ac2a1037545a6449b406e3ca8e6e0f7b3f940918e6d12eddc",
+              "matches_current": false
+            }
+          ]
+        }
+      ],
+      "changed_bound_paths": [
+        "frontend/src/ui.ts"
+      ]
+    },
+    {
+      "item_id": 235,
+      "requirement": "Inspect HTML revalidation, immutable hashed assets and previous-release retention as hosting dependencies without silently modifying server infrastructure.",
+      "acceptance_review": "docs/premium-ui/reviews/hosting-inspection-235-acceptance.json",
+      "direct_acceptance_evidence": [
+        {
+          "path": "docs/premium-ui/reviews/hosting-inspection-235-acceptance.json",
+          "sha256": "9173f747713ce80a0de6d2b75700a00f34fda160306285c643eb4b47bd56bd8b",
+          "changed_source_bindings": []
+        }
+      ],
+      "changed_bound_paths": []
+    },
+    {
+      "item_id": 259,
+      "requirement": "Prepare a concrete review build, rollback instructions and an unresolved-issue list before requesting any separate deployment approval.",
+      "acceptance_review": "docs/premium-ui/reviews/review-build-259-acceptance.json",
+      "direct_acceptance_evidence": [
+        {
+          "path": "docs/premium-ui/reviews/review-build-259-acceptance.json",
+          "sha256": "9ba83f652f73a1d115ca97c956d08f5ca49148e1241cb38a0e3298c55c42948e",
+          "changed_source_bindings": []
+        }
+      ],
+      "changed_bound_paths": []
+    }
+  ],
+  "evidence_sha256": {
+    "docs/premium-ui/qa-match-identity.json": "0bde93c5ab8882133ca9755654e204446032e9e27c9a86d7b0b2a1a571c6abb3",
+    "docs/premium-ui/qa-workbook-choice-lifetime.json": "9a450aaf6ff9b85de39aaefc3225340bcc2b28982296eba8beb1d84acd7c48b2",
+    "tmp/member-import-ownership-proof.json": "8cab5051d04e28000e379ee6fdf22c815dfd0812add5d57a064689280fc81194",
+    "tmp/member-match-source-proof.json": "d0f09cc48defca40af387024d3298911563361fdff91ffe0570be1a4e3484f7f",
+    "docs/premium-ui/table-surface-dispositions-current.json": "975aacc3a14c3f2e9ad7ef7a2daded3202e0ac036eafccea2bc94f5839ae21b1",
+    "docs/premium-ui/table-surface-inventory.json": "d58320e6eac08140bbf22fb9cb0ec816adca22b6c94f6808b1ae484dae358987"
+  },
+  "recommendation": "Retain the previous25 scoped acceptances based on unchanged applicable source/definitions and the specific preserved helper/profile segments. Refresh their hash-binding wrappers through an explicit source-revalidation chain; do not relabel historical browser executions as current or broaden original conditions.",
+  "rationale": [
+    "Only memberMatch identity presentation and workbook request ownership intentionally change. Other shared UI declaration bodies are compared exactly; profile/editor body remains byte identical.",
+    "Member CSV, operational and past adapters change identity rendering or pending explanations, not payloads or profile/editor behavior. Workbook ownership source proof explicitly discloses added guards and preserves API calls and blockers.",
+    "New current matching36 cases (24 adapter +12 workbook ownership),114 passing units and held build support the changed matching scope. Root reports fresh import regressions48; individual raw scopes remain authoritative."
+  ],
+  "historical_limits": [
+    "This report does not rerun every previously accepted browser suite. Historical screenshots, persisted readbacks, zoom/device checks and their source snapshots remain historical.",
+    "Acceptance source hashes that differ are not certified by filename existence. Direct acceptance documents are indexed here; older nested references require the existing revalidation chain and are not silently rewritten.",
+    "No new persistence, export, permission, physical-device or native assistive-technology evidence. Requirement140 and full260 goal remain separate.",
+    "Past-actions rerun was pending at task assignment and is not claimed passed by this source-preservation review."
+  ]
+}

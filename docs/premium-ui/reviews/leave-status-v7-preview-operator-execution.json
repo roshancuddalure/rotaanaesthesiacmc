@@ -1,0 +1,84 @@
+{
+  "recorded_at_utc": "2026-10-28T22:56:45.171959+00:00",
+  "operator": "/root/leave_status_runtime_plan",
+  "status": "frozen_v7_full_preview_matrix_passed_not_applied",
+  "source_author": "/root",
+  "operator_role_disclosure": "Operator authored the original faithful fixture/test and added only start/end test SHA guard to root v7 copy. Root authored final v7 helper/main/theme. Independent source/lifecycle review remains separate.",
+  "contexts": 24,
+  "normal_contexts": 12,
+  "stress_contexts": 12,
+  "focused_date_checks": 744,
+  "observed_terminal_exit_codes": {
+    "normal": 0,
+    "stress": 0
+  },
+  "finished_sessions": [
+    19322,
+    76923
+  ],
+  "test": {
+    "path": "frontend/tests/premium-leave-status-semantics-v7-preview.browser.mjs",
+    "sha256": "9c3b64dd5bc677fba60fce56d69d2d292815bd406454405365d00e530e047fd1"
+  },
+  "reports": [
+    {
+      "path": "docs/premium-ui/qa-leave-status-semantics-v7-preview.json",
+      "sha256": "fa4f0828c4a61a29ccf324b523a25575b12362ebe282ba7bf6e0e5fa38bd3223"
+    },
+    {
+      "path": "docs/premium-ui/qa-leave-status-semantics-v7-preview-stress.json",
+      "sha256": "e62749a4c652e78fc839aecfea13eb9c61f0f0c5aa182a619b7f67db16a2db4f"
+    }
+  ],
+  "logs": [
+    {
+      "path": "tmp/leave-status-v7-preview-native-operator.log",
+      "sha256": "74cf7c72aac657059cb3a426d878a5477266e346d92678f2a836dc7f30f9f107"
+    },
+    {
+      "path": "tmp/leave-status-v7-preview-stress-operator.log",
+      "sha256": "74cf7c72aac657059cb3a426d878a5477266e346d92678f2a836dc7f30f9f107"
+    }
+  ],
+  "candidate": {
+    "directory": "../tmp/leave-status-v7",
+    "source_sha256": {
+      "main.ts": "cefb30a235398c3a00d77279b81b8b37a0a1c6206c73f30e4e914af94fab0f03",
+      "premium-theme.css": "aa0d3c25681b83298cd53f45f009ed2f1f8e64b0f334903936d269c886d399d7",
+      "leave-calendar-focus.ts": "93bc00fb0c753ef342412e2f58730126d17918c09edfd6f3e58f72b43d1cc2b3"
+    },
+    "final_source_sha256": {
+      "main.ts": "cefb30a235398c3a00d77279b81b8b37a0a1c6206c73f30e4e914af94fab0f03",
+      "premium-theme.css": "aa0d3c25681b83298cd53f45f009ed2f1f8e64b0f334903936d269c886d399d7",
+      "leave-calendar-focus.ts": "93bc00fb0c753ef342412e2f58730126d17918c09edfd6f3e58f72b43d1cc2b3"
+    },
+    "limit": "Transform-only candidate preview; application source hashes below identify held live files, not candidate bytes."
+  },
+  "source_sha256": {
+    "frontend/src/main.ts": "20fc4e1c086f4ae6c25a381a176b590173f7ee680d6eec205489dc97eb069ea6",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "9344ea87024b282475a3b9f110ce9c83bdc5dca1dc984961eefed044c2ad6065",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/ui.ts": "680d7830bca8826b46b6f1dc2c0d064d2a3a2e16fb41188d2c323de6bccf85b2",
+    "frontend/src/record-workspace.ts": "7c196c12b114c48bf2db4ee57aad7e591d8e3acc7a77cccd15abbad7c349fb8f"
+  },
+  "matrix": "3engines x320/1280xlight/dark plus3enginesx320x568root200/390x320normalxlight/dark",
+  "covered": [
+    "Full focused date button plus computed outline within actual scroller client clip for all31dates, chronological nativeTab and arrow scroll",
+    "Full visible approved/requested/imported-review words; no character-per-line splitting/clipping in populated calendar; faithful duplicate-person AMapproved/PMpending records",
+    "Exact full record membership via existing modal, full names and escaped HTML-like text, no hidden status substitution",
+    "Month/day-list local toggles retain returned metrics/month/entry counts and perform no refetch or writes",
+    "Actual pointer-open cross-month day modal Escape restores exactclickedopener, includingWebKit; keyboard openers also exact",
+    "Allfiveknownstatusvalues and prototype/HTML-likeunknownreturnedstatusvalues remain safelytextualincomplete requesttable/cards; fullMay31June2range preserved",
+    "Returned pressuretotal4/blocking2 retained; operation-specific warning-versus-confirmed-absenceguidance",
+    "Scopedcalendaraxe0, no pageerrors, no documentoverflow, application/candidate/testsourceheld"
+  ],
+  "limits": [
+    "Transform-only preview5205; main/theme/helperremainunapplied at time of this gate. Final applied-source run and prioracceptance/sourceapplicabilityreview required.",
+    "Helper cancellation/fallback/recovery/newer-intent/abort/disconnectfaultcases are independently reviewed/tested separately, not inferred from this normal matrix",
+    "Monthlyapprovalpersistence, toolbarrolehierarchy, complete28/29/30monthboundaries and other original145representations require separateevidence",
+    "GET-onlyinterceptedleave/calendar/request/pressurefixture; remainingGETsforwardonlyexistingloopbackRAM8031. No backend/schema/scheduling/persistedsemantics orpermissionchanges/certification.",
+    "Browseremulationonly; physicaldevices/nativeATpending"
+  ],
+  "retained_failures": "Frozenv6normal/stress8completedcontextseachfailedWebKitpointeropener; baseline4fails/responsefix4passesboundindocs/premium-ui/reviews/leave-pointer-opener-v6-diagnostic-review.json. V7 passes do not relabel those failures."
+}

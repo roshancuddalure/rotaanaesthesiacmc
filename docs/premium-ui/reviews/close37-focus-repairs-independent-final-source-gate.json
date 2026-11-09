@@ -1,0 +1,38 @@
+{
+  "recorded_at_utc": "2026-10-28T16:25:16.745084+00:00",
+  "reviewer": "/root/close_focus_final_readonly",
+  "scope": "Independent exact-byte and semantic source review of two drawer focus calls and one saved-Rules recovery-focus condition. No application, backend, ledger or raw report edits; runtime acceptance remains pending.",
+  "source_gate": "pass_exact_narrow_focus_delta",
+  "main": {
+    "before_sha256": "6676ae91ec39f33eea0b5347b5f2394804e9cf04c30d0d80c0cc515436c8efac",
+    "after_sha256": "20fc4e1c086f4ae6c25a381a176b590173f7ee680d6eec205489dc97eb069ea6",
+    "full_source_reconstructed": true,
+    "rationale": "Only intentional sidebar-close and backdrop click listeners gain opener focus after the existing close/aria update. Both controls mean close rather than navigation, so returning to the stable menu opener is appropriate. General toggleSidebar, navigation and Escape remain byte-identical. The actual WebKit diagnostic records pointer focus loss before click and Escape already returning correctly; capturing focus only inside toggle would not fix the pointer case."
+  },
+  "rules": {
+    "before_sha256": "f93da9188ffd18eb6c202939efa9ae2ea701b4a1d4db627689774b1b850eaa2b",
+    "after_sha256": "709319c8b0a0be0c696b1a48c99ccd4d2aaa471806907a3b4085b709cf7fc1f9",
+    "full_source_reconstructed": true,
+    "rationale": "The close listener already owns the original review focus and repaints the saved-reload summary. The new alternative applies only to the same confirmed save operation, allowing focus to the current recovery control even when pending edit count is zero. Existing page connectivity, owned-review and BODY-only guards remain. A newer intentional focus destination is still preserved. No save/check/reload request, revision, draft or operation state logic changes."
+  },
+  "preservation": "Exact full-source reconstructions prove that all API calls, serialization, confirmations, timing, role checks and other state assignments remain byte-identical; two existing close listeners intentionally differ only by focus calls, and the Rules close guard intentionally differs only by its confirmed-save alternative.",
+  "runtime_recommendation": "Require terminal current36-close and12-compact matrices, including WebKit click/tap saved-Rules recovery and drawer close. Existing current unit/build and Rules regressions must pass. Do not count partially completed logs or prior failed runs as passes.",
+  "prior37_applicability": "Combine this narrow repair gate with close37-v3-prior37-source-applicability.json; historical callbacks-identical statements apply to v3 icon delta only. For current final source explicitly disclose these additional two listener focus calls and one Rules guard alternative. Font stacks, local SVG assets, CSS motion declarations and table literals are unaffected by these focus-only repairs.",
+  "evidence_sha256": {
+    "frontend/src/main.ts": "20fc4e1c086f4ae6c25a381a176b590173f7ee680d6eec205489dc97eb069ea6",
+    "frontend/src/rota-rules.ts": "709319c8b0a0be0c696b1a48c99ccd4d2aaa471806907a3b4085b709cf7fc1f9",
+    "tmp/close37-menu-focus-repair/proposal.json": "b18fb7152a1d5fa0113f947f0ce1e4b18126e409f0652a5a17fdd72d76896286",
+    "tmp/close37-menu-focus-repair/source-preservation.json": "f072c2457a52e040ad00ad3bea8de96a14778ad8596e4f99a09f92be967f137b",
+    "tmp/close37-menu-focus-repair/application-record.json": "f0baa3daa6528290d365786b0c2b7d1e3aeb64eb43719bd06e3c312f1e537bf5",
+    "tmp/close37-rules-recovery-focus/application-record.json": "74c18c69585082ba8ed3d8ef19faab1b39282b4dd18b17877f4d65792968f579",
+    "tmp/close37-webkit-menu-inputs-diagnostic.json": "b69d463b1d30dbb34b8795187813023259fb8d17c14ad2096c186401943699e5",
+    "tmp/close37-webkit-rules-focus-diagnostic.json": "4201f8c0ab34aa289a25a9709315836d0def0a156e0bda4006a36a41896b65aa",
+    "frontend/tests/premium-close-icon-placements.browser.mjs": "e60d2dbf447b8bc4e695270b9afd1b0e55535a47d3648c5636299173ac053e6d",
+    "frontend/tests/premium-close-target-geometry.browser.mjs": "60182f3b1988e1baff4f3955984e1c8b8877cee5e3cf4573b3aa00d9f3adf488"
+  },
+  "limits": [
+    "This is source safety and applicability, not fresh independent browser execution.",
+    "Whole original37 still requires remaining ASCII/status/filter/publish/compute/superadmin icons and measured placement evidence.",
+    "No full260, physical-device, native AT, persisted-data or backend authorization certification."
+  ]
+}

@@ -1,0 +1,173 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-10-28T15:21:20.176293+00:00",
+  "scope": "Root inspection of two current import suites; source assertion mapping plus recorded bounded execution. No whole-goal/requirement acceptance inferred.",
+  "entries": [
+    {
+      "suite": "frontend/tests/premium-import-review-context.browser.mjs",
+      "sha256": "1ea6517beb59dcf3fe55c27bdb9ab737646ca3082097544e115031fa57c4699c",
+      "source_inspected": true,
+      "screens": [
+        "Member workbook",
+        "Member CSV",
+        "Unit posting import",
+        "Leave import",
+        "Past-duty import"
+      ],
+      "contexts": {
+        "cases": 30,
+        "engines": [
+          "chromium",
+          "firefox",
+          "webkit"
+        ],
+        "widths": [
+          320,
+          1280
+        ],
+        "height": 850,
+        "fixture": "Actual mounted import components; local API fulfillment; one native Apply503 eligibility probe per context, no real backend write."
+      },
+      "execution_verified": true,
+      "raw_report": "docs/premium-ui/qa-import-review-context.json",
+      "raw_report_sha256": "d895acec8761104cf64d548b28136be3e0dc2a7e69072c9797005f438dbd11b6",
+      "assertion_groups": [
+        {
+          "action": "correctable-row-conditions",
+          "selector": "Actual row3/4/5/6 attention and row5 Edit field",
+          "outcome": "Unresolved/duplicate/invalid/inactive distinctions and long invalid-row field visible through native focus; original HTML-looking server issue remains escaped and readable.",
+          "source_lines": [
+            [
+              101,
+              127
+            ]
+          ],
+          "evidence_class": "native_browser_locally_fulfilled_requests",
+          "report_paths": [
+            "docs/premium-ui/qa-import-review-context.json"
+          ]
+        },
+        {
+          "action": "returned-preview-authority",
+          "selector": "Server import preview scope; mode/scope fixtures",
+          "outcome": "Known returned modes differ from unchanged form; omitted/null/malformed scope remains unavailable; unknown/prototype keys are escaped unknown modes.",
+          "source_lines": [
+            [
+              129,
+              157
+            ]
+          ],
+          "evidence_class": "native_browser_locally_fulfilled_requests",
+          "report_paths": [
+            "docs/premium-ui/qa-import-review-context.json"
+          ]
+        },
+        {
+          "action": "isolated-stale-gate",
+          "selector": "Actual Apply, corrected field, mode/file controls",
+          "outcome": "Clean ready native Apply reaches locally intercepted503; correction/mode changes show specific stale authority and no extra write, failed refresh retains stale context, replacement file removes old preview.",
+          "source_lines": [
+            [
+              159,
+              211
+            ]
+          ],
+          "evidence_class": "native_browser_locally_fulfilled_requests",
+          "report_paths": [
+            "docs/premium-ui/qa-import-review-context.json"
+          ]
+        }
+      ],
+      "limitations": [
+        "Actual data/persistence/authorization not certified. All five surfaces use controlled API previews; workbook bytes in this context suite are transport fixtures, not parser tests.",
+        "Normal-text320/1280 geometry only; narrow/reduced-height/enlarged-text and actual sticky overlap are separate mobile suite."
+      ]
+    },
+    {
+      "suite": "frontend/tests/premium-import-mobile-reachability.browser.mjs",
+      "sha256": "62552703e1ed32fc349fd3eb2b1186de420359a60b7e8455ca3d2f452f63971e",
+      "source_inspected": true,
+      "screens": [
+        "Five actual import modules",
+        "Actual signed-in app shell for workbook and past-duty panels"
+      ],
+      "contexts": {
+        "cases": 84,
+        "engines": [
+          "chromium",
+          "firefox",
+          "webkit"
+        ],
+        "viewports": [
+          [
+            320,
+            568
+          ],
+          [
+            390,
+            844
+          ],
+          [
+            390,
+            320
+          ]
+        ],
+        "root_text_variant": "320x568 CSS root200%; not browser zoom",
+        "fixture": "31returned source rows; final unresolved row32 with1217char validation and128char unbroken token; accepted XLSX fixture for past duties."
+      },
+      "execution_verified": true,
+      "raw_reports": {
+        "docs/premium-ui/qa-import-mobile-reachability.json": "c588114cef095ceb5ddf5613c9e72e9177a7ec82a18a7df45d9ff0d4aded76f1",
+        "docs/premium-ui/qa-import-mobile-shell-reachability.json": "80a84ccf2d6fc3b6407dcfc03323cd19c4e2ed3cb43aa1faea601505035952ff"
+      },
+      "assertion_groups": [
+        {
+          "action": "phone-native-navigation",
+          "selector": "Actual preview/pager/Edit/correction/Apply controls",
+          "outcome": "Native touch and adjacent ShiftTab/Tab reach actual review controls; operational Previous/Next paging reaches final source row. Unresolved Apply issues no request.",
+          "source_lines": [
+            [
+              36,
+              64
+            ],
+            [
+              130,
+              156
+            ]
+          ],
+          "evidence_class": "native_browser_locally_fulfilled_requests",
+          "report_paths": [
+            "docs/premium-ui/qa-import-mobile-reachability.json",
+            "docs/premium-ui/qa-import-mobile-shell-reachability.json"
+          ]
+        },
+        {
+          "action": "last-row-sticky-clearance",
+          "selector": "Final error text beginning/end Range and first/last expanded field; actual fixed/sticky elements",
+          "outcome": "Recorded full vertical viewport geometry, hit testing, actual sticky/fixed overlap and nested scroll regions. Root postprocessor checks all ancestor vertical clips; no actual footer is synthesized.",
+          "source_lines": [
+            [
+              45,
+              64
+            ],
+            [
+              140,
+              155
+            ]
+          ],
+          "evidence_class": "native_browser_locally_fulfilled_requests",
+          "report_paths": [
+            "docs/premium-ui/qa-import-mobile-reachability.json",
+            "docs/premium-ui/qa-import-mobile-shell-reachability.json"
+          ]
+        }
+      ],
+      "limitations": [
+        "Contained tables can require horizontal navigation; full control width/label readability at root200 is not established by center hit tests.",
+        "Native Tab checks are adjacent traversal, not full end-to-end sequence. Error text is explicitly scrolled to begin/end.",
+        "Emulated touch/viewport only: no physical device, software keyboard or native AT.",
+        "Raw mobile hash list omits new transitive import-review-presentation helper; root held regression/build/application record separately binds that helper."
+      ]
+    }
+  ]
+}

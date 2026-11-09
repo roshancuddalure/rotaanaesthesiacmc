@@ -1,0 +1,58 @@
+import assert from 'node:assert/strict';
+import {readFile,writeFile} from 'node:fs/promises';
+import {createHash} from 'node:crypto';
+import {chromium,firefox,webkit} from 'playwright';
+const sha=b=>createHash('sha256').update(b).digest('hex');
+const base='http://127.0.0.1:5197',api='http://127.0.0.1:8031';
+const candidatePaths=['src/main.ts','src/unit-modal-accessibility.ts','src/shell-accessibility.ts','src/main.ts','src/record-workspace.ts','src/member-workspace.ts','src/shell-accessibility.ts','src/services/api.ts'];
+const hashes=async()=>Object.fromEntries(await Promise.all(candidatePaths.map(async p=>[p,sha(await readFile(p))]))),initial=await hashes();
+const units=['a','b'].map(x=>({id:'ind-unit-'+x,name:'Independent Unit '+x.toUpperCase(),campus:'Main',code:x,minimum_free_people:1,active_status:'active',notes:null}));
+const person={id:'ind-person',canonical_name:'Dr Independent Person',active_status:'active',call_level:'2ND_CALL',aliases:[],designations:[]};
+const posting={id:'ind-posting',person,unit:units[0],posting_type:'2ND_CALL',starts_on:'2026-05-02',ends_on:'2026-05-30',notes:'Original dated context',source:'manual'};
+const data={month:'2026-05',starts_on:'2026-05-01',ends_on:'2026-05-31',units,assignments:[posting],unit_summaries:units.map(u=>({unit_id:u.id,assigned_members:u===units[0]?1:0,people_with_leave:0,leave_days:0,leave_by_call_level:{}})),unit_call_minimums:[],validation_issues:[]};
+const results=[];
+for(const[engine,launcher]of Object.entries({chromium,firefox,webkit})){
+ const browser=await launcher.launch();
+ try{for(const width of [320,1280]){
+  const context=await browser.newContext({viewport:{width,height:850},hasTouch:true,reducedMotion:'reduce'}),page=await context.newPage(),errors=[],unexpected=[],previews=[],prompts=[];
+  let release,arrive,acceptDiscard=false,expireEditGet=false;const pending=new Promise(r=>arrive=r);
+  const manage=id=>page.locator(`[data-unit-board-card="unit:ind-unit-${id}"] button[data-open-unit-modal]`),modal=page.locator('#unit-management-modal');
+  page.on('pageerror',e=>errors.push(e.message));page.on('dialog',async d=>{prompts.push({message:d.message(),accept:acceptDiscard});await(acceptDiscard?d.accept():d.dismiss());});
+  try{
+   await page.clock.setFixedTime(new Date('2026-05-15T12:00:00Z'));await page.addInitScript(()=>{localStorage.setItem('duty_rota_auth_token','ind-unit-runtime');localStorage.setItem('duty_rota_working_month','2026-05');});
+   await page.route('**/api/**',async route=>{const q=route.request(),u=new URL(q.url());if(q.method()==='POST'&&u.pathname==='/api/v1/normalization/records/units/preview'){
+    previews.push(q.postDataJSON());arrive();await new Promise(r=>release=r);return route.fulfill({status:503,json:{detail:'Independent preview unavailable'}});
+   }if(q.method()!=='GET'){unexpected.push({method:q.method(),path:u.pathname});return route.abort();}
+   if(u.pathname.endsWith('/unit-management/month'))return route.fulfill({json:data});
+   if(u.pathname==='/api/v1/admin/members')return route.fulfill({json:[person]});if(u.pathname==='/api/v1/normalization/units')return route.fulfill({json:units});
+   if(u.pathname==='/api/v1/normalization/catalog/posting_type')return route.fulfill({json:[{key:'2ND_CALL',label:'Second call',active:true}]});
+   if(u.pathname==='/api/v1/normalization/records/units/ind-posting')return expireEditGet?route.fulfill({status:401,json:{detail:'Independent session refusal'}}):route.fulfill({json:{id:posting.id,person_id:person.id,unit_id:units[0].id,posting_type:posting.posting_type,starts_on:posting.starts_on,ends_on:posting.ends_on,notes:posting.notes}});
+   return route.fulfill({response:await route.fetch({url:api+u.pathname+u.search,maxRetries:2})});});
+   await page.goto(base+'/#view=units');await manage('a').waitFor();await page.waitForLoadState('networkidle');const initialInert=await page.evaluate(()=>({appInert:document.querySelector('#app')?.inert,navInert:!!document.querySelector('.sidebar')?.closest('[inert]')}));
+   // A cancelled pointer press must not override a subsequent actual keyboard opener.
+   await manage('a').focus();await manage('a').scrollIntoViewIfNeeded();let box=await manage('a').boundingBox();await page.mouse.move(box.x+box.width/2,box.y+box.height/2);await page.mouse.down();await page.mouse.move(1,1);await page.mouse.up();
+   const afterCancelledPointer=await page.evaluate(()=>({tag:document.activeElement.tagName,label:document.activeElement.getAttribute('aria-label')}));
+   await manage('a').focus();let tabs=0;while(!await manage('b').evaluate(e=>e===document.activeElement)&&tabs<8){await page.keyboard.press('Tab');tabs++;}
+   assert.equal(await manage('b').evaluate(e=>e===document.activeElement),true,'Native Tab reaches B');await page.keyboard.press('Enter');await modal.waitFor();assert.match(await modal.locator('#unit-modal-title').innerText(),/Unit B/);await page.keyboard.press('Escape');await modal.waitFor({state:'detached'});
+   const keyboardAfterCancelledPointer=await page.evaluate(()=>({tag:document.activeElement.tagName,label:document.activeElement.getAttribute('aria-label')}));
+   assert.equal(keyboardAfterCancelledPointer.label,'Manage '+units[1].name,'Actual newer keyboard opener overrides cancelled pointer gesture');
+   // Independently drive actual delegated Edit, retained draft, held preview,
+   // rejected Escape/header close while busy, error, discard refusal and acceptance.
+   await manage('a').tap();await modal.waitFor();const edit=modal.locator('[data-edit-operational-record="ind-posting"]');await edit.tap();const record=page.locator('dialog.record-workspace');await record.locator('[name=notes]').waitFor();
+   for(const [name,value]of Object.entries({person_id:person.id,unit_id:units[0].id,posting_type:'2ND_CALL',starts_on:'2026-05-02',ends_on:'2026-05-30',notes:'Original dated context'}))assert.equal(await record.locator(`[name="${name}"]`).inputValue(),value);
+   await record.locator('[name=notes]').fill('Independent unsaved notes');await record.getByRole('button',{name:'Review changes',exact:true}).click();await pending;assert.equal(await record.locator('form').getAttribute('aria-busy'),'true');const beforePrompts=prompts.length;await page.keyboard.press('Escape');await record.locator('header [data-close]').tap();assert.equal(await record.count(),1);assert.equal(await modal.count(),1);assert.equal(prompts.length,beforePrompts);assert.equal(previews.length,1);release();
+   await record.locator('[data-error]').filter({hasText:'Independent preview unavailable'}).waitFor();assert.equal(await record.locator('[name=notes]').inputValue(),'Independent unsaved notes');await page.keyboard.press('Escape');assert.equal(await record.count(),1);assert.equal(prompts.at(-1).accept,false);acceptDiscard=true;await record.locator('footer [data-close]').tap();await record.waitFor({state:'detached'});assert.equal(await edit.evaluate(e=>e===document.activeElement),true,'Tap Edit returns exact native opener');
+   assert.equal(previews[0].values.person_id,person.id);assert.equal(previews[0].values.unit_id,units[0].id);assert.equal(previews[0].values.starts_on,'2026-05-02');assert.equal(previews[0].values.ends_on,'2026-05-30');assert.equal(previews[0].values.notes,'Independent unsaved notes');
+   await page.keyboard.press('Escape');await modal.waitFor({state:'detached'});assert.equal(await manage('a').evaluate(e=>e===document.activeElement),true);
+   const special=page.locator('[data-unit-board-card="special:PAIN"] h3');await special.tap();await modal.waitFor();await page.waitForFunction(()=>document.activeElement?.matches('#unit-management-modal [data-close-unit-modal]'));await page.keyboard.press('Escape');await modal.waitFor({state:'detached'});const specialReturn=await page.evaluate(()=>document.activeElement.getAttribute('aria-label'));assert.match(specialReturn,/Manage.*postings/);
+   // Actual route teardown must restore the shell, not strand an inert view.
+   await manage('a').tap();await modal.waitFor();await page.evaluate(()=>location.hash='#view=members');await page.locator('input[data-unit-board-search]').waitFor({state:'detached'});await page.waitForFunction(()=>!document.querySelector('#unit-management-modal'));const routeTeardown=await page.evaluate(()=>({appInert:document.querySelector('#app')?.inert,active:document.activeElement.tagName,navInert:!!document.querySelector('.sidebar')?.closest('[inert]')}));assert.equal(routeTeardown.appInert,initialInert.appInert);assert.equal(routeTeardown.navInert,initialInert.navInert);await page.waitForLoadState('networkidle');
+   // Exercise the actual session-refusal UI and its real account teardown,
+   // rather than directly aborting a synthetic controller.
+   await page.evaluate(()=>location.hash='#view=units');await manage('a').waitFor();await page.waitForLoadState('networkidle');if(!await modal.count())await manage('a').tap();await modal.waitFor();assert.match(await modal.locator('#unit-modal-title').innerText(),/Unit A/);expireEditGet=true;await modal.locator('[data-edit-operational-record="ind-posting"]').tap();await page.locator('#session-expiry-recovery').getByRole('button',{name:'Sign in again',exact:true}).waitFor();assert.equal(await page.locator('dialog.record-workspace').count(),1);acceptDiscard=true;await page.locator('#session-expiry-recovery').getByRole('button',{name:'Sign in again',exact:true}).tap();await page.locator('#login-form').waitFor();await page.waitForLoadState('networkidle');
+   const accountTeardown=await page.evaluate(()=>({appInert:document.querySelector('#app')?.inert,privateDialogs:document.querySelectorAll('dialog,#unit-management-modal').length,loginInert:!!document.querySelector('#login-form')?.closest('[inert]')}));assert.equal(accountTeardown.appInert,false);assert.equal(accountTeardown.privateDialogs,0);assert.equal(accountTeardown.loginInert,false);await page.keyboard.press('Escape');assert.equal(await page.locator('#login-form').isVisible(),true);
+   assert.deepEqual(errors,[]);assert.deepEqual(unexpected,[]);results.push({engine,width,afterCancelledPointer,tabs,keyboardAfterCancelledPointer,stalePointerRespectsKeyboard:true,delegatedEditIdentity:true,pendingNativeEscapeAndCloseRefused:true,failedReviewDraftRetained:true,discardRefusalAndAcceptance:true,exactEditOpenerAfterTap:true,specialCardTitleReturn:specialReturn,initialInert,routeTeardown,accountTeardown,actual401RecoveryAndAbort:true,previews,prompts,unexpected,errors});console.log(engine+' '+width+' adverse contexts recorded');
+  }catch(error){console.log('PRIMARY_FAILURE '+String(error));throw error;}finally{release?.();await page.unrouteAll({behavior:'ignoreErrors'});await context.close();}
+ }}finally{await browser.close();}
+}
+assert.deepEqual(await hashes(),initial);await writeFile('../docs/premium-ui/qa-unit-modal-independent-v9-root-adverse-integrated.json',JSON.stringify({recorded_at_utc:new Date().toISOString(),reviewer:'/root',test_sha256:sha(await readFile(new URL(import.meta.url))),source_sha256:initial,scope:'Root rerun of independently authored actual-app adversarial workflow in3engines320/1280. Cancelled pointer plus newer actual Tab/Enter opener outcome recorded diagnostically. Actual delegated Edit posting, held503 preview, native pending/dirty close refusal/acceptance, touch exact opener, special-card title and actual hash-route teardown asserted. Operational preview POST locally fulfilled; other writes rejected; remaining GETs local RAM. No backend persistence, physical device, account reset or full260 claim.',results},null,2)+'\n');console.log('Independent adverse runtime: '+results.length+' contexts; '+results.filter(r=>!r.stalePointerRespectsKeyboard).length+' stale-pointer gaps');

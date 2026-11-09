@@ -1,0 +1,79 @@
+{
+  "recorded_at_utc": "2026-10-28T16:01:42.599398+00:00",
+  "reviewer": "/root/motion039_final_review",
+  "scope": "Independent source-only gate for exactly two intentional drawer-close focus restorations after source-bound native WebKit diagnosis. New review only; no app/backend/test/ledger mutation.",
+  "overall_disposition": "source_ready_for_two_narrow_focus_calls_pending_runtime",
+  "recommendation": "Apply the exact reviewed two-call focus delta after old-source held runs terminate; require fresh compact/menu native close tests and relevant shell/navigation regressions before reporting repaired focus. Do not generalize this to routing/navigation focus changes.",
+  "source": "frontend/src/main.ts",
+  "before_sha256": "6676ae91ec39f33eea0b5347b5f2394804e9cf04c30d0d80c0cc515436c8efac",
+  "after_sha256": "20fc4e1c086f4ae6c25a381a176b590173f7ee680d6eec205489dc97eb069ea6",
+  "exact_full_source_reconstructed": true,
+  "allowed_deltas": [
+    {
+      "handler": "sidebar-close",
+      "operation": "After toggleSidebar(false) and the existing aria-expanded update, explicitly focus the existing sidebar-toggle with preventScroll:true."
+    },
+    {
+      "handler": "sidebar-overlay",
+      "operation": "After toggleSidebar(false) and the existing aria-expanded update, explicitly focus the existing sidebar-toggle with preventScroll:true."
+    }
+  ],
+  "diagnosis": {
+    "report": "tmp/close37-webkit-menu-inputs-diagnostic.json",
+    "outcomes": {
+      "close-tap": {
+        "restoredToggle": false,
+        "outcome": {
+          "activeTag": "BODY",
+          "activeId": "",
+          "sidebarInert": true,
+          "expanded": "false"
+        }
+      },
+      "overlay-click": {
+        "restoredToggle": false,
+        "outcome": {
+          "activeTag": "BODY",
+          "activeId": "",
+          "sidebarInert": true,
+          "expanded": "false"
+        }
+      },
+      "escape": {
+        "restoredToggle": true,
+        "outcome": {
+          "activeTag": "BUTTON",
+          "activeId": "sidebar-toggle",
+          "sidebarInert": true,
+          "expanded": "false"
+        }
+      }
+    },
+    "interpretation": "Native WebKit pointer/touch compatibility mousedown can move focus to BODY before the click handler closes the drawer, so toggleSidebar contains(activeElement) restoration does not fire. Explicit intentional-close focus provides a reliable actual opener. Escape from focused drawer control already restores focus in this probe and is not modified."
+  },
+  "scope_review": [
+    "Both handlers are dedicated close-button/backdrop actions. General navigation closeSidebarOnMobile/toggleSidebar routing and Escape handling stay byte-identical; focus is not stolen from a newly chosen destination.",
+    "Closure first removes drawer modal state and restores underlying content from inert before focusing its original named toggle. preventScroll avoids an extra viewport jump.",
+    "Full source differs only by two focus calls; every API/request/save/permission/scheduling/data/filter/month/serialization/confirmation operation is unchanged. No timing, replay or new external resource is introduced.",
+    "The pre-v3 handlers are independently reconstructed as byte-identical by the proposal, but the observed diagnostic is explicitly from the applied-v3 snapshot. Do not claim a full pre-v3 native baseline was executed."
+  ],
+  "runtime_gates": [
+    "Keyboard, native click and tap closebutton and overlay return actual focus to sidebar-toggle; Escape retains its already working focus path.",
+    "Compact320/root200 and390x320/header geometry suites remain strict. Preserve no-close-request and exact saved draft/month assertions.",
+    "Full17close placement matrix has a separate pending Rules-saved recovery focus failure; this two-call menu repair does not claim to fix that different dialog."
+  ],
+  "evidence_sha256": {
+    "tmp/close37-menu-focus-repair/proposal.json": "b18fb7152a1d5fa0113f947f0ce1e4b18126e409f0652a5a17fdd72d76896286",
+    "frontend/src/main.ts": "6676ae91ec39f33eea0b5347b5f2394804e9cf04c30d0d80c0cc515436c8efac",
+    "tmp/close37-menu-focus-repair/main.ts": "20fc4e1c086f4ae6c25a381a176b590173f7ee680d6eec205489dc97eb069ea6",
+    "tmp/close37-menu-focus-repair/before-main.ts": "6676ae91ec39f33eea0b5347b5f2394804e9cf04c30d0d80c0cc515436c8efac",
+    "tmp/close37-menu-focus-repair/pre-v3-main-reconstructed.ts": "658711ebf2ce8b26094131a5f1e4fe383d9ff98f6d0fc3dc5e9961fba44ac983",
+    "tmp/close37-webkit-menu-inputs-diagnostic.json": "b69d463b1d30dbb34b8795187813023259fb8d17c14ad2096c186401943699e5",
+    "frontend/tests/premium-close-menu-inputs-diagnostic.browser.mjs": "5c999808c0334f8534f9fb7cb8e9ea0f4240c6dff83b549e73b464dc97fba825"
+  },
+  "limitations": [
+    "Source gate is not actual repaired runtime evidence.",
+    "No whole37, whole-shell, physical-device/nativeAT or backend/persistence certification.",
+    "Earlier v3 exact-callback parity remains historical. Following this intentional fix, the two close handlers legitimately differ by these focus calls and must be described explicitly."
+  ]
+}

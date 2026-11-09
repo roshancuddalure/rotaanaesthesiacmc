@@ -1,0 +1,56 @@
+{
+  "recorded_at_utc": "2026-11-09T09:19:15.748539+00:00",
+  "reviewer": "/root/stage161_final_review",
+  "application_changed": false,
+  "browser_executed": false,
+  "acceptance_ledger_changed": false,
+  "scope": "Independent source review of combined V7 direct-record retained-parent proposal7ab96e over appliedV5main2b8f. Did not author V6/V7 product changes. Reviewed actual normal6 result/test assertions; other48-family runs remain root-owned and were not certified here.",
+  "decision": "conditional_recommendation_for_guarded_integration_after_runtime_gates",
+  "source_blocking_findings": [],
+  "positive_findings": [
+    "Direct Add/Edit now reuses the same retained-parent coordinator as member profile. It captures account, route sequence, render sequence, root, month and original overlay identity, preserving existing outer callback owner guards before notification. Accepted record mutation invalidates cache even when originating view no longer owns rendering.",
+    "Native record editor invokes saved callback only after accepted POST, clearing busy/dirty and closing dialog. V7 callback has no asynchronous throw path outside existing isolated handling, avoiding a readback failure turning confirmed mutation into replayable Save failure. Parent GET failure reports saved-but-stale with GET-only retry. Cancellation/Escape sends no saved notification.",
+    "Existing settings form/input nodes, board filters, inline fallback/history hosts and selected Leave view/selection are retained by reused partial painters. No direct-record full-parent remount occurs when coordinator owns current Units/Leave parent.",
+    "Dated Leave Add deliberately closes its original day overlay before capturing retained parent identity. That avoids rejecting readback because of the intentional close, keeps original data-initial-date defaults and existing editor payload/review-token logic, and does not resurrect the closed day overlay.",
+    "V7 versusV6 exact reversal verifies one selector extension in an existing AbortSignal-owned document click forwarder; no new listener. outside-root guard avoids viewRoot/document double dispatch. Current Leave day Add has one forwarding path; separate body handler has no Add/Edit branch.",
+    "Day close/backdrop clicks pass through handleViewClick without an Add/Edit effect, then reach existing legacy close branch. Native dialog Escape is consumed/prevented by editor and existing main keydown checks native dialog/defaultPrevented before legacy overlays. Existing rota-day selector remains in same forwarder; its handlers/exclusions unchanged.",
+    "V6/V7 effect proofs preserve existing imported mutation, storage, confirmation and serialization expressions with no GET expression additions. No backend/API/permission/scheduling/export semantics are proposed. Six actual Unit Edit expected-correct cases verify original unsaved settings3 over server1 plus independent dirty fallback order, fresh posting and retained controls/filters/month."
+  ],
+  "required_runtime_gates": [
+    {
+      "id": "V7-DIRECT-LEAVE-EDIT-COVERAGE",
+      "kind": "coverage_gap_not_reproduced_bug",
+      "reason": "Current48 planned matrix covers Unit Add/Edit and dated Leave Add, but explicitly excludes existing Leave Edit. The branch and retained Leave painter are reused but date/month intersection, selected-record prune, sibling selection, current Daylist/disclosure/history retention and GET-only failure recovery should be exercised through the actual direct Leave Edit menu before describing direct Leave repair as verified.",
+      "minimum_check": "Three engines320/1280: direct Edit an existing leave via real row/card actions, review/save exact identity and token, move target out of displayed month while retaining sibling selection; verify one3GET parent refresh, no node remount/history reset and correct delete-selected count. Include one held/failing sibling read with reachable GET-only retry if broader readback reliability claimed."
+    },
+    {
+      "id": "V7-EXTERNAL-DAY-CLOSE-ROTA-SMOKE",
+      "kind": "coverage_gap_not_source_regression",
+      "reason": "Forwarder broadens only Leave overlay selector, with source-proven no new duplicate action branch. Before integration verify Leave close-button/Escape/backdrop behavior and an existing rota-day action still dispatches once; preserve unchanged native editor cancel/dirty refusal behavior."
+    },
+    {
+      "id": "V7-RECOVERY-OWNER-MATRIX",
+      "kind": "pending_root_execution",
+      "reason": "Root recovery30 and dated Leave12 runs pending at review time. Inspect actual terminal reports; test route-owner return contains redundant Manage click when previously selected Unit modal is automatically restored. Treat that timeout as harness precondition if observed, preserve diagnostic and use unique corrected rerun without weakening freshness/read-count assertions."
+    }
+  ],
+  "limitations": [
+    "No whole159 acceptance: imports, registry/reference mutations, deletion, Leave decisions and core member dependency refresh remain separately unproven.",
+    "Source reasoning is not new runtime execution. Normal6 fixture POSTs were locally fulfilled; no production/backend writes or scheduling/security certification.",
+    "Existing body-overlay close handlers use event target.matches (including nested icon behavior) unchanged by this proposal; this review does not silently certify every pre-existing close affordance.",
+    "Final root application requires current48 outcomes plus scoped remaining gates, independent review, preserved prior54 applicability and fresh applied/unit/build evidence."
+  ],
+  "evidence_sha256": {
+    "tmp/profile-parent-refresh-v6/manifest.json": "98a9cd57b69ac1d058992cadf54252d3a867efb9724f8ed897056119876be6ae",
+    "tmp/profile-parent-refresh-v6/effect-proof.json": "ab7aec45afec687ef4e8013adc989251b58ccf5d97b812799a5e3e6d71a6a330",
+    "tmp/profile-parent-refresh-v7/manifest.json": "9026e19747f394c04756e52e3d79c04f7c5774fe7da2d69831ad5c49cc2c122b",
+    "tmp/profile-parent-refresh-v7/effect-proof.json": "e2a6120ffef3eb275fd7c0d6645f6b098f69f4b230229a1901ca6a2fe788d874",
+    "tmp/profile-parent-refresh-v7/initial-typecheck.json": "1d51c6b435cd7cf368cf4fabe2bebae1e350584ee6773ff089fefc6dbf52517f",
+    "docs/premium-ui/reviews/original159-direct-record-v7-source-and-harness-review.json": "c14f921356c5d0c01375cee95479af5104785c90f9dcff2856112b7342dc9b18",
+    "docs/premium-ui/qa-original159-direct-record-v7-normal.json": "613dff6fa2bd104a275e795286b9750c13efa58aeebd9a33a6291bb843ccc7c4",
+    "frontend/tests/premium-original159-direct-record-v7-normal.browser.mjs": "88df684f215d7487e3eaf0627a8b94b0ec28619ac5822d685fe49010846828be",
+    "frontend/src/record-workspace.ts": "469fd6bf2e4118b15ad343d8059cd3cfb0acbc6483bea969ca5fb93488644335",
+    "frontend/src/main.ts": "2b8f68c069e599af50a4ac1b2146a7018d6268f290b90a9949130a057dc91b43",
+    "tmp/profile-parent-refresh-v7/main.ts": "7ab96e2109aec76f027bbd80bc9535ee40c0eaacc4040eea3261e4b4c8e3d2d6"
+  }
+}

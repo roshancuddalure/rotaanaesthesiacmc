@@ -1,0 +1,34 @@
+{
+  "recorded_at_utc": "2026-10-30T18:17:12.797486+00:00",
+  "reviewer": "/root/dependent159_final_scope_review",
+  "mode": "New independent actual-main diagnostic,not accepted behavior. No app/backend/ledger edits.",
+  "decision": "Keep original159partial: active Unit modal settings workflow has confirmed save/readback recovery and late UI ownership defects.",
+  "contexts": 12,
+  "terminal_exit_code_observed": 0,
+  "terminal_session_observed": 9697,
+  "findings": [
+    "Six cases: PUT succeeds, following dependentGET503 fails. Existingcatch re-enables Save,offers no dedicated read-only retry,and clickingunchangedSave sends identical secondPUT; main doesnotretainconfirmed-savephase. This is explicit manualSave replay,not an invented automatic retry.",
+    "Six cases: actualGuidehashnavigation removes originalunitmodal duringheldPUT; late success thenloadsunitdata,toastsandopens a freshunitmodal over theGuide. modalBeforeRelease0\u2192modalAfterRelease1 inall3engines320/1280."
+  ],
+  "source_sha256": {
+    "frontend/src/main.ts": "162dd5f04f185f4506c38dba974f0cd927b3e09d1ce85f5fd0da0f0de566885c",
+    "frontend/src/unit-modal-accessibility.ts": "f24dc45dd7b548ac66311252cb03c74430a117949e7b76bc72c0a3c652f6b147",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+  },
+  "evidence_sha256": {
+    "docs/premium-ui/qa-dependent159-unit-settings-readback-diagnostic.json": "6500d4bdd0bc7950d4c1ab51388a7789b7034404042da47b32bf9580e9ccfe6d",
+    "frontend/tests/premium-dependent159-unit-settings-readback-diagnostic.browser.mjs": "57c034e2e63067be3d6343ce510c49a970e9c84df7a2361e3b99a2a4fcedeac8",
+    "tmp/dependent159-unit-settings-readback-diagnostic.log": "9c77c422c2b06aeeeaf3967b7605ba4d6bc54f2da92ccd4b7625a9b8d0f98407"
+  },
+  "repair_plan": [
+    "Capture account/viewsequence/render/month/root/form+modalidentity beforePUT; neverassignglobalunits/showtoast/reopen afterownershiplost. Invalidateconfirmedpostingcacheonlysameaccount.",
+    "Separate unconfirmedPUTfailure fromconfirmedPUT/readfailure. Show Saved,but refreshfailed andmanualGET-onlyretry; unchangedconfirmedDraftSavecannotreplayPUT. Genuine editednewdraft may be explicitlysaved.",
+    "Keep form/input DOM duringpendingread; ifuserhasnewerinput,do not replaceitwithreadback orlateopenUnitModal. Preservecurrentdraft plus explicitunsavedstate.",
+    "Readback commits onlyaftercapture/ownreadgeneration check; preserve originalPUTpayload/validation/permission/rules."
+  ],
+  "limitations": [
+    "Allwritesfullylocallyfulfilled;GETdisposablefixture. No realDBmutation/backendpersistence/authorization claim.",
+    "Generic legacy assignment handlers remain unrendered;active settingsform is currentrenderedpath andcannot be excluded from159scope.",
+    "No original159/160/260 acceptance;physical/nativeATpending."
+  ]
+}

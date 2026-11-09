@@ -1,0 +1,75 @@
+{
+  "recorded_at_utc": "2026-10-30T10:15:56.161388+00:00",
+  "reviewer": "/root/reference157160_lifecycle_audit",
+  "decision": "Confirmed current159 UI lifecycle defect; keep159partial. No product/backend/ledger edits.",
+  "terminal_exit_code_observed": 0,
+  "own_contexts": 12,
+  "source_sha256": {
+    "frontend/src/main.ts": "c2526f3881fe425735714023f5d48e0296302550d5fb3d86400619e73a54a641",
+    "frontend/src/reference-workspace.ts": "78c231ea1d5ab15bd3a4b5f2f8265529451a51bacc68d2a4aac1708a4be30292",
+    "frontend/src/record-workspace.ts": "927ca02c180634f25f51e982b2e703d9b7997d665067c1e2d64a74fac9a86132",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+  },
+  "confirmed_trigger": "Actual Units Addunit -> held locallyfulfilled POST -> actual hashnavigation UserGuide while native savepending -> release success. Six states across3engines320/1280.",
+  "observed_result": "UserGuide visible before release. Late callback closes registry then changes heading to Monthly unit postings and replaces Guide with unitboard while URL still#view=user-guide. Exactlyone mutation,followupunitGET. Six same-view controls correctly refresh Units.",
+  "cause": "The main registry saved callback unconditionally starts renderUnitManagement(true). That renderer creates a fresh renderTicket after newer route state and immediately changes header/skeleton; its guard therefore considers itself current. Its own loader guards cannot restore original launcher ownership.",
+  "repair_design": [
+    "Capture launcher account,view sequence,rootmount,and current render generation before opening registry. Invalidate unit cache only for the same account; refresh only while original Units view/mount/generation still owns the result.",
+    "Track the generation started by an owned refresh so a long-lived Manageunits registry can save repeatedly; a static originalrender gate alone would suppress second legitimate save.",
+    "Preserve exact native opener focus repair,all requestpayloads,normalization rules,returned created-unit callback and nested outerrecord workflows. Never replay mutation as recovery.",
+    "Exercise sameview normal refresh,actualaway/back sameview route,newer render/month,repeat registry saves,account reset and existing nestedrecord creation."
+  ],
+  "related_source_only_findings": [
+    {
+      "surface": "main openRecordEditor saved callback",
+      "status": "Unconditional renderLeave/renderUnitManagement after success; similar ownership suspicion,not runtimeconfirmed in this packet."
+    },
+    {
+      "surface": "main openOperationalImport updated callback",
+      "status": "Unconditional dependent renderer; importer owns its dialog/application token but main view ownership remains source-only concern."
+    },
+    {
+      "surface": "main mapping creator callback",
+      "status": "Existing activeView mappings gate; sameview generation issue not yet probed."
+    },
+    {
+      "surface": "record nested reference callback",
+      "status": "Existing dialog.open guard after options and draft/caret preservation. Catalog close suppresses callback; current normal/retry matrix handled by separate specialist."
+    }
+  ],
+  "other_requested_criteria": [
+    {
+      "item_id": 157,
+      "status": "Outside this bounded lifecycle reproduction; rowidentity/matching/import controls need dedicated currentmultirow probe."
+    },
+    {
+      "item_id": 158,
+      "status": "Outside this bounded lifecycle reproduction; close/cancel/delete request-target matrix stillrequired."
+    },
+    {
+      "item_id": 160,
+      "status": "Outside this bounded lifecycle reproduction; fullaction/month/unit persisted readback remains unproven."
+    }
+  ],
+  "harness_corrections": [
+    "Initial genericAddunit locator matched3actualcontrols; scoped to visible toolbar.",
+    "Initial title assertion used sectionname rather than existing setHeader subtitle text; corrected to actual rendered heading,not product change."
+  ],
+  "evidence_sha256": {
+    "docs/premium-ui/qa-reference159-late-unit-callback-independent.json": "c4ba4e5d655efebe14a765393d642b0db75fa24082903e8bcd103d1e4ddd81c0",
+    "frontend/tests/premium-reference159-late-unit-callback-independent.browser.mjs": "8d2534d2f169cb7b2b23dced5d817d475ba815e8cd321ae55bbc78238336e7de",
+    "tmp/reference159-late-unit-callback-independent.log": "ef4a76e573eeb51a803d73fb023b277a4722772631e247ee194e9b3c4ca8b245",
+    "tmp/reference159-late-unit-callback-selector-diagnostic.log": "12020b6f536913b3efc8453859d8c235f5345ad0bdc0f5119b61bfc75a775dbf",
+    "tmp/reference159-late-unit-callback-title-diagnostic.log": "0c9f460939016048437e4bb7e3c2ad431bfaacc4d1a7935774e3a1cdfb249f36",
+    "frontend/src/main.ts": "c2526f3881fe425735714023f5d48e0296302550d5fb3d86400619e73a54a641",
+    "frontend/src/reference-workspace.ts": "78c231ea1d5ab15bd3a4b5f2f8265529451a51bacc68d2a4aac1708a4be30292",
+    "frontend/src/record-workspace.ts": "927ca02c180634f25f51e982b2e703d9b7997d665067c1e2d64a74fac9a86132",
+    "frontend/src/operational-import.ts": "6f9a3e6e40a3faa63c3a023c15e56e1a9ee22e46a734247bd085954e3e9340e1",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+  },
+  "limitations": [
+    "LocalPOSTfulfillment and RAMGETfixture; no production/backend mutation or policy/persistence certification.",
+    "Hash navigation represents supported browser history route change while native dialog open; no synthetic click through inert surface used.",
+    "No all159/currentreference workflow acceptance,physicaldevice/nativeAT or zero-bug claim."
+  ]
+}

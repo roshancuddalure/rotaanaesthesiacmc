@@ -1,0 +1,75 @@
+{
+  "recorded_at_utc": "2026-10-31T01:31:48.450401+00:00",
+  "reviewer": "/root/generation161_stage_clarity_current_audit",
+  "application_changed": false,
+  "acceptance_ledger_changed": false,
+  "item_id": 161,
+  "decision": "Keep whole161 partial. Prior classification repair is correct but does not resolve distinct member-assignment stage and known-state freshness gaps.",
+  "current_main_sha256": "e88c69570e7faf9b4277b541e073c8bd2ca3805c23f4feead544f16770f6e07a",
+  "runtime_execution": {
+    "report": "docs/premium-ui/qa-stage161-known-state-independent-defect-r2.json",
+    "test": "frontend/tests/premium-stage161-known-state-diagnostic-r2.browser.mjs",
+    "terminal_session": 4601,
+    "exit_code": 0,
+    "contexts": 6,
+    "scope": "3engines320/1280; successful published checklist then actual Guide-away/returnPublishGET503. Zero writes/errors. Current page says Publish unavailable while four tracker rows remain unlabelled Done."
+  },
+  "conditions": [
+    {
+      "condition": "Setup, template allocation, member assignment, review and publishing are presented as distinct understandable stages.",
+      "disposition": "Incomplete: mixed route-level and operation-level sequences",
+      "source_evidence": [
+        "main.ts WORKFLOW_STEPS: Setup/Template/Review/Publish only; shell tracker and Overview map these four.",
+        "generationReadiness local list: Build template/Autoassign members/Extra-duty layer/Review draft; Setup and Publish omitted, numbering differs from route headers.",
+        "Headers SetupStep1/TemplateStep2/ReviewStep3/PublishStep4 mix two Template operations into one route."
+      ],
+      "implementation_actions": [
+        "Give the five required operations stable presentation IDs independent of their four existing route destinations: setup, template allocation, member assignment, review, publish. Reuse existing routes and handlers; assignment is a distinct operation in the Template workspace.",
+        "Generate consistent five-operation labels in shell/Overview and Template overview. Extra-duty and balance remain optional tools within assignment, not substitutes for Setup or Publish.",
+        "Use unique operation IDs for DOM/state lookup. Do not merely duplicate rota-template in the existing view-keyed array: querySelector would paint only its first matching row. Preserve existing data-view routing and role filtering.",
+        "If assignment-stage navigation focuses the existing Autoassign control, use captured route/month ownership and focus only; never auto-open or auto-run computation. Explain that Build allocates duty slots, Assign proposes people, Review checks, and Publish records approval."
+      ]
+    },
+    {
+      "condition": "Readiness indicators derive from actual available state and do not mark incomplete stages complete.",
+      "disposition": "Incomplete: six actual native read-failure workflows prove unlabelled cachedDone",
+      "source_evidence": [
+        "workflowStateFrom now correctly requires zero authoritative blockers for Reviewdone; all six known labels and future unknown are conservatively handled by prior one-line fix. Preserve this.",
+        "refreshWorkflowTracker catches failures without recording freshness and can reuse same-month rotaPublish even after renderRotaPublish currentGET503. paintWorkflowTracker has no stale/loading/error metadata.",
+        "onDataChange currently invokes refreshWorkflowTracker before clearing rotaPublish, allowing synchronous reuse of an old same-month object. This ordering risk is source-observed, not newly runtime-certified here."
+      ],
+      "implementation_actions": [
+        "Separate last-known progress from freshness. Mark read checking/current/unavailable explicitly per account+month; retain cached values only with visible and accessible Last known/check unavailable wording. A first failed read stays unknown, not not-started or completed.",
+        "On failed current publish/checklist refresh, do not let the tracker immediately reuse an old object as freshly confirmed. Capture successful read provenance or propagate that read outcome to tracker; avoid a duplicate GET where the renderer already fetched the same checklist.",
+        "Derive assignment progress from authoritative returned total/assigned/open counts and/or Open slots blocker, explicitly unknown when required values are unavailable. Do not infer completion from a missing optional report or local proposal generation. Keep Reviewdone constrained by all blockers and Publishdone as published-history semantics, including override history.",
+        "Capture account, month and read generation before tracker reads; late reads must not repaint another month/account or overwrite a newer successful read. Clear freshness and cache on sign-out. Preserve existing constraint that browsing Overview/nonworkflow routes never creates draft periods via new checklist reads."
+      ]
+    }
+  ],
+  "required_test_matrix": [
+    "Five distinct operation labels and consistent order at320/1280, keyboard accessible in shell/Overview/Template; optional assignment tools do not replace required stages.",
+    "Scope unlocked, locked empty, generated slots open, partially assigned, allassigned but safety/exchange/call-level/future blocker, ready draft, published, published-with-override blocker. Each operation progress equals available authoritative state.",
+    "First checklist503 => unknown; knownDone\u2192held refresh => checking/lastknown; knownDone\u2192503 => unavailable/lastknown; manual existing retrysuccess => current exactprogress without duplicate mutation.",
+    "MonthA known\u2192monthB unavailable\u2192lateA response; account switch; away-return and newer same-month read supersession; no stale overwrite or focus theft.",
+    "Actual generation dialog remains open while progress refreshes; existing computation gates, request payloads, reviewcheckbox state, scheduling/backend permission decisions unchanged.",
+    "Nonworkflow Overview uses cacheonly and clearly marks unknown/lastknown; no new API request that creates monthly draft state."
+  ],
+  "diagnostics": [
+    "Initial diagnostic used getByRole heading for emptyState title, but shared emptyState renders a paragraph. Original failed test/log retained; R2 waits exact visible title text, with all other functional assertions unchanged."
+  ],
+  "limits": [
+    "No application changes, no new acceptance or backend edits.",
+    "Six defect diagnostics address known-state publish failure only; stage-layout recommendations are grounded in current source, not a new fullstage visual acceptance.",
+    "Original72classification cases remain bounded earlier evidence, not newly rerun here.",
+    "Actual scheduling, Apply, GPU hardware, production data, physical devices and nativeAT not exercised."
+  ],
+  "evidence_sha256": {
+    "docs/premium-ui/qa-stage161-known-state-independent-defect-r2.json": "1f634391cea124e801540e8a80fb666445cb2178216b5b1b27dca428ba326773",
+    "frontend/tests/premium-stage161-known-state-diagnostic-r2.browser.mjs": "fa6bedf3ec5720d7e677aae68dcf9eba54093a166a7b022da8d6b0ab9006cfea",
+    "tmp/stage161-known-state-independent-defect-r2.log": "06782bd2b5189769726da52309c0ef792db41700f1d94b0152436dd4577b4e96",
+    "docs/premium-ui/acceptance-criteria/items-087-173.json": "a7bf1322bd8e08a1fddd4195095d9cc52a8867a1b8a2bda9b523917fae458576",
+    "docs/premium-ui/reviews/stage161-classification-review-v2-source.json": "d837ab58f14c8aba5b97a90a55df0239a1c3f9d83f07f6f03f683f9ad380cd52",
+    "docs/premium-ui/reviews/generation161165-independent-gapmap.json": "85d47b2d8b775369dff0a0ecee4f8dd0144463af53198d9c309f424beaf9e07b",
+    "frontend/src/main.ts": "e88c69570e7faf9b4277b541e073c8bd2ca3805c23f4feead544f16770f6e07a"
+  }
+}

@@ -1,0 +1,531 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-10-28T08:44:27.477896+00:00",
+  "scope": "Three new finalnested24/action18/pointer12 suites plus three changed priorselector suites. No duplicates, app/test edits or acceptance inferred.",
+  "entries": [
+    {
+      "suite": "frontend/tests/premium-profile-record-patterns.browser.mjs",
+      "sha256": "5ef86af78a1442f31f047c0d21d831131515842b38c2e1556630686696faa8e7",
+      "source_inspected": true,
+      "execution_verified": true,
+      "execution_verification_scope": "New54 executed by mapper against finalsource; priorreadback/draft/member-save rootfinal retained reports/logs inspected. Empty historical source map does not certify omitted hashes. No whole131acceptance.",
+      "screens": [
+        "Actual canonical profile and nested posting/leave editor"
+      ],
+      "contexts": {
+        "cases": 24,
+        "engines": [
+          "chromium",
+          "firefox",
+          "webkit"
+        ],
+        "widths": [
+          320,
+          1280
+        ],
+        "height": 800,
+        "fixture": "Isolatedactualcomponents except member-save actualAnalyticsentry. All writes/readbacks locallyfulfilled; nativecontrolinteractions.",
+        "activation": "Pointertest trueclick/tap noforce; actionmatrix focusEnter; nestedmixedkeyboard/click.",
+        "themes": "Defaultonly; CSSrootfont200 in actionmatrix is notbrowserzoom."
+      },
+      "raw_report": "docs/premium-ui/qa-profile-record-patterns.json",
+      "raw_report_sha256": "c6242b3768bc30163229b352e147bb86cbf4590d601ddf28eb6de2d809490639",
+      "report_source_sha256": {
+        "src/member-workspace.ts": "6d6d361f7eb66a519423cd46c26a6af7596b0679b8443d12ae82ecbb31271c3f",
+        "src/member-profile.ts": "39f8bc4d281c9d8f3da9cad3a7ef98e4ecef1b0ba020145ca20439228fdc3df3",
+        "src/record-workspace.ts": "23a2ec5e7cc77d2ce167345496865335efda58703155f0d5cfb3ca5c23488f5c",
+        "src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+        "src/premium-theme.css": "f4c646977ef2cce1ef1a31e6b99de17f5749a60b3282a888ba4412b83e348516",
+        "tests/premium-profile-record-patterns.browser.mjs": "5ef86af78a1442f31f047c0d21d831131515842b38c2e1556630686696faa8e7"
+      },
+      "declared_report_hashes_match_current": true,
+      "snapshot_limit": "Onlyreportdeclaredsourcesbound. Readback/draft rawreports have noembeddedapp/testhash; currentinspectedscript ishashed here, notretroactivelybound. Member-save records main/workspaceonly.",
+      "assertion_groups": [
+        {
+          "action": "exact-record-target",
+          "selector": "actual parentAdd/Edit; memberSelect; originalGET",
+          "outcome": "Correct member and original/new record ID, original existing values read.",
+          "source_lines": [
+            [
+              17,
+              29
+            ],
+            [
+              32,
+              38
+            ]
+          ],
+          "evidence_class": "native_browser_locally_fulfilled_requests",
+          "report_paths": [
+            "docs/premium-ui/qa-profile-record-patterns.json"
+          ]
+        },
+        {
+          "action": "review-error-and-stale-token",
+          "selector": "Review/Save controls; notes; status",
+          "outcome": "Preview503 retains draft; manualretry works; input afterreview invalidates Save/token.",
+          "source_lines": [
+            [
+              40,
+              42
+            ]
+          ],
+          "evidence_class": "native_browser_locally_fulfilled_requests",
+          "report_paths": [
+            "docs/premium-ui/qa-profile-record-patterns.json"
+          ]
+        },
+        {
+          "action": "save-failure-and-existing-busy-policy",
+          "selector": "Save reviewed changes; Cancel/Escape",
+          "outcome": "Save503 requires rereview, retainednotes and uncertaintycopy; heldSave remainsenabled by existing policy but native repeatedEnter/click produces noextraPOST via busyguard. Closeblocked.",
+          "source_lines": [
+            [
+              43,
+              44
+            ]
+          ],
+          "evidence_class": "native_browser_locally_fulfilled_requests",
+          "report_paths": [
+            "docs/premium-ui/qa-profile-record-patterns.json"
+          ]
+        },
+        {
+          "action": "readback-discard-payloads",
+          "selector": "parenthistory GET; reopenededitor; idleCancel",
+          "outcome": "IndependentfixtureGET savedvalues; parenthistoryreload; idledecline/accept; exactidentity/values/token3token4 bodies and finalhashhold.",
+          "source_lines": [
+            [
+              45,
+              52
+            ]
+          ],
+          "evidence_class": "native_browser_locally_fulfilled_requests",
+          "report_paths": [
+            "docs/premium-ui/qa-profile-record-patterns.json"
+          ]
+        }
+      ],
+      "limitations": [
+        "No realbackendpersistence/permissions/scheduling/serverabort orphysicaldevice/nativeATcertification.",
+        "No whole131acceptance from thismap.",
+        "Legacy actionmatrix measuresbuttonfit; markerrectsrecorded butnotseparatelyvisibilityasserted.",
+        "beforeunload in olddraftsuite iscancellableeventlistener check, notactualnavigationexitprompt."
+      ]
+    },
+    {
+      "suite": "frontend/tests/premium-profile-editor-actions.browser.mjs",
+      "sha256": "b70bdb9e5694ac93bcc25a9d8fecc2cea0f3ba0f5c5e3508a7a1ca20f664b2e4",
+      "source_inspected": true,
+      "execution_verified": true,
+      "execution_verification_scope": "New54 executed by mapper against finalsource; priorreadback/draft/member-save rootfinal retained reports/logs inspected. Empty historical source map does not certify omitted hashes. No whole131acceptance.",
+      "screens": [
+        "Actual canonical/legacy profile section actions and state"
+      ],
+      "contexts": {
+        "cases": 18,
+        "engines": [
+          "chromium",
+          "firefox",
+          "webkit"
+        ],
+        "widths": [
+          320,
+          1280
+        ],
+        "height": "560 or320x480/rootfont200%",
+        "fixture": "Isolatedactualcomponents except member-save actualAnalyticsentry. All writes/readbacks locallyfulfilled; nativecontrolinteractions.",
+        "activation": "Pointertest trueclick/tap noforce; actionmatrix focusEnter; nestedmixedkeyboard/click.",
+        "themes": "Defaultonly; CSSrootfont200 in actionmatrix is notbrowserzoom."
+      },
+      "raw_report": "docs/premium-ui/qa-profile-editor-actions.json",
+      "raw_report_sha256": "807c72e1d2807ed546b0dafc70a50b9c18c04d05eec0105ed5929c84aa469391",
+      "report_source_sha256": {
+        "src/member-workspace.ts": "6d6d361f7eb66a519423cd46c26a6af7596b0679b8443d12ae82ecbb31271c3f",
+        "src/member-profile.ts": "39f8bc4d281c9d8f3da9cad3a7ef98e4ecef1b0ba020145ca20439228fdc3df3",
+        "src/record-workspace.ts": "23a2ec5e7cc77d2ce167345496865335efda58703155f0d5cfb3ca5c23488f5c",
+        "src/premium-theme.css": "f4c646977ef2cce1ef1a31e6b99de17f5749a60b3282a888ba4412b83e348516",
+        "src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+        "src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+        "tests/premium-profile-editor-actions.browser.mjs": "b70bdb9e5694ac93bcc25a9d8fecc2cea0f3ba0f5c5e3508a7a1ca20f664b2e4"
+      },
+      "declared_report_hashes_match_current": true,
+      "snapshot_limit": "Onlyreportdeclaredsourcesbound. Readback/draft rawreports have noembeddedapp/testhash; currentinspectedscript ishashed here, notretroactivelybound. Member-save records main/workspaceonly.",
+      "assertion_groups": [
+        {
+          "action": "canonical-combined-state",
+          "selector": "Details/Roles/Names; globalSaveCancel",
+          "outcome": "Sameexisting actionsgroup/scope acrosseditabletabs; pendingSave;503retainedfieldnode/value and unsavedstatus.",
+          "source_lines": [
+            [
+              40,
+              54
+            ]
+          ],
+          "evidence_class": "native_browser_locally_fulfilled_requests",
+          "report_paths": [
+            "docs/premium-ui/qa-profile-editor-actions.json"
+          ]
+        },
+        {
+          "action": "wrapped-footer-reachability",
+          "selector": "actualfield/error/footer/Cancel/Save rectangles",
+          "outcome": "Focusedcontrols and fieldfitviewport; actualerrornonzeroheight/visible; field/error aboveactualfooter. Staticfooter may bebelowviewport; allactions individuallyscrollreachable; idledecline/accept.",
+          "source_lines": [
+            15,
+            [
+              55,
+              59
+            ]
+          ],
+          "evidence_class": "native_browser_locally_fulfilled_requests",
+          "report_paths": [
+            "docs/premium-ui/qa-profile-editor-actions.json"
+          ]
+        },
+        {
+          "action": "legacy-five-independent-forms",
+          "selector": "call/designation/alias/comment/details groups",
+          "outcome": "Eachsentencecaseexistingaction in Sectionactions group; heldSaving/disabledfieldset; Closeblocked;503namedvalues/sectionerror retained; explicitretry exactpath/body; eachactionbuttonfocusfitsviewport.",
+          "source_lines": [
+            [
+              60,
+              84
+            ]
+          ],
+          "evidence_class": "native_browser_locally_fulfilled_requests",
+          "report_paths": [
+            "docs/premium-ui/qa-profile-editor-actions.json"
+          ]
+        },
+        {
+          "action": "snapshots-and-overflow",
+          "selector": "rootWidth; screenshots; sourcehash",
+          "outcome": "No root horizontaloverflow/pageerrors; actual18screenshots and geometryrecorded; ownapp/testhashheld.",
+          "source_lines": [
+            [
+              85,
+              89
+            ]
+          ],
+          "evidence_class": "native_browser_locally_fulfilled_requests",
+          "report_paths": [
+            "docs/premium-ui/qa-profile-editor-actions.json"
+          ]
+        }
+      ],
+      "limitations": [
+        "No realbackendpersistence/permissions/scheduling/serverabort orphysicaldevice/nativeATcertification.",
+        "No whole131acceptance from thismap.",
+        "Legacy actionmatrix measuresbuttonfit; markerrectsrecorded butnotseparatelyvisibilityasserted.",
+        "beforeunload in olddraftsuite iscancellableeventlistener check, notactualnavigationexitprompt."
+      ]
+    },
+    {
+      "suite": "frontend/tests/premium-profile-tab-pointer.browser.mjs",
+      "sha256": "d6f849d211e6db47d56be848cec89d0f54a6bd67b3028b4aaca97bc223c02155",
+      "source_inspected": true,
+      "execution_verified": true,
+      "execution_verification_scope": "New54 executed by mapper against finalsource; priorreadback/draft/member-save rootfinal retained reports/logs inspected. Empty historical source map does not certify omitted hashes. No whole131acceptance.",
+      "screens": [
+        "Actual canonical/legacy profile section actions and state"
+      ],
+      "contexts": {
+        "cases": 12,
+        "engines": [
+          "chromium",
+          "firefox",
+          "webkit"
+        ],
+        "widths": [
+          320,
+          1280
+        ],
+        "height": 900,
+        "fixture": "Isolatedactualcomponents except member-save actualAnalyticsentry. All writes/readbacks locallyfulfilled; nativecontrolinteractions.",
+        "activation": "Pointertest trueclick/tap noforce; actionmatrix focusEnter; nestedmixedkeyboard/click.",
+        "themes": "Defaultonly; CSSrootfont200 in actionmatrix is notbrowserzoom."
+      },
+      "raw_report": "docs/premium-ui/qa-profile-tab-pointer.json",
+      "raw_report_sha256": "f5efd76b06ba674e8e9f1d02bfca0797bde0a779c78798adff46d975af910971",
+      "report_source_sha256": {
+        "src/member-workspace.ts": "6d6d361f7eb66a519423cd46c26a6af7596b0679b8443d12ae82ecbb31271c3f",
+        "src/premium-theme.css": "f4c646977ef2cce1ef1a31e6b99de17f5749a60b3282a888ba4412b83e348516",
+        "src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+        "tests/premium-profile-tab-pointer.browser.mjs": "d6f849d211e6db47d56be848cec89d0f54a6bd67b3028b4aaca97bc223c02155"
+      },
+      "declared_report_hashes_match_current": true,
+      "snapshot_limit": "Onlyreportdeclaredsourcesbound. Readback/draft rawreports have noembeddedapp/testhash; currentinspectedscript ishashed here, notretroactivelybound. Member-save records main/workspaceonly.",
+      "assertion_groups": [
+        {
+          "action": "passive-pointer-evidence",
+          "selector": "nativeclick/tap; actualpointer/focusnodes; rail",
+          "outcome": "Passive targetnodeID/connectedstate,focus,railgeometry/scroll,vvevents; noforce/synthetic/keyboardreplacement.",
+          "source_lines": [
+            [
+              15,
+              31
+            ]
+          ],
+          "evidence_class": "native_browser_locally_fulfilled_requests",
+          "report_paths": [
+            "docs/premium-ui/qa-profile-tab-pointer.json"
+          ]
+        },
+        {
+          "action": "strict-tab-outcome",
+          "selector": "selectedDetails/canonicalfield; hashes",
+          "outcome": "All12nativeclick/tap roundtrip mustsettleDetails+onecanonicalfield,noerrors; endhashhold. Historicalbadproofnotcountedaspass.",
+          "source_lines": [
+            [
+              28,
+              35
+            ]
+          ],
+          "evidence_class": "native_browser_locally_fulfilled_requests",
+          "report_paths": [
+            "docs/premium-ui/qa-profile-tab-pointer.json"
+          ]
+        }
+      ],
+      "limitations": [
+        "No realbackendpersistence/permissions/scheduling/serverabort orphysicaldevice/nativeATcertification.",
+        "No whole131acceptance from thismap.",
+        "Legacy actionmatrix measuresbuttonfit; markerrectsrecorded butnotseparatelyvisibilityasserted.",
+        "beforeunload in olddraftsuite iscancellableeventlistener check, notactualnavigationexitprompt."
+      ]
+    },
+    {
+      "suite": "frontend/tests/premium-profile-readback.browser.mjs",
+      "sha256": "e1d8a7c89075496edc2d75faabbcdef0500469402e0357375edefaeea0a2ffac",
+      "source_inspected": true,
+      "execution_verified": true,
+      "execution_verification_scope": "New54 executed by mapper against finalsource; priorreadback/draft/member-save rootfinal retained reports/logs inspected. Empty historical source map does not certify omitted hashes. No whole131acceptance.",
+      "screens": [
+        "Actual canonical/legacy profile section actions and state"
+      ],
+      "contexts": {
+        "cases": 15,
+        "engines": [
+          "chromium"
+        ],
+        "widths": [
+          320,
+          390,
+          1280
+        ],
+        "height": 850,
+        "fixture": "Isolatedactualcomponents except member-save actualAnalyticsentry. All writes/readbacks locallyfulfilled; nativecontrolinteractions.",
+        "activation": "Pointertest trueclick/tap noforce; actionmatrix focusEnter; nestedmixedkeyboard/click.",
+        "themes": "Defaultonly; CSSrootfont200 in actionmatrix is notbrowserzoom."
+      },
+      "raw_report": "docs/premium-ui/qa-profile-readback.json",
+      "raw_report_sha256": "ca4afb4868c17c967de388186f34f8ceb9cdf69d027b8b9cc21412536bc19551",
+      "report_source_sha256": {},
+      "declared_report_hashes_match_current": true,
+      "snapshot_limit": "Onlyreportdeclaredsourcesbound. Readback/draft rawreports have noembeddedapp/testhash; currentinspectedscript ishashed here, notretroactivelybound. Member-save records main/workspaceonly.",
+      "assertion_groups": [
+        {
+          "action": "exact-five-contracts",
+          "selector": "fiveforms; interceptedmutations",
+          "outcome": "Oneexactpath/body percase; savedvalues fixtureupdated; confirmedmutation neverreplayed.",
+          "source_lines": [
+            [
+              13,
+              30
+            ]
+          ],
+          "evidence_class": "native_browser_locally_fulfilled_requests",
+          "report_paths": [
+            "docs/premium-ui/qa-profile-readback.json",
+            "docs/premium-ui/reviews/profile131-regression-execution.json"
+          ]
+        },
+        {
+          "action": "confirmed-readback-recovery",
+          "selector": "Refreshprofile; lockedform/siblingdraft",
+          "outcome": "Confirmedformlocked, siblingeditable; manualGETonlyrefresh/focusrestored; savedreadback visible, siblingdraftretained; designationlocator scopedtimelineheading.",
+          "source_lines": [
+            [
+              43,
+              77
+            ]
+          ],
+          "evidence_class": "native_browser_locally_fulfilled_requests",
+          "report_paths": [
+            "docs/premium-ui/qa-profile-readback.json",
+            "docs/premium-ui/reviews/profile131-regression-execution.json"
+          ]
+        }
+      ],
+      "limitations": [
+        "No realbackendpersistence/permissions/scheduling/serverabort orphysicaldevice/nativeATcertification.",
+        "No whole131acceptance from thismap.",
+        "Legacy actionmatrix measuresbuttonfit; markerrectsrecorded butnotseparatelyvisibilityasserted.",
+        "beforeunload in olddraftsuite iscancellableeventlistener check, notactualnavigationexitprompt."
+      ],
+      "execution_manifest": "docs/premium-ui/reviews/profile131-regression-execution.json"
+    },
+    {
+      "suite": "frontend/tests/premium-profile-draft-review.browser.mjs",
+      "sha256": "3dbc02db7dd57896f06bab0108b874617c28875e9c0127b1013fb0364b108bee",
+      "source_inspected": true,
+      "execution_verified": true,
+      "execution_verification_scope": "New54 executed by mapper against finalsource; priorreadback/draft/member-save rootfinal retained reports/logs inspected. Empty historical source map does not certify omitted hashes. No whole131acceptance.",
+      "screens": [
+        "Actual canonical/legacy profile section actions and state"
+      ],
+      "contexts": {
+        "cases": 3,
+        "engines": [
+          "chromium"
+        ],
+        "widths": [
+          320,
+          390,
+          1280
+        ],
+        "height": 850,
+        "fixture": "Isolatedactualcomponents except member-save actualAnalyticsentry. All writes/readbacks locallyfulfilled; nativecontrolinteractions.",
+        "activation": "Pointertest trueclick/tap noforce; actionmatrix focusEnter; nestedmixedkeyboard/click.",
+        "themes": "Defaultonly; CSSrootfont200 in actionmatrix is notbrowserzoom."
+      },
+      "raw_report": "docs/premium-ui/qa-profile-draft-independent.json",
+      "raw_report_sha256": "8a117adfa184d6311b234cd796dfb3fadeaf44f1093dfdbb250150ea69a5e89d",
+      "report_source_sha256": {},
+      "declared_report_hashes_match_current": true,
+      "snapshot_limit": "Onlyreportdeclaredsourcesbound. Readback/draft rawreports have noembeddedapp/testhash; currentinspectedscript ishashed here, notretroactivelybound. Member-save records main/workspaceonly.",
+      "assertion_groups": [
+        {
+          "action": "native-discard-and-independent-save",
+          "selector": "Close/Escape; Addcomment; siblingalias",
+          "outcome": "Cleanclose/focus,dirtydecline/accept,busyblock,successfulsection clears onlyitsform,refusalretainsinput; actualAddcomment sentencecase locators.",
+          "source_lines": [
+            [
+              43,
+              92
+            ]
+          ],
+          "evidence_class": "native_browser_locally_fulfilled_requests",
+          "report_paths": [
+            "docs/premium-ui/qa-profile-draft-independent.json",
+            "docs/premium-ui/reviews/profile131-regression-execution.json"
+          ]
+        },
+        {
+          "action": "confirmed-getonly-retry",
+          "selector": "Refresh; lockedcomment/editablealias",
+          "outcome": "New siblingedits retained through readbackrecovery; GETonly/focusrestore, no mutationreplay, cleanup. beforeunload checked by cancellableevent only.",
+          "source_lines": [
+            [
+              94,
+              121
+            ]
+          ],
+          "evidence_class": "native_browser_locally_fulfilled_requests",
+          "report_paths": [
+            "docs/premium-ui/qa-profile-draft-independent.json",
+            "docs/premium-ui/reviews/profile131-regression-execution.json"
+          ]
+        }
+      ],
+      "limitations": [
+        "No realbackendpersistence/permissions/scheduling/serverabort orphysicaldevice/nativeATcertification.",
+        "No whole131acceptance from thismap.",
+        "Legacy actionmatrix measuresbuttonfit; markerrectsrecorded butnotseparatelyvisibilityasserted.",
+        "beforeunload in olddraftsuite iscancellableeventlistener check, notactualnavigationexitprompt."
+      ],
+      "execution_manifest": "docs/premium-ui/reviews/profile131-regression-execution.json"
+    },
+    {
+      "suite": "frontend/tests/premium-member-save-independent.browser.mjs",
+      "sha256": "09c05dd22c41321098d58f0fc7aa2f10b7b5a53cbee7feff9e802bee91aad2c8",
+      "source_inspected": true,
+      "execution_verified": true,
+      "execution_verification_scope": "New54 executed by mapper against finalsource; priorreadback/draft/member-save rootfinal retained reports/logs inspected. Empty historical source map does not certify omitted hashes. No whole131acceptance.",
+      "screens": [
+        "Actual canonical/legacy profile section actions and state"
+      ],
+      "contexts": {
+        "cases": 6,
+        "engines": [
+          "chromium",
+          "firefox",
+          "webkit"
+        ],
+        "widths": [
+          320,
+          1280
+        ],
+        "height": 900,
+        "fixture": "Isolatedactualcomponents except member-save actualAnalyticsentry. All writes/readbacks locallyfulfilled; nativecontrolinteractions.",
+        "activation": "Pointertest trueclick/tap noforce; actionmatrix focusEnter; nestedmixedkeyboard/click.",
+        "themes": "Defaultonly; CSSrootfont200 in actionmatrix is notbrowserzoom."
+      },
+      "raw_report": "docs/premium-ui/qa-member-save-independent.json",
+      "raw_report_sha256": "fbeeed5b374d59569077267f46c9a87eecf9ff57c9dab6b706f3c47c3cb6cd3c",
+      "report_source_sha256": {
+        "src/main.ts": "658711ebf2ce8b26094131a5f1e4fe383d9ff98f6d0fc3dc5e9961fba44ac983",
+        "src/member-workspace.ts": "6d6d361f7eb66a519423cd46c26a6af7596b0679b8443d12ae82ecbb31271c3f"
+      },
+      "declared_report_hashes_match_current": true,
+      "snapshot_limit": "Onlyreportdeclaredsourcesbound. Readback/draft rawreports have noembeddedapp/testhash; currentinspectedscript ishashed here, notretroactivelybound. Member-save records main/workspaceonly.",
+      "assertion_groups": [
+        {
+          "action": "native-edit-discard-crosstab",
+          "selector": "actualAnalytics opener; Roles/Detailsclick; membershipconfirm",
+          "outcome": "Prefillededitablefields,idlediscarddecline/accept, nativepointertabroundtrip preservesdraft,membershipdecline noPUT.",
+          "source_lines": [
+            [
+              34,
+              43
+            ]
+          ],
+          "evidence_class": "native_browser_locally_fulfilled_requests",
+          "report_paths": [
+            "docs/premium-ui/qa-member-save-independent.json",
+            "docs/premium-ui/reviews/profile131-regression-execution.json"
+          ]
+        },
+        {
+          "action": "exact-put-and-independent-reopen",
+          "selector": "SavePUT; GETreopen; positionheading",
+          "outcome": "503retaineddraft/manualretryidenticalbody; reopenedGETsavedname/status/call/position/note; scopedpositionheading avoidsAddactionambiguity; subsequentsave usesrevision; ID/navigation/month retained.",
+          "source_lines": [
+            [
+              44,
+              57
+            ]
+          ],
+          "evidence_class": "native_browser_locally_fulfilled_requests",
+          "report_paths": [
+            "docs/premium-ui/qa-member-save-independent.json",
+            "docs/premium-ui/reviews/profile131-regression-execution.json"
+          ]
+        }
+      ],
+      "limitations": [
+        "No realbackendpersistence/permissions/scheduling/serverabort orphysicaldevice/nativeATcertification.",
+        "No whole131acceptance from thismap.",
+        "Legacy actionmatrix measuresbuttonfit; markerrectsrecorded butnotseparatelyvisibilityasserted.",
+        "beforeunload in olddraftsuite iscancellableeventlistener check, notactualnavigationexitprompt."
+      ],
+      "execution_manifest": "docs/premium-ui/reviews/profile131-regression-execution.json"
+    }
+  ],
+  "root_prior_regression_logs": [
+    "tmp/profile131-final-readback.log",
+    "tmp/profile131-final-draft-review.log",
+    "tmp/profile131-member-save-final.log"
+  ],
+  "historical_failures": [
+    "tmp/profile131-geometry-before-scroll-fix.json",
+    "tmp/profile131-pointer-before-metadata-fix.json"
+  ],
+  "historical_handling": "Beforefixgeometry/pointer actualdefects retained separately, nevercountedaspassing54.",
+  "root_execution_manifest": {
+    "path": "docs/premium-ui/reviews/profile131-regression-execution.json",
+    "sha256": "ddfae003037412e93bc20db73de6d35dfed0913376e42533fb189563a1293b29",
+    "scope": "Separate rootrunbinding for existing90; rawreadback/draftremainunhashedhistorically. New54ownreportsbinddeclaredsources."
+  }
+}

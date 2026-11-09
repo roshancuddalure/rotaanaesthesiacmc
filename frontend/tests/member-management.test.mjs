@@ -5,6 +5,14 @@ import ts from "typescript";
 
 // Exercise the UI controllers with a small host and API doubles; no browser dependency.
 const dataModule = source => `data:text/javascript;base64,${Buffer.from(source).toString("base64")}`;
+// Nested workspace navigation is exercised with the real module in browser tests.
+// Keep this controller host independent of that workspace's browser-only dependencies.
+const workspaceModule = dataModule(`
+  export const openMemberWorkspace = (...args) => {
+    if (!globalThis.profileWorkspace?.open) throw new Error("Unexpected nested workspace navigation in controller host");
+    return globalThis.profileWorkspace.open(...args);
+  };
+`);
 const apiModule = dataModule(`
   export const downloadPreviewIssues = (...args) => globalThis.reportApi?.download(...args);
   export const memberWorkbookRequest = (...args) => globalThis.memberApi.request(...args);
@@ -29,8 +37,9 @@ async function compiledModule(filename) {
   const source = await readFile(new URL(`../src/${filename}`, import.meta.url), "utf8");
   let compiled = ts.transpileModule(source, {
     compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2020 },
-  }).outputText.replace('"./services/api"', JSON.stringify(apiModule));
-  for (const local of ["ui", "member-import", "audit-time"]) {
+  }).outputText.replace('"./services/api"', JSON.stringify(apiModule))
+    .replace('"./member-workspace"', JSON.stringify(workspaceModule));
+  for (const local of ["ui", "member-import", "audit-time", "member-presentation", "import-review-presentation", "decorative-icons"]) {
     if (compiled.includes(`"./${local}"`))
       compiled = compiled.replace(`"./${local}"`, JSON.stringify(await compiledModule(`${local}.ts`)));
   }
@@ -90,7 +99,7 @@ test("CSV review requires call approval, stays reviewed on filtering, and refres
   assert.equal(refreshed, 1);
   assert.equal(calls.at(-1).options.confirm_call_changes, true);
   assert.equal(calls.at(-1).hash, "reviewed-hash");
-  assert.match(host.innerHTML, /Master list and counts refreshed/);
+  assert.match(host.innerHTML, /Changes were confirmed\. Return to the member list to view the saved result\./);
   assert.ok(!host.innerHTML.includes('data-mi="apply"'));
   importUi.resetMemberImport();
 });

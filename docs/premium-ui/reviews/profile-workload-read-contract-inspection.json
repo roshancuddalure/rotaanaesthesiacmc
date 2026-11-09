@@ -1,0 +1,15 @@
+{
+  "recorded_at_utc": "2026-10-24T11:25:48.860628+00:00",
+  "scope": "Read-only existing supported route inspection; no backend modifications or executed authorization/persistence test.",
+  "source_sha256": {
+    "backend/app/api/v1/member_workspace.py": "d10478af152083e9c1c2a2a6ad173bacf4b8c2f8eecd6ec6d21e2bf08da86920",
+    "backend/tests/test_member_workspace.py": "a557f88d4b02616252ea67aedc887dd3c5035fa3b7e2bea828a21a9590802b81",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+  },
+  "observations": [
+    "Member workspace router depends on current_user; read profile/section handlers use the existing person ID.",
+    "Existing test_permissions_on_all_member_reads_and_writes includes rota_board_member profile GET200 and separate mutation403 checks. This inspection does not claim those tests were executed in this batch.",
+    "Nested frontend drill uses existing openMemberWorkspace(id,isAdmin,...,duties) and exact member ID. Browser fixtures assert correct role/read controls and parent draft/focus preservation."
+  ],
+  "runtime_limit": "Local fixtures prove frontend request/navigation behavior, not real backend authorization or aggregate correctness."
+}

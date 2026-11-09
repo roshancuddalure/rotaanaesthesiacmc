@@ -11,6 +11,7 @@ async function hashes() {
   return result;
 }
 const initial = await hashes();
+const testSha256 = createHash('sha256').update(await readFile(new URL(import.meta.url))).digest('hex');
 const policy = { enabled: true, lookback_months: 6, total_weight: 1, hours24_weight: 2, weekend_weight: 3, group_weight: 4 };
 const members = [{ id: 'member-a', canonical_name: 'Dr Alex A', active_status: 'active' }, { id: 'member-b', canonical_name: 'Dr Alex B', active_status: 'active' }];
 const inspection = { header_row: 1, fields: ['date', 'name', 'duty_type'], sheets: ['Duties', 'Archive'].map(name => ({ name, headers: ['Date', 'Name', 'Duty'], mapping: { date: 0, name: 1, duty_type: 2 } })) };
@@ -23,6 +24,10 @@ for (const [engine, type] of Object.entries({ chromium, firefox, webkit })) {
     for (const width of [320, 1280]) {
       const context = await browser.newContext({ viewport: { width, height: 850 } });
       const page = await context.newPage(), calls = [], uploads = [], saves = [], errors = [];
+      page.setDefaultTimeout(10000);
+      page.setDefaultNavigationTimeout(15000);
+      const progress = step => console.log(`Past actions ${engine} ${width}: ${step}`);
+      progress('start');
       let policyFailure = 0, historyFailure = false, templateFailure = true, hashNumber = 0;
       page.on('pageerror', error => errors.push(error.message));
       await page.route('**/__past-actions', route => route.fulfill({ contentType: 'text/html', body: '<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/src/styles.css"><link rel="stylesheet" href="/src/premium-theme.css"></head><body><main><div id="host"></div></main></body></html>' }));
@@ -58,9 +63,9 @@ for (const [engine, type] of Object.entries({ chromium, firefox, webkit })) {
       await page.goto(`${base}/__past-actions`);
       await page.evaluate(async () => { const { mountPastDuties } = await import('/src/past-duties.ts'); await mountPastDuties(document.querySelector('#host')); });
       const host = page.locator('#host'), control = action => host.locator(`[data-past="${action}"]`);
-      async function idle() { await page.waitForFunction(() => ![...document.querySelectorAll('#host [role="status"]')].some(node => /Working|Loading past duties/.test(node.textContent || ''))); }
-      async function act(action) { await control(action).click(); await idle(); }
-      async function chooseMember() { await host.locator('[data-pick-member="member-a"]').click(); await idle(); }
+      async function idle() { await page.waitForFunction(() => ![...document.querySelectorAll('#host [role="status"]')].some(node => /Working|Loading past duties/.test(node.textContent || '')), undefined, { timeout: 10000 }); }
+      async function act(action) { progress(action); await control(action).click(); await idle(); }
+      async function chooseMember() { progress('choose member-a'); await host.locator('[data-pick-member="member-a"]').click(); await idle(); }
       async function preview() { await act('preview'); }
       async function lastOptions() { return structuredClone(uploads.at(-1).options); }
       await control('file').setInputFiles({ name: 'actions.xlsx', mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', buffer: fileBytes });
@@ -94,6 +99,7 @@ for (const [engine, type] of Object.entries({ chromium, firefox, webkit })) {
         ['header', async () => { await control('header').fill('2'); await control('header').press('Tab'); }],
       ];
       for (const [name, change] of invalidations) {
+        progress(`invalidate ${name}`);
         if (await host.locator('[data-pick-member="member-a"]').count()) await chooseMember();
         await control('confirm-warnings').check(); await control('confirm-corrections').check();
         await change();
@@ -133,10 +139,12 @@ for (const [engine, type] of Object.entries({ chromium, firefox, webkit })) {
       assert.equal(calls.filter(call => call.path.endsWith('/apply')).length, 0);
       assert.deepEqual(errors, []);
       results.push({ engine, width, memberChoiceUndo: true, skipIncludeExactRepreview: true, rowEditRetained: true, staleRowChangeBlocked: true, configInvalidations: invalidations.map(([name]) => name), rejectedCsvFilenameAndExactContent: true, templateFailureRetainsFileAndPreview: true, templateKeyboardRetryExactDownloadedBytes: true, exactEncodedHistoryId: true, escapedHistoryMarkup: true, historyReadRetryRetainsPreview: true, exactPolicyPayload422503Success: true, policySaveInvalidatesReview: true, interceptedUploads: uploads.length, interceptedPolicySaves: saves.length, liveWrites: 0, pageErrors: errors.length });
+      progress('passed');
       await context.close();
     }
   } finally { await browser.close(); }
 }
 const sources = await hashes(); assert.deepEqual(sources, initial, 'App sources stable during action checks');
+assert.equal(createHash('sha256').update(await readFile(new URL(import.meta.url))).digest('hex'), testSha256, 'Test source held');
 await writeFile(new URL('../../docs/premium-ui/qa-past-actions.json', import.meta.url), JSON.stringify({ createdAt: new Date().toISOString(), command: 'node tests/premium-past-actions.browser.mjs (frontend directory)', testSha256: createHash('sha256').update(await readFile(new URL(import.meta.url))).digest('hex'), scope: 'Actual past-duties component, services/api and production CSS. All API responses intercepted. Workbook and downloaded template are transport fixtures only, not Excel parser or real template validity tests. Rejected CSV bytes are verified against the controlled rejected row. Browser emulation; no physical device, actual screen reader or live write claim. Apply success/recovery is separate and not claimed by these action cases.', sources, results }, null, 2) + '\n');
 console.log(`${results.length} past-duty action cases passed`);

@@ -1,0 +1,46 @@
+import assert from 'node:assert/strict';
+import {readFile,writeFile} from 'node:fs/promises';
+import {createHash} from 'node:crypto';
+import {chromium,firefox,webkit} from 'playwright';
+const sha=b=>createHash('sha256').update(b).digest('hex'),initial=sha(await readFile('src/main.ts')),candidate=sha(await readFile('../tmp/mapping-creator-parent-v1/main.ts')),results=[];
+const original={id:'mapping-existing',mapping_type:'duty_label',source_label:'Existing legacy duty',target_key:'T1',target_label:'First duty',status:'reviewed',notes:'Original saved notes'};
+for(const[engine,launcher]of Object.entries({chromium})){
+ const browser=await launcher.launch();try{for(const width of [320])for(const scenario of ['away-return']){
+  const page=await browser.newPage({viewport:{width,height:900},reducedMotion:'reduce'}),errors=[],writes=[];let created=null,reads=0,release,arrived,readRelease,readArrived,holdRead=false,failRead=false;
+  const pending=new Promise(r=>arrived=r),readPending=new Promise(r=>readArrived=r);
+  page.on('pageerror',e=>errors.push(e.message));await page.addInitScript(()=>localStorage.setItem('duty_rota_auth_token','mapping-create-independent'));
+  await page.route('**/api/**',async route=>{const q=route.request(),u=new URL(q.url());
+   if(q.method()!=='GET'){assert.equal(q.method(),'POST');assert.equal(u.pathname,'/api/v1/admin/mappings');writes.push(q.postDataJSON());arrived();if(['late-guide','away-return','signout','root-disconnected'].includes(scenario))await new Promise(r=>release=r);created={id:'mapping-new',...q.postDataJSON()};holdRead=scenario==='held-read-edit';failRead=scenario==='readback503';return route.fulfill({json:created});}
+   if(u.pathname==='/api/v1/admin/mappings/options')return route.fulfill({json:{duty_types:[{key:'T1',label:'First duty'},{key:'T2',label:'Second duty'}],mapping_types:['duty_label','unit_label','posting_label']}});
+   if(u.pathname==='/api/v1/admin/mappings'){reads++;if(holdRead){holdRead=false;readArrived();await new Promise(r=>readRelease=r);}if(failRead){failRead=false;return route.fulfill({status:503,json:{detail:'Confirmed mapping list unavailable'}});}return route.fulfill({json:[original,...created?[created]:[]]});}
+   if(u.pathname==='/api/v1/normalization/catalog/duty_type')return route.fulfill({json:[{key:'T1',label:'First duty',active:true},{key:'T2',label:'Second duty',active:true}]});
+   return route.fulfill({response:await route.fetch({url:'http://127.0.0.1:8031'+u.pathname+u.search,maxRetries:2})});
+  });
+  const notes=()=>page.getByLabel('Notes for Existing legacy duty',{exact:true});
+  const assertDraft=async(note='Keep this unrelated existing-row draft')=>{assert.equal(await notes().inputValue(),note);assert.equal(await page.getByLabel('Target key for Existing legacy duty',{exact:true}).inputValue(),'T2');assert.equal(await page.getByLabel('Target label for Existing legacy duty',{exact:true}).inputValue(),'Private label draft');assert.equal(await page.getByLabel('Status for Existing legacy duty',{exact:true}).inputValue(),'suggested');};
+  try{
+   await page.goto('http://127.0.0.1:5280/#view=mappings');await notes().waitFor();await page.waitForLoadState('networkidle');
+   await page.getByLabel('Target key for Existing legacy duty',{exact:true}).selectOption('T2');await page.getByLabel('Target label for Existing legacy duty',{exact:true}).fill('Private label draft');await page.getByLabel('Status for Existing legacy duty',{exact:true}).selectOption('suggested');await notes().fill('Keep this unrelated existing-row draft');await notes().press('Tab');await page.locator('[data-filter="duty_label"]').click();await page.getByRole('searchbox',{name:'Search mappings'}).fill('legacy');await assertDraft();
+   const readsBeforeCreate=reads;await page.locator('[data-create-import-mapping]').click();const dialog=page.getByRole('dialog',{name:'Add imported label mapping',exact:true});await dialog.locator('[name=source_label]').fill('New legacy duty');await dialog.locator('[name=target_key]').selectOption('T2');await dialog.locator('[name=notes]').fill('Only new mapping is being saved');await dialog.getByRole('button',{name:'Save mapping',exact:true}).click();await pending;
+   if(['late-guide','away-return','signout','root-disconnected'].includes(scenario)){
+    if(scenario==='signout'){await page.evaluate(()=>{localStorage.removeItem('duty_rota_auth_token');window.dispatchEvent(new StorageEvent('storage',{key:'duty_rota_auth_token',oldValue:'mapping-create-independent',newValue:null}));});}
+    else if(scenario==='root-disconnected')await page.locator('#view-root').evaluate(e=>{const clone=document.createElement('div');clone.id='view-root';clone.textContent='New owner root';e.replaceWith(clone);});
+    else {await page.evaluate(()=>location.hash='#view=user-guide');await page.locator('#guide-checklist').waitFor();if(scenario==='away-return'){await page.evaluate(()=>location.hash='#view=mappings');await notes().waitFor();await notes().fill('New owner mapping draft');await notes().press('Tab');}}
+    const debugBefore=await notes().evaluate(e=>{window.__mappingOldNode=e;return {value:e.value,focus:e===document.activeElement,inert:!!e.closest('[inert]'),html:e.outerHTML}});console.log('BEFORE',JSON.stringify(debugBefore));const readsBeforeRelease=reads;release();await dialog.waitFor({state:'detached'});await page.evaluate(()=>new Promise(r=>setTimeout(r,100)));assert.equal(reads,readsBeforeRelease);assert.equal(writes.length,1);
+    if(scenario==='late-guide')assert.equal(await page.locator('#guide-checklist').count(),1);
+    if(scenario==='away-return'){console.log('AFTER',JSON.stringify(await notes().evaluate(e=>({value:e.value,same:e===window.__mappingOldNode,inert:!!e.closest('[inert]'),html:e.outerHTML}))));console.log('WRITES',JSON.stringify(writes),'READS',readsBeforeRelease,reads);}
+    if(scenario==='root-disconnected')assert.equal(await page.locator('#view-root').innerText(),'New owner root');
+   }else if(scenario==='held-read-edit'){
+    await readPending;await notes().fill('Newer draft during confirmed refresh');await notes().press('Tab');readRelease();await page.evaluate(()=>new Promise(r=>setTimeout(r,100)));await assertDraft('Newer draft during confirmed refresh');assert.equal(await page.locator('[data-save="mapping-new"]').count(),0);assert.equal(reads,readsBeforeCreate+1);
+   }else{
+    await dialog.waitFor({state:'detached'});
+    if(scenario==='readback503'){await page.getByText('Confirmed mapping list unavailable',{exact:true}).waitFor();await assertDraft();await page.locator('[data-retry-mappings]').click();}
+    await page.locator('[data-save="mapping-new"]').waitFor();await assertDraft();assert.equal(reads,readsBeforeCreate+(scenario==='readback503'?2:1));assert.equal(await page.getByRole('searchbox',{name:'Search mappings'}).inputValue(),'legacy');assert.equal(await page.locator('[data-filter="duty_label"]').evaluate(e=>e.classList.contains('selected')),true);
+   }
+   assert.equal(writes.length,1);assert.deepEqual(writes[0],{mapping_type:'duty_label',source_label:'New legacy duty',target_key:'T2',notes:'Only new mapping is being saved',status:'reviewed',target_label:'Second duty'});assert.deepEqual(errors,[]);
+   results.push({engine,width,scenario,reads,writes,errors,newerInputSupersededRead:scenario==='held-read-edit'});console.log(engine+' '+width+' '+scenario+' mapping parent passed');
+  }finally{if(release)release();if(readRelease)readRelease();await page.unrouteAll({behavior:'ignoreErrors'});await page.close();}
+ }}finally{await browser.close();}
+}
+assert.equal(sha(await readFile('src/main.ts')),initial);assert.equal(sha(await readFile('../tmp/mapping-creator-parent-v1/main.ts')),candidate);
+await writeFile('../docs/premium-ui/qa-mapping-creator-parent-v1-away-debug.json',JSON.stringify({recorded_at_utc:new Date().toISOString(),reviewer:'/root/unit_settings_v2_independent_review',scope:'42 frozen scratch mapping callback contexts,3engines320/1280. Same-view preserves all dirty fields and filters while new mapping appears; confirmed-read503 explicitGET retry no duplicatePOST; lateGuide/awayreturn/account/root callback suppression. Held-read newer existing-row edit intentionally invalidates reader and retains current draft; that scenario does NOT prove new mapping becomes visible without a subsequent explicit reload.',applied_main_sha256:initial,candidate_main_sha256:candidate,test_sha256:sha(await readFile(new URL(import.meta.url))),results},null,2)+'\n');console.log('Independent mapping parent42 passed');

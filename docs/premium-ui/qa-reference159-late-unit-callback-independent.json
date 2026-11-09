@@ -1,0 +1,978 @@
+{
+  "recorded_at_utc": "2026-10-30T10:13:34.483Z",
+  "reviewer": "/root/reference157160_lifecycle_audit",
+  "scope": "Diagnostic,not acceptance: actual unitcreate heldlocalPOST, same-view dependent refresh control vs actual hash navigation toUserGuide before release. All mutations locallyfulfilled; GETfixtureonly; no backend operation.",
+  "source_sha256": {
+    "frontend/src/main.ts": "c2526f3881fe425735714023f5d48e0296302550d5fb3d86400619e73a54a641",
+    "frontend/src/reference-workspace.ts": "78c231ea1d5ab15bd3a4b5f2f8265529451a51bacc68d2a4aac1708a4be30292",
+    "frontend/src/record-workspace.ts": "927ca02c180634f25f51e982b2e703d9b7997d665067c1e2d64a74fac9a86132",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+  },
+  "test_sha256": "8d2534d2f169cb7b2b23dced5d817d475ba815e8cd321ae55bbc78238336e7de",
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "scenario": "same-view",
+      "before": {
+        "hash": "#view=units",
+        "title": "Monthly unit postings",
+        "guide": 0,
+        "dialogOpen": true
+      },
+      "after": {
+        "hash": "#view=units",
+        "title": "Monthly unit postings",
+        "guide": 0,
+        "unitBoard": 1,
+        "unitReads": 2
+      },
+      "posts": 1,
+      "errors": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        }
+      ],
+      "diagnostic": "Expected same-view dependent refresh"
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "scenario": "navigate-guide",
+      "before": {
+        "hash": "#view=user-guide",
+        "title": "End-to-end rota website guide",
+        "guide": 1,
+        "dialogOpen": true
+      },
+      "after": {
+        "hash": "#view=user-guide",
+        "title": "Monthly unit postings",
+        "guide": 0,
+        "unitBoard": 1,
+        "unitReads": 2
+      },
+      "posts": 1,
+      "errors": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        }
+      ],
+      "diagnostic": "Confirmed newer route overwritten by stale success callback"
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "scenario": "same-view",
+      "before": {
+        "hash": "#view=units",
+        "title": "Monthly unit postings",
+        "guide": 0,
+        "dialogOpen": true
+      },
+      "after": {
+        "hash": "#view=units",
+        "title": "Monthly unit postings",
+        "guide": 0,
+        "unitBoard": 1,
+        "unitReads": 2
+      },
+      "posts": 1,
+      "errors": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        }
+      ],
+      "diagnostic": "Expected same-view dependent refresh"
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "scenario": "navigate-guide",
+      "before": {
+        "hash": "#view=user-guide",
+        "title": "End-to-end rota website guide",
+        "guide": 1,
+        "dialogOpen": true
+      },
+      "after": {
+        "hash": "#view=user-guide",
+        "title": "Monthly unit postings",
+        "guide": 0,
+        "unitBoard": 1,
+        "unitReads": 2
+      },
+      "posts": 1,
+      "errors": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        }
+      ],
+      "diagnostic": "Confirmed newer route overwritten by stale success callback"
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "scenario": "same-view",
+      "before": {
+        "hash": "#view=units",
+        "title": "Monthly unit postings",
+        "guide": 0,
+        "dialogOpen": true
+      },
+      "after": {
+        "hash": "#view=units",
+        "title": "Monthly unit postings",
+        "guide": 0,
+        "unitBoard": 1,
+        "unitReads": 2
+      },
+      "posts": 1,
+      "errors": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        }
+      ],
+      "diagnostic": "Expected same-view dependent refresh"
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "scenario": "navigate-guide",
+      "before": {
+        "hash": "#view=user-guide",
+        "title": "End-to-end rota website guide",
+        "guide": 1,
+        "dialogOpen": true
+      },
+      "after": {
+        "hash": "#view=user-guide",
+        "title": "Monthly unit postings",
+        "guide": 0,
+        "unitBoard": 1,
+        "unitReads": 2
+      },
+      "posts": 1,
+      "errors": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        }
+      ],
+      "diagnostic": "Confirmed newer route overwritten by stale success callback"
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "scenario": "same-view",
+      "before": {
+        "hash": "#view=units",
+        "title": "Monthly unit postings",
+        "guide": 0,
+        "dialogOpen": true
+      },
+      "after": {
+        "hash": "#view=units",
+        "title": "Monthly unit postings",
+        "guide": 0,
+        "unitBoard": 1,
+        "unitReads": 2
+      },
+      "posts": 1,
+      "errors": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        }
+      ],
+      "diagnostic": "Expected same-view dependent refresh"
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "scenario": "navigate-guide",
+      "before": {
+        "hash": "#view=user-guide",
+        "title": "End-to-end rota website guide",
+        "guide": 1,
+        "dialogOpen": true
+      },
+      "after": {
+        "hash": "#view=user-guide",
+        "title": "Monthly unit postings",
+        "guide": 0,
+        "unitBoard": 1,
+        "unitReads": 2
+      },
+      "posts": 1,
+      "errors": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        }
+      ],
+      "diagnostic": "Confirmed newer route overwritten by stale success callback"
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "scenario": "same-view",
+      "before": {
+        "hash": "#view=units",
+        "title": "Monthly unit postings",
+        "guide": 0,
+        "dialogOpen": true
+      },
+      "after": {
+        "hash": "#view=units",
+        "title": "Monthly unit postings",
+        "guide": 0,
+        "unitBoard": 1,
+        "unitReads": 2
+      },
+      "posts": 1,
+      "errors": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        }
+      ],
+      "diagnostic": "Expected same-view dependent refresh"
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "scenario": "navigate-guide",
+      "before": {
+        "hash": "#view=user-guide",
+        "title": "End-to-end rota website guide",
+        "guide": 1,
+        "dialogOpen": true
+      },
+      "after": {
+        "hash": "#view=user-guide",
+        "title": "Monthly unit postings",
+        "guide": 0,
+        "unitBoard": 1,
+        "unitReads": 2
+      },
+      "posts": 1,
+      "errors": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        }
+      ],
+      "diagnostic": "Confirmed newer route overwritten by stale success callback"
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "scenario": "same-view",
+      "before": {
+        "hash": "#view=units",
+        "title": "Monthly unit postings",
+        "guide": 0,
+        "dialogOpen": true
+      },
+      "after": {
+        "hash": "#view=units",
+        "title": "Monthly unit postings",
+        "guide": 0,
+        "unitBoard": 1,
+        "unitReads": 2
+      },
+      "posts": 1,
+      "errors": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        }
+      ],
+      "diagnostic": "Expected same-view dependent refresh"
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "scenario": "navigate-guide",
+      "before": {
+        "hash": "#view=user-guide",
+        "title": "End-to-end rota website guide",
+        "guide": 1,
+        "dialogOpen": true
+      },
+      "after": {
+        "hash": "#view=user-guide",
+        "title": "Monthly unit postings",
+        "guide": 0,
+        "unitBoard": 1,
+        "unitReads": 2
+      },
+      "posts": 1,
+      "errors": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        }
+      ],
+      "diagnostic": "Confirmed newer route overwritten by stale success callback"
+    }
+  ]
+}

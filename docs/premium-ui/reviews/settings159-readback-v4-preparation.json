@@ -1,0 +1,46 @@
+{
+  "recorded_at_utc": "2026-11-03T05:22:09.636121+00:00",
+  "operator": "/root/settings_readback_resume",
+  "status": "scratch_frozen_runtime_pending",
+  "application_changed": false,
+  "candidate": {
+    "main.ts": {
+      "before_sha256": "d13bd73108d89d6efb70a66426e6f8e9f6e50400475575b7a40cb06eef12c1bc",
+      "after_sha256": "6a093622f67352bee662ef686de502d49df029cf2b18913a013d2eaaf527d427"
+    },
+    "unit-board-filters.ts": {
+      "before_sha256": "b52758e18a4d6abeda57b57ef84e0614b085a317e9d3ca345e096d860ea384a3",
+      "after_sha256": "c29d92e9b9b397a757ab7c449c82dcf45265d6c34059e7b986231ea11f0e5377"
+    },
+    "unit-settings-recovery.ts": {
+      "before_sha256": "4cfcd55615c77fa39aa08ee57abb3e807412fb9fb6c42af71dbb86a4458ce51d",
+      "after_sha256": "9e899c32f81c23b2fbedbe164e188880c21cc7dad5021a57f6cac9fe98e38679"
+    },
+    "scope": "Scratch V4 only. Missing unit explicitly unavailable with retained invalid draft and recoverable GET-only retry. Existing print snapshot released before fresh readback paint, recreated for active print media. New server call fields extend saved signature without marking an edit; user dirty flag captured before paint. No application edits.",
+    "preproof_note": "Before source proof/test freeze, add accurate no-new-edits input status when user reverts dirty values. No candidate runtime had run before this finalization."
+  },
+  "source_proof": {
+    "path": "tmp\\settings159-readback-regions-v4\\source-proof.json",
+    "sha256": "8e6feaa5e3fa3ea630384c15dc65006c58599718a945211b89e319c9d306dcd1",
+    "terminal_exit_code": 0
+  },
+  "planned_browser_executions": {
+    "native_regressions": 42,
+    "fresh_regions_topology": 18,
+    "missing_unit_and_active_print": 12,
+    "newer_native_focus": 6,
+    "introduced_server_field_without_user_edit": 6,
+    "isolated_helper": 60,
+    "total": 144,
+    "note": "Separate actual browser executions, not144 unique end-user journeys. Runner is live; planned counts are not passing outcomes."
+  },
+  "running_artifacts": "tmp/settings159-readback-v4-author-sequence/status.json",
+  "known_remaining_integration_gate": "Independent source review identified missing-unit removal/disabling can strand owned focus outside the retained form. Frozen V4 must not integrate before dedicated reproduction and guarded focus repair. True/false print event variants also required.",
+  "preserved_diagnostics": [
+    "V1 navigation load timeout before workflow",
+    "V2 nullable timestamp TypeScript failure and baseline guard changed from E88 to D13 before teststart",
+    "V3 first test ambiguous input/card selector",
+    "V3R2 filter typing after modalopen hit native inert background; preserve assertions and move setup beforemodal in V4"
+  ],
+  "whole159_accepted": false
+}

@@ -1,8 +1,11 @@
+import { decorativeIcon } from "./decorative-icons";
+import { importRowAttention, importPreviewModeText, importPreviewAuthorityText, updateImportPreviewAuthority } from "./import-review-presentation";
+import { recordedCalendarDate, designationPresentation, designationHistoryMarkup } from "./member-presentation";
 import { openReferenceCatalog } from "./reference-workspace";
 import { openRecordEditor } from "./record-workspace";
 import { protectWorkspaceDraft, lockWorkspaceControls, workspaceLoading, workspaceLoadFailure } from "./workspace-load-state";
 import { request, requestMultipartJSON, type DepartmentMember } from "./services/api";
-import { applyBlocker, memberMatch, retainActionFocus, steps, formatCalendarDate, type MemberMatchView } from "./ui";
+import { applyBlocker, memberMatch, memberIdentityText, importRecoveryText, updateMemberMatchPending, retainActionFocus, steps, formatCalendarDate, type MemberMatchView } from "./ui";
 import { formatAuditTimestamp } from "./audit-time";
 import { installFormValidation } from "./form-validation";
 
@@ -75,14 +78,13 @@ const periodLabel = (from: string, until?: string | null) => {
       : "Current";
 };
 // Calendar-only presentation: dates never imply approval or scheduling eligibility.
-function recordedCalendarDate(value: unknown): string | null {
-  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value) || value.startsWith("0000-")) return null;
-  const date = new Date(`${value}T00:00:00Z`);
-  return Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === value ? value : null;
-}
 function localCalendarToday(): string {
   const today = new Date();
   return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+}
+// A device-date view of returned records, never an inferred promotion precedence.
+function memberDesignationPresentation(member: DepartmentMember) {
+  return designationPresentation(member.designations, localCalendarToday(), "device");
 }
 function recordedDateMarkup(value: unknown, missing = "Not recorded"): string {
   const date = recordedCalendarDate(value);
@@ -155,14 +157,17 @@ function memberSectionsVertical(dialog: HTMLDialogElement): boolean {
 }
 
 function updateMemberIdentityScroll(dialog: HTMLDialogElement) {
-  const heading = dialog.querySelector<HTMLElement>("[data-member-identity]");
-  if (!heading) return;
-  if (heading.scrollHeight > heading.clientHeight) {
-    heading.tabIndex = 0;
-    heading.setAttribute("aria-description", "Scroll within this heading to read the full member name.");
+  const identity = dialog.querySelector<HTMLElement>("[data-member-identity-region]");
+  if (!identity) return;
+  const overflow = identity.scrollHeight > identity.clientHeight + 1;
+  const cue = dialog.querySelector<HTMLElement>("[data-member-identity-cue]");
+  if (cue) cue.hidden = !overflow;
+  if (overflow) {
+    identity.tabIndex = 0;
+    identity.setAttribute("aria-description", "Scroll within member identity to read the full name, designation and status.");
   } else {
-    heading.removeAttribute("tabindex");
-    heading.removeAttribute("aria-description");
+    identity.tabIndex = -1;
+    identity.removeAttribute("aria-description");
   }
 }
 
@@ -258,6 +263,18 @@ export function workspaceDialog(
   return dialog;
 }
 
+export type ProfileOperationalChange = Readonly<{
+  kind: "units" | "leave";
+  personId: string;
+  recordId?: string;
+  operation: "save" | "cancel";
+}>;
+
+export type ProfileParentLifecycle = Readonly<{
+  confirmed: (change: ProfileOperationalChange) => void;
+  closed: () => void;
+}>;
+
 export async function openMemberWorkspace(
   id: string,
   admin: boolean,
@@ -265,9 +282,24 @@ export async function openMemberWorkspace(
   ids: string[] = [],
   initialTab = "overview",
   proposedStatus?: string,
+  parentLifecycle?: ProfileParentLifecycle,
 ) {
   const opener = document.activeElement as HTMLElement | null;
   const dialog = workspaceDialog("Member profile");
+  let replacingProfile = false;
+  let parentCloseNotified = false;
+  const notifyParent = (change: ProfileOperationalChange) => {
+    try { parentLifecycle?.confirmed(change); }
+    catch { console.warn("The dependent view refresh notification could not be delivered."); }
+  };
+  const notifyParentClosed = () => {
+    if (replacingProfile || parentCloseNotified) return;
+    parentCloseNotified = true;
+    try { parentLifecycle?.closed(); }
+    catch { console.warn("The dependent view refresh close notification could not be delivered."); }
+  };
+  // Native close is queued; the explicit close path may already have notified.
+  dialog.addEventListener("close", notifyParentClosed, {once: true});
   const sectionsCueId = `mw-sections-cue-${++memberSectionCueSequence}`;
   const alive = () => dialog.isConnected && dialog.open;
   const dismissInitialLoad = () => {
@@ -279,13 +311,16 @@ export async function openMemberWorkspace(
   try {
     profile = await request<Profile>(`/api/v1/admin/member-workspace/${id}`);
     if (!alive()) return;
+    if (!profile?.member || !Array.isArray(profile.member.aliases) || !Array.isArray(profile.member.designations))
+      throw new Error("Member identity records were not returned. Retry to load the complete profile before editing.");
   } catch (error) {
     if (!alive()) return;
     workspaceLoadFailure(dialog, "Member profile unavailable", error, () => {
       if (!alive()) return;
+      replacingProfile = true;
       dismissInitialLoad();
       if (opener?.isConnected) opener.focus({ preventScroll: true });
-      void openMemberWorkspace(id, admin, changed, ids, initialTab, proposedStatus);
+      void openMemberWorkspace(id, admin, changed, ids, initialTab, proposedStatus, parentLifecycle);
     }, dismissInitialLoad);
     return;
   }
@@ -296,16 +331,49 @@ export async function openMemberWorkspace(
   if (proposedStatus && admin) draft.active_status = proposedStatus;
   let busy = false;
   let preservePreviousName = true;
+  const disclosureStates = new Map<string, boolean>();
   const fieldErrors: Record<string, string> = {};
   let formValidation: ReturnType<typeof installFormValidation>;
   const cache: Record<string, Row[] | undefined> = {};
   const errors: Record<string, string> = {};
-  function sectionMetadata(key: string) {
+  const registeredErrorSections = new Set<string>();
+  function historyMetadata(key: string) {
     if (!["postings", "leave", "duties", "activity"].includes(key)) return { description: "", markup: "" };
     if (errors[key]) return { description: `${labels[key]} could not load. Use Retry in this section.`, markup: '<span class="mw-tab-count is-error" aria-hidden="true">Retry needed</span>' };
     if (!cache[key]) return { description: "", markup: "" };
     const count = cache[key].length;
     return { description: `${count} ${count === 1 ? "record" : "records"} loaded in this section. Loaded records may be a subset of the full history.`, markup: `<span class="mw-tab-count" aria-hidden="true">${count} loaded</span>` };
+  }
+  function sectionDraftChanged(key: string) {
+    if (key === "names") return editing && JSON.stringify(draft.aliases.map(alias => alias.alias)) !== JSON.stringify(member.aliases.map(alias => alias.alias));
+    const keys = key === "details" ? ["canonical_name", "active_status", "call_level"]
+      : key === "roles" ? ["designations", "call_level_changes"] : key === "names" ? ["aliases"] : [];
+    return editing && keys.some(field => JSON.stringify((draft as unknown as Row)[field]) !== JSON.stringify((member as unknown as Row)[field]));
+  }
+  function sectionMetadata(key: string) {
+    const history = historyMetadata(key);
+    const dirtySection = sectionDraftChanged(key);
+    const errorsHere = registeredErrorSections.has(key) || Object.keys(fieldErrors).some(field => key === "details" ? field === "canonical_name" : key === "roles" && (field.startsWith("designation-") || field.startsWith("call-")));
+    const messages = [dirtySection ? "Unsaved changes in this section." : "", errorsHere ? "Review validation errors in this section." : "", history.description].filter(Boolean);
+    return { description: messages.join(" "), markup: `${dirtySection ? '<span class="mw-tab-draft" aria-hidden="true">Unsaved changes</span>' : ""}${errorsHere ? '<span class="mw-tab-error" aria-hidden="true">Review errors</span>' : ""}${history.markup}` };
+  }
+  function refreshSectionMetadata() {
+    let changed = false;
+    dialog.querySelectorAll<HTMLElement>(".mw-rail [data-tab]").forEach(button => {
+      const metadata = sectionMetadata(button.dataset.tab!);
+      const markers = [...button.querySelectorAll<HTMLElement>(".mw-tab-draft, .mw-tab-error, .mw-tab-count")];
+      if (markers.map(node => node.outerHTML).join("") !== metadata.markup) {
+        markers.forEach(node => node.remove());
+        button.insertAdjacentHTML("beforeend", metadata.markup);
+        changed = true;
+      }
+      if ((button.getAttribute("aria-description") || "") !== metadata.description) {
+        if (metadata.description) button.setAttribute("aria-description", metadata.description);
+        else button.removeAttribute("aria-description");
+        changed = true;
+      }
+    });
+    if (changed) dialog.dispatchEvent(new Event("membersectionschange"));
   }
   let dutyAnalysis: Row | undefined;
   let dutyMonths: string[] = [];
@@ -367,9 +435,10 @@ export async function openMemberWorkspace(
     field?.scrollIntoView({ block: "nearest" });
     return false;
   }
-  const close = () => {
+  const close = (replacing = false) => {
     if (busy || (dirty() && !confirm("Discard unsaved member changes?")))
-      return;
+      return false;
+    replacingProfile = replacing;
     dialog.close();
     dialog.remove();
     if (opener?.isConnected) opener.focus();
@@ -377,6 +446,8 @@ export async function openMemberWorkspace(
       document
         .querySelector<HTMLElement>("#member-search, main button, nav button")
         ?.focus();
+    notifyParentClosed();
+    return true;
   };
   dialog.addEventListener("cancel", (event) => {
     event.preventDefault();
@@ -405,7 +476,7 @@ export async function openMemberWorkspace(
     const changes = draft.call_level_changes || [];
     if (!editing) {
       const effective = memberCallPresentation(member);
-      const ordered = changes.map((change, index) => ({ change, index })).sort((a, b) => {
+      const ordered = (Array.isArray(changes) ? changes : []).map((change, index) => ({ change, index })).sort((a, b) => {
         const first = recordedCalendarDate(a.change.effective_from);
         const second = recordedCalendarDate(b.change.effective_from);
         return first && second ? first.localeCompare(second) || a.index - b.index : first ? -1 : second ? 1 : a.index - b.index;
@@ -414,7 +485,7 @@ export async function openMemberWorkspace(
         const date = recordedCalendarDate(change.effective_from);
         const state = date ? date > localCalendarToday() ? "Scheduled change" : "Recorded change" : change.effective_from == null || change.effective_from === "" ? "Date not recorded" : "Date invalid";
         return `<li data-call-change-history="${index}"><article class="mw-history"><h4>Default changes to ${esc(callLabel(change.call_level))}</h4><span class="mw-period-badge">${state}</span><p>Effective from ${recordedDateMarkup(change.effective_from)}</p><p>${esc(change.notes)}</p></article></li>`;
-      }).join("")}</ol>` : "<p>No dated changes recorded.</p>"}`;
+      }).join("")}</ol>` : !Array.isArray(member.call_level_changes) ? "<p data-call-history-unavailable>Dated call-level history was not returned.</p>" : "<p>No dated changes recorded.</p>"}`;
     }
     return `<h3>Dated default call-level changes</h3><p>A dated change overrides the base default from its effective date. Monthly postings still take precedence.</p>${changes.map((c, i) => `<fieldset><legend>Call-level change ${i + 1}</legend><label>Call level<select data-call-change="${i}" data-key="call_level" ${editing ? "" : "disabled"}>${[...new Set([...levels, c.call_level])].map((level) => `<option ${level === c.call_level ? "selected" : ""} value="${esc(level)}">${esc(callLabel(level))}</option>`).join("")}</select></label><label>Effective from<input type="date" data-call-change="${i}" data-key="effective_from" value="${esc(c.effective_from)}" ${editing ? "" : "readonly"}></label><label>Notes<input maxlength="1000" data-call-change="${i}" data-key="notes" value="${esc(c.notes)}" ${editing ? "" : "readonly"}></label>${editing ? `<button type="button" data-remove-call-change="${i}">Remove dated change</button>` : ""}</fieldset>`).join("")}${editing ? `<button type="button" data-add-call-change>Add dated call-level change</button>` : changes.length ? "" : "<p>No dated changes recorded.</p>"}`;
   }
@@ -494,13 +565,13 @@ export async function openMemberWorkspace(
           (!dutyUntil || String(row.date) <= dutyUntil)),
     );
     const analysis =
-      tab === "duties" && dutyAnalysis
-        ? `<h3>Official analysis · ${esc(dutyMonths[0])} to ${esc(dutyMonths[dutyMonths.length - 1])}</h3><p>Historical, approved, published and finalized periods. Draft duties appear separately below.</p><div class="mw-summary">${Object.entries(
+      tab === "duties" && dutyAnalysis && !Array.isArray(dutyAnalysis) && Object.entries(dutyAnalysis).some(([key, value]) => (typeof value === "number" && Number.isFinite(value) && !key.endsWith("_id")) || (key === "monthly_24hr" && value != null && typeof value === "object" && !Array.isArray(value) && Object.keys(value).length > 0))
+        ? `<h3 data-duty-analysis-period>Official analysis${dutyMonths.length ? ` · ${esc(dutyMonths[0])} to ${esc(dutyMonths[dutyMonths.length - 1])}` : " · Reporting period not returned"}</h3><p>Historical, approved, published and finalized periods. Draft duties appear separately below.</p><div class="mw-summary">${Object.entries(
             dutyAnalysis,
           )
             .filter(
               ([key, value]) =>
-                typeof value === "number" && !key.endsWith("_id"),
+                typeof value === "number" && Number.isFinite(value) && !key.endsWith("_id"),
             )
             .map(
               ([key, value]) =>
@@ -511,10 +582,10 @@ export async function openMemberWorkspace(
           )
             .map(
               ([month, count]) =>
-                `<p>${esc(month)} <strong>${esc(count)}</strong>${/^\d{4}-(0[1-9]|1[0-2])$/.test(month) ? ` <button type="button" class="quiet-button" data-duty-month="${esc(month)}">Review duty records for ${esc(month)}</button>` : ""}</p>`,
+                `<p>${esc(month)} <strong>${typeof count === "number" && Number.isSafeInteger(count) && count >= 0 ? esc(count) : "Not returned"}</strong>${/^\d{4}-(0[1-9]|1[0-2])$/.test(month) ? ` <button type="button" class="quiet-button" data-duty-month="${esc(month)}">Review duty records for ${esc(month)}</button>` : ""}</p>`,
             )
             .join("")}${detailedAnalysis()}<h3>Duty records</h3>`
-        : "";
+        : tab === "duties" ? `<p data-duty-analysis-unavailable>Workload analysis was not returned.</p><p data-duty-analysis-period>${dutyMonths.length ? `Returned reporting months: ${esc(dutyMonths[0])} to ${esc(dutyMonths[dutyMonths.length - 1])}.` : "Reporting period not returned."}</p><h3>Duty records</h3>` : "";
     const filter =
       tab === "duties"
         ? `<div class="mw-date-filter"><label>From date<input type="date" data-duty-from value="${esc(dutyFrom)}"></label><label>Until date<input type="date" data-duty-until value="${esc(dutyUntil)}"></label>${dutyFrom || dutyUntil ? '<button type="button" class="quiet-button" data-clear-duty-dates>Show all duty records</button>' : ""}</div>`
@@ -535,14 +606,24 @@ export async function openMemberWorkspace(
                 return `<article class="mw-history">${range ? `<h3 class="mw-record-heading" id="${contextId}-heading">${esc(heading)}</h3><p class="mw-record-dates" id="${contextId}-dates">${range.markup}</p><span class="mw-period-badge mw-date-state">${range.state}</span>${tab === "leave" ? `<p class="mw-record-status">Status: ${esc(statusLabel(row.status))}</p>` : ""}` : row.starts_on || row.effective_from ? `<span class="mw-period-badge">${periodLabel(String(row.starts_on || row.effective_from), (row.ends_on || row.effective_to) as string | null)}</span>` : ""}<dl>${Object.entries(
                   row,
                 )
-                  .filter(([key]) => key !== "id")
+                  .filter(([key]) => key !== "id" && !["source", "author", "recorded_at", "created_at", "updated_at", "import_file", "import_sheet", "import_row"].includes(key))
                   .map(
                     ([key, value]) =>
                       `<div><dt>${esc(key.replace(/_/g, " "))}</dt><dd>${typeof value === "object" && value !== null ? `<pre>${esc(JSON.stringify(value, null, 2))}</pre>` : esc(key === "call_level" || key === "posting_type" ? callLabel(value) : ["type", "slot", "source", "status"].includes(key) ? statusLabel(value) : typeof value === "boolean" ? (value ? "Yes" : "No") : typeof value === "string" && ["date", "duty_date", "starts_on", "ends_on", "effective_from", "effective_to"].includes(key) ? formatCalendarDate(value) : (value ?? (["ends_on", "effective_to"].includes(key) ? "Ongoing" : "Not recorded")))}</dd></div>`,
                   )
                   .join(
                     "",
-                  )}</dl>${["postings", "leave"].includes(tab) ? `<button type="button" data-edit-record="${esc(row.id)}" aria-describedby="${contextId}-heading ${contextId}-dates">Edit ${tab === "postings" ? "posting" : "leave"}</button>${tab === "leave" && row.status !== "cancelled" ? `<button type="button" class="danger-button" data-cancel-profile-leave="${esc(row.id)}" aria-describedby="${contextId}-heading ${contextId}-dates">Cancel leave</button>` : ""}` : ""}</article>`;
+                  )}</dl>${Object.keys(row).some(key => ["source", "author", "recorded_at", "created_at", "updated_at", "import_file", "import_sheet", "import_row"].includes(key)) ? `<details data-member-record-provenance data-profile-disclosure="record-${esc(tab)}-${esc(row.id)}"><summary>Record provenance</summary><dl>${Object.entries(
+                  row,
+                )
+                  .filter(([key]) => ["source", "author", "recorded_at", "created_at", "updated_at", "import_file", "import_sheet", "import_row"].includes(key))
+                  .map(
+                    ([key, value]) =>
+                      `<div><dt>${esc(key.replace(/_/g, " "))}</dt><dd>${typeof value === "object" && value !== null ? `<pre>${esc(JSON.stringify(value, null, 2))}</pre>` : esc(key === "call_level" || key === "posting_type" ? callLabel(value) : ["type", "slot", "source", "status"].includes(key) ? statusLabel(value) : typeof value === "boolean" ? (value ? "Yes" : "No") : typeof value === "string" && ["date", "duty_date", "starts_on", "ends_on", "effective_from", "effective_to"].includes(key) ? formatCalendarDate(value) : (value ?? (["ends_on", "effective_to"].includes(key) ? "Ongoing" : "Not recorded")))}</dd></div>`,
+                  )
+                  .join(
+                    "",
+                  )}</dl></details>` : ""}${["postings", "leave"].includes(tab) ? `<button type="button" data-edit-record="${esc(row.id)}" aria-describedby="${contextId}-heading ${contextId}-dates">Edit ${tab === "postings" ? "posting" : "leave"}</button>${tab === "leave" && row.status !== "cancelled" ? `<button type="button" class="danger-button" data-cancel-profile-leave="${esc(row.id)}" aria-describedby="${contextId}-heading ${contextId}-dates">Cancel leave</button>` : ""}` : ""}</article>`;
               },
             )
             .join("")
@@ -551,26 +632,19 @@ export async function openMemberWorkspace(
   }
   function content() {
     const call = memberCallPresentation(member);
-    const today = new Date().toLocaleDateString("en-CA");
-    const current = member.designations
-      .filter(
-        (d) =>
-          d.effective_from <= today &&
-          (!d.effective_to || d.effective_to >= today),
-      )
-      .slice(-1)[0];
+    const designation = memberDesignationPresentation(member);
     if (tab === "overview")
-      return `<div class="mw-summary"><article><small>Current position</small><strong>${esc(current?.designation || "Missing designation")}</strong></article><article data-effective-call-summary><small>${esc(call.caption)}</small><strong>${esc(call.label)}</strong>${call.note ? `<p data-member-call-note>${esc(call.note)}</p>` : ""}</article><article><small>Membership</small><strong>${esc(statusLabel(member.active_status))}</strong></article></div><h3>Needs attention</h3>${!current ? `<button type="button" data-tab-link="roles">Add or correct designation</button>` : ""}${call.needsReview ? `<button type="button" data-tab-link="details">Review call level</button>` : ""}${current && !call.needsReview ? "<p>No missing designation or effective call level.</p>" : ""}<h3>Identity checks</h3><button type="button" data-tab-link="names">Review aliases and possible duplicates</button><h3>Linked records</h3><p>${esc(profile.impact.future_duties)} future duties · ${esc(profile.impact.current_or_future_postings)} current/upcoming postings · ${esc(profile.impact.eligibility_memberships)} eligibility memberships</p><p>Monthly postings may override this member’s default call level. Review the relevant month in Postings.</p>`;
+      return `<div class="mw-summary"><article data-member-designation-summary><small>Position recorded for this date</small><strong>${esc(designation.label)}</strong><p>${esc(designation.note)}</p></article><article data-effective-call-summary><small>${esc(call.caption)}</small><strong>${esc(call.label)}</strong>${call.note ? `<p data-member-call-note>${esc(call.note)}</p>` : ""}</article><article><small>Membership</small><strong>${esc(statusLabel(member.active_status))}</strong></article></div><h3>Needs attention</h3>${designation.needsReview ? `<button type="button" data-tab-link="roles">Add or correct designation</button>` : ""}${call.needsReview ? `<button type="button" data-tab-link="details">Review call level</button>` : ""}${!designation.needsReview && !call.needsReview ? "<p>No missing designation or effective call level.</p>" : ""}<h3>Identity checks</h3><button type="button" data-tab-link="names">Review aliases and possible duplicates</button><h3>Linked records</h3><p>${esc(profile.impact.future_duties)} future duties · ${esc(profile.impact.current_or_future_postings)} current/upcoming postings · ${esc(profile.impact.eligibility_memberships)} eligibility memberships</p><p>Monthly postings may override this member’s default call level. Review the relevant month in Postings.</p>`;
     if (tab === "details")
-      return `<label>Member ID<input readonly data-member-id value="${esc(member.id)}"></label><button type="button" data-copy-member-id>Copy member ID</button><label>Member name<input data-field="canonical_name" required maxlength="255" value="${esc(draft.canonical_name)}" ${!editing ? "readonly" : ""}></label>${editing ? `<label><input type="checkbox" data-preserve-name ${preservePreviousName ? "checked" : ""}> Keep the previous name as an alias when renaming</label>` : ""}<label>Membership status<select data-field="active_status" ${!editing ? "disabled" : ""}>${["active", "historical", "archived"].map((s) => `<option ${draft.active_status === s ? "selected" : ""}>${s}</option>`).join("")}</select></label><label>Base default call level<select data-field="call_level" ${!editing ? "disabled" : ""}><option value="">Unassigned</option>${[...new Set([...levels, ...(draft.call_level ? [draft.call_level] : [])])].map((s) => `<option value="${esc(s)}" ${draft.call_level === s ? "selected" : ""}>${esc(callLabel(s))}</option>`).join("")}</select></label><p>Changing status preserves historical records. Future duties and memberships remain linked and need review.</p>`;
+      return `<details data-member-record-identification data-profile-disclosure="record-identification"><summary data-member-disclosure-summary="record-identification">Record identification</summary><label>Member ID<input readonly data-member-id value="${esc(member.id)}"></label><button type="button" data-copy-member-id>Copy member ID</button></details><label>Member name<input data-field="canonical_name" required maxlength="255" value="${esc(draft.canonical_name)}" ${!editing ? "readonly" : ""}></label>${editing ? `<label><input type="checkbox" data-preserve-name ${preservePreviousName ? "checked" : ""}> Keep the previous name as an alias when renaming</label>` : ""}<label>Membership status<select data-field="active_status" ${!editing ? "disabled" : ""}>${["active", "historical", "archived"].map((s) => `<option ${draft.active_status === s ? "selected" : ""}>${s}</option>`).join("")}</select></label><label>Base default call level<select data-field="call_level" ${!editing ? "disabled" : ""}><option value="">Unassigned</option>${[...new Set([...levels, ...(draft.call_level ? [draft.call_level] : [])])].map((s) => `<option value="${esc(s)}" ${draft.call_level === s ? "selected" : ""}>${esc(callLabel(s))}</option>`).join("")}</select></label><p>Changing status preserves historical records. Future duties and memberships remain linked and need review.</p>`;
     if (tab === "roles")
-      return `${admin ? `<button type="button" data-manage-profile-references>Manage designations and aliases</button>` : ""}<h3>Designation history</h3>${editing ? designationEditor() : member.designations.map((d) => `<article class="mw-history"><strong>${esc(d.designation)}</strong><span class="mw-period-badge">${periodLabel(d.effective_from, d.effective_to)}</span><p>${esc(d.effective_from)} → ${esc(d.effective_to || "Ongoing")} · ${esc(d.source)}</p><p>${esc(d.notes)}</p></article>`).join("") || "<p>No designation recorded.</p>"}${scheduledCalls()}<h3>Eligibility groups</h3><p>Groups restrict particular duties within a call level. Membership does not override approved leave, posting dates or rest requirements.</p>${history()}`;
+      return `${admin ? `<button type="button" data-manage-profile-references>Manage designations and aliases</button>` : ""}<h3>Designation history</h3>${editing ? designationEditor() : designationHistoryMarkup(member.designations, localCalendarToday(), "device")}${scheduledCalls()}<h3>Eligibility groups</h3><p>Groups restrict particular duties within a call level. Membership does not override approved leave, posting dates or rest requirements.</p>${history()}`;
     if (tab === "names")
-      return `<p>Aliases connect imported spellings to this member. Previous names are preserved by default when renaming.</p>${editing ? `${draft.aliases.map((a, i) => `<div class="mw-alias-row"><span>${esc(a.alias)}</span><button type="button" data-remove-alias="${i}" aria-label="Remove alias ${esc(a.alias)}">Remove</button></div>`).join("")}<label>Aliases (one per line)<textarea data-aliases rows="7">${esc(draft.aliases.map((a) => a.alias).join("\n"))}</textarea></label>` : member.aliases.map((a) => `<article class="mw-history"><strong>${esc(a.alias)}</strong><small>${esc(a.source)}</small></article>`).join("") || "<p>No aliases recorded.</p>"}<h3>Possible duplicates</h3>${cache.duplicates ? (cache.duplicates.length ? cache.duplicates.map((r) => `<article class="mw-history"><strong>${esc(r.name)}</strong><p>${esc(statusLabel(r.status))} \u00b7 ${esc(callLabel(r.call_level))}</p><p>${esc(r.duties)} duties \u00b7 ${esc(r.postings)} postings \u00b7 ${esc(r.leave)} leave records \u00b7 ${esc(r.memberships)} memberships</p><p>Positions: ${esc((r.designations as string[]).join(", "))}</p>${r.member ? `<details><summary>Compare profile details</summary><p>Surviving member: ${esc(member.canonical_name)} \u00b7 ${esc(statusLabel(member.active_status))} \u00b7 ${esc(callLabel(member.call_level))}</p><p>Surviving aliases: ${esc(member.aliases.map((a) => a.alias).join(", ") || "None")}</p><p>Other member aliases: ${esc((r.member as DepartmentMember).aliases.map((a) => a.alias).join(", ") || "None")}</p><h4>Other member's designation history</h4>${(r.member as DepartmentMember).designations.map((d) => `<p>${esc(d.designation)} \u00b7 ${esc(d.effective_from)} to ${esc(d.effective_to || "Ongoing")} \u00b7 ${esc(d.notes)}</p>`).join("") || "<p>No positions recorded.</p>"}<h4>Other member's dated call levels</h4>${((r.member as DepartmentMember).call_level_changes || []).map((c) => `<p>${esc(callLabel(c.call_level))} from ${esc(c.effective_from)}</p>`).join("") || "<p>No dated changes.</p>"}</details>` : ""}${admin ? `<button type="button" class="danger-button" data-merge-source="${esc(r.id)}">Merge into ${esc(member.canonical_name)}</button>` : ""}</article>`).join("") : "<p>No duplicate candidates found.</p>") : errors.duplicates ? `<p role="alert">${esc(errors.duplicates)}</p><button type="button" data-retry-duplicates>Retry duplicate check</button>` : "<p>Checking duplicate identities\u2026</p>"}`;
+      return `<p>Aliases connect imported spellings to this member. Previous names are preserved by default when renaming.</p>${editing ? `${draft.aliases.map((a, i) => `<div class="mw-alias-row"><span>${esc(a.alias)}</span><button type="button" data-remove-alias="${i}" aria-label="Remove alias ${esc(a.alias)}">Remove</button></div>`).join("")}<label>Aliases (one per line)<textarea data-aliases rows="7">${esc(draft.aliases.map((a) => a.alias).join("\n"))}</textarea></label>` : member.aliases.map((a) => `<article class="mw-history"><strong>${esc(a.alias)}</strong><details data-member-alias-provenance data-profile-disclosure="alias-source-${esc(a.id)}"><summary data-member-disclosure-summary="alias-source-${esc(a.id)}">Record provenance</summary><small>${esc(a.source)}</small></details></article>`).join("") || "<p>No aliases recorded.</p>"}<h3>Possible duplicates</h3>${cache.duplicates ? (cache.duplicates.length ? cache.duplicates.map((r) => `<article class="mw-history"><strong>${esc(r.name)}</strong><p>${esc(statusLabel(r.status))} \u00b7 ${esc(callLabel(r.call_level))}</p><p>${esc(r.duties)} duties \u00b7 ${esc(r.postings)} postings \u00b7 ${esc(r.leave)} leave records \u00b7 ${esc(r.memberships)} memberships</p><p>Positions: ${esc((r.designations as string[]).join(", "))}</p>${r.member ? `<details><summary>Compare profile details</summary><p>Surviving member: ${esc(member.canonical_name)} \u00b7 ${esc(statusLabel(member.active_status))} \u00b7 ${esc(callLabel(member.call_level))}</p><p>Surviving aliases: ${esc(member.aliases.map((a) => a.alias).join(", ") || "None")}</p><p>Other member aliases: ${esc((r.member as DepartmentMember).aliases.map((a) => a.alias).join(", ") || "None")}</p><h4>Other member's designation history</h4>${(r.member as DepartmentMember).designations.map((d) => `<p>${esc(d.designation)} \u00b7 ${esc(d.effective_from)} to ${esc(d.effective_to || "Ongoing")} \u00b7 ${esc(d.notes)}</p>`).join("") || "<p>No positions recorded.</p>"}<h4>Other member's dated call levels</h4>${((r.member as DepartmentMember).call_level_changes || []).map((c) => `<p>${esc(callLabel(c.call_level))} from ${esc(c.effective_from)}</p>`).join("") || "<p>No dated changes.</p>"}</details>` : ""}${admin ? `<button type="button" class="danger-button" data-merge-source="${esc(r.id)}">Merge into ${esc(member.canonical_name)}</button>` : ""}</article>`).join("") : "<p>No duplicate candidates found.</p>") : errors.duplicates ? `<p role="alert">${esc(errors.duplicates)}</p><button type="button" data-retry-duplicates>Retry duplicate check</button>` : "<p>Checking duplicate identities\u2026</p>"}`;
     if (tab === "postings")
       return `<button type="button" class="primary" data-add-record>Add Posting</button><p>Dated postings determine monthly unit and call-level overrides. Base department default: ${esc(callLabel(member.call_level))}.</p>${history()}`;
     if (tab === "leave")
-      return `<button type="button" class="primary" data-add-record>Add Leave</button><p>Approved leave blocks availability. Requested or imported pending leave needs review; cancelled leave does not block duties.</p>${history()}`;
+      return `<button type="button" class="primary" data-add-record>Add Leave</button><p>Review the returned approval state and session for each leave record. Pending requests are not confirmed absence. Availability depends on the operation; use its returned blocking counts and duty safety checks.</p>${history()}`;
     // Extra-duty ledger (docs/extra_duty_contract.md §8), filled after render.
     if (tab === "duties" && admin)
       return `${history()}<section data-extra-duties-host aria-label="Extra duties"></section>`;
@@ -578,16 +652,11 @@ export async function openMemberWorkspace(
   }
   function render() {
     if (!dialog.open) return;
+    dialog.querySelectorAll<HTMLDetailsElement>("details[data-profile-disclosure]").forEach(details => {
+      disclosureStates.set(details.dataset.profileDisclosure!, details.open);
+    });
     const call = memberCallPresentation(member);
-    const today = new Date().toLocaleDateString("en-CA");
-    const position =
-      member.designations
-        .filter(
-          (d) =>
-            d.effective_from <= today &&
-            (!d.effective_to || d.effective_to >= today),
-        )
-        .slice(-1)[0]?.designation || "Position not recorded";
+    const designation = memberDesignationPresentation(member);
     const focused = document.activeElement as HTMLElement | null;
     const contentScroll = dialog.querySelector(".mw-content")?.scrollTop || 0;
     const railScroll = dialog.querySelector(".mw-rail")?.scrollLeft || 0;
@@ -600,7 +669,7 @@ export async function openMemberWorkspace(
               `data-${key.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`)}="${CSS.escape(value || "")}"`,
           )
         : [];
-    dialog.innerHTML = `<header class="mw-header"><div><small>Department member</small><h2 data-member-identity>${esc(member.canonical_name)}</h2><span>${esc(statusLabel(member.active_status))} · <span data-member-call-identity aria-label="${esc(`${call.caption}: ${call.label}`)}">${call.returned ? esc(call.label) : `${esc(call.caption)}: ${esc(call.label)}`}</span></span>${call.note ? ` <span data-member-call-note>${esc(call.note)}</span>` : ""}</div><button type="button" data-close aria-label="Close member profile">×</button></header><p class="mw-sections-cue" data-member-sections-cue id="${sectionsCueId}" hidden></p><div class="mw-layout"><nav class="mw-rail" role="tablist" aria-label="Member sections" tabindex="-1">${Object.entries(
+    dialog.innerHTML = `<header class="mw-header"><div><div data-member-identity-region role="region" aria-label="Member identity" tabindex="-1"><small>Department member</small><h2 data-member-identity>${esc(member.canonical_name)}</h2><p data-member-designation><strong>${esc(designation.label)}</strong></p><span data-member-status-row><span data-member-active-status>${esc(statusLabel(member.active_status))}</span> · <span data-member-call-identity aria-label="${esc(`${call.caption}: ${call.label}`)}">${call.returned ? esc(call.label) : `${esc(call.caption)}: ${esc(call.label)}`}</span></span>${call.note ? ` <span data-member-call-note>${esc(call.note)}</span>` : ""}<p data-member-designation-context>${esc(designation.note)}</p></div><small data-member-identity-cue hidden>Scroll for full identity. Use Up/Down arrows.</small></div><button type="button" data-close aria-label="Close member profile">${decorativeIcon("close")}</button></header><p class="mw-sections-cue" data-member-sections-cue id="${sectionsCueId}" hidden></p><div class="mw-layout"><nav class="mw-rail" role="tablist" aria-label="Member sections" tabindex="-1">${Object.entries(
       labels,
     )
       .map(
@@ -611,9 +680,14 @@ export async function openMemberWorkspace(
       )
       .join(
         "",
-      )}</nav><form id="mw-form"><section class="mw-content" id="mw-panel" role="tabpanel" aria-labelledby="mw-tab-${tab}" tabindex="0">${content()}</section><div id="mw-error" class="mw-error" role="alert"></div><footer class="mw-footer"><span id="mw-save-status" aria-live="polite">${dirty() ? "Unsaved changes" : editing ? "Editing profile" : ""}</span>${editing ? `<button type="button" data-cancel-edit>Cancel</button><button class="primary" type="submit" ${busy ? "disabled" : ""}>${busy ? "Saving…" : "Save changes"}</button>` : admin ? `<button type="button" data-edit>Edit profile</button>` : `<span>View only</span>`}<button type="button" data-prev ${ids.indexOf(id) <= 0 ? "disabled" : ""}>Previous</button><button type="button" data-next ${ids.indexOf(id) < 0 || ids.indexOf(id) >= ids.length - 1 ? "disabled" : ""}>Next</button></footer></form></div>`;
+      )}</nav><form id="mw-form"><section class="mw-content" id="mw-panel" role="tabpanel" aria-labelledby="mw-tab-${tab}" tabindex="0">${content()}</section><div id="mw-error" class="mw-error" role="alert"></div><footer class="mw-footer profile-editor-footer"><div class="profile-editor-state"><span id="mw-save-status" aria-live="polite">${busy ? "Saving..." : dirty() ? "Unsaved changes" : editing ? "Editing profile" : ""}</span>${editing ? '<p class="profile-editor-scope" data-profile-save-scope>Save and Cancel cover Details, positions, call-level changes and aliases together.</p>' : ""}</div><div class="profile-editor-actions" role="group" aria-label="Profile actions">${editing ? `<button type="button" data-cancel-edit ${busy ? "disabled" : ""}>Cancel</button><button class="primary" type="submit" ${busy ? "disabled" : ""}>${busy ? "Saving…" : "Save changes"}</button>` : admin ? `<button type="button" data-edit>Edit profile</button>` : `<span>View only</span>`}</div><div class="profile-editor-navigation" role="group" aria-label="Other member profiles"><button type="button" data-prev ${ids.indexOf(id) <= 0 ? "disabled" : ""}>Previous</button><button type="button" data-next ${ids.indexOf(id) < 0 || ids.indexOf(id) >= ids.length - 1 ? "disabled" : ""}>Next</button></div></footer></form></div>`;
+    dialog.querySelectorAll<HTMLDetailsElement>("details[data-profile-disclosure]").forEach(details => {
+      if (disclosureStates.has(details.dataset.profileDisclosure!)) details.open = disclosureStates.get(details.dataset.profileDisclosure!)!;
+      const summary = details.querySelector<HTMLElement>(":scope > summary");
+      if (summary) summary.dataset.memberDisclosureSummary = details.dataset.profileDisclosure!;
+    });
     updateMemberIdentityScroll(dialog);
-    dialog.querySelector<HTMLButtonElement>("[data-close]")!.onclick = close;
+    dialog.querySelector<HTMLButtonElement>("[data-close]")!.onclick = () => { close(); };
     const form = dialog.querySelector<HTMLFormElement>("#mw-form")!;
     formValidation = installFormValidation(form, dialog.querySelector<HTMLElement>("#mw-error")!, (path) => {
       if (path.length === 1 && typeof path[0] === "string")
@@ -626,6 +700,7 @@ export async function openMemberWorkspace(
     });
     const clearLocalErrors = () => {
       Object.keys(fieldErrors).forEach(key => delete fieldErrors[key]);
+      registeredErrorSections.clear();
       form.querySelectorAll<HTMLElement>("[data-member-validation-hint]").forEach(hint => {
         form.querySelectorAll<HTMLElement>('[aria-describedby]').forEach(field => {
           const ids = (field.getAttribute("aria-describedby") || "").split(/\s+/).filter(id => id && id !== hint.id);
@@ -638,9 +713,17 @@ export async function openMemberWorkspace(
         });
         hint.remove();
       });
+      refreshSectionMetadata();
     };
     form.addEventListener("input", clearLocalErrors);
     form.addEventListener("change", clearLocalErrors);
+    form.addEventListener("invalid", event => {
+      const field = event.target as HTMLElement;
+      if (field.matches("[data-field]")) registeredErrorSections.add("details");
+      else if (field.matches("[data-d], [data-call-change]")) registeredErrorSections.add("roles");
+      else if (field.matches("[data-aliases]")) registeredErrorSections.add("names");
+      refreshSectionMetadata();
+    }, true);
     const extraDutiesHost = dialog.querySelector<HTMLElement>("[data-extra-duties-host]");
     if (extraDutiesHost) {
       const loadExtraDuties = () => {
@@ -831,9 +914,11 @@ export async function openMemberWorkspace(
     dialog
       .querySelector("[data-cancel-edit]")
       ?.addEventListener("click", () => {
+        if (busy) return;
         if (dirty() && !confirm("Discard unsaved changes?")) return;
         draft = structuredClone(member);
         Object.keys(fieldErrors).forEach((key) => delete fieldErrors[key]);
+        registeredErrorSections.clear();
         editing = false;
         render();
       });
@@ -861,6 +946,8 @@ export async function openMemberWorkspace(
               render();
               return;
             }
+            const cancelledPersonId = id;
+            const cancelledRecordId = String(leave.id);
             if (
               !confirm(
                 `Cancel leave for ${member.canonical_name}?\nFrom: ${leave.starts_on ?? "Not recorded"}\nUntil: ${leave.ends_on ?? "Not recorded"}\nCategory: ${statusLabel(leave.type)}\nRecord ID: ${leave.id}\n\nIt will no longer block availability. History is retained. Existing duties remain assigned and may need review.`,
@@ -873,6 +960,7 @@ export async function openMemberWorkspace(
                 `/api/v1/leave/requests/${button.dataset.cancelProfileLeave}/cancel`,
                 { method: "POST" },
               );
+              notifyParent({kind: "leave", personId: cancelledPersonId, recordId: cancelledRecordId, operation: "cancel"});
               delete cache.leave;
               delete cache.activity;
               await loadTab();
@@ -890,12 +978,16 @@ export async function openMemberWorkspace(
         (button) =>
           (button.onclick = () => {
             const key = tab;
+            const savedKind = key === "postings" ? "units" : "leave";
+            const savedPersonId = id;
+            const savedRecordId = button.dataset.editRecord;
             void openRecordEditor(
               key === "postings" ? "units" : "leave",
               id,
               button.dataset.editRecord,
               admin,
               () => {
+                notifyParent({kind: savedKind, personId: savedPersonId, recordId: savedRecordId, operation: "save"});
                 delete cache[key];
                 delete cache.activity;
                 delete errors[key];
@@ -1061,16 +1153,18 @@ export async function openMemberWorkspace(
       ["[data-next]", 1],
     ] as const)
       dialog.querySelector(selector)?.addEventListener("click", () => {
-        if (dirty() && !confirm("Discard unsaved changes and switch member?"))
+        if (busy || (dirty() && !confirm("Discard unsaved changes and switch member?")))
           return;
         draft = structuredClone(member);
-        close();
+        if (!close(true)) return;
         void openMemberWorkspace(
           ids[ids.indexOf(id) + offset],
           admin,
           changed,
           ids,
           tab,
+          undefined,
+          parentLifecycle,
         );
       });
     const vertical = memberSectionsVertical(dialog);
@@ -1127,6 +1221,7 @@ export async function openMemberWorkspace(
         );
         draft = structuredClone(member);
         Object.keys(fieldErrors).forEach((key) => delete fieldErrors[key]);
+        registeredErrorSections.clear();
         editing = false;
         delete cache.activity;
         changed(member);
@@ -1139,7 +1234,14 @@ export async function openMemberWorkspace(
             : ["canonical_name", "active_status", "call_level"].includes(path?.[0]) ? "details" : tab;
           if (destination !== tab) { tab = destination; render(); }
         }
+        if (Array.isArray(issues)) issues.forEach(issue => {
+          const field = Array.isArray(issue?.loc) ? issue.loc.filter((part: unknown) => part !== "body")[0] : undefined;
+          if (["designations", "call_level_changes"].includes(field)) registeredErrorSections.add("roles");
+          else if (["canonical_name", "active_status", "call_level"].includes(field)) registeredErrorSections.add("details");
+          else if (field === "aliases") registeredErrorSections.add("names");
+        });
         formValidation.show(error);
+        refreshSectionMetadata();
         const target = dialog.querySelector<HTMLElement>("#mw-error")!;
         const detail = (
           error as Error & { detail?: { current?: DepartmentMember } }
@@ -1199,10 +1301,15 @@ export async function openMemberWorkspace(
           save.disabled = false;
           save.textContent = "Save changes";
         }
+        const cancelEdit = dialog.querySelector<HTMLButtonElement>("[data-cancel-edit]");
+        if (cancelEdit) cancelEdit.disabled = false;
+        const saveStatus = dialog.querySelector<HTMLElement>("#mw-save-status");
+        if (saveStatus) saveStatus.textContent = dirty() ? "Unsaved changes" : editing ? "Editing profile" : "";
       }
     };
   }
   function status() {
+    refreshSectionMetadata();
     dialog.querySelector("#mw-save-status")!.textContent = dirty()
       ? "Unsaved changes"
       : "Editing profile";
@@ -1228,10 +1335,12 @@ export async function openMemberWorkspace(
         analysis?: Row;
         months?: string[];
       }>(`/api/v1/admin/member-workspace/${id}/${key}`);
-      cache[key] = result.rows;
+      if (!Array.isArray(result.rows)) {
+        errors[key] = "History records were not returned. Use Retry to request this section again.";
+      } else cache[key] = result.rows;
       if (key === "duties") {
         dutyAnalysis = result.analysis;
-        dutyMonths = result.months || [];
+        dutyMonths = Array.isArray(result.months) ? result.months : [];
       }
     } catch (error) {
       errors[key] = (error as Error).message;
@@ -1248,13 +1357,13 @@ let csvExampleCueSequence = 0;
 export function openMemberCsvImport(done: () => void) {
   const dialog = workspaceDialog("Import department members", "mw-import");
   const exampleCueId = `mw-csv-example-cue-${++csvExampleCueSequence}`;
-  dialog.innerHTML = `<header class="mw-header"><div><h2>Import department members</h2><div data-import-steps>${steps(MEMBER_IMPORT_STEPS, 0)}</div></div><button type="button" data-close aria-label="Close import">×</button></header><div class="mw-content"><div class="registry-actions"><a class="primary" href="/templates/department-members.csv" download>Download blank CSV template</a><a class="icon-button" href="/templates/department-members-example.csv" download>Download example CSV (filled)</a></div><p>Only canonical_name is required. Blank cells keep the member's current value. New members default to Active and Unassigned.</p><details class="mw-csv-help" open><summary>CSV format and example</summary><p>One member per row. Open the example in Excel, replace the example rows with your members, then save as <strong>CSV UTF-8</strong>.</p><p class="mw-csv-example-cue" id="${esc(exampleCueId)}">If the example extends beyond this panel, scroll horizontally. With a keyboard, focus the example and use the Left and Right arrow keys.</p><pre class="mw-csv-example" tabindex="0" role="region" aria-label="CSV example" aria-describedby="${esc(exampleCueId)}">member_id,canonical_name,active_status,call_level,designation,designation_effective_from
+  dialog.innerHTML = `<header class="mw-header"><div><h2>Import department members</h2><div data-import-steps>${steps(MEMBER_IMPORT_STEPS, 0)}</div></div><button type="button" data-close aria-label="Close import">${decorativeIcon("close")}</button></header><div class="mw-content"><div class="registry-actions"><a class="primary" href="/templates/department-members.csv" download>Download blank CSV template</a><a class="icon-button" href="/templates/department-members-example.csv" download>Download example CSV (filled)</a></div><p>Only canonical_name is required. Blank cells keep the member's current value. New members default to Active and Unassigned.</p><details class="mw-csv-help" open><summary>CSV format and example</summary><p>One member per row. Open the example in Excel, replace the example rows with your members, then save as <strong>CSV UTF-8</strong>.</p><p class="mw-csv-example-cue" id="${esc(exampleCueId)}">If the example extends beyond this panel, scroll horizontally. With a keyboard, focus the example and use the Left and Right arrow keys.</p><pre class="mw-csv-example" tabindex="0" role="region" aria-label="CSV example" aria-describedby="${esc(exampleCueId)}">member_id,canonical_name,active_status,call_level,designation,designation_effective_from
 ,Dr Example Member One,active,1ST_CALL,SENIOR RESIDENT,2026-10-01
 ,Dr Example Member Two,active,2ND_CALL,SENIOR RESIDENT (DM TRAINEE),2026-10-01
 ,Dr Example Member Three,active,3RD_CALL,ASSISTANT PROFESSOR,
 ,Dr Example Member Four,,4TH_CALL,ASSOCIATE PROFESSOR,
 ,Dr Example Member Five,,5TH_CALL,PROFESSOR,
-,Dr Example Member Six,,,,</pre><table class="mw-csv-columns"><caption>CSV field reference</caption><colgroup><col class="mw-csv-column-name"><col></colgroup><thead><tr><th scope="col">Column</th><th scope="col">What to enter</th></tr></thead><tbody><tr><th scope="row">member_id</th><td>Optional. Leave blank; names are matched automatically. Paste the ID from a profile only to force a match.</td></tr><tr><th scope="row">canonical_name</th><td><strong>Required.</strong> Full name, e.g. Dr Example Member One. Saved aliases and close spellings are matched.</td></tr><tr><th scope="row">active_status</th><td>Optional: active, inactive or archived. Use active to restore an archived member.</td></tr><tr><th scope="row">call_level</th><td>Optional: 1ST_CALL, 2ND_CALL, 3RD_CALL, CO_4TH_CALL, 4TH_CALL, 5TH_CALL, PAIN, SICU, DRP, NEURO_ICU. Enter __CLEAR__ to remove a default call level.</td></tr><tr><th scope="row">designation</th><td>Optional position, e.g. SENIOR RESIDENT, ASSISTANT PROFESSOR, PROFESSOR.</td></tr><tr><th scope="row">designation_effective_from</th><td>Optional start date of the position as YYYY-MM-DD. In roster sync a blank date means today; other modes require it.</td></tr></tbody></table><p>A plain list with only a canonical_name column (or just one name per line) also works.</p></details><form id="csv-form"><label>CSV UTF-8 file (up to 2 MB and 5,000 members)<input type="file" accept=".csv,text/csv" required></label><label>Import mode<select name="mode"><option value="roster_sync">Sync full department roster (create, update, list missing)</option><option value="create_only">Create new members only</option><option value="update_existing">Update existing members only</option></select></label><p>Roster sync treats the file as the complete current list: it adds new names, updates call levels, positions and status of matched members, and lists active members missing from the file so you can choose who to archive.</p><div id="csv-column-mapping"></div><button class="primary" type="submit">Preview import</button></form><p role="status" id="csv-message"></p><div id="csv-preview"></div></div>`;
+,Dr Example Member Six,,,,</pre><table class="mw-csv-columns"><caption>CSV field reference</caption><colgroup><col class="mw-csv-column-name"><col></colgroup><thead><tr><th scope="col">Column</th><th scope="col">What to enter</th></tr></thead><tbody><tr><th scope="row">member_id</th><td>Optional. Leave blank; names are matched automatically. Paste the ID from a profile only to force a match.</td></tr><tr><th scope="row">canonical_name</th><td><strong>Required.</strong> Full name, e.g. Dr Example Member One. Saved aliases and close spellings are matched.</td></tr><tr><th scope="row">active_status</th><td>Optional: active, inactive or archived. Use active to restore an archived member.</td></tr><tr><th scope="row">call_level</th><td>Optional: 1ST_CALL, 2ND_CALL, 3RD_CALL, CO_4TH_CALL, 4TH_CALL, 5TH_CALL, PAIN, SICU, DRP, NEURO_ICU. Enter __CLEAR__ to remove a default call level.</td></tr><tr><th scope="row">designation</th><td>Optional position, e.g. SENIOR RESIDENT, ASSISTANT PROFESSOR, PROFESSOR.</td></tr><tr><th scope="row">designation_effective_from</th><td>Optional start date of the position as YYYY-MM-DD. In roster sync a blank date means today; other modes require it.</td></tr></tbody></table><p>A plain list with only a canonical_name column (or just one name per line) also works.</p></details><p>Files and selections are kept in this open import. Replacing the file resets mappings and review choices. Closing, leaving or reloading may require choosing the file again.</p><form id="csv-form"><label>CSV UTF-8 file (up to 2 MB and 5,000 members)<input type="file" accept=".csv,text/csv" required></label><label>Import mode<select name="mode"><option value="roster_sync">Sync full department roster (create, update, list missing)</option><option value="create_only">Create new members only</option><option value="update_existing">Update existing members only</option></select></label><p><strong>Roster sync:</strong> create and update members, then review active members missing from the file for optional archiving. <strong>Create only:</strong> add new members; existing matches need another mode. <strong>Update existing:</strong> update matched members; new names need another mode. The returned preview below confirms the reviewed mode before Apply.</p><div id="csv-column-mapping"></div><button class="primary" type="submit">Preview import</button></form><p role="status" id="csv-message"></p><div id="csv-preview"></div></div>`;
   let file: File | undefined;
   let preview: { id: string; mode?: string; headers: string[]; rows: Row[]; missing?: Row[] } | undefined;
   let applied = false;
@@ -1324,7 +1433,7 @@ export function openMemberCsvImport(done: () => void) {
       renderPreview();
       message.textContent = `${preview!.rows.length} rows previewed. Nothing has been saved.`;
     } catch (error) {
-      if (alive()) message.textContent = (error as Error).message;
+      if (alive()) message.textContent = `${(error as Error).message} ${importRecoveryText("preview")}`;
     } finally {
       unlock();
       busy = false;
@@ -1347,19 +1456,19 @@ export function openMemberCsvImport(done: () => void) {
     const rows = preview!.rows;
     const fresh = rows.filter((r) => !r.person_id);
     const matched = rows.filter((r) => r.person_id);
-    const missing = preview!.missing || [];
+    const missing = Array.isArray(preview!.missing) ? preview!.missing : undefined;
     const changed = matched.filter((r) => r.action === "update").length;
     const section = (title: string, hint: string, items: Row[]) =>
       `<section class="mw-roster-list"><h4>${esc(title)} (${items.length})</h4><p>${esc(hint)}</p>${items.length ? items.map(rowHtml).join("") : "<p>None.</p>"}</section>`;
-    root.innerHTML = `<h3>Compare roster with department members</h3><p>${fresh.length} new in file / ${matched.length} matched (${changed} with changes) / ${missing.length} existing members missing from file</p><p>Correct values below, then refresh preview. Every applied change is recorded in that member's profile activity. Call-level changes take effect today and are added to call history; a new position ends the previous one the day before.</p>${section(
+    root.innerHTML = `<h3>Compare roster with department members</h3><p>${fresh.length} new in file / ${matched.length} matched (${changed} with changes) / ${missing?.length ?? "Not returned"} existing members missing from file</p><p>Correct values below, then refresh preview. Every applied change is recorded in that member's profile activity. Call-level changes take effect today and are added to call history; a new position ends the previous one the day before.</p>${section(
       "New in file",
-      "These names did not match any existing member or alias. Check possible matches before creating new members.",
+      "No existing member ID was returned for these rows. Resolve errors and possible matches before creating new members.",
       fresh,
     )}${section(
       "Matched existing members",
       "Blank cells keep the current value. Rows marked unchanged need no update.",
       matched,
-    )}<section class="mw-roster-list"><h4>Existing but missing from file (${missing.length})</h4><p>These active members are not in the uploaded roster. Tick the ones to archive; unticked members stay active. Archiving keeps their duties, leave and history.</p>${missing.length ? `<div class="registry-actions"><button type="button" data-archive-all>Tick all</button><button type="button" data-archive-none>Untick all</button></div>${missing.map((m) => `<article class="mw-history"><label><input type="checkbox" data-archive="${esc(m.id)}"> Archive <strong>${esc(m.canonical_name)}</strong></label><p>${esc(m.call_level || "Unassigned")} &middot; ${esc(m.designation || "No current designation")}</p>${m.possible_row ? `<p class="mw-error">Possibly file row ${esc(m.possible_row)} (spelling differs) &mdash; resolve that row before archiving.</p>` : ""}<button type="button" data-csv-review-member="${esc(m.id)}">Review member profile</button></article>`).join("")}` : "<p>None. Every active member is in the file.</p>"}</section>${actions()}`;
+    )}<section class="mw-roster-list"><h4>Existing but missing from file (${missing?.length ?? "Not returned"})</h4><p>These active members are not in the uploaded roster. Tick the ones to archive; unticked members stay active. Archiving keeps their duties, leave and history.</p>${missing?.length ? `<div class="registry-actions"><button type="button" data-archive-all>Tick all</button><button type="button" data-archive-none>Untick all</button></div>${missing.map((m) => `<article class="mw-history"><label><input type="checkbox" data-archive="${esc(m.id)}"> Archive <strong>${esc(m.canonical_name)}</strong></label><p>${esc(m.call_level || "Unassigned")} &middot; ${esc(m.designation || "No current designation")}</p>${m.possible_row ? `<p class="mw-error">Possibly file row ${esc(m.possible_row)} (spelling differs) &mdash; resolve that row before archiving.</p>` : ""}<button type="button" data-csv-review-member="${esc(m.id)}">Review member profile</button></article>`).join("")}` : Array.isArray(missing) ? "<p>None. No missing active members were returned by this preview.</p>" : "<p>Missing-member scope was not returned. No archive choices are available from this preview.</p>"}</section>${actions()}`;
   }
   function actions() {
     return `<button type="button" data-refresh>Refresh preview after corrections</button><button type="button" data-report>Download row report</button><button class="primary" type="button" data-apply aria-describedby="csv-apply-blocker">${preview!.mode === "roster_sync" ? "Apply roster changes" : "Apply selected rows"}</button><p class="import-apply-blocker" id="csv-apply-blocker" data-apply-blocker hidden></p><p role="status" data-apply-status aria-live="polite"></p>`;
@@ -1378,6 +1487,8 @@ export function openMemberCsvImport(done: () => void) {
         raw,
         status: "matched",
         name: String(before.canonical_name),
+        selectedId: String(row.person_id),
+        selectedIdentity: { call_level: typeof before.call_level === "string" ? before.call_level : undefined, designation: typeof before.designation === "string" ? before.designation : undefined, units: Array.isArray(before.units) ? before.units.map(String) : undefined, status: typeof before.active_status === "string" ? before.active_status : undefined },
         method: values.member_id ? "member_id" : exact ? "canonical_exact" : "approved_alias",
       };
     }
@@ -1385,7 +1496,7 @@ export function openMemberCsvImport(done: () => void) {
       return {
         raw,
         status: "needs_review",
-        reason: `Possible duplicate of ${suggestions.map((m) => `${m.name} (${m.status || "member"})`).join(", ")}. Choose the member, or confirm this is a different person.`,
+        reason: `Possible duplicate of ${suggestions.map((m) => `${m.name} (${memberIdentityText(m)})`).join(", ")}. Choose the member, or confirm this is a different person.`,
         candidates: suggestions.map((m) => ({
           id: String(m.id),
           name: String(m.name),
@@ -1400,6 +1511,7 @@ export function openMemberCsvImport(done: () => void) {
     return {
       raw,
       status: "not_found",
+      newMember: row.action === "create",
       reason: distinct
         ? "You confirmed this is a different person; a new member will be created."
         : "No existing member with this name; a new member will be created.",
@@ -1415,9 +1527,9 @@ export function openMemberCsvImport(done: () => void) {
     const decisions = [
       suggestions.length ? `<button type="button" class="quiet-button" data-csv-distinct="${esc(key)}">This is a different person</button>` : "",
       distinct || chosen ? `<button type="button" class="quiet-button" data-csv-undo="${esc(key)}">Undo my choice</button>` : "",
-      ...suggestions.map((suggestion) => `<button type="button" class="quiet-button" data-csv-review-member="${esc(suggestion.id)}">Review profile: ${esc(suggestion.name)}</button>`),
+      ...suggestions.map((suggestion) => `<button type="button" class="quiet-button" data-csv-review-member="${esc(suggestion.id)}">Review profile: ${esc(suggestion.name)} · ${esc(memberIdentityText(suggestion))}</button>`),
     ].join("");
-    return `<article class="mw-history" data-csv-row="${esc(key)}"><label><input type="checkbox" data-include="${row.row_number}" ${["invalid", "needs_review"].includes(String(row.action)) ? "" : "checked"}> Include row ${row.row_number}</label><strong>${esc(String(row.action).replace(/_/g, " "))}</strong>${memberMatch(key, matchView(row))}${decisions ? `<div class="registry-actions">${decisions}</div>` : ""}${changeSummary(row)}${errors.length ? `<p class="mw-error">${esc(errors.join(" · "))}</p>` : ""}<details class="import-row-edit"><summary>Edit row</summary><p>Change values, then refresh the preview. Paste a member ID to force a match.</p>${["member_id", "canonical_name", "active_status", "call_level", "designation", "designation_effective_from"].map((field) => `<label>${esc(field.replace(/_/g, " "))}<input data-row="${row.row_number}" data-key="${field}" value="${esc(values[field])}"></label>`).join("")}</details><details><summary>Before → After</summary><pre>${esc(JSON.stringify({ before: row.before, after: row.after, designation_change: row.designation_change }, null, 2))}</pre></details></article>`;
+    return `<article class="mw-history" data-csv-row="${esc(key)}"><label><input type="checkbox" data-include="${row.row_number}" ${["invalid", "needs_review"].includes(String(row.action)) ? "" : "checked"}> Include row ${row.row_number}</label><strong>${esc(String(row.action).replace(/_/g, " "))}</strong>${importRowAttention({ action: String(row.action), issues: errors, matchStatus: suggestions.length ? "needs_review" : undefined })}${memberMatch(key, { ...matchView(row), pending: stale })}${decisions ? `<div class="registry-actions">${decisions}</div>` : ""}${changeSummary(row)}${errors.length ? `<p class="mw-error">${esc(errors.join(" · "))}</p>` : ""}<details class="import-row-edit"><summary>Edit row</summary><p>Change values, then refresh the preview. Paste a member ID to force a match.</p>${["member_id", "canonical_name", "active_status", "call_level", "designation", "designation_effective_from"].map((field) => `<label>${esc(field.replace(/_/g, " "))}<input data-row="${row.row_number}" data-key="${field}" value="${esc(values[field])}"></label>`).join("")}</details><details><summary>Before → After</summary><pre>${esc(JSON.stringify({ before: row.before, after: row.after, designation_change: row.designation_change }, null, 2))}</pre></details></article>`;
   }
   /** Plain-language reason Apply cannot run yet, or "" when the reviewed rows can be applied. */
   function blockerText(): string {
@@ -1443,6 +1555,8 @@ export function openMemberCsvImport(done: () => void) {
     return applyBlocker(rows, excluded);
   }
   function updateBlocker() {
+    updateMemberMatchPending(dialog, stale);
+    updateImportPreviewAuthority(dialog, stale);
     const host = dialog.querySelector<HTMLElement>("[data-apply-blocker]");
     if (!host) return;
     const text = blockerText();
@@ -1510,6 +1624,7 @@ export function openMemberCsvImport(done: () => void) {
     };
     root.querySelector("[data-archive-all]")?.addEventListener("click", retainArchiveChoices);
     root.querySelector("[data-archive-none]")?.addEventListener("click", retainArchiveChoices);
+    root.insertAdjacentHTML("afterbegin", `<section aria-label="Server import preview scope"><p>${esc(importPreviewModeText("members", preview!.mode))}</p><p>${preview!.rows.length} member rows returned for review.${preview!.mode === "roster_sync" ? Array.isArray(preview!.missing) ? ` ${preview!.missing.length} active members returned as missing from the file; only checked archive choices are submitted.` : " Missing-member scope was not returned." : ""}</p><p data-import-preview-authority>${importPreviewAuthorityText(stale)}</p></section>`);
     updateBlocker();
     root
       .querySelectorAll<HTMLButtonElement>("[data-csv-review-member]")
@@ -1600,6 +1715,7 @@ export function openMemberCsvImport(done: () => void) {
       busy = true;
       columnSequence++;
       const unlock = lockWorkspaceControls(dialog);
+      setImportStep(3);
       status.textContent = "Applying reviewed member changes…";
       try {
         const result = await request<Row>(
@@ -1628,8 +1744,12 @@ export function openMemberCsvImport(done: () => void) {
           );
         done();
       } catch (error) {
-        if (alive()) dialog.querySelector("#csv-message")!.textContent = status.textContent =
-          (error as Error).message;
+        if (alive()) {
+          setImportStep(applied ? MEMBER_IMPORT_STEPS.length : 2);
+          dialog.querySelector("#csv-message")!.textContent = status.textContent = applied
+            ? `Import was confirmed, but the result view could not finish updating. ${(error as Error).message} Return to the member list to view the saved result.`
+            : `${(error as Error).message} ${importRecoveryText("apply")}`;
+        }
       } finally {
         unlock();
         busy = false;
@@ -1646,11 +1766,13 @@ export function openMemberCsvImport(done: () => void) {
     applied = false;
     stale = true;
     preview = undefined;
+    setImportStep(0);
     Object.keys(corrections).forEach((k) => delete corrections[k]);
     Object.keys(mapping).forEach((k) => delete mapping[k]);
     includeChoices.clear();
     archiveChoices.clear();
     dialog.querySelector("#csv-preview")!.innerHTML = "";
+    dialog.querySelector("#csv-column-mapping")!.innerHTML = "";
     if (!file) return;
     const inspectedFile = file;
     const form = new FormData();
@@ -1702,7 +1824,7 @@ export function openMemberCsvImport(done: () => void) {
       if (sequence === columnSequence && file === inspectedFile && dialog.isConnected && dialog.open)
         dialog.querySelector("#csv-message")!.textContent = (
         error as Error
-      ).message;
+      ).message + " " + importRecoveryText("columns");
     }
   };
   dialog.querySelector<HTMLSelectElement>("select[name=mode]")!.onchange =

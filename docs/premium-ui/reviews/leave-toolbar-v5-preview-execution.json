@@ -1,0 +1,41 @@
+{
+  "recorded_at_utc": "2026-10-28T17:49:30.273185+00:00",
+  "reviewer": "/root",
+  "scope": "48 bounded scratch-v5 toolbar role/count/layout contexts. No current application integration or original141 acceptance yet.",
+  "preview": "http://127.0.0.1:5201",
+  "candidate": "tmp/leave141147-status-v5",
+  "test": {
+    "path": "frontend/tests/premium-leave-toolbar-hierarchy.browser.mjs",
+    "sha256": "1a960411925eccc884de7ee36fade1c4fd61a454a5a74ac40bace711e184a70b"
+  },
+  "source_inspection": "Root read actual route whitelist, native summary handling, primary order, role/count, full text/44px geometry, actual Add/Import+focus, template download events+headers and local preview/refusal assertions. Test does not apply approvals or test server authorization.",
+  "runs": [
+    {
+      "report": "docs/premium-ui/qa-leave-toolbar-hierarchy.json",
+      "sha256": "067ba3f36299a597bd8f68c1c14ae9278e4258eff0a8d582888273c1201efded",
+      "log": "tmp/leave-toolbar-hierarchy-v5-final.log",
+      "log_sha256": "e02f5cf6cfaf081cc726e7d43f82ea7774084fcd938c026a0bd2d33829daafd1",
+      "contexts": 24,
+      "terminal_exit_code": 0,
+      "terminal_observation": "Agent process handles33646/15357 terminal0; root inspected passed24 summaries and matching stored report/test hashes."
+    },
+    {
+      "report": "docs/premium-ui/qa-leave-toolbar-hierarchy-stress.json",
+      "sha256": "f18dd953344af67b5050733a74a62cf76645252517c9c31b69d8b77bbacabd97",
+      "log": "tmp/leave-toolbar-hierarchy-v5-stress.log",
+      "log_sha256": "51875b79202355ae7f9163957e6b42eec420e25700c3a827bed369f4868ec097",
+      "contexts": 24,
+      "terminal_exit_code": 0,
+      "terminal_observation": "Agent process handles33646/15357 terminal0; root inspected passed24 summaries and matching stored report/test hashes."
+    }
+  ],
+  "total_contexts": 48,
+  "limits": [
+    "Two historical harness failures preserved (native summary role assumption and More dismissal between actual downloads); final test corrected without app change.",
+    "Admin light and board dark only; not a full role-by-theme cross product.",
+    "Current app remains before-candidate source; final integration/regression and independent runtime review required.",
+    "Month native-focus reveal still fails candidate gate.",
+    "Physical/native assistive-technology checks pending."
+  ],
+  "whole_items_accepted": []
+}

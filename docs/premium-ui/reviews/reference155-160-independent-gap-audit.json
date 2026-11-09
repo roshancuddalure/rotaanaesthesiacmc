@@ -1,0 +1,194 @@
+{
+  "recorded_at_utc": "2026-10-30T09:26:47.644805+00:00",
+  "reviewer": "/root/reference155_159_audit",
+  "independent": true,
+  "scope": "Independent exact155157158159160 source/evidence gap audit,plus separately authored archived-existing reference component counterexample. No product/backend/ledger/package changes or whole-item acceptance.",
+  "source_sha256": {
+    "frontend/src/main.ts": "9f42daa30c62a348ba3a3ac6deabae37bb904f3dbefd66e11584f2a7e373b9f6",
+    "frontend/src/record-workspace.ts": "7c196c12b114c48bf2db4ee57aad7e591d8e3acc7a77cccd15abbad7c349fb8f",
+    "frontend/src/reference-workspace.ts": "78c231ea1d5ab15bd3a4b5f2f8265529451a51bacc68d2a4aac1708a4be30292",
+    "frontend/src/operational-import.ts": "6f9a3e6e40a3faa63c3a023c15e56e1a9ee22e46a734247bd085954e3e9340e1",
+    "frontend/src/admin-delete.ts": "7a3eb13237272ad8b44f523bea5483ebeae60fc9c8b58d92035fe15c74528979",
+    "frontend/src/form-validation.ts": "a6d6cfa746f502cf05e5f4f1e1acade1c7ca82b592a497d98b79661854783a93",
+    "backend/app/api/v1/normalization.py": "32e45b60608f0f3a596c937994a2ffccad4d2db195a107fdb855e02436d407f3",
+    "backend/app/services/reference_catalog.py": "33d6c7cbb7474d13af0777801bda9bfea3347063a4a0ace37762557556f0c875",
+    "backend/app/services/operational_records.py": "96568185999dbe64d803c51e8c6a3980c194d27d40e296b9e71e43a82df3a1c6",
+    "backend/app/services/operational_import.py": "17708df0d3a82d5c44cac5fd9f44658cadb6ea59d8f5bca1dd281f216f97015d",
+    "backend/app/models/leave.py": "3a9407f2a95554a13ea7f059b99a5e275739a54c43b0bf5d67901076635134f7",
+    "tools/compute_smoke_server.py": "bfac642bb956b656816e6f2f32911f6f8e4abf4fb23c860b67569b70c8c87582",
+    "tools/leave_approval_smoke_server.py": "8d74436eb3dd712cb5f31c74a6185d6d5daf70cf79ecca92994e5f8289e36a78",
+    "tools/generation_smoke_server.py": "7dcf364fe3c2eb0de08d013f5a03880c785c24ccbeb571cd3acb259cfc827c08",
+    "tools/frontend_visual_fixture_server.py": "3bf1733f34a62ce4ed000715002eb86fde32880fc164f3fbe3ba0f332c6d184e"
+  },
+  "evidence_sha256": {
+    "docs/premium-ui/qa-reference155-archived-existing-independent.json": "287c85fa6aa106d5905a98027bf90878ad342cee7a6e5a117a28da250f94604d",
+    "frontend/tests/premium-reference155-archived-existing-independent.browser.mjs": "91b91123394a967f0eedc541ac6ba1ba0fafa1bda59ac82d902af6bca9fda588",
+    "tmp/reference155-archived-existing-independent.log": "9342becdea0d3019feb0d38931d03e6c3986c1369d445736002b1ad10a4432e1",
+    "docs/premium-ui/reviews/unit-create-opener-integrated-execution.json": "1fd647bba7dedd86b5421edca86c6fb18b22c7893fce3b828bccfcb2997e0779",
+    "docs/premium-ui/reviews/unit-create-opener-prior44-applicability.json": "beb9becdae912f29d75d7e0ece480df3fddf27f488a8526ffc677f15aba5718a",
+    "docs/premium-ui/reviews/reference-validation-current.json": "461c0e1c522c31c30b83c3f4bfe67589ebb905e23d566872e192d99ef0287101",
+    "docs/premium-ui/reviews/record-reference-refresh-current.json": "25d475b8981435a28e4ba7a6ccf7ef369354c4ec2aaf8c41a02cacd5db6a907b",
+    "docs/premium-ui/reviews/import-unit-reference-current.json": "b092ef52a28877f4974a6b7257b26eace43e44aaee31ba9ad2e88da0f76da8f0",
+    "docs/premium-ui/reviews/inline-member-selection-source-review.json": "2f1842c4f557ccbd9469b6491f8095f7cb92a670809e78bc1b3b110c08c98aeb",
+    "docs/premium-ui/reviews/inline-member-selection-test-review.json": "fd2729dbb042433ace1758671ef5e9e439f676d82cf3cf58185f8fb91af2bd08",
+    "docs/premium-ui/reviews/inline-member-selection-lifetime-current.json": "befc3c74d1b044970c85770490d8471b41f8c01f0c52e347417f29714d8d78b3",
+    "frontend/tests/premium-reference-meaning-fields.browser.mjs": "0fdee0a212f6d1632113131cfa6ee32826c9c3d7dd379dc14cec55711deefa07",
+    "frontend/tests/premium-unit-save-recovery.browser.mjs": "915be030f2c9814c03ab25042d7d4610b598ebb7a1d2a84f73b9604a78d11331",
+    "frontend/tests/premium-record-reference-refresh.browser.mjs": "e75234570fb4159281d08056bdc1e50ae579a86119687342e6c469babfd11983",
+    "frontend/tests/premium-import-created-unit.browser.mjs": "d93862290aa1a23d46560f86abd1ab02cbe6abf5c382574381e73c1ee9086394",
+    "frontend/tests/premium-record-close-extra-guidance-regression.browser.mjs": "c2dcba2984dde9cc934e339feb62813ad670fc7c34a95dcfd0f825975c1b23cd"
+  },
+  "requirements": [
+    {
+      "item_id": 155,
+      "requirement": "Align normalized reference pickers and inline creation dialogs with the same label, validation and save conventions.",
+      "acceptance_scope": "Consistent normalized picker and inline-create forms",
+      "disposition": "implementation_blocker_and_remaining_type_matrix",
+      "conditions": [
+        {
+          "condition": "Reference pickers and inline creation dialogs share clear labels, field validation and save/cancel conventions.",
+          "state": "partially_supported_gap",
+          "finding": "Current labels and required/native/server validation exist for seven catalog kinds plus unit/member/mapping inline workflows. Independent historical validation covers unit minima,duty behavior and mapping422 refusals; newer source differs, and no complete current seven-kind success/failure matrix was inspected."
+        },
+        {
+          "condition": "Existing normalized values and newly created values remain distinguishable and selected only after authoritative save.",
+          "state": "contradicted_by_current_component",
+          "finding": "Existing archived posting_type/leave_type/leave_slot/status disappear from select options and unchanged native Review submits the first active replacement.24archived cases fail while24active controls pass. This violates current existing-value distinction/preservation. Current nested unit creation6fixture cases support authoritative saved-id selection,not all reference kinds."
+        }
+      ]
+    },
+    {
+      "item_id": 157,
+      "requirement": "Keep imported record corrections attached to their original preview row, with visible completion and unresolved-state indicators.",
+      "acceptance_scope": "Import corrections retain original row identity",
+      "disposition": "current_row_authority_and_lifetime_evidence_gap",
+      "conditions": [
+        {
+          "condition": "Corrections remain attached to their originating preview row through rerender, matching and retry.",
+          "state": "source_supported_bounded_historical_evidence",
+          "finding": "Operational corrections are keyed by row.key; row data-attributes use that exact key. Preview applies whole draftVersion/alive gates and repeated-label edits require explicit confirmation. Historical inline member lifetime tests cover edited-name/changeback/race and other-row/file/month preservation,not a fresh current comprehensive units+leave similarly named rows/cross-sheet/page matrix."
+        },
+        {
+          "condition": "Completion and unresolved indicators reflect that row's latest authoritative review state.",
+          "state": "source_supported_runtime_gap",
+          "finding": "Current row action/issues/member match and leave normalized-status summaries derive from returned preview; previewDirty labels matching/authority stale and blocks Apply until manual refresh. Need verify multiple same-name rows after correction,late matching503/retry,exclusion/page/rerender and refreshed action/issue status. Do not call a local correction complete before authoritative preview."
+        }
+      ]
+    },
+    {
+      "item_id": 158,
+      "requirement": "Standardize cancellation and deletion confirmations so removing a record never resembles merely closing its editor.",
+      "acceptance_scope": "Distinct cancellation and deletion confirmation",
+      "disposition": "source_conventions_supported_full_path_matrix_unverified",
+      "conditions": [
+        {
+          "condition": "Closing/cancelling an editor is labeled and handled differently from cancelling or deleting its record.",
+          "state": "source_supported_bounded_tests",
+          "finding": "Record editor says Cancel closes this editor; dirty close asks Discard unsaved changes and busy close refuses. Leave record cancellation instead names member,dates,type,session,status,recordID and retained history/duties. Posting removal uses separate Remove posting label and admin-delete preview. Historical actual close tests support distinct close/dirty refusal; full current app route matrix remains unverified."
+        },
+        {
+          "condition": "Consequential record removal names the target and consequence before the existing operation executes.",
+          "state": "source_supported_real_confirmation_outcome_gap",
+          "finding": "admin-delete renders target item labels,count,blocked reasons,linked effects,30-day recycle consequence and typed whole-month phrase/token. Need execute actual row/selected/month removal confirm,refusal,409stale preview and pending guard using isolatedRAM,then independent deleted/retained record readback. Existing source/audit screenshots or close-only fixtures do not prove confirmed removal semantics."
+        }
+      ]
+    },
+    {
+      "item_id": 159,
+      "requirement": "Refresh dependent leave and unit views after confirmed mutations without discarding unrelated unsaved edits or chosen filters.",
+      "acceptance_scope": "Dependent refresh preserving unrelated drafts and filters",
+      "disposition": "fixture_bounded_recovery_supported_persistence_matrix_missing",
+      "conditions": [
+        {
+          "condition": "Confirmed leave/unit/reference mutations refresh their relevant dependent views.",
+          "state": "source_supported_fixture_bounded",
+          "finding": "Main saved callbacks invalidate unit cache and render dependent unit/leave views; nested reference saved callback reloads record options; operational-import updates after confirmed apply. Current/historical local fixtures demonstrate callbacks and GET recovery,not a persisted backend mutation/readback across all leave/unit/reference outcomes."
+        },
+        {
+          "condition": "Unrelated unsaved edits and chosen filters survive those refreshes, and failed read-back does not repeat the mutation.",
+          "state": "bounded_draft_recovery_evidence_and_route_race_investigation",
+          "finding": "Reference/unit components mark confirmed saves and expose GET-only readback retry. Record option refresh captures newer focus/caret/search/scroll before rerender; import created-unit recovery preserves row/file/version ownership. Need real mutation→failed dependency GET→manual retry while unrelated draft/filter survives,with one mutation count. Source-only potential route race: record saved() callback invokes renderer even after history route changes; renderer entry lacks explicit activeView guard. Not runtime-reproduced here; do not classify as confirmed bug."
+        }
+      ]
+    },
+    {
+      "item_id": 160,
+      "requirement": "Verify all record-level and monthly actions against their actual selected-month and selected-unit context on desktop and mobile.",
+      "acceptance_scope": "Actual selected context for leave and unit actions",
+      "disposition": "full_action_context_and_persisted_readback_missing",
+      "conditions": [
+        {
+          "condition": "Each record-level and monthly action uses its visibly selected month and unit context on desktop and mobile.",
+          "state": "bounded_contexts_supported_broader_matrix_missing",
+          "finding": "Latest60case packet covers actual selected June/July unit create/add/edit and exact preview identity; prior142 covers individual/month leave approval on dedicatedRAM. Other row/selected/month posting/leave delete,cancel,import replace/apply and reference dependent refresh require complete action/context matrix with active role/month/unit/native mobile destinations. Current fixture context checks are not all record/month actions."
+        },
+        {
+          "condition": "Results or subsequent reads confirm the intended records changed and other context records remained untouched.",
+          "state": "requires_independent_disposable_persisted_readback",
+          "finding": "Existing UI fixtures fulfill POST/PUT success but cannot prove only intended persisted records changed. Use fresh asserted SQLite:memory: engine and current app dependency overrides,seed two months/two units/two similarly named members,drive actual existing operations,then independent API/SQL readback of target and sentinel records/duty assignments/recycle state. No configuredDB or production credentials needed."
+        }
+      ]
+    }
+  ],
+  "verified_findings": [
+    {
+      "id": "REF155-ARCHIVED-CURRENT-SILENT-REPLACEMENT-001",
+      "severity": "P1",
+      "classification": "verified_frontend_value_preservation_bug",
+      "root_cause": "record-workspace select(field,label,items) filters i.active only,then no selected option matches raw existing value,so native select chooses first active. read() merges FormData into draft and unchanged Review sends that replacement.",
+      "fields": [
+        "posting_type",
+        "leave_type",
+        "leave_slot",
+        "status"
+      ],
+      "runtime": {
+        "contexts": 6,
+        "engines": [
+          "chromium",
+          "firefox",
+          "webkit"
+        ],
+        "widths": [
+          320,
+          1280
+        ],
+        "archived_failures": 24,
+        "active_controls": 24,
+        "previewPostsLocallyIntercepted": 48,
+        "saveRequests": 0
+      },
+      "feasibility": "Backend catalog returns inactive persisted overrides; archive is permitted while historical records remain linked; read_record returns raw stored fields. Backend preview enforces active reference on submitted value,so client must preserve/show unavailable old value and require explicit repair rather than silently choose another active option.",
+      "evidence": "docs/premium-ui/qa-reference155-archived-existing-independent.json"
+    }
+  ],
+  "source_investigations": [
+    {
+      "id": "REF159-LATE-SAVE-ROUTE-REPAINT-CANDIDATE",
+      "classification": "source_risk_not_reproduced",
+      "finding": "record-workspace invokes saved() after awaited confirmed save; main callbacks directly render original kind. renderLeave/renderUnitManagement obtain fresh renderTicket and setHeader before entry activeView check. Browser history during held save may repaint wrong route; probe before asserting defect."
+    }
+  ],
+  "priority_actions": [
+    "P0: retain exact current inactive/unknown reference in existing record picker without making archived values generally assignable; unavailable new defaults must not select first active approval state. Source/review/body-preservation tests and backend-policy-preserving UI required before155 acceptance.",
+    "P1: run current seven-kind reference/unit/member/mapping validation+failure+confirmed selection matrix; preserve exact saved meaning and selection only after response.",
+    "P1: run actual same-name/cross-sheet/page import row-key and stale-preview tests for157,including exclusion/repeat-label explicit confirmation.",
+    "P1: build actual leave/posting close/cancel/delete row/selected/month matrix for158; target/consequence+dirty/pending/refusal/409 scope.",
+    "P1: establish a fresh loopback-only asserted RAM persistence harness for159160; do not reuse shared fixture reset across concurrent suites. Capture independent before/after sentinels.",
+    "P2: probe late record-save/history route race as an investigation; only then fix/review frontend lifetime behavior if reproduced."
+  ],
+  "safe_persistence_test_design": {
+    "engine": "Fresh sqlite+pysqlite:///:memory: with StaticPool; assert engine.url.database==:memory: before serving requests.",
+    "dependency_boundary": "Use existing compute_smoke_server/current_app fixtures as reference; override get_db/current_user on a distinct local app instance/port before API execution. Never load configuredDB data or point mutation browser routes at production.",
+    "seed": "Two distinct months,two units,two members with same display name,overlapping/out-of-scope sentinels,active+archived catalog definitions and existing duties.",
+    "execution": "One mutation suite owns the instance and unique seed; actual API normalise/review/save/cancel/delete/approve operations only. Client fault injection may fail readback while actual server mutation executes once.",
+    "readback": "Independent GET endpoint/directSQL to that already-asserted RAM engine verifies target IDs and unchanged sentinel rows/assignments; no broad fixture reset during another run.",
+    "limits": "Test-only harness orchestration,notbackend product changes or policy rewrites. Root authorization/scope must remain frontend-only."
+  },
+  "limits": [
+    "Historical reports explicitly retain old source hashes and narrower mutation/viewport scopes; source equality of an untouched helper is not blanket current runtime acceptance.",
+    "Local previewPOST/fixture success is not backend persistence/authorization/scheduling correctness.",
+    "NativeAT/physical-device checks unperformed.",
+    "Only archived picker defect is runtime-confirmed in this audit. Other missing matrices are evidence gaps unless separately source/runtimed as described."
+  ]
+}

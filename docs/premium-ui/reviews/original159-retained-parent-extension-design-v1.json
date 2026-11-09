@@ -1,0 +1,110 @@
+{
+  "recorded_at_utc": "2026-11-09T07:58:04.374353+00:00",
+  "author": "/root/profile_parent_final_audit",
+  "decision": "Detailed scratch implementation design only. No application edits, browser execution or acceptance.",
+  "scope": "Extend V5 retained dependent parent coordinator to rendered direct record, normalized import, Unit registry and posting-delete families. Add member-core dependency follow-on explicitly required by root; preserve frontend-only mutation contracts.",
+  "source_sha256": {
+    "tmp/profile-parent-refresh-v5/main.ts": "2b8f68c069e599af50a4ac1b2146a7018d6268f290b90a9949130a057dc91b43",
+    "frontend/src/main.ts": "5311e9933a6614747458418a218ac2b22855c2f7baa574e446557a4aa6d9d13d",
+    "frontend/src/record-workspace.ts": "469fd6bf2e4118b15ad343d8059cd3cfb0acbc6483bea969ca5fb93488644335",
+    "frontend/src/operational-import.ts": "00a6339fb0bd56dcae64ec05cb79ad041364a502ee207dec71c95106b2c20ce8",
+    "frontend/src/reference-workspace.ts": "78c231ea1d5ab15bd3a4b5f2f8265529451a51bacc68d2a4aac1708a4be30292",
+    "frontend/src/admin-delete.ts": "7a3eb13237272ad8b44f523bea5483ebeae60fc9c8b58d92035fe15c74528979",
+    "frontend/src/extra-duty.ts": "52084624922de21f2a0fa478eb1ca4c883cdeb66dd1d05147d0f21fe806bc7ea"
+  },
+  "contract_fragment": "tmp\\original159-retained-parent-extension-design-v1\\parent-refresh-contract.design.ts",
+  "principles": [
+    "One current parent owner and shared root read generation; one owned recovery panel and retry callback, no document-global mutation listener.",
+    "One lease per independent child session; parent GET coalesces after actual final close, protecting active import/registry/nested editor drafts and focus. Existing profile Previous/Next is replacement, not release.",
+    "Confirmed mutation and dependent read are separate states. Notify immediately after accepted request before own GET/markup work; never report an accepted save as unconfirmed solely because refresh failed.",
+    "Retain Unit settings, existing inline fallback host/control identities, search/campus/page/selected IDs; only paint returned readonly dependent regions. Preserve Leave view/month/pressure disclosure/selection and stable record focus.",
+    "No additional POST, changed payload, changed preview/review token, expanded permission or altered scheduling/export semantics."
+  ],
+  "coordinator_design": {
+    "factory": "Generalize createProfileParentLifecycle into acquireRetainedParentRefresh returning confirmed(signal), released(). Keep original ProfileParentLifecycle adapter so member lifecycle calling convention remains compatible.",
+    "owner": "Capture currentUser object, activeView, viewSeq, renderSeq, viewRoot reference/isConnected, unitMonth/leaveMonth and exact original Unit/day overlay identity/selected Unit/special posting. Never weaken owner guards to make a test pass.",
+    "reuse": "WeakMap<HTMLElement, OwnedParentCoordinator>. Reuse only if every captured owner field/overlay identity matches. New owner invalidates old root generation; no old queued drain can reacquire ownership.",
+    "state": "leaseCount, changedVersion, lastAppliedVersion, busy, readGeneration. confirmed increments changedVersion and invalidates root generation; release idempotently decrements leaseCount; drain only if current, dirty and count0. On newer confirmation during held read, discard result and coalesce one latest read after all active leases close.",
+    "cache": "Same captured account may invalidate Unit cache even after route/overlay expired; no old-account global commits. Existing data-sync invalidation remains. Do not refetch every other route.",
+    "read": "Units: existing getUnitManagementMonth(capturedMonth) with ++unitLoadSeq, current/shared root-read-generation guard, consumed-shape/month guard, atomic globals then retained Unit board/modal readback. Leave: existing3GETs Promise.all; owned complete shape/month before any globals, then retained snapshot/day partial painter + syncAdminSelection.",
+    "failure": "Retain prior snapshots, controls, local drafts and chosen filters. Status distinguishes accepted mutation from stale read; GET-only retry stays in current owned Unit/day overlay or current root. Retry click attached once via controller closure, not additive listener. A second retry while busy is disabled, not a second GET.",
+    "focus": "Refresh after final child close prevents painting behind active child by default. Restore by immutable operational record plus semantic control; newer intentional focus wins. Removed record uses owned visible status/region. No focus into inert root or another account.",
+    "notifications": "Use source-neutral saved/refreshing/stale/success copy instead of member-profile-only wording. Make callback notification isolation explicit: caught/logged constant failure must never alter mutation result or leak response body."
+  },
+  "callback_integration": [
+    {
+      "family": "Direct normalized record Add/Edit",
+      "current": "main9280..9301: saved callback invokes renderUnitManagement(true)/renderLeave; record-workspace368..379 accepted POST then close then saved()",
+      "proposed": "Capture lease before opening child. For data-initial-date, explicitly perform intentional closeLeaveDayModal before capturing parent overlay identity; retain initial date values. Main saved callback calls lease.confirmed(record metadata) then lease.released(). Existing saved is after actual editor close, so no new record-editor close API is needed for this success path. Cancelled editor lease must also be released: either optional closed callback or a minimal returned close-completion handle; do not leave leaseCount stuck.",
+      "minimal_module_hook": "Add optional final lifecycle argument with closed() only to openRecordEditor if sharing leases across parent root; invoke idempotently from accepted explicit close and native close fallback after original focus restoration. Main saved callback only confirmed; closed hook release must occur after confirmation on save. Best order: accepted request -> isolated confirmed callback -> existing close -> idempotent released. Preserve old saved callback timing for callers without lifecycle. Alternative one-shot direct record uses auto-release on saved, and cancel never registers lease until confirmed, avoiding module change but must prove no cross-child busy lease leak.",
+      "recommendation": "Use explicit optional lifecycle for a consistent success-before-close order, while original saved callbacks remain backward compatible and do not duplicate confirmation. Main supplies no-op saved callback when lifecycle is sole notification path; profile nested editor retains its existing saved callback for its profile cache."
+    },
+    {
+      "family": "Normalized import",
+      "current": "operational-import248 signature updated() only;285 final close;877..891 apply success -> ownsApply -> result markup -> updated(); main9318 full parent render, import remains open and can select another file",
+      "missing_information": "No final-close signal; updated lacks appliedPreview.month and can be skipped if accepted request succeeds but result markup throws before updated. Current child-local ownsApply should still suppress stale child DOM, not suppress same-account cache invalidation for a confirmed write.",
+      "proposed": "Optional lifecycle last argument with confirmed({domain, submittedMonth:appliedPreview.month, identity:appliedPreview.id,source:import}) called isolated immediately after request resolves, before ownsApply/result markup. Actual final explicit/native close calls released once after existing focus handling. Main uses lifecycle as sole dependent-parent signal and a no-op updated callback; other callers retain updated behavior. Multiple confirmed batches in same dialog increment version but coalesce one fresh parent GET at final close, preserving next-file/import review draft.",
+      "nested_children": "If nested import reference/unit creation affects parent, relay confirmed through same outer lease. Do not create a separate immediate parent refresh that replaces the import owner. Parent can show saved-pending status while import remains open; child completion copy should say parent refresh occurs after closing if needed."
+    },
+    {
+      "family": "Unit registry create/edit/deactivate",
+      "current": "reference-workspace476 accepted POST/PUT -> confirmedUnit then own units GET; saved(result) only after own read succeeds or refreshSavedUnit273; main9337 full parent render",
+      "missing_information": "No immediate accepted-mutation signal or final-close hook. Closing savedReadbackFailure while confirmedUnit exists can otherwise leave parent unnotified. Repeated registry saves stay in same dialog.",
+      "proposed": "Optional last lifecycle argument. Notify confirmed immediately after accepted POST/PUT and before own GET, exactly once per accepted mutation. Invoke released exactly once on final accepted explicit/native close; no notification replay on refreshSavedUnit GET retry. Main existing saved callback becomes no-op when lifecycle supplied. Create-new closes immediately so one accepted confirmation then release. Edit session coalesces repeated mutations until close.",
+      "preservation": "Capture parent working month, not registry own count-month. Preserve inline fallback order draft/search/campus/page. Readback missing selected Unit must retain Unit draft with explicit unavailable state; never silently close/replace form."
+    },
+    {
+      "family": "Posting delete row/selected/month",
+      "current": "runAdminDelete3323 captures lifetime; confirmAdminDelete resolves result only after finish closes/removes dialog; result null means cancel; posting refresh passes renderUnitManagement(true)",
+      "proposed": "Capture lease before awaiting existing confirmation. After result, same-account invalidation and existing owner checks remain. If accepted posting deletion, update selected IDs as existing code, then confirmed({source:posting-delete,domain:units}) and released(); null/cancel only releases. For non-posting/member callers keep existing refresh argument behavior. Do not invoke both retained refresh and old render callback.",
+      "missing_information": "Existing Promise already distinguishes accepted result/null and resolves after dialog close, so no delete-module lifecycle change needed. Retain deleted-count toast policy, exact target IDs/month, token and typed phrase.",
+      "special_case": "Deletion from an open Unit modal may remove active focused row or all its postings; retained painter preserves unrelated settings draft and uses record-aware focus fallback. Month-wide deletion must not discard dirty inline fallback lists."
+    }
+  ],
+  "module_lifecycle_contract": {
+    "optional": "Frontend optional final arg only; no backend/schema/public endpoint change. Existing caller signatures remain valid.",
+    "confirmed": "One isolated callback per accepted server mutation, before subsequent GET/markup work; never fired by preview, cancel, GET retry or ambiguous failed request. Preserve uncertain-write behavior for transport failures.",
+    "released": "Idempotent actual final close, including native close fallback; dirty/busy close refusal does not release, Previous/Next replacement does not release. Save path confirmation must happen before release.",
+    "no_duplicate": "Main switches each integrated family from legacy full-render callback to lifecycle notification, not both. Nested callers that still require local saved callback retain it; lifecycle only concerns outer parent. No MutationObserver or generic global event is required for success detection."
+  },
+  "inline_fallback_component": {
+    "why": "Skipping remount preserves local draft but registry rename/create can leave fallback labels/options stale. Must reconcile relevant dependent readonly references without replacing draft maps.",
+    "proposal": "Add component-owned WeakMap keyed original #unit-fallbacks-host exposing a narrow refreshReferences(freshUnits) or staged GET readback. Retain saved/draft Maps, dirty flags, open details, busy states, per-row notes, focus and order. Update unit name map/options from fresh unit data and append new available choices without sorting or overwriting an existing user draft.",
+    "unavailable": "If a selected fallback Unit is not returned/renamed/inactive, retain its ID and visible last-known/unavailable presentation; do not silently remove it or alter fallback scheduling rules. Existing save endpoint remains authoritative. If fresh endpoint is needed, reuse existing extra-duty unit-fallbacks GET and guard host/account/read generation.",
+    "testing": "At least3 units, unsaved reordering/add/remove on a different row, registry rename/create/deactivate, parent read failure then retry; assert host and controls/order/dirty marker retained and labels current. Saving after refresh must use unchanged existing payload."
+  },
+  "member_core_follow_on": {
+    "requested_by_root": true,
+    "source_gap": "V5 confirmed hook is operational Postings/Leave only. onMemberWorkspaceChanged updates members and fetches members/audit, rendering only active Members. Names/call/designation/status used by Unit assignments and Leave snapshots can remain visually stale after core profile save.",
+    "additional_owner_risk": "Existing onMemberWorkspaceChanged commits members=await getMembers and memberAudit=await... without captured account/view/render ownership. A late response after signout/account replacement may commit old-account global data. Existing accepted member scopes do not prove this branch safe.",
+    "proposal": "Capture originating account in wrapper and guard shared member/audit commits after each awaited read; make cache invalidation same-account. Notify retained parent lifecycle as member-core after confirmed accepted member details/roles/alias mutation, without fabricating an operational record or duplicating changed(member). Adapter may add separate coreChanged signal, or wrapper changed callback marks same lease dirty before invoking existing callback. Keep existing core persisted payload/changed callback contract.",
+    "test": "Actual name/call/designation/status change from Unit and Leave profile -> fresh relevant parent after close, unaffected settings/inlinefallback draft retained; fail member/profile/parent reads separately, no duplicate PUT; held old-account member GET cannot commit globals or repaint after signout/new account. Include aliases only where rendered dependency actually changes."
+  },
+  "implementation_order": [
+    "Freeze and integrate V5 only after its120 actual checks pass; keep directdraft6fail diagnostic and open defect visible.",
+    "Generalize coordinator contract/neutral copy without changing exact V5 Unit/Leave painter semantics; source reversal/effect proof.",
+    "Implement direct record one-shot lifecycle and first repair actual direct-edit6fail; add direct-create and parent503 GET-only recovery.",
+    "Implement root-owned leases and import/registry minimal frontend lifecycle success/close hooks; test repeated saves/batches and cancelled/no-change sessions.",
+    "Replace posting-delete refresh only for current owned Unit parent; preserve member deletion and existing target semantics.",
+    "Add inlinefallback component reference refresh preserving its own dirty state, then registry/import/delete matrix.",
+    "Address member-core confirmed callback and account-read guards as separate bounded change before whole159 acceptance.",
+    "Generalize Leave direct decision/import/delete callbacks only after applicable retained snapshot tests; use same owner coordinator, not forced page rerender.",
+    "Full unit/build, changedsource contract proof, impacted browser gates and prior53 applicability; original159 only after every relevant rendered family has correct outcome evidence."
+  ],
+  "critical_test_matrix": [
+    "Direct Add/Edit posting from Unit modal with server1/draft3, separate per-call draft, Royal search/campus/page; failed/readwrongmonth/malformed and GET-only retry.",
+    "Direct Leave edit/Add from day modal: intentional day closure precedes captured owner; no permanent owner mismatch and no resurrection of closed day.",
+    "Import2batches/next-file dirty draft: no parent rebuild during active child; one final read, exactly2accepted apply requests, no replay on parent retry.",
+    "Registry2edits and create-new; failed registry-own GET then close still refreshes parent from confirmed mutation once.",
+    "Posting row/selected/month delete retains settings/inlinefallback draft and chosen filters; sibling IDs/deleted rows correct, no repeat delete.",
+    "New input/focus while parent GET held, profile/import/registry route/month/account/root/overlay replacement, stale older result and coalesced newest result.",
+    "Registry rename/create updates fallback names/options but preserves dirty order/control identities; removed Unit explicit retained draft.",
+    "Member-core parent name/call/status refresh and late old-account members/audit GET suppression.",
+    "Three engines320/1280 for distinct shared painters and lifecycle classes; expand based on failures rather than count-only certification."
+  ],
+  "limits": [
+    "No application code or full implementation in this design artifact. Contract fragment is nonexecutable design only.",
+    "No browser load while root V5 run active. Existing directdraft actual6 failures reported by root, not newly executed by author.",
+    "Whole159 remains partial; no claim that source-safe extension is correct until actual runtime outcomes and current-source integration checks pass."
+  ]
+}

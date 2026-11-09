@@ -1,0 +1,189 @@
+{
+  "recorded_at_utc": "2026-10-28T23:04:55.891486+00:00",
+  "operator": "/root/leave_status_runtime_plan",
+  "status": "frozen_v7_toolbar_and_regression_preview_passed_not_applied",
+  "contexts": {
+    "toolbar_normal": 24,
+    "toolbar_stress": 24,
+    "calendar_boundaries": 24,
+    "daylist": 12,
+    "pressure": 12,
+    "monthly_review": 6,
+    "independent_narrow": 2,
+    "total_workflow_contexts": 104,
+    "supplemental_encoding_contexts": 3
+  },
+  "observed_terminal_exit_codes": {
+    "toolbar_normal_43106": 0,
+    "toolbar_stress_17035": 0,
+    "regression_group_a_70011": 0,
+    "regression_group_b_86749": 0,
+    "encoding_probe_28519": 0
+  },
+  "toolbar_test": {
+    "path": "frontend/tests/premium-leave-toolbar-hierarchy-v7-preview.browser.mjs",
+    "sha256": "a53ba902591070169f55c07d15be62e2dfb52c272dbe456c0fbce1ee7be2e8fe"
+  },
+  "toolbar_reports": [
+    {
+      "path": "docs/premium-ui/qa-leave-toolbar-hierarchy-v7-preview.json",
+      "sha256": "f5423cfb574947e6d3096b810cf0b64eb5f3bc2583c8e8015f32505cff33140f"
+    },
+    {
+      "path": "docs/premium-ui/qa-leave-toolbar-hierarchy-v7-preview-stress.json",
+      "sha256": "98363570729204905b940749a73a526e5c8a325c7eefd44cd7d764c2c8ec7906"
+    }
+  ],
+  "regression_reports": [
+    {
+      "path": "docs/premium-ui/qa-leave-calendar-boundaries-v7-preview.json",
+      "sha256": "642550a67044346723ae97386cc6566fe8e7bc849fc1560033ca869a573d6d3a",
+      "contexts": 24,
+      "test_sha256": "f5c1d9a62a30a2c5f7971810a592850e42ddcd9c93591ac2b1b7bed47729b356",
+      "classification": "Existing empty28/29/30/31monthfixtures; GET-only. Native semantics/actions/counts unchanged."
+    },
+    {
+      "path": "docs/premium-ui/qa-leave-list-v7-preview.json",
+      "sha256": "9b4bc55f50307ce5c0c4bad3b1b7c3925b0d03463bb5c75c732dbb50d157c481",
+      "contexts": 12,
+      "test_sha256": "cebf38fdb05a2a6e3cb07f7e392ff2206d41b0c871dce307af2bfb809f12a570",
+      "classification": "DEFENSIVE inherited calendar fixture includes cancelled/rejected despite realserviceexcludingthosefromactivecalendar. Rendering robustness only; faithfulbackendcalendar semantics are separately tested."
+    },
+    {
+      "path": "docs/premium-ui/qa-leave-pressure-v7-preview.json",
+      "sha256": "1297cc7ab43610bf918d8e6662abca80c86da7d7b8bcf34d3dc46e0e7e46c517",
+      "contexts": 12,
+      "test_sha256": "35c6145ed42a12293deff727bd0b08d8a68b8b690a19da3dfef658138e277048",
+      "classification": "Existing display fixture retains independently supplied pressurecounts/ranks/groups; no backendaggregateconsistency certification. All original assertions unchanged."
+    },
+    {
+      "path": "docs/premium-ui/qa-monthly-leave-review-v7-preview.json",
+      "sha256": "c69283a09ed8ae17070d7fd5ee3ed5dfc3a9a5f093ca16e446087773f82a567c",
+      "contexts": 6,
+      "test_sha256": "47ea2066b966b354011144a2d6671ccf6cf7aa0ffaba959c7ebade882d9d28fc",
+      "classification": "Existing18pendingrows/2duties; allpreview/approvalPOSTslocallyfulfilled. Actual token/payload/acknowledgement/refusal/recovery assertions unchanged; persistence separately tested."
+    },
+    {
+      "path": "docs/premium-ui/qa-leave-independent-review-v7-preview.json",
+      "sha256": "d227553329b4914e548db4b074a7bf5fc55751df57ac79f427781a0848bce7b0",
+      "contexts": 2,
+      "test_sha256": "e332603bc085ad2a5309451dfb02a722441ba0183c644155827c53c5306ad7dc",
+      "classification": "DEFENSIVE inherited leap-day fixture includes cancelled/rejected entries impossibleforrealactivecalendar; retainedsolelyforrenderingrobustness. Faithfulfixtureseparate."
+    }
+  ],
+  "regression_child_execution": [
+    {
+      "test": "frontend/tests/premium-leave-calendar-boundaries-v7-preview.browser.mjs",
+      "test_sha256": "f5c1d9a62a30a2c5f7971810a592850e42ddcd9c93591ac2b1b7bed47729b356",
+      "started_at_utc": "2026-10-28T23:01:24.866Z",
+      "finished_at_utc": "2026-10-28T23:02:48.062Z",
+      "exit_code": 0,
+      "signal": null,
+      "log": "tmp/premium-leave-calendar-boundaries-v7-preview.log",
+      "log_sha256": "9e50bc562bbdfdcb8e78403f02cebbff6654252eac39873700fb60f7a3cab262"
+    },
+    {
+      "test": "frontend/tests/premium-leave-independent-review-v7-preview.browser.mjs",
+      "test_sha256": "e332603bc085ad2a5309451dfb02a722441ba0183c644155827c53c5306ad7dc",
+      "started_at_utc": "2026-10-28T23:02:48.104Z",
+      "finished_at_utc": "2026-10-28T23:02:56.863Z",
+      "exit_code": 0,
+      "signal": null,
+      "log": "tmp/premium-leave-independent-review-v7-preview.log",
+      "log_sha256": "9800df4530aa76927e0f96d25a21bc74f0b29c2723791f8a908861d1d621932e"
+    },
+    {
+      "test": "frontend/tests/premium-leave-list-v7-preview.browser.mjs",
+      "test_sha256": "cebf38fdb05a2a6e3cb07f7e392ff2206d41b0c871dce307af2bfb809f12a570",
+      "started_at_utc": "2026-10-28T23:01:24.864Z",
+      "finished_at_utc": "2026-10-28T23:02:25.656Z",
+      "exit_code": 0,
+      "signal": null,
+      "log": "tmp/premium-leave-list-v7-preview.log",
+      "log_sha256": "adc99db2d0264bee1281bcd0925186c4854143dd5b5bef152f0ff7f2deb6cefd"
+    },
+    {
+      "test": "frontend/tests/premium-leave-pressure-v7-preview.browser.mjs",
+      "test_sha256": "35c6145ed42a12293deff727bd0b08d8a68b8b690a19da3dfef658138e277048",
+      "started_at_utc": "2026-10-28T23:02:25.661Z",
+      "finished_at_utc": "2026-10-28T23:03:27.337Z",
+      "exit_code": 0,
+      "signal": null,
+      "log": "tmp/premium-leave-pressure-v7-preview.log",
+      "log_sha256": "4396d22695acdbd54229b2d821fde48a4aadc45b2dc0eb6881946a1b31355574"
+    },
+    {
+      "test": "frontend/tests/premium-monthly-leave-review-v7-preview.browser.mjs",
+      "test_sha256": "47ea2066b966b354011144a2d6671ccf6cf7aa0ffaba959c7ebade882d9d28fc",
+      "started_at_utc": "2026-10-28T23:03:27.344Z",
+      "finished_at_utc": "2026-10-28T23:03:59.879Z",
+      "exit_code": 0,
+      "signal": null,
+      "log": "tmp/premium-monthly-leave-review-v7-preview.log",
+      "log_sha256": "4c035a2f99f23cfe260a7e9e8a510785f98a0d9d1396c5021fd96a62a44320d7"
+    }
+  ],
+  "encoding": {
+    "path": "tmp/leave-status-v7-actual-summary-encoding.json",
+    "sha256": "b878a3b4b4b4684e35096f72982c1c5988e0ae0d23825f44c9f77529f993b31a",
+    "result": "Uninstrumented actualv7agenda/modaltext containsU+00B7 and noU+00C2 in all3engines. Historical instrumenteddiag remainsunchanged."
+  },
+  "supporting_artifacts": [
+    {
+      "path": "tmp/leave-toolbar-v7-copy-provenance.json",
+      "sha256": "610f223b1a18645338fb11ba4d2394ee7e6d95f6622e15da6345606379f30491"
+    },
+    {
+      "path": "docs/premium-ui/reviews/leave-v7-regression-copy-provenance.json",
+      "sha256": "5dfff5b18b4d0746b16935a29cefd35be5a1cc64320d1bb8e5a4b8a2ed23ddfd"
+    },
+    {
+      "path": "tmp/leave-toolbar-v7-preview-native-operator.log",
+      "sha256": "e02f5cf6cfaf081cc726e7d43f82ea7774084fcd938c026a0bd2d33829daafd1"
+    },
+    {
+      "path": "tmp/leave-toolbar-v7-preview-stress-operator.log",
+      "sha256": "51875b79202355ae7f9163957e6b42eec420e25700c3a827bed369f4868ec097"
+    },
+    {
+      "path": "tmp/leave-status-v7-actual-summary-encoding.log",
+      "sha256": "f85bb4408e97fd1a52186cb529af92c3bb45a1f08385eba97a45d22f398ebc0a"
+    },
+    {
+      "path": "frontend/tests/premium-leave-v7-summary-encoding-probe.browser.mjs",
+      "sha256": "e170ecb4f8f7adc5dfca61d8f1910bc6be0199d96ad9ed13bf4f99ef1a32782b"
+    },
+    {
+      "path": "tmp/leave-v7-regression-group-a-execution.json",
+      "sha256": "2cff769902e1f90ca3853f0b24dce168b4939cc3ab835bbd28b4cc097cff5bd2"
+    },
+    {
+      "path": "tmp/leave-v7-regression-group-b-execution.json",
+      "sha256": "a7298666af3d18d7478754672101d94a3afd27cb9ecba5f95fe38556dcabd030"
+    }
+  ],
+  "candidate_sha256": {
+    "main.ts": "cefb30a235398c3a00d77279b81b8b37a0a1c6206c73f30e4e914af94fab0f03",
+    "premium-theme.css": "aa0d3c25681b83298cd53f45f009ed2f1f8e64b0f334903936d269c886d399d7",
+    "leave-calendar-focus.ts": "93bc00fb0c753ef342412e2f58730126d17918c09edfd6f3e58f72b43d1cc2b3"
+  },
+  "source_sha256": {
+    "frontend/src/main.ts": "20fc4e1c086f4ae6c25a381a176b590173f7ee680d6eec205489dc97eb069ea6",
+    "frontend/src/premium-theme.css": "9344ea87024b282475a3b9f110ce9c83bdc5dca1dc984961eefed044c2ad6065",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/leave-approval.ts": "42e5a47751ae081d1b97108209c7a2b53272985251d153aa065f7718f43e544f",
+    "frontend/src/record-workspace.ts": "7c196c12b114c48bf2db4ee57aad7e591d8e3acc7a77cccd15abbad7c349fb8f",
+    "frontend/src/operational-import.ts": "70f4307cf3fb231016cdb074131b0d2ea2a7399f81ec5f64d579f9484bbe9906",
+    "frontend/src/member-workspace.ts": "cca57cfbe6b48ce7022ebc65b666e2fbeb0dadaf28499bb10a2a563cbb818ef8",
+    "frontend/src/ui.ts": "680d7830bca8826b46b6f1dc2c0d064d2a3a2e16fb41188d2c323de6bccf85b2",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+  },
+  "source_and_test_hold": "Eachnewtestasserts before/after application/candidate/testhashes. Copypreparationprovenance bindsoriginalandnewtesthashes; all originals unchanged. Six exact intentional copy assertions changed; action/count/role/request/payload/axis/geometry assertions retained.",
+  "scope_limits": [
+    "Preview5205usesfrozenv7main/theme/helper; application remainsunapplied. Final applied-source checks and independent requirement-by-requirement review needed.",
+    "Toolbar allroles/pending0or123/AddImportMore/bothCSVdownloads/monthlypreview/refusal; solePOSTpreviewansweredlocally, noactualapprovalmutation. Boardrolefixturedoesnotcertifybackendauthorization.",
+    "Defensive inherited list/leapcalendarfixtures intentionally contain cancelled/rejected despiteactualbackendexcludingthemfromactivecalendar; these passes are renderingrobustness only, kept separatefromfaithful24contextcorefixture.",
+    "Pressure legacyfixture retains independentlyreturned counts/ranks; no backendaggregateconsistency claim. Monthly review intercepted failure/retry preventswrite/replay; actual persistence belongs to142separategate.",
+    "Physical-device/nativeassistivetechnologyremainpending; browseremulationonly."
+  ]
+}

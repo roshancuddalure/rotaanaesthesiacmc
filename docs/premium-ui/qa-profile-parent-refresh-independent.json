@@ -1,0 +1,563 @@
+{
+  "recorded_at_utc": "2026-11-03T07:57:36.082Z",
+  "reviewer": "/root/profile_parent_refresh_audit",
+  "decision": "Diagnostic reproduction; not passing product behavior or whole159 acceptance.",
+  "scope": "Four actual app Chromium320/1280 workflows. Units modal→profile Postings edit and Leave list→profile cancellation refresh profile rows but leave underlying current route DOM stale. One accepted locally fulfilled mutation each; explicit parent refresh/navigation recovers via GET only. No backend writes/production/permissions certification.",
+  "source_sha256": {
+    "frontend/src/main.ts": "d13bd73108d89d6efb70a66426e6f8e9f6e50400475575b7a40cb06eef12c1bc",
+    "frontend/src/member-workspace.ts": "0ef8c1ef2234c7a50d8ca10b8aaa3998a654d452f563bd4c75531faef09d6c63",
+    "frontend/src/record-workspace.ts": "469fd6bf2e4118b15ad343d8059cd3cfb0acbc6483bea969ca5fb93488644335",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+  },
+  "test_sha256": "6cc670e0783737aafa62c931f32b763120c475e805de15a9aadbeaa468158118",
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "scenario": "posting-edit",
+      "parentStaleAfterProfileClose": true,
+      "staleText": "Dr Parent Audit\n\n2ND_CALL · 2026-11-01 to 2026-11-30\n\nSaved posting notes OLD\n\nEdit posting\nRemove posting…",
+      "readsBefore": 1,
+      "readsAfterExplicitRefresh": 2,
+      "profileReads": 2,
+      "selectedMonthRetained": true,
+      "unrelatedDraftOrViewRetained": true,
+      "explicitReadRecovers": true,
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "body": {
+            "identity": "parent-posting",
+            "values": {
+              "person_id": "parent-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "parent-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Saved posting notes NEW",
+              "id": "parent-posting",
+              "person": {
+                "id": "parent-person",
+                "canonical_name": "Dr Parent Audit",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "unit": {
+                "id": "parent-unit",
+                "name": "Royal Parent Unit",
+                "campus": "Main",
+                "code": "PARENT",
+                "minimum_free_people": 1,
+                "active_status": "active",
+                "notes": null
+              },
+              "source": "manual"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "body": {
+            "identity": "parent-posting",
+            "values": {
+              "person_id": "parent-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "parent-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Saved posting notes NEW",
+              "id": "parent-posting",
+              "person": {
+                "id": "parent-person",
+                "canonical_name": "Dr Parent Audit",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "unit": {
+                "id": "parent-unit",
+                "name": "Royal Parent Unit",
+                "campus": "Main",
+                "code": "PARENT",
+                "minimum_free_people": 1,
+                "active_status": "active",
+                "notes": null
+              },
+              "source": "manual"
+            },
+            "review_token": "parent-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person/postings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/records/units/parent-posting"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person/postings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "scenario": "leave-cancel",
+      "parentStaleAfterProfileClose": true,
+      "staleText": "Delete selected (0)\nDr Parent Audit\n⋯\n\n5 Nov 2026 · Annual Leave · Full Day\n\nApproved",
+      "readsBefore": 1,
+      "readsAfterExplicitRefresh": 2,
+      "profileReads": 2,
+      "selectedMonthRetained": true,
+      "unrelatedDraftOrViewRetained": true,
+      "explicitReadRecovers": true,
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/parent-leave/cancel",
+          "body": null
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person/leave"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/parent-leave/cancel"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person/leave"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "scenario": "posting-edit",
+      "parentStaleAfterProfileClose": true,
+      "staleText": "Dr Parent Audit\n\n2ND_CALL · 2026-11-01 to 2026-11-30\n\nSaved posting notes OLD\n\nEdit posting\nRemove posting…",
+      "readsBefore": 1,
+      "readsAfterExplicitRefresh": 2,
+      "profileReads": 2,
+      "selectedMonthRetained": true,
+      "unrelatedDraftOrViewRetained": true,
+      "explicitReadRecovers": true,
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "body": {
+            "identity": "parent-posting",
+            "values": {
+              "person_id": "parent-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "parent-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Saved posting notes NEW",
+              "id": "parent-posting",
+              "person": {
+                "id": "parent-person",
+                "canonical_name": "Dr Parent Audit",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "unit": {
+                "id": "parent-unit",
+                "name": "Royal Parent Unit",
+                "campus": "Main",
+                "code": "PARENT",
+                "minimum_free_people": 1,
+                "active_status": "active",
+                "notes": null
+              },
+              "source": "manual"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "body": {
+            "identity": "parent-posting",
+            "values": {
+              "person_id": "parent-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "parent-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Saved posting notes NEW",
+              "id": "parent-posting",
+              "person": {
+                "id": "parent-person",
+                "canonical_name": "Dr Parent Audit",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "unit": {
+                "id": "parent-unit",
+                "name": "Royal Parent Unit",
+                "campus": "Main",
+                "code": "PARENT",
+                "minimum_free_people": 1,
+                "active_status": "active",
+                "notes": null
+              },
+              "source": "manual"
+            },
+            "review_token": "parent-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person/postings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/records/units/parent-posting"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person/postings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "scenario": "leave-cancel",
+      "parentStaleAfterProfileClose": true,
+      "staleText": "All leave this month\n1 records\nDelete selected (0)\nSelect\n\tMember\tDates\tSession\tType\tStatus\tDays\t\nActions\n\n\tDr Parent Audit\n2nd Call\n\t5 Nov 2026\tFull Day\tAnnual Leave\tApproved\t1\t\n⋯",
+      "readsBefore": 1,
+      "readsAfterExplicitRefresh": 2,
+      "profileReads": 2,
+      "selectedMonthRetained": true,
+      "unrelatedDraftOrViewRetained": true,
+      "explicitReadRecovers": true,
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/parent-leave/cancel",
+          "body": null
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person/leave"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/parent-leave/cancel"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person/leave"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        }
+      ],
+      "errors": []
+    }
+  ]
+}

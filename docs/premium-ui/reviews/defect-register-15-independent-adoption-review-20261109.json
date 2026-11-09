@@ -1,0 +1,307 @@
+{
+  "recorded_at_utc": "2026-11-09T10:47:49.960568+00:00",
+  "reviewer": "/root/defect15_adoption_review",
+  "scope": "Independent read-only documentary adoption review. No application, shared current register, acceptance ledger, backend, browser or production changes.",
+  "requirement": "Establish a defect register that separates verified bugs, design improvements, historical findings and open investigation questions.",
+  "exact_pass_conditions": [
+    "Maintain a searchable register separating reproduced bugs, design improvements, historical findings and investigation questions",
+    "Give each entry evidence, applicability snapshot, owner/status and next disposition"
+  ],
+  "status": "conditional_safe_adoption_recommendation_not_acceptance",
+  "item15_complete": false,
+  "verified_checks": {
+    "all_88_original_entries_preserved_exact_json": true,
+    "unique_ids": 88,
+    "original_classification_counts": {
+      "verified_bug": 48,
+      "design_improvement": 5,
+      "historical_finding": 19,
+      "investigation": 16
+    },
+    "unique_direct_evidence_files_exist_and_match_proposal_inspected_hashes": 130,
+    "changed_unique_evidence_paths": 7,
+    "changed_entry_bindings": 9,
+    "prospective_root_triage_assignment_ids_match_all_unassigned_ids": 29
+  },
+  "acceptance_condition_assessment": [
+    {
+      "condition": "Maintain a searchable register separating reproduced bugs, design improvements, historical findings and investigation questions",
+      "assessment": "Four distinct classification values and stable unique searchable IDs exist for88 preserved records; normalization may be adopted without reclassifying historically reproduced bugs as current bugs."
+    },
+    {
+      "condition": "Give each entry evidence, applicability snapshot, owner/status and next disposition",
+      "assessment": "Proposal alone is incomplete:29unassigned owners,11generic proposed actions, four extraction-gap contexts, stale operative scope/status wording and seven changed evidence paths must receive explicit adopted documentary dispositions. Actual unknown current behavior is an allowed truthful recorded applicability state, provided historical evidence context and concrete follow-up owner/status/action are supplied; no current fix or bug may be inferred."
+    }
+  ],
+  "safe_adoption_steps": [
+    "Freeze/hash the current register and proposal, retain all88 original records and original digests unchanged inside historical/original_entry fields, and fail adoption on concurrent divergence.",
+    "Adopt normalized rows in the shared searchable register with historical classification separated from operational triage status and current applicability. Retain59 existing historical owners; add prospective root triage owner to29currently unassigned followups with effective date and authorization, never retroactively as implementation owner.",
+    "For each evidence link retain recorded historical digest, separately inspected current digest, existence and relationship/adjudication. Seven unresolved original bindings remain historical_evidence_binding_unresolved. This is an evidence investigation, not software tampering or proof of current bug/fix.",
+    "Adopt the four-snapshot followup as separately attributed historical context. Documentary audits19/20 require actual documentary/tool/test snapshot, not an invented application snapshot.002later source implementation is bounded source counterevidence; runtime viewport behavior stays unknown. Fieldset before application snapshot is recovered; final historical report bytes remain unrecovered.",
+    "Replace11generic proposed next-actions with entry-specific actions listed here and update chronological operative status only from independently inspected later resolution reports. Keep original stale wording visible historically.",
+    "Require concrete historical snapshot kind/context on every row: reported application source, documentary audit, source-only review or explicit original-snapshot-unrecovered. Extraction of a source digest is attribution only, not semantic adjudication or current applicability.",
+    "Run a preservation/completeness audit on the adopted register: all88 IDs/order/original records; all evidence bindings; nonempty concrete snapshot kind/context, triage owner/status and next action; computed classification totals; no unresolved issue silently promoted to verified current failure or fix.",
+    "Only then independently review the adopted exact bytes against both pass conditions and record documentary acceptance. Do not demand every historical bug be reproduced/fixed, native AT or unrelated broad runtime gates for this item."
+  ],
+  "unresolved_evidence_bindings": [
+    {
+      "path": "docs/premium-ui/qa-profile-tabs-complete.json",
+      "historical_declared_sha256": "d4eb0562477d0717892d408446ad9b7aa649705e9ac74aceb2601e4ff6be17a1",
+      "inspected_sha256": "f54b36c987c4f429680391321e81bd1bd7180aabea5b344f0f7aea59de8015fd",
+      "affected_ids": [
+        "FE-PROFILE-SECTIONS-001"
+      ],
+      "relationship": "historical_original_bytes_unrecovered_or_unadjudicated; current_report_is_separate_evidence_not_replacement"
+    },
+    {
+      "path": "docs/premium-ui/qa-profile-effective-identity.json",
+      "historical_declared_sha256": "aea9cfb9b423fe6095a3d99d594eff5dd0a0335bf0648cabe3b9fa2891ffe73e",
+      "inspected_sha256": "f3416428990719322020f9c74efd5e69c62a3eb1f2f0ca6a59babbfbdf1f3aa7",
+      "affected_ids": [
+        "FE-PROFILE-EFFECTIVE-WRAP-001"
+      ],
+      "relationship": "historical_original_bytes_unrecovered_or_unadjudicated; current_report_is_separate_evidence_not_replacement"
+    },
+    {
+      "path": "docs/premium-ui/qa-profile-designation-header.json",
+      "historical_declared_sha256": "e42b6a27643cd6c7c471b0f2480d4fe657b2846f5e7ef672f01bcbbf1edd4e7f",
+      "inspected_sha256": "6fb6d7131621072febf477a39053b651a54e47305e611da29fc530eaf39e903d",
+      "affected_ids": [
+        "FE-PROFILE-IDENTITY-ORDER-001"
+      ],
+      "relationship": "historical_original_bytes_unrecovered_or_unadjudicated; current_report_is_separate_evidence_not_replacement"
+    },
+    {
+      "path": "docs/premium-ui/qa-match-identity.json",
+      "historical_declared_sha256": "0bde93c5ab8882133ca9755654e204446032e9e27c9a86d7b0b2a1a571c6abb3",
+      "inspected_sha256": "793bc22ab875b04283e2fe1cc99c4c2f03d2b60d705f929b775a0790f965c0dd",
+      "affected_ids": [
+        "FE-MEMBER-MATCH-SAME-NAME-001",
+        "FE-WORKBOOK-CHOICE-LIFETIME-001"
+      ],
+      "relationship": "historical_original_bytes_unrecovered_or_unadjudicated; current_report_is_separate_evidence_not_replacement"
+    },
+    {
+      "path": "docs/premium-ui/qa-workbook-choice-lifetime.json",
+      "historical_declared_sha256": "9a450aaf6ff9b85de39aaefc3225340bcc2b28982296eba8beb1d84acd7c48b2",
+      "inspected_sha256": "665eb7ed0d5c3b2b12c63d12c229e8a488269d8f724becb915519fc91ad8a389",
+      "affected_ids": [
+        "FE-MEMBER-MATCH-SAME-NAME-001",
+        "FE-WORKBOOK-CHOICE-LIFETIME-001"
+      ],
+      "relationship": "historical_original_bytes_unrecovered_or_unadjudicated; current_report_is_separate_evidence_not_replacement"
+    },
+    {
+      "path": "docs/premium-ui/qa-profile-section-markers.json",
+      "historical_declared_sha256": "2e8a90c132ba926b6e77139bec7a57bd500dc608adefbab54ee68679f9721d8a",
+      "inspected_sha256": "b36122fe63068c0dd122cfe5ab6fe5fa1a357394d6e4f484c2c494f6eda2fe92",
+      "affected_ids": [
+        "FE-PROFILE-ALIAS-MARKER-001"
+      ],
+      "relationship": "historical_original_bytes_unrecovered_or_unadjudicated; current_report_is_separate_evidence_not_replacement"
+    },
+    {
+      "path": "docs/premium-ui/qa-match-identity-long.json",
+      "historical_declared_sha256": "35e13b758d17ed6da940d8994bdb66f979d6ad429f6555a7d79850edf5ed5636",
+      "inspected_sha256": "16cef59eaf89e9ac0281421a19d8902d21ac4ca8be95471e7ced6ed3c5ea8d70",
+      "affected_ids": [
+        "FE-IMPORT-FIELDSET-WIDTH-001"
+      ],
+      "relationship": "historical_original_bytes_unrecovered_or_unadjudicated; current_report_is_separate_evidence_not_replacement"
+    }
+  ],
+  "entry_specific_next_disposition_recommendations": {
+    "FE-REVIEW-CLASSIFICATION-001": "Retain recorded bounded classifier resolution and linked exact snapshot; review applicability only when readiness rendering or authoritative blocker mapping changes. Do not equate this with all workflow invariants being verified.",
+    "FE-UNIT-SETTINGS-CONFIRMED-READBACK-001": "Retain bounded save/readback owner and GET-only recovery evidence; map later dependent-region resolution separately, and recheck affected ownership/draft paths when changed.",
+    "FE-WORKFLOW-STALE-READINESS-001": "Adjudicate later five-stage readiness resolution against its exact report/build/source snapshots before changing the historical open disposition; preserve the original six failures and require scope-specific applicability for later sources.",
+    "FE-MAPPING-CREATE-UNRELATED-DRAFT-001": "Retain bounded mapping creator draft-preservation evidence and original failure; review current owner/draft merge applicability if relevant mapping code changes, separately from all import mutations.",
+    "FE-UNIT-SETTINGS-DEPENDENT-REGIONS-001": "Retain applied V7 dependent-region settings readback scope and original diagnostic; preserve draft/returned-data distinction and GET-only retry limitations without accepting all item159 families.",
+    "FE-PROFILE-RECORD-PARENT-REFRESH-001": "Retain applied V5 profile child-final-close parent refresh evidence and exact owner scope; keep direct record, registry, imports and core member metadata as separately assessed families.",
+    "FE-PROFILE-PARENT-NORMAL-UNIT-FOCUS-001": "Record V4 scratch wrong-record diagnostic and later applied V5 immutable-record focus resolution as chronological events; correct operative scratch-only wording while retaining original text in history.",
+    "FE-UNIT-DIRECT-RECORD-UNRELATED-DRAFT-001": "Record V4 scratch direct posting draft-loss diagnostic and later applied V7 retained direct record resolution as chronological events; correct operative scratch-only wording while retaining original text in history.",
+    "FE-LEAVE-DAY-ADD-DELEGATION-001": "Retain bounded external day-modal delegation resolution with actual Add leave action evidence; keep date/record ownership and overlay close behavior scoped to tested reports.",
+    "FE-IMPORT-POSTCOMPLETE-DRAFT-CLOSE-001": "Retain bounded V9r1 postcomplete new-draft protection and uncertain-result copy resolution with exact integrated snapshots; avoid treating this as all import source/backend/persistence verification.",
+    "FE-UNIT-REGISTRY-FALLBACK-DRAFT-001": "Preserve six historical applied-source failures and isolated V10r1 normal candidate evidence. Adjudicate later V10r4 integration, if separately supplied, by exact applied sources and report assertions before updating operative status; no fix inferred from filenames."
+  },
+  "four_snapshot_followup_assessment": [
+    {
+      "id": "FE-SPECIALIST-002",
+      "snapshot_resolution_as_followup": "Historical source-change snapshot recovered; runtime browser-chrome/keyboard outcome remains unverified.",
+      "review_disposition": "Adopt as separate attributable historical context with original limits and digest provenance; not proof of current runtime outcome."
+    },
+    {
+      "id": "FE-SPECIALIST-019",
+      "snapshot_resolution_as_followup": "Documentary audit snapshot recovered from its actual docs/tools/test digests. Runtime application snapshot was not asserted by the audit and is not required to attribute that investigation.",
+      "review_disposition": "Adopt as separate attributable historical context with original limits and digest provenance; not proof of current runtime outcome."
+    },
+    {
+      "id": "FE-SPECIALIST-020",
+      "snapshot_resolution_as_followup": "Documentary audit snapshot recovered; subsequent invariant-identification documentary acceptance exists with independent review. Operational invariant execution remains separately bounded.",
+      "review_disposition": "Adopt as separate attributable historical context with original limits and digest provenance; not proof of current runtime outcome."
+    },
+    {
+      "id": "FE-IMPORT-FIELDSET-WIDTH-001",
+      "snapshot_resolution_as_followup": "Original before-CSS application snapshot recovered by resolving frontend-relative src/... keys. Current final report also has exact application snapshot, but its bytes differ from the historical final report digest.",
+      "review_disposition": "Adopt as separate attributable historical context with original limits and digest provenance; not proof of current runtime outcome."
+    }
+  ],
+  "known_operative_history_conflicts": [
+    "FE-PROFILE-PARENT-NORMAL-UNIT-FOCUS-001: fixed_bounded observed later applied V5 conflicts with old scope confirmed on V4scratch/not applied.",
+    "FE-UNIT-DIRECT-RECORD-UNRELATED-DRAFT-001: fixed_bounded observed later applied V7 conflicts with old scope confirmed on V4scratch/not applied.",
+    "FE-WORKFLOW-STALE-READINESS-001 and FE-UNIT-REGISTRY-FALLBACK-DRAFT-001: original open/candidate-only records need separately evidenced later-resolution adjudication; this review does not infer a fix."
+  ],
+  "historical_unknown_representation_example": {
+    "classification": "verified_bug_at_recorded_historical_snapshot",
+    "recorded_status": "preserved_verbatim",
+    "current_applicability": "unassessed_not_claimed",
+    "snapshot": {
+      "kind": "historical_reported_application_or_documentary_context",
+      "source_claims": "preserve literals with before/candidate/integrated context",
+      "evidence_binding": "historical_original_bytes_unrecovered_when_applicable"
+    },
+    "triage_owner": "/root prospectively where explicitly assigned",
+    "triage_status": "evidence_adjudication_pending",
+    "next_disposition": "specific evidence relationship or current applicability question, not generic verify everything"
+  },
+  "inspected_input_sha256": {
+    "docs/premium-ui/acceptance-criteria/items-001-086.json": "5f84ff2a0927e6f67f8e09d326e5874bb49e27b6c1752ad6443c5a4b8ccb0625",
+    "docs/premium-ui/defect-register-current.json": "0e2b351d69f8c0b3d7c29aedc092e131c0500bdf766fe2fcad08d6c35dadfad5",
+    "docs/premium-ui/reviews/defect-register-15-reconciliation-proposal-20261109.json": "4c36a8d602eda750aefce22af720a6382e66e9b717e1f8bf786aa399e79175e1",
+    "docs/premium-ui/reviews/defect-register-15-reconciliation-proposal-20261109-rationale.md": "908d3d8d71a40c441a5003a36c5949118469640bcd6fb00054acc1d61772736d",
+    "docs/premium-ui/reviews/defect-register-15-reconciliation-proposal-20261109-stats.json": "9a56481d66db84e6f7f8d54a004bc76e4c7cc45bbd4ff3f4c8d4edc612039726",
+    "docs/premium-ui/reviews/defect-register-15-four-snapshot-followup-20261109.json": "7c5831f3632efeec0512d12747f9a6bb666368a3fd24c4153c8ae520fef5b81f"
+  },
+  "direct_evidence_sha256_verified": {
+    "docs/premium-ui/qa-connection-status/before.json": "ac0f46ee3c3999aab2ee31b632b9b65a4b57943051807eb19dad31f7707a05bd",
+    "docs/premium-ui/reviews/connection-status-current.json": "e6491a99a96a3030f73dbd58a24d320a1ca1f6b84e24d7b51e3e75973852a2e0",
+    "docs/premium-ui/qa-connection-status/report-development.json": "96046add14ab615ad16fd0b3f51f4422951bbe6c403a0b09614d78187cae239e",
+    "docs/premium-ui/qa-connection-status/report-production.json": "32c82958532bcc0bf2eb5cce9a5736513d382b962dc28295e016bec38f49256a",
+    "docs/premium-ui/reviews/connection-status-source-review.json": "9cae3f90874f1c5565c1fff1ad87b17fd09b3d98ffd633990b1b8c0c413f7074",
+    "docs/premium-ui/qa-connection-status/contrast-webkit-dark.png": "3ef3418502796b867edd97816d1e3e26e4e34909e85b8f5d74a2f02f334b5b20",
+    "tmp/premium-connection-development-repeat.log": "e043ebce0c3eacb95628e503d7894784f7dda87bcee2b6a9bd73a455f05041ee",
+    "tmp/premium-connection-header-regression.log": "a02c7c439a930c986ca5f4788424add1a8e40fc6708883822269b978508f07e0",
+    "docs/premium-ui/qa-header-wrap.json": "c0c3943a2c349ddf867e2ff6feba2ff1ebcf4afa35f3c5ea41a005ee5bae4211",
+    "docs/premium-ui/reviews/connection-status-test-review.json": "6e80fbecd6ffb38f28d633cf7ac7e332b2ef32e1f04a2684067421767011e4b6",
+    "docs/premium-ui/qa-profile-initial-recovery/before.json": "a09adcdf7bc5facca13fc8441a3ba8320083abcf4113e1ffcfe7af31ad34aad8",
+    "docs/premium-ui/reviews/profile-initial-recovery-current.json": "ed4e0b8685dd8752f37490db0e971b05732a14dce71569e84b90f4e1b9a93f1b",
+    "docs/premium-ui/qa-profile-initial-recovery/report-development.json": "d61b7f8b826e64f598a2f7df3f0528cf2bcf83bcf67034a4f9ac780606947805",
+    "docs/premium-ui/qa-profile-initial-recovery/report-production.json": "e269b696838601b6e70a3ce4a04cb7410edf6a958032977c97d828341978139a",
+    "docs/premium-ui/qa-inline-member-selection-lifetime/before.json": "d379597cd5c0a48ac3e996dc3a8bbbe7a7c5e826904639893645561fb1f3cab9",
+    "docs/premium-ui/reviews/inline-member-selection-lifetime-current.json": "befc3c74d1b044970c85770490d8471b41f8c01f0c52e347417f29714d8d78b3",
+    "docs/premium-ui/qa-inline-member-selection-lifetime/report-development.json": "7e383a27ee05afaf1b0d972b8cc09795afb03e14fe55e80a80876dacbe6fea72",
+    "docs/premium-ui/qa-inline-member-selection-lifetime/report-production.json": "36ac166d5e2c6be2e8990f70d44ab9cedaa2cbe554ed1f9b40004f1de5c62fc3",
+    "docs/premium-ui/qa-inline-member-selection-lifetime/before-focus.json": "5debc088b11df8ce1d48b1a17969e7b83eede9b11cc146e176e9a6f7ab098387",
+    "docs/premium-ui/reviews/legacy-import-entry-graph-current.json": "d9bd07beb8214752b8ccaf7d62441169655fe760401f0bbb968eb2b223646817",
+    "docs/premium-ui/specialist-action-queue-current.json": "f59ecace8ed5441f05a07b45024d6ac84ba95edd68169cf6f9c5df225b1b721f",
+    "docs/premium-ui/reviews/agent-surface-scroll-20261022.json": "73d7f762b82dc110b63b17e70a8cfc2aaa9006b2342802e178c24b7ae524de20",
+    "docs/premium-ui/qa-disclosure-scroll.json": "dbee593f047845a4626799da0bbe09d1aee66ec0e0dde0b00df90f996c947dfe",
+    "docs/premium-ui/reviews/agent-profile-identity-20261022.json": "766e69534cec48a09189973508505ced5dd72a06d59d42f133cc3da0d2f57685",
+    "docs/premium-ui/reviews/agent-generation-presentation-20261022.json": "4e6b579c059cd7764b0c0f0fb0e403974fb2d4e93a0e08517184ce2e1c462547",
+    "docs/premium-ui/reviews/specialist-integration-current.json": "1e0d552f1118929c5f26c203e0c4ba635228242ca622df467d5cbf757d93da78",
+    "docs/premium-ui/reviews/generation-state-current.json": "ad437259e0fc5ab4bfa4750fe56b8e2edb0be25adedf31c4980093b19f9eb634",
+    "docs/premium-ui/reviews/agent-visual-tokens-20261022.json": "99d8dd578d40c1a4da5f9b7ea480604dce343a346d2e194642a6ffb1bcfc5422",
+    "docs/premium-ui/reviews/icons-current.json": "aac4fc52ea717f61f2934adfe256925d57cfb62a48a3e5ec7863662297f81248",
+    "docs/premium-ui/reviews/agent-motion-fallback-20261022.json": "9e3cc0e238905875eab1a6b0f1ae7949197c57f6fa51f9d29757f003bbfb6c66",
+    "docs/premium-ui/reviews/unit-motion-current.json": "2282644c949dcb150fcb8df028b82ebd2ae9d698d12cca9752c4453e014f8b6a",
+    "docs/premium-ui/reviews/agent-validation-recovery-20261022.json": "fa394e81d617db193d19510180dabc961672f58090e588299e7273f391bf09f4",
+    "docs/premium-ui/reviews/agent-table-selection-20261022.json": "19e137e8d520e2bd566d444700473566b1da4e869584f2350646d30dc92a1452",
+    "docs/premium-ui/reviews/search-selection-current.json": "e4d31557d83462e232e841286456e74a6f5ef264bf6c68877222e59f7458aa5a",
+    "docs/premium-ui/reviews/agent-leave-calendar-20261022.json": "a1636244fd3fbcd419aaf485a150d113de7500306298e20840bb70bef27f5ce4",
+    "docs/premium-ui/reviews/staffing-review-current.json": "899bb100fc6a10e8c174c7a89b09108610792d5105c707fb5ff4856d7300fbfe",
+    "docs/premium-ui/reviews/agent-rules-presentation-20261022.json": "334b5da2f26385cfdfe6f94f339d4e4a6768dc14a02e1e458a5fd124b7af9c25",
+    "docs/premium-ui/reviews/rules-dock-current.json": "9c89400a1d9effed5f1adac99361c9a6c94a34d0b6149789c0fe5b9aa5beba42",
+    "docs/premium-ui/reviews/agent-acceptance-evidence-20261022.json": "f9e4be381b660af427e99a19cad640ae021711df55064d8fdb5c713bfd6ddeef",
+    "docs/premium-ui/reliability-gaps-current.md": "ad015d7c796553e7b28edaa4fb09b456b69aaa994388017b5e732b2dc449d3c5",
+    "docs/premium-ui/reviews/reliability-current.json": "dd81e95e150659f1dbe35924d4ebade72db8472b53c006df8693c515c7a3cb37",
+    "docs/premium-ui/qa-profile-tabs-complete.json": "f54b36c987c4f429680391321e81bd1bd7180aabea5b344f0f7aea59de8015fd",
+    "docs/premium-ui/reviews/profile-tabs-complete-current.json": "3276214f87c7845822058e55127cb169ade8dd1f43ba3959a0ee6b5a8c4709c4",
+    "tmp/premium-profile-tabs-complete-container-before-fix.log": "7b7122e1fb5bdb57956c46b81eca79b9d3d128d6530253868c99a49420d828db",
+    "tmp/premium-profile-tabs-complete-native-rail-stop-before.log": "7f5e4866336f3776c3b252fe8676d869d4d8985e6b125bc8464181f5e40ddf00",
+    "docs/premium-ui/reviews/profile-date-cards-current.json": "fc1ce3b70e409ab0fbfb6eec5eb160212a3bec707dc1f154416e7b3481e3186e",
+    "tmp/premium-profile-effective-before-wrap.log": "6dd4ec61d1dd39d84048a85e04e71479afd963986b2d26ad69d26d9dde5c7183",
+    "docs/premium-ui/qa-profile-effective-identity.json": "f3416428990719322020f9c74efd5e69c62a3eb1f2f0ca6a59babbfbdf1f3aa7",
+    "tmp/premium-profile-designation-header-before-compact.log": "7fdd48f5594feef2177146d93d1118ebdf4265b6f09692df2fcfd923707f8ef5",
+    "docs/premium-ui/reviews/designation-header-current.json": "a1388fb4fd92b61afef91316bdf7c0678a666d07236e4389cfd3409f3afd7a4b",
+    "docs/premium-ui/qa-profile-designation-header.json": "6fb6d7131621072febf477a39053b651a54e47305e611da29fc530eaf39e903d",
+    "docs/premium-ui/reviews/member-match-same-name-source-probe.json": "0681e31ad23e879aeb9b0fd0b63b70549396ae6a98c83377cfd5a2296b5ddb14",
+    "docs/premium-ui/qa-match-identity.json": "793bc22ab875b04283e2fe1cc99c4c2f03d2b60d705f929b775a0790f965c0dd",
+    "docs/premium-ui/qa-workbook-choice-lifetime.json": "665eb7ed0d5c3b2b12c63d12c229e8a488269d8f724becb915519fc91ad8a389",
+    "docs/premium-ui/reviews/member-match-134-acceptance.json": "b855ad2cdb02bfe99c6c52413a547ca217a25f830f6e9b8f6c8163be2e624e22",
+    "tmp/premium-profile-section-markers-alias-baseline.log": "6c9617d971ae7d81899910f05a40c8ec33ec39416c5602a4e88cc0163d1caf86",
+    "docs/premium-ui/qa-profile-section-markers.json": "b36122fe63068c0dd122cfe5ab6fe5fa1a357394d6e4f484c2c494f6eda2fe92",
+    "docs/premium-ui/qa-workbook-choice-lifetime-before-ownership.json": "bda0655e9c0de0e33043ca4ed0d2b77b1bc47c8a0c6c1509684aeb5a6cd06d7d",
+    "docs/premium-ui/qa-match-identity-long-before-css.json": "7d3356229c1e2eaadc1dcaeec833052e7cad46a568cb331833e81c046074f684",
+    "docs/premium-ui/qa-match-identity-long.json": "16cef59eaf89e9ac0281421a19d8902d21ac4ca8be95471e7ced6ed3c5ea8d70",
+    "tmp/profile-cancel-pending-proof/report.json": "660a2131d3443c1f80d00775df71e1abc5c3dd8a921f590eaf2d63b1988492d6",
+    "tmp/profile-cancel-pending-proof/finding.json": "6fbd3fd163a0160d5ccadb075ff4f17bb82f43ffb3fffeaafa9a6f7b09e3472a",
+    "frontend/tests/premium-profile-cancel-pending-proof.browser.mjs": "b77b74667e4a8357f8d4b5d5eaea6e64c2cdcddfef9dc644151dfc4d10ffa38d",
+    "tmp/member-workspace-before-cancel-pending.ts": "2d52a71134b38e6ec1b2398ddac0cd90ac85829d0bd6ba084b92c1693f2bb97d",
+    "docs/premium-ui/reviews/profile-cancel-pending-guard-current.json": "ede7ab485f7b99069ee2307e567e000475a81af0cee745b7ee3073042880e137",
+    "tmp/profile131-geometry-before-scroll-fix.json": "e614728cc7f19714983c813e9d509131dfb576a2ae4fef855690d4bd18e47b9a",
+    "tmp/profile131-geometry-before-scroll-fix.png": "2323876e47b53b2b8280566e950f0dda644da5ff5375c18925ac6968a8ab60c8",
+    "docs/premium-ui/reviews/profile131-current.json": "5bedc2bf2483dc00a07c38989ff766ba192ddccacc8408fcad2c242e89f589d0",
+    "tmp/profile131-pointer-before-metadata-fix.json": "a44f13a6ff68fd0331e06efe585265114f37da76073d720450586afa739b487c",
+    "tmp/profile131-pointer-finding.json": "8d464cd789ffa47e0cdda6219c73ce59ca5fbcbb0150e17f8a08ffc0d4d4c569",
+    "docs/premium-ui/reviews/motion039-target-reveal-current.json": "9d240753216b5dc8de1450b29c844cbf957e1b8e056bb22ea4d432e0a8b8bcc6",
+    "tmp/close37-webkit-menu-inputs-after.json": "07ff05d285a0eb232063b602744ababf3f813f680ab43dd42846030be343b4e5",
+    "docs/premium-ui/reviews/close37-final-execution-current.json": "18a24a3debb7c070e3dd0c2b42b3f7fecd8ba7566cf0c0ce201f1792e58a3e39",
+    "tmp/close37-rules-reveal-proposal/proposal.json": "218b0c5560769d18fc47b6319e45abaee2eaa932a6200e7f2477bd9d5461e817",
+    "docs/premium-ui/reviews/unit-monthly-v3-integrated-execution.json": "5b3d70e49f799b5253656fe79c7d7b2cc86757f37bfc543a5ed57c2f46997efa",
+    "docs/premium-ui/reviews/unit-monthly-leave-presentation-next-audit.json": "fbc48ccb095cac28fa5c8a9e2e1fb236af0252a943dc3996c92080a3a3bd0112",
+    "docs/premium-ui/qa-unit-monthly-baseline.json": "6766f1a083e55ab0947a3b732432e0d5ac86d6af9ca9293c759968a17ec72412",
+    "docs/premium-ui/reviews/unit-focus-v9-integrated-execution.json": "2963680e60331bce6b5ed69deb86a78269cda57db4fafef77cefbaa0a3b022ce",
+    "docs/premium-ui/screenshots/unit-monthly-v2/phone-light.png": "5547e9a68564de1a103a3b6aeabc8a09f8d1fb5d37d49a8236f5e5b27cf6888b",
+    "docs/premium-ui/screenshots/unit-monthly-v3/phone-light.png": "49e439a777db4ad2b52756305c03f82554f61635751f537d22187957bad4266e",
+    "docs/premium-ui/reviews/icon037-v3-independent-review.json": "37398b033e53d9bd5236d7e1e4cb79cd46c67de8ef05fe4c02ef889d36dedd8d",
+    "docs/premium-ui/qa-rules-help-owner-v2-preview.json": "57115ced32f0dd9a78dee119be4393b1c1c6f59e367ecdccdd3e063049aa0879",
+    "docs/premium-ui/reviews/unit-rules-integrated-execution.json": "b61566b93e3671fb9538e0cea637f3e9279d9b9f045592f099024f39a38dc098",
+    "docs/premium-ui/screenshots/unit-board-current-reflow-v3-1280.png": "764535d5ce9068c81c123a37754016b430d19f3c3231414fc33f86695f51d662",
+    "docs/premium-ui/screenshots/unit-card-geometry-v1-1280.png": "aae0e191e1cd88712561a666633495f399af0adc8b13024a6fe7ceb89f0a57f8",
+    "docs/premium-ui/reviews/unit149151152154-acceptance.json": "1259a0de0b6e4a81f99db9bc3ce0cde2fef3a76ada9314cddeed21b4f33a259c",
+    "docs/premium-ui/qa-unit-creation-context-diagnostic-v2.json": "a3349dffab071e1c0f0c40e8f2766665d522fd7c0831322440bb029445bfa50f",
+    "docs/premium-ui/reviews/unit-create-opener-integrated-execution.json": "1fd647bba7dedd86b5421edca86c6fb18b22c7893fce3b828bccfcb2997e0779",
+    "tmp/unit-create-opener-v1/source-proof.json": "b3e58c5e4f6b92bfbdc472df84b7fadde6734bfdfc696fe9773d41b234ecb591",
+    "docs/premium-ui/reviews/reference155-160-independent-gap-audit.json": "dd859edf8b3e97c0b8bde39d43e7d71f4439c12b7220fb44891b2abf35e7f01c",
+    "docs/premium-ui/reviews/picker-v2-integrated-execution.json": "cd61d5f7fc3eb77652b921e94bb232de25456239305bde36db909286a89a17fc",
+    "docs/premium-ui/reviews/picker-v2-prior45-applicability.json": "01f45664890b6a29e6fba02855740b9923dd09a511bd4033939a93b591f4114c",
+    "docs/premium-ui/reviews/staffing-v2-integrated-execution.json": "ffae966ecbfda6b1d09b6c7a75d768ac477d4112796028cd678cee920a06e275",
+    "docs/premium-ui/reviews/staffing153-acceptance.json": "e391c7a61f4c3564065eb5b493e1e22463b90208f2ca86ed2d6339ae042527f5",
+    "docs/premium-ui/reviews/icon037-v4-operational-extension-independent.json": "cabf35b34c37cc12bc04e91b0e1d2c29bef320b13602c30bcc9a5b62668ead46",
+    "docs/premium-ui/reviews/superadmin-pointer-focus-v1-independent-review.json": "51d8b7235f1de853e58246eb951e7dc0fa322707efb429da5815164889e4f6dd",
+    "docs/premium-ui/reviews/reference-recovery-combined-v1-integrated-execution.json": "e58a708a50d96bc57a1c2a516d9e4146d1a8adfe4bdca25ad830839ceab0ffd0",
+    "docs/premium-ui/qa-reference155-opener-diagnostic-independent.json": "ff375837eb0430b8092d1758a686f9acfbfe5d5d6b47b925c3028a978578a3b3",
+    "docs/premium-ui/qa-reference159-late-unit-callback-independent.json": "c4ba4e5d655efebe14a765393d642b0db75fa24082903e8bcd103d1e4ddd81c0",
+    "frontend/tests/premium-reference159-late-unit-callback-independent.browser.mjs": "8d2534d2f169cb7b2b23dced5d817d475ba815e8cd321ae55bbc78238336e7de",
+    "docs/premium-ui/reviews/reference159-remaining-callbacks-independent-audit.json": "26f24bc101d7db2c259cf6ae9c785076f3f2fe3f8bd1a2ef974a31996c937737",
+    "docs/premium-ui/reviews/reference159-record-owner-v1-integrated-execution.json": "9ad26613ba3f117b988d877e1acab18365558a056a985d5ae757c4e50c2039ed",
+    "docs/premium-ui/reviews/reference159-import-apply-late-callback-independent-defect.json": "3706500cefca4e6745598d2be9712126ad565a0e01920607fe5555b021ab912e",
+    "docs/premium-ui/reviews/reference159-import-owner-v1-author-execution.json": "f7ec915461b0ced0db6c9653ecfb8ef14223f1bccc1545058e1154da6ba67438",
+    "docs/premium-ui/reviews/reference159-import-owner-v1-integrated-execution.json": "c18d1cc5025805e900a13793e5c2a03790fa5617c3438747b6da4e9402469356",
+    "docs/premium-ui/reviews/reference159-monthly-approval-recovered-defect.json": "dee870ae3c0d97eb69a128254a6e5622e95a75a428f1cbd3fae438aaf1299ffb",
+    "docs/premium-ui/reviews/reference159-monthly-owner-v1-author-execution.json": "eac027fa1ab9b32a53f214f419ad70803afd7be6245510b0b3858e37055ff4ac",
+    "docs/premium-ui/reviews/reference159-monthly-delete-combined-v1-integrated-execution.json": "e870aee829c2ace0d0300874e86aa4d56ee5d51b0fe57a2a3d59d5f100b40ed9",
+    "docs/premium-ui/qa-reference159-delete-route-independent.json": "e18646d3fdddbb384c994e0e6bba6251b4792526b5ff7aa8ad245895cbf03fd2",
+    "frontend/tests/premium-reference159-delete-route-independent.browser.mjs": "7563c27ac7f31ed6bb32bbb1a5c21ecf893b507596ea301d3e142a89ef462cc4",
+    "docs/premium-ui/reviews/stage161-readiness-independent-defect.json": "b45ee46502394e6d6984841a52eb2b6622ff131868be9dbe81b32b3cf71454f9",
+    "docs/premium-ui/reviews/stage161-classification-integrated-execution.json": "e78524598a04e0e5330557233e7d71f93bad0010e611a8cf0c7df0585d633e29",
+    "docs/premium-ui/reviews/dependent159-unit-settings-confirmed-readback-independent-defect.json": "0c1a3bd94579e35acdf40d41e1c7438b643632be8d0645df0233cdc4463cbd0b",
+    "docs/premium-ui/reviews/unit-settings-recovery-v6-integrated-execution.json": "a123b0ab1ef44bf5cf077f086c2c92e6d17308b2429db118a845a220f46c5c67",
+    "docs/premium-ui/reviews/unit-settings-recovery-v5-independent-adjudication.json": "0c3c98b09b4ba8e92a5255363807119ef28928afbd7d48f91a7bcd8d0b1c566b",
+    "docs/premium-ui/reviews/generation161-current-stage-and-freshness-independent-audit.json": "9492e0d66929938d97c94fe3e6cc0dd6c80ad1ab9be2371f08fbf8048e74fa26",
+    "docs/premium-ui/qa-dependent159-mapping-create-draft-independent.json": "cf95ff61f95b8a6299965dbe6a33b4a3aad071536087273b4a9cbf40707b1c01",
+    "docs/premium-ui/reviews/mapping-parent-v1-integrated-execution.json": "9e1a25c14666218b0c5033b8f9b77d6034b00377c0abb18936c933e68b0c79b1",
+    "docs/premium-ui/qa-settings159-dependent-regions-independent-defect.json": "7d8b90de88029f3697b1fb8aafa1fa4603fc1bdbe10193cfba45c96f62ebd5b3",
+    "docs/premium-ui/reviews/settings159-v7-integrated-execution.json": "ecab26160223451f8b63522d1221b626d9fac4bd799d0b527da1a0c7895c4c59",
+    "docs/premium-ui/qa-profile-parent-refresh-independent.json": "8752be4349b54089f16d34c31e785a44594405a67ef1a09482ca1b49214b8206",
+    "docs/premium-ui/reviews/profile-parent-v5-integrated-execution.json": "ea3c751d8d62f1aca3edd53e40228635de44719e8f8269a7d80d2955347620bc",
+    "docs/premium-ui/qa-profile-parent-v4-normal-unit-duplicate-focus-diagnostic.json": "e2e469ce01158f25f0b3869aa837e4afcf8cdbd041b6632ae61064fa2492aef2",
+    "docs/premium-ui/qa-original159-direct-posting-draft-v4-diagnostic.json": "1e9bb8eda7be2ac4d9a212aab4b26e6ae190618f4e4e8ed015adfd78868d8510",
+    "docs/premium-ui/reviews/original159-direct-record-v7-integrated-execution.json": "f50fdc238f7ecde920678e6ecb152b1828a820ccebeba09495974ba4210e4d29",
+    "docs/premium-ui/qa-original159-leave-day-add-v6-dead-control-diagnostic.json": "f0044010349038a4fdeb86f75d348f1589f62af361a813b8e246146515e9c972",
+    "docs/premium-ui/qa-original159-import-v8-postcomplete-mode-diagnostic.json": "977fc5a8036e01008c04a6bf8546ee8b4fdd845a0b78875fc2a3906d6e4333c8",
+    "docs/premium-ui/reviews/original159-import-v9r1-integrated-execution.json": "a4ee37412da49741e03e1b5d327bbc56f52645a6fb0eea5f7d5593dbaa1e05f7",
+    "docs/premium-ui/qa-original159-registry-fallback-draft-diagnostic.json": "defd3d1dbffb11ab13d048b98f51983e2d27b08975c68ad7618bf5f3b40dba5e",
+    "docs/premium-ui/reviews/original159-registry-v10r1-diagnostic-attribution.json": "21d42b425eca3876648fedede3a1bce8b3757f5246fcc53ab6deedcf79388085"
+  },
+  "no_current_runtime_or_acceptance_claim": true
+}

@@ -1,0 +1,86 @@
+{
+  "reviewer": "/root/independent_v2_reviewer",
+  "recorded_at_utc": "2026-10-30T09:56:25.808Z",
+  "candidate_sha256": "c2526f3881fe425735714023f5d48e0296302550d5fb3d86400619e73a54a641",
+  "test_sha256": "4bc1c7bfbc04bfaa5d9039db3b1fe8a4f0c9e2b49c67ca6fddeac3e32ac8097b",
+  "source_sha256": "9f42daa30c62a348ba3a3ac6deabae37bb904f3dbefd66e11584f2a7e373b9f6",
+  "own_checks": {
+    "exactReplay": true,
+    "changedExistingFunctions": [
+      "renderSlotSafetyCell",
+      "renderUnitDaySafetyRows"
+    ],
+    "addedFunctions": [
+      "returnedSafetyReasons",
+      "safetyUnitDayKey",
+      "unitDaySafetyReasonIndex"
+    ],
+    "otherNamedFunctionsUnchanged": 336,
+    "keyProbe": [
+      "[null,\"2026-12-17\"]",
+      null,
+      "[\"null\",\"2026-12-17\"]",
+      "[\"a|b\",\"c\"]",
+      "[\"a\",\"b|c\"]"
+    ],
+    "stressSlots": 10000,
+    "stressReasonLines": 30000,
+    "stressIndexMs": 47.003000000000156
+  },
+  "css_candidate_sha256": "40bc7f91441cc805375a2e13332f424c88423c93124bf34123dff4bcffbf5673",
+  "scope": "Independent own source/VM and one additional actual-controller320light screenshot probe; title contrast,44px close and keyboard return checked; all mutation rejected; local GET fixture/RAM fallback only. Long reason and native disclosure/focus checks, not physical keyboard/AT/backend persistence/full147 acceptance. Author24cases separately inspected, not rerun here.",
+  "results": [
+    {
+      "engine": "chromium",
+      "theme": "light",
+      "profile": {
+        "width": 320,
+        "height": 700,
+        "root": 16
+      },
+      "titleGeometry": {
+        "foreground": "rgb(255, 255, 255)",
+        "background": "rgb(23, 29, 56)",
+        "image": "none",
+        "title": {
+          "left": 28,
+          "right": 230.578125,
+          "top": 28,
+          "bottom": 51.390625
+        },
+        "button": {
+          "left": 248,
+          "right": 292,
+          "top": 28,
+          "bottom": 72,
+          "width": 44,
+          "height": 44
+        },
+        "header": {
+          "left": 12,
+          "right": 308,
+          "top": 12,
+          "bottom": 97.1875
+        }
+      },
+      "contrast": 16.544782001846542,
+      "allFiveOrderedReasons": true,
+      "longReasonCharacters": 11722,
+      "exactGroups": true,
+      "nativeEnterSpaceRetainedFocus": true,
+      "geometry": {
+        "width": 296,
+        "scroll": 296,
+        "viewport": 320
+      },
+      "titleStyle": {
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(255, 255, 255)",
+        "fontSize": "18px",
+        "fontWeight": "700"
+      },
+      "errors": [],
+      "writes": []
+    }
+  ]
+}

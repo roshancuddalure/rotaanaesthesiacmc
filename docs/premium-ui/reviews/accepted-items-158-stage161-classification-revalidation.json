@@ -1,0 +1,149 @@
+{
+  "recorded_at_utc": "2026-10-30T18:17:25.245605+00:00",
+  "scope_type": "exact_runtime_requirement",
+  "scope": "Original158 only; no all159dependentcallback/all160action/260goal acceptance.",
+  "items": [
+    {
+      "item_id": 158,
+      "requirement": "Standardize cancellation and deletion confirmations so removing a record never resembles merely closing its editor.",
+      "conditions": [
+        {
+          "condition": "Closing/cancelling an editor is labeled and handled differently from cancelling or deleting its record.",
+          "satisfied": true,
+          "evidence": [
+            "docs/premium-ui/reviews/cancellation158-current-independent-adjudication.json"
+          ],
+          "rationale": "Current12native existing Edit posting/Edit leave cases explicitly assert Cancel closes this editor,pristine/search-only closure withoutprompt,dirtydecline/accept/pending503guards andzeroSave/delete. Existing-record identity is loaded through originalGET; previewretains exactperson/dates/notes. Separate actualfullshell12Leave cases activate Cancel leave\u2026 rather than editorCancel; nativeconfirmation names person,dates,category,slot,status andrecordID plusretainedhistory/existingduties. New18admin-delete cases use Delete posting/Delete selected/Delete all month andrenderedDelete counts; footerCancel returnsnull withzero delete requests. Source main legacy Cancel unit edit onlyclears editingidentity/rerenders,whereas Remove posting\u2026/Delete posting\u2026 both call commonrunAdminDelete/confirmAdminDelete beforeanymutation. Close/cancel prompts are not relabeled into consequentialrecordoperations."
+        },
+        {
+          "condition": "Consequential record removal names the target and consequence before the existing operation executes.",
+          "satisfied": true,
+          "evidence": [
+            "docs/premium-ui/reviews/cancellation158-current-independent-adjudication.json"
+          ],
+          "rationale": "Current actualLeave12cases compare completeexact nativeconfirmation before POST{},declineallthreeoverlapping/crossmonthtargets withzerowrites,503doesnotretry,explicitsame-targetretry refreshesGET andretains siblingrecords; 48lateaccount/view outcomes suppress stale UI/replay. New18shareddelete-controller cases assert backend-returnedescapedtargetlabels,blocked sibling andlinkedrecord/recycle30day consequence beforeDelete; heldpreviewdisablesaction,Canceldoesnotdelete,busyDelete cannotclose/replay.409forcesfreshpreview/newtoken andexplicitreconfirmation;wholemonth requires exactcasephrase andclearsitafter409. ExactPOSTselection/id/month/token assertions prove frontendrequests match reviewedtarget. Mainrow/selected/month callsites supplyexistingkind/id/month/title tothissinglecontroller andmutateonlyafterpromiseconfirmed. No backendpersistence/authorization proof is inferred."
+        }
+      ]
+    }
+  ],
+  "requirement_scope_rationale": "Both exactconditions reviewed against current controller/source/outcomes and completecorrection-surface inventory (157) or distinct sharedconsequential-action/editorclose paths (158). Apply/backendpolicy/persistence notinferred. Currentheldbuild and48prior scopedacceptances retained.",
+  "execution_evidence": [
+    {
+      "report": "docs/premium-ui/qa-cancellation158-edit-close-independent.json",
+      "test": "frontend/tests/premium-cancellation158-edit-close-independent.browser.mjs",
+      "exit_code": 0,
+      "contexts": 12,
+      "operator": "/root/cancellation158_outcome_audit",
+      "authorship": "Independent current-source adaptation/rerun of prior specialist-authored assertions; historical originals untouched"
+    },
+    {
+      "report": "docs/premium-ui/qa-cancellation158-delete-independent.json",
+      "test": "frontend/tests/premium-cancellation158-delete-independent.browser.mjs",
+      "exit_code": 0,
+      "contexts": 18,
+      "operator": "/root/cancellation158_outcome_audit",
+      "authorship": "New independent test"
+    },
+    {
+      "report": "docs/premium-ui/qa-cancellation158-leave-record-independent/report.json",
+      "test": "frontend/tests/premium-cancellation158-leave-record-independent.browser.mjs",
+      "exit_code": 0,
+      "contexts": 12,
+      "operator": "/root/cancellation158_outcome_audit",
+      "authorship": "Independent current-source adaptation/rerun of prior specialist-authored assertions; historical originals untouched"
+    }
+  ],
+  "independent_review": {
+    "reviewer": "/root/cancellation158_outcome_audit",
+    "report": "docs/premium-ui/reviews/cancellation158-current-independent-adjudication.json",
+    "method": "Independent exact-condition source/test/result audit plus42current browser contexts; app/backend/ledger unchanged."
+  },
+  "root_review": {
+    "reviewer": "/root",
+    "method": "Read exacttwooriginalconditions,allcurrentreports/tests/sourcehashes and independentcriteria rationales.157includes operational/memberCSV/workbook/PastDuties correctionpaths;158distinguisheseditorCancel fromnamedcancel/delete andheld/conflict/manualretryconsequences. Originaloperational157preintegrationreport retains explicit one-directfocus-line applicability; row/state/API logic unchanged. No acceptance fromcounts alone."
+  },
+  "evidence_sha256": {
+    "docs/premium-ui/reviews/cancellation158-current-independent-adjudication.json": "c56dd2605957690aae7b3087b1b7fe13faf3cbbb7899313b91e509f608877ac7",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json": "b902f1a9b1e0049694ab917b194da0bb9262fe99fb5cb0f406f40a5cb09942ad",
+    "docs/premium-ui/acceptance-criteria/items-087-173.json": "a7bf1322bd8e08a1fddd4195095d9cc52a8867a1b8a2bda9b523917fae458576",
+    "docs/premium-ui/reviews/reference-recovery-combined-v1-prior48-applicability.json": "099b67aec5262174479ba9779f88ec1a24946b852386bc7a34fb4c0868822d16",
+    "docs/premium-ui/reviews/reference-recovery-combined-v1-integrated-execution.json": "e58a708a50d96bc57a1c2a516d9e4146d1a8adfe4bdca25ad830839ceab0ffd0",
+    "docs/premium-ui/reviews/reference-recovery-combined-v1-root-sourceproof.json": "5a8162c64faffe7c0d8b5a3ce06c026972bbafb227d88577dfd9fec61660f24a",
+    "frontend/src/record-workspace.ts": "469fd6bf2e4118b15ad343d8059cd3cfb0acbc6483bea969ca5fb93488644335",
+    "frontend/src/workspace-load-state.ts": "cdd0e323d7e83e6e668a381bbfcc37cad4726b1193ac5de31d5f14e03eecd9c6",
+    "frontend/src/admin-delete.ts": "7a3eb13237272ad8b44f523bea5483ebeae60fc9c8b58d92035fe15c74528979",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/member-workspace.ts": "0ef8c1ef2234c7a50d8ca10b8aaa3998a654d452f563bd4c75531faef09d6c63",
+    "frontend/src/premium-theme.css": "40bc7f91441cc805375a2e13332f424c88423c93124bf34123dff4bcffbf5673",
+    "frontend/src/main.ts": "2798e0cbbf61b1a473695f99f9f56b57c3ad249c9987abe00421f4a50e2731eb",
+    "frontend/src/ui.ts": "680d7830bca8826b46b6f1dc2c0d064d2a3a2e16fb41188d2c323de6bccf85b2",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "docs/premium-ui/qa-cancellation158-edit-close-independent.json": "43a369dae10bb376f5cae247acb51cb467e96ec58858d7cc2f588d5245a38f5f",
+    "frontend/tests/premium-cancellation158-edit-close-independent.browser.mjs": "3a90e91838af01097d3359d072dba814a3557e8eb203f4e8630d91a871887868",
+    "tmp/cancellation158-edit-close-independent.log": "0f086eec0e38111f544a5fa23ec4f9489c748535d7ab58640f9967b96c03b46c",
+    "docs/premium-ui/qa-cancellation158-delete-independent.json": "33d0f98755ad1c318d944ebb6d85cf55e480993bb1c4cfbe0597dfa2df23075f",
+    "frontend/tests/premium-cancellation158-delete-independent.browser.mjs": "f890de8285db3cd0c81d2c3490b07d5798e7eccd95bbc199fe8611bdb6224e69",
+    "tmp/cancellation158-delete-independent.log": "293f8ed5e964abb9154ab5c632d73a8db4456298e470c2502394ff0ea0b04be8",
+    "docs/premium-ui/qa-cancellation158-leave-record-independent/report.json": "2689764e941efbc7fb331f9b82dfeabbcbcba267eb31475c4587c0a8751be925",
+    "frontend/tests/premium-cancellation158-leave-record-independent.browser.mjs": "750122f1352c08db42eda2dbbbf3c52393462be8d6efb06389316da4a401ba1d",
+    "tmp/cancellation158-leave-record-independent.log": "0ac7b1909226a0e32289a4c29b69748d62187364a7580ec3f609643c4d435edf",
+    "docs/premium-ui/reviews/item158-acceptance.json": "1c8a56ba42431476a4d066a969c2f2e50c22709f5de9e748572f6e2cb9da808d",
+    "docs/premium-ui/reviews/reference159-record-owner-prior50-applicability.json": "144072fc1d6cdeb26ab36875779634ef4823952b50a9ca571878bf00be08a3a3",
+    "docs/premium-ui/reviews/reference159-record-owner-v1-integrated-execution.json": "9ad26613ba3f117b988d877e1acab18365558a056a985d5ae757c4e50c2039ed",
+    "docs/premium-ui/reviews/record-owner-v1-table-applicability.json": "5b94c14f87e53bd5cd65df76dbe68c66cb376aeb91d48696c81cdb41caba6f03",
+    "docs/premium-ui/reviews/accepted-items-158-record-owner-v1-revalidation.json": "1390e396e7fdfe7f03448ef1f9e8fcc2dbffe8bd10afa152a5437539d23036bd",
+    "docs/premium-ui/reviews/reference159-import-owner-prior50-applicability.json": "dc9ae719dbb4cc685dce269d82405673657b7feb02c14ea905451c73069a7946",
+    "docs/premium-ui/reviews/reference159-import-owner-v1-integrated-execution.json": "c18d1cc5025805e900a13793e5c2a03790fa5617c3438747b6da4e9402469356",
+    "docs/premium-ui/reviews/import-owner-v1-table-applicability.json": "c498650fbb9a28af4ccb1a40cf684efc6bd88ca1353609a093ef85d4c434dea0",
+    "docs/premium-ui/reviews/accepted-items-158-import-owner-v1-revalidation.json": "0cee4fa4c8ed3b09e60328c8089521f7ea41bece1343c0633a07df3827a30287",
+    "docs/premium-ui/reviews/reference159-monthly-delete-combined-prior51-applicability.json": "9e0c9f9fee82e7ecf3fb0dd577081185236182ae5049891b853fe5182b6177a4",
+    "docs/premium-ui/reviews/reference159-monthly-delete-combined-v1-integrated-execution.json": "e870aee829c2ace0d0300874e86aa4d56ee5d51b0fe57a2a3d59d5f100b40ed9",
+    "docs/premium-ui/reviews/monthly-delete-combined-v1-table-applicability.json": "fc7eac3ec028e1588240906ade45d3d2cb938b63209fa6aa01700f0e68ec7510",
+    "docs/premium-ui/reviews/accepted-items-158-monthly-delete-combined-v1-revalidation.json": "78966380617e9a1ae8338bb8117d21d4ab6853d4c9ba9c7b82b437cd5b4445e1",
+    "docs/premium-ui/reviews/stage161-classification-prior51-applicability.json": "e54dd60fdb9759ef40be5fcb178fe3ea9305b108fe62b494825fa80b31a09d45",
+    "docs/premium-ui/reviews/stage161-classification-integrated-execution.json": "e78524598a04e0e5330557233e7d71f93bad0010e611a8cf0c7df0585d633e29",
+    "docs/premium-ui/reviews/stage161-classification-table-applicability.json": "44b7498658cac874afcf978ba4625bb99b5f4dbf29d3916916e7c7373479f627"
+  },
+  "limitations": [
+    "Originalitemonly. Localmockpreview/inspect/delete/cancel requests; not actualDBpersistence/parseraccuracy/backendauthorization/productioncertification.",
+    "157operational12initialcases precede one directcatalogfocusline; exact sourceproof retains all row/state/request logic,other24member and6PastDutiescases current. No stale report silentlyrehash.",
+    "Current158maincommoncontrollercallsite inspection plus18sharedcontrollercontexts is not all160selectedmonth/unitmutation coverage.",
+    "Physical/nativeATpending;broader159latecallbackand260 incomplete."
+  ],
+  "record_owner_v1_revalidation": {
+    "parent": "docs/premium-ui/reviews/item158-acceptance.json",
+    "changed_evidence": [
+      "docs/premium-ui/reviews/frontend-build-snapshot-current.json",
+      "frontend/src/main.ts"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/reference159-record-owner-prior50-applicability.json",
+    "scope": "Originalconditions retained by exactdelta/current60outcomes; unrelatedhistoricaltests notclaimedrerun."
+  },
+  "import_owner_v1_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-158-record-owner-v1-revalidation.json",
+    "changed_evidence": [
+      "docs/premium-ui/reviews/frontend-build-snapshot-current.json",
+      "frontend/src/main.ts"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/reference159-import-owner-prior50-applicability.json",
+    "scope": "Originalconditions retained by exactdelta/current60outcomes; unrelatedhistoricaltests notclaimedrerun."
+  },
+  "monthly_delete_combined_v1_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-158-import-owner-v1-revalidation.json",
+    "changed_evidence": [
+      "docs/premium-ui/reviews/frontend-build-snapshot-current.json",
+      "frontend/src/main.ts"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/reference159-monthly-delete-combined-prior51-applicability.json",
+    "scope": "Originalconditions retained by exactdelta/current54outcomes; unrelatedhistoricaltests notclaimedrerun."
+  },
+  "stage161_classification_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-158-monthly-delete-combined-v1-revalidation.json",
+    "changed_evidence": [
+      "docs/premium-ui/reviews/frontend-build-snapshot-current.json",
+      "frontend/src/main.ts"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/stage161-classification-prior51-applicability.json",
+    "scope": "Originalconditions retained byexactoneline/current72outcomes."
+  }
+}

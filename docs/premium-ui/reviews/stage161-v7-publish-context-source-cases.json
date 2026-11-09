@@ -1,0 +1,120 @@
+{
+  "recorded_at_utc": "2026-11-09T05:48:52.494Z",
+  "operator": "/root/stage161_v4_review",
+  "application_changed": false,
+  "candidate_sha256": "2bf62a4f03aabd274d98eb051f171ba2bdf641d6185193476c2e5d4dff662475",
+  "scope": "Four pure extracted-full-renderer simulations with minimal DOM/state stubs; not browser evidence. Wrong-month initial/confirmed, stale owner and rejectedGET paths preserve known cache, capture requested month and route recovery through existing failure/retry presentation. Valid recovery/native controls require later actual browser checks.",
+  "results": [
+    {
+      "scenario": "wrong-month-initial",
+      "cachedObjectRetained": true,
+      "requestedMonthCaptured": true,
+      "wrongMonthNeverCommitted": true,
+      "events": [
+        [
+          "header",
+          "Publish & Export",
+          "Step 5 · Approve and export the final rota"
+        ],
+        [
+          "GET",
+          "2026-11"
+        ],
+        [
+          "toast",
+          "The returned checklist belongs to a different month. Retry this month before approving or exporting.",
+          "error"
+        ],
+        [
+          "failure"
+        ]
+      ],
+      "failureView": {
+        "title": "Publish unavailable",
+        "body": "Unable to load final checklist and export controls. Retry loading this month.",
+        "tone": "danger",
+        "actionHtml": "<button type=\"button\" class=\"primary\" data-retry-publish=\"initial\">Retry checklist</button>"
+      }
+    },
+    {
+      "scenario": "wrong-month-confirmed",
+      "cachedObjectRetained": true,
+      "requestedMonthCaptured": true,
+      "wrongMonthNeverCommitted": true,
+      "events": [
+        [
+          "header",
+          "Publish & Export",
+          "Step 5 · Approve and export the final rota"
+        ],
+        [
+          "GET",
+          "2026-11"
+        ],
+        [
+          "toast",
+          "The returned checklist belongs to a different month. Retry this month before approving or exporting.",
+          "error"
+        ],
+        [
+          "failure"
+        ]
+      ],
+      "failureView": {
+        "title": "Publication recorded; checklist could not refresh",
+        "body": "The server confirmed publication for 2026-11. Retry loading the checklist to review the approval and export.",
+        "tone": "info",
+        "actionHtml": "<button type=\"button\" class=\"primary\" data-retry-publish=\"confirmed\">Retry checklist</button>"
+      }
+    },
+    {
+      "scenario": "wrong-month-stale-owner",
+      "cachedObjectRetained": true,
+      "requestedMonthCaptured": true,
+      "wrongMonthNeverCommitted": true,
+      "events": [
+        [
+          "header",
+          "Publish & Export",
+          "Step 5 · Approve and export the final rota"
+        ],
+        [
+          "GET",
+          "2026-11"
+        ]
+      ],
+      "failureView": null
+    },
+    {
+      "scenario": "read-error",
+      "cachedObjectRetained": true,
+      "requestedMonthCaptured": true,
+      "wrongMonthNeverCommitted": true,
+      "events": [
+        [
+          "header",
+          "Publish & Export",
+          "Step 5 · Approve and export the final rota"
+        ],
+        [
+          "GET",
+          "2026-11"
+        ],
+        [
+          "toast",
+          "read unavailable",
+          "error"
+        ],
+        [
+          "failure"
+        ]
+      ],
+      "failureView": {
+        "title": "Publish unavailable",
+        "body": "Unable to load final checklist and export controls. Retry loading this month.",
+        "tone": "danger",
+        "actionHtml": "<button type=\"button\" class=\"primary\" data-retry-publish=\"initial\">Retry checklist</button>"
+      }
+    }
+  ]
+}

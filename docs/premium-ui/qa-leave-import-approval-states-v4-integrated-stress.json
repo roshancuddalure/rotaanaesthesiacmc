@@ -1,0 +1,1268 @@
+{
+  "recorded_at_utc": "2026-10-29T01:08:48.012Z",
+  "base": "http://127.0.0.1:5197",
+  "candidate": {
+    "path": "src/operational-import.ts",
+    "sha256": "6f9a3e6e40a3faa63c3a023c15e56e1a9ee22e46a734247bd085954e3e9340e1"
+  },
+  "source_sha256": {
+    "frontend/src/operational-import.ts": "6f9a3e6e40a3faa63c3a023c15e56e1a9ee22e46a734247bd085954e3e9340e1",
+    "frontend/src/member-workspace.ts": "0ef8c1ef2234c7a50d8ca10b8aaa3998a654d452f563bd4c75531faef09d6c63",
+    "frontend/src/reference-workspace.ts": "78c231ea1d5ab15bd3a4b5f2f8265529451a51bacc68d2a4aac1708a4be30292",
+    "frontend/src/ui.ts": "680d7830bca8826b46b6f1dc2c0d064d2a3a2e16fb41188d2c323de6bccf85b2",
+    "frontend/src/import-review-presentation.ts": "4371d8a267480de774dbe32232cdeead69c041d8803bdcc9d9b24d5c7d13f8a9",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "b34613418086c715ed4eee37ddfc115daccffecc5399772078ef2076de620868"
+  },
+  "final_source_sha256": {
+    "frontend/src/operational-import.ts": "6f9a3e6e40a3faa63c3a023c15e56e1a9ee22e46a734247bd085954e3e9340e1",
+    "frontend/src/member-workspace.ts": "0ef8c1ef2234c7a50d8ca10b8aaa3998a654d452f563bd4c75531faef09d6c63",
+    "frontend/src/reference-workspace.ts": "78c231ea1d5ab15bd3a4b5f2f8265529451a51bacc68d2a4aac1708a4be30292",
+    "frontend/src/ui.ts": "680d7830bca8826b46b6f1dc2c0d064d2a3a2e16fb41188d2c323de6bccf85b2",
+    "frontend/src/import-review-presentation.ts": "4371d8a267480de774dbe32232cdeead69c041d8803bdcc9d9b24d5c7d13f8a9",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "b34613418086c715ed4eee37ddfc115daccffecc5399772078ef2076de620868"
+  },
+  "test_sha256": "4fb219e143810508085969346d0cee9e9af2d88b80fc51f9529113d30f4b293b",
+  "scope": "Actual operational leave import controller; local POST preview/columns fixture and GET responses only. Five known approval states plus defensive malformed/unknown states, preview-input provenance, paging, dirty edits, exclusion, held503/newer-focus/manual retry. Not parser/backend-normalization or saved approval correctness; no Apply request permitted. Emulation only.",
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "height": 568,
+      "font": 200,
+      "scheme": "light",
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/columns"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/leave/preview"
+        }
+      ],
+      "unexpected": [],
+      "errors": [],
+      "knownAndDefensiveCases": 18,
+      "rowsCompared": 80,
+      "inputVersusNormalizedDistinct": true,
+      "dirtyDraftNotConfirmed": true,
+      "pagingNoRequests": true,
+      "excludedChoiceRetained": true,
+      "held503RetryRetainsDraft": true,
+      "newerFocusPreserved": true,
+      "previewPayloads": [
+        {
+          "date_format": "auto",
+          "mapping": {
+            "Member": "member_name",
+            "Start": "starts_on",
+            "End": "ends_on",
+            "Status": "status"
+          },
+          "corrections": {},
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": []
+        },
+        {
+          "date_format": "auto",
+          "mapping": {
+            "Member": "member_name",
+            "Start": "starts_on",
+            "End": "ends_on",
+            "Status": "status"
+          },
+          "corrections": {
+            "CSV:0": {
+              "status": "rejected"
+            }
+          },
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": [
+            "CSV:1"
+          ]
+        },
+        {
+          "date_format": "auto",
+          "mapping": {
+            "Member": "member_name",
+            "Start": "starts_on",
+            "End": "ends_on",
+            "Status": "status"
+          },
+          "corrections": {
+            "CSV:0": {
+              "status": "rejected"
+            }
+          },
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": [
+            "CSV:1"
+          ]
+        }
+      ],
+      "noApplyRequests": true
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "height": 568,
+      "font": 200,
+      "scheme": "dark",
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/columns"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/leave/preview"
+        }
+      ],
+      "unexpected": [],
+      "errors": [],
+      "knownAndDefensiveCases": 18,
+      "rowsCompared": 80,
+      "inputVersusNormalizedDistinct": true,
+      "dirtyDraftNotConfirmed": true,
+      "pagingNoRequests": true,
+      "excludedChoiceRetained": true,
+      "held503RetryRetainsDraft": true,
+      "newerFocusPreserved": true,
+      "previewPayloads": [
+        {
+          "date_format": "auto",
+          "mapping": {
+            "Member": "member_name",
+            "Start": "starts_on",
+            "End": "ends_on",
+            "Status": "status"
+          },
+          "corrections": {},
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": []
+        },
+        {
+          "date_format": "auto",
+          "mapping": {
+            "Member": "member_name",
+            "Start": "starts_on",
+            "End": "ends_on",
+            "Status": "status"
+          },
+          "corrections": {
+            "CSV:0": {
+              "status": "rejected"
+            }
+          },
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": [
+            "CSV:1"
+          ]
+        },
+        {
+          "date_format": "auto",
+          "mapping": {
+            "Member": "member_name",
+            "Start": "starts_on",
+            "End": "ends_on",
+            "Status": "status"
+          },
+          "corrections": {
+            "CSV:0": {
+              "status": "rejected"
+            }
+          },
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": [
+            "CSV:1"
+          ]
+        }
+      ],
+      "noApplyRequests": true
+    },
+    {
+      "engine": "chromium",
+      "width": 390,
+      "height": 320,
+      "font": 100,
+      "scheme": "light",
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/columns"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/leave/preview"
+        }
+      ],
+      "unexpected": [],
+      "errors": [],
+      "knownAndDefensiveCases": 18,
+      "rowsCompared": 80,
+      "inputVersusNormalizedDistinct": true,
+      "dirtyDraftNotConfirmed": true,
+      "pagingNoRequests": true,
+      "excludedChoiceRetained": true,
+      "held503RetryRetainsDraft": true,
+      "newerFocusPreserved": true,
+      "previewPayloads": [
+        {
+          "date_format": "auto",
+          "mapping": {
+            "Member": "member_name",
+            "Start": "starts_on",
+            "End": "ends_on",
+            "Status": "status"
+          },
+          "corrections": {},
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": []
+        },
+        {
+          "date_format": "auto",
+          "mapping": {
+            "Member": "member_name",
+            "Start": "starts_on",
+            "End": "ends_on",
+            "Status": "status"
+          },
+          "corrections": {
+            "CSV:0": {
+              "status": "rejected"
+            }
+          },
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": [
+            "CSV:1"
+          ]
+        },
+        {
+          "date_format": "auto",
+          "mapping": {
+            "Member": "member_name",
+            "Start": "starts_on",
+            "End": "ends_on",
+            "Status": "status"
+          },
+          "corrections": {
+            "CSV:0": {
+              "status": "rejected"
+            }
+          },
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": [
+            "CSV:1"
+          ]
+        }
+      ],
+      "noApplyRequests": true
+    },
+    {
+      "engine": "chromium",
+      "width": 390,
+      "height": 320,
+      "font": 100,
+      "scheme": "dark",
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/columns"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/leave/preview"
+        }
+      ],
+      "unexpected": [],
+      "errors": [],
+      "knownAndDefensiveCases": 18,
+      "rowsCompared": 80,
+      "inputVersusNormalizedDistinct": true,
+      "dirtyDraftNotConfirmed": true,
+      "pagingNoRequests": true,
+      "excludedChoiceRetained": true,
+      "held503RetryRetainsDraft": true,
+      "newerFocusPreserved": true,
+      "previewPayloads": [
+        {
+          "date_format": "auto",
+          "mapping": {
+            "Member": "member_name",
+            "Start": "starts_on",
+            "End": "ends_on",
+            "Status": "status"
+          },
+          "corrections": {},
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": []
+        },
+        {
+          "date_format": "auto",
+          "mapping": {
+            "Member": "member_name",
+            "Start": "starts_on",
+            "End": "ends_on",
+            "Status": "status"
+          },
+          "corrections": {
+            "CSV:0": {
+              "status": "rejected"
+            }
+          },
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": [
+            "CSV:1"
+          ]
+        },
+        {
+          "date_format": "auto",
+          "mapping": {
+            "Member": "member_name",
+            "Start": "starts_on",
+            "End": "ends_on",
+            "Status": "status"
+          },
+          "corrections": {
+            "CSV:0": {
+              "status": "rejected"
+            }
+          },
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": [
+            "CSV:1"
+          ]
+        }
+      ],
+      "noApplyRequests": true
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "height": 568,
+      "font": 200,
+      "scheme": "light",
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/columns"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/leave/preview"
+        }
+      ],
+      "unexpected": [],
+      "errors": [],
+      "knownAndDefensiveCases": 18,
+      "rowsCompared": 80,
+      "inputVersusNormalizedDistinct": true,
+      "dirtyDraftNotConfirmed": true,
+      "pagingNoRequests": true,
+      "excludedChoiceRetained": true,
+      "held503RetryRetainsDraft": true,
+      "newerFocusPreserved": true,
+      "previewPayloads": [
+        {
+          "date_format": "auto",
+          "mapping": {
+            "Member": "member_name",
+            "Start": "starts_on",
+            "End": "ends_on",
+            "Status": "status"
+          },
+          "corrections": {},
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": []
+        },
+        {
+          "date_format": "auto",
+          "mapping": {
+            "Member": "member_name",
+            "Start": "starts_on",
+            "End": "ends_on",
+            "Status": "status"
+          },
+          "corrections": {
+            "CSV:0": {
+              "status": "rejected"
+            }
+          },
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": [
+            "CSV:1"
+          ]
+        },
+        {
+          "date_format": "auto",
+          "mapping": {
+            "Member": "member_name",
+            "Start": "starts_on",
+            "End": "ends_on",
+            "Status": "status"
+          },
+          "corrections": {
+            "CSV:0": {
+              "status": "rejected"
+            }
+          },
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": [
+            "CSV:1"
+          ]
+        }
+      ],
+      "noApplyRequests": true
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "height": 568,
+      "font": 200,
+      "scheme": "dark",
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/columns"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/leave/preview"
+        }
+      ],
+      "unexpected": [],
+      "errors": [],
+      "knownAndDefensiveCases": 18,
+      "rowsCompared": 80,
+      "inputVersusNormalizedDistinct": true,
+      "dirtyDraftNotConfirmed": true,
+      "pagingNoRequests": true,
+      "excludedChoiceRetained": true,
+      "held503RetryRetainsDraft": true,
+      "newerFocusPreserved": true,
+      "previewPayloads": [
+        {
+          "date_format": "auto",
+          "mapping": {
+            "Member": "member_name",
+            "Start": "starts_on",
+            "End": "ends_on",
+            "Status": "status"
+          },
+          "corrections": {},
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": []
+        },
+        {
+          "date_format": "auto",
+          "mapping": {
+            "Member": "member_name",
+            "Start": "starts_on",
+            "End": "ends_on",
+            "Status": "status"
+          },
+          "corrections": {
+            "CSV:0": {
+              "status": "rejected"
+            }
+          },
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": [
+            "CSV:1"
+          ]
+        },
+        {
+          "date_format": "auto",
+          "mapping": {
+            "Member": "member_name",
+            "Start": "starts_on",
+            "End": "ends_on",
+            "Status": "status"
+          },
+          "corrections": {
+            "CSV:0": {
+              "status": "rejected"
+            }
+          },
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": [
+            "CSV:1"
+          ]
+        }
+      ],
+      "noApplyRequests": true
+    },
+    {
+      "engine": "firefox",
+      "width": 390,
+      "height": 320,
+      "font": 100,
+      "scheme": "light",
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/columns"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/leave/preview"
+        }
+      ],
+      "unexpected": [],
+      "errors": [],
+      "knownAndDefensiveCases": 18,
+      "rowsCompared": 80,
+      "inputVersusNormalizedDistinct": true,
+      "dirtyDraftNotConfirmed": true,
+      "pagingNoRequests": true,
+      "excludedChoiceRetained": true,
+      "held503RetryRetainsDraft": true,
+      "newerFocusPreserved": true,
+      "previewPayloads": [
+        {
+          "date_format": "auto",
+          "mapping": {
+            "Member": "member_name",
+            "Start": "starts_on",
+            "End": "ends_on",
+            "Status": "status"
+          },
+          "corrections": {},
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": []
+        },
+        {
+          "date_format": "auto",
+          "mapping": {
+            "Member": "member_name",
+            "Start": "starts_on",
+            "End": "ends_on",
+            "Status": "status"
+          },
+          "corrections": {
+            "CSV:0": {
+              "status": "rejected"
+            }
+          },
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": [
+            "CSV:1"
+          ]
+        },
+        {
+          "date_format": "auto",
+          "mapping": {
+            "Member": "member_name",
+            "Start": "starts_on",
+            "End": "ends_on",
+            "Status": "status"
+          },
+          "corrections": {
+            "CSV:0": {
+              "status": "rejected"
+            }
+          },
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": [
+            "CSV:1"
+          ]
+        }
+      ],
+      "noApplyRequests": true
+    },
+    {
+      "engine": "firefox",
+      "width": 390,
+      "height": 320,
+      "font": 100,
+      "scheme": "dark",
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/columns"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/leave/preview"
+        }
+      ],
+      "unexpected": [],
+      "errors": [],
+      "knownAndDefensiveCases": 18,
+      "rowsCompared": 80,
+      "inputVersusNormalizedDistinct": true,
+      "dirtyDraftNotConfirmed": true,
+      "pagingNoRequests": true,
+      "excludedChoiceRetained": true,
+      "held503RetryRetainsDraft": true,
+      "newerFocusPreserved": true,
+      "previewPayloads": [
+        {
+          "date_format": "auto",
+          "mapping": {
+            "Member": "member_name",
+            "Start": "starts_on",
+            "End": "ends_on",
+            "Status": "status"
+          },
+          "corrections": {},
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": []
+        },
+        {
+          "date_format": "auto",
+          "mapping": {
+            "Member": "member_name",
+            "Start": "starts_on",
+            "End": "ends_on",
+            "Status": "status"
+          },
+          "corrections": {
+            "CSV:0": {
+              "status": "rejected"
+            }
+          },
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": [
+            "CSV:1"
+          ]
+        },
+        {
+          "date_format": "auto",
+          "mapping": {
+            "Member": "member_name",
+            "Start": "starts_on",
+            "End": "ends_on",
+            "Status": "status"
+          },
+          "corrections": {
+            "CSV:0": {
+              "status": "rejected"
+            }
+          },
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": [
+            "CSV:1"
+          ]
+        }
+      ],
+      "noApplyRequests": true
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "height": 568,
+      "font": 200,
+      "scheme": "light",
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/columns"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/leave/preview"
+        }
+      ],
+      "unexpected": [],
+      "errors": [],
+      "knownAndDefensiveCases": 18,
+      "rowsCompared": 80,
+      "inputVersusNormalizedDistinct": true,
+      "dirtyDraftNotConfirmed": true,
+      "pagingNoRequests": true,
+      "excludedChoiceRetained": true,
+      "held503RetryRetainsDraft": true,
+      "newerFocusPreserved": true,
+      "previewPayloads": [
+        {
+          "date_format": "auto",
+          "mapping": {
+            "Member": "member_name",
+            "Start": "starts_on",
+            "End": "ends_on",
+            "Status": "status"
+          },
+          "corrections": {},
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": []
+        },
+        {
+          "date_format": "auto",
+          "mapping": {
+            "Member": "member_name",
+            "Start": "starts_on",
+            "End": "ends_on",
+            "Status": "status"
+          },
+          "corrections": {
+            "CSV:0": {
+              "status": "rejected"
+            }
+          },
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": [
+            "CSV:1"
+          ]
+        },
+        {
+          "date_format": "auto",
+          "mapping": {
+            "Member": "member_name",
+            "Start": "starts_on",
+            "End": "ends_on",
+            "Status": "status"
+          },
+          "corrections": {
+            "CSV:0": {
+              "status": "rejected"
+            }
+          },
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": [
+            "CSV:1"
+          ]
+        }
+      ],
+      "noApplyRequests": true
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "height": 568,
+      "font": 200,
+      "scheme": "dark",
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/columns"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/leave/preview"
+        }
+      ],
+      "unexpected": [],
+      "errors": [],
+      "knownAndDefensiveCases": 18,
+      "rowsCompared": 80,
+      "inputVersusNormalizedDistinct": true,
+      "dirtyDraftNotConfirmed": true,
+      "pagingNoRequests": true,
+      "excludedChoiceRetained": true,
+      "held503RetryRetainsDraft": true,
+      "newerFocusPreserved": true,
+      "previewPayloads": [
+        {
+          "date_format": "auto",
+          "mapping": {
+            "Member": "member_name",
+            "Start": "starts_on",
+            "End": "ends_on",
+            "Status": "status"
+          },
+          "corrections": {},
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": []
+        },
+        {
+          "date_format": "auto",
+          "mapping": {
+            "Member": "member_name",
+            "Start": "starts_on",
+            "End": "ends_on",
+            "Status": "status"
+          },
+          "corrections": {
+            "CSV:0": {
+              "status": "rejected"
+            }
+          },
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": [
+            "CSV:1"
+          ]
+        },
+        {
+          "date_format": "auto",
+          "mapping": {
+            "Member": "member_name",
+            "Start": "starts_on",
+            "End": "ends_on",
+            "Status": "status"
+          },
+          "corrections": {
+            "CSV:0": {
+              "status": "rejected"
+            }
+          },
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": [
+            "CSV:1"
+          ]
+        }
+      ],
+      "noApplyRequests": true
+    },
+    {
+      "engine": "webkit",
+      "width": 390,
+      "height": 320,
+      "font": 100,
+      "scheme": "light",
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/columns"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/leave/preview"
+        }
+      ],
+      "unexpected": [],
+      "errors": [],
+      "knownAndDefensiveCases": 18,
+      "rowsCompared": 80,
+      "inputVersusNormalizedDistinct": true,
+      "dirtyDraftNotConfirmed": true,
+      "pagingNoRequests": true,
+      "excludedChoiceRetained": true,
+      "held503RetryRetainsDraft": true,
+      "newerFocusPreserved": true,
+      "previewPayloads": [
+        {
+          "date_format": "auto",
+          "mapping": {
+            "Member": "member_name",
+            "Start": "starts_on",
+            "End": "ends_on",
+            "Status": "status"
+          },
+          "corrections": {},
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": []
+        },
+        {
+          "date_format": "auto",
+          "mapping": {
+            "Member": "member_name",
+            "Start": "starts_on",
+            "End": "ends_on",
+            "Status": "status"
+          },
+          "corrections": {
+            "CSV:0": {
+              "status": "rejected"
+            }
+          },
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": [
+            "CSV:1"
+          ]
+        },
+        {
+          "date_format": "auto",
+          "mapping": {
+            "Member": "member_name",
+            "Start": "starts_on",
+            "End": "ends_on",
+            "Status": "status"
+          },
+          "corrections": {
+            "CSV:0": {
+              "status": "rejected"
+            }
+          },
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": [
+            "CSV:1"
+          ]
+        }
+      ],
+      "noApplyRequests": true
+    },
+    {
+      "engine": "webkit",
+      "width": 390,
+      "height": 320,
+      "font": 100,
+      "scheme": "dark",
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/columns"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/leave/preview"
+        }
+      ],
+      "unexpected": [],
+      "errors": [],
+      "knownAndDefensiveCases": 18,
+      "rowsCompared": 80,
+      "inputVersusNormalizedDistinct": true,
+      "dirtyDraftNotConfirmed": true,
+      "pagingNoRequests": true,
+      "excludedChoiceRetained": true,
+      "held503RetryRetainsDraft": true,
+      "newerFocusPreserved": true,
+      "previewPayloads": [
+        {
+          "date_format": "auto",
+          "mapping": {
+            "Member": "member_name",
+            "Start": "starts_on",
+            "End": "ends_on",
+            "Status": "status"
+          },
+          "corrections": {},
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": []
+        },
+        {
+          "date_format": "auto",
+          "mapping": {
+            "Member": "member_name",
+            "Start": "starts_on",
+            "End": "ends_on",
+            "Status": "status"
+          },
+          "corrections": {
+            "CSV:0": {
+              "status": "rejected"
+            }
+          },
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": [
+            "CSV:1"
+          ]
+        },
+        {
+          "date_format": "auto",
+          "mapping": {
+            "Member": "member_name",
+            "Start": "starts_on",
+            "End": "ends_on",
+            "Status": "status"
+          },
+          "corrections": {
+            "CSV:0": {
+              "status": "rejected"
+            }
+          },
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": [
+            "CSV:1"
+          ]
+        }
+      ],
+      "noApplyRequests": true
+    }
+  ]
+}

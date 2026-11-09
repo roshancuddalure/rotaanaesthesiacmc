@@ -1,0 +1,26 @@
+{
+  "recorded_at_utc": "2026-11-09T07:42:15.576028+00:00",
+  "author": "/root/profile_payload_guard",
+  "browser_executed": false,
+  "base_test": "frontend/tests/premium-profile-parent-refresh-v4-read-failure.browser.mjs",
+  "base_sha256": "f326cdabd0684b53893f5c002aaf0cdf611bea71a0c8a7c1c80d34e4acad3579",
+  "test": "frontend/tests/premium-profile-parent-refresh-v4-malformed200.browser.mjs",
+  "test_sha256": "847d481940f06769bdc0924862269bf7247fe4b31c6ab91cfa7db91606dbf8fa",
+  "candidate_main_sha256": "355e71753eb79135d4bdefb94837da4fc1ff727b12a2ed1f9c4bdb4b5d744a07",
+  "candidate_preview": 5292,
+  "fixture": 8031,
+  "matrix": "3 engines x 2 viewport widths x 2 parent operations = 12 sequential workflows",
+  "bad_responses": [
+    "Units HTTP200 with unchanged requested month and assignments:null",
+    "Leave requests HTTP200 array with null status and person; sibling calendar/pressure month unchanged and valid"
+  ],
+  "assertions": [
+    "Explicit generic incomplete-data recovery notice",
+    "No unhandled page errors",
+    "Old Units posting/Leave approved state retained",
+    "Leave previous people summary retained despite other successfully fetched changed sibling data",
+    "Unrelated settings draft input/form identities, search, working month and Leave view retained",
+    "Keyboard activation of manual retry sends reads only, yields fresh parent, and no extra accepted mutation"
+  ],
+  "scope_note": "Harness authored only; root runs sequentially after candidate preview available. No app code changes."
+}

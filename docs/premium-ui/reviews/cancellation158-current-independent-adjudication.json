@@ -1,0 +1,101 @@
+{
+  "recorded_at_utc": "2026-10-30T11:32:49.291183+00:00",
+  "reviewer": "/root/cancellation158_outcome_audit",
+  "mode": "Independent exact-condition source/test/result audit plus42current browser contexts; app/backend/ledger unchanged.",
+  "item_id": 158,
+  "requirement": "Standardize cancellation and deletion confirmations so removing a record never resembles merely closing its editor.",
+  "decision": "Recommend original158 acceptance after root final exact-scope signoff/current build and applicability checks. Bothoriginalconditions are supported by current42outcomes and commoncontroller/maincallsite inspection. Not all160record/month mutations orbroader159lifetime acceptance.",
+  "conditions": [
+    {
+      "condition": "Closing/cancelling an editor is labeled and handled differently from cancelling or deleting its record.",
+      "satisfied_on_inspected_applied_source": true,
+      "rationale": "Current12native existing Edit posting/Edit leave cases explicitly assert Cancel closes this editor,pristine/search-only closure withoutprompt,dirtydecline/accept/pending503guards andzeroSave/delete. Existing-record identity is loaded through originalGET; previewretains exactperson/dates/notes. Separate actualfullshell12Leave cases activate Cancel leave… rather than editorCancel; nativeconfirmation names person,dates,category,slot,status andrecordID plusretainedhistory/existingduties. New18admin-delete cases use Delete posting/Delete selected/Delete all month andrenderedDelete counts; footerCancel returnsnull withzero delete requests. Source main legacy Cancel unit edit onlyclears editingidentity/rerenders,whereas Remove posting…/Delete posting… both call commonrunAdminDelete/confirmAdminDelete beforeanymutation. Close/cancel prompts are not relabeled into consequentialrecordoperations."
+    },
+    {
+      "condition": "Consequential record removal names the target and consequence before the existing operation executes.",
+      "satisfied_on_inspected_applied_source": true,
+      "rationale": "Current actualLeave12cases compare completeexact nativeconfirmation before POST{},declineallthreeoverlapping/crossmonthtargets withzerowrites,503doesnotretry,explicitsame-targetretry refreshesGET andretains siblingrecords; 48lateaccount/view outcomes suppress stale UI/replay. New18shareddelete-controller cases assert backend-returnedescapedtargetlabels,blocked sibling andlinkedrecord/recycle30day consequence beforeDelete; heldpreviewdisablesaction,Canceldoesnotdelete,busyDelete cannotclose/replay.409forcesfreshpreview/newtoken andexplicitreconfirmation;wholemonth requires exactcasephrase andclearsitafter409. ExactPOSTselection/id/month/token assertions prove frontendrequests match reviewedtarget. Mainrow/selected/month callsites supplyexistingkind/id/month/title tothissinglecontroller andmutateonlyafterpromiseconfirmed. No backendpersistence/authorization proof is inferred."
+    }
+  ],
+  "own_current_contexts": 42,
+  "own_executions": [
+    {
+      "name": "edit-close",
+      "report": "docs/premium-ui/qa-cancellation158-edit-close-independent.json",
+      "test": "frontend/tests/premium-cancellation158-edit-close-independent.browser.mjs",
+      "log": "tmp/cancellation158-edit-close-independent.log",
+      "contexts": 12,
+      "exit_code": 0,
+      "terminal_session": 27150,
+      "operator": "/root/cancellation158_outcome_audit",
+      "authorship": "Independent current-source adaptation/rerun of prior specialist-authored assertions; historical originals untouched"
+    },
+    {
+      "name": "delete",
+      "report": "docs/premium-ui/qa-cancellation158-delete-independent.json",
+      "test": "frontend/tests/premium-cancellation158-delete-independent.browser.mjs",
+      "log": "tmp/cancellation158-delete-independent.log",
+      "contexts": 18,
+      "exit_code": 0,
+      "terminal_session": 23221,
+      "operator": "/root/cancellation158_outcome_audit",
+      "authorship": "New independent test"
+    },
+    {
+      "name": "leave-record",
+      "report": "docs/premium-ui/qa-cancellation158-leave-record-independent/report.json",
+      "test": "frontend/tests/premium-cancellation158-leave-record-independent.browser.mjs",
+      "log": "tmp/cancellation158-leave-record-independent.log",
+      "contexts": 12,
+      "exit_code": 0,
+      "terminal_session": 50718,
+      "operator": "/root/cancellation158_outcome_audit",
+      "authorship": "Independent current-source adaptation/rerun of prior specialist-authored assertions; historical originals untouched"
+    }
+  ],
+  "source_findings": [
+    "record-workspace close path onlybusy/dirtydiscard checks,nativeclose/remove/openerfocus; noSave/Delete/cancellation API. Identity remainsoriginalexistingrecord; footertext explicitly saysCancelcloseseditor.",
+    "main Cancel leave… exactexistingrecordlookup and fullynamednativeconsequence precede cancelLeaveRequest; currentguard alreadyhandles account/view/render/month/root. This audit foundno issueinthisguard.",
+    "mainrunAdminDelete awaits commonconfirmAdminDelete and returnswhenvalueNull. Onlyconfirmedresult clearsselection/toasts/refreshes; mainRemove/Deleterow/selected/month supplyvisiblekind/IDs/month/title. Admin-delete usespreview-first,escapedreturnedlabels/blockedreasons/effects,30dayRecyclecopy,typedmonthphrase,token and409re-review.",
+    "Commonadmin-delete noun/config maps member,leave,posting,past-duty; currentnewruntime18coverspostingrow,selectedleave,andwholemonth. Otherkindnounbranches are sourceinspected,notclaimedfreshend-to-enddeletionruns. This is frontendconfirmationconvention evidence,notallbuttons/backendcontent certification."
+  ],
+  "source_sha256": {
+    "frontend/src/record-workspace.ts": "469fd6bf2e4118b15ad343d8059cd3cfb0acbc6483bea969ca5fb93488644335",
+    "frontend/src/workspace-load-state.ts": "cdd0e323d7e83e6e668a381bbfcc37cad4726b1193ac5de31d5f14e03eecd9c6",
+    "frontend/src/admin-delete.ts": "7a3eb13237272ad8b44f523bea5483ebeae60fc9c8b58d92035fe15c74528979",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/member-workspace.ts": "0ef8c1ef2234c7a50d8ca10b8aaa3998a654d452f563bd4c75531faef09d6c63",
+    "frontend/src/premium-theme.css": "40bc7f91441cc805375a2e13332f424c88423c93124bf34123dff4bcffbf5673",
+    "frontend/src/main.ts": "d71d357b2cb2128249b0f76f7ddbbc9c1dff73fee208c9497b73953bc0820212",
+    "frontend/src/ui.ts": "680d7830bca8826b46b6f1dc2c0d064d2a3a2e16fb41188d2c323de6bccf85b2",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86"
+  },
+  "evidence_sha256": {
+    "docs/premium-ui/qa-cancellation158-edit-close-independent.json": "43a369dae10bb376f5cae247acb51cb467e96ec58858d7cc2f588d5245a38f5f",
+    "frontend/tests/premium-cancellation158-edit-close-independent.browser.mjs": "3a90e91838af01097d3359d072dba814a3557e8eb203f4e8630d91a871887868",
+    "tmp/cancellation158-edit-close-independent.log": "0f086eec0e38111f544a5fa23ec4f9489c748535d7ab58640f9967b96c03b46c",
+    "docs/premium-ui/qa-cancellation158-delete-independent.json": "33d0f98755ad1c318d944ebb6d85cf55e480993bb1c4cfbe0597dfa2df23075f",
+    "frontend/tests/premium-cancellation158-delete-independent.browser.mjs": "f890de8285db3cd0c81d2c3490b07d5798e7eccd95bbc199fe8611bdb6224e69",
+    "tmp/cancellation158-delete-independent.log": "293f8ed5e964abb9154ab5c632d73a8db4456298e470c2502394ff0ea0b04be8",
+    "docs/premium-ui/qa-cancellation158-leave-record-independent/report.json": "2689764e941efbc7fb331f9b82dfeabbcbcba267eb31475c4587c0a8751be925",
+    "frontend/tests/premium-cancellation158-leave-record-independent.browser.mjs": "750122f1352c08db42eda2dbbbf3c52393462be8d6efb06389316da4a401ba1d",
+    "tmp/cancellation158-leave-record-independent.log": "0ac7b1909226a0e32289a4c29b69748d62187364a7580ec3f609643c4d435edf",
+    "docs/premium-ui/acceptance-criteria/items-087-173.json": "a7bf1322bd8e08a1fddd4195095d9cc52a8867a1b8a2bda9b523917fae458576",
+    "frontend/src/record-workspace.ts": "469fd6bf2e4118b15ad343d8059cd3cfb0acbc6483bea969ca5fb93488644335",
+    "frontend/src/workspace-load-state.ts": "cdd0e323d7e83e6e668a381bbfcc37cad4726b1193ac5de31d5f14e03eecd9c6",
+    "frontend/src/admin-delete.ts": "7a3eb13237272ad8b44f523bea5483ebeae60fc9c8b58d92035fe15c74528979",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/member-workspace.ts": "0ef8c1ef2234c7a50d8ca10b8aaa3998a654d452f563bd4c75531faef09d6c63",
+    "frontend/src/premium-theme.css": "40bc7f91441cc805375a2e13332f424c88423c93124bf34123dff4bcffbf5673",
+    "frontend/src/main.ts": "d71d357b2cb2128249b0f76f7ddbbc9c1dff73fee208c9497b73953bc0820212",
+    "frontend/src/ui.ts": "680d7830bca8826b46b6f1dc2c0d064d2a3a2e16fb41188d2c323de6bccf85b2",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86"
+  },
+  "limitations": [
+    "No actualdatabasewrite,backendpolicy/permissions/persistence certification; operationalrequests locallyfulfilled andotherGETs disposableRAM8031.",
+    "Delete18usesactualsharednativecontrolleropenedfromfixture; mainrow/selected/monthwiring is sourceinspected. Leavecancel12isactualfullshell. Editor12usesactualnativecontrollerwithexistingidentity.",
+    "Browsercontexts are3engines320/1280;leavealso2themes. Physicaldevices/nativeAT/nativepromptvisualappearance unperformed.",
+    "Do not infer160allrecords/monthsunchanged fromlocaldeletefixture results. No broader159callbackclosure orfull260completion.",
+    "Latest sourcebytes bound at execution/sealing. Latermaincallbackchanges require explicit scopedapplicability orcurrentrerun,notblindhashrefresh."
+  ]
+}

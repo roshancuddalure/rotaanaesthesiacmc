@@ -1,0 +1,773 @@
+{
+  "recorded_at_utc": "2026-10-28T15:54:34.179Z",
+  "source_sha256": {
+    "src/member-workspace.ts": "cca57cfbe6b48ce7022ebc65b666e2fbeb0dadaf28499bb10a2a563cbb818ef8",
+    "src/ui.ts": "680d7830bca8826b46b6f1dc2c0d064d2a3a2e16fb41188d2c323de6bccf85b2",
+    "src/form-validation.ts": "a6d6cfa746f502cf05e5f4f1e1acade1c7ca82b592a497d98b79661854783a93",
+    "src/workspace-load-state.ts": "cdd0e323d7e83e6e668a381bbfcc37cad4726b1193ac5de31d5f14e03eecd9c6",
+    "src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "src/premium-theme.css": "9344ea87024b282475a3b9f110ce9c83bdc5dca1dc984961eefed044c2ad6065",
+    "tests/premium-profile-cancel-pending-regression.browser.mjs": "cb17e8151d53b840c51cf7ad898f646c7d05a028ad13292e5054b5a070ecf8fe"
+  },
+  "status": "Scoped final regression evidence; not whole requirement131 acceptance",
+  "scope": "Actual native canonical profile edit/heldPUT, attempted keyboard interaction with disabled Cancel (no claim that disabled control receives focus), existing Close busy guard, separate503/409/success responses, retained nodes/draft and targeted finally unlock, conflict comparison/Keep my draft, idle discard decline/accept and exact original PUT. All API responses locally fulfilled; no actual backend persistence or request-abort policy claim. Immutable before-fix reproduction remains separate.",
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "outcome": "503",
+      "pendingCancelDisabledAndAttemptedKeyboardNoDiscard": true,
+      "pendingDraftAndSavingIndicatorRetained": true,
+      "closeBusyGuardRetained": true,
+      "exactOnePut": {
+        "id": "cancel-regression",
+        "canonical_name": "Dr Submitted Draft",
+        "active_status": "active",
+        "call_level": "2ND_CALL",
+        "revision": "original-one",
+        "aliases": [
+          "Original spelling"
+        ],
+        "designations": [],
+        "call_level_changes": [],
+        "preserve_previous_name": true
+      },
+      "failureRetainsFieldCancelFormNodesAndUnlocks": true,
+      "conflictCompareKeepDraftThenIdleDiscard": false,
+      "idleDiscardDeclineAcceptPreserved": true,
+      "successChangedCallbackOnce": false,
+      "prompts": [
+        {
+          "type": "confirm",
+          "message": "Discard unsaved changes?"
+        },
+        {
+          "type": "confirm",
+          "message": "Discard unsaved changes?"
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/cancel-regression"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/cancel-regression"
+        }
+      ]
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "outcome": "409",
+      "pendingCancelDisabledAndAttemptedKeyboardNoDiscard": true,
+      "pendingDraftAndSavingIndicatorRetained": true,
+      "closeBusyGuardRetained": true,
+      "exactOnePut": {
+        "id": "cancel-regression",
+        "canonical_name": "Dr Submitted Draft",
+        "active_status": "active",
+        "call_level": "2ND_CALL",
+        "revision": "original-one",
+        "aliases": [
+          "Original spelling"
+        ],
+        "designations": [],
+        "call_level_changes": [],
+        "preserve_previous_name": true
+      },
+      "failureRetainsFieldCancelFormNodesAndUnlocks": true,
+      "conflictCompareKeepDraftThenIdleDiscard": true,
+      "idleDiscardDeclineAcceptPreserved": true,
+      "successChangedCallbackOnce": false,
+      "prompts": [
+        {
+          "type": "confirm",
+          "message": "Discard unsaved changes?"
+        },
+        {
+          "type": "confirm",
+          "message": "Discard unsaved changes?"
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/cancel-regression"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/cancel-regression"
+        }
+      ]
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "outcome": "success",
+      "pendingCancelDisabledAndAttemptedKeyboardNoDiscard": true,
+      "pendingDraftAndSavingIndicatorRetained": true,
+      "closeBusyGuardRetained": true,
+      "exactOnePut": {
+        "id": "cancel-regression",
+        "canonical_name": "Dr Submitted Draft",
+        "active_status": "active",
+        "call_level": "2ND_CALL",
+        "revision": "original-one",
+        "aliases": [
+          "Original spelling"
+        ],
+        "designations": [],
+        "call_level_changes": [],
+        "preserve_previous_name": true
+      },
+      "failureRetainsFieldCancelFormNodesAndUnlocks": false,
+      "conflictCompareKeepDraftThenIdleDiscard": false,
+      "idleDiscardDeclineAcceptPreserved": false,
+      "successChangedCallbackOnce": true,
+      "prompts": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/cancel-regression"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/cancel-regression"
+        }
+      ]
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "outcome": "503",
+      "pendingCancelDisabledAndAttemptedKeyboardNoDiscard": true,
+      "pendingDraftAndSavingIndicatorRetained": true,
+      "closeBusyGuardRetained": true,
+      "exactOnePut": {
+        "id": "cancel-regression",
+        "canonical_name": "Dr Submitted Draft",
+        "active_status": "active",
+        "call_level": "2ND_CALL",
+        "revision": "original-one",
+        "aliases": [
+          "Original spelling"
+        ],
+        "designations": [],
+        "call_level_changes": [],
+        "preserve_previous_name": true
+      },
+      "failureRetainsFieldCancelFormNodesAndUnlocks": true,
+      "conflictCompareKeepDraftThenIdleDiscard": false,
+      "idleDiscardDeclineAcceptPreserved": true,
+      "successChangedCallbackOnce": false,
+      "prompts": [
+        {
+          "type": "confirm",
+          "message": "Discard unsaved changes?"
+        },
+        {
+          "type": "confirm",
+          "message": "Discard unsaved changes?"
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/cancel-regression"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/cancel-regression"
+        }
+      ]
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "outcome": "409",
+      "pendingCancelDisabledAndAttemptedKeyboardNoDiscard": true,
+      "pendingDraftAndSavingIndicatorRetained": true,
+      "closeBusyGuardRetained": true,
+      "exactOnePut": {
+        "id": "cancel-regression",
+        "canonical_name": "Dr Submitted Draft",
+        "active_status": "active",
+        "call_level": "2ND_CALL",
+        "revision": "original-one",
+        "aliases": [
+          "Original spelling"
+        ],
+        "designations": [],
+        "call_level_changes": [],
+        "preserve_previous_name": true
+      },
+      "failureRetainsFieldCancelFormNodesAndUnlocks": true,
+      "conflictCompareKeepDraftThenIdleDiscard": true,
+      "idleDiscardDeclineAcceptPreserved": true,
+      "successChangedCallbackOnce": false,
+      "prompts": [
+        {
+          "type": "confirm",
+          "message": "Discard unsaved changes?"
+        },
+        {
+          "type": "confirm",
+          "message": "Discard unsaved changes?"
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/cancel-regression"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/cancel-regression"
+        }
+      ]
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "outcome": "success",
+      "pendingCancelDisabledAndAttemptedKeyboardNoDiscard": true,
+      "pendingDraftAndSavingIndicatorRetained": true,
+      "closeBusyGuardRetained": true,
+      "exactOnePut": {
+        "id": "cancel-regression",
+        "canonical_name": "Dr Submitted Draft",
+        "active_status": "active",
+        "call_level": "2ND_CALL",
+        "revision": "original-one",
+        "aliases": [
+          "Original spelling"
+        ],
+        "designations": [],
+        "call_level_changes": [],
+        "preserve_previous_name": true
+      },
+      "failureRetainsFieldCancelFormNodesAndUnlocks": false,
+      "conflictCompareKeepDraftThenIdleDiscard": false,
+      "idleDiscardDeclineAcceptPreserved": false,
+      "successChangedCallbackOnce": true,
+      "prompts": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/cancel-regression"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/cancel-regression"
+        }
+      ]
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "outcome": "503",
+      "pendingCancelDisabledAndAttemptedKeyboardNoDiscard": true,
+      "pendingDraftAndSavingIndicatorRetained": true,
+      "closeBusyGuardRetained": true,
+      "exactOnePut": {
+        "id": "cancel-regression",
+        "canonical_name": "Dr Submitted Draft",
+        "active_status": "active",
+        "call_level": "2ND_CALL",
+        "revision": "original-one",
+        "aliases": [
+          "Original spelling"
+        ],
+        "designations": [],
+        "call_level_changes": [],
+        "preserve_previous_name": true
+      },
+      "failureRetainsFieldCancelFormNodesAndUnlocks": true,
+      "conflictCompareKeepDraftThenIdleDiscard": false,
+      "idleDiscardDeclineAcceptPreserved": true,
+      "successChangedCallbackOnce": false,
+      "prompts": [
+        {
+          "type": "confirm",
+          "message": "Discard unsaved changes?"
+        },
+        {
+          "type": "confirm",
+          "message": "Discard unsaved changes?"
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/cancel-regression"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/cancel-regression"
+        }
+      ]
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "outcome": "409",
+      "pendingCancelDisabledAndAttemptedKeyboardNoDiscard": true,
+      "pendingDraftAndSavingIndicatorRetained": true,
+      "closeBusyGuardRetained": true,
+      "exactOnePut": {
+        "id": "cancel-regression",
+        "canonical_name": "Dr Submitted Draft",
+        "active_status": "active",
+        "call_level": "2ND_CALL",
+        "revision": "original-one",
+        "aliases": [
+          "Original spelling"
+        ],
+        "designations": [],
+        "call_level_changes": [],
+        "preserve_previous_name": true
+      },
+      "failureRetainsFieldCancelFormNodesAndUnlocks": true,
+      "conflictCompareKeepDraftThenIdleDiscard": true,
+      "idleDiscardDeclineAcceptPreserved": true,
+      "successChangedCallbackOnce": false,
+      "prompts": [
+        {
+          "type": "confirm",
+          "message": "Discard unsaved changes?"
+        },
+        {
+          "type": "confirm",
+          "message": "Discard unsaved changes?"
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/cancel-regression"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/cancel-regression"
+        }
+      ]
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "outcome": "success",
+      "pendingCancelDisabledAndAttemptedKeyboardNoDiscard": true,
+      "pendingDraftAndSavingIndicatorRetained": true,
+      "closeBusyGuardRetained": true,
+      "exactOnePut": {
+        "id": "cancel-regression",
+        "canonical_name": "Dr Submitted Draft",
+        "active_status": "active",
+        "call_level": "2ND_CALL",
+        "revision": "original-one",
+        "aliases": [
+          "Original spelling"
+        ],
+        "designations": [],
+        "call_level_changes": [],
+        "preserve_previous_name": true
+      },
+      "failureRetainsFieldCancelFormNodesAndUnlocks": false,
+      "conflictCompareKeepDraftThenIdleDiscard": false,
+      "idleDiscardDeclineAcceptPreserved": false,
+      "successChangedCallbackOnce": true,
+      "prompts": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/cancel-regression"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/cancel-regression"
+        }
+      ]
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "outcome": "503",
+      "pendingCancelDisabledAndAttemptedKeyboardNoDiscard": true,
+      "pendingDraftAndSavingIndicatorRetained": true,
+      "closeBusyGuardRetained": true,
+      "exactOnePut": {
+        "id": "cancel-regression",
+        "canonical_name": "Dr Submitted Draft",
+        "active_status": "active",
+        "call_level": "2ND_CALL",
+        "revision": "original-one",
+        "aliases": [
+          "Original spelling"
+        ],
+        "designations": [],
+        "call_level_changes": [],
+        "preserve_previous_name": true
+      },
+      "failureRetainsFieldCancelFormNodesAndUnlocks": true,
+      "conflictCompareKeepDraftThenIdleDiscard": false,
+      "idleDiscardDeclineAcceptPreserved": true,
+      "successChangedCallbackOnce": false,
+      "prompts": [
+        {
+          "type": "confirm",
+          "message": "Discard unsaved changes?"
+        },
+        {
+          "type": "confirm",
+          "message": "Discard unsaved changes?"
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/cancel-regression"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/cancel-regression"
+        }
+      ]
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "outcome": "409",
+      "pendingCancelDisabledAndAttemptedKeyboardNoDiscard": true,
+      "pendingDraftAndSavingIndicatorRetained": true,
+      "closeBusyGuardRetained": true,
+      "exactOnePut": {
+        "id": "cancel-regression",
+        "canonical_name": "Dr Submitted Draft",
+        "active_status": "active",
+        "call_level": "2ND_CALL",
+        "revision": "original-one",
+        "aliases": [
+          "Original spelling"
+        ],
+        "designations": [],
+        "call_level_changes": [],
+        "preserve_previous_name": true
+      },
+      "failureRetainsFieldCancelFormNodesAndUnlocks": true,
+      "conflictCompareKeepDraftThenIdleDiscard": true,
+      "idleDiscardDeclineAcceptPreserved": true,
+      "successChangedCallbackOnce": false,
+      "prompts": [
+        {
+          "type": "confirm",
+          "message": "Discard unsaved changes?"
+        },
+        {
+          "type": "confirm",
+          "message": "Discard unsaved changes?"
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/cancel-regression"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/cancel-regression"
+        }
+      ]
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "outcome": "success",
+      "pendingCancelDisabledAndAttemptedKeyboardNoDiscard": true,
+      "pendingDraftAndSavingIndicatorRetained": true,
+      "closeBusyGuardRetained": true,
+      "exactOnePut": {
+        "id": "cancel-regression",
+        "canonical_name": "Dr Submitted Draft",
+        "active_status": "active",
+        "call_level": "2ND_CALL",
+        "revision": "original-one",
+        "aliases": [
+          "Original spelling"
+        ],
+        "designations": [],
+        "call_level_changes": [],
+        "preserve_previous_name": true
+      },
+      "failureRetainsFieldCancelFormNodesAndUnlocks": false,
+      "conflictCompareKeepDraftThenIdleDiscard": false,
+      "idleDiscardDeclineAcceptPreserved": false,
+      "successChangedCallbackOnce": true,
+      "prompts": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/cancel-regression"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/cancel-regression"
+        }
+      ]
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "outcome": "503",
+      "pendingCancelDisabledAndAttemptedKeyboardNoDiscard": true,
+      "pendingDraftAndSavingIndicatorRetained": true,
+      "closeBusyGuardRetained": true,
+      "exactOnePut": {
+        "id": "cancel-regression",
+        "canonical_name": "Dr Submitted Draft",
+        "active_status": "active",
+        "call_level": "2ND_CALL",
+        "revision": "original-one",
+        "aliases": [
+          "Original spelling"
+        ],
+        "designations": [],
+        "call_level_changes": [],
+        "preserve_previous_name": true
+      },
+      "failureRetainsFieldCancelFormNodesAndUnlocks": true,
+      "conflictCompareKeepDraftThenIdleDiscard": false,
+      "idleDiscardDeclineAcceptPreserved": true,
+      "successChangedCallbackOnce": false,
+      "prompts": [
+        {
+          "type": "confirm",
+          "message": "Discard unsaved changes?"
+        },
+        {
+          "type": "confirm",
+          "message": "Discard unsaved changes?"
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/cancel-regression"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/cancel-regression"
+        }
+      ]
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "outcome": "409",
+      "pendingCancelDisabledAndAttemptedKeyboardNoDiscard": true,
+      "pendingDraftAndSavingIndicatorRetained": true,
+      "closeBusyGuardRetained": true,
+      "exactOnePut": {
+        "id": "cancel-regression",
+        "canonical_name": "Dr Submitted Draft",
+        "active_status": "active",
+        "call_level": "2ND_CALL",
+        "revision": "original-one",
+        "aliases": [
+          "Original spelling"
+        ],
+        "designations": [],
+        "call_level_changes": [],
+        "preserve_previous_name": true
+      },
+      "failureRetainsFieldCancelFormNodesAndUnlocks": true,
+      "conflictCompareKeepDraftThenIdleDiscard": true,
+      "idleDiscardDeclineAcceptPreserved": true,
+      "successChangedCallbackOnce": false,
+      "prompts": [
+        {
+          "type": "confirm",
+          "message": "Discard unsaved changes?"
+        },
+        {
+          "type": "confirm",
+          "message": "Discard unsaved changes?"
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/cancel-regression"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/cancel-regression"
+        }
+      ]
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "outcome": "success",
+      "pendingCancelDisabledAndAttemptedKeyboardNoDiscard": true,
+      "pendingDraftAndSavingIndicatorRetained": true,
+      "closeBusyGuardRetained": true,
+      "exactOnePut": {
+        "id": "cancel-regression",
+        "canonical_name": "Dr Submitted Draft",
+        "active_status": "active",
+        "call_level": "2ND_CALL",
+        "revision": "original-one",
+        "aliases": [
+          "Original spelling"
+        ],
+        "designations": [],
+        "call_level_changes": [],
+        "preserve_previous_name": true
+      },
+      "failureRetainsFieldCancelFormNodesAndUnlocks": false,
+      "conflictCompareKeepDraftThenIdleDiscard": false,
+      "idleDiscardDeclineAcceptPreserved": false,
+      "successChangedCallbackOnce": true,
+      "prompts": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/cancel-regression"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/cancel-regression"
+        }
+      ]
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "outcome": "503",
+      "pendingCancelDisabledAndAttemptedKeyboardNoDiscard": true,
+      "pendingDraftAndSavingIndicatorRetained": true,
+      "closeBusyGuardRetained": true,
+      "exactOnePut": {
+        "id": "cancel-regression",
+        "canonical_name": "Dr Submitted Draft",
+        "active_status": "active",
+        "call_level": "2ND_CALL",
+        "revision": "original-one",
+        "aliases": [
+          "Original spelling"
+        ],
+        "designations": [],
+        "call_level_changes": [],
+        "preserve_previous_name": true
+      },
+      "failureRetainsFieldCancelFormNodesAndUnlocks": true,
+      "conflictCompareKeepDraftThenIdleDiscard": false,
+      "idleDiscardDeclineAcceptPreserved": true,
+      "successChangedCallbackOnce": false,
+      "prompts": [
+        {
+          "type": "confirm",
+          "message": "Discard unsaved changes?"
+        },
+        {
+          "type": "confirm",
+          "message": "Discard unsaved changes?"
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/cancel-regression"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/cancel-regression"
+        }
+      ]
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "outcome": "409",
+      "pendingCancelDisabledAndAttemptedKeyboardNoDiscard": true,
+      "pendingDraftAndSavingIndicatorRetained": true,
+      "closeBusyGuardRetained": true,
+      "exactOnePut": {
+        "id": "cancel-regression",
+        "canonical_name": "Dr Submitted Draft",
+        "active_status": "active",
+        "call_level": "2ND_CALL",
+        "revision": "original-one",
+        "aliases": [
+          "Original spelling"
+        ],
+        "designations": [],
+        "call_level_changes": [],
+        "preserve_previous_name": true
+      },
+      "failureRetainsFieldCancelFormNodesAndUnlocks": true,
+      "conflictCompareKeepDraftThenIdleDiscard": true,
+      "idleDiscardDeclineAcceptPreserved": true,
+      "successChangedCallbackOnce": false,
+      "prompts": [
+        {
+          "type": "confirm",
+          "message": "Discard unsaved changes?"
+        },
+        {
+          "type": "confirm",
+          "message": "Discard unsaved changes?"
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/cancel-regression"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/cancel-regression"
+        }
+      ]
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "outcome": "success",
+      "pendingCancelDisabledAndAttemptedKeyboardNoDiscard": true,
+      "pendingDraftAndSavingIndicatorRetained": true,
+      "closeBusyGuardRetained": true,
+      "exactOnePut": {
+        "id": "cancel-regression",
+        "canonical_name": "Dr Submitted Draft",
+        "active_status": "active",
+        "call_level": "2ND_CALL",
+        "revision": "original-one",
+        "aliases": [
+          "Original spelling"
+        ],
+        "designations": [],
+        "call_level_changes": [],
+        "preserve_previous_name": true
+      },
+      "failureRetainsFieldCancelFormNodesAndUnlocks": false,
+      "conflictCompareKeepDraftThenIdleDiscard": false,
+      "idleDiscardDeclineAcceptPreserved": false,
+      "successChangedCallbackOnce": true,
+      "prompts": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/cancel-regression"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/cancel-regression"
+        }
+      ]
+    }
+  ]
+}

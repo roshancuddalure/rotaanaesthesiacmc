@@ -1,0 +1,3055 @@
+{
+  "recorded_at_utc": "2026-11-09T08:08:52.575Z",
+  "reviewer": "/root/profile_parent_final_audit",
+  "decision": "Scratch targeted selection and duplicate-record focus regressions only.",
+  "scope": "18 actual browser contexts if terminal success: three engines,320/1280, selected record edited out of month with retained sibling or final selection removed, and held special-posting parent read with a focused second same-member record. All mutations locally fulfilled. No real database writes or whole-item acceptance.",
+  "source_sha256": {
+    "frontend/src/main.ts": "2b8f68c069e599af50a4ac1b2146a7018d6268f290b90a9949130a057dc91b43",
+    "frontend/src/member-workspace.ts": "105cc1d91ea4815d565ad4859fc01412cf576a3203c07834f4010e3fef7ef1a5",
+    "frontend/src/record-workspace.ts": "469fd6bf2e4118b15ad343d8059cd3cfb0acbc6483bea969ca5fb93488644335",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+  },
+  "candidate_sha256": {
+    "../tmp/profile-parent-refresh-v5/main.ts": "2b8f68c069e599af50a4ac1b2146a7018d6268f290b90a9949130a057dc91b43",
+    "../tmp/profile-parent-refresh-v5/member-workspace.ts": "105cc1d91ea4815d565ad4859fc01412cf576a3203c07834f4010e3fef7ef1a5"
+  },
+  "test_sha256": "b6ea3ea5ecc2a24ccb3287ee50d5a92041894f4be88d1d7f1df89621d88c2892",
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "scenario": "selection-prune-with-sibling",
+      "evidence": {
+        "selectedRecordMovedTo": "2026-12",
+        "parentMonth": "2026-11",
+        "desktopControlRetained": true,
+        "desktopCount": 1,
+        "mobileCount": 1,
+        "unrelatedSelectionRetained": true,
+        "parentReads": 1
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/preview",
+          "body": {
+            "identity": "leave-target",
+            "values": {
+              "person_id": "parent-person",
+              "starts_on": "2026-12-05",
+              "ends_on": "2026-12-05",
+              "posting_type": "2ND_CALL",
+              "unit_id": "",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "approved",
+              "notes": "leave-target",
+              "id": "leave-target",
+              "person": {
+                "id": "parent-person",
+                "canonical_name": "Dr Parent Audit",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "type": "ANNUAL_LEAVE",
+              "slot": "FULL_DAY",
+              "days": 1,
+              "source": "manual"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/save",
+          "body": {
+            "identity": "leave-target",
+            "values": {
+              "person_id": "parent-person",
+              "starts_on": "2026-12-05",
+              "ends_on": "2026-12-05",
+              "posting_type": "2ND_CALL",
+              "unit_id": "",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "approved",
+              "notes": "leave-target",
+              "id": "leave-target",
+              "person": {
+                "id": "parent-person",
+                "canonical_name": "Dr Parent Audit",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "type": "ANNUAL_LEAVE",
+              "slot": "FULL_DAY",
+              "days": 1,
+              "source": "manual"
+            },
+            "review_token": "target-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person/leave"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_slot"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_status"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/records/leave/leave-target"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/save"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person/leave"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "scenario": "selection-prune-last",
+      "evidence": {
+        "selectedRecordMovedTo": "2026-12",
+        "parentMonth": "2026-11",
+        "desktopControlRetained": true,
+        "desktopCount": 0,
+        "mobileCount": 0,
+        "unrelatedSelectionRetained": false,
+        "parentReads": 1
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/preview",
+          "body": {
+            "identity": "leave-target",
+            "values": {
+              "person_id": "parent-person",
+              "starts_on": "2026-12-05",
+              "ends_on": "2026-12-05",
+              "posting_type": "2ND_CALL",
+              "unit_id": "",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "approved",
+              "notes": "leave-target",
+              "id": "leave-target",
+              "person": {
+                "id": "parent-person",
+                "canonical_name": "Dr Parent Audit",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "type": "ANNUAL_LEAVE",
+              "slot": "FULL_DAY",
+              "days": 1,
+              "source": "manual"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/save",
+          "body": {
+            "identity": "leave-target",
+            "values": {
+              "person_id": "parent-person",
+              "starts_on": "2026-12-05",
+              "ends_on": "2026-12-05",
+              "posting_type": "2ND_CALL",
+              "unit_id": "",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "approved",
+              "notes": "leave-target",
+              "id": "leave-target",
+              "person": {
+                "id": "parent-person",
+                "canonical_name": "Dr Parent Audit",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "type": "ANNUAL_LEAVE",
+              "slot": "FULL_DAY",
+              "days": 1,
+              "source": "manual"
+            },
+            "review_token": "target-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person/leave"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_slot"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_status"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/records/leave/leave-target"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/save"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person/leave"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "scenario": "duplicate-special-posting-focus",
+      "evidence": {
+        "heldRead": true,
+        "focusedRecordBefore": "posting-second",
+        "focusedRecordAfter": "posting-second",
+        "duplicatePerson": "parent-person",
+        "distinctRecordIds": [
+          "posting-first",
+          "posting-second"
+        ],
+        "parentReads": 1
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "body": {
+            "identity": "posting-first",
+            "values": {
+              "person_id": "parent-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-15",
+              "posting_type": "SICU",
+              "unit_id": "",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Saved posting notes NEW",
+              "id": "posting-first",
+              "person": {
+                "id": "parent-person",
+                "canonical_name": "Dr Parent Audit",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "unit": null,
+              "source": "manual"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "body": {
+            "identity": "posting-first",
+            "values": {
+              "person_id": "parent-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-15",
+              "posting_type": "SICU",
+              "unit_id": "",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Saved posting notes NEW",
+              "id": "posting-first",
+              "person": {
+                "id": "parent-person",
+                "canonical_name": "Dr Parent Audit",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "unit": null,
+              "source": "manual"
+            },
+            "review_token": "target-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person/postings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/records/units/posting-first"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person/postings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "scenario": "selection-prune-with-sibling",
+      "evidence": {
+        "selectedRecordMovedTo": "2026-12",
+        "parentMonth": "2026-11",
+        "desktopControlRetained": true,
+        "desktopCount": 1,
+        "mobileCount": 1,
+        "unrelatedSelectionRetained": true,
+        "parentReads": 1
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/preview",
+          "body": {
+            "identity": "leave-target",
+            "values": {
+              "person_id": "parent-person",
+              "starts_on": "2026-12-05",
+              "ends_on": "2026-12-05",
+              "posting_type": "2ND_CALL",
+              "unit_id": "",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "approved",
+              "notes": "leave-target",
+              "id": "leave-target",
+              "person": {
+                "id": "parent-person",
+                "canonical_name": "Dr Parent Audit",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "type": "ANNUAL_LEAVE",
+              "slot": "FULL_DAY",
+              "days": 1,
+              "source": "manual"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/save",
+          "body": {
+            "identity": "leave-target",
+            "values": {
+              "person_id": "parent-person",
+              "starts_on": "2026-12-05",
+              "ends_on": "2026-12-05",
+              "posting_type": "2ND_CALL",
+              "unit_id": "",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "approved",
+              "notes": "leave-target",
+              "id": "leave-target",
+              "person": {
+                "id": "parent-person",
+                "canonical_name": "Dr Parent Audit",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "type": "ANNUAL_LEAVE",
+              "slot": "FULL_DAY",
+              "days": 1,
+              "source": "manual"
+            },
+            "review_token": "target-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person/leave"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_slot"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_status"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/records/leave/leave-target"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/save"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person/leave"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "scenario": "selection-prune-last",
+      "evidence": {
+        "selectedRecordMovedTo": "2026-12",
+        "parentMonth": "2026-11",
+        "desktopControlRetained": true,
+        "desktopCount": 0,
+        "mobileCount": 0,
+        "unrelatedSelectionRetained": false,
+        "parentReads": 1
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/preview",
+          "body": {
+            "identity": "leave-target",
+            "values": {
+              "person_id": "parent-person",
+              "starts_on": "2026-12-05",
+              "ends_on": "2026-12-05",
+              "posting_type": "2ND_CALL",
+              "unit_id": "",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "approved",
+              "notes": "leave-target",
+              "id": "leave-target",
+              "person": {
+                "id": "parent-person",
+                "canonical_name": "Dr Parent Audit",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "type": "ANNUAL_LEAVE",
+              "slot": "FULL_DAY",
+              "days": 1,
+              "source": "manual"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/save",
+          "body": {
+            "identity": "leave-target",
+            "values": {
+              "person_id": "parent-person",
+              "starts_on": "2026-12-05",
+              "ends_on": "2026-12-05",
+              "posting_type": "2ND_CALL",
+              "unit_id": "",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "approved",
+              "notes": "leave-target",
+              "id": "leave-target",
+              "person": {
+                "id": "parent-person",
+                "canonical_name": "Dr Parent Audit",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "type": "ANNUAL_LEAVE",
+              "slot": "FULL_DAY",
+              "days": 1,
+              "source": "manual"
+            },
+            "review_token": "target-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person/leave"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_slot"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_status"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/records/leave/leave-target"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/save"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person/leave"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "scenario": "duplicate-special-posting-focus",
+      "evidence": {
+        "heldRead": true,
+        "focusedRecordBefore": "posting-second",
+        "focusedRecordAfter": "posting-second",
+        "duplicatePerson": "parent-person",
+        "distinctRecordIds": [
+          "posting-first",
+          "posting-second"
+        ],
+        "parentReads": 1
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "body": {
+            "identity": "posting-first",
+            "values": {
+              "person_id": "parent-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-15",
+              "posting_type": "SICU",
+              "unit_id": "",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Saved posting notes NEW",
+              "id": "posting-first",
+              "person": {
+                "id": "parent-person",
+                "canonical_name": "Dr Parent Audit",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "unit": null,
+              "source": "manual"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "body": {
+            "identity": "posting-first",
+            "values": {
+              "person_id": "parent-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-15",
+              "posting_type": "SICU",
+              "unit_id": "",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Saved posting notes NEW",
+              "id": "posting-first",
+              "person": {
+                "id": "parent-person",
+                "canonical_name": "Dr Parent Audit",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "unit": null,
+              "source": "manual"
+            },
+            "review_token": "target-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person/postings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/records/units/posting-first"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person/postings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "scenario": "selection-prune-with-sibling",
+      "evidence": {
+        "selectedRecordMovedTo": "2026-12",
+        "parentMonth": "2026-11",
+        "desktopControlRetained": true,
+        "desktopCount": 1,
+        "mobileCount": 1,
+        "unrelatedSelectionRetained": true,
+        "parentReads": 1
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/preview",
+          "body": {
+            "identity": "leave-target",
+            "values": {
+              "person_id": "parent-person",
+              "starts_on": "2026-12-05",
+              "ends_on": "2026-12-05",
+              "posting_type": "2ND_CALL",
+              "unit_id": "",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "approved",
+              "notes": "leave-target",
+              "id": "leave-target",
+              "person": {
+                "id": "parent-person",
+                "canonical_name": "Dr Parent Audit",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "type": "ANNUAL_LEAVE",
+              "slot": "FULL_DAY",
+              "days": 1,
+              "source": "manual"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/save",
+          "body": {
+            "identity": "leave-target",
+            "values": {
+              "person_id": "parent-person",
+              "starts_on": "2026-12-05",
+              "ends_on": "2026-12-05",
+              "posting_type": "2ND_CALL",
+              "unit_id": "",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "approved",
+              "notes": "leave-target",
+              "id": "leave-target",
+              "person": {
+                "id": "parent-person",
+                "canonical_name": "Dr Parent Audit",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "type": "ANNUAL_LEAVE",
+              "slot": "FULL_DAY",
+              "days": 1,
+              "source": "manual"
+            },
+            "review_token": "target-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person/leave"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_slot"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_status"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/records/leave/leave-target"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/save"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person/leave"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "scenario": "selection-prune-last",
+      "evidence": {
+        "selectedRecordMovedTo": "2026-12",
+        "parentMonth": "2026-11",
+        "desktopControlRetained": true,
+        "desktopCount": 0,
+        "mobileCount": 0,
+        "unrelatedSelectionRetained": false,
+        "parentReads": 1
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/preview",
+          "body": {
+            "identity": "leave-target",
+            "values": {
+              "person_id": "parent-person",
+              "starts_on": "2026-12-05",
+              "ends_on": "2026-12-05",
+              "posting_type": "2ND_CALL",
+              "unit_id": "",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "approved",
+              "notes": "leave-target",
+              "id": "leave-target",
+              "person": {
+                "id": "parent-person",
+                "canonical_name": "Dr Parent Audit",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "type": "ANNUAL_LEAVE",
+              "slot": "FULL_DAY",
+              "days": 1,
+              "source": "manual"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/save",
+          "body": {
+            "identity": "leave-target",
+            "values": {
+              "person_id": "parent-person",
+              "starts_on": "2026-12-05",
+              "ends_on": "2026-12-05",
+              "posting_type": "2ND_CALL",
+              "unit_id": "",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "approved",
+              "notes": "leave-target",
+              "id": "leave-target",
+              "person": {
+                "id": "parent-person",
+                "canonical_name": "Dr Parent Audit",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "type": "ANNUAL_LEAVE",
+              "slot": "FULL_DAY",
+              "days": 1,
+              "source": "manual"
+            },
+            "review_token": "target-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person/leave"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_slot"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_status"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/records/leave/leave-target"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/save"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person/leave"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "scenario": "duplicate-special-posting-focus",
+      "evidence": {
+        "heldRead": true,
+        "focusedRecordBefore": "posting-second",
+        "focusedRecordAfter": "posting-second",
+        "duplicatePerson": "parent-person",
+        "distinctRecordIds": [
+          "posting-first",
+          "posting-second"
+        ],
+        "parentReads": 1
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "body": {
+            "identity": "posting-first",
+            "values": {
+              "person_id": "parent-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-15",
+              "posting_type": "SICU",
+              "unit_id": "",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Saved posting notes NEW",
+              "id": "posting-first",
+              "person": {
+                "id": "parent-person",
+                "canonical_name": "Dr Parent Audit",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "unit": null,
+              "source": "manual"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "body": {
+            "identity": "posting-first",
+            "values": {
+              "person_id": "parent-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-15",
+              "posting_type": "SICU",
+              "unit_id": "",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Saved posting notes NEW",
+              "id": "posting-first",
+              "person": {
+                "id": "parent-person",
+                "canonical_name": "Dr Parent Audit",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "unit": null,
+              "source": "manual"
+            },
+            "review_token": "target-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person/postings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/records/units/posting-first"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person/postings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "scenario": "selection-prune-with-sibling",
+      "evidence": {
+        "selectedRecordMovedTo": "2026-12",
+        "parentMonth": "2026-11",
+        "desktopControlRetained": true,
+        "desktopCount": 1,
+        "mobileCount": 1,
+        "unrelatedSelectionRetained": true,
+        "parentReads": 1
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/preview",
+          "body": {
+            "identity": "leave-target",
+            "values": {
+              "person_id": "parent-person",
+              "starts_on": "2026-12-05",
+              "ends_on": "2026-12-05",
+              "posting_type": "2ND_CALL",
+              "unit_id": "",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "approved",
+              "notes": "leave-target",
+              "id": "leave-target",
+              "person": {
+                "id": "parent-person",
+                "canonical_name": "Dr Parent Audit",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "type": "ANNUAL_LEAVE",
+              "slot": "FULL_DAY",
+              "days": 1,
+              "source": "manual"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/save",
+          "body": {
+            "identity": "leave-target",
+            "values": {
+              "person_id": "parent-person",
+              "starts_on": "2026-12-05",
+              "ends_on": "2026-12-05",
+              "posting_type": "2ND_CALL",
+              "unit_id": "",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "approved",
+              "notes": "leave-target",
+              "id": "leave-target",
+              "person": {
+                "id": "parent-person",
+                "canonical_name": "Dr Parent Audit",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "type": "ANNUAL_LEAVE",
+              "slot": "FULL_DAY",
+              "days": 1,
+              "source": "manual"
+            },
+            "review_token": "target-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person/leave"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_slot"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_status"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/records/leave/leave-target"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/save"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person/leave"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "scenario": "selection-prune-last",
+      "evidence": {
+        "selectedRecordMovedTo": "2026-12",
+        "parentMonth": "2026-11",
+        "desktopControlRetained": true,
+        "desktopCount": 0,
+        "mobileCount": 0,
+        "unrelatedSelectionRetained": false,
+        "parentReads": 1
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/preview",
+          "body": {
+            "identity": "leave-target",
+            "values": {
+              "person_id": "parent-person",
+              "starts_on": "2026-12-05",
+              "ends_on": "2026-12-05",
+              "posting_type": "2ND_CALL",
+              "unit_id": "",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "approved",
+              "notes": "leave-target",
+              "id": "leave-target",
+              "person": {
+                "id": "parent-person",
+                "canonical_name": "Dr Parent Audit",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "type": "ANNUAL_LEAVE",
+              "slot": "FULL_DAY",
+              "days": 1,
+              "source": "manual"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/save",
+          "body": {
+            "identity": "leave-target",
+            "values": {
+              "person_id": "parent-person",
+              "starts_on": "2026-12-05",
+              "ends_on": "2026-12-05",
+              "posting_type": "2ND_CALL",
+              "unit_id": "",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "approved",
+              "notes": "leave-target",
+              "id": "leave-target",
+              "person": {
+                "id": "parent-person",
+                "canonical_name": "Dr Parent Audit",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "type": "ANNUAL_LEAVE",
+              "slot": "FULL_DAY",
+              "days": 1,
+              "source": "manual"
+            },
+            "review_token": "target-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person/leave"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_slot"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_status"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/records/leave/leave-target"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/save"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person/leave"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "scenario": "duplicate-special-posting-focus",
+      "evidence": {
+        "heldRead": true,
+        "focusedRecordBefore": "posting-second",
+        "focusedRecordAfter": "posting-second",
+        "duplicatePerson": "parent-person",
+        "distinctRecordIds": [
+          "posting-first",
+          "posting-second"
+        ],
+        "parentReads": 1
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "body": {
+            "identity": "posting-first",
+            "values": {
+              "person_id": "parent-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-15",
+              "posting_type": "SICU",
+              "unit_id": "",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Saved posting notes NEW",
+              "id": "posting-first",
+              "person": {
+                "id": "parent-person",
+                "canonical_name": "Dr Parent Audit",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "unit": null,
+              "source": "manual"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "body": {
+            "identity": "posting-first",
+            "values": {
+              "person_id": "parent-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-15",
+              "posting_type": "SICU",
+              "unit_id": "",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Saved posting notes NEW",
+              "id": "posting-first",
+              "person": {
+                "id": "parent-person",
+                "canonical_name": "Dr Parent Audit",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "unit": null,
+              "source": "manual"
+            },
+            "review_token": "target-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person/postings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/records/units/posting-first"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person/postings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "scenario": "selection-prune-with-sibling",
+      "evidence": {
+        "selectedRecordMovedTo": "2026-12",
+        "parentMonth": "2026-11",
+        "desktopControlRetained": true,
+        "desktopCount": 1,
+        "mobileCount": 1,
+        "unrelatedSelectionRetained": true,
+        "parentReads": 1
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/preview",
+          "body": {
+            "identity": "leave-target",
+            "values": {
+              "person_id": "parent-person",
+              "starts_on": "2026-12-05",
+              "ends_on": "2026-12-05",
+              "posting_type": "2ND_CALL",
+              "unit_id": "",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "approved",
+              "notes": "leave-target",
+              "id": "leave-target",
+              "person": {
+                "id": "parent-person",
+                "canonical_name": "Dr Parent Audit",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "type": "ANNUAL_LEAVE",
+              "slot": "FULL_DAY",
+              "days": 1,
+              "source": "manual"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/save",
+          "body": {
+            "identity": "leave-target",
+            "values": {
+              "person_id": "parent-person",
+              "starts_on": "2026-12-05",
+              "ends_on": "2026-12-05",
+              "posting_type": "2ND_CALL",
+              "unit_id": "",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "approved",
+              "notes": "leave-target",
+              "id": "leave-target",
+              "person": {
+                "id": "parent-person",
+                "canonical_name": "Dr Parent Audit",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "type": "ANNUAL_LEAVE",
+              "slot": "FULL_DAY",
+              "days": 1,
+              "source": "manual"
+            },
+            "review_token": "target-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person/leave"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_slot"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_status"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/records/leave/leave-target"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/save"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person/leave"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "scenario": "selection-prune-last",
+      "evidence": {
+        "selectedRecordMovedTo": "2026-12",
+        "parentMonth": "2026-11",
+        "desktopControlRetained": true,
+        "desktopCount": 0,
+        "mobileCount": 0,
+        "unrelatedSelectionRetained": false,
+        "parentReads": 1
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/preview",
+          "body": {
+            "identity": "leave-target",
+            "values": {
+              "person_id": "parent-person",
+              "starts_on": "2026-12-05",
+              "ends_on": "2026-12-05",
+              "posting_type": "2ND_CALL",
+              "unit_id": "",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "approved",
+              "notes": "leave-target",
+              "id": "leave-target",
+              "person": {
+                "id": "parent-person",
+                "canonical_name": "Dr Parent Audit",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "type": "ANNUAL_LEAVE",
+              "slot": "FULL_DAY",
+              "days": 1,
+              "source": "manual"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/save",
+          "body": {
+            "identity": "leave-target",
+            "values": {
+              "person_id": "parent-person",
+              "starts_on": "2026-12-05",
+              "ends_on": "2026-12-05",
+              "posting_type": "2ND_CALL",
+              "unit_id": "",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "approved",
+              "notes": "leave-target",
+              "id": "leave-target",
+              "person": {
+                "id": "parent-person",
+                "canonical_name": "Dr Parent Audit",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "type": "ANNUAL_LEAVE",
+              "slot": "FULL_DAY",
+              "days": 1,
+              "source": "manual"
+            },
+            "review_token": "target-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person/leave"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_slot"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_status"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/records/leave/leave-target"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/save"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person/leave"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "scenario": "duplicate-special-posting-focus",
+      "evidence": {
+        "heldRead": true,
+        "focusedRecordBefore": "posting-second",
+        "focusedRecordAfter": "posting-second",
+        "duplicatePerson": "parent-person",
+        "distinctRecordIds": [
+          "posting-first",
+          "posting-second"
+        ],
+        "parentReads": 1
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "body": {
+            "identity": "posting-first",
+            "values": {
+              "person_id": "parent-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-15",
+              "posting_type": "SICU",
+              "unit_id": "",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Saved posting notes NEW",
+              "id": "posting-first",
+              "person": {
+                "id": "parent-person",
+                "canonical_name": "Dr Parent Audit",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "unit": null,
+              "source": "manual"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "body": {
+            "identity": "posting-first",
+            "values": {
+              "person_id": "parent-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-15",
+              "posting_type": "SICU",
+              "unit_id": "",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Saved posting notes NEW",
+              "id": "posting-first",
+              "person": {
+                "id": "parent-person",
+                "canonical_name": "Dr Parent Audit",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "unit": null,
+              "source": "manual"
+            },
+            "review_token": "target-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person/postings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/records/units/posting-first"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person/postings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "scenario": "selection-prune-with-sibling",
+      "evidence": {
+        "selectedRecordMovedTo": "2026-12",
+        "parentMonth": "2026-11",
+        "desktopControlRetained": true,
+        "desktopCount": 1,
+        "mobileCount": 1,
+        "unrelatedSelectionRetained": true,
+        "parentReads": 1
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/preview",
+          "body": {
+            "identity": "leave-target",
+            "values": {
+              "person_id": "parent-person",
+              "starts_on": "2026-12-05",
+              "ends_on": "2026-12-05",
+              "posting_type": "2ND_CALL",
+              "unit_id": "",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "approved",
+              "notes": "leave-target",
+              "id": "leave-target",
+              "person": {
+                "id": "parent-person",
+                "canonical_name": "Dr Parent Audit",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "type": "ANNUAL_LEAVE",
+              "slot": "FULL_DAY",
+              "days": 1,
+              "source": "manual"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/save",
+          "body": {
+            "identity": "leave-target",
+            "values": {
+              "person_id": "parent-person",
+              "starts_on": "2026-12-05",
+              "ends_on": "2026-12-05",
+              "posting_type": "2ND_CALL",
+              "unit_id": "",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "approved",
+              "notes": "leave-target",
+              "id": "leave-target",
+              "person": {
+                "id": "parent-person",
+                "canonical_name": "Dr Parent Audit",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "type": "ANNUAL_LEAVE",
+              "slot": "FULL_DAY",
+              "days": 1,
+              "source": "manual"
+            },
+            "review_token": "target-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person/leave"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_slot"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_status"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/records/leave/leave-target"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/save"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person/leave"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "scenario": "selection-prune-last",
+      "evidence": {
+        "selectedRecordMovedTo": "2026-12",
+        "parentMonth": "2026-11",
+        "desktopControlRetained": true,
+        "desktopCount": 0,
+        "mobileCount": 0,
+        "unrelatedSelectionRetained": false,
+        "parentReads": 1
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/preview",
+          "body": {
+            "identity": "leave-target",
+            "values": {
+              "person_id": "parent-person",
+              "starts_on": "2026-12-05",
+              "ends_on": "2026-12-05",
+              "posting_type": "2ND_CALL",
+              "unit_id": "",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "approved",
+              "notes": "leave-target",
+              "id": "leave-target",
+              "person": {
+                "id": "parent-person",
+                "canonical_name": "Dr Parent Audit",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "type": "ANNUAL_LEAVE",
+              "slot": "FULL_DAY",
+              "days": 1,
+              "source": "manual"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/save",
+          "body": {
+            "identity": "leave-target",
+            "values": {
+              "person_id": "parent-person",
+              "starts_on": "2026-12-05",
+              "ends_on": "2026-12-05",
+              "posting_type": "2ND_CALL",
+              "unit_id": "",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "approved",
+              "notes": "leave-target",
+              "id": "leave-target",
+              "person": {
+                "id": "parent-person",
+                "canonical_name": "Dr Parent Audit",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "type": "ANNUAL_LEAVE",
+              "slot": "FULL_DAY",
+              "days": 1,
+              "source": "manual"
+            },
+            "review_token": "target-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person/leave"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_slot"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_status"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/records/leave/leave-target"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/leave/save"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person/leave"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "scenario": "duplicate-special-posting-focus",
+      "evidence": {
+        "heldRead": true,
+        "focusedRecordBefore": "posting-second",
+        "focusedRecordAfter": "posting-second",
+        "duplicatePerson": "parent-person",
+        "distinctRecordIds": [
+          "posting-first",
+          "posting-second"
+        ],
+        "parentReads": 1
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "body": {
+            "identity": "posting-first",
+            "values": {
+              "person_id": "parent-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-15",
+              "posting_type": "SICU",
+              "unit_id": "",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Saved posting notes NEW",
+              "id": "posting-first",
+              "person": {
+                "id": "parent-person",
+                "canonical_name": "Dr Parent Audit",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "unit": null,
+              "source": "manual"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "body": {
+            "identity": "posting-first",
+            "values": {
+              "person_id": "parent-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-15",
+              "posting_type": "SICU",
+              "unit_id": "",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Saved posting notes NEW",
+              "id": "posting-first",
+              "person": {
+                "id": "parent-person",
+                "canonical_name": "Dr Parent Audit",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "unit": null,
+              "source": "manual"
+            },
+            "review_token": "target-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person/postings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/records/units/posting-first"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/parent-person/postings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        }
+      ],
+      "errors": []
+    }
+  ]
+}

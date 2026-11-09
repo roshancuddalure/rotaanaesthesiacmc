@@ -150,6 +150,13 @@ export function steps(labels: string[], current: number): string {
     .join("")}</ol>`;
 }
 
+/** Plain recovery guidance; callers retain and escape the original server error. */
+export function importRecoveryText(stage: "columns" | "preview" | "apply"): string {
+  if (stage === "columns") return "Your selected file is retained in this open import. Use the preview action to process it with automatic column matching. Replacing the file resets mappings and review choices.";
+  if (stage === "apply") return "Apply has not returned a confirmed result. The request may already have saved changes. Check existing records or import history before repeating Apply. Your file, mappings and review choices are retained in this open import; refresh the preview if the review is marked stale.";
+  return "Your file, mappings and review choices are retained in this open import. Correct the reported issue if needed, then choose Preview again. Nothing is applied by previewing.";
+}
+
 /** Counts for an import review: what is new, what changes, what needs a decision. */
 export function importSummary(counts: { label: string; count: number; tone?: Tone }[]): string {
   return `<div class="ds-import-summary" role="status">${counts
@@ -176,6 +183,11 @@ export interface MemberMatchView {
   /** matched | needs_review | not_found | ambiguous | conflict | inactive */
   status: string;
   name?: string | null;
+  /** Identity confirmed by the returned preview, never a pending local choice. */
+  selectedId?: string | null;
+  selectedIdentity?: Partial<MemberMatchCandidate>;
+  newMember?: boolean;
+  pending?: boolean;
   method?: string | null;
   reason?: string;
   warnings?: string[];
@@ -198,9 +210,27 @@ export function matchMethodText(method?: string | null): string {
   return method ? MATCH_METHOD[method] ?? codeLabel(method.toUpperCase()) : "";
 }
 
-function candidateLine(c: MemberMatchCandidate): string {
-  return [codeLabel((c.call_level ?? "").toUpperCase()), c.designation, ...(c.units ?? []),
-          c.status && c.status !== "active" ? c.status : ""].filter(Boolean).join(" · ");
+/** Plain text identity context; HTML callers must escape the result. */
+export function memberIdentityText(c: Partial<MemberMatchCandidate>): string {
+  const id = c.id ?? c.person_id;
+  return ["Existing member", c.call_level ? codeLabel(c.call_level.toUpperCase()) : "", c.designation,
+          ...(c.units ?? []), c.status && c.status !== "active" ? c.status : "",
+          id ? `Member ID: ${id}` : "Member ID unavailable", c.reason].filter(Boolean).join(" · ");
+}
+
+const MEMBER_MATCH_PENDING = "Changes pending. Showing the last preview result; refresh preview to confirm the current choice.";
+
+/** Update presentation of retained preview rows without replacing controls or identity. */
+export function updateMemberMatchPending(host: HTMLElement, pending: boolean): void {
+  host.querySelectorAll<HTMLElement>(".member-match").forEach((match) => {
+    const existing = match.querySelector<HTMLElement>(".member-match__pending");
+    if (!pending) { existing?.remove(); return; }
+    if (existing) return;
+    const note = document.createElement("p");
+    note.className = "member-match__pending";
+    note.textContent = MEMBER_MATCH_PENDING;
+    match.querySelector(".member-match__identity")?.after(note);
+  });
 }
 
 /**
@@ -213,7 +243,9 @@ export function memberMatch(rowKey: string, view: MemberMatchView): string {
   const tone: Tone = matched ? "success" : view.status === "not_found" ? "neutral" : view.status === "conflict" ? "danger" : "warning";
   const label = matched ? "Matched" : view.status === "ambiguous" ? "Several members fit"
     : view.status === "inactive" ? "Member not active" : view.status === "not_found" ? "No such member" : "Needs your choice";
-  const alternatives = (view.candidates ?? []).filter((c) => (c.id ?? c.person_id) && c.name !== view.name).slice(0, 5);
+  const selectedId = matched ? view.selectedId : undefined;
+  const selectedCandidate = selectedId ? (view.candidates ?? []).find((c) => (c.id ?? c.person_id) === selectedId) : undefined;
+  const alternatives = (view.candidates ?? []).filter((c) => (c.id ?? c.person_id) && (!selectedId || (c.id ?? c.person_id) !== selectedId)).slice(0, 5);
   return `<div class="member-match" data-match-status="${esc(view.status)}">
     <p class="member-match__line">
       <span class="member-match__raw">${esc(view.raw || "(blank)")}</span>
@@ -221,11 +253,13 @@ export function memberMatch(rowKey: string, view: MemberMatchView): string {
       <strong class="member-match__name">${matched ? esc(view.name) : "<em>not chosen</em>"}</strong>
       ${badge(label, tone)}
     </p>
+    ${matched ? `<p class="member-match__identity">${esc(memberIdentityText({ ...selectedCandidate, ...view.selectedIdentity, id: selectedId ?? undefined }))}</p>` : `<p class="member-match__identity">${view.newMember ? "New member will be created; no existing member selected." : "No existing member selected."}</p>`}
+    ${view.pending ? `<p class="member-match__pending">${MEMBER_MATCH_PENDING}</p>` : ""}
     <p class="member-match__why">${esc(matched ? `Match: ${matchMethodText(view.method)}` : view.reason ?? "")}</p>
     ${(view.warnings ?? []).length ? `<p class="member-match__warn">${(view.warnings ?? []).map(esc).join(" · ")}</p>` : ""}
     ${alternatives.length ? `<div class="member-match__picks" role="group" aria-label="Choose the member for ${esc(view.raw)}">
       ${alternatives.map((c) => `<button type="button" class="member-pick" data-pick-row="${esc(rowKey)}" data-pick-member="${esc(c.id ?? c.person_id)}">
-        <span>${matched ? "Use " : ""}${esc(c.name)}</span><small>${esc(candidateLine(c) || c.reason || "")}</small></button>`).join("")}
+        <span>${matched ? "Use " : ""}${esc(c.name)}</span><small>${esc(memberIdentityText(c))}</small></button>`).join("")}
     </div>` : ""}
   </div>`;
 }

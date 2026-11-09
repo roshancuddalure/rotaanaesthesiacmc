@@ -1,0 +1,2526 @@
+{
+  "recorded_at_utc": "2026-10-28T08:41:00.874Z",
+  "source_sha256": {
+    "src/member-workspace.ts": "6d6d361f7eb66a519423cd46c26a6af7596b0679b8443d12ae82ecbb31271c3f",
+    "src/member-profile.ts": "39f8bc4d281c9d8f3da9cad3a7ef98e4ecef1b0ba020145ca20439228fdc3df3",
+    "src/record-workspace.ts": "23a2ec5e7cc77d2ce167345496865335efda58703155f0d5cfb3ca5c23488f5c",
+    "src/premium-theme.css": "f4c646977ef2cce1ef1a31e6b99de17f5749a60b3282a888ba4412b83e348516",
+    "src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "tests/premium-profile-editor-actions.browser.mjs": "b70bdb9e5694ac93bcc25a9d8fecc2cea0f3ba0f5c5e3508a7a1ca20f664b2e4"
+  },
+  "scope": "Actual canonical combined editor and legacy five independent section editors; native edits/pending503/manualretry/discard and real action/footer geometry at reduced heights plus root text200%. Root text enlargement is CSS font-size, not browser zoom. All API responses locally fulfilled; no backend or whole131 acceptance.",
+  "results": [
+    {
+      "engine": "chromium",
+      "surface": "canonical",
+      "width": 320,
+      "height": 560,
+      "font": 100,
+      "actualActionGroupsAndScope": true,
+      "draftPendingFailureConventions": true,
+      "requestBodies": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/editor-target",
+          "body": {
+            "id": "editor-target",
+            "canonical_name": "Dr Edited Whole Profile",
+            "active_status": "active",
+            "call_level": "2ND_CALL",
+            "aliases": [
+              "Edited alias"
+            ],
+            "designations": [
+              {
+                "id": null,
+                "designation": "Registrar",
+                "effective_from": "2026-10-01",
+                "effective_to": null,
+                "source": "manual",
+                "notes": null
+              }
+            ],
+            "call_level_changes": [],
+            "revision": "one",
+            "preserve_previous_name": true
+          },
+          "action": "canonical"
+        }
+      ],
+      "geometry": [
+        {
+          "scope": "canonical-actions",
+          "footer": {
+            "x": 0,
+            "y": 382.5625,
+            "width": 320,
+            "height": 203.171875
+          },
+          "cancel": {
+            "x": 12,
+            "y": 449.734375,
+            "width": 119.15625,
+            "height": 44
+          },
+          "save": {
+            "x": 139.15625,
+            "y": 449.734375,
+            "width": 168.84375,
+            "height": 44
+          }
+        },
+        {
+          "scope": "canonical-final-field-and-error",
+          "fieldRect": {
+            "x": 16,
+            "y": 214.375,
+            "width": 288,
+            "height": 44
+          },
+          "footerRect": {
+            "x": 0,
+            "y": 639.5625,
+            "width": 320,
+            "height": 203.171875
+          },
+          "errorRect": {
+            "x": 0,
+            "y": 331.765625,
+            "width": 320,
+            "height": 24.796875
+          },
+          "afterFooter": {
+            "x": 0,
+            "y": 356.5625,
+            "width": 320,
+            "height": 203.171875
+          }
+        }
+      ],
+      "prompts": [
+        "Discard unsaved changes?",
+        "Discard unsaved changes?"
+      ],
+      "screenshot": "docs/premium-ui/qa-profile-editor-actions/chromium-canonical-320-560-100.png"
+    },
+    {
+      "engine": "chromium",
+      "surface": "legacy",
+      "width": 320,
+      "height": 560,
+      "font": 100,
+      "actualActionGroupsAndScope": true,
+      "draftPendingFailureConventions": true,
+      "requestBodies": [
+        {
+          "method": "POST",
+          "path": "/api/v1/members/editor-target/call-changes",
+          "body": {
+            "call_level": "3RD_CALL",
+            "effective_from": "2026-10-28",
+            "reason": "Reviewed call change"
+          },
+          "action": "call"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/editor-target/call-changes",
+          "body": {
+            "call_level": "3RD_CALL",
+            "effective_from": "2026-10-28",
+            "reason": "Reviewed call change"
+          },
+          "action": "call"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members/editor-target/designations",
+          "body": {
+            "designation": "Registrar",
+            "effective_from": "2026-10-01",
+            "notes": null
+          },
+          "action": "designation"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members/editor-target/designations",
+          "body": {
+            "designation": "Registrar",
+            "effective_from": "2026-10-01",
+            "notes": null
+          },
+          "action": "designation"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members/editor-target/aliases",
+          "body": {
+            "alias": "Section alias",
+            "source": "unit_import_resolution"
+          },
+          "action": "alias"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members/editor-target/aliases",
+          "body": {
+            "alias": "Section alias",
+            "source": "unit_import_resolution"
+          },
+          "action": "alias"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/editor-target/comments",
+          "body": {
+            "body": "Section comment"
+          },
+          "action": "comment"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/editor-target/comments",
+          "body": {
+            "body": "Section comment"
+          },
+          "action": "comment"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/members/editor-target",
+          "body": {
+            "revision": "one",
+            "canonical_name": "Dr Section Details",
+            "active_status": "active",
+            "call_level": "2ND_CALL"
+          },
+          "action": "details"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/members/editor-target",
+          "body": {
+            "revision": "one",
+            "canonical_name": "Dr Section Details",
+            "active_status": "active",
+            "call_level": "2ND_CALL"
+          },
+          "action": "details"
+        }
+      ],
+      "geometry": [
+        {
+          "scope": "legacy-call",
+          "button": {
+            "x": 82.25,
+            "y": 213.65625,
+            "width": 174.75,
+            "height": 44
+          },
+          "marker": {
+            "x": 63,
+            "y": 140.59375,
+            "width": 194,
+            "height": 65.0625
+          }
+        },
+        {
+          "scope": "legacy-designation",
+          "button": {
+            "x": 98.9375,
+            "y": 213.78125,
+            "width": 158.0625,
+            "height": 44
+          },
+          "marker": {
+            "x": 63,
+            "y": 140.71875,
+            "width": 194,
+            "height": 65.0625
+          }
+        },
+        {
+          "scope": "legacy-alias",
+          "button": {
+            "x": 154.171875,
+            "y": 214.046875,
+            "width": 102.828125,
+            "height": 44
+          },
+          "marker": {
+            "x": 63,
+            "y": 140.984375,
+            "width": 194,
+            "height": 65.0625
+          }
+        },
+        {
+          "scope": "legacy-comment",
+          "button": {
+            "x": 116.1875,
+            "y": 213.890625,
+            "width": 140.8125,
+            "height": 44
+          },
+          "marker": {
+            "x": 63,
+            "y": 140.828125,
+            "width": 194,
+            "height": 65.0625
+          }
+        },
+        {
+          "scope": "legacy-details",
+          "button": {
+            "x": 66.96875,
+            "y": 389.234375,
+            "width": 190.03125,
+            "height": 44
+          },
+          "marker": {
+            "x": 63,
+            "y": 316.171875,
+            "width": 194,
+            "height": 65.0625
+          }
+        }
+      ],
+      "prompts": [],
+      "screenshot": "docs/premium-ui/qa-profile-editor-actions/chromium-legacy-320-560-100.png"
+    },
+    {
+      "engine": "chromium",
+      "surface": "canonical",
+      "width": 1280,
+      "height": 560,
+      "font": 100,
+      "actualActionGroupsAndScope": true,
+      "draftPendingFailureConventions": true,
+      "requestBodies": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/editor-target",
+          "body": {
+            "id": "editor-target",
+            "canonical_name": "Dr Edited Whole Profile",
+            "active_status": "active",
+            "call_level": "2ND_CALL",
+            "aliases": [
+              "Edited alias"
+            ],
+            "designations": [
+              {
+                "id": null,
+                "designation": "Registrar",
+                "effective_from": "2026-10-01",
+                "effective_to": null,
+                "source": "manual",
+                "notes": null
+              }
+            ],
+            "call_level_changes": [],
+            "revision": "one",
+            "preserve_previous_name": true
+          },
+          "action": "canonical"
+        }
+      ],
+      "geometry": [
+        {
+          "scope": "canonical-actions",
+          "footer": {
+            "x": 271,
+            "y": 480.375,
+            "width": 928,
+            "height": 97.171875
+          },
+          "cancel": {
+            "x": 791.359375,
+            "y": 446.375,
+            "width": 77.828125,
+            "height": 44
+          },
+          "save": {
+            "x": 877.1875,
+            "y": 446.375,
+            "width": 127.515625,
+            "height": 44
+          }
+        },
+        {
+          "scope": "canonical-final-field-and-error",
+          "fieldRect": {
+            "x": 295,
+            "y": 68.78125,
+            "width": 880,
+            "height": 44
+          },
+          "footerRect": {
+            "x": 271,
+            "y": 452.375,
+            "width": 928,
+            "height": 97.171875
+          },
+          "errorRect": {
+            "x": 271,
+            "y": 427.578125,
+            "width": 928,
+            "height": 24.796875
+          },
+          "afterFooter": {
+            "x": 271,
+            "y": 452.375,
+            "width": 928,
+            "height": 97.171875
+          }
+        }
+      ],
+      "prompts": [
+        "Discard unsaved changes?",
+        "Discard unsaved changes?"
+      ],
+      "screenshot": "docs/premium-ui/qa-profile-editor-actions/chromium-canonical-1280-560-100.png"
+    },
+    {
+      "engine": "chromium",
+      "surface": "legacy",
+      "width": 1280,
+      "height": 560,
+      "font": 100,
+      "actualActionGroupsAndScope": true,
+      "draftPendingFailureConventions": true,
+      "requestBodies": [
+        {
+          "method": "POST",
+          "path": "/api/v1/members/editor-target/call-changes",
+          "body": {
+            "call_level": "3RD_CALL",
+            "effective_from": "2026-10-28",
+            "reason": "Reviewed call change"
+          },
+          "action": "call"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/editor-target/call-changes",
+          "body": {
+            "call_level": "3RD_CALL",
+            "effective_from": "2026-10-28",
+            "reason": "Reviewed call change"
+          },
+          "action": "call"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members/editor-target/designations",
+          "body": {
+            "designation": "Registrar",
+            "effective_from": "2026-10-01",
+            "notes": null
+          },
+          "action": "designation"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members/editor-target/designations",
+          "body": {
+            "designation": "Registrar",
+            "effective_from": "2026-10-01",
+            "notes": null
+          },
+          "action": "designation"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members/editor-target/aliases",
+          "body": {
+            "alias": "Section alias",
+            "source": "unit_import_resolution"
+          },
+          "action": "alias"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members/editor-target/aliases",
+          "body": {
+            "alias": "Section alias",
+            "source": "unit_import_resolution"
+          },
+          "action": "alias"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/editor-target/comments",
+          "body": {
+            "body": "Section comment"
+          },
+          "action": "comment"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/editor-target/comments",
+          "body": {
+            "body": "Section comment"
+          },
+          "action": "comment"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/members/editor-target",
+          "body": {
+            "revision": "one",
+            "canonical_name": "Dr Section Details",
+            "active_status": "active",
+            "call_level": "2ND_CALL"
+          },
+          "action": "details"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/members/editor-target",
+          "body": {
+            "revision": "one",
+            "canonical_name": "Dr Section Details",
+            "active_status": "active",
+            "call_level": "2ND_CALL"
+          },
+          "action": "details"
+        }
+      ],
+      "geometry": [
+        {
+          "scope": "legacy-call",
+          "button": {
+            "x": 846.25,
+            "y": 213.609375,
+            "width": 174.75,
+            "height": 44
+          },
+          "marker": {
+            "x": 259,
+            "y": 183.921875,
+            "width": 762,
+            "height": 21.6875
+          }
+        },
+        {
+          "scope": "legacy-designation",
+          "button": {
+            "x": 862.9375,
+            "y": 214.46875,
+            "width": 158.0625,
+            "height": 44
+          },
+          "marker": {
+            "x": 259,
+            "y": 184.78125,
+            "width": 762,
+            "height": 21.6875
+          }
+        },
+        {
+          "scope": "legacy-alias",
+          "button": {
+            "x": 918.171875,
+            "y": 213.734375,
+            "width": 102.828125,
+            "height": 44
+          },
+          "marker": {
+            "x": 259,
+            "y": 184.046875,
+            "width": 762,
+            "height": 21.6875
+          }
+        },
+        {
+          "scope": "legacy-comment",
+          "button": {
+            "x": 880.1875,
+            "y": 214.59375,
+            "width": 140.8125,
+            "height": 44
+          },
+          "marker": {
+            "x": 259,
+            "y": 184.90625,
+            "width": 762,
+            "height": 21.6875
+          }
+        },
+        {
+          "scope": "legacy-details",
+          "button": {
+            "x": 830.96875,
+            "y": 389.0625,
+            "width": 190.03125,
+            "height": 44
+          },
+          "marker": {
+            "x": 259,
+            "y": 359.375,
+            "width": 762,
+            "height": 21.6875
+          }
+        }
+      ],
+      "prompts": [],
+      "screenshot": "docs/premium-ui/qa-profile-editor-actions/chromium-legacy-1280-560-100.png"
+    },
+    {
+      "engine": "chromium",
+      "surface": "canonical",
+      "width": 320,
+      "height": 480,
+      "font": 200,
+      "actualActionGroupsAndScope": true,
+      "draftPendingFailureConventions": true,
+      "requestBodies": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/editor-target",
+          "body": {
+            "id": "editor-target",
+            "canonical_name": "Dr Edited Whole Profile",
+            "active_status": "active",
+            "call_level": "2ND_CALL",
+            "aliases": [
+              "Edited alias"
+            ],
+            "designations": [
+              {
+                "id": null,
+                "designation": "Registrar",
+                "effective_from": "2026-10-01",
+                "effective_to": null,
+                "source": "manual",
+                "notes": null
+              }
+            ],
+            "call_level_changes": [],
+            "revision": "one",
+            "preserve_previous_name": true
+          },
+          "action": "canonical"
+        }
+      ],
+      "geometry": [
+        {
+          "scope": "canonical-actions",
+          "footer": {
+            "x": 0,
+            "y": 307.765625,
+            "width": 320,
+            "height": 197.171875
+          },
+          "cancel": {
+            "x": 12,
+            "y": 373.9375,
+            "width": 119.15625,
+            "height": 44
+          },
+          "save": {
+            "x": 139.15625,
+            "y": 373.9375,
+            "width": 168.84375,
+            "height": 44
+          }
+        },
+        {
+          "scope": "canonical-final-field-and-error",
+          "fieldRect": {
+            "x": 16,
+            "y": 173.578125,
+            "width": 288,
+            "height": 44
+          },
+          "footerRect": {
+            "x": 0,
+            "y": 598.765625,
+            "width": 320,
+            "height": 197.171875
+          },
+          "errorRect": {
+            "x": 0,
+            "y": 257.96875,
+            "width": 320,
+            "height": 24.796875
+          },
+          "afterFooter": {
+            "x": 0,
+            "y": 282.765625,
+            "width": 320,
+            "height": 197.171875
+          }
+        }
+      ],
+      "prompts": [
+        "Discard unsaved changes?",
+        "Discard unsaved changes?"
+      ],
+      "screenshot": "docs/premium-ui/qa-profile-editor-actions/chromium-canonical-320-480-200.png"
+    },
+    {
+      "engine": "chromium",
+      "surface": "legacy",
+      "width": 320,
+      "height": 480,
+      "font": 200,
+      "actualActionGroupsAndScope": true,
+      "draftPendingFailureConventions": true,
+      "requestBodies": [
+        {
+          "method": "POST",
+          "path": "/api/v1/members/editor-target/call-changes",
+          "body": {
+            "call_level": "3RD_CALL",
+            "effective_from": "2026-10-28",
+            "reason": "Reviewed call change"
+          },
+          "action": "call"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/editor-target/call-changes",
+          "body": {
+            "call_level": "3RD_CALL",
+            "effective_from": "2026-10-28",
+            "reason": "Reviewed call change"
+          },
+          "action": "call"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members/editor-target/designations",
+          "body": {
+            "designation": "Registrar",
+            "effective_from": "2026-10-01",
+            "notes": null
+          },
+          "action": "designation"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members/editor-target/designations",
+          "body": {
+            "designation": "Registrar",
+            "effective_from": "2026-10-01",
+            "notes": null
+          },
+          "action": "designation"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members/editor-target/aliases",
+          "body": {
+            "alias": "Section alias",
+            "source": "unit_import_resolution"
+          },
+          "action": "alias"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members/editor-target/aliases",
+          "body": {
+            "alias": "Section alias",
+            "source": "unit_import_resolution"
+          },
+          "action": "alias"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/editor-target/comments",
+          "body": {
+            "body": "Section comment"
+          },
+          "action": "comment"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/editor-target/comments",
+          "body": {
+            "body": "Section comment"
+          },
+          "action": "comment"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/members/editor-target",
+          "body": {
+            "revision": "one",
+            "canonical_name": "Dr Section Details",
+            "active_status": "active",
+            "call_level": "2ND_CALL"
+          },
+          "action": "details"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/members/editor-target",
+          "body": {
+            "revision": "one",
+            "canonical_name": "Dr Section Details",
+            "active_status": "active",
+            "call_level": "2ND_CALL"
+          },
+          "action": "details"
+        }
+      ],
+      "geometry": [
+        {
+          "scope": "legacy-call",
+          "button": {
+            "x": 103,
+            "y": 166.375,
+            "width": 114,
+            "height": 59.5625
+          },
+          "marker": {
+            "x": 103,
+            "y": 28.25,
+            "width": 114,
+            "height": 130.125
+          }
+        },
+        {
+          "scope": "legacy-designation",
+          "button": {
+            "x": 103,
+            "y": 166.46875,
+            "width": 114,
+            "height": 59.5625
+          },
+          "marker": {
+            "x": 103,
+            "y": 28.34375,
+            "width": 114,
+            "height": 130.125
+          }
+        },
+        {
+          "scope": "legacy-alias",
+          "button": {
+            "x": 114.171875,
+            "y": 174.390625,
+            "width": 102.828125,
+            "height": 44
+          },
+          "marker": {
+            "x": 103,
+            "y": 36.265625,
+            "width": 114,
+            "height": 130.125
+          }
+        },
+        {
+          "scope": "legacy-comment",
+          "button": {
+            "x": 103,
+            "y": 174.234375,
+            "width": 114,
+            "height": 44
+          },
+          "marker": {
+            "x": 103,
+            "y": 36.109375,
+            "width": 114,
+            "height": 130.125
+          }
+        },
+        {
+          "scope": "legacy-details",
+          "button": {
+            "x": 103,
+            "y": 233.1875,
+            "width": 114,
+            "height": 59.5625
+          },
+          "marker": {
+            "x": 103,
+            "y": 95.0625,
+            "width": 114,
+            "height": 130.125
+          }
+        }
+      ],
+      "prompts": [],
+      "screenshot": "docs/premium-ui/qa-profile-editor-actions/chromium-legacy-320-480-200.png"
+    },
+    {
+      "engine": "firefox",
+      "surface": "canonical",
+      "width": 320,
+      "height": 560,
+      "font": 100,
+      "actualActionGroupsAndScope": true,
+      "draftPendingFailureConventions": true,
+      "requestBodies": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/editor-target",
+          "body": {
+            "id": "editor-target",
+            "canonical_name": "Dr Edited Whole Profile",
+            "active_status": "active",
+            "call_level": "2ND_CALL",
+            "aliases": [
+              "Edited alias"
+            ],
+            "designations": [
+              {
+                "id": null,
+                "designation": "Registrar",
+                "effective_from": "2026-10-01",
+                "effective_to": null,
+                "source": "manual",
+                "notes": null
+              }
+            ],
+            "call_level_changes": [],
+            "revision": "one",
+            "preserve_previous_name": true
+          },
+          "action": "canonical"
+        }
+      ],
+      "geometry": [
+        {
+          "scope": "canonical-actions",
+          "footer": {
+            "x": 0,
+            "y": 381.8999938964844,
+            "width": 320,
+            "height": 203.19998168945312
+          },
+          "cancel": {
+            "x": 12,
+            "y": 450.29998779296875,
+            "width": 119.14999389648438,
+            "height": 44
+          },
+          "save": {
+            "x": 139.14999389648438,
+            "y": 450.29998779296875,
+            "width": 168.85000610351562,
+            "height": 44
+          }
+        },
+        {
+          "scope": "canonical-final-field-and-error",
+          "fieldRect": {
+            "x": 16,
+            "y": 257.8999938964844,
+            "width": 288,
+            "height": 44
+          },
+          "footerRect": {
+            "x": 0,
+            "y": 683.0999755859375,
+            "width": 320,
+            "height": 203.20001220703125
+          },
+          "errorRect": {
+            "x": 0,
+            "y": 332.29998779296875,
+            "width": 320,
+            "height": 24.79998779296875
+          },
+          "afterFooter": {
+            "x": 0,
+            "y": 357.1000061035156,
+            "width": 320,
+            "height": 203.19998168945312
+          }
+        }
+      ],
+      "prompts": [
+        "Discard unsaved changes?",
+        "Discard unsaved changes?"
+      ],
+      "screenshot": "docs/premium-ui/qa-profile-editor-actions/firefox-canonical-320-560-100.png"
+    },
+    {
+      "engine": "firefox",
+      "surface": "legacy",
+      "width": 320,
+      "height": 560,
+      "font": 100,
+      "actualActionGroupsAndScope": true,
+      "draftPendingFailureConventions": true,
+      "requestBodies": [
+        {
+          "method": "POST",
+          "path": "/api/v1/members/editor-target/call-changes",
+          "body": {
+            "call_level": "3RD_CALL",
+            "effective_from": "2026-10-28",
+            "reason": "Reviewed call change"
+          },
+          "action": "call"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/editor-target/call-changes",
+          "body": {
+            "call_level": "3RD_CALL",
+            "effective_from": "2026-10-28",
+            "reason": "Reviewed call change"
+          },
+          "action": "call"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members/editor-target/designations",
+          "body": {
+            "designation": "Registrar",
+            "effective_from": "2026-10-01",
+            "notes": null
+          },
+          "action": "designation"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members/editor-target/designations",
+          "body": {
+            "designation": "Registrar",
+            "effective_from": "2026-10-01",
+            "notes": null
+          },
+          "action": "designation"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members/editor-target/aliases",
+          "body": {
+            "alias": "Section alias",
+            "source": "unit_import_resolution"
+          },
+          "action": "alias"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members/editor-target/aliases",
+          "body": {
+            "alias": "Section alias",
+            "source": "unit_import_resolution"
+          },
+          "action": "alias"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/editor-target/comments",
+          "body": {
+            "body": "Section comment"
+          },
+          "action": "comment"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/editor-target/comments",
+          "body": {
+            "body": "Section comment"
+          },
+          "action": "comment"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/members/editor-target",
+          "body": {
+            "revision": "one",
+            "canonical_name": "Dr Section Details",
+            "active_status": "active",
+            "call_level": "2ND_CALL"
+          },
+          "action": "details"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/members/editor-target",
+          "body": {
+            "revision": "one",
+            "canonical_name": "Dr Section Details",
+            "active_status": "active",
+            "call_level": "2ND_CALL"
+          },
+          "action": "details"
+        }
+      ],
+      "geometry": [
+        {
+          "scope": "legacy-call",
+          "button": {
+            "x": 82.23332977294922,
+            "y": 258.3999938964844,
+            "width": 174.76667022705078,
+            "height": 44
+          },
+          "marker": {
+            "x": 63,
+            "y": 185.3000030517578,
+            "width": 194,
+            "height": 65.09999084472656
+          }
+        },
+        {
+          "scope": "legacy-designation",
+          "button": {
+            "x": 98.94999694824219,
+            "y": 257.6000061035156,
+            "width": 158.0500030517578,
+            "height": 44
+          },
+          "marker": {
+            "x": 63,
+            "y": 184.5,
+            "width": 194,
+            "height": 65.10000610351562
+          }
+        },
+        {
+          "scope": "legacy-alias",
+          "button": {
+            "x": 154.1666717529297,
+            "y": 257.8999938964844,
+            "width": 102.83332824707031,
+            "height": 44
+          },
+          "marker": {
+            "x": 63,
+            "y": 184.8000030517578,
+            "width": 194,
+            "height": 65.09999084472656
+          }
+        },
+        {
+          "scope": "legacy-comment",
+          "button": {
+            "x": 116.19999694824219,
+            "y": 257.79998779296875,
+            "width": 140.8000030517578,
+            "height": 44
+          },
+          "marker": {
+            "x": 63,
+            "y": 184.6999969482422,
+            "width": 194,
+            "height": 65.09999084472656
+          }
+        },
+        {
+          "scope": "legacy-details",
+          "button": {
+            "x": 67,
+            "y": 388.70001220703125,
+            "width": 190,
+            "height": 44
+          },
+          "marker": {
+            "x": 63,
+            "y": 315.6000061035156,
+            "width": 194,
+            "height": 65.10000610351562
+          }
+        }
+      ],
+      "prompts": [],
+      "screenshot": "docs/premium-ui/qa-profile-editor-actions/firefox-legacy-320-560-100.png"
+    },
+    {
+      "engine": "firefox",
+      "surface": "canonical",
+      "width": 1280,
+      "height": 560,
+      "font": 100,
+      "actualActionGroupsAndScope": true,
+      "draftPendingFailureConventions": true,
+      "requestBodies": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/editor-target",
+          "body": {
+            "id": "editor-target",
+            "canonical_name": "Dr Edited Whole Profile",
+            "active_status": "active",
+            "call_level": "2ND_CALL",
+            "aliases": [
+              "Edited alias"
+            ],
+            "designations": [
+              {
+                "id": null,
+                "designation": "Registrar",
+                "effective_from": "2026-10-01",
+                "effective_to": null,
+                "source": "manual",
+                "notes": null
+              }
+            ],
+            "call_level_changes": [],
+            "revision": "one",
+            "preserve_previous_name": true
+          },
+          "action": "canonical"
+        }
+      ],
+      "geometry": [
+        {
+          "scope": "canonical-actions",
+          "footer": {
+            "x": 271,
+            "y": 479.8999938964844,
+            "width": 928,
+            "height": 97.19998168945312
+          },
+          "cancel": {
+            "x": 791.3833618164062,
+            "y": 446.8999938964844,
+            "width": 77.816650390625,
+            "height": 44
+          },
+          "save": {
+            "x": 877.2000122070312,
+            "y": 446.8999938964844,
+            "width": 127.51666259765625,
+            "height": 44
+          }
+        },
+        {
+          "scope": "canonical-final-field-and-error",
+          "fieldRect": {
+            "x": 295,
+            "y": 50.29999923706055,
+            "width": 880,
+            "height": 44.000003814697266
+          },
+          "footerRect": {
+            "x": 271,
+            "y": 433.8999938964844,
+            "width": 928,
+            "height": 97.19998168945312
+          },
+          "errorRect": {
+            "x": 271,
+            "y": 409.1000061035156,
+            "width": 928,
+            "height": 24.79998779296875
+          },
+          "afterFooter": {
+            "x": 271,
+            "y": 433.8999938964844,
+            "width": 928,
+            "height": 97.19998168945312
+          }
+        }
+      ],
+      "prompts": [
+        "Discard unsaved changes?",
+        "Discard unsaved changes?"
+      ],
+      "screenshot": "docs/premium-ui/qa-profile-editor-actions/firefox-canonical-1280-560-100.png"
+    },
+    {
+      "engine": "firefox",
+      "surface": "legacy",
+      "width": 1280,
+      "height": 560,
+      "font": 100,
+      "actualActionGroupsAndScope": true,
+      "draftPendingFailureConventions": true,
+      "requestBodies": [
+        {
+          "method": "POST",
+          "path": "/api/v1/members/editor-target/call-changes",
+          "body": {
+            "call_level": "3RD_CALL",
+            "effective_from": "2026-10-28",
+            "reason": "Reviewed call change"
+          },
+          "action": "call"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/editor-target/call-changes",
+          "body": {
+            "call_level": "3RD_CALL",
+            "effective_from": "2026-10-28",
+            "reason": "Reviewed call change"
+          },
+          "action": "call"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members/editor-target/designations",
+          "body": {
+            "designation": "Registrar",
+            "effective_from": "2026-10-01",
+            "notes": null
+          },
+          "action": "designation"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members/editor-target/designations",
+          "body": {
+            "designation": "Registrar",
+            "effective_from": "2026-10-01",
+            "notes": null
+          },
+          "action": "designation"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members/editor-target/aliases",
+          "body": {
+            "alias": "Section alias",
+            "source": "unit_import_resolution"
+          },
+          "action": "alias"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members/editor-target/aliases",
+          "body": {
+            "alias": "Section alias",
+            "source": "unit_import_resolution"
+          },
+          "action": "alias"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/editor-target/comments",
+          "body": {
+            "body": "Section comment"
+          },
+          "action": "comment"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/editor-target/comments",
+          "body": {
+            "body": "Section comment"
+          },
+          "action": "comment"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/members/editor-target",
+          "body": {
+            "revision": "one",
+            "canonical_name": "Dr Section Details",
+            "active_status": "active",
+            "call_level": "2ND_CALL"
+          },
+          "action": "details"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/members/editor-target",
+          "body": {
+            "revision": "one",
+            "canonical_name": "Dr Section Details",
+            "active_status": "active",
+            "call_level": "2ND_CALL"
+          },
+          "action": "details"
+        }
+      ],
+      "geometry": [
+        {
+          "scope": "legacy-call",
+          "button": {
+            "x": 846.2333374023438,
+            "y": 258.23333740234375,
+            "width": 174.76666259765625,
+            "height": 44
+          },
+          "marker": {
+            "x": 259,
+            "y": 228.53334045410156,
+            "width": 762,
+            "height": 21.699996948242188
+          }
+        },
+        {
+          "scope": "legacy-designation",
+          "button": {
+            "x": 862.9500122070312,
+            "y": 258.1333312988281,
+            "width": 158.04998779296875,
+            "height": 44
+          },
+          "marker": {
+            "x": 259,
+            "y": 228.43333435058594,
+            "width": 762,
+            "height": 21.699996948242188
+          }
+        },
+        {
+          "scope": "legacy-alias",
+          "button": {
+            "x": 918.1666870117188,
+            "y": 258.4333190917969,
+            "width": 102.83331298828125,
+            "height": 44
+          },
+          "marker": {
+            "x": 259,
+            "y": 228.73333740234375,
+            "width": 762,
+            "height": 21.699996948242188
+          }
+        },
+        {
+          "scope": "legacy-comment",
+          "button": {
+            "x": 880.2000122070312,
+            "y": 258.3333435058594,
+            "width": 140.79998779296875,
+            "height": 44
+          },
+          "marker": {
+            "x": 259,
+            "y": 228.63333129882812,
+            "width": 762,
+            "height": 21.699996948242188
+          }
+        },
+        {
+          "scope": "legacy-details",
+          "button": {
+            "x": 831,
+            "y": 389.3333435058594,
+            "width": 190,
+            "height": 44
+          },
+          "marker": {
+            "x": 259,
+            "y": 359.6333312988281,
+            "width": 762,
+            "height": 21.70001220703125
+          }
+        }
+      ],
+      "prompts": [],
+      "screenshot": "docs/premium-ui/qa-profile-editor-actions/firefox-legacy-1280-560-100.png"
+    },
+    {
+      "engine": "firefox",
+      "surface": "canonical",
+      "width": 320,
+      "height": 480,
+      "font": 200,
+      "actualActionGroupsAndScope": true,
+      "draftPendingFailureConventions": true,
+      "requestBodies": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/editor-target",
+          "body": {
+            "id": "editor-target",
+            "canonical_name": "Dr Edited Whole Profile",
+            "active_status": "active",
+            "call_level": "2ND_CALL",
+            "aliases": [
+              "Edited alias"
+            ],
+            "designations": [
+              {
+                "id": null,
+                "designation": "Registrar",
+                "effective_from": "2026-10-01",
+                "effective_to": null,
+                "source": "manual",
+                "notes": null
+              }
+            ],
+            "call_level_changes": [],
+            "revision": "one",
+            "preserve_previous_name": true
+          },
+          "action": "canonical"
+        }
+      ],
+      "geometry": [
+        {
+          "scope": "canonical-actions",
+          "footer": {
+            "x": 0,
+            "y": 307.5,
+            "width": 320,
+            "height": 197.20001220703125
+          },
+          "cancel": {
+            "x": 12,
+            "y": 373.5,
+            "width": 119.14999389648438,
+            "height": 44
+          },
+          "save": {
+            "x": 139.14999389648438,
+            "y": 373.5,
+            "width": 168.85000610351562,
+            "height": 44
+          }
+        },
+        {
+          "scope": "canonical-final-field-and-error",
+          "fieldRect": {
+            "x": 16,
+            "y": 218.10000610351562,
+            "width": 288,
+            "height": 44
+          },
+          "footerRect": {
+            "x": 0,
+            "y": 643.2999877929688,
+            "width": 320,
+            "height": 197.20001220703125
+          },
+          "errorRect": {
+            "x": 0,
+            "y": 257.5,
+            "width": 320,
+            "height": 24.79998779296875
+          },
+          "afterFooter": {
+            "x": 0,
+            "y": 282.29998779296875,
+            "width": 320,
+            "height": 197.20001220703125
+          }
+        }
+      ],
+      "prompts": [
+        "Discard unsaved changes?",
+        "Discard unsaved changes?"
+      ],
+      "screenshot": "docs/premium-ui/qa-profile-editor-actions/firefox-canonical-320-480-200.png"
+    },
+    {
+      "engine": "firefox",
+      "surface": "legacy",
+      "width": 320,
+      "height": 480,
+      "font": 200,
+      "actualActionGroupsAndScope": true,
+      "draftPendingFailureConventions": true,
+      "requestBodies": [
+        {
+          "method": "POST",
+          "path": "/api/v1/members/editor-target/call-changes",
+          "body": {
+            "call_level": "3RD_CALL",
+            "effective_from": "2026-10-28",
+            "reason": "Reviewed call change"
+          },
+          "action": "call"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/editor-target/call-changes",
+          "body": {
+            "call_level": "3RD_CALL",
+            "effective_from": "2026-10-28",
+            "reason": "Reviewed call change"
+          },
+          "action": "call"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members/editor-target/designations",
+          "body": {
+            "designation": "Registrar",
+            "effective_from": "2026-10-01",
+            "notes": null
+          },
+          "action": "designation"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members/editor-target/designations",
+          "body": {
+            "designation": "Registrar",
+            "effective_from": "2026-10-01",
+            "notes": null
+          },
+          "action": "designation"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members/editor-target/aliases",
+          "body": {
+            "alias": "Section alias",
+            "source": "unit_import_resolution"
+          },
+          "action": "alias"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members/editor-target/aliases",
+          "body": {
+            "alias": "Section alias",
+            "source": "unit_import_resolution"
+          },
+          "action": "alias"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/editor-target/comments",
+          "body": {
+            "body": "Section comment"
+          },
+          "action": "comment"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/editor-target/comments",
+          "body": {
+            "body": "Section comment"
+          },
+          "action": "comment"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/members/editor-target",
+          "body": {
+            "revision": "one",
+            "canonical_name": "Dr Section Details",
+            "active_status": "active",
+            "call_level": "2ND_CALL"
+          },
+          "action": "details"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/members/editor-target",
+          "body": {
+            "revision": "one",
+            "canonical_name": "Dr Section Details",
+            "active_status": "active",
+            "call_level": "2ND_CALL"
+          },
+          "action": "details"
+        }
+      ],
+      "geometry": [
+        {
+          "scope": "legacy-call",
+          "button": {
+            "x": 103,
+            "y": 210.1999969482422,
+            "width": 114,
+            "height": 59.59999084472656
+          },
+          "marker": {
+            "x": 103,
+            "y": 72,
+            "width": 114,
+            "height": 130.1999969482422
+          }
+        },
+        {
+          "scope": "legacy-designation",
+          "button": {
+            "x": 103,
+            "y": 210.39999389648438,
+            "width": 114,
+            "height": 59.600006103515625
+          },
+          "marker": {
+            "x": 103,
+            "y": 72.19999694824219,
+            "width": 114,
+            "height": 130.1999969482422
+          }
+        },
+        {
+          "scope": "legacy-alias",
+          "button": {
+            "x": 114.16666412353516,
+            "y": 218.39999389648438,
+            "width": 102.83333587646484,
+            "height": 44
+          },
+          "marker": {
+            "x": 103,
+            "y": 80.19999694824219,
+            "width": 114,
+            "height": 130.1999969482422
+          }
+        },
+        {
+          "scope": "legacy-comment",
+          "button": {
+            "x": 103,
+            "y": 218.3000030517578,
+            "width": 114,
+            "height": 43.99998474121094
+          },
+          "marker": {
+            "x": 103,
+            "y": 80.0999984741211,
+            "width": 114,
+            "height": 130.19998931884766
+          }
+        },
+        {
+          "scope": "legacy-details",
+          "button": {
+            "x": 103,
+            "y": 232.8000030517578,
+            "width": 114,
+            "height": 59.59999084472656
+          },
+          "marker": {
+            "x": 103,
+            "y": 94.5999984741211,
+            "width": 114,
+            "height": 130.19998931884766
+          }
+        }
+      ],
+      "prompts": [],
+      "screenshot": "docs/premium-ui/qa-profile-editor-actions/firefox-legacy-320-480-200.png"
+    },
+    {
+      "engine": "webkit",
+      "surface": "canonical",
+      "width": 320,
+      "height": 560,
+      "font": 100,
+      "actualActionGroupsAndScope": true,
+      "draftPendingFailureConventions": true,
+      "requestBodies": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/editor-target",
+          "body": {
+            "id": "editor-target",
+            "canonical_name": "Dr Edited Whole Profile",
+            "active_status": "active",
+            "call_level": "2ND_CALL",
+            "aliases": [
+              "Edited alias"
+            ],
+            "designations": [
+              {
+                "id": null,
+                "designation": "Registrar",
+                "effective_from": "2026-10-01",
+                "effective_to": null,
+                "source": "manual",
+                "notes": null
+              }
+            ],
+            "call_level_changes": [],
+            "revision": "one",
+            "preserve_previous_name": true
+          },
+          "action": "canonical"
+        }
+      ],
+      "geometry": [
+        {
+          "scope": "canonical-actions",
+          "footer": {
+            "x": 0,
+            "y": 356.5625,
+            "width": 320,
+            "height": 203.171875
+          },
+          "cancel": {
+            "x": 12,
+            "y": 449.734375,
+            "width": 119.15625,
+            "height": 44
+          },
+          "save": {
+            "x": 139.15625,
+            "y": 449.734375,
+            "width": 168.84375,
+            "height": 44
+          }
+        },
+        {
+          "scope": "canonical-final-field-and-error",
+          "fieldRect": {
+            "x": 16,
+            "y": 257.375,
+            "width": 288,
+            "height": 44
+          },
+          "footerRect": {
+            "x": 0,
+            "y": 696.5625,
+            "width": 320,
+            "height": 203.171875
+          },
+          "errorRect": {
+            "x": 0,
+            "y": 331.765625,
+            "width": 320,
+            "height": 24.796875
+          },
+          "afterFooter": {
+            "x": 0,
+            "y": 356.5625,
+            "width": 320,
+            "height": 203.171875
+          }
+        }
+      ],
+      "prompts": [
+        "Discard unsaved changes?",
+        "Discard unsaved changes?"
+      ],
+      "screenshot": "docs/premium-ui/qa-profile-editor-actions/webkit-canonical-320-560-100.png"
+    },
+    {
+      "engine": "webkit",
+      "surface": "legacy",
+      "width": 320,
+      "height": 560,
+      "font": 100,
+      "actualActionGroupsAndScope": true,
+      "draftPendingFailureConventions": true,
+      "requestBodies": [
+        {
+          "method": "POST",
+          "path": "/api/v1/members/editor-target/call-changes",
+          "body": {
+            "call_level": "3RD_CALL",
+            "effective_from": "2026-10-28",
+            "reason": "Reviewed call change"
+          },
+          "action": "call"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/editor-target/call-changes",
+          "body": {
+            "call_level": "3RD_CALL",
+            "effective_from": "2026-10-28",
+            "reason": "Reviewed call change"
+          },
+          "action": "call"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members/editor-target/designations",
+          "body": {
+            "designation": "Registrar",
+            "effective_from": "2026-10-01",
+            "notes": null
+          },
+          "action": "designation"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members/editor-target/designations",
+          "body": {
+            "designation": "Registrar",
+            "effective_from": "2026-10-01",
+            "notes": null
+          },
+          "action": "designation"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members/editor-target/aliases",
+          "body": {
+            "alias": "Section alias",
+            "source": "unit_import_resolution"
+          },
+          "action": "alias"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members/editor-target/aliases",
+          "body": {
+            "alias": "Section alias",
+            "source": "unit_import_resolution"
+          },
+          "action": "alias"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/editor-target/comments",
+          "body": {
+            "body": "Section comment"
+          },
+          "action": "comment"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/editor-target/comments",
+          "body": {
+            "body": "Section comment"
+          },
+          "action": "comment"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/members/editor-target",
+          "body": {
+            "revision": "one",
+            "canonical_name": "Dr Section Details",
+            "active_status": "active",
+            "call_level": "2ND_CALL"
+          },
+          "action": "details"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/members/editor-target",
+          "body": {
+            "revision": "one",
+            "canonical_name": "Dr Section Details",
+            "active_status": "active",
+            "call_level": "2ND_CALL"
+          },
+          "action": "details"
+        }
+      ],
+      "geometry": [
+        {
+          "scope": "legacy-call",
+          "button": {
+            "x": 82.25,
+            "y": 257.65625,
+            "width": 174.75,
+            "height": 44
+          },
+          "marker": {
+            "x": 63,
+            "y": 184.59375,
+            "width": 194,
+            "height": 65.0625
+          }
+        },
+        {
+          "scope": "legacy-designation",
+          "button": {
+            "x": 98.9375,
+            "y": 257.78125,
+            "width": 158.0625,
+            "height": 44
+          },
+          "marker": {
+            "x": 63,
+            "y": 184.71875,
+            "width": 194,
+            "height": 65.0625
+          }
+        },
+        {
+          "scope": "legacy-alias",
+          "button": {
+            "x": 154.171875,
+            "y": 257.046875,
+            "width": 102.828125,
+            "height": 44
+          },
+          "marker": {
+            "x": 63,
+            "y": 183.984375,
+            "width": 194,
+            "height": 65.0625
+          }
+        },
+        {
+          "scope": "legacy-comment",
+          "button": {
+            "x": 116.1875,
+            "y": 257.890625,
+            "width": 140.8125,
+            "height": 44
+          },
+          "marker": {
+            "x": 63,
+            "y": 184.828125,
+            "width": 194,
+            "height": 65.0625
+          }
+        },
+        {
+          "scope": "legacy-details",
+          "button": {
+            "x": 66.96875,
+            "y": 389.234375,
+            "width": 190.03125,
+            "height": 44
+          },
+          "marker": {
+            "x": 63,
+            "y": 316.171875,
+            "width": 194,
+            "height": 65.0625
+          }
+        }
+      ],
+      "prompts": [],
+      "screenshot": "docs/premium-ui/qa-profile-editor-actions/webkit-legacy-320-560-100.png"
+    },
+    {
+      "engine": "webkit",
+      "surface": "canonical",
+      "width": 1280,
+      "height": 560,
+      "font": 100,
+      "actualActionGroupsAndScope": true,
+      "draftPendingFailureConventions": true,
+      "requestBodies": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/editor-target",
+          "body": {
+            "id": "editor-target",
+            "canonical_name": "Dr Edited Whole Profile",
+            "active_status": "active",
+            "call_level": "2ND_CALL",
+            "aliases": [
+              "Edited alias"
+            ],
+            "designations": [
+              {
+                "id": null,
+                "designation": "Registrar",
+                "effective_from": "2026-10-01",
+                "effective_to": null,
+                "source": "manual",
+                "notes": null
+              }
+            ],
+            "call_level_changes": [],
+            "revision": "one",
+            "preserve_previous_name": true
+          },
+          "action": "canonical"
+        }
+      ],
+      "geometry": [
+        {
+          "scope": "canonical-actions",
+          "footer": {
+            "x": 271,
+            "y": 433.375,
+            "width": 928,
+            "height": 97.171875
+          },
+          "cancel": {
+            "x": 791.359375,
+            "y": 446.375,
+            "width": 77.828125,
+            "height": 44
+          },
+          "save": {
+            "x": 877.1875,
+            "y": 446.375,
+            "width": 127.515625,
+            "height": 44
+          }
+        },
+        {
+          "scope": "canonical-final-field-and-error",
+          "fieldRect": {
+            "x": 295,
+            "y": 45.78125,
+            "width": 880,
+            "height": 44
+          },
+          "footerRect": {
+            "x": 271,
+            "y": 443.375,
+            "width": 928,
+            "height": 97.171875
+          },
+          "errorRect": {
+            "x": 271,
+            "y": 418.578125,
+            "width": 928,
+            "height": 24.796875
+          },
+          "afterFooter": {
+            "x": 271,
+            "y": 443.375,
+            "width": 928,
+            "height": 97.171875
+          }
+        }
+      ],
+      "prompts": [
+        "Discard unsaved changes?",
+        "Discard unsaved changes?"
+      ],
+      "screenshot": "docs/premium-ui/qa-profile-editor-actions/webkit-canonical-1280-560-100.png"
+    },
+    {
+      "engine": "webkit",
+      "surface": "legacy",
+      "width": 1280,
+      "height": 560,
+      "font": 100,
+      "actualActionGroupsAndScope": true,
+      "draftPendingFailureConventions": true,
+      "requestBodies": [
+        {
+          "method": "POST",
+          "path": "/api/v1/members/editor-target/call-changes",
+          "body": {
+            "call_level": "3RD_CALL",
+            "effective_from": "2026-10-28",
+            "reason": "Reviewed call change"
+          },
+          "action": "call"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/editor-target/call-changes",
+          "body": {
+            "call_level": "3RD_CALL",
+            "effective_from": "2026-10-28",
+            "reason": "Reviewed call change"
+          },
+          "action": "call"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members/editor-target/designations",
+          "body": {
+            "designation": "Registrar",
+            "effective_from": "2026-10-01",
+            "notes": null
+          },
+          "action": "designation"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members/editor-target/designations",
+          "body": {
+            "designation": "Registrar",
+            "effective_from": "2026-10-01",
+            "notes": null
+          },
+          "action": "designation"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members/editor-target/aliases",
+          "body": {
+            "alias": "Section alias",
+            "source": "unit_import_resolution"
+          },
+          "action": "alias"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members/editor-target/aliases",
+          "body": {
+            "alias": "Section alias",
+            "source": "unit_import_resolution"
+          },
+          "action": "alias"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/editor-target/comments",
+          "body": {
+            "body": "Section comment"
+          },
+          "action": "comment"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/editor-target/comments",
+          "body": {
+            "body": "Section comment"
+          },
+          "action": "comment"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/members/editor-target",
+          "body": {
+            "revision": "one",
+            "canonical_name": "Dr Section Details",
+            "active_status": "active",
+            "call_level": "2ND_CALL"
+          },
+          "action": "details"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/members/editor-target",
+          "body": {
+            "revision": "one",
+            "canonical_name": "Dr Section Details",
+            "active_status": "active",
+            "call_level": "2ND_CALL"
+          },
+          "action": "details"
+        }
+      ],
+      "geometry": [
+        {
+          "scope": "legacy-call",
+          "button": {
+            "x": 846.25,
+            "y": 257.609375,
+            "width": 174.75,
+            "height": 44
+          },
+          "marker": {
+            "x": 259,
+            "y": 227.921875,
+            "width": 762,
+            "height": 21.6875
+          }
+        },
+        {
+          "scope": "legacy-designation",
+          "button": {
+            "x": 862.9375,
+            "y": 257.46875,
+            "width": 158.0625,
+            "height": 44
+          },
+          "marker": {
+            "x": 259,
+            "y": 227.78125,
+            "width": 762,
+            "height": 21.6875
+          }
+        },
+        {
+          "scope": "legacy-alias",
+          "button": {
+            "x": 918.171875,
+            "y": 257.734375,
+            "width": 102.828125,
+            "height": 44
+          },
+          "marker": {
+            "x": 259,
+            "y": 228.046875,
+            "width": 762,
+            "height": 21.6875
+          }
+        },
+        {
+          "scope": "legacy-comment",
+          "button": {
+            "x": 880.1875,
+            "y": 257.59375,
+            "width": 140.8125,
+            "height": 44
+          },
+          "marker": {
+            "x": 259,
+            "y": 227.90625,
+            "width": 762,
+            "height": 21.6875
+          }
+        },
+        {
+          "scope": "legacy-details",
+          "button": {
+            "x": 830.96875,
+            "y": 389.0625,
+            "width": 190.03125,
+            "height": 44
+          },
+          "marker": {
+            "x": 259,
+            "y": 359.375,
+            "width": 762,
+            "height": 21.6875
+          }
+        }
+      ],
+      "prompts": [],
+      "screenshot": "docs/premium-ui/qa-profile-editor-actions/webkit-legacy-1280-560-100.png"
+    },
+    {
+      "engine": "webkit",
+      "surface": "canonical",
+      "width": 320,
+      "height": 480,
+      "font": 200,
+      "actualActionGroupsAndScope": true,
+      "draftPendingFailureConventions": true,
+      "requestBodies": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/editor-target",
+          "body": {
+            "id": "editor-target",
+            "canonical_name": "Dr Edited Whole Profile",
+            "active_status": "active",
+            "call_level": "2ND_CALL",
+            "aliases": [
+              "Edited alias"
+            ],
+            "designations": [
+              {
+                "id": null,
+                "designation": "Registrar",
+                "effective_from": "2026-10-01",
+                "effective_to": null,
+                "source": "manual",
+                "notes": null
+              }
+            ],
+            "call_level_changes": [],
+            "revision": "one",
+            "preserve_previous_name": true
+          },
+          "action": "canonical"
+        }
+      ],
+      "geometry": [
+        {
+          "scope": "canonical-actions",
+          "footer": {
+            "x": 0,
+            "y": 282.765625,
+            "width": 320,
+            "height": 197.171875
+          },
+          "cancel": {
+            "x": 12,
+            "y": 373.9375,
+            "width": 119.15625,
+            "height": 44
+          },
+          "save": {
+            "x": 139.15625,
+            "y": 373.9375,
+            "width": 168.84375,
+            "height": 44
+          }
+        },
+        {
+          "scope": "canonical-final-field-and-error",
+          "fieldRect": {
+            "x": 16,
+            "y": 217.578125,
+            "width": 288,
+            "height": 44
+          },
+          "footerRect": {
+            "x": 0,
+            "y": 656.765625,
+            "width": 320,
+            "height": 197.171875
+          },
+          "errorRect": {
+            "x": 0,
+            "y": 257.96875,
+            "width": 320,
+            "height": 24.796875
+          },
+          "afterFooter": {
+            "x": 0,
+            "y": 282.765625,
+            "width": 320,
+            "height": 197.171875
+          }
+        }
+      ],
+      "prompts": [
+        "Discard unsaved changes?",
+        "Discard unsaved changes?"
+      ],
+      "screenshot": "docs/premium-ui/qa-profile-editor-actions/webkit-canonical-320-480-200.png"
+    },
+    {
+      "engine": "webkit",
+      "surface": "legacy",
+      "width": 320,
+      "height": 480,
+      "font": 200,
+      "actualActionGroupsAndScope": true,
+      "draftPendingFailureConventions": true,
+      "requestBodies": [
+        {
+          "method": "POST",
+          "path": "/api/v1/members/editor-target/call-changes",
+          "body": {
+            "call_level": "3RD_CALL",
+            "effective_from": "2026-10-28",
+            "reason": "Reviewed call change"
+          },
+          "action": "call"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/editor-target/call-changes",
+          "body": {
+            "call_level": "3RD_CALL",
+            "effective_from": "2026-10-28",
+            "reason": "Reviewed call change"
+          },
+          "action": "call"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members/editor-target/designations",
+          "body": {
+            "designation": "Registrar",
+            "effective_from": "2026-10-01",
+            "notes": null
+          },
+          "action": "designation"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members/editor-target/designations",
+          "body": {
+            "designation": "Registrar",
+            "effective_from": "2026-10-01",
+            "notes": null
+          },
+          "action": "designation"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members/editor-target/aliases",
+          "body": {
+            "alias": "Section alias",
+            "source": "unit_import_resolution"
+          },
+          "action": "alias"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members/editor-target/aliases",
+          "body": {
+            "alias": "Section alias",
+            "source": "unit_import_resolution"
+          },
+          "action": "alias"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/editor-target/comments",
+          "body": {
+            "body": "Section comment"
+          },
+          "action": "comment"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/editor-target/comments",
+          "body": {
+            "body": "Section comment"
+          },
+          "action": "comment"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/members/editor-target",
+          "body": {
+            "revision": "one",
+            "canonical_name": "Dr Section Details",
+            "active_status": "active",
+            "call_level": "2ND_CALL"
+          },
+          "action": "details"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/members/editor-target",
+          "body": {
+            "revision": "one",
+            "canonical_name": "Dr Section Details",
+            "active_status": "active",
+            "call_level": "2ND_CALL"
+          },
+          "action": "details"
+        }
+      ],
+      "geometry": [
+        {
+          "scope": "legacy-call",
+          "button": {
+            "x": 103,
+            "y": 210.171875,
+            "width": 114,
+            "height": 59.5625
+          },
+          "marker": {
+            "x": 103,
+            "y": 72.046875,
+            "width": 114,
+            "height": 130.125
+          }
+        },
+        {
+          "scope": "legacy-designation",
+          "button": {
+            "x": 103,
+            "y": 210.265625,
+            "width": 114,
+            "height": 59.5625
+          },
+          "marker": {
+            "x": 103,
+            "y": 72.140625,
+            "width": 114,
+            "height": 130.125
+          }
+        },
+        {
+          "scope": "legacy-alias",
+          "button": {
+            "x": 114.171875,
+            "y": 217.1875,
+            "width": 102.828125,
+            "height": 44
+          },
+          "marker": {
+            "x": 103,
+            "y": 79.0625,
+            "width": 114,
+            "height": 130.125
+          }
+        },
+        {
+          "scope": "legacy-comment",
+          "button": {
+            "x": 103,
+            "y": 217.03125,
+            "width": 114,
+            "height": 44
+          },
+          "marker": {
+            "x": 103,
+            "y": 78.90625,
+            "width": 114,
+            "height": 130.125
+          }
+        },
+        {
+          "scope": "legacy-details",
+          "button": {
+            "x": 103,
+            "y": 232.984375,
+            "width": 114,
+            "height": 59.5625
+          },
+          "marker": {
+            "x": 103,
+            "y": 94.859375,
+            "width": 114,
+            "height": 130.125
+          }
+        }
+      ],
+      "prompts": [],
+      "screenshot": "docs/premium-ui/qa-profile-editor-actions/webkit-legacy-320-480-200.png"
+    }
+  ]
+}

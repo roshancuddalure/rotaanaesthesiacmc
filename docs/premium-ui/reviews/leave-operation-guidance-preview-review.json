@@ -1,0 +1,61 @@
+{
+  "recorded_at_utc": "2026-10-29T00:34:00.061391+00:00",
+  "reviewer_and_test_author": "/root",
+  "candidate_author": "/root/leave_status_rebase",
+  "scope": "Independent root source review of two static leave-specific guidance literals plus exact-controller preview. Root authored/reran test; no independence claimed for test design. No application edit or item acceptance.",
+  "proofs": [
+    {
+      "source": "frontend/src/reference-workspace.ts",
+      "before_sha256": "8760883b22a09fd65b152681734469dcb0f8988eebd22fccb58d5a4f461c02f0",
+      "proposed_sha256": "78c231ea1d5ab15bd3a4b5f2f8265529451a51bacc68d2a4aac1708a4be30292",
+      "exact_reverse_one_literal_recovers_all_bytes": true
+    },
+    {
+      "source": "frontend/src/member-workspace.ts",
+      "before_sha256": "cca57cfbe6b48ce7022ebc65b666e2fbeb0dadaf28499bb10a2a563cbb818ef8",
+      "proposed_sha256": "0ef8c1ef2234c7a50d8ca10b8aaa3998a654d452f563bd4c75531faef09d6c63",
+      "exact_reverse_one_literal_recovers_all_bytes": true
+    }
+  ],
+  "runs": [
+    {
+      "report": "docs/premium-ui/qa-leave-operation-guidance-preview.json",
+      "report_sha256": "df5fb94391d4729b8640430e76af11721c2b391716295f554ac06e0946ef23c7",
+      "log": "tmp/leave-guidance-preview-normal.log",
+      "log_sha256": "a135f1c8a7ce4720986d9b305634559b41b68ebb28003fccc0d3d8b7d620d689",
+      "contexts": 6,
+      "exit_code": 0
+    },
+    {
+      "report": "docs/premium-ui/qa-leave-operation-guidance-preview-stress.json",
+      "report_sha256": "762f28c507f1f1a373dfeb3c6996450e4ece2e0b9a03576229581acf51e16d8f",
+      "log": "tmp/leave-guidance-preview-stress.log",
+      "log_sha256": "a135f1c8a7ce4720986d9b305634559b41b68ebb28003fccc0d3d8b7d620d689",
+      "contexts": 6,
+      "exit_code": 0
+    }
+  ],
+  "preview_contexts": 12,
+  "actual_controller_workflows": 48,
+  "test": {
+    "path": "frontend/tests/premium-leave-operation-guidance-preview.browser.mjs",
+    "sha256": "433c068df9a90a651797a126bc039076187b7526f38538873ca1f23c98dcd956"
+  },
+  "source_review": "Exactreverseone-literalreplacement recovers each completeoriginalfile. All surroundingcontroloptions, values, API/request/serialization/permissions/state/handlers and non-leave copy byte-identical. Wording corrects blanketpendingwarnsclaim without deriving eligibility or altering data.",
+  "actual_coverage": [
+    "Legacyknown/unknownstatushistories retained",
+    "CanonicalLeavefullguidanceandcrossmonthAMrecords/nestededitor/cancel preserved",
+    "Referenceapproval-labelmeaningoptions exactsupportedreturnedkeys andselectedrequestedrawmeaning retained",
+    "Referenceleave_slot/posting_type guidance/options remain unchanged",
+    "Bothdialogsclosewithoutwrites/refetch; exactopenerfocus; wrappedtext andlongunknownstatusgeometry root200/short across3engines"
+  ],
+  "remaining_gates": [
+    "Applyonlyagainstexactbaseline hashes",
+    "Run sameactualcontrollersagainstappliedsource, existingprofile/referenceactionregressions ifneeded",
+    "Unit/heldbuild andexplicitprior38sourceapplicability bridge",
+    "Original145 operationalimportnormalizedstatussummary stillmissing, notsolvedbyguidancecopy",
+    "Finalwhole147representationconditionreview and source-backed session/eligibility accuracy"
+  ],
+  "application_changed": false,
+  "new_items_accepted": []
+}

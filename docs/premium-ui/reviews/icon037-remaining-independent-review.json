@@ -1,0 +1,89 @@
+{
+  "reviewer": "/root/remaining_icons_independent",
+  "recorded_at_utc": "2026-10-28T17:39:59.978037+00:00",
+  "item_id": 37,
+  "decision": "source_safe_bounded_candidate_requires_scope_revision_and_runtime",
+  "whole_item_accepted": false,
+  "application_changes": false,
+  "source_check": {
+    "path": "docs/premium-ui/reviews/icon037-remaining-independent-source-check.json",
+    "sha256": "4c2ff3ade4d7756b96daf68c1a7ea60c40dfbedb9744a22cf1768fdb43237d84",
+    "passed": true,
+    "typescript_diagnostics": 0
+  },
+  "source_sha256": {
+    "frontend/src/main.ts": "20fc4e1c086f4ae6c25a381a176b590173f7ee680d6eec205489dc97eb069ea6",
+    "frontend/src/rota-compute.ts": "e5f967e6166e2ace9352983a468002d45850188d8811363230305d7597fb70ab",
+    "frontend/src/superadmin.ts": "767ec62ae188efd4fda9b5a8f5173d24b80c89964e23d372d7b31ceb1dc818f8",
+    "frontend/src/ui.ts": "680d7830bca8826b46b6f1dc2c0d064d2a3a2e16fb41188d2c323de6bccf85b2",
+    "frontend/src/balance-duties.ts": "ab4f5ffad3f219380ffc74cc0212ace10b57c1d951c2e3e6137547fed6a35113",
+    "frontend/src/extra-duty.ts": "52084624922de21f2a0fa478eb1ca4c883cdeb66dd1d05147d0f21fe806bc7ea",
+    "frontend/src/premium-theme.css": "9344ea87024b282475a3b9f110ce9c83bdc5dca1dc984961eefed044c2ad6065"
+  },
+  "independent_findings": [
+    {
+      "id": "ICON037-NAV-001",
+      "severity": "whole_item_scope_gap",
+      "sources": [
+        "frontend/src/main.ts:4357",
+        "frontend/src/main.ts:4358",
+        "frontend/src/main.ts:6413",
+        "frontend/src/main.ts:6414"
+      ],
+      "finding": "Four previous/next icon-only unit/day font arrows are control icons, not relational data operators. Migrate to same-family treatment preserving names and native navigation."
+    },
+    {
+      "id": "ICON037-PAGE-002",
+      "severity": "whole_item_scope_gap",
+      "sources": [
+        "frontend/src/main.ts:1560",
+        "frontend/src/main.ts:1561",
+        "frontend/src/main.ts:1563",
+        "frontend/src/main.ts:1564"
+      ],
+      "finding": "Pagination arrows are decorative navigation glyphs alongside meaningful Prev/Next labels. Resolve separately from relational arrows; preserve labels and page outcomes."
+    },
+    {
+      "id": "ICON037-HELP-003",
+      "severity": "whole_item_scope_gap",
+      "sources": [
+        "frontend/src/main.ts:1754",
+        "frontend/src/rota-rules.ts:500"
+      ],
+      "finding": "Question-mark-only help buttons function as help pictograms. Resolve with matching local help SVG or tested visible Help text; eight variants is not an original cap."
+    },
+    {
+      "id": "ICON037-TARGET-004",
+      "severity": "runtime_geometry_gate",
+      "finding": "Eight legacy ASCII close placements retain40px minimum. Measure shared44px target compliance, wrapped headings and actual SVG hit targets; source helper dimensions are not button dimensions."
+    }
+  ],
+  "runtime_status": "not_executed_for_unapplied_proposal",
+  "required_runtime_families": [
+    "eight ASCII closes with actual opener recovery and dirty/pending guards",
+    "filter removal exact single-filter effect",
+    "preflight safe and unsafe destinations",
+    "publish ready blockers warnings and both debriefs",
+    "five compute steps under actual capability/preference conditions",
+    "superadmin role blocked/cross-level success and read-back recovery",
+    "CSV workbook operational import workflow transitions and exact payloads",
+    "Extra-duty Balance safety lists and all three disclosures normal/reduced motion",
+    "previous/next unit/day and pagination outcomes",
+    "main and Rules help opening closing expanded-state and focus"
+  ],
+  "justified_exceptions": [
+    "relational arrows between actual data values",
+    "sort suffix semantics",
+    "browser-owned form/disclosure indicators",
+    "geometric state accents with visible text",
+    "loading motion treatments with text/busy semantics",
+    "nonrendered comments and arbitrary user-provided text"
+  ],
+  "limits": [
+    "Source replay/typecheck/API-expression preservation does not establish runtime alignment or action results.",
+    "Read-only review; no app/service/database/ledger edits.",
+    "Must regenerate scratch substitutions after concurrent leave source changes.",
+    "Physical device and native assistive technology remain unperformed."
+  ],
+  "narrative": "docs/premium-ui/reviews/icon037-remaining-independent-review.md"
+}

@@ -1,0 +1,151 @@
+{
+  "recorded_at_utc": "2026-10-28T10:02:14.843790+00:00",
+  "scope": "Root-observed selected import regressions on held frontend-only presentation sources; all browser writes intercepted or existing RAM fixture only.",
+  "source_sha256": {
+    "frontend/src/member-import.ts": "d985f4aefa5bfdd71b6f0a53995a8c63b3c827639158ec584b97e72f14ced061",
+    "frontend/src/member-workspace.ts": "c350f7bc273994f697060a271c758b5f2097c0ef7c90c15ffce5cf799d6a32f2",
+    "frontend/src/operational-import.ts": "621c94522c9cc66a0388b6a74632e608fea513f1cc9abd1a71038235a1d920af",
+    "frontend/src/past-duties.ts": "659bc4a927a8d4efbaf0ab0050941262555319e3fbc1ca85064332435ea32bd1",
+    "frontend/src/import-review-presentation.ts": "4371d8a267480de774dbe32232cdeead69c041d8803bdcc9d9b24d5c7d13f8a9",
+    "frontend/src/ui.ts": "680d7830bca8826b46b6f1dc2c0d064d2a3a2e16fb41188d2c323de6bccf85b2",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "f4c646977ef2cce1ef1a31e6b99de17f5749a60b3282a888ba4412b83e348516"
+  },
+  "executions": [
+    {
+      "test": "frontend/tests/premium-import-progress-recovery.browser.mjs",
+      "test_sha256": "2b11a9986ad64bc063ba6f2ef20fe27bc322c63dd5f7e8cc5d737b85afac575a",
+      "report": "docs/premium-ui/qa-import-progress-recovery.json",
+      "log": "tmp/import137138-premium-import-progress-recovery.log",
+      "log_sha256": "42c26ee6c353ad6c2e11e8f4c29d7eae3f3561538acb62d7191083426bc076f2",
+      "exit_code": 0,
+      "expected_contexts": 42,
+      "report_sha256": "b22c6bb110823dd310aba76380415593bdfe83d786d503564d8d2cb3193ac5ff",
+      "contexts": 42,
+      "scope": "Actual mounted four CSV-capable import surfaces, native keyboard/file/mapping/choice interactions, intercepted existing settings/multipart fields, staged failure/retry and confirmed-apply callback failures. All API requests fulfilled locally; no backend or persistence claim. Additional modes, include/archive/exclusion retention, full reload boundaries and independent acceptance remain separate."
+    },
+    {
+      "test": "frontend/tests/premium-import-retention-boundaries.browser.mjs",
+      "test_sha256": "0a35a7fd3ecc05250b6164802f83633778f3fbafdbcf5306491d017b3683353f",
+      "report": "docs/premium-ui/qa-import-retention-boundaries.json",
+      "log": "tmp/import137138-premium-import-retention-boundaries.log",
+      "log_sha256": "908a01a8e7bd056576b211b606ecd37fdaa5d9781b258bae4a77d71d87f23fdd",
+      "exit_code": 0,
+      "expected_contexts": 36,
+      "report_sha256": "bca407252161a8e0c6500852b8dfd6c3879c145bac0cf381d5658d941d154a1a",
+      "contexts": 36,
+      "scope": "Native mapping/member choice plus nonempty CSV inclusion/archive, operational exclusion, workbook skip decisions across preview503/retry; remaining modes in Chromium, default modes in Firefox/WebKit; native ready-review replacement, accepted discard/reopen, actual browser reload. Create-only existing-member fixture remains server-style invalid, with explicit inclusion choice retained. No Apply or persistence claim."
+    },
+    {
+      "test": "frontend/tests/premium-member-csv-candidate.browser.mjs",
+      "test_sha256": "d16d4ef5cbe3aa484a39ddb76516602c57edea7a89ab43c33b07845cafeb4ce9",
+      "report": "docs/premium-ui/qa-member-csv-candidate.json",
+      "log": "tmp/import137138-premium-member-csv-candidate.log",
+      "log_sha256": "c1b991bd8c8a218161185a28b057d2e5b29dc0cb9dca88ab41c9972b52608324",
+      "exit_code": 0,
+      "expected_contexts": 12,
+      "report_sha256": "7225b1c55fd954abfb5091a1915e59c585d233f982952645c7c5c3c0ab5b3e5c",
+      "contexts": 12,
+      "scope": "Actual memberCSV candidate choice503/retry, explicit row exclusion/missing-member archive selection, intercepted Apply503 and replacement file.3engines320/1280,create_only/roster_sync; all requests intercepted, no persistence claim."
+    },
+    {
+      "test": "frontend/tests/premium-member-csv-lifetime.browser.mjs",
+      "test_sha256": "dd8cc6e20253e597af1c1edb76543b9d4e821c0acee0e6155e5c2d40f6e76d45",
+      "report": "docs/premium-ui/qa-member-csv-lifetime.json",
+      "log": "tmp/import137138-premium-member-csv-lifetime.log",
+      "log_sha256": "98061cffd89be9ed1c971a76d7980a4964ec2f6c75c8d6390dcf91840b1d93ce",
+      "exit_code": 0,
+      "expected_contexts": 6,
+      "report_sha256": "2364ba737934a68c42f372f5cfb36d056f2bda509c2f59774b3dbe91c2421454",
+      "contexts": 6,
+      "scope": "Actual exported memberCSV dialog, oldcolumns/newfile, heldpreview/apply/refusal/manualretry/context/focus/newfilediscard.3engines320/1280, allPOSTsfullyintercepted; no backendwrites/persistenceclaim."
+    },
+    {
+      "test": "frontend/tests/premium-import-candidate-choice.browser.mjs",
+      "test_sha256": "b20dd97cbd33229ed8f40b4b510510e92cb1f5b8e357a46c1a7938ddc02440f5",
+      "report": "docs/premium-ui/qa-import-candidate-choice.json",
+      "log": "tmp/import137138-premium-import-candidate-choice.log",
+      "log_sha256": "79b08da9bc8521f732b53a0d2f495556a40c4e2c7e9fc80cf5111eb921070b6f",
+      "exit_code": 0,
+      "expected_contexts": 6,
+      "report_sha256": "e5f75fbae193ca9dc10ffaa1d64eb2f9541cea3606c19161c165dba2a86eb62a",
+      "contexts": 6,
+      "scope": "Actual normalizedunitimport file/settings/preview, member/unitsearch, exactrowcandidate503/retry andarchivedprofilecancel.3engines320/1280, allwrites intercepted; noapply/restore/backendpersistence certification."
+    },
+    {
+      "test": "frontend/tests/premium-operational-import-file-race-fixed.browser.mjs",
+      "test_sha256": "e88ac6b7b826fa478d401240db74fc41a179122b66c1f110ca65fa6da759268b",
+      "report": "docs/premium-ui/reviews/operational-import-file-race-fixed-current.json",
+      "log": "tmp/import137138-premium-operational-import-file-race-fixed.log",
+      "log_sha256": "5472b31612f3db484ab5e63f9b137ad97be98127ec775f8ecb6add6e6277513b",
+      "exit_code": 0,
+      "expected_contexts": 12,
+      "report_sha256": "fb88067a514bb0550d1a48a7f2494406c9c9d82db096971fb8a54e2e31df4d6a",
+      "contexts": 12,
+      "scope": "Actual Leave/Units toolbar; hold old columns A, inspect B, ignore old503; preview/apply B intercepted, verify actual native controls locked; return503, preserve draft and disabled states; explicit manualretry exactpayload success; select newC, decline discard then accept. No backend writes; disabled file inputs are never programmatically bypassed. Main snapshot drift recorded separately."
+    },
+    {
+      "test": "frontend/tests/premium-match-identity.browser.mjs",
+      "test_sha256": "c53f7fb5c4b0c077c33dd9aac90b61dddadf054fe6a053f8daa63d37f07105fc",
+      "report": "docs/premium-ui/qa-match-identity.json",
+      "log": "tmp/import137138-premium-match-identity.log",
+      "log_sha256": "04467b36e52880acf841308ea95db07a28d2e7e6757e007d1e30b3f9425b546d",
+      "exit_code": 0,
+      "expected_contexts": 24,
+      "report_sha256": "793bc22ab875b04283e2fe1cc99c4c2f03d2b60d705f929b775a0790f965c0dd",
+      "contexts": 24,
+      "scope": "Actual four import components, native keyboard selections, returned equal-name identities, exact intercepted preview requests; three engines at320/1280. All API responses fulfilled locally. No Apply or real persistence/backend authorization claim. Existing CSV distinct/undo, candidate failure and lifecycle suites remain separate regressions."
+    },
+    {
+      "test": "frontend/tests/premium-workbook-choice-lifetime.browser.mjs",
+      "test_sha256": "d22bf755ed8c1c3974baa437b2a983a484460eafccc910b3ab735f2bceb37b2e",
+      "report": "docs/premium-ui/qa-workbook-choice-lifetime.json",
+      "log": "tmp/import137138-premium-workbook-choice-lifetime.log",
+      "log_sha256": "c75639fd79067fd27915979c3079eaea8fbe0c5610548caca46251c59f613379",
+      "exit_code": 0,
+      "expected_contexts": 12,
+      "report_sha256": "665eb7ed0d5c3b2b12c63d12c229e8a488269d8f724becb915519fc91ad8a389",
+      "contexts": 12,
+      "scope": "Actual workbook component with native upload/inspect/preview/pick/filter; existing resetMemberImport and mount used for account reset/remount. Three engines at320/1280: delayed old candidate success after current ready, and old503 while current pending. All API responses fulfilled locally; no actual backend writes or persistence claim."
+    },
+    {
+      "test": "frontend/tests/premium-past-actions.browser.mjs",
+      "test_sha256": "ce9848e1ae323d3c622a90b45066755ede1eff9cb3e8c2cf7b156e1f7a6111a5",
+      "report": "docs/premium-ui/qa-past-actions.json",
+      "log": "tmp/import137138-premium-past-actions.log",
+      "log_sha256": "99aeebddc593b4cba916528b6c646d78b4959f84a3e055f6cba6844011cfc7fb",
+      "exit_code": 0,
+      "expected_contexts": 6,
+      "report_sha256": "b70a32769f880d7e8f5788a1d2da48aeeadc9011849c6d17c75b9e972b95053f",
+      "contexts": 6,
+      "scope": "Actual past-duties component, services/api and production CSS. All API responses intercepted. Workbook and downloaded template are transport fixtures only, not Excel parser or real template validity tests. Rejected CSV bytes are verified against the controlled rejected row. Browser emulation; no physical device, actual screen reader or live write claim. Apply success/recovery is separate and not claimed by these action cases."
+    },
+    {
+      "test": "frontend/tests/premium-match-identity-long.browser.mjs",
+      "test_sha256": "1bb0be8bfbdfcb5e3a5a470a276d2587d6010ca770806a8ade2f97ac59e4009a",
+      "report": "docs/premium-ui/qa-match-identity-long.json",
+      "log": "tmp/import137138-premium-match-identity-long.log",
+      "log_sha256": "960c05c2f5daf0376e9da348d3020e928df5a91980192b4120f3952e522364ea",
+      "exit_code": 0,
+      "expected_contexts": 24,
+      "report_sha256": "16cef59eaf89e9ac0281421a19d8902d21ac4ca8be95471e7ced6ed3c5ea8d70",
+      "contexts": 24,
+      "scope": "Actual four import adapters mounted inside the production shell, three engines at320/390 with production CSS and no diagnostic style injection. Short fixture compared with UUID plus160character unbroken ID, equal names and long designation/unit/reason; native keyboard choice, returned selected identity, raw text/element/page/dialog geometry. Existing contained table horizontal scrolling distinguished from document/dialog overflow. Import API responses fulfilled locally; shell GETs use local disposable fixture8031. No Apply, actual persistence, physical-device or native AT claim."
+    }
+  ],
+  "interrupted_attempts": [
+    {
+      "test": "frontend/tests/premium-import-retention-boundaries.browser.mjs",
+      "test_sha256": "0a35a7fd3ecc05250b6164802f83633778f3fbafdbcf5306491d017b3683353f",
+      "report": "docs/premium-ui/qa-import-retention-boundaries.json",
+      "log": "tmp/import137138-premium-import-retention-boundaries-interrupted-100214.log",
+      "log_sha256": "28ae08113cc439ca6466e7ed7b1b5d0ff2473f3f541167c720a883789af6589e",
+      "exit_code": 1,
+      "expected_contexts": 36
+    }
+  ],
+  "all_selected_suites_finished": true,
+  "all_selected_suites_passed": true,
+  "contexts": 180
+}

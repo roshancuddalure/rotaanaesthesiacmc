@@ -1,0 +1,67 @@
+{
+  "reviewer": "/root/registry_api_scope_r2",
+  "review_date": "2026-11-09",
+  "review_mode": "Independent read-only source comparison; no application edits or browser runs",
+  "candidate_applied_by_reviewer": false,
+  "decision": "No blocking API, authorization, mutation-payload or cross-owner commit defect found within the reviewed source boundary. Runtime and broader UX acceptance remain separate gates.",
+  "candidate_sha256": {
+    "main.ts": "1017a2d1bed914294ed680cde5bc397c337094664cde3d445d68b05ca94a8949",
+    "reference-workspace.ts": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd",
+    "extra-duty.ts": "21edb8d59249b7c5be30d59c79f4e20b350930bdc16bd097e957a9c22650855f"
+  },
+  "compared_baseline_sha256": {
+    "main.ts": "96ab7c4c6b14d41736ad4153313b1270677e324fcab6b11c3a5b0d8ac3e47a0b",
+    "reference-workspace.ts": "78c231ea1d5ab15bd3a4b5f2f8265529451a51bacc68d2a4aac1708a4be30292",
+    "extra-duty.ts": "52084624922de21f2a0fa478eb1ca4c883cdeb66dd1d05147d0f21fe806bc7ea"
+  },
+  "contract_sha256": {
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "backend/app/api/v1/extra_duty.py": "93894c0dd7a1d330f3ce76e00018af0f87f923fc5460d38ab7ddddffc9e33d5b"
+  },
+  "findings": [
+    {
+      "id": "GET-01",
+      "result": "bounded_pass",
+      "evidence": "extra-duty.ts:722 stages GET /api/v1/extra-duty/unit-fallbacks with a 15-second AbortSignal through the unchanged shared request helper. It adds no request body, credential handling, storage, endpoint, mutation retry or background write. The integration supplies this preparer only for the Units registry path with an existing fallback host."
+    },
+    {
+      "id": "AUTH-01",
+      "result": "bounded_pass",
+      "evidence": "Shared request captures authGeneration and checks it after fetch and after body decoding; Authorization construction and session-expiry behavior are untouched. Backend router still depends on require_admin and require_enabled. Frontend refresh cannot grant access or bypass the feature-disabled response."
+    },
+    {
+      "id": "READ-CONTRACT-01",
+      "result": "bounded_pass",
+      "evidence": "Backend list_unit_fallbacks selects all Unit rows, not a month-active subset, and supplies each owner's existing fallback order. Candidate validates the response array, unique owner IDs, string owner ID/name, fallback arrays, string target IDs and nullable/string target names before returning the commit closure. It does not infer an absent owner from a month-filtered registry read."
+    },
+    {
+      "id": "OWNER-01",
+      "result": "bounded_pass",
+      "evidence": "main.ts:3292 captures account object, view, view/render generations, root identity/connected state, selected month and original overlay identities. On read completion it checks that ownership plus root-specific read generation and unitLoadSeq before committing primary state or fallback references. Wrong-month primary data is rejected. Fallback commit is synchronous and additionally requires a connected host and a ready component reader."
+    },
+    {
+      "id": "EFFECT-01",
+      "result": "bounded_pass",
+      "evidence": "Reviewed complete baseline-to-candidate unified differences for all three files. Existing normalization POST/PUT expression, payload construction, fallback PUT expression, storage expressions and request helper are unchanged. Added lifecycle hooks run after accepted registry response and on idempotent final close; they defer/coalesce parent reads. The fallback Add control intentionally refuses choices absent from the complete reference read; retained saved/draft IDs are not removed or submitted automatically."
+    },
+    {
+      "id": "RECOVERY-01",
+      "result": "bounded_pass",
+      "evidence": "Optional fallback read rejection is converted into a throwing commit closure, allowing the valid Units board read to render before the existing parent error/retry state. Retry repeats reads only. Changed remains true until both reads/commits succeed. This is partial readback with an explicit stale warning, not an atomic all-or-nothing DOM transaction."
+    },
+    {
+      "id": "OUTPUT-01",
+      "result": "bounded_pass",
+      "evidence": "Names from the read enter textContent, createTextNode, Option or the existing HTML esc helper. New owner IDs entering selectors use existing CSS.escape paths; inserted unitHtml escapes IDs and names. Added lifecycle warning logs contain constant copy rather than server records or tokens."
+    }
+  ],
+  "limitations": [
+    "No runtime results, browser coverage, penetration test, production environment or device check is certified by this source review.",
+    "Response validation is consumed-shape validation rather than full UUID/schema/range validation; backend remains the authority for write constraints. Duplicate fallback targets or empty string IDs are not rejected by this new read validator.",
+    "Existing owners intentionally retain both saved and draft fallback order; this reference refresh does not reconcile concurrent external fallback-order mutations. New owners alone receive order from the complete GET.",
+    "A feature-disabled, forbidden, malformed or timed-out fallback read keeps a retry/stale notice after valid primary data renders. Runtime tests should verify clear copy and no write replay in each recovery case.",
+    "Connected host and component-reader guards do not separately version arbitrary in-place remounts; the actual parent integration also guards root/render identity. Tests remain necessary for supported remount and supersession paths.",
+    "git diff --name-only -- backend was empty at review time. This does not establish that all historical backend files match an earlier repository baseline.",
+    "No global functionality preservation or zero-new-bug claim follows from this bounded review."
+  ]
+}

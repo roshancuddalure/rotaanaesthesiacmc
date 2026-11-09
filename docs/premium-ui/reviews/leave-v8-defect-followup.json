@@ -1,0 +1,81 @@
+{
+  "recorded_at_utc": "2026-10-29T00:19:51.154961+00:00",
+  "reviewer": "/root",
+  "scope": "Bounded leave frontend defect-register supplement. Existing live bugs and unapplied candidate defects explicitly distinguished; no general bug-free or original15/full260 claim.",
+  "items": [
+    {
+      "id": "FE-LEAVE-DAY-POINTER-OPENER-001",
+      "surface": "Existing live leave calendar/list modal",
+      "classification": "verified_bug",
+      "expected": "Closing the day modal returns focus to the actual clicked day.",
+      "observed": "Four WebKit baseline cases on current5197/v6preview captured priorMay1 and restored it after pointer-openingMay31.",
+      "disposition": "Fix verified in frozen v7/v8 previews; not applied.",
+      "evidence": [
+        "docs/premium-ui/reviews/leave-pointer-opener-v6-diagnostic-review.json",
+        "docs/premium-ui/reviews/leave-status-v7-preview-operator-execution.json"
+      ],
+      "evidence_sha256": {
+        "docs/premium-ui/reviews/leave-pointer-opener-v6-diagnostic-review.json": "13067b29862c54524cc2f9a9fdd82bb65696ef68fc03a53b1bb2fd3b8eaed25a",
+        "docs/premium-ui/reviews/leave-status-v7-preview-operator-execution.json": "11760adc6cfe0cc6cfdc53acf46009356b489cc3b24e0ddd9dada0ed933de1bf"
+      }
+    },
+    {
+      "id": "FE-LEAVE-MORE-TARGET-001",
+      "surface": "Leave toolbar four secondary menu items",
+      "classification": "verified_bug",
+      "expected": "Each target at least44px high with full label and viewport containment.",
+      "observed": "48measurements across12v7contexts were38px high.",
+      "disposition": "V8 scoped44px rule passes48measurements; not applied.",
+      "evidence": [
+        "docs/premium-ui/qa-leave-more-actions-v7-preview.json",
+        "docs/premium-ui/qa-leave-more-actions-v7-preview-stress.json",
+        "docs/premium-ui/reviews/leave-more-v8-preview-execution.json"
+      ],
+      "evidence_sha256": {
+        "docs/premium-ui/qa-leave-more-actions-v7-preview.json": "967207fd4c0f9fb685fa89db682999fab68c9848ba42fcab12f9723aba676738",
+        "docs/premium-ui/qa-leave-more-actions-v7-preview-stress.json": "368c8b9e1f8e5cb61edd5b2d8bd2d8ab68782e7cab88d8275055994e4b4ab623",
+        "docs/premium-ui/reviews/leave-more-v8-preview-execution.json": "ce9fe14be05e601164fb51ce14dccb615735fc4ab1e2a8672f7a28460104fc61"
+      }
+    },
+    {
+      "id": "FE-LEAVE-MORE-RETURN-FOCUS-001",
+      "surface": "Catalog and monthly delete preview opened from Leave More",
+      "classification": "verified_bug",
+      "expected": "Pristine Cancel/Escape/headerclose returns to a visible stable launcher.",
+      "observed": "72v7workflow closes returnedBODY after menu hid its opener.",
+      "disposition": "V8 intentional visibleMore focus before dialog construction passes72closeworkflows; no actualdelete/save issued. Not applied.",
+      "evidence": [
+        "docs/premium-ui/qa-leave-more-actions-v7-preview.json",
+        "docs/premium-ui/qa-leave-more-actions-v7-preview-stress.json",
+        "docs/premium-ui/reviews/leave-more-v8-preview-execution.json"
+      ],
+      "evidence_sha256": {
+        "docs/premium-ui/qa-leave-more-actions-v7-preview.json": "967207fd4c0f9fb685fa89db682999fab68c9848ba42fcab12f9723aba676738",
+        "docs/premium-ui/qa-leave-more-actions-v7-preview-stress.json": "368c8b9e1f8e5cb61edd5b2d8bd2d8ab68782e7cab88d8275055994e4b4ab623",
+        "docs/premium-ui/reviews/leave-more-v8-preview-execution.json": "ce9fe14be05e601164fb51ce14dccb615735fc4ab1e2a8672f7a28460104fc61"
+      }
+    },
+    {
+      "id": "FE-LEAVE-SCROLLER-CANDIDATE-FOCUS-001",
+      "surface": "Unapplied v5/v6 bounded month scroller candidate",
+      "classification": "verified_candidate_bug",
+      "expected": "Focused dates and complete focus ring remain visible without fighting newer manual intent.",
+      "observed": "Native partial focus persists; synchronous/singleRAF/scrollend alone insufficient; nativearrowanimation can continue after initiallyfittingfocus.",
+      "disposition": "Frozenv7helper core744forward+744reversechecks and138helpercontexts supportboundedfix; v8samehelperhash. Currentlivecalendar never received the defective candidate.",
+      "evidence": [
+        "docs/premium-ui/reviews/leave-calendar-focus-independent-diagnostics.json",
+        "docs/premium-ui/reviews/leave-status-v7-preview-operator-execution.json",
+        "docs/premium-ui/reviews/leave-v7-native-activation-preview-execution.json",
+        "docs/premium-ui/reviews/leave-calendar-focus-helper-v7-supplement-execution.json"
+      ],
+      "evidence_sha256": {
+        "docs/premium-ui/reviews/leave-calendar-focus-independent-diagnostics.json": "eab69c4c77ce55f9937cefd39ccf7538915f2a828ea189fc8004e75084e7587d",
+        "docs/premium-ui/reviews/leave-status-v7-preview-operator-execution.json": "11760adc6cfe0cc6cfdc53acf46009356b489cc3b24e0ddd9dada0ed933de1bf",
+        "docs/premium-ui/reviews/leave-v7-native-activation-preview-execution.json": "d7a77bd2f6e78b88a0444917785798213d41577f43bdcbdcadac75396dca4074",
+        "docs/premium-ui/reviews/leave-calendar-focus-helper-v7-supplement-execution.json": "9bf8e54be9f81867c3006ebc698e4ecdd40d048d39ef90e159a75dacecc55a8d"
+      }
+    }
+  ],
+  "application_changed": false,
+  "new_items_accepted": 0
+}

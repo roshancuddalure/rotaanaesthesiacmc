@@ -1,0 +1,204 @@
+{
+  "recorded_at_utc": "2026-11-03T07:56:57.510Z",
+  "reviewer": "/root/stage161_v4_review",
+  "application_changed": false,
+  "candidate_sha256": "021208eaa66c6b61dee652c155510e59f95204bed5931c68be7237db0f044160",
+  "method": "Independent extraction and TypeScript transpilation of exact candidate workflowStateFrom; executes only pure classifier, no API or product mutation.",
+  "results": [
+    {
+      "name": "known-filled",
+      "summary": {
+        "total_slots": 2,
+        "assigned_slots": 2,
+        "open_slots": 0
+      },
+      "returnedBlockers": [],
+      "actual": {
+        "setup": "done",
+        "template": "done",
+        "assignment": "done",
+        "review": "done",
+        "publish": "blocked"
+      },
+      "conservativeExpected": "done",
+      "conservativeMatches": true
+    },
+    {
+      "name": "known-open",
+      "summary": {
+        "total_slots": 2,
+        "assigned_slots": 1,
+        "open_slots": 1
+      },
+      "returnedBlockers": [
+        "Open slots"
+      ],
+      "actual": {
+        "setup": "done",
+        "template": "done",
+        "assignment": "blocked",
+        "review": "blocked",
+        "publish": "pending"
+      },
+      "conservativeExpected": "blocked",
+      "conservativeMatches": true
+    },
+    {
+      "name": "missing-assigned",
+      "summary": {
+        "total_slots": 2,
+        "open_slots": 0
+      },
+      "returnedBlockers": [],
+      "actual": {
+        "setup": "done",
+        "template": "done",
+        "assignment": "unknown",
+        "review": "done",
+        "publish": "blocked"
+      },
+      "conservativeExpected": "unknown",
+      "conservativeMatches": true
+    },
+    {
+      "name": "negative",
+      "summary": {
+        "total_slots": 2,
+        "assigned_slots": -1,
+        "open_slots": 3
+      },
+      "returnedBlockers": [],
+      "actual": {
+        "setup": "done",
+        "template": "done",
+        "assignment": "unknown",
+        "review": "done",
+        "publish": "blocked"
+      },
+      "conservativeExpected": "unknown",
+      "conservativeMatches": true
+    },
+    {
+      "name": "nonfinite",
+      "summary": {
+        "total_slots": 2,
+        "assigned_slots": null,
+        "open_slots": 0
+      },
+      "returnedBlockers": [],
+      "actual": {
+        "setup": "done",
+        "template": "done",
+        "assignment": "unknown",
+        "review": "done",
+        "publish": "blocked"
+      },
+      "conservativeExpected": "unknown",
+      "conservativeMatches": true
+    },
+    {
+      "name": "fractional-filled",
+      "summary": {
+        "total_slots": 0.5,
+        "assigned_slots": 0.5,
+        "open_slots": 0
+      },
+      "returnedBlockers": [],
+      "actual": {
+        "setup": "done",
+        "template": "done",
+        "assignment": "done",
+        "review": "done",
+        "publish": "blocked"
+      },
+      "conservativeExpected": "unknown",
+      "conservativeMatches": false
+    },
+    {
+      "name": "inconsistent-total",
+      "summary": {
+        "total_slots": 2,
+        "assigned_slots": 1,
+        "open_slots": 0
+      },
+      "returnedBlockers": [],
+      "actual": {
+        "setup": "done",
+        "template": "done",
+        "assignment": "blocked",
+        "review": "done",
+        "publish": "blocked"
+      },
+      "conservativeExpected": "unknown",
+      "conservativeMatches": false
+    },
+    {
+      "name": "excess-assigned",
+      "summary": {
+        "total_slots": 2,
+        "assigned_slots": 3,
+        "open_slots": 0
+      },
+      "returnedBlockers": [],
+      "actual": {
+        "setup": "done",
+        "template": "done",
+        "assignment": "blocked",
+        "review": "done",
+        "publish": "blocked"
+      },
+      "conservativeExpected": "unknown",
+      "conservativeMatches": false
+    },
+    {
+      "name": "filled-with-no-generated-blocker",
+      "summary": {
+        "total_slots": 2,
+        "assigned_slots": 2,
+        "open_slots": 0
+      },
+      "returnedBlockers": [
+        "Generated slots"
+      ],
+      "actual": {
+        "setup": "done",
+        "template": "blocked",
+        "assignment": "done",
+        "review": "pending",
+        "publish": "pending"
+      },
+      "conservativeExpected": "unknown",
+      "conservativeMatches": false
+    },
+    {
+      "name": "filled-with-scope-blocker",
+      "summary": {
+        "total_slots": 2,
+        "assigned_slots": 2,
+        "open_slots": 0
+      },
+      "returnedBlockers": [
+        "Monthly unit scope"
+      ],
+      "actual": {
+        "setup": "blocked",
+        "template": "done",
+        "assignment": "done",
+        "review": "blocked",
+        "publish": "pending"
+      },
+      "conservativeExpected": "unknown",
+      "conservativeMatches": false
+    }
+  ],
+  "findings": [
+    "Fractional returned slot counts can mark assignment Done (0.5/0.5/0). Slots are indivisible; require nonnegative integers.",
+    "Inconsistent totals are treated as known blocked rather than unknown. No safe stage interpretation follows contradictory counts.",
+    "Generated slots or Monthly unit scope blocker with apparently filled counts marks assignmentDone. This conflicts with an ordered current-readiness cue; if intended as historic filled-count progress, wording must explicitly distinguish that from stage completion. Preserve prior all-blockerReview and published-history semantics."
+  ],
+  "recommendation": "Do not approve whole161 until malformed/inconsistent assignment counts are unknown and blocker/ordered-stage semantics are explicitly reconciled. This pure source evidence does not establish rendered browser outcomes.",
+  "limits": [
+    "Conservative expected values are independent review recommendations, not assertions that backend ever emits malformed/contradictory counts.",
+    "Existing12state author matrix deliberately accepts assignmentDone with scope-only blocker; that case requires explicit product-readiness decision rather than silently changing backend policy."
+  ]
+}

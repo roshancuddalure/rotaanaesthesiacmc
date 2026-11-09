@@ -1,0 +1,38 @@
+{
+  "recorded_at_utc": "2026-10-29T01:22:10.064727+00:00",
+  "reviewer": "/root",
+  "scope": "Read-only next147/global frontend presentation audit. No backend or application edits.",
+  "sources": {
+    "frontend/src/main.ts": "b2c4d95966eb6885744123bdefdbfa20c08dace6ed1346e7ee8b98c85ee013ea",
+    "backend/app/services/unit_management.py": "a9f978660297c34f8b6ab3c48f7d8e36fe38e7abc74123568532a4a1a14dea4c",
+    "backend/app/services/leave.py": "36ca33b02c355f11a8e7631afdceef44e1f661a47777c81ff7563c4d40118fd1"
+  },
+  "finding": "Unit summaries call monthly people_with_leave counts onleave and assigned-minus-count availability. The service includes approved/requested/imported_pending_review with any month overlap; this is not daily/session-specific or confirmedabsence.",
+  "existing_issue_proof": {
+    "prior_source": "tmp/leave-v8-integration-before/main.ts",
+    "prior_sha256": "20fc4e1c086f4ae6c25a381a176b590173f7ee680d6eec205489dc97eb069ea6",
+    "unitAvailability_body_byte_equal_to_current": true
+  },
+  "source_locations": [
+    "frontend/src/main.ts:4015 unitAvailability",
+    "frontend/src/main.ts:4355 unit modal monthly aggregate chips",
+    "backend/app/services/unit_management.py:98 active_leaves_for_month",
+    "backend/app/services/unit_management.py:115 unit_leave_summary",
+    "backend/app/services/leave.py:19 ACTIVE_LEAVE_STATUSES"
+  ],
+  "proposed_frontend_only_direction": [
+    "Label peoplewithactiveleaverecords thismonth, includingpending; do notcallallconfirmedabsence.",
+    "Keepcounts andassigned-minus-recordcountmathunchanged butlabeldifferencewithoutactiveleaverecords, noteligibleavailablepeople.",
+    "Separateconfiguredminimum-free rulefrommonthlyrecordcoverage; avoidcolorjudgementthatpretendsmonthaggregateisdailystaffing.",
+    "Explainmonth/date/sessionboundaries anddeferavailabilitytoreturnedoperation-specificsafetychecks. Do notnewlycalculateeligibility.",
+    "Preserveactualunit/membernavigation, modaloperators, rolepermissions,filters,API,payloads,assignments,validationissues andallbackendrules."
+  ],
+  "runtime_gates": [
+    "FaithfulGETfixtures withapproved/requested/importedreview,differentdates,AM/PM,multiplemonthlypostings andduplicateleaverecords.",
+    "Exactbackendreturnedassigned/uniquepeople/leave-dayscounts andunitcallminima unchanged acrosscards/modal/phone.",
+    "3enginesphone/desktop/root200/short +actualnativeunitmodalopen/prevnext/close/nameprofile outcomes; no writes.",
+    "Sourcecontractparity andprior40acceptanceapplicability; no147completionuntilfullrepresentationaudit."
+  ],
+  "application_changed": false,
+  "new_items_accepted": []
+}

@@ -1,0 +1,72 @@
+{
+  "recorded_at_utc": "2026-11-09T07:48:26.105306+00:00",
+  "author": "/root/profile_payload_guard",
+  "browser_executed": false,
+  "syntax_check": {
+    "command": "node --check frontend/tests/premium-profile-parent-v4-leave-owner.browser.mjs",
+    "exit_code": 0
+  },
+  "test": "frontend/tests/premium-profile-parent-v4-leave-owner.browser.mjs",
+  "test_sha256": "c54c5c5aeb51f371bb36c5a9dd480bd905d4b7596dddd0fc86452a3cf3a2d69f",
+  "candidate": "tmp/profile-parent-refresh-v4/main.ts",
+  "candidate_sha256": "355e71753eb79135d4bdefb94837da4fc1ff727b12a2ed1f9c4bdb4b5d744a07",
+  "preview_port": 5292,
+  "fixture_port": 8031,
+  "planned_contexts": 24,
+  "matrix": {
+    "engines": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "widths": [
+      320,
+      1280
+    ],
+    "scenarios": [
+      "leave-route-away-return",
+      "leave-month-supersession",
+      "leave-signout",
+      "leave-newer-view-focus"
+    ]
+  },
+  "held_group": "Hold first parent calendar GET; sibling requests and pressure resolve while old DOM/summary must remain. Release on owner-specific action.",
+  "assertions": [
+    "Old Approved row and previous summary retained while group held",
+    "Routeaway response cannot paint guide; return performs fresh monthly group read and shows cancellation",
+    "Old November response cannot overwrite December record/month/notice",
+    "Signout discards private late reads",
+    "Newer Day list toggle/focus retained across narrow readback; original month/list/scroll/history/toggle elements retained",
+    "Exactly one cancellation mutation locally fulfilled; retry/refresh never forwards writes",
+    "No unhandled page errors; exact source/candidate hashes checked before/after"
+  ],
+  "limitations": [
+    "No daymodal profile-entry runtime claim: current actual day modal contains only Add leave/Close controls and static member-name strong elements.",
+    "No separate Leave filter/search exists in the inspected markup; tests preserve actual calendar view and focus rather than inventing a filter.",
+    "Programmatically dispatched month change and storage signout intentionally exercise races; route and newer-view actions use actual UI flows.",
+    "Browser execution/root sealing still required."
+  ],
+  "day_modal_entry_gap": {
+    "candidate_sha256": "355e71753eb79135d4bdefb94837da4fc1ff727b12a2ed1f9c4bdb4b5d744a07",
+    "render_function_span": [
+      "renderLeaveDayCallGroups",
+      "renderLeaveDayModal"
+    ],
+    "combined_function_sha256": "5d2c1785c5a94fc5ca46456c511ff7dc7484eb6db6f2e395ac5f329332680f53",
+    "member_profile_controls_in_markup": 0,
+    "current_member_markup": "<strong>${escapeHtml(entry.person_name)}</strong>",
+    "current_controls": [
+      "Add leave on this day",
+      "Close"
+    ],
+    "api_entry_field": "LeaveDayEntry.person_id: string",
+    "api_sha256": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "existing_external_document_handler": "data-open-member buttons outside viewRoot call openMemberWorkspaceWithParent; excludes only #rota-day-modal",
+    "future_scoped_ui_option": "After separate source review, replace static member name with existing member-profile-link button data-open-member=entry.person_id and data-profile-tab=leave, using the existing document handler. Validate missing/invalid person_id safely if implementing. Not implemented or runtime-proven here."
+  },
+  "api_semantics_read_only_reference": {
+    "file": "backend/app/services/leave.py",
+    "sha256": "36ca33b02c355f11a8e7631afdceef44e1f661a47777c81ff7563c4d40118fd1",
+    "observation": "leave_day_entries and summary use ACTIVE_LEAVE_STATUSES, so the locally fulfilled fixture removes cancelled entries from calendar/summary but keeps cancelled records in Leave requests. This file was read only."
+  }
+}

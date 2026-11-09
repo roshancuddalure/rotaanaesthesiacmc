@@ -1,0 +1,2191 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-09T08:12:35.607660+00:00",
+  "reviewer": "theme_foundation_closeout source-grounded definition author; independent review pending",
+  "item_id": 22,
+  "scope": "Definition/documentation only: all five named color purposes, concrete scheduling/chart mappings and component exception/nonconformance dispositions. No runtime execution or acceptance status change.",
+  "completion_claim": false,
+  "application_source_mutations": false,
+  "browser_executions": 0,
+  "criteria": {
+    "path": "docs/premium-ui/acceptance-criteria/items-001-086.json",
+    "sha256": "5f84ff2a0927e6f67f8e09d326e5874bb49e27b6c1752ad6443c5a4b8ccb0625",
+    "acceptance_scope": "Definition/documentation or recorded-baseline deliverable: Semantic-color map definition. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+    "pass_conditions": [
+      "Map brand, interaction feedback, scheduling statuses, chart categories and destructive actions to distinct named purposes",
+      "Document component-specific exceptions so decoration cannot imply operational state"
+    ]
+  },
+  "deliverable": {
+    "path": "docs/premium-ui/semantic-color-register-20261109-item022.md",
+    "sha256": "647611c55df5148a29603cd836914717d6609eb7c064df4834c9b9da3ccafdd3"
+  },
+  "source_hashes_start": {
+    "frontend/src/main.ts": "2b8f68c069e599af50a4ac1b2146a7018d6268f290b90a9949130a057dc91b43",
+    "frontend/src/member-workspace.ts": "105cc1d91ea4815d565ad4859fc01412cf576a3203c07834f4010e3fef7ef1a5",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "acc46b2249087f365ca855bcd9630628c390c4cdf013301daaee40ede80e55f4",
+    "frontend/src/component-reference.ts": "dcf2631694638459aa31be896bb966e0d8472e56b811d28464392a8fc34b15de",
+    "frontend/src/component-reference.css": "46ed291bfdd2463fdc470392a12207bf37fca0478587c24a5019b82e6f7262ee",
+    "frontend/src/analysis-charts.ts": "823a2cddb07d0f69ba1fe12719e4094ae29fda839769e1f4b2dc75e7aa887c4a",
+    "frontend/src/ui.ts": "680d7830bca8826b46b6f1dc2c0d064d2a3a2e16fb41188d2c323de6bccf85b2",
+    "frontend/src/superadmin.ts": "ce337c066f127db0d4400daf86e90316d5442dced44c3eea0e996584ef1ed841",
+    "frontend/src/limits.ts": "f7c040de08fd0a593e1e071d7c09b2696344b9b85bbcd836f5367b49e4ef8db6",
+    "frontend/src/operational-import.ts": "00a6339fb0bd56dcae64ec05cb79ad041364a502ee207dec71c95106b2c20ce8"
+  },
+  "source_hashes_end": {
+    "frontend/src/main.ts": "2b8f68c069e599af50a4ac1b2146a7018d6268f290b90a9949130a057dc91b43",
+    "frontend/src/member-workspace.ts": "105cc1d91ea4815d565ad4859fc01412cf576a3203c07834f4010e3fef7ef1a5",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "acc46b2249087f365ca855bcd9630628c390c4cdf013301daaee40ede80e55f4",
+    "frontend/src/component-reference.ts": "dcf2631694638459aa31be896bb966e0d8472e56b811d28464392a8fc34b15de",
+    "frontend/src/component-reference.css": "46ed291bfdd2463fdc470392a12207bf37fca0478587c24a5019b82e6f7262ee",
+    "frontend/src/analysis-charts.ts": "823a2cddb07d0f69ba1fe12719e4094ae29fda839769e1f4b2dc75e7aa887c4a",
+    "frontend/src/ui.ts": "680d7830bca8826b46b6f1dc2c0d064d2a3a2e16fb41188d2c323de6bccf85b2",
+    "frontend/src/superadmin.ts": "ce337c066f127db0d4400daf86e90316d5442dced44c3eea0e996584ef1ed841",
+    "frontend/src/limits.ts": "f7c040de08fd0a593e1e071d7c09b2696344b9b85bbcd836f5367b49e4ef8db6",
+    "frontend/src/operational-import.ts": "00a6339fb0bd56dcae64ec05cb79ad041364a502ee207dec71c95106b2c20ce8"
+  },
+  "sources_held_during_register_capture": true,
+  "purpose_map": [
+    {
+      "purpose": "brand identity",
+      "document_section": "1. Brand identity",
+      "current_families": [
+        "--color-sidebar/--color-sidebar-depth/--dialog-header-bg",
+        "--color-primary* and --color-accent*",
+        "--royal-champagne",
+        "--royal-burgundy"
+      ],
+      "semantic_boundary": "Decoration/frame never asserts operational status; N01/N04 and E05 are explicit exceptions or unresolved contexts."
+    },
+    {
+      "purpose": "interaction feedback",
+      "document_section": "2. Interaction feedback",
+      "current_families": [
+        "primary default/hover/pressed/focus",
+        "active navigation/profile/analysis/rota selection",
+        "disabled/busy",
+        "success/warning/error/information/neutral feedback",
+        "invalid fields"
+      ],
+      "semantic_boundary": "Control name, focus outline, selected attributes and explicit outcome wording retain meaning; selection is distinct from readiness."
+    },
+    {
+      "purpose": "scheduling status",
+      "document_section": "3. Scheduling and operational status",
+      "components": [
+        "leave approval and pressure",
+        "workflow readiness/freshness",
+        "member activity",
+        "unit setup issues",
+        "rota review metrics",
+        "manual review",
+        "roster/audit context",
+        "import member match",
+        "extra duty",
+        "balance review",
+        "limits"
+      ],
+      "semantic_boundary": "Current classifiers and returned state are documented without policy or backend changes. N05 records canceled/cancelled tone mismatch."
+    },
+    {
+      "purpose": "chart categories",
+      "document_section": "4. Chart categories and measured quantities",
+      "components": [
+        "Weekend striped primary",
+        "Weekday solid secondary",
+        "unstacked Total using weekday class",
+        "unit relative distribution using focus",
+        "legacy bars",
+        "zero/invalid/empty values",
+        "forced-color patterns/data table"
+      ],
+      "semantic_boundary": "Category and quantitative fill never signal approval or clickable primary action; actual values/labels/table/patterns remain authoritative."
+    },
+    {
+      "purpose": "destructive actions",
+      "document_section": "5. Destructive actions",
+      "components": [
+        "shared danger button",
+        "compact row-menu danger",
+        "member workspace danger",
+        "filled superadmin danger",
+        "non-action caution icons"
+      ],
+      "semantic_boundary": "Explicit destructive names and error family remain distinct from violet and burgundy brand/operational accent."
+    }
+  ],
+  "condition_evidence": [
+    {
+      "condition": "Map brand, interaction feedback, scheduling statuses, chart categories and destructive actions to distinct named purposes",
+      "evidence": "Sections1?5 plus exact token declarations/source anchors in this JSON map each requested purpose separately; source-map review required before acceptance."
+    },
+    {
+      "condition": "Document component-specific exceptions so decoration cannot imply operational state",
+      "evidence": "Exception/nonconformance table E01?E07/N01?N07 and component text/shape mappings prevent decoration being silently approved as operational state; original21/23?28 remain separate."
+    }
+  ],
+  "theme_tokens": [
+    {
+      "token": "--safe-area-top",
+      "value": "env(safe-area-inset-top, 0px)",
+      "theme_scope": "light-root",
+      "line": 6
+    },
+    {
+      "token": "--safe-area-right",
+      "value": "env(safe-area-inset-right, 0px)",
+      "theme_scope": "light-root",
+      "line": 7
+    },
+    {
+      "token": "--safe-area-bottom",
+      "value": "env(safe-area-inset-bottom, 0px)",
+      "theme_scope": "light-root",
+      "line": 8
+    },
+    {
+      "token": "--safe-area-left",
+      "value": "env(safe-area-inset-left, 0px)",
+      "theme_scope": "light-root",
+      "line": 9
+    },
+    {
+      "token": "--color-primary",
+      "value": "#493a8f",
+      "theme_scope": "light-root",
+      "line": 11
+    },
+    {
+      "token": "--color-primary-dark",
+      "value": "#382b72",
+      "theme_scope": "light-root",
+      "line": 12
+    },
+    {
+      "token": "--color-primary-light",
+      "value": "#ece8f8",
+      "theme_scope": "light-root",
+      "line": 13
+    },
+    {
+      "token": "--color-accent",
+      "value": "var(--color-primary)",
+      "theme_scope": "light-root",
+      "line": 14
+    },
+    {
+      "token": "--color-accent-hover",
+      "value": "var(--color-primary-dark)",
+      "theme_scope": "light-root",
+      "line": 15
+    },
+    {
+      "token": "--color-accent-contrast",
+      "value": "#ffffff",
+      "theme_scope": "light-root",
+      "line": 16
+    },
+    {
+      "token": "--color-focus",
+      "value": "#5942ac",
+      "theme_scope": "light-root",
+      "line": 17
+    },
+    {
+      "token": "--color-link",
+      "value": "#423286",
+      "theme_scope": "light-root",
+      "line": 18
+    },
+    {
+      "token": "--color-bg",
+      "value": "#f6f5f9",
+      "theme_scope": "light-root",
+      "line": 19
+    },
+    {
+      "token": "--color-bg-top",
+      "value": "#fcfbfe",
+      "theme_scope": "light-root",
+      "line": 20
+    },
+    {
+      "token": "--color-surface",
+      "value": "#ffffff",
+      "theme_scope": "light-root",
+      "line": 21
+    },
+    {
+      "token": "--color-surface-raised",
+      "value": "#ffffff",
+      "theme_scope": "light-root",
+      "line": 22
+    },
+    {
+      "token": "--color-surface-muted",
+      "value": "#f3f1f8",
+      "theme_scope": "light-root",
+      "line": 23
+    },
+    {
+      "token": "--color-sidebar",
+      "value": "#171d38",
+      "theme_scope": "light-root",
+      "line": 24
+    },
+    {
+      "token": "--color-sidebar-depth",
+      "value": "#22213e",
+      "theme_scope": "light-root",
+      "line": 25
+    },
+    {
+      "token": "--color-sidebar-hover",
+      "value": "#303657",
+      "theme_scope": "light-root",
+      "line": 26
+    },
+    {
+      "token": "--color-text",
+      "value": "#20243b",
+      "theme_scope": "light-root",
+      "line": 27
+    },
+    {
+      "token": "--color-text-secondary",
+      "value": "#4f536a",
+      "theme_scope": "light-root",
+      "line": 28
+    },
+    {
+      "token": "--color-text-muted",
+      "value": "#656980",
+      "theme_scope": "light-root",
+      "line": 29
+    },
+    {
+      "token": "--color-text-inverse",
+      "value": "#ffffff",
+      "theme_scope": "light-root",
+      "line": 30
+    },
+    {
+      "token": "--color-text-inverse-muted",
+      "value": "#c3c8dc",
+      "theme_scope": "light-root",
+      "line": 31
+    },
+    {
+      "token": "--color-number",
+      "value": "#272344",
+      "theme_scope": "light-root",
+      "line": 32
+    },
+    {
+      "token": "--color-border",
+      "value": "#d6d3e2",
+      "theme_scope": "light-root",
+      "line": 33
+    },
+    {
+      "token": "--color-border-light",
+      "value": "#e7e4ee",
+      "theme_scope": "light-root",
+      "line": 34
+    },
+    {
+      "token": "--color-input-border",
+      "value": "#9491a8",
+      "theme_scope": "light-root",
+      "line": 35
+    },
+    {
+      "token": "--color-th-bg",
+      "value": "#f3f1f8",
+      "theme_scope": "light-root",
+      "line": 36
+    },
+    {
+      "token": "--color-table-hover",
+      "value": "#f0edf8",
+      "theme_scope": "light-root",
+      "line": 37
+    },
+    {
+      "token": "--color-table-zebra",
+      "value": "#faf9fc",
+      "theme_scope": "light-root",
+      "line": 38
+    },
+    {
+      "token": "--color-table-zebra-hover",
+      "value": "#f0edf8",
+      "theme_scope": "light-root",
+      "line": 39
+    },
+    {
+      "token": "--color-disabled-bg",
+      "value": "#eeecf3",
+      "theme_scope": "light-root",
+      "line": 40
+    },
+    {
+      "token": "--color-disabled-text",
+      "value": "#626477",
+      "theme_scope": "light-root",
+      "line": 41
+    },
+    {
+      "token": "--color-disabled-border",
+      "value": "#d6d3e2",
+      "theme_scope": "light-root",
+      "line": 42
+    },
+    {
+      "token": "--color-success",
+      "value": "#167047",
+      "theme_scope": "light-root",
+      "line": 43
+    },
+    {
+      "token": "--color-success-bg",
+      "value": "#e6f5ed",
+      "theme_scope": "light-root",
+      "line": 44
+    },
+    {
+      "token": "--color-success-text",
+      "value": "#145d3e",
+      "theme_scope": "light-root",
+      "line": 45
+    },
+    {
+      "token": "--color-success-border",
+      "value": "#87bc9f",
+      "theme_scope": "light-root",
+      "line": 46
+    },
+    {
+      "token": "--color-warning",
+      "value": "#956315",
+      "theme_scope": "light-root",
+      "line": 47
+    },
+    {
+      "token": "--color-warning-bg",
+      "value": "#fff5dc",
+      "theme_scope": "light-root",
+      "line": 48
+    },
+    {
+      "token": "--color-warning-text",
+      "value": "#76500d",
+      "theme_scope": "light-root",
+      "line": 49
+    },
+    {
+      "token": "--color-warning-border",
+      "value": "#d0aa5b",
+      "theme_scope": "light-root",
+      "line": 50
+    },
+    {
+      "token": "--color-error",
+      "value": "#b52b43",
+      "theme_scope": "light-root",
+      "line": 51
+    },
+    {
+      "token": "--color-error-bg",
+      "value": "#fcebf0",
+      "theme_scope": "light-root",
+      "line": 52
+    },
+    {
+      "token": "--color-error-text",
+      "value": "#a1223a",
+      "theme_scope": "light-root",
+      "line": 53
+    },
+    {
+      "token": "--color-danger-border",
+      "value": "#d693a0",
+      "theme_scope": "light-root",
+      "line": 54
+    },
+    {
+      "token": "--color-info",
+      "value": "#2853a4",
+      "theme_scope": "light-root",
+      "line": 55
+    },
+    {
+      "token": "--color-info-bg",
+      "value": "#edf2ff",
+      "theme_scope": "light-root",
+      "line": 56
+    },
+    {
+      "token": "--color-info-text",
+      "value": "#244b93",
+      "theme_scope": "light-root",
+      "line": 57
+    },
+    {
+      "token": "--color-info-border",
+      "value": "#9bb2de",
+      "theme_scope": "light-root",
+      "line": 58
+    },
+    {
+      "token": "--color-skeleton",
+      "value": "#e7e3ef",
+      "theme_scope": "light-root",
+      "line": 59
+    },
+    {
+      "token": "--color-skeleton-shine",
+      "value": "#f5f2fa",
+      "theme_scope": "light-root",
+      "line": 60
+    },
+    {
+      "token": "--color-modal-body-bg",
+      "value": "#f8f6fc",
+      "theme_scope": "light-root",
+      "line": 61
+    },
+    {
+      "token": "--color-modal-body-border",
+      "value": "#d6d3e2",
+      "theme_scope": "light-root",
+      "line": 62
+    },
+    {
+      "token": "--color-manual-review-bg",
+      "value": "#fffbf0",
+      "theme_scope": "light-root",
+      "line": 63
+    },
+    {
+      "token": "--color-manual-review-border",
+      "value": "#d0aa5b",
+      "theme_scope": "light-root",
+      "line": 64
+    },
+    {
+      "token": "--color-manual-review-badge-bg",
+      "value": "#fff0c7",
+      "theme_scope": "light-root",
+      "line": 65
+    },
+    {
+      "token": "--color-manual-review-badge-text",
+      "value": "#76500d",
+      "theme_scope": "light-root",
+      "line": 66
+    },
+    {
+      "token": "--color-roster-command-bg",
+      "value": "#f2faf5",
+      "theme_scope": "light-root",
+      "line": 67
+    },
+    {
+      "token": "--color-roster-command-border",
+      "value": "#87bc9f",
+      "theme_scope": "light-root",
+      "line": 68
+    },
+    {
+      "token": "--color-audit-chip-bg",
+      "value": "#edf6f0",
+      "theme_scope": "light-root",
+      "line": 69
+    },
+    {
+      "token": "--color-audit-chip-border",
+      "value": "#a5c9b4",
+      "theme_scope": "light-root",
+      "line": 70
+    },
+    {
+      "token": "--royal-champagne",
+      "value": "#b99046",
+      "theme_scope": "light-root",
+      "line": 71
+    },
+    {
+      "token": "--royal-burgundy",
+      "value": "#8c2846",
+      "theme_scope": "light-root",
+      "line": 72
+    },
+    {
+      "token": "--dialog-header-bg",
+      "value": "#171d38",
+      "theme_scope": "light-root",
+      "line": 73
+    },
+    {
+      "token": "--text-xs",
+      "value": "12px",
+      "theme_scope": "light-root",
+      "line": 74
+    },
+    {
+      "token": "--text-sm",
+      "value": "14px",
+      "theme_scope": "light-root",
+      "line": 75
+    },
+    {
+      "token": "--text-base",
+      "value": "16px",
+      "theme_scope": "light-root",
+      "line": 76
+    },
+    {
+      "token": "--text-md",
+      "value": "16px",
+      "theme_scope": "light-root",
+      "line": 77
+    },
+    {
+      "token": "--text-lg",
+      "value": "18px",
+      "theme_scope": "light-root",
+      "line": 78
+    },
+    {
+      "token": "--text-xl",
+      "value": "22px",
+      "theme_scope": "light-root",
+      "line": 79
+    },
+    {
+      "token": "--text-2xl",
+      "value": "clamp(24px, 2vw, 30px)",
+      "theme_scope": "light-root",
+      "line": 80
+    },
+    {
+      "token": "--text-3xl",
+      "value": "clamp(28px, 3vw, 36px)",
+      "theme_scope": "light-root",
+      "line": 81
+    },
+    {
+      "token": "--radius-sm",
+      "value": "8px",
+      "theme_scope": "light-root",
+      "line": 82
+    },
+    {
+      "token": "--radius-md",
+      "value": "10px",
+      "theme_scope": "light-root",
+      "line": 83
+    },
+    {
+      "token": "--radius-lg",
+      "value": "16px",
+      "theme_scope": "light-root",
+      "line": 84
+    },
+    {
+      "token": "--radius-xl",
+      "value": "20px",
+      "theme_scope": "light-root",
+      "line": 85
+    },
+    {
+      "token": "--control-height",
+      "value": "44px",
+      "theme_scope": "light-root",
+      "line": 86
+    },
+    {
+      "token": "--shadow-sm",
+      "value": "0 2px 5px rgb(23 29 56 / 0.04)",
+      "theme_scope": "light-root",
+      "line": 87
+    },
+    {
+      "token": "--shadow-md",
+      "value": "0 8px 24px rgb(23 29 56 / 0.07)",
+      "theme_scope": "light-root",
+      "line": 88
+    },
+    {
+      "token": "--shadow-lg",
+      "value": "0 16px 40px rgb(23 29 56 / 0.12)",
+      "theme_scope": "light-root",
+      "line": 89
+    },
+    {
+      "token": "--shadow-xl",
+      "value": "0 24px 72px rgb(13 17 37 / 0.26)",
+      "theme_scope": "light-root",
+      "line": 90
+    },
+    {
+      "token": "--focus-ring",
+      "value": "0 0 0 3px rgb(89 66 172 / 0.24)",
+      "theme_scope": "light-root",
+      "line": 91
+    },
+    {
+      "token": "--color-primary",
+      "value": "#7863c5",
+      "theme_scope": "dark-media-root",
+      "line": 97
+    },
+    {
+      "token": "--color-primary-dark",
+      "value": "#6550b0",
+      "theme_scope": "dark-media-root",
+      "line": 98
+    },
+    {
+      "token": "--color-primary-light",
+      "value": "#332951",
+      "theme_scope": "dark-media-root",
+      "line": 99
+    },
+    {
+      "token": "--color-focus",
+      "value": "#c4b4ff",
+      "theme_scope": "dark-media-root",
+      "line": 100
+    },
+    {
+      "token": "--color-link",
+      "value": "#cec0ff",
+      "theme_scope": "dark-media-root",
+      "line": 101
+    },
+    {
+      "token": "--color-bg",
+      "value": "#111522",
+      "theme_scope": "dark-media-root",
+      "line": 102
+    },
+    {
+      "token": "--color-bg-top",
+      "value": "#171b2b",
+      "theme_scope": "dark-media-root",
+      "line": 103
+    },
+    {
+      "token": "--color-surface",
+      "value": "#1b2033",
+      "theme_scope": "dark-media-root",
+      "line": 104
+    },
+    {
+      "token": "--color-surface-raised",
+      "value": "#262c43",
+      "theme_scope": "dark-media-root",
+      "line": 105
+    },
+    {
+      "token": "--color-surface-muted",
+      "value": "#171c2e",
+      "theme_scope": "dark-media-root",
+      "line": 106
+    },
+    {
+      "token": "--color-sidebar",
+      "value": "#101427",
+      "theme_scope": "dark-media-root",
+      "line": 107
+    },
+    {
+      "token": "--color-sidebar-depth",
+      "value": "#1c1b31",
+      "theme_scope": "dark-media-root",
+      "line": 108
+    },
+    {
+      "token": "--color-sidebar-hover",
+      "value": "#303657",
+      "theme_scope": "dark-media-root",
+      "line": 109
+    },
+    {
+      "token": "--color-text",
+      "value": "#f0edf8",
+      "theme_scope": "dark-media-root",
+      "line": 110
+    },
+    {
+      "token": "--color-text-secondary",
+      "value": "#cdc8dd",
+      "theme_scope": "dark-media-root",
+      "line": 111
+    },
+    {
+      "token": "--color-text-muted",
+      "value": "#aba5be",
+      "theme_scope": "dark-media-root",
+      "line": 112
+    },
+    {
+      "token": "--color-number",
+      "value": "#ede6ff",
+      "theme_scope": "dark-media-root",
+      "line": 113
+    },
+    {
+      "token": "--color-border",
+      "value": "#44445f",
+      "theme_scope": "dark-media-root",
+      "line": 114
+    },
+    {
+      "token": "--color-border-light",
+      "value": "#35364f",
+      "theme_scope": "dark-media-root",
+      "line": 115
+    },
+    {
+      "token": "--color-input-border",
+      "value": "#79758d",
+      "theme_scope": "dark-media-root",
+      "line": 116
+    },
+    {
+      "token": "--color-th-bg",
+      "value": "#24283e",
+      "theme_scope": "dark-media-root",
+      "line": 117
+    },
+    {
+      "token": "--color-table-hover",
+      "value": "#2b2944",
+      "theme_scope": "dark-media-root",
+      "line": 118
+    },
+    {
+      "token": "--color-table-zebra",
+      "value": "#1e2237",
+      "theme_scope": "dark-media-root",
+      "line": 119
+    },
+    {
+      "token": "--color-table-zebra-hover",
+      "value": "#2b2944",
+      "theme_scope": "dark-media-root",
+      "line": 120
+    },
+    {
+      "token": "--color-disabled-bg",
+      "value": "#2a2c42",
+      "theme_scope": "dark-media-root",
+      "line": 121
+    },
+    {
+      "token": "--color-disabled-text",
+      "value": "#b3aec4",
+      "theme_scope": "dark-media-root",
+      "line": 122
+    },
+    {
+      "token": "--color-disabled-border",
+      "value": "#44445f",
+      "theme_scope": "dark-media-root",
+      "line": 123
+    },
+    {
+      "token": "--color-success",
+      "value": "#5bb78b",
+      "theme_scope": "dark-media-root",
+      "line": 124
+    },
+    {
+      "token": "--color-success-bg",
+      "value": "#16392c",
+      "theme_scope": "dark-media-root",
+      "line": 125
+    },
+    {
+      "token": "--color-success-text",
+      "value": "#a5e8c3",
+      "theme_scope": "dark-media-root",
+      "line": 126
+    },
+    {
+      "token": "--color-success-border",
+      "value": "#4c8a6a",
+      "theme_scope": "dark-media-root",
+      "line": 127
+    },
+    {
+      "token": "--color-warning",
+      "value": "#d5b16a",
+      "theme_scope": "dark-media-root",
+      "line": 128
+    },
+    {
+      "token": "--color-warning-bg",
+      "value": "#3c3019",
+      "theme_scope": "dark-media-root",
+      "line": 129
+    },
+    {
+      "token": "--color-warning-text",
+      "value": "#f2d695",
+      "theme_scope": "dark-media-root",
+      "line": 130
+    },
+    {
+      "token": "--color-warning-border",
+      "value": "#a58a50",
+      "theme_scope": "dark-media-root",
+      "line": 131
+    },
+    {
+      "token": "--color-error",
+      "value": "#c74c68",
+      "theme_scope": "dark-media-root",
+      "line": 132
+    },
+    {
+      "token": "--color-error-bg",
+      "value": "#422332",
+      "theme_scope": "dark-media-root",
+      "line": 133
+    },
+    {
+      "token": "--color-error-text",
+      "value": "#ffb8c8",
+      "theme_scope": "dark-media-root",
+      "line": 134
+    },
+    {
+      "token": "--color-danger-border",
+      "value": "#b86c81",
+      "theme_scope": "dark-media-root",
+      "line": 135
+    },
+    {
+      "token": "--color-info",
+      "value": "#86a8f4",
+      "theme_scope": "dark-media-root",
+      "line": 136
+    },
+    {
+      "token": "--color-info-bg",
+      "value": "#202e50",
+      "theme_scope": "dark-media-root",
+      "line": 137
+    },
+    {
+      "token": "--color-info-text",
+      "value": "#bdceff",
+      "theme_scope": "dark-media-root",
+      "line": 138
+    },
+    {
+      "token": "--color-info-border",
+      "value": "#6d8bbe",
+      "theme_scope": "dark-media-root",
+      "line": 139
+    },
+    {
+      "token": "--color-skeleton",
+      "value": "#2c2d45",
+      "theme_scope": "dark-media-root",
+      "line": 140
+    },
+    {
+      "token": "--color-skeleton-shine",
+      "value": "#393951",
+      "theme_scope": "dark-media-root",
+      "line": 141
+    },
+    {
+      "token": "--color-modal-body-bg",
+      "value": "#1b2033",
+      "theme_scope": "dark-media-root",
+      "line": 142
+    },
+    {
+      "token": "--color-modal-body-border",
+      "value": "#44445f",
+      "theme_scope": "dark-media-root",
+      "line": 143
+    },
+    {
+      "token": "--color-manual-review-bg",
+      "value": "#332c1d",
+      "theme_scope": "dark-media-root",
+      "line": 144
+    },
+    {
+      "token": "--color-manual-review-border",
+      "value": "#a58a50",
+      "theme_scope": "dark-media-root",
+      "line": 145
+    },
+    {
+      "token": "--color-manual-review-badge-bg",
+      "value": "#493b20",
+      "theme_scope": "dark-media-root",
+      "line": 146
+    },
+    {
+      "token": "--color-manual-review-badge-text",
+      "value": "#f2d695",
+      "theme_scope": "dark-media-root",
+      "line": 147
+    },
+    {
+      "token": "--color-roster-command-bg",
+      "value": "#19382c",
+      "theme_scope": "dark-media-root",
+      "line": 148
+    },
+    {
+      "token": "--color-roster-command-border",
+      "value": "#4c8a6a",
+      "theme_scope": "dark-media-root",
+      "line": 149
+    },
+    {
+      "token": "--color-audit-chip-bg",
+      "value": "#20382e",
+      "theme_scope": "dark-media-root",
+      "line": 150
+    },
+    {
+      "token": "--color-audit-chip-border",
+      "value": "#4c8a6a",
+      "theme_scope": "dark-media-root",
+      "line": 151
+    },
+    {
+      "token": "--dialog-header-bg",
+      "value": "#101427",
+      "theme_scope": "dark-media-root",
+      "line": 152
+    },
+    {
+      "token": "--color-pre-bg",
+      "value": "#101427",
+      "theme_scope": "dark-media-root",
+      "line": 153
+    },
+    {
+      "token": "--color-pre-text",
+      "value": "#d9d3ec",
+      "theme_scope": "dark-media-root",
+      "line": 154
+    },
+    {
+      "token": "--focus-ring",
+      "value": "0 0 0 3px rgb(196 180 255 / 0.30)",
+      "theme_scope": "dark-media-root",
+      "line": 155
+    }
+  ],
+  "source_anchors": [
+    {
+      "file": "frontend/src/main.ts",
+      "search_literal": "import \"./styles.css\"",
+      "occurrences": [
+        {
+          "line": 51,
+          "text": "import \"./styles.css\";"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/main.ts",
+      "search_literal": "import \"./premium-theme.css\"",
+      "occurrences": [
+        {
+          "line": 52,
+          "text": "import \"./premium-theme.css\";"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/main.ts",
+      "search_literal": "function workflowStateFrom",
+      "occurrences": [
+        {
+          "line": 687,
+          "text": "function workflowStateFrom(publish: RotaPublishMonth): Record<string, WorkflowState> {"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/main.ts",
+      "search_literal": "function workflowStateLabel",
+      "occurrences": [
+        {
+          "line": 706,
+          "text": "function workflowStateLabel(state: WorkflowState): string {"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/main.ts",
+      "search_literal": "function memberStatusBadge",
+      "occurrences": [
+        {
+          "line": 3516,
+          "text": "function memberStatusBadge(member: DepartmentMember): string {"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/main.ts",
+      "search_literal": "function leaveStatusLabel",
+      "occurrences": [
+        {
+          "line": 3770,
+          "text": "function leaveStatusLabel(value: string): string {"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/main.ts",
+      "search_literal": "function leaveStatusBadge",
+      "occurrences": [
+        {
+          "line": 4100,
+          "text": "function leaveStatusBadge(status: string): string {"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/main.ts",
+      "search_literal": "function renderRotaTemplateDistribution",
+      "occurrences": [
+        {
+          "line": 6364,
+          "text": "function renderRotaTemplateDistribution(template: RotaTemplateMonth): string {"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/main.ts",
+      "search_literal": "class=\"row-menu__danger\" data-cancel-leave",
+      "occurrences": [
+        {
+          "line": 4108,
+          "text": "${leave.status === \"cancelled\" ? \"\" : `<button type=\"button\" role=\"menuitem\" class=\"row-menu__danger\" data-cancel-leave=\"${leave.id}\">Cancel leave\u2026</button>`}"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/main.ts",
+      "search_literal": "class=\"row-menu__danger\" data-delete-leave",
+      "occurrences": [
+        {
+          "line": 4109,
+          "text": "${isAdminUser() ? `<button type=\"button\" role=\"menuitem\" class=\"row-menu__danger\" data-delete-leave=\"${leave.id}\">Delete leave\u2026</button>` : \"\"}"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/premium-theme.css",
+      "search_literal": ":root {",
+      "occurrences": [
+        {
+          "line": 5,
+          "text": ":root {"
+        },
+        {
+          "line": 95,
+          "text": ":root {"
+        },
+        {
+          "line": 611,
+          "text": ":root { --color-focus: Highlight; --focus-ring: none; }"
+        },
+        {
+          "line": 645,
+          "text": ":root { color-scheme: light; --color-bg: #ffffff; --color-text: #000000; --color-text-secondary: #222222; }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/premium-theme.css",
+      "search_literal": "@media (prefers-color-scheme: dark)",
+      "occurrences": [
+        {
+          "line": 94,
+          "text": "@media (prefers-color-scheme: dark) {"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/premium-theme.css",
+      "search_literal": ".sidebar {",
+      "occurrences": [
+        {
+          "line": 181,
+          "text": ".sidebar { background: linear-gradient(165deg, var(--color-sidebar), var(--color-sidebar-depth)); padding: max(20px, var(--safe-area-top)) max(20px, var(--safe-area-right)) max(20px, var(--safe-area-bottom)) max(20px, var(--safe-area-left)); }"
+        },
+        {
+          "line": 496,
+          "text": ".sidebar { height: 100vh; height: 100dvh; padding-block: max(16px, var(--safe-area-top)) max(16px, var(--safe-area-bottom)); padding-inline: max(16px, var(--safe-area-left)) max(16px, var(--safe-area-right)); overflow-y: auto; }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/premium-theme.css",
+      "search_literal": ".brand-mark {",
+      "occurrences": [
+        {
+          "line": 182,
+          "text": ".brand-mark { border: 1px solid var(--royal-champagne); box-shadow: none; }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/premium-theme.css",
+      "search_literal": ".brand {",
+      "occurrences": [
+        {
+          "line": 183,
+          "text": ".brand { padding-block-end: 20px; border-bottom: 1px solid rgb(185 144 70 / 0.34); }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/premium-theme.css",
+      "search_literal": ".nav button.active::before",
+      "occurrences": [
+        {
+          "line": 187,
+          "text": ".nav button.active::before { background: #e2c589; }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/premium-theme.css",
+      "search_literal": ".sidebar :focus-visible",
+      "occurrences": [
+        {
+          "line": 190,
+          "text": ".sidebar :focus-visible { outline-color: #e2c589; }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/premium-theme.css",
+      "search_literal": ".primary:active:not(:disabled)",
+      "occurrences": [
+        {
+          "line": 215,
+          "text": ".primary:active:not(:disabled) { background: var(--color-primary-dark); }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/premium-theme.css",
+      "search_literal": ":where(input, select, textarea)[aria-invalid='true']",
+      "occurrences": [
+        {
+          "line": 221,
+          "text": ":where(input, select, textarea)[aria-invalid='true'] {"
+        },
+        {
+          "line": 624,
+          "text": ":where(input, select, textarea)[aria-invalid='true'] { border: 2px solid LinkText; }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/premium-theme.css",
+      "search_literal": ":where(.mw-header, .person-modal-header, .mobile-more-sheet header) {",
+      "occurrences": [
+        {
+          "line": 272,
+          "text": ":where(.mw-header, .person-modal-header, .mobile-more-sheet header) {"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/premium-theme.css",
+      "search_literal": ".mw-rail button[aria-selected='true']",
+      "occurrences": [
+        {
+          "line": 286,
+          "text": ".mw-rail button[aria-selected='true'] {"
+        },
+        {
+          "line": 291,
+          "text": ".member-workspace:not(.compute-workspace) .mw-rail button[aria-selected='true'] {"
+        },
+        {
+          "line": 619,
+          "text": ":where(.nav button.active, .mobile-bottom-nav button.active, .mw-rail button[aria-selected='true']) {"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/premium-theme.css",
+      "search_literal": ".mobile-bottom-nav button.active",
+      "occurrences": [
+        {
+          "line": 506,
+          "text": ".mobile-bottom-nav button.active { background: var(--color-primary-light); color: var(--color-link); }"
+        },
+        {
+          "line": 619,
+          "text": ":where(.nav button.active, .mobile-bottom-nav button.active, .mw-rail button[aria-selected='true']) {"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/premium-theme.css",
+      "search_literal": ".analysis-chart .weekend-bar,",
+      "occurrences": [
+        {
+          "line": 717,
+          "text": ".analysis-chart .weekend-bar, .analysis-chart-swatch.is-weekend { background-color: var(--color-primary); background-image: repeating-linear-gradient(135deg, transparent 0 4px, rgb(255 255 255 / 55%) 4px 6px); }"
+        },
+        {
+          "line": 732,
+          "text": ".analysis-chart .weekend-bar, .analysis-chart-swatch.is-weekend { forced-color-adjust: none; background-color: Canvas; background-image: repeating-linear-gradient(135deg, Canvas 0 4px, CanvasText 4px 6px); }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/premium-theme.css",
+      "search_literal": ".analysis-chart .weekday-bar,",
+      "occurrences": [
+        {
+          "line": 718,
+          "text": ".analysis-chart .weekday-bar, .analysis-chart-swatch.is-weekday { background-color: var(--color-text-secondary); }"
+        },
+        {
+          "line": 733,
+          "text": ".analysis-chart .weekday-bar, .analysis-chart-swatch.is-weekday { background: CanvasText; }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/premium-theme.css",
+      "search_literal": "@media (forced-colors: active)",
+      "occurrences": [
+        {
+          "line": 610,
+          "text": "@media (forced-colors: active) {"
+        },
+        {
+          "line": 730,
+          "text": "@media (forced-colors: active) {"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/premium-theme.css",
+      "search_literal": ".workflow-freshness {",
+      "occurrences": [
+        {
+          "line": 1073,
+          "text": ".workflow-freshness { margin: var(--space-2) 0; color: var(--color-text-secondary); font-size: var(--text-sm); overflow-wrap: anywhere; }"
+        },
+        {
+          "line": 1074,
+          "text": ".nav-workflow > .workflow-freshness { padding: 0 var(--space-2); color: var(--color-text-inverse-muted); }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/premium-theme.css",
+      "search_literal": ".nav-workflow > .workflow-freshness",
+      "occurrences": [
+        {
+          "line": 1074,
+          "text": ".nav-workflow > .workflow-freshness { padding: 0 var(--space-2); color: var(--color-text-inverse-muted); }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".primary {",
+      "occurrences": [
+        {
+          "line": 3068,
+          "text": ".primary {"
+        },
+        {
+          "line": 4856,
+          "text": ".member-workspace .primary { background: #174c7f; color: white; }"
+        },
+        {
+          "line": 5142,
+          "text": ".primary {"
+        },
+        {
+          "line": 5483,
+          "text": ".member-workspace .primary {"
+        },
+        {
+          "line": 5976,
+          "text": ".member-actions .primary { flex: 1 1 auto; }"
+        },
+        {
+          "line": 6056,
+          "text": ".page-toolbar__actions .primary { flex: 1 1 auto; }"
+        },
+        {
+          "line": 6737,
+          "text": ".leave-approval-workspace .mw-footer .primary { flex: 1; }"
+        },
+        {
+          "line": 6840,
+          "text": ".extra-duty-footer .primary { flex: 1 1 100%; }"
+        },
+        {
+          "line": 7169,
+          "text": ".limits-savebar__actions .primary { min-width: 150px; }"
+        },
+        {
+          "line": 7272,
+          "text": ".limits-savebar__actions .primary { min-width: 0; }"
+        },
+        {
+          "line": 7432,
+          "text": ".balance-footer .primary { flex: 1 1 100%; }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".primary:hover:not(:disabled)",
+      "occurrences": [
+        {
+          "line": 5149,
+          "text": ".primary:hover:not(:disabled):not([aria-disabled=\"true\"]),"
+        },
+        {
+          "line": 5489,
+          "text": ".member-workspace .primary:hover:not(:disabled) { background: var(--color-accent-hover); }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".danger-button {",
+      "occurrences": [
+        {
+          "line": 3102,
+          "text": ".danger-button {"
+        },
+        {
+          "line": 5161,
+          "text": ".danger-button {"
+        },
+        {
+          "line": 5490,
+          "text": ".member-workspace .danger-button { border-color: var(--color-danger-border); background: var(--color-surface); color: var(--color-error-text); }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".danger-button:hover:not(:disabled)",
+      "occurrences": [
+        {
+          "line": 5171,
+          "text": ".danger-button:hover:not(:disabled),"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".primary:disabled,",
+      "occurrences": [
+        {
+          "line": 3083,
+          "text": ".primary:disabled,"
+        },
+        {
+          "line": 5194,
+          "text": ".primary:disabled,"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".ds-badge,",
+      "occurrences": [
+        {
+          "line": 5329,
+          "text": ".ds-badge,"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".ds-badge--success,",
+      "occurrences": [
+        {
+          "line": 5346,
+          "text": ".ds-badge--success, .status.ok { border-color: var(--color-success-border); background: var(--color-success-bg); color: var(--color-success-text); }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".ds-badge--warning,",
+      "occurrences": [
+        {
+          "line": 5347,
+          "text": ".ds-badge--warning, .status.warning { border-color: var(--color-warning-border); background: var(--color-warning-bg); color: var(--color-warning-text); }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".ds-badge--danger,",
+      "occurrences": [
+        {
+          "line": 5348,
+          "text": ".ds-badge--danger, .status.error { border-color: var(--color-danger-border); background: var(--color-error-bg); color: var(--color-error-text); }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".ds-badge--info {",
+      "occurrences": [
+        {
+          "line": 5349,
+          "text": ".ds-badge--info { border-color: var(--color-info-border); background: var(--color-info-bg); color: var(--color-info-text); }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".analysis-tab-btn.active {",
+      "occurrences": [
+        {
+          "line": 4339,
+          "text": ".analysis-tab-btn.active {"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".member-workspace .danger-button {",
+      "occurrences": [
+        {
+          "line": 5490,
+          "text": ".member-workspace .danger-button { border-color: var(--color-danger-border); background: var(--color-surface); color: var(--color-error-text); }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".member-workspace :focus-visible {",
+      "occurrences": [
+        {
+          "line": 4857,
+          "text": ".member-workspace :focus-visible { outline: 3px solid #da8a13; outline-offset: 2px; }"
+        },
+        {
+          "line": 5491,
+          "text": ".member-workspace :focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".nav-step[data-state=\"done\"]",
+      "occurrences": [
+        {
+          "line": 5598,
+          "text": ".nav-step[data-state=\"done\"] .nav-step__num { border-color: #4ade80; background: #166534; color: #ffffff; }"
+        },
+        {
+          "line": 5599,
+          "text": ".nav-step[data-state=\"done\"] .nav-step__state { background: #4ade80; }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".nav-step[data-state=\"blocked\"]",
+      "occurrences": [
+        {
+          "line": 5600,
+          "text": ".nav-step[data-state=\"blocked\"] .nav-step__num { border-color: #fbbf24; color: #fde68a; }"
+        },
+        {
+          "line": 5601,
+          "text": ".nav-step[data-state=\"blocked\"] .nav-step__state { background: #fbbf24; box-shadow: 0 0 0 3px rgb(251 191 36 / 0.2); }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".nav-step[data-state=\"pending\"]",
+      "occurrences": [
+        {
+          "line": 5602,
+          "text": ".nav-step[data-state=\"pending\"] .nav-step__state { border: 1px solid rgb(255 255 255 / 0.35); }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".row-menu__list .row-menu__danger",
+      "occurrences": [
+        {
+          "line": 5816,
+          "text": ".row-menu__list .row-menu__danger { color: var(--color-error-text); }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".leave-calendar .leave-pressure-normal",
+      "occurrences": [
+        {
+          "line": 6144,
+          "text": ".leave-calendar .leave-pressure-normal { border-color: var(--color-info-border); }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".leave-calendar .leave-pressure-watch",
+      "occurrences": [
+        {
+          "line": 6145,
+          "text": ".leave-calendar .leave-pressure-watch { border-color: var(--color-warning-border); background: var(--color-warning-bg); }"
+        },
+        {
+          "line": 6146,
+          "text": ".leave-calendar .leave-pressure-watch .leave-day-card__count { background: var(--color-warning); color: #1f1300; }"
+        },
+        {
+          "line": 6168,
+          "text": ".leave-calendar .leave-pressure-watch .leave-day-card__date, .leave-calendar .leave-pressure-high .leave-day-card__date, .leave-calendar .leave-pressure-watch small, .leave-calendar .leave-pressure-high small { color: var(--color-text); }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".leave-calendar .leave-pressure-high",
+      "occurrences": [
+        {
+          "line": 6147,
+          "text": ".leave-calendar .leave-pressure-high { border-color: var(--color-danger-border); background: var(--color-error-bg); }"
+        },
+        {
+          "line": 6148,
+          "text": ".leave-calendar .leave-pressure-high .leave-day-card__count { background: var(--color-error); color: #ffffff; }"
+        },
+        {
+          "line": 6168,
+          "text": ".leave-calendar .leave-pressure-watch .leave-day-card__date, .leave-calendar .leave-pressure-high .leave-day-card__date, .leave-calendar .leave-pressure-watch small, .leave-calendar .leave-pressure-high small { color: var(--color-text); }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".rota-distribution-track i {",
+      "occurrences": [
+        {
+          "line": 2280,
+          "text": ".rota-distribution-track i {"
+        },
+        {
+          "line": 6196,
+          "text": ".rota-distribution-track i { background: var(--color-focus); }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".overview-step[data-state=\"done\"]",
+      "occurrences": [
+        {
+          "line": 6237,
+          "text": ".overview-step[data-state=\"done\"] .overview-step__num { background: var(--color-success-bg); color: var(--color-success-text); }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".overview-step[data-state=\"blocked\"]",
+      "occurrences": [
+        {
+          "line": 6238,
+          "text": ".overview-step[data-state=\"blocked\"] button { border-color: var(--color-warning-border); }"
+        },
+        {
+          "line": 6239,
+          "text": ".overview-step[data-state=\"blocked\"] .overview-step__num { background: var(--color-warning-bg); color: var(--color-warning-text); }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".ds-steps__item[data-state=\"done\"] .ds-steps__dot",
+      "occurrences": [
+        {
+          "line": 6270,
+          "text": ".ds-steps__item[data-state=\"done\"] .ds-steps__dot { border-color: var(--color-success); background: var(--color-success); color: #ffffff; }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": "button.rr-tile[aria-pressed=",
+      "occurrences": [
+        {
+          "line": 6468,
+          "text": "button.rr-tile[aria-pressed=\"true\"] { border-color: var(--color-info-text); box-shadow: inset 0 0 0 1px var(--color-info-text); }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".rr-tile.is-alert",
+      "occurrences": [
+        {
+          "line": 6472,
+          "text": ".rr-tile.is-alert { border-color: var(--color-danger-border); box-shadow: inset 4px 0 0 var(--color-error); }"
+        },
+        {
+          "line": 6473,
+          "text": ".rr-tile.is-alert .rr-tile__value { color: var(--color-error-text); }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".rr-tile.is-warn",
+      "occurrences": [
+        {
+          "line": 6474,
+          "text": ".rr-tile.is-warn { border-color: var(--color-warning-border); box-shadow: inset 4px 0 0 var(--color-warning); }"
+        },
+        {
+          "line": 6475,
+          "text": ".rr-tile.is-warn .rr-tile__value { color: var(--color-warning-text); }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".rr-tile.is-good",
+      "occurrences": [
+        {
+          "line": 6476,
+          "text": ".rr-tile.is-good { box-shadow: inset 4px 0 0 var(--color-success); }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".extra-duty-badge--fallback",
+      "occurrences": [
+        {
+          "line": 6772,
+          "text": ".extra-duty-badge--fallback { border-color: var(--color-warning-border); background: var(--color-warning-bg); color: var(--color-warning-text); }"
+        },
+        {
+          "line": 6777,
+          "text": ".extra-duty-badge--fallback { white-space: normal; }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".extra-duty-badge--active",
+      "occurrences": [
+        {
+          "line": 6773,
+          "text": ".extra-duty-badge--active { border-color: var(--color-success-border); background: var(--color-success-bg); color: var(--color-success-text); }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".extra-duty-badge--void",
+      "occurrences": [
+        {
+          "line": 6774,
+          "text": ".extra-duty-badge--void { border-color: var(--color-border); background: var(--color-surface-muted); color: var(--color-text-secondary); }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".superadmin-danger-button,",
+      "occurrences": [
+        {
+          "line": 6995,
+          "text": ".superadmin-danger-button, .superadmin-workspace .superadmin-danger-button { min-height: 44px; padding: var(--space-2) var(--space-4); border: 1px solid #7f1d1d; border-radius: var(--radius-md);"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".superadmin-success__icon {",
+      "occurrences": [
+        {
+          "line": 7004,
+          "text": ".superadmin-success__icon { display: grid; place-items: center; width: 44px; height: 44px; border-radius: var(--radius-full); background: var(--color-success); color: #ffffff; font-size: 22px; font-weight: 800; }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".superadmin-published-notice__icon {",
+      "occurrences": [
+        {
+          "line": 7023,
+          "text": ".superadmin-published-notice__icon { display: grid; place-items: center; width: 40px; height: 40px; border-radius: var(--radius-full); background: var(--color-warning); color: #ffffff; font-weight: 800; font-size: 20px; }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".limits-eyebrow {",
+      "occurrences": [
+        {
+          "line": 7045,
+          "text": ".limits-eyebrow { display: inline-flex; align-items: center; gap: 6px; margin: 0 0 var(--space-2); color: var(--royal-champagne); font-size: var(--text-xs); font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; }"
+        },
+        {
+          "line": 7176,
+          "text": ".limits-dialog__header p.limits-eyebrow { margin-bottom: var(--space-1); }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".limits-hero__text p {",
+      "occurrences": [
+        {
+          "line": 7050,
+          "text": ".limits-hero__text p { margin: 0; color: var(--color-text-secondary); line-height: 1.55; }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".limits-badge--hard",
+      "occurrences": [
+        {
+          "line": 7066,
+          "text": ".limits-badge--hard { border-color: var(--color-danger-border); background: var(--color-error-bg); color: var(--color-error-text); }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".limits-badge--soft",
+      "occurrences": [
+        {
+          "line": 7067,
+          "text": ".limits-badge--soft { border-color: var(--color-warning-border); background: var(--color-warning-bg); color: var(--color-warning-text); }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".limits-badge--guide",
+      "occurrences": [
+        {
+          "line": 7068,
+          "text": ".limits-badge--guide { border-color: var(--color-info-border); background: var(--color-info-bg); color: var(--color-info-text); }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".superadmin-person.is-cross-level {",
+      "occurrences": [
+        {
+          "line": 7250,
+          "text": ".superadmin-person.is-cross-level { border-color: var(--color-warning-border); box-shadow: inset 4px 0 0 var(--royal-burgundy); }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".superadmin-person.is-cross-level.is-selected",
+      "occurrences": [
+        {
+          "line": 7251,
+          "text": ".superadmin-person.is-cross-level.is-selected { border-color: var(--royal-burgundy); box-shadow: inset 4px 0 0 var(--royal-burgundy), inset 0 0 0 1px var(--royal-burgundy); background: var(--color-warning-bg); }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".superadmin-person__cross-icon {",
+      "occurrences": [
+        {
+          "line": 7253,
+          "text": ".superadmin-person__cross-icon { display: inline-grid; place-items: center; flex: none; width: 18px; height: 18px; margin-top: 1px; border-radius: var(--radius-full); background: var(--color-error); color: #ffffff; font-size: 12px; font-weight: 900; }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".superadmin-cross__icon {",
+      "occurrences": [
+        {
+          "line": 7257,
+          "text": ".superadmin-cross__icon { display: grid; place-items: center; width: 40px; height: 40px; border-radius: var(--radius-full); background: var(--color-error); color: #ffffff; font-size: 22px; font-weight: 900; }"
+        },
+        {
+          "line": 7277,
+          "text": ".superadmin-cross__icon { width: 32px; height: 32px; font-size: 18px; }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".balance-badge--ok",
+      "occurrences": [
+        {
+          "line": 7370,
+          "text": ".balance-badge--ok { border-color: var(--color-success-border); background: var(--color-success-bg); color: var(--color-success-text); }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".balance-badge--warn",
+      "occurrences": [
+        {
+          "line": 7371,
+          "text": ".balance-badge--warn, .balance-badge--cross { border-color: var(--color-warning-border); background: var(--color-warning-bg); color: var(--color-warning-text); }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".balance-badge--swap",
+      "occurrences": [
+        {
+          "line": 7373,
+          "text": ".balance-badge--swap { border-color: var(--color-info-border); background: var(--color-info-bg); color: var(--color-info-text); }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".balance-badge--extra",
+      "occurrences": [
+        {
+          "line": 7457,
+          "text": ".balance-badge--extra { border-color: var(--color-primary); background: var(--color-surface); color: var(--color-text); font-weight: 700; }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".manual-review-panel {",
+      "occurrences": [
+        {
+          "line": 1034,
+          "text": ".manual-review-panel {"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".roster-command {",
+      "occurrences": [
+        {
+          "line": 1729,
+          "text": ".roster-command {"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".audit-chip-row > span {",
+      "occurrences": [
+        {
+          "line": 1772,
+          "text": ".audit-chip-row > span {"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".modal-backdrop {",
+      "occurrences": [
+        {
+          "line": 3443,
+          "text": ".modal-backdrop {"
+        },
+        {
+          "line": 4275,
+          "text": ".modal-backdrop {"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".sidebar-overlay {",
+      "occurrences": [
+        {
+          "line": 372,
+          "text": ".sidebar-overlay {"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "search_literal": ".mobile-more-backdrop {",
+      "occurrences": [
+        {
+          "line": 394,
+          "text": ".mobile-more-backdrop {"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/ui.ts",
+      "search_literal": "export function badge",
+      "occurrences": [
+        {
+          "line": 102,
+          "text": "export function badge(text: string, tone: Tone = \"neutral\"): string {"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/ui.ts",
+      "search_literal": "export function steps",
+      "occurrences": [
+        {
+          "line": 141,
+          "text": "export function steps(labels: string[], current: number): string {"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/ui.ts",
+      "search_literal": "<span class=\"ds-steps__dot\"",
+      "occurrences": [
+        {
+          "line": 146,
+          "text": "<span class=\"ds-steps__dot\" aria-hidden=\"true\">${state === \"done\" ? \"\u2713\" : index + 1}</span>"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/ui.ts",
+      "search_literal": "export function memberMatch",
+      "occurrences": [
+        {
+          "line": 241,
+          "text": "export function memberMatch(rowKey: string, view: MemberMatchView): string {"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/ui.ts",
+      "search_literal": "const tone: Tone = matched",
+      "occurrences": [
+        {
+          "line": 243,
+          "text": "const tone: Tone = matched ? \"success\" : view.status === \"not_found\" ? \"neutral\" : view.status === \"conflict\" ? \"danger\" : \"warning\";"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/analysis-charts.ts",
+      "search_literal": "export function renderAnalysisBars",
+      "occurrences": [
+        {
+          "line": 11,
+          "text": "export function renderAnalysisBars(entries: AnalysisBarEntry[], title: string, maxH = 120): string {"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/analysis-charts.ts",
+      "search_literal": "const stacked =",
+      "occurrences": [
+        {
+          "line": 13,
+          "text": "const stacked = entries.some(entry => entry.weekend !== undefined);"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/analysis-charts.ts",
+      "search_literal": "const canPlot =",
+      "occurrences": [
+        {
+          "line": 14,
+          "text": "const canPlot = (entry: AnalysisBarEntry) => Number.isFinite(entry.total) && entry.total >= 0"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/analysis-charts.ts",
+      "search_literal": "const bars =",
+      "occurrences": [
+        {
+          "line": 22,
+          "text": "const bars = !canPlot(entry) ? '<span class=\"chart-unavailable\">\u2014</span>'"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/analysis-charts.ts",
+      "search_literal": "const rows =",
+      "occurrences": [
+        {
+          "line": 28,
+          "text": "const rows = entries.map(entry => `<tr><th scope=\"row\">${escapeHtml(entry.title ?? entry.label)}</th><td>${value(entry.total)}</td>${stacked ? `<td>${value(entry.weekend)}</td><td>${value(Number.isFinite(entry.total) && Number.isFinite(entry.weekend) ? entry.total - entry.weekend! : undefined)}</td>` : \"\"}</tr>`).join(\"\");"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/analysis-charts.ts",
+      "search_literal": "chart-legend",
+      "occurrences": [
+        {
+          "line": 31,
+          "text": "${stacked ? '<p class=\"chart-legend\"><span><i class=\"analysis-chart-swatch is-weekend\" aria-hidden=\"true\"></i>Weekend \u00b7 striped</span><span><i class=\"analysis-chart-swatch is-weekday\" aria-hidden=\"true\"></i>Weekday \u00b7 solid</span></p>' : \"\"}"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/analysis-charts.ts",
+      "search_literal": "<details class=\"chart-data\"",
+      "occurrences": [
+        {
+          "line": 34,
+          "text": "<details class=\"chart-data\"><summary>View chart data<span class=\"visually-hidden\">: ${escapeHtml(title)}</span></summary>"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/superadmin.ts",
+      "search_literal": "superadmin-published-notice__icon",
+      "occurrences": [
+        {
+          "line": 135,
+          "text": "<span class=\"superadmin-published-notice__icon\" aria-hidden=\"true\">!</span>"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/superadmin.ts",
+      "search_literal": "superadmin-person__cross-icon",
+      "occurrences": [
+        {
+          "line": 313,
+          "text": "${cross ? `<p class=\"superadmin-person__cross\" id=\"${id}-cross\"><span class=\"superadmin-person__cross-icon\" aria-hidden=\"true\">!</span><span>${esc(crossText(p))}</span></p>` : \"\"}"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/superadmin.ts",
+      "search_literal": "superadmin-cross__icon",
+      "occurrences": [
+        {
+          "line": 344,
+          "text": "<span class=\"superadmin-cross__icon\" aria-hidden=\"true\">!</span>"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/superadmin.ts",
+      "search_literal": "superadmin-success__icon",
+      "occurrences": [
+        {
+          "line": 393,
+          "text": "<span class=\"superadmin-success__icon\" aria-hidden=\"true\">\u2713</span>"
+        },
+        {
+          "line": 634,
+          "text": "<span class=\"superadmin-success__icon\" aria-hidden=\"true\">\u2713</span>"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/limits.ts",
+      "search_literal": "class=\"limits-eyebrow\"",
+      "occurrences": [
+        {
+          "line": 470,
+          "text": "<p class=\"limits-eyebrow\">${STAR} Superadmin only</p>"
+        },
+        {
+          "line": 774,
+          "text": "<p class=\"limits-eyebrow\">${STAR} Superadmin only</p>"
+        },
+        {
+          "line": 966,
+          "text": "<p class=\"limits-eyebrow\">${STAR} Limits</p>"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/component-reference.ts",
+      "search_literal": "import './styles.css'",
+      "occurrences": [
+        {
+          "line": 2,
+          "text": "import './styles.css';"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/component-reference.ts",
+      "search_literal": "import './premium-theme.css'",
+      "occurrences": [
+        {
+          "line": 3,
+          "text": "import './premium-theme.css';"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/component-reference.ts",
+      "search_literal": "import './component-reference.css'",
+      "occurrences": [
+        {
+          "line": 4,
+          "text": "import './component-reference.css';"
+        }
+      ]
+    }
+  ],
+  "review_gates": [
+    "Independent source-map accuracy/completeness review of the five purposes and all declared exceptions",
+    "Root checks exact item22 definition conditions, current applicability and documentary source hashes",
+    "No implied runtime completion21/23?28; no acceptance-ledger mutation by author"
+  ],
+  "limitations": [
+    "Source definition audit, no computed browser styles or runtime contrast measures",
+    "Arithmetic contrast candidates are explicitly unexecuted; decorative versus essential non-text classification remains pending",
+    "Legacy consolidation and violet-selection consistency are documented incomplete",
+    "No native/physical assistive or device verification claimed"
+  ],
+  "preserved_scope": [
+    "No backend edits",
+    "No API contract or permission edits",
+    "No scheduling/persisted data semantics or export edits",
+    "No application/CSS edits",
+    "No shared acceptance status changes"
+  ]
+}

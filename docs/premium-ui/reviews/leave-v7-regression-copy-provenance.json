@@ -1,0 +1,111 @@
+{
+  "recorded_at_utc": "2026-10-28T23:00:39.352325+00:00",
+  "status": "copies_prepared_not_executed",
+  "author": "/root/leave_status_runtime_plan",
+  "approved_scope": "Re-run preserved leave coverage against frozenv7 without changing app or originals.",
+  "copies": [
+    {
+      "parent": "frontend/tests/premium-leave-calendar-boundaries.browser.mjs",
+      "parent_sha256": "1f8e7dcbbaf8c771634f6cf44cfa2d7e86edb39de05b35c8d843de048b99d6c6",
+      "copy": "frontend/tests/premium-leave-calendar-boundaries-v7-preview.browser.mjs",
+      "copy_sha256": "f5c1d9a62a30a2c5f7971810a592850e42ddcd9c93591ac2b1b7bed47729b356",
+      "output_prefix": "qa-leave-calendar-boundaries-v7-preview",
+      "assertion_edits": [
+        {
+          "before": ": nobody on leave`",
+          "after": ": No leave records`",
+          "rationale": "Empty native date accessible name follows intentional truthful record wording; date fields and chronological order unchanged."
+        }
+      ],
+      "non_assertion_changes": [
+        "Unique local5205configurablebase/selfreport/screenshotprefix",
+        "Explicitapplication/candidate3file/testbeforeafterhashguards and nested v7evidence",
+        "Explicitfixtureclassification; original APIroutes/actions/counts/roles/payload/axes/geometry unchanged."
+      ],
+      "classification": "Existing empty28/29/30/31monthfixtures; GET-only. Native semantics/actions/counts unchanged."
+    },
+    {
+      "parent": "frontend/tests/premium-leave-list.browser.mjs",
+      "parent_sha256": "07e2c451da59818ce78e57fd3f56fc660e2f30c635c4b8efa53d3b245a7a4e84",
+      "copy": "frontend/tests/premium-leave-list-v7-preview.browser.mjs",
+      "copy_sha256": "cebf38fdb05a2a6e3cb07f7e392ff2206d41b0c871dce307af2bfb809f12a570",
+      "output_prefix": "qa-leave-list-v7-preview",
+      "assertion_edits": [
+        {
+          "before": "/Nobody on leave/",
+          "after": "/No leave records/",
+          "rationale": "Existing empty day remains empty/reachable; intentional empty copy changes only."
+        },
+        {
+          "before": "/5 on leave/",
+          "after": "/5 leave records/",
+          "rationale": "Existing returned entry count5 unchanged; label no longer implies all entries are confirmed absence."
+        }
+      ],
+      "non_assertion_changes": [
+        "Unique local5205configurablebase/selfreport/screenshotprefix",
+        "Explicitapplication/candidate3file/testbeforeafterhashguards and nested v7evidence",
+        "Explicitfixtureclassification; original APIroutes/actions/counts/roles/payload/axes/geometry unchanged."
+      ],
+      "classification": "DEFENSIVE inherited calendar fixture includes cancelled/rejected despite realserviceexcludingthosefromactivecalendar. Rendering robustness only; faithfulbackendcalendar semantics are separately tested."
+    },
+    {
+      "parent": "frontend/tests/premium-leave-pressure.browser.mjs",
+      "parent_sha256": "930c4781459244b6a9005eff64557dec9353e88e0453f478241b9a20440ba3d5",
+      "copy": "frontend/tests/premium-leave-pressure-v7-preview.browser.mjs",
+      "copy_sha256": "35c6145ed42a12293deff727bd0b08d8a68b8b690a19da3dfef658138e277048",
+      "output_prefix": "qa-leave-pressure-v7-preview",
+      "assertion_edits": [],
+      "non_assertion_changes": [
+        "Unique local5205configurablebase/selfreport/screenshotprefix",
+        "Explicitapplication/candidate3file/testbeforeafterhashguards and nested v7evidence",
+        "Explicitfixtureclassification; original APIroutes/actions/counts/roles/payload/axes/geometry unchanged."
+      ],
+      "classification": "Existing display fixture retains independently supplied pressurecounts/ranks/groups; no backendaggregateconsistency certification. All original assertions unchanged."
+    },
+    {
+      "parent": "frontend/tests/premium-monthly-leave-review.browser.mjs",
+      "parent_sha256": "a74030383a9104084b59c6e7a27f5158ddce903af9a9deaf6562eb09c911e093",
+      "copy": "frontend/tests/premium-monthly-leave-review-v7-preview.browser.mjs",
+      "copy_sha256": "47ea2066b966b354011144a2d6671ccf6cf7aa0ffaba959c7ebade882d9d28fc",
+      "output_prefix": "qa-monthly-leave-review-v7-preview",
+      "assertion_edits": [],
+      "non_assertion_changes": [
+        "Unique local5205configurablebase/selfreport/screenshotprefix",
+        "Explicitapplication/candidate3file/testbeforeafterhashguards and nested v7evidence",
+        "Explicitfixtureclassification; original APIroutes/actions/counts/roles/payload/axes/geometry unchanged."
+      ],
+      "classification": "Existing18pendingrows/2duties; allpreview/approvalPOSTslocallyfulfilled. Actual token/payload/acknowledgement/refusal/recovery assertions unchanged; persistence separately tested."
+    },
+    {
+      "parent": "frontend/tests/premium-leave-independent-review.browser.mjs",
+      "parent_sha256": "3db2e277e818061a6729666ad4242d199482fa6b9aba2b1d9b2443715f51dd8e",
+      "copy": "frontend/tests/premium-leave-independent-review-v7-preview.browser.mjs",
+      "copy_sha256": "e332603bc085ad2a5309451dfb02a722441ba0183c644155827c53c5306ad7dc",
+      "output_prefix": "qa-leave-independent-review-v7-preview",
+      "assertion_edits": [
+        {
+          "before": "/5 on leave.*1 approved.*2 awaiting review/",
+          "after": "/5 leave records: 1 Approved.*1 Requested.*1 Imported, Pending Review.*1 Rejected.*1 Cancelled/",
+          "rationale": "Intentional full returned-status summary splits pending classes1+1 rather than old grouped2, and explicitlychecksretainedrejected/cancelledstatuses. Exactentrycount5 remains."
+        },
+        {
+          "before": "/Nobody on leave/",
+          "after": "/No leave records/",
+          "rationale": "Empty day wording only."
+        },
+        {
+          "before": "/5 on leave/",
+          "after": "/5 leave records/",
+          "rationale": "Five returned defensive entries retained; truthful record wording."
+        }
+      ],
+      "non_assertion_changes": [
+        "Unique local5205configurablebase/selfreport/screenshotprefix",
+        "Explicitapplication/candidate3file/testbeforeafterhashguards and nested v7evidence",
+        "Explicitfixtureclassification; original APIroutes/actions/counts/roles/payload/axes/geometry unchanged."
+      ],
+      "classification": "DEFENSIVE inherited leap-day fixture includes cancelled/rejected entries impossibleforrealactivecalendar; retainedsolelyforrenderingrobustness. Faithfulfixtureseparate."
+    }
+  ]
+}

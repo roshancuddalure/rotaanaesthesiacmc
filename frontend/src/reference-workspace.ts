@@ -1,3 +1,4 @@
+import { decorativeIcon } from "./decorative-icons";
 import { request } from "./services/api";
 import { workspaceDialog } from "./member-workspace";
 import { workspaceLoading, workspaceLoadFailure, savedReadbackFailure, lockWorkspaceControls, protectWorkspaceDraft } from "./workspace-load-state";
@@ -34,7 +35,7 @@ export async function openMappingCreator(saved: () => void) {
     e.preventDefault();
     close();
   });
-  dialog.innerHTML = `<header class="mw-header"><h2>Add Mapping</h2><button type="button" data-close aria-label="Close mapping creation">×</button></header><form class="mw-content"><p>Connect an imported label to an existing definition. Examples: U04 → Main Unit IV; CL → Casual leave belongs in Leave references.</p><label>Mapping category<select name="mapping_type"><option value="duty_label">Duty label</option><option value="unit_label">Unit label</option><option value="posting_label">Posting label</option></select></label><label>Imported spelling<input name="source_label" required maxlength="255"></label><label>Find destination<input type="search" data-find></label><label>Approved destination<select name="target_key" required></select></label><label>Notes<textarea name="notes"></textarea></label><p data-error role="alert" class="mw-error"></p><footer class="mw-footer"><button type="button" data-close>Cancel</button><button type="submit" class="primary">Save mapping</button></footer></form>`;
+  dialog.innerHTML = `<header class="mw-header"><h2>Add Mapping</h2><button type="button" data-close aria-label="Close mapping creation">${decorativeIcon("close")}</button></header><form class="mw-content"><p>Connect an imported label to an existing definition. Examples: U04 → Main Unit IV; CL → Casual leave belongs in Leave references.</p><label>Mapping category<select name="mapping_type"><option value="duty_label">Duty label</option><option value="unit_label">Unit label</option><option value="posting_label">Posting label</option></select></label><label>Imported spelling<input name="source_label" required maxlength="255"></label><label>Find destination<input type="search" data-find></label><label>Approved destination<select name="target_key" required></select></label><label>Notes<textarea name="notes"></textarea></label><p data-error role="alert" class="mw-error"></p><footer class="mw-footer"><button type="button" data-close>Cancel</button><button type="submit" class="primary">Save mapping</button></footer></form>`;
   dialog
     .querySelectorAll<HTMLButtonElement>("[data-close]")
     .forEach((b) => (b.onclick = close));
@@ -176,7 +177,7 @@ async function openReferenceHistory(query: string) {
       `/api/v1/normalization/activity?${query}`,
     );
     if (!dialog.open) return;
-    dialog.innerHTML = `<header class="mw-header"><h2>Reference activity</h2><button type="button" data-close aria-label="Close activity">×</button></header><div class="mw-content">${
+    dialog.innerHTML = `<header class="mw-header"><h2>Reference activity</h2><button type="button" data-close aria-label="Close activity">${decorativeIcon("close")}</button></header><div class="mw-content">${
       rows
         .map(
           (row) =>
@@ -202,16 +203,27 @@ async function openReferenceHistory(query: string) {
   await loadActivity();
 }
 
+export type UnitRegistryParentLifecycle = Readonly<{ confirmed: () => void; closed: () => void }>;
+
 export async function openUnitRegistry(
   saved: (unit?: Unit) => void,
   initialId?: string,
   createNew = false,
+  parentLifecycle?: UnitRegistryParentLifecycle,
 ) {
   const opener = document.activeElement as HTMLElement | null;
   const dialog = workspaceDialog(
     "Manage department units",
     "mw-import reference-workspace",
   );
+  let parentClosed = false;
+  const notifyParentClosed = () => {
+    if (parentClosed) return;
+    parentClosed = true;
+    try { parentLifecycle?.closed(); }
+    catch { console.warn("The dependent unit view close notification could not be delivered."); }
+  };
+  dialog.addEventListener("close", notifyParentClosed, {once: true});
   let units: Unit[] = [];
   let selected: Unit | undefined;
   let confirmedUnit: Unit | undefined;
@@ -229,6 +241,7 @@ export async function openUnitRegistry(
     dialog.close();
     dialog.remove();
     opener?.focus();
+    notifyParentClosed();
   };
   dialog.addEventListener("cancel", (e) => {
     e.preventDefault();
@@ -329,7 +342,7 @@ export async function openUnitRegistry(
 
   function render() {
     if (!dialog.open) return;
-    dialog.innerHTML = `<header class="mw-header"><div><h2>Department units</h2><p>Create units, maintain names and aliases, and preserve their history.</p></div><button data-close type="button" aria-label="Close unit management">×</button></header><div class="mw-content"><div class="registry-actions"><label>Find a unit<input type="search" data-search placeholder="Name, code, campus or alias"></label><label>Member count month<input type="month" data-unit-month value="${month}"></label><label>Show units<select data-unit-status><option value="all">All</option><option value="active" ${statusFilter === "active" ? "selected" : ""}>Active</option><option value="archived" ${statusFilter === "archived" ? "selected" : ""}>Archived</option></select></label><button type="button" data-new>Add Unit</button></div><div data-count-status><p role="status" aria-atomic="true" data-count-message></p><button type="button" hidden>Retry member counts</button></div><p role="status" aria-live="polite" aria-atomic="true" data-search-results></p><div class="registry-unit-list">${units.map((u) => `<button type="button" data-select-unit="${u.id}" ${selected?.id === u.id ? 'aria-current="true"' : ""} data-unit-state="${u.active_status}" data-unit-search="${esc([u.name, u.code, u.campus, ...u.aliases].join(" ").toLowerCase())}"><strong>${esc(u.name)}</strong> · ${esc(u.campus || "Campus not specified")} · ${esc(u.code)} · ${esc(u.active_status)} &middot; <span data-unit-count="${esc(u.id)}">${u.usage.selected_members === undefined ? `Member count unavailable for ${countsMonth}` : `${u.usage.selected_members} members in ${countsMonth}`}</span></button>`).join("") || "<p>No units yet. Add your first department unit below.</p>"}</div><hr><h3>${selected ? `Edit ${esc(selected.name)}` : "Add a unit"}</h3>${selected ? `<p>${selected.usage.postings} postings · ${selected.usage.duties} duty slots linked. ${selected.usage.future_postings} current/upcoming postings and ${selected.usage.future_duties} future duty slots.</p><button type="button" data-unit-history>View unit activity</button>` : ""}<form id="registry-unit-form"><label>Unit name<input name="name" required maxlength="255" value="${esc(selected?.name)}" placeholder="For example: Unit IV"></label><label>Campus<input name="campus" maxlength="100" value="${esc(selected?.campus)}" placeholder="For example: Main or Ranipet"></label><label>Unique unit code<input name="code" maxlength="50" value="${esc(selected?.code)}" placeholder="Suggested from name and campus"></label><label>Minimum free people<input name="minimum_free_people" type="number" min="0" required value="${selected?.minimum_free_people ?? 1}"></label><details><summary>Call-wise staffing minimums</summary>${["1ST_CALL", "2ND_CALL", "3RD_CALL", "CO_4TH_CALL", "4TH_CALL", "5TH_CALL"].map((level) => `<label>${level.replace(/_/g, " ")}<input type="number" min="0" data-call-minimum="${level}" placeholder="Use fallback minimum" value="${selected?.call_minimums?.find(([key]) => key === level)?.[1] ?? ""}"></label>`).join("")}</details><label>Alternative labels (one per line)<textarea name="aliases" rows="4" placeholder="Use campus-qualified aliases where numbered units could be confused">${esc(selected?.aliases.join("\n"))}</textarea></label><label>Notes<textarea name="notes" rows="3">${esc(selected?.notes)}</textarea></label><label>Membership<select name="active_status"><option value="active" ${selected?.active_status !== "archived" ? "selected" : ""}>Active</option><option value="archived" ${selected?.active_status === "archived" ? "selected" : ""}>Archived</option></select></label><p>Renaming keeps the previous unit label as an alias. Archiving preserves postings and duty history.</p><p class="mw-error" role="alert" data-error></p><div class="mw-footer"><span data-dirty>Saved details</span><button type="button" data-close>Cancel</button><button class="primary" type="submit">${selected ? "Save unit" : "Create unit"}</button></div></form></div>`;
+    dialog.innerHTML = `<header class="mw-header"><div><h2>Department units</h2><p>Create units, maintain names and aliases, and preserve their history.</p></div><button data-close type="button" aria-label="Close unit management">${decorativeIcon("close")}</button></header><div class="mw-content"><div class="registry-actions"><label>Find a unit<input type="search" data-search placeholder="Name, code, campus or alias"></label><label>Member count month<input type="month" data-unit-month value="${month}"></label><label>Show units<select data-unit-status><option value="all">All</option><option value="active" ${statusFilter === "active" ? "selected" : ""}>Active</option><option value="archived" ${statusFilter === "archived" ? "selected" : ""}>Archived</option></select></label><button type="button" data-new>Add Unit</button></div><div data-count-status><p role="status" aria-atomic="true" data-count-message></p><button type="button" hidden>Retry member counts</button></div><p role="status" aria-live="polite" aria-atomic="true" data-search-results></p><div class="registry-unit-list">${units.map((u) => `<button type="button" data-select-unit="${u.id}" ${selected?.id === u.id ? 'aria-current="true"' : ""} data-unit-state="${u.active_status}" data-unit-search="${esc([u.name, u.code, u.campus, ...u.aliases].join(" ").toLowerCase())}"><strong>${esc(u.name)}</strong> · ${esc(u.campus || "Campus not specified")} · ${esc(u.code)} · ${esc(u.active_status)} &middot; <span data-unit-count="${esc(u.id)}">${u.usage.selected_members === undefined ? `Member count unavailable for ${countsMonth}` : `${u.usage.selected_members} members in ${countsMonth}`}</span></button>`).join("") || "<p>No units yet. Add your first department unit below.</p>"}</div><hr><h3>${selected ? `Edit ${esc(selected.name)}` : "Add a unit"}</h3>${selected ? `<p>${selected.usage.postings} postings · ${selected.usage.duties} duty slots linked. ${selected.usage.future_postings} current/upcoming postings and ${selected.usage.future_duties} future duty slots.</p><button type="button" data-unit-history>View unit activity</button>` : ""}<form id="registry-unit-form"><label>Unit name<input name="name" required maxlength="255" value="${esc(selected?.name)}" placeholder="For example: Unit IV"></label><label>Campus<input name="campus" maxlength="100" value="${esc(selected?.campus)}" placeholder="For example: Main or Ranipet"></label><label>Unique unit code<input name="code" maxlength="50" value="${esc(selected?.code)}" placeholder="Suggested from name and campus"></label><label>Minimum free people<input name="minimum_free_people" type="number" min="0" required value="${selected?.minimum_free_people ?? 1}"></label><details><summary>Call-wise staffing minimums</summary>${["1ST_CALL", "2ND_CALL", "3RD_CALL", "CO_4TH_CALL", "4TH_CALL", "5TH_CALL"].map((level) => `<label>${level.replace(/_/g, " ")}<input type="number" min="0" data-call-minimum="${level}" placeholder="Use fallback minimum" value="${selected?.call_minimums?.find(([key]) => key === level)?.[1] ?? ""}"></label>`).join("")}</details><label>Alternative labels (one per line)<textarea name="aliases" rows="4" placeholder="Use campus-qualified aliases where numbered units could be confused">${esc(selected?.aliases.join("\n"))}</textarea></label><label>Notes<textarea name="notes" rows="3">${esc(selected?.notes)}</textarea></label><label>Membership<select name="active_status"><option value="active" ${selected?.active_status !== "archived" ? "selected" : ""}>Active</option><option value="archived" ${selected?.active_status === "archived" ? "selected" : ""}>Archived</option></select></label><p>Renaming keeps the previous unit label as an alias. Archiving preserves postings and duty history.</p><p class="mw-error" role="alert" data-error></p><div class="mw-footer"><span data-dirty>Saved details</span><button type="button" data-close>Cancel</button><button class="primary" type="submit">${selected ? "Save unit" : "Create unit"}</button></div></form></div>`;
     dialog
       .querySelectorAll<HTMLButtonElement>("[data-close]")
       .forEach((b) => (b.onclick = close));
@@ -476,6 +489,9 @@ export async function openUnitRegistry(
           `/api/v1/normalization/units${selected ? `/${selected.id}` : ""}`,
           { method: selected ? "PUT" : "POST", body: JSON.stringify(payload) },
         );
+        // Accepted mutation is independent of this dialog's subsequent GET.
+        try { parentLifecycle?.confirmed(); }
+        catch { console.warn("The dependent unit view refresh notification could not be delivered."); }
         selected = result;
         confirmedUnit = result;
         dirty = false;
@@ -585,7 +601,7 @@ export async function openReferenceCatalog(
   }
   function render() {
     if (!dialog.open) return;
-    dialog.innerHTML = `<header class="mw-header"><div><h2>Reference labels and mappings</h2><p>A mapping connects an imported spelling to an approved value. Example: CL → Casual leave.</p></div><button type="button" data-close aria-label="Close reference management">×</button></header><div class="mw-content"><label>Section<select data-kind>${Object.entries(
+    dialog.innerHTML = `<header class="mw-header"><div><h2>Reference labels and mappings</h2><p>A mapping connects an imported spelling to an approved value. Example: CL → Casual leave.</p></div><button type="button" data-close aria-label="Close reference management">${decorativeIcon("close")}</button></header><div class="mw-content"><label>Section<select data-kind>${Object.entries(
       kinds,
     )
       .map(
@@ -604,7 +620,7 @@ export async function openReferenceCatalog(
             )
             .join(
               "",
-            )}</select></label><p>${kind === "leave_status" ? "Approved blocks availability; pending warns; cancelled and rejected do not block." : kind === "leave_slot" ? "Map the imported session to a supported time window; custom sessions conservatively block duties until clarified." : "A label uses the selected posting's unit and eligibility rules. Genuinely new duty behavior requires duty-rule configuration."}</p>`
+            )}</select></label><p>${kind === "leave_status" ? "Choose the supported approval state for this label. Pending requests are not confirmed absence. Availability depends on the operation; review its returned blocking counts and duty safety checks alongside the leave session." : kind === "leave_slot" ? "Map the imported session to a supported time window; custom sessions conservatively block duties until clarified." : "A label uses the selected posting's unit and eligibility rules. Genuinely new duty behavior requires duty-rule configuration."}</p>`
         : ""
     }${
       kind === "duty_type"

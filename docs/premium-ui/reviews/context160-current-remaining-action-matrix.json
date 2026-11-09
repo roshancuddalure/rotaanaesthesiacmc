@@ -1,0 +1,127 @@
+{
+  "recorded_at_utc": "2026-10-31T01:17:07.449361+00:00",
+  "reviewer": "/root/frontend160_remaining_scope_map",
+  "requirement160": "Verify all record-level and monthly actions against their actual selected-month and selected-unit context on desktop and mobile.",
+  "acceptance_conditions": [
+    "Each record-level and monthly action uses its visibly selected month and unit context on desktop and mobile.",
+    "Results or subsequent reads confirm the intended records changed and other context records remained untouched."
+  ],
+  "decision": "Original160 remains partial; no acceptance count or application changes. New bounded real-RAM cancellation subset passed.",
+  "new_runtime": {
+    "contexts": 4,
+    "engines": [
+      "Chromium"
+    ],
+    "widths": [
+      320,
+      1280
+    ],
+    "terminal_exit_code_observed": 0,
+    "fixture": "Dedicated5270 asserted SQLite :memory:/StaticPool, explicit DB/auth overrides; shared8031/8025 untouched",
+    "initial_diagnostic": "Initial test terminal1 ECONNREFUSED because fixture import/startup had not completed. Original log preserved. Inspected actual listener PID39824 before rerun; rerun terminal0. No lowered assertion/product change."
+  },
+  "native_scope_notes": [
+    "This matrix targets rendered current Leave/Units operational entry points. Legacy #unit-assignment-form, #apply-unit-import and #apply-leave-import handlers are not assumed reachable merely because source exists.",
+    "A month-wide action uses the month-wide server preview scope, including cross-month overlapping records under existing rules. A unit search/filter is not an API unit constraint unless existing operation explicitly sends one.",
+    "Unit/reference settings global-vs-dated semantics must be read from existing API; frontend work must not normalize them into new persisted behavior.",
+    "Member-level global archive/delete, duty assignment generation and export contents are outside this exact Leave/Units160 acceptance scope, but remain other original requirements."
+  ],
+  "remaining_matrix": [
+    {
+      "action": "Create dated posting / leave",
+      "native_entry": "[data-add-operational-record=units|leave]; nested unit Manage -> Add member posting; Leave day -> Add leave on this day",
+      "existing": "4 actualRAM Chromium320/1280 July contexts, one exact new row and all prior/sibling/adjacent rows retained",
+      "remaining": "Fresh applicability to latest main; special null-unit posting, cross-month dates, similarly named member identities, leave day defaults. Then targeted Firefox/WebKit if required by broader plan."
+    },
+    {
+      "action": "Edit existing posting / leave",
+      "native_entry": "[data-edit-operational-record][data-record-kind=units|leave]; mobile visible row menu, unit modal assignment editor",
+      "existing": "4 actualRAM Chromium320/1280 July contexts, zero-write Cancel and exact existing identity update",
+      "remaining": "Fresh applicability to latest main; change selected unit, same-name member disambiguation, cross-month existing record, archived preserved values, special null-unit posting. Assert row count and all other rows exact."
+    },
+    {
+      "action": "Cancel leave",
+      "native_entry": "[data-cancel-leave=<exact existing ID>] in visible leave row menu",
+      "existing": "NEW 4 actualRAM Chromium320/1280 confirm/decline contexts: status-only exact July target update, no removal, untouched sibling/June/postings/members; decline zero writes",
+      "remaining": "Cross-month target and assigned-duty sentinel unchanged. Local mock late callback/routing already separately tested; do not equate this four-case RAM subset to all engines or all dates."
+    },
+    {
+      "action": "Individual leave approval",
+      "native_entry": "Current normalized leave editor Approval state and reviewed save; verify rendered permission scope before invoking",
+      "existing": "Historical leave142 dedicatedRAM individual/month approval packet exists, not re-adjudicated here",
+      "remaining": "Bind historical packet to current branch or fresh actual current editor save. Requested->approved target only; rejected/cancelled/approved siblings unchanged, existing duty unchanged, explicit member/date/session preserved."
+    },
+    {
+      "action": "Monthly leave approval",
+      "native_entry": "[data-approve-month-leave] -> reviewed monthly approval dialog",
+      "existing": "Current locally fulfilled owner/recovery tests; historical dedicatedRAM approval evidence",
+      "remaining": "Fresh/current applicability proof. Seed pending/approved/cancelled, two units, adjacent-only and overlapping months. Compare exact server preview IDs/count/month with approved results. Month-wide action includes all eligible returned units; unit display filter must not silently narrow or relabel operation. Decline and preview409 zero approvals."
+    },
+    {
+      "action": "Remove one posting through unit modal",
+      "native_entry": "[data-delete-unit-assignment=<ID>] -> confirmAdminDelete posting",
+      "existing": "Current locally fulfilled deletion-confirmation and callback ownership evidence",
+      "remaining": "Actual RAM target removed/recycled exactly once, other assignments/leave/duties intact; native320/1280 unit context. Confirm phrase/token match preview. Distinguish Remove posting from unit reference deletion."
+    },
+    {
+      "action": "Delete single row leave/posting",
+      "native_entry": "[data-delete-leave] / [data-delete-posting] visible row-menu buttons",
+      "existing": "Current locally fulfilled selected-ID/consequence/controller tests",
+      "remaining": "RAM before/after exact ID deletion and recycle snapshot; unchanged siblings/adjacent context. Cancel zero delete; 409 must refresh preview/token before another deliberate delete. Restore test verifies exact former identity/content if included in workflow."
+    },
+    {
+      "action": "Delete selected leave/postings",
+      "native_entry": "[data-admin-select=leave|posting] + [data-delete-selected=leave|posting]",
+      "existing": "Shared controller cases locally fulfilled; selection pruning source present",
+      "remaining": "RAM select two nonadjacent identities including same-name member context, leave other unit/month sentinel. Change filters/month and verify pruned hidden selection cannot delete unseen stale IDs. Mobile/desktop selection count, exact preview IDs, token and deleted/recycle rows agree."
+    },
+    {
+      "action": "Delete all leave/postings for month",
+      "native_entry": "[data-delete-month=leave|posting] inside Leave/Unit actions menu",
+      "existing": "Current locally fulfilled parent owner and failed readback evidence",
+      "remaining": "RAM exact selected month preview + POST body {kind,month,preview_token,confirm_phrase}; backend returned overlap semantics authoritative. Seed adjacent-only and cross-boundary dates, two units, manual/imported sources. Compare exact affected IDs; global month action is not a filtered-unit deletion. Preserve all nonaffected rows and recycle data."
+    },
+    {
+      "action": "Normalized CSV/workbook operational import: append / upsert / replace_month",
+      "native_entry": "[data-open-normalized-import=units|leave] -> openOperationalImport(kind,capturedMonth) -> reviewed Apply",
+      "existing": "Historical actualRAM import equivalence modes plus recent current locally fulfilled callback/readback/row-identity packets",
+      "remaining": "Exact-current applicability or rerun actual native UI for each supported mode/kind. Seed manual+imported, before/after overlap intervals, same-name people, unit siblings. Preview month/mode/replacement scope and Apply ID/hash/corrections must match; untouched sources/intervals/units survive per existing backend behavior. Replaying same reviewed Apply must not create extras. No auto-retry mutation on failed readback."
+    },
+    {
+      "action": "Create/edit normalized unit reference inline and registry",
+      "native_entry": "[data-add-department-unit], [data-manage-department-units], record editor Create unit, import row Create unit",
+      "existing": "Current local sequencing/value-preservation tests; normalization catalog evidence",
+      "remaining": "RAM exact reference identity/name/code/campus update or one creation. Reference creation is global, selected month is only count context; do not invent dated/unit-posting scope. Verify existing postings/dates remain unchanged and newly selected option uses exact returned ID."
+    },
+    {
+      "action": "Save selected unit call-wise settings",
+      "native_entry": "Unit Manage -> #unit-settings-form[data-unit-id]",
+      "existing": "Confirmed duplicate unchanged PUT/late modal defect; root recovery proposal in separate workstream, not accepted",
+      "remaining": "After independent repair and applied tests, actualRAM exact selected unit/month rule readback; untouched unit and adjacent-month rule sentinels. Preserve existing global fallback vs dated call-minimum semantics; repeat canonical same payload disabled after confirmed save/read503; GET-only retry, newer draft preserved, stale account/month/closed modal suppressed."
+    }
+  ],
+  "fixture_method": [
+    "Use a fresh loopback-owned process asserting sqlite+pysqlite:///:memory:, StaticPool, DB/auth overrides before startup; no configured DB/credentials.",
+    "Seed selected month plus adjacent-only and cross-boundary intervals, two unit IDs, similarly named member IDs, manual/imported rows, duties and recycle sentinels.",
+    "Capture independent raw state before and after through existing APIs or known dedicated RAM SQL; exact changed target and every unaffected row must be compared.",
+    "Drive visible native controls at320/1280. Record method/path/query/body, confirmation/review identity and server result. No test may infer persisted correctness from mocked POST success.",
+    "Never reset shared8031/8025 while another suite runs. Stop dedicated fixture after terminal tests and prove listener absent."
+  ],
+  "source_sha256": {
+    "frontend/src/main.ts": "2798e0cbbf61b1a473695f99f9f56b57c3ad249c9987abe00421f4a50e2731eb",
+    "frontend/src/record-workspace.ts": "469fd6bf2e4118b15ad343d8059cd3cfb0acbc6483bea969ca5fb93488644335",
+    "frontend/src/operational-import.ts": "00a6339fb0bd56dcae64ec05cb79ad041364a502ee207dec71c95106b2c20ce8",
+    "frontend/src/reference-workspace.ts": "78c231ea1d5ab15bd3a4b5f2f8265529451a51bacc68d2a4aac1708a4be30292",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+  },
+  "evidence_sha256": {
+    "docs/premium-ui/qa-context160-ram-cancel-independent.json": "28ccb0292bf913c25a70bd47a9bfd45cdddce1b5832ece85aa8ca30dccbb760c",
+    "frontend/tests/premium-context160-ram-cancel-independent.browser.mjs": "6886e195df91e5ea2934733b679eefda047c3fc95fc8d008ff93342d0caf1dab",
+    "tmp/context160_ram_cancel_server.py": "44f8ab518c578ef7a96de23da6fb868b845cb095a90b66c52fbfcaa2512a55b0",
+    "tmp/context160-ram-cancel-independent.log": "b8914d92cf37f2532d5c0e6f2062be2ed9d965b9fc9cef7fe7af8bccf20d30ba",
+    "tmp/context160-ram-cancel-independent-rerun.log": "d625d1acd5ec6e78e66629d7d9b36e06fa983d59db9a31f8357465fa6c09af0c",
+    "docs/premium-ui/reviews/context160-ram-create-independent-groundwork.json": "4e75798177c71c085daace290cb1f66abcb5e4ad0c823e82a9ed203eb03b7fa4",
+    "docs/premium-ui/reviews/context160-ram-edit-independent-subset.json": "5925755e8ef311ae41b67263b3ccc596b65e986724010d2b3065066b704ca93f",
+    "docs/premium-ui/reviews/reference155-160-independent-gap-audit.json": "dd859edf8b3e97c0b8bde39d43e7d71f4439c12b7220fb44891b2abf35e7f01c"
+  }
+}

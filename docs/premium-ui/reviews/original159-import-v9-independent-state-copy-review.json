@@ -1,0 +1,47 @@
+{
+  "recorded_at_utc": "2026-11-09T09:40:32.139084+00:00",
+  "reviewer": "/root/stage161_final_review",
+  "application_changed": false,
+  "browser_executed": false,
+  "acceptance_ledger_changed": false,
+  "decision": "minimal_confirmation_copy_revision_required_before_runtime_acceptance",
+  "scope": "Independent V9 importer-only finished/confirmed-history state and discard-copy review. FrozenV9main96ab/member105cc/importer7eac; no source changes or new browser runs.",
+  "findings": [
+    {
+      "id": "IMPORT-V9-CLOSE-UNCERTAIN-RESULT-001",
+      "severity": "medium",
+      "location": "tmp/profile-parent-refresh-v9/operational-import.ts:309",
+      "title": "New close warning asserts unconfirmed second Apply did not persist",
+      "trigger": "First import Apply is accepted, then choose next file/preview and submit second Apply; second POST rejects due network/response uncertainty, leaving finished=false and hasConfirmedImport=true. Close review afterward.",
+      "evidence": "Existing importRecoveryText(\"apply\") warns save may have occurred/check records. New hasConfirmedImport close branch says \"these pending changes have not been applied\", although no accepted response proves absence of persistence.",
+      "requested_fix": "Use discard wording that preserves prior confirmed imports and describes pending draft without asserting its server persistence, e.g. \"Discard this pending import draft? Previously confirmed import changes remain saved.\" Keep first-draft policy/uncertainty semantics scoped explicitly.",
+      "required_test": "Accepted first batch then unconfirmed second apply failure; compare uncertainty warning and subsequent Close prompt. Prompt must not say unconfirmed request definitely was not applied; dismiss retains second draft and prior accepted batch parent signal."
+    }
+  ],
+  "positive_findings": [
+    "hasConfirmedImport initializes false and is set only after existing await apply POST resolves, before parent notification and ownsApply/result rendering. It is not reset when a new file, mapping or preview is selected, so prior accepted history is distinct from current pending draft.",
+    "finished=false inside dirtyPreview protects meaningful settings/mapping changes after completion using existing close/unload guards. Busy Apply still short-circuits manual close; existing lockWorkspaceControls, draftVersion and ownsApply guards remain unchanged.",
+    "Actual completed current result still sets finished=true only after accepted response and current child ownership. Markup failure keeps accepted-history flag and parent signal despite failed result rendering.",
+    "No API request/body/token/exclusion/acknowledgment/serialization/storage changes. Main/member unchanged versusV8; verification reports full virtualTS0 and exact request effects with intentional confirmation text difference only.",
+    "Original V8 six diagnostics reproduce meaningful mode draft loss across3engines320/1280, with one accepted apply and no discard prompt before dialog removal. V9 state repair targets this actual failure, not hypothetical lost draft."
+  ],
+  "runtime_gates": [
+    "Repeat six postcomplete meaningful mode close-refusal cases on corrected frozen proposal; retain exact file/mode and zero premature parent GET.",
+    "Accepted batch then second-file pending draft; discard refusal retains draft, accepted discard yields one deferred parent refresh representing only confirmed history.",
+    "First apply failure versus accepted first + uncertain second failure copy and state; no invented success or failure outcome, no parent mutation replay.",
+    "Original import lifecycle/owner/GET-only-recovery coverage remains required; no whole159 acceptance."
+  ],
+  "evidence_sha256": {
+    "tmp/profile-parent-refresh-v9/manifest.json": "bf781af1639206a1a09a1170507f9170fc68b49fa57c6fc8c23621723d4026de",
+    "tmp/profile-parent-refresh-v9/verification.json": "d2fd84c1ef9ea73df6d7b69226192b256453529291f49a87ba33eadd8ddca8f0",
+    "tmp/profile-parent-refresh-v9/operational-import.ts.patch": "d0f515fa0953582d60558e5afd75e57a4da4a161505a5ec061e1b8002c201eed",
+    "tmp/profile-parent-refresh-v9/operational-import.ts": "7eac1bfed7658297afbf62f48a11919305863834f12963df30a9a715450cb9f6",
+    "tmp/profile-parent-refresh-v9/main.ts": "96ab7c4c6b14d41736ad4153313b1270677e324fcab6b11c3a5b0d8ac3e47a0b",
+    "docs/premium-ui/qa-original159-import-v8-postcomplete-mode-diagnostic.json": "977fc5a8036e01008c04a6bf8546ee8b4fdd845a0b78875fc2a3906d6e4333c8",
+    "docs/premium-ui/reviews/original159-import-retained-parent-v8-independent-source-review.json": "2feff8b006b97c100f4cfd3d2c486994409af2553aed3894fd28c28dc2e30b31"
+  },
+  "limitations": [
+    "No V9 runtime or integration acceptance inferred from source/typecheck.",
+    "Existing initial no-confirmed-batch discard text also makes a definitive no-applied claim after uncertain failure; do not silently certify it here. Fix scope should make any changed warning truthful without altering persistence policy."
+  ]
+}

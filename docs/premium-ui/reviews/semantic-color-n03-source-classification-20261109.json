@@ -1,0 +1,370 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-09T09:39:45.388954+00:00",
+  "reviewer": "theme_foundation_closeout read-only source audit",
+  "scope": "N03 essential-versus-decorative source classification across all steps callers and superadmin icon occurrences; no browser or pixel/contrast execution",
+  "source_sha256": {
+    "frontend/src/ui.ts": "680d7830bca8826b46b6f1dc2c0d064d2a3a2e16fb41188d2c323de6bccf85b2",
+    "frontend/src/operational-import.ts": "00a6339fb0bd56dcae64ec05cb79ad041364a502ee207dec71c95106b2c20ce8",
+    "frontend/src/member-workspace.ts": "105cc1d91ea4815d565ad4859fc01412cf576a3203c07834f4010e3fef7ef1a5",
+    "frontend/src/member-import.ts": "d985f4aefa5bfdd71b6f0a53995a8c63b3c827639158ec584b97e72f14ced061",
+    "frontend/src/component-reference.ts": "dcf2631694638459aa31be896bb966e0d8472e56b811d28464392a8fc34b15de",
+    "frontend/src/superadmin.ts": "ce337c066f127db0d4400daf86e90316d5442dced44c3eea0e996584ef1ed841",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "acc46b2249087f365ca855bcd9630628c390c4cdf013301daaee40ede80e55f4"
+  },
+  "classification_policy": [
+    "aria-hidden means excludedfromaccessibilitytree, notautomaticWCAGnontext exemption. Visible equivalent text/shape mustbe assessed separately.",
+    "Whiteglyph/darkthemefill arithmetic2.4444success or2.0337warning isacandidatepair, notproofthatessentialinformationfails.",
+    "Do not alter sources merelytomake anisolatedtokenpairpass whenactualcomponent providesredundantvisiblemeaning.",
+    "NativeAT andall28completionremainunproven."
+  ],
+  "instances": [
+    {
+      "id": "N03-SUPERADMIN-PUBLISHED",
+      "source": "superadmin.ts:135?138",
+      "glyph": "aria-hidden !",
+      "visible_equivalent": "Heading Published with superadmin override; sentence names publisher/date/open slots/unresolved blockers and optional reason",
+      "classification": "Strongdecorativeduplicatecandidate: warning informationisexplicitvisibletext, iconisnotacontrol. Do notcall itessentialfromtokenpairalone.",
+      "remaining": "Renderedvisibility/readabilityofheading/body inactualoverride states; ifshownandcomplete, iconcontrastlegitimateexemption."
+    },
+    {
+      "id": "N03-SUPERADMIN-ALLOCATED",
+      "source": "superadmin.ts:392?398",
+      "glyph": "aria-hidden check",
+      "visible_equivalent": "Allocated heading; namedperson/duty/date/replacedmembers and overrides; role=status namesheading",
+      "classification": "Strongdecorativeduplicatecandidate: successcommunicatedvisibleheadingandresults; noicon-onlyaction.",
+      "remaining": "Actualsuccessrenderafterconfirmedfixtureallocation, header/bodyvisibility andstatewording; checkmarkcontrastalone doesnotjustifyfix."
+    },
+    {
+      "id": "N03-SUPERADMIN-PUBLISH-SUCCESS",
+      "source": "superadmin.ts:633?636",
+      "glyph": "aria-hidden check",
+      "visible_equivalent": "Published with superadmin override heading; monthfinal/openUnfilled/recordedreasonandblockers sentence",
+      "classification": "Strongdecorativeduplicatecandidate; publishedstatehasvisiblewords independentgreenicon.",
+      "remaining": "Actualsuccessfulpublishfixturevisibility; no backendwrite neededforUIcheck."
+    },
+    {
+      "id": "N03-SUPERADMIN-CROSS-ROW",
+      "source": "superadmin.ts:313",
+      "glyph": "aria-hidden !",
+      "visible_equivalent": "AdjacentcrossText(p) within superadmin-person__cross paragraph",
+      "classification": "Likelydecorativeduplicate; exactreturnedcrossText wording andvisibility needcontext, notonlyaria-hidden.",
+      "remaining": "Actualcross-levelrow andcompactselection visibility; respectburgundyselectionversusdanger distinction."
+    },
+    {
+      "id": "N03-SUPERADMIN-CROSS-PANEL",
+      "source": "superadmin.ts:343?349",
+      "glyph": "aria-hidden !",
+      "visible_equivalent": "Heading This crosses call level; paragraph explicitlynamesneededcalllevel/personactuallevelandrecording; confirmationcheckbox repeatsnamedcross-levelscope.",
+      "classification": "Likelydecorativeduplicate caution marker; notdestructiveaction.",
+      "remaining": "Actualpanelvisibility/readability andheadingassociation."
+    },
+    {
+      "id": "N03-STEPS-OPERATIONAL-IMPORT",
+      "source": "operational-import.ts:9,280?283; setStep callsites357/372/436/874/886/894",
+      "states": "Upload file / Map columns / Review rows / Apply; doneindices beforecurrent; all doneafterconfirmedapply",
+      "visible_equivalent": "Every step hasvisiblestagelabel; currenthasaria-current=step; donehascheckglyph but textual(done) isvisuallyhidden",
+      "classification": "Unresolvedessentialstatuscue: visiblelabelnamesstagebutdoesnotitselfsaydone. Do NOT exemptchecksolelybecausearia-hiddenorhidden(done). Needactualfill/outline/check/categorydistinctionagainstnavyheader andadjacentbackgrounds.",
+      "remaining": "Actualpreviewandcompletedstates withglyphandouterfilledcircle contrasts; headercontext mayhavepassingfill-versusnavy evenwhenwhiteglyph/green2.44. Needactualstateunderstanding."
+    },
+    {
+      "id": "N03-STEPS-MEMBER-MODAL-IMPORT",
+      "source": "member-workspace.ts:12,1360,1400;1730/1748",
+      "states": "Same4stageflow inside mw-header",
+      "visible_equivalent": "Sameui.steps text/aria-current/hidden(done) semantics",
+      "classification": "Sameunresolvedessentialstatuscue; navyheadercontext mustbe measuredratherthancopybodyassumptions.",
+      "remaining": "ActualmemberCSVpreview/completion UI, current/incomplete/done distinction andcolors."
+    },
+    {
+      "id": "N03-STEPS-MEMBER-WORKBOOK",
+      "source": "member-import.ts:132?135",
+      "states": "applied all done; applyingindex3; previewindex2; inspectionindex1; otherwise0",
+      "visible_equivalent": "Sameui.steps output inside panel.member-import (contentcontext, notnavyheader)",
+      "classification": "HighestpriorityN03actualnontextcandidate: contentbackgrounddiffersfromheader; doneglyphcanbetheonlyvisibleexplicitcompletedmarker. Stage labelsandhidden(done)donotautomaticallyexemptgraphics.",
+      "remaining": "Actualworkbook preview/done onboth themes; fill boundary+glyph andupcomingnumbercontrast, actualvisiblecompletionmessages. Noapplyforwardneeded; locallyfulfillfixture."
+    },
+    {
+      "id": "N03-STEPS-REFERENCE",
+      "source": "component-reference.ts:44",
+      "states": "Upload / Review / Apply withcurrentindex1",
+      "visible_equivalent": "Samegenericstepcomponent, reference-onlysample",
+      "classification": "Usefulisolationforcomputedstatepair/shapeinspection, insufficienttoacceptactualoperationalcallers.",
+      "remaining": "Canexploreglyph/fillcontrastquicklyafterbrowserqueue butactualworkbookcontextmustfollow."
+    }
+  ],
+  "source_anchors": [
+    {
+      "file": "frontend/src/ui.ts",
+      "literal": "export function steps",
+      "hits": [
+        {
+          "line": 141,
+          "text": "export function steps(labels: string[], current: number): string {"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/ui.ts",
+      "literal": "ds-steps__dot",
+      "hits": [
+        {
+          "line": 146,
+          "text": "<span class=\"ds-steps__dot\" aria-hidden=\"true\">${state === \"done\" ? \"\u2713\" : index + 1}</span>"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/ui.ts",
+      "literal": "visually-hidden\"> (done)",
+      "hits": [
+        {
+          "line": 147,
+          "text": "<span>${esc(label)}</span>${state === \"done\" ? '<span class=\"visually-hidden\"> (done)</span>' : \"\"}"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/operational-import.ts",
+      "literal": "const IMPORT_STEPS",
+      "hits": [
+        {
+          "line": 9,
+          "text": "const IMPORT_STEPS = [\"Upload file\", \"Map columns\", \"Review rows\", \"Apply\"];"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/operational-import.ts",
+      "literal": "steps(IMPORT_STEPS",
+      "hits": [
+        {
+          "line": 280,
+          "text": "dialog.innerHTML = `<header class=\"mw-header\"><div><h2>Import ${title.toLowerCase()}</h2><div data-import-steps>${steps(IMPORT_STEPS, 0)}</div></div><button data-close type=\"button\" aria-label=\"Close import review\">${decorativeIcon(\"close\")}</button></header><div class=\"mw-content\"><div class=\"registry-actions\"><a class=\"icon-button\" href=\"/templates/${kind === \"units\" ? \"unitwise-assignments\" : \"leave-records\"}.csv\" download>Download ${kind === \"units\" ? \"unitwise\" : \"leave\"} CSV template</a><a class=\"quiet-button\" href=\"/templates/${kind === \"units\" ? \"unitwise-assignments\" : \"leave-records\"}-example.csv\" download>Download example CSV</a>${admin ? `<button type=\"button\" class=\"quiet-button\" data-manage-import-references>Manage labels and mappings</button>` : \"\"}</div><details class=\"mw-csv-help\"><summary>CSV examples</summary><p>Use one row per dated record. Replace the illustrative member and unit names with your department records.</p><pre>${kind === \"units\" ? \"member_name,unit_name,posting_type,starts_on,ends_on\\nDr Example Member,Main Unit IV,2ND_CALL,2026-10-01,2026-10-31\" : \"member_name,starts_on,ends_on,leave_type,leave_slot,status\\nDr Example Member,2026-10-03,2026-10-04,CL,FULL_DAY,approved\"}</pre></details><p>Files and selections are kept in this open import. Replacing the file resets mappings and review choices. Closing, leaving or reloading may require choosing the file again.</p><form data-settings><label>Month<input type=\"month\" name=\"month\" required value=\"${esc(month)}\"></label><label>File (up to 5 MB and 5,000 rows)<input type=\"file\" required accept=\"${kind === \"units\" ? \".csv,.xlsx,.xlsm,.txt\" : \".csv,.xlsx,.xls\"}\"></label><label>Operation<select name=\"mode\"><option value=\"append\">Append new records</option><option value=\"update_matching\">Update matching member/date records</option><option value=\"replace_month\">Replace imported records in this month</option></select></label><label>Dates in this file<select name=\"date_format\"><option value=\"auto\">ISO / detect unambiguous dates</option><option value=\"DMY\">Day / month / year</option><option value=\"MDY\">Month / day / year</option></select></label><p>Ambiguous dates need an explicit format. Blank unitwise dates use the selected month. Leave needs a start date. Replacement preserves records outside the month${kind === \"leave\" ? \" and manually entered leave\" : \"\"}.</p><div data-mapping></div><button class=\"primary\" type=\"submit\">Preview and normalize</button></form><p data-message role=\"status\"></p><section data-review></section></div>`;"
+        },
+        {
+          "line": 283,
+          "text": "if (host) host.innerHTML = steps(IMPORT_STEPS, index);"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/operational-import.ts",
+      "literal": "setStep(IMPORT_STEPS.length)",
+      "hits": [
+        {
+          "line": 886,
+          "text": "setStep(IMPORT_STEPS.length);"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/member-workspace.ts",
+      "literal": "const MEMBER_IMPORT_STEPS",
+      "hits": [
+        {
+          "line": 12,
+          "text": "const MEMBER_IMPORT_STEPS = [\"Upload file\", \"Map columns\", \"Review rows\", \"Apply\"];"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/member-workspace.ts",
+      "literal": "steps(MEMBER_IMPORT_STEPS",
+      "hits": [
+        {
+          "line": 1360,
+          "text": "dialog.innerHTML = `<header class=\"mw-header\"><div><h2>Import department members</h2><div data-import-steps>${steps(MEMBER_IMPORT_STEPS, 0)}</div></div><button type=\"button\" data-close aria-label=\"Close import\">${decorativeIcon(\"close\")}</button></header><div class=\"mw-content\"><div class=\"registry-actions\"><a class=\"primary\" href=\"/templates/department-members.csv\" download>Download blank CSV template</a><a class=\"icon-button\" href=\"/templates/department-members-example.csv\" download>Download example CSV (filled)</a></div><p>Only canonical_name is required. Blank cells keep the member's current value. New members default to Active and Unassigned.</p><details class=\"mw-csv-help\" open><summary>CSV format and example</summary><p>One member per row. Open the example in Excel, replace the example rows with your members, then save as <strong>CSV UTF-8</strong>.</p><p class=\"mw-csv-example-cue\" id=\"${esc(exampleCueId)}\">If the example extends beyond this panel, scroll horizontally. With a keyboard, focus the example and use the Left and Right arrow keys.</p><pre class=\"mw-csv-example\" tabindex=\"0\" role=\"region\" aria-label=\"CSV example\" aria-describedby=\"${esc(exampleCueId)}\">member_id,canonical_name,active_status,call_level,designation,designation_effective_from"
+        },
+        {
+          "line": 1400,
+          "text": "if (host) host.innerHTML = steps(MEMBER_IMPORT_STEPS, index);"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/member-workspace.ts",
+      "literal": "setImportStep(MEMBER_IMPORT_STEPS.length)",
+      "hits": [
+        {
+          "line": 1730,
+          "text": "setImportStep(MEMBER_IMPORT_STEPS.length);"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/member-import.ts",
+      "literal": "const MEMBER_WORKBOOK_STEPS",
+      "hits": [
+        {
+          "line": 32,
+          "text": "const MEMBER_WORKBOOK_STEPS = [\"Upload file\", \"Map columns\", \"Review rows\", \"Apply\"];"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/member-import.ts",
+      "literal": "const stage = applied",
+      "hits": [
+        {
+          "line": 132,
+          "text": "const stage = applied ? MEMBER_WORKBOOK_STEPS.length : applying ? 3 : preview ? 2 : inspection ? 1 : 0;"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/member-import.ts",
+      "literal": "steps(MEMBER_WORKBOOK_STEPS",
+      "hits": [
+        {
+          "line": 135,
+          "text": "<div data-import-steps>${steps(MEMBER_WORKBOOK_STEPS, stage)}</div>"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/component-reference.ts",
+      "literal": "steps(['Upload','Review','Apply'],1)",
+      "hits": [
+        {
+          "line": 44,
+          "text": "${steps(['Upload','Review','Apply'],1)}<p>Royal accents identify the application. Status meaning remains explicit in text.</p></section>"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/superadmin.ts",
+      "literal": "superadmin-published-notice__icon",
+      "hits": [
+        {
+          "line": 135,
+          "text": "<span class=\"superadmin-published-notice__icon\" aria-hidden=\"true\">!</span>"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/superadmin.ts",
+      "literal": "superadmin-success__icon",
+      "hits": [
+        {
+          "line": 393,
+          "text": "<span class=\"superadmin-success__icon\" aria-hidden=\"true\">\u2713</span>"
+        },
+        {
+          "line": 634,
+          "text": "<span class=\"superadmin-success__icon\" aria-hidden=\"true\">\u2713</span>"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/superadmin.ts",
+      "literal": "superadmin-person__cross-icon",
+      "hits": [
+        {
+          "line": 313,
+          "text": "${cross ? `<p class=\"superadmin-person__cross\" id=\"${id}-cross\"><span class=\"superadmin-person__cross-icon\" aria-hidden=\"true\">!</span><span>${esc(crossText(p))}</span></p>` : \"\"}"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/superadmin.ts",
+      "literal": "superadmin-cross__icon",
+      "hits": [
+        {
+          "line": 344,
+          "text": "<span class=\"superadmin-cross__icon\" aria-hidden=\"true\">!</span>"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/superadmin.ts",
+      "literal": "Published with superadmin override",
+      "hits": [
+        {
+          "line": 136,
+          "text": "<div><h3 id=\"superadmin-published-title\">Published with superadmin override</h3>"
+        },
+        {
+          "line": 635,
+          "text": "<div><h3 id=\"sa-published-title\">Published with superadmin override</h3>"
+        },
+        {
+          "line": 689,
+          "text": "announceToast(\"Published with superadmin override\", \"success\");"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/superadmin.ts",
+      "literal": "<h3 id=\"sa-success-title\">Allocated",
+      "hits": [
+        {
+          "line": 394,
+          "text": "<div><h3 id=\"sa-success-title\">Allocated</h3>"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "literal": ".ds-steps__item[data-state=\"done\"] .ds-steps__dot",
+      "hits": [
+        {
+          "line": 6270,
+          "text": ".ds-steps__item[data-state=\"done\"] .ds-steps__dot { border-color: var(--color-success); background: var(--color-success); color: #ffffff; }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "literal": ".superadmin-success__icon {",
+      "hits": [
+        {
+          "line": 7004,
+          "text": ".superadmin-success__icon { display: grid; place-items: center; width: 44px; height: 44px; border-radius: var(--radius-full); background: var(--color-success); color: #ffffff; font-size: 22px; font-weight: 800; }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "literal": ".superadmin-published-notice__icon {",
+      "hits": [
+        {
+          "line": 7023,
+          "text": ".superadmin-published-notice__icon { display: grid; place-items: center; width: 40px; height: 40px; border-radius: var(--radius-full); background: var(--color-warning); color: #ffffff; font-weight: 800; font-size: 20px; }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "literal": ".superadmin-person__cross-icon {",
+      "hits": [
+        {
+          "line": 7253,
+          "text": ".superadmin-person__cross-icon { display: inline-grid; place-items: center; flex: none; width: 18px; height: 18px; margin-top: 1px; border-radius: var(--radius-full); background: var(--color-error); color: #ffffff; font-size: 12px; font-weight: 900; }"
+        }
+      ]
+    },
+    {
+      "file": "frontend/src/styles.css",
+      "literal": ".superadmin-cross__icon {",
+      "hits": [
+        {
+          "line": 7257,
+          "text": ".superadmin-cross__icon { display: grid; place-items: center; width: 40px; height: 40px; border-radius: var(--radius-full); background: var(--color-error); color: #ffffff; font-size: 22px; font-weight: 900; }"
+        },
+        {
+          "line": 7277,
+          "text": ".superadmin-cross__icon { width: 32px; height: 32px; font-size: 18px; }"
+        }
+      ]
+    }
+  ],
+  "next_runtime_priority": {
+    "first": "Actualcontent/memberworkbookdone-stepstate andequivalentvisiblecompletionwording; assessessentialgraphicsratherthanall decorativeSuperadminicons",
+    "second": "ActualnavyheaderstepssamecategoriesinmemberCSVandposting/leaveimports",
+    "third": "Superadminvisiblewording/headingvisibility asboundedexemptionconfirmation, notassumedcontrastbug"
+  },
+  "no_application_edits": true,
+  "no_browser_execution": true,
+  "no_acceptance_changes": true
+}

@@ -1,0 +1,83 @@
+{
+  "recorded_at_utc": "2026-11-09T12:25:56.130692+00:00",
+  "reviewer": "/root/priority19_adoption_review",
+  "scope": "Independent isolated V11 deletion retained-parent source/API/ownership review. No browser execution, application or shared-current edits. Candidate is not integrated.",
+  "decision": "broader_testing_required_with_selection_failure_risk",
+  "source_sha256": {
+    "tmp/delete-parent-refresh-v11/main.ts": "523ea9474e6b65f34df9fe0e3f404bd0b6b89e7705e310a3da509bb24eb72d7e",
+    "frontend/src/main.ts": "9f5359ad9e8014098bc12c8ed3f9e1c6b1a06d1a4f92797b7f9da24bfba6e6b8",
+    "frontend/src/admin-delete.ts": "7a3eb13237272ad8b44f523bea5483ebeae60fc9c8b58d92035fe15c74528979",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "tmp/delete-parent-refresh-v11/manifest.json": "efedf88875027be4f2e541c5d8644c351efb4536dc14b8a11df8ab222a1fedc3",
+    "tmp/delete-parent-refresh-v11/typecheck-effect-proof.json": "fd2df9b25c8ef81cb2f7efb5746e118b5fa9c3ad13a218611d65e530d4c26a10",
+    "docs/premium-ui/qa-original159-delete-v11-fallback-retention.json": "b15eb605b5deb3a42bdcce78d0610c3f67cae74e5b4a934a233c53412c4c1cc2"
+  },
+  "source_findings": [
+    {
+      "id": "DELETE-V11-SOURCE-01",
+      "classification": "positive_source_evidence",
+      "finding": "Only runAdminDelete changes. Captures the existing parent lifecycle before confirmation opens, then invokes confirmed/closed only after accepted response and the existing account/view/render/root/month guard. Posting cache invalidation remains before stale-view return. No delete preview/token/phrase/request/payload mutation added or changed; member callback path remains await refresh().",
+      "locations": [
+        "tmp/delete-parent-refresh-v11/main.ts:3575",
+        "frontend/src/admin-delete.ts:39"
+      ]
+    },
+    {
+      "id": "DELETE-V11-SOURCE-02",
+      "classification": "positive_source_evidence_with_runtime_gate",
+      "finding": "Existing createDependentParentLifecycle adds modal identity and latest-parent-read guards. Retained Units read patches board/modal portions while leaving fallback component closure and unrelated settings form nodes intact. Leave reads validate calendar/requests/pressure before patching. Read errors expose GET-only retry without rerunning confirmAdminDelete. These are source properties; shared lifecycle prior evidence is not deletion-specific failure proof.",
+      "locations": [
+        "tmp/delete-parent-refresh-v11/main.ts:3292",
+        "tmp/delete-parent-refresh-v11/main.ts:4769"
+      ]
+    },
+    {
+      "id": "DELETE-V11-SELECTION-FAILURE-03",
+      "classification": "source_identified_risk_runtime_confirmation_required",
+      "finding": "Accepted deletion clears target selection Set (or whole month Set), but retained DOM selection count/checked state sync is only inside successful Units/Leave readback. If parent GET fails, old checked controls and nonzero Delete selected count can remain while Set is already empty; subsequent click may appear inert. Immediate syncAdminSelection(kind) after guarded selection cleanup is a narrow candidate remedy, pending actual fail/read-recovery assertions.",
+      "locations": [
+        "tmp/delete-parent-refresh-v11/main.ts:3597",
+        "tmp/delete-parent-refresh-v11/main.ts:3554",
+        "tmp/delete-parent-refresh-v11/main.ts:3374"
+      ],
+      "recommendation": "Test accepted selected and month deletion with failed parent GET before integration; assert checked boxes/count/disabled state are truthful immediately and retry causes no second delete."
+    },
+    {
+      "id": "DELETE-V11-CLEANUP-04",
+      "classification": "bounded_source_behavior_change_requires_checks",
+      "finding": "unitEditingAssignmentId cleanup now applies commonly to posting target.ids before retained refresh; month target does not explicitly clear it. Baseline cleanup existed only the modal single-posting callback and was bypassed if switching to retained refresh without this move. Assert deleted editor/control removal and unrelated editor drafts survive; do not blanket-clear unrelated assignments.",
+      "locations": [
+        "tmp/delete-parent-refresh-v11/main.ts:3602",
+        "tmp/delete-parent-refresh-v11/main.ts:10060"
+      ]
+    },
+    {
+      "id": "DELETE-V11-OWNERSHIP-FOCUS-05",
+      "classification": "runtime_gate",
+      "finding": "Deletion dialog finish closes/removes before resolving. Existing parent lifecycle captures whatever element receives restored focus, patches immutable-record keyed controls and avoids stealing newer focus. Test removed opener, surviving selected/month action, ordinary/special Unit modal and Leave day modal; modal navigation/replacement must suppress expired owner results. Also verify parent503/malformed/wrongmonth retry, route/month/account supersession, two simultaneous confirmed lifecycle owners and current newer filter input.",
+      "locations": [
+        "frontend/src/admin-delete.ts:48",
+        "tmp/delete-parent-refresh-v11/main.ts:3327"
+      ]
+    },
+    {
+      "id": "DELETE-V11-EVIDENCE-06",
+      "classification": "evidence_copy_error",
+      "finding": "V11 typecheck-effect-proof limits says one new completefallback GET, but actual V11 diff adds no GET call; this inherited registry wording does not describe V11. Correct evidence wording without claiming a new source change."
+    }
+  ],
+  "required_next_checks": [
+    "Selection truthfulness immediately after accepted delete when GET fails; GET-only recovery and no POST replay.",
+    "Posting all four actual entry paths plus Leave row/selected/month/day entry paths; empty and partial-blocked confirmed results.",
+    "Units normal/special modal drafts, existing fallback order/node identity, chosen current/newer filters, pagination, updated totals and removed record.",
+    "Leave selected day/filters/view/disclosure retention, updated list/calendar/pressure and approval count.",
+    "Cancel/preview failure/409 renewed-preview and uncertain delete failure leave parent untouched and avoid unaccepted lifecycle notifications.",
+    "Parent GET503, malformed shape, wrongmonth, current route/month/account ownership and stale read suppression; focus fallback when opener deleted and no steal from newer input.",
+    "Member deletion regression remains existing callback; held source/test bindings, unit/build and prior accepted requirements applicability before any integration."
+  ],
+  "limits": [
+    "Normal18 candidate report inspected as preliminary evidence only; reviewer did not execute browsers.",
+    "No whole159 acceptance or zero-regression claim.",
+    "Selection issue is a source-identified risk until actual runtime diagnostic; not yet a new verified defect."
+  ]
+}

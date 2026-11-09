@@ -1,0 +1,158 @@
+{
+  "recorded_at_utc": "2026-10-31T01:35:13.523981+00:00",
+  "reviewer": "/root/unit_settings_v2_independent_review",
+  "conditions": [
+    "Confirmed leave/unit/reference mutations refresh their relevant dependent views.",
+    "Unrelated unsaved edits and chosen filters survive those refreshes, and failed read-back does not repeat the mutation."
+  ],
+  "decision": "Keep whole159partial. Settings V6 closes its known defect, but Add mapping refresh independently loses unrelated existing draft. Profile-linked posting/leave mutation underlying-parent behavior remains unverified and must be inspected/tested before whole acceptance.",
+  "inventory": [
+    {
+      "mutation": "Normalized posting/leave Add or Edit, including individual leave review/approval",
+      "rendered_entry": "main Add/Edit operational record controls; record-workspace native editor",
+      "dependent": "Main Units or Leave refresh after confirmed Save; account/view/render/root/month-owned callback",
+      "evidence": "Record owner60, prior realRAM approval142, record readback12, picker nested tests; handlers unchanged by settings-only delta",
+      "condition2": "Parent chosen search/campus/Day list survive confirmedSave\u2192GET503\u2192manual GET retry; exactly one Save. Owning editor intentionally closes.",
+      "status": "bounded evidence supported"
+    },
+    {
+      "mutation": "Normalized Units/Leave CSV import Apply",
+      "rendered_entry": "data-open-normalized-import in live toolbars",
+      "dependent": "Parent kind refresh; same-account cache invalidation; repeated-file generation adoption",
+      "evidence": "Applied import60 plus independent import readback/filter/new-file12",
+      "condition2": "New file/update_matching selection survives held parent GET503 and manual GET-only retry, no reApply; chosen filters retained",
+      "status": "bounded evidence supported"
+    },
+    {
+      "mutation": "Department unit registry create/edit/archive/aliases/call-minimum settings",
+      "rendered_entry": "main Add unit/Manage units; nested record and import registry",
+      "dependent": "Registry authoritative reread then selected new unit and parent Units owner refresh; nested outer editor choices refresh",
+      "evidence": "Registry owner30, independent registry6readback/draft, picker nested-unit6 and source main guarded callback",
+      "condition2": "Confirmed PUT readback error separates manual GET retry; unsaved next registry name/notes and parent filters retained",
+      "status": "bounded evidence supported"
+    },
+    {
+      "mutation": "Unit modal call-wise rules Save",
+      "rendered_entry": "live #unit-settings-form",
+      "dependent": "Reviewed V6 readback helper commits current captured-month GET only; stale owners suppressed",
+      "evidence": "Current applied42native+2visual, independent48same-helper applicability",
+      "condition2": "Confirmed update GET503 retries GET only; equivalent numeric payload Save disabled; newer fields/focus retained; retry focus recovered only when owned",
+      "status": "current affected branch verified"
+    },
+    {
+      "mutation": "Leave cancellation in Leave row/card menu",
+      "rendered_entry": "live data-cancel-leave",
+      "dependent": "Owned renderLeave GETs; successful API mutation emits global data-change invalidating Units cache; normal Units navigation additionally forces GET",
+      "evidence": "Accepted158 actual Leave12+late ownership; new current cross-view6",
+      "condition2": "No automatic mutation replay, exact record confirmation and explicit retry; cross-view6 proves changed monthly totals after one cancel",
+      "status": "cross-view source concern refuted by actual outcome"
+    },
+    {
+      "mutation": "Monthly pending leave approval",
+      "rendered_entry": "live admin data-approve-month-leave",
+      "dependent": "Owned month callback renderLeave after confirmation; global mutation invalidation; Units return forces GET",
+      "evidence": "Monthly owner30, same-view readback6, earlier actualRAM approval142",
+      "condition2": "Postconfirmed GET503 retry is GET-only and Day list retained; late view/account/month callbacks suppressed",
+      "status": "bounded evidence supported"
+    },
+    {
+      "mutation": "Admin leave/posting row, selected rows or whole-month delete; modal Remove posting",
+      "rendered_entry": "live row menus, selected buttons, More tools, posting cards",
+      "dependent": "runAdminDelete confirmed owner guard then supplied kind refresh; same-account posting cache invalidation; global mutation invalidation",
+      "evidence": "Shared controller15818 plus main leave/posting/member owner48; confirmed readback6leave; common Units failure/retry renderer independently exercised by registry/settings",
+      "condition2": "Target/token/typed phrase/review409 and single mutation; same-view readback failure manual GET recovery. Posting-specific postdelete readback503 has source composition rather than new dedicated full path",
+      "status": "bounded supported composition; do not claim dedicated runtime for every delete variant"
+    },
+    {
+      "mutation": "Normalization reference catalog seven kinds, nested in record/import/member dialogs",
+      "rendered_entry": "live More Labels and mappings, Mapping Manage reference labels, record/import/profile nested reference controls",
+      "dependent": "Catalog reread selects fresh row; record reload preserves draft/selection; import dirtyPreview revalidates; parent main cache invalidation. Profile designation control uses free text/history rather than this catalog as active dropdown",
+      "evidence": "Seven-kind42 catalog, record nested label18/unit6, picker155 current source. Module unchanged",
+      "condition2": "Confirmed save/readback503 manual GET only; outer notes/caret/search preserved by existing scoped evidence",
+      "status": "bounded evidence supported; no blanket all nested parent route claim"
+    },
+    {
+      "mutation": "Existing mapping row Save and historical file Scan",
+      "rendered_entry": "live mappings table data-save; Scan historical files",
+      "dependent": "Save updates authoritative returned row; Scan calls guarded loadMappings(true,current)",
+      "evidence": "Previously accepted134/135/136 mapping row/scan matrices; source exact outside settings branch",
+      "condition2": "Save/scan holds dirty row fields and chosen search/filter; source scan explicitly preserves mapping drafts",
+      "status": "original scoped evidence retained"
+    },
+    {
+      "mutation": "Add imported label mapping",
+      "rendered_entry": "live Mapping toolbar data-create-import-mapping",
+      "dependent": "Reference mapping creator POST closes; main callback calls loadMappings() default preserveDrafts=false then renderMappings",
+      "evidence": "New six current actual browser cases confirm unrelated existing-row notes lost after successful create refresh; one local POST only; filter/search remain",
+      "condition2": "VIOLATED: parent loader replaces mapping array and clears mappingDraftIds, losing unrelated unsaved row draft",
+      "status": "confirmed current defect; prevents whole159 acceptance"
+    },
+    {
+      "mutation": "Profile Postings/Leave Add/Edit and profile Leave cancellation",
+      "rendered_entry": "live member profile tabs, accessible from Units/Leave member links and other pages",
+      "dependent": "Profile record callback deletes tab/activity caches and calls loadTab; profile cancellation rereads Leave tab. request emits global invalidation. Main visible underlying page is not explicitly refreshed by these nested callbacks",
+      "evidence": "Source-inspected member-workspace lines906-964, unchanged. Existing normalized editor/module evidence covers own save but not all currently visible underlying Units/Leave page outcomes",
+      "condition2": "Profile drafts and same-tab reread have separate tests; current audit has not proved underlying parent after nested save/close, or postconfirmed-readback errors for this entry",
+      "status": "remaining verification gap/source concern, NOT a confirmed defect"
+    },
+    {
+      "mutation": "Legacy main leave-form/unit-assignment-form/data-unit-row-form submit, old apply-unit/leave-import",
+      "rendered_entry": "No current renderer emits corresponding forms/apply buttons. Current data-unit-row-form is an article containing normalized Edit/Remove buttons, not a submit form",
+      "dependent": "Handlers and old helper literals remain source inventory only",
+      "evidence": "Current renderLeave, renderUnitManagement, renderUnitModal, renderPostingEditorCards inspected; active controls route to normalized modules",
+      "condition2": "Do not invent live flows from handler presence or old literal-table discovery",
+      "status": "excluded from live mutation completeness claims"
+    }
+  ],
+  "new_executions": [
+    {
+      "name": "cancel-cross-view-refresh",
+      "contexts": 6,
+      "terminal_exit_code": 0,
+      "terminal_session_observed": 21333
+    },
+    {
+      "name": "mapping-create-draft",
+      "contexts": 6,
+      "terminal_exit_code": 0,
+      "terminal_session_observed": 80752
+    }
+  ],
+  "confirmed_defect": {
+    "trigger": "Edit notes on an existing mapping row, leave unsaved, open Add mapping, successfully save a different new mapping",
+    "observed": "Existing dirty notes become Original saved notes in6/6contexts; new row appears, exactlyone local POST and no existing-row PUT; filters/search preserved",
+    "source": "main Addmapping callback loadMappings() invokes defaultfalse; loader replaces mappings and clears mappingDraftIds",
+    "recommendation": "Use preserveDrafts=true plus originating owner predicate; retain callback/account/read-generation semantics and GET-only retry. Test newer edits while read held rather than adopting obsolete data."
+  },
+  "refuted_concern": {
+    "name": "Leave cancel\u2192Units stale active-leave counts",
+    "result": "Current actual6 prove fresh Units GET and changed count. Main global onDataChange already invalidates cache for every confirmed operational mutation; Units normal navigation also renderUnitManagement(true). Earlier expected-stale assertion was incorrect, preserved in tmp/dependent159-cancel-unit-cache-independent.log; no bug counted."
+  },
+  "evidence_sha256": {
+    "docs/premium-ui/reviews/reference159-dependent-refresh-condition-gapmap.json": "4409d6cfee1101144b4341b0c54a4c0723872a12f2469980182919c9c267f850",
+    "docs/premium-ui/reviews/reference159-import-readback-filter-independent-supplement.json": "3350294675683df0175c834c1b3de4ec03b38929dfe490a4f7a8d68b900b4a8a",
+    "docs/premium-ui/reviews/dependent159-monthly-delete-readback-independent.json": "3a7fec88514e2ff40823fda37a801986270c33f45b3aa001724711e1424207de",
+    "docs/premium-ui/reviews/unit-settings-recovery-v6-integrated-execution.json": "a123b0ab1ef44bf5cf077f086c2c92e6d17308b2429db118a845a220f46c5c67",
+    "docs/premium-ui/reviews/unit-settings-recovery-v6-prior52-independent-analysis.json": "421021b51fedc047c1d4c12a93b51c184f6152de017136755ffcf4bf805e1316",
+    "docs/premium-ui/reviews/picker150155156-independent-acceptance-adjudication.json": "dc080d086b6a9057f54f284a304030cec6cbdb0ad16daaadf9c48f75d50b90b5",
+    "docs/premium-ui/reviews/cancellation158-current-independent-adjudication.json": "c56dd2605957690aae7b3087b1b7fe13faf3cbbb7899313b91e509f608877ac7",
+    "docs/premium-ui/qa-mapping-scan-independent.json": "e62ce80c8186a49b42f0a567e5bf8591e500a280ae77647926d499ff9a2c2460",
+    "docs/premium-ui/qa-dependent159-cancel-cross-view-refresh-independent.json": "4d59e6ea0d64fef25e823349e190a01bee7d6de704cefee7c429021d369a652c",
+    "docs/premium-ui/qa-dependent159-mapping-create-draft-independent.json": "cf95ff61f95b8a6299965dbe6a33b4a3aad071536087273b4a9cbf40707b1c01",
+    "frontend/tests/premium-dependent159-cancel-cross-view-refresh-independent.browser.mjs": "b7a18c5a2c735013041c02c3e4a23f113cf04fa5184b9b8e292218c2aaefd796",
+    "frontend/tests/premium-dependent159-mapping-create-draft-independent.browser.mjs": "a3466ab8940d5bd752c567f0bfefa081b7cb902071f0cc17c45b5fbe0c1044c6"
+  },
+  "current_sources": {
+    "frontend/src/main.ts": "e88c69570e7faf9b4277b541e073c8bd2ca3805c23f4feead544f16770f6e07a",
+    "frontend/src/reference-workspace.ts": "78c231ea1d5ab15bd3a4b5f2f8265529451a51bacc68d2a4aac1708a4be30292",
+    "frontend/src/member-workspace.ts": "0ef8c1ef2234c7a50d8ca10b8aaa3998a654d452f563bd4c75531faef09d6c63",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/data-sync.ts": "8408ff9eb6369d486126b7471ffc15a45fbe7f6fe5decd73b231f1dbf07c2f02",
+    "frontend/src/unit-settings-recovery.ts": "4cfcd55615c77fa39aa08ee57abb3e807412fb9fb6c42af71dbb86a4458ce51d"
+  },
+  "limits": [
+    "Locally intercepted mutations and disposable GET fixtures; no production/backend persistence or permissions certification.",
+    "Historical proofs are bounded to declared scenarios and exact source applicability, not relabeled as new current full-path executions.",
+    "No application or acceptance ledger edits by reviewer."
+  ]
+}

@@ -1,0 +1,1061 @@
+{
+  "recorded_at_utc": "2026-10-28T06:49:30.609Z",
+  "source_sha256": {
+    "src/rota-compute.ts": "e5f967e6166e2ace9352983a468002d45850188d8811363230305d7597fb70ab",
+    "src/rota-intelligence.ts": "bda7257a3cafdcf6c4122575cc454abb1623f27dbd13950ea1d61260a23bb79b",
+    "src/compute-device.ts": "c7083623b77132d2ace7d1a0a815ad457a695c9e381afcfd1aeb91af1a6d4eca",
+    "src/member-workspace.ts": "2d52a71134b38e6ec1b2398ddac0cd90ac85829d0bd6ba084b92c1693f2bb97d",
+    "src/workspace-load-state.ts": "cdd0e323d7e83e6e668a381bbfcc37cad4726b1193ac5de31d5f14e03eecd9c6",
+    "src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "src/premium-theme.css": "d9113665ea4657cc9d5539db9017bbce76981881b2896341155694552610f1f6",
+    "tests/premium-generation-transitions.browser.mjs": "ce4000ed9d36ed6e6febdf83879abc467c676a7c273a238202f179fa7168284f"
+  },
+  "scope": "Actual quick/template shared compute and whole-month intelligence modules, Chromium320/1280. Native Resume from authoritative queued jobs; held queued/running/503-readback/newrevision/returnedcompleted/validate and returnedfailed branches. Quick completion label appears only after completed result exists; intelligence explicit review notice follows validation. No inventedpercentages, exact existing revision bodies, no jobcreation/Apply. All API requests fulfilled locally; no real scheduling/GPU/persistence/physical/nativeAT claim.",
+  "results": [
+    {
+      "width": 320,
+      "kind": "members",
+      "scenario": "recover503-complete",
+      "snapshots": [
+        {
+          "phase": "returned-queued",
+          "expectedState": "queued",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Autoassign members - quick safe fill\n\n2026-11 · Server\n\nClose\n\nExisting assignments are preserved. Proposed choices are saved only after review and final server validation.\n\nQueued\n\nRequested: Server. Running: Server.\n\n0 of 0 slots checked · 0 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.00 s.\n\nDate / duty\tProposal\tReason\nContinue generation\nCancel proposal"
+        },
+        {
+          "phase": "queued-step-held",
+          "expectedState": "queued",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Autoassign members - quick safe fill\n\n2026-11 · Server\n\nClose\n\nExisting assignments are preserved. Proposed choices are saved only after review and final server validation.\n\nQueued\n\nCalculating…\n\nRequested: Server. Running: Server.\n\n0 of 0 slots checked · 0 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.00 s.\n\nDate / duty\tProposal\tReason\nCancel proposal"
+        },
+        {
+          "phase": "returned-running-next-step-held",
+          "expectedState": "running",
+          "progressMax": "7",
+          "progressValue": "3",
+          "visibleText": "Autoassign members - quick safe fill\n\n2026-11 · Server\n\nClose\n\nExisting assignments are preserved. Proposed choices are saved only after review and final server validation.\n\nGenerating proposal\n\nCalculating…\n\nRequested: Server. Running: Server.\n\n3 of 7 slots checked · 0 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.11 s.\n\nDate / duty\tProposal\tReason\nCancel proposal"
+        },
+        {
+          "phase": "503-readback-held-last-known-running",
+          "expectedState": "running",
+          "progressMax": "7",
+          "progressValue": "3",
+          "visibleText": "Autoassign members - quick safe fill\n\n2026-11 · Server\n\nClose\n\nExisting assignments are preserved. Proposed choices are saved only after review and final server validation.\n\nGenerating proposal\n\nCalculating…\n\nRequested: Server. Running: Server.\n\n3 of 7 slots checked · 0 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.11 s.\n\nDate / duty\tProposal\tReason\nCancel proposal"
+        },
+        {
+          "phase": "readback-running-new-revision-next-step-held",
+          "expectedState": "running",
+          "progressMax": "7",
+          "progressValue": "4",
+          "visibleText": "Autoassign members - quick safe fill\n\n2026-11 · Server\n\nClose\n\nExisting assignments are preserved. Proposed choices are saved only after review and final server validation.\n\nGenerating proposal\n\nCalculating…\n\nRequested: Server. Running: Server.\n\n4 of 7 slots checked · 0 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.26 s.\n\nDate / duty\tProposal\tReason\nCancel proposal"
+        },
+        {
+          "phase": "completed-result-present-validation-held",
+          "expectedState": "completed",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Autoassign members - quick safe fill\n\n2026-11 · Server\n\nClose\n\nExisting assignments are preserved. Proposed choices are saved only after review and final server validation.\n\nReady for review\n\nCalculating…\n\nRequested: Server. Running: Server.\n\n7 of 7 slots checked · 1 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.35 s.\n\nDate / duty\tProposal\tReason\n2026-11-02\nUNIT I · Main duty\nReturned Result Member\nEligible fixture choice\nCancel proposal\nI reviewed the proposed changes and unresolved slots\nApply reviewed draft\nDownload report"
+        },
+        {
+          "phase": "validated-review-ready",
+          "expectedState": "completed",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Autoassign members - quick safe fill\n\n2026-11 · Server\n\nClose\n\nExisting assignments are preserved. Proposed choices are saved only after review and final server validation.\n\nReady for review\n\nDraft ready for review. No assignments have been applied.\n\nRequested: Server. Running: Server.\n\n7 of 7 slots checked · 1 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.44 s.\n\nDate / duty\tProposal\tReason\n2026-11-02\nUNIT I · Main duty\nReturned Result Member\nEligible fixture choice\nCancel proposal\nI reviewed the proposed changes and unresolved slots\nApply reviewed draft\nDownload report"
+        }
+      ],
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/rota-compute/capabilities",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/rota-compute/jobs",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/rota-compute/jobs/transition-job/step",
+          "search": "",
+          "body": {
+            "revision": 1
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/rota-compute/jobs/transition-job/step",
+          "search": "",
+          "body": {
+            "revision": 2
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/rota-compute/jobs/transition-job",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/rota-compute/jobs/transition-job/step",
+          "search": "",
+          "body": {
+            "revision": 3
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/rota-compute/jobs/transition-job/validate",
+          "search": "",
+          "body": {
+            "revision": 4
+          }
+        }
+      ],
+      "noApply": true,
+      "actualBackendWrites": 0,
+      "pageErrors": []
+    },
+    {
+      "width": 320,
+      "kind": "members",
+      "scenario": "returned-failure",
+      "snapshots": [
+        {
+          "phase": "returned-queued",
+          "expectedState": "queued",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Autoassign members - quick safe fill\n\n2026-11 · Server\n\nClose\n\nExisting assignments are preserved. Proposed choices are saved only after review and final server validation.\n\nQueued\n\nRequested: Server. Running: Server.\n\n0 of 0 slots checked · 0 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.00 s.\n\nDate / duty\tProposal\tReason\nContinue generation\nCancel proposal"
+        },
+        {
+          "phase": "queued-step-held",
+          "expectedState": "queued",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Autoassign members - quick safe fill\n\n2026-11 · Server\n\nClose\n\nExisting assignments are preserved. Proposed choices are saved only after review and final server validation.\n\nQueued\n\nCalculating…\n\nRequested: Server. Running: Server.\n\n0 of 0 slots checked · 0 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.00 s.\n\nDate / duty\tProposal\tReason\nCancel proposal"
+        },
+        {
+          "phase": "returned-running-next-step-held",
+          "expectedState": "running",
+          "progressMax": "7",
+          "progressValue": "3",
+          "visibleText": "Autoassign members - quick safe fill\n\n2026-11 · Server\n\nClose\n\nExisting assignments are preserved. Proposed choices are saved only after review and final server validation.\n\nGenerating proposal\n\nCalculating…\n\nRequested: Server. Running: Server.\n\n3 of 7 slots checked · 0 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.06 s.\n\nDate / duty\tProposal\tReason\nCancel proposal"
+        },
+        {
+          "phase": "returned-failed",
+          "expectedState": "failed",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Autoassign members - quick safe fill\n\n2026-11 · Server\n\nClose\n\nExisting assignments are preserved. Proposed choices are saved only after review and final server validation.\n\nFailed\n\nReturned generation failure\n\nRequested: Server. Running: Server.\n\n3 of 7 slots checked · 0 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.13 s.\n\nDate / duty\tProposal\tReason\nWhere to compute\nServer\nAlways available. Default.\nThis computer's GPU — pilot\nScores candidates on this browser's graphics card. The server re-checks every result and takes over automatically if the GPU fails.\nAutomatic\nUses the GPU only after Compare engines in Compute Settings shows it is faster for this month.\n\nBrowser GPU is turned off by the deployment administrator.\n\nOpen Compute Settings (test device, power, compare)\nGenerate proposal"
+        }
+      ],
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/rota-compute/capabilities",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/rota-compute/jobs",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/rota-compute/jobs/transition-job/step",
+          "search": "",
+          "body": {
+            "revision": 1
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/rota-compute/jobs/transition-job/step",
+          "search": "",
+          "body": {
+            "revision": 2
+          }
+        }
+      ],
+      "noApply": true,
+      "actualBackendWrites": 0,
+      "pageErrors": []
+    },
+    {
+      "width": 320,
+      "kind": "template",
+      "scenario": "recover503-complete",
+      "snapshots": [
+        {
+          "phase": "returned-queued",
+          "expectedState": "queued",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Preview template allocation\n\n2026-11 · Server\n\nClose\n\nUnits are allocated to duties; no people are assigned. Forced allocations remain marked for review.\n\nQueued\n\nRequested: Server. Running: Server.\n\n0 of 0 slots checked · 0 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.00 s.\n\nDate / duty\tProposal\tReason\nContinue generation\nCancel proposal"
+        },
+        {
+          "phase": "queued-step-held",
+          "expectedState": "queued",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Preview template allocation\n\n2026-11 · Server\n\nClose\n\nUnits are allocated to duties; no people are assigned. Forced allocations remain marked for review.\n\nQueued\n\nCalculating…\n\nRequested: Server. Running: Server.\n\n0 of 0 slots checked · 0 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.00 s.\n\nDate / duty\tProposal\tReason\nCancel proposal"
+        },
+        {
+          "phase": "returned-running-next-step-held",
+          "expectedState": "running",
+          "progressMax": "7",
+          "progressValue": "3",
+          "visibleText": "Preview template allocation\n\n2026-11 · Server\n\nClose\n\nUnits are allocated to duties; no people are assigned. Forced allocations remain marked for review.\n\nGenerating proposal\n\nCalculating…\n\nRequested: Server. Running: Server.\n\n3 of 7 slots checked · 0 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.05 s.\n\nDate / duty\tProposal\tReason\nCancel proposal"
+        },
+        {
+          "phase": "503-readback-held-last-known-running",
+          "expectedState": "running",
+          "progressMax": "7",
+          "progressValue": "3",
+          "visibleText": "Preview template allocation\n\n2026-11 · Server\n\nClose\n\nUnits are allocated to duties; no people are assigned. Forced allocations remain marked for review.\n\nGenerating proposal\n\nCalculating…\n\nRequested: Server. Running: Server.\n\n3 of 7 slots checked · 0 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.05 s.\n\nDate / duty\tProposal\tReason\nCancel proposal"
+        },
+        {
+          "phase": "readback-running-new-revision-next-step-held",
+          "expectedState": "running",
+          "progressMax": "7",
+          "progressValue": "4",
+          "visibleText": "Preview template allocation\n\n2026-11 · Server\n\nClose\n\nUnits are allocated to duties; no people are assigned. Forced allocations remain marked for review.\n\nGenerating proposal\n\nCalculating…\n\nRequested: Server. Running: Server.\n\n4 of 7 slots checked · 0 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.19 s.\n\nDate / duty\tProposal\tReason\nCancel proposal"
+        },
+        {
+          "phase": "completed-result-present-validation-held",
+          "expectedState": "completed",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Preview template allocation\n\n2026-11 · Server\n\nClose\n\nUnits are allocated to duties; no people are assigned. Forced allocations remain marked for review.\n\nReady for review\n\nCalculating…\n\nRequested: Server. Running: Server.\n\n7 of 7 slots checked · 1 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.26 s.\n\nDate / duty\tProposal\tReason\n2026-11-02\nUNIT I · Main duty\nUNIT I\nEligible fixture choice\nCancel proposal\nI reviewed the proposed changes and unresolved slots\nApply reviewed draft\nDownload report"
+        },
+        {
+          "phase": "validated-review-ready",
+          "expectedState": "completed",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Preview template allocation\n\n2026-11 · Server\n\nClose\n\nUnits are allocated to duties; no people are assigned. Forced allocations remain marked for review.\n\nReady for review\n\nDraft ready for review. No assignments have been applied.\n\nRequested: Server. Running: Server.\n\n7 of 7 slots checked · 1 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.36 s.\n\nDate / duty\tProposal\tReason\n2026-11-02\nUNIT I · Main duty\nUNIT I\nEligible fixture choice\nCancel proposal\nI reviewed the proposed changes and unresolved slots\nApply reviewed draft\nDownload report"
+        }
+      ],
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/rota-compute/capabilities",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/rota-compute/jobs",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/rota-compute/jobs/transition-job/step",
+          "search": "",
+          "body": {
+            "revision": 1
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/rota-compute/jobs/transition-job/step",
+          "search": "",
+          "body": {
+            "revision": 2
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/rota-compute/jobs/transition-job",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/rota-compute/jobs/transition-job/step",
+          "search": "",
+          "body": {
+            "revision": 3
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/rota-compute/jobs/transition-job/validate",
+          "search": "",
+          "body": {
+            "revision": 4
+          }
+        }
+      ],
+      "noApply": true,
+      "actualBackendWrites": 0,
+      "pageErrors": []
+    },
+    {
+      "width": 320,
+      "kind": "template",
+      "scenario": "returned-failure",
+      "snapshots": [
+        {
+          "phase": "returned-queued",
+          "expectedState": "queued",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Preview template allocation\n\n2026-11 · Server\n\nClose\n\nUnits are allocated to duties; no people are assigned. Forced allocations remain marked for review.\n\nQueued\n\nRequested: Server. Running: Server.\n\n0 of 0 slots checked · 0 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.00 s.\n\nDate / duty\tProposal\tReason\nContinue generation\nCancel proposal"
+        },
+        {
+          "phase": "queued-step-held",
+          "expectedState": "queued",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Preview template allocation\n\n2026-11 · Server\n\nClose\n\nUnits are allocated to duties; no people are assigned. Forced allocations remain marked for review.\n\nQueued\n\nCalculating…\n\nRequested: Server. Running: Server.\n\n0 of 0 slots checked · 0 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.00 s.\n\nDate / duty\tProposal\tReason\nCancel proposal"
+        },
+        {
+          "phase": "returned-running-next-step-held",
+          "expectedState": "running",
+          "progressMax": "7",
+          "progressValue": "3",
+          "visibleText": "Preview template allocation\n\n2026-11 · Server\n\nClose\n\nUnits are allocated to duties; no people are assigned. Forced allocations remain marked for review.\n\nGenerating proposal\n\nCalculating…\n\nRequested: Server. Running: Server.\n\n3 of 7 slots checked · 0 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.07 s.\n\nDate / duty\tProposal\tReason\nCancel proposal"
+        },
+        {
+          "phase": "returned-failed",
+          "expectedState": "failed",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Preview template allocation\n\n2026-11 · Server\n\nClose\n\nUnits are allocated to duties; no people are assigned. Forced allocations remain marked for review.\n\nFailed\n\nReturned generation failure\n\nRequested: Server. Running: Server.\n\n3 of 7 slots checked · 0 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.15 s.\n\nDate / duty\tProposal\tReason\nWhere to compute\nServer\nAlways available. Default.\nThis computer's GPU — pilot\nScores candidates on this browser's graphics card. The server re-checks every result and takes over automatically if the GPU fails.\nAutomatic\nUses the GPU only after Compare engines in Compute Settings shows it is faster for this month.\n\nBrowser GPU is turned off by the deployment administrator.\n\nOpen Compute Settings (test device, power, compare)\nGenerate proposal"
+        }
+      ],
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/rota-compute/capabilities",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/rota-compute/jobs",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/rota-compute/jobs/transition-job/step",
+          "search": "",
+          "body": {
+            "revision": 1
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/rota-compute/jobs/transition-job/step",
+          "search": "",
+          "body": {
+            "revision": 2
+          }
+        }
+      ],
+      "noApply": true,
+      "actualBackendWrites": 0,
+      "pageErrors": []
+    },
+    {
+      "width": 320,
+      "kind": "intelligence",
+      "scenario": "recover503-complete",
+      "snapshots": [
+        {
+          "phase": "returned-queued",
+          "expectedState": "queued",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Intelligent rota generator\n\n2026-11 · queued\n\nClose\nPlan\nReview\nTeaching\nAssistant\nLearning\n\nPlan the whole month while enforcing configured eligibility, leave, rest, limits and staffing checks. Existing assignments stay fixed unless selected for repair.\n\nPlanning priority\nBalanced\nFewest changes / repair\nPreferences first, after safe coverage\nSearch budget\n30 seconds\n60 seconds\n120 seconds\n\nHistorical policy: 6 months. Observed months: none; unknown history receives no zero-workload credit.\n\nHoliday calendar: not configured; holiday balancing will be reported as unevaluated.\n\nMaintain holiday dates\nLocks and repair scope\nMember preferences\nConfigured safety rules\nGenerate intelligent draft Resume generationContinue on server\nAll assignments require review and final validation."
+        },
+        {
+          "phase": "queued-step-held",
+          "expectedState": "queued",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Intelligent rota generator\n\n2026-11 · queued\n\nClose\nPlan\nReview\nTeaching\nAssistant\nLearning\n\nPlan the whole month while enforcing configured eligibility, leave, rest, limits and staffing checks. Existing assignments stay fixed unless selected for repair.\n\nPlanning priority\nBalanced\nFewest changes / repair\nPreferences first, after safe coverage\nSearch budget\n30 seconds\n60 seconds\n120 seconds\n\nHistorical policy: 6 months. Observed months: none; unknown history receives no zero-workload credit.\n\nHoliday calendar: not configured; holiday balancing will be reported as unevaluated.\n\nMaintain holiday dates\nLocks and repair scope\nMember preferences\nConfigured safety rules\nGenerate intelligent draft Resume generationContinue on server\nWorking. Closing this window stops further requests; an in-flight search may finish without applying assignments."
+        },
+        {
+          "phase": "returned-running-next-step-held",
+          "expectedState": "running",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Intelligent rota generator\n\n2026-11 · running\n\nClose\nPlan\nReview\nTeaching\nAssistant\nLearning\n\nServer optimisation · running.\n\nPlan the whole month while enforcing configured eligibility, leave, rest, limits and staffing checks. Existing assignments stay fixed unless selected for repair.\n\nPlanning priority\nBalanced\nFewest changes / repair\nPreferences first, after safe coverage\nSearch budget\n30 seconds\n60 seconds\n120 seconds\n\nHistorical policy: 6 months. Observed months: none; unknown history receives no zero-workload credit.\n\nHoliday calendar: not configured; holiday balancing will be reported as unevaluated.\n\nMaintain holiday dates\nLocks and repair scope\nMember preferences\nConfigured safety rules\nGenerate intelligent draft Resume generationContinue on server\nWorking. Closing this window stops further requests; an in-flight search may finish without applying assignments."
+        },
+        {
+          "phase": "503-readback-held-last-known-running",
+          "expectedState": "running",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Intelligent rota generator\n\n2026-11 · running\n\nClose\nPlan\nReview\nTeaching\nAssistant\nLearning\n\nServer optimisation · running.\n\nPlan the whole month while enforcing configured eligibility, leave, rest, limits and staffing checks. Existing assignments stay fixed unless selected for repair.\n\nPlanning priority\nBalanced\nFewest changes / repair\nPreferences first, after safe coverage\nSearch budget\n30 seconds\n60 seconds\n120 seconds\n\nHistorical policy: 6 months. Observed months: none; unknown history receives no zero-workload credit.\n\nHoliday calendar: not configured; holiday balancing will be reported as unevaluated.\n\nMaintain holiday dates\nLocks and repair scope\nMember preferences\nConfigured safety rules\nGenerate intelligent draft Resume generationContinue on server\nWorking. Closing this window stops further requests; an in-flight search may finish without applying assignments."
+        },
+        {
+          "phase": "readback-running-new-revision-next-step-held",
+          "expectedState": "running",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Intelligent rota generator\n\n2026-11 · running\n\nClose\nPlan\nReview\nTeaching\nAssistant\nLearning\n\nServer optimisation · running.\n\nPlan the whole month while enforcing configured eligibility, leave, rest, limits and staffing checks. Existing assignments stay fixed unless selected for repair.\n\nPlanning priority\nBalanced\nFewest changes / repair\nPreferences first, after safe coverage\nSearch budget\n30 seconds\n60 seconds\n120 seconds\n\nHistorical policy: 6 months. Observed months: none; unknown history receives no zero-workload credit.\n\nHoliday calendar: not configured; holiday balancing will be reported as unevaluated.\n\nMaintain holiday dates\nLocks and repair scope\nMember preferences\nConfigured safety rules\nGenerate intelligent draft Resume generationContinue on server\nWorking. Closing this window stops further requests; an in-flight search may finish without applying assignments."
+        },
+        {
+          "phase": "completed-result-present-validation-held",
+          "expectedState": "completed",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Intelligent rota generator\n\n2026-11 · completed\n\nClose\nPlan\nReview\nTeaching\nAssistant\nLearning\n\nServer optimisation · completed.\n\nPlan the whole month while enforcing configured eligibility, leave, rest, limits and staffing checks. Existing assignments stay fixed unless selected for repair.\n\nPlanning priority\nBalanced\nFewest changes / repair\nPreferences first, after safe coverage\nSearch budget\n30 seconds\n60 seconds\n120 seconds\n\nHistorical policy: 6 months. Observed months: none; unknown history receives no zero-workload credit.\n\nHoliday calendar: not configured; holiday balancing will be reported as unevaluated.\n\nMaintain holiday dates\nLocks and repair scope\nMember preferences\nConfigured safety rules\nGenerate intelligent draft\nWorking. Closing this window stops further requests; an in-flight search may finish without applying assignments."
+        },
+        {
+          "phase": "validated-review-ready",
+          "expectedState": "completed",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Intelligent rota generator\n\n2026-11 · completed\n\nClose\nPlan\nReview\nTeaching\nAssistant\nLearning\n\nDraft ready for review. No assignments have been saved.\n\n1 proposed · 0 uncovered. feasible · 0.00 seconds · 0 existing assignments changed\n\nAlternative\n1: 0 uncovered, 0 changes, feasible\n\nIf columns extend beyond this panel, scroll horizontally. Keyboard: focus the table region and use the arrow keys.\n\nWhole-month alternatives reported by the server\nAlternative\tUncovered\tChanges\tStatus\n1 (selected)\t0\t0\tfeasible\nOptimization evidence\nDuty\tProposal\tReason / teach\n2026-11-02\nMain duty\nReturned Result Member\n\nEligible choice in the validated whole-month plan.\n\nWhy this choice?\nTeach this decision\nFind another alternative\nI reviewed changes and uncovered duties\nApply reviewed draft Cancel proposalDownload evidence\nAll assignments require review and final validation."
+        }
+      ],
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/rota-intelligence/setup",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/rota-compute/jobs",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/rota-compute/jobs/transition-job/step",
+          "search": "",
+          "body": {
+            "revision": 1
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/rota-compute/jobs/transition-job/step",
+          "search": "",
+          "body": {
+            "revision": 2
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/rota-compute/jobs/transition-job",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/rota-compute/jobs/transition-job/step",
+          "search": "",
+          "body": {
+            "revision": 3
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/rota-compute/jobs/transition-job/validate",
+          "search": "",
+          "body": {
+            "revision": 4
+          }
+        }
+      ],
+      "noApply": true,
+      "actualBackendWrites": 0,
+      "pageErrors": []
+    },
+    {
+      "width": 320,
+      "kind": "intelligence",
+      "scenario": "returned-failure",
+      "snapshots": [
+        {
+          "phase": "returned-queued",
+          "expectedState": "queued",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Intelligent rota generator\n\n2026-11 · queued\n\nClose\nPlan\nReview\nTeaching\nAssistant\nLearning\n\nPlan the whole month while enforcing configured eligibility, leave, rest, limits and staffing checks. Existing assignments stay fixed unless selected for repair.\n\nPlanning priority\nBalanced\nFewest changes / repair\nPreferences first, after safe coverage\nSearch budget\n30 seconds\n60 seconds\n120 seconds\n\nHistorical policy: 6 months. Observed months: none; unknown history receives no zero-workload credit.\n\nHoliday calendar: not configured; holiday balancing will be reported as unevaluated.\n\nMaintain holiday dates\nLocks and repair scope\nMember preferences\nConfigured safety rules\nGenerate intelligent draft Resume generationContinue on server\nAll assignments require review and final validation."
+        },
+        {
+          "phase": "queued-step-held",
+          "expectedState": "queued",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Intelligent rota generator\n\n2026-11 · queued\n\nClose\nPlan\nReview\nTeaching\nAssistant\nLearning\n\nPlan the whole month while enforcing configured eligibility, leave, rest, limits and staffing checks. Existing assignments stay fixed unless selected for repair.\n\nPlanning priority\nBalanced\nFewest changes / repair\nPreferences first, after safe coverage\nSearch budget\n30 seconds\n60 seconds\n120 seconds\n\nHistorical policy: 6 months. Observed months: none; unknown history receives no zero-workload credit.\n\nHoliday calendar: not configured; holiday balancing will be reported as unevaluated.\n\nMaintain holiday dates\nLocks and repair scope\nMember preferences\nConfigured safety rules\nGenerate intelligent draft Resume generationContinue on server\nWorking. Closing this window stops further requests; an in-flight search may finish without applying assignments."
+        },
+        {
+          "phase": "returned-running-next-step-held",
+          "expectedState": "running",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Intelligent rota generator\n\n2026-11 · running\n\nClose\nPlan\nReview\nTeaching\nAssistant\nLearning\n\nServer optimisation · running.\n\nPlan the whole month while enforcing configured eligibility, leave, rest, limits and staffing checks. Existing assignments stay fixed unless selected for repair.\n\nPlanning priority\nBalanced\nFewest changes / repair\nPreferences first, after safe coverage\nSearch budget\n30 seconds\n60 seconds\n120 seconds\n\nHistorical policy: 6 months. Observed months: none; unknown history receives no zero-workload credit.\n\nHoliday calendar: not configured; holiday balancing will be reported as unevaluated.\n\nMaintain holiday dates\nLocks and repair scope\nMember preferences\nConfigured safety rules\nGenerate intelligent draft Resume generationContinue on server\nWorking. Closing this window stops further requests; an in-flight search may finish without applying assignments."
+        },
+        {
+          "phase": "returned-failed",
+          "expectedState": "failed",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Intelligent rota generator\n\n2026-11 · failed\n\nClose\nPlan\nReview\nTeaching\nAssistant\nLearning\n\nServer optimisation · failed.\n\nPlan the whole month while enforcing configured eligibility, leave, rest, limits and staffing checks. Existing assignments stay fixed unless selected for repair.\n\nPlanning priority\nBalanced\nFewest changes / repair\nPreferences first, after safe coverage\nSearch budget\n30 seconds\n60 seconds\n120 seconds\n\nHistorical policy: 6 months. Observed months: none; unknown history receives no zero-workload credit.\n\nHoliday calendar: not configured; holiday balancing will be reported as unevaluated.\n\nMaintain holiday dates\nLocks and repair scope\nMember preferences\nConfigured safety rules\nGenerate intelligent draft\nAll assignments require review and final validation."
+        }
+      ],
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/rota-intelligence/setup",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/rota-compute/jobs",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/rota-compute/jobs/transition-job/step",
+          "search": "",
+          "body": {
+            "revision": 1
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/rota-compute/jobs/transition-job/step",
+          "search": "",
+          "body": {
+            "revision": 2
+          }
+        }
+      ],
+      "noApply": true,
+      "actualBackendWrites": 0,
+      "pageErrors": []
+    },
+    {
+      "width": 1280,
+      "kind": "members",
+      "scenario": "recover503-complete",
+      "snapshots": [
+        {
+          "phase": "returned-queued",
+          "expectedState": "queued",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Autoassign members - quick safe fill\n\n2026-11 · Server\n\nClose\n\nExisting assignments are preserved. Proposed choices are saved only after review and final server validation.\n\nQueued\n\nRequested: Server. Running: Server.\n\n0 of 0 slots checked · 0 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.00 s.\n\nDate / duty\tProposal\tReason\nContinue generation\nCancel proposal"
+        },
+        {
+          "phase": "queued-step-held",
+          "expectedState": "queued",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Autoassign members - quick safe fill\n\n2026-11 · Server\n\nClose\n\nExisting assignments are preserved. Proposed choices are saved only after review and final server validation.\n\nQueued\n\nCalculating…\n\nRequested: Server. Running: Server.\n\n0 of 0 slots checked · 0 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.00 s.\n\nDate / duty\tProposal\tReason\nCancel proposal"
+        },
+        {
+          "phase": "returned-running-next-step-held",
+          "expectedState": "running",
+          "progressMax": "7",
+          "progressValue": "3",
+          "visibleText": "Autoassign members - quick safe fill\n\n2026-11 · Server\n\nClose\n\nExisting assignments are preserved. Proposed choices are saved only after review and final server validation.\n\nGenerating proposal\n\nCalculating…\n\nRequested: Server. Running: Server.\n\n3 of 7 slots checked · 0 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.05 s.\n\nDate / duty\tProposal\tReason\nCancel proposal"
+        },
+        {
+          "phase": "503-readback-held-last-known-running",
+          "expectedState": "running",
+          "progressMax": "7",
+          "progressValue": "3",
+          "visibleText": "Autoassign members - quick safe fill\n\n2026-11 · Server\n\nClose\n\nExisting assignments are preserved. Proposed choices are saved only after review and final server validation.\n\nGenerating proposal\n\nCalculating…\n\nRequested: Server. Running: Server.\n\n3 of 7 slots checked · 0 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.05 s.\n\nDate / duty\tProposal\tReason\nCancel proposal"
+        },
+        {
+          "phase": "readback-running-new-revision-next-step-held",
+          "expectedState": "running",
+          "progressMax": "7",
+          "progressValue": "4",
+          "visibleText": "Autoassign members - quick safe fill\n\n2026-11 · Server\n\nClose\n\nExisting assignments are preserved. Proposed choices are saved only after review and final server validation.\n\nGenerating proposal\n\nCalculating…\n\nRequested: Server. Running: Server.\n\n4 of 7 slots checked · 0 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.15 s.\n\nDate / duty\tProposal\tReason\nCancel proposal"
+        },
+        {
+          "phase": "completed-result-present-validation-held",
+          "expectedState": "completed",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Autoassign members - quick safe fill\n\n2026-11 · Server\n\nClose\n\nExisting assignments are preserved. Proposed choices are saved only after review and final server validation.\n\nReady for review\n\nCalculating…\n\nRequested: Server. Running: Server.\n\n7 of 7 slots checked · 1 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.20 s.\n\nDate / duty\tProposal\tReason\n2026-11-02\nUNIT I · Main duty\n\tReturned Result Member\tEligible fixture choice\nCancel proposal\nI reviewed the proposed changes and unresolved slots\nApply reviewed draft\nDownload report"
+        },
+        {
+          "phase": "validated-review-ready",
+          "expectedState": "completed",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Autoassign members - quick safe fill\n\n2026-11 · Server\n\nClose\n\nExisting assignments are preserved. Proposed choices are saved only after review and final server validation.\n\nReady for review\n\nDraft ready for review. No assignments have been applied.\n\nRequested: Server. Running: Server.\n\n7 of 7 slots checked · 1 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.28 s.\n\nDate / duty\tProposal\tReason\n2026-11-02\nUNIT I · Main duty\n\tReturned Result Member\tEligible fixture choice\nCancel proposal\nI reviewed the proposed changes and unresolved slots\nApply reviewed draft\nDownload report"
+        }
+      ],
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/rota-compute/capabilities",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/rota-compute/jobs",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/rota-compute/jobs/transition-job/step",
+          "search": "",
+          "body": {
+            "revision": 1
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/rota-compute/jobs/transition-job/step",
+          "search": "",
+          "body": {
+            "revision": 2
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/rota-compute/jobs/transition-job",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/rota-compute/jobs/transition-job/step",
+          "search": "",
+          "body": {
+            "revision": 3
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/rota-compute/jobs/transition-job/validate",
+          "search": "",
+          "body": {
+            "revision": 4
+          }
+        }
+      ],
+      "noApply": true,
+      "actualBackendWrites": 0,
+      "pageErrors": []
+    },
+    {
+      "width": 1280,
+      "kind": "members",
+      "scenario": "returned-failure",
+      "snapshots": [
+        {
+          "phase": "returned-queued",
+          "expectedState": "queued",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Autoassign members - quick safe fill\n\n2026-11 · Server\n\nClose\n\nExisting assignments are preserved. Proposed choices are saved only after review and final server validation.\n\nQueued\n\nRequested: Server. Running: Server.\n\n0 of 0 slots checked · 0 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.00 s.\n\nDate / duty\tProposal\tReason\nContinue generation\nCancel proposal"
+        },
+        {
+          "phase": "queued-step-held",
+          "expectedState": "queued",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Autoassign members - quick safe fill\n\n2026-11 · Server\n\nClose\n\nExisting assignments are preserved. Proposed choices are saved only after review and final server validation.\n\nQueued\n\nCalculating…\n\nRequested: Server. Running: Server.\n\n0 of 0 slots checked · 0 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.00 s.\n\nDate / duty\tProposal\tReason\nCancel proposal"
+        },
+        {
+          "phase": "returned-running-next-step-held",
+          "expectedState": "running",
+          "progressMax": "7",
+          "progressValue": "3",
+          "visibleText": "Autoassign members - quick safe fill\n\n2026-11 · Server\n\nClose\n\nExisting assignments are preserved. Proposed choices are saved only after review and final server validation.\n\nGenerating proposal\n\nCalculating…\n\nRequested: Server. Running: Server.\n\n3 of 7 slots checked · 0 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.08 s.\n\nDate / duty\tProposal\tReason\nCancel proposal"
+        },
+        {
+          "phase": "returned-failed",
+          "expectedState": "failed",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Autoassign members - quick safe fill\n\n2026-11 · Server\n\nClose\n\nExisting assignments are preserved. Proposed choices are saved only after review and final server validation.\n\nFailed\n\nReturned generation failure\n\nRequested: Server. Running: Server.\n\n3 of 7 slots checked · 0 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.17 s.\n\nDate / duty\tProposal\tReason\nWhere to compute\nServer\nAlways available. Default.\nThis computer's GPU — pilot\nScores candidates on this browser's graphics card. The server re-checks every result and takes over automatically if the GPU fails.\nAutomatic\nUses the GPU only after Compare engines in Compute Settings shows it is faster for this month.\n\nBrowser GPU is turned off by the deployment administrator.\n\nOpen Compute Settings (test device, power, compare)\nGenerate proposal"
+        }
+      ],
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/rota-compute/capabilities",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/rota-compute/jobs",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/rota-compute/jobs/transition-job/step",
+          "search": "",
+          "body": {
+            "revision": 1
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/rota-compute/jobs/transition-job/step",
+          "search": "",
+          "body": {
+            "revision": 2
+          }
+        }
+      ],
+      "noApply": true,
+      "actualBackendWrites": 0,
+      "pageErrors": []
+    },
+    {
+      "width": 1280,
+      "kind": "template",
+      "scenario": "recover503-complete",
+      "snapshots": [
+        {
+          "phase": "returned-queued",
+          "expectedState": "queued",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Preview template allocation\n\n2026-11 · Server\n\nClose\n\nUnits are allocated to duties; no people are assigned. Forced allocations remain marked for review.\n\nQueued\n\nRequested: Server. Running: Server.\n\n0 of 0 slots checked · 0 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.00 s.\n\nDate / duty\tProposal\tReason\nContinue generation\nCancel proposal"
+        },
+        {
+          "phase": "queued-step-held",
+          "expectedState": "queued",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Preview template allocation\n\n2026-11 · Server\n\nClose\n\nUnits are allocated to duties; no people are assigned. Forced allocations remain marked for review.\n\nQueued\n\nCalculating…\n\nRequested: Server. Running: Server.\n\n0 of 0 slots checked · 0 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.00 s.\n\nDate / duty\tProposal\tReason\nCancel proposal"
+        },
+        {
+          "phase": "returned-running-next-step-held",
+          "expectedState": "running",
+          "progressMax": "7",
+          "progressValue": "3",
+          "visibleText": "Preview template allocation\n\n2026-11 · Server\n\nClose\n\nUnits are allocated to duties; no people are assigned. Forced allocations remain marked for review.\n\nGenerating proposal\n\nCalculating…\n\nRequested: Server. Running: Server.\n\n3 of 7 slots checked · 0 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.05 s.\n\nDate / duty\tProposal\tReason\nCancel proposal"
+        },
+        {
+          "phase": "503-readback-held-last-known-running",
+          "expectedState": "running",
+          "progressMax": "7",
+          "progressValue": "3",
+          "visibleText": "Preview template allocation\n\n2026-11 · Server\n\nClose\n\nUnits are allocated to duties; no people are assigned. Forced allocations remain marked for review.\n\nGenerating proposal\n\nCalculating…\n\nRequested: Server. Running: Server.\n\n3 of 7 slots checked · 0 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.05 s.\n\nDate / duty\tProposal\tReason\nCancel proposal"
+        },
+        {
+          "phase": "readback-running-new-revision-next-step-held",
+          "expectedState": "running",
+          "progressMax": "7",
+          "progressValue": "4",
+          "visibleText": "Preview template allocation\n\n2026-11 · Server\n\nClose\n\nUnits are allocated to duties; no people are assigned. Forced allocations remain marked for review.\n\nGenerating proposal\n\nCalculating…\n\nRequested: Server. Running: Server.\n\n4 of 7 slots checked · 0 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.18 s.\n\nDate / duty\tProposal\tReason\nCancel proposal"
+        },
+        {
+          "phase": "completed-result-present-validation-held",
+          "expectedState": "completed",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Preview template allocation\n\n2026-11 · Server\n\nClose\n\nUnits are allocated to duties; no people are assigned. Forced allocations remain marked for review.\n\nReady for review\n\nCalculating…\n\nRequested: Server. Running: Server.\n\n7 of 7 slots checked · 1 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.25 s.\n\nDate / duty\tProposal\tReason\n2026-11-02\nUNIT I · Main duty\n\tUNIT I\tEligible fixture choice\nCancel proposal\nI reviewed the proposed changes and unresolved slots\nApply reviewed draft\nDownload report"
+        },
+        {
+          "phase": "validated-review-ready",
+          "expectedState": "completed",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Preview template allocation\n\n2026-11 · Server\n\nClose\n\nUnits are allocated to duties; no people are assigned. Forced allocations remain marked for review.\n\nReady for review\n\nDraft ready for review. No assignments have been applied.\n\nRequested: Server. Running: Server.\n\n7 of 7 slots checked · 1 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.32 s.\n\nDate / duty\tProposal\tReason\n2026-11-02\nUNIT I · Main duty\n\tUNIT I\tEligible fixture choice\nCancel proposal\nI reviewed the proposed changes and unresolved slots\nApply reviewed draft\nDownload report"
+        }
+      ],
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/rota-compute/capabilities",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/rota-compute/jobs",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/rota-compute/jobs/transition-job/step",
+          "search": "",
+          "body": {
+            "revision": 1
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/rota-compute/jobs/transition-job/step",
+          "search": "",
+          "body": {
+            "revision": 2
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/rota-compute/jobs/transition-job",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/rota-compute/jobs/transition-job/step",
+          "search": "",
+          "body": {
+            "revision": 3
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/rota-compute/jobs/transition-job/validate",
+          "search": "",
+          "body": {
+            "revision": 4
+          }
+        }
+      ],
+      "noApply": true,
+      "actualBackendWrites": 0,
+      "pageErrors": []
+    },
+    {
+      "width": 1280,
+      "kind": "template",
+      "scenario": "returned-failure",
+      "snapshots": [
+        {
+          "phase": "returned-queued",
+          "expectedState": "queued",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Preview template allocation\n\n2026-11 · Server\n\nClose\n\nUnits are allocated to duties; no people are assigned. Forced allocations remain marked for review.\n\nQueued\n\nRequested: Server. Running: Server.\n\n0 of 0 slots checked · 0 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.00 s.\n\nDate / duty\tProposal\tReason\nContinue generation\nCancel proposal"
+        },
+        {
+          "phase": "queued-step-held",
+          "expectedState": "queued",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Preview template allocation\n\n2026-11 · Server\n\nClose\n\nUnits are allocated to duties; no people are assigned. Forced allocations remain marked for review.\n\nQueued\n\nCalculating…\n\nRequested: Server. Running: Server.\n\n0 of 0 slots checked · 0 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.00 s.\n\nDate / duty\tProposal\tReason\nCancel proposal"
+        },
+        {
+          "phase": "returned-running-next-step-held",
+          "expectedState": "running",
+          "progressMax": "7",
+          "progressValue": "3",
+          "visibleText": "Preview template allocation\n\n2026-11 · Server\n\nClose\n\nUnits are allocated to duties; no people are assigned. Forced allocations remain marked for review.\n\nGenerating proposal\n\nCalculating…\n\nRequested: Server. Running: Server.\n\n3 of 7 slots checked · 0 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.08 s.\n\nDate / duty\tProposal\tReason\nCancel proposal"
+        },
+        {
+          "phase": "returned-failed",
+          "expectedState": "failed",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Preview template allocation\n\n2026-11 · Server\n\nClose\n\nUnits are allocated to duties; no people are assigned. Forced allocations remain marked for review.\n\nFailed\n\nReturned generation failure\n\nRequested: Server. Running: Server.\n\n3 of 7 slots checked · 0 proposed · 0 need review\n\n0 GPU batches verified by the server.\n\nPlanning: 0.00 s on server; this session: 0.16 s.\n\nDate / duty\tProposal\tReason\nWhere to compute\nServer\nAlways available. Default.\nThis computer's GPU — pilot\nScores candidates on this browser's graphics card. The server re-checks every result and takes over automatically if the GPU fails.\nAutomatic\nUses the GPU only after Compare engines in Compute Settings shows it is faster for this month.\n\nBrowser GPU is turned off by the deployment administrator.\n\nOpen Compute Settings (test device, power, compare)\nGenerate proposal"
+        }
+      ],
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/rota-compute/capabilities",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/rota-compute/jobs",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/rota-compute/jobs/transition-job/step",
+          "search": "",
+          "body": {
+            "revision": 1
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/rota-compute/jobs/transition-job/step",
+          "search": "",
+          "body": {
+            "revision": 2
+          }
+        }
+      ],
+      "noApply": true,
+      "actualBackendWrites": 0,
+      "pageErrors": []
+    },
+    {
+      "width": 1280,
+      "kind": "intelligence",
+      "scenario": "recover503-complete",
+      "snapshots": [
+        {
+          "phase": "returned-queued",
+          "expectedState": "queued",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Intelligent rota generator\n\n2026-11 · queued\n\nClose\nPlan\nReview\nTeaching\nAssistant\nLearning\n\nPlan the whole month while enforcing configured eligibility, leave, rest, limits and staffing checks. Existing assignments stay fixed unless selected for repair.\n\nPlanning priority\nBalanced\nFewest changes / repair\nPreferences first, after safe coverage\nSearch budget\n30 seconds\n60 seconds\n120 seconds\n\nHistorical policy: 6 months. Observed months: none; unknown history receives no zero-workload credit.\n\nHoliday calendar: not configured; holiday balancing will be reported as unevaluated.\n\nMaintain holiday dates\nLocks and repair scope\nMember preferences\nConfigured safety rules\nGenerate intelligent draft Resume generationContinue on server\nAll assignments require review and final validation."
+        },
+        {
+          "phase": "queued-step-held",
+          "expectedState": "queued",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Intelligent rota generator\n\n2026-11 · queued\n\nClose\nPlan\nReview\nTeaching\nAssistant\nLearning\n\nPlan the whole month while enforcing configured eligibility, leave, rest, limits and staffing checks. Existing assignments stay fixed unless selected for repair.\n\nPlanning priority\nBalanced\nFewest changes / repair\nPreferences first, after safe coverage\nSearch budget\n30 seconds\n60 seconds\n120 seconds\n\nHistorical policy: 6 months. Observed months: none; unknown history receives no zero-workload credit.\n\nHoliday calendar: not configured; holiday balancing will be reported as unevaluated.\n\nMaintain holiday dates\nLocks and repair scope\nMember preferences\nConfigured safety rules\nGenerate intelligent draft Resume generationContinue on server\nWorking. Closing this window stops further requests; an in-flight search may finish without applying assignments."
+        },
+        {
+          "phase": "returned-running-next-step-held",
+          "expectedState": "running",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Intelligent rota generator\n\n2026-11 · running\n\nClose\nPlan\nReview\nTeaching\nAssistant\nLearning\n\nServer optimisation · running.\n\nPlan the whole month while enforcing configured eligibility, leave, rest, limits and staffing checks. Existing assignments stay fixed unless selected for repair.\n\nPlanning priority\nBalanced\nFewest changes / repair\nPreferences first, after safe coverage\nSearch budget\n30 seconds\n60 seconds\n120 seconds\n\nHistorical policy: 6 months. Observed months: none; unknown history receives no zero-workload credit.\n\nHoliday calendar: not configured; holiday balancing will be reported as unevaluated.\n\nMaintain holiday dates\nLocks and repair scope\nMember preferences\nConfigured safety rules\nGenerate intelligent draft Resume generationContinue on server\nWorking. Closing this window stops further requests; an in-flight search may finish without applying assignments."
+        },
+        {
+          "phase": "503-readback-held-last-known-running",
+          "expectedState": "running",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Intelligent rota generator\n\n2026-11 · running\n\nClose\nPlan\nReview\nTeaching\nAssistant\nLearning\n\nServer optimisation · running.\n\nPlan the whole month while enforcing configured eligibility, leave, rest, limits and staffing checks. Existing assignments stay fixed unless selected for repair.\n\nPlanning priority\nBalanced\nFewest changes / repair\nPreferences first, after safe coverage\nSearch budget\n30 seconds\n60 seconds\n120 seconds\n\nHistorical policy: 6 months. Observed months: none; unknown history receives no zero-workload credit.\n\nHoliday calendar: not configured; holiday balancing will be reported as unevaluated.\n\nMaintain holiday dates\nLocks and repair scope\nMember preferences\nConfigured safety rules\nGenerate intelligent draft Resume generationContinue on server\nWorking. Closing this window stops further requests; an in-flight search may finish without applying assignments."
+        },
+        {
+          "phase": "readback-running-new-revision-next-step-held",
+          "expectedState": "running",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Intelligent rota generator\n\n2026-11 · running\n\nClose\nPlan\nReview\nTeaching\nAssistant\nLearning\n\nServer optimisation · running.\n\nPlan the whole month while enforcing configured eligibility, leave, rest, limits and staffing checks. Existing assignments stay fixed unless selected for repair.\n\nPlanning priority\nBalanced\nFewest changes / repair\nPreferences first, after safe coverage\nSearch budget\n30 seconds\n60 seconds\n120 seconds\n\nHistorical policy: 6 months. Observed months: none; unknown history receives no zero-workload credit.\n\nHoliday calendar: not configured; holiday balancing will be reported as unevaluated.\n\nMaintain holiday dates\nLocks and repair scope\nMember preferences\nConfigured safety rules\nGenerate intelligent draft Resume generationContinue on server\nWorking. Closing this window stops further requests; an in-flight search may finish without applying assignments."
+        },
+        {
+          "phase": "completed-result-present-validation-held",
+          "expectedState": "completed",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Intelligent rota generator\n\n2026-11 · completed\n\nClose\nPlan\nReview\nTeaching\nAssistant\nLearning\n\nServer optimisation · completed.\n\nPlan the whole month while enforcing configured eligibility, leave, rest, limits and staffing checks. Existing assignments stay fixed unless selected for repair.\n\nPlanning priority\nBalanced\nFewest changes / repair\nPreferences first, after safe coverage\nSearch budget\n30 seconds\n60 seconds\n120 seconds\n\nHistorical policy: 6 months. Observed months: none; unknown history receives no zero-workload credit.\n\nHoliday calendar: not configured; holiday balancing will be reported as unevaluated.\n\nMaintain holiday dates\nLocks and repair scope\nMember preferences\nConfigured safety rules\nGenerate intelligent draft\nWorking. Closing this window stops further requests; an in-flight search may finish without applying assignments."
+        },
+        {
+          "phase": "validated-review-ready",
+          "expectedState": "completed",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Intelligent rota generator\n\n2026-11 · completed\n\nClose\nPlan\nReview\nTeaching\nAssistant\nLearning\n\nDraft ready for review. No assignments have been saved.\n\n1 proposed · 0 uncovered. feasible · 0.00 seconds · 0 existing assignments changed\n\nAlternative\n1: 0 uncovered, 0 changes, feasible\n\nIf columns extend beyond this panel, scroll horizontally. Keyboard: focus the table region and use the arrow keys.\n\nWhole-month alternatives reported by the server\nAlternative\tUncovered\tChanges\tStatus\n1 (selected)\t0\t0\tfeasible\nOptimization evidence\nDuty\tProposal\tReason / teach\n2026-11-02\nMain duty\n\tReturned Result Member\t\n\nEligible choice in the validated whole-month plan.\n\nWhy this choice?\nTeach this decision\nFind another alternative\nI reviewed changes and uncovered duties\nApply reviewed draft Cancel proposalDownload evidence\nAll assignments require review and final validation."
+        }
+      ],
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/rota-intelligence/setup",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/rota-compute/jobs",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/rota-compute/jobs/transition-job/step",
+          "search": "",
+          "body": {
+            "revision": 1
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/rota-compute/jobs/transition-job/step",
+          "search": "",
+          "body": {
+            "revision": 2
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/rota-compute/jobs/transition-job",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/rota-compute/jobs/transition-job/step",
+          "search": "",
+          "body": {
+            "revision": 3
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/rota-compute/jobs/transition-job/validate",
+          "search": "",
+          "body": {
+            "revision": 4
+          }
+        }
+      ],
+      "noApply": true,
+      "actualBackendWrites": 0,
+      "pageErrors": []
+    },
+    {
+      "width": 1280,
+      "kind": "intelligence",
+      "scenario": "returned-failure",
+      "snapshots": [
+        {
+          "phase": "returned-queued",
+          "expectedState": "queued",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Intelligent rota generator\n\n2026-11 · queued\n\nClose\nPlan\nReview\nTeaching\nAssistant\nLearning\n\nPlan the whole month while enforcing configured eligibility, leave, rest, limits and staffing checks. Existing assignments stay fixed unless selected for repair.\n\nPlanning priority\nBalanced\nFewest changes / repair\nPreferences first, after safe coverage\nSearch budget\n30 seconds\n60 seconds\n120 seconds\n\nHistorical policy: 6 months. Observed months: none; unknown history receives no zero-workload credit.\n\nHoliday calendar: not configured; holiday balancing will be reported as unevaluated.\n\nMaintain holiday dates\nLocks and repair scope\nMember preferences\nConfigured safety rules\nGenerate intelligent draft Resume generationContinue on server\nAll assignments require review and final validation."
+        },
+        {
+          "phase": "queued-step-held",
+          "expectedState": "queued",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Intelligent rota generator\n\n2026-11 · queued\n\nClose\nPlan\nReview\nTeaching\nAssistant\nLearning\n\nPlan the whole month while enforcing configured eligibility, leave, rest, limits and staffing checks. Existing assignments stay fixed unless selected for repair.\n\nPlanning priority\nBalanced\nFewest changes / repair\nPreferences first, after safe coverage\nSearch budget\n30 seconds\n60 seconds\n120 seconds\n\nHistorical policy: 6 months. Observed months: none; unknown history receives no zero-workload credit.\n\nHoliday calendar: not configured; holiday balancing will be reported as unevaluated.\n\nMaintain holiday dates\nLocks and repair scope\nMember preferences\nConfigured safety rules\nGenerate intelligent draft Resume generationContinue on server\nWorking. Closing this window stops further requests; an in-flight search may finish without applying assignments."
+        },
+        {
+          "phase": "returned-running-next-step-held",
+          "expectedState": "running",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Intelligent rota generator\n\n2026-11 · running\n\nClose\nPlan\nReview\nTeaching\nAssistant\nLearning\n\nServer optimisation · running.\n\nPlan the whole month while enforcing configured eligibility, leave, rest, limits and staffing checks. Existing assignments stay fixed unless selected for repair.\n\nPlanning priority\nBalanced\nFewest changes / repair\nPreferences first, after safe coverage\nSearch budget\n30 seconds\n60 seconds\n120 seconds\n\nHistorical policy: 6 months. Observed months: none; unknown history receives no zero-workload credit.\n\nHoliday calendar: not configured; holiday balancing will be reported as unevaluated.\n\nMaintain holiday dates\nLocks and repair scope\nMember preferences\nConfigured safety rules\nGenerate intelligent draft Resume generationContinue on server\nWorking. Closing this window stops further requests; an in-flight search may finish without applying assignments."
+        },
+        {
+          "phase": "returned-failed",
+          "expectedState": "failed",
+          "progressMax": null,
+          "progressValue": null,
+          "visibleText": "Intelligent rota generator\n\n2026-11 · failed\n\nClose\nPlan\nReview\nTeaching\nAssistant\nLearning\n\nServer optimisation · failed.\n\nPlan the whole month while enforcing configured eligibility, leave, rest, limits and staffing checks. Existing assignments stay fixed unless selected for repair.\n\nPlanning priority\nBalanced\nFewest changes / repair\nPreferences first, after safe coverage\nSearch budget\n30 seconds\n60 seconds\n120 seconds\n\nHistorical policy: 6 months. Observed months: none; unknown history receives no zero-workload credit.\n\nHoliday calendar: not configured; holiday balancing will be reported as unevaluated.\n\nMaintain holiday dates\nLocks and repair scope\nMember preferences\nConfigured safety rules\nGenerate intelligent draft\nAll assignments require review and final validation."
+        }
+      ],
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/rota-intelligence/setup",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/rota-compute/jobs",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/rota-compute/jobs/transition-job/step",
+          "search": "",
+          "body": {
+            "revision": 1
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/rota-compute/jobs/transition-job/step",
+          "search": "",
+          "body": {
+            "revision": 2
+          }
+        }
+      ],
+      "noApply": true,
+      "actualBackendWrites": 0,
+      "pageErrors": []
+    }
+  ]
+}

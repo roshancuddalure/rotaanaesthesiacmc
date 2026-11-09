@@ -1,0 +1,24 @@
+{
+  "recorded_at_utc": "2026-11-09T08:13:26.271425+00:00",
+  "author": "/root/profile_parent_final_audit",
+  "status": "Prepared, not browser executed",
+  "application_changed": false,
+  "test": "frontend\\tests\\premium-original159-leave-day-add-v6-dead-control-diagnostic.browser.mjs",
+  "test_sha256": "07b32191fdd3600370cbe1198fcc50ec2cb340d1e2c7be9d3c066b799b631cb6",
+  "expected_contexts": 1,
+  "engine": "chromium",
+  "width": 320,
+  "explicit_editor_open_timeout_ms": 2000,
+  "actual_flow": "Native Daylist day button and existing day-modal Add leave click; no synthetic delegation or forced handler invocation",
+  "failure_evidence": [
+    "phase distinguishes setup from actual clicked-day-add failure",
+    "actual open Add leave dialog count",
+    "existing day modal and dated Add button counts",
+    "all open dialog headings",
+    "noMutationAfterClick and acceptedMutationCount plus exact requests/writes/errors",
+    "baseline/current candidate source hashes held"
+  ],
+  "report": "docs/premium-ui/qa-original159-leave-day-add-v6-dead-control-diagnostic.json",
+  "failure_policy": "Write actual failure report then expected-correct terminal1 if editor did not open; do not classify setup failure as confirmeddeadbutton.",
+  "limits": "No browser execution or V7 fix authored. Await root actual diagnostic before preparing separate guarded forwarding repair."
+}

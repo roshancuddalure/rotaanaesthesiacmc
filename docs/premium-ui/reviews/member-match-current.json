@@ -1,0 +1,112 @@
+{
+  "recorded_at_utc": "2026-10-28T06:30:18.014809+00:00",
+  "completion_claim": false,
+  "scope": "Member matching identity presentation and stale workbook preview ownership, original134 only.",
+  "source_sha256": {
+    "frontend/src/ui.ts": "a1f8e5a527d6517ac2a1037545a6449b406e3ca8e6e0f7b3f940918e6d12eddc",
+    "frontend/src/member-import.ts": "58742f27a951c8c2dea3b428c9f419b60e8882d12ec8978fd218e8fea731c5ec",
+    "frontend/src/member-workspace.ts": "340f4c9d0b6ee676bba226ca3c5e577028fb04ed0149b62a57a09f936d206b6d",
+    "frontend/src/operational-import.ts": "e112f581d096d4a8c1f81b297d989dcbac4b18327e3de8a8d218deecba060030",
+    "frontend/src/past-duties.ts": "58e3ba3344f5c99457f796151c5039629f663dd24bc40e36738283bb2030de33"
+  },
+  "checks": {
+    "new_matching_contexts": 24,
+    "new_workbook_lifecycle_contexts": 12,
+    "import_regression_contexts": 48,
+    "past_action_regression_contexts": 6,
+    "unit_tests": 114,
+    "held_build": true
+  },
+  "execution_evidence": [
+    {
+      "report": "docs/premium-ui/qa-match-identity.json",
+      "test": "frontend/tests/premium-match-identity.browser.mjs",
+      "exit_code": 0,
+      "contexts": 24,
+      "scope": "Actual four import components, native keyboard selections, returned equal-name identities, exact intercepted preview requests; three engines at320/1280. All API responses fulfilled locally. No Apply or real persistence/backend authorization claim. Existing CSV distinct/undo, candidate failure and lifecycle suites remain separate regressions."
+    },
+    {
+      "report": "docs/premium-ui/qa-workbook-choice-lifetime.json",
+      "test": "frontend/tests/premium-workbook-choice-lifetime.browser.mjs",
+      "exit_code": 0,
+      "contexts": 12,
+      "scope": "Actual workbook component with native upload/inspect/preview/pick/filter; existing resetMemberImport and mount used for account reset/remount. Three engines at320/1280: delayed old candidate success after current ready, and old503 while current pending. All API responses fulfilled locally; no actual backend writes or persistence claim."
+    },
+    {
+      "report": "docs/premium-ui/qa-member-csv-candidate.json",
+      "test": "frontend/tests/premium-member-csv-candidate.browser.mjs",
+      "exit_code": 0,
+      "contexts": 12,
+      "scope": "Actual memberCSV candidate choice503/retry, explicit row exclusion/missing-member archive selection, intercepted Apply503 and replacement file.3engines320/1280,create_only/roster_sync; all requests intercepted, no persistence claim."
+    },
+    {
+      "report": "docs/premium-ui/qa-member-csv-lifetime.json",
+      "test": "frontend/tests/premium-member-csv-lifetime.browser.mjs",
+      "exit_code": 0,
+      "contexts": 6,
+      "scope": "Actual exported memberCSV dialog, oldcolumns/newfile, heldpreview/apply/refusal/manualretry/context/focus/newfilediscard.3engines320/1280, allPOSTsfullyintercepted; no backendwrites/persistenceclaim."
+    },
+    {
+      "report": "docs/premium-ui/qa-import-candidate-choice.json",
+      "test": "frontend/tests/premium-import-candidate-choice.browser.mjs",
+      "exit_code": 0,
+      "contexts": 6,
+      "scope": "Actual normalizedunitimport file/settings/preview, member/unitsearch, exactrowcandidate503/retry andarchivedprofilecancel.3engines320/1280, allwrites intercepted; noapply/restore/backendpersistence certification."
+    },
+    {
+      "report": "docs/premium-ui/qa-past-actions.json",
+      "test": "frontend/tests/premium-past-actions.browser.mjs",
+      "exit_code": 0,
+      "contexts": 6,
+      "scope": "Actual past-duties component, services/api and production CSS. All API responses intercepted. Workbook and downloaded template are transport fixtures only, not Excel parser or real template validity tests. Rejected CSV bytes are verified against the controlled rejected row. Browser emulation; no physical device, actual screen reader or live write claim. Apply success/recovery is separate and not claimed by these action cases."
+    },
+    {
+      "report": "docs/premium-ui/reviews/operational-import-file-race-fixed-current.json",
+      "test": "frontend/tests/premium-operational-import-file-race-fixed.browser.mjs",
+      "exit_code": 0,
+      "contexts": 12,
+      "scope": "Actual Leave/Units toolbar; hold old columns A, inspect B, ignore old503; preview/apply B intercepted, verify actual native controls locked; return503, preserve draft and disabled states; explicit manualretry exactpayload success; select newC, decline discard then accept. No backend writes; disabled file inputs are never programmatically bypassed. Main snapshot drift recorded separately."
+    },
+    {
+      "report": "docs/premium-ui/qa-profile-section-state.json",
+      "test": "frontend/tests/premium-profile-section-state.browser.mjs",
+      "exit_code": 0,
+      "contexts": 6,
+      "scope": "6engine-width contexts, canonical and legacy editable profiles. Native multi-section typing/caret identity, baseline dirty markers, hidden local validation and first invalid reachability, existing loaded/error/retry descriptions, native refused/confirmed discard,12 exact local PUTs and18 local comment POSTs with failure/success/confirmed-save readback failure and GET-only recovery. All network fulfilled locally; no real persistence/backend authorization/physical device/native AT claim."
+    },
+    {
+      "report": "docs/premium-ui/qa-profile-effective-identity.json",
+      "test": "frontend/tests/premium-profile-effective-identity.browser.mjs",
+      "exit_code": 0,
+      "contexts": 6,
+      "scope": "Actual exported canonical profile:3 engines x320/1280,6 returned-effective/base/future fixtures xadmin/view-only=72 profile workflows within6 browser contexts. Fixed local calendar2026-10-24. Consistent header/overview/timeline presentation, explicit null distinct from omitted legacy field, escaped unknown values, unchanged base edit contract, native cancel/close/reopen focus,36 exact locally fulfilled PUTs. No backend authorization/persistence, physical devices, native AT, production bundle or scheduling correctness certification."
+    },
+    {
+      "report": "docs/premium-ui/qa-profile-tabs-complete.json",
+      "test": "frontend/tests/premium-profile-tabs-complete.browser.mjs",
+      "exit_code": 0,
+      "contexts": 6,
+      "scope": "Actual canonical profile in isolated CSS harness; six engine/initial-width contexts, two existing role presentations each. Complete native orientation keyboard/roving semantics and panel/close/footer/ordinary navigation, selected/ordinary focus and section preservation through mobile/desktop/short-height/container reflow, actual-overflow cue truth and unique description IDs. All API GETs locally fulfilled; no API writes, backend authorization/persistence, legacy-profile, native-screenreader or physical-device certification."
+    }
+  ],
+  "independent_review": "docs/premium-ui/reviews/member-match-independent-review.json",
+  "root_review": {
+    "reviewer": "/root",
+    "method": "Read full isolated display and ownership patches; inspect every returned ID source, escaping, candidate filtering and pending controls. Recompute all current report source hashes and inspect final test logs. Preserve historical failed race and source proofs, independently review current guard ownership and exact API calls."
+  },
+  "evidence": [
+    "tmp/member-match-source-proof.json",
+    "tmp/member-import-ownership-proof.json",
+    "docs/premium-ui/reviews/member-match-independent-review.json",
+    "docs/premium-ui/reviews/previous25-member-match-source-revalidation.json",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json",
+    "tmp/premium-match-final-unit.log"
+  ],
+  "limitations": [
+    "Actual local components and native controls with intercepted API responses. No real backend persistence, authorization, template parser or scheduling certification.",
+    "Three browser engines at320/1280. Browser emulation does not replace physical-device or native assistive-technology checks.",
+    "The display-only preservation proof is historical against tmp/member-match-display-held. The current workbook ownership patch intentionally adds epoch and async result guards; its separate proof preserves API expressions, not entire handlers.",
+    "Lifecycle runtime cases cover delayed preview choice after reset/remount. Other guarded inspect/template/apply branches are source-reviewed; not all independently delayed.",
+    "The full260 goal remains incomplete. No commit, push, deployment or backend edit is authorized by this record."
+  ]
+}

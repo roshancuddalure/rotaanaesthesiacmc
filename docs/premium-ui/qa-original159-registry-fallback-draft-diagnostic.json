@@ -1,0 +1,686 @@
+{
+  "recorded_at_utc": "2026-11-09T10:12:42.877Z",
+  "operator": "/root",
+  "scope": "Six actual current application registry rename cases across3engines320/1280. Real inline fallback reorder C,B is an unrelated unsaved draft. Only PUT registry-b is locally fulfilled; all remaining GETs disposableRAM. Expect draft host/order retained and saved target label refreshed, onePUT/no fallbacksave. Failure is diagnostic, notpassing acceptance orproduction persistence.",
+  "source_sha256": {
+    "frontend/src/main.ts": "96ab7c4c6b14d41736ad4153313b1270677e324fcab6b11c3a5b0d8ac3e47a0b",
+    "frontend/src/reference-workspace.ts": "78c231ea1d5ab15bd3a4b5f2f8265529451a51bacc68d2a4aac1708a4be30292",
+    "frontend/src/extra-duty.ts": "52084624922de21f2a0fa478eb1ca4c883cdeb66dd1d05147d0f21fe806bc7ea",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+  },
+  "test_sha256": "ea3b4004ed13489a2e4fc6579625db3b5355221c9edf123df6735b6aa5fb65f7",
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "passed": false,
+      "assertion": "Unit registry save must retain unrelated fallback draft host\n\nfalse !== true\n",
+      "observed": {
+        "hostRetained": false,
+        "rowRetained": false,
+        "order": [
+          "registry-b",
+          "registry-c"
+        ],
+        "saveEnabled": false
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/units/registry-b",
+          "payload": {
+            "name": "Royal Renamed Fallback B",
+            "campus": "Main",
+            "code": "B",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "revision": "one",
+            "call_minimums": []
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/units/registry-b",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": [],
+      "unitReads": 2,
+      "fallbackReads": 2
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "passed": false,
+      "assertion": "Unit registry save must retain unrelated fallback draft host\n\nfalse !== true\n",
+      "observed": {
+        "hostRetained": false,
+        "rowRetained": false,
+        "order": [
+          "registry-b",
+          "registry-c"
+        ],
+        "saveEnabled": false
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/units/registry-b",
+          "payload": {
+            "name": "Royal Renamed Fallback B",
+            "campus": "Main",
+            "code": "B",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "revision": "one",
+            "call_minimums": []
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/units/registry-b",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": [],
+      "unitReads": 2,
+      "fallbackReads": 2
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "passed": false,
+      "assertion": "Unit registry save must retain unrelated fallback draft host\n\nfalse !== true\n",
+      "observed": {
+        "hostRetained": false,
+        "rowRetained": false,
+        "order": [
+          "registry-b",
+          "registry-c"
+        ],
+        "saveEnabled": false
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/units/registry-b",
+          "payload": {
+            "name": "Royal Renamed Fallback B",
+            "campus": "Main",
+            "code": "B",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "revision": "one",
+            "call_minimums": []
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/units/registry-b",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": [],
+      "unitReads": 2,
+      "fallbackReads": 2
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "passed": false,
+      "assertion": "Unit registry save must retain unrelated fallback draft host\n\nfalse !== true\n",
+      "observed": {
+        "hostRetained": false,
+        "rowRetained": false,
+        "order": [
+          "registry-b",
+          "registry-c"
+        ],
+        "saveEnabled": false
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/units/registry-b",
+          "payload": {
+            "name": "Royal Renamed Fallback B",
+            "campus": "Main",
+            "code": "B",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "revision": "one",
+            "call_minimums": []
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/units/registry-b",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": [],
+      "unitReads": 2,
+      "fallbackReads": 2
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "passed": false,
+      "assertion": "Unit registry save must retain unrelated fallback draft host\n\nfalse !== true\n",
+      "observed": {
+        "hostRetained": false,
+        "rowRetained": false,
+        "order": [
+          "registry-b",
+          "registry-c"
+        ],
+        "saveEnabled": false
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/units/registry-b",
+          "payload": {
+            "name": "Royal Renamed Fallback B",
+            "campus": "Main",
+            "code": "B",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "revision": "one",
+            "call_minimums": []
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/units/registry-b",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": [],
+      "unitReads": 2,
+      "fallbackReads": 2
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "passed": false,
+      "assertion": "Unit registry save must retain unrelated fallback draft host\n\nfalse !== true\n",
+      "observed": {
+        "hostRetained": false,
+        "rowRetained": false,
+        "order": [
+          "registry-b",
+          "registry-c"
+        ],
+        "saveEnabled": false
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/units/registry-b",
+          "payload": {
+            "name": "Royal Renamed Fallback B",
+            "campus": "Main",
+            "code": "B",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "revision": "one",
+            "call_minimums": []
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/units/registry-b",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": [],
+      "unitReads": 2,
+      "fallbackReads": 2
+    }
+  ]
+}

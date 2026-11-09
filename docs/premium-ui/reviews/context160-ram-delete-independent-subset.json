@@ -1,0 +1,58 @@
+{
+  "recorded_at_utc": "2026-10-31T01:30:41.562119+00:00",
+  "operator": "/root/frontend160_remaining_scope_map",
+  "decision": "Eight real-RAM native single-leave delete / selected-unit posting removal contexts passed. Original160 remains partial; no application/backend/ledger changes.",
+  "terminal_browser_exit_code_observed": 0,
+  "contexts": 8,
+  "engines": [
+    "Chromium"
+  ],
+  "widths": [
+    320,
+    1280
+  ],
+  "fixture": {
+    "host": "127.0.0.1",
+    "port": 5273,
+    "database": "sqlite+pysqlite:///:memory:",
+    "pool": "StaticPool",
+    "explicit_db_auth_overrides": true,
+    "configured_db_used": false,
+    "shared8031_8025_reset": false
+  },
+  "verified": [
+    "Actual selectedJuly Leave row menu Delete and selectedunit Manage->Remove posting,with exact existing IDs.",
+    "Real server preview selects exactly one requested identity,count1,unblocked,nonempty token; preview has no SQL state changes.",
+    "Confirm sends only same kind/IDs and returned preview token; one successful delete result,count1.",
+    "Independent read-only RAM SQL snapshot proves only exact target removed; complete serialized target stored in one new recycle entry with matching entity/batch/kind and30day retention.",
+    "Every other posting,leave,member,unit,duty slot and duty assignment row unchanged; adjacentJune unit-management GET unchanged.",
+    "Cancel after preview makes no delete request and leaves every SQL row unchanged.",
+    "No pageerror or horizontal overflow in the eight tested contexts."
+  ],
+  "limitations": [
+    "Only single leave deletion and unit-modal posting removal; not selection/month delete,restore,cross-month overlap or similarly named target identities.",
+    "Chromium phone/desktop only; not Firefox/WebKit,physicaldevices,nativeAT or production.",
+    "SQL snapshot covers seven named tables,not every database table. No broad all260/whole160 acceptance."
+  ],
+  "remaining160": [
+    "Selected leave/posting deletion: exact checked IDs,hidden-selection pruning after filter/month changes,untouched unit/month siblings.",
+    "Month leave/posting deletion: exact visibly selected month,server starts_on-in-month scope,phrase/token and matching recycled rows; cross-boundary start/end sentinel explicitly required.",
+    "Historical actualRAM individual/month approval and append/upsert/replace imports need current source applicability or fresh native reruns.",
+    "Selected-unit settings recovery actualRAM persistence across global fallback vs dated call-rule boundaries; root currently owns repair.",
+    "Reference unit create/edit actualRAM exact global reference identity with unchanged dated assignments.",
+    "Cross-month and special null-unit posting additions/edits; same-name member/unit ambiguity; remaining plan crossbrowser scope."
+  ],
+  "source_sha256": {
+    "frontend/src/main.ts": "e88c69570e7faf9b4277b541e073c8bd2ca3805c23f4feead544f16770f6e07a",
+    "frontend/src/admin-delete.ts": "7a3eb13237272ad8b44f523bea5483ebeae60fc9c8b58d92035fe15c74528979",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/member-workspace.ts": "0ef8c1ef2234c7a50d8ca10b8aaa3998a654d452f563bd4c75531faef09d6c63"
+  },
+  "evidence_sha256": {
+    "docs/premium-ui/qa-context160-ram-delete-independent.json": "eec31ff5c1550d991339cafea774e7b941888490ac3e8d350a5910a85fb7f84c",
+    "frontend/tests/premium-context160-ram-delete-independent.browser.mjs": "08d68cde53120cbc336234a22ac1f2e62599fd4681be00911cfcfe4004d59f54",
+    "tmp/context160_ram_delete_server.py": "fbeba2d838c14d63d148b6473f6ea94503e520a6ca5e909b1796bc96ad653788",
+    "tmp/context160-ram-delete-independent.log": "6dc1b19517217b8ed58f9f667144198fb4e28b2f2760cacaf0e17631a9db6242",
+    "docs/premium-ui/reviews/context160-current-remaining-action-matrix.json": "07752948a1cf09403b395162cdae41d24e5a536e96c3df6ce273b8ff435b8d0f"
+  }
+}

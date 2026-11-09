@@ -1,0 +1,9 @@
+# Independent150/156 addendum: withhold both
+
+This addendum supersedes the recommendation in `unit150156-independent-acceptance-review.json`; that initial report remains immutable. No application,ledger or backend file was changed by this reviewer.
+
+The reference auditor's current actual-editor diagnostic records24 archived saved posting-type/leave-type/session/status cases submitting a different first-active value on unchanged Review,while24 active controls preserve values. I verified the bound source/test hashes and raw cases. This materially affects156: broad Add/Edit labels and the correct record identity/date endpoint do not make the existing editor context trustworthy when its subtype or approval state changes silently. Restricting acceptance to active controls would narrow the known defect rather than satisfy the original requirement.
+
+150 is also affected. I authored and ran a separate actual unit-board diagnostic in Chromium,Firefox and WebKit at320/1280. All six offered Pain Calls→Add member posting cases with an archived PAIN catalog entry visibly select and preview2ND_CALL with no unit. The action remains visible,but its intended special-posting context is silently replaced. This directly contradicts150's correct-context condition. The test exits0 to preserve this failure evidence; it is not a passing UI outcome.
+
+Retain150 and156 as partial until the picker repair preserves existing archived/unknown values and gives unavailable new defaults an explicit non-submitting choice instead of an unrelated first-active value. Existing inactive values need not imply permission for new inactive selections. Independent closure should exercise all saved4field cases and the offered specialPAIN new-context case,alongside the existing active/role/month/focus regressions. No backend authorization,persistence,physical or whole-goal certification is implied.

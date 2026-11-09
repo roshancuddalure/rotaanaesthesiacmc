@@ -907,3 +907,173 @@ td { line-height: 1.5; }
 
 /* Effective member identity: retain full returned values within the profile header. */
 .mw-header :is([data-member-call-identity], [data-member-call-note]) { overflow-wrap: anywhere; }
+
+/* Keep the complete member identity accessible without consuming the profile panel. */
+.mw-header [data-member-identity-region] { max-block-size: 28vh; max-block-size: 28dvh; overflow-y: auto; overflow-x: hidden; overflow-wrap: anywhere; overscroll-behavior: contain; scrollbar-gutter: stable; }
+.mw-header [data-member-identity-region] [data-member-identity] { max-height: none; overflow: visible; scrollbar-gutter: auto; }
+.mw-header [data-member-designation-context], .mw-header [data-member-identity-cue] { font-size: 12px; line-height: 1.4; }
+.mw-header [data-member-identity-cue] { display: block; margin-block-start: 4px; overflow-wrap: anywhere; }
+.mw-header [data-member-identity-cue][hidden] { display: none; }
+.mw-header [data-member-identity-region]:focus-visible { outline: 2px solid #ffffff; outline-offset: 2px; }
+@media (max-height: 520px) {
+  .mw-header [data-member-identity-region] { max-block-size: 20vh; max-block-size: 20dvh; }
+  .mw-header [data-member-identity-region] > small { display: none; }
+  .mw-header [data-member-identity-region] [data-member-identity] { margin-block: 0 4px; }
+  .mw-header [data-member-designation] { margin-block: 0 4px; }
+}
+
+/* Keep member facts grouped above secondary record provenance. */
+.member-workspace .mw-summary { align-items: start; }
+.member-workspace .mw-summary article { align-content: start; gap: 8px; }
+.member-workspace .mw-summary article > :is(p, strong, small) { margin-block: 0; }
+:is(.member-workspace, .member-profile-dialog) [data-designation-timeline] { list-style: none; padding-inline-start: 12px; margin-block: 12px; border-inline-start: 2px solid var(--color-border); }
+:is(.member-workspace, .member-profile-dialog) [data-designation-timeline] > li { min-inline-size: 0; margin-block: 12px; }
+:is(.member-workspace, .member-profile-dialog) [data-designation-timeline] h4 { margin-block: 0 8px; overflow-wrap: anywhere; }
+:is(.member-workspace, .member-profile-dialog) :is([data-profile-disclosure], [data-designation-provenance], [data-member-record-identification], [data-member-alias-provenance], [data-member-record-provenance]) { margin-block: 8px; overflow-wrap: anywhere; }
+:is(.member-workspace, .member-profile-dialog) :is([data-profile-disclosure], [data-designation-provenance], [data-member-record-identification], [data-member-alias-provenance], [data-member-record-provenance]) > summary { cursor: pointer; min-block-size: 44px; padding-block: 10px; box-sizing: border-box; font-weight: 600; }
+.member-profile-header > div { flex: 1; min-width: 0; }
+.member-profile-header [data-legacy-identity-region] { max-block-size: 28vh; max-block-size: 28dvh; overflow-y: auto; overflow-wrap: anywhere; overscroll-behavior: contain; scrollbar-gutter: stable; }
+.member-profile-header [data-legacy-identity-region] h2 { margin-block: 0 4px; line-height: 1.4; }
+.member-profile-header [data-legacy-identity-region] p { margin-block: 4px; line-height: 1.4; }
+.member-profile-header [data-legacy-designation-context], .member-profile-header [data-legacy-identity-cue] { font-size: 12px; line-height: 1.4; }
+.member-profile-header [data-legacy-identity-cue] { display: block; margin-block-start: 4px; }
+.member-profile-header [data-legacy-identity-cue][hidden] { display: none; }
+.member-profile-header [data-legacy-identity-region]:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+@media (max-height: 520px) {
+  .member-profile-header [data-legacy-identity-region] { max-block-size: 20vh; max-block-size: 20dvh; }
+  .member-profile-header [data-legacy-member-name] { font-size: 18px; }
+  .member-profile-header [data-legacy-member-designation] { font-size: 12px; }
+}
+
+.mw-rail :is(.mw-tab-draft, .mw-tab-error) { display: block; font-size: 12px; line-height: 1.4; font-weight: 600; margin-block-start: 2px; }
+.mw-rail .mw-tab-error { color: var(--color-error-text); }
+.member-section-status { font-size: var(--text-sm); font-weight: 600; margin-block: 8px; overflow-wrap: anywhere; }
+.member-section-status:empty { display: none; }
+.member-profile-dialog .member-workload { margin-block: 16px; }
+.member-profile-dialog .member-workload h3 { margin-block: 0 8px; }
+.member-workload > p { font-size: 12px; line-height: 1.4; margin-block: 8px; }
+[data-profile-workload-metrics] { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-block: 8px; }
+[data-profile-workload-metrics] > div { min-width: 0; padding: 8px; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface-muted); }
+[data-profile-workload-metrics] dt { font-size: 12px; line-height: 1.4; overflow-wrap: anywhere; }
+[data-profile-workload-metrics] dd { margin: 4px 0 0; font-weight: 700; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+/* Allow import tables to scroll within their panel at narrow viewport widths. */
+.member-import fieldset { min-inline-size: 0; max-inline-size: 100%; }
+
+/* Profile editors share action hierarchy while retaining their existing save scopes. */
+.mw-rail :is(.mw-tab-draft, .mw-tab-error, .mw-tab-count) { pointer-events: none; }
+.profile-editor-footer { align-items: start; }
+.profile-editor-state { flex: 1 1 18rem; min-inline-size: 0; }
+.profile-editor-scope { margin: 4px 0 0; color: var(--color-text-secondary); font-size: var(--text-sm); overflow-wrap: anywhere; }
+.profile-editor-actions, .profile-editor-navigation { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; min-inline-size: 0; }
+.profile-editor-actions .member-section-status { flex: 1 1 100%; margin: 0; }
+.member-profile-dialog .profile-editor-actions { flex: 1 1 100%; }
+.member-profile-dialog .profile-editor-actions > button { margin-inline-start: auto; }
+@media (max-width: 600px) {
+  .profile-editor-footer > .profile-editor-state, .profile-editor-footer > .profile-editor-actions { flex-basis: 100%; }
+  .profile-editor-footer > .profile-editor-actions > button { flex: 1 1 auto; }
+}
+
+/* Wrapped profile actions must not squeeze fields or errors out of view. */
+@media (max-width: 700px), (max-height: 650px) {
+  .member-workspace:has(> .mw-layout .profile-editor-footer) {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scroll-padding-block: 16px;
+  }
+  .member-workspace:has(> .mw-layout .profile-editor-footer) > .mw-layout {
+    flex: 0 0 auto;
+    height: auto;
+    min-height: auto;
+    overflow: visible;
+  }
+  .member-workspace:has(> .mw-layout .profile-editor-footer) > .mw-layout > form,
+  .member-workspace:has(> .mw-layout .profile-editor-footer) .mw-content {
+    flex: none;
+    overflow: visible;
+  }
+  .member-workspace:has(> .mw-layout .profile-editor-footer) :is(.profile-editor-footer, #mw-error) {
+    flex-shrink: 0;
+    position: static;
+  }
+}
+
+/* Keep the decorative leave-day close SVG on its existing button hit target. */
+[data-close-leave-day-modal] .app-icon,
+[data-close-leave-day-modal] .app-icon * { pointer-events: none; }
+/* These existing mobile controls measured below the shared 44px target. */
+.person-modal-header [data-close-leave-day-modal] { min-width: 44px; min-height: 44px; }
+#sidebar-toggle, #sidebar-close { min-width: 44px; min-height: 44px; }
+
+/* Status words remain visible in the compact calendar; counts retain returned records. */
+.leave-calendar .leave-day-card .leave-day-card__statuses {
+  display: grid; gap: 2px; min-width: 0; width: 100%;
+  color: var(--color-text-secondary); font-size: 0.75rem; line-height: 1.3; letter-spacing: normal;
+  font-weight: 500; text-transform: none; overflow-wrap: anywhere;
+}
+.leave-calendar .leave-day-card .leave-day-card__statuses > span {
+  color: inherit; font: inherit; text-transform: none;
+}
+.leave-status-guidance { color: var(--color-text-secondary); overflow-wrap: anywhere; }
+
+/* Keep weekday headings and dates aligned in one bounded, natively scrollable region.
+   Relative minimum width keeps full returned-status words readable at text enlargement. */
+.leave-calendar .leave-month-scroll {
+  width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box;
+  overflow-x: auto; padding: 4px;
+  border: 1px solid var(--color-border); border-radius: var(--radius-md);
+}
+.leave-calendar .leave-month-scroll:focus-visible {
+  outline: 2px solid var(--color-focus); outline-offset: -2px;
+}
+.leave-calendar .leave-month-scroll > .leave-week-header,
+.leave-calendar .leave-month-scroll > .leave-calendar-grid { min-width: 49rem; }
+.leave-calendar .leave-month-scroll .leave-week-header span {
+  font-size: 0.75rem;
+}
+.leave-month-scroll-help { color: var(--color-text-secondary); overflow-wrap: anywhere; }
+
+/* Unknown returned status text stays complete inside the phone leave card. */
+.leave-card { min-width: 0; }
+.leave-card > .ds-badge {
+  min-width: 0; max-width: 100%; box-sizing: border-box;
+  white-space: normal; overflow-wrap: anywhere;
+}
+
+/* Leave secondary actions retain the shared minimum touch target. */
+[aria-label="Leave actions"] .row-menu__list [role="menuitem"] { min-height: 44px; }
+
+/* Monthly record coverage is descriptive, not a daily safety judgement. */
+.unit-availability[data-tone="records"] .unit-availability__bar span { background: var(--color-focus); }
+.unit-monthly-guidance { color: var(--color-text-secondary); overflow-wrap: anywhere; }
+.unit-card-grid > .unit-monthly-guidance { grid-column: 1 / -1; margin: 0; }
+.unit-modal-header-actions .modal-nav-button,
+.unit-modal-header-actions .modal-close { min-width: 44px; min-height: 44px; }
+#unit-management-modal .person-modal-header h3 { color: var(--color-text-inverse); }
+#unit-management-modal .audit-chip-row > span {
+  background: var(--color-surface-muted);
+  border-color: var(--color-border);
+}
+
+/* Unit identities and dated membership retain readable space at card widths. */
+.unit-card header { flex-wrap: wrap; }
+.unit-card header > div { flex: 1 1 12rem; min-inline-size: 0; }
+.unit-card header > button { flex: 0 0 auto; white-space: nowrap; min-block-size: 44px; }
+@media (min-width: 769px) {
+  .unit-member-chip { flex-wrap: wrap; }
+  .unit-member-chip .member-profile-link { flex: 1 1 12rem; min-inline-size: 0; }
+  .unit-member-chip small { flex: 0 0 auto; }
+}
+
+/* Keep generic review headings and their existing close control readable and reachable. */
+#review-action-modal .person-modal-header h3 { color: var(--color-text-inverse); }
+#review-action-modal .person-modal-header [data-close-review-action] { min-width: 44px; min-height: 44px; }
+
+/* Five operational stages share existing routes; assignment tools remain optional. */
+.generation-stages[data-workflow-operations] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.workflow-freshness { margin: var(--space-2) 0; color: var(--color-text-secondary); font-size: var(--text-sm); overflow-wrap: anywhere; }
+.nav-workflow > .workflow-freshness { padding: 0 var(--space-2); color: var(--color-text-inverse-muted); }
+.generation-stages[data-workflow-operations] [data-workflow-state-text] { font-weight: 600; }
+.generation-stages[data-workflow-operations] .assignment-tools > summary { cursor: pointer; min-height: 44px; padding-block: var(--space-2); }
+.generation-stages[data-workflow-operations] .assignment-tools .extra-duty-stage { padding-left: var(--space-2); margin-top: var(--space-3); }
+@media (max-width: 1000px) { .generation-stages[data-workflow-operations] { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .generation-stages[data-workflow-operations] { grid-template-columns: 1fr; } }

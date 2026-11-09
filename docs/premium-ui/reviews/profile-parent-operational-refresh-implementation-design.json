@@ -1,0 +1,95 @@
+{
+  "recorded_at_utc": "2026-11-03T08:07:46.995171+00:00",
+  "author": "/root/profile_parent_refresh_audit",
+  "scope": "Concrete frontend-only design for separately confirmed nested-profile parent refresh defects. Source proposal only, no application edits or integration approval.",
+  "actual_sources": {
+    "frontend/src/main.ts": "d13bd73108d89d6efb70a66426e6f8e9f6e50400475575b7a40cb06eef12c1bc",
+    "frontend/src/member-workspace.ts": "0ef8c1ef2234c7a50d8ca10b8aaa3998a654d452f563bd4c75531faef09d6c63",
+    "frontend/src/record-workspace.ts": "469fd6bf2e4118b15ad343d8059cd3cfb0acbc6483bea969ca5fb93488644335",
+    "frontend/src/unit-board-filters.ts": "b52758e18a4d6abeda57b57ef84e0614b085a317e9d3ca345e096d860ea384a3",
+    "frontend/src/unit-settings-recovery.ts": "4cfcd55615c77fa39aa08ee57abb3e807412fb9fb6c42af71dbb86a4458ce51d"
+  },
+  "contract_design": "tmp/profile-parent-refresh-design/operational-profile-contract.ts",
+  "choice": {
+    "mechanism": "Optional typed seventh openMemberWorkspace lifecycle argument; keep changed(member) unchanged.",
+    "why": "A typed operational record event distinguishes units/leave mutations and immutable identities from member details/roles. Parent-owned callbacks can close over account/view/render/root/month context. A global DOM event cannot distinguish the originating parent/profile owner as clearly, and the existing global data-change event already invalidates caches without repainting parent DOM.",
+    "coalescing": "Shared lifecycle object collects confirmed record changes through profile tab/member transitions; final close triggers one relevant dependent parent refresh. Mutations changing other surface kinds still invalidate caches, while only current captured Units/Leave surface is painted."
+  },
+  "member_workspace_edits": [
+    {
+      "place": "openMemberWorkspace signature and retry recursion",
+      "change": "Add optional lifecycle argument and propagate it through initial-profile-load retry and Previous/Next recursion. Retain existing positional arguments and defaults so unrelated callers remain unchanged."
+    },
+    {
+      "place": "Nested openRecordEditor saved callback",
+      "change": "Capture kind, original member ID and immutable edit identity before open. On confirmed editor save, call lifecycle.confirmed before cache deletion/loadTab; then preserve existing internal profile refresh. Creation may omit recordId if callback API does not currently return one; never invent an ID or widen backend response."
+    },
+    {
+      "place": "Cancel profile leave POST success",
+      "change": "Notify confirmed({kind:leave,personId:capturedMemberId,recordId:capturedLeaveId,operation:cancel}) immediately after request success, independently of following loadTab. Avoid repeated notification on profile GET retry."
+    },
+    {
+      "place": "Actual final profile close/cancel/backdrop/native close",
+      "change": "Invoke one idempotent closed hook after close/remove and existing focus return, while dirty/busy refusal still prevents closing. Previous/Next replacement must suppress final-closed semantics and pass the same lifecycle object to the next profile. Native close fallback must not double-trigger."
+    }
+  ],
+  "main_integration_edits": [
+    {
+      "place": "View-root data-open-member branch and body-delegated data-open-member branch",
+      "change": "Create a parent lifecycle capturing actual account/viewSeq/renderSeq/viewRoot/working month and current Unit/Leave day modal identity. Pass it as optional lifecycle argument; reuse existing admin gates, IDs and selected profile tab. Additional profile entrypoints may use lifecycle only when relevant current operational parent exists."
+    },
+    {
+      "place": "confirmed callback",
+      "change": "Same-account invalidate relevant caches, set dirty mutation set and retain immutable originating parent context. Do not navigate, repaint or replace form while native profile still owns interaction. Mark parent refresh pending if accessible status is required; do not call persisted member changed callback with fabricated data."
+    },
+    {
+      "place": "final closed callback",
+      "change": "Only if account/route/view/render/root/month/modal ownership still matches, stage fresh GETs for the original parent. Capture new read-generation token and validate exact returned month before commit. Any newer parent render/navigation/month/account invalidates pending refresh. Coalesce multiple profile mutations into one dependent read."
+    },
+    {
+      "place": "Unit parent success paint",
+      "change": "Reuse settings readback painter only after its V6 independent large-print/notice-focus gates pass. It must refresh board/modal members, counts, validation and rule bounds while preserving existing fallback/call input nodes and values, board filters/page, selected unit and intentional focus. No unconditional renderUnitManagement when unsaved settings exist."
+    },
+    {
+      "place": "Leave parent success paint",
+      "change": "Extract existing Leave markup calculation into an exact-output snapshot renderer or equivalent narrow painter; stage calendar/requests/pressure responses without clearing current DOM. Preserve Daylist/Month, selected month, active day modal and selection filters, and keep separate native import/editor drafts untouched. Update current rows/cards/summary/calendar/pressure together from same captured read. Refresh selected day modal by immutable day only if still owned."
+    },
+    {
+      "place": "dependent read failure and retry",
+      "change": "Retain visible parent data and drafts, mark it last-known, say record saved/cancelled but latest parent data unavailable. Provide GET-only retry bound to the same owner/month; never repeat operational POST. Separate profile GET outcome from parent GET outcome. Avoid generic toast claiming full refresh success."
+    }
+  ],
+  "required_state_tests": [
+    "Original4contexts converted to correct fresh-parent behavior, plus3engines320/1280. Preserve fallback3/searchRoyal/Daylist/November and exact mutation target/siblings.",
+    "Add/Edit posting and Add/Edit/Cancel leave, one accepted mutation even when profile or parent GET fails; profile/parent retry independently GET-only.",
+    "Multiple mutations in one profile session and Previous/Next navigation coalesce correctly; mutation event captures original member/record rather than later selected member.",
+    "Final close by keyboard/button/native cancel/backdrop triggers once; rejected dirty-close triggers zero parent refresh; forced signout/replaced root never refreshes former parent.",
+    "Held read or mutation then Guide, away-return, month change, account replacement, root/modal replacement: no old read repaint/focus/toast/navigation.",
+    "Newer input during parent read, changed call topology/unit missing/wrong-month read and active-print fullmatching lifecycle reuse painter gates; no new backend or permission semantics.",
+    "Parent read success updates all dependent regions together; no lost native profile/import/editor draft and no focus into an inert background.",
+    "Profile can mutate Leave while underlying Units or vice versa: global cache invalidation retained; current relevant parent summary must refresh if affected. Scope of changed-kind dependency mapping explicitly audited."
+  ],
+  "integration_order": [
+    "Finish settings painter V6 critical runtime and independent review first; avoid building second data painter with divergent rules.",
+    "Implement lifecycle hooks and parent context coordinator in isolated scratch files; exact reverse/API-effect/TypeScript proof.",
+    "Implement retained Leave snapshot painter with source/output parity and corresponding failure/selection tests.",
+    "Run candidate actual nested-profile cases with local mutations, then independent review, guarded application, applied tests/unit/build and prior52 applicability.",
+    "Only after complete rendered mutation inventory is reconciled consider original159 condition acceptance; this design does not accept it."
+  ],
+  "nonchanges": [
+    "No backend file, endpoint, payload, permission gate, scheduling rule, persisted identity or export content change.",
+    "No artificial changed(member) call from operational mutation and no global forced navigation.",
+    "No production operations/commit/push/deploy."
+  ],
+  "limitations": [
+    "This is a concrete design, not an implemented or tested callback contract.",
+    "Deferred final-close refresh requires explicit last-known/pending handling if browser exposes background content; stale parent cannot be silently presented as current.",
+    "Settings painter V6 remains scratch and can change after independent review; integration must exact-rebase then."
+  ],
+  "evidence_sha256": {
+    "tmp/profile-parent-refresh-design/operational-profile-contract.ts": "b31d1f8875760ec403891c99706fd7bbbf8cd81254346d5bc54a1148e031a9e1",
+    "docs/premium-ui/reviews/profile-parent-refresh-independent-defect.json": "34703b0a661155cf3a7f31dc59ad2f8ee5ce64f1257b65e8bf9406c0527e1df5",
+    "frontend/src/member-workspace.ts": "0ef8c1ef2234c7a50d8ca10b8aaa3998a654d452f563bd4c75531faef09d6c63",
+    "frontend/src/main.ts": "d13bd73108d89d6efb70a66426e6f8e9f6e50400475575b7a40cb06eef12c1bc"
+  }
+}

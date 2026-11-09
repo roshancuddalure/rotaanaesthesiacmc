@@ -1,0 +1,75 @@
+{
+  "recorded_at_utc": "2026-10-30T10:12:26.782Z",
+  "reviewer": "/root/picker150155156_acceptance_audit",
+  "test_sha256": "d83a6982eb9852b55564d1c20968dacc4f29a3c0810aa4648a4f984e46914117",
+  "source_sha256": {
+    "frontend/src/reference-workspace.ts": "78c231ea1d5ab15bd3a4b5f2f8265529451a51bacc68d2a4aac1708a4be30292"
+  },
+  "scope": "Diagnostic actual catalog controller: pointer or keyboard opener/Cancel. WebKit pointer returnsBODY; keyboard returns exact opener all3engines. This positive diagnostic does not certify pointer behavior correct. Reference module byteidentical to historical pre-picker source78c231; picker helper not involved. All reads locallyfulfilled,no writes.",
+  "results": [
+    {
+      "engine": "chromium",
+      "input": "pointer",
+      "actual": {
+        "tag": "BUTTON",
+        "id": "open"
+      },
+      "returnsExactOpener": true,
+      "writes": []
+    },
+    {
+      "engine": "chromium",
+      "input": "keyboard",
+      "actual": {
+        "tag": "BUTTON",
+        "id": "open"
+      },
+      "returnsExactOpener": true,
+      "writes": []
+    },
+    {
+      "engine": "firefox",
+      "input": "pointer",
+      "actual": {
+        "tag": "BUTTON",
+        "id": "open"
+      },
+      "returnsExactOpener": true,
+      "writes": []
+    },
+    {
+      "engine": "firefox",
+      "input": "keyboard",
+      "actual": {
+        "tag": "BUTTON",
+        "id": "open"
+      },
+      "returnsExactOpener": true,
+      "writes": []
+    },
+    {
+      "engine": "webkit",
+      "input": "pointer",
+      "actual": {
+        "tag": "BODY",
+        "id": ""
+      },
+      "returnsExactOpener": false,
+      "writes": []
+    },
+    {
+      "engine": "webkit",
+      "input": "keyboard",
+      "actual": {
+        "tag": "BUTTON",
+        "id": "open"
+      },
+      "returnsExactOpener": true,
+      "writes": []
+    }
+  ],
+  "limits": [
+    "Existing pointer focus defect remains broader260 accessibility work;155 exact cataloglabel/validation/save conditions do not become pointerfocus acceptance.",
+    "No physical/nativeAT claim."
+  ]
+}

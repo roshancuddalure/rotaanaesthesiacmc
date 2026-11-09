@@ -1,0 +1,1066 @@
+{
+  "recorded_at_utc": "2026-10-24T10:36:35.861Z",
+  "source_sha256": {
+    "frontend/src/member-profile.ts": "3a31d989707c006ed18f33a26105c8ed855d70bca29a0dc4d925a763979cd1af",
+    "frontend/src/member-workspace.ts": "f6386f39469cfcb3a3526deff06cdb9037bb7483574d988bf5e1a568d2db5782",
+    "frontend/src/member-presentation.ts": "99874e6e80efadd671be1c6d5b17b50e93e061bf8e7f2538535724baafd7d887",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/ui.ts": "88579ed75c8c72e4fd4e2d98508a58c42b925202362589a2469623664c2a975f",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "46764b33f5c230611b17074e4e196d0a2faac72dcc18de8dc37a74a2fb7e67ad"
+  },
+  "test_sha256": "6df211a566f848930e0bd7d50cf9d06b088261e194fde1c84d5f05826463ac59",
+  "scope": "6engine-width contexts/48 workflows: independent computer_admin/HOD/view role versus returned can_manage guards, keyed disclosure insertion/removal and async-render focus, exact36 locally fulfilled comment POSTs. Canonical unchanged edit/cancel/tab metadata state and deferred roles GET focus. No backend authorization/persistence, production, physical-device or native AT certification.",
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "cases": [
+        {
+          "surface": "legacy",
+          "role": "computer_admin",
+          "manage": true,
+          "independentGuardsPreserved": true,
+          "locallyFulfilledCommentPosts": 2,
+          "keyedDisclosureInsertionRemovalFocus": true
+        },
+        {
+          "surface": "legacy",
+          "role": "computer_admin",
+          "manage": false,
+          "independentGuardsPreserved": true,
+          "locallyFulfilledCommentPosts": 0,
+          "keyedDisclosureInsertionRemovalFocus": false
+        },
+        {
+          "surface": "legacy",
+          "role": "hod",
+          "manage": true,
+          "independentGuardsPreserved": true,
+          "locallyFulfilledCommentPosts": 2,
+          "keyedDisclosureInsertionRemovalFocus": true
+        },
+        {
+          "surface": "legacy",
+          "role": "hod",
+          "manage": false,
+          "independentGuardsPreserved": true,
+          "locallyFulfilledCommentPosts": 0,
+          "keyedDisclosureInsertionRemovalFocus": false
+        },
+        {
+          "surface": "legacy",
+          "role": "rota_board_member",
+          "manage": true,
+          "independentGuardsPreserved": true,
+          "locallyFulfilledCommentPosts": 2,
+          "keyedDisclosureInsertionRemovalFocus": true
+        },
+        {
+          "surface": "legacy",
+          "role": "rota_board_member",
+          "manage": false,
+          "independentGuardsPreserved": true,
+          "locallyFulfilledCommentPosts": 0,
+          "keyedDisclosureInsertionRemovalFocus": false
+        },
+        {
+          "surface": "canonical",
+          "admin": true,
+          "keyedDisclosureAsyncFocus": true,
+          "identificationStateAcrossEditCancelTabs": true
+        },
+        {
+          "surface": "canonical",
+          "admin": false,
+          "keyedDisclosureAsyncFocus": true,
+          "identificationStateAcrossEditCancelTabs": true
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/metadata-review/comments",
+          "body": {
+            "body": "Hierarchy rerender check 1"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/metadata-review/comments",
+          "body": {
+            "body": "Hierarchy rerender check 2"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/metadata-review/comments",
+          "body": {
+            "body": "Hierarchy rerender check 1"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/metadata-review/comments",
+          "body": {
+            "body": "Hierarchy rerender check 2"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/metadata-review/comments",
+          "body": {
+            "body": "Hierarchy rerender check 1"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/metadata-review/comments",
+          "body": {
+            "body": "Hierarchy rerender check 2"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/metadata-review"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/metadata-review/roles"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/metadata-review"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/metadata-review/roles"
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "cases": [
+        {
+          "surface": "legacy",
+          "role": "computer_admin",
+          "manage": true,
+          "independentGuardsPreserved": true,
+          "locallyFulfilledCommentPosts": 2,
+          "keyedDisclosureInsertionRemovalFocus": true
+        },
+        {
+          "surface": "legacy",
+          "role": "computer_admin",
+          "manage": false,
+          "independentGuardsPreserved": true,
+          "locallyFulfilledCommentPosts": 0,
+          "keyedDisclosureInsertionRemovalFocus": false
+        },
+        {
+          "surface": "legacy",
+          "role": "hod",
+          "manage": true,
+          "independentGuardsPreserved": true,
+          "locallyFulfilledCommentPosts": 2,
+          "keyedDisclosureInsertionRemovalFocus": true
+        },
+        {
+          "surface": "legacy",
+          "role": "hod",
+          "manage": false,
+          "independentGuardsPreserved": true,
+          "locallyFulfilledCommentPosts": 0,
+          "keyedDisclosureInsertionRemovalFocus": false
+        },
+        {
+          "surface": "legacy",
+          "role": "rota_board_member",
+          "manage": true,
+          "independentGuardsPreserved": true,
+          "locallyFulfilledCommentPosts": 2,
+          "keyedDisclosureInsertionRemovalFocus": true
+        },
+        {
+          "surface": "legacy",
+          "role": "rota_board_member",
+          "manage": false,
+          "independentGuardsPreserved": true,
+          "locallyFulfilledCommentPosts": 0,
+          "keyedDisclosureInsertionRemovalFocus": false
+        },
+        {
+          "surface": "canonical",
+          "admin": true,
+          "keyedDisclosureAsyncFocus": true,
+          "identificationStateAcrossEditCancelTabs": true
+        },
+        {
+          "surface": "canonical",
+          "admin": false,
+          "keyedDisclosureAsyncFocus": true,
+          "identificationStateAcrossEditCancelTabs": true
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/metadata-review/comments",
+          "body": {
+            "body": "Hierarchy rerender check 1"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/metadata-review/comments",
+          "body": {
+            "body": "Hierarchy rerender check 2"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/metadata-review/comments",
+          "body": {
+            "body": "Hierarchy rerender check 1"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/metadata-review/comments",
+          "body": {
+            "body": "Hierarchy rerender check 2"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/metadata-review/comments",
+          "body": {
+            "body": "Hierarchy rerender check 1"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/metadata-review/comments",
+          "body": {
+            "body": "Hierarchy rerender check 2"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/metadata-review"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/metadata-review/roles"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/metadata-review"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/metadata-review/roles"
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "cases": [
+        {
+          "surface": "legacy",
+          "role": "computer_admin",
+          "manage": true,
+          "independentGuardsPreserved": true,
+          "locallyFulfilledCommentPosts": 2,
+          "keyedDisclosureInsertionRemovalFocus": true
+        },
+        {
+          "surface": "legacy",
+          "role": "computer_admin",
+          "manage": false,
+          "independentGuardsPreserved": true,
+          "locallyFulfilledCommentPosts": 0,
+          "keyedDisclosureInsertionRemovalFocus": false
+        },
+        {
+          "surface": "legacy",
+          "role": "hod",
+          "manage": true,
+          "independentGuardsPreserved": true,
+          "locallyFulfilledCommentPosts": 2,
+          "keyedDisclosureInsertionRemovalFocus": true
+        },
+        {
+          "surface": "legacy",
+          "role": "hod",
+          "manage": false,
+          "independentGuardsPreserved": true,
+          "locallyFulfilledCommentPosts": 0,
+          "keyedDisclosureInsertionRemovalFocus": false
+        },
+        {
+          "surface": "legacy",
+          "role": "rota_board_member",
+          "manage": true,
+          "independentGuardsPreserved": true,
+          "locallyFulfilledCommentPosts": 2,
+          "keyedDisclosureInsertionRemovalFocus": true
+        },
+        {
+          "surface": "legacy",
+          "role": "rota_board_member",
+          "manage": false,
+          "independentGuardsPreserved": true,
+          "locallyFulfilledCommentPosts": 0,
+          "keyedDisclosureInsertionRemovalFocus": false
+        },
+        {
+          "surface": "canonical",
+          "admin": true,
+          "keyedDisclosureAsyncFocus": true,
+          "identificationStateAcrossEditCancelTabs": true
+        },
+        {
+          "surface": "canonical",
+          "admin": false,
+          "keyedDisclosureAsyncFocus": true,
+          "identificationStateAcrossEditCancelTabs": true
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/metadata-review/comments",
+          "body": {
+            "body": "Hierarchy rerender check 1"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/metadata-review/comments",
+          "body": {
+            "body": "Hierarchy rerender check 2"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/metadata-review/comments",
+          "body": {
+            "body": "Hierarchy rerender check 1"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/metadata-review/comments",
+          "body": {
+            "body": "Hierarchy rerender check 2"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/metadata-review/comments",
+          "body": {
+            "body": "Hierarchy rerender check 1"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/metadata-review/comments",
+          "body": {
+            "body": "Hierarchy rerender check 2"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/metadata-review"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/metadata-review/roles"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/metadata-review"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/metadata-review/roles"
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "cases": [
+        {
+          "surface": "legacy",
+          "role": "computer_admin",
+          "manage": true,
+          "independentGuardsPreserved": true,
+          "locallyFulfilledCommentPosts": 2,
+          "keyedDisclosureInsertionRemovalFocus": true
+        },
+        {
+          "surface": "legacy",
+          "role": "computer_admin",
+          "manage": false,
+          "independentGuardsPreserved": true,
+          "locallyFulfilledCommentPosts": 0,
+          "keyedDisclosureInsertionRemovalFocus": false
+        },
+        {
+          "surface": "legacy",
+          "role": "hod",
+          "manage": true,
+          "independentGuardsPreserved": true,
+          "locallyFulfilledCommentPosts": 2,
+          "keyedDisclosureInsertionRemovalFocus": true
+        },
+        {
+          "surface": "legacy",
+          "role": "hod",
+          "manage": false,
+          "independentGuardsPreserved": true,
+          "locallyFulfilledCommentPosts": 0,
+          "keyedDisclosureInsertionRemovalFocus": false
+        },
+        {
+          "surface": "legacy",
+          "role": "rota_board_member",
+          "manage": true,
+          "independentGuardsPreserved": true,
+          "locallyFulfilledCommentPosts": 2,
+          "keyedDisclosureInsertionRemovalFocus": true
+        },
+        {
+          "surface": "legacy",
+          "role": "rota_board_member",
+          "manage": false,
+          "independentGuardsPreserved": true,
+          "locallyFulfilledCommentPosts": 0,
+          "keyedDisclosureInsertionRemovalFocus": false
+        },
+        {
+          "surface": "canonical",
+          "admin": true,
+          "keyedDisclosureAsyncFocus": true,
+          "identificationStateAcrossEditCancelTabs": true
+        },
+        {
+          "surface": "canonical",
+          "admin": false,
+          "keyedDisclosureAsyncFocus": true,
+          "identificationStateAcrossEditCancelTabs": true
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/metadata-review/comments",
+          "body": {
+            "body": "Hierarchy rerender check 1"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/metadata-review/comments",
+          "body": {
+            "body": "Hierarchy rerender check 2"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/metadata-review/comments",
+          "body": {
+            "body": "Hierarchy rerender check 1"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/metadata-review/comments",
+          "body": {
+            "body": "Hierarchy rerender check 2"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/metadata-review/comments",
+          "body": {
+            "body": "Hierarchy rerender check 1"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/metadata-review/comments",
+          "body": {
+            "body": "Hierarchy rerender check 2"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/metadata-review"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/metadata-review/roles"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/metadata-review"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/metadata-review/roles"
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "cases": [
+        {
+          "surface": "legacy",
+          "role": "computer_admin",
+          "manage": true,
+          "independentGuardsPreserved": true,
+          "locallyFulfilledCommentPosts": 2,
+          "keyedDisclosureInsertionRemovalFocus": true
+        },
+        {
+          "surface": "legacy",
+          "role": "computer_admin",
+          "manage": false,
+          "independentGuardsPreserved": true,
+          "locallyFulfilledCommentPosts": 0,
+          "keyedDisclosureInsertionRemovalFocus": false
+        },
+        {
+          "surface": "legacy",
+          "role": "hod",
+          "manage": true,
+          "independentGuardsPreserved": true,
+          "locallyFulfilledCommentPosts": 2,
+          "keyedDisclosureInsertionRemovalFocus": true
+        },
+        {
+          "surface": "legacy",
+          "role": "hod",
+          "manage": false,
+          "independentGuardsPreserved": true,
+          "locallyFulfilledCommentPosts": 0,
+          "keyedDisclosureInsertionRemovalFocus": false
+        },
+        {
+          "surface": "legacy",
+          "role": "rota_board_member",
+          "manage": true,
+          "independentGuardsPreserved": true,
+          "locallyFulfilledCommentPosts": 2,
+          "keyedDisclosureInsertionRemovalFocus": true
+        },
+        {
+          "surface": "legacy",
+          "role": "rota_board_member",
+          "manage": false,
+          "independentGuardsPreserved": true,
+          "locallyFulfilledCommentPosts": 0,
+          "keyedDisclosureInsertionRemovalFocus": false
+        },
+        {
+          "surface": "canonical",
+          "admin": true,
+          "keyedDisclosureAsyncFocus": true,
+          "identificationStateAcrossEditCancelTabs": true
+        },
+        {
+          "surface": "canonical",
+          "admin": false,
+          "keyedDisclosureAsyncFocus": true,
+          "identificationStateAcrossEditCancelTabs": true
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/metadata-review/comments",
+          "body": {
+            "body": "Hierarchy rerender check 1"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/metadata-review/comments",
+          "body": {
+            "body": "Hierarchy rerender check 2"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/metadata-review/comments",
+          "body": {
+            "body": "Hierarchy rerender check 1"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/metadata-review/comments",
+          "body": {
+            "body": "Hierarchy rerender check 2"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/metadata-review/comments",
+          "body": {
+            "body": "Hierarchy rerender check 1"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/metadata-review/comments",
+          "body": {
+            "body": "Hierarchy rerender check 2"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/metadata-review"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/metadata-review/roles"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/metadata-review"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/metadata-review/roles"
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "cases": [
+        {
+          "surface": "legacy",
+          "role": "computer_admin",
+          "manage": true,
+          "independentGuardsPreserved": true,
+          "locallyFulfilledCommentPosts": 2,
+          "keyedDisclosureInsertionRemovalFocus": true
+        },
+        {
+          "surface": "legacy",
+          "role": "computer_admin",
+          "manage": false,
+          "independentGuardsPreserved": true,
+          "locallyFulfilledCommentPosts": 0,
+          "keyedDisclosureInsertionRemovalFocus": false
+        },
+        {
+          "surface": "legacy",
+          "role": "hod",
+          "manage": true,
+          "independentGuardsPreserved": true,
+          "locallyFulfilledCommentPosts": 2,
+          "keyedDisclosureInsertionRemovalFocus": true
+        },
+        {
+          "surface": "legacy",
+          "role": "hod",
+          "manage": false,
+          "independentGuardsPreserved": true,
+          "locallyFulfilledCommentPosts": 0,
+          "keyedDisclosureInsertionRemovalFocus": false
+        },
+        {
+          "surface": "legacy",
+          "role": "rota_board_member",
+          "manage": true,
+          "independentGuardsPreserved": true,
+          "locallyFulfilledCommentPosts": 2,
+          "keyedDisclosureInsertionRemovalFocus": true
+        },
+        {
+          "surface": "legacy",
+          "role": "rota_board_member",
+          "manage": false,
+          "independentGuardsPreserved": true,
+          "locallyFulfilledCommentPosts": 0,
+          "keyedDisclosureInsertionRemovalFocus": false
+        },
+        {
+          "surface": "canonical",
+          "admin": true,
+          "keyedDisclosureAsyncFocus": true,
+          "identificationStateAcrossEditCancelTabs": true
+        },
+        {
+          "surface": "canonical",
+          "admin": false,
+          "keyedDisclosureAsyncFocus": true,
+          "identificationStateAcrossEditCancelTabs": true
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/metadata-review/comments",
+          "body": {
+            "body": "Hierarchy rerender check 1"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/metadata-review/comments",
+          "body": {
+            "body": "Hierarchy rerender check 2"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/metadata-review/comments",
+          "body": {
+            "body": "Hierarchy rerender check 1"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/metadata-review/comments",
+          "body": {
+            "body": "Hierarchy rerender check 2"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/metadata-review/comments",
+          "body": {
+            "body": "Hierarchy rerender check 1"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/metadata-review/comments",
+          "body": {
+            "body": "Hierarchy rerender check 2"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/metadata-review/profile"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/metadata-review"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/metadata-review/roles"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/metadata-review"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/metadata-review/roles"
+        }
+      ],
+      "pageErrors": []
+    }
+  ]
+}

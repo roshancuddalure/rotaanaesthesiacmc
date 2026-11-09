@@ -1,0 +1,174 @@
+{
+  "recorded_at_utc": "2026-11-09T07:52:57.001547+00:00",
+  "reviewer": "/root/profile_parent_final_audit",
+  "application_changed": false,
+  "item_id": 159,
+  "requirement": "Refresh dependent leave and unit views after confirmed mutations without discarding unrelated unsaved edits or chosen filters.",
+  "pass_conditions": [
+    "Confirmed leave/unit/reference mutations refresh their relevant dependent views.",
+    "Unrelated unsaved edits and chosen filters survive those refreshes, and failed read-back does not repeat the mutation."
+  ],
+  "decision": "Keep original159 partial after V4; sibling mutation callback families still use destructive parent rebuilds. Existing owner/recovery fixes remain useful but do not establish these draft-preservation conditions.",
+  "source_sha256": {
+    "frontend/src/main.ts": "5311e9933a6614747458418a218ac2b22855c2f7baa574e446557a4aa6d9d13d",
+    "frontend/src/extra-duty.ts": "52084624922de21f2a0fa478eb1ca4c883cdeb66dd1d05147d0f21fe806bc7ea",
+    "frontend/src/reference-workspace.ts": "78c231ea1d5ab15bd3a4b5f2f8265529451a51bacc68d2a4aac1708a4be30292",
+    "frontend/src/record-workspace.ts": "469fd6bf2e4118b15ad343d8059cd3cfb0acbc6483bea969ca5fb93488644335",
+    "frontend/src/operational-import.ts": "00a6339fb0bd56dcae64ec05cb79ad041364a502ee207dec71c95106b2c20ce8",
+    "tmp/profile-parent-refresh-v4/main.ts": "355e71753eb79135d4bdefb94837da4fc1ff727b12a2ed1f9c4bdb4b5d744a07",
+    "docs/premium-ui/acceptance-criteria/items-087-173.json": "a7bf1322bd8e08a1fddd4195095d9cc52a8867a1b8a2bda9b523917fae458576",
+    "docs/premium-ui/traceability.json": "d946f5602b35bb73080e83e0ecc4924eeb71382f9ba957d8333fa9abd66a3ba7"
+  },
+  "findings": [
+    {
+      "id": "159-GAP-DIRECT-UNIT-RECORD",
+      "priority": 1,
+      "classification": "source-demonstrated destructive refresh; new actual regression diagnostic prepared, not executed by this reviewer",
+      "handlers": [
+        "frontend/src/main.ts:9280 existing data-add-operational-record/data-edit-operational-record delegation",
+        "frontend/src/main.ts:9296 normalized record saved callback calls renderUnitManagement(true)",
+        "frontend/src/main.ts:4778 full viewRoot.innerHTML rebuild",
+        "frontend/src/main.ts:4849-4852 reopens selected special/unit modal from returned server snapshot"
+      ],
+      "reachable_trigger": "Open existing Unit modal, change fallback minimum1 to unsaved3, then use its existing Add member posting or Edit posting button; confirm only that operational record. Settings input is an unrelated draft.",
+      "result_from_source": "Full parent rebuild replaces the settings form and reopens it from server minimum1, so unrelated draft3/control identity cannot survive. V4 profile-only coordinator does not wrap this direct editor callback.",
+      "next_actions": [
+        "Run prepared expected-correct direct-edit6-context diagnostic on V4 served5292; preserve each failure report.",
+        "Add direct-create equivalent once direct-edit reproduction is confirmed.",
+        "Reuse a generalized owner-scoped retained parent readback instead of adding a second divergent painter; keep existing exact operational POST payload/review tokens/permissions.",
+        "Verify failed parent GET leaves explicit saved status, draft/filter retention and GET-only retry."
+      ]
+    },
+    {
+      "id": "159-GAP-INLINE-FALLBACK-DRAFT",
+      "priority": 2,
+      "classification": "source-demonstrated state destruction across multiple reachable mutation families; runtime confirmation required",
+      "handlers": [
+        "frontend/src/extra-duty.ts:718 renderUnitFallbacks",
+        "frontend/src/extra-duty.ts:735 saved local Map;736 draft local Map",
+        "frontend/src/main.ts:4828 unit-fallbacks-host included in rebuilt markup",
+        "frontend/src/main.ts:4848 remounts renderUnitFallbacks",
+        "frontend/src/main.ts:9318 normalized import saved callback full render",
+        "frontend/src/main.ts:9337 unit registry saved callback full render",
+        "frontend/src/main.ts:3320 posting deletion refresh full render"
+      ],
+      "reachable_trigger": "Change an inline fallback unit order without saving; the host lives on the Units page. Then use top-toolbar registry/import or a direct posting editor/deletion. This does not require interacting with an inert background while a modal is open.",
+      "result_from_source": "Rebuilding viewRoot destroys the host and its closure-local draft Map; remount creates draft again from saved GET response. Thus unsaved fallback ordering is lost. V4 retained profile readback leaves this host intact, but sibling callbacks still rebuild it.",
+      "next_actions": [
+        "Use at least3 units to create a distinct unsaved order and assert original host/control identities, visible unsaved marker and order after each relevant mutation.",
+        "Prioritize registry create/edit and normalized Units import, then posting delete row/selected/month.",
+        "Preserve existing extra-duty backend contract; retention is frontend view ownership, not scheduling behavior."
+      ]
+    },
+    {
+      "id": "159-GAP-UNIT-FILTER-ABSENT-OPTION",
+      "priority": 3,
+      "classification": "source risk requiring actual mutation/response trigger, not a certified defect",
+      "handlers": [
+        "frontend/src/main.ts:4812 campus options derived only from returned unit campuses",
+        "frontend/src/main.ts:4831 bindUnitBoardFilters initializes rendered filters",
+        "frontend/src/main.ts:9337 registry save rebuilds Unit page"
+      ],
+      "reachable_trigger": "Choose campus Main, change last Main unit campus to Central in registry, then successful dependent refresh.",
+      "risk": "Full rebuilt campus select no longer has prior Main option; existing retained painter explicitly keeps unavailable selected campus options, but full render lacks equivalent retention. Confirm whether bindUnitBoardFilters resets state/chosen filter.",
+      "next_actions": [
+        "Actual registry edit fixture returning changed campus; require retained explicit empty Main filter or a clear unavailable option rather than silent All campuses.",
+        "Preserve search and posting page independently; no invented auto-reset policy."
+      ]
+    },
+    {
+      "id": "159-GAP-LEAVE-SIBLING-READBACK",
+      "priority": 4,
+      "classification": "source-confirmed different recovery paths; full condition remains unverified for all mutation families",
+      "handlers": [
+        "frontend/src/main.ts:9296 direct Leave record save renderLeave",
+        "frontend/src/main.ts:9318 normalized Leave import renderLeave",
+        "frontend/src/main.ts:9615 direct cancellation renderLeave",
+        "frontend/src/main.ts:9834 monthly approval renderLeave",
+        "frontend/src/main.ts:3346 Leave deletion refresh callback renderLeave",
+        "frontend/src/main.ts:renderLeave immediately replaces viewRoot with skeleton and later an empty-state error on failed read"
+      ],
+      "risk": "These do not use V4 retained Leave snapshot/recovery path. Daylist mode is global and may survive normal full render, but failed reads remove last-known data and selections/pressure disclosure DOM; broad retained-draft/failure assertions cannot be borrowed from nested-profile tests.",
+      "next_actions": [
+        "For direct save/cancel, monthly approval, normalized import and delete, perform one actual confirmed fixture mutation then fail one of three dependent GETs.",
+        "Assert chosen Month/Day list and selected month, any surviving unrelated selected IDs, truthful saved-versus-read-failed status and a GET-only retry.",
+        "Avoid replaying approve/import/save when retrying failed parent reads. Preserve existing owner guards and locally reviewed target IDs."
+      ]
+    },
+    {
+      "id": "159-GAP-TOP-REFERENCE-DEPENDENCY",
+      "priority": 5,
+      "classification": "source dependency-analysis gap, not an established UI defect",
+      "handlers": [
+        "frontend/src/main.ts:9278 top-level catalog saved callback only invalidates Unit cache",
+        "frontend/src/reference-workspace.ts:723 catalog PUT; successful load drives saved callback",
+        "frontend/src/main.ts:9332 Unit registry is separate actual unit mutation family"
+      ],
+      "risk": "Top-level catalog save does not repaint current dependent Leave/Unit snapshots. Need identify which reference edits actually affect rendered response fields rather than requiring indiscriminate reload after every label change. Nested editor reference options recovery already has separate bounded evidence.",
+      "next_actions": [
+        "Build a small dependency table for campus/unit identity, posting type/call label, Leave type/status/slot and mapping changes, marking current parent consumer or no current dependency.",
+        "Use actual existing PUT response + dependent GET changed fixture for one affected consumer; assert current view refresh while unrelated draft/filter stays.",
+        "Do not change reference behavior, permissions, canonical label policy or map semantics to manufacture a visible result."
+      ]
+    }
+  ],
+  "existing_bounded_evidence_to_preserve": [
+    "settings159-v7-integrated-execution.json: retained settings readback painter and its owner/print/focus gates",
+    "profile-parent-v4-selection-focus-execution.json:18 actual selection/focus contexts after profile mutations",
+    "qa-profile-parent-refresh-v4-normal.json and read-failure.json:12+12 nested profile operational contexts",
+    "qa-profile-parent-refresh-v4-malformed200.json and owner-coalescing/leave-owner reports: exact declared scopes only",
+    "record-reference-refresh-current.json: nested reference options preserve editor notes/search/caret; not direct parent full-render retention",
+    "Existing normalized record/import/registry/delete/monthly-approval ownership fixes guard stale route/account/month responses, but do not prove unrelated parent drafts survive their full rebuilds"
+  ],
+  "not_new_scope": [
+    "No requirement to reload every route after every mutation: only relevant dependent mounted views and truthful later reads.",
+    "Member name/alias editing, rota scheduling and new backend endpoints are outside this gap repair unless independently required elsewhere.",
+    "Legacy leave-form, leave-import-form, unit-assignment-form and apply-legacy-import handler strings have no matching current rendered controls in inspected main. Inventory separately as stale code; do not treat unreachable synthetic forms as user regression cases without real entrypoint evidence.",
+    "Registry controls do not necessarily coexist with an open Unit settings modal; use reachable inline fallback draft for registry/import rather than forcing events through inert background."
+  ],
+  "prioritized_matrix": [
+    {
+      "batch": "A",
+      "cases": "direct posting edit6 then create6",
+      "dimensions": "3 engines?320/1280; draft3/server1, Royal search, same Unit form; success and explicit parent GET failure/retry added after reproduction",
+      "proof": "one accepted existing review/save; fresh dependent posting; original unrelated draft values/nodes; filter/month retained; no replay"
+    },
+    {
+      "batch": "B",
+      "cases": "registry create/edit, normalized Units import, posting row/selected/month delete",
+      "dimensions": "inline fallback dirty order, search/campus/page; sample all rendered mutation families, then expand engine/mobile for distinct painters",
+      "proof": "fresh relevant Unit data and original dirty fallback order/control identity; GET-only read failure recovery"
+    },
+    {
+      "batch": "C",
+      "cases": "Leave direct save/cancel, monthly approval, normalized import, row/selected/month delete",
+      "dimensions": "Daylist/Month, month, surviving selection, read503/wrongmonth/malformed shape, late owner invalidation",
+      "proof": "truthful saved result, relevant whole snapshot, retained selected UI state, no mutation repeat"
+    },
+    {
+      "batch": "D",
+      "cases": "actual affected top-reference dependency consumers",
+      "dimensions": "structural dependency table first; nested editor and mounted parent separated",
+      "proof": "relevant refreshed consumer and unaffected draft/filter retention; no broad reload without dependency"
+    },
+    {
+      "batch": "E",
+      "cases": "integration cross-family regression",
+      "dimensions": "held reads/newer draft/focus, away-return/month/account changes, one full print lifecycle if shared Unit painter changed",
+      "proof": "prior accepted53 applicable, source contracts exact, unit/build and fresh impacted browser outcomes; whole159 only after each actual family disposition"
+    }
+  ],
+  "diagnostic_harness": {
+    "path": "frontend/tests/premium-original159-direct-posting-draft-v4-diagnostic.browser.mjs",
+    "sha256": "b0d73c56c57f4be2c193734bfce0e0e8416f4dd9a2792957b91761f2fb9c9edc",
+    "source": "scratch V4 main355e on5292, app5311 held",
+    "expected_contexts": 6,
+    "status": "Prepared and node --check0; no browser execution by author",
+    "report": "docs/premium-ui/qa-original159-direct-posting-draft-v4-diagnostic.json",
+    "failure_policy": "Catch and record each context, write all results before final expected-correct assertion; no forced success or relabeling draft loss."
+  },
+  "limitations": [
+    "Read-only review, no new runtime proof or app edits. Source destruction is deterministic but actual entrypoint runtime diagnostic remains required.",
+    "Do not accept original159 from V4 narrow counts or this inventory; every listed relevant family needs actual correct outcome evidence or a precise reason it has no dependent/draft interaction."
+  ]
+}

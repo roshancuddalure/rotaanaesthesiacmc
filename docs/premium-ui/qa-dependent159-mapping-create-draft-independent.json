@@ -1,0 +1,125 @@
+{
+  "recorded_at_utc": "2026-10-31T01:32:24.414Z",
+  "reviewer": "/root/unit_settings_v2_independent_review",
+  "scope": "Six actual app contexts,3engines320/1280. Edit existing mapping notes without saving; choose filter/search, open Add mapping and confirm one local POST. Parent loadMappings(false) refresh replaces unrelated existing draft with old server value. Exactly one locally intercepted create; no old-row PUT or backend writes. Filter/search retain; draft does not.",
+  "source_sha256": {
+    "frontend/src/main.ts": "e88c69570e7faf9b4277b541e073c8bd2ca3805c23f4feead544f16770f6e07a"
+  },
+  "test_sha256": "a3466ab8940d5bd752c567f0bfefa081b7cb902071f0cc17c45b5fbe0c1044c6",
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "unrelatedDraftBefore": "Keep this unrelated existing-row draft",
+      "unrelatedDraftAfter": "Original saved notes",
+      "draftLostOnCreateRefresh": true,
+      "reads": 3,
+      "writes": [
+        {
+          "mapping_type": "duty_label",
+          "source_label": "New legacy duty",
+          "target_key": "T2",
+          "notes": "Only this new mapping is being saved",
+          "status": "reviewed",
+          "target_label": "Second duty"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "unrelatedDraftBefore": "Keep this unrelated existing-row draft",
+      "unrelatedDraftAfter": "Original saved notes",
+      "draftLostOnCreateRefresh": true,
+      "reads": 3,
+      "writes": [
+        {
+          "mapping_type": "duty_label",
+          "source_label": "New legacy duty",
+          "target_key": "T2",
+          "notes": "Only this new mapping is being saved",
+          "status": "reviewed",
+          "target_label": "Second duty"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "unrelatedDraftBefore": "Keep this unrelated existing-row draft",
+      "unrelatedDraftAfter": "Original saved notes",
+      "draftLostOnCreateRefresh": true,
+      "reads": 3,
+      "writes": [
+        {
+          "mapping_type": "duty_label",
+          "source_label": "New legacy duty",
+          "target_key": "T2",
+          "notes": "Only this new mapping is being saved",
+          "status": "reviewed",
+          "target_label": "Second duty"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "unrelatedDraftBefore": "Keep this unrelated existing-row draft",
+      "unrelatedDraftAfter": "Original saved notes",
+      "draftLostOnCreateRefresh": true,
+      "reads": 3,
+      "writes": [
+        {
+          "mapping_type": "duty_label",
+          "source_label": "New legacy duty",
+          "target_key": "T2",
+          "notes": "Only this new mapping is being saved",
+          "status": "reviewed",
+          "target_label": "Second duty"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "unrelatedDraftBefore": "Keep this unrelated existing-row draft",
+      "unrelatedDraftAfter": "Original saved notes",
+      "draftLostOnCreateRefresh": true,
+      "reads": 3,
+      "writes": [
+        {
+          "mapping_type": "duty_label",
+          "source_label": "New legacy duty",
+          "target_key": "T2",
+          "notes": "Only this new mapping is being saved",
+          "status": "reviewed",
+          "target_label": "Second duty"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "unrelatedDraftBefore": "Keep this unrelated existing-row draft",
+      "unrelatedDraftAfter": "Original saved notes",
+      "draftLostOnCreateRefresh": true,
+      "reads": 3,
+      "writes": [
+        {
+          "mapping_type": "duty_label",
+          "source_label": "New legacy duty",
+          "target_key": "T2",
+          "notes": "Only this new mapping is being saved",
+          "status": "reviewed",
+          "target_label": "Second duty"
+        }
+      ],
+      "errors": []
+    }
+  ]
+}

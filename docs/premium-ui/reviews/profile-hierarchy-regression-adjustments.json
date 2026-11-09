@@ -1,0 +1,41 @@
+{
+  "recorded_at_utc": "2026-10-24T11:08:16.343929+00:00",
+  "scope": "Intentional test adaptation to approved presentation changes; no production behavior or API expectation changes.",
+  "changes": [
+    {
+      "test": "frontend/tests/premium-legacy-timeline.browser.mjs",
+      "reason": "Header now has separate designation,status and date-context paragraphs. Target exact data-legacy-member-call instead of ambiguous generic paragraph; expected returned3RD CALL remains unchanged."
+    },
+    {
+      "test": "frontend/tests/premium-member-container-independent.browser.mjs",
+      "reason": "MemberID/copy are inside Record identification. Open native disclosure with focus+Enter before existing exact clipboard assertion. Retain all container/rail/focus/cursor checks."
+    },
+    {
+      "test": "frontend/tests/premium-member-actions.browser.mjs",
+      "reason": "Designation history now uses semantic h4 timeline headings. Target exact record heading rather than previous strong element. Preserve all five legacy submit paths, exact bodies and read-back expectations."
+    },
+    {
+      "test": "frontend/tests/premium-profile-identity.browser.mjs",
+      "reason": "Header designation has a specific selector and honest date fallback; fixed22October boundaries retained. Effective call assertion separate. Shared-helper held hashes added."
+    },
+    {
+      "test": "frontend/tests/premium-profile-designation-header.browser.mjs",
+      "reason": "Shared invalid-date note refers to designation history. Existing full text, geometry and native keyboard assertions retained; shared-helper hash added."
+    }
+  ],
+  "preserved_failures": [
+    "tmp/hierarchy-regression-legacy-before-selector.log",
+    "tmp/hierarchy-regression-container-before-disclosure.log",
+    "tmp/hierarchy-regression-container-server-unavailable.log",
+    "tmp/hierarchy-regression-actions-before-designation-heading.log"
+  ],
+  "recovery": "Unavailable localVite process was confirmed absent then restarted loopback5197; no production request or persistence operation. Reused passes require exact source/script equality and immutable parent report hash.",
+  "current_test_sha256": {
+    "frontend/tests/premium-legacy-timeline.browser.mjs": "4b3c0ebfc32f961ce894ad36a3d936d4763907e99ead2ca795f9d1f6bd2113e0",
+    "frontend/tests/premium-member-container-independent.browser.mjs": "6643db3ee52f88c07874bce12f4fb0d414b22de7455193f95c10536160b804e9",
+    "frontend/tests/premium-member-actions.browser.mjs": "986cdbb3c3117af69a05db6ebb499c313391b4098b0a2bae5927531c08004d95",
+    "frontend/tests/premium-profile-identity.browser.mjs": "c2e4ca02a6fce1fcd7ad544c35a77e304210aaae6944faee1c4cca1057bbdb5e",
+    "frontend/tests/premium-profile-designation-header.browser.mjs": "d57152815989f2c1f13a5b8bc2834a81c1d8f0600aa3e1f5364dca9c87f904b4"
+  },
+  "completion_claim": false
+}

@@ -1,0 +1,252 @@
+{
+  "recorded_at_utc": "2026-10-28T06:56:53.681Z",
+  "reviewer": "/root/import_progress_recovery_review",
+  "scope": "Independent original111166169 exact-condition review. No app/test/ledger edits; no whole-goal acceptance.",
+  "recommendation": "Recommend scoped acceptance of111,166 and169; historical rendered evidence explicitly revalidated rather than described as fresh.",
+  "completion_claim": false,
+  "original_definitions": [
+    {
+      "item_id": 111,
+      "requirement": "Consolidate dense mobile filters into an expandable panel while keeping applied-filter count visible in the main toolbar.",
+      "acceptance_scope": "Mobile filter disclosure with visible applied count",
+      "pass_conditions": [
+        "Dense optional mobile filters occupy an expandable panel while the main toolbar shows the applied-filter count.",
+        "Opening, closing and reflow preserve chosen filters and leave primary actions accessible."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/qa-member-filters.json"
+      ],
+      "remaining_gap": "Verify the disclosure count and retained applied values in affected mobile toolbars."
+    },
+    {
+      "item_id": 166,
+      "requirement": "Make quick Autoassign and whole-month planning distinct choices, with concise explanations of preservation and repair behavior.",
+      "acceptance_scope": "Distinct Autoassign and whole-month planning choices",
+      "pass_conditions": [
+        "Quick Autoassign and whole-month planning have distinct labels and concise explanations.",
+        "Preservation and repair behavior is described accurately according to existing modes and launch context."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/generation-entrypoints-current.json",
+        "docs/premium-ui/qa-generation-entrypoints.json"
+      ],
+      "remaining_gap": "Verify both visible launchers and mode explanations against the current generation contracts."
+    },
+    {
+      "item_id": 169,
+      "requirement": "Present generation progress as queued, working, review-ready or failed according to actual returned states, avoiding invented percentages.",
+      "acceptance_scope": "Generation progress tied to actual state",
+      "pass_conditions": [
+        "Queued, working, review-ready and failed presentations correspond to actual returned job states.",
+        "The frontend does not invent numeric progress or announce completion before a review/result is available."
+      ],
+      "evidence_needed": [
+        "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+        "Record the specific surfaces, fixtures, state variants and source snapshot covered; a linked candidate is not itself an acceptance result."
+      ],
+      "existing_evidence_candidates": [
+        "docs/premium-ui/reviews/generation-state-current.json",
+        "docs/premium-ui/qa-generation-state.json"
+      ],
+      "remaining_gap": "Drive controlled returned-state transitions, including delayed/error states, and compare visible progress."
+    }
+  ],
+  "evidence": {
+    "historical": [
+      {
+        "path": "docs/premium-ui/qa-mobile-member-filters/report.json",
+        "sha256": "0e9b9baaee92e4bd1e4cf083362a7f8f15e72e04c4fd337f1fa953a352e18952",
+        "result_rows": 15,
+        "bindings": [
+          {
+            "path": "frontend/src/main.ts",
+            "recorded_sha256": "658711ebf2ce8b26094131a5f1e4fe383d9ff98f6d0fc3dc5e9961fba44ac983",
+            "current_sha256": "658711ebf2ce8b26094131a5f1e4fe383d9ff98f6d0fc3dc5e9961fba44ac983",
+            "matches_current": true
+          },
+          {
+            "path": "frontend/src/styles.css",
+            "recorded_sha256": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+            "current_sha256": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+            "matches_current": true
+          },
+          {
+            "path": "frontend/src/premium-theme.css",
+            "recorded_sha256": "559041ee03d192fcc291582bd7572e8d32004e9d5428b7e57fbbea9ba9e60f83",
+            "current_sha256": "d9113665ea4657cc9d5539db9017bbce76981881b2896341155694552610f1f6",
+            "matches_current": false
+          }
+        ]
+      },
+      {
+        "path": "docs/premium-ui/qa-member-filters.json",
+        "sha256": "233214e77099d49b5a8c56f5dde8e4abce692a378c7a7d46b01522cd45c623f5",
+        "result_rows": 6,
+        "bindings": []
+      },
+      {
+        "path": "docs/premium-ui/qa-generation-entrypoints.json",
+        "sha256": "1f64dc65b6f631af9f357b6bf572d7b2aa0c3a4eef7729dd68b79a39cf0eb857",
+        "result_rows": 12,
+        "bindings": [
+          {
+            "path": "frontend/src/rota-compute.ts",
+            "recorded_sha256": "e5f967e6166e2ace9352983a468002d45850188d8811363230305d7597fb70ab",
+            "current_sha256": "e5f967e6166e2ace9352983a468002d45850188d8811363230305d7597fb70ab",
+            "matches_current": true
+          },
+          {
+            "path": "frontend/src/rota-intelligence.ts",
+            "recorded_sha256": "bda7257a3cafdcf6c4122575cc454abb1623f27dbd13950ea1d61260a23bb79b",
+            "current_sha256": "bda7257a3cafdcf6c4122575cc454abb1623f27dbd13950ea1d61260a23bb79b",
+            "matches_current": true
+          },
+          {
+            "path": "frontend/src/main.ts",
+            "recorded_sha256": "658711ebf2ce8b26094131a5f1e4fe383d9ff98f6d0fc3dc5e9961fba44ac983",
+            "current_sha256": "658711ebf2ce8b26094131a5f1e4fe383d9ff98f6d0fc3dc5e9961fba44ac983",
+            "matches_current": true
+          },
+          {
+            "path": "frontend/src/styles.css",
+            "recorded_sha256": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+            "current_sha256": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+            "matches_current": true
+          },
+          {
+            "path": "frontend/src/premium-theme.css",
+            "recorded_sha256": "559041ee03d192fcc291582bd7572e8d32004e9d5428b7e57fbbea9ba9e60f83",
+            "current_sha256": "d9113665ea4657cc9d5539db9017bbce76981881b2896341155694552610f1f6",
+            "matches_current": false
+          }
+        ]
+      },
+      {
+        "path": "docs/premium-ui/qa-generation-state.json",
+        "sha256": "12f673a899fdcf42db7faaafde56d02f63937cebb98126e9e52a9c2ae901ae81",
+        "result_rows": 48,
+        "bindings": [
+          {
+            "path": "frontend/src/rota-compute.ts",
+            "recorded_sha256": "e5f967e6166e2ace9352983a468002d45850188d8811363230305d7597fb70ab",
+            "current_sha256": "e5f967e6166e2ace9352983a468002d45850188d8811363230305d7597fb70ab",
+            "matches_current": true
+          },
+          {
+            "path": "frontend/src/styles.css",
+            "recorded_sha256": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+            "current_sha256": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+            "matches_current": true
+          },
+          {
+            "path": "frontend/src/premium-theme.css",
+            "recorded_sha256": "559041ee03d192fcc291582bd7572e8d32004e9d5428b7e57fbbea9ba9e60f83",
+            "current_sha256": "d9113665ea4657cc9d5539db9017bbce76981881b2896341155694552610f1f6",
+            "matches_current": false
+          }
+        ]
+      }
+    ],
+    "transitions": {
+      "path": "docs/premium-ui/qa-generation-transitions.json",
+      "sha256": "a1f7caa09d5bb632720fac4158bd2a08e941462a370c908a0af005a590f5fe04",
+      "result_rows": 12,
+      "bindings": [
+        {
+          "path": "frontend/src/rota-compute.ts",
+          "recorded_sha256": "e5f967e6166e2ace9352983a468002d45850188d8811363230305d7597fb70ab",
+          "current_sha256": "e5f967e6166e2ace9352983a468002d45850188d8811363230305d7597fb70ab",
+          "matches_current": true
+        },
+        {
+          "path": "frontend/src/rota-intelligence.ts",
+          "recorded_sha256": "bda7257a3cafdcf6c4122575cc454abb1623f27dbd13950ea1d61260a23bb79b",
+          "current_sha256": "bda7257a3cafdcf6c4122575cc454abb1623f27dbd13950ea1d61260a23bb79b",
+          "matches_current": true
+        },
+        {
+          "path": "frontend/src/compute-device.ts",
+          "recorded_sha256": "c7083623b77132d2ace7d1a0a815ad457a695c9e381afcfd1aeb91af1a6d4eca",
+          "current_sha256": "c7083623b77132d2ace7d1a0a815ad457a695c9e381afcfd1aeb91af1a6d4eca",
+          "matches_current": true
+        },
+        {
+          "path": "frontend/src/member-workspace.ts",
+          "recorded_sha256": "2d52a71134b38e6ec1b2398ddac0cd90ac85829d0bd6ba084b92c1693f2bb97d",
+          "current_sha256": "2d52a71134b38e6ec1b2398ddac0cd90ac85829d0bd6ba084b92c1693f2bb97d",
+          "matches_current": true
+        },
+        {
+          "path": "frontend/src/workspace-load-state.ts",
+          "recorded_sha256": "cdd0e323d7e83e6e668a381bbfcc37cad4726b1193ac5de31d5f14e03eecd9c6",
+          "current_sha256": "cdd0e323d7e83e6e668a381bbfcc37cad4726b1193ac5de31d5f14e03eecd9c6",
+          "matches_current": true
+        },
+        {
+          "path": "frontend/src/services/api.ts",
+          "recorded_sha256": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+          "current_sha256": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+          "matches_current": true
+        },
+        {
+          "path": "frontend/src/styles.css",
+          "recorded_sha256": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+          "current_sha256": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+          "matches_current": true
+        },
+        {
+          "path": "frontend/src/premium-theme.css",
+          "recorded_sha256": "d9113665ea4657cc9d5539db9017bbce76981881b2896341155694552610f1f6",
+          "current_sha256": "d9113665ea4657cc9d5539db9017bbce76981881b2896341155694552610f1f6",
+          "matches_current": true
+        },
+        {
+          "path": "frontend/tests/premium-generation-transitions.browser.mjs",
+          "recorded_sha256": "ce4000ed9d36ed6e6febdf83879abc467c676a7c273a238202f179fa7168284f",
+          "current_sha256": "ce4000ed9d36ed6e6febdf83879abc467c676a7c273a238202f179fa7168284f",
+          "matches_current": true
+        }
+      ]
+    }
+  },
+  "theme_revalidation": {
+    "path": "frontend/src/premium-theme.css",
+    "current_sha256": "d9113665ea4657cc9d5539db9017bbce76981881b2896341155694552610f1f6",
+    "historical_prefix_bytes": 44589,
+    "historical_prefix_lines": 856,
+    "historical_prefix_sha256": "559041ee03d192fcc291582bd7572e8d32004e9d5428b7e57fbbea9ba9e60f83",
+    "prefix_exact": true,
+    "appended_suffix_sha256": "5be1dd521c2967199e812dc188659a4a061827825d54ff11ae08d12c87fef746",
+    "selector_scope": "Appends target comparison tables, CSV guides, profile/member disclosures/workload and member-import fieldsets; no Members filter toolbar, chooser method cards or progress/status mapping selector changed."
+  },
+  "conditions_review": [
+    {
+      "item": 111,
+      "result": "Both original conditions supported",
+      "rationale": "Exact current main.ts Members Position/Call native disclosure retains explicit open choice, applied optional count and separate visible total count.15 historical three-engine widths320/390/768/769/1280 outcomes exercise meaningful call/search filtering, native toggle, resize, profile and route return, clear.6 supplementary light/dark outcomes cover results/overflow. Main/base styles match raw recorded bytes; unchanged original theme prefix plus unrelated append supports revalidation. Primary actions remain outside optional details in source; do not claim old tests clicked AddMember while collapsed."
+    },
+    {
+      "item": 166,
+      "result": "Both original conditions supported",
+      "rationale": "Exact current chooser source has Quick safe fill and Whole-month optimisation cards/actions and preservation/selected-repair prose.12 historical three-engine320/1280 two-role native chooser workflows assert correct destination/month. Compute/intelligence/main/base styles match recorded functional sources. Source/backend contract comparison confirms selected repair mode/slots and otherwise fixed assignments. This is copy/choice acceptance, not real scheduling outcome certification."
+    },
+    {
+      "item": 169,
+      "result": "Both original conditions supported",
+      "rationale": "Fresh12 Chromium320/1280 cases cover quick, template and intelligence queued→held running→503/readback/newrevision→completed result/held validation→review-ready plus returnedfailed branches. Snapshot assertions tie labels to returned job status, indeterminate vs returned3/7 or4/7 progress, no percentages/no result or Apply before returned completion. Exact revision step/validate requests; no replacement job creation or Apply. Historical48 independent state snapshots across3engines revalidate unchanged compute/base styles and theme prefix; they remain historical and do not become fresh transition executions."
+    }
+  ],
+  "limits": [
+    "111/166 browser outcomes retained from their original snapshots; current inspection binds existing test bytes, not retroactive execution hashes absent from original report.",
+    "169 fresh transitions are Chromium only,12 workflows; historical48state snapshots are separate scope.",
+    "No real scheduling/GPU/persistence, physical-device/nativeAT or broader toolbar/launcher authorization claim."
+  ]
+}

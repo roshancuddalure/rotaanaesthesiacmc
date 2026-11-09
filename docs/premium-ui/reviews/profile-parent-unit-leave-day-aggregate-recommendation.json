@@ -1,0 +1,74 @@
+{
+  "recorded_at_utc": "2026-11-09T07:43:10.852Z",
+  "reviewer": "/root/profile_payload_guard",
+  "application_changed": false,
+  "source": "tmp/profile-parent-refresh-v4/main.ts",
+  "source_sha256": "355e71753eb79135d4bdefb94837da4fc1ff727b12a2ed1f9c4bdb4b5d744a07",
+  "actual_metric_function_sha256": "87a91b403479406837162f739e0bc78fee194cdf1579888ed6ad827e9a196d04",
+  "probes": [
+    {
+      "name": "one missing total",
+      "rows": [
+        {}
+      ],
+      "expected": "Not reported",
+      "sum": null,
+      "actual_markup": "<article class=\"metric\"><span class=\"is-missing\">Not reported</span><p>Unit leave days</p></article>"
+    },
+    {
+      "name": "null total",
+      "rows": [
+        {
+          "leave_days": null
+        }
+      ],
+      "expected": "<span>0</span>",
+      "sum": 0,
+      "actual_markup": "<article class=\"metric\"><span>0</span><p>Unit leave days</p></article>"
+    },
+    {
+      "name": "negative total",
+      "rows": [
+        {
+          "leave_days": -1
+        }
+      ],
+      "expected": "<span>-1</span>",
+      "sum": -1,
+      "actual_markup": "<article class=\"metric\"><span>-1</span><p>Unit leave days</p></article>"
+    },
+    {
+      "name": "fractional total",
+      "rows": [
+        {
+          "leave_days": 0.5
+        }
+      ],
+      "expected": "<span>0.5</span>",
+      "sum": 0.5,
+      "actual_markup": "<article class=\"metric\"><span>0.5</span><p>Unit leave days</p></article>"
+    },
+    {
+      "name": "known totals",
+      "rows": [
+        {
+          "leave_days": 1
+        },
+        {
+          "leave_days": 2
+        }
+      ],
+      "expected": "<span>3</span>",
+      "sum": 3,
+      "actual_markup": "<article class=\"metric\"><span>3</span><p>Unit leave days</p></article>"
+    }
+  ],
+  "correction": "The earlier claim that missing leave_days visibly displays NaN was incorrect. metricCard already renders non-finite values as Not reported. Null/negative/fractional totals can still display numeric values while the per-unit monthly display treats those values as unavailable.",
+  "recommendation": "Optional separate frontend follow-up: compute a shared unit leave-day display value for initial render and retained refresh. Return undefined unless each returned summary has its own finite nonnegative integer leave_days field. Otherwise return the sum. Pass undefined to existing metricCard so the existing Not reported presentation is reused. Do not coerce missing/null to zero or change any response/persisted data. Preserve current empty-summary behavior unless an explicit completeness contract is established.",
+  "proposed_pure_helper": "function unitLeaveDayMetric(rows: UnitManagementMonth[\"unit_summaries\"]): number | undefined { return rows.every(row => Object.prototype.hasOwnProperty.call(row, \"leave_days\") && Number.isInteger(row.leave_days) && row.leave_days >= 0) ? rows.reduce((sum, row) => sum + row.leave_days, 0) : undefined; }",
+  "limitations": [
+    "Pure evidence uses the exact current metricCard function with simple escaping/label stubs; no browser executed.",
+    "This is a recommendation only, not a V4 applied change or acceptance claim.",
+    "No assumption made that every listed unit must appear in unit_summaries; establishing missing-group completeness would require separate contract evidence."
+  ]
+}

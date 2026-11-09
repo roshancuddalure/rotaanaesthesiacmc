@@ -1,0 +1,131 @@
+{
+  "recorded_at_utc": "2026-10-28T15:28:01.626492+00:00",
+  "author": "/root/foundation_font_acceptance_recovery",
+  "scope": "Execution/source classification and completion-gate preparation. Author independently reviewed original24test, then authored additional12extension; extension requires separate peer/root review. No whole38acceptance or application/ledger edits.",
+  "reports": [
+    {
+      "report": "docs/premium-ui/reviews/font-resource-fallback-current.json",
+      "sha256": "5b0d054e70896e92e7c312b50ba1a6c7a1dd02402a444ed1d4005709a8a5f37b",
+      "test": "frontend/tests/premium-font-resource-fallback.browser.mjs",
+      "test_sha256": "29a8267a0ae4eca3b611fc96273e9a9f622299fc23a22cf882fa632400919902",
+      "contexts": 24,
+      "current_source_mismatches": [
+        "frontend/src/rota-rules.ts"
+      ],
+      "historical_execution_source_scope": "All declared sources held throughout actual completed run; current laterRulesmotion target-reveal expression is recorded separately, not retroactively inserted into raw."
+    },
+    {
+      "report": "docs/premium-ui/reviews/font-family-icons-failure-current.json",
+      "sha256": "0ed03ea8dc1e2a9afc86da3e38f7a50a088938612a763c99d8a9102d88d78f44",
+      "test": "frontend/tests/premium-font-family-icons-failure.browser.mjs",
+      "test_sha256": "fde56971ab4156c971c15d56f9ee17b45f0f7e2697967882db10b0b58beed48e",
+      "contexts": 12,
+      "current_source_mismatches": [
+        "frontend/src/rota-rules.ts"
+      ],
+      "historical_execution_source_scope": "All declared sources held throughout actual completed run; current laterRulesmotion target-reveal expression is recorded separately, not retroactively inserted into raw."
+    }
+  ],
+  "total_contexts": 36,
+  "current_font_family_declarations": [
+    {
+      "line": 165,
+      "declaration": "font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,"
+    },
+    {
+      "line": 500,
+      "declaration": "font-family: var(--font-mono, ui-monospace, monospace);"
+    },
+    {
+      "line": 3581,
+      "declaration": "font-family: Georgia, \"Times New Roman\", serif;"
+    },
+    {
+      "line": 3608,
+      "declaration": "font-family: Georgia, \"Times New Roman\", serif;"
+    },
+    {
+      "line": 6327,
+      "declaration": ".member-match__raw { font-family: var(--font-mono, ui-monospace, monospace); color: var(--color-text-secondary); }"
+    },
+    {
+      "line": 6362,
+      "declaration": ".archive-all__phrase input { font-family: var(--font-mono, ui-monospace, monospace); letter-spacing: 0.04em; }"
+    }
+  ],
+  "only_svg_literal": [
+    {
+      "source": "frontend/src/decorative-icons.ts",
+      "line": 15
+    }
+  ],
+  "shared_helper_operational_calls": [
+    {
+      "source": "frontend/src/limits.ts",
+      "line": 120,
+      "text": "const STAR = decorativeIcon(\"star\", \"limits-icon\");"
+    },
+    {
+      "source": "frontend/src/limits.ts",
+      "line": 121,
+      "text": "const WARN_ICON = decorativeIcon(\"warning\", \"limits-icon\");"
+    },
+    {
+      "source": "frontend/src/main.ts",
+      "line": 1035,
+      "text": "${decorativeIcon(\"close\")}"
+    },
+    {
+      "source": "frontend/src/main.ts",
+      "line": 1047,
+      "text": "${decorativeIcon(\"menu\")}"
+    },
+    {
+      "source": "frontend/src/rota-rules.ts",
+      "line": 205,
+      "text": "const LOCK_ICON = decorativeIcon(\"lock\", \"rr-icon\");"
+    },
+    {
+      "source": "frontend/src/rota-rules.ts",
+      "line": 206,
+      "text": "const WARN_ICON = decorativeIcon(\"warning\", \"rr-icon\");"
+    },
+    {
+      "source": "frontend/src/rota-rules.ts",
+      "line": 207,
+      "text": "const CHECK_ICON = decorativeIcon(\"check\", \"rr-icon rr-chip__tick\");"
+    },
+    {
+      "source": "frontend/src/rota-rules.ts",
+      "line": 208,
+      "text": "const CHEVRON = decorativeIcon(\"chevron\", \"rr-icon rr-chev\");"
+    },
+    {
+      "source": "frontend/src/rota-rules.ts",
+      "line": 209,
+      "text": "const SEARCH_ICON = decorativeIcon(\"search\", \"rr-icon\");"
+    }
+  ],
+  "font_source_scan": {
+    "bounded_sources": 57,
+    "external_font_or_icon_font_declarations": [],
+    "limits": "Source classification of authoredsrc/entryHTML, not arbitrary user text or dependencies."
+  },
+  "coverage_reasoning": [
+    "Body Inter stack appears through actual shell, canonical profile and component reference with native outcomes in24 contexts. Named Interwebface failure, rejected load, errorface and fallback metric equality asserted.",
+    "All three genericmonospace selectors are now rendered: readonlyfield CSSfixture; actual memberMatch helper; actual archiveconfirmation input via native type\u2192enable destructivecontrol\u2192Cancel without Apply. Their local genericstacks unchanged and metric equality positive.",
+    "The two serifselectors have no authoredTS/HTML markup caller; classify as inactive legacyCSSexceptions. ProductionCSSfixtures renderboth currentselectors afterfailedGeorgiawebface. OSlocalGeorgia maystillresolve; secondaryTimesmetric equality is deliberatelynotclaimed.",
+    "All eight localSVGfamilies rendered with exactviewBox/24px/currentColor/noimage-use/decorative semantics under blockedfont resources. AlloperationalSVGcallers use thissame helper; actualshellmenu/close inoriginal24 and canonicalfontglyphclose retained separately.",
+    "Current authoredapplication has no externalfont/iconfont declarations; synthetic requests exercise failuremechanics without inventing a productiondependency. No unrelatedclose37migration is needed to claimbasiclocalfontfallback."
+  ],
+  "review_gates": [
+    "Peer/root inspect additional12test and exact36rawcondition scope before original38acceptance.",
+    "Bind laterRulesmotionexpression applicability if current all-sourcehashfreshness is required; do notrehashrawhistoricalexecution.",
+    "Preserve separate40x44menutarget finding; no fontfailure regression observed."
+  ],
+  "limits": [
+    "No everyoperationalSVGplacement/nativeAT/OSfont-removal/physicaldevice certification.",
+    "Root200 originalmatrix is not universaltextenlargement; extension usesnormalrootfont only.",
+    "No backendrequests or changes, databasewrites, permission/export/scheduling/APIsemantics changes."
+  ]
+}

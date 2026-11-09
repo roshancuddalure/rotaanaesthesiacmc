@@ -1,0 +1,221 @@
+{
+  "recorded_at_utc": "2026-11-09T10:28:45.817805+00:00",
+  "reviewer": "/root/frontend_remaining_priorities",
+  "scope": "Independent read-only planning triage of current260 requirements outside active original159. No browser execution, application edits, current ledger changes or completion certification.",
+  "accepted_count_at_task_assignment": 54,
+  "recommendation": "First15/19 documentary reconciliation, then231/234 frozen-production artifact checks, then31 source-category/computed typography. All are candidates, not guaranteed passes. Run browser-heavy tests sequentially under coordinator ownership.",
+  "items": [
+    {
+      "rank": 1,
+      "item_id": 15,
+      "requirement": "Establish a defect register that separates verified bugs, design improvements, historical findings and open investigation questions.",
+      "exact_original_pass_conditions": [
+        "Maintain a searchable register separating reproduced bugs, design improvements, historical findings and investigation questions",
+        "Give each entry evidence, applicability snapshot, owner/status and next disposition"
+      ],
+      "acceptance_scope": "Definition/documentation or recorded-baseline deliverable: Defect-register establishment. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "suggested_work_shape": "Documentation only; first closure candidate",
+      "inspected_basis": "An actual 88-record searchable defect register already separates all four required classifications, unlike the older criteria description that still calls the evidence distributed. Current register status and coverage explicitly remain incomplete; no acceptance inferred.",
+      "remaining_gaps_and_limits": [
+        "In inspected 88 records, owner exists in59, applicability in59, next_verification in77. Existing schema allows equivalent data in newer resolution/scope/reviewer fields, so inspect equivalence before declaring each absent field a gap.",
+        "Top-level total_records is88, but summary_by_classification still records43 verified bugs while actual entries contain48. Header timestamp/source snapshot remain historical. Preserve historical evidence rather than replacing it with current-source hashes.",
+        "Reconcile current newly verified findings and bounded fixes against the register; root is handling registry original159. Avoid duplicate entries and do not demand reproduction of every historical report merely to establish a classified register."
+      ],
+      "suggested_source_and_test_review": [
+        "Read each entry, normalize owner/status/applicability/next disposition with explicit unknowns, and reconcile counts and current scope.",
+        "Write a documentary coverage validator checking unique IDs, classifications, existing evidence paths, explicit snapshot applicability and ownership/disposition fields. Missing evidence must stay explicit, never invented.",
+        "Seek independent requirement-level review of both exact pass conditions. This can close establishment only; it does not certify all bugs fixed."
+      ],
+      "source_and_evidence_candidates": [
+        "docs/premium-ui/defect-register-current.json",
+        "docs/premium-ui/specialist-action-queue-current.json",
+        "docs/premium-ui/reliability-gaps-current.md"
+      ],
+      "completion_inferred": false
+    },
+    {
+      "rank": 2,
+      "item_id": 19,
+      "requirement": "Prioritize broken actions, inaccessible controls, hidden content and lost drafts ahead of purely decorative refinements.",
+      "exact_original_pass_conditions": [
+        "Order reproduced broken actions, inaccessible controls, hidden content and lost drafts ahead of decorative work",
+        "Record prioritization changes and evidence-backed dispositions in the active queue"
+      ],
+      "acceptance_scope": "Definition/documentation or recorded-baseline deliverable: Implementation prioritization policy and execution. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "suggested_work_shape": "Documentation only; shares reconciliation with15",
+      "inspected_basis": "Actual recent work has prioritized confirmed draft loss, inert Leave Add delegation and recovery defects. The specialist queue is still dated2026-10-22 and is not an authoritative current priority register.",
+      "remaining_gaps_and_limits": [
+        "Current queue has historical dispositions and twenty specialist actions; execution-status/live-work and defect register contain later priorities and fixes.",
+        "A policy alone is insufficient: pass conditions ask for evidence-backed execution ordering and recorded priority changes. Show dated actual examples and current open queue ordering, including why an investigation is not a reproduced bug."
+      ],
+      "suggested_source_and_test_review": [
+        "Create one explicit authoritative current queue ordered by reproduced broken action, inaccessible/hidden content, draft loss, then cosmetic work, with owner, evidence, current disposition and priority rationale.",
+        "Link historical specialist entries to their current defect IDs or explicitly superseded dispositions without deleting historical queues.",
+        "Document recent chronology from source-bound diagnostic and applied-execution receipts, and review exact conditions independently. No application changes or runtime reruns are required merely to establish the queue."
+      ],
+      "source_and_evidence_candidates": [
+        "docs/premium-ui/specialist-action-queue-current.json",
+        "docs/premium-ui/execution-status.md",
+        "docs/premium-ui/live-work.json",
+        "docs/premium-ui/defect-register-current.json"
+      ],
+      "completion_inferred": false
+    },
+    {
+      "rank": 3,
+      "item_id": 231,
+      "requirement": "Provide minimal HTML/bootstrap recovery even when the entry script fails, with safe error text and a working Retry path.",
+      "exact_original_pass_conditions": [
+        "If the entry script cannot load or execute, minimal HTML presents readable safe recovery guidance.",
+        "Retry works after the resource is restored and does not require the failed application bundle to render or activate the recovery control."
+      ],
+      "acceptance_scope": "Entry-script/bootstrap failure recovery",
+      "suggested_work_shape": "Small independent production recovery test; source likely already sufficient",
+      "inspected_basis": "Static index.html contains readable starting/reload HTML before the main bundle. Independent public/frontend-bootstrap.js also handles startup failures. The generic old qa-recovery report verifies blocked development entry only and does not bind current source/build.",
+      "remaining_gaps_and_limits": [
+        "The exact condition includes entry script unable to execute, not only unable to load. Cover both network/HTTP failure and a deliberately invalid/throwing production entry, with injection explicitly marked expected.",
+        "Restore the actual entry resource and activate the static Retry with real pointer/keyboard; assert successful app startup and removal of fallback. The fallback must work with the application bundle unavailable, and should remain meaningful if independent bootstrap is unavailable too.",
+        "Existing reports are not fresh build proof; retain them as historical antecedents. Never delete real assets from current dist or disturb active preview services to simulate failure."
+      ],
+      "suggested_source_and_test_review": [
+        "Serve an extracted frozen review artifact in an isolated test service; intercept only the entry resource in the test browser.",
+        "Use three engines at320/1280, safe read-only fixtures, source/asset hashes, expected-error allowlist, zero mutation assertions and real Reload app link activation.",
+        "Assert safe fixed text excludes injected error details, fallback still works without both scripts, restored app reaches a concrete known view, and no automatic navigation loop occurs. Review requirement231 only, not broader233/250."
+      ],
+      "source_and_evidence_candidates": [
+        "frontend/index.html",
+        "frontend/public/frontend-bootstrap.js",
+        "frontend/src/frontend-runtime.ts",
+        "frontend/tests/premium-recovery.browser.mjs",
+        "docs/premium-ui/qa-recovery.json",
+        "docs/premium-ui/qa-production-chunk-recovery.json"
+      ],
+      "completion_inferred": false
+    },
+    {
+      "rank": 4,
+      "item_id": 234,
+      "requirement": "Include a build identity in artifacts and expandable support diagnostics, keeping development identifiers out of prominent operational headings.",
+      "exact_original_pass_conditions": [
+        "Review artifacts and support diagnostics expose the same attributable build identity.",
+        "Development identifiers remain in expandable support information rather than prominent operational headings."
+      ],
+      "acceptance_scope": "Build identity placement",
+      "suggested_work_shape": "Small frozen-artifact/support identity comparison; source likely sufficient",
+      "inspected_basis": "vite.config.ts supplies a safe timestamp build identity. frontend-runtime.ts sanitizes it. Main diagnostics and runtime recovery place it inside Support details. Existing diagnostics suite asserts only the presence of Frontend build:, not equality to the packaged artifact identity.",
+      "remaining_gaps_and_limits": [
+        "Current ZIP manifest has source/asset hashes and reviewed_build_reference but no explicit build identity field. A content-attributable compiled identity can be extracted and compared without changing product code; if ambiguous, add review-tool metadata through separately reviewed tooling only.",
+        "Do not compare a dev-server timestamp to a production artifact: Vite generates identity per configuration invocation. Run against the exact extracted frozen archive.",
+        "Inspect all build-identity call sites and heading content; no blanket prominence claim from one diagnostics screenshot. Main has diagnostics support call, runtime has recovery support call."
+      ],
+      "suggested_source_and_test_review": [
+        "Verify archive digest/manifest first, identify the identity embedded in the exact entry asset, and compare exact value rendered by normal Diagnostics Support details and a recoverable missing-chunk Support details notice.",
+        "Before opening disclosure assert build identifiers absent from prominent operational headings; confirm both disclosures default collapsed and retain support text after opening by real keyboard/pointer.",
+        "Capture three-engine320/1280 both-theme evidence and exact artifact/build bindings. Do not deploy, rebuild merely to get a different timestamp, or expose env/path/account data."
+      ],
+      "source_and_evidence_candidates": [
+        "frontend/vite.config.ts",
+        "frontend/src/frontend-runtime.ts",
+        "frontend/src/main.ts",
+        "frontend/tests/premium-diagnostics-hierarchy.browser.mjs",
+        "docs/premium-ui/qa-diagnostics-hierarchy/report.json",
+        "docs/premium-ui/review-build-current.json",
+        "tools/package_frontend_review.py"
+      ],
+      "completion_inferred": false
+    },
+    {
+      "rank": 5,
+      "item_id": 31,
+      "requirement": "Use tabular numerals for workload totals, dates, percentages, capacity, runtime and comparison columns.",
+      "exact_original_pass_conditions": [
+        "Apply tabular numerals to workload totals, dates, percentages, capacity, runtime and comparison columns",
+        "Verify computed numeric typography on actual instances in every requested category without altering values"
+      ],
+      "acceptance_scope": "Current frontend implementation and applicable runtime behavior: Tabular numeric presentation. Preserve the full original requirement; evidence from one representative surface cannot establish broader coverage.",
+      "suggested_work_shape": "Bounded numeric typography audit/test; likely mostly evidence work",
+      "inspected_basis": "Shared premium CSS applies tabular-nums to .num, .metric, .compute-diagnostics, .working-month, time and td.num. Explicit profile workload, chart-data, audit, leave pressure, limits and balance selectors also exist. Existing pressure evidence covers only a subset.",
+      "remaining_gaps_and_limits": [
+        "Enumerate actual renderers for all six requested categories: workload totals, dates, percentages, capacity, runtime and comparison columns. A shared declaration is not enough: inherited/shorthand cascade, different markup and mobile cards may bypass it.",
+        "Use current actual values and computed font-variant-numeric, not synthetic style probes. Native date-field internal rendering is browser-controlled: classify separately and verify supported styling without altering input behavior.",
+        "Record every applicable renderer family and any exceptions; one convenient example per category cannot certify undiscovered families. If missing selectors are found, restrict repair to presentation and verify exact original values are unchanged."
+      ],
+      "suggested_source_and_test_review": [
+        "Build a source-grounded category/renderer selector register covering analysis, member/profile, units/capacity, compute timing, comparisons, history/audit and month/date displays.",
+        "Assert computed tabular-nums on actual populated instances in light/dark320/1280 across three engines; take exact textContent/value snapshots before and after any optional CSS repair.",
+        "Use existing read-only fixtures and narrow render-source equivalence review; no calculations, serialization, persisted date formats or native input semantics may change."
+      ],
+      "source_and_evidence_candidates": [
+        "frontend/src/premium-theme.css",
+        "frontend/src/styles.css",
+        "frontend/src/member-workspace.ts",
+        "frontend/src/analysis-charts.ts",
+        "frontend/src/rota-compute.ts",
+        "frontend/tests/premium-type-elevation.browser.mjs",
+        "docs/premium-ui/qa-leave-pressure.json"
+      ],
+      "completion_inferred": false
+    }
+  ],
+  "reserve_candidate": {
+    "item_id": 36,
+    "reason": "Existing12context elevation evidence and four-tier contract make this plausible, but roughly100 shadow declarations span active/overridden/focus/inset/print states. Full declaration classification and actual surfaces are more work than a two-line token change. Keep partial until reconciled.",
+    "evidence": [
+      "docs/premium-ui/reviews/type-elevation-current.json",
+      "docs/premium-ui/visual-contract.md",
+      "frontend/src/styles.css",
+      "frontend/src/premium-theme.css"
+    ]
+  },
+  "excluded_easy_looking_items": [
+    {
+      "items": [
+        9,
+        16,
+        20,
+        41
+      ],
+      "reason": "Original pre-consolidation/pre-implementation/pre-breakpoint timing cannot be recreated by current documentation. Historical timing must be evidenced or explicit limitation retained."
+    },
+    {
+      "items": [
+        17
+      ],
+      "reason": "Every browser-suite assertion-level mapping is growing with active scratch/integrated suites; not a small closure despite existing browser-suite map."
+    },
+    {
+      "items": [
+        218,
+        252
+      ],
+      "reason": "Native assistive-technology and physical-device checks remain distinct dependencies. Emulation cannot convert them to passes."
+    }
+  ],
+  "inspected_file_sha256": {
+    "docs/premium-ui/defect-register-current.json": "04ffa21fe7eb834d63cdb0adcaa8d187d8665a163caac81e1648cc2b7026319c",
+    "docs/premium-ui/execution-status.md": "466289811895e59faa45ce6633c343ebe7d9076f1b9735a4aaec4ae4f25284d2",
+    "docs/premium-ui/live-work.json": "35a289e20ac595b25490a23b4bcd4cb17bc328df481bec3d3776634d67c8c7af",
+    "docs/premium-ui/qa-diagnostics-hierarchy/report.json": "2f73b7255e2ac6ff1c81bccd469438e4780a9d57ebc14b9dc7f0dc3f1dda46e7",
+    "docs/premium-ui/qa-leave-pressure.json": "588d4411d951a110df4b0fd62aed52137e7296503522570a76461ddc02fae344",
+    "docs/premium-ui/qa-production-chunk-recovery.json": "8d9578936abc0ba315c49ebb1491c949828d59567183fc94a03c3c15057ecb0b",
+    "docs/premium-ui/qa-recovery.json": "7dc6dfef2b1cb40e762609ec6ccd0e52f35c30f7d37e4beadcce545a8503c5a5",
+    "docs/premium-ui/reliability-gaps-current.md": "ad015d7c796553e7b28edaa4fb09b456b69aaa994388017b5e732b2dc449d3c5",
+    "docs/premium-ui/review-build-current.json": "86cde675a3ce667a2a94d5bdeb6111f9834d8845c46237d8662dc8679d548bfa",
+    "docs/premium-ui/specialist-action-queue-current.json": "f59ecace8ed5441f05a07b45024d6ac84ba95edd68169cf6f9c5df225b1b721f",
+    "frontend/index.html": "4b7afb8eeccdd1d27d12a2550c90817a997c6ff90da0b044fd18c36b93223914",
+    "frontend/public/frontend-bootstrap.js": "a7b977d63f9f82ad6416a652de74adfe817044372217c8e0ddbce4259c4904b1",
+    "frontend/src/analysis-charts.ts": "823a2cddb07d0f69ba1fe12719e4094ae29fda839769e1f4b2dc75e7aa887c4a",
+    "frontend/src/frontend-runtime.ts": "45efce04e229e0bdcbc84de4c9570dd9c04877b2adb869269a6e40ff68b12a01",
+    "frontend/src/main.ts": "96ab7c4c6b14d41736ad4153313b1270677e324fcab6b11c3a5b0d8ac3e47a0b",
+    "frontend/src/member-workspace.ts": "105cc1d91ea4815d565ad4859fc01412cf576a3203c07834f4010e3fef7ef1a5",
+    "frontend/src/premium-theme.css": "acc46b2249087f365ca855bcd9630628c390c4cdf013301daaee40ede80e55f4",
+    "frontend/src/rota-compute.ts": "e5f967e6166e2ace9352983a468002d45850188d8811363230305d7597fb70ab",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/tests/premium-diagnostics-hierarchy.browser.mjs": "c7573eea16f8e3c5a4ba2a9ee8e605c257d3091578f905a49aab6ebbae76cd66",
+    "frontend/tests/premium-recovery.browser.mjs": "3fd423d01575d30618f869f92bdfd688cb770595b208d4164eba6a97513d041d",
+    "frontend/tests/premium-type-elevation.browser.mjs": "2cb20d545a7e67fc7470cc4edf15fb56610f4b44773ace3099140a832ae575a3",
+    "frontend/vite.config.ts": "888554ca400c108436a9680b4a62f5507f94c8bfe6cc1b0b19caf1797f41ef88",
+    "tools/package_frontend_review.py": "587d0d5e87290f1b657d5c20880211448d56e1426ecdc92920b53ef209b02ee0"
+  },
+  "safety": "No backend/API/permissions/scheduling/persistence/export changes proposed. No production operations, deployment, commit or push. Current source hashes attribute inspection only and do not constitute runtime evidence."
+}

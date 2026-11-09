@@ -1,0 +1,194 @@
+{
+  "recorded_at_utc": "2026-10-28T17:57:03.630011+00:00",
+  "reviewer": "/root/leave_status_rebase",
+  "conflictDisclosure": "Reviewer authored v5 main/theme present in preview, not these two TypeScript proposals or their profile-status test. No independence claimed for v5 layout. Isolated profile test imports no main; base stylesheet/current theme plus candidate v5 theme are bound separately.",
+  "sourceProofs": [
+    {
+      "source": "frontend/src/record-workspace.ts",
+      "before_sha256": "17bc44141dcab9c2d674602bbd9abc42fb66a7f86e22bbd2def7ace0ec1c4af8",
+      "after_sha256": "7c196c12b114c48bf2db4ee57aad7e591d8e3acc7a77cccd15abbad7c349fb8f",
+      "importsIdentical": true,
+      "effectCallsIdentical": 19,
+      "handlerAssignmentsIdentical": 6,
+      "controlOpeningsIdentical": 20,
+      "reverseKnownPresentationHunksRecoversOriginalNonblankLines": true
+    },
+    {
+      "source": "frontend/src/member-profile.ts",
+      "before_sha256": "39f8bc4d281c9d8f3da9cad3a7ef98e4ecef1b0ba020145ca20439228fdc3df3",
+      "after_sha256": "b7f91a431124346954f17c48cf99cf8ccdf87a98e3b6dd9d21bc6ce980454b64",
+      "importsIdentical": true,
+      "effectCallsIdentical": 27,
+      "handlerAssignmentsIdentical": 2,
+      "controlOpeningsIdentical": 27,
+      "reverseKnownPresentationHunksRecoversOriginalNonblankLines": true
+    }
+  ],
+  "labels": [
+    {
+      "value": "approved",
+      "label": "Approved"
+    },
+    {
+      "value": "requested",
+      "label": "Requested"
+    },
+    {
+      "value": "imported_pending_review",
+      "label": "Imported, Pending Review"
+    },
+    {
+      "value": "cancelled",
+      "label": "Cancelled"
+    },
+    {
+      "value": "canceled",
+      "label": "Cancelled"
+    },
+    {
+      "value": "rejected",
+      "label": "Rejected"
+    },
+    {
+      "value": "APPROVED",
+      "label": "Approved"
+    },
+    {
+      "value": "constructor",
+      "label": "constructor"
+    },
+    {
+      "value": "__proto__",
+      "label": "__proto__"
+    },
+    {
+      "value": "toString",
+      "label": "toString"
+    },
+    {
+      "value": "<img src=x onerror=\"x\">",
+      "label": "<img src=x onerror=\"x\">"
+    }
+  ],
+  "malformedStatusProbe": [
+    {
+      "input": null,
+      "outcome": "throws",
+      "error": "Cannot read properties of null (reading 'toLowerCase')"
+    },
+    {
+      "input": "undefined",
+      "outcome": "throws",
+      "error": "Cannot read properties of undefined (reading 'toLowerCase')"
+    },
+    {
+      "input": 42,
+      "outcome": "throws",
+      "error": "value.toLowerCase is not a function"
+    },
+    {
+      "input": {},
+      "outcome": "throws",
+      "error": "value.toLowerCase is not a function"
+    }
+  ],
+  "runtimeReports": [
+    {
+      "path": "docs/premium-ui/qa-leave-profile-statuses.json",
+      "sha256": "742b9e7d1e878349e33a58ec183fbd656ee525ae6326fdadc444845948717755",
+      "contexts": 6,
+      "test_sha256": "db990bc6032e2a1da13b7805ec34fcee162dc5544f23530abfcb3c6c6f395690",
+      "candidateSourceHashesMatch": true,
+      "scope": "Actual isolated legacy/canonical/editor controllers; GET-only intercepted strings, not save/persistence/full-app navigation"
+    },
+    {
+      "path": "docs/premium-ui/qa-leave-profile-statuses-stress.json",
+      "sha256": "bfa4456a75c30219caa3de270732f3f8a2ef6e335f9ccf26b713a8c225c81e81",
+      "contexts": 6,
+      "test_sha256": "db990bc6032e2a1da13b7805ec34fcee162dc5544f23530abfcb3c6c6f395690",
+      "candidateSourceHashesMatch": true,
+      "scope": "Actual isolated legacy/canonical/editor controllers; GET-only intercepted strings, not save/persistence/full-app navigation"
+    }
+  ],
+  "sourceReviewDecision": "Bounded two-TS proposal preserves API/handlers/control attributes/permissions outside exact presentation hunks. Existing tolerant escaping becomes a new throw for malformed non-string status; contract says string, but defensive regression needs explicit disposition before integration.",
+  "applicationChanged": false,
+  "decision": "Do not apply v1. Preserve prior tolerance for malformed non-string leave status before integration; otherwise bounded presentation edits are source-safe and string runtime fixtures pass.",
+  "blockers": [
+    {
+      "id": "FE-LEGACY-LEAVE-STATUS-TOLERANCE-001",
+      "severity": "bounded defensive regression",
+      "evidence": "Exact candidate AST-extracted helper throws for null, undefined,42,{} where previous escape(l.status) converted nullish to empty and other values to escaped strings. API contract promises string; nevertheless this introduces avoidable render failure for malformed responses.",
+      "required_fix": "Convert once with String(value ?? \"\") before case lookup and return that string for unknown values; retain escaped render sink and all known labels. Independently probe malformed inputs and rerun actual controller fixture with them."
+    }
+  ],
+  "copy_semantics": {
+    "assessment": "Accurate operation-scoped guidance; does not imply every pending request is only a warning in every eligibility operation. Review returned approval state/session before save; pending is not confirmed absence. No new eligibility rule is implemented.",
+    "read_only_sources": [
+      "backend/app/services/leave.py:19",
+      "backend/app/services/rota_safety.py:354",
+      "backend/app/services/rota_safety.py:376",
+      "backend/app/services/balance_duties.py:632",
+      "backend/app/services/rota_template.py:308"
+    ]
+  },
+  "runtime_limits": [
+    "12 contexts total (6normal plus6stress), each three engines/two layouts;24legacy+canonical controller workflows plus12nested pristine editors, not36separate browser contexts.",
+    "Legacy case-preserving unknown strings escaped; known5/canceled/uppercase variants,prototype names,long/HTMLlike unknowns checked. Canonical status formatter remains existing implementation.",
+    "Native controller launchers are fixture buttons; real Department Members menu/canonical app navigation are not exercised here. No save,approval,production persistence,full permission matrix,software keyboard,physical device or nativeAT claim.",
+    "Preview applies v5main/theme plus these2TS; isolated fixture imports no main. Reviewer authored v5main/theme, not these2TS or this test; final integrated baseline-theme run required.",
+    "A report source hash alone is not a terminalexit proof; parent must retain actual toolhandle/terminal/log records."
+  ],
+  "prior38_impact": {
+    "potentially_affected": [
+      {
+        "items": [
+          122,
+          123,
+          124,
+          125,
+          126,
+          128,
+          129,
+          130,
+          131
+        ],
+        "reason": "Legacy profile is one of the accepted profile variants; added helper/span changes leave history rendering/flow. Native disclosures,focus,editor hierarchy and long-history layout need current regression/source bridges."
+      },
+      {
+        "items": [
+          142
+        ],
+        "reason": "Normalized leave editor paragraph changes. Individual two-phase ReviewSave/readback must remain valid; monthly controller untouched but paired142acceptance needs current-source applicability and appropriate realRAM rerun."
+      },
+      {
+        "items": [
+          116
+        ],
+        "reason": "Nonvirtualized leave history map must retain every record and date;12-row runtime fixture supports bounded cardinality, original requirement remains linked to its full prior evidence."
+      }
+    ],
+    "bounded_source_applicability": [
+      "Imports, requests, serialization, form options/control opening attributes, handler assignments and permission branches are unchanged in exact reverse-hunk inspection. No API/persistence/scheduling/export logic edit.",
+      "Font38/motion39 helpers/styles/assets unchanged; new span inherits existing font/wrapping. No icon source/path edit and existing close buttons/delegates unchanged.",
+      "Table101 markup unchanged; no new table,sorting,pagination,virtualization,import/device/generation code. Accepted unrelated source evidence needs explicit delta bridge, not blind rehash."
+    ],
+    "required_integration_gates": [
+      "Unique integrated copies/reports of new profile-status test normal+stress with baseline theme and final2TS; exact hashes/terminal logs retained.",
+      "premium-leave-approval-persistence.browser.mjs on dedicated hardcoded8025SQLiteRAM; actual individual preview/save/readback, monthly stale409/fresh-token flows and assignment identity. Preserve old accepted raw.",
+      "premium-record-close.browser.mjs plus profile-cancel-pending-regression/identity applicable existing variants: close/cancel refusals,newer focus,exact opener and noextra mutation.",
+      "premium-profile-date-cards.browser.mjs and premium-profile-editor-actions.browser.mjs: crossmonthdates,actualdate attributes,readable statuses and existing action geometry/focus.",
+      "premium-profile-record-patterns.browser.mjs and premium-profile-readback.browser.mjs for nestededitor ReviewSave/payload/recovery. Scope or explicit unchanged-code rationale must accompany every skipped family.",
+      "Full unit suite and held-source production build after final integration; independent root prior38applicability bridge before refreshing ledger."
+    ]
+  },
+  "original145147_disposition": "No whole145/147 acceptance. These edits address extra legacy/editor representations only; month/daylist/status safety surfaces and current source integration remain separate incomplete gates.",
+  "evidence_sha256": {
+    "tmp/leave-extra-surfaces-independent-check.json": "a6219fa98278f20816a95a691fa3b33d588e646906c3d688ca735bf8cd5dc6a5",
+    "tmp/leave-status-extra-surfaces-proposal/proposal.patch": "02f7d4bfe05e5d2b637253a4ef0ffc363d4cb5be2ffcafe338dcbb2ae934e185",
+    "tmp/leave-status-extra-surfaces-proposal/source-proof.json": "9a99276fc77c7bb795d0fbee7fb5e3bf975cda906cf05765936573b93e1d2810",
+    "tmp/leave-status-extra-surfaces-proposal/ast-typecheck-proof.json": "4ed7058e7d05bea5b012aa44a73f55b64762c86ac3859de0c5fe9ac0ec1c1c70",
+    "frontend/tests/premium-leave-profile-statuses.browser.mjs": "db990bc6032e2a1da13b7805ec34fcee162dc5544f23530abfcb3c6c6f395690",
+    "docs/premium-ui/qa-leave-profile-statuses.json": "742b9e7d1e878349e33a58ec183fbd656ee525ae6326fdadc444845948717755",
+    "docs/premium-ui/qa-leave-profile-statuses-stress.json": "bfa4456a75c30219caa3de270732f3f8a2ef6e335f9ccf26b713a8c225c81e81"
+  }
+}

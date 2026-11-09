@@ -1,4 +1,86 @@
+## Registry retained-reference checkpoint — 9 November 2026
+
+Registry V10r4 is applied and verified:106 fresh browser contexts,114 unit tests and held build.78 contexts cover13 registry paths across Chromium/Firefox/WebKit at320/1280;28 Chromium contexts cover close-time expired owners, native/dirty/busy close, delayed focus recovery and direct/profile/import shared callers. Candidate106 and applied106 are separate runs. Accepted registry changes refresh retained labels, accessible names and complete new-owner choices after final close; unrelated fallback orders/control nodes and filters survive. Valid primary board data renders when optional references fail, with truthful GET-only recovery. New choices do not retain the old empty placeholder as a real unit.
+
+Independent source/API/accessibility/lifecycle/focus/applicability/test-quality reviews supported guarded three-file integration. Existing84 mutation/storage/confirmation/serialization expressions are exact; one complete fallback GET is intentional. Initial R3 harness failures remain preserved; corrected R4 tests pass. All54 scoped acceptances are revalidated. Original159 remains partial for deletion, member-core and nested-reference changes without import Apply. In-flight supersession after parent read starts is not newly measured. Existing-owner fallback orders are retained rather than synchronized with concurrent external writes. Physical/native AT checks remain pending. No backend, production, commit, push or deployment operation in this wave.
+
+Ten distinct specialists contributed across coordinated waves, with at most3 alongside root. Documentary15/19 proposals remain unaccepted. The overall260 goal remains active.
+
+## Historical checkpoints
+
+The dated sections below describe their own frozen checkpoints. Their totals, next steps and applied/unapplied statuses are historical; the registry checkpoint above is current.
+
+## Import retained-parent checkpoint — 9 November 2026
+
+Import V9r1 is applied and verified:90 fresh browser contexts,114unit tests and heldbuild.78 browser contexts span Chromium/Firefox/WebKit at320/1280;12 captured-owner cases use Chromium at both widths. Confirmed batches mark the existing parent dirty but defer readback until final popup close. Repeated batches coalesce; GET failures retain parent drafts and recover without repeating Apply. Original six post-completion mode-draft failures are retained. New choices now remain pending after an accepted batch; discard refusal retains file/mode, known confirmed history is separate from uncertain first/later requests, and both warning branches avoid false persistence claims.
+
+Independent V8 lifecycle and V9r1 state/copy reviews plus layered exact-effect/TypeScript proofs supported guarded two-file integration. Final90 candidate cases and90 fresh applied cases are separate executions. Other source files remain unchanged. All54 scoped acceptances revalidated; original159 remains partial for nested reference changes without Apply, registry, deletion and member-core dependencies. Physical/nativeAT checks remain pending. No backend, production, commit, push or deployment operation in this batch.
+
+## Direct record and day Add checkpoint — 9 November 2026
+
+Main-only V7 is applied and verified:72 fresh browser contexts across Chromium/Firefox/WebKit at320/1280, including66 external-overlay action outcomes,114unit tests,heldbuild and prior54 source applicability. Direct Unit Add/Edit retains settings/form/input/fallback order and filters; Leave datedAdd/existingEdit preserves exact dates/identity/token, Daylist/history/selection and newer focus. GET failures recover without replaying saves. External Leave day Add now reaches its existing editor; Close/icon-coordinate/Escape/backdrop and Rota mode/navigation remain working within measured scope.
+
+Original recovery candidate30 retained24passing cases and6failed harness route-return assertions; unique corrected6passed. Fresh applied corrected30 allpassed, no failedreport relabelledgreen. Source-only potentialwatchcount contrast defect was refuted by6actual22pxbold measurements:3.5378passeslarge-text3threshold. Original22definition remains accepted through explicit100anchor text applicability/sixlineoffset updates; originalruntime28 incomplete.
+
+Overall54/260accepted; no whole159 acceptance. Import V8 remains isolated and browsertesting; registry/deletion/member-core dependent families require further work. Physical/nativeAT pending. No backend or production edits in this batch.
+
+## Profile dependent-view checkpoint — 9 November 2026
+
+Profile V5 is applied and passed144 fresh browser checks across Chromium/Firefox/WebKit at320/1280,114unit tests and heldbuild. Existing53 scoped acceptances are revalidated with source applicability and explicit Leave table owner extraction; no whole159 acceptance. Candidate144 and applied144 are distinct executions. Prior6wrong-record focus failures and initial harness diagnostics are preserved. Operational profile changes refresh retained Units/Leave after final close, including Next/initial-readRetry replacement; stale owners, malformed200 and GET failures recover without repeating saves. Settings/filters/history/view/selection and newer focus survive.
+
+Separate direct posting save still lost unrelated settings draft in six actual V4 diagnostic cases; isolated V6 repair is pending browser verification. Source review found a potentially dead day-modal Add leave entry; actual diagnostic is next. Import, registry, deletion and member-core dependent families require further work. Current acceptance53/260; physical/nativeAT pending. No backend or production edits in this batch.
+
+## Five operational stages — 9 November 2026
+
+Original161 is accepted: five distinct stages and truthful available-state/read freshness cues. Final applied V9 passed168 browser contexts across Chromium, Firefox and WebKit at320/1280,114unit assertions and heldbuild. Independent exact-condition/source/assertion/result review supports both conditions; previous52 scoped acceptances remain valid through explicit source applicability. Total53/260 accepted; goal remains active. Initial unit harness failure113/114 is preserved; missing extracted dependency fixed with positive and negative month interruption assertions.
+
+Nested-profile parent refresh remains isolated. V3 passed12normal and12readfailure checks, then independent review identified selection-control reconciliation, precommit malformed-response guards and duplicate-record focus identity requirements. V4 is being prepared; no parent repair has been applied. Physical-device and native assistive-technology checks remain pending. No backend/API/permission/scheduling/persisted-semantics/export changes made in this batch.
+
 # Frontend goal execution status
+
+## Returned-data recovery checkpoint — 9 November 2026
+
+Settings returned-data V7 is applied to main.ts, unit-board-filters.ts and unit-settings-recovery.ts.90current browser workflows across3engines320/1280,114unit tests, heldbuild and prior52 applicability pass. Newer drafts retain form/input/filter identity while returned summaries/memberlists/validation/callbounds and backgroundboard refresh. Missing unit/wrongmonth results recover throughGET-onlyretry; print snapshots preserve allmatchingrows and restorefreshpages; ownedfocus/newerinputfocus verified.
+
+Overall52/260 remains accepted; original159 stayspartial for four confirmed nested-profile parent refresh defects. Five-stage readiness V6 is source-ready but unapplied/browserpending. Candidate174historicalV5 and root36scratchV7 checks retain their original provenance; they are not added to applied90. Earlier hiddenmobilepager, asynchronousprintmedia and incorrecttableIDselector diagnostics are preserved with explicit corrected tests. Firstunit invocation had114assertions pass butPowerShell treated npmnotice asfailure; durablechild-exit rerunpassed114/0. No backend/API/rules/permissions/persistedsemantics/exportcolumn changes or production operations.
+
+## Mapping draft recovery checkpoint — 3 November 2026
+
+Callback-only Add mapping repair is applied (D13bd731 main). Independent42 and controlled applied42 browser cases,114unit tests and heldbuild passed;52 previous scoped acceptances revalidated. Initial applied Chromium14 passed then Firefox setup control timed out before Add action; isolatedFirefoxcase and identical42rerun passed, with cause unproven and original logs retained. Original159 remains partial for settings dependent regions and nested profile refresh audit.
+
+Settings dependent-region V4 and five-stage freshness V3 remain scratch. Source proofs pass; their browser/independent integration gates remain incomplete. Source-preservation3November audit records318historical files/87differences/24missing copiedfrontend entries explicitly. Ten exact obsolete goal-owned previewservers stopped; active app/fixture/dashboard/tests retained. Backend uncommitted diff empty; no production operation.52/260 total accepted; physical/nativeAT dependencies pending.
+
+## Verified settings recovery checkpoint — 31 October 2026
+
+Unit-settings V6 is applied (e88c695 main,4cfcd556 helper) and passed42 native workflows plus2 visual checks,114unit tests and heldbuild. Independent48 helper evidence remains exact-byte applicable. The52 previous scoped acceptances pass revalidation; overall52/260 remains. Original159 stays partial: six actual Add mapping workflows expose unrelated existing-row draft loss; its callback-only proposal is scratch. The cancelled-leave cross-view concern was refuted by forced fresh Units reads and global invalidation. Profile nested record refresh remains an audit gap.
+
+Original160 now has28 bounded actual RAM create/edit/cancel/delete contexts across multiple snapshots, not full acceptance. Original161 has six confirmed known-state freshness failures and a five-operation scratch proposal. No backend/API/rules/permissions/persisted-data/export/production changes. Physical/nativeAT dependencies pending.
+
+## Accepted optional recovery checkpoint — 31 October 2026
+
+Original164 is accepted after independent exact-condition review,126 applied browser contexts,114unit tests, heldbuild and prior51 source/runtime applicability. Acceptance verifier passes52/260;206partial plus nativeAT/physical dependencies remain. Unit-settings V6 is reviewed but not applied; guarded integration and42 native checks are next. Earlier checkpoints below are historical.
+
+## Recovery checkpoint — 31 October 2026
+
+Optional-report recovery V6 is applied to frontend main.ts only (976b51). It passed114unit tests, heldbuild,42delayed-report control checks and24malformed-report checks. Normal30/focus24 initial Firefox timeouts are preserved; sequential reruns are pending. Prior51 acceptance applicability and a fresh review archive remain pending, so the previous archive is historical. Accepted count remains51/260.
+
+Unit-settings V5 remains scratch: independent48helper and12native stale-workflow checks passed; native keyboard6 passed. V3/V4 focus failures are preserved and corrected in V5. Rebase/integration remain pending. Four additional real-RAM Leave cancellation checks passed;160 remains partial. No backend changes or production operations.
+
+## Current checkpoint — 30 October 2026
+
+The goal remains active:51 of260 requirements are accepted,207 are partial,one awaits native assistive-technology checks andone depends on physical devices. Browser emulation was selected by the user; physical checks remain pending. Historical sections below retain their original dated scope and counts.
+
+More than ten specialists have contributed in waves,with up to three beside the coordinator. The progress dashboard at http://127.0.0.1:5199 is available in an app-style window alongside the PowerShell viewer.
+
+Latest one-line Review-completion classification passed72 applied tracker states,114unit tests,heldbuild and prior51applicability. It honors all returned blockers,including call-level mismatch and unknown blockers,without changing backend publishing rules or published-history meaning. Whole161 remains partial for stage clarity/error-state scope.
+
+Parent registry/record/import/monthlyapproval/deletion guards remain verified. New active unit-settings diagnostics confirm duplicate confirmed-save risk afterGET503 and late popup over a newer route; its recovery helper is underpreparation.159remainspartial. Optional-report retry V4 is addressing focus retention and malformedsuccessfulpayloads;it is not applied.160actualRAM8create/editcases remain a bounded subset. Icon37stillrequires exactrebase and remainingcoverage.
+
+The review artifact is referenced by `review-build-current.json`; it is not a known-good deployment rollback. No backend,API contract,scheduling,permission,persisted-data semantic or export-content change is authorized. No commit,push,deployment or production operation has been performed. No zero-bug or full-goal completion claim is made.
+
+## Verification interruption after import presentation changes
+
+The last sealed acceptance count is 32/260. The 137–139 presentation changes are applied, and saved terminal reports show 30 context cases, 84 mobile reachability cases and 180 existing import regression cases passing. Final source-binding, ancestor-clipping review and independent sign-offs remain incomplete; these results do not increase accepted requirements. The local command runner stopped producing output, including for simple readiness commands. Existing read-only diagnostic sessions were cancelled during recovery; application processes were not broadly terminated. Resume by checking current sources, pending evidence and service readiness before new changes. The prior review archive remains historical and must not be described as a build of the newly applied import changes.
 
 Approved scope: all 260 actions in `docs/premium_frontend_upgrade_plan_2026-10-21.md`, subject to the user's stricter frontend-only preservation requirement. Goal active; this is an interim evidence record, not a completion report.
 
@@ -773,3 +855,66 @@ Rulesvalidation (2026-10-24T04:41:33.449670+00:00):159browsercontexts/workflows=
 
 
 2026-10-24T09:49:01.396196+00:00: Effective identity: null/omitted/unknown values presented truthfully, long unknown mobile header wraps. 49 browser contexts/workflows passed, including 72 role/fixture workflows within six new contexts and 36 exact mocked PUTs; six legacy timeline contexts preserve server dates/flags. 110 units and held-input build passed. Editing handlers byte-preserved. Requirements 122/128/133 remain partial; overall 18 accepted, 240 partial, one pending, one dependency.
+
+
+2026-10-24T10:28:52.390244+00:00: Canonical designation header:9 contexts/180 GET-only workflows plus49 regression contexts/workflows passed;110 units and held build passed. Source form/save wiring byte-preserved.68px panel failure fixed, final minimum106px. Primary identity reordered before date explanation. Native arrows verified across engines.122126 remain partial pending legacy coverage;18 total accepted.
+
+
+2026-10-24T11:09:16.484902+00:00: Both-profile hierarchy completed:27 new contexts/408 nested workflows (36 exact mocked comment POSTs),12 existing profile regression suites,110 units and held-input build passed. Root and independent exact-condition review accepted122126128130. Overall22 accepted/236 partial/1 pending/1 dependency. Primary identity, compact full-text access, dated position history and metadata disclosure verified across both variants. Existing save handlers and CSS prefix byte-preserved; no backend/API/role/scheduling/persisted/export changes. No push or deployment.
+
+
+2026-10-24T11:31:38.420807+00:00: Profile draft/workload/unknown-state batch:33 new contexts,624 history variants,108 nested duty drilldowns,66 value cases,12 exact mockPUTs and18 mockcommentPOSTs.12 profile regression suites,110 unit tests and held build passed. Alias metadata false-marker bug fixed with actual preserved failure; optional missingcallhistory differs from[]. Original127132133 accepted after root+independent review.25 accepted/233partial/1pending/1dependency. No backend/API/persisted/export/permission/scheduling changes, push or deployment.
+
+## Member matching and request ownership — 28 October 2026
+
+Original134 is accepted after24 native matching and12 stale request cases across three engines at320/1280;48 CSV/operational and6 past-action regression contexts,114 units and the held build pass. Three additional profile suites pass18 contexts, preserving section drafts, effective identity and native tabs. Previous25 scoped sign-offs were independently revalidated through unchanged-source proof and explicit historical limits. Current total26/260; full goal remains active. More than ten specialists have participated across waves; the session supports four simultaneously active agents.
+
+A separate long-content geometry audit found isolated workbook/past-view page overflow. Actual-shell reproduction and mobile containment remain under investigation; these results are not presented as mobile passes. Physical-device and native assistive-technology checks remain unperformed.
+
+## Import recovery and reviewed UI states — 28 October 2026
+
+Current accepted total31/260 (227 partial,1 pending,1 dependency). Original135/136 now pass after42 progress/recovery and36 retention-boundary workflows.24 production-CSS geometry plus78 matching/lifecycle/import regressions yield180 current import workflows;12 generation transitions are separate (192 fresh overall).114 units and the held build pass.17 named specialist review attributions across waves are recorded; four agents including the coordinator can run concurrently.
+
+Arithmetic correction: earlier CSV/operational regression summaries said48; the correct sum is36 (12+6+6+12), plus6 past actions=42. Raw reports and sealed artifacts are preserved. The explicit correction is `reviews/import-workflow-count-correction-20261028.json`. No failed case was converted to pass.
+
+Original111/166 use independently revalidated historical filter/chooser evidence with exact functional sources and an unchanged original theme prefix. Original169 adds12 fresh held queued/running/503-readback/completed/failed transition cases. Historical48 static state snapshots remain historical. WebKit file-byte proof observes the actual File passed to unchanged native fetch; its intercepted protocol omits raw file bytes, so server-received bytes are not certified. Physical devices and native assistive technology remain unperformed. Full139 final-row/sticky reachability remains separate. No backend edit, push, deployment or goal completion.
+
+## Profile editor consistency — 28 October 2026
+
+Original131 accepted:54 new native action/nested-record/pointer contexts plus90 existing regression contexts;114 units and held build pass.32 accepted,226 partial,1 pending,1 dependency. A corrupt preparation draft was rejected before application; final exact UTF8/nonASCII/comment/API/state preservation and actual source differences were reviewed. Scoped single-scroll resolves measured field/error clipping, and no-op metadata preserves actual click/tap targets. Existing save/record/confirmation boundaries retained. Full goal active; no push/deployment/backend change.
+
+## 28 October 2026: import context and mobile reachability
+
+Local runner recovered. Original137–139 accepted after exact six-condition independent review and root source/assertion/geometry gate:114 new plus180 regression browser contexts,114 units and held production build.35 accepted,223 partial,1 pending,1 physical-device dependency. No vertical ancestor clipping or actual sticky/fixed overlap in804 recorded rectangles; contained workbook/past tables retain horizontal scrolling at enlarged root text. No full-label horizontal visibility, browser zoom, physical-device or native AT claim. Review-only archive `tmp/premium-frontend-review-20261028-import-context-mobile.zip`, SHA256 `9fe2728344a42880e0e7ad5cf3c9960f550db6252f2b8afdb03b8abe4ef9fc96`. Fifteen static/review payload entries plus manifest; no push, deployment or known-good rollback claim. Prior archives and source-scoped reviews remain preserved.
+
+## 28 October 2026: font resilience and rules-review reveal
+
+Original38 accepted after36 font-failure contexts across all6 declared font-family selectors and8 shared SVG families, with native shell/profile/reference/archive-cancel outcomes. Exact one-expression Rules repair now scrolls the selected field instead of its tall article;12 native five-path motion contexts,20 Rules regressions,114 units andheld build pass. Independent source delta review preserves prior35 scopes.36accepted,222partial,1pending,1dependency. Whole37/39 remain incomplete. Close-icon proposal held for scoped SVG hit-target protection before application. Review-only archive `tmp/premium-frontend-review-20261028-font-fallback-rules-reveal.zip`, SHA256 `911014062b06975e01b9bf10db4f5589c4440d7f9e58f8cc441578b39539f042`; no push, deployment, physical/nativeAT or known-good rollback claim.
+
+## 28 October 2026: motion contract acceptance
+
+Original39accepted after exacttwo-condition independent/root review:56CSSrules,8keyframes and23explicitimperative/frame calls classified;36 browser contexts cover five guarded scrollsites, seven active keyframefamilies and the actual300ms bar-renderer transition with native data disclosure. Shared selector aliases/defaultinstantpositioning/frame scheduling have explicit source applicability, not invented individual runtime passes.37accepted,221partial,1pending,1dependency. Review-only archive `tmp/premium-frontend-review-20261028-motion-contract.zip`, SHA256 `5ec952883dca0efd37a0d46376830f9fa1fc809b24b11b1b87d3dc9e96c9db10`; no deployment, push or known-good rollback claim. Full260remainsactive.
+
+## 28 October 2026: close controls, recovery focus and leave approval
+
+38/260accepted after original142realRAMindividual/monthlyapproval gate. Bounded close batch uses17localSVGclosecontrols andthree44pxminimumtargets;36contexts/612nativeplacements pluscompact12/menu3 pass.177selectedclose/import/lifecyclecontexts,114units andheldbuild pass;12actualRAMleavecontexts separately verifyreadback, stale409/fresh-tokenacknowledgements and unchangedassignmentIDs. Two real focus defects were diagnosed, with retained failures: WebKitdrawerpointerclose nowreturnsopener; savedRulesclose instantlyreveals/focusestheownedrecoverycontrolwithoutstealingnewerfocus. Prior37acceptances explicitlyrevalidatedaftercurrentdelta. Whole37remainsincomplete; remainingiconsproposalunapplied. Review-only archive `tmp/premium-frontend-review-20261028-close-focus-leave-approval.zip`, SHA256 `bbaf6b762a5fb79ee836fb3ae2541cd7f8d0730107581eea98b6544d53a08aba`. Physical/nativeATpending;no backendedit,productiondataoperation,push,deployment orknown-goodrollbackclaim.
+
+## 29 October 2026: legacy leave status and editor guidance
+
+Applied exactly two reviewed frontend files. Legacy Recent Leave now uses readable known statuses and preserves exact escaped unknown text, including the prior tolerance for malformed non-string data. Normalized leave editor guidance defers operation-specific availability to returned checks.85 selected browser contexts,114 units and a held-source build pass. Real individual/monthly approval readback uses only dedicated8025RAM; assignment identity retained. Existing38 accepted requirements explicitly revalidated. Full145/147, calendar focus and remaining icons remain incomplete; physical/nativeAT checks pending. Specialist final runtime review was interrupted by a usage limit; root reviewed source/test/report/log/build evidence, with pre-application independent source gate retained. No backend, production, push or deployment changes.
+
+## 29 October 2026: frozen V8 leave preview checkpoint
+
+V8 is still isolated from the live app.108 exact-source preview contexts pass:24status/calendar,24normal-motionreverse/tap/pressure,48primarytoolbar and12actualsecondarycatalog/deletepreview contexts.1488datefocus-ringchecks,96touch-emulatedmodalopenings,72secondarycloses and48targetmeasurements pass. V7 secondary probes preserved48short-target and72hidden-opener failures; V8 uses scoped44pxminimums and visibleMore asreturnpoint. Compiler/source gate passes, helper bytes unchanged from independently reviewedV7. IndependentV8delta review, integration, applied-source regressions/build and original141144conditionreview remain. Whole145147/globalimport/reference work remainspartial. No app/backend/production/push/deploy operations in this preview batch. Lastsealedappliedcheckpoint has38accepted/260.
+
+## 29 October 2026: applied V8 leave presentation/focus checkpoint
+
+Applied main/theme plus new leave-calendar-focus helper against exact reviewed/tested baseline.314currentbrowsercontexts pass(176actualshell/138controlledhelperfault-lifecycle),114units andheldproductionbuildpass.1488forward/reversefull-focus-ringdatechecks,96touch-emulatedmodalopenings,72secondarycatalog/delete-previewcloses verified. Fresh12actualRAMapprovalcasespreserveindividual/monthlyreadback,stale409refusal andassignmentidentity. Existing38acceptances explicitlyrevalidated; no new141144145147completionclaim. V7productionhelperreviewedindependently; exactV8Morefocus/44pxdelta andintegratedruntime reviewedbyroot, finalindependentV8reviewpendingavailability. All61tableliteralbodies/documentarydecisions preserved. Newinstantfocusfamily explicitlyclassified; no oldsourcehashesrewritten. Globalreference/canonical/importstatuswork andremainingiconsremainincomplete. No backend/configuredDB/production/push/deploymentchanges; physical/nativeATpending.
+
+## 29 October 2026: original141/144 and operation-scoped guidance
+
+40/260accepted after exactoriginal141toolbar and144phoneDaylist conditionadjudication. Rootreadcurrent314caseappliedevidence, independentparentV7source/runtimeaudits withtheirremaininggapsexplicitlyclosedbyV8actualMoretarget/focus/outcomes, andfourcurrentlight/darkphone/desktopscreenshots. No independentfinalV8reviewis falselyclaimed. Twoadditionalstaticguidanceparagraphs incanonicalprofile/referenceapproval-label editor applied;12currentcontexts/48controllerworkflows,114units andheldbuildpass. Exactreverseofone literalperfilepreservesallvalues/options/handlers/requests/permissions. Original38revalidatedbefore141144acceptance. Original145147/globaloperationalimportstatussummary remainsincomplete; remainingiconsandphysical/nativeATpending. No backend/configuredDB/production/push/deploychanges.
+
+## 29 October 2026: applied leave-import approval summary
+
+Applied one frontend module. Collapsed leave rows show the normalized approval proposal, distinct returned preview input when values differ, and clean/stale authority text through the existing previewDirty lifecycle. Input may include earlier operator corrections; it is not labelled original file content. Missing/null/blank/unknown values do not imply approval.102 current browser contexts pass:24status,12review-context,24mobile and42progress/recovery pages. The recovery count includes workbook replay/remount/callback variants, not merely24defaultsurfacecases.114units andheldbuildpass. API/settings/token/body/permission/handler/state semantics recover exactly after removing disclosed presentation additions. Previous40acceptances explicitly revalidated; original145147full-representationreview remains. Sourceaudit corrected an older no-table wording mistake: member-workspace owns one CSV reference table, unchanged outside its separate guidance paragraph; all61tablebodies/decisions unchanged andbindingsfresh. No backend/configuredDB/push/deploy; physical/nativeATpending.

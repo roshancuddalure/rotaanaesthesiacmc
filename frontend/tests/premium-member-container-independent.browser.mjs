@@ -35,6 +35,8 @@ for(const[engine,type]of Object.entries({chromium,firefox,webkit})){
    await page.keyboard.press('End');assert.equal(await dialog.getByRole('tab',{name:'Activity',exact:true}).getAttribute('aria-selected'),'true');
    await page.keyboard.press('Home');await page.keyboard.press(horizontal?'ArrowRight':'ArrowDown');
    const details=dialog.getByRole('tab',{name:'Details',exact:true});await details.focus();await page.keyboard.press('Tab');assert.equal(await page.evaluate(()=>document.activeElement?.getAttribute('role')==='tabpanel'),true,'Native Tab leaves roving rail for Details panel');
+   const identification=dialog.locator('[data-member-record-identification]');
+   if(!(await identification.evaluate(node=>node.open))){await identification.locator('summary').focus();await page.keyboard.press('Enter');}
    const copy=dialog.getByRole('button',{name:'Copy member ID',exact:true});await copy.click();assert.equal(await page.evaluate(()=>window.__copiedMemberId),'container-member');
    const fieldWidth=await dialog.locator('[data-field="canonical_name"]').evaluate(el=>el.getBoundingClientRect().width);
    if(size===360)assert.ok(fieldWidth>=250,`Constrained profile field must recover readable width, measured ${fieldWidth}`);

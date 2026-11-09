@@ -1,0 +1,36 @@
+# Independent review: remaining item 37 proposal
+
+Reviewer: `/root/remaining_icons_independent`. Scope: current seven-file scratch proposal, not an application change or acceptance. Reviewed 28 October 2026. **Decision: source-safe bounded candidate, with whole-item scope revisions and runtime gates required.** Item 37 remains partial.
+
+The original requirement is “Standardize one icon family, optical sizing, stroke weight and alignment with adjacent text and controls.” Its two conditions require one local family with consistent optical roles and classification/migration of actual icons while retaining labels. A gallery, a count of replacements or unchanged APIs cannot establish operational alignment.
+
+## Independently checked source
+
+`icon037-remaining-independent-source-check.json` records a separately implemented exact edit replay, current/before/proposed hashes, AST effect-call/control-opening comparison and a full-project TypeScript check using an in-memory proposal overlay. All seven current sources matched their saved baselines; six TypeScript files reconstructed exactly from the declared edits; all selected API, listener, confirmation, serialization, storage and form-append expressions and control openings remained identical. The stylesheet retains the exact original prefix. The overlay produced zero diagnostics. This reviewer read the complete patch, helper, affected source selectors and delegates instead of relying solely on the author's proof.
+
+The local helper has constant paths, escapes supplied class names, uses a 24-unit view box and two-unit rounded strokes, and marks SVGs hidden and unfocusable. The proposed 14/16/24px roles are deliberate roles within this family. Main's seven close selector types cover eight ASCII renderings. The narrowly scoped direct-child SVG/path pointer rule protects their existing `matches` delegates. Member-filter removal uses `closest`, so the extra SVG nesting does not require another pointer override. No callback, request, role decision or data operation was changed. This is source evidence only.
+
+The appended pseudo suppression has equal specificity and later order than the existing safety-list and Balance-summary pseudo selectors. `content:none; display:none` suppresses the old generated mark, including its borders; actual computed results still need measurement. Balance's new right-chevron rotates to down, retaining the old 150ms duration and immediate reduced-motion alternative. The original motion inventory must explicitly include the new selector rather than assuming the old pseudo's evidence covers it.
+
+## Required scope corrections
+
+1. **Four icon-only navigation arrows are still font glyphs.** `main.ts:4357–4358` and `6413–6414` render the previous/next unit and rota-day controls as `&#8592;`/`&#8594;`. These are control pictograms, unlike arrows between before/after values. They cannot be justified by a blanket “relational operators” exception. Use the existing chevron with explicit left/right optical roles (preserving exact labels and disabled state), or another reviewed same-family arrow treatment. Test native navigation, month/day boundaries, selected unit and exact focus outcomes.
+2. **Four pagination branches still use decorative font arrows.** `main.ts:1560–1564` use arrows alongside `Prev`/`Next`, in enabled and disabled branches. Keep those text labels and classify the decorative arrow separately. Migrate it to the existing chevron family or remove only the redundant decorative arrow after an explicit design decision and alignment review. Verify actual page changes, disabled edges, row data and current filter/page semantics.
+3. **The `?` help controls need a deliberate resolution.** `main.ts:1754` (`help-icon`) and `rota-rules.ts:500` (`rr-help`) use punctuation as the sole visible representation of help, with accessible Explain/More-about names. In this operational context they function as help pictograms; calling them text mnemonics does not itself prove they are outside the unified-family requirement. Preferred narrow alternatives are a matching-stroke locally defined help variant or a visible `Help` label, preserving accessible names, expanded state, controls linkage and handlers. A ninth locally defined glyph is still the same family if its geometry follows the contract; “eight variants only” is not an original requirement. A text alternative requires real measured wrapping/target/focus behavior, especially Rules field rows.
+
+Relational arrows between actual records/values, sort direction suffixes, native browser indicators, geometric state dots/stripes and loading treatments can remain justified exceptions with their original semantics. This does not extend to the actual navigation/help controls above. No arbitrary user-provided text should be transliterated to satisfy a source counter.
+
+## Runtime obligations before acceptance
+
+The author's eight-family matrix in `tmp/icon037-remaining-proposal/runtime-gates.md` is necessary and remains unperformed for this proposal. In particular:
+
+- Run all eight closes through real native entry points in three engines, both themes, narrow/wide and short/enlarged layouts. Mouse/touch must strike actual SVG/path coordinates; keyboard must close or obey existing dirty/pending refusal. Record event target, exact opener/recovery focus and no extra request. Their legacy 40px target rule still exists: measure and repair any shared-44px target gap explicitly, including heading collisions.
+- Prove filter-chip SVG clicks remove exactly one filter and retain others, result rows and meaningful focus. Exercise long wrapping labels.
+- Exercise actual preflight safe/unsafe, Publish ready/blocking/warnings and both debrief families; retain every label, returned detail and role gate. Reject real publish writes in the fixture.
+- Render each compute checklist condition and all five ordinal/incomplete/completed roles without changing capability preference or launching generation for icon testing. Verify actual help disclosure and unchanged labels/state.
+- Exercise superadmin denied/allowed roles, both dialogs, blocked/cross-level reasons, both completion surfaces and uncertain read-back failures with locally intercepted fixture mutations only. Test actual follow-up and Cancel outcomes; never send an override to a configured database.
+- Exercise actual CSV/workbook/operational import stages, preview/held apply, failure/retry and completion. Compare numbers, hidden done labels and exact payloads; an SVG cannot establish import success.
+- Exercise Extra-duty/Balance safety rows, all three native disclosure variants, one SVG and no pseudo per row, source values, focus, normal 150ms versus reduced immediate transition and rotation. Retain explicit text/busy semantics.
+- Add the navigation/help cases above. Bind current source/test/report/log bytes and disclose browser emulation versus physical-device/native-AT coverage. Preserve source changes from the concurrent leave batch by regenerating exact substitutions rather than copying these full proposal files.
+
+No application, service, database, acceptance ledger or progress count was changed by this review. No runtime pass, production persistence, push, deployment or whole-item acceptance is claimed.

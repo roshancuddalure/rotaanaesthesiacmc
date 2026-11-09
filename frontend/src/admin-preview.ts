@@ -1,3 +1,4 @@
+import { decorativeIcon } from "./decorative-icons";
 // Preview-then-confirm window for admin member tools (roster reconciliation, call-level
 // prefill, name cleanup, duplicate merge). The server makes no change until the admin
 // confirms the exact preview shown; a stale preview (409) is re-shown with the new data.
@@ -79,7 +80,7 @@ export async function reviewAndApply<T extends ReviewedPreview>(tool: ReviewedTo
     const sections = preview ? tool.sections(preview) : [];
     const changes = preview ? tool.changeCount(preview) : 0;
     dialog.innerHTML = `<header class="mw-header"><div><h2>${esc(tool.title)}</h2><p>${esc(tool.intro)}</p></div>
-        <button type="button" data-close aria-label="Close ${esc(tool.title)}">×</button></header>
+        <button type="button" data-close aria-label="Close ${esc(tool.title)}">${decorativeIcon("close")}</button></header>
       <div class="mw-content">
         ${!preview ? loading ? `<p role="status">Preparing the preview… nothing has been changed.</p>`
           : `<section role="alert"><h3>Could not prepare the preview</h3><p>Nothing has been changed. Try preparing the preview again.</p><button type="button" class="primary" data-retry-preview>Try again</button></section>`

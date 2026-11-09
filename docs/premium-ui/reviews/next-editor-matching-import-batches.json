@@ -1,0 +1,72 @@
+{
+  "recorded_at_utc": "2026-10-24T11:28:54.181934+00:00",
+  "scope": "Three independent read-only specialist inventories. Approved frontend work remains open; no new implementation or completion inferred.",
+  "reviewers": [
+    "/root/profile_editor_patterns",
+    "/root/matching_identity_inventory",
+    "/root/import_progress_recovery_review"
+  ],
+  "editor_131": {
+    "files": [
+      "frontend/src/member-workspace.ts",
+      "frontend/src/member-profile.ts",
+      "frontend/src/record-workspace.ts",
+      "frontend/src/premium-theme.css"
+    ],
+    "boundaries": [
+      "Canonical Details/Roles/Names save together with global Cancel.",
+      "Legacy five forms save separately; no existing section Cancel.",
+      "Linked posting/leave require preview then review-token save. Consequential Cancel leave remains distinct."
+    ],
+    "next_changes": [
+      "Consistent action rows, responsive primary/secondary grouping, status placement and concise save-scope guidance.",
+      "Preserve required Review changes and Save reviewed changes sequence; no fabricated new cancellation semantics."
+    ],
+    "critical_tests": [
+      "Exact combined canonical PUT and all-section discard.",
+      "All five independent legacy payloads, siblings retained, confirmed-save readback recovery.",
+      "Both posting/leave xadd/edit preview+token+save exact identity, changed fields invalidate review, accepted save reloads correct parent."
+    ]
+  },
+  "matching_134": {
+    "verified_defect": "docs/premium-ui/reviews/member-match-same-name-source-probe.json",
+    "selected_id_sources": {
+      "member-import.ts": "row.target_id",
+      "member-workspace.ts": "matched row.person_id with before",
+      "operational-import.ts": "row.person_match.person_id, existing fixture after.person_id fallback",
+      "past-duties.ts": "row.normalized.person_id"
+    },
+    "next_changes": [
+      "Optional presentation selectedId from returned preview data. Filter candidate choices by identity, never name; absent selectedId preserves candidates.",
+      "Readable identity context/ID fallback for indistinguishable names, including dropdowns and CSV duplicate lists.",
+      "Keep unresolved/new-person vs existing-person distinction and exact current corrections/resolutions bodies. Operational create means posting/leave record, not new member."
+    ],
+    "critical_tests": [
+      "Same name/different IDs, same ID/different name, absent selected ID, person_id shape, escaping and five-alternative limit.",
+      "Native selection/undo/new/skip/refreshed exact results on workbook, member CSV, operational and past-duty flows.",
+      "Delayed candidate response cannot overwrite replaced file, changed draft or closed view."
+    ]
+  },
+  "import_135_139": {
+    "source_gaps": [
+      "Dialog steps skip Apply-current while held apply is running.",
+      "File replacement leaves old progress until columns success; failed columns can leave old progress.",
+      "Member CSV new-file handler leaves old mapping DOM while new columns request fails.",
+      "Workbook has no shared stage indicator or stage-specific recovery guidance.",
+      "Workbook confirmed apply followed by list refresh rejection is overwritten by generic failure.",
+      "Member CSV guidance always describes roster sync despite create/update modes."
+    ],
+    "preserve": [
+      "Multipart options, preview IDs/hashes/tokens, exact exclusions/archive/resolution payloads.",
+      "File/draft/sequence ownership and stale-preview blockers, explicit confirmations, callback and download behavior.",
+      "No automatic replay after uncertain apply; distinguish confirmed apply from failed refresh."
+    ],
+    "critical_tests": [
+      "A-to-B columns failure clears obsolete mapping/progress while retaining correct B.",
+      "Same-file retry retains file, mapping, corrections and selections; equivalent existing payload.",
+      "Held columns/preview/apply show truthful stage, failed controls recover.",
+      "320short/enlarged final-row/action reachability, native keyboard, duplicate/invalid long rows."
+    ]
+  },
+  "140_separate": "Actual persistence, nonempty rejection downloads and history reopen require disposable real-service independent readback; locally fulfilled success cannot certify them."
+}

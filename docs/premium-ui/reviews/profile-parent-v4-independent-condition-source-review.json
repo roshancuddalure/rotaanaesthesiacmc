@@ -1,0 +1,102 @@
+{
+  "recorded_at_utc": "2026-11-09T07:53:49.212642+00:00",
+  "reviewer": "/root/stage161_final_review",
+  "application_changed": false,
+  "acceptance_ledger_changed": false,
+  "item_id": 159,
+  "requirement": "Refresh dependent leave and unit views after confirmed mutations without discarding unrelated unsaved edits or chosen filters.",
+  "scope": "Independent V4 application-source review; this reviewer authored Units owner/coalescing and normal-unit diagnostic harnesses, which root executed. Did not author V4 application source. Following source finding, authored V5 two-edit scratch repair, so V5 needs separate root/independent review. No browser executed in this review task.",
+  "decision": "V4 changes required before integration: normal Unit modal duplicate-record focus restoration is still incorrect. Existing 114 passing expected-correct cases are bounded evidence, not whole159 acceptance. Six additional diagnostic contexts reproduce the source finding.",
+  "findings": [
+    {
+      "id": "PROFILE-PARENT-V4-REVIEW-001",
+      "severity": "medium",
+      "status": "reproduced",
+      "location": "tmp/profile-parent-refresh-v4/main.ts:4870",
+      "title": "Normal Unit modal matches duplicate member control in wrong dated posting after parent refresh",
+      "trigger": "Two dated postings in one ordinary Unit belong to the same member. Confirm edit through profile, close profile, focus the second posting member control while deferred parent GET is held, then resolve GET.",
+      "evidence": "createProfileParentLifecycle uses refreshUnitModalReadback for normal Unit, whereas special posting and Leave use patchProfileParentRegion. Only the latter captures immutable row identity. The existing Unit helper matches member/tab attributes and selects the first duplicate. All six engine/width diagnostic contexts recorded posting-second before and posting-first after.",
+      "impact": "Keyboard focus changes to a different dated posting, so the user loses active record context.",
+      "required_fix": "Extend only the Unit helper focus identity and replacement predicate to retain nearest data-unit-row-form immutable id. Preserve input nodes/values, newer input focus and existing unavailable-row fallback.",
+      "validation": "Rerun expected-correct normal duplicate6 and scoped prior114 against frozen repaired proposal; independently inspect exact source reversal/API-effect equality/typecheck and original settings applicability."
+    }
+  ],
+  "positive_source_findings": [
+    "Ownership captures account object, route/view generation, render generation, root identity/connectedness, selected month and original overlay identity; Unit adds existing unitLoadSeq. Latest read ownership is weakly keyed by parent root. Old route/month/account responses return before shared snapshot commit or DOM paint.",
+    "Confirmed hooks are sent immediately after successful operational save/cancel, before profile GET. Parent mutations are not replayed on read failure; explicit retry invokes only existing GET helpers. Multiple confirmations while profile is open defer to final close. If a notification arrives after close, it can schedule owned refresh and a busy same-lifecycle read queues a newer read.",
+    "Initial-profile retry and Previous/Next replacements carry the same lifecycle while suppressing final-close notification on replaced dialog. Explicit/native close notification is idempotent. Existing busy/dirty refusal prevents close notification. Callback exceptions are isolated to a constant sanitized warning.",
+    "Parent refresh temporary focusin listener is removed in finally on success, rejected read, exception or ownership loss. Retry handler is assigned on the retained current notice rather than repeatedly stacked. Detached notice closures are collectible with their DOM; parent-root ownership uses WeakMap. No new global permanent listener is introduced by coordinator.",
+    "Leave responses stage all three GET results and check consumed shapes/month ownership before assigning any globals. Unit validates consumed arrays/nested fields before commit. Missing optional Unit monthly counts remain accepted; nullable display fields and forward enum labels are not converted to business rules. These guards are not full server-schema or renderer-transaction certification.",
+    "Leave partial paint preserves toolbar/toggles/history container and selected view; chosen selectors replace returned summaries, rows/cards and calendar/day content. Existing pruneAdminSelection then syncAdminSelection reconciles retained desktop selection count/enabled state with mobile. V4 generic focus matcher restricts replacement to immutable leave/posting record, addressing duplicate links in generic regions.",
+    "Units retain existing settings form/input nodes and board filter bindings. Main exact-effect proof preserves API writes/GET expressions except four intended existing parent GET additions; member hook exact-effect proof preserves request/confirmation/storage/serialization expressions. No backend or persisted semantic change is proposed."
+  ],
+  "completed_evidence_checked": [
+    {
+      "report": "docs/premium-ui/qa-profile-parent-refresh-v4-normal.json",
+      "sha256": "99038961edc07713c5558af77086c1bb3135baa65620d1af20c3ed994932da07",
+      "test": "frontend/tests/premium-profile-parent-refresh-v4-normal.browser.mjs",
+      "test_sha256": "10432a48850fb17d74b6e8344f452c68d8e7c6ab035fdb54c989c3dcd9fba75a",
+      "contexts": 12
+    },
+    {
+      "report": "docs/premium-ui/qa-profile-parent-refresh-v4-read-failure.json",
+      "sha256": "c8647cfa136725e79c395776f9282047c1712700fe810d9277a502f00b63be88",
+      "test": "frontend/tests/premium-profile-parent-refresh-v4-read-failure.browser.mjs",
+      "test_sha256": "f326cdabd0684b53893f5c002aaf0cdf611bea71a0c8a7c1c80d34e4acad3579",
+      "contexts": 12
+    },
+    {
+      "report": "docs/premium-ui/qa-profile-parent-refresh-v4-malformed200.json",
+      "sha256": "deb652ed27995a81e89f58a27e3011a2bde4748ebc07c65a07bea18df22c2476",
+      "test": "frontend/tests/premium-profile-parent-refresh-v4-malformed200.browser.mjs",
+      "test_sha256": "847d481940f06769bdc0924862269bf7247fe4b31c6ab91cfa7db91606dbf8fa",
+      "contexts": 12
+    },
+    {
+      "report": "docs/premium-ui/qa-profile-parent-v4-owner-coalescing-r1.json",
+      "sha256": "e517046d431437c4a4acb91166055ddfdf22261c26078126b4e7038be1e03547",
+      "test": "frontend/tests/premium-profile-parent-v4-owner-coalescing-r1.browser.mjs",
+      "test_sha256": "c2be63c811df5cf4fd1a4187521557257d001374f6f24f92c0432c8d4f003b09",
+      "contexts": 36
+    },
+    {
+      "report": "docs/premium-ui/qa-profile-parent-refresh-v4-selection-focus.json",
+      "sha256": "b732a294144de0be45b09146a126c834b12095c6bb99465d4b6923afb3daa230",
+      "test": "frontend/tests/premium-profile-parent-refresh-v4-selection-focus.browser.mjs",
+      "test_sha256": "4abb9bb1e8d611ded761d4b2a3013265d152dd1f0598a7e039bed923ddfc8148",
+      "contexts": 18
+    },
+    {
+      "report": "docs/premium-ui/qa-profile-parent-v4-leave-owner.json",
+      "sha256": "f16ea789deef11b24f6f2a69e73647ef7215a81ecdfa1360387196a5124917f2",
+      "test": "frontend/tests/premium-profile-parent-v4-leave-owner.browser.mjs",
+      "test_sha256": "c54c5c5aeb51f371bb36c5a9dd480bd905d4b7596dddd0fc86452a3cf3a2d69f",
+      "contexts": 24
+    }
+  ],
+  "passing_bounded_contexts": 114,
+  "diagnostic": {
+    "report": "docs/premium-ui/qa-profile-parent-v4-normal-unit-duplicate-focus-diagnostic.json",
+    "sha256": "e2e469ce01158f25f0b3869aa837e4afcf8cdbd041b6632ae61064fa2492aef2",
+    "contexts": 6,
+    "expected_correct_assertion_failures": 6,
+    "actual_focus_every_context": "posting-first",
+    "expected_focus": "posting-second"
+  },
+  "remaining_gaps": [
+    "V4 must not integrate until reproduced ordinary Unit duplicate focus defect is repaired and verified. V5 scratch repair is separate and currently not certified by this report.",
+    "Previous/Next lifecycle transfer, initial profile retry, late operational confirmation after final close, cross-kind edits from opposite parent, replaced overlays, removed-focused-record fallback and optional-field rendered fixtures have source reasoning but no newly inspected full runtime matrix here. Classify these as evidence gaps, not reproduced bugs.",
+    "Whole159 includes all relevant mutation entry points beyond these member-profile paths; do not accept whole159 from profile-only passing contexts. Root must preserve prior settings159 and direct/import/bulk/etc applicability with explicit source boundaries.",
+    "Physical device/native assistive technology checks remain pending; local fixtures and emulation are not production scheduling/security certification."
+  ],
+  "evidence_sha256": {
+    "tmp/profile-parent-refresh-v4/main.ts": "355e71753eb79135d4bdefb94837da4fc1ff727b12a2ed1f9c4bdb4b5d744a07",
+    "tmp/profile-parent-refresh-v4/member-workspace.ts": "105cc1d91ea4815d565ad4859fc01412cf576a3203c07834f4010e3fef7ef1a5",
+    "tmp/profile-parent-refresh-v4/effect-proof.json": "3b7474fbe93d27aa808a1c1aabb68cea560637b862472b33374dcc7410c87edd",
+    "tmp/profile-parent-refresh-v4/source-reversal-proof.json": "cc76200c8e23d0a84c5fc88c02da0e8e23ce2fc4404b3b7a7f50584ed0b35781",
+    "tmp/profile-operational-lifecycle-v1/source-proof.json": "c99e1516de2bc1b9580861482a2672ea93e8ecbed17c1074293148872ef8a28e",
+    "docs/premium-ui/reviews/profile-parent-v3-independent-final-audit.json": "32a6c4245b27167a815363c7f8eee7a0248ac547497970302bbe99043c376a7a",
+    "docs/premium-ui/reviews/profile-parent-v4-consumed-shape-guard-review.json": "80bdbb5927081aa263099548f92c21146aa15e5bf222f7d8b2241e6f48139c28",
+    "docs/premium-ui/qa-profile-parent-v4-normal-unit-duplicate-focus-diagnostic.json": "e2e469ce01158f25f0b3869aa837e4afcf8cdbd041b6632ae61064fa2492aef2"
+  }
+}

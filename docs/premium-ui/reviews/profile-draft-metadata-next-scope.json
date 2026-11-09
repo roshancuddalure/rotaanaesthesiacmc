@@ -1,0 +1,27 @@
+{
+  "recorded_at_utc": "2026-10-24T10:33:08.963724+00:00",
+  "status": "source_review_for_following_batch_not_implemented",
+  "requirement": 127,
+  "scope": "Tab-specific existing draft and registered validation state; current hierarchy batch remains independent.",
+  "source_findings": [
+    "sectionMetadata currently covers loaded history counts/retry only; it has no draft or registered field-error contribution.",
+    "dirty compares whole draft/member JSON. Details owns canonical_name,active_status,call_level; Roles owns designations and call_level_changes; Names owns aliases.",
+    "validateDraft records all local errors before routing to Details or Roles and focusing first existing control. Existing input/change clearing semantics must remain intact.",
+    "status updates currently change footer state; tab metadata must refresh without replacing focused inputs or altering selection.",
+    "Server save failures are generic existing error messages; do not infer field ownership from error text."
+  ],
+  "implementation_constraints": [
+    "Derive presentation markers from existing exact section comparisons and registered fieldErrors, not new validation or persistence rules.",
+    "Combine draft/error metadata with existing loaded-count/retry descriptions; preserve role=tab, roving tabindex, count meaning, vocabulary and keyboard behavior.",
+    "Update badges and aria-description without stealing focus or rerendering ordinary input on each keystroke.",
+    "Existing save/discard/validation routing, API body, authorization checks and error-clearing behavior remain unchanged.",
+    "Legacy is a linear form view; expose section-specific draft/error status without artificial tabs or changed save actions."
+  ],
+  "necessary_tests": [
+    "Multiple changed sections, return-to-base values, hidden local errors and first-invalid routing.",
+    "Native keyboard access to marked section/field, unchanged selected tab during ordinary typing and cursor selection preservation.",
+    "Confirmed discard, refused discard, successful mocked exact-payload save, save failure and retained drafts.",
+    "Loaded-count/retry and tab keyboard regressions remain correct alongside new markers."
+  ],
+  "acceptance_claim": false
+}

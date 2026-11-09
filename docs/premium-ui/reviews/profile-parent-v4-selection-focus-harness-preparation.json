@@ -1,0 +1,30 @@
+{
+  "recorded_at_utc": "2026-11-09T07:45:02.510053+00:00",
+  "author": "/root/profile_parent_final_audit",
+  "status": "prepared_not_browser_executed",
+  "application_changed": false,
+  "test": "frontend/tests/premium-profile-parent-refresh-v4-selection-focus.browser.mjs",
+  "test_sha256": "4abb9bb1e8d611ded761d4b2a3013265d152dd1f0598a7e039bed923ddfc8148",
+  "node_syntax_check": "Final node --check terminal0 after all harness additions",
+  "expected_contexts": 18,
+  "engines": [
+    "chromium",
+    "firefox",
+    "webkit"
+  ],
+  "widths": [
+    320,
+    1280
+  ],
+  "scenarios": [
+    "selection-prune-with-sibling: two selected records, date-edit target out of month, desktop original control count1 enabled/mobile count1, sibling remains selected",
+    "selection-prune-last: target only selected, date-edit target outmonth, desktop original control count0 disabled/mobile count0",
+    "duplicate-special-posting-focus: same-person two SICU records; edit first, close profile, hold parent GET, focus second record member link; release, assert exact second-record focus and fresh first notes"
+  ],
+  "writes": "Only local fulfillment of existing normalization review/save endpoints. Strict one preview+one save; never delete. Other GETs fall back only to fixture8031.",
+  "report": "docs/premium-ui/qa-profile-parent-refresh-v4-selection-focus.json",
+  "limitations": [
+    "No browser execution by author; source guard/application integrity asserted by harness",
+    "Does not test duplicate Leave row focus, removed focused record, or full owner matrix; these remain separate runtime gates"
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "recorded_at_utc": "2026-10-29T03:37:43.485271+00:00",
+  "author": "/root",
+  "scope": "Extend the existing39-context V5 preview packet with12 actual settings-controller comparisons:6 applied baseline and6 scratch. Total executed contexts51;45 candidate contexts comprise39 actual-app and6 controlled, plus6 applied-baseline contexts. No application change or item acceptance.",
+  "parent": {
+    "path": "docs/premium-ui/reviews/unit-modal-accessibility-v5-preview-execution.json",
+    "sha256": "cd0f0fadbee786884f65ddd75b5fd685fc4af68e8f2b7f2f9eac1bfc80816423"
+  },
+  "report": "docs/premium-ui/qa-unit-modal-settings-v5-contract.json",
+  "report_sha256": "80c8a7fe07a94c962791c5165cafd97cb95cd2091d53c49f359459fe40ec3cf8",
+  "test": "frontend/tests/premium-unit-modal-settings-v5-contract.browser.mjs",
+  "test_sha256": "4c86f1752501a89194fb91db7dc4a087a9f211ebc75e437f19088f1cb508fde3",
+  "log": "tmp/unit-modal-settings-v5-contract.log",
+  "log_sha256": "1e0a3841120894ba932a7905b55c5737dccbc9fc0c3ba04de0e09f1d0fa6cdac",
+  "exit_code": 0,
+  "added_contexts": 12,
+  "added_scratch_contexts": 6,
+  "added_applied_baseline_contexts": 6,
+  "candidate_helper_sha256": "90d670e574a4c5d0b4b1390c916ce242563ac7ccbe8a3c9da8baf76eae7359a6",
+  "applied_main_sha256": "cb6ee8d2bedc1401cedcda8e20e199f60bd8418e2a24baa00a373c5290a52168",
+  "evidence": [
+    "Exact same two settings PUTs per baseline/candidate pair, preserving unit id,month and field values.",
+    "Held first503 leaves original inputs and restores existing Save button; manual retry only then succeeds and reloads returned values.",
+    "Native max validity blocks a third request. Scratch close returns to corresponding Manage control.",
+    "All24 PUT requests across12contexts fulfilled inside the local route fixture; no configured API receives mutations."
+  ],
+  "harness_correction": "Initial busy-state locator searched the old exact button name while existing loading markup changed that name. Preserved first script/log in tmp/unit-modal-settings-v5-initial-busy-label-harness. Stable form-submit selector corrects harness; no UI change attributed to that timeout.",
+  "limits": [
+    "Not backend authorization, save persistence or mutation-readback semantics proof. Existing controller/API implementations unchanged.",
+    "Pending-close policy, account/view completion races, physical devices and native AT are not certified here. Independent V5 review still pending."
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "recorded_at_utc": "2026-11-09T10:27:25.419024+00:00",
+  "operator": "/root/registry_lifecycle_r3_review",
+  "review_kind": "Independent read-only exact-source lifecycle and test-coverage review. No runtime executed; no application edits; not acceptance.",
+  "sha256": {
+    "tmp/registry-parent-refresh-v10r3/main.ts": "9f5359ad9e8014098bc12c8ed3f9e1c6b1a06d1a4f92797b7f9da24bfba6e6b8",
+    "tmp/registry-parent-refresh-v10r3/reference-workspace.ts": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd",
+    "tmp/registry-parent-refresh-v10r3/extra-duty.ts": "21edb8d59249b7c5be30d59c79f4e20b350930bdc16bd097e957a9c22650855f",
+    "frontend/tests/premium-original159-registry-v10r3-lifecycle.browser.mjs": "135befe40ca812d0958e361c90288ea67f445f63f692d39abee6eb254c317a24",
+    "frontend/src/member-workspace.ts": "105cc1d91ea4815d565ad4859fc01412cf576a3203c07834f4010e3fef7ef1a5",
+    "frontend/src/workspace-load-state.ts": "cdd0e323d7e83e6e668a381bbfcc37cad4726b1193ac5de31d5f14e03eecd9c6"
+  },
+  "disposition": "No blocking lifecycle source defect found in the reviewed candidate delta. Conditional on runtime cases and preservation checks; does not certify fallback component internals, full original159, or all frontend behavior.",
+  "source_findings": [
+    {
+      "condition": "Accepted mutation observed before child readback failure",
+      "finding": "openUnitRegistry invokes parentLifecycle.confirmed immediately after awaited existing POST/PUT response, before confirmedUnit assignment, its own normalization GET, or render. Callback exceptions are isolated using constant warning text. GET recovery does not invoke confirmed again.",
+      "locations": [
+        "reference-workspace.ts:489-510",
+        "reference-workspace.ts:refreshSavedUnit"
+      ]
+    },
+    {
+      "condition": "Deferred final-close read and multiple-save coalescing",
+      "finding": "On Units, main supplies the existing owned parent lifecycle; legacy saved callback returns immediately. confirmed marks changed and exposes pending status, but refresh requires closed. Multiple accepted saves while open therefore coalesce into one final-close parent GET pair. readback retries issue GET only; no mutation closure is retained.",
+      "locations": [
+        "main.ts:3292-3397",
+        "main.ts:9608-9633"
+      ]
+    },
+    {
+      "condition": "createNew auto-close",
+      "finding": "Direct add-department-unit entry passes createNew true. Accepted response marks parent confirmed, clears dirty, sets busy false, then close removes dialog and calls closed; saved callback is a no-op for supplied Units lifecycle. No child normalization GET is needed on this branch. Current 72-case script does not execute this true branch."
+    },
+    {
+      "condition": "Explicit and native close idempotence",
+      "finding": "notifyParentClosed has a one-way parentClosed guard. Explicit close notifies synchronously after dialog.close/remove/opener focus; queued native close listener cannot notify again. Native-only close also notifies. Existing workspaceDialog native close cleanup is registered first and removes dialog/restores permitted focus. Calling HTMLDialogElement.close programmatically bypasses dirty/busy refusal by design of the native API; supported UI close and cancel paths use guarded close."
+    },
+    {
+      "condition": "Dirty and busy UI close refusal",
+      "finding": "close returns while busy, or when dirty discard confirmation is declined. cancel prevents native default then calls this guarded close. Declined dirty close cannot call closed. Existing lockWorkspaceControls disables rendered controls during mutation. Initial load close and saved-readback failure close remain supported; refreshSavedUnit loading close intentionally clears busy before close, allowing departure from a GET-only recovery."
+    },
+    {
+      "condition": "Stale owner and latest read suppression",
+      "finding": "current binds account object, active view, viewSeq, renderSeq, root identity/connection, month and relevant existing overlay identity. refresh checks current before starting, then owned after reads; unitLoadSeq additionally rejects a newer Unit read. confirmed invalidates cached Unit data only for the same account, then drops stale parent callbacks. close of a stale registry cannot start a current-parent GET. Runtime supersession remains untested by this script."
+    },
+    {
+      "condition": "Fallback read failure remains recoverable",
+      "finding": "Optional reference preparation rejection is converted into a throwing commit closure. This allows successful validated Unit board readback to paint before reporting reference refresh failure. changed is cleared only after successful commit; retry can read again without replaying POST/PUT. Focus recovery for an actually removed parent-owned node now precedes that throwing commit. No atomic board-and-reference DOM transaction is claimed."
+    }
+  ],
+  "browser_script_coverage_review": {
+    "declared_contexts": "12 modes x 3 engines x 2 widths = 72, contingent on actual successful run report",
+    "source_assertions_present": [
+      "defer parent board/fallback GET until final close",
+      "two accepted saves lead to one final parent refresh",
+      "child own GET 503 then retry or close",
+      "parent board/fallback 503 and malformed fallback retry",
+      "declined dirty close retains input and dialog",
+      "no-save close causes no parent GET",
+      "dirty fallback host/row/select/order and search/campus retention",
+      "rename owner accessible label and subsequent order repaint",
+      "create via Manage/data-new and first empty registry produce real new fallback owner"
+    ],
+    "missing_actual_cases": [
+      "direct toolbar Add Unit createNew=true auto-close",
+      "native-only HTMLDialogElement.close and explicit close followed by queued native event exact counts",
+      "busy mutation held in flight then attempted close/Escape",
+      "parent GET held while account changes",
+      "parent GET held while month changes",
+      "parent GET held while route changes",
+      "newer Unit GET supersedes held parent read",
+      "newer deliberate focus during held parent read",
+      "accepted POST/PUT followed by injected child render exception"
+    ],
+    "caution": "create and first-unit modes both open Manage then data-new, so they cannot stand in for createNew=true. Source review is not runtime evidence for missing branches."
+  },
+  "approval_conditions": [
+    "Retain raw terminal/report evidence for actual browser runs and failures.",
+    "Before integration, test direct createNew auto-close and native/busy close plus owner supersession, or explicitly keep these unverified and candidate isolated.",
+    "Recheck exact candidate hashes and shared helper hashes if later edits occur.",
+    "Preserve existing mutation/API/storage semantics using separate exact-delta proof and run appropriate unit/build checks."
+  ]
+}

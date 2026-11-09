@@ -1,0 +1,1001 @@
+{
+  "recorded_at_utc": "2026-11-09T09:32:12.305Z",
+  "scope": "Twelve actual external Leave/Rota day-overlay contexts across3engines320/1280; realpointer/keyboard actions, noforce/detached synthetic events, noapp/style edits. Every nonGET blocked. Locallyfulfilled Leave/rota fixtures, otherGETsRAM8031. Not whole260/action/physical acceptance.",
+  "source_sha256": {
+    "src/main.ts": "7ab96e2109aec76f027bbd80bc9535ee40c0eaacc4040eea3261e4b4c8e3d2d6",
+    "src/member-workspace.ts": "105cc1d91ea4815d565ad4859fc01412cf576a3203c07834f4010e3fef7ef1a5",
+    "src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "src/premium-theme.css": "acc46b2249087f365ca855bcd9630628c390c4cdf013301daaee40ede80e55f4"
+  },
+  "candidate_sha256": {
+    "../tmp/profile-parent-refresh-v7/main.ts": "7ab96e2109aec76f027bbd80bc9535ee40c0eaacc4040eea3261e4b4c8e3d2d6",
+    "../tmp/profile-parent-refresh-v7/member-workspace.ts": "105cc1d91ea4815d565ad4859fc01412cf576a3203c07834f4010e3fef7ef1a5"
+  },
+  "test_sha256": "a6501ef2c17308f30f9b07d82271f2bff16eb5279b52abe1b8cb6b18dfbdd407",
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "scenario": "leave",
+      "outcomes": [
+        {
+          "name": "close-center",
+          "passed": true
+        },
+        {
+          "name": "close-svg-coordinate",
+          "passed": true
+        },
+        {
+          "name": "close-escape",
+          "passed": true
+        },
+        {
+          "name": "close-backdrop",
+          "passed": true
+        },
+        {
+          "name": "external-add-leave-opens-editor-with-date",
+          "passed": true
+        }
+      ],
+      "actualClickTargets": [
+        {
+          "tag": "BUTTON",
+          "id": "",
+          "classes": "modal-close",
+          "closeButton": true,
+          "matchesClose": true
+        },
+        {
+          "tag": "BUTTON",
+          "id": "",
+          "classes": "modal-close",
+          "closeButton": true,
+          "matchesClose": true
+        },
+        {
+          "tag": "DIV",
+          "id": "leave-day-modal",
+          "classes": "modal-backdrop",
+          "closeButton": false,
+          "matchesClose": false
+        },
+        {
+          "tag": "BUTTON",
+          "id": "",
+          "classes": "primary",
+          "closeButton": false,
+          "matchesClose": false
+        }
+      ],
+      "reads": [
+        "/api/v1/auth/me",
+        "/api/health",
+        "/api/v1/admin/mappings/options",
+        "/api/v1/admin/mappings",
+        "/api/v1/admin/members",
+        "/api/v1/leave/calendar?month=2026-11",
+        "/api/v1/leave/requests?month=2026-11",
+        "/api/v1/leave/pressure?month=2026-11",
+        "/api/v1/imports/leave/history?offset=0&month=2026-11",
+        "/api/v1/admin/members",
+        "/api/v1/normalization/units",
+        "/api/v1/normalization/catalog/leave_type",
+        "/api/v1/normalization/catalog/leave_slot",
+        "/api/v1/normalization/catalog/leave_status"
+      ],
+      "writes": [],
+      "errors": [],
+      "selectedMonth": "2026-11"
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "scenario": "rota",
+      "outcomes": [
+        {
+          "name": "close-center",
+          "passed": true
+        },
+        {
+          "name": "close-escape",
+          "passed": true
+        },
+        {
+          "name": "close-backdrop",
+          "passed": true
+        },
+        {
+          "name": "external-rota-view-control",
+          "passed": true
+        },
+        {
+          "name": "external-rota-next-day-control",
+          "passed": true
+        },
+        {
+          "name": "external-rota-close-after-actions",
+          "passed": true
+        }
+      ],
+      "actualClickTargets": [
+        {
+          "tag": "BUTTON",
+          "id": "",
+          "classes": "modal-close",
+          "closeButton": true,
+          "matchesClose": true
+        },
+        {
+          "tag": "DIV",
+          "id": "rota-day-modal",
+          "classes": "modal-backdrop",
+          "closeButton": false,
+          "matchesClose": false
+        },
+        {
+          "tag": "BUTTON",
+          "id": "",
+          "classes": "",
+          "closeButton": false,
+          "matchesClose": false
+        },
+        {
+          "tag": "BUTTON",
+          "id": "",
+          "classes": "modal-nav-button",
+          "closeButton": false,
+          "matchesClose": false
+        },
+        {
+          "tag": "BUTTON",
+          "id": "",
+          "classes": "modal-close",
+          "closeButton": true,
+          "matchesClose": true
+        }
+      ],
+      "reads": [
+        "/api/v1/auth/me",
+        "/api/health",
+        "/api/v1/admin/mappings/options",
+        "/api/v1/admin/mappings",
+        "/api/v1/rota-template/month?month=2026-11",
+        "/api/v1/rota-template/allocation-statistics?month=2026-11",
+        "/api/v1/rota-safety/month?month=2026-11",
+        "/api/v1/rota-candidates/month?month=2026-11&limit_per_slot=5",
+        "/api/v1/rota-auto-fill/month?month=2026-11",
+        "/api/v1/rota-publish/month?month=2026-11",
+        "/api/v1/rota-candidates/slots/overlay-slot-0?limit=50",
+        "/api/v1/rota-candidates/slots/overlay-slot-0?limit=50",
+        "/api/v1/rota-candidates/slots/overlay-slot-0?limit=50",
+        "/api/v1/rota-candidates/slots/overlay-slot-0?limit=50",
+        "/api/v1/rota-candidates/slots/overlay-slot-1?limit=50"
+      ],
+      "writes": [],
+      "errors": [],
+      "selectedMonth": "2026-11"
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "scenario": "leave",
+      "outcomes": [
+        {
+          "name": "close-center",
+          "passed": true
+        },
+        {
+          "name": "close-svg-coordinate",
+          "passed": true
+        },
+        {
+          "name": "close-escape",
+          "passed": true
+        },
+        {
+          "name": "close-backdrop",
+          "passed": true
+        },
+        {
+          "name": "external-add-leave-opens-editor-with-date",
+          "passed": true
+        }
+      ],
+      "actualClickTargets": [
+        {
+          "tag": "BUTTON",
+          "id": "",
+          "classes": "modal-close",
+          "closeButton": true,
+          "matchesClose": true
+        },
+        {
+          "tag": "BUTTON",
+          "id": "",
+          "classes": "modal-close",
+          "closeButton": true,
+          "matchesClose": true
+        },
+        {
+          "tag": "DIV",
+          "id": "leave-day-modal",
+          "classes": "modal-backdrop",
+          "closeButton": false,
+          "matchesClose": false
+        },
+        {
+          "tag": "BUTTON",
+          "id": "",
+          "classes": "primary",
+          "closeButton": false,
+          "matchesClose": false
+        }
+      ],
+      "reads": [
+        "/api/v1/auth/me",
+        "/api/health",
+        "/api/v1/admin/mappings/options",
+        "/api/v1/admin/mappings",
+        "/api/v1/admin/members",
+        "/api/v1/leave/calendar?month=2026-11",
+        "/api/v1/leave/requests?month=2026-11",
+        "/api/v1/leave/pressure?month=2026-11",
+        "/api/v1/imports/leave/history?offset=0&month=2026-11",
+        "/api/v1/admin/members",
+        "/api/v1/normalization/units",
+        "/api/v1/normalization/catalog/leave_type",
+        "/api/v1/normalization/catalog/leave_slot",
+        "/api/v1/normalization/catalog/leave_status"
+      ],
+      "writes": [],
+      "errors": [],
+      "selectedMonth": "2026-11"
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "scenario": "rota",
+      "outcomes": [
+        {
+          "name": "close-center",
+          "passed": true
+        },
+        {
+          "name": "close-escape",
+          "passed": true
+        },
+        {
+          "name": "close-backdrop",
+          "passed": true
+        },
+        {
+          "name": "external-rota-view-control",
+          "passed": true
+        },
+        {
+          "name": "external-rota-next-day-control",
+          "passed": true
+        },
+        {
+          "name": "external-rota-close-after-actions",
+          "passed": true
+        }
+      ],
+      "actualClickTargets": [
+        {
+          "tag": "BUTTON",
+          "id": "",
+          "classes": "modal-close",
+          "closeButton": true,
+          "matchesClose": true
+        },
+        {
+          "tag": "DIV",
+          "id": "rota-day-modal",
+          "classes": "modal-backdrop",
+          "closeButton": false,
+          "matchesClose": false
+        },
+        {
+          "tag": "BUTTON",
+          "id": "",
+          "classes": "",
+          "closeButton": false,
+          "matchesClose": false
+        },
+        {
+          "tag": "BUTTON",
+          "id": "",
+          "classes": "modal-nav-button",
+          "closeButton": false,
+          "matchesClose": false
+        },
+        {
+          "tag": "BUTTON",
+          "id": "",
+          "classes": "modal-close",
+          "closeButton": true,
+          "matchesClose": true
+        }
+      ],
+      "reads": [
+        "/api/v1/auth/me",
+        "/api/health",
+        "/api/v1/admin/mappings/options",
+        "/api/v1/admin/mappings",
+        "/api/v1/rota-template/month?month=2026-11",
+        "/api/v1/rota-template/allocation-statistics?month=2026-11",
+        "/api/v1/rota-safety/month?month=2026-11",
+        "/api/v1/rota-candidates/month?month=2026-11&limit_per_slot=5",
+        "/api/v1/rota-auto-fill/month?month=2026-11",
+        "/api/v1/rota-publish/month?month=2026-11",
+        "/api/v1/rota-candidates/slots/overlay-slot-0?limit=50",
+        "/api/v1/rota-candidates/slots/overlay-slot-0?limit=50",
+        "/api/v1/rota-candidates/slots/overlay-slot-0?limit=50",
+        "/api/v1/rota-candidates/slots/overlay-slot-0?limit=50",
+        "/api/v1/rota-candidates/slots/overlay-slot-1?limit=50"
+      ],
+      "writes": [],
+      "errors": [],
+      "selectedMonth": "2026-11"
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "scenario": "leave",
+      "outcomes": [
+        {
+          "name": "close-center",
+          "passed": true
+        },
+        {
+          "name": "close-svg-coordinate",
+          "passed": true
+        },
+        {
+          "name": "close-escape",
+          "passed": true
+        },
+        {
+          "name": "close-backdrop",
+          "passed": true
+        },
+        {
+          "name": "external-add-leave-opens-editor-with-date",
+          "passed": true
+        }
+      ],
+      "actualClickTargets": [
+        {
+          "tag": "BUTTON",
+          "id": "",
+          "classes": "modal-close",
+          "closeButton": true,
+          "matchesClose": true
+        },
+        {
+          "tag": "BUTTON",
+          "id": "",
+          "classes": "modal-close",
+          "closeButton": true,
+          "matchesClose": true
+        },
+        {
+          "tag": "DIV",
+          "id": "leave-day-modal",
+          "classes": "modal-backdrop",
+          "closeButton": false,
+          "matchesClose": false
+        },
+        {
+          "tag": "BUTTON",
+          "id": "",
+          "classes": "primary",
+          "closeButton": false,
+          "matchesClose": false
+        }
+      ],
+      "reads": [
+        "/api/v1/auth/me",
+        "/api/health",
+        "/api/v1/admin/mappings/options",
+        "/api/v1/admin/mappings",
+        "/api/v1/admin/members",
+        "/api/v1/leave/calendar?month=2026-11",
+        "/api/v1/leave/requests?month=2026-11",
+        "/api/v1/leave/pressure?month=2026-11",
+        "/api/v1/imports/leave/history?offset=0&month=2026-11",
+        "/api/v1/admin/members",
+        "/api/v1/normalization/units",
+        "/api/v1/normalization/catalog/leave_type",
+        "/api/v1/normalization/catalog/leave_slot",
+        "/api/v1/normalization/catalog/leave_status"
+      ],
+      "writes": [],
+      "errors": [],
+      "selectedMonth": "2026-11"
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "scenario": "rota",
+      "outcomes": [
+        {
+          "name": "close-center",
+          "passed": true
+        },
+        {
+          "name": "close-escape",
+          "passed": true
+        },
+        {
+          "name": "close-backdrop",
+          "passed": true
+        },
+        {
+          "name": "external-rota-view-control",
+          "passed": true
+        },
+        {
+          "name": "external-rota-next-day-control",
+          "passed": true
+        },
+        {
+          "name": "external-rota-close-after-actions",
+          "passed": true
+        }
+      ],
+      "actualClickTargets": [
+        {
+          "tag": "BUTTON",
+          "id": "",
+          "classes": "modal-close",
+          "closeButton": true,
+          "matchesClose": true
+        },
+        {
+          "tag": "DIV",
+          "id": "rota-day-modal",
+          "classes": "modal-backdrop",
+          "closeButton": false,
+          "matchesClose": false
+        },
+        {
+          "tag": "BUTTON",
+          "id": "",
+          "classes": "",
+          "closeButton": false,
+          "matchesClose": false
+        },
+        {
+          "tag": "BUTTON",
+          "id": "",
+          "classes": "modal-nav-button",
+          "closeButton": false,
+          "matchesClose": false
+        },
+        {
+          "tag": "BUTTON",
+          "id": "",
+          "classes": "modal-close",
+          "closeButton": true,
+          "matchesClose": true
+        }
+      ],
+      "reads": [
+        "/api/v1/auth/me",
+        "/api/health",
+        "/api/v1/admin/mappings/options",
+        "/api/v1/admin/mappings",
+        "/api/v1/rota-template/month?month=2026-11",
+        "/api/v1/rota-template/allocation-statistics?month=2026-11",
+        "/api/v1/rota-safety/month?month=2026-11",
+        "/api/v1/rota-candidates/month?month=2026-11&limit_per_slot=5",
+        "/api/v1/rota-auto-fill/month?month=2026-11",
+        "/api/v1/rota-publish/month?month=2026-11",
+        "/api/v1/rota-candidates/slots/overlay-slot-0?limit=50",
+        "/api/v1/rota-candidates/slots/overlay-slot-0?limit=50",
+        "/api/v1/rota-candidates/slots/overlay-slot-0?limit=50",
+        "/api/v1/rota-candidates/slots/overlay-slot-0?limit=50",
+        "/api/v1/rota-candidates/slots/overlay-slot-1?limit=50"
+      ],
+      "writes": [],
+      "errors": [],
+      "selectedMonth": "2026-11"
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "scenario": "leave",
+      "outcomes": [
+        {
+          "name": "close-center",
+          "passed": true
+        },
+        {
+          "name": "close-svg-coordinate",
+          "passed": true
+        },
+        {
+          "name": "close-escape",
+          "passed": true
+        },
+        {
+          "name": "close-backdrop",
+          "passed": true
+        },
+        {
+          "name": "external-add-leave-opens-editor-with-date",
+          "passed": true
+        }
+      ],
+      "actualClickTargets": [
+        {
+          "tag": "BUTTON",
+          "id": "",
+          "classes": "modal-close",
+          "closeButton": true,
+          "matchesClose": true
+        },
+        {
+          "tag": "BUTTON",
+          "id": "",
+          "classes": "modal-close",
+          "closeButton": true,
+          "matchesClose": true
+        },
+        {
+          "tag": "DIV",
+          "id": "leave-day-modal",
+          "classes": "modal-backdrop",
+          "closeButton": false,
+          "matchesClose": false
+        },
+        {
+          "tag": "BUTTON",
+          "id": "",
+          "classes": "primary",
+          "closeButton": false,
+          "matchesClose": false
+        }
+      ],
+      "reads": [
+        "/api/v1/auth/me",
+        "/api/health",
+        "/api/v1/admin/mappings/options",
+        "/api/v1/admin/mappings",
+        "/api/v1/admin/members",
+        "/api/v1/leave/calendar?month=2026-11",
+        "/api/v1/leave/requests?month=2026-11",
+        "/api/v1/leave/pressure?month=2026-11",
+        "/api/v1/imports/leave/history?offset=0&month=2026-11",
+        "/api/v1/admin/members",
+        "/api/v1/normalization/units",
+        "/api/v1/normalization/catalog/leave_type",
+        "/api/v1/normalization/catalog/leave_slot",
+        "/api/v1/normalization/catalog/leave_status"
+      ],
+      "writes": [],
+      "errors": [],
+      "selectedMonth": "2026-11"
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "scenario": "rota",
+      "outcomes": [
+        {
+          "name": "close-center",
+          "passed": true
+        },
+        {
+          "name": "close-escape",
+          "passed": true
+        },
+        {
+          "name": "close-backdrop",
+          "passed": true
+        },
+        {
+          "name": "external-rota-view-control",
+          "passed": true
+        },
+        {
+          "name": "external-rota-next-day-control",
+          "passed": true
+        },
+        {
+          "name": "external-rota-close-after-actions",
+          "passed": true
+        }
+      ],
+      "actualClickTargets": [
+        {
+          "tag": "BUTTON",
+          "id": "",
+          "classes": "modal-close",
+          "closeButton": true,
+          "matchesClose": true
+        },
+        {
+          "tag": "DIV",
+          "id": "rota-day-modal",
+          "classes": "modal-backdrop",
+          "closeButton": false,
+          "matchesClose": false
+        },
+        {
+          "tag": "BUTTON",
+          "id": "",
+          "classes": "",
+          "closeButton": false,
+          "matchesClose": false
+        },
+        {
+          "tag": "BUTTON",
+          "id": "",
+          "classes": "modal-nav-button",
+          "closeButton": false,
+          "matchesClose": false
+        },
+        {
+          "tag": "BUTTON",
+          "id": "",
+          "classes": "modal-close",
+          "closeButton": true,
+          "matchesClose": true
+        }
+      ],
+      "reads": [
+        "/api/v1/auth/me",
+        "/api/health",
+        "/api/v1/admin/mappings/options",
+        "/api/v1/admin/mappings",
+        "/api/v1/rota-template/month?month=2026-11",
+        "/api/v1/rota-template/allocation-statistics?month=2026-11",
+        "/api/v1/rota-safety/month?month=2026-11",
+        "/api/v1/rota-candidates/month?month=2026-11&limit_per_slot=5",
+        "/api/v1/rota-auto-fill/month?month=2026-11",
+        "/api/v1/rota-publish/month?month=2026-11",
+        "/api/v1/rota-candidates/slots/overlay-slot-0?limit=50",
+        "/api/v1/rota-candidates/slots/overlay-slot-0?limit=50",
+        "/api/v1/rota-candidates/slots/overlay-slot-0?limit=50",
+        "/api/v1/rota-candidates/slots/overlay-slot-0?limit=50",
+        "/api/v1/rota-candidates/slots/overlay-slot-1?limit=50"
+      ],
+      "writes": [],
+      "errors": [],
+      "selectedMonth": "2026-11"
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "scenario": "leave",
+      "outcomes": [
+        {
+          "name": "close-center",
+          "passed": true
+        },
+        {
+          "name": "close-svg-coordinate",
+          "passed": true
+        },
+        {
+          "name": "close-escape",
+          "passed": true
+        },
+        {
+          "name": "close-backdrop",
+          "passed": true
+        },
+        {
+          "name": "external-add-leave-opens-editor-with-date",
+          "passed": true
+        }
+      ],
+      "actualClickTargets": [
+        {
+          "tag": "BUTTON",
+          "id": "",
+          "classes": "modal-close",
+          "closeButton": true,
+          "matchesClose": true
+        },
+        {
+          "tag": "BUTTON",
+          "id": "",
+          "classes": "modal-close",
+          "closeButton": true,
+          "matchesClose": true
+        },
+        {
+          "tag": "DIV",
+          "id": "leave-day-modal",
+          "classes": "modal-backdrop",
+          "closeButton": false,
+          "matchesClose": false
+        },
+        {
+          "tag": "BUTTON",
+          "id": "",
+          "classes": "primary",
+          "closeButton": false,
+          "matchesClose": false
+        }
+      ],
+      "reads": [
+        "/api/v1/auth/me",
+        "/api/health",
+        "/api/v1/admin/mappings/options",
+        "/api/v1/admin/mappings",
+        "/api/v1/admin/members",
+        "/api/v1/leave/calendar?month=2026-11",
+        "/api/v1/leave/requests?month=2026-11",
+        "/api/v1/leave/pressure?month=2026-11",
+        "/api/v1/imports/leave/history?offset=0&month=2026-11",
+        "/api/v1/admin/members",
+        "/api/v1/normalization/units",
+        "/api/v1/normalization/catalog/leave_type",
+        "/api/v1/normalization/catalog/leave_slot",
+        "/api/v1/normalization/catalog/leave_status"
+      ],
+      "writes": [],
+      "errors": [],
+      "selectedMonth": "2026-11"
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "scenario": "rota",
+      "outcomes": [
+        {
+          "name": "close-center",
+          "passed": true
+        },
+        {
+          "name": "close-escape",
+          "passed": true
+        },
+        {
+          "name": "close-backdrop",
+          "passed": true
+        },
+        {
+          "name": "external-rota-view-control",
+          "passed": true
+        },
+        {
+          "name": "external-rota-next-day-control",
+          "passed": true
+        },
+        {
+          "name": "external-rota-close-after-actions",
+          "passed": true
+        }
+      ],
+      "actualClickTargets": [
+        {
+          "tag": "BUTTON",
+          "id": "",
+          "classes": "modal-close",
+          "closeButton": true,
+          "matchesClose": true
+        },
+        {
+          "tag": "DIV",
+          "id": "rota-day-modal",
+          "classes": "modal-backdrop",
+          "closeButton": false,
+          "matchesClose": false
+        },
+        {
+          "tag": "BUTTON",
+          "id": "",
+          "classes": "",
+          "closeButton": false,
+          "matchesClose": false
+        },
+        {
+          "tag": "BUTTON",
+          "id": "",
+          "classes": "modal-nav-button",
+          "closeButton": false,
+          "matchesClose": false
+        },
+        {
+          "tag": "BUTTON",
+          "id": "",
+          "classes": "modal-close",
+          "closeButton": true,
+          "matchesClose": true
+        }
+      ],
+      "reads": [
+        "/api/v1/auth/me",
+        "/api/health",
+        "/api/v1/admin/mappings/options",
+        "/api/v1/admin/mappings",
+        "/api/v1/rota-template/month?month=2026-11",
+        "/api/v1/rota-template/allocation-statistics?month=2026-11",
+        "/api/v1/rota-safety/month?month=2026-11",
+        "/api/v1/rota-candidates/month?month=2026-11&limit_per_slot=5",
+        "/api/v1/rota-auto-fill/month?month=2026-11",
+        "/api/v1/rota-publish/month?month=2026-11",
+        "/api/v1/rota-candidates/slots/overlay-slot-0?limit=50",
+        "/api/v1/rota-candidates/slots/overlay-slot-0?limit=50",
+        "/api/v1/rota-candidates/slots/overlay-slot-0?limit=50",
+        "/api/v1/rota-candidates/slots/overlay-slot-0?limit=50",
+        "/api/v1/rota-candidates/slots/overlay-slot-1?limit=50"
+      ],
+      "writes": [],
+      "errors": [],
+      "selectedMonth": "2026-11"
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "scenario": "leave",
+      "outcomes": [
+        {
+          "name": "close-center",
+          "passed": true
+        },
+        {
+          "name": "close-svg-coordinate",
+          "passed": true
+        },
+        {
+          "name": "close-escape",
+          "passed": true
+        },
+        {
+          "name": "close-backdrop",
+          "passed": true
+        },
+        {
+          "name": "external-add-leave-opens-editor-with-date",
+          "passed": true
+        }
+      ],
+      "actualClickTargets": [
+        {
+          "tag": "BUTTON",
+          "id": "",
+          "classes": "modal-close",
+          "closeButton": true,
+          "matchesClose": true
+        },
+        {
+          "tag": "BUTTON",
+          "id": "",
+          "classes": "modal-close",
+          "closeButton": true,
+          "matchesClose": true
+        },
+        {
+          "tag": "DIV",
+          "id": "leave-day-modal",
+          "classes": "modal-backdrop",
+          "closeButton": false,
+          "matchesClose": false
+        },
+        {
+          "tag": "BUTTON",
+          "id": "",
+          "classes": "primary",
+          "closeButton": false,
+          "matchesClose": false
+        }
+      ],
+      "reads": [
+        "/api/v1/auth/me",
+        "/api/health",
+        "/api/v1/admin/mappings/options",
+        "/api/v1/admin/mappings",
+        "/api/v1/admin/members",
+        "/api/v1/leave/calendar?month=2026-11",
+        "/api/v1/leave/requests?month=2026-11",
+        "/api/v1/leave/pressure?month=2026-11",
+        "/api/v1/imports/leave/history?offset=0&month=2026-11",
+        "/api/v1/admin/members",
+        "/api/v1/normalization/units",
+        "/api/v1/normalization/catalog/leave_type",
+        "/api/v1/normalization/catalog/leave_slot",
+        "/api/v1/normalization/catalog/leave_status"
+      ],
+      "writes": [],
+      "errors": [],
+      "selectedMonth": "2026-11"
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "scenario": "rota",
+      "outcomes": [
+        {
+          "name": "close-center",
+          "passed": true
+        },
+        {
+          "name": "close-escape",
+          "passed": true
+        },
+        {
+          "name": "close-backdrop",
+          "passed": true
+        },
+        {
+          "name": "external-rota-view-control",
+          "passed": true
+        },
+        {
+          "name": "external-rota-next-day-control",
+          "passed": true
+        },
+        {
+          "name": "external-rota-close-after-actions",
+          "passed": true
+        }
+      ],
+      "actualClickTargets": [
+        {
+          "tag": "BUTTON",
+          "id": "",
+          "classes": "modal-close",
+          "closeButton": true,
+          "matchesClose": true
+        },
+        {
+          "tag": "DIV",
+          "id": "rota-day-modal",
+          "classes": "modal-backdrop",
+          "closeButton": false,
+          "matchesClose": false
+        },
+        {
+          "tag": "BUTTON",
+          "id": "",
+          "classes": "",
+          "closeButton": false,
+          "matchesClose": false
+        },
+        {
+          "tag": "BUTTON",
+          "id": "",
+          "classes": "modal-nav-button",
+          "closeButton": false,
+          "matchesClose": false
+        },
+        {
+          "tag": "BUTTON",
+          "id": "",
+          "classes": "modal-close",
+          "closeButton": true,
+          "matchesClose": true
+        }
+      ],
+      "reads": [
+        "/api/v1/auth/me",
+        "/api/health",
+        "/api/v1/admin/mappings/options",
+        "/api/v1/admin/mappings",
+        "/api/v1/rota-template/month?month=2026-11",
+        "/api/v1/rota-template/allocation-statistics?month=2026-11",
+        "/api/v1/rota-safety/month?month=2026-11",
+        "/api/v1/rota-candidates/month?month=2026-11&limit_per_slot=5",
+        "/api/v1/rota-auto-fill/month?month=2026-11",
+        "/api/v1/rota-publish/month?month=2026-11",
+        "/api/v1/rota-candidates/slots/overlay-slot-0?limit=50",
+        "/api/v1/rota-candidates/slots/overlay-slot-0?limit=50",
+        "/api/v1/rota-candidates/slots/overlay-slot-0?limit=50",
+        "/api/v1/rota-candidates/slots/overlay-slot-0?limit=50",
+        "/api/v1/rota-candidates/slots/overlay-slot-1?limit=50"
+      ],
+      "writes": [],
+      "errors": [],
+      "selectedMonth": "2026-11"
+    }
+  ]
+}

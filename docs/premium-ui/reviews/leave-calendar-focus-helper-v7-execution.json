@@ -1,0 +1,107 @@
+{
+  "recorded_at_utc": "2026-10-28T22:59:09.589053+00:00",
+  "author": "/root/leave_status_rebase",
+  "scope": "Helper fallback/cleanup test-author execution only. Exact imported frozen candidate helper and actual31-native-date scroller/styles in isolated fixture. No application/API/backend/production mutation or whole-item acceptance.",
+  "independence_limit": "This agent authored this test and earlier v5main/theme scratch, not root v6/v7 focus helpers. Root and source reviewer separately review implementation; this is author execution evidence, not independent sign-off.",
+  "test_sha256": "86789730ad4ed548708e465feb4bc2f6bfac3df55d739b31f78b02a913f4f8cb",
+  "successful_v7": {
+    "base": "http://127.0.0.1:5205",
+    "contexts": 108,
+    "matrix": "18scenarios×3engines×2layouts (320×568 root200/dark and390×320 root100/light)",
+    "candidate_sha256": {
+      "main.ts": "cefb30a235398c3a00d77279b81b8b37a0a1c6206c73f30e4e914af94fab0f03",
+      "premium-theme.css": "aa0d3c25681b83298cd53f45f009ed2f1f8e64b0f334903936d269c886d399d7",
+      "leave-calendar-focus.ts": "93bc00fb0c753ef342412e2f58730126d17918c09edfd6f3e58f72b43d1cc2b3"
+    },
+    "source_sha256": {
+      "frontend/src/main.ts": "20fc4e1c086f4ae6c25a381a176b590173f7ee680d6eec205489dc97eb069ea6",
+      "frontend/src/premium-theme.css": "9344ea87024b282475a3b9f110ce9c83bdc5dca1dc984961eefed044c2ad6065",
+      "frontend/src/member-profile.ts": "6874284e2437402f0cb00d57841f0d4170d8ecc6f2067ad2a156e38c3b0b69f2",
+      "frontend/src/record-workspace.ts": "7c196c12b114c48bf2db4ee57aad7e591d8e3acc7a77cccd15abbad7c349fb8f",
+      "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+    },
+    "report": "docs/premium-ui/qa-leave-calendar-focus-helper-v7.json",
+    "log": "tmp/leave-helper-v7-final.log",
+    "terminal_handle": 43437,
+    "exit_code": 0,
+    "observed_by": "/root/leave_status_rebase tool wait returned terminal0",
+    "scenarios": [
+      "abort-before-bind",
+      "cancelRAF-missing",
+      "cancelRAF-throws",
+      "hidden-root",
+      "inert-root",
+      "later-stable-restores-hint",
+      "lifetime-abort",
+      "moving-deadline-fitting",
+      "native-keydown",
+      "native-pointer",
+      "native-wheel",
+      "new-focus",
+      "raf-missing",
+      "raf-throws",
+      "remove-root",
+      "scrollBy-missing",
+      "scrollBy-throws",
+      "stable-native-geometry"
+    ]
+  },
+  "retained_v6_negative": {
+    "base": "http://127.0.0.1:5204",
+    "contexts": 30,
+    "passed": 0,
+    "failed": 30,
+    "expected_exit_code": 1,
+    "terminal_handle": 62337,
+    "observed_by": "/root/leave_status_rebase tool wait returned terminal1 as expected for old behavior",
+    "candidate_sha256": {
+      "main.ts": "16f38415189294f32b034a497df60bfb619233850df62b094eff0b6a7a6bdc43",
+      "premium-theme.css": "aa0d3c25681b83298cd53f45f009ed2f1f8e64b0f334903936d269c886d399d7",
+      "leave-calendar-focus.ts": "347f7d10ec511d87e0f6861e592da7dc79806e1fe0546a389aa69b4e9bc93a6e"
+    },
+    "report": "docs/premium-ui/qa-leave-calendar-focus-helper-v6.json",
+    "log": "tmp/leave-helper-v6-negative.log",
+    "same_test_bytes_as_v7": true,
+    "failures_per_scenario": {
+      "raf-missing": 6,
+      "cancelRAF-missing": 6,
+      "cancelRAF-throws": 6,
+      "moving-deadline-fitting": 6,
+      "later-stable-restores-hint": 6
+    },
+    "specific_failures": {
+      "raf-missing": "Unavailable settling must disclose Day list fallback even when instantaneous geometry fits\n\n'note' !== 'status'\n",
+      "cancelRAF-missing": "No escaped errors from optional frame cancellation/fallback\n+ actual - expected\n\n+ [\n+   'view.cancelAnimationFrame is not a function'\n+ ]\n- []\n",
+      "cancelRAF-throws": "No escaped errors from optional frame cancellation/fallback\n+ actual - expected\n\n+ [\n+   'Injected cancelRAF failure'\n+ ]\n- []\n",
+      "moving-deadline-fitting": "Moving-but-fitting deadline cannot claim stable success\n\n'note' !== 'status'\n",
+      "later-stable-restores-hint": "Expected values to be strictly equal:\n\n'note' !== 'status'\n"
+    }
+  },
+  "coverage_findings": [
+    "Root lifetime abort, pre-aborted binding, root removal,hidden/inert ancestors,new active focus and actual native pointer/wheel/keydown stop pending work. Instrumented geometry reads remain unchanged after cancellation, no new helper frame is scheduled, and any uncancellable queued callback drains without escaped errors or work.",
+    "Missing and throwing scrollBy fall back to native scrollLeft; actual target and focus ring fit after stable intervals. Existing date buttons remain native and no API call is issued.",
+    "Missing and throwing RAF disclose role=status Day list guidance rather than claiming instantaneous-fit success. V6 missingRAF fails this check; v7 passes.",
+    "Missing and throwing cancelRAF no longer leak page errors or pending ownership/work. V6 emits cancelRAF missing/throw errors; v7 safely clears ownership and drains uncancellable callback without geometry/reschedule.",
+    "Controlled monotonic performance.now sequence0/250/500/750/1001 with changing target rect top but fitting horizontal rect proves deadline cannot equate a momentarily fitting target to stable geometry. V6 retains ordinary note; v7 publishes status fallback.",
+    "A prior failure hint survives cancellation and fewer than4stable intervals. Only later owned focus plus4actual identical fitting geometry intervals restores original help text and original role=note; no fabricated success on current fit."
+  ],
+  "method_limits": [
+    "This is deterministic fault injection: optional browser methods,RAF queue and performance.now are replaced only inside fresh isolated contexts. The moving-deadline scenario overrides target rect top/bottom specifically to model continuing geometry change; ordinary scenarios use actual native DOMRects. It does not simulate a real GPU/CPU race or replace actual-shell scroll behavior evidence.",
+    "Native inputs use Playwright mouse,keyboard and wheel protocol events. They are browser emulation, not physical device or assistive technology checks.",
+    "Only the helper is imported; main is bound for frozen candidate identity but not imported by this fixture. The separate actual-shell suite owns month/day-list/pressure modal opener focus and actual native scroll/full status/membership workflows.",
+    "An uncancellable already queued callback may be invoked once; the assertion is no geometry work,new schedule or page error after ownership/lifetime loss. No claim that an absent cancelRAF can remove a browser-owned callback.",
+    "Initial18Chromiumshortcontexts are retained separately and not added to the final108count. V6negative30contexts are deliberately failing regressions, not accepted runtime passes.",
+    "No candidate/source edits,service launch/reset,API writes,acceptance ledger changes or full260completion by this execution."
+  ],
+  "evidence_sha256": {
+    "frontend/tests/premium-leave-calendar-focus-helper.browser.mjs": "86789730ad4ed548708e465feb4bc2f6bfac3df55d739b31f78b02a913f4f8cb",
+    "docs/premium-ui/qa-leave-calendar-focus-helper-v7.json": "119e5a67c8199dc3b24f41b4581e25c12df570b5a616be29eccfe5502c96f34e",
+    "docs/premium-ui/qa-leave-calendar-focus-helper-v6.json": "6c4d58a45ea7c08baccf363047762b7f270e8c75fc8b8f00ef0f108d4862f451",
+    "tmp/leave-helper-v7-final.log": "39ae3b5b93091654b6558eab8f9839b5b59cd0970ec6c8273bc09db8769c003b",
+    "tmp/leave-helper-v6-negative.log": "6267b5ff150943a565e692adee206ad16a02417abe6871d2f2c071dfb9e81ef6",
+    "tmp/leave-helper-v7-initial-chromium.json": "2cf742e52a232a8deb77ad04eccc66c0424c15ee97dd4e315651e5e31b89986c",
+    "tmp/leave-helper-v7-initial-chromium.log": "4a3516a618ce965e20ec54e3abe67a432fb72854869f501443461761f376ae33",
+    "tmp/leave-status-v7-preview-server.mjs": "adbf049dc34b97cd6381798bc8a4e89791a67aeb5a97fbbbc72f02ebda293181",
+    "tmp/leave-status-v6-preview-server.mjs": "eefc12ca6343319fed88190ce09138333ce55d39aa20dbbe8c2f3e59462f4d3d"
+  }
+}

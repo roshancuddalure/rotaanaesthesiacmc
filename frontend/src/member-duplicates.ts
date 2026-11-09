@@ -1,3 +1,4 @@
+import { decorativeIcon } from "./decorative-icons";
 // "Possible duplicate members" review window (admin). Each suspected pair is shown side by
 // side; the admin picks which record to keep and confirms the merge, or marks the pair as
 // "not the same person" so the server stops suggesting it. Nothing merges without a confirm.
@@ -99,7 +100,7 @@ export async function openSuspectedDuplicates(onChanged: () => void | Promise<vo
   const dialog = workspaceDialog(TITLE, "member-duplicates");
   dialog.innerHTML = `<header class="mw-header"><div><h2>${TITLE}</h2>
       <p>Records that may be the same person. Choose which to keep, then merge — or mark them as different people.</p></div>
-      <button type="button" data-close aria-label="Close ${TITLE}">×</button></header>
+      <button type="button" data-close aria-label="Close ${TITLE}">${decorativeIcon("close")}</button></header>
     <div class="mw-content">
       <p role="status" aria-live="polite" class="dup-status" data-status></p>
       <div data-body></div>

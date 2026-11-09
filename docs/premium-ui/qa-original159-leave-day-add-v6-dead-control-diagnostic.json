@@ -1,0 +1,93 @@
+{
+  "recorded_at_utc": "2026-11-09T08:14:36.193Z",
+  "author": "/root/profile_parent_final_audit",
+  "decision": "Actual day-modal Add did not satisfy existing editor-opening action contract; diagnostic evidence retained",
+  "scope": "One Chromium320 actual Daylist->Nov5 day modal->existing Add leave button. Explicit2000ms editor-opening expectation. Failure records actual matching editor/day modal/button counts and no-mutation evidence. Expected-correct terminal1 if dead. No forced dispatch, source edits, production writes or whole159 claim.",
+  "source_sha256": {
+    "frontend/src/main.ts": "2b8f68c069e599af50a4ac1b2146a7018d6268f290b90a9949130a057dc91b43",
+    "frontend/src/member-workspace.ts": "105cc1d91ea4815d565ad4859fc01412cf576a3203c07834f4010e3fef7ef1a5",
+    "frontend/src/record-workspace.ts": "469fd6bf2e4118b15ad343d8059cd3cfb0acbc6483bea969ca5fb93488644335",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/extra-duty.ts": "52084624922de21f2a0fa478eb1ca4c883cdeb66dd1d05147d0f21fe806bc7ea"
+  },
+  "candidate_sha256": {
+    "../tmp/profile-parent-refresh-v6/main.ts": "6c306cf2cd619a0003ca547c0fdf73a88a1abf95939234cf0d86193624db6404",
+    "../tmp/profile-parent-refresh-v6/member-workspace.ts": "105cc1d91ea4815d565ad4859fc01412cf576a3203c07834f4010e3fef7ef1a5"
+  },
+  "test_sha256": "07b32191fdd3600370cbe1198fcc50ec2cb340d1e2c7be9d3c066b799b631cb6",
+  "expected_contexts": 1,
+  "failed_contexts": 1,
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "scenario": "dated-add",
+      "passed": false,
+      "phase": "day-add-clicked",
+      "assertion": "locator.waitFor: Timeout 2000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('dialog', { name: 'Add leave', exact: true }) to be visible\u001b[22m\n",
+      "actual": {
+        "dayModalCount": 1,
+        "dayAddButtonCount": 1,
+        "matchingEditorCount": 0,
+        "allOpenDialogHeadings": [],
+        "view": "#view=leave"
+      },
+      "noMutationAfterClick": true,
+      "acceptedMutationCount": 0,
+      "counts": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        }
+      ],
+      "errors": []
+    }
+  ]
+}

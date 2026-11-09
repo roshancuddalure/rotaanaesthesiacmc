@@ -41,6 +41,12 @@ export function installShellOverlayAccessibility() {
       target?.focus({ preventScroll: true });
     } else if (!last && removedTop) {
       const opener = openers.get(removedTop);
+      const activeFocus = document.activeElement;
+      if (opener?.closest('#unit-management-modal') && activeFocus instanceof HTMLElement
+        && activeFocus !== document.body && activeFocus !== document.documentElement
+        && !activeFocus.closest('#unit-management-modal')
+        && activeFocus.isConnected && !removedTop.contains(activeFocus)
+        && activeFocus.getClientRects().length && !activeFocus.closest('[hidden], [inert]')) return;
       if (opener?.isConnected && opener.getClientRects().length && !opener.closest('[inert]')) opener.focus({ preventScroll: true });
       else document.getElementById('account-menu-button')?.focus({ preventScroll: true });
     }
@@ -50,7 +56,7 @@ export function installShellOverlayAccessibility() {
     const target = event.target;
     if (target instanceof HTMLElement) {
       if (!target.closest('.modal-backdrop, .mobile-more-backdrop, dialog')) lastOutsideFocus = target;
-      if (!target.closest('.modal-backdrop, .mobile-more-backdrop, dialog') || previous.some(overlay => overlay.contains(target))) lastOpenerFocus = target;
+      if (!target.closest('.modal-backdrop, .mobile-more-backdrop, dialog') || previous.some(overlay => overlay.contains(target)) || target.closest('#unit-management-modal')) lastOpenerFocus = target;
     }
   });
   document.addEventListener('keydown', (event) => {

@@ -1,0 +1,23 @@
+{
+  "recorded_at_utc": "2026-11-03T08:12:24.679015+00:00",
+  "reviewer": "/root/settings_v5_finish",
+  "application_changed": false,
+  "actual_diagnostic_contexts": 1,
+  "engine": "chromium",
+  "width": 320,
+  "terminal_exit_code": 0,
+  "decision": "Confirmed V6 focus defect; terminal0 means successful defect reproduction, not accepted product behavior.",
+  "finding": "Initial missing-unit read deliberately displaces a real member action; product makes unavailable notice programmatically focusable and focuses it. Retry GET held, operator focuses that legitimate notice; correct unit returns and removes notice. Recovery status p has no tabindex, so final attempted .focus fails and BODY owns focus. One PUT and GET-only retry; retained draft3.",
+  "metadata_addendum": [
+    "Raw R2report inherited six/all-engine/noticefocus wording and log twelve-context success line from a template. Actual executed loop contains only Chromium320 and exactly one result, explicitly validated here.",
+    "Raw initialV6notice6 failed earlier precondition: initialmissingread retainedinputfocus so notice never becamefocusable. It does not itself prove returnednotice focus loss. R2 establishes legitimate initialmemberaction displacement without test attribute mutation before reproducing real returnednotice failure.",
+    "Neither raw file/test/log overwritten. V7 separate candidate makes only owned recovery-status fallback focusable; needs successful nativefocus6/no-steal6 verification."
+  ],
+  "evidence_sha256": {
+    "docs/premium-ui/qa-settings159-readback-v6-notice-return-diagnostic-r2.json": "78f6c965941ab887ae8ef0aeaaaeeaa683f1b6bb4d1b1d58fb3a1f67e3d0eefa",
+    "frontend/tests/premium-settings159-readback-v6-notice-return-diagnostic-r2.browser.mjs": "0fea216669545067a67cb471c5c60fbf1231e596d93c3398db2dafd1512ef843",
+    "tmp/settings159-v6-notice-return-diagnostic-r2.log": "331b216c9c2abf43d478854507f573b2a06b5213414b23c7546a400da4d5ca76",
+    "tmp/settings159-v6-author-critical/terminal.json": "f623918390a7a0410968773c7785a28b1ccfcf276cb04a136aefa4407a197422",
+    "tmp/settings159-v6-author-critical/notice-focus6.log": "1e7fa85b410dbc1af940eb4a2eb71d853c7e1f8a40b5803fb876b871e6b2e6d0"
+  }
+}

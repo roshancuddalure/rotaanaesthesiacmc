@@ -1,9 +1,12 @@
+import { saveUnitSettingsWithRecovery } from "./unit-settings-recovery";
+import { bindUnitModalAccessibility } from "./unit-modal-accessibility";
+import { bindLeaveCalendarFocus } from "./leave-calendar-focus";
 import { decorativeIcon } from "./decorative-icons";
 import { bindConnectionStatus } from './connection-status';
 import { shareableDiagnostics } from './diagnostics-summary';
 import { announceToast } from './ui-feedback';
 import { formatAuditTimestamp } from './audit-time';
-import { bindUnitBoardFilters } from './unit-board-filters';
+import { bindUnitBoardFilters, refreshUnitBoardFilters } from './unit-board-filters';
 import { resetUnitMemberLists, unitMemberList, filterUnitMemberLists, activateUnitMemberList } from './unit-member-lists';
 import { renderAnalysisBars } from './analysis-charts';
 import { installManualScrollRestoration, routeFromHash, guideSectionFromHash, writeRoute, restoreViewScroll } from './navigation-history';
@@ -11,14 +14,14 @@ import { installShellOverlayAccessibility } from './shell-accessibility';
 import { installFrontendRuntime, markFrontendReady, safeLocalStorage, isValidWorkingMonth, frontendBuildIdentity } from './frontend-runtime';
 import { openRotaCompute, openAutoassign, renderComputeSettings } from "./rota-compute";
 import { openMonthlyLeaveApproval } from "./leave-approval";
-import { openExtraDuty, openFillAll, overLimitTable, auditReportLinks, renderUnitFallbacks } from "./extra-duty";
+import { openExtraDuty, openFillAll, overLimitTable, auditReportLinks, renderUnitFallbacks, prepareUnitFallbackReadback } from "./extra-duty";
 import { balanceStageHtml, openBalanceDuties } from "./balance-duties";
 import { installSuperadminActions, superadminSlotAction, publishAnywayControl, publishOverrideNotice, openPublishAnyway } from "./superadmin";
 import { preference as computePreference } from "./compute-device";
 import { openRecordEditor } from "./record-workspace";
 import { openOperationalImport } from "./operational-import";
 import { openUnitRegistry, openReferenceCatalog, openMappingCreator } from "./reference-workspace";
-import { openMemberWorkspace, openMemberCsvImport } from "./member-workspace";
+import { openMemberWorkspace, openMemberCsvImport, type ProfileParentLifecycle } from "./member-workspace";
 /**
  * Duty Rota single-page app (framework-free TypeScript + Vite).
  *
@@ -466,7 +469,8 @@ const renderedAnalysisPeople = new WeakMap<HTMLButtonElement, { id: string; ids:
 
 onDataChange(() => {
   workflowStatus.delete(rotaPublishMonth);
-  void refreshWorkflowTracker();
+  workflowFreshness.delete(rotaPublishMonth);
+  workflowReadSeq++;
   if (analysis) {
     const byName = new Map<string, string>();
     analysis.people.forEach(person => {
@@ -495,6 +499,8 @@ onDataChange(() => {
   reviewCandidateSlots.clear();
   failedExchangeCandidateSlots.clear();
   rejectedRotaCandidates.clear();
+  // Refresh only after every dependent cache, including the old checklist, is invalidated.
+  void refreshWorkflowTracker();
 });
 
 const DUTY_CALL_LEVELS = [
@@ -615,10 +621,11 @@ function renderTicket(): () => boolean {
 const WORKING_MONTH_KEY = "duty_rota_working_month";
 const MONTH_VIEWS = new Set(["leave", "units", "rota-setup", "rota-template", "rota-review", "rota-publish"]);
 const WORKFLOW_STEPS = [
-  { view: "rota-setup", label: "Setup" },
-  { view: "rota-template", label: "Template" },
-  { view: "rota-review", label: "Review" },
-  { view: "rota-publish", label: "Publish" },
+  { id: "setup", view: "rota-setup", label: "Setup" },
+  { id: "template", view: "rota-template", label: "Build template" },
+  { id: "assignment", view: "rota-template", label: "Assign members" },
+  { id: "review", view: "rota-review", label: "Review" },
+  { id: "publish", view: "rota-publish", label: "Publish" },
 ] as const;
 
 function storedWorkingMonth(): string {
@@ -643,6 +650,7 @@ function applyWorkingMonth(month: string): boolean {
       .forEach(picker => { picker.value = leaveMonth; });
     return false;
   }
+  if (changed) interruptWorkflowRead();
   leaveMonth = unitMonth = rotaSetupMonth = rotaTemplateMonth = rotaReviewMonth = rotaPublishMonth = month;
   try {
     safeLocalStorage.setItem(WORKING_MONTH_KEY, month);
@@ -670,56 +678,113 @@ function applyWorkingMonth(month: string): boolean {
   return changed;
 }
 
-type WorkflowState = "done" | "blocked" | "pending";
+type WorkflowState = "done" | "blocked" | "pending" | "unknown";
+type WorkflowFreshness = "checking" | "current" | "unavailable" | "interrupted";
 const workflowStatus = new Map<string, Record<string, WorkflowState>>();
+const workflowFreshness = new Map<string, WorkflowFreshness>();
+let workflowReadSeq = 0;
 
 function workflowStateFrom(publish: RotaPublishMonth): Record<string, WorkflowState> {
   const blocked = new Set(publish.blockers.map((item) => item.title));
   const scopeDone = !blocked.has("Monthly unit scope");
   const templateDone = !blocked.has("Generated slots");
-  const reviewDone = templateDone && !blocked.has("Open slots") && !blocked.has("Hard safety blockers") && !blocked.has("Exchange requests");
+  const reviewDone = scopeDone && templateDone && publish.blockers.length === 0;
+  const { total_slots: total, assigned_slots: assigned, open_slots: open } = publish.summary;
+  const countsKnown = [total, assigned, open].every(value => typeof value === "number" && Number.isInteger(value) && value >= 0)
+    && assigned + open === total;
+  const assignment: WorkflowState = !countsKnown ? "unknown" : !total ? "pending"
+    : assigned === total && open === 0 && !blocked.has("Open slots") ? "done" : "blocked";
   return {
-    "rota-setup": scopeDone ? "done" : "blocked",
-    "rota-template": templateDone ? "done" : scopeDone ? "blocked" : "pending",
-    "rota-review": reviewDone ? "done" : templateDone ? "blocked" : "pending",
-    "rota-publish": publish.latest_publish ? "done" : reviewDone ? "blocked" : "pending",
+    setup: scopeDone ? "done" : "blocked",
+    template: templateDone ? "done" : scopeDone ? "blocked" : "pending",
+    assignment,
+    review: reviewDone ? "done" : templateDone ? "blocked" : "pending",
+    publish: publish.latest_publish ? "done" : reviewDone ? "blocked" : "pending",
   };
+}
+
+function workflowStateLabel(state: WorkflowState): string {
+  return state === "done" ? "Done" : state === "blocked" ? "Needs action" : state === "pending" ? "Not started" : "Open to check";
+}
+
+function workflowFreshnessText(): string {
+  const known = workflowStatus.has(rotaPublishMonth);
+  const phase = workflowFreshness.get(rotaPublishMonth);
+  return phase === "checking" ? known ? "Checking checklist; showing last known progress." : "Checking checklist."
+    : phase === "unavailable" ? known ? "Checklist unavailable; showing last known progress." : "Checklist unavailable; progress unknown."
+    : phase === "interrupted" ? known ? "Checklist check paused; showing last known progress." : "Checklist check paused; progress unknown."
+    : phase === "current" ? "Checklist checked for this month." : known ? "Last known checklist progress." : "Open a rota stage to check progress.";
 }
 
 function paintWorkflowTracker() {
   const status = workflowStatus.get(rotaPublishMonth);
-  const tracker = document.querySelector<HTMLElement>("#workflow-tracker");
-  if (!tracker) return;
-  tracker.querySelector<HTMLElement>("[data-workflow-month]")!.textContent = formatMonth(rotaPublishMonth);
+  const fresh = workflowFreshness.get(rotaPublishMonth) === "current";
+  document.querySelectorAll<HTMLElement>("[data-workflow-month]").forEach(item => { item.textContent = formatMonth(rotaPublishMonth); });
+  document.querySelectorAll<HTMLElement>("[data-workflow-freshness]").forEach(item => { item.textContent = workflowFreshnessText(); });
   WORKFLOW_STEPS.forEach((step) => {
-    const state = status?.[step.view] ?? "pending";
-    const item = tracker.querySelector<HTMLElement>(`[data-workflow-step="${step.view}"]`);
-    if (!item) return;
-    item.dataset.state = status ? state : "unknown";
-    const label = state === "done" ? "done" : state === "blocked" ? "needs action" : "not started";
-    item.querySelector<HTMLElement>(".visually-hidden")!.textContent = status ? `, ${label}` : "";
+    const state = status?.[step.id] ?? "unknown";
+    const label = status && !fresh ? `Last known: ${workflowStateLabel(state)}` : workflowStateLabel(state);
+    document.querySelectorAll<HTMLElement>(`[data-workflow-operation="${step.id}"]`).forEach(item => {
+      item.dataset.state = fresh ? state : "unknown";
+      const hidden = item.querySelector<HTMLElement>(".visually-hidden");
+      if (hidden) hidden.textContent = `, ${label}`;
+      const visible = item.querySelector<HTMLElement>("[data-workflow-state-text]");
+      if (visible) visible.textContent = label;
+    });
   });
 }
 
-/**
- * Reads the publish checklist for the working month. Only called from the four workflow pages,
- * which already create the month's draft period, so browsing elsewhere never writes data.
- */
+/** Navigation abandons only the currently pending checklist check; no read is started here. */
+function interruptWorkflowRead() {
+  if (workflowFreshness.get(rotaPublishMonth) !== "checking") return;
+  workflowReadSeq++;
+  workflowFreshness.set(rotaPublishMonth, "interrupted");
+  paintWorkflowTracker();
+}
+
+/** A read may update only the account, month, route generation and latest read that own it. */
+function beginWorkflowRead() {
+  const month = rotaPublishMonth, account = currentUser, view = viewSeq, read = ++workflowReadSeq;
+  const current = () => month === rotaPublishMonth && account === currentUser && view === viewSeq && read === workflowReadSeq;
+  workflowFreshness.set(month, "checking");
+  paintWorkflowTracker();
+  return {
+    current,
+    success(publish: RotaPublishMonth) {
+      if (!current()) return;
+      if (publish.month !== month) {
+        workflowFreshness.set(month, "unavailable");
+        paintWorkflowTracker();
+        return;
+      }
+      workflowStatus.set(month, workflowStateFrom(publish));
+      workflowFreshness.set(month, "current");
+      paintWorkflowTracker();
+    },
+    failure() {
+      if (!current()) return;
+      workflowFreshness.set(month, "unavailable");
+      paintWorkflowTracker();
+    },
+  };
+}
+
+/** Workflow pages already create the month's period; other pages use cache only. */
 async function refreshWorkflowTracker() {
-  if (!WORKFLOW_STEPS.some((step) => step.view === activeView)) {
+  if (!WORKFLOW_STEPS.some((step) => step.view === activeView) || activeView === "rota-publish") {
+    // Publish's renderer records its own successful or failed read, never an old cached object.
     paintWorkflowTracker();
     return;
   }
   const month = rotaPublishMonth;
+  const read = beginWorkflowRead();
   try {
-    const publish = month === rotaPublish?.month ? rotaPublish : await getRotaPublishMonth(month);
-    workflowStatus.set(month, workflowStateFrom(publish));
+    const publish = await getRotaPublishMonth(month);
+    read.success(publish);
   } catch {
-    // The tracker is a convenience; keep the last known state.
+    read.failure();
   }
-  if (month === rotaPublishMonth) paintWorkflowTracker();
 }
-
 type ReviewAction = {
   label: string;
   kind: "navigate" | "open-unit" | "open-rota-day" | "apply-leave-import" | "apply-unit-import" | "none";
@@ -977,8 +1042,8 @@ async function runReviewAction(action: HTMLElement) {
   }
 }
 
-function workflowStepButton(item: NavItem, index: number): string {
-  return `<button data-view="${escapeHtml(item.view)}" data-workflow-step="${escapeHtml(item.view)}" data-state="unknown" class="nav-step">
+function workflowStepButton(item: typeof WORKFLOW_STEPS[number], index: number): string {
+  return `<button data-view="${escapeHtml(item.view)}" data-workflow-step="${escapeHtml(item.view)}" data-workflow-operation="${item.id}" data-state="unknown" class="nav-step">
     <span class="nav-step__num" aria-hidden="true">${index + 1}</span>
     <span class="nav-step__label">${escapeHtml(item.label)}</span>
     <span class="nav-step__state" aria-hidden="true"></span><span class="visually-hidden"></span>
@@ -995,7 +1060,7 @@ function renderShell() {
   activeView = "overview";
   const stepViews = WORKFLOW_STEPS.map((step) => step.view as string);
   const workflowItems = visibleNavItems().filter((item) => item.group === "Workflow");
-  const stepItems = workflowItems.filter((item) => stepViews.includes(item.view));
+  const stepItems = WORKFLOW_STEPS.filter(step => workflowItems.some(item => item.view === step.view));
   const workflowNav = workflowItems
     .map((item) => {
       if (!stepViews.includes(item.view)) {
@@ -1005,6 +1070,7 @@ function renderShell() {
       return `<div class="nav-workflow" id="workflow-tracker" role="group" aria-labelledby="workflow-tracker-label">
         <div class="nav-section-label" id="workflow-tracker-label">Monthly rota · <span data-workflow-month>${escapeHtml(formatMonth(rotaPublishMonth))}</span></div>
         ${stepItems.map(workflowStepButton).join("")}
+        <p class="workflow-freshness" data-workflow-freshness role="status">${escapeHtml(workflowFreshnessText())}</p>
       </div>`;
     })
     .join("");
@@ -1093,11 +1159,13 @@ function renderShell() {
     toggleSidebar(false);
     const btn = document.getElementById("sidebar-toggle");
     if (btn) btn.setAttribute("aria-expanded", "false");
+    btn?.focus({ preventScroll: true });
   });
   document.getElementById("sidebar-overlay")?.addEventListener("click", () => {
     toggleSidebar(false);
     const btn = document.getElementById("sidebar-toggle");
     if (btn) btn.setAttribute("aria-expanded", "false");
+    btn?.focus({ preventScroll: true });
   });
   document.getElementById("sign-out")?.addEventListener("click", () => {
     clearAuthToken();
@@ -1416,8 +1484,8 @@ function lockPendingMappingSaves() {
 /** Home-page summary of the monthly rota steps, using the tracker's last known state. */
 function overviewMonthPanel(): string {
   const status = workflowStatus.get(rotaPublishMonth);
-  const labels: Record<WorkflowState, string> = { done: "Done", blocked: "Needs action", pending: "Not started" };
-  const nextView = WORKFLOW_STEPS.find((step) => status?.[step.view] !== "done")?.view ?? "rota-publish";
+  const fresh = workflowFreshness.get(rotaPublishMonth) === "current";
+  const nextView = WORKFLOW_STEPS.find((step) => status?.[step.id] !== "done")?.view ?? "rota-publish";
   return `<section class="panel overview-month" aria-labelledby="overview-month-title">
     <div class="overview-month__head">
       <div>
@@ -1426,14 +1494,15 @@ function overviewMonthPanel(): string {
       </div>
       <button type="button" class="primary" data-view-shortcut="${nextView}">${status ? "Continue" : "Open Rota Setup"}</button>
     </div>
+    <p class="workflow-freshness" data-workflow-freshness role="status">${escapeHtml(workflowFreshnessText())}</p>
     <ol class="overview-steps">
       ${WORKFLOW_STEPS.map((step, index) => {
-        const state = status?.[step.view];
-        return `<li class="overview-step" data-state="${state ?? "unknown"}">
+        const state = status?.[step.id] ?? "unknown";
+        return `<li class="overview-step" data-workflow-operation="${step.id}" data-state="${fresh ? state : "unknown"}">
           <button type="button" data-view-shortcut="${step.view}">
             <span class="overview-step__num" aria-hidden="true">${index + 1}</span>
             <span class="overview-step__label">${escapeHtml(step.label)}</span>
-            <span class="overview-step__state">${state ? labels[state] : "Open to check"}</span>
+            <span class="overview-step__state" data-workflow-state-text>${status && !fresh ? `Last known: ${workflowStateLabel(state)}` : workflowStateLabel(state)}</span>
           </button>
         </li>`;
       }).join("")}
@@ -1694,9 +1763,9 @@ const STAT_HELP: Record<string, string> = {
   "Import batches": "Historical import runs saved by the software.",
   "Import warnings": "Rows or labels that need review after import or diagnostics.",
   "Leave requests": "Leave records for the selected month, including approved and pending review leave.",
-  "People on leave": "Unique department members who have leave recorded in this month.",
+  "People on leave": "Unique department members with approved or pending leave records in this month.",
   "Total leave days": "Total calendar days covered by active leave records in this month.",
-  "Highest day pressure": "The largest number of people on leave on any one day in this month.",
+  "Highest day pressure": "The largest returned number of active leave entries on any one day in this month, including requests awaiting review.",
   "By Call Level": "Leave totals grouped by the member's department call level.",
   "By Unit": "Leave totals grouped by the unit assigned in Unit Management.",
   "Pressure By Call Level": "Generator-facing leave pressure grouped by call level.",
@@ -2651,7 +2720,7 @@ function openAnalysisPersonModal(button: HTMLButtonElement) {
   const person = analysis?.people.find(item => item.name === button.dataset.analysisPerson);
   const id = rendered?.id ?? person?.person_id;
   if (!id) return;
-  void openMemberWorkspace(id, isAdminUser(), onMemberWorkspaceChanged, rendered?.ids ?? analysis?.people.map(p => p.person_id) ?? [], "duties");
+  void openMemberWorkspaceWithParent(id, isAdminUser(), onMemberWorkspaceChanged, rendered?.ids ?? analysis?.people.map(p => p.person_id) ?? [], "duties");
 }
 
 
@@ -3082,6 +3151,258 @@ async function renderImports() {
   if (pastHost) await mountPastDuties(pastHost);
 }
 
+/** Validate only the response shapes consumed by the retained-parent painters.
+ * This does not normalize values, constrain server labels, or establish eligibility.
+ * Run before assigning any of the returned snapshots to shared state.
+ */
+function profileReadObject(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+function profileReadStrings(value: Record<string, unknown>, keys: string[]): boolean {
+  return keys.every(key => typeof value[key] === "string");
+}
+function profileReadNullableText(value: unknown): boolean {
+  return value == null || typeof value === "string";
+}
+function profileReadNumber(value: unknown): boolean {
+  return typeof value === "number" && Number.isFinite(value);
+}
+function profileReadCounts(value: unknown): boolean {
+  return profileReadObject(value) && Object.values(value).every(profileReadNumber);
+}
+function profileReadPerson(value: unknown): boolean {
+  return profileReadObject(value) && profileReadStrings(value, ["id", "canonical_name"])
+    && profileReadNullableText(value.call_level);
+}
+function profileReadUnit(value: unknown): boolean {
+  return profileReadObject(value) && profileReadStrings(value, ["id", "name"])
+    && profileReadNullableText(value.campus) && profileReadNumber(value.minimum_free_people);
+}
+function assertProfileUnitReadShape(value: unknown): void {
+  const valid = profileReadObject(value)
+    && Array.isArray(value.units) && value.units.every(profileReadUnit)
+    && Array.isArray(value.assignments) && value.assignments.every(row => profileReadObject(row)
+      && profileReadStrings(row, ["id", "posting_type", "starts_on"])
+      && profileReadPerson(row.person) && (row.unit == null || profileReadUnit(row.unit))
+      && profileReadNullableText(row.ends_on) && profileReadNullableText(row.notes)
+      && profileReadNullableText(row.effective_call_level))
+    && Array.isArray(value.unit_summaries) && value.unit_summaries.every(row => profileReadObject(row)
+      && profileReadStrings(row, ["unit_id"])
+      // Missing monthly counts have an existing explicit unavailable presentation.
+      && ["assigned_members", "people_with_leave", "leave_days"].every(key => row[key] == null || profileReadNumber(row[key])))
+    && Array.isArray(value.unit_call_minimums) && value.unit_call_minimums.every(row => profileReadObject(row)
+      && profileReadStrings(row, ["unit_id", "call_level"])
+      && ["assigned_members", "minimum_free_people", "max_allowed"].every(key => profileReadNumber(row[key])))
+    && Array.isArray(value.validation_issues) && value.validation_issues.every(row => profileReadObject(row)
+      && profileReadStrings(row, ["severity", "code", "message"])
+      && ["person_id", "unit_id", "posting_id"].every(key => profileReadNullableText(row[key])));
+  if (!valid) throw new Error("Unit information was incomplete. Refresh saved changes again.");
+}
+function profileReadLeaveDayEntry(value: unknown): boolean {
+  return profileReadObject(value) && profileReadStrings(value, ["person_name", "status", "leave_type", "leave_slot"])
+    && ["unit", "posting_type", "call_level"].every(key => profileReadNullableText(value[key]));
+}
+function profileReadIsoDate(value: unknown): value is string {
+  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const date = new Date(`${value}T00:00:00Z`);
+  return Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === value;
+}
+function assertProfileLeaveReadShape(calendar: unknown, requests: unknown, pressure: unknown, month: string): void {
+  const validCalendar = profileReadObject(calendar) && profileReadObject(calendar.summary)
+    // These are the loop bounds for the existing monthly calendar. Validate them
+    // before rendering so malformed dates cannot create an unbounded date loop.
+    && profileReadIsoDate(calendar.summary.starts_on) && profileReadIsoDate(calendar.summary.ends_on)
+    && calendar.summary.starts_on.slice(0, 7) === month && calendar.summary.ends_on.slice(0, 7) === month
+    && calendar.summary.starts_on <= calendar.summary.ends_on
+    && ["total_requests", "people_on_leave", "total_leave_days"].every(key => profileReadNumber((calendar.summary as Record<string, unknown>)[key]))
+    && ["call_level_counts", "unit_counts"].every(key => profileReadCounts((calendar.summary as Record<string, unknown>)[key]))
+    && (calendar.summary.busiest_day == null || (profileReadObject(calendar.summary.busiest_day)
+      && profileReadStrings(calendar.summary.busiest_day, ["date"]) && profileReadNumber(calendar.summary.busiest_day.count)))
+    && profileReadObject(calendar.days) && Object.values(calendar.days).every(rows => Array.isArray(rows) && rows.every(profileReadLeaveDayEntry));
+  const validRequests = Array.isArray(requests) && requests.every(row => profileReadObject(row)
+    && profileReadStrings(row, ["id", "status", "leave_type", "leave_slot", "starts_on", "ends_on"])
+    && profileReadPerson(row.person) && profileReadNumber(row.days));
+  const validPressure = profileReadObject(pressure)
+    && profileReadCounts(pressure.unit_totals) && profileReadCounts(pressure.call_level_totals)
+    && Array.isArray(pressure.days) && pressure.days.every(row => profileReadObject(row)
+      && profileReadStrings(row, ["date"]) && profileReadNumber(row.total_people) && profileReadNumber(row.blocking_people));
+  if (!validCalendar || !validRequests || !validPressure)
+    throw new Error("Leave information was incomplete. Refresh saved changes again.");
+}
+
+let profileParentReadSequence = 0;
+const profileParentReadOwners = new WeakMap<HTMLElement, number>();
+
+/** Existing operational identity, independent of a repeated member/profile link. */
+function profileParentRecordIdentity(element: HTMLElement): string | null {
+  const record = element.closest<HTMLElement>("[data-unit-row-form], tr, .leave-card");
+  if (!record) return null;
+  if (record.dataset.unitRowForm) return `units:${record.dataset.unitRowForm}`;
+  const leaveAction = record.querySelector<HTMLElement>('[data-edit-operational-record][data-record-kind="leave"]');
+  return leaveAction?.dataset.editOperationalRecord ? `leave:${leaveAction.dataset.editOperationalRecord}` : null;
+}
+
+/** Paint returned data without replacing surviving draft, filter or navigation controls. */
+function patchProfileParentRegion(existing: HTMLElement | null, fresh: HTMLElement | null) {
+  if (!existing || !fresh) return;
+  const active = document.activeElement instanceof HTMLElement && existing.contains(document.activeElement)
+    ? document.activeElement : null;
+  const identity = active ? { tag: active.tagName, id: active.id, value: active.getAttribute("value"),
+    data: [...active.attributes].filter(a => a.name.startsWith("data-")).map(a => [a.name, a.value]), text: active.textContent,
+    record: profileParentRecordIdentity(active) } : null;
+  const open = existing instanceof HTMLDetailsElement && existing.open;
+  const retainedNotice = existing.querySelector<HTMLElement>(":scope > [data-profile-parent-refresh]");
+  existing.replaceChildren(...(retainedNotice ? [retainedNotice] : []), ...fresh.childNodes);
+  if (existing instanceof HTMLDetailsElement) existing.open = open;
+  if (!identity || (document.activeElement !== document.body && document.activeElement !== active)) return;
+  const replacement = [...existing.querySelectorAll<HTMLElement>("button, a, input, select, summary, [tabindex]")]
+    .find(e => (!identity.record || profileParentRecordIdentity(e) === identity.record)
+      && e.tagName === identity.tag && (identity.id ? e.id === identity.id
+      : identity.data.length ? identity.data.every(([name, value]) => e.getAttribute(name) === value) && e.getAttribute("value") === identity.value
+      : e.textContent === identity.text));
+  if (replacement && !replacement.matches(":disabled") && replacement.getClientRects().length)
+    replacement.focus({preventScroll:true});
+  else if (document.activeElement === document.body) { existing.tabIndex = -1; existing.focus({preventScroll:true}); }
+}
+
+function refreshProfileLeaveReadback(root: HTMLElement) {
+  const fresh = document.createElement("template");
+  fresh.innerHTML = renderLeaveSnapshot();
+  for (const selector of [".page-toolbar__context", ".board-metrics", ".analytics-grid", ".leave-pressure-details",
+    "#leave-month-view .leave-calendar-grid", "#leave-day-list-view", "section[aria-labelledby=leave-list-title] tbody",
+    "section[aria-labelledby=leave-list-title] .table-caption__count", "section.card-list[aria-label='Leave this month']"])
+    patchProfileParentRegion(root.querySelector<HTMLElement>(selector), fresh.content.querySelector<HTMLElement>(selector));
+  syncAdminSelection("leave");
+  const currentApproval = root.querySelector<HTMLButtonElement>("[data-approve-month-leave]");
+  const nextApproval = fresh.content.querySelector<HTMLButtonElement>("[data-approve-month-leave]");
+  if (currentApproval && nextApproval) {
+    currentApproval.textContent = nextApproval.textContent;
+    currentApproval.disabled = nextApproval.disabled;
+  }
+  // The selected day belongs to the existing overlay, not to the profile's selected member.
+  const dayModal = document.querySelector<HTMLElement>("#leave-day-modal");
+  const day = dayModal?.dataset.leaveModalDate;
+  if (dayModal && day) {
+    const template = document.createElement("template"); template.innerHTML = renderLeaveDayModal(day);
+    patchProfileParentRegion(dayModal.querySelector(".person-modal-header > div"), template.content.querySelector(".person-modal-header > div"));
+    patchProfileParentRegion(dayModal.querySelector(".leave-day-modal-body"), template.content.querySelector(".leave-day-modal-body"));
+  }
+}
+
+function createDependentParentLifecycle(
+  pendingMessage = "Changes saved. This view will refresh when the member profile closes.",
+  prepareReferences?: () => Promise<() => void>,
+): Readonly<{confirmed: () => void; closed: () => void}> | undefined {
+  if (!viewRoot || !currentUser || (activeView !== "units" && activeView !== "leave")) return;
+  const root = viewRoot, account = currentUser, view = activeView, viewGeneration = viewSeq, renderGeneration = renderSeq;
+  const month = view === "units" ? unitMonth : leaveMonth;
+  const originalUnitModal = view === "units" ? document.querySelector("#unit-management-modal") : null;
+  const originalDayModal = view === "leave" ? document.querySelector("#leave-day-modal") : null;
+  const unitId = unitModalUnitId, specialPosting = unitModalSpecialPostingType;
+  const current = () => account === currentUser && activeView === view && viewSeq === viewGeneration
+    && renderSeq === renderGeneration && viewRoot === root && root.isConnected
+    && month === (view === "units" ? unitMonth : leaveMonth)
+    && (view !== "units" || (originalUnitModal === document.querySelector("#unit-management-modal")
+      && unitId === unitModalUnitId && specialPosting === unitModalSpecialPostingType))
+    && (view !== "leave" || originalDayModal === document.querySelector("#leave-day-modal"));
+  let changed = false, closed = false, busy = false, queued = false;
+  const region = () => {
+    const host = originalUnitModal?.querySelector<HTMLElement>(".person-modal-body")
+      ?? originalDayModal?.querySelector<HTMLElement>(".person-modal-body") ?? root;
+    let panel = host.querySelector<HTMLElement>(":scope > [data-profile-parent-refresh]");
+    if (!panel) {
+      panel = document.createElement("section"); panel.className = "panel"; panel.dataset.profileParentRefresh = "";
+      const message = document.createElement("p"); message.setAttribute("role", "status"); message.tabIndex = -1;
+      const retry = document.createElement("button"); retry.type = "button"; retry.className = "primary";
+      retry.dataset.retryProfileParent = ""; retry.textContent = "Refresh saved changes";
+      panel.append(message, retry); host.prepend(panel);
+    }
+    return {panel, message: panel.querySelector<HTMLElement>("[role=status]")!, retry: panel.querySelector<HTMLButtonElement>("button")!};
+  };
+  const refresh = async () => {
+    if (!current() || busy || !changed || !closed) return;
+    const generation = ++profileParentReadSequence; profileParentReadOwners.set(root, generation);
+    const owned = () => current() && profileParentReadOwners.get(root) === generation;
+    const {panel, message, retry} = region();
+    const initiator = document.activeElement;
+    let focusMoved = false;
+    const trackFocus = (event: FocusEvent) => { if (event.target !== initiator && event.target !== document.body) focusMoved = true; };
+    document.addEventListener("focusin", trackFocus, true);
+    busy = true; retry.disabled = true; panel.setAttribute("aria-busy", "true");
+    message.textContent = "Changes saved. Refreshing this view… Previously loaded information remains visible.";
+    try {
+      if (view === "units") {
+        const readGeneration = ++unitLoadSeq;
+        const [result, commitReferences] = await Promise.all([
+          getUnitManagementMonth(month),
+          prepareReferences?.().catch(error => () => { throw error; }),
+        ]);
+        if (!owned()) return;
+        if (readGeneration !== unitLoadSeq) throw new Error("A newer unit refresh started. Refresh saved changes again.");
+        assertProfileUnitReadShape(result);
+        if (result.month !== month) throw new Error("The returned unit information belongs to another month. Refresh this month again.");
+        unitManagement = result; units = result.units; unitAssignments = result.assignments;
+        unitManagementLoadedMonth = month; unitManagementConfirmedAt = Date.now(); unitManagementRefreshError = "";
+        const activeBeforePaint = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+        const parentOwnedFocus = Boolean(activeBeforePaint && root.contains(activeBeforePaint));
+        refreshUnitBoardReadback();
+        const form = originalUnitModal?.querySelector<HTMLFormElement>("#unit-settings-form");
+        if (unitId && form) refreshUnitModalReadback(unitId, form);
+        else if (specialPosting && originalUnitModal instanceof HTMLElement) {
+          const template = document.createElement("template"); template.innerHTML = renderSpecialPostingModal(specialPosting);
+          for (const selector of [".audit-chip-row", ".unit-modal-validation", ".unit-editor-list"])
+            patchProfileParentRegion(originalUnitModal.querySelector(selector), template.content.querySelector(selector));
+        }
+        if (parentOwnedFocus && activeBeforePaint && !activeBeforePaint.isConnected && document.activeElement === document.body)
+          message.focus({preventScroll:true});
+        commitReferences?.();
+      } else {
+        const [calendar, requests, pressure] = await Promise.all([getLeaveCalendar(month), getLeaveRequests(month), getLeavePressure(month)]);
+        if (!owned()) return;
+        assertProfileLeaveReadShape(calendar, requests, pressure, month);
+        if (calendar.month !== month || calendar.summary.month !== month || pressure.month !== month)
+          throw new Error("The returned leave information belongs to another month. Refresh this month again.");
+        if (!Array.isArray(requests)) throw new Error("Leave records were not returned. Refresh saved changes again.");
+        leaveCalendar = calendar; leaveRequests = requests; leavePressure = pressure;
+        refreshProfileLeaveReadback(root);
+      }
+      if (!owned()) return;
+      changed = false; message.textContent = "Saved changes are reflected in this view.";
+      retry.hidden = true; retry.style.display = "none";
+      if (initiator === retry && !focusMoved && (document.activeElement === retry || document.activeElement === document.body))
+        message.focus({preventScroll:true});
+    } catch (error) {
+      if (!owned()) return;
+      message.textContent = `Changes are saved, but this view could not refresh. ${error instanceof Error ? error.message : "Try refreshing again."} Previously loaded information may be out of date.`;
+      retry.hidden = false; retry.style.display = ""; retry.onclick = () => { void refresh(); };
+      if (initiator === retry && !focusMoved && (document.activeElement === retry || document.activeElement === document.body))
+        retry.focus({preventScroll:true});
+    } finally {
+      document.removeEventListener("focusin", trackFocus, true); busy = false;
+      if (owned()) { retry.disabled = false; panel.setAttribute("aria-busy", "false"); }
+      if (queued && current()) { queued = false; void refresh(); }
+    }
+  };
+  return {
+    confirmed() {
+      if (account === currentUser) invalidateUnitManagementCache();
+      if (!current()) return;
+      changed = true; profileParentReadOwners.set(root, ++profileParentReadSequence);
+      const {message, retry} = region();
+      message.textContent = pendingMessage;
+      retry.hidden = true; retry.style.display = "none";
+      if (closed) { if (busy) queued = true; else void refresh(); }
+    },
+    closed() { closed = true; if (changed) void refresh(); },
+  };
+}
+
+function openMemberWorkspaceWithParent(id: string, admin: boolean, changed: (member: DepartmentMember) => void,
+  ids: string[] = [], initialTab = "overview", proposedStatus?: string) {
+  return openMemberWorkspace(id, admin, changed, ids, initialTab, proposedStatus, createDependentParentLifecycle());
+}
+
+
 function onMemberWorkspaceChanged(saved: DepartmentMember) {
   const index = members.findIndex(m => m.id === saved.id);
   if (index >= 0) members[index] = saved;
@@ -3257,8 +3578,19 @@ async function runAdminDelete(
   title: string,
   refresh: () => Promise<void>,
 ) {
+  const deleteAccount = currentUser;
+  const deleteView = activeView;
+  const deleteSequence = viewSeq;
+  const deleteRender = renderSeq;
+  const deleteRoot = viewRoot;
+  const deleteMonth = kind === "posting" ? unitMonth : kind === "leave" ? leaveMonth : null;
   const result = await confirmAdminDelete({ kind, ...target, title });
-  if (!result) return;
+  if (!result || deleteAccount !== currentUser) return;
+  // A confirmed posting deletion still invalidates cached data for an explicit later visit.
+  if (kind === "posting") invalidateUnitManagementCache();
+  if (activeView !== deleteView || viewSeq !== deleteSequence || renderSeq !== deleteRender
+      || viewRoot !== deleteRoot || !deleteRoot?.isConnected
+      || deleteMonth !== (kind === "posting" ? unitMonth : kind === "leave" ? leaveMonth : null)) return;
   for (const id of target.ids ?? []) adminSelection[kind].delete(id);
   if (target.month) adminSelection[kind].clear();
   const [one, many] = ADMIN_DELETE_NOUN[kind];
@@ -3443,16 +3775,15 @@ function leaveTypeLabel(value: string): string {
 }
 
 function leaveStatusLabel(value: string): string {
-  return (
-    ({
-      approved: "Approved",
-      requested: "Requested",
-      imported_pending_review: "Imported, Pending Review",
-      rejected: "Rejected",
-      cancelled: "Cancelled",
-      canceled: "Cancelled",
-    } as Record<string, string>)[value] ?? leaveTypeLabel(value)
-  );
+  const labels: Record<string, string> = {
+    approved: "Approved",
+    requested: "Requested",
+    imported_pending_review: "Imported, Pending Review",
+    rejected: "Rejected",
+    cancelled: "Cancelled",
+    canceled: "Cancelled",
+  };
+  return Object.prototype.hasOwnProperty.call(labels, value) ? labels[value] : leaveTypeLabel(value);
 }
 
 function displayUnitText(value: string | null, fallback = "Unit not assigned"): string {
@@ -3573,6 +3904,18 @@ function leaveDayEntries(day: string): LeaveDayEntry[] {
   return leaveCalendar?.days[day] ?? [];
 }
 
+/** Presentation counts only: preserve every returned calendar entry and its status. */
+function leaveDayStatusCounts(entries: LeaveDayEntry[]): [string, number][] {
+  const counts = new Map<string, number>();
+  for (const entry of entries) counts.set(entry.status, (counts.get(entry.status) ?? 0) + 1);
+  return [...counts];
+}
+
+function leaveDayStatusSummary(entries: LeaveDayEntry[]): string {
+  if (!entries.length) return "No leave records";
+  return `${entries.length} leave ${entries.length === 1 ? "record" : "records"}: ${leaveDayStatusCounts(entries).map(([status, count]) => `${count} ${leaveStatusLabel(status)}`).join(" · ")}`;
+}
+
 function renderLeaveCalendarDays(): string {
   if (!leaveCalendar) return "";
   const start = leaveCalendar.summary.starts_on;
@@ -3595,9 +3938,10 @@ function renderLeaveCalendarDays(): string {
       const weekday = new Date(`${day}T00:00:00Z`).getUTCDay();
       const names = entries.slice(0, 3).map((entry) => escapeHtml(entry.person_name.split(/\s+/).slice(0, 2).join(" ")));
       return `
-        <button class="leave-day-card ${pressure ? `leave-pressure-${pressure}` : ""} ${weekday === 0 || weekday === 6 ? "is-weekend" : ""} ${day === today ? "is-today" : ""}" type="button" data-leave-day="${day}" aria-label="${escapeHtml(formatDate(day))}: ${entries.length ? `${entries.length} on leave` : "nobody on leave"}">
+        <button class="leave-day-card ${pressure ? `leave-pressure-${pressure}` : ""} ${weekday === 0 || weekday === 6 ? "is-weekend" : ""} ${day === today ? "is-today" : ""}" type="button" data-leave-day="${day}" aria-label="${escapeHtml(formatDate(day))}: ${escapeHtml(leaveDayStatusSummary(entries))}">
           <span class="leave-day-card__date">${Number(day.slice(8, 10))}</span>
           ${entries.length ? `<strong class="leave-day-card__count">${entries.length}</strong>` : ""}
+          ${entries.length ? `<span class="leave-day-card__statuses">${leaveDayStatusCounts(entries).map(([status, count]) => `<span>${count} ${escapeHtml(leaveStatusLabel(status))}</span>`).join("")}</span>` : ""}
           <small>${names.join("<br>")}${entries.length > 3 ? `<br>+${entries.length - 3} more` : ""}</small>
         </button>
       `;
@@ -3611,7 +3955,7 @@ function renderLeaveDayList(): string {
   for (let day = leaveCalendar.summary.starts_on; day <= leaveCalendar.summary.ends_on; day = addDaysIso(day, 1)) {
     const entries = leaveDayEntries(day);
     days.push(`<li><button type="button" class="leave-agenda-day" data-leave-day="${day}">
-      <span class="leave-agenda-day__heading"><strong>${escapeHtml(formatDate(day, { weekday: true }))}</strong><span>${entries.length ? `${entries.length} on leave` : "Nobody on leave"}</span></span>
+      <span class="leave-agenda-day__heading"><strong>${escapeHtml(formatDate(day, { weekday: true }))}</strong><span>${escapeHtml(leaveDayStatusSummary(entries))}</span></span>
       ${entries.slice(0, 3).map((entry) => `<span class="leave-agenda-day__person"><span>${escapeHtml(entry.person_name)}</span><small>${escapeHtml(leaveStatusLabel(entry.status))} · ${escapeHtml(leaveTypeLabel(entry.leave_slot))}</small></span>`).join("")}
       ${entries.length > 3 ? `<span class="leave-agenda-day__more">View ${entries.length - 3} more</span>` : ""}
     </button></li>`);
@@ -3657,17 +4001,15 @@ function renderLeaveDayCallGroups(day: string): string {
 
 function renderLeaveDayModal(day: string): string {
   const entries = leaveDayEntries(day);
-  const approved = entries.filter((entry) => entry.status === "approved").length;
-  const requested = entries.filter((entry) => entry.status === "requested" || entry.status === "imported_pending_review").length;
   return `
-    <div class="modal-backdrop" id="leave-day-modal">
+    <div class="modal-backdrop" id="leave-day-modal" data-leave-modal-date="${escapeHtml(day)}">
       <section class="person-modal leave-day-modal" role="dialog" aria-modal="true" aria-labelledby="leave-day-modal-title">
         <header class="person-modal-header">
           <div>
             <h3 id="leave-day-modal-title">${escapeHtml(formatDate(day))}</h3>
-            <p>${entries.length ? `${entries.length} on leave · ${approved} approved · ${requested} awaiting review` : "Nobody is on leave"}</p>
+            <p>${escapeHtml(leaveDayStatusSummary(entries))}</p>
           </div>
-          <button class="modal-close" data-close-leave-day-modal aria-label="Close">×</button>
+          <button class="modal-close" data-close-leave-day-modal aria-label="Close">${decorativeIcon("close")}</button>
         </header>
         <div class="person-modal-body leave-day-modal-body">
           <div class="page-toolbar__actions">
@@ -3775,39 +4117,20 @@ function leaveRowActions(leave: LeaveRequest): string {
   `);
 }
 
-async function renderLeave() {
-  const current = renderTicket();
-  setHeader("Leave", "Leave calendar and availability");
-  if (!viewRoot) return;
-  viewRoot.innerHTML = pageSkeleton("leave");
-  try {
-    const requestedMonth = leaveMonth;
-    if (!members.length) {
-      const result = await getMembers();
-      if (!current()) return;
-      members = result;
-    }
-    const results = await Promise.all([
-      getLeaveCalendar(requestedMonth),
-      getLeaveRequests(requestedMonth),
-      getLeavePressure(requestedMonth),
-    ]);
-    if (!current()) return;
-    [leaveCalendar, leaveRequests, leavePressure] = results;
-  } catch (error) {
-    showToast(error instanceof Error ? error.message : "Failed to load leave", "error");
-    if (!current()) return;
-    viewRoot.innerHTML = emptyState({ title: "Leave could not load", body: "Check the connection and try again.", tone: "danger", actionHtml: `<button class="primary" type="button" data-view-shortcut="leave">Try again</button>` });
-    return;
-  }
+/** Synchronous markup from already-committed Leave state.
+ * This renderer retains the existing selection-pruning effect. It performs no
+ * network reads, event binding, DOM painting, mutation requests or navigation.
+ * Call only after the caller validates and commits an owned monthly snapshot.
+ */
+function renderLeaveSnapshot(): string {
+  if (!leaveCalendar) return "";
   const summary = leaveCalendar.summary;
   const monthName = formatMonth(summary.month);
   const pendingApprovals = leaveRequests.filter(leave => ["requested", "imported_pending_review"].includes(leave.status.toLowerCase())).length;
   pruneAdminSelection("leave", leaveRequests.map((leave) => leave.id));
   const leaveSelectCol = isAdminUser() ? `<th scope="col" class="admin-select-cell"><span class="visually-hidden">Select</span></th>` : "";
   const busiest = summary.busiest_day;
-  if (!current()) return;
-  viewRoot.innerHTML = `
+  return `
     <section class="page-toolbar" aria-label="Leave actions">
       <p class="page-toolbar__context"><strong>${monthName}</strong> · ${summary.total_requests} leave ${summary.total_requests === 1 ? "record" : "records"} for ${summary.people_on_leave} ${summary.people_on_leave === 1 ? "person" : "people"}</p>
       <div class="page-toolbar__actions">
@@ -3827,7 +4150,7 @@ async function renderLeave() {
     </section>
     <section class="summary-grid four-col board-metrics">
       ${metricCard(summary.total_requests, "Leave requests")}
-      ${metricCard(summary.people_on_leave, "People on leave")}
+      ${metricCard(summary.people_on_leave, "People with leave records", STAT_HELP["People on leave"])}
       ${metricCard(summary.total_leave_days, "Total leave days")}
       ${metricCard(busiest?.count ?? 0, busiest?.count ? `Busiest day · ${formatDate(busiest.date, { weekday: true }).replace(/ \d{4}$/, "")}` : "Highest day pressure", STAT_HELP["Highest day pressure"], (busiest?.count ?? 0) >= 6 ? "is-warn" : "")}
     </section>
@@ -3839,10 +4162,14 @@ async function renderLeave() {
           <button type="button" data-leave-calendar-view="list" aria-controls="leave-day-list-view" aria-pressed="${leaveCalendarView === "list"}">Day list</button>
         </div>
       </div>
+      <p class="leave-status-guidance">Status counts include approved records and requests awaiting review. Pending requests are not confirmed absence. Review returned blocking counts and duty safety checks before assigning; eligibility depends on the operation.</p>
       <div id="leave-month-view" ${leaveCalendarView !== "month" ? "hidden" : ""}>
         <p class="leave-calendar__legend">Compared with the busiest day: <span class="legend-swatch is-normal"></span>quieter <span class="legend-swatch is-watch"></span>busier <span class="legend-swatch is-high"></span>busiest</p>
-      <div class="leave-week-header" aria-hidden="true">${["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => `<span>${d}</span>`).join("")}</div>
-      <div class="leave-calendar-grid">${renderLeaveCalendarDays()}</div>
+        <p id="leave-month-scroll-help" class="leave-month-scroll-help">Scroll across the month when needed; use arrow keys while the calendar region is focused. Choose Day list for a full-width view.</p>
+        <div class="leave-month-scroll" role="region" aria-label="Month calendar" aria-describedby="leave-month-scroll-help" tabindex="0">
+          <div class="leave-week-header" aria-hidden="true">${["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => `<span>${d}</span>`).join("")}</div>
+          <div class="leave-calendar-grid">${renderLeaveCalendarDays()}</div>
+        </div>
       </div>
       <div id="leave-day-list-view" ${leaveCalendarView !== "list" ? "hidden" : ""}>
         <p class="leave-agenda-hint">Every day this month. Select a day to see all members, leave details and review status.</p>
@@ -3870,6 +4197,35 @@ async function renderLeave() {
     </section>
     <div id="leave-history-host"></div>
   `;
+}
+
+async function renderLeave() {
+  const current = renderTicket();
+  setHeader("Leave", "Leave calendar and availability");
+  if (!viewRoot) return;
+  viewRoot.innerHTML = pageSkeleton("leave");
+  try {
+    const requestedMonth = leaveMonth;
+    if (!members.length) {
+      const result = await getMembers();
+      if (!current()) return;
+      members = result;
+    }
+    const results = await Promise.all([
+      getLeaveCalendar(requestedMonth),
+      getLeaveRequests(requestedMonth),
+      getLeavePressure(requestedMonth),
+    ]);
+    if (!current()) return;
+    [leaveCalendar, leaveRequests, leavePressure] = results;
+  } catch (error) {
+    showToast(error instanceof Error ? error.message : "Failed to load leave", "error");
+    if (!current()) return;
+    viewRoot.innerHTML = emptyState({ title: "Leave could not load", body: "Check the connection and try again.", tone: "danger", actionHtml: `<button class="primary" type="button" data-view-shortcut="leave">Try again</button>` });
+    return;
+  }
+  if (!current()) return;
+  viewRoot.innerHTML = renderLeaveSnapshot();
   void mountWorkflowImportHistory(document.getElementById("leave-history-host")!, "leave", leaveMonth);
 }
 
@@ -3995,13 +4351,26 @@ function unitMemberChips(assignments: UnitAssignment[], showDates = false, key =
   return key ? unitMemberList(`${unitMonth}:${key}`, items) : `<div class="unit-chip-row">${items.map(item => item.html).join("")}</div>`;
 }
 
-function unitAvailability(assigned: number, onLeave: number, minimumFree: number): string {
+const UNIT_MONTHLY_RECORD_GUIDANCE = "Monthly leave records include approved, requested and imported leave awaiting review. They do not establish availability for a duty date or session; use the returned duty checks.";
+
+function unitMonthlyPeopleCountsAvailable(summary: UnitManagementMonth["unit_summaries"][number] | null | undefined): boolean {
+  if (!summary) return false;
+  return Object.prototype.hasOwnProperty.call(summary, "assigned_members")
+    && Object.prototype.hasOwnProperty.call(summary, "people_with_leave")
+    && Number.isInteger(summary.assigned_members) && summary.assigned_members >= 0
+    && Number.isInteger(summary.people_with_leave) && summary.people_with_leave >= 0
+    && summary.people_with_leave <= summary.assigned_members;
+}
+
+function unitAvailability(assigned: number, onLeave: number, minimumFree: number, countsAvailable: boolean): string {
+  if (!countsAvailable) return `<div class="unit-availability" data-tone="unavailable"><p data-unit-monthly-unavailable>Monthly leave record totals are unavailable. Refresh postings to review record coverage.</p><p>Configured minimum free: ${minimumFree}</p></div>`;
   const available = Math.max(0, assigned - onLeave);
   const percent = assigned ? Math.round((available / assigned) * 100) : 0;
-  const tone = !assigned ? "empty" : available < minimumFree ? "low" : "ok";
+  const tone = assigned ? "records" : "empty";
   return `<div class="unit-availability" data-tone="${tone}">
     <div class="unit-availability__bar" aria-hidden="true"><span style="width:${percent}%"></span></div>
-    <p><strong>${available}</strong> available of ${assigned} assigned · ${onLeave} on leave · minimum free ${minimumFree}</p>
+    <p><strong>${available}</strong> without active leave records · ${assigned} assigned · ${onLeave} with active leave records this month.</p>
+    <p>Configured minimum free: ${minimumFree}</p>
   </div>`;
 }
 
@@ -4060,7 +4429,7 @@ function renderUnitAssignmentsByUnit(): string {
             </div>
             <button type="button" class="icon-button btn-sm" data-open-unit-modal="${unit.id}" aria-label="Manage ${escapeHtml(unit.name)}">Manage</button>
           </header>
-          ${unitAvailability(assigned, onLeave, unit.minimum_free_people)}
+          ${unitAvailability(assigned, onLeave, unit.minimum_free_people, unitMonthlyPeopleCountsAvailable(summary))}
           ${unitIssues.length ? `<p class="unit-warning-strip">${badge(`${unitIssues.length} setup ${unitIssues.length === 1 ? "issue" : "issues"}`, "warning")}</p>` : ""}
           ${grouped || `<p class="unit-card__empty">Nobody posted this month.</p>`}
         </article>
@@ -4069,7 +4438,7 @@ function renderUnitAssignmentsByUnit(): string {
     .join("");
   const ungrouped = unitAssignments.filter(assignment => !SPECIAL_UNIT_POSTING_KEYS.has(assignment.posting_type) && !unitManagement!.units.some(unit => unit.id === assignment.unit?.id));
   const ungroupedCard = ungrouped.length ? `<article class="unit-card" data-unit-board-card="unassigned" data-unit-board-campus="unspecified" data-unit-board-search="${escapeHtml(["postings needing unit review", ...ungrouped.map(assignment => assignment.person.canonical_name)].join(" ").toLocaleLowerCase())}"><header><div><h3>Postings needing unit review</h3><p>No matching listed unit</p></div></header><p>Open a member's posting history to review their dated record. Setup issues remain listed above.</p>${unitMemberChips(ungrouped, true, "unassigned")}</article>` : "";
-  return `${specialCards}${regularCards}${ungroupedCard}`;
+  return `${unitManagement.units.length ? `<p class="unit-monthly-guidance">${UNIT_MONTHLY_RECORD_GUIDANCE}</p>` : ""}${specialCards}${regularCards}${ungroupedCard}`;
 }
 
 function unitPostingGroup(assignment: UnitAssignment): string {
@@ -4358,13 +4727,12 @@ function renderUnitModal(unit: UnitRead): string {
           </div>
         </header>
         <div class="person-modal-body unit-modal-body">
+          <p class="unit-monthly-guidance">${UNIT_MONTHLY_RECORD_GUIDANCE}</p>
           <div class="audit-chip-row">
-            <span><strong>${assigned}</strong> assigned</span>
-            <span><strong>${onLeave}</strong> on leave</span>
-            <span><strong>${available}</strong> roughly available</span>
-            <span><strong>${unit.minimum_free_people}</strong> fallback min free</span>
+            ${unitMonthlyPeopleCountsAvailable(summary) ? `<span><strong>${assigned}</strong> assigned this month</span><span><strong>${onLeave}</strong> with active leave records</span><span><strong>${available}</strong> without active leave records</span>` : `<span data-unit-monthly-unavailable>Monthly leave record totals are unavailable.</span>`}
+            <span><strong>${unit.minimum_free_people}</strong> configured fallback min free</span>
             <span><strong>${callRuleCount}</strong> call-wise rules</span>
-            <span><strong>${summary?.leave_days ?? 0}</strong> leave days</span>
+            ${summary && Object.prototype.hasOwnProperty.call(summary, "leave_days") && Number.isInteger(summary.leave_days) && summary.leave_days >= 0 ? `<span><strong>${summary.leave_days}</strong> recorded leave days</span>` : `<span data-unit-leave-days-unavailable>Leave-day total unavailable</span>`}
           </div>
           <form class="leave-form unit-settings-form" id="unit-settings-form" data-unit-id="${unit.id}">
             <label>
@@ -4388,6 +4756,173 @@ function renderUnitModal(unit: UnitRead): string {
       </section>
     </div>
   `;
+}
+
+function refreshUnitBoardReadback() {
+  if (!viewRoot || !unitManagement || unitManagement.month !== unitMonth) return;
+  const errors = unitManagement.validation_issues.filter(issue => issue.severity === "error").length;
+  const warnings = unitManagement.validation_issues.filter(issue => issue.severity === "warning").length;
+  const monthName = formatMonth(unitMonth);
+  const context = viewRoot.querySelector<HTMLElement>('[aria-label="Unit actions"] .page-toolbar__context');
+  if (context) context.innerHTML = `<strong>${escapeHtml(monthName)}</strong> · ${unitAssignments.length} postings across ${unitManagement.units.length} units`;
+  const freshness = viewRoot.querySelector<HTMLElement>('[data-unit-freshness]');
+  if (freshness) {
+    freshness.classList.remove("is-stale");
+    freshness.setAttribute("role", "status");
+    freshness.textContent = unitManagementConfirmedAt ? `Last confirmed by a successful load: ${new Date(unitManagementConfirmedAt).toLocaleString()}.` : "The last confirmed load time is unavailable.";
+  }
+  const metrics = viewRoot.querySelector<HTMLElement>('.board-metrics');
+  if (metrics) metrics.innerHTML = metricCard(unitAssignments.length, "Postings", "Member postings to units and special cards for this month.")
+    + metricCard(unitManagement.units.length, "Active units")
+    + metricCard(unitManagement.unit_summaries.reduce((sum, item) => sum + item.leave_days, 0), "Unit leave days")
+    + metricCard(errors + warnings, "Setup issues", `${errors} errors and ${warnings} warnings found in this month's postings.`, errors ? "is-alert" : warnings ? "is-warn" : "is-good");
+  const issues = viewRoot.querySelector<HTMLDetailsElement>('#unit-setup-issues');
+  if (issues) {
+    const next = document.createElement("template"); next.innerHTML = renderUnitValidationIssues();
+    const updated = next.content.querySelector<HTMLDetailsElement>('#unit-setup-issues');
+    if (updated) { const open = issues.open; issues.replaceChildren(...updated.childNodes); issues.open = open; }
+  }
+  const callout = viewRoot.querySelector<HTMLElement>('[data-unit-readback-callout]');
+  if (callout) callout.innerHTML = unitManagementReadbackCallout(errors, monthName);
+  const campus = viewRoot.querySelector<HTMLSelectElement>('[data-unit-board-campus]');
+  if (campus) {
+    const selected = campus.value;
+    campus.innerHTML = `<option value="">All campuses and special postings</option>${[...new Set(unitManagement.units.map(unit => unit.campus).filter((value): value is string => Boolean(value)))].sort().map(value => `<option value="${escapeHtml(`campus:${value}`)}">${escapeHtml(value)}</option>`).join("")}<option value="unspecified">Campus not specified</option><option value="special">Special postings</option>`;
+    if (selected && ![...campus.options].some(option => option.value === selected)) {
+      const retained = new Option(`${selected.replace(/^campus:/, "")} (no current units)`, selected); campus.add(retained);
+    }
+    campus.value = selected;
+  }
+  const cards = viewRoot.querySelector<HTMLElement>('.unit-card-grid');
+  if (cards) cards.innerHTML = renderUnitAssignmentsByUnit();
+  pruneAdminSelection("posting", unitAssignments.map(assignment => assignment.id));
+  const count = viewRoot.querySelector<HTMLElement>('.table-caption__count');
+  if (count) count.textContent = `${unitAssignments.length} this month`;
+  syncAdminSelection("posting");
+  refreshUnitBoardFilters(viewRoot, {
+    groups: unitAssignments.map(unitPostingGroup),
+    page: unitBoardPostingsPage,
+    pageChanged: page => { unitBoardPostingsPage = page; },
+    render: indexes => renderUnitAssignmentRows(indexes.map(index => unitAssignments[index])) || `<tr><td colspan="${isAdminUser() ? 7 : 6}">${emptyState({title: unitAssignments.length ? "No postings match these filters" : "No postings this month"})}</td></tr>`,
+  });
+}
+
+function unitManagementReadbackCallout(errors: number, monthName: string): string {
+  return errors ? nextStep({tone: "danger", title: `${errors} unit setup ${errors === 1 ? "error" : "errors"} for ${monthName}`,
+    body: "Fix these before generating the rota; open each issue for the exact member or unit.",
+    actionHtml: `<a class="primary" href="#unit-setup-issues">Review issues</a>`})
+    : !unitAssignments.length ? nextStep({tone: "info", title: `No unit postings for ${monthName} yet`,
+      body: "Use Import unitwise CSV for the whole month, or Add posting for one member at a time."}) : "";
+}
+
+function refreshUnitModalReadback(unitId: string, form: HTMLFormElement) {
+  const modal = form.closest<HTMLElement>("#unit-management-modal");
+  const unit = units.find(item => item.id === unitId);
+  if (!modal || !form.isConnected) return;
+  const active = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+  let displaced: HTMLElement | null = null;
+  if (!unit) {
+    // Capture ownership before replacing children or disabling navigation: both
+    // can synchronously move native focus to BODY.
+    const ownsDisplacedFocus = Boolean(active && (
+      modal.querySelector('.audit-chip-row')?.contains(active)
+      || modal.querySelector('.unit-modal-validation')?.contains(active)
+      || modal.querySelector('.unit-editor-list')?.contains(active)
+      || active.matches('[data-unit-modal-nav]')
+    ));
+    let notice = modal.querySelector<HTMLElement>('[data-unit-readback-unavailable]');
+    if (!notice) { notice = document.createElement("p"); notice.dataset.unitReadbackUnavailable = ""; notice.setAttribute("role", "alert"); form.before(notice); }
+    notice.textContent = "This unit was not returned by the latest read. Your settings draft is retained. Retry the saved rules refresh, or close and reopen Units before saving.";
+    for (const input of form.querySelectorAll<HTMLInputElement>('input')) {
+      input.dataset.settingsUnitMissing = "";
+      input.setCustomValidity("This unit is unavailable in the latest read. Retry refresh or close and reopen Units before saving.");
+    }
+    const chips = modal.querySelector<HTMLElement>('.audit-chip-row');
+    if (chips) chips.textContent = "Current unit totals are unavailable.";
+    const validation = modal.querySelector<HTMLElement>('.unit-modal-validation');
+    if (validation) validation.innerHTML = '<summary>Validation <span>Unavailable</span></summary><p>This unit was not returned by the latest read.</p>';
+    const members = modal.querySelector<HTMLElement>('.unit-editor-list');
+    if (members) members.textContent = "Current member postings are unavailable for this unit.";
+    for (const button of modal.querySelectorAll<HTMLButtonElement>('[data-unit-modal-nav]')) button.disabled = true;
+    if (ownsDisplacedFocus && notice && (document.activeElement === document.body || document.activeElement === active)) {
+      notice.tabIndex = -1;
+      notice.focus({preventScroll: true});
+    }
+    throw new Error("The latest read did not return this unit. Your draft is retained; retry refresh or close and reopen Units.");
+  }
+  const unavailableNotice = modal.querySelector<HTMLElement>('[data-unit-readback-unavailable]');
+  if (active && unavailableNotice?.contains(active)) displaced = form.querySelector<HTMLElement>('[data-unit-settings-recovery] > [role="status"]');
+  unavailableNotice?.remove();
+  for (const input of form.querySelectorAll<HTMLInputElement>('[data-settings-unit-missing]')) {
+    input.setCustomValidity(""); delete input.dataset.settingsUnitMissing;
+  }
+  const fresh = document.createElement("template");
+  fresh.innerHTML = renderUnitModal(unit);
+  const title = modal.querySelector<HTMLElement>('#unit-modal-title');
+  if (title) title.textContent = unit.name;
+  const previousUnitId = adjacentUnitId(unitId, -1), nextUnitId = adjacentUnitId(unitId, 1);
+  for (const [label, destination] of [["Previous unit", previousUnitId], ["Next unit", nextUnitId]] as const) {
+    const button = modal.querySelector<HTMLButtonElement>(`[aria-label="${label}"]`);
+    if (button) { button.dataset.unitModalNav = destination ?? ""; button.disabled = !destination; if (button === active && button.disabled) displaced = form.querySelector<HTMLElement>('[role="status"]'); }
+  }
+  for (const selector of [".audit-chip-row", ".unit-modal-validation", ".unit-editor-list"]) {
+    const existing = modal.querySelector<HTMLElement>(selector);
+    const replacement = fresh.content.querySelector<HTMLElement>(selector);
+    if (!existing || !replacement) continue;
+    const focused = active && existing.contains(active) ? active : null;
+    const identity = focused ? {tag: focused.tagName, text: focused.textContent,
+      record: focused.closest<HTMLElement>("[data-unit-row-form]")?.dataset.unitRowForm,
+      data: [...focused.attributes].filter(attribute => attribute.name.startsWith("data-")).map(attribute => [attribute.name, attribute.value])} : null;
+    const open = existing instanceof HTMLDetailsElement && existing.open;
+    existing.replaceChildren(...replacement.childNodes);
+    if (existing instanceof HTMLDetailsElement) existing.open = open;
+    if (identity) {
+      displaced = [...existing.querySelectorAll<HTMLElement>("button, a, summary, [tabindex]")].find(element =>
+        (!identity.record || element.closest<HTMLElement>("[data-unit-row-form]")?.dataset.unitRowForm === identity.record)
+        && element.tagName === identity.tag && (identity.data.length
+          ? identity.data.every(([name, value]) => element.getAttribute(name) === value)
+          : element.textContent === identity.text)) ?? form.querySelector<HTMLElement>('[role="status"]');
+    }
+  }
+  // Keep editable values and input nodes; only their returned bounds/context change.
+  const grid = form.querySelector<HTMLElement>(".unit-call-minimum-grid");
+  const nextGrid = fresh.content.querySelector<HTMLElement>(".unit-call-minimum-grid");
+  if (grid && nextGrid) {
+    const nextInputs = new Map([...nextGrid.querySelectorAll<HTMLInputElement>('[data-unit-call-minimum]')]
+      .map(input => [input.dataset.unitCallMinimum, input]));
+    for (const input of grid.querySelectorAll<HTMLInputElement>('[data-unit-call-minimum]')) {
+      const next = nextInputs.get(input.dataset.unitCallMinimum);
+      const row = input.closest<HTMLElement>(".unit-call-minimum-row");
+      if (!next) {
+        input.setCustomValidity("This call level is no longer returned for this unit. Close and reopen the unit to review current rules before saving.");
+        let notice = row?.querySelector<HTMLElement>('[data-unit-call-unavailable]');
+        if (!notice && row) {
+          notice = document.createElement("small");
+          notice.dataset.unitCallUnavailable = "";
+          notice.setAttribute("role", "status");
+          row.append(notice);
+        }
+        if (notice) notice.textContent = "This call level is no longer returned. Your draft is retained; reopen the unit before saving.";
+        continue;
+      }
+      input.setCustomValidity("");
+      row?.querySelector('[data-unit-call-unavailable]')?.remove();
+      input.max = next.max;
+      const count = row?.querySelector("span > small");
+      const nextCount = next.closest(".unit-call-minimum-row")?.querySelector("span > small");
+      if (count && nextCount) count.textContent = nextCount.textContent;
+      nextInputs.delete(input.dataset.unitCallMinimum);
+    }
+    for (const next of nextInputs.values()) {
+      grid.querySelector(".unit-call-minimum-empty")?.remove();
+      const row = next.closest(".unit-call-minimum-row");
+      if (row) grid.append(row);
+    }
+  }
+  if (displaced && !displaced.matches(":disabled") && displaced.getClientRects().length) {
+    if (displaced.matches('[data-unit-settings-recovery] > [role="status"]')) displaced.tabIndex = -1;
+    displaced.focus({preventScroll: true});
+  }
 }
 
 function openUnitModal(unitId: string, focusAssignmentId?: string) {
@@ -4496,20 +5031,7 @@ async function renderUnitManagement(forceReload = false) {
   const leaveDays = unitManagement.unit_summaries.reduce((sum, item) => sum + item.leave_days, 0);
   const monthName = formatMonth(unitManagement.month);
   pruneAdminSelection("posting", unitAssignments.map((assignment) => assignment.id));
-  const callout = errors
-    ? nextStep({
-        tone: "danger",
-        title: `${errors} unit setup ${errors === 1 ? "error" : "errors"} for ${monthName}`,
-        body: "Fix these before generating the rota; open each issue for the exact member or unit.",
-        actionHtml: `<a class="primary" href="#unit-setup-issues">Review issues</a>`,
-      })
-    : !unitAssignments.length
-      ? nextStep({
-          tone: "info",
-          title: `No unit postings for ${monthName} yet`,
-          body: "Use Import unitwise CSV for the whole month, or Add posting for one member at a time.",
-        })
-      : "";
+  const callout = unitManagementReadbackCallout(errors, monthName);
   if (!current()) return;
   const focusedFilter = document.activeElement instanceof HTMLElement && viewRoot.contains(document.activeElement)
     ? document.activeElement.closest<HTMLElement>('input[data-unit-board-search], select[data-unit-board-campus], [data-unit-board-reset]') : null;
@@ -4518,7 +5040,7 @@ async function renderUnitManagement(forceReload = false) {
     : focusedFilter ? '[data-unit-board-reset]' : null;
   const filterSelection = focusedFilter instanceof HTMLInputElement ? [focusedFilter.selectionStart, focusedFilter.selectionEnd] : null;
   viewRoot.innerHTML = `
-    ${callout}
+    <div data-unit-readback-callout>${callout}</div>
     <section class="page-toolbar" aria-label="Unit actions">
       <p class="page-toolbar__context"><strong>${monthName}</strong> · ${unitAssignments.length} postings across ${unitManagement.units.length} units</p>
       <div class="page-toolbar__actions">
@@ -4555,7 +5077,7 @@ async function renderUnitManagement(forceReload = false) {
         <button type="button" data-unit-board-reset>Clear unit filters</button>
       </div>
       <p data-unit-board-count role="status"></p>
-      <p class="unit-board-context">Filters show matching unit groups and their postings. Monthly totals and setup issues remain complete. Posting dates below distinguish current, upcoming and past assignments; availability figures summarize the selected month.</p>
+      <p class="unit-board-context">Filters show matching unit groups and their postings. Monthly totals and setup issues remain complete. Posting dates below distinguish current, upcoming and past assignments.</p>
     </section>
     <section class="unit-card-grid" aria-label="Units">${renderUnitAssignmentsByUnit()}</section>
     <section class="panel" data-unit-board-empty hidden><h3>No matching unit groups</h3><p>Try another unit, campus or member name.</p></section>
@@ -5437,16 +5959,52 @@ function emptyRotaSafety(template: RotaTemplateMonth): RotaSafetyMonth {
   };
 }
 
+function returnedSafetyReasons(value: unknown): string[] {
+  if (!Array.isArray(value)) return ["Rule details unavailable in this response."];
+  if (!value.length) return ["No rule details returned for this duty check."];
+  return Array.from(value, (reason) => typeof reason !== "string"
+    ? "Unsupported rule detail returned."
+    : reason.trim() ? reason : "Blank rule detail returned.");
+}
+
+function safetyUnitDayKey(unitId: unknown, day: unknown): string | null {
+  if ((unitId !== null && (typeof unitId !== "string" || !unitId)) || typeof day !== "string" || !day) return null;
+  return JSON.stringify([unitId, day]);
+}
+
+function unitDaySafetyReasonIndex(safety: RotaSafetyMonth): Map<string, string[]> {
+  const details = new Map<string, string[]>();
+  const slots = Array.isArray(safety.slots) ? safety.slots : [];
+  for (const slot of slots) {
+    if (!slot || typeof slot !== "object") continue;
+    const key = safetyUnitDayKey(slot.unit_id, slot.duty_date);
+    if (key === null) continue;
+    const unit = typeof slot.unit_name === "string" && slot.unit_name.trim()
+      ? slot.unit_name : slot.unit_id === null ? "Unassigned unit" : "Unit name not returned";
+    const duty = typeof slot.duty_type === "string" && slot.duty_type.trim() ? slot.duty_type : "Duty not returned";
+    const label = typeof slot.slot_label === "string" && slot.slot_label.trim() ? slot.slot_label : "Slot label not returned";
+    const status = typeof slot.safety_status === "string" && slot.safety_status.trim()
+      ? safetyStatusLabel(slot.safety_status) : "Status not returned";
+    const context = `${slot.duty_date} · ${unit} · ${duty} · ${label} · ${status}`;
+    const entries = returnedSafetyReasons(slot.reasons).map((reason) => `${context}: ${reason}`);
+    const existing = details.get(key);
+    if (existing) existing.push(...entries);
+    else details.set(key, entries);
+  }
+  return details;
+}
+
 function renderSlotSafetyCell(safety?: RotaSafetyMonth["slots"][number]): string {
   if (!safety) {
     return `<span class="status">Not Checked</span><small>Run the safety check with the current template.</small>`;
   }
-  const reason = safety.reasons.slice(0, 1).join(" ");
+  const reasons = returnedSafetyReasons(safety.reasons);
   return `
     <div class="safety-cell">
       <span class="status ${safetyStatusClass(safety.safety_status)}">${escapeHtml(safetyStatusLabel(safety.safety_status))}</span>
       <small>${safety.available_members}/${safety.eligible_members} eligible available</small>
-      ${reason ? `<small>${escapeHtml(reason)}</small>` : ""}
+      <small data-slot-safety-first-reason>${escapeHtml(reasons[0])}</small>
+      ${reasons.length > 1 ? `<details class="safety-rule-details"><summary class="icon-button">Show remaining ${reasons.length - 1} returned rule ${reasons.length === 2 ? "detail" : "details"}</summary><ul class="quality-list">${reasons.slice(1).map((reason) => `<li>${escapeHtml(reason)}</li>`).join("")}</ul></details>` : ""}
     </div>
   `;
 }
@@ -6463,6 +7021,7 @@ function closeRotaDayModal() {
 }
 
 function renderUnitDaySafetyRows(safety: RotaSafetyMonth, start = 0, end = 100): string {
+  const ruleDetails = unitDaySafetyReasonIndex(safety);
   return safety.unit_day_safety.slice(start, end).map((row) => `
     <tr>
       <td>${escapeHtml(row.date)}</td>
@@ -6478,7 +7037,10 @@ function renderUnitDaySafetyRows(safety: RotaSafetyMonth, start = 0, end = 100):
           review_slots: row.needs_review_slots,
           hard_blocked_slots: row.hard_blocked_slots,
           minimum_available: row.minimum_available_members,
+          minimum_available_context: "Lowest reported available-member count across this unit/date duty checks; not a configured staffing minimum.",
         },
+        issues: ruleDetails.get(safetyUnitDayKey(row.unit_id, row.date) ?? "")
+          ?? ["Rule details unavailable: no matching duty checks were returned for this unit and date."],
         actions: [
           { label: "Open Rota Day", kind: "open-rota-day", target: row.date, month: rotaTemplateMonth, variant: "primary" },
           { label: row.unit_id ? `Open ${row.unit_name ?? "affected unit"} postings` : "Open Unit Management (no unit recorded)", kind: row.unit_id ? "open-unit" : "navigate", target: row.unit_id ?? "units", month: rotaTemplateMonth },
@@ -6607,35 +7169,116 @@ function generationReadiness(template: NonNullable<typeof rotaTemplate>, early=f
   const assigned=template.slots.filter(s=>s.assignments.some(a=>["assigned","confirmed","draft"].includes(a.status.toLowerCase()))).length;
   const open=Math.max(0,template.slots.length-assigned), locked=template.scope.is_locked;
   return `<section class="generation-overview panel" aria-label="Generation workflow"><div class="generation-heading"><div><p class="eyebrow">Generation workspace</p><h2>Build the duties. Find the right people.</h2><p>${escapeHtml(formatMonth(rotaTemplateMonth))} · ${template.scope.included_units.length} units · ${template.slots.length} duties · ${assigned} filled · ${open} open</p></div><button type="button" class="icon-button" data-view-shortcut="compute-settings" title="Choose server or this computer's GPU for generation">${escapeHtml(computeEngineLabel())}</button></div>
-    <ol class="generation-stages"><li><strong>1 · Build template</strong><span>Allocate duties to included units</span></li><li class="balance-stage"><strong>2 · Autoassign members</strong><span>Prepare safe member proposals, then balance duties within each call level.</span>${isAdminUser()?balanceStageHtml(rotaTemplateMonth,{draft,locked,assigned}):""}</li><li class="extra-duty-stage"><strong>3 · Extra-duty layer</strong><span>Fills duties that are still open, even when the unit is short-staffed. Leave and rest are never broken.</span>${isAdminUser()?`<span class="extra-duty-stage__actions"><button type="button" data-extra-duty ${!draft||!locked||!open?"disabled":""}>Preview extra duties</button><button type="button" class="fill-all-button" data-fill-all ${!draft||!locked||!open?"disabled":""}>Fill remaining duties (all units)</button></span>`:""}</li><li><strong>4 · Review draft</strong><span>Apply only after final validation</span></li></ol>
+    <ol class="generation-stages" data-workflow-operations>
+      <li data-workflow-operation="setup"><strong>1 · Setup</strong><span>Choose and lock the included units.</span><span data-workflow-state-text>Open to check</span></li>
+      <li data-workflow-operation="template"><strong>2 · Build template</strong><span>Allocate duty slots to the included units.</span><span data-workflow-state-text>Open to check</span></li>
+      <li class="balance-stage" data-workflow-operation="assignment"><strong>3 · Assign members</strong><span>Use Autoassign members to prepare safe proposals for the duty slots.</span><span data-workflow-state-text>Open to check</span><details class="assignment-tools"><summary>Optional assignment tools</summary>${isAdminUser()?balanceStageHtml(rotaTemplateMonth,{draft,locked,assigned}):""}<section class="extra-duty-stage"><strong>Extra-duty layer</strong><span>Fills duties that are still open, even when the unit is short-staffed. Leave and rest are never broken.</span>${isAdminUser()?`<span class="extra-duty-stage__actions"><button type="button" data-extra-duty ${!draft||!locked||!open?"disabled":""}>Preview extra duties</button><button type="button" class="fill-all-button" data-fill-all ${!draft||!locked||!open?"disabled":""}>Fill remaining duties (all units)</button></span>`:""}</section></details></li>
+      <li data-workflow-operation="review"><strong>4 · Review</strong><span>Check warnings and final validation before approval.</span><span data-workflow-state-text>Open to check</span></li>
+      <li data-workflow-operation="publish"><strong>5 · Publish</strong><span>Record board approval, then export the final rota.</span><span data-workflow-state-text>Open to check</span></li>
+    </ol><p class="workflow-freshness" data-workflow-freshness role="status">${escapeHtml(workflowFreshnessText())}</p>
     <p role="status">${!draft?"This month is published. Generation is read-only.":!locked?"Lock included units in Rota Setup before building the template.":!template.slots.length?"Build and apply the template first, then Autoassign members.":!open?"All duties have members. Review the draft or use explicit repair in Whole-month optimisation.":`${open} duties are ready for Autoassign. Existing assignments stay fixed unless you explicitly allow repairs.`}</p>
     ${early?`<div class="generation-early-actions"><button type="button" class="primary" data-early-build ${!draft||!locked?"disabled":""}>Build template</button><button type="button" class="primary" id="run-safe-auto-fill" ${!draft||!open?"disabled":""}>Autoassign members</button><button type="button" data-view-shortcut="rota-review">Review draft</button><p>Actions are ready. Optional reports are still loading…</p></div>`:""}</section>`;
 }
 
+function renderTemplateOptionalFigures(template: RotaTemplateMonth, safety: RotaSafetyMonth, candidates: RotaCandidateMonth, unavailable: ReadonlySet<number>): string {
+  const latest = template.latest_run;
+  const forcedReviewCount = template.summary.forced_review_slots ?? Number(latest?.summary?.forced_review_slots ?? 0);
+  const minimumAvailable = safety.unit_day_safety.length
+    ? Math.min(...safety.unit_day_safety.map((row) => row.minimum_available_members)) : 0;
+  return `
+      <details class="panel disclosure-panel template-figures">
+        <summary>All safety and suggestion figures</summary>
+        <div class="summary-grid four-col">
+          ${metricCard(template.summary.ready_slots, "Ready slots")}
+          ${metricCard(template.summary.needs_review_slots, "Need review")}
+          ${metricCard(forcedReviewCount, "Forced review")}
+          ${metricCard(unavailable.has(1) ? null : safety.summary.total_slots, "Safety checked")}
+          ${metricCard(unavailable.has(1) ? null : safety.summary.safe_slots, "Safe slots")}
+          ${metricCard(unavailable.has(1) ? null : safety.summary.needs_review_slots, "Needs review")}
+          ${metricCard(unavailable.has(1) ? null : minimumAvailable, "Minimum available")}
+          ${metricCard(unavailable.has(1) ? null : safety.unit_day_safety.length, "Unit-day checks", "Distinct unit and date combinations checked for staffing safety.")}
+          ${metricCard(unavailable.has(2) ? null : candidates.summary.slots_with_candidates, "Suggestion slots")}
+          ${metricCard(unavailable.has(2) ? null : candidates.summary.eligible_candidates, "Safe suggestions")}
+          ${metricCard(unavailable.has(2) ? null : candidates.summary.needs_review_candidates, "Review suggestions")}
+          ${metricCard(unavailable.has(2) ? null : candidates.summary.blocked_candidates, "Blocked suggestions")}
+        </div>
+        <p class="template-figures__rule"><strong>Safe auto-fill rule.</strong> A slot is filled only when its call level is known and the chosen person has the same call level. Ambiguous call slots are left open for board review.</p>
+        <label class="checkbox-line"><input id="rota-template-fast-mode" type="checkbox" ${rotaTemplateFastMode ? "checked" : ""} /> Fast load: skip suggestions and auto-fill history when opening this page</label>
+      </details>
+  `;
+}
+
 async function renderRotaTemplate() {
   const current = renderTicket();
-  setHeader("Rota Template", "Step 2 · Generate and fill the month");
+  const reportMonth = rotaTemplateMonth;
+  const reportAccount = currentUser;
+  const reportRoot = viewRoot;
+  const optionalNames = ["Allocation statistics", "Safety checks", "Member suggestions", "Auto-fill history"];
+  let reportTemplate: RotaTemplateMonth | null = null;
+  const validateOptionalReport = (index: number, value: unknown): unknown => {
+    const object = (item: unknown): item is Record<string, unknown> => Boolean(item) && typeof item === "object" && !Array.isArray(item);
+    const finiteFields = (item: Record<string, unknown>, fields: string[]) => fields.every(key => typeof item[key] === "number" && Number.isFinite(item[key]));
+    const invalid = () => new Error(`${optionalNames[index]} returned an unavailable report.`);
+    if (!object(value) || value.month !== reportMonth) throw invalid();
+    const summaryFields = [
+      ["total_slots", "ready_slots", "needs_review_slots", "forced_review_slots", "unresolved_slots", "included_units", "units_used", "blocked_or_skipped_events"],
+      ["total_slots", "safe_slots", "needs_review_slots", "hard_blocked_slots"],
+      ["slots_checked", "slots_with_candidates", "eligible_candidates", "needs_review_candidates", "blocked_candidates"],
+    ];
+    const arrayFields = [
+      ["duty_keys", "duty_groups", "group_call_buckets", "unit_tallies", "unit_duty_matrix", "unit_group_matrix", "unit_group_call_matrix", "unit_target_tallies", "unit_generation_diagnostics", "date_distribution", "call_level_distribution", "blocked_or_skipped_events"],
+      ["slots", "unit_day_safety"],
+      ["slots"],
+    ];
+    if (index < 3) {
+      if (!object(value.summary) || !finiteFields(value.summary, summaryFields[index])) throw invalid();
+      if (arrayFields[index].some(key => !Array.isArray(value[key]))) throw invalid();
+    } else if (value.latest_run !== null) {
+      if (!object(value.latest_run) || !Array.isArray(value.latest_run.events)
+          || !finiteFields(value.latest_run, ["assigned_slots", "skipped_slots", "review_slots", "blocked_slots"])) throw invalid();
+    }
+    // Render into strings before committing report state or touching live controls.
+    if (index === 0) renderRotaAllocationStatistics(value as unknown as RotaTemplateAllocationStatistics);
+    if (index === 1) {
+      const previousContexts = new Map(reviewActionContexts);
+      try {
+        renderUnitDaySafetyRows(value as unknown as RotaSafetyMonth, 0, (value.unit_day_safety as unknown[]).length);
+      } finally {
+        // Safety renderers register review-button contexts; preflight must leave that registry intact.
+        for (const key of reviewActionContexts.keys()) if (!previousContexts.has(key)) reviewActionContexts.delete(key);
+        for (const [key, context] of previousContexts) reviewActionContexts.set(key, context);
+      }
+    }
+    if (index === 2 && (value.slots as unknown[]).some(slot => !object(slot) || !Array.isArray(slot.candidates))) throw invalid();
+    if (index === 3) renderAutoFillReport(value as unknown as RotaAutoFillMonth);
+    if (!reportTemplate) throw invalid();
+    return value;
+  };
+  const optionalReads: Array<() => Promise<unknown>> = [
+    async () => validateOptionalReport(0, await withTimeout(getRotaTemplateAllocationStatistics(reportMonth), 12000, optionalNames[0])),
+    async () => validateOptionalReport(1, await withTimeout(getRotaSafetyMonth(reportMonth), 12000, optionalNames[1])),
+    async () => validateOptionalReport(2, await withTimeout(getRotaCandidateMonth(reportMonth), 12000, optionalNames[2])),
+    async () => validateOptionalReport(3, await withTimeout(getRotaAutoFillMonth(reportMonth), 12000, optionalNames[3])),
+  ];
+  const unavailableReports = new Set<number>();
+  let retryingReports = false;
+  let reportsRecovered = false;
+  setHeader("Rota Template", "Steps 2–3 · Build the template and assign members");
   if (!viewRoot) return;
   viewRoot.innerHTML = pageSkeleton("rota template");
   try {
     const templateResult = await withTimeout(getRotaTemplateMonth(rotaTemplateMonth), 12000, "Rota template");
     if(!current()) return;
     rotaTemplate = templateResult;
+    reportTemplate = templateResult;
     viewRoot.innerHTML=generationReadiness(templateResult,true)+pageSkeleton("optional generation reports");
-    const results=await Promise.allSettled([
-      withTimeout(getRotaTemplateAllocationStatistics(rotaTemplateMonth),12000,"Allocation statistics"),
-      ...(rotaTemplateFastMode?[]:[
-        withTimeout(getRotaSafetyMonth(rotaTemplateMonth),12000,"Rota safety check"),
-        withTimeout(getRotaCandidateMonth(rotaTemplateMonth),12000,"Rota suggestions"),
-        withTimeout(getRotaAutoFillMonth(rotaTemplateMonth),12000,"Rota auto-fill history"),
-      ]),
-    ]);
+    const results = await Promise.allSettled(optionalReads.slice(0, rotaTemplateFastMode ? 1 : 4).map(read => read()));
     if(!current())return;
     rotaTemplateStats=results[0].status==='fulfilled'?results[0].value as typeof rotaTemplateStats:null;
     rotaSafety=results[1]?.status==='fulfilled'?results[1].value as typeof rotaSafety:emptyRotaSafety(templateResult);
     rotaCandidates=results[2]?.status==='fulfilled'?results[2].value as typeof rotaCandidates:emptyRotaCandidates(rotaTemplateMonth);
     rotaAutoFill=results[3]?.status==='fulfilled'?results[3].value as typeof rotaAutoFill:null;
-    for(const result of results)if(result.status==='rejected')showToast(result.reason instanceof Error?result.reason.message:"An optional report could not load. Generation remains available.","warning");
+    results.forEach((result, index) => { if (result.status === "rejected") unavailableReports.add(index); });
   } catch (error) {
     showToast(error instanceof Error ? error.message : "Failed to load rota template", "error");
     if (!current()) return;
@@ -6653,22 +7296,19 @@ async function renderRotaTemplate() {
   const locked = template.scope.is_locked;
   const latest = template.latest_run;
   const includedUnitNames = template.scope.included_units.map((unit) => unit.name).join(", ");
-  const minimumAvailable = safety.unit_day_safety.length
-    ? Math.min(...safety.unit_day_safety.map((row) => row.minimum_available_members))
-    : 0;
   const assignedSlotCount = template.slots.filter((slot) => slot.assignments.some(a=>["assigned","confirmed","draft"].includes(a.status.toLowerCase()))).length;
   const openSlotCount = Math.max(0, template.slots.length - assignedSlotCount);
   const selectedDutyKeys = latestTemplateDutyKeys(template);
   const selectedDutyCount = selectedDutyKeys.size;
   const selectedMandatoryCount = template.duty_options.filter((duty) => selectedDutyKeys.has(duty.key) && duty.is_mandatory).length;
   const selectedAdjustableCount = template.duty_options.filter((duty) => selectedDutyKeys.has(duty.key) && duty.is_adjustable).length;
-  const forcedReviewCount = template.summary.forced_review_slots ?? Number(latest?.summary?.forced_review_slots ?? 0);
   const selectedFairnessPolicy = String(latest?.summary?.allocation_fairness_policy ?? "hybrid");
 
   if (!current()) return;
   viewRoot.innerHTML = `
     ${generationReadiness(template)}
-    ${templateNextStep(locked, template.summary.total_slots, openSlotCount, safety.summary.hard_blocked_slots, rotaTemplateMonth)}
+    <div data-template-optional-next>${templateNextStep(locked, template.summary.total_slots, openSlotCount, safety.summary.hard_blocked_slots, rotaTemplateMonth)}</div>
+    <section class="panel" data-template-optional-status aria-label="Optional report recovery"></section>
     <form id="rota-template-form">
       <section class="page-toolbar" aria-label="Rota template actions">
         <p class="page-toolbar__context"><strong>${escapeHtml(formatMonth(rotaTemplateMonth))}</strong> · ${template.scope.included_units.length} ${template.scope.included_units.length === 1 ? "unit" : "units"}${includedUnitNames ? `: ${escapeHtml(includedUnitNames)}` : ""}</p>
@@ -6696,27 +7336,9 @@ async function renderRotaTemplate() {
         ${metricCard(template.summary.total_slots, "Template slots")}
         ${metricCard(`${assignedSlotCount}`, "Assigned slots")}
         ${metricCard(openSlotCount, "Open slots", undefined, template.summary.total_slots && openSlotCount ? "is-warn" : template.summary.total_slots ? "is-good" : "")}
-        ${metricCard(safety.summary.hard_blocked_slots, "Cannot assign", undefined, safety.summary.hard_blocked_slots ? "is-alert" : "")}
+        ${metricCard(unavailableReports.has(1) ? null : safety.summary.hard_blocked_slots, "Cannot assign", undefined, !unavailableReports.has(1) && safety.summary.hard_blocked_slots ? "is-alert" : "").replace('<article ', '<article data-template-optional-blocked ')}
       </section>
-      <details class="panel disclosure-panel template-figures">
-        <summary>All safety and suggestion figures</summary>
-        <div class="summary-grid four-col">
-          ${metricCard(template.summary.ready_slots, "Ready slots")}
-          ${metricCard(template.summary.needs_review_slots, "Need review")}
-          ${metricCard(forcedReviewCount, "Forced review")}
-          ${metricCard(safety.summary.total_slots, "Safety checked")}
-          ${metricCard(safety.summary.safe_slots, "Safe slots")}
-          ${metricCard(safety.summary.needs_review_slots, "Needs review")}
-          ${metricCard(minimumAvailable, "Minimum available")}
-          ${metricCard(safety.unit_day_safety.length, "Unit-day checks", "Distinct unit and date combinations checked for staffing safety.")}
-          ${metricCard(candidates.summary.slots_with_candidates, "Suggestion slots")}
-          ${metricCard(candidates.summary.eligible_candidates, "Safe suggestions")}
-          ${metricCard(candidates.summary.needs_review_candidates, "Review suggestions")}
-          ${metricCard(candidates.summary.blocked_candidates, "Blocked suggestions")}
-        </div>
-        <p class="template-figures__rule"><strong>Safe auto-fill rule.</strong> A slot is filled only when its call level is known and the chosen person has the same call level. Ambiguous call slots are left open for board review.</p>
-        <label class="checkbox-line"><input id="rota-template-fast-mode" type="checkbox" ${rotaTemplateFastMode ? "checked" : ""} /> Fast load: skip suggestions and auto-fill history when opening this page</label>
-      </details>
+      ${renderTemplateOptionalFigures(template, safety, candidates, unavailableReports)}
       ${rotaTemplateFastMode ? `<p class="inline-note">${badge("Fast load on", "info")} Suggestions and auto-fill history are skipped. Turn it off under “All safety and suggestion figures”.</p>` : ""}
       <details class="panel template-settings-panel">
         <summary>
@@ -6760,8 +7382,111 @@ async function renderRotaTemplate() {
         </div>
       </details>
     </form>
-    ${renderRotaTemplateOverview(template, safety, autoFill, stats)}
+    <div data-template-optional-overview>${renderRotaTemplateOverview(template, safety, autoFill, stats)}</div>
   `;
+  const reportsCurrent = () => current() && currentUser === reportAccount && activeView === "rota-template"
+    && rotaTemplateMonth === reportMonth && rotaTemplate === template && viewRoot === reportRoot && Boolean(reportRoot?.isConnected);
+  const paintReportStatus = () => {
+    if (!reportsCurrent()) return;
+    const status = reportRoot?.querySelector<HTMLElement>('[data-template-optional-status]');
+    if (!status) return;
+    status.hidden = !unavailableReports.size && !reportsRecovered;
+    status.setAttribute("aria-busy", String(retryingReports));
+    status.innerHTML = `<p role="status">${retryingReports ? "Retrying unavailable reports… Generation actions remain available."
+      : unavailableReports.size ? `${escapeHtml([...unavailableReports].map(index => optionalNames[index]).join(", "))} could not load. Generation actions remain available.`
+      : "Optional reports are up to date."}</p>${unavailableReports.size ? `<button type="button" data-retry-template-reports ${retryingReports ? "disabled" : ""}>${retryingReports ? "Retrying reports…" : "Retry unavailable reports"}</button>` : ""}`;
+    status.querySelector<HTMLButtonElement>('[data-retry-template-reports]')?.addEventListener("click", () => { void retryOptionalReports(); });
+  };
+  const replaceOptionalRegion = (region: HTMLElement, html: string) => {
+    const focused = document.activeElement instanceof HTMLElement && region.contains(document.activeElement)
+      ? document.activeElement : null;
+    const focusIdentity = focused ? {
+      tag: focused.tagName,
+      id: focused.id,
+      data: [...focused.attributes].filter(attribute => attribute.name.startsWith("data-")).map(attribute => [attribute.name, attribute.value]),
+      name: focused.getAttribute("name"),
+      role: focused.getAttribute("role"),
+      text: focused.textContent?.trim(),
+    } : null;
+    const openSummaries = [...region.querySelectorAll<HTMLDetailsElement>("details[open]")]
+      .map(details => details.querySelector(":scope > summary")?.textContent?.trim());
+    region.innerHTML = html;
+    region.querySelectorAll<HTMLDetailsElement>("details").forEach(details => {
+      if (openSummaries.includes(details.querySelector(":scope > summary")?.textContent?.trim())) details.open = true;
+    });
+    if (!focusIdentity) return;
+    const replacement = [...region.querySelectorAll<HTMLElement>("button, a, input, select, textarea, summary, [tabindex]")]
+      .find(element => element.tagName === focusIdentity.tag
+        && (focusIdentity.id ? element.id === focusIdentity.id
+          : focusIdentity.data.length ? focusIdentity.data.every(([name, value]) => element.getAttribute(name) === value)
+          : element.getAttribute("name") === focusIdentity.name && element.getAttribute("role") === focusIdentity.role
+            && element.textContent?.trim() === focusIdentity.text));
+    if (replacement && !replacement.matches(":disabled") && replacement.getClientRects().length) {
+      replacement.focus({ preventScroll: true });
+    } else {
+      const status = reportRoot?.querySelector<HTMLElement>('[data-template-optional-status]');
+      status?.setAttribute("tabindex", "-1");
+      status?.focus({ preventScroll: true });
+    }
+  };
+  async function retryOptionalReports() {
+    if (retryingReports || !reportsCurrent() || !unavailableReports.size) return;
+    const attempted = [...unavailableReports];
+    const status = reportRoot?.querySelector<HTMLElement>('[data-template-optional-status]');
+    const retryOwnedFocus = Boolean(status?.contains(document.activeElement));
+    retryingReports = true;
+    paintReportStatus();
+    if (retryOwnedFocus) { status?.setAttribute("tabindex", "-1"); status?.focus({ preventScroll: true }); }
+    const results = await Promise.allSettled(attempted.map(index => optionalReads[index]()));
+    if (!reportsCurrent()) return;
+    results.forEach((result, offset) => {
+      if (result.status !== "fulfilled") return;
+      const index = attempted[offset];
+      if (index === 0) rotaTemplateStats = result.value as typeof rotaTemplateStats;
+      if (index === 1) rotaSafety = result.value as typeof rotaSafety;
+      if (index === 2) rotaCandidates = result.value as typeof rotaCandidates;
+      if (index === 3) rotaAutoFill = result.value as typeof rotaAutoFill;
+      unavailableReports.delete(index);
+    });
+    retryingReports = false;
+    reportsRecovered = true;
+    const updatedSafety = rotaSafety || emptyRotaSafety(template);
+    const updatedCandidates = rotaCandidates || emptyRotaCandidates(reportMonth);
+    const figures = reportRoot?.querySelector<HTMLDetailsElement>('.template-figures');
+    if (figures) {
+      const values = document.createElement("template");
+      values.innerHTML = renderTemplateOptionalFigures(template, updatedSafety, updatedCandidates, unavailableReports);
+      const freshValues = values.content.querySelectorAll<HTMLElement>(".metric > span");
+      figures.querySelectorAll<HTMLElement>(".metric > span").forEach((value, index) => {
+        const fresh = freshValues[index];
+        if (!fresh) return;
+        value.textContent = fresh.textContent;
+        value.className = fresh.className;
+      });
+    }
+    const next = reportRoot?.querySelector<HTMLElement>('[data-template-optional-next]');
+    if (next) replaceOptionalRegion(next, templateNextStep(locked, template.summary.total_slots, openSlotCount, updatedSafety.summary.hard_blocked_slots, reportMonth));
+    const blocked = reportRoot?.querySelector<HTMLElement>('[data-template-optional-blocked]');
+    if (blocked) {
+      blocked.classList.toggle("is-alert", !unavailableReports.has(1) && Boolean(updatedSafety.summary.hard_blocked_slots));
+      const value = blocked.querySelector<HTMLElement>(":scope > span");
+      if (value) {
+        value.textContent = unavailableReports.has(1) ? "Not reported" : String(updatedSafety.summary.hard_blocked_slots);
+        value.classList.toggle("is-missing", unavailableReports.has(1));
+      }
+    }
+    const overview = reportRoot?.querySelector<HTMLElement>('[data-template-optional-overview]');
+    if (overview) replaceOptionalRegion(overview, renderRotaTemplateOverview(template, updatedSafety, rotaAutoFill, rotaTemplateStats));
+    const statusOwnedFocus = reportRoot?.querySelector('[data-template-optional-status]')?.contains(document.activeElement);
+    paintReportStatus();
+    if (statusOwnedFocus) {
+      const status = reportRoot?.querySelector<HTMLElement>('[data-template-optional-status]');
+      const retry = status?.querySelector<HTMLButtonElement>('[data-retry-template-reports]');
+      if (retry) retry.focus({ preventScroll: true });
+      else { status?.setAttribute("tabindex", "-1"); status?.focus({ preventScroll: true }); }
+    }
+  }
+  paintReportStatus();
 }
 
 function exchangeStatusLabel(status: string): string {
@@ -7275,7 +8000,7 @@ function reviewNextStep(summary: RotaReviewMonth["summary"], month: string): str
 
 async function renderRotaReview() {
   const current = renderTicket();
-  setHeader("Rota Review", "Step 3 · Resolve warnings and approve changes");
+  setHeader("Rota Review", "Step 4 · Resolve warnings and approve changes");
   if (!viewRoot) return;
   viewRoot.innerHTML = pageSkeleton("rota review");
   try {
@@ -7473,16 +8198,24 @@ const pendingPublishForms = new WeakSet<HTMLFormElement>();
 
 async function renderRotaPublish(publicationConfirmed = false) {
   const current = renderTicket();
-  setHeader("Publish & Export", "Step 4 · Approve and export the final rota");
+  const publishReadMonth = rotaPublishMonth;
+  const workflowRead = beginWorkflowRead();
+  setHeader("Publish & Export", "Step 5 · Approve and export the final rota");
   if (!viewRoot) return;
   viewRoot.innerHTML = pageSkeleton("publish checklist");
   try {
-    const result = await getRotaPublishMonth(rotaPublishMonth);
+    const result = await getRotaPublishMonth(publishReadMonth);
     if (!current()) return;
+    if (!workflowRead.current())
+      throw new Error("The checklist changed while loading. Retry to view the latest version.");
+    if (result.month !== publishReadMonth)
+      throw new Error("The returned checklist belongs to a different month. Retry this month before approving or exporting.");
     rotaPublish = result;
+    workflowRead.success(result);
   } catch (error) {
     showToast(error instanceof Error ? error.message : "Failed to load publish checklist", "error");
     if (!current()) return;
+    workflowRead.failure();
     viewRoot.innerHTML = emptyState({ title: publicationConfirmed ? "Publication recorded; checklist could not refresh" : "Publish unavailable", body: publicationConfirmed ? `The server confirmed publication for ${formatMonth(rotaPublishMonth)}. Retry loading the checklist to review the approval and export.` : "Unable to load final checklist and export controls. Retry loading this month.", tone: publicationConfirmed ? "info" : "danger", actionHtml: `<button type="button" class="primary" data-retry-publish="${publicationConfirmed ? "confirmed" : "initial"}">Retry checklist</button>` });
     return;
   }
@@ -8013,6 +8746,7 @@ function updateNavigationState(selectedView: string) {
 
 /** Marks a screen as current without loading it, for flows that render it themselves. */
 function showView(view: string) {
+  interruptWorkflowRead();
   activeView = view;
   viewSeq++;
   updateNavigationState(view);
@@ -8087,6 +8821,7 @@ function navigateToView(selectedView: string, historyMode: "push" | "replace" = 
   }
   if (selectedView !== activeView) viewScrollPositions.set(activeView, {x: window.scrollX, y: window.scrollY});
   cancelScrollRestore?.();
+  interruptWorkflowRead();
   activeView = selectedView;
   viewSeq++;
   writeRoute(selectedView, historyMode === 'replace');
@@ -8181,6 +8916,8 @@ function bindViewEvents() {
   viewEventController?.abort();
   viewEventController = new AbortController();
   const signal = viewEventController.signal;
+  bindLeaveCalendarFocus(viewRoot, signal);
+  bindUnitModalAccessibility(viewRoot, closeUnitModal, signal);
   document.querySelector<HTMLAnchorElement>('.skip-link')?.addEventListener('click', event => {
     event.preventDefault();
     if (!sectionTitle) return;
@@ -8653,24 +9390,48 @@ function bindViewEvents() {
         showToast("Call-wise minimum cannot be negative or greater than assigned members in that unit/call", "warning");
         return;
       }
-      setButtonLoading(btn, true, "Save Call-Wise Rules");
-      try {
-        const updated = await updateUnitSettings(unitId, {
+      if (!btn) return;
+      const settingsAccount = currentUser, settingsView = viewSeq, settingsRender = renderSeq;
+      const settingsMonth = unitManagement?.month, settingsRoot = viewRoot;
+      const settingsModal = form.closest("#unit-management-modal");
+      const current = () => settingsAccount === currentUser && activeView === "units"
+        && viewSeq === settingsView && renderSeq === settingsRender && viewRoot === settingsRoot
+        && Boolean(settingsRoot?.isConnected) && form.isConnected && unitMonth === settingsMonth
+        && unitModalUnitId === unitId && settingsModal === document.querySelector("#unit-management-modal");
+      await saveUnitSettingsWithRecovery(form, btn, {
+        current,
+        save: () => updateUnitSettings(unitId, {
           minimum_free_people: Math.floor(minimumFreePeople),
           call_minimums: callMinimums.map((row) => ({
             call_level: row.call_level,
             minimum_free_people: row.minimum_free_people,
           })),
-        }, unitManagement?.month);
-        units = units.map((unit) => (unit.id === updated.id ? updated : unit));
-        invalidateUnitManagementCache();
-        await loadUnitManagementData(true);
-        showToast("Unit call-wise rules saved", "success");
-        openUnitModal(updated.id);
-      } catch (error) {
-        showToast(error instanceof Error ? error.message : "Failed to save unit rule", "error");
-        resetButton(btn);
-      }
+        }, settingsMonth),
+        confirmed: () => { if (settingsAccount === currentUser) invalidateUnitManagementCache(); },
+        read: async () => {
+          const settingsReadGeneration = ++unitLoadSeq;
+          const result = await getUnitManagementMonth(settingsMonth!);
+          if (result.month !== settingsMonth)
+            throw new Error("The unit report returned a different month. Retry saved rules refresh.");
+          if (settingsReadGeneration !== unitLoadSeq)
+            throw new Error("A newer unit refresh started. Retry saved rules refresh.");
+          return result;
+        },
+        commit: (result) => {
+          unitManagement = result;
+          units = result.units;
+          unitAssignments = result.assignments;
+          unitManagementLoadedMonth = settingsMonth!;
+          unitManagementConfirmedAt = Date.now();
+          unitManagementRefreshError = "";
+          refreshUnitBoardReadback();
+          refreshUnitModalReadback(unitId, form);
+        },
+        refreshed: () => {
+          showToast("Unit call-wise rules saved", "success");
+          openUnitModal(unitId);
+        },
+      });
       return;
     }
     if (form.id === "unit-assignment-form") {
@@ -8760,36 +9521,116 @@ function bindViewEvents() {
     const target = event.target as HTMLElement;
     if (target.closest("[data-create-import-mapping]")) {
       if (mappingScanPending && activeView === 'mappings') return;
-      void openMappingCreator(() => { void loadMappings().then(loaded => { if (loaded && activeView === 'mappings') renderMappings(); }); }); return;
+      const mappingAccount = currentUser, mappingView = viewSeq, mappingRender = renderSeq;
+      const mappingRoot = viewRoot;
+      const mappingCurrent = () => currentUser === mappingAccount && activeView === 'mappings'
+        && viewSeq === mappingView && renderSeq === mappingRender && viewRoot === mappingRoot
+        && Boolean(mappingRoot?.isConnected);
+      void openMappingCreator(() => {
+        if (!mappingCurrent()) return;
+        void loadMappings(true, mappingCurrent).then(loaded => {
+          if (loaded && mappingCurrent()) renderMappings();
+        });
+      }); return;
     }
     if (target.closest("[data-manage-reference-catalog]")) {
       if (mappingScanPending && activeView === 'mappings') return;
+      const referenceTools = target.closest<HTMLElement>('[aria-label="Leave actions"], [aria-label="Unit actions"]');
+      const referenceOpener = referenceTools?.querySelector<HTMLElement>('details.row-menu > summary')
+        ?? target.closest<HTMLElement>('[data-manage-reference-catalog]');
+      referenceOpener?.focus({ preventScroll: true });
       void openReferenceCatalog(() => { invalidateUnitManagementCache(); }); return;
     }
     const recordButton = target.closest<HTMLElement>("[data-add-operational-record], [data-edit-operational-record]");
     if (recordButton) {
       const kind = (recordButton.dataset.addOperationalRecord || recordButton.dataset.recordKind) as "units" | "leave";
+      if (kind === "units") recordButton.focus({ preventScroll: true });
+      const recordAccount = currentUser;
+      const recordView = activeView;
+      const recordSequence = viewSeq;
+      const recordRender = renderSeq;
+      const recordRoot = viewRoot;
+      const recordMonth = kind === "units" ? unitMonth : leaveMonth;
+      // A dated Leave action intentionally closes its day overlay. Capture the
+      // retained parent only after that close, so its owner is the surviving view.
+      if (recordButton.dataset.initialDate) closeLeaveDayModal();
+      const recordParent = recordView === kind ? createDependentParentLifecycle(
+        "Changes saved. The current view will refresh while retaining unrelated edits.",
+      ) : undefined;
       void openRecordEditor(kind, undefined, recordButton.dataset.editOperationalRecord, isAdminUser(), () => {
+        if (recordAccount !== currentUser) return;
         invalidateUnitManagementCache();
-        if (kind === "leave") void renderLeave(); else void renderUnitManagement(true);
+        if (recordView !== kind || activeView !== recordView || viewSeq !== recordSequence
+            || renderSeq !== recordRender || viewRoot !== recordRoot || !recordRoot?.isConnected
+            || recordMonth !== (kind === "units" ? unitMonth : leaveMonth)) return;
+        if (recordParent) {
+          // The existing saved callback runs after the editor has actually closed.
+          // This one-shot notification has no lease or cancel lifecycle to leak.
+          try { recordParent.confirmed(); recordParent.closed(); }
+          catch { showToast("Changes are saved, but the view refresh could not start. Reopen this month to load current information.", "warning"); }
+        } else if (kind === "leave") void renderLeave(); else void renderUnitManagement(true);
       }, kind === "units"
         ? {unit_id: recordButton.dataset.initialUnit || "", posting_type: recordButton.dataset.initialPosting || "2ND_CALL", starts_on:unitManagement?.starts_on || `${unitMonth}-01`, ends_on:unitManagement?.ends_on || ""}
         : recordButton.dataset.initialDate ? { starts_on: recordButton.dataset.initialDate, ends_on: recordButton.dataset.initialDate } : undefined);
-      if (recordButton.dataset.initialDate) closeLeaveDayModal();
       return;
     }
     const operationalImport = target.closest<HTMLElement>("[data-open-normalized-import]");
     if (operationalImport) {
       const kind = operationalImport.dataset.openNormalizedImport as "units" | "leave";
-      void openOperationalImport(kind, kind === "units" ? unitMonth : leaveMonth, () => {
+      const importAccount = currentUser;
+      const importView = activeView;
+      const importSequence = viewSeq;
+      const importRoot = viewRoot;
+      const importMonth = kind === "units" ? unitMonth : leaveMonth;
+      let importRender = renderSeq;
+      // One dialog owns one deferred parent refresh. Multiple accepted batches
+      // mark this same owner dirty; final close coalesces its latest read.
+      const importParent = importView === kind ? createDependentParentLifecycle(
+        "Import changes saved. This view will refresh when the import review closes; unrelated edits are retained.",
+      ) : undefined;
+      void openOperationalImport(kind, importMonth, () => {
+        if (importParent) return;
+        if (importAccount !== currentUser) return;
         invalidateUnitManagementCache();
-        if (kind === "units") void renderUnitManagement(true);
-        else void renderLeave();
-      }, isAdminUser());
+        if (importView !== kind || activeView !== importView || viewSeq !== importSequence
+            || renderSeq !== importRender || viewRoot !== importRoot || !importRoot?.isConnected
+            || importMonth !== (kind === "units" ? unitMonth : leaveMonth)) return;
+        const refresh = kind === "units" ? renderUnitManagement(true) : renderLeave();
+        // A completed import may be followed by another file in this same dialog.
+        importRender = renderSeq;
+        void refresh;
+      }, isAdminUser(), importParent ? {
+        confirmed: () => { importParent.confirmed(); },
+        closed: () => { importParent.closed(); },
+      } : undefined);
       return;
     }
     if (target.closest("[data-add-department-unit], [data-manage-department-units]")) {
-      void openUnitRegistry(() => { invalidateUnitManagementCache(); void renderUnitManagement(true); }, undefined, Boolean(target.closest("[data-add-department-unit]")));
+      target.closest<HTMLElement>("[data-add-department-unit], [data-manage-department-units]")?.focus({ preventScroll: true });
+      const registryAccount = currentUser;
+      const registryView = activeView;
+      const registrySequence = viewSeq;
+      const registryRoot = viewRoot;
+      let registryRender = renderSeq;
+      const fallbackHost = registryRoot?.querySelector<HTMLElement>("#unit-fallbacks-host");
+      const registryParent = registryView === "units" ? createDependentParentLifecycle(
+        "Unit changes saved. This view will refresh when unit management closes; unrelated drafts are retained.",
+        fallbackHost ? () => prepareUnitFallbackReadback(fallbackHost) : undefined,
+      ) : undefined;
+      void openUnitRegistry(() => {
+        if (registryParent) return;
+        if (registryAccount !== currentUser) return;
+        invalidateUnitManagementCache();
+        if (registryView !== "units" || activeView !== registryView || viewSeq !== registrySequence
+            || renderSeq !== registryRender || viewRoot !== registryRoot || !registryRoot?.isConnected) return;
+        const refresh = renderUnitManagement(true);
+        // This registry retains ownership of its own refresh, so later saves can refresh again.
+        registryRender = renderSeq;
+        void refresh;
+      }, undefined, Boolean(target.closest("[data-add-department-unit]")), registryParent ? {
+        confirmed: () => { registryParent.confirmed(); },
+        closed: () => { registryParent.closed(); },
+      } : undefined);
       return;
     }
 
@@ -8808,13 +9649,13 @@ function bindViewEvents() {
       try {
         const candidate = kind === "invalid" ? invalidMembers.people[0]
           : members.find(m => kind === "positions" ? !latestDesignation(m) : !(m.effective_call_level ?? m.call_level));
-        if (candidate) void openMemberWorkspace(candidate.id, isAdminUser(), onMemberWorkspaceChanged, filteredMembers().map(m => m.id), kind === "positions" ? "roles" : "details");
+        if (candidate) void openMemberWorkspaceWithParent(candidate.id, isAdminUser(), onMemberWorkspaceChanged, filteredMembers().map(m => m.id), kind === "positions" ? "roles" : "details");
       } catch (error) { showToast(error instanceof Error ? error.message : "Unable to open member review", "error"); }
       return;
     }
     const profileButton = target.closest<HTMLButtonElement>("[data-open-member]");
     if (profileButton?.dataset.openMember) {
-      void openMemberWorkspace(profileButton.dataset.openMember, isAdminUser(), onMemberWorkspaceChanged, filteredMembers().map(m => m.id), profileButton.dataset.profileTab || "overview");
+      void openMemberWorkspaceWithParent(profileButton.dataset.openMember, isAdminUser(), onMemberWorkspaceChanged, filteredMembers().map(m => m.id), profileButton.dataset.profileTab || "overview");
       return;
     }
 
@@ -9087,6 +9928,7 @@ function bindViewEvents() {
 
     const leaveDayBtn = target.closest<HTMLButtonElement>("[data-leave-day]");
     if (leaveDayBtn?.dataset.leaveDay) {
+      leaveDayBtn.focus({ preventScroll: true });
       openLeaveDayModal(leaveDayBtn.dataset.leaveDay);
       return;
     }
@@ -9238,6 +10080,10 @@ function bindViewEvents() {
     if (adminDeleteMonth && isAdminUser()) {
       adminDeleteMonth.closest<HTMLDetailsElement>("details.row-menu")?.removeAttribute("open");
       if (adminDeleteMonth.dataset.deleteMonth === "leave") {
+        adminDeleteMonth.closest<HTMLElement>('[aria-label="Leave actions"]')
+          ?.querySelector<HTMLElement>('details.row-menu > summary')?.focus({ preventScroll: true });
+      }
+      if (adminDeleteMonth.dataset.deleteMonth === "leave") {
         await runAdminDelete("leave", { month: leaveMonth }, `Delete all leave for ${formatMonth(leaveMonth)}`, () => renderLeave());
       } else if (adminDeleteMonth.dataset.deleteMonth === "posting") {
         await runAdminDelete("posting", { month: unitMonth }, `Delete all postings for ${formatMonth(unitMonth)}`, refreshUnitsAfterDelete);
@@ -9267,7 +10113,15 @@ function bindViewEvents() {
 
     if (target.closest("[data-approve-month-leave]") && isAdminUser()) {
       const approvalMonth = leaveMonth;
+      const approvalAccount = currentUser;
+      const approvalView = activeView;
+      const approvalSequence = viewSeq;
+      const approvalRender = renderSeq;
+      const approvalRoot = viewRoot;
       openMonthlyLeaveApproval(approvalMonth, count => {
+        if (approvalAccount !== currentUser || approvalView !== "leave" || activeView !== approvalView
+            || viewSeq !== approvalSequence || renderSeq !== approvalRender || viewRoot !== approvalRoot
+            || !approvalRoot?.isConnected || leaveMonth !== approvalMonth) return;
         showToast(`${count} leave request${count === 1 ? "" : "s"} approved for ${formatMonth(approvalMonth)}`, "success");
         void renderLeave();
       });
@@ -9720,7 +10574,7 @@ function bindViewEvents() {
     const statusAction = target.closest<HTMLButtonElement>("[data-archive-member], [data-restore-member]");
     if (statusAction) {
       const id = statusAction.dataset.archiveMember || statusAction.dataset.restoreMember;
-      if (id) void openMemberWorkspace(id, isAdminUser(), onMemberWorkspaceChanged, filteredMembers().map(m => m.id), "details", statusAction.dataset.archiveMember ? "archived" : "active");
+      if (id) void openMemberWorkspaceWithParent(id, isAdminUser(), onMemberWorkspaceChanged, filteredMembers().map(m => m.id), "details", statusAction.dataset.archiveMember ? "archived" : "active");
       return;
     }
 
@@ -9985,14 +10839,14 @@ function bindViewEvents() {
   // The day overlay lives outside the inert app shell; retain its existing action handlers.
   document.addEventListener("click", event => {
     const target = event.target as HTMLElement;
-    if (target.closest("#rota-day-modal") && !viewRoot?.contains(target)) void handleViewClick(event);
+    if (target.closest("#rota-day-modal, #leave-day-modal") && !viewRoot?.contains(target)) void handleViewClick(event);
   }, { signal });
 
   document.addEventListener("click", (event) => {
     const target = event.target as HTMLElement;
     if (target.closest('[data-startup-retry]')) { void bootApp(); return; }
     const help = target.closest<HTMLButtonElement>('[data-help]');
-    if (help) {
+    if (help && !help.matches('.rr-help')) {
       const open = help.getAttribute('aria-expanded') === 'true';
       help.setAttribute('aria-expanded', String(!open));
       help.parentElement?.querySelector('[data-help-content]')?.remove();
@@ -10008,7 +10862,7 @@ function bindViewEvents() {
     }
     const memberLink = target.closest<HTMLButtonElement>("[data-open-member]");
     if (memberLink?.dataset.openMember && !viewRoot?.contains(memberLink) && !memberLink.closest("#rota-day-modal")) {
-      void openMemberWorkspace(memberLink.dataset.openMember, isAdminUser(), onMemberWorkspaceChanged, [], memberLink.dataset.profileTab || "overview");
+      void openMemberWorkspaceWithParent(memberLink.dataset.openMember, isAdminUser(), onMemberWorkspaceChanged, [], memberLink.dataset.profileTab || "overview");
       return;
     }
 
@@ -10059,7 +10913,7 @@ function bindViewEvents() {
       return;
     }
     const reviewOpener = target.closest<HTMLElement>("[data-open-review-action]");
-    if (reviewOpener?.dataset.openReviewAction) {
+    if (reviewOpener?.dataset.openReviewAction && !viewRoot?.contains(reviewOpener)) {
       openReviewActionModal(reviewOpener.dataset.openReviewAction);
       return;
     }
@@ -10088,7 +10942,7 @@ function bindViewEvents() {
 
   document.addEventListener("keydown", (event) => {
     const expandedHelp = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-help][aria-expanded="true"]');
-    if (event.key === 'Escape' && expandedHelp) {
+    if (event.key === 'Escape' && expandedHelp && !expandedHelp.matches('.rr-help')) {
       event.preventDefault();
       expandedHelp.setAttribute('aria-expanded', 'false');
       expandedHelp.parentElement?.querySelector('[data-help-content]')?.remove();
@@ -10517,6 +11371,8 @@ function resetPrivateSessionView() {
   failedExchangeCandidateSlots.clear();
   reviewActionContexts.clear();
   workflowStatus.clear();
+  workflowFreshness.clear();
+  workflowReadSeq++;
   Object.values(adminSelection).forEach(selection => selection.clear());
   renderLogin();
 }

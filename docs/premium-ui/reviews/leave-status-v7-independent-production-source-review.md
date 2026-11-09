@@ -1,0 +1,36 @@
+# Independent production-source review: leave status v7
+
+Reviewer `/root/remaining_icons_independent`; 29 October 2026 IST. **Source gate passes for bounded integration review, subject to actual-module runtime/fallback results. No whole-item acceptance or application change is made by this review.** Frozen candidate: `tmp/leave-status-v7/`.
+
+The independent AST/overlay check in `leave-status-v7-independent-source-check.json` passes with zero full-project TypeScript diagnostics. Removing exactly the new helper import, installation and intentional opener-focus line leaves 154 existing effect-call expressions, three assigned handlers and 330 other functions identical to the current baseline. The remaining main source is exactly the previously reviewed v5 presentation candidate after those three disclosed removals. API calls, confirmation/serialization, request shapes, permission decisions, data membership/counts and existing handlers retain their original logic. The premium stylesheet's existing prefix remains byte-identical.
+
+Hashes: main `cefb30a235398c3a00d77279b81b8b37a0a1c6206c73f30e4e914af94fab0f03`; theme `aa0d3c25681b83298cd53f45f009ed2f1f8e64b0f334903936d269c886d399d7`; helper `93bc00fb0c753ef342412e2f58730126d17918c09edfd6f3e58f72b43d1cc2b3`.
+
+## V6 findings resolved in source
+
+`leave-status-v7-independent-delta-check.json` independently reconstructs the complete v6-to-v7 helper from exactly the three required revisions and verifies that the theme is byte-identical. Cancellation captures the outstanding frame, clears `frame` and `stopPending`, aborts ownership, then feature-checks and catches native frame-cancellation failure. An uncancellable callback cannot scroll or reschedule because its first ownership check sees the aborted controller. Missing RAF always shows the actionable fallback. The one-second deadline before stable completion also always shows fallback. Only four stable, fitting geometry frames call `help(region,false)` and restore the saved original help text/role.
+
+The actual helper retains one pending focus owner, document-capture cancellation for newer pointer/wheel/keydown intent, focusout cancellation and existing view-lifetime AbortSignal disposal. Root rebinding, logout and view replacement already abort that lifetime. It rejects a changed active element, disconnected root/region/target, containment loss and hidden/inert ancestors before doing work. It compares full target/scroller geometry and client dimensions as well as scrollLeft, instead of assuming a stable scroll position means a stable layout.
+
+Scrolling is horizontal and instant, with the actual computed external outline and positive offset, an extra pixel of margin and outward integer rounding. Missing/throwing native scrollBy falls back to the existing scrollLeft property; failure enters the honest recovery path. No helper focus call, vertical scroll, API, persistence, timer or keyboard-default interception was found. New input listeners, bounded RAF settlement, instant scroll and help-status changes remain explicit presentation effects, not an assertion that every event listener is unchanged. Add this instant-reveal path to the current motion applicability record; test normal and reduced-motion behavior.
+
+## Intentional opener focus
+
+V7 adds exactly one `leaveDayBtn.focus({preventScroll:true})` immediately before the existing `openLeaveDayModal` call in the existing intentional day-activation branch. This changes focus deliberately, without changing the selected date or opening API path. It applies to every current `[data-leave-day]` launcher: month date, Day list entry and pressure-panel Review day. Fresh tests must cover all three, including touch/pointer and exact Escape/Close return; the bounded diagnostic alone does not prove every launcher.
+
+This reviewer verified all artifact hashes in `leave-pointer-opener-v6-diagnostic-review.json` and inspected the raw outcomes: four baseline/current-preview cases returned to old May 1 after clicking May 31, while four response-only repair cases returned to the clicked May 31 with no extra API/page errors. This supports the narrow source repair. It is a response experiment with observational shell tracing, not an already-integrated application pass. The current full v7 native matrix remains the authority for the production candidate.
+
+## Remaining gates and full-scope boundaries
+
+The actual helper differs from earlier injected diagnostics. Require its dedicated lifecycle/error suite: null/aborted lifetime, newer focus and document-wide manual intent inside/outside the region, abort/disconnect/hidden/inert/rerender cleanup, missing/throwing RAF and cancelRAF, missing/throwing/no-op scrollBy and scrollLeft, unstable-but-momentarily-fitting deadline, and exact help text/role recovery only after later stable success. Retain failures and distinguish deterministic clock/RAF or geometry fault injection from real native layout evidence.
+
+Finish the native three-engine normal/stress matrices with strict full target and computed-ring visibility, all dates, native keyboard scrolling/Tab, complete returned status words, correct counts, no-refetch view switching, modal outcomes and exact opener return. Re-run applicable regressions, held-source units/build and prior accepted-source applicability after integration. No source gate can substitute for these outcomes.
+
+Original145 and147 remain broader than this calendar change. The existing extra two-file work has improved legacy profile labels and editor guidance, but further applicability remains:
+
+- `reference-workspace.ts:608` still says “pending warns” in leave-status mapping guidance without operation qualification. Balance structural eligibility and template staffing use active overlapping leave; scope this copy before global147 acceptance.
+- Canonical `member-workspace.ts:616` says approved leave blocks availability and requested/imported leave needs review, with cancelled leave nonblocking. It does not say pending is universally assignable, but its availability wording must be checked alongside returned sessions and actual record history so half-day leave is not presented as full-day absence. Preserve exact record/session/status data.
+- Monthly approval is pending-only and uses escaped codeLabel text, while canonical member history uses statusLabel. Include their actual applicable status/unknown/missing-data cases in the global145 representation inventory rather than assuming the month calendar proves them.
+- Operational leave import review exposes raw editable `status` inside Edit row and raw normalization original/proposed values. Those stored values must remain exact. The collapsed row does not supply an explicit human-readable leave approval-state summary. Inspect the actual returned `row.values`, `row.after` and omissions before choosing an adjacent display label; never invent Approved/pending defaults or confuse import row readiness with leave approval. This is next work, not a reason to change backend normalization.
+
+This source gate does not accept original141/144/145/147, all260 upgrades, physical-device checks or native assistive technology. It approves no push, deployment or production data operation.

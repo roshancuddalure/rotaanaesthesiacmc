@@ -1,0 +1,55 @@
+{
+  "reviewer": "/root/registry_source_review_v10",
+  "reviewed_at_local_date": "2026-11-09",
+  "scope": "Exact isolated V10r2 source review against V10r1 and prior findings. No application edits or runtime/integration approval.",
+  "candidate_sha256_verified_from_bytes": {
+    "main.ts": "1017a2d1bed914294ed680cde5bc397c337094664cde3d445d68b05ca94a8949",
+    "reference-workspace.ts": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd",
+    "extra-duty.ts": "21edb8d59249b7c5be30d59c79f4e20b350930bdc16bd097e957a9c22650855f"
+  },
+  "disposition": "four_prior_findings_addressed_in_source; additional_error_path_focus_ordering_requires_resolution_and_runtime_coverage",
+  "prior_findings": [
+    {
+      "id": "REGISTRY-V10R1-OPTIONAL-READ-COUPLING",
+      "status": "source_addressed_runtime_pending",
+      "evidence": "main.ts:3338 converts optional reference-read rejection into a throwing commit closure. Primary result passes owner/generation/shape/month validation and paints before commit invocation. Catch retains GET-only retry and changed=true. Primary GET rejection still enters catch without painting. Optional failure still delays primary paint until the optional operation settles, bounded by its existing 15-second signal."
+    },
+    {
+      "id": "REGISTRY-V10R1-STALE-OWNER-ACCESSIBLE-LABEL",
+      "status": "source_addressed_runtime_pending",
+      "evidence": "extra-duty.ts:779 now generates the ol label using currentName(id); line821 refreshes the existing retained list's aria-label through setAttribute. This covers both immediate reference update and later repaint."
+    },
+    {
+      "id": "REGISTRY-V10R1-STALE-EMPTY-STATE",
+      "status": "source_addressed_runtime_pending",
+      "evidence": "extra-duty.ts:868 removes only the direct component empty-state paragraph when sorted.length is nonzero after snapshot merge. Existing zero-owner state remains unchanged."
+    },
+    {
+      "id": "REGISTRY-V10R1-MISSING-OWNER-NOTICE",
+      "status": "source_addressed_runtime_pending",
+      "evidence": "extra-duty.ts:851 includes draft.keys() alongside referenced target IDs in missing detection. Retained unavailable owner rows now trigger the explicit incomplete-reference notice."
+    }
+  ],
+  "new_findings": [
+    {
+      "id": "REGISTRY-V10R2-DEFERRED-ERROR-SKIPS-FOCUS-REPAIR",
+      "severity": "medium",
+      "locations": ["main.ts:3356", "main.ts:3357"],
+      "basis": "source-confirmed control flow; no reviewer runtime reproduction",
+      "problem": "The deferred optional-error commit throws after primary paint but before the existing disconnected-parent-focus repair. If the primary board/modal repaint removed the focused parent control, this error path skips the repair and may leave focus on body.",
+      "recommended_repair": "Run the existing bounded parentOwnedFocus/disconnected/body focus repair before invoking the potentially throwing commit, or protect that repair in a narrowly scoped finally. Preserve the guards that prevent focus stealing when the user moved to a surviving control.",
+      "required_runtime_case": "Delay parent reads, move focus to a parent unit card/table/modal control that primary repaint replaces, then complete primary read successfully while rejecting fallback read. Confirm visible primary changes, retained fallback draft, recoverable error notice, and focus on an appropriate surviving status/control rather than body. Also test a newer surviving focus target remains focused."
+    }
+  ],
+  "effect_review": {
+    "actual_delta": "Exactly the five documented edits-from-v10r1: one optional-read catch, generated owner list label, retained list label, missing owner classification, and narrow empty-state removal. reference-workspace.ts bytes unchanged.",
+    "reported_typecheck": "Inspected typecheck-effect-proof.json: no diagnostics; 60 main, 18 reference and 6 extra-duty selected effect expressions exact. Reviewer did not rerun that checker.",
+    "no_new_mutation_change_in_r2": true,
+    "no_backend_or_api_wrapper_edit_in_r2": true
+  },
+  "limits": [
+    "This artifact supplies source findings only. Candidate V10r1 six passing browser cases do not establish V10r2 recovery, create, close, owner or focus behavior.",
+    "All broader runtime cases requested in the V10r1 independent source review remain pending unless separately executed and recorded.",
+    "No original159 completion, application integration or physical-device/native-assistive-technology approval is implied."
+  ]
+}

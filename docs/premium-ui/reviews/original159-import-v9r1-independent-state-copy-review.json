@@ -1,0 +1,42 @@
+{
+  "recorded_at_utc": "2026-11-09T09:41:53.949608+00:00",
+  "reviewer": "/root/stage161_final_review",
+  "application_changed": false,
+  "browser_executed": false,
+  "acceptance_ledger_changed": false,
+  "decision": "recommend_runtime_verification_no_remaining_source_copy_blocker",
+  "scope": "Independent V9r1 minimal importer state/copy source review; no source authorship or browser execution by reviewer. Main96ab/member105cc unchanged; importer1ccbc over frozenV9import7eac.",
+  "resolved_finding": {
+    "id": "IMPORT-V9-CLOSE-UNCERTAIN-RESULT-001",
+    "status": "source_corrected_runtime_pending",
+    "proof": "Independently reverse exactly two literal replacements from V9r1 to byte-identical frozenV9. Both warning branches now refer to uncertain Apply history without asserting pending request never persisted. No source byte outside those warning strings changed fromV9."
+  },
+  "conditions_checked": [
+    "Prior-confirmed warning preserves known saved history and directs history check for any uncertain later Apply. No-prior-confirmed warning also avoids declaring no changes were applied after a failed/ambiguous first request.",
+    "hasConfirmedImport remains false until accepted await apply response; assignment precedes notify/ownsApply/render. New file/settings/preview do not erase known accepted history.",
+    "dirtyPreview resets finished=false, so current pending settings/mapping choice is distinct from confirmed prior history and existing close/unload guards protect it. Busy locks, draftVersion/ownsApply gates and uncertain Apply recovery logic stay unchanged.",
+    "Main/import/member request/storage/serialization effects exactly match companion proof; intentional confirmation text difference only. Full virtualTypeScript diagnostics0.",
+    "No callback payload, request target, preview/review ID, exclusion, acknowledgment, permission, scheduling, retry or export semantics change. V8 deferred confirmed/final-close parent lifecycle source review remains applicable with known nested-reference scope gaps."
+  ],
+  "runtime_required": [
+    "Six original mode-change loss diagnostic triggers must now retain dialog/mode/CSV after discard refusal, with one prior accepted Apply and zero premature parent GET.",
+    "Normal completed close with no newer draft, pending dirty close dismissal/acceptance, no-accepted-import cancel/close and multiple batches; confirm one final current parent read and no mutation replay.",
+    "First uncertain Apply and accepted first batch then uncertain second Apply: appropriate warning branch, preserved draft after refusal, no claim of unobserved persistence, and parent known-history notification only for accepted response.",
+    "Original import lifecycle48/owner boundaries and GET-only parent recovery must run on final immutable source before integration."
+  ],
+  "limitations": [
+    "Source approval does not certify runtime behavior, whole159 or full goal.",
+    "Nested reference/unit mutation without applying import remains separate original159 work.",
+    "Existing uncertainty policy is preserved; history check is guidance, not an invented backend reconciliation or automatic retry."
+  ],
+  "evidence_sha256": {
+    "tmp/profile-parent-refresh-v9r1/manifest.json": "e3fdfcb7a043f53d2776b61149875ef67edd488788fa558746976d64bb9c91b3",
+    "tmp/profile-parent-refresh-v9r1/verification.json": "7bcf8b083a822e3fd28367b0e996bf8a39660049fa03f23d7ccc230feaca9304",
+    "tmp/profile-parent-refresh-v9r1/operational-import.ts": "1ccbcf4181330a5f66c59b0723ec02f878a268b6b3030aa99b177de1b7070355",
+    "tmp/profile-parent-refresh-v9r1/main.ts": "96ab7c4c6b14d41736ad4153313b1270677e324fcab6b11c3a5b0d8ac3e47a0b",
+    "tmp/profile-parent-refresh-v9r1/member-workspace.ts": "105cc1d91ea4815d565ad4859fc01412cf576a3203c07834f4010e3fef7ef1a5",
+    "tmp/profile-parent-refresh-v9/manifest.json": "bf781af1639206a1a09a1170507f9170fc68b49fa57c6fc8c23621723d4026de",
+    "docs/premium-ui/reviews/original159-import-v9-independent-state-copy-review.json": "a9cdfb648c92290e0b319dba38daf91ccd2edcf3bd9bad2a9d17c1d0b62a827a",
+    "docs/premium-ui/qa-original159-import-v8-postcomplete-mode-diagnostic.json": "977fc5a8036e01008c04a6bf8546ee8b4fdd845a0b78875fc2a3906d6e4333c8"
+  }
+}

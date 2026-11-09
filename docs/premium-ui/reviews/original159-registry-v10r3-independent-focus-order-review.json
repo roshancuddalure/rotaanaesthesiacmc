@@ -1,0 +1,68 @@
+{
+  "recorded_at_utc": "2026-11-09T10:27:19.621007+00:00",
+  "reviewer": "/root/registry_focus_r3_review",
+  "scope": "Independent read-only exact r2-to-r3 focus/error-ordering source review and lifecycle-test proof-limit inspection. No browser execution, application edits, or integration approval.",
+  "bindings": {
+    "main.ts": {
+      "r2_sha256": "1017a2d1bed914294ed680cde5bc397c337094664cde3d445d68b05ca94a8949",
+      "r3_sha256": "9f5359ad9e8014098bc12c8ed3f9e1c6b1a06d1a4f92797b7f9da24bfba6e6b8",
+      "applied_sha256": "96ab7c4c6b14d41736ad4153313b1270677e324fcab6b11c3a5b0d8ac3e47a0b"
+    },
+    "reference-workspace.ts": {
+      "r2_sha256": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd",
+      "r3_sha256": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd",
+      "applied_sha256": "78c231ea1d5ab15bd3a4b5f2f8265529451a51bacc68d2a4aac1708a4be30292"
+    },
+    "extra-duty.ts": {
+      "r2_sha256": "21edb8d59249b7c5be30d59c79f4e20b350930bdc16bd097e957a9c22650855f",
+      "r3_sha256": "21edb8d59249b7c5be30d59c79f4e20b350930bdc16bd097e957a9c22650855f",
+      "applied_sha256": "52084624922de21f2a0fa478eb1ca4c883cdeb66dd1d05147d0f21fe806bc7ea"
+    }
+  },
+  "test": {
+    "path": "frontend\\tests\\premium-original159-registry-v10r3-lifecycle.browser.mjs",
+    "sha256": "135befe40ca812d0958e361c90288ea67f445f63f692d39abee6eb254c317a24"
+  },
+  "exact_main_delta": "--- v10r2/main.ts\n+++ v10r3/main.ts\n@@ -3353,9 +3353,9 @@\n           for (const selector of [\".audit-chip-row\", \".unit-modal-validation\", \".unit-editor-list\"])\n             patchProfileParentRegion(originalUnitModal.querySelector(selector), template.content.querySelector(selector));\n         }\n-        commitReferences?.();\n         if (parentOwnedFocus && activeBeforePaint && !activeBeforePaint.isConnected && document.activeElement === document.body)\n           message.focus({preventScroll:true});\n+        commitReferences?.();\n       } else {\n         const [calendar, requests, pressure] = await Promise.all([getLeaveCalendar(month), getLeaveRequests(month), getLeavePressure(month)]);\n         if (!owned()) return;\n",
+  "disposition": "identified_r2_error_ordering_addressed_in_source; targeted_cross_browser_focus_runtime_proof_still_required",
+  "source_conclusions": [
+    "The only r2-to-r3 main.ts edit moves commitReferences?.() immediately after the existing guarded removed-parent focus recovery. Reference and fallback component bytes are identical to r2.",
+    "Primary read still passes owner, latest-read, response-shape and month checks before state commit or repaint. The focus guard remains synchronous after repaint and before optional-reference commit can throw.",
+    "If repaint disconnects the active parent control and leaves activeElement equal to body, the status paragraph receives focus before an optional-reference error enters catch. Catch then updates that same paragraph with truthful saved-but-stale error and exposes GET-only retry.",
+    "If the user has focused a surviving connected control, activeBeforePaint remains connected and the recovery branch does not run. If a nested painter already recovered focus, the body check also prevents stealing it.",
+    "The change does not alter endpoints, write expressions, request bodies, retry ownership, or permission guards. This is a narrow comparison, not certification of the complete older candidate delta."
+  ],
+  "lifecycle_test_proof_limits": [
+    "The authored matrix has 12 scenarios by three engines by two widths, intended 72 contexts. This reviewer did not run it or infer its result.",
+    "It asserts retained fallback host/row/select identity, dirty order/save state, labels including later repaint, new owner creation, first-unit empty-state removal, GET counts, local write counts, deferred final-close reads, dirty-close refusal, retry, chosen board filters and pageerror absence.",
+    "It neither delays parent responses behind an explicit gate nor deliberately focuses a newer board action or surviving control while the initial parent read is in flight.",
+    "It contains no activeElement assertions. Retained select identity is not equivalent to retained keyboard focus or selected-value proof; its existing dirty parent draft contains both available target IDs, so that parent select may have no enabled choices.",
+    "The local 503 and malformed modes establish only their actual asserted recovery paths; they do not establish focus behavior of delayed initial-close optional-read failure, native assistive technology, physical devices, account/month/route supersession, or busy fallback-save interleaving."
+  ],
+  "proposed_targeted_cases": [
+    {
+      "case": "initial-close optional-read failure with replaced focus",
+      "matrix": "Chromium, Firefox, WebKit at 320 and 1280; six contexts",
+      "procedure": [
+        "Reuse the actual registry rename and dirty C,B fallback order setup. Gate both post-close monthly-board and complete-fallback GET handlers with explicit promises; record that both requests have arrived. Do not use elapsed sleeps as request-order evidence.",
+        "After actual registry close, focus a visible button[data-open-unit-modal=\"registry-b\"] inside [data-unit-board-card=\"unit:registry-b\"] without clicking. Save its exact element reference and assert document.activeElement equals it.",
+        "Release valid renamed monthly-board data and reject the gated fallback GET with a bounded 503. Await the visible saved-but-could-not-refresh notice and enabled retry.",
+        "Assert the old focused action is disconnected, the board shows the confirmed rename, fallback host/row/order C,B and dirty Save state survive, and document.activeElement is the refresh panel role=status paragraph rather than body.",
+        "Click GET-only retry, return valid full fallback data, assert success without a second mutation and with expected GET counts. Preserve actual request order and active-element evidence in a unique report."
+      ]
+    },
+    {
+      "case": "initial-close optional-read failure with newer surviving focus",
+      "matrix": "Chromium, Firefox, WebKit at 320 and 1280; six contexts per focus target",
+      "procedure": [
+        "Use the same explicit post-close GET gate and confirmed rename. Focus the surviving input[data-unit-board-search] after both requests begin, set a nonempty query and selection range, and hold its exact node reference.",
+        "Release valid board data and fallback 503. Assert unchanged exact input node, value, selection range and document.activeElement after error notice and retry exposure. Assert old fallback draft/order survives and the write count remains one.",
+        "Optionally repeat with the surviving select[data-unit-board-campus], retaining a nonempty campus value. For fallback select focus coverage, add a fourth fixture unit so an available unselected choice exists; explicitly assert select is enabled before focusing, retain its chosen value and exact node, and test successful reference commit as well as failure.",
+        "Do not count a retained disabled select or a selected-value-only assertion as proof of focused-control retention."
+      ]
+    }
+  ],
+  "limitations": [
+    "No browser run by this reviewer. No original159 or whole-plan acceptance. No production or backend operations."
+  ]
+}

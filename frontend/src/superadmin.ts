@@ -158,6 +158,7 @@ export function installSuperadminActions(options: {
     const publish = target?.closest<HTMLButtonElement>("[data-superadmin-publish-anyway]");
     const button = allocate ?? publish;
     if (!button || button.disabled || !isSuperadmin(options.role())) return;
+    button.focus({ preventScroll: true });
     event.preventDefault();
     event.stopPropagation();
     if (allocate) {

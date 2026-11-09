@@ -146,6 +146,15 @@
             "docs/premium-ui/acceptance-audit-current.json"
           ],
           "limit": "Review-only incomplete snapshot. 18readonly screens oneemulatedwidth/theme; no fullallaction/release certification. No accepted priorrelease or isolatedsource rollback artifact."
+        },
+        {
+          "recorded_at_utc": "2026-11-03T07:59:13.483344+00:00",
+          "scope": "3November current source reconciliation and exact-hash supplemental recovery of missing historical baseline copies.",
+          "evidence": [
+            "docs/premium-ui/reviews/source-preservation-20261103/reconciliation.json",
+            "docs/premium-ui/reviews/source-preservation-20261103/baseline-copy-supplement.json"
+          ],
+          "limit": "318historicalfiles compared/87differences recorded;11of24missingcopies recoveredonlybyoriginalmanifesthash,13remainmissing. Originalbaseline untouched; fullconcurrent-attribution and missingcopies prevent wholeitem2acceptance."
         }
       ],
       "acceptance_definition": {
@@ -1089,7 +1098,7 @@
       },
       "acceptance": {
         "status": "accepted",
-        "review": "docs/premium-ui/reviews/accepted-items-10-29-34-35-effective-identity-revalidation.json",
+        "review": "docs/premium-ui/reviews/accepted-items-10-29-34-35-registry-v10r4-revalidation.json",
         "scope": "Original documentary definition/classification deliverable only."
       }
     },
@@ -1184,7 +1193,7 @@
       },
       "acceptance": {
         "status": "accepted",
-        "review": "docs/premium-ui/reviews/accepted-items-11-13-effective-identity-revalidation.json",
+        "review": "docs/premium-ui/reviews/accepted-items-11-13-registry-v10r4-revalidation.json",
         "scope": "Original documentary deliverable only; operational runtime acceptance remains separate."
       }
     },
@@ -1358,7 +1367,7 @@
       },
       "acceptance": {
         "status": "accepted",
-        "review": "docs/premium-ui/reviews/accepted-items-11-13-effective-identity-revalidation.json",
+        "review": "docs/premium-ui/reviews/accepted-items-11-13-registry-v10r4-revalidation.json",
         "scope": "Original documentary deliverable only; operational runtime acceptance remains separate."
       }
     },
@@ -1457,7 +1466,7 @@
     {
       "item_id": 15,
       "requirement": "Establish a defect register that separates verified bugs, design improvements, historical findings and open investigation questions.",
-      "implementation_status": "partial",
+      "implementation_status": "complete",
       "files": [],
       "action_ids": [],
       "screenshots": [],
@@ -1541,12 +1550,53 @@
             "tools/verify_frontend_acceptance_pass.py"
           ],
           "limit": "Reviewcoverageof521conditions,nofreshallworkflowexecutionorautomaticacceptance."
+        },
+        {
+          "recorded_at_utc": "2026-10-29T03:06:20.618754+00:00",
+          "scope": "Monthly unit record totals labelled descriptively; pending/requested imports are not presented as confirmed absence or daily availability. Missing/invalid counts distinguished from true zero. Unit-only neutral chips, readable title and 44px header controls.",
+          "evidence": [
+            "docs/premium-ui/reviews/unit-monthly-v3-integrated-execution.json",
+            "docs/premium-ui/reviews/unit-monthly-v3-prior40-applicability.json",
+            "docs/premium-ui/reviews/unit-monthly-v3-table-applicability.json"
+          ],
+          "limit": "36 applied browser workflows,114 units,held build and prior40 applicability. No whole145147 acceptance; nested modal focus/Tab/Escape defects remain separately open."
+        },
+        {
+          "recorded_at_utc": "2026-10-29T04:12:16.860547+00:00",
+          "scope": "Applied unit focus/Tab/Escape/exact opener and upper popup ownership repair,69browser contexts including real native Edit/pending/dirty safeguards/settings payload/account teardown.",
+          "evidence": [
+            "docs/premium-ui/reviews/unit-focus-v9-integrated-execution.json",
+            "docs/premium-ui/reviews/unit-focus-v9-prior40-applicability.json"
+          ],
+          "limit": "Bounded lifecycle repair, not whole requirement acceptance. NativeAT/physical pending; latest V9 authored/tested/adjudicated root."
+        },
+        {
+          "recorded_at_utc": "2026-10-30T09:20:28.610484+00:00",
+          "scope": "Current unit-only native opener,role and exact June/July create/edit context;60applied contexts,114units,heldbuild.",
+          "evidence": [
+            "docs/premium-ui/reviews/unit-create-opener-integrated-execution.json",
+            "docs/premium-ui/reviews/unit-create-opener-prior44-applicability.json"
+          ],
+          "limit": "No backend persistence or authorization claim.150156 independent acceptance assessment pending;153rulecontext gap separately audited."
+        },
+        {
+          "recorded_at_utc": "2026-11-09T10:42:56.624520+00:00",
+          "scope": "Independent documentary groundwork proposal; current sharedregister/queue not replaced.",
+          "evidence": [
+            "docs/premium-ui/reviews/defect-register-15-reconciliation-proposal-20261109.json",
+            "docs/premium-ui/reviews/defect-register-15-four-snapshot-followup-20261109.json"
+          ],
+          "limit": "Proposal/sourceaudit, not requirementacceptance or actualnewruntimechecks."
         }
       ],
       "acceptance_definition": {
         "path": "docs/premium-ui/acceptance-criteria/items-001-086.json",
         "item_id": 15,
         "policy": "Definition only; evidence candidates and conditions are not passed outcomes."
+      },
+      "acceptance": {
+        "review": "docs/premium-ui/reviews/original015-documentary-register-acceptance-20261109.json",
+        "scope": "Documentarysearchableclassifiedregisteronly;trackedbugresolutionnotimplied."
       }
     },
     {
@@ -2002,7 +2052,7 @@
     {
       "item_id": 19,
       "requirement": "Prioritize broken actions, inaccessible controls, hidden content and lost drafts ahead of purely decorative refinements.",
-      "implementation_status": "partial",
+      "implementation_status": "complete",
       "files": [
         "frontend/src/workspace-load-state.ts",
         "frontend/src/record-workspace.ts",
@@ -2239,12 +2289,24 @@
             "docs/premium-ui/reviews/member-create-disclosure-current.json"
           ],
           "limit": "Bounded native creation/draft/read-back outcomes only; full requirement status and signoff unchanged."
+        },
+        {
+          "recorded_at_utc": "2026-11-09T10:42:56.624520+00:00",
+          "scope": "Independent documentary groundwork proposal; current sharedregister/queue not replaced.",
+          "evidence": [
+            "docs/premium-ui/reviews/original019-priority-queue-proposal-20261109.json"
+          ],
+          "limit": "Proposal/sourceaudit, not requirementacceptance or actualnewruntimechecks."
         }
       ],
       "acceptance_definition": {
         "path": "docs/premium-ui/acceptance-criteria/items-001-086.json",
         "item_id": 19,
         "policy": "Definition only; evidence candidates and conditions are not passed outcomes."
+      },
+      "acceptance": {
+        "review": "docs/premium-ui/reviews/original019-documentary-priority-acceptance-20261109.json",
+        "scope": "Documentary activequeueprioritizationonly;noqueuedimplementationcompletion."
       }
     },
     {
@@ -2398,8 +2460,11 @@
     {
       "item_id": 22,
       "requirement": "Introduce a shared semantic-color map separating brand identity, interaction feedback, scheduling status, chart categories and destructive actions.",
-      "implementation_status": "partial",
-      "files": [],
+      "implementation_status": "complete",
+      "files": [
+        "docs/premium-ui/semantic-color-register-20261109-item022.md",
+        "docs/premium-ui/reviews/semantic-color-register-20261109-item022-source-map.json"
+      ],
       "action_ids": [],
       "screenshots": [],
       "tests": [],
@@ -2462,12 +2527,30 @@
             "docs/premium-ui/style-inventory.md"
           ],
           "limit": "Scoped layout/navigation results and static inventory; no full requirement acceptance."
+        },
+        {
+          "recorded_at_utc": "2026-11-09T09:17:28.667153+00:00",
+          "scope": "Exact original22 definition accepted after independent/current-source review.",
+          "evidence": [
+            "docs/premium-ui/reviews/item022-semantic-color-definition-acceptance.json",
+            "docs/premium-ui/semantic-color-register-20261109-item022.md",
+            "docs/premium-ui/reviews/semantic-color-register-20261109-item022-source-map.json",
+            "docs/premium-ui/reviews/semantic-color-register-20261109-item022-independent-review.json"
+          ],
+          "limit": "No runtime21/23–28 or whole260 completion inferred."
         }
       ],
       "acceptance_definition": {
         "path": "docs/premium-ui/acceptance-criteria/items-001-086.json",
         "item_id": 22,
         "policy": "Definition only; evidence candidates and conditions are not passed outcomes."
+      },
+      "acceptance": {
+        "status": "accepted",
+        "review": "docs/premium-ui/reviews/accepted-items-22-registry-v10r4-revalidation.json",
+        "scope_type": "documentary_deliverable_only",
+        "reviewer": "/root",
+        "recorded_at_utc": "2026-11-09T09:17:28.667153+00:00"
       }
     },
     {
@@ -3107,7 +3190,7 @@
       },
       "acceptance": {
         "status": "accepted",
-        "review": "docs/premium-ui/reviews/accepted-items-10-29-34-35-effective-identity-revalidation.json",
+        "review": "docs/premium-ui/reviews/accepted-items-10-29-34-35-registry-v10r4-revalidation.json",
         "scope": "Original documentary definition/classification deliverable only."
       }
     },
@@ -3505,7 +3588,7 @@
       },
       "acceptance": {
         "status": "accepted",
-        "review": "docs/premium-ui/reviews/accepted-items-10-29-34-35-effective-identity-revalidation.json",
+        "review": "docs/premium-ui/reviews/accepted-items-10-29-34-35-registry-v10r4-revalidation.json",
         "scope": "Original documentary definition/classification deliverable only."
       }
     },
@@ -3609,7 +3692,7 @@
       },
       "acceptance": {
         "status": "accepted",
-        "review": "docs/premium-ui/reviews/accepted-items-10-29-34-35-effective-identity-revalidation.json",
+        "review": "docs/premium-ui/reviews/accepted-items-10-29-34-35-registry-v10r4-revalidation.json",
         "scope": "Original documentary definition/classification deliverable only."
       }
     },
@@ -3772,7 +3855,7 @@
     {
       "item_id": 38,
       "requirement": "Provide reliable local font and icon fallbacks so blocked resources cannot erase labels or alter control usability.",
-      "implementation_status": "partial",
+      "implementation_status": "complete",
       "files": [],
       "action_ids": [],
       "screenshots": [],
@@ -3850,12 +3933,17 @@
         "path": "docs/premium-ui/acceptance-criteria/items-001-086.json",
         "item_id": 38,
         "policy": "Definition only; evidence candidates and conditions are not passed outcomes."
+      },
+      "acceptance": {
+        "status": "accepted",
+        "review": "docs/premium-ui/reviews/accepted-items-38-registry-v10r4-revalidation.json",
+        "scope": "exact_runtime_requirement"
       }
     },
     {
       "item_id": 39,
       "requirement": "Define restrained motion durations and a reduced-motion alternative for every nonessential transition or loading treatment.",
-      "implementation_status": "partial",
+      "implementation_status": "complete",
       "files": [],
       "action_ids": [],
       "screenshots": [],
@@ -3923,6 +4011,11 @@
         "path": "docs/premium-ui/acceptance-criteria/items-001-086.json",
         "item_id": 39,
         "policy": "Definition only; evidence candidates and conditions are not passed outcomes."
+      },
+      "acceptance": {
+        "status": "accepted",
+        "review": "docs/premium-ui/reviews/accepted-items-39-registry-v10r4-revalidation.json",
+        "scope": "exact_runtime_requirement"
       }
     },
     {
@@ -10341,7 +10434,7 @@
       },
       "acceptance": {
         "status": "accepted",
-        "review": "docs/premium-ui/reviews/accepted-items-101-effective-identity-revalidation.json",
+        "review": "docs/premium-ui/reviews/accepted-items-101-registry-v10r4-revalidation.json",
         "scope": "Original tableclassification/mobiledecision documentarydeliverable only; runtime102–105separate."
       }
     },
@@ -11155,7 +11248,7 @@
     {
       "item_id": 111,
       "requirement": "Consolidate dense mobile filters into an expandable panel while keeping applied-filter count visible in the main toolbar.",
-      "implementation_status": "partial",
+      "implementation_status": "complete",
       "files": [],
       "action_ids": [],
       "screenshots": [],
@@ -11227,7 +11320,12 @@
           ],
           "limit": "Explicit143/146/148acceptancesseparate;othercandidatesretainspecificgaps."
         }
-      ]
+      ],
+      "acceptance": {
+        "status": "accepted",
+        "review": "docs/premium-ui/reviews/accepted-items-111-registry-v10r4-revalidation.json",
+        "scope": "exact_runtime_requirement"
+      }
     },
     {
       "item_id": 112,
@@ -11754,7 +11852,7 @@
       },
       "acceptance": {
         "status": "accepted",
-        "review": "docs/premium-ui/reviews/accepted-items-116-effective-identity-revalidation.json",
+        "review": "docs/premium-ui/reviews/accepted-items-116-registry-v10r4-revalidation.json",
         "scope": "Conditionalvirtualizationrequirementnottriggered;currentexplicitpagination/disclosure isnotwindowing."
       }
     },
@@ -12195,7 +12293,7 @@
     {
       "item_id": 122,
       "requirement": "Make member identity, designation, effective call level and active status clear before secondary history or administrative metadata.",
-      "implementation_status": "partial",
+      "implementation_status": "complete",
       "files": [],
       "action_ids": [],
       "screenshots": [],
@@ -12296,12 +12394,26 @@
             "docs/premium-ui/qa-legacy-timeline.json"
           ],
           "limit": "72workflowswithin6contexts,36mockPUTs;nofull122/128/133acceptance."
+        },
+        {
+          "recorded_at_utc": "2026-10-24T10:27:29.083574+00:00",
+          "scope": "Canonical dated designation and compact identity verification",
+          "evidence": [
+            "docs/premium-ui/reviews/designation-header-current.json",
+            "docs/premium-ui/qa-profile-designation-header.json"
+          ],
+          "limit": "No whole requirement completion; remaining legacy and broader hierarchy scope explicit."
         }
       ],
       "acceptance_definition": {
         "path": "docs/premium-ui/acceptance-criteria/items-087-173.json",
         "item_id": 122,
         "policy": "Definition only; evidence candidates and conditions are not passed outcomes."
+      },
+      "acceptance": {
+        "status": "accepted",
+        "review": "docs/premium-ui/reviews/accepted-items-122-126-128-130-registry-v10r4-revalidation.json",
+        "scope": "exact_runtime_requirement"
       }
     },
     {
@@ -12503,7 +12615,7 @@
       },
       "acceptance": {
         "status": "accepted",
-        "review": "docs/premium-ui/reviews/accepted-items-123-124-125-effective-identity-revalidation.json",
+        "review": "docs/premium-ui/reviews/accepted-items-123-124-125-registry-v10r4-revalidation.json",
         "scope": "Exactoriginalmemberprofiletabconditions;non-tablinearlegacyworkflowapplicabilityexplicitlyreviewed."
       }
     },
@@ -12621,7 +12733,7 @@
       },
       "acceptance": {
         "status": "accepted",
-        "review": "docs/premium-ui/reviews/accepted-items-123-124-125-effective-identity-revalidation.json",
+        "review": "docs/premium-ui/reviews/accepted-items-123-124-125-registry-v10r4-revalidation.json",
         "scope": "Exactoriginalmemberprofiletabconditions;non-tablinearlegacyworkflowapplicabilityexplicitlyreviewed."
       }
     },
@@ -12760,14 +12872,14 @@
       },
       "acceptance": {
         "status": "accepted",
-        "review": "docs/premium-ui/reviews/accepted-items-123-124-125-effective-identity-revalidation.json",
+        "review": "docs/premium-ui/reviews/accepted-items-123-124-125-registry-v10r4-revalidation.json",
         "scope": "Exactoriginalmemberprofiletabconditions;non-tablinearlegacyworkflowapplicabilityexplicitlyreviewed."
       }
     },
     {
       "item_id": 126,
       "requirement": "Keep the identity header compact while allowing full names and designations to wrap without overlapping close controls.",
-      "implementation_status": "partial",
+      "implementation_status": "complete",
       "files": [],
       "action_ids": [],
       "screenshots": [],
@@ -12839,18 +12951,32 @@
             "docs/premium-ui/qa-profile-tab-status.json"
           ],
           "limit": "ActualPhase7tabpattern;no allprofilehistory/editing/permissions/persistenceacceptance."
+        },
+        {
+          "recorded_at_utc": "2026-10-24T10:27:29.083574+00:00",
+          "scope": "Canonical dated designation and compact identity verification",
+          "evidence": [
+            "docs/premium-ui/reviews/designation-header-current.json",
+            "docs/premium-ui/qa-profile-designation-header.json"
+          ],
+          "limit": "No whole requirement completion; remaining legacy and broader hierarchy scope explicit."
         }
       ],
       "acceptance_definition": {
         "path": "docs/premium-ui/acceptance-criteria/items-087-173.json",
         "item_id": 126,
         "policy": "Definition only; evidence candidates and conditions are not passed outcomes."
+      },
+      "acceptance": {
+        "status": "accepted",
+        "review": "docs/premium-ui/reviews/accepted-items-122-126-128-130-registry-v10r4-revalidation.json",
+        "scope": "exact_runtime_requirement"
       }
     },
     {
       "item_id": 127,
       "requirement": "Surface unsaved changes and validation errors on their relevant tabs so hidden form problems remain discoverable.",
-      "implementation_status": "partial",
+      "implementation_status": "complete",
       "files": [
         "frontend/src/rota-intelligence.ts"
       ],
@@ -12967,12 +13093,17 @@
         "path": "docs/premium-ui/acceptance-criteria/items-087-173.json",
         "item_id": 127,
         "policy": "Definition only; evidence candidates and conditions are not passed outcomes."
+      },
+      "acceptance": {
+        "status": "accepted",
+        "review": "docs/premium-ui/reviews/accepted-items-127-132-133-registry-v10r4-revalidation.json",
+        "scope": "exact_runtime_requirement"
       }
     },
     {
       "item_id": 128,
       "requirement": "Present dated promotions and call-level changes as a readable timeline with clear scheduled-versus-effective distinctions.",
-      "implementation_status": "partial",
+      "implementation_status": "complete",
       "files": [],
       "action_ids": [],
       "screenshots": [],
@@ -13078,12 +13209,26 @@
             "docs/premium-ui/qa-legacy-timeline.json"
           ],
           "limit": "72workflowswithin6contexts,36mockPUTs;nofull122/128/133acceptance."
+        },
+        {
+          "recorded_at_utc": "2026-10-24T10:27:29.083574+00:00",
+          "scope": "Canonical dated designation and compact identity verification",
+          "evidence": [
+            "docs/premium-ui/reviews/designation-header-current.json",
+            "docs/premium-ui/qa-profile-designation-header.json"
+          ],
+          "limit": "No whole requirement completion; remaining legacy and broader hierarchy scope explicit."
         }
       ],
       "acceptance_definition": {
         "path": "docs/premium-ui/acceptance-criteria/items-087-173.json",
         "item_id": 128,
         "policy": "Definition only; evidence candidates and conditions are not passed outcomes."
+      },
+      "acceptance": {
+        "status": "accepted",
+        "review": "docs/premium-ui/reviews/accepted-items-122-126-128-130-registry-v10r4-revalidation.json",
+        "scope": "exact_runtime_requirement"
       }
     },
     {
@@ -13199,14 +13344,14 @@
       },
       "acceptance": {
         "status": "accepted",
-        "review": "docs/premium-ui/reviews/accepted-items-129-effective-identity-revalidation.json",
+        "review": "docs/premium-ui/reviews/accepted-items-129-registry-v10r4-revalidation.json",
         "scope": "Exactdate-awarecard/readabilityandcorrespondingeditidentityconditions."
       }
     },
     {
       "item_id": 130,
       "requirement": "Separate member-facing information from administrator metadata through hierarchy and progressive disclosure rather than hidden essential context.",
-      "implementation_status": "partial",
+      "implementation_status": "complete",
       "files": [],
       "action_ids": [],
       "screenshots": [],
@@ -13270,18 +13415,32 @@
             "docs/premium-ui/qa-record-close.json"
           ],
           "limit": "Bounded actual-module assertions; no whole item acceptance."
+        },
+        {
+          "recorded_at_utc": "2026-10-24T10:27:29.083574+00:00",
+          "scope": "Canonical dated designation and compact identity verification",
+          "evidence": [
+            "docs/premium-ui/reviews/designation-header-current.json",
+            "docs/premium-ui/qa-profile-designation-header.json"
+          ],
+          "limit": "No whole requirement completion; remaining legacy and broader hierarchy scope explicit."
         }
       ],
       "acceptance_definition": {
         "path": "docs/premium-ui/acceptance-criteria/items-087-173.json",
         "item_id": 130,
         "policy": "Definition only; evidence candidates and conditions are not passed outcomes."
+      },
+      "acceptance": {
+        "status": "accepted",
+        "review": "docs/premium-ui/reviews/accepted-items-122-126-128-130-registry-v10r4-revalidation.json",
+        "scope": "exact_runtime_requirement"
       }
     },
     {
       "item_id": 131,
       "requirement": "Standardize add, edit, save and cancel patterns across profile sections so users do not relearn each editor.",
-      "implementation_status": "partial",
+      "implementation_status": "complete",
       "files": [],
       "action_ids": [],
       "screenshots": [],
@@ -13447,12 +13606,17 @@
         "path": "docs/premium-ui/acceptance-criteria/items-087-173.json",
         "item_id": 131,
         "policy": "Definition only; evidence candidates and conditions are not passed outcomes."
+      },
+      "acceptance": {
+        "status": "accepted",
+        "review": "docs/premium-ui/reviews/accepted-items-131-registry-v10r4-revalidation.json",
+        "scope": "exact_runtime_requirement"
       }
     },
     {
       "item_id": 132,
       "requirement": "Keep workload summaries compact and readable, linking to actual duties using existing supported detail or report views.",
-      "implementation_status": "partial",
+      "implementation_status": "complete",
       "files": [],
       "action_ids": [],
       "screenshots": [],
@@ -13520,12 +13684,17 @@
         "path": "docs/premium-ui/acceptance-criteria/items-087-173.json",
         "item_id": 132,
         "policy": "Definition only; evidence candidates and conditions are not passed outcomes."
+      },
+      "acceptance": {
+        "status": "accepted",
+        "review": "docs/premium-ui/reviews/accepted-items-127-132-133-registry-v10r4-revalidation.json",
+        "scope": "exact_runtime_requirement"
       }
     },
     {
       "item_id": 133,
       "requirement": "Show missing designation, unknown history and unassigned values honestly instead of presenting misleading zeroes or placeholder identities.",
-      "implementation_status": "partial",
+      "implementation_status": "complete",
       "files": [],
       "action_ids": [],
       "screenshots": [],
@@ -13607,18 +13776,32 @@
             "docs/premium-ui/qa-legacy-timeline.json"
           ],
           "limit": "72workflowswithin6contexts,36mockPUTs;nofull122/128/133acceptance."
+        },
+        {
+          "recorded_at_utc": "2026-10-24T10:27:29.083574+00:00",
+          "scope": "Canonical dated designation and compact identity verification",
+          "evidence": [
+            "docs/premium-ui/reviews/designation-header-current.json",
+            "docs/premium-ui/qa-profile-designation-header.json"
+          ],
+          "limit": "No whole requirement completion; remaining legacy and broader hierarchy scope explicit."
         }
       ],
       "acceptance_definition": {
         "path": "docs/premium-ui/acceptance-criteria/items-087-173.json",
         "item_id": 133,
         "policy": "Definition only; evidence candidates and conditions are not passed outcomes."
+      },
+      "acceptance": {
+        "status": "accepted",
+        "review": "docs/premium-ui/reviews/accepted-items-127-132-133-registry-v10r4-revalidation.json",
+        "scope": "exact_runtime_requirement"
       }
     },
     {
       "item_id": 134,
       "requirement": "Make aliases and member-matching choices understandable, with explicit selection results and clear differences between existing and new people.",
-      "implementation_status": "partial",
+      "implementation_status": "complete",
       "files": [],
       "action_ids": [],
       "screenshots": [],
@@ -13773,12 +13956,17 @@
         "path": "docs/premium-ui/acceptance-criteria/items-087-173.json",
         "item_id": 134,
         "policy": "Definition only; evidence candidates and conditions are not passed outcomes."
+      },
+      "acceptance": {
+        "status": "accepted",
+        "review": "docs/premium-ui/reviews/accepted-items-134-registry-v10r4-revalidation.json",
+        "scope": "exact_runtime_requirement"
       }
     },
     {
       "item_id": 135,
       "requirement": "Give CSV upload, column mapping, row review and apply stages consistent progress indicators and recovery affordances.",
-      "implementation_status": "partial",
+      "implementation_status": "complete",
       "files": [
         "frontend/src/workspace-load-state.ts",
         "frontend/src/record-workspace.ts",
@@ -13963,12 +14151,17 @@
         "path": "docs/premium-ui/acceptance-criteria/items-087-173.json",
         "item_id": 135,
         "policy": "Definition only; evidence candidates and conditions are not passed outcomes."
+      },
+      "acceptance": {
+        "status": "accepted",
+        "review": "docs/premium-ui/reviews/accepted-items-135-136-registry-v10r4-revalidation.json",
+        "scope": "exact_runtime_requirement"
       }
     },
     {
       "item_id": 136,
       "requirement": "Preserve selected files and mappings after recoverable errors where browser permissions and current API semantics allow it.",
-      "implementation_status": "partial",
+      "implementation_status": "complete",
       "files": [
         "frontend/src/reference-workspace.ts",
         "frontend/src/record-workspace.ts",
@@ -14147,12 +14340,17 @@
         "path": "docs/premium-ui/acceptance-criteria/items-087-173.json",
         "item_id": 136,
         "policy": "Definition only; evidence candidates and conditions are not passed outcomes."
+      },
+      "acceptance": {
+        "status": "accepted",
+        "review": "docs/premium-ui/reviews/accepted-items-135-136-registry-v10r4-revalidation.json",
+        "scope": "exact_runtime_requirement"
       }
     },
     {
       "item_id": 137,
       "requirement": "Highlight unresolved, duplicate and invalid import rows without letting decorative badges overwhelm the information needed to correct them.",
-      "implementation_status": "partial",
+      "implementation_status": "complete",
       "files": [],
       "action_ids": [],
       "screenshots": [],
@@ -14296,12 +14494,17 @@
         "path": "docs/premium-ui/acceptance-criteria/items-087-173.json",
         "item_id": 137,
         "policy": "Definition only; evidence candidates and conditions are not passed outcomes."
+      },
+      "acceptance": {
+        "status": "accepted",
+        "review": "docs/premium-ui/reviews/accepted-items-137-138-139-registry-v10r4-revalidation.json",
+        "scope": "exact_runtime_requirement"
       }
     },
     {
       "item_id": 138,
       "requirement": "Explain import modes and scope before apply, using current server preview results rather than frontend assumptions.",
-      "implementation_status": "partial",
+      "implementation_status": "complete",
       "files": [],
       "action_ids": [],
       "screenshots": [],
@@ -14426,12 +14629,17 @@
         "path": "docs/premium-ui/acceptance-criteria/items-087-173.json",
         "item_id": 138,
         "policy": "Definition only; evidence candidates and conditions are not passed outcomes."
+      },
+      "acceptance": {
+        "status": "accepted",
+        "review": "docs/premium-ui/reviews/accepted-items-137-138-139-registry-v10r4-revalidation.json",
+        "scope": "exact_runtime_requirement"
       }
     },
     {
       "item_id": 139,
       "requirement": "Keep import preview and apply actions reachable on phones while ensuring sticky footers cannot obscure final review rows.",
-      "implementation_status": "partial",
+      "implementation_status": "complete",
       "files": [],
       "action_ids": [],
       "screenshots": [],
@@ -14571,6 +14779,11 @@
         "path": "docs/premium-ui/acceptance-criteria/items-087-173.json",
         "item_id": 139,
         "policy": "Definition only; evidence candidates and conditions are not passed outcomes."
+      },
+      "acceptance": {
+        "status": "accepted",
+        "review": "docs/premium-ui/reviews/accepted-items-137-138-139-registry-v10r4-revalidation.json",
+        "scope": "exact_runtime_requirement"
       }
     },
     {
@@ -14835,7 +15048,7 @@
     {
       "item_id": 141,
       "requirement": "Refine the leave toolbar around add, import and monthly approval, keeping secondary management tools visually subordinate.",
-      "implementation_status": "partial",
+      "implementation_status": "complete",
       "files": [],
       "action_ids": [],
       "screenshots": [],
@@ -14904,12 +15117,17 @@
         "path": "docs/premium-ui/acceptance-criteria/items-087-173.json",
         "item_id": 141,
         "policy": "Definition only; evidence candidates and conditions are not passed outcomes."
+      },
+      "acceptance": {
+        "status": "accepted",
+        "review": "docs/premium-ui/reviews/accepted-items-141-registry-v10r4-revalidation.json",
+        "scope": "exact_runtime_requirement"
       }
     },
     {
       "item_id": 142,
       "requirement": "Preserve individual leave approval while making monthly pending counts, review scope and affected-duty acknowledgements clear.",
-      "implementation_status": "partial",
+      "implementation_status": "complete",
       "files": [],
       "action_ids": [],
       "screenshots": [],
@@ -14977,6 +15195,11 @@
         "path": "docs/premium-ui/acceptance-criteria/items-087-173.json",
         "item_id": 142,
         "policy": "Definition only; evidence candidates and conditions are not passed outcomes."
+      },
+      "acceptance": {
+        "status": "accepted",
+        "review": "docs/premium-ui/reviews/accepted-items-142-registry-v10r4-revalidation.json",
+        "scope": "exact_runtime_requirement"
       }
     },
     {
@@ -15065,7 +15288,7 @@
       },
       "acceptance": {
         "status": "accepted",
-        "review": "docs/premium-ui/reviews/accepted-items-143-146-148-effective-identity-revalidation.json",
+        "review": "docs/premium-ui/reviews/accepted-items-143-146-148-registry-v10r4-revalidation.json",
         "scope_type": "exact_runtime_requirement",
         "scope": "Exact original presentation/keyboard conditions, not broader Leave operational certification."
       }
@@ -15073,7 +15296,7 @@
     {
       "item_id": 144,
       "requirement": "Offer useful phone day/list navigation alongside the month calendar without changing leave counts or blocking semantics.",
-      "implementation_status": "partial",
+      "implementation_status": "complete",
       "files": [
         "frontend/src/main.ts",
         "frontend/src/premium-theme.css"
@@ -15142,6 +15365,11 @@
         "path": "docs/premium-ui/acceptance-criteria/items-087-173.json",
         "item_id": 144,
         "policy": "Definition only; evidence candidates and conditions are not passed outcomes."
+      },
+      "acceptance": {
+        "status": "accepted",
+        "review": "docs/premium-ui/reviews/accepted-items-144-registry-v10r4-revalidation.json",
+        "scope": "exact_runtime_requirement"
       }
     },
     {
@@ -15209,6 +15437,16 @@
             "docs/premium-ui/qa-leave-pressure.json"
           ],
           "limit": "Bounded pressure/day-review surface; no whole-requirement completion."
+        },
+        {
+          "recorded_at_utc": "2026-10-29T03:06:20.618754+00:00",
+          "scope": "Monthly unit record totals labelled descriptively; pending/requested imports are not presented as confirmed absence or daily availability. Missing/invalid counts distinguished from true zero. Unit-only neutral chips, readable title and 44px header controls.",
+          "evidence": [
+            "docs/premium-ui/reviews/unit-monthly-v3-integrated-execution.json",
+            "docs/premium-ui/reviews/unit-monthly-v3-prior40-applicability.json",
+            "docs/premium-ui/reviews/unit-monthly-v3-table-applicability.json"
+          ],
+          "limit": "36 applied browser workflows,114 units,held build and prior40 applicability. No whole145147 acceptance; nested modal focus/Tab/Escape defects remain separately open."
         }
       ],
       "acceptance_definition": {
@@ -15304,7 +15542,7 @@
       },
       "acceptance": {
         "status": "accepted",
-        "review": "docs/premium-ui/reviews/accepted-items-143-146-148-effective-identity-revalidation.json",
+        "review": "docs/premium-ui/reviews/accepted-items-143-146-148-registry-v10r4-revalidation.json",
         "scope_type": "exact_runtime_requirement",
         "scope": "Exact original presentation/keyboard conditions, not broader Leave operational certification."
       }
@@ -15374,6 +15612,16 @@
             "docs/premium-ui/qa-leave-pressure.json"
           ],
           "limit": "Bounded pressure/day-review surface; no whole-requirement completion."
+        },
+        {
+          "recorded_at_utc": "2026-10-29T03:06:20.618754+00:00",
+          "scope": "Monthly unit record totals labelled descriptively; pending/requested imports are not presented as confirmed absence or daily availability. Missing/invalid counts distinguished from true zero. Unit-only neutral chips, readable title and 44px header controls.",
+          "evidence": [
+            "docs/premium-ui/reviews/unit-monthly-v3-integrated-execution.json",
+            "docs/premium-ui/reviews/unit-monthly-v3-prior40-applicability.json",
+            "docs/premium-ui/reviews/unit-monthly-v3-table-applicability.json"
+          ],
+          "limit": "36 applied browser workflows,114 units,held build and prior40 applicability. No whole145147 acceptance; nested modal focus/Tab/Escape defects remain separately open."
         }
       ],
       "acceptance_definition": {
@@ -15468,7 +15716,7 @@
       },
       "acceptance": {
         "status": "accepted",
-        "review": "docs/premium-ui/reviews/accepted-items-143-146-148-effective-identity-revalidation.json",
+        "review": "docs/premium-ui/reviews/accepted-items-143-146-148-registry-v10r4-revalidation.json",
         "scope_type": "exact_runtime_requirement",
         "scope": "Exact original presentation/keyboard conditions, not broader Leave operational certification."
       }
@@ -15476,7 +15724,7 @@
     {
       "item_id": 149,
       "requirement": "Improve unit-board hierarchy so campus, unit identity, staffing groups and dated assignments remain easy to scan.",
-      "implementation_status": "partial",
+      "implementation_status": "complete",
       "files": [
         "frontend/src/unit-board-filters.ts",
         "frontend/src/main.ts",
@@ -15559,18 +15807,42 @@
             "docs/premium-ui/qa-unit-performance.json"
           ],
           "limit": "6independent browser/emulatedwidth workflows +18currentlocalChromium measurements. All2000on-demand reachability proven separately. No all-item/physical/screenreader/production performance claim."
+        },
+        {
+          "recorded_at_utc": "2026-10-29T04:12:16.860547+00:00",
+          "scope": "Applied unit focus/Tab/Escape/exact opener and upper popup ownership repair,69browser contexts including real native Edit/pending/dirty safeguards/settings payload/account teardown.",
+          "evidence": [
+            "docs/premium-ui/reviews/unit-focus-v9-integrated-execution.json",
+            "docs/premium-ui/reviews/unit-focus-v9-prior40-applicability.json"
+          ],
+          "limit": "Bounded lifecycle repair, not whole requirement acceptance. NativeAT/physical pending; latest V9 authored/tested/adjudicated root."
+        },
+        {
+          "recorded_at_utc": "2026-10-29T04:28:16.906352+00:00",
+          "scope": "Original two conditions explicitly accepted with exact current runtime evidence and disclosed independent parent gap audit/root closure.",
+          "evidence": [
+            "docs/premium-ui/reviews/unit149151152154-acceptance.json",
+            "docs/premium-ui/reviews/unit-rules-integrated-execution.json"
+          ]
         }
       ],
       "acceptance_definition": {
         "path": "docs/premium-ui/acceptance-criteria/items-087-173.json",
         "item_id": 149,
         "policy": "Definition only; evidence candidates and conditions are not passed outcomes."
+      },
+      "acceptance": {
+        "status": "accepted",
+        "review": "docs/premium-ui/reviews/accepted-items-149-151-152-154-registry-v10r4-revalidation.json",
+        "scope_type": "exact_runtime_requirement",
+        "reviewer": "/root",
+        "recorded_at_utc": "2026-10-29T04:28:16.906352+00:00"
       }
     },
     {
       "item_id": 150,
       "requirement": "Keep create-unit and add-member actions visible at the relevant unit context, preserving existing normalized reference workflows.",
-      "implementation_status": "partial",
+      "implementation_status": "complete",
       "files": [
         "frontend/src/unit-board-filters.ts",
         "frontend/src/main.ts",
@@ -15700,18 +15972,53 @@
             "docs/premium-ui/qa-inline-member-selection-lifetime/report-production.json"
           ],
           "limit": "Current bounded UI checks; no whole-item/all-role/persistence/nativeAT/physical certification."
+        },
+        {
+          "recorded_at_utc": "2026-10-29T04:12:16.860547+00:00",
+          "scope": "Applied unit focus/Tab/Escape/exact opener and upper popup ownership repair,69browser contexts including real native Edit/pending/dirty safeguards/settings payload/account teardown.",
+          "evidence": [
+            "docs/premium-ui/reviews/unit-focus-v9-integrated-execution.json",
+            "docs/premium-ui/reviews/unit-focus-v9-prior40-applicability.json"
+          ],
+          "limit": "Bounded lifecycle repair, not whole requirement acceptance. NativeAT/physical pending; latest V9 authored/tested/adjudicated root."
+        },
+        {
+          "recorded_at_utc": "2026-10-30T09:20:28.610484+00:00",
+          "scope": "Current unit-only native opener,role and exact June/July create/edit context;60applied contexts,114units,heldbuild.",
+          "evidence": [
+            "docs/premium-ui/reviews/unit-create-opener-integrated-execution.json",
+            "docs/premium-ui/reviews/unit-create-opener-prior44-applicability.json"
+          ],
+          "limit": "No backend persistence or authorization claim.150156 independent acceptance assessment pending;153rulecontext gap separately audited."
+        },
+        {
+          "recorded_at_utc": "2026-10-30T10:18:08.316345+00:00",
+          "scope": "Originalconditionaccepted after appliedV2value/context repair,current474cases,independent66normalizationworkflows,114units/heldbuild andprior45bridge.",
+          "evidence": [
+            "docs/premium-ui/reviews/picker150155156-acceptance.json",
+            "docs/premium-ui/reviews/picker-v2-integrated-execution.json",
+            "docs/premium-ui/reviews/picker150155156-independent-acceptance-adjudication.json"
+          ],
+          "limit": "159latecallback and pointerfocusopen; notbroader260,backend,persistence,physical/nativeAT claim."
         }
       ],
       "acceptance_definition": {
         "path": "docs/premium-ui/acceptance-criteria/items-087-173.json",
         "item_id": 150,
         "policy": "Definition only; evidence candidates and conditions are not passed outcomes."
+      },
+      "acceptance": {
+        "status": "accepted",
+        "review": "docs/premium-ui/reviews/accepted-items-150-155-156-registry-v10r4-revalidation.json",
+        "scope_type": "exact_runtime_requirement",
+        "reviewer": "/root",
+        "recorded_at_utc": "2026-10-30T10:18:08.316345+00:00"
       }
     },
     {
       "item_id": 151,
       "requirement": "Present dated unit membership changes without visually implying that a future posting is already effective today.",
-      "implementation_status": "partial",
+      "implementation_status": "complete",
       "files": [
         "frontend/src/unit-board-filters.ts",
         "frontend/src/main.ts",
@@ -15781,18 +16088,33 @@
             "docs/premium-ui/qa-unit-board.json"
           ],
           "limit": "9cross-browser actual-app populated workflows; no full all-role/action/physical-screenreader acceptance. No pagination added without measured need."
+        },
+        {
+          "recorded_at_utc": "2026-10-29T04:28:16.906352+00:00",
+          "scope": "Original two conditions explicitly accepted with exact current runtime evidence and disclosed independent parent gap audit/root closure.",
+          "evidence": [
+            "docs/premium-ui/reviews/unit149151152154-acceptance.json",
+            "docs/premium-ui/reviews/unit-rules-integrated-execution.json"
+          ]
         }
       ],
       "acceptance_definition": {
         "path": "docs/premium-ui/acceptance-criteria/items-087-173.json",
         "item_id": 151,
         "policy": "Definition only; evidence candidates and conditions are not passed outcomes."
+      },
+      "acceptance": {
+        "status": "accepted",
+        "review": "docs/premium-ui/reviews/accepted-items-149-151-152-154-registry-v10r4-revalidation.json",
+        "scope_type": "exact_runtime_requirement",
+        "reviewer": "/root",
+        "recorded_at_utc": "2026-10-29T04:28:16.906352+00:00"
       }
     },
     {
       "item_id": 152,
       "requirement": "Standardize unit filters, expansion states and per-unit counts across desktop boards and mobile stacked cards.",
-      "implementation_status": "partial",
+      "implementation_status": "complete",
       "files": [
         "frontend/src/unit-board-filters.ts",
         "frontend/src/main.ts",
@@ -15871,18 +16193,33 @@
             "docs/premium-ui/reviews/count-import-layout-current.json"
           ],
           "limit": "Bounded workflows, no whole-item completion."
+        },
+        {
+          "recorded_at_utc": "2026-10-29T04:28:16.906352+00:00",
+          "scope": "Original two conditions explicitly accepted with exact current runtime evidence and disclosed independent parent gap audit/root closure.",
+          "evidence": [
+            "docs/premium-ui/reviews/unit149151152154-acceptance.json",
+            "docs/premium-ui/reviews/unit-rules-integrated-execution.json"
+          ]
         }
       ],
       "acceptance_definition": {
         "path": "docs/premium-ui/acceptance-criteria/items-087-173.json",
         "item_id": 152,
         "policy": "Definition only; evidence candidates and conditions are not passed outcomes."
+      },
+      "acceptance": {
+        "status": "accepted",
+        "review": "docs/premium-ui/reviews/accepted-items-149-151-152-154-registry-v10r4-revalidation.json",
+        "scope_type": "exact_runtime_requirement",
+        "reviewer": "/root",
+        "recorded_at_utc": "2026-10-29T04:28:16.906352+00:00"
       }
     },
     {
       "item_id": 153,
       "requirement": "Make staffing warnings actionable through existing editors while keeping the authoritative rule and affected date visible.",
-      "implementation_status": "partial",
+      "implementation_status": "complete",
       "files": [],
       "action_ids": [],
       "screenshots": [],
@@ -15944,18 +16281,44 @@
             "docs/premium-ui/qa-staffing-review.json"
           ],
           "limit": "Bounded staffing review and existing action recovery; whole-item acceptance open."
+        },
+        {
+          "recorded_at_utc": "2026-10-29T04:12:16.860547+00:00",
+          "scope": "Applied unit focus/Tab/Escape/exact opener and upper popup ownership repair,69browser contexts including real native Edit/pending/dirty safeguards/settings payload/account teardown.",
+          "evidence": [
+            "docs/premium-ui/reviews/unit-focus-v9-integrated-execution.json",
+            "docs/premium-ui/reviews/unit-focus-v9-prior40-applicability.json"
+          ],
+          "limit": "Bounded lifecycle repair, not whole requirement acceptance. NativeAT/physical pending; latest V9 authored/tested/adjudicated root."
+        },
+        {
+          "recorded_at_utc": "2026-10-30T10:03:57.117287+00:00",
+          "scope": "Original153 accepted after applied returned-rule/date context,existing exact action destinations,scoped review visual repair and72current contexts/114units/heldbuild.",
+          "evidence": [
+            "docs/premium-ui/reviews/staffing153-acceptance.json",
+            "docs/premium-ui/reviews/staffing-v2-integrated-execution.json",
+            "docs/premium-ui/reviews/staffing153-independent-acceptance-adjudication.json"
+          ],
+          "limit": "No broader147/260/nativeAT/physical/backend persistence claim."
         }
       ],
       "acceptance_definition": {
         "path": "docs/premium-ui/acceptance-criteria/items-087-173.json",
         "item_id": 153,
         "policy": "Definition only; evidence candidates and conditions are not passed outcomes."
+      },
+      "acceptance": {
+        "status": "accepted",
+        "review": "docs/premium-ui/reviews/accepted-items-153-registry-v10r4-revalidation.json",
+        "scope_type": "exact_runtime_requirement",
+        "reviewer": "/root",
+        "recorded_at_utc": "2026-10-30T10:03:57.117287+00:00"
       }
     },
     {
       "item_id": 154,
       "requirement": "Improve long unit-member lists through measured pagination or expansion without concealing missing staffing or leave conflicts.",
-      "implementation_status": "partial",
+      "implementation_status": "complete",
       "files": [
         "frontend/src/unit-board-filters.ts",
         "frontend/src/main.ts",
@@ -16058,18 +16421,33 @@
             "docs/premium-ui/qa-unit-print-independent.json"
           ],
           "limit": "Exact per-report emulation/intercepted API scope; no whole-requirement/fullrelease/physical/nativeassistive acceptance."
+        },
+        {
+          "recorded_at_utc": "2026-10-29T04:28:16.906352+00:00",
+          "scope": "Original two conditions explicitly accepted with exact current runtime evidence and disclosed independent parent gap audit/root closure.",
+          "evidence": [
+            "docs/premium-ui/reviews/unit149151152154-acceptance.json",
+            "docs/premium-ui/reviews/unit-rules-integrated-execution.json"
+          ]
         }
       ],
       "acceptance_definition": {
         "path": "docs/premium-ui/acceptance-criteria/items-087-173.json",
         "item_id": 154,
         "policy": "Definition only; evidence candidates and conditions are not passed outcomes."
+      },
+      "acceptance": {
+        "status": "accepted",
+        "review": "docs/premium-ui/reviews/accepted-items-149-151-152-154-registry-v10r4-revalidation.json",
+        "scope_type": "exact_runtime_requirement",
+        "reviewer": "/root",
+        "recorded_at_utc": "2026-10-29T04:28:16.906352+00:00"
       }
     },
     {
       "item_id": 155,
       "requirement": "Align normalized reference pickers and inline creation dialogs with the same label, validation and save conventions.",
-      "implementation_status": "partial",
+      "implementation_status": "complete",
       "files": [
         "frontend/src/reference-workspace.ts",
         "frontend/src/record-workspace.ts",
@@ -16274,18 +16652,44 @@
             "docs/premium-ui/qa-inline-member-selection-lifetime/report-production.json"
           ],
           "limit": "Current bounded UI checks; no whole-item/all-role/persistence/nativeAT/physical certification."
+        },
+        {
+          "recorded_at_utc": "2026-10-30T09:20:28.610484+00:00",
+          "scope": "Current unit-only native opener,role and exact June/July create/edit context;60applied contexts,114units,heldbuild.",
+          "evidence": [
+            "docs/premium-ui/reviews/unit-create-opener-integrated-execution.json",
+            "docs/premium-ui/reviews/unit-create-opener-prior44-applicability.json"
+          ],
+          "limit": "No backend persistence or authorization claim.150156 independent acceptance assessment pending;153rulecontext gap separately audited."
+        },
+        {
+          "recorded_at_utc": "2026-10-30T10:18:08.316345+00:00",
+          "scope": "Originalconditionaccepted after appliedV2value/context repair,current474cases,independent66normalizationworkflows,114units/heldbuild andprior45bridge.",
+          "evidence": [
+            "docs/premium-ui/reviews/picker150155156-acceptance.json",
+            "docs/premium-ui/reviews/picker-v2-integrated-execution.json",
+            "docs/premium-ui/reviews/picker150155156-independent-acceptance-adjudication.json"
+          ],
+          "limit": "159latecallback and pointerfocusopen; notbroader260,backend,persistence,physical/nativeAT claim."
         }
       ],
       "acceptance_definition": {
         "path": "docs/premium-ui/acceptance-criteria/items-087-173.json",
         "item_id": 155,
         "policy": "Definition only; evidence candidates and conditions are not passed outcomes."
+      },
+      "acceptance": {
+        "status": "accepted",
+        "review": "docs/premium-ui/reviews/accepted-items-150-155-156-registry-v10r4-revalidation.json",
+        "scope_type": "exact_runtime_requirement",
+        "reviewer": "/root",
+        "recorded_at_utc": "2026-10-30T10:18:08.316345+00:00"
       }
     },
     {
       "item_id": 156,
       "requirement": "Preserve clear distinction between adding a reference value, assigning a person and editing an existing dated record.",
-      "implementation_status": "partial",
+      "implementation_status": "complete",
       "files": [],
       "action_ids": [],
       "screenshots": [],
@@ -16435,18 +16839,44 @@
             "docs/premium-ui/qa-inline-member-selection-lifetime/report-production.json"
           ],
           "limit": "Current bounded UI checks; no whole-item/all-role/persistence/nativeAT/physical certification."
+        },
+        {
+          "recorded_at_utc": "2026-10-30T09:20:28.610484+00:00",
+          "scope": "Current unit-only native opener,role and exact June/July create/edit context;60applied contexts,114units,heldbuild.",
+          "evidence": [
+            "docs/premium-ui/reviews/unit-create-opener-integrated-execution.json",
+            "docs/premium-ui/reviews/unit-create-opener-prior44-applicability.json"
+          ],
+          "limit": "No backend persistence or authorization claim.150156 independent acceptance assessment pending;153rulecontext gap separately audited."
+        },
+        {
+          "recorded_at_utc": "2026-10-30T10:18:08.316345+00:00",
+          "scope": "Originalconditionaccepted after appliedV2value/context repair,current474cases,independent66normalizationworkflows,114units/heldbuild andprior45bridge.",
+          "evidence": [
+            "docs/premium-ui/reviews/picker150155156-acceptance.json",
+            "docs/premium-ui/reviews/picker-v2-integrated-execution.json",
+            "docs/premium-ui/reviews/picker150155156-independent-acceptance-adjudication.json"
+          ],
+          "limit": "159latecallback and pointerfocusopen; notbroader260,backend,persistence,physical/nativeAT claim."
         }
       ],
       "acceptance_definition": {
         "path": "docs/premium-ui/acceptance-criteria/items-087-173.json",
         "item_id": 156,
         "policy": "Definition only; evidence candidates and conditions are not passed outcomes."
+      },
+      "acceptance": {
+        "status": "accepted",
+        "review": "docs/premium-ui/reviews/accepted-items-150-155-156-registry-v10r4-revalidation.json",
+        "scope_type": "exact_runtime_requirement",
+        "reviewer": "/root",
+        "recorded_at_utc": "2026-10-30T10:18:08.316345+00:00"
       }
     },
     {
       "item_id": 157,
       "requirement": "Keep imported record corrections attached to their original preview row, with visible completion and unresolved-state indicators.",
-      "implementation_status": "partial",
+      "implementation_status": "complete",
       "files": [],
       "action_ids": [],
       "screenshots": [],
@@ -16542,18 +16972,34 @@
             "docs/premium-ui/qa-inline-member-selection-lifetime/report-production.json"
           ],
           "limit": "Current bounded UI checks; no whole-item/all-role/persistence/nativeAT/physical certification."
+        },
+        {
+          "recorded_at_utc": "2026-10-30T11:34:43.896763+00:00",
+          "scope": "Original157 accepted after exactcondition audit and current42boundedcontexts withdeclaredsourceapplicability.",
+          "evidence": [
+            "docs/premium-ui/reviews/item157-acceptance.json",
+            "docs/premium-ui/reviews/import157-final-scope-independent-adjudication.json"
+          ],
+          "limit": "No159160/260/backendpersistence/physical/nativeAT acceptance."
         }
       ],
       "acceptance_definition": {
         "path": "docs/premium-ui/acceptance-criteria/items-087-173.json",
         "item_id": 157,
         "policy": "Definition only; evidence candidates and conditions are not passed outcomes."
+      },
+      "acceptance": {
+        "status": "accepted",
+        "review": "docs/premium-ui/reviews/accepted-items-157-registry-v10r4-revalidation.json",
+        "scope_type": "exact_runtime_requirement",
+        "reviewer": "/root",
+        "recorded_at_utc": "2026-10-30T11:34:43.896763+00:00"
       }
     },
     {
       "item_id": 158,
       "requirement": "Standardize cancellation and deletion confirmations so removing a record never resembles merely closing its editor.",
-      "implementation_status": "partial",
+      "implementation_status": "complete",
       "files": [],
       "action_ids": [],
       "screenshots": [],
@@ -16626,12 +17072,37 @@
             "docs/premium-ui/qa-record-close.json"
           ],
           "limit": "Bounded actual-module assertions; no whole item acceptance."
+        },
+        {
+          "recorded_at_utc": "2026-10-29T04:12:16.860547+00:00",
+          "scope": "Applied unit focus/Tab/Escape/exact opener and upper popup ownership repair,69browser contexts including real native Edit/pending/dirty safeguards/settings payload/account teardown.",
+          "evidence": [
+            "docs/premium-ui/reviews/unit-focus-v9-integrated-execution.json",
+            "docs/premium-ui/reviews/unit-focus-v9-prior40-applicability.json"
+          ],
+          "limit": "Bounded lifecycle repair, not whole requirement acceptance. NativeAT/physical pending; latest V9 authored/tested/adjudicated root."
+        },
+        {
+          "recorded_at_utc": "2026-10-30T11:34:43.896763+00:00",
+          "scope": "Original158 accepted after exactcondition audit and current42boundedcontexts withdeclaredsourceapplicability.",
+          "evidence": [
+            "docs/premium-ui/reviews/item158-acceptance.json",
+            "docs/premium-ui/reviews/cancellation158-current-independent-adjudication.json"
+          ],
+          "limit": "No159160/260/backendpersistence/physical/nativeAT acceptance."
         }
       ],
       "acceptance_definition": {
         "path": "docs/premium-ui/acceptance-criteria/items-087-173.json",
         "item_id": 158,
         "policy": "Definition only; evidence candidates and conditions are not passed outcomes."
+      },
+      "acceptance": {
+        "status": "accepted",
+        "review": "docs/premium-ui/reviews/accepted-items-158-registry-v10r4-revalidation.json",
+        "scope_type": "exact_runtime_requirement",
+        "reviewer": "/root",
+        "recorded_at_utc": "2026-10-30T11:34:43.896763+00:00"
       }
     },
     {
@@ -16746,6 +17217,16 @@
             "docs/premium-ui/reviews/import-unit-reference-current.json"
           ],
           "limit": "Bounded fixture assertions only; no whole item acceptance."
+        },
+        {
+          "recorded_at_utc": "2026-11-09T10:42:56.624520+00:00",
+          "scope": "Registry V10r4 retained fallbackreferences plus actual106applied browsercontexts;84existingwrite/storage/serialization/confirmexpressions exact and one intentionalcompletefallbackGET.",
+          "evidence": [
+            "docs/premium-ui/reviews/original159-registry-v10r4-integrated-execution.json",
+            "docs/premium-ui/reviews/original159-registry-v10r4-prior54-applicability.json",
+            "docs/premium-ui/reviews/original159-registry-v10r4-independent-acceptance-applicability.json"
+          ],
+          "limit": "No whole159acceptance.78threeengine320/1280registrycases;28Chromiumowner/focus/sharedcallers. Deletion/membercore/nestedreference withoutApply remain open; in-flight supersession not newlymeasured."
         }
       ],
       "acceptance_definition": {
@@ -16886,6 +17367,24 @@
             "docs/premium-ui/qa-record-close.json"
           ],
           "limit": "Bounded actual-module assertions; no whole item acceptance."
+        },
+        {
+          "recorded_at_utc": "2026-10-29T04:12:16.860547+00:00",
+          "scope": "Applied unit focus/Tab/Escape/exact opener and upper popup ownership repair,69browser contexts including real native Edit/pending/dirty safeguards/settings payload/account teardown.",
+          "evidence": [
+            "docs/premium-ui/reviews/unit-focus-v9-integrated-execution.json",
+            "docs/premium-ui/reviews/unit-focus-v9-prior40-applicability.json"
+          ],
+          "limit": "Bounded lifecycle repair, not whole requirement acceptance. NativeAT/physical pending; latest V9 authored/tested/adjudicated root."
+        },
+        {
+          "recorded_at_utc": "2026-10-30T09:20:28.610484+00:00",
+          "scope": "Current unit-only native opener,role and exact June/July create/edit context;60applied contexts,114units,heldbuild.",
+          "evidence": [
+            "docs/premium-ui/reviews/unit-create-opener-integrated-execution.json",
+            "docs/premium-ui/reviews/unit-create-opener-prior44-applicability.json"
+          ],
+          "limit": "No backend persistence or authorization claim.150156 independent acceptance assessment pending;153rulecontext gap separately audited."
         }
       ],
       "acceptance_definition": {
@@ -16897,11 +17396,23 @@
     {
       "item_id": 161,
       "requirement": "Present setup, template allocation, member assignment, review and publishing as clear operational stages with truthful readiness cues.",
-      "implementation_status": "partial",
-      "files": [],
+      "implementation_status": "complete",
+      "files": [
+        "frontend/src/main.ts",
+        "frontend/src/premium-theme.css"
+      ],
       "action_ids": [],
       "screenshots": [],
-      "tests": [],
+      "tests": [
+        "frontend/tests/premium-stage161-v9-owner-integrated.browser.mjs",
+        "frontend/tests/premium-stage161-v9-classification-integrated.browser.mjs",
+        "frontend/tests/premium-stage161-v9-surfaces-integrated.browser.mjs",
+        "frontend/tests/premium-stage161-v9-wrongmonth-integrated.browser.mjs",
+        "frontend/tests/premium-stage161-v9-invalidcounts-text-integrated.browser.mjs",
+        "frontend/tests/premium-stage161-v9-known503-integrated.browser.mjs",
+        "frontend/tests/premium-stage161-v9-datachange-integrated.browser.mjs",
+        "frontend/tests/premium-stage161-v9-contrast-integrated.browser.mjs"
+      ],
       "limitations": [],
       "reviews": {
         "visual": {
@@ -16970,12 +17481,29 @@
             "docs/premium-ui/qa-generation-entrypoints.json"
           ],
           "limit": "Bounded fixture UI outcomes; full requirement acceptance unproven."
+        },
+        {
+          "recorded_at_utc": "2026-11-09T07:36:55.734743+00:00",
+          "scope": "Original161 accepted after168 applied browser contexts,114unit,heldbuild and independent exactcondition review.",
+          "evidence": [
+            "docs/premium-ui/reviews/item161-v9-acceptance.json",
+            "docs/premium-ui/reviews/stage161-v9-independent-final-review.json",
+            "docs/premium-ui/reviews/stage161-v9-integrated-execution.json"
+          ],
+          "limit": "No broader260 completion; physical/nativeAT pending."
         }
       ],
       "acceptance_definition": {
         "path": "docs/premium-ui/acceptance-criteria/items-087-173.json",
         "item_id": 161,
         "policy": "Definition only; evidence candidates and conditions are not passed outcomes."
+      },
+      "acceptance": {
+        "status": "accepted",
+        "review": "docs/premium-ui/reviews/accepted-items-161-registry-v10r4-revalidation.json",
+        "scope_type": "exact_runtime_requirement",
+        "reviewer": "/root",
+        "recorded_at_utc": "2026-11-09T07:36:55.734743+00:00"
       }
     },
     {
@@ -17148,7 +17676,7 @@
     {
       "item_id": 164,
       "requirement": "Maintain essential generation actions while optional reports load or fail, preserving the existing nonblocking foundation.",
-      "implementation_status": "partial",
+      "implementation_status": "complete",
       "files": [],
       "action_ids": [],
       "screenshots": [],
@@ -17216,12 +17744,19 @@
         "path": "docs/premium-ui/acceptance-criteria/items-087-173.json",
         "item_id": 164,
         "policy": "Definition only; evidence candidates and conditions are not passed outcomes."
+      },
+      "acceptance": {
+        "status": "accepted",
+        "review": "docs/premium-ui/reviews/accepted-items-164-registry-v10r4-revalidation.json",
+        "scope_type": "exact_runtime_requirement",
+        "reviewer": "/root",
+        "recorded_at_utc": "2026-10-31T01:26:59.655805+00:00"
       }
     },
     {
       "item_id": 165,
       "requirement": "Give template proposals a balanced review layout showing units, dates, forced choices and unresolved work before apply.",
-      "implementation_status": "partial",
+      "implementation_status": "complete",
       "files": [],
       "action_ids": [],
       "screenshots": [],
@@ -17290,18 +17825,34 @@
             "docs/premium-ui/reviews/repair-preservation-and-action-register-current.json"
           ],
           "limit": "Bounded outcomes only;full requirement status/signoff unchanged."
+        },
+        {
+          "recorded_at_utc": "2026-10-30T16:07:13.486707+00:00",
+          "scope": "Original165accepted after12currentproposalcontexts,independentexactconditionreview androotvisual/currentbuildsignoff.",
+          "evidence": [
+            "docs/premium-ui/reviews/item165-acceptance.json",
+            "docs/premium-ui/reviews/generation165-independent-adjudication.json"
+          ],
+          "limit": "No161164/260/backendApply/nativeAT/physicalclaim."
         }
       ],
       "acceptance_definition": {
         "path": "docs/premium-ui/acceptance-criteria/items-087-173.json",
         "item_id": 165,
         "policy": "Definition only; evidence candidates and conditions are not passed outcomes."
+      },
+      "acceptance": {
+        "status": "accepted",
+        "review": "docs/premium-ui/reviews/accepted-items-165-registry-v10r4-revalidation.json",
+        "scope_type": "exact_runtime_requirement",
+        "reviewer": "/root",
+        "recorded_at_utc": "2026-10-30T16:07:13.486707+00:00"
       }
     },
     {
       "item_id": 166,
       "requirement": "Make quick Autoassign and whole-month planning distinct choices, with concise explanations of preservation and repair behavior.",
-      "implementation_status": "partial",
+      "implementation_status": "complete",
       "files": [],
       "action_ids": [],
       "screenshots": [],
@@ -17386,6 +17937,11 @@
         "path": "docs/premium-ui/acceptance-criteria/items-087-173.json",
         "item_id": 166,
         "policy": "Definition only; evidence candidates and conditions are not passed outcomes."
+      },
+      "acceptance": {
+        "status": "accepted",
+        "review": "docs/premium-ui/reviews/accepted-items-166-169-registry-v10r4-revalidation.json",
+        "scope": "exact_runtime_requirement"
       }
     },
     {
@@ -17601,7 +18157,7 @@
     {
       "item_id": 169,
       "requirement": "Present generation progress as queued, working, review-ready or failed according to actual returned states, avoiding invented percentages.",
-      "implementation_status": "partial",
+      "implementation_status": "complete",
       "files": [],
       "action_ids": [],
       "screenshots": [],
@@ -17686,6 +18242,11 @@
         "path": "docs/premium-ui/acceptance-criteria/items-087-173.json",
         "item_id": 169,
         "policy": "Definition only; evidence candidates and conditions are not passed outcomes."
+      },
+      "acceptance": {
+        "status": "accepted",
+        "review": "docs/premium-ui/reviews/accepted-items-166-169-registry-v10r4-revalidation.json",
+        "scope": "exact_runtime_requirement"
       }
     },
     {
@@ -27857,6 +28418,15 @@
             "docs/premium-ui/qa-legacy-timeline.json"
           ],
           "limit": "72workflowswithin6contexts,36mockPUTs;nofull122/128/133acceptance."
+        },
+        {
+          "recorded_at_utc": "2026-10-24T10:27:29.083574+00:00",
+          "scope": "Canonical dated designation and compact identity verification",
+          "evidence": [
+            "docs/premium-ui/reviews/designation-header-current.json",
+            "docs/premium-ui/qa-profile-designation-header.json"
+          ],
+          "limit": "No whole requirement completion; remaining legacy and broader hierarchy scope explicit."
         }
       ],
       "acceptance_definition": {
@@ -28355,6 +28925,15 @@
             "docs/premium-ui/qa-legacy-timeline.json"
           ],
           "limit": "72workflowswithin6contexts,36mockPUTs;nofull122/128/133acceptance."
+        },
+        {
+          "recorded_at_utc": "2026-10-24T10:27:29.083574+00:00",
+          "scope": "Canonical dated designation and compact identity verification",
+          "evidence": [
+            "docs/premium-ui/reviews/designation-header-current.json",
+            "docs/premium-ui/qa-profile-designation-header.json"
+          ],
+          "limit": "No whole requirement completion; remaining legacy and broader hierarchy scope explicit."
         }
       ],
       "acceptance_definition": {
@@ -28660,6 +29239,15 @@
             "docs/premium-ui/qa-legacy-timeline.json"
           ],
           "limit": "72workflowswithin6contexts,36mockPUTs;nofull122/128/133acceptance."
+        },
+        {
+          "recorded_at_utc": "2026-10-24T10:27:29.083574+00:00",
+          "scope": "Canonical dated designation and compact identity verification",
+          "evidence": [
+            "docs/premium-ui/reviews/designation-header-current.json",
+            "docs/premium-ui/qa-profile-designation-header.json"
+          ],
+          "limit": "No whole requirement completion; remaining legacy and broader hierarchy scope explicit."
         }
       ],
       "acceptance_definition": {
@@ -29361,6 +29949,15 @@
             "docs/premium-ui/qa-legacy-timeline.json"
           ],
           "limit": "72workflowswithin6contexts,36mockPUTs;nofull122/128/133acceptance."
+        },
+        {
+          "recorded_at_utc": "2026-10-24T10:27:29.083574+00:00",
+          "scope": "Canonical dated designation and compact identity verification",
+          "evidence": [
+            "docs/premium-ui/reviews/designation-header-current.json",
+            "docs/premium-ui/qa-profile-designation-header.json"
+          ],
+          "limit": "No whole requirement completion; remaining legacy and broader hierarchy scope explicit."
         }
       ],
       "acceptance_definition": {

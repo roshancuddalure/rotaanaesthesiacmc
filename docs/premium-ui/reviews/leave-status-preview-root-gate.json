@@ -1,0 +1,62 @@
+{
+  "recorded_at_utc": "2026-10-28T17:44:00.795701+00:00",
+  "reviewer": "/root",
+  "scope": "Scratch-only frontend presentation preparation. No application source integration or requirement acceptance.",
+  "live_source_sha256": {
+    "frontend/src/main.ts": "20fc4e1c086f4ae6c25a381a176b590173f7ee680d6eec205489dc97eb069ea6",
+    "frontend/src/premium-theme.css": "9344ea87024b282475a3b9f110ce9c83bdc5dca1dc984961eefed044c2ad6065"
+  },
+  "candidate": "tmp/leave141147-status-v5",
+  "candidate_sha256": {
+    "main.ts": "b5bb65120baf6029a5e1d09e49a6c01edcb80db4e697d7810a53ece0913dc00e",
+    "premium-theme.css": "aa0d3c25681b83298cd53f45f009ed2f1f8e64b0f334903936d269c886d399d7"
+  },
+  "preview": {
+    "base": "http://127.0.0.1:5201",
+    "loader": "tmp/leave141147-preview-server.mjs",
+    "loader_sha256": "21f4d2df73af1ba411852bf143a7ce54ef8949380270241ea55419f0b79c08d8",
+    "limit": "Vite load overrides only main/theme; source files and API remain unchanged. Preview is not the integrated app."
+  },
+  "root_findings": [
+    {
+      "finding": "v2 full-text calendar is unusably tall despite no document overflow",
+      "evidence": "tmp/leave141147-preview-geometry.json",
+      "normal_cell_height": 312.09375,
+      "enlarged_cell_height": 1091.78125,
+      "disposition": "Rejected before application."
+    },
+    {
+      "finding": "v5 shared keyboard scroller retains full status words and aligned weekdays",
+      "evidence": "tmp/leave141147-preview-v5-geometry.json",
+      "normal_cell_height": 124.96875,
+      "enlarged_cell_height": 187.34375,
+      "disposition": "Bounded Chromium visual diagnostic passes; full native matrix pending."
+    },
+    {
+      "finding": "Existing phone unknown-status badge overflows both live and old candidate",
+      "evidence": "tmp/leave-status-overflow-probe.json",
+      "disposition": "Narrow direct-child badge wrapping added in scratch v5; full native confirmation pending."
+    },
+    {
+      "finding": "Global claim that every pending request is only a warning is overbroad across operations",
+      "evidence": "Independent reviewer source inspection of existing safety/balance/template operations; v3/v4 preserved",
+      "disposition": "Final candidate scopes guidance to returned blocking counts and operation safety information."
+    }
+  ],
+  "reviewed_changes": [
+    "Pure status-label own-property guard prevents inherited object/function labels.",
+    "Returned per-record status counts preserve duplicate members, entry membership, order and session values.",
+    "Visible/accessibility summaries say records instead of confirmed absence.",
+    "Named focusable native month scroller wraps only weekday headings and day buttons; Day list stays full width.",
+    "Narrow leave-card direct badge wraps unknown text without hiding it."
+  ],
+  "remaining_gates": [
+    "Independent final v5 source review",
+    "Three-engine standard and short/enlarged faithful GET-only fixture tests",
+    "Original141 toolbar hierarchy role/count/entry outcomes",
+    "Apply only reviewed candidate against exact before hashes",
+    "Integrated regression checks and held build",
+    "Explicit prior acceptance applicability review before any ledger updates"
+  ],
+  "completion_claim": false
+}

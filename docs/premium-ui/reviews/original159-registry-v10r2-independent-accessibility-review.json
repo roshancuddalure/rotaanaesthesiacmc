@@ -1,0 +1,61 @@
+{
+  "recorded_at_utc": "2026-11-09T10:24:53.548528+00:00",
+  "reviewer": "/root/registry_accessibility_r2",
+  "mode": "Independent read-only source accessibility and focus review; no browser execution and no application edits",
+  "bindings": {
+    "main.ts": {
+      "candidate_path": "tmp/registry-parent-refresh-v10r2/main.ts",
+      "candidate_sha256": "1017a2d1bed914294ed680cde5bc397c337094664cde3d445d68b05ca94a8949",
+      "baseline_path": "frontend/src/main.ts",
+      "baseline_sha256": "96ab7c4c6b14d41736ad4153313b1270677e324fcab6b11c3a5b0d8ac3e47a0b"
+    },
+    "reference-workspace.ts": {
+      "candidate_path": "tmp/registry-parent-refresh-v10r2/reference-workspace.ts",
+      "candidate_sha256": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd",
+      "baseline_path": "frontend/src/reference-workspace.ts",
+      "baseline_sha256": "78c231ea1d5ab15bd3a4b5f2f8265529451a51bacc68d2a4aac1708a4be30292"
+    },
+    "extra-duty.ts": {
+      "candidate_path": "tmp/registry-parent-refresh-v10r2/extra-duty.ts",
+      "candidate_sha256": "21edb8d59249b7c5be30d59c79f4e20b350930bdc16bd097e957a9c22650855f",
+      "baseline_path": "frontend/src/extra-duty.ts",
+      "baseline_sha256": "52084624922de21f2a0fa478eb1ca4c883cdeb66dd1d05147d0f21fe806bc7ea"
+    }
+  },
+  "result": "changes_required_for_conditional_focus_recovery_before_integration",
+  "findings": [
+    {
+      "id": "REGISTRY-V10R2-FOCUS-OPTIONAL-READ-FAILURE",
+      "severity": "medium",
+      "status": "source_confirmed_path_requires_runtime_reproduction",
+      "location": "main.ts createDependentParentLifecycle refresh: board repaint -> commitReferences -> disconnected-focus recovery",
+      "trigger": "Initial registry-close parent read waits. User moves keyboard focus onto a Unit board card action. Primary monthly GET succeeds, optional fallback GET fails. r2 stages that optional rejection as a throwing commit.",
+      "mechanism": "refreshUnitBoardReadback replaces card-grid contents and removes the focused action. commitReferences then throws before the disconnected-parent-focus recovery branch. catch only explicitly recovers focus for initiator === retry, which does not hold for the initial close refresh. Focus can remain on body.",
+      "recommendation": "Execute the existing owned, disconnected-parent-focus recovery before invoking the potentially throwing optional commit, or provide an equivalent guarded recovery in a shared finally path. Preserve any newer connected focus target and owner/latest-read guards.",
+      "requested_test": "Delayed optional fallback GET failure with successful primary read and deliberate newer focus on an actual Unit board action; assert action removal does not leave focus on body. Also assert connected fallback/select/filter focus is not stolen."
+    }
+  ],
+  "positive_source_observations": [
+    "Reference update retains existing details/select/action nodes. It changes heading text, list accessible names, item text and action aria-labels without replacing owner rows.",
+    "Owner aria-label now derives currentName both on repaint and in-place refresh, correcting the stale original row.unit_name label path.",
+    "Option refresh captures selected value and retains an unavailable selected value as a disabled option. Add remains disabled until a returned available option is selected.",
+    "Select and Add disabled states include the saving set; reference refresh does not re-enable controls for an in-flight owner save.",
+    "Draft and saved ID orders remain intact. Missing owners and referenced targets receive explicit last-known unavailable labels and a role=status notice.",
+    "New owner rows are appended from the complete fallback GET; populated initial-empty state removes its obsolete No units yet paragraph.",
+    "New DOM labels use textContent, createTextNode, setAttribute or new Option; markup fields use esc and selector interpolations use CSS.escape. No new unsafe HTML label interpolation was identified.",
+    "Registry accepted mutation notification precedes its own readback. Final close notification is idempotent; dirty or busy explicit close refusals do not notify.",
+    "Owner/account/month/route/render/latest-read checks precede committed primary and reference presentation changes. Optional GET failure now permits the primary board readback to render before a truthful retry notice."
+  ],
+  "runtime_checks_still_required": [
+    "Retained select focus and value after rename, removal and reintroduction of its chosen option across supported engines.",
+    "Optional fallback read rejection after delayed primary repaint, including newer keyboard focus as described in finding.",
+    "Missing owner/target label and action behavior without draft ID deletion; busy owner save interleaved with readback.",
+    "New owner with empty and nonempty confirmed fallback list; originally empty component; escaped label text.",
+    "Final close, native close, canceled dirty close, multiple accepted saves, owner supersession and GET-only retry."
+  ],
+  "limitations": [
+    "Source reasoning does not establish cross-browser focus behavior or native assistive-technology announcements.",
+    "No whole original159 acceptance or broader 260-item completion follows from this review.",
+    "Existing fallback Save uncertainty copy and baseline repaint focus behavior are outside this candidate delta and are not certified by this review."
+  ]
+}

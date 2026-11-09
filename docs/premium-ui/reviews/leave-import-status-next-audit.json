@@ -1,0 +1,43 @@
+{
+  "recorded_at_utc": "2026-10-29T00:41:08.292631+00:00",
+  "reviewer": "/root",
+  "scope": "Next original145/147 operational-import status presentation audit. Read-only; current40acceptedcheckpointunchanged.",
+  "source": {
+    "path": "frontend/src/operational-import.ts",
+    "sha256": "70f4307cf3fb231016cdb074131b0d2ea2a7399f81ec5f64d579f9484bbe9906"
+  },
+  "findings": [
+    {
+      "surface": "Collapsed normalized leave import row",
+      "observed": "rowHtml renders file source/action/member/issues/warnings but no normalized leave approval status. status input exists only inside Edit row.",
+      "risk": "Create/update/ready import actions can be mistaken for leave approval if approval status is unavailable outside Editrow."
+    },
+    {
+      "surface": "Returned preview status",
+      "observed": "row.values.status is source/input value; corrections[row.key] holds local draft changes; row.after.status belongs to last server normalized preview. These must not be silently substituted for one another.",
+      "risk": "Using local corrections as confirmednormalizedstatus would change perceivedauthority without serverreadback."
+    },
+    {
+      "surface": "Dirty preview lifecycle",
+      "observed": "dirtyPreview increments existingdraftVersion,sets previewDirty andmarksApplyaria-disabled. say() already updates membermatchpending andimportpreviewauthority. Per-row status authority should update through same existing lifecycle; existing inputhandlers need no replacement."
+    }
+  ],
+  "candidate_requirements": [
+    "Display a compact clearly labelled normalized approval status for leave rows only; no new defaults/eligibility calculations.",
+    "Preserve raw file status as separate returned-value context where available; unknownstringsescaped/exact andknownstatusesreadable.",
+    "Absent/null/blank normalizedstatus must be distinguished explicitly; never infer approved/requested/importedreview from import action/readiness/matchstate.",
+    "When previewDirty, label normalizedstatus as lastpreview and requireRefresh toconfirm; update visible stale marker synchronously through existing say lifecycle without rerendering inputs or movingfocus.",
+    "Previewrefresh/failure/newerintent/retry/excludedrows/pagination must preserve existing corrections,requestbodies,tokens,acknowledgements and no automaticmutationreplay.",
+    "Do not change units/posting import presentation or shared readiness semantics. Existing137139omitteddata rules remain.",
+    "Use existing pure render/escaping patterns and current styles; add no source/dependency/backend/API/statecontract changes."
+  ],
+  "planned_gates": [
+    "ExactASTAPI/serialization/permission/formhandler comparison with disclosed presentation-only say/rowmarkup deltas.",
+    "OverlayTypeScript and source-heldactualcontroller3engine/narrow/wide/root200/short runs.",
+    "File-vs-normalizedstatusdisagreement;allknownstates;unknownprototype/HTML/longstrings;absent/null/blank;dirtycorrection;heldrefresh503/retry;newerfocus;excluded/paged rows.",
+    "Exactactualpreview/applypayloads locally intercepted, no configuredDBwrites; no actualapproval inferred fromimport completion.",
+    "Existingimport137139/recovery/membermatchingcurrentregressions and prior40explicit sourceapplicability before acceptance."
+  ],
+  "completion_claim": false,
+  "application_changed": false
+}

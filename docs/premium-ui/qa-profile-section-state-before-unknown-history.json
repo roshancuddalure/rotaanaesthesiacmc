@@ -1,0 +1,857 @@
+{
+  "recorded_at_utc": "2026-10-24T11:14:19.701Z",
+  "source_sha256": {
+    "frontend/src/member-workspace.ts": "8c53494a481b6ad0c66503c82e0425ad04728896e56363f0799f8823b1691b12",
+    "frontend/src/member-profile.ts": "2a4ca8080f72825273f1bda37a0e25dbb4ea97540ac4ab2820aa9a29f393b48b",
+    "frontend/src/member-presentation.ts": "99874e6e80efadd671be1c6d5b17b50e93e061bf8e7f2538535724baafd7d887",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/ui.ts": "88579ed75c8c72e4fd4e2d98508a58c42b925202362589a2469623664c2a975f",
+    "frontend/src/form-validation.ts": "a6d6cfa746f502cf05e5f4f1e1acade1c7ca82b592a497d98b79661854783a93",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "f9a52bbb83955b97b61a45eca2e40050e08c0108ee2dea6c413bef8a709f21e4"
+  },
+  "test_sha256": "36d6db3f30b0fd9669442a32e243d102d971a4c75f09c1566389d0250a69c01d",
+  "scope": "6engine-width contexts, canonical and legacy editable profiles. Native multi-section typing/caret identity, baseline dirty markers, hidden local validation and first invalid reachability, existing loaded/error/retry descriptions, native refused/confirmed discard,12 exact local PUTs and18 local comment POSTs with failure/success/confirmed-save readback failure and GET-only recovery. All network fulfilled locally; no real persistence/backend authorization/physical device/native AT claim.",
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "clock": "2026-10-24T06:30:00Z",
+      "canonicalImmediatePerSectionMarkers": true,
+      "typingNodeCaretPreserved": true,
+      "baselineClears": true,
+      "hiddenTwoSectionValidationReachable": true,
+      "retryCounterRetained": true,
+      "exactMockPuts": 2,
+      "legacyLinearFormDirtyMarkers": true,
+      "independentSiblingDraftPreserved": true,
+      "exactMockCommentPosts": 3,
+      "confirmedPostReadbackFailureHonest": true,
+      "noRepeatedConfirmedMutation": true,
+      "discardRefusedAndConfirmed": true,
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/section-state"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/section-state/roles"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/section-state/activity"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/section-state/activity"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/section-state/activity"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/section-state",
+          "body": {
+            "id": "section-state",
+            "canonical_name": "Changed name",
+            "active_status": "active",
+            "call_level": "1ST_CALL",
+            "effective_call_level": "3RD_CALL",
+            "revision": "section-one",
+            "archived_at": null,
+            "aliases": [
+              "Known alias"
+            ],
+            "designations": [
+              {
+                "id": "position",
+                "designation": "Consultant",
+                "effective_from": "2025-01-01",
+                "effective_to": null,
+                "source": "manual",
+                "notes": "Saved notes X"
+              }
+            ],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/section-state",
+          "body": {
+            "id": "section-state",
+            "canonical_name": "Changed name",
+            "active_status": "active",
+            "call_level": "1ST_CALL",
+            "effective_call_level": "3RD_CALL",
+            "revision": "section-one",
+            "archived_at": null,
+            "aliases": [
+              "Known alias"
+            ],
+            "designations": [
+              {
+                "id": "position",
+                "designation": "Consultant",
+                "effective_from": "2025-01-01",
+                "effective_to": null,
+                "source": "manual",
+                "notes": "Saved notes X"
+              }
+            ],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/section-state/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/section-state/comments",
+          "body": {
+            "body": "Comment draft"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/section-state/comments",
+          "body": {
+            "body": "Comment draft"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/section-state/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/section-state/comments",
+          "body": {
+            "body": "Comment draft"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/section-state/profile"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/section-state/profile"
+        }
+      ],
+      "prompts": [
+        "Discard unsaved member changes?",
+        "Discard unsaved member changes?",
+        "Discard unsaved member changes?",
+        "Discard unsaved profile changes?",
+        "Discard unsaved profile changes?"
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "clock": "2026-10-24T06:30:00Z",
+      "canonicalImmediatePerSectionMarkers": true,
+      "typingNodeCaretPreserved": true,
+      "baselineClears": true,
+      "hiddenTwoSectionValidationReachable": true,
+      "retryCounterRetained": true,
+      "exactMockPuts": 2,
+      "legacyLinearFormDirtyMarkers": true,
+      "independentSiblingDraftPreserved": true,
+      "exactMockCommentPosts": 3,
+      "confirmedPostReadbackFailureHonest": true,
+      "noRepeatedConfirmedMutation": true,
+      "discardRefusedAndConfirmed": true,
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/section-state"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/section-state/roles"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/section-state/activity"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/section-state/activity"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/section-state/activity"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/section-state",
+          "body": {
+            "id": "section-state",
+            "canonical_name": "Changed name",
+            "active_status": "active",
+            "call_level": "1ST_CALL",
+            "effective_call_level": "3RD_CALL",
+            "revision": "section-one",
+            "archived_at": null,
+            "aliases": [
+              "Known alias"
+            ],
+            "designations": [
+              {
+                "id": "position",
+                "designation": "Consultant",
+                "effective_from": "2025-01-01",
+                "effective_to": null,
+                "source": "manual",
+                "notes": "Saved notes X"
+              }
+            ],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/section-state",
+          "body": {
+            "id": "section-state",
+            "canonical_name": "Changed name",
+            "active_status": "active",
+            "call_level": "1ST_CALL",
+            "effective_call_level": "3RD_CALL",
+            "revision": "section-one",
+            "archived_at": null,
+            "aliases": [
+              "Known alias"
+            ],
+            "designations": [
+              {
+                "id": "position",
+                "designation": "Consultant",
+                "effective_from": "2025-01-01",
+                "effective_to": null,
+                "source": "manual",
+                "notes": "Saved notes X"
+              }
+            ],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/section-state/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/section-state/comments",
+          "body": {
+            "body": "Comment draft"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/section-state/comments",
+          "body": {
+            "body": "Comment draft"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/section-state/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/section-state/comments",
+          "body": {
+            "body": "Comment draft"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/section-state/profile"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/section-state/profile"
+        }
+      ],
+      "prompts": [
+        "Discard unsaved member changes?",
+        "Discard unsaved member changes?",
+        "Discard unsaved member changes?",
+        "Discard unsaved profile changes?",
+        "Discard unsaved profile changes?"
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "clock": "2026-10-24T06:30:00Z",
+      "canonicalImmediatePerSectionMarkers": true,
+      "typingNodeCaretPreserved": true,
+      "baselineClears": true,
+      "hiddenTwoSectionValidationReachable": true,
+      "retryCounterRetained": true,
+      "exactMockPuts": 2,
+      "legacyLinearFormDirtyMarkers": true,
+      "independentSiblingDraftPreserved": true,
+      "exactMockCommentPosts": 3,
+      "confirmedPostReadbackFailureHonest": true,
+      "noRepeatedConfirmedMutation": true,
+      "discardRefusedAndConfirmed": true,
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/section-state"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/section-state/roles"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/section-state/activity"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/section-state/activity"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/section-state/activity"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/section-state",
+          "body": {
+            "id": "section-state",
+            "canonical_name": "Changed name",
+            "active_status": "active",
+            "call_level": "1ST_CALL",
+            "effective_call_level": "3RD_CALL",
+            "revision": "section-one",
+            "archived_at": null,
+            "aliases": [
+              "Known alias"
+            ],
+            "designations": [
+              {
+                "id": "position",
+                "designation": "Consultant",
+                "effective_from": "2025-01-01",
+                "effective_to": null,
+                "source": "manual",
+                "notes": "Saved notes X"
+              }
+            ],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/section-state",
+          "body": {
+            "id": "section-state",
+            "canonical_name": "Changed name",
+            "active_status": "active",
+            "call_level": "1ST_CALL",
+            "effective_call_level": "3RD_CALL",
+            "revision": "section-one",
+            "archived_at": null,
+            "aliases": [
+              "Known alias"
+            ],
+            "designations": [
+              {
+                "id": "position",
+                "designation": "Consultant",
+                "effective_from": "2025-01-01",
+                "effective_to": null,
+                "source": "manual",
+                "notes": "Saved notes X"
+              }
+            ],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/section-state/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/section-state/comments",
+          "body": {
+            "body": "Comment draft"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/section-state/comments",
+          "body": {
+            "body": "Comment draft"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/section-state/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/section-state/comments",
+          "body": {
+            "body": "Comment draft"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/section-state/profile"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/section-state/profile"
+        }
+      ],
+      "prompts": [
+        "Discard unsaved member changes?",
+        "Discard unsaved member changes?",
+        "Discard unsaved member changes?",
+        "Discard unsaved profile changes?",
+        "Discard unsaved profile changes?"
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "clock": "2026-10-24T06:30:00Z",
+      "canonicalImmediatePerSectionMarkers": true,
+      "typingNodeCaretPreserved": true,
+      "baselineClears": true,
+      "hiddenTwoSectionValidationReachable": true,
+      "retryCounterRetained": true,
+      "exactMockPuts": 2,
+      "legacyLinearFormDirtyMarkers": true,
+      "independentSiblingDraftPreserved": true,
+      "exactMockCommentPosts": 3,
+      "confirmedPostReadbackFailureHonest": true,
+      "noRepeatedConfirmedMutation": true,
+      "discardRefusedAndConfirmed": true,
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/section-state"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/section-state/roles"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/section-state/activity"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/section-state/activity"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/section-state/activity"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/section-state",
+          "body": {
+            "id": "section-state",
+            "canonical_name": "Changed name",
+            "active_status": "active",
+            "call_level": "1ST_CALL",
+            "effective_call_level": "3RD_CALL",
+            "revision": "section-one",
+            "archived_at": null,
+            "aliases": [
+              "Known alias"
+            ],
+            "designations": [
+              {
+                "id": "position",
+                "designation": "Consultant",
+                "effective_from": "2025-01-01",
+                "effective_to": null,
+                "source": "manual",
+                "notes": "Saved notes X"
+              }
+            ],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/section-state",
+          "body": {
+            "id": "section-state",
+            "canonical_name": "Changed name",
+            "active_status": "active",
+            "call_level": "1ST_CALL",
+            "effective_call_level": "3RD_CALL",
+            "revision": "section-one",
+            "archived_at": null,
+            "aliases": [
+              "Known alias"
+            ],
+            "designations": [
+              {
+                "id": "position",
+                "designation": "Consultant",
+                "effective_from": "2025-01-01",
+                "effective_to": null,
+                "source": "manual",
+                "notes": "Saved notes X"
+              }
+            ],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/section-state/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/section-state/comments",
+          "body": {
+            "body": "Comment draft"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/section-state/comments",
+          "body": {
+            "body": "Comment draft"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/section-state/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/section-state/comments",
+          "body": {
+            "body": "Comment draft"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/section-state/profile"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/section-state/profile"
+        }
+      ],
+      "prompts": [
+        "Discard unsaved member changes?",
+        "Discard unsaved member changes?",
+        "Discard unsaved member changes?",
+        "Discard unsaved profile changes?",
+        "Discard unsaved profile changes?"
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "clock": "2026-10-24T06:30:00Z",
+      "canonicalImmediatePerSectionMarkers": true,
+      "typingNodeCaretPreserved": true,
+      "baselineClears": true,
+      "hiddenTwoSectionValidationReachable": true,
+      "retryCounterRetained": true,
+      "exactMockPuts": 2,
+      "legacyLinearFormDirtyMarkers": true,
+      "independentSiblingDraftPreserved": true,
+      "exactMockCommentPosts": 3,
+      "confirmedPostReadbackFailureHonest": true,
+      "noRepeatedConfirmedMutation": true,
+      "discardRefusedAndConfirmed": true,
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/section-state"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/section-state/roles"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/section-state/activity"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/section-state/activity"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/section-state/activity"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/section-state",
+          "body": {
+            "id": "section-state",
+            "canonical_name": "Changed name",
+            "active_status": "active",
+            "call_level": "1ST_CALL",
+            "effective_call_level": "3RD_CALL",
+            "revision": "section-one",
+            "archived_at": null,
+            "aliases": [
+              "Known alias"
+            ],
+            "designations": [
+              {
+                "id": "position",
+                "designation": "Consultant",
+                "effective_from": "2025-01-01",
+                "effective_to": null,
+                "source": "manual",
+                "notes": "Saved notes X"
+              }
+            ],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/section-state",
+          "body": {
+            "id": "section-state",
+            "canonical_name": "Changed name",
+            "active_status": "active",
+            "call_level": "1ST_CALL",
+            "effective_call_level": "3RD_CALL",
+            "revision": "section-one",
+            "archived_at": null,
+            "aliases": [
+              "Known alias"
+            ],
+            "designations": [
+              {
+                "id": "position",
+                "designation": "Consultant",
+                "effective_from": "2025-01-01",
+                "effective_to": null,
+                "source": "manual",
+                "notes": "Saved notes X"
+              }
+            ],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/section-state/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/section-state/comments",
+          "body": {
+            "body": "Comment draft"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/section-state/comments",
+          "body": {
+            "body": "Comment draft"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/section-state/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/section-state/comments",
+          "body": {
+            "body": "Comment draft"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/section-state/profile"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/section-state/profile"
+        }
+      ],
+      "prompts": [
+        "Discard unsaved member changes?",
+        "Discard unsaved member changes?",
+        "Discard unsaved member changes?",
+        "Discard unsaved profile changes?",
+        "Discard unsaved profile changes?"
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "clock": "2026-10-24T06:30:00Z",
+      "canonicalImmediatePerSectionMarkers": true,
+      "typingNodeCaretPreserved": true,
+      "baselineClears": true,
+      "hiddenTwoSectionValidationReachable": true,
+      "retryCounterRetained": true,
+      "exactMockPuts": 2,
+      "legacyLinearFormDirtyMarkers": true,
+      "independentSiblingDraftPreserved": true,
+      "exactMockCommentPosts": 3,
+      "confirmedPostReadbackFailureHonest": true,
+      "noRepeatedConfirmedMutation": true,
+      "discardRefusedAndConfirmed": true,
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/section-state"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/section-state/roles"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/section-state/activity"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/section-state/activity"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/section-state/activity"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/section-state",
+          "body": {
+            "id": "section-state",
+            "canonical_name": "Changed name",
+            "active_status": "active",
+            "call_level": "1ST_CALL",
+            "effective_call_level": "3RD_CALL",
+            "revision": "section-one",
+            "archived_at": null,
+            "aliases": [
+              "Known alias"
+            ],
+            "designations": [
+              {
+                "id": "position",
+                "designation": "Consultant",
+                "effective_from": "2025-01-01",
+                "effective_to": null,
+                "source": "manual",
+                "notes": "Saved notes X"
+              }
+            ],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/section-state",
+          "body": {
+            "id": "section-state",
+            "canonical_name": "Changed name",
+            "active_status": "active",
+            "call_level": "1ST_CALL",
+            "effective_call_level": "3RD_CALL",
+            "revision": "section-one",
+            "archived_at": null,
+            "aliases": [
+              "Known alias"
+            ],
+            "designations": [
+              {
+                "id": "position",
+                "designation": "Consultant",
+                "effective_from": "2025-01-01",
+                "effective_to": null,
+                "source": "manual",
+                "notes": "Saved notes X"
+              }
+            ],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/section-state/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/section-state/comments",
+          "body": {
+            "body": "Comment draft"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/section-state/comments",
+          "body": {
+            "body": "Comment draft"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/section-state/profile"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/members/section-state/comments",
+          "body": {
+            "body": "Comment draft"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/section-state/profile"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/section-state/profile"
+        }
+      ],
+      "prompts": [
+        "Discard unsaved member changes?",
+        "Discard unsaved member changes?",
+        "Discard unsaved member changes?",
+        "Discard unsaved profile changes?",
+        "Discard unsaved profile changes?"
+      ],
+      "pageErrors": []
+    }
+  ]
+}

@@ -1,0 +1,2425 @@
+{
+  "recorded_at_utc": "2026-10-29T01:09:40.363Z",
+  "source_sha256": {
+    "src/ui.ts": "680d7830bca8826b46b6f1dc2c0d064d2a3a2e16fb41188d2c323de6bccf85b2",
+    "src/member-import.ts": "d985f4aefa5bfdd71b6f0a53995a8c63b3c827639158ec584b97e72f14ced061",
+    "src/member-workspace.ts": "0ef8c1ef2234c7a50d8ca10b8aaa3998a654d452f563bd4c75531faef09d6c63",
+    "src/operational-import.ts": "6f9a3e6e40a3faa63c3a023c15e56e1a9ee22e46a734247bd085954e3e9340e1",
+    "src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "src/premium-theme.css": "b34613418086c715ed4eee37ddfc115daccffecc5399772078ef2076de620868",
+    "tests/premium-leave-import-status-progress-integrated.browser.mjs": "41808b107c8fac6a5e9daf3af31dd205ada9f1ff2054624b749a2bb35c219af8",
+    "tests/fixtures/import-upload-observer.mjs": "ef20334b30a036c61d11558da867c2fa38041460323275378dce0f9a29c63ec7"
+  },
+  "status": "Scoped browser evidence; not requirement acceptance",
+  "file_byte_evidence": "All engines: passive observation of the actual File name/text in FormData passed to native fetch, with original fetch arguments/body/return unchanged. Chromium/Firefox also assert intercepted multipart bytes. WebKit interception omits raw file payload; browser FormData evidence is not server-received-byte certification.",
+  "scope": "Actual mounted four CSV-capable import surfaces, native keyboard/file/mapping/choice interactions, intercepted existing settings/multipart fields, staged failure/retry and confirmed-apply callback failures. All API requests fulfilled locally; no backend or persistence claim. Additional modes, include/archive/exclusion retention, full reload boundaries and independent acceptance remain separate.",
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "surface": "workbook",
+      "variant": "ordinary-remount",
+      "columnFailureRetainedFileSafeNativeRetry": true,
+      "replacementResetsStagesAndControls": true,
+      "previewFailureRetainsExactFileMappingAndChoice": {
+        "file": "mapped.csv",
+        "bytes": "819cc6ae8459889b1f82175598375355e02bd629ed4c47f06a1686ee8d85cd1d",
+        "byte_observation": "native fetch FormData File and intercepted multipart",
+        "settings": {
+          "sheet": "Members",
+          "header_row": 1,
+          "mapping": {
+            "name": 0
+          },
+          "resolutions": {
+            "2": "b"
+          },
+          "confirm_call_changes": false
+        }
+      },
+      "applyPendingAndUnconfirmedFailure": true,
+      "confirmedCallbackFailureKeepsCompletion": true,
+      "nativeDiscardRetained": false,
+      "applyBodies": [
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        },
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        }
+      ],
+      "columnFiles": [
+        "initial.csv",
+        "initial.csv",
+        "mapped.csv",
+        "replacement.csv"
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "surface": "workbook",
+      "variant": "replayed-remount",
+      "columnFailureRetainedFileSafeNativeRetry": true,
+      "replacementResetsStagesAndControls": true,
+      "previewFailureRetainsExactFileMappingAndChoice": {
+        "file": "mapped.csv",
+        "bytes": "819cc6ae8459889b1f82175598375355e02bd629ed4c47f06a1686ee8d85cd1d",
+        "byte_observation": "native fetch FormData File and intercepted multipart",
+        "settings": {
+          "sheet": "Members",
+          "header_row": 1,
+          "mapping": {
+            "name": 0
+          },
+          "resolutions": {
+            "2": "b"
+          },
+          "confirm_call_changes": false
+        }
+      },
+      "applyPendingAndUnconfirmedFailure": true,
+      "confirmedCallbackFailureKeepsCompletion": true,
+      "nativeDiscardRetained": false,
+      "applyBodies": [
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        },
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        }
+      ],
+      "columnFiles": [
+        "initial.csv",
+        "initial.csv",
+        "mapped.csv",
+        "replacement.csv"
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "surface": "workbook",
+      "variant": "ordinary-throw",
+      "columnFailureRetainedFileSafeNativeRetry": true,
+      "replacementResetsStagesAndControls": true,
+      "previewFailureRetainsExactFileMappingAndChoice": {
+        "file": "mapped.csv",
+        "bytes": "819cc6ae8459889b1f82175598375355e02bd629ed4c47f06a1686ee8d85cd1d",
+        "byte_observation": "native fetch FormData File and intercepted multipart",
+        "settings": {
+          "sheet": "Members",
+          "header_row": 1,
+          "mapping": {
+            "name": 0
+          },
+          "resolutions": {
+            "2": "b"
+          },
+          "confirm_call_changes": false
+        }
+      },
+      "applyPendingAndUnconfirmedFailure": true,
+      "confirmedCallbackFailureKeepsCompletion": true,
+      "nativeDiscardRetained": false,
+      "applyBodies": [
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        },
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        }
+      ],
+      "columnFiles": [
+        "initial.csv",
+        "initial.csv",
+        "mapped.csv",
+        "replacement.csv"
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "surface": "workbook",
+      "variant": "replayed-throw",
+      "columnFailureRetainedFileSafeNativeRetry": true,
+      "replacementResetsStagesAndControls": true,
+      "previewFailureRetainsExactFileMappingAndChoice": {
+        "file": "mapped.csv",
+        "bytes": "819cc6ae8459889b1f82175598375355e02bd629ed4c47f06a1686ee8d85cd1d",
+        "byte_observation": "native fetch FormData File and intercepted multipart",
+        "settings": {
+          "sheet": "Members",
+          "header_row": 1,
+          "mapping": {
+            "name": 0
+          },
+          "resolutions": {
+            "2": "b"
+          },
+          "confirm_call_changes": false
+        }
+      },
+      "applyPendingAndUnconfirmedFailure": true,
+      "confirmedCallbackFailureKeepsCompletion": true,
+      "nativeDiscardRetained": false,
+      "applyBodies": [
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        },
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        }
+      ],
+      "columnFiles": [
+        "initial.csv",
+        "initial.csv",
+        "mapped.csv",
+        "replacement.csv"
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "surface": "csv",
+      "variant": "ordinary-throw",
+      "columnFailureRetainedFileSafeNativeRetry": true,
+      "replacementResetsStagesAndControls": true,
+      "previewFailureRetainsExactFileMappingAndChoice": {
+        "file": "mapped.csv",
+        "bytes": "819cc6ae8459889b1f82175598375355e02bd629ed4c47f06a1686ee8d85cd1d",
+        "byte_observation": "native fetch FormData File and intercepted multipart",
+        "settings": {
+          "corrections": {
+            "2": {
+              "member_id": "b",
+              "_confirm_distinct": ""
+            }
+          },
+          "mapping": {
+            "canonical_name": "canonical_name",
+            "call_level": ""
+          },
+          "mode": "roster_sync"
+        }
+      },
+      "applyPendingAndUnconfirmedFailure": true,
+      "confirmedCallbackFailureKeepsCompletion": true,
+      "nativeDiscardRetained": true,
+      "applyBodies": [
+        {
+          "excluded": [],
+          "archive_missing": []
+        },
+        {
+          "excluded": [],
+          "archive_missing": []
+        }
+      ],
+      "columnFiles": [
+        "initial.csv",
+        "mapped.csv",
+        "replacement.csv"
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "surface": "units",
+      "variant": "ordinary-throw",
+      "columnFailureRetainedFileSafeNativeRetry": true,
+      "replacementResetsStagesAndControls": true,
+      "previewFailureRetainsExactFileMappingAndChoice": {
+        "file": "mapped.csv",
+        "bytes": "819cc6ae8459889b1f82175598375355e02bd629ed4c47f06a1686ee8d85cd1d",
+        "byte_observation": "native fetch FormData File and intercepted multipart",
+        "settings": {
+          "date_format": "DMY",
+          "mapping": {
+            "canonical_name": "member_name"
+          },
+          "corrections": {
+            "CSV:2": {
+              "person_id": "b"
+            }
+          },
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": [],
+          "mode": "update_matching",
+          "month": "2026-10"
+        }
+      },
+      "applyPendingAndUnconfirmedFailure": true,
+      "confirmedCallbackFailureKeepsCompletion": true,
+      "nativeDiscardRetained": true,
+      "applyBodies": [
+        {
+          "excluded": [],
+          "acknowledge_warnings": false
+        },
+        {
+          "excluded": [],
+          "acknowledge_warnings": false
+        }
+      ],
+      "columnFiles": [
+        "initial.csv",
+        "mapped.csv",
+        "replacement.csv"
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "surface": "leave",
+      "variant": "ordinary-throw",
+      "columnFailureRetainedFileSafeNativeRetry": true,
+      "replacementResetsStagesAndControls": true,
+      "previewFailureRetainsExactFileMappingAndChoice": {
+        "file": "mapped.csv",
+        "bytes": "819cc6ae8459889b1f82175598375355e02bd629ed4c47f06a1686ee8d85cd1d",
+        "byte_observation": "native fetch FormData File and intercepted multipart",
+        "settings": {
+          "date_format": "DMY",
+          "mapping": {
+            "canonical_name": "member_name"
+          },
+          "corrections": {
+            "CSV:2": {
+              "person_id": "b"
+            }
+          },
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": [],
+          "mode": "update_matching",
+          "month": "2026-10"
+        }
+      },
+      "applyPendingAndUnconfirmedFailure": true,
+      "confirmedCallbackFailureKeepsCompletion": true,
+      "nativeDiscardRetained": true,
+      "applyBodies": [
+        {
+          "excluded": [],
+          "acknowledge_warnings": false
+        },
+        {
+          "excluded": [],
+          "acknowledge_warnings": false
+        }
+      ],
+      "columnFiles": [
+        "initial.csv",
+        "mapped.csv",
+        "replacement.csv"
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "surface": "workbook",
+      "variant": "ordinary-remount",
+      "columnFailureRetainedFileSafeNativeRetry": true,
+      "replacementResetsStagesAndControls": true,
+      "previewFailureRetainsExactFileMappingAndChoice": {
+        "file": "mapped.csv",
+        "bytes": "819cc6ae8459889b1f82175598375355e02bd629ed4c47f06a1686ee8d85cd1d",
+        "byte_observation": "native fetch FormData File and intercepted multipart",
+        "settings": {
+          "sheet": "Members",
+          "header_row": 1,
+          "mapping": {
+            "name": 0
+          },
+          "resolutions": {
+            "2": "b"
+          },
+          "confirm_call_changes": false
+        }
+      },
+      "applyPendingAndUnconfirmedFailure": true,
+      "confirmedCallbackFailureKeepsCompletion": true,
+      "nativeDiscardRetained": false,
+      "applyBodies": [
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        },
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        }
+      ],
+      "columnFiles": [
+        "initial.csv",
+        "initial.csv",
+        "mapped.csv",
+        "replacement.csv"
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "surface": "workbook",
+      "variant": "replayed-remount",
+      "columnFailureRetainedFileSafeNativeRetry": true,
+      "replacementResetsStagesAndControls": true,
+      "previewFailureRetainsExactFileMappingAndChoice": {
+        "file": "mapped.csv",
+        "bytes": "819cc6ae8459889b1f82175598375355e02bd629ed4c47f06a1686ee8d85cd1d",
+        "byte_observation": "native fetch FormData File and intercepted multipart",
+        "settings": {
+          "sheet": "Members",
+          "header_row": 1,
+          "mapping": {
+            "name": 0
+          },
+          "resolutions": {
+            "2": "b"
+          },
+          "confirm_call_changes": false
+        }
+      },
+      "applyPendingAndUnconfirmedFailure": true,
+      "confirmedCallbackFailureKeepsCompletion": true,
+      "nativeDiscardRetained": false,
+      "applyBodies": [
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        },
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        }
+      ],
+      "columnFiles": [
+        "initial.csv",
+        "initial.csv",
+        "mapped.csv",
+        "replacement.csv"
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "surface": "workbook",
+      "variant": "ordinary-throw",
+      "columnFailureRetainedFileSafeNativeRetry": true,
+      "replacementResetsStagesAndControls": true,
+      "previewFailureRetainsExactFileMappingAndChoice": {
+        "file": "mapped.csv",
+        "bytes": "819cc6ae8459889b1f82175598375355e02bd629ed4c47f06a1686ee8d85cd1d",
+        "byte_observation": "native fetch FormData File and intercepted multipart",
+        "settings": {
+          "sheet": "Members",
+          "header_row": 1,
+          "mapping": {
+            "name": 0
+          },
+          "resolutions": {
+            "2": "b"
+          },
+          "confirm_call_changes": false
+        }
+      },
+      "applyPendingAndUnconfirmedFailure": true,
+      "confirmedCallbackFailureKeepsCompletion": true,
+      "nativeDiscardRetained": false,
+      "applyBodies": [
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        },
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        }
+      ],
+      "columnFiles": [
+        "initial.csv",
+        "initial.csv",
+        "mapped.csv",
+        "replacement.csv"
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "surface": "workbook",
+      "variant": "replayed-throw",
+      "columnFailureRetainedFileSafeNativeRetry": true,
+      "replacementResetsStagesAndControls": true,
+      "previewFailureRetainsExactFileMappingAndChoice": {
+        "file": "mapped.csv",
+        "bytes": "819cc6ae8459889b1f82175598375355e02bd629ed4c47f06a1686ee8d85cd1d",
+        "byte_observation": "native fetch FormData File and intercepted multipart",
+        "settings": {
+          "sheet": "Members",
+          "header_row": 1,
+          "mapping": {
+            "name": 0
+          },
+          "resolutions": {
+            "2": "b"
+          },
+          "confirm_call_changes": false
+        }
+      },
+      "applyPendingAndUnconfirmedFailure": true,
+      "confirmedCallbackFailureKeepsCompletion": true,
+      "nativeDiscardRetained": false,
+      "applyBodies": [
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        },
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        }
+      ],
+      "columnFiles": [
+        "initial.csv",
+        "initial.csv",
+        "mapped.csv",
+        "replacement.csv"
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "surface": "csv",
+      "variant": "ordinary-throw",
+      "columnFailureRetainedFileSafeNativeRetry": true,
+      "replacementResetsStagesAndControls": true,
+      "previewFailureRetainsExactFileMappingAndChoice": {
+        "file": "mapped.csv",
+        "bytes": "819cc6ae8459889b1f82175598375355e02bd629ed4c47f06a1686ee8d85cd1d",
+        "byte_observation": "native fetch FormData File and intercepted multipart",
+        "settings": {
+          "corrections": {
+            "2": {
+              "member_id": "b",
+              "_confirm_distinct": ""
+            }
+          },
+          "mapping": {
+            "canonical_name": "canonical_name",
+            "call_level": ""
+          },
+          "mode": "roster_sync"
+        }
+      },
+      "applyPendingAndUnconfirmedFailure": true,
+      "confirmedCallbackFailureKeepsCompletion": true,
+      "nativeDiscardRetained": true,
+      "applyBodies": [
+        {
+          "excluded": [],
+          "archive_missing": []
+        },
+        {
+          "excluded": [],
+          "archive_missing": []
+        }
+      ],
+      "columnFiles": [
+        "initial.csv",
+        "mapped.csv",
+        "replacement.csv"
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "surface": "units",
+      "variant": "ordinary-throw",
+      "columnFailureRetainedFileSafeNativeRetry": true,
+      "replacementResetsStagesAndControls": true,
+      "previewFailureRetainsExactFileMappingAndChoice": {
+        "file": "mapped.csv",
+        "bytes": "819cc6ae8459889b1f82175598375355e02bd629ed4c47f06a1686ee8d85cd1d",
+        "byte_observation": "native fetch FormData File and intercepted multipart",
+        "settings": {
+          "date_format": "DMY",
+          "mapping": {
+            "canonical_name": "member_name"
+          },
+          "corrections": {
+            "CSV:2": {
+              "person_id": "b"
+            }
+          },
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": [],
+          "mode": "update_matching",
+          "month": "2026-10"
+        }
+      },
+      "applyPendingAndUnconfirmedFailure": true,
+      "confirmedCallbackFailureKeepsCompletion": true,
+      "nativeDiscardRetained": true,
+      "applyBodies": [
+        {
+          "excluded": [],
+          "acknowledge_warnings": false
+        },
+        {
+          "excluded": [],
+          "acknowledge_warnings": false
+        }
+      ],
+      "columnFiles": [
+        "initial.csv",
+        "mapped.csv",
+        "replacement.csv"
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "surface": "leave",
+      "variant": "ordinary-throw",
+      "columnFailureRetainedFileSafeNativeRetry": true,
+      "replacementResetsStagesAndControls": true,
+      "previewFailureRetainsExactFileMappingAndChoice": {
+        "file": "mapped.csv",
+        "bytes": "819cc6ae8459889b1f82175598375355e02bd629ed4c47f06a1686ee8d85cd1d",
+        "byte_observation": "native fetch FormData File and intercepted multipart",
+        "settings": {
+          "date_format": "DMY",
+          "mapping": {
+            "canonical_name": "member_name"
+          },
+          "corrections": {
+            "CSV:2": {
+              "person_id": "b"
+            }
+          },
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": [],
+          "mode": "update_matching",
+          "month": "2026-10"
+        }
+      },
+      "applyPendingAndUnconfirmedFailure": true,
+      "confirmedCallbackFailureKeepsCompletion": true,
+      "nativeDiscardRetained": true,
+      "applyBodies": [
+        {
+          "excluded": [],
+          "acknowledge_warnings": false
+        },
+        {
+          "excluded": [],
+          "acknowledge_warnings": false
+        }
+      ],
+      "columnFiles": [
+        "initial.csv",
+        "mapped.csv",
+        "replacement.csv"
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "surface": "workbook",
+      "variant": "ordinary-remount",
+      "columnFailureRetainedFileSafeNativeRetry": true,
+      "replacementResetsStagesAndControls": true,
+      "previewFailureRetainsExactFileMappingAndChoice": {
+        "file": "mapped.csv",
+        "bytes": "819cc6ae8459889b1f82175598375355e02bd629ed4c47f06a1686ee8d85cd1d",
+        "byte_observation": "native fetch FormData File and intercepted multipart",
+        "settings": {
+          "sheet": "Members",
+          "header_row": 1,
+          "mapping": {
+            "name": 0
+          },
+          "resolutions": {
+            "2": "b"
+          },
+          "confirm_call_changes": false
+        }
+      },
+      "applyPendingAndUnconfirmedFailure": true,
+      "confirmedCallbackFailureKeepsCompletion": true,
+      "nativeDiscardRetained": false,
+      "applyBodies": [
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        },
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        }
+      ],
+      "columnFiles": [
+        "initial.csv",
+        "initial.csv",
+        "mapped.csv",
+        "replacement.csv"
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "surface": "workbook",
+      "variant": "replayed-remount",
+      "columnFailureRetainedFileSafeNativeRetry": true,
+      "replacementResetsStagesAndControls": true,
+      "previewFailureRetainsExactFileMappingAndChoice": {
+        "file": "mapped.csv",
+        "bytes": "819cc6ae8459889b1f82175598375355e02bd629ed4c47f06a1686ee8d85cd1d",
+        "byte_observation": "native fetch FormData File and intercepted multipart",
+        "settings": {
+          "sheet": "Members",
+          "header_row": 1,
+          "mapping": {
+            "name": 0
+          },
+          "resolutions": {
+            "2": "b"
+          },
+          "confirm_call_changes": false
+        }
+      },
+      "applyPendingAndUnconfirmedFailure": true,
+      "confirmedCallbackFailureKeepsCompletion": true,
+      "nativeDiscardRetained": false,
+      "applyBodies": [
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        },
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        }
+      ],
+      "columnFiles": [
+        "initial.csv",
+        "initial.csv",
+        "mapped.csv",
+        "replacement.csv"
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "surface": "workbook",
+      "variant": "ordinary-throw",
+      "columnFailureRetainedFileSafeNativeRetry": true,
+      "replacementResetsStagesAndControls": true,
+      "previewFailureRetainsExactFileMappingAndChoice": {
+        "file": "mapped.csv",
+        "bytes": "819cc6ae8459889b1f82175598375355e02bd629ed4c47f06a1686ee8d85cd1d",
+        "byte_observation": "native fetch FormData File and intercepted multipart",
+        "settings": {
+          "sheet": "Members",
+          "header_row": 1,
+          "mapping": {
+            "name": 0
+          },
+          "resolutions": {
+            "2": "b"
+          },
+          "confirm_call_changes": false
+        }
+      },
+      "applyPendingAndUnconfirmedFailure": true,
+      "confirmedCallbackFailureKeepsCompletion": true,
+      "nativeDiscardRetained": false,
+      "applyBodies": [
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        },
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        }
+      ],
+      "columnFiles": [
+        "initial.csv",
+        "initial.csv",
+        "mapped.csv",
+        "replacement.csv"
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "surface": "workbook",
+      "variant": "replayed-throw",
+      "columnFailureRetainedFileSafeNativeRetry": true,
+      "replacementResetsStagesAndControls": true,
+      "previewFailureRetainsExactFileMappingAndChoice": {
+        "file": "mapped.csv",
+        "bytes": "819cc6ae8459889b1f82175598375355e02bd629ed4c47f06a1686ee8d85cd1d",
+        "byte_observation": "native fetch FormData File and intercepted multipart",
+        "settings": {
+          "sheet": "Members",
+          "header_row": 1,
+          "mapping": {
+            "name": 0
+          },
+          "resolutions": {
+            "2": "b"
+          },
+          "confirm_call_changes": false
+        }
+      },
+      "applyPendingAndUnconfirmedFailure": true,
+      "confirmedCallbackFailureKeepsCompletion": true,
+      "nativeDiscardRetained": false,
+      "applyBodies": [
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        },
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        }
+      ],
+      "columnFiles": [
+        "initial.csv",
+        "initial.csv",
+        "mapped.csv",
+        "replacement.csv"
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "surface": "csv",
+      "variant": "ordinary-throw",
+      "columnFailureRetainedFileSafeNativeRetry": true,
+      "replacementResetsStagesAndControls": true,
+      "previewFailureRetainsExactFileMappingAndChoice": {
+        "file": "mapped.csv",
+        "bytes": "819cc6ae8459889b1f82175598375355e02bd629ed4c47f06a1686ee8d85cd1d",
+        "byte_observation": "native fetch FormData File and intercepted multipart",
+        "settings": {
+          "corrections": {
+            "2": {
+              "member_id": "b",
+              "_confirm_distinct": ""
+            }
+          },
+          "mapping": {
+            "canonical_name": "canonical_name",
+            "call_level": ""
+          },
+          "mode": "roster_sync"
+        }
+      },
+      "applyPendingAndUnconfirmedFailure": true,
+      "confirmedCallbackFailureKeepsCompletion": true,
+      "nativeDiscardRetained": true,
+      "applyBodies": [
+        {
+          "excluded": [],
+          "archive_missing": []
+        },
+        {
+          "excluded": [],
+          "archive_missing": []
+        }
+      ],
+      "columnFiles": [
+        "initial.csv",
+        "mapped.csv",
+        "replacement.csv"
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "surface": "units",
+      "variant": "ordinary-throw",
+      "columnFailureRetainedFileSafeNativeRetry": true,
+      "replacementResetsStagesAndControls": true,
+      "previewFailureRetainsExactFileMappingAndChoice": {
+        "file": "mapped.csv",
+        "bytes": "819cc6ae8459889b1f82175598375355e02bd629ed4c47f06a1686ee8d85cd1d",
+        "byte_observation": "native fetch FormData File and intercepted multipart",
+        "settings": {
+          "date_format": "DMY",
+          "mapping": {
+            "canonical_name": "member_name"
+          },
+          "corrections": {
+            "CSV:2": {
+              "person_id": "b"
+            }
+          },
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": [],
+          "mode": "update_matching",
+          "month": "2026-10"
+        }
+      },
+      "applyPendingAndUnconfirmedFailure": true,
+      "confirmedCallbackFailureKeepsCompletion": true,
+      "nativeDiscardRetained": true,
+      "applyBodies": [
+        {
+          "excluded": [],
+          "acknowledge_warnings": false
+        },
+        {
+          "excluded": [],
+          "acknowledge_warnings": false
+        }
+      ],
+      "columnFiles": [
+        "initial.csv",
+        "mapped.csv",
+        "replacement.csv"
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "surface": "leave",
+      "variant": "ordinary-throw",
+      "columnFailureRetainedFileSafeNativeRetry": true,
+      "replacementResetsStagesAndControls": true,
+      "previewFailureRetainsExactFileMappingAndChoice": {
+        "file": "mapped.csv",
+        "bytes": "819cc6ae8459889b1f82175598375355e02bd629ed4c47f06a1686ee8d85cd1d",
+        "byte_observation": "native fetch FormData File and intercepted multipart",
+        "settings": {
+          "date_format": "DMY",
+          "mapping": {
+            "canonical_name": "member_name"
+          },
+          "corrections": {
+            "CSV:2": {
+              "person_id": "b"
+            }
+          },
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": [],
+          "mode": "update_matching",
+          "month": "2026-10"
+        }
+      },
+      "applyPendingAndUnconfirmedFailure": true,
+      "confirmedCallbackFailureKeepsCompletion": true,
+      "nativeDiscardRetained": true,
+      "applyBodies": [
+        {
+          "excluded": [],
+          "acknowledge_warnings": false
+        },
+        {
+          "excluded": [],
+          "acknowledge_warnings": false
+        }
+      ],
+      "columnFiles": [
+        "initial.csv",
+        "mapped.csv",
+        "replacement.csv"
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "surface": "workbook",
+      "variant": "ordinary-remount",
+      "columnFailureRetainedFileSafeNativeRetry": true,
+      "replacementResetsStagesAndControls": true,
+      "previewFailureRetainsExactFileMappingAndChoice": {
+        "file": "mapped.csv",
+        "bytes": "819cc6ae8459889b1f82175598375355e02bd629ed4c47f06a1686ee8d85cd1d",
+        "byte_observation": "native fetch FormData File and intercepted multipart",
+        "settings": {
+          "sheet": "Members",
+          "header_row": 1,
+          "mapping": {
+            "name": 0
+          },
+          "resolutions": {
+            "2": "b"
+          },
+          "confirm_call_changes": false
+        }
+      },
+      "applyPendingAndUnconfirmedFailure": true,
+      "confirmedCallbackFailureKeepsCompletion": true,
+      "nativeDiscardRetained": false,
+      "applyBodies": [
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        },
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        }
+      ],
+      "columnFiles": [
+        "initial.csv",
+        "initial.csv",
+        "mapped.csv",
+        "replacement.csv"
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "surface": "workbook",
+      "variant": "replayed-remount",
+      "columnFailureRetainedFileSafeNativeRetry": true,
+      "replacementResetsStagesAndControls": true,
+      "previewFailureRetainsExactFileMappingAndChoice": {
+        "file": "mapped.csv",
+        "bytes": "819cc6ae8459889b1f82175598375355e02bd629ed4c47f06a1686ee8d85cd1d",
+        "byte_observation": "native fetch FormData File and intercepted multipart",
+        "settings": {
+          "sheet": "Members",
+          "header_row": 1,
+          "mapping": {
+            "name": 0
+          },
+          "resolutions": {
+            "2": "b"
+          },
+          "confirm_call_changes": false
+        }
+      },
+      "applyPendingAndUnconfirmedFailure": true,
+      "confirmedCallbackFailureKeepsCompletion": true,
+      "nativeDiscardRetained": false,
+      "applyBodies": [
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        },
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        }
+      ],
+      "columnFiles": [
+        "initial.csv",
+        "initial.csv",
+        "mapped.csv",
+        "replacement.csv"
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "surface": "workbook",
+      "variant": "ordinary-throw",
+      "columnFailureRetainedFileSafeNativeRetry": true,
+      "replacementResetsStagesAndControls": true,
+      "previewFailureRetainsExactFileMappingAndChoice": {
+        "file": "mapped.csv",
+        "bytes": "819cc6ae8459889b1f82175598375355e02bd629ed4c47f06a1686ee8d85cd1d",
+        "byte_observation": "native fetch FormData File and intercepted multipart",
+        "settings": {
+          "sheet": "Members",
+          "header_row": 1,
+          "mapping": {
+            "name": 0
+          },
+          "resolutions": {
+            "2": "b"
+          },
+          "confirm_call_changes": false
+        }
+      },
+      "applyPendingAndUnconfirmedFailure": true,
+      "confirmedCallbackFailureKeepsCompletion": true,
+      "nativeDiscardRetained": false,
+      "applyBodies": [
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        },
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        }
+      ],
+      "columnFiles": [
+        "initial.csv",
+        "initial.csv",
+        "mapped.csv",
+        "replacement.csv"
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "surface": "workbook",
+      "variant": "replayed-throw",
+      "columnFailureRetainedFileSafeNativeRetry": true,
+      "replacementResetsStagesAndControls": true,
+      "previewFailureRetainsExactFileMappingAndChoice": {
+        "file": "mapped.csv",
+        "bytes": "819cc6ae8459889b1f82175598375355e02bd629ed4c47f06a1686ee8d85cd1d",
+        "byte_observation": "native fetch FormData File and intercepted multipart",
+        "settings": {
+          "sheet": "Members",
+          "header_row": 1,
+          "mapping": {
+            "name": 0
+          },
+          "resolutions": {
+            "2": "b"
+          },
+          "confirm_call_changes": false
+        }
+      },
+      "applyPendingAndUnconfirmedFailure": true,
+      "confirmedCallbackFailureKeepsCompletion": true,
+      "nativeDiscardRetained": false,
+      "applyBodies": [
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        },
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        }
+      ],
+      "columnFiles": [
+        "initial.csv",
+        "initial.csv",
+        "mapped.csv",
+        "replacement.csv"
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "surface": "csv",
+      "variant": "ordinary-throw",
+      "columnFailureRetainedFileSafeNativeRetry": true,
+      "replacementResetsStagesAndControls": true,
+      "previewFailureRetainsExactFileMappingAndChoice": {
+        "file": "mapped.csv",
+        "bytes": "819cc6ae8459889b1f82175598375355e02bd629ed4c47f06a1686ee8d85cd1d",
+        "byte_observation": "native fetch FormData File and intercepted multipart",
+        "settings": {
+          "corrections": {
+            "2": {
+              "member_id": "b",
+              "_confirm_distinct": ""
+            }
+          },
+          "mapping": {
+            "canonical_name": "canonical_name",
+            "call_level": ""
+          },
+          "mode": "roster_sync"
+        }
+      },
+      "applyPendingAndUnconfirmedFailure": true,
+      "confirmedCallbackFailureKeepsCompletion": true,
+      "nativeDiscardRetained": true,
+      "applyBodies": [
+        {
+          "excluded": [],
+          "archive_missing": []
+        },
+        {
+          "excluded": [],
+          "archive_missing": []
+        }
+      ],
+      "columnFiles": [
+        "initial.csv",
+        "mapped.csv",
+        "replacement.csv"
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "surface": "units",
+      "variant": "ordinary-throw",
+      "columnFailureRetainedFileSafeNativeRetry": true,
+      "replacementResetsStagesAndControls": true,
+      "previewFailureRetainsExactFileMappingAndChoice": {
+        "file": "mapped.csv",
+        "bytes": "819cc6ae8459889b1f82175598375355e02bd629ed4c47f06a1686ee8d85cd1d",
+        "byte_observation": "native fetch FormData File and intercepted multipart",
+        "settings": {
+          "date_format": "DMY",
+          "mapping": {
+            "canonical_name": "member_name"
+          },
+          "corrections": {
+            "CSV:2": {
+              "person_id": "b"
+            }
+          },
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": [],
+          "mode": "update_matching",
+          "month": "2026-10"
+        }
+      },
+      "applyPendingAndUnconfirmedFailure": true,
+      "confirmedCallbackFailureKeepsCompletion": true,
+      "nativeDiscardRetained": true,
+      "applyBodies": [
+        {
+          "excluded": [],
+          "acknowledge_warnings": false
+        },
+        {
+          "excluded": [],
+          "acknowledge_warnings": false
+        }
+      ],
+      "columnFiles": [
+        "initial.csv",
+        "mapped.csv",
+        "replacement.csv"
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "surface": "leave",
+      "variant": "ordinary-throw",
+      "columnFailureRetainedFileSafeNativeRetry": true,
+      "replacementResetsStagesAndControls": true,
+      "previewFailureRetainsExactFileMappingAndChoice": {
+        "file": "mapped.csv",
+        "bytes": "819cc6ae8459889b1f82175598375355e02bd629ed4c47f06a1686ee8d85cd1d",
+        "byte_observation": "native fetch FormData File and intercepted multipart",
+        "settings": {
+          "date_format": "DMY",
+          "mapping": {
+            "canonical_name": "member_name"
+          },
+          "corrections": {
+            "CSV:2": {
+              "person_id": "b"
+            }
+          },
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": [],
+          "mode": "update_matching",
+          "month": "2026-10"
+        }
+      },
+      "applyPendingAndUnconfirmedFailure": true,
+      "confirmedCallbackFailureKeepsCompletion": true,
+      "nativeDiscardRetained": true,
+      "applyBodies": [
+        {
+          "excluded": [],
+          "acknowledge_warnings": false
+        },
+        {
+          "excluded": [],
+          "acknowledge_warnings": false
+        }
+      ],
+      "columnFiles": [
+        "initial.csv",
+        "mapped.csv",
+        "replacement.csv"
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "surface": "workbook",
+      "variant": "ordinary-remount",
+      "columnFailureRetainedFileSafeNativeRetry": true,
+      "replacementResetsStagesAndControls": true,
+      "previewFailureRetainsExactFileMappingAndChoice": {
+        "file": "mapped.csv",
+        "bytes": "819cc6ae8459889b1f82175598375355e02bd629ed4c47f06a1686ee8d85cd1d",
+        "byte_observation": "native fetch FormData File; interception protocol omits file bytes",
+        "settings": {
+          "sheet": "Members",
+          "header_row": 1,
+          "mapping": {
+            "name": 0
+          },
+          "resolutions": {
+            "2": "b"
+          },
+          "confirm_call_changes": false
+        }
+      },
+      "applyPendingAndUnconfirmedFailure": true,
+      "confirmedCallbackFailureKeepsCompletion": true,
+      "nativeDiscardRetained": false,
+      "applyBodies": [
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        },
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        }
+      ],
+      "columnFiles": [
+        "initial.csv",
+        "initial.csv",
+        "mapped.csv",
+        "replacement.csv"
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "surface": "workbook",
+      "variant": "replayed-remount",
+      "columnFailureRetainedFileSafeNativeRetry": true,
+      "replacementResetsStagesAndControls": true,
+      "previewFailureRetainsExactFileMappingAndChoice": {
+        "file": "mapped.csv",
+        "bytes": "819cc6ae8459889b1f82175598375355e02bd629ed4c47f06a1686ee8d85cd1d",
+        "byte_observation": "native fetch FormData File; interception protocol omits file bytes",
+        "settings": {
+          "sheet": "Members",
+          "header_row": 1,
+          "mapping": {
+            "name": 0
+          },
+          "resolutions": {
+            "2": "b"
+          },
+          "confirm_call_changes": false
+        }
+      },
+      "applyPendingAndUnconfirmedFailure": true,
+      "confirmedCallbackFailureKeepsCompletion": true,
+      "nativeDiscardRetained": false,
+      "applyBodies": [
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        },
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        }
+      ],
+      "columnFiles": [
+        "initial.csv",
+        "initial.csv",
+        "mapped.csv",
+        "replacement.csv"
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "surface": "workbook",
+      "variant": "ordinary-throw",
+      "columnFailureRetainedFileSafeNativeRetry": true,
+      "replacementResetsStagesAndControls": true,
+      "previewFailureRetainsExactFileMappingAndChoice": {
+        "file": "mapped.csv",
+        "bytes": "819cc6ae8459889b1f82175598375355e02bd629ed4c47f06a1686ee8d85cd1d",
+        "byte_observation": "native fetch FormData File; interception protocol omits file bytes",
+        "settings": {
+          "sheet": "Members",
+          "header_row": 1,
+          "mapping": {
+            "name": 0
+          },
+          "resolutions": {
+            "2": "b"
+          },
+          "confirm_call_changes": false
+        }
+      },
+      "applyPendingAndUnconfirmedFailure": true,
+      "confirmedCallbackFailureKeepsCompletion": true,
+      "nativeDiscardRetained": false,
+      "applyBodies": [
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        },
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        }
+      ],
+      "columnFiles": [
+        "initial.csv",
+        "initial.csv",
+        "mapped.csv",
+        "replacement.csv"
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "surface": "workbook",
+      "variant": "replayed-throw",
+      "columnFailureRetainedFileSafeNativeRetry": true,
+      "replacementResetsStagesAndControls": true,
+      "previewFailureRetainsExactFileMappingAndChoice": {
+        "file": "mapped.csv",
+        "bytes": "819cc6ae8459889b1f82175598375355e02bd629ed4c47f06a1686ee8d85cd1d",
+        "byte_observation": "native fetch FormData File; interception protocol omits file bytes",
+        "settings": {
+          "sheet": "Members",
+          "header_row": 1,
+          "mapping": {
+            "name": 0
+          },
+          "resolutions": {
+            "2": "b"
+          },
+          "confirm_call_changes": false
+        }
+      },
+      "applyPendingAndUnconfirmedFailure": true,
+      "confirmedCallbackFailureKeepsCompletion": true,
+      "nativeDiscardRetained": false,
+      "applyBodies": [
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        },
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        }
+      ],
+      "columnFiles": [
+        "initial.csv",
+        "initial.csv",
+        "mapped.csv",
+        "replacement.csv"
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "surface": "csv",
+      "variant": "ordinary-throw",
+      "columnFailureRetainedFileSafeNativeRetry": true,
+      "replacementResetsStagesAndControls": true,
+      "previewFailureRetainsExactFileMappingAndChoice": {
+        "file": "mapped.csv",
+        "bytes": "819cc6ae8459889b1f82175598375355e02bd629ed4c47f06a1686ee8d85cd1d",
+        "byte_observation": "native fetch FormData File; interception protocol omits file bytes",
+        "settings": {
+          "corrections": {
+            "2": {
+              "member_id": "b",
+              "_confirm_distinct": ""
+            }
+          },
+          "mapping": {
+            "canonical_name": "canonical_name",
+            "call_level": ""
+          },
+          "mode": "roster_sync"
+        }
+      },
+      "applyPendingAndUnconfirmedFailure": true,
+      "confirmedCallbackFailureKeepsCompletion": true,
+      "nativeDiscardRetained": true,
+      "applyBodies": [
+        {
+          "excluded": [],
+          "archive_missing": []
+        },
+        {
+          "excluded": [],
+          "archive_missing": []
+        }
+      ],
+      "columnFiles": [
+        "initial.csv",
+        "mapped.csv",
+        "replacement.csv"
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "surface": "units",
+      "variant": "ordinary-throw",
+      "columnFailureRetainedFileSafeNativeRetry": true,
+      "replacementResetsStagesAndControls": true,
+      "previewFailureRetainsExactFileMappingAndChoice": {
+        "file": "mapped.csv",
+        "bytes": "819cc6ae8459889b1f82175598375355e02bd629ed4c47f06a1686ee8d85cd1d",
+        "byte_observation": "native fetch FormData File; interception protocol omits file bytes",
+        "settings": {
+          "date_format": "DMY",
+          "mapping": {
+            "canonical_name": "member_name"
+          },
+          "corrections": {
+            "CSV:2": {
+              "person_id": "b"
+            }
+          },
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": [],
+          "mode": "update_matching",
+          "month": "2026-10"
+        }
+      },
+      "applyPendingAndUnconfirmedFailure": true,
+      "confirmedCallbackFailureKeepsCompletion": true,
+      "nativeDiscardRetained": true,
+      "applyBodies": [
+        {
+          "excluded": [],
+          "acknowledge_warnings": false
+        },
+        {
+          "excluded": [],
+          "acknowledge_warnings": false
+        }
+      ],
+      "columnFiles": [
+        "initial.csv",
+        "mapped.csv",
+        "replacement.csv"
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "surface": "leave",
+      "variant": "ordinary-throw",
+      "columnFailureRetainedFileSafeNativeRetry": true,
+      "replacementResetsStagesAndControls": true,
+      "previewFailureRetainsExactFileMappingAndChoice": {
+        "file": "mapped.csv",
+        "bytes": "819cc6ae8459889b1f82175598375355e02bd629ed4c47f06a1686ee8d85cd1d",
+        "byte_observation": "native fetch FormData File; interception protocol omits file bytes",
+        "settings": {
+          "date_format": "DMY",
+          "mapping": {
+            "canonical_name": "member_name"
+          },
+          "corrections": {
+            "CSV:2": {
+              "person_id": "b"
+            }
+          },
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": [],
+          "mode": "update_matching",
+          "month": "2026-10"
+        }
+      },
+      "applyPendingAndUnconfirmedFailure": true,
+      "confirmedCallbackFailureKeepsCompletion": true,
+      "nativeDiscardRetained": true,
+      "applyBodies": [
+        {
+          "excluded": [],
+          "acknowledge_warnings": false
+        },
+        {
+          "excluded": [],
+          "acknowledge_warnings": false
+        }
+      ],
+      "columnFiles": [
+        "initial.csv",
+        "mapped.csv",
+        "replacement.csv"
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "surface": "workbook",
+      "variant": "ordinary-remount",
+      "columnFailureRetainedFileSafeNativeRetry": true,
+      "replacementResetsStagesAndControls": true,
+      "previewFailureRetainsExactFileMappingAndChoice": {
+        "file": "mapped.csv",
+        "bytes": "819cc6ae8459889b1f82175598375355e02bd629ed4c47f06a1686ee8d85cd1d",
+        "byte_observation": "native fetch FormData File; interception protocol omits file bytes",
+        "settings": {
+          "sheet": "Members",
+          "header_row": 1,
+          "mapping": {
+            "name": 0
+          },
+          "resolutions": {
+            "2": "b"
+          },
+          "confirm_call_changes": false
+        }
+      },
+      "applyPendingAndUnconfirmedFailure": true,
+      "confirmedCallbackFailureKeepsCompletion": true,
+      "nativeDiscardRetained": false,
+      "applyBodies": [
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        },
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        }
+      ],
+      "columnFiles": [
+        "initial.csv",
+        "initial.csv",
+        "mapped.csv",
+        "replacement.csv"
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "surface": "workbook",
+      "variant": "replayed-remount",
+      "columnFailureRetainedFileSafeNativeRetry": true,
+      "replacementResetsStagesAndControls": true,
+      "previewFailureRetainsExactFileMappingAndChoice": {
+        "file": "mapped.csv",
+        "bytes": "819cc6ae8459889b1f82175598375355e02bd629ed4c47f06a1686ee8d85cd1d",
+        "byte_observation": "native fetch FormData File; interception protocol omits file bytes",
+        "settings": {
+          "sheet": "Members",
+          "header_row": 1,
+          "mapping": {
+            "name": 0
+          },
+          "resolutions": {
+            "2": "b"
+          },
+          "confirm_call_changes": false
+        }
+      },
+      "applyPendingAndUnconfirmedFailure": true,
+      "confirmedCallbackFailureKeepsCompletion": true,
+      "nativeDiscardRetained": false,
+      "applyBodies": [
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        },
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        }
+      ],
+      "columnFiles": [
+        "initial.csv",
+        "initial.csv",
+        "mapped.csv",
+        "replacement.csv"
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "surface": "workbook",
+      "variant": "ordinary-throw",
+      "columnFailureRetainedFileSafeNativeRetry": true,
+      "replacementResetsStagesAndControls": true,
+      "previewFailureRetainsExactFileMappingAndChoice": {
+        "file": "mapped.csv",
+        "bytes": "819cc6ae8459889b1f82175598375355e02bd629ed4c47f06a1686ee8d85cd1d",
+        "byte_observation": "native fetch FormData File; interception protocol omits file bytes",
+        "settings": {
+          "sheet": "Members",
+          "header_row": 1,
+          "mapping": {
+            "name": 0
+          },
+          "resolutions": {
+            "2": "b"
+          },
+          "confirm_call_changes": false
+        }
+      },
+      "applyPendingAndUnconfirmedFailure": true,
+      "confirmedCallbackFailureKeepsCompletion": true,
+      "nativeDiscardRetained": false,
+      "applyBodies": [
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        },
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        }
+      ],
+      "columnFiles": [
+        "initial.csv",
+        "initial.csv",
+        "mapped.csv",
+        "replacement.csv"
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "surface": "workbook",
+      "variant": "replayed-throw",
+      "columnFailureRetainedFileSafeNativeRetry": true,
+      "replacementResetsStagesAndControls": true,
+      "previewFailureRetainsExactFileMappingAndChoice": {
+        "file": "mapped.csv",
+        "bytes": "819cc6ae8459889b1f82175598375355e02bd629ed4c47f06a1686ee8d85cd1d",
+        "byte_observation": "native fetch FormData File; interception protocol omits file bytes",
+        "settings": {
+          "sheet": "Members",
+          "header_row": 1,
+          "mapping": {
+            "name": 0
+          },
+          "resolutions": {
+            "2": "b"
+          },
+          "confirm_call_changes": false
+        }
+      },
+      "applyPendingAndUnconfirmedFailure": true,
+      "confirmedCallbackFailureKeepsCompletion": true,
+      "nativeDiscardRetained": false,
+      "applyBodies": [
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        },
+        {
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "b"
+            },
+            "confirm_call_changes": false
+          },
+          "preview_hash": "reviewed-hash"
+        }
+      ],
+      "columnFiles": [
+        "initial.csv",
+        "initial.csv",
+        "mapped.csv",
+        "replacement.csv"
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "surface": "csv",
+      "variant": "ordinary-throw",
+      "columnFailureRetainedFileSafeNativeRetry": true,
+      "replacementResetsStagesAndControls": true,
+      "previewFailureRetainsExactFileMappingAndChoice": {
+        "file": "mapped.csv",
+        "bytes": "819cc6ae8459889b1f82175598375355e02bd629ed4c47f06a1686ee8d85cd1d",
+        "byte_observation": "native fetch FormData File; interception protocol omits file bytes",
+        "settings": {
+          "corrections": {
+            "2": {
+              "member_id": "b",
+              "_confirm_distinct": ""
+            }
+          },
+          "mapping": {
+            "canonical_name": "canonical_name",
+            "call_level": ""
+          },
+          "mode": "roster_sync"
+        }
+      },
+      "applyPendingAndUnconfirmedFailure": true,
+      "confirmedCallbackFailureKeepsCompletion": true,
+      "nativeDiscardRetained": true,
+      "applyBodies": [
+        {
+          "excluded": [],
+          "archive_missing": []
+        },
+        {
+          "excluded": [],
+          "archive_missing": []
+        }
+      ],
+      "columnFiles": [
+        "initial.csv",
+        "mapped.csv",
+        "replacement.csv"
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "surface": "units",
+      "variant": "ordinary-throw",
+      "columnFailureRetainedFileSafeNativeRetry": true,
+      "replacementResetsStagesAndControls": true,
+      "previewFailureRetainsExactFileMappingAndChoice": {
+        "file": "mapped.csv",
+        "bytes": "819cc6ae8459889b1f82175598375355e02bd629ed4c47f06a1686ee8d85cd1d",
+        "byte_observation": "native fetch FormData File; interception protocol omits file bytes",
+        "settings": {
+          "date_format": "DMY",
+          "mapping": {
+            "canonical_name": "member_name"
+          },
+          "corrections": {
+            "CSV:2": {
+              "person_id": "b"
+            }
+          },
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": [],
+          "mode": "update_matching",
+          "month": "2026-10"
+        }
+      },
+      "applyPendingAndUnconfirmedFailure": true,
+      "confirmedCallbackFailureKeepsCompletion": true,
+      "nativeDiscardRetained": true,
+      "applyBodies": [
+        {
+          "excluded": [],
+          "acknowledge_warnings": false
+        },
+        {
+          "excluded": [],
+          "acknowledge_warnings": false
+        }
+      ],
+      "columnFiles": [
+        "initial.csv",
+        "mapped.csv",
+        "replacement.csv"
+      ],
+      "pageErrors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "surface": "leave",
+      "variant": "ordinary-throw",
+      "columnFailureRetainedFileSafeNativeRetry": true,
+      "replacementResetsStagesAndControls": true,
+      "previewFailureRetainsExactFileMappingAndChoice": {
+        "file": "mapped.csv",
+        "bytes": "819cc6ae8459889b1f82175598375355e02bd629ed4c47f06a1686ee8d85cd1d",
+        "byte_observation": "native fetch FormData File; interception protocol omits file bytes",
+        "settings": {
+          "date_format": "DMY",
+          "mapping": {
+            "canonical_name": "member_name"
+          },
+          "corrections": {
+            "CSV:2": {
+              "person_id": "b"
+            }
+          },
+          "repeated": {
+            "members": {},
+            "units": {}
+          },
+          "excluded": [],
+          "mode": "update_matching",
+          "month": "2026-10"
+        }
+      },
+      "applyPendingAndUnconfirmedFailure": true,
+      "confirmedCallbackFailureKeepsCompletion": true,
+      "nativeDiscardRetained": true,
+      "applyBodies": [
+        {
+          "excluded": [],
+          "acknowledge_warnings": false
+        },
+        {
+          "excluded": [],
+          "acknowledge_warnings": false
+        }
+      ],
+      "columnFiles": [
+        "initial.csv",
+        "mapped.csv",
+        "replacement.csv"
+      ],
+      "pageErrors": []
+    }
+  ]
+}

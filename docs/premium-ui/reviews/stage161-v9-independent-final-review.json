@@ -1,0 +1,120 @@
+{
+  "recorded_at_utc": "2026-11-09T07:35:43.755352+00:00",
+  "reviewer": "/root/stage161_final_review",
+  "independence": "This reviewer did not author the stage proposal or its tests and made no application edits, did not run browsers, and did not alter the acceptance ledger. Independent source, assertion, recorded-result and screenshot inspection.",
+  "item_id": 161,
+  "requirement": "Present setup, template allocation, member assignment, review and publishing as clear operational stages with truthful readiness cues.",
+  "decision": "Both exact item 161 pass conditions are supported on the current applied source snapshot. Recommend whole-item acceptance after root integration gates (unit tests, prior accepted-item applicability and final ledger verification) succeed; this report itself does not change acceptance.",
+  "source_sha256": {
+    "frontend/src/main.ts": "5311e9933a6614747458418a218ac2b22855c2f7baa574e446557a4aa6d9d13d",
+    "frontend/src/premium-theme.css": "acc46b2249087f365ca855bcd9630628c390c4cdf013301daaee40ede80e55f4"
+  },
+  "conditions": [
+    {
+      "condition": "Setup, template allocation, member assignment, review and publishing are presented as distinct understandable stages.",
+      "supported": true,
+      "findings": [
+        "WORKFLOW_STEPS contains five distinct operation identifiers and ordered Setup, Build template, Assign members, Review and Publish labels. Template and assignment share their existing route but have separate identifiers, labels, explanatory copy and ordinal stages. This preserves the application route contract while distinguishing operations.",
+        "The shell tracker, Overview cards and generation stage list use the same five identifiers; header context uses steps 1, 2?3, 4 and 5. Optional balance and extra-duty controls remain inside the assignment stage.",
+        "The applied surface assertions check exact labels/order on shell, Template and Overview, keyboard opening of optional tools, cache-only Overview and no horizontal page overflow. Recorded Chromium mobile Template screenshot has five individually bounded cards with wrapping copy. Desktop 32px Overview screenshot shows five individually bounded, legible cards and focused Publish control."
+      ]
+    },
+    {
+      "condition": "Readiness indicators derive from actual available state and do not mark incomplete stages complete.",
+      "supported": true,
+      "findings": [
+        "Setup and template readiness derive from their authoritative server blocker titles; Review requires scope complete, template complete and zero returned blockers, including future unrecognized blocker titles. The browser classification matrix asserts incomplete, ready, unavailable and historical publication variants rather than merely the number of displayed stages.",
+        "Assignment completion additionally requires nonnegative integer total/assigned/open counts with assigned + open = total, positive total, all assigned, zero open and no Open slots blocker. Missing, fractional and inconsistent counts render assignment unknown. Valid filled assignment progress can coexist with another-stage blocker; Review still remains blocked.",
+        "Publication completion means an existing recorded publication (latest_publish), preserving the current application history semantics. It does not claim that later edits have been reapproved; Publish page explicitly states any later change needs new approval.",
+        "Freshness and last-known wording are separate from progress: checking, unavailable and interrupted states render unknown visual state and explicit Last known accessible text rather than current completion. First-failure checks show unknown. Current account, month, view generation and latest read identity gate accepted checklist results. Wrong-month Publish data and superseded same-view responses cannot commit the old approval controls.",
+        "Applied recorded cases verify stale/read failure and GET-only recovery, wrong-month rejection, route-away success and failure, superseding month, sign-out and local data-change ownership. Computed sidebar cue contrast is at least 9.31:1 across tested gradient endpoints in light mode; all 12 light/dark engine-width cases pass 4.5:1."
+      ]
+    }
+  ],
+  "executions_independently_checked": [
+    {
+      "kind": "owner",
+      "report": "docs/premium-ui/qa-stage161-v9-owner-integrated.json",
+      "sha256": "ad345a59aa98552a0bb79bdb722c1c7ed444e60a98bff9bee4ce5b91d1016571",
+      "contexts": 24,
+      "test": "frontend/tests/premium-stage161-v9-owner-integrated.browser.mjs",
+      "test_sha256": "b61f59b08a8740da3c2f8d74d0b784a575db9f5401ed92967f069463e5a263de"
+    },
+    {
+      "kind": "classification",
+      "report": "docs/premium-ui/qa-stage161-v9-classification-integrated.json",
+      "sha256": "f8ce16f8eb64c1252e4cc28a25217bc154d4cd3d4bfa2cc0a250e979b81837e3",
+      "contexts": 72,
+      "test": "frontend/tests/premium-stage161-v9-classification-integrated.browser.mjs",
+      "test_sha256": "31e9a552e494368fffcc51a81ced04c13d79eb5d72d70e0af3e9dd8ec880b64b"
+    },
+    {
+      "kind": "surfaces",
+      "report": "docs/premium-ui/qa-stage161-v9-surfaces-integrated.json",
+      "sha256": "3a0460a553db73a234f0926e82b696f3e72c1921c2adec8cadf3a2a85092c8d2",
+      "contexts": 12,
+      "test": "frontend/tests/premium-stage161-v9-surfaces-integrated.browser.mjs",
+      "test_sha256": "992968da5e2f445d6eb26aa6cbcdbc22e1fce9529eb50b8e994440af296da91b"
+    },
+    {
+      "kind": "wrongmonth",
+      "report": "docs/premium-ui/qa-stage161-v9-wrongmonth-integrated.json",
+      "sha256": "579fa57e7a908851f421d2c60e6138a2af7192948bcb66110eecdb7fe228d200",
+      "contexts": 6,
+      "test": "frontend/tests/premium-stage161-v9-wrongmonth-integrated.browser.mjs",
+      "test_sha256": "17fc3de65aac88a1e72ea2f2fec949cf53df1a71a22934cf1c2b716cf8552b3b"
+    },
+    {
+      "kind": "invalidcounts-text",
+      "report": "docs/premium-ui/qa-stage161-v9-invalidcounts-text-integrated.json",
+      "sha256": "5bd42d298d70f9ee02fa20ad6a7f1226fab111364498577ae67e6d6fc23e0998",
+      "contexts": 30,
+      "test": "frontend/tests/premium-stage161-v9-invalidcounts-text-integrated.browser.mjs",
+      "test_sha256": "3fc9377536eef7abcd445dcf7212fa1d226c911d671c2afb192012388cc68817"
+    },
+    {
+      "kind": "known503",
+      "report": "docs/premium-ui/qa-stage161-v9-known503-integrated.json",
+      "sha256": "fd06461b590224cc4a01fbe75f936c8d797afff5ecbba14359a0b57c31c301ac",
+      "contexts": 6,
+      "test": "frontend/tests/premium-stage161-v9-known503-integrated.browser.mjs",
+      "test_sha256": "ce551ed4c8864524e878780f659b7c80761a6037b4de9e827ef0bd90f44c09c9"
+    },
+    {
+      "kind": "datachange",
+      "report": "docs/premium-ui/qa-stage161-v9-datachange-integrated.json",
+      "sha256": "e8c6f168fb3b847b9a7a9d73085505e5c78e70a81f82efd1832b63544f72cafa",
+      "contexts": 6,
+      "test": "frontend/tests/premium-stage161-v9-datachange-integrated.browser.mjs",
+      "test_sha256": "f72596b6964bb007369849834503be4c43020465af625c31f548c79afb8f57f3"
+    },
+    {
+      "kind": "contrast",
+      "report": "docs/premium-ui/qa-stage161-v9-contrast-integrated.json",
+      "sha256": "e11dd936e47125f18f2b1acb0e33e3f2caa7ed5352d8406a05836daca1df9793",
+      "contexts": 12,
+      "test": "frontend/tests/premium-stage161-v9-contrast-integrated.browser.mjs",
+      "test_sha256": "f9633af85a494cc3182a9c7360128c5d50c578c1cbbdac437b5980a7fbd71dd6"
+    }
+  ],
+  "evidence_integrity": "Recomputed each execution test/report hash and verified current main/CSS equal both pre/post-run hashes. Inspected assertions and nonempty result arrays for each of the eight report families, with all three browser engines and both widths present. No recorded page errors or attempted writes. Counts are supporting coverage, not the acceptance rationale.",
+  "limitations": [
+    "These are local fixture/read-only browser outcomes, not a claim of production backend correctness, security certification, performance, actual Publish/Generate/Apply/Export mutation success or all 260-item completion.",
+    "Readiness intentionally trusts the existing authoritative checklist blocker contract; no new business policy is inferred from missing arbitrary server checks. Invalid assignment summary counts yield assignment unknown while Review still represents the independently returned blocker checklist.",
+    "Publication Done represents recorded publication history, not a new approval of later edits.",
+    "Full-page mobile screenshots include the fixed bottom navigation in their stitched image; this is not evidence of a permanent unscrollable occlusion. Actual rendered tests cover scrolling/focus reachability. Text scaling at 32px is not native browser zoom. Physical devices and native assistive technology remain pending.",
+    "Some raw report scope/reviewer prose retains inherited scratch/V7 ancestry wording although the root execution receipt, source hashes and test/report hashes bind these actual runs to applied V9. Treat the exact source/run bindings as authoritative; do not quote inherited prose as a fresh independent browser execution.",
+    "Root unit-test harness repair and previous accepted-item applicability verification were not completed or certified by this reviewer; they remain release/integration gates."
+  ],
+  "evidence_sha256": {
+    "docs/premium-ui/acceptance-criteria/items-087-173.json": "a7bf1322bd8e08a1fddd4195095d9cc52a8867a1b8a2bda9b523917fae458576",
+    "tmp/stage161-operations-v9/source-proof.json": "a29057cffdd59c727f937a8afb35bd87f2f57dee0ef40196df6f04179d812e14",
+    "docs/premium-ui/reviews/stage161-v9-condition-review.json": "5be572c04d52fb8dc279e4ca610db7872f002abdcea3a89018272288e7baac32",
+    "docs/premium-ui/reviews/stage161-v9-application.json": "e0807d14824632e22ea47b2a2fee2c4ec46f26bd98ad491ae36860f7674511ad",
+    "tmp/stage161-v9-integrated-run/exit.json": "bcec087014c9ccdcf697e68c30fbae1962e1b145b1177d375ce9025dbb519a84",
+    "docs/premium-ui/screenshots/stage161-operations-v9/320-template.png": "44bc9a592b10e046ae738093ce622ca0901897d53cfbd7dec511fb90d5f5f891",
+    "docs/premium-ui/screenshots/stage161-operations-v9/1280-overview-32px.png": "38447048312ed0083603c6db32c7ad483606b10e4697451bf561862bb9788b79"
+  },
+  "application_changed": false,
+  "acceptance_ledger_changed": false
+}

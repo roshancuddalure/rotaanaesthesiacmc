@@ -1,0 +1,54 @@
+{
+  "recorded_at_utc": "2026-11-09T08:00:25.989366+00:00",
+  "author": "/root/profile_payload_guard",
+  "browser_executed": false,
+  "syntax_check": {
+    "command": "node --check frontend/tests/premium-profile-parent-v5-replacement-lifecycle.browser.mjs",
+    "exit_code": 0
+  },
+  "test": "frontend/tests/premium-profile-parent-v5-replacement-lifecycle.browser.mjs",
+  "test_sha256": "37e15d5f18dc455526a6218a15da0ce4db08c962fe32fd279cb7970bb0a6702f",
+  "candidate_main_sha256": "2b8f68c069e599af50a4ac1b2146a7018d6268f290b90a9949130a057dc91b43",
+  "candidate_member_sha256": "105cc1d91ea4815d565ad4859fc01412cf576a3203c07834f4010e3fef7ef1a5",
+  "preview_port": 5293,
+  "fixture_port": 8031,
+  "planned_contexts": 12,
+  "matrix": {
+    "engines": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "widths": [
+      320,
+      1280
+    ],
+    "scenarios": [
+      "next-final-close",
+      "next-initial503-retry-final-close"
+    ]
+  },
+  "actual_markup_and_handlers": [
+    "Member profile renders data-next/data-prev actual navigation buttons with disabled state from filtered member IDs.",
+    "Next handler invokes close(true), recursively opens next profile with same parentLifecycle and selected tab.",
+    "Initial identity load failure exposes workspaceLoadFailure data-load-retry and data-load-close controls.",
+    "Retry sets replacingProfile=true before dismissing failed initial surface and passes same parentLifecycle into recursive retry.",
+    "Final normal profile close invokes once-only lifecycle.closed and captured parent refresh owner."
+  ],
+  "assertions": [
+    "Original confirmed posting save does not read parent before profile closes",
+    "Two actual returned members produce enabled Next and disabled Previous on initial member",
+    "Next replacement does not deliver final-close parent read",
+    "Initial replacement HTTP503 and explicit keyboard Try again remain read-only and do not deliver final-close parent read",
+    "Second member has matching identity and expected terminal navigation state",
+    "One final close produces exactly one deferred Units GET and fresh original posting in retained parent",
+    "Original form/input identities and unrelated unsaved fallback3 retained",
+    "Exactly one preview and one accepted save, no mutation replay; first identity GET1 and second identity GET1 or2 depending failed-read retry",
+    "No unhandled page errors; app/candidate/preview hashes held"
+  ],
+  "limitations": [
+    "Harness authored and syntax checked only; root executes browser sequentially after120 candidate suite.",
+    "Coverage is forward Next plus initial identity retry. It does not claim backward Previous, dirty edit refusal, busy navigation refusal or all member navigation paths.",
+    "No real database writes, backend edits or whole159 acceptance claim."
+  ]
+}

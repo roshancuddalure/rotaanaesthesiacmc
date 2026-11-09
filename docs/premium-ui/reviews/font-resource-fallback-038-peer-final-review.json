@@ -1,0 +1,82 @@
+{
+  "recorded_at_utc": "2026-10-28T15:26:52.840336+00:00",
+  "reviewer": "/root/close_icons_037_preparation",
+  "scope": "Independent source/assertion/current-raw review of item38. No browser execution by this reviewer; no app/backend/acceptance mutation.",
+  "recommendation": "Condition evidence passes on its recorded snapshot; root must resolve explicitly recorded source differences before current acceptance.",
+  "requirement": "Provide reliable local font and icon fallbacks so blocked resources cannot erase labels or alter control usability.",
+  "condition_reviews": [
+    {
+      "condition": "Provide usable local font stacks and icon assets or text fallbacks",
+      "result": "pass",
+      "rationale": "Source scan finds six font-family declarations, all with explicit system/generic local fallback: body Inter\u2192ui-sans/system/sans, three mono selectors\u2192ui-monospace/monospace, two serif selectors\u2192Georgia/Times/serif. The two legacy person-* declarations have no current TS/HTML caller and are deliberately rendered as CSS fixtures rather than claimed operational flows. All eight decorative icon variants are local inline SVG path/rect/circle shapes sharing currentColor/24viewBox/2stroke and named textual control wrappers. No remote icon font, SVG use/image, application font-face, CSS import or webfont URL is present in the inspected source/entry scope. The extension exercises every declared family selector plus actual memberMatch and actual archive monospace input; it is broader than one representative body sample."
+    },
+    {
+      "condition": "Block optional external font/icon resources and verify labels, control targets and layout remain usable",
+      "result": "pass",
+      "rationale": "The original24 actual shell/profile/reference contexts block external resources and deliberately reject an injected Inter FontFace while retaining the deployed family stack. Rejected load, error face, request failure and fallback text metrics/linebox equality corroborate visible labels, no document overflow and successful native menu, profile edit/discard and local reference outcomes. The additional12 contexts block Inter/Georgia resources, render all six family selectors and all eight local SVG variants with labels and nonempty local geometry, and natively type the actual archive phrase, verify eligibility, then Cancel without mutation and restore opener focus. Georgia secondary-stack equality is correctly diagnostic because a failed webface does not remove installed OS Georgia; actual text visibility/positive width/containment remains asserted. All API traffic is expected GET-only; every mutation is rejected. Width40\u00d744 menu controls are explicitly an existing separate target-size issue, not a font-outage regression or a38claim of universal44px."
+    }
+  ],
+  "executions": [
+    {
+      "test": "frontend/tests/premium-font-resource-fallback.browser.mjs",
+      "test_sha256": "29a8267a0ae4eca3b611fc96273e9a9f622299fc23a22cf882fa632400919902",
+      "report": "docs/premium-ui/reviews/font-resource-fallback-current.json",
+      "report_sha256": "5b0d054e70896e92e7c312b50ba1a6c7a1dd02402a444ed1d4005709a8a5f37b",
+      "contexts": 24,
+      "scope": "Actual application guide/shell, canonical member workspace opened through real exported module and native launcher, and deployed component reference. Three engines, light/dark, 320/1280, normal/200% root font-size override (explicit px-token text may remain unchanged). Injected test-only failed Inter @font-face; deployed font-family stack is never replaced. All external resources aborted and all API traffic GET-only to disposable loopback fixture or locally fulfilled profile reads. No persistence, application changes, physical devices or native assistive technology."
+    },
+    {
+      "test": "frontend/tests/premium-font-family-icons-failure.browser.mjs",
+      "test_sha256": "fde56971ab4156c971c15d56f9ee17b45f0f7e2697967882db10b0b58beed48e",
+      "report": "docs/premium-ui/reviews/font-family-icons-failure-current.json",
+      "report_sha256": "0ed03ea8dc1e2a9afc86da3e38f7a50a088938612a763c99d8a9102d88d78f44",
+      "contexts": 12,
+      "scope": "All six current CSS font-family selector declarations in a controlled production-CSS component-reference fixture, actual memberMatch helper, all eight shared SVG families and actual archive confirmation type/enable/Cancel. External test-only Inter and Georgia webfont requests fail; the deployed stacks stay unchanged. Local generic monospace remains intrinsic. Three engines, two themes,320/1280. All API reads locally fulfilled and all mutations refused."
+    }
+  ],
+  "source_differences": [
+    {
+      "report": "docs/premium-ui/reviews/font-resource-fallback-current.json",
+      "source": "frontend/src/rota-rules.ts",
+      "recorded_sha256": "21c76de1e2db86e75b778c088a558a9bfb859fd1ef6b683e627c594ec3d5966a",
+      "current_sha256": "c32bdce62c7dbb472ba2211446b93f92582727d61b4e41d5730c546a233f750c"
+    },
+    {
+      "report": "docs/premium-ui/reviews/font-family-icons-failure-current.json",
+      "source": "frontend/src/rota-rules.ts",
+      "recorded_sha256": "21c76de1e2db86e75b778c088a558a9bfb859fd1ef6b683e627c594ec3d5966a",
+      "current_sha256": "c32bdce62c7dbb472ba2211446b93f92582727d61b4e41d5730c546a233f750c"
+    }
+  ],
+  "source_classification": {
+    "font_family_declarations": 6,
+    "local_svg_variants": 8,
+    "inactive_css_exceptions": [
+      ".person-metric strong",
+      ".person-day strong"
+    ],
+    "source_scan": "frontend/src TS/CSS and entry HTML; current rg source inspection found no external font/icon provider or application @font-face/import/font URL. Inline style/grid in test fixture is test-only and not deployed UI."
+  },
+  "evidence_sha256": {
+    "docs/premium-ui/acceptance-criteria/items-001-086.json": "5f84ff2a0927e6f67f8e09d326e5874bb49e27b6c1752ad6443c5a4b8ccb0625",
+    "docs/premium-ui/reviews/font-resource-fallback-038-review.md": "47262731fc68c76112eac74236fa162f2499daa07d7c6e0dcd5ba996c650c639",
+    "frontend/src/decorative-icons.ts": "7e2d11356114e96f242435a2cd7cb7bc24cdc1787142e864e1cf053f92c373d7",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "f4c646977ef2cce1ef1a31e6b99de17f5749a60b3282a888ba4412b83e348516",
+    "frontend/src/component-reference.css": "46ed291bfdd2463fdc470392a12207bf37fca0478587c24a5019b82e6f7262ee",
+    "frontend/index.html": "4b7afb8eeccdd1d27d12a2550c90817a997c6ff90da0b044fd18c36b93223914",
+    "frontend/component-reference.html": "4273ea2a972d964be7ff2ffeed8ab5224df32d7cbf8b58461424b9ffd2831ebb",
+    "frontend/tests/premium-font-resource-fallback.browser.mjs": "29a8267a0ae4eca3b611fc96273e9a9f622299fc23a22cf882fa632400919902",
+    "docs/premium-ui/reviews/font-resource-fallback-current.json": "5b0d054e70896e92e7c312b50ba1a6c7a1dd02402a444ed1d4005709a8a5f37b",
+    "frontend/tests/premium-font-family-icons-failure.browser.mjs": "fde56971ab4156c971c15d56f9ee17b45f0f7e2697967882db10b0b58beed48e",
+    "docs/premium-ui/reviews/font-family-icons-failure-current.json": "0ed03ea8dc1e2a9afc86da3e38f7a50a088938612a763c99d8a9102d88d78f44"
+  },
+  "limitations": [
+    "No production external resource currently exists to fail; these tests inject controlled optional resource failures without changing deployed stacks.",
+    "Failed Georgia webfont does not establish OS-font removal; generic and installed-font combinations are environment dependent.",
+    "All shared SVG families and all explicit CSS family declarations are covered; this does not certify every operational icon placement/alignment required by separate37.",
+    "CSS root200 is not browser zoom or universal enlargement of fixed-pixel labels. Existing40\u00d744 menu target remains a separate refinement.",
+    "Physical device, software keyboard and native AT checks remain unperformed.",
+    "The real archive control is enabled but never activated; no persistence/authorization certification."
+  ]
+}

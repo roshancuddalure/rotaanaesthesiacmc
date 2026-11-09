@@ -1,0 +1,66 @@
+{
+  "recorded_at_utc": "2026-11-09T07:57:12.760Z",
+  "author": "/root/stage161_final_review",
+  "application_changed": false,
+  "accepted_count_observed": 53,
+  "baseline_main_sha256": "5311e9933a6614747458418a218ac2b22855c2f7baa574e446557a4aa6d9d13d",
+  "candidate_main_sha256": "2b8f68c069e599af50a4ac1b2146a7018d6268f290b90a9949130a057dc91b43",
+  "baseline_member_sha256": "0ef8c1ef2234c7a50d8ca10b8aaa3998a654d452f563bd4c75531faef09d6c63",
+  "candidate_member_sha256": "105cc1d91ea4815d565ad4859fc01412cf576a3203c07834f4010e3fef7ef1a5",
+  "main_literal_tables_equal": 37,
+  "main_literal_forms_equal": 14,
+  "member_literal_tables_equal": 1,
+  "member_literal_forms_equal": 2,
+  "main_ast_table_openings_equal": 37,
+  "table_owner_moves": [
+    {
+      "ordinal": 15,
+      "before": "renderLeave",
+      "after": "renderLeaveSnapshot"
+    }
+  ],
+  "changed_existing_top_level_functions": [
+    "openAnalysisPersonModal",
+    "renderLeaveDayModal",
+    "renderLeave",
+    "refreshUnitModalReadback",
+    "bindViewEvents"
+  ],
+  "added_top_level_functions": [
+    "profileReadObject",
+    "profileReadStrings",
+    "profileReadNullableText",
+    "profileReadNumber",
+    "profileReadCounts",
+    "profileReadPerson",
+    "profileReadUnit",
+    "assertProfileUnitReadShape",
+    "profileReadLeaveDayEntry",
+    "profileReadIsoDate",
+    "assertProfileLeaveReadShape",
+    "profileParentRecordIdentity",
+    "patchProfileParentRegion",
+    "refreshProfileLeaveReadback",
+    "createProfileParentLifecycle",
+    "openMemberWorkspaceWithParent",
+    "renderLeaveSnapshot"
+  ],
+  "accepted161_function_bodies_exact": [
+    "workflowStateFrom",
+    "workflowStateLabel",
+    "workflowFreshnessText",
+    "paintWorkflowTracker",
+    "interruptWorkflowRead",
+    "beginWorkflowRead",
+    "refreshWorkflowTracker",
+    "workflowStepButton",
+    "overviewMonthPanel",
+    "generationReadiness",
+    "renderRotaPublish"
+  ],
+  "limits": [
+    "Source analysis only; no current acceptance wrapper mutation or integration proof. Applied120, unit/build, independent review and previous settings applicability remain root gates.",
+    "Table body equality alone does not prove listener/data correctness. Leave table owner changes must be explicitly reconciled after extraction; no blind owner/hash rebinding.",
+    "Whole159 remains partial. API/mutation semantics require accompanying exact-effect/reversal proofs, not inference from these table matches."
+  ]
+}

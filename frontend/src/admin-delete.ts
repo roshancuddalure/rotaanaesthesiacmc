@@ -1,3 +1,4 @@
+import { decorativeIcon } from "./decorative-icons";
 // Admin delete with a recycle bin (docs/admin_delete_contract.md). The window previews
 // exactly what will be deleted (and what is blocked, with the reason), asks for a typed
 // phrase on whole-month deletes, and sends the preview token so the server refuses if the
@@ -61,7 +62,7 @@ export function confirmAdminDelete(request: AdminDeleteRequest): Promise<AdminDe
   const render = () => {
     const header = `<header class="mw-header"><div><h2>${esc(title)}</h2>
         <p>Review what will be deleted, then confirm. Nothing changes until you do.</p></div>
-      <button type="button" data-close aria-label="Close ${esc(title)}">×</button></header>`;
+      <button type="button" data-close aria-label="Close ${esc(title)}">${decorativeIcon("close")}</button></header>`;
     let body: string;
     if (!preview) {
       body = message ? "" : `<p role="status">Checking what will be deleted… nothing has been changed.</p>`;

@@ -1,0 +1,54 @@
+{
+  "recorded_at_utc": "2026-10-28T06:56:21.938557+00:00",
+  "classification": "Aggregate arithmetic correction; individual raw outcomes unchanged",
+  "incorrect_previous_rollup": {
+    "csv_operational_regressions": 48,
+    "including_past_actions": 54,
+    "matching_lifecycle_and_import_regressions": 90
+  },
+  "correct_rollup": {
+    "csv_operational_regressions": 36,
+    "including_past_actions": 42,
+    "matching_lifecycle_and_import_regressions": 78
+  },
+  "basis": [
+    {
+      "report": "docs/premium-ui/qa-member-csv-candidate.json",
+      "workflows": 12,
+      "sha256": "4de840a7f563aca796daa1432a14a9a0cacf3423c4f37cd2dade9edba2f95907"
+    },
+    {
+      "report": "docs/premium-ui/qa-member-csv-lifetime.json",
+      "workflows": 6,
+      "sha256": "b6eac218bacb8cc212c637b16a6419901d90799524fba5967e78ea3da7cadf0d"
+    },
+    {
+      "report": "docs/premium-ui/qa-import-candidate-choice.json",
+      "workflows": 6,
+      "sha256": "3295756a57effb83eb319fa8ef85a22b5a47bc1077cbdb6f5e98aa1bd81d139e"
+    },
+    {
+      "report": "docs/premium-ui/reviews/operational-import-file-race-fixed-current.json",
+      "workflows": 12,
+      "sha256": "09e3b8e9dc64f45e5907f22a91bc634483f835942f6223d7c27314d11b9efd76"
+    }
+  ],
+  "current_batch": {
+    "progress_recovery": 42,
+    "retention_boundaries": 36,
+    "mobile_geometry": 24,
+    "matching_lifecycle_and_import_regressions": 78,
+    "total_import_workflows": 180,
+    "separate_generation_transitions": 12,
+    "overall_current_workflows": 192
+  },
+  "affected_historical_summaries": [
+    "docs/premium-ui/reviews/member-match-current.json",
+    "docs/premium-ui/reviews/member-match-independent-review.json",
+    "docs/premium-ui/reviews/previous25-member-match-source-revalidation.json",
+    "docs/premium-ui/reviews/verification-packaging-20261028-member-matching.json",
+    "docs/premium-ui/execution-status.md"
+  ],
+  "disposition": "Preserve immutable prior reports/archive and their hashes; bind this explicit correction in current review and source-revalidation wrappers. No failed test is converted to pass; original134 two condition proofs remain supported by unchanged individual raw counts.",
+  "goal_completion_claim": false
+}

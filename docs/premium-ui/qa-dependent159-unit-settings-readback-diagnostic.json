@@ -1,0 +1,1081 @@
+{
+  "recorded_at_utc": "2026-10-30T18:14:38.559Z",
+  "reviewer": "/root/dependent159_final_scope_review",
+  "scope": "Diagnostic twelve native unit-settings cases: confirmed PUT then dependent GET503 permits same PUT on enabled Save; held success after actual Guide navigation opens unit modal over Guide. All writes locallyfulfilled, GETfixtureonly. Asserts observed defect,not correct accepted behavior.",
+  "test_sha256": "57c034e2e63067be3d6343ce510c49a970e9c84df7a2361e3b99a2a4fcedeac8",
+  "source_sha256": {
+    "frontend/src/main.ts": "162dd5f04f185f4506c38dba974f0cd927b3e09d1ce85f5fd0da0f0de566885c",
+    "frontend/src/unit-modal-accessibility.ts": "f24dc45dd7b548ac66311252cb03c74430a117949e7b76bc72c0a3c652f6b147",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+  },
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "scenario": "readback-failure",
+      "outcome": {
+        "puts": 2,
+        "reads": 3,
+        "readRetryControls": [],
+        "confirmedSaveRetriedAsPut": true
+      },
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "body": null
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/unit-management/units/settings-unit/settings",
+          "body": {
+            "minimum_free_people": 2,
+            "call_minimums": [
+              {
+                "call_level": "2ND_CALL",
+                "minimum_free_people": 2
+              }
+            ]
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/unit-management/units/settings-unit/settings",
+          "body": {
+            "minimum_free_people": 2,
+            "call_minimums": [
+              {
+                "call_level": "2ND_CALL",
+                "minimum_free_people": 2
+              }
+            ]
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "scenario": "late-guide",
+      "outcome": {
+        "puts": 1,
+        "reads": 2,
+        "modalBeforeRelease": 0,
+        "modalAfterRelease": 1,
+        "lateUnitModalOpenedOverGuide": true
+      },
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "body": null
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/unit-management/units/settings-unit/settings",
+          "body": {
+            "minimum_free_people": 2,
+            "call_minimums": [
+              {
+                "call_level": "2ND_CALL",
+                "minimum_free_people": 2
+              }
+            ]
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "scenario": "readback-failure",
+      "outcome": {
+        "puts": 2,
+        "reads": 3,
+        "readRetryControls": [],
+        "confirmedSaveRetriedAsPut": true
+      },
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "body": null
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/unit-management/units/settings-unit/settings",
+          "body": {
+            "minimum_free_people": 2,
+            "call_minimums": [
+              {
+                "call_level": "2ND_CALL",
+                "minimum_free_people": 2
+              }
+            ]
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/unit-management/units/settings-unit/settings",
+          "body": {
+            "minimum_free_people": 2,
+            "call_minimums": [
+              {
+                "call_level": "2ND_CALL",
+                "minimum_free_people": 2
+              }
+            ]
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "scenario": "late-guide",
+      "outcome": {
+        "puts": 1,
+        "reads": 2,
+        "modalBeforeRelease": 0,
+        "modalAfterRelease": 1,
+        "lateUnitModalOpenedOverGuide": true
+      },
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "body": null
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/unit-management/units/settings-unit/settings",
+          "body": {
+            "minimum_free_people": 2,
+            "call_minimums": [
+              {
+                "call_level": "2ND_CALL",
+                "minimum_free_people": 2
+              }
+            ]
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "scenario": "readback-failure",
+      "outcome": {
+        "puts": 2,
+        "reads": 3,
+        "readRetryControls": [],
+        "confirmedSaveRetriedAsPut": true
+      },
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "body": null
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/unit-management/units/settings-unit/settings",
+          "body": {
+            "minimum_free_people": 2,
+            "call_minimums": [
+              {
+                "call_level": "2ND_CALL",
+                "minimum_free_people": 2
+              }
+            ]
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/unit-management/units/settings-unit/settings",
+          "body": {
+            "minimum_free_people": 2,
+            "call_minimums": [
+              {
+                "call_level": "2ND_CALL",
+                "minimum_free_people": 2
+              }
+            ]
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "scenario": "late-guide",
+      "outcome": {
+        "puts": 1,
+        "reads": 2,
+        "modalBeforeRelease": 0,
+        "modalAfterRelease": 1,
+        "lateUnitModalOpenedOverGuide": true
+      },
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "body": null
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/unit-management/units/settings-unit/settings",
+          "body": {
+            "minimum_free_people": 2,
+            "call_minimums": [
+              {
+                "call_level": "2ND_CALL",
+                "minimum_free_people": 2
+              }
+            ]
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "scenario": "readback-failure",
+      "outcome": {
+        "puts": 2,
+        "reads": 3,
+        "readRetryControls": [],
+        "confirmedSaveRetriedAsPut": true
+      },
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "body": null
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/unit-management/units/settings-unit/settings",
+          "body": {
+            "minimum_free_people": 2,
+            "call_minimums": [
+              {
+                "call_level": "2ND_CALL",
+                "minimum_free_people": 2
+              }
+            ]
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/unit-management/units/settings-unit/settings",
+          "body": {
+            "minimum_free_people": 2,
+            "call_minimums": [
+              {
+                "call_level": "2ND_CALL",
+                "minimum_free_people": 2
+              }
+            ]
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "scenario": "late-guide",
+      "outcome": {
+        "puts": 1,
+        "reads": 2,
+        "modalBeforeRelease": 0,
+        "modalAfterRelease": 1,
+        "lateUnitModalOpenedOverGuide": true
+      },
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "body": null
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/unit-management/units/settings-unit/settings",
+          "body": {
+            "minimum_free_people": 2,
+            "call_minimums": [
+              {
+                "call_level": "2ND_CALL",
+                "minimum_free_people": 2
+              }
+            ]
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "scenario": "readback-failure",
+      "outcome": {
+        "puts": 2,
+        "reads": 3,
+        "readRetryControls": [],
+        "confirmedSaveRetriedAsPut": true
+      },
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "body": null
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/unit-management/units/settings-unit/settings",
+          "body": {
+            "minimum_free_people": 2,
+            "call_minimums": [
+              {
+                "call_level": "2ND_CALL",
+                "minimum_free_people": 2
+              }
+            ]
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/unit-management/units/settings-unit/settings",
+          "body": {
+            "minimum_free_people": 2,
+            "call_minimums": [
+              {
+                "call_level": "2ND_CALL",
+                "minimum_free_people": 2
+              }
+            ]
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "scenario": "late-guide",
+      "outcome": {
+        "puts": 1,
+        "reads": 2,
+        "modalBeforeRelease": 0,
+        "modalAfterRelease": 1,
+        "lateUnitModalOpenedOverGuide": true
+      },
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "body": null
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/unit-management/units/settings-unit/settings",
+          "body": {
+            "minimum_free_people": 2,
+            "call_minimums": [
+              {
+                "call_level": "2ND_CALL",
+                "minimum_free_people": 2
+              }
+            ]
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "scenario": "readback-failure",
+      "outcome": {
+        "puts": 2,
+        "reads": 3,
+        "readRetryControls": [],
+        "confirmedSaveRetriedAsPut": true
+      },
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "body": null
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/unit-management/units/settings-unit/settings",
+          "body": {
+            "minimum_free_people": 2,
+            "call_minimums": [
+              {
+                "call_level": "2ND_CALL",
+                "minimum_free_people": 2
+              }
+            ]
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/unit-management/units/settings-unit/settings",
+          "body": {
+            "minimum_free_people": 2,
+            "call_minimums": [
+              {
+                "call_level": "2ND_CALL",
+                "minimum_free_people": 2
+              }
+            ]
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "scenario": "late-guide",
+      "outcome": {
+        "puts": 1,
+        "reads": 2,
+        "modalBeforeRelease": 0,
+        "modalAfterRelease": 1,
+        "lateUnitModalOpenedOverGuide": true
+      },
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "body": null
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/unit-management/units/settings-unit/settings",
+          "body": {
+            "minimum_free_people": 2,
+            "call_minimums": [
+              {
+                "call_level": "2ND_CALL",
+                "minimum_free_people": 2
+              }
+            ]
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        }
+      ],
+      "errors": []
+    }
+  ]
+}

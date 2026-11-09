@@ -1,0 +1,44 @@
+{
+  "recorded_at_utc": "2026-11-09T09:15:34.916188+00:00",
+  "reviewer": "/root/profile_parent_final_audit",
+  "application_changed": false,
+  "browser_executed": false,
+  "scope": "ScratchV7 one-selector forwarding repair over immutableV6 direct retained-parent proposal. Exact source/fullTS/effect/preview-integrity evidence and48 prepared browser contexts.",
+  "source_hashes": {
+    "tmp/profile-parent-refresh-v7/main.ts": "7ab96e2109aec76f027bbd80bc9535ee40c0eaacc4040eea3261e4b4c8e3d2d6",
+    "tmp/profile-parent-refresh-v7/member-workspace.ts": "105cc1d91ea4815d565ad4859fc01412cf576a3203c07834f4010e3fef7ef1a5",
+    "tmp/profile-parent-refresh-v7/manifest.json": "9026e19747f394c04756e52e3d79c04f7c5774fe7da2d69831ad5c49cc2c122b",
+    "tmp/profile-parent-refresh-v7/effect-proof.json": "e2a6120ffef3eb275fd7c0d6645f6b098f69f4b230229a1901ca6a2fe788d874",
+    "tmp/profile-parent-refresh-v7/initial-typecheck.json": "1d51c6b435cd7cf368cf4fabe2bebae1e350584ee6773ff089fefc6dbf52517f",
+    "tmp/profile-parent-refresh-v7/preview-integrity.json": "d27a30f01cb60c0ae7bd195193315241b23db48c0a4f4147754fd4421c31628c",
+    "tmp/profile-parent-refresh-v7/tests.json": "4823a45155ad5dd98c0cb32d12122cdc95303d8712334304464827a73edcc049"
+  },
+  "exact_delta": "Only target.closest(\"#rota-day-modal\") -> target.closest(\"#rota-day-modal, #leave-day-modal\") in existing one document forwarding listener. No listener added, no other source bytes changed from V6; manifest exact reversal true.",
+  "dispatch_audit": {
+    "outside_root_guard": "Existing !viewRoot?.contains(target) remains, preventing events from reaching both viewRoot handler and document forwarding if overlay placement changes.",
+    "actual_external_day_add": "Body-appended Leave day Add previously had zero route to handleViewClick; now matches selector once and uses existing Add/Edit operational branch. That branch deliberately closes day overlay before createDependentParentLifecycle captures surviving parent owner.",
+    "other_body_handler": "Separate document handler has external member-profile dispatch and day-close branches, but no data-add-operational-record or data-edit-operational-record branch. Therefore Add/Edit action cannot duplicate there. Current rendered Leave day modal contains Add leave/dayclose only, not member-profile buttons.",
+    "day_close": "Forwarded handleViewClick has no closeLeaveDayModal side-effect branch; later existing document body handler handles day-close once. Click-on-backdrop likewise closes once via existing body handler.",
+    "external_profile": "Separate external member-link guard still excludes rota overlay as before and unchanged. Leave day markup has no data-open-member; adding such a control later would need explicit routing audit to avoid duplicates. No broad exclusion introduced now.",
+    "rota_preservation": "Original rota selector remains and all its forwarding/body exclusions stay byte-identical; existing route still delegates once. This source audit is not runtime smoke proof."
+  },
+  "verification": {
+    "virtual_frontend_TS_diagnostics": 0,
+    "existing_imported_nonGET_expressions": 49,
+    "existing_nonGET_storage_confirm_expressions_exact": true,
+    "read_expression_delta": {},
+    "preview_observed_port": 5295,
+    "preview_observed_pid": 24248,
+    "preview_integrity": "Both original-source map SHA hashes exact on successful HTTP verification. Agent-owned process may end after turn; root should own lifecycle before browser run.",
+    "node_check": "Three prepared browser harnesses and preview file terminal0"
+  },
+  "prepared_browser_manifest": "tmp/profile-parent-refresh-v7/tests.json",
+  "expected_contexts": 48,
+  "execution_status": "Not run by author; no passed browser claims.",
+  "risks_and_limits": [
+    "Day Add existing default date/person/status/token/payload behavior must be exercised by actual12 cases after fix.",
+    "Day-close and preserved rota overlay controls require relevant smoke/previous evidence applicability before integration.",
+    "V6 direct record parent repaint scope is now reused; current app remains immutableV5 and V7 source must not be applied before root gated review.",
+    "Import/registry/posting-delete/Leave decisions/core-member original159 families remain pending; this change does not accept whole159."
+  ]
+}

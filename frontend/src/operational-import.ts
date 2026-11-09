@@ -1,8 +1,10 @@
+import { decorativeIcon } from "./decorative-icons";
+import { importRowAttention, importPreviewModeText, importPreviewAuthorityText, updateImportPreviewAuthority } from "./import-review-presentation";
 import { request, requestMultipartJSON, type DepartmentMember } from "./services/api";
 import { workspaceDialog, openMemberWorkspace } from "./member-workspace";
 import { lockWorkspaceControls, protectWorkspaceDraft } from "./workspace-load-state";
 import { openUnitRegistry, openReferenceCatalog } from "./reference-workspace";
-import { applyBlocker, badge, importSummary, memberMatch, retainActionFocus, steps, type MemberMatchView } from "./ui";
+import { applyBlocker, badge, importSummary, memberMatch, memberIdentityText, importRecoveryText, updateMemberMatchPending, retainActionFocus, steps, type MemberMatchView } from "./ui";
 
 const IMPORT_STEPS = ["Upload file", "Map columns", "Review rows", "Apply"];
 
@@ -26,12 +28,55 @@ const esc = (value: unknown) =>
       ]!,
   );
 
+function leaveImportApprovalLabel(value: unknown, returned: boolean): string {
+  if (!returned || value == null) return "Not returned";
+  if (typeof value !== "string") return "Unsupported value";
+  if (!value.length) return "Blank (no approval state)";
+  if (!value.trim().length) return "Blank (whitespace)";
+  switch (value) {
+    case "approved": return "Approved";
+    case "requested": return "Requested";
+    case "imported_pending_review": return "Imported, Pending Review";
+    case "cancelled":
+    case "canceled": return "Cancelled";
+    case "rejected": return "Rejected";
+    default: return value;
+  }
+}
+
+function leaveImportApprovalAuthority(dirty: boolean): string {
+  return dirty
+    ? "Last preview. Refresh to confirm edits."
+    : "Preview only.";
+}
+
+function leaveImportApprovalSummary(row: Row, dirty: boolean): string {
+  const normalizedReturned = Object.prototype.hasOwnProperty.call(row.after ?? {}, "status");
+  const inputReturned = Object.prototype.hasOwnProperty.call(row.values ?? {}, "status");
+  const normalized = leaveImportApprovalLabel(row.after?.status, normalizedReturned);
+  const inputValue = leaveImportApprovalLabel(row.values?.status, inputReturned);
+  const inputText = inputReturned && typeof row.values?.status === "string" && row.values.status.trim().length
+    ? row.values.status : inputValue;
+  const sameInput = normalizedReturned === inputReturned && Object.is(row.after?.status, row.values?.status);
+  const inputContext = sameInput ? ""
+    : ` <span class="muted-text">(preview input: <span data-leave-input-status>${esc(inputText)}</span>)</span>`;
+  return `<div class="import-row__leave-status" data-leave-approval-status>
+    <p><strong>Approval state in preview:</strong> <span data-leave-normalized-status>${esc(normalized)}</span>${inputContext}</p>
+    <p class="muted-text" data-leave-approval-authority>${leaveImportApprovalAuthority(dirty)}</p>
+  </div>`;
+}
+
+function updateLeaveImportApprovalAuthority(root: HTMLElement, dirty: boolean): void {
+  root.querySelectorAll<HTMLElement>("[data-leave-approval-authority]")
+    .forEach(element => { element.textContent = leaveImportApprovalAuthority(dirty); });
+}
+
 export async function createMemberInline(
   name: string,
   done: (member: DepartmentMember) => void,
 ) {
   const dialog = workspaceDialog("Create department member", "mw-import");
-  dialog.innerHTML = `<header class="mw-header"><h2>Create department member</h2><button type="button" data-close aria-label="Close member creation">×</button></header><form class="mw-content"><p>Check the suggested existing members before creating a new identity. This creates the member; the import still requires review and apply.</p><label>Full member name<input name="canonical_name" required maxlength="255" value="${esc(name)}"></label><section data-existing-members aria-live="polite"></section><label>Default call level<select name="call_level"><option value="">Unassigned</option>${["1ST_CALL", "2ND_CALL", "3RD_CALL", "CO_4TH_CALL", "4TH_CALL", "5TH_CALL"].map((key) => `<option>${key}</option>`).join("")}</select></label><p data-error class="mw-error" role="alert"></p><button class="primary" type="submit">Create member</button></form>`;
+  dialog.innerHTML = `<header class="mw-header"><h2>Create department member</h2><button type="button" data-close aria-label="Close member creation">${decorativeIcon("close")}</button></header><form class="mw-content"><p>Check the suggested existing members before creating a new identity. This creates the member; the import still requires review and apply.</p><label>Full member name<input name="canonical_name" required maxlength="255" value="${esc(name)}"></label><section data-existing-members aria-live="polite"></section><label>Default call level<select name="call_level"><option value="">Unassigned</option>${["1ST_CALL", "2ND_CALL", "3RD_CALL", "CO_4TH_CALL", "4TH_CALL", "5TH_CALL"].map((key) => `<option>${key}</option>`).join("")}</select></label><p data-error class="mw-error" role="alert"></p><button class="primary" type="submit">Create member</button></form>`;
   let busy = false;
   let memberDraftDirty = false;
   protectWorkspaceDraft(dialog, () => busy || memberDraftDirty);
@@ -200,22 +245,41 @@ export async function createMemberInline(
   };
 }
 
+export type OperationalImportLifecycle = Readonly<{
+  confirmed: (change: Readonly<{kind: "units" | "leave"; month: string; batchId: string}>) => void;
+  closed: () => void;
+}>;
+
 export async function openOperationalImport(
   kind: "units" | "leave",
   month: string,
   updated: () => void,
   admin: boolean,
+  parentLifecycle?: OperationalImportLifecycle,
 ) {
   const dialog = workspaceDialog(
     kind === "units" ? "Import unitwise assignments" : "Import leave",
     "mw-import operational-import",
   );
+  let parentClosed = false;
+  const notifyParentClosed = () => {
+    if (parentClosed) return;
+    parentClosed = true;
+    try { parentLifecycle?.closed(); }
+    catch { console.warn("The dependent import view close notification could not be delivered."); }
+  };
+  const notifyParentConfirmed = (applied: Preview) => {
+    try { parentLifecycle?.confirmed({kind, month: applied.month, batchId: applied.id}); }
+    catch { console.warn("The dependent import view refresh notification could not be delivered."); }
+  };
+  dialog.addEventListener("close", notifyParentClosed, {once: true});
   let members: DepartmentMember[] = [];
   let units: Row[] = [];
   let preview: Preview | undefined;
   let file: File | undefined;
   let busy = false;
   let finished = false;
+  let hasConfirmedImport = false;
   protectWorkspaceDraft(dialog, () => busy || Boolean((file || preview) && !finished));
   let previewDirty = true;
   let draftVersion = 0;
@@ -232,7 +296,7 @@ export async function openOperationalImport(
   const excluded = new Set<string>();
   let page = 0;
   const title = kind === "units" ? "Unitwise assignments" : "Leave";
-  dialog.innerHTML = `<header class="mw-header"><div><h2>Import ${title.toLowerCase()}</h2><div data-import-steps>${steps(IMPORT_STEPS, 0)}</div></div><button data-close type="button" aria-label="Close import review">×</button></header><div class="mw-content"><div class="registry-actions"><a class="icon-button" href="/templates/${kind === "units" ? "unitwise-assignments" : "leave-records"}.csv" download>Download ${kind === "units" ? "unitwise" : "leave"} CSV template</a><a class="quiet-button" href="/templates/${kind === "units" ? "unitwise-assignments" : "leave-records"}-example.csv" download>Download example CSV</a>${admin ? `<button type="button" class="quiet-button" data-manage-import-references>Manage labels and mappings</button>` : ""}</div><details class="mw-csv-help"><summary>CSV examples</summary><p>Use one row per dated record. Replace the illustrative member and unit names with your department records.</p><pre>${kind === "units" ? "member_name,unit_name,posting_type,starts_on,ends_on\nDr Example Member,Main Unit IV,2ND_CALL,2026-10-01,2026-10-31" : "member_name,starts_on,ends_on,leave_type,leave_slot,status\nDr Example Member,2026-10-03,2026-10-04,CL,FULL_DAY,approved"}</pre></details><form data-settings><label>Month<input type="month" name="month" required value="${esc(month)}"></label><label>File (up to 5 MB and 5,000 rows)<input type="file" required accept="${kind === "units" ? ".csv,.xlsx,.xlsm,.txt" : ".csv,.xlsx,.xls"}"></label><label>Operation<select name="mode"><option value="append">Append new records</option><option value="update_matching">Update matching member/date records</option><option value="replace_month">Replace imported records in this month</option></select></label><label>Dates in this file<select name="date_format"><option value="auto">ISO / detect unambiguous dates</option><option value="DMY">Day / month / year</option><option value="MDY">Month / day / year</option></select></label><p>Ambiguous dates need an explicit format. Blank unitwise dates use the selected month. Leave needs a start date. Replacement preserves records outside the month${kind === "leave" ? " and manually entered leave" : ""}.</p><div data-mapping></div><button class="primary" type="submit">Preview and normalize</button></form><p data-message role="status"></p><section data-review></section></div>`;
+  dialog.innerHTML = `<header class="mw-header"><div><h2>Import ${title.toLowerCase()}</h2><div data-import-steps>${steps(IMPORT_STEPS, 0)}</div></div><button data-close type="button" aria-label="Close import review">${decorativeIcon("close")}</button></header><div class="mw-content"><div class="registry-actions"><a class="icon-button" href="/templates/${kind === "units" ? "unitwise-assignments" : "leave-records"}.csv" download>Download ${kind === "units" ? "unitwise" : "leave"} CSV template</a><a class="quiet-button" href="/templates/${kind === "units" ? "unitwise-assignments" : "leave-records"}-example.csv" download>Download example CSV</a>${admin ? `<button type="button" class="quiet-button" data-manage-import-references>Manage labels and mappings</button>` : ""}</div><details class="mw-csv-help"><summary>CSV examples</summary><p>Use one row per dated record. Replace the illustrative member and unit names with your department records.</p><pre>${kind === "units" ? "member_name,unit_name,posting_type,starts_on,ends_on\nDr Example Member,Main Unit IV,2ND_CALL,2026-10-01,2026-10-31" : "member_name,starts_on,ends_on,leave_type,leave_slot,status\nDr Example Member,2026-10-03,2026-10-04,CL,FULL_DAY,approved"}</pre></details><p>Files and selections are kept in this open import. Replacing the file resets mappings and review choices. Closing, leaving or reloading may require choosing the file again.</p><form data-settings><label>Month<input type="month" name="month" required value="${esc(month)}"></label><label>File (up to 5 MB and 5,000 rows)<input type="file" required accept="${kind === "units" ? ".csv,.xlsx,.xlsm,.txt" : ".csv,.xlsx,.xls"}"></label><label>Operation<select name="mode"><option value="append">Append new records</option><option value="update_matching">Update matching member/date records</option><option value="replace_month">Replace imported records in this month</option></select></label><label>Dates in this file<select name="date_format"><option value="auto">ISO / detect unambiguous dates</option><option value="DMY">Day / month / year</option><option value="MDY">Month / day / year</option></select></label><p>Ambiguous dates need an explicit format. Blank unitwise dates use the selected month. Leave needs a start date. Replacement preserves records outside the month${kind === "leave" ? " and manually entered leave" : ""}.</p><div data-mapping></div><button class="primary" type="submit">Preview and normalize</button></form><p data-message role="status"></p><section data-review></section></div>`;
   function setStep(index: number) {
     const host = dialog.querySelector<HTMLElement>("[data-import-steps]");
     if (host) host.innerHTML = steps(IMPORT_STEPS, index);
@@ -242,11 +306,14 @@ export async function openOperationalImport(
       busy ||
       ((file || preview) &&
         !finished &&
-        !confirm("Discard this import draft? No import changes have been applied."))
+        !confirm(hasConfirmedImport
+          ? "Discard this import draft? Previously confirmed import changes remain saved. If an Apply result was uncertain, check import history before trying again."
+          : "Discard this import draft? If an Apply result was uncertain, check import history before trying again."))
     )
       return;
     dialog.close();
     dialog.remove();
+    notifyParentClosed();
   };
   dialog.querySelector("[data-close]")!.addEventListener("click", close);
   dialog.addEventListener("cancel", (e) => {
@@ -256,7 +323,8 @@ export async function openOperationalImport(
   const message = dialog.querySelector<HTMLElement>("[data-message]")!;
   dialog
     .querySelector<HTMLButtonElement>("[data-manage-import-references]")
-    ?.addEventListener("click", () => {
+    ?.addEventListener("click", (event) => {
+      (event.currentTarget as HTMLButtonElement).focus({ preventScroll: true });
       void openReferenceCatalog(
         () => {
           dirtyPreview();
@@ -277,6 +345,9 @@ export async function openOperationalImport(
   });
   // The apply button sits below a long row list, so mirror status next to it.
   function say(text: string, revealFooter = true) {
+    updateMemberMatchPending(dialog, previewDirty);
+    updateImportPreviewAuthority(dialog, previewDirty);
+    updateLeaveImportApprovalAuthority(dialog, previewDirty);
     message.textContent = text;
     const status = dialog.querySelector<HTMLElement>("[data-apply-status]");
     if (status) {
@@ -285,6 +356,7 @@ export async function openOperationalImport(
     }
   }
   function dirtyPreview(revealFooter = true) {
+    finished = false;
     draftVersion++;
     previewDirty = true;
     dialog
@@ -305,6 +377,7 @@ export async function openOperationalImport(
     preview = undefined;
     columns = undefined;
     previewDirty = true;
+    setStep(0);
     Object.keys(corrections).forEach((k) => delete corrections[k]);
     Object.keys(mapping).forEach((k) => delete mapping[k]);
     excluded.clear();
@@ -334,7 +407,7 @@ export async function openOperationalImport(
         : "Section-style file: preview to review extracted records.";
     } catch (error) {
       if (inspectedSequence === columnLoadSequence && file === inspectedFile && dialog.isConnected && dialog.open)
-        message.textContent = (error as Error).message;
+        message.textContent = `${(error as Error).message} ${importRecoveryText("columns")}`;
     }
   };
   async function runPreview(initiator?: HTMLElement) {
@@ -397,7 +470,7 @@ export async function openOperationalImport(
         if (chosenRow) restored?.scrollIntoView({ block: "nearest", behavior: "instant" });
       }
     } catch (error) {
-      if (alive()) say((error as Error).message, false);
+      if (alive()) say(`${(error as Error).message} ${importRecoveryText("preview")}`, false);
     } finally {
       document.removeEventListener("focusin", trackFocus);
       busy = false;
@@ -434,29 +507,12 @@ export async function openOperationalImport(
       { label: "unchanged", count: actionCount("unchanged") },
       { label: "need attention", count: preview!.rows.filter((row) => !excluded.has(row.key) && row.issues.length).length, tone: "warning" },
     ]);
-    const matchState = (row: Row) =>
-      excluded.has(row.key)
-        ? "Excluded"
-        : row.person_match.state === "ambiguous" ||
-            row.unit_match?.state === "ambiguous"
-          ? "Ambiguous"
-          : row.issues.some((issue: string) =>
-                /duplicate|repeated|already exists/i.test(issue),
-              )
-            ? "Duplicate"
-            : row.issues.some((issue: string) =>
-                  /invalid|ambiguous date|end date|outside.*month/i.test(issue),
-                )
-              ? "Invalid"
-              : row.issues.length
-                ? "Needs review"
-                : row.action === "create"
-                  ? "Matched - new record"
-                  : "Matched";
     const memberView = (row: Row): MemberMatchView => ({
       raw: String(row.values.member_name ?? ""),
       status: row.person_match.state === "inactive" ? "inactive" : (row.person_match.status ?? row.person_match.state),
       name: row.person_match.canonical_name,
+      selectedId: row.person_match.person_id ?? row.after.person_id,
+      pending: previewDirty,
       method: row.person_match.method,
       reason: row.person_match.reason,
       warnings: row.person_match.warnings ?? [],
@@ -465,7 +521,7 @@ export async function openOperationalImport(
     const memberOptions = (row: Row, value: Row) =>
       members
         .filter((m) => m.active_status === "active")
-        .map((m) => `<option value="${m.id}" ${m.id === (value.person_id || row.after.person_id) ? "selected" : ""}>${esc(m.canonical_name)} · ${esc(m.call_level || "Unassigned")} · ${esc(m.designations.slice(-1)[0]?.designation || "Position missing")}</option>`)
+        .map((m) => `<option value="${m.id}" ${m.id === (value.person_id || row.after.person_id) ? "selected" : ""}>${esc(m.canonical_name)} · ${esc(m.call_level || "Unassigned")} · ${esc(m.designations.slice(-1)[0]?.designation || "Position missing")} · Member ID: ${esc(m.id)}</option>`)
         .join("");
     const unitOptions = (row: Row, value: Row) =>
       units
@@ -475,8 +531,7 @@ export async function openOperationalImport(
     const special = (row: Row) => ["PAIN", "SICU", "DRP"].includes(row.after.posting_type);
     const rowHtml = (row: Row) => {
       const value = { ...row.values, ...corrections[row.key] };
-      const tone = excluded.has(row.key) ? "neutral" : row.issues.length ? "warning" : "success";
-      const otherIssues = row.issues.filter((issue: string) => !/department member/i.test(issue));
+      const otherIssues = row.issues;
       const unitLine = kind === "units" && row.unit_match
         ? `<p class="import-row__unit"><span class="muted-text">Unit</span> ${esc(row.values.unit_name || "(blank)")} → <strong>${esc(row.unit_match.name || (special(row) ? "Special posting (no unit)" : "not chosen"))}</strong>${row.unit_match.state !== "matched" && !special(row) ? ` ${badge("Choose unit", "warning")}` : ""}</p>`
         : "";
@@ -484,11 +539,12 @@ export async function openOperationalImport(
         <header class="import-row__head">
           <label class="import-row__include"><input type="checkbox" data-include="${esc(row.key)}" ${excluded.has(row.key) ? "" : "checked"}> Include</label>
           <span class="import-row__source">${esc(row.source.sheet)} row ${esc(row.source.row)}</span>
-          ${badge(matchState(row), tone)}
           ${row.action !== "needs_review" ? `<span class="muted-text">${esc(String(row.action).replace(/_/g, " "))}</span>` : ""}
         </header>
+        ${importRowAttention({ action: row.action, issues: row.issues, matchStatus: row.person_match.status ?? row.person_match.state })}
         ${memberMatch(row.key, memberView(row))}
         ${unitLine}
+        ${kind === "leave" ? leaveImportApprovalSummary(row, previewDirty) : ""}
         ${otherIssues.length ? `<ul class="import-row__issues">${otherIssues.map((issue: string) => `<li>${esc(issue)}</li>`).join("")}</ul>` : ""}
         ${row.warnings.length ? `<p class="member-match__warn">${row.warnings.map(esc).join(" · ")}</p>` : ""}
         <div class="import-row__actions">
@@ -513,7 +569,7 @@ export async function openOperationalImport(
             <label>End date<input data-row="${esc(row.key)}" data-field="ends_on" value="${esc(value.ends_on)}" placeholder="YYYY-MM-DD"></label>
           </div>
           <dl class="import-row__changes">${(row.normalizations || []).map((change: Row) => `<dt>${esc(change.field.replace(/_/g, " "))}</dt><dd>${esc(change.original || "Blank")} → ${esc(change.proposed || "Blank")} <small>${esc(change.reason)}</small></dd>`).join("")}</dl>
-          ${row.person_match.candidates?.length ? `<div class="registry-actions">${row.person_match.candidates.map((c: Row) => `<button type="button" class="quiet-button btn-sm" data-review-candidate="${esc(c.id)}">${c.status === "active" ? "Open profile:" : "Review / restore"} ${esc(c.name)}</button>`).join("")}</div>` : ""}
+          ${row.person_match.candidates?.length ? `<div class="registry-actions">${row.person_match.candidates.map((c: Row) => `<button type="button" class="quiet-button btn-sm" data-review-candidate="${esc(c.id)}">${c.status === "active" ? "Open profile:" : "Review / restore"} ${esc(c.name)} · ${esc(memberIdentityText(c))}</button>`).join("")}</div>` : ""}
         </details>
       </article>`;
     };
@@ -524,7 +580,7 @@ export async function openOperationalImport(
             preview!.rows.map((r) => ({ key: r.key, issues: r.issues, label: `row ${r.source.row} “${r.values.member_name ?? ""}”` })),
             excluded,
           );
-    root.innerHTML = `<h3>Resolve and review</h3>${groupedSummary}<p data-review-counts class="review-counts">${reviewCounts()}</p>${preview.mode === "replace_month" ? `<details><summary>${preview.replacement_scope.length} existing records affected by replacement</summary>${preview.replacement_scope.map((r) => `<p>${esc(members.find((m) => m.id === r.person_id)?.canonical_name || r.person_id)} · ${esc(r.starts_on)} to ${esc(r.ends_on || "Ongoing")}</p>`).join("")}</details>` : ""}${shown.map(rowHtml).join("")}<div class="pager" ${preview.rows.length <= 25 ? "hidden" : ""}><button type="button" class="icon-button btn-sm" data-page="-1" ${page === 0 ? "disabled" : ""}>Previous rows</button><span>Page ${page + 1} of ${Math.ceil(preview.rows.length / 25)}</span><button type="button" class="icon-button btn-sm" data-page="1" ${(page + 1) * 25 >= preview.rows.length ? "disabled" : ""}>Next rows</button></div><label class="checkbox-line"><input type="checkbox" data-acknowledge> I reviewed the affected duties and replacement scope</label><div class="registry-actions import-apply-bar"><button type="button" class="icon-button" data-refresh>Refresh normalized preview</button><button type="button" class="quiet-button" data-report>Download row report</button><button type="button" class="primary" data-apply ${previewDirty ? 'aria-disabled="true"' : ""}>Apply reviewed rows</button></div><p class="import-apply-blocker" data-apply-blocker role="status">${esc(blocker())}</p><p data-apply-status role="status" aria-live="polite"></p>`;
+    root.innerHTML = `<h3>Resolve and review</h3><section aria-label="Server import preview scope"><p>${esc(importPreviewModeText("records", preview.mode))}</p><p>Month returned by preview: <strong>${esc(preview.month || "Not returned")}</strong>. ${preview.rows.length} ${kind === "units" ? "posting" : "leave"} rows returned for review.${preview.mode === "replace_month" ? Array.isArray(preview.replacement_scope) ? ` ${preview.replacement_scope.length} existing imported records returned in replacement scope; inspect that scope below.` : " Replacement scope was not returned." : ""}</p><p data-import-preview-authority>${importPreviewAuthorityText(previewDirty)}</p></section>${groupedSummary}<p data-review-counts class="review-counts">${reviewCounts()}</p>${preview.mode === "replace_month" ? `<details><summary>${Array.isArray(preview.replacement_scope) ? preview.replacement_scope.length : "Not returned"} existing records affected by replacement</summary>${(Array.isArray(preview.replacement_scope) ? preview.replacement_scope : []).map((r) => `<p>${esc(members.find((m) => m.id === r.person_id)?.canonical_name || r.person_id)} · ${esc(r.starts_on)} to ${esc(r.ends_on || "Ongoing")}</p>`).join("")}</details>` : ""}${shown.map(rowHtml).join("")}<div class="pager" ${preview.rows.length <= 25 ? "hidden" : ""}><button type="button" class="icon-button btn-sm" data-page="-1" ${page === 0 ? "disabled" : ""}>Previous rows</button><span>Page ${page + 1} of ${Math.ceil(preview.rows.length / 25)}</span><button type="button" class="icon-button btn-sm" data-page="1" ${(page + 1) * 25 >= preview.rows.length ? "disabled" : ""}>Next rows</button></div><label class="checkbox-line"><input type="checkbox" data-acknowledge> I reviewed the affected duties and replacement scope</label><div class="registry-actions import-apply-bar"><button type="button" class="icon-button" data-refresh>Refresh normalized preview</button><button type="button" class="quiet-button" data-report>Download row report</button><button type="button" class="primary" data-apply ${previewDirty ? 'aria-disabled="true"' : ""}>Apply reviewed rows</button></div><p class="import-apply-blocker" data-apply-blocker role="status">${esc(blocker())}</p><p data-apply-status role="status" aria-live="polite"></p>`;
     // One-click member choice: save it and re-run the preview so the row is checked again.
     root.querySelectorAll<HTMLButtonElement>("[data-pick-member]").forEach(
       (button) =>
@@ -838,6 +894,7 @@ export async function openOperationalImport(
       // A delayed inspection must not replace locked controls or apply feedback.
       columnLoadSequence++;
       const unlock = lockWorkspaceControls(dialog);
+      setStep(3);
       say("Applying reviewed rows…");
       try {
         const result = await request<Row>(
@@ -847,6 +904,9 @@ export async function openOperationalImport(
             body: applyPayload,
           },
         );
+        // Confirmed write is independent of later child result rendering/readback.
+        hasConfirmedImport = true;
+        notifyParentConfirmed(appliedPreview);
         if (!ownsApply()) return;
         finished = true;
         setStep(IMPORT_STEPS.length);
@@ -856,7 +916,12 @@ export async function openOperationalImport(
           .addEventListener("click", downloadReport);
         updated();
       } catch (error) {
-        if (ownsApply()) say((error as Error).message);
+        if (ownsApply()) {
+          setStep(finished ? IMPORT_STEPS.length : 2);
+          say(finished
+            ? `Import was confirmed, but the result view could not finish updating. ${(error as Error).message} Return to the records list to view the saved result.`
+            : `${(error as Error).message} ${importRecoveryText("apply")}`);
+        }
       } finally {
         unlock();
         busy = false;

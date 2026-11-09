@@ -1,0 +1,128 @@
+{
+  "reviewer": "/root/remaining_icons_independent",
+  "recorded_at_utc": "2026-10-28T18:06:27.205847+00:00",
+  "decision": "v5_native_focus_defect_confirmed_bounded_owned_RAF_candidate_supported",
+  "application_fixed": false,
+  "items_accepted": [],
+  "preview": "Frozen5201v5 scratch only; explicit testDOM/CSS/handler experiments; no application candidate mutation",
+  "bounded_RAF": {
+    "contexts": 6,
+    "date_controls": 186,
+    "engines": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "viewport": "320x900",
+    "root_percent": [
+      100,
+      200
+    ],
+    "strict_full_target_and_computed_4px_ring": true,
+    "first_owned_settlement_plus_geometry_deadline_ms": 3000,
+    "max_owner_deadline_ms": 1000,
+    "stable_frames": 4,
+    "max_observed_settlement_ms": 166.59999999962747,
+    "deadline_hits": 0
+  },
+  "ownership": {
+    "contexts": 15,
+    "engines": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "scenarios": [
+      "new-focus",
+      "manual-pointer",
+      "manual-wheel",
+      "new-keydown",
+      "disconnect"
+    ],
+    "actual_pending_cancellation_observations": 12,
+    "already_completed_before_intent": 1,
+    "no_correction_after_cancellation": true,
+    "no_focus_stealing": true,
+    "pointer_wheel_visible_hit_and_native_timestamps_checked": true
+  },
+  "rejected_as_complete_solution": [
+    "CSSscroll-margin/padding",
+    "exaggeratedmargin",
+    "mandatory/proximitysnap",
+    "syncfocusreveal",
+    "singleRAF",
+    "zero-deltainstantscrollTo",
+    "oneshotnative_scrollend"
+  ],
+  "production_review_requirements": [
+    "one bounded ownedRAF path with per-region cleanup",
+    "preserve noAPI/noverticalscroll/nofocuscall/nopersistedstate and keyboarddefaults",
+    "compare fullgeometry as well as scrollLeft for stability, retest that change",
+    "cancel on newerfocus/pointer/wheel/keydown, disconnect/hidden and renderdispose",
+    "explicitly disclose newlistener/RAF/instantmotion in sourceproof",
+    "test unsupported/throwing scroll capability and Daylist recovery",
+    "fresh integrated strict fullrect+ring allengines/themes/layouts and originalleavecriteria"
+  ],
+  "evidence": [
+    {
+      "path": "tmp/leave-status-independent-focus-owned-settle.json",
+      "sha256": "39bf46bed20d04b91d94d50f2762b340b151f230e4b6b5a723104a60c715416a"
+    },
+    {
+      "path": "tmp/leave-status-independent-focus-ownership-v4.json",
+      "sha256": "369a03ae58b23d0c241ea3e6094b3f29145f5f690183d458077a37599251d90e"
+    },
+    {
+      "path": "tmp/leave-status-independent-focus-timeline.json",
+      "sha256": "29540cc0173f0b2fd2ceb79c357db2f21f6fb366a74c5d50e1567326f26a7931"
+    },
+    {
+      "path": "tmp/leave-status-independent-focus-experiments.json",
+      "sha256": "6977f8f39c83e8f535f9f573548a9ffd2d0503aedff959a5e69fd25d646c0a28"
+    },
+    {
+      "path": "tmp/leave-status-independent-horizontal-experiments.json",
+      "sha256": "a5ed3a4697b486fd3061b6e8249f2fe7ffc34f4c956df24ac027e3296d50ea92"
+    },
+    {
+      "path": "tmp/leave-status-independent-focus-followup.json",
+      "sha256": "c36a90f0eaaefe082b57f1933a4189ebfe149bd438b215a1c766777ad1f55053"
+    },
+    {
+      "path": "tmp/leave-status-independent-focus-cancel.json",
+      "sha256": "a2f22f5e3862bfb9370fad3dc8a0245941e3fb5baa93b817ee606cc4d12e44d1"
+    },
+    {
+      "path": "tmp/leave-status-independent-focus-snap.json",
+      "sha256": "19e843a6a06c81b9ea41b4ccd7dc90307a50029679622da857b9b9256c489b44"
+    },
+    {
+      "path": "tmp/leave-status-independent-focus-scrollend.json",
+      "sha256": "5d1cda8edaccd8625c4927120b91d06a673aa6b2e12ec50ee43fc6f257f452d1"
+    },
+    {
+      "path": "tmp/leave-status-independent-focus-scrollend-settled.json",
+      "sha256": "03617bf2a539b04e96fe8f644f3dc135df457b90c665777e342f623bace63710"
+    },
+    {
+      "path": "tmp/leave-status-independent-focus-owned-settle.log",
+      "sha256": "15365e566ed28cf2eefcc2b3daaf858b61879564aef1b83e505eacc6c9ea3761"
+    },
+    {
+      "path": "tmp/leave-status-independent-focus-ownership-v4.log",
+      "sha256": "f5449504774372a2040731bf38e6e18ed51d309ec3735b53755ee9f3ae746170"
+    }
+  ],
+  "historical_failures": [
+    "tmp/leave-status-independent-focus-ownership.log",
+    "tmp/leave-status-independent-focus-ownership-v2.log",
+    "tmp/leave-status-independent-focus-ownership-v2-held.log"
+  ],
+  "limits": [
+    "Experiments are not integrated application acceptance.",
+    "Earlier reports bind historicalrecordworkspace17bc; finalownership holds current7c196. No rawsourcehash rewritten.",
+    "No actual physicaldevice/nativeAT/realdragscroll claim.",
+    "No app/backend/service/database/ledger changes by reviewer."
+  ],
+  "narrative": "docs/premium-ui/reviews/leave-calendar-focus-independent-diagnostics.md"
+}

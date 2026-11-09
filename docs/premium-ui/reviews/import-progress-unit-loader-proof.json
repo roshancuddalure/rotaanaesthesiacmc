@@ -1,0 +1,40 @@
+{
+  "test": "frontend/tests/member-management.test.mjs",
+  "current_test_sha256": "cb2155099a0882f72800ad31bed4614d0b427b2f7fe02b9e4a943208a11ccbdf",
+  "source_inspected": true,
+  "loader_source_lines": [
+    [
+      35,
+      51
+    ]
+  ],
+  "actual_behavior": "compiledModule reads ../src/${filename} as UTF-8 at execution, transpiles that source with TypeScript, rewrites API/workspace import bindings to doubles, recursively compiles current ui/member-import/audit-time/member-presentation modules, then imports the generated data URL. importUi loads current member-import.ts; no copied controller implementation or prebuilt JS is used.",
+  "scoped_test_source_lines": [
+    [
+      60,
+      105
+    ]
+  ],
+  "scoped_assertions": "Current-source member CSV controller retains review on filtering, requires call approval, uses selected member, exact confirm_call_changes and reviewed-hash on apply, calls refresh once, displays the newly applied honest confirmed/saved-result copy, and removes Apply after success. Root updated only the obsolete old success-copy expectation.",
+  "raw_log": "tmp/premium-import-progress-unit.log",
+  "raw_log_sha256": "465a1836022aa7ea29ae49ecb485b2d09f64ee616b7835cbcf0f2cb922a8e78a",
+  "log_summary_source_lines": [
+    [
+      119,
+      126
+    ]
+  ],
+  "retained_run_summary": {
+    "tests": 114,
+    "pass": 114,
+    "fail": 0
+  },
+  "run_command_from_log": "npm test -> node --test tests/*.test.mjs",
+  "limitations": "The retained114-pass log has no embedded source-hash manifest. Current source hashes are recorded at mapping; loader provenance is source-inspected, not a fabricated historical log hash binding. API doubles and lightweight hosts do not certify browser rendering or backend behavior.",
+  "current_local_source_sha256": {
+    "src/member-import.ts": "d4c70924c8a089de3fa836491d2e2bf6b6b7d38c17571d516c1f9bc194ad3e50",
+    "src/ui.ts": "680d7830bca8826b46b6f1dc2c0d064d2a3a2e16fb41188d2c323de6bccf85b2",
+    "src/member-presentation.ts": "71c8c8f7b1eadd1d02e84e3a997f3c636a3b7edb04b4bf527b19bdde223c5f60",
+    "src/audit-time.ts": "136542cb2daec343417532d372f2e8ce01a0e6103ef6c62a7a4a8017ac8a6d15"
+  }
+}

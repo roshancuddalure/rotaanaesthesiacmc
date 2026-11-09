@@ -1,0 +1,101 @@
+{
+  "recorded_at_utc": "2026-11-09T10:21:25.445994+00:00",
+  "operator": "/root/progress_integrity_review",
+  "scope": "Read-only documentary progress integrity review. No browser rerun, implementation, build or acceptance adjudication.",
+  "source_sha256": {
+    "docs/premium-ui/live-work.json": "5147806b9611b893aadaa5f9c7b97bc41e9f130d29c5a498a75908ca3b880642",
+    "docs/premium-ui/acceptance-audit-current.json": "efce357056deaf1287364f5ea56090213c0170f79054df3ab3c3edd2828f39ad",
+    "docs/premium-ui/verification-current.json": "2561465961da636207fb09a940e2d190c9db029145e76616f63040c3278c75cd",
+    "docs/premium-ui/review-build-current.json": "86cde675a3ce667a2a94d5bdeb6111f9834d8845c46237d8662dc8679d548bfa",
+    "docs/premium-ui/progress-window.html": "8a3f01865e25e8d5f51294df0fab77ea3ec45c068d2205b413d194475a5d6567",
+    "docs/premium-ui/execution-status.md": "466289811895e59faa45ce6633c343ebe7d9076f1b9735a4aaec4ae4f25284d2",
+    "docs/premium-ui/agent-workstreams-current.json": "510dbf84625fa48be8f015aa52030ea07227b8fec6e075502ae0ba49e88d1416",
+    "docs/premium-ui/qa-original159-registry-fallback-draft-diagnostic.json": "defd3d1dbffb11ab13d048b98f51983e2d27b08975c68ad7618bf5f3b40dba5e",
+    "docs/premium-ui/qa-original159-registry-v10r1-fallback-recovery.json": "96692a6e36665f16653c405407d2c937186d8c08d79d722e801c2072d71ebf6d"
+  },
+  "current_counts": {
+    "partial": 204,
+    "complete": 54,
+    "pending": 1,
+    "dependency": 1
+  },
+  "count_interpretation": "54/260 accepted requirements (20.8% of requirements by count); not percentage of implementation effort completed. 204 partial, one native-AT pending, one physical dependency.",
+  "registry_evidence": {
+    "baseline_cases": 6,
+    "baseline_passed": 0,
+    "candidate_cases": 6,
+    "candidate_passed": 6,
+    "candidate_applied": false,
+    "coverage": "Three engines at 320/1280: one rename workflow retaining fallback host, row, dirty C/B order, enabled Save, updated target label; one local registry PUT, no fallback save.",
+    "limits": "Normal rename subset only. No create, malformed/failed read, owner supersession, account/month/route, a11y label completeness or integrated-source acceptance inferred."
+  },
+  "findings": [
+    {
+      "priority": "high",
+      "path": "docs/premium-ui/live-work.json",
+      "location": "Final Full260goalactive task",
+      "finding": "44 accepted /216 remaining and 214 partial conflict with current 54 accepted/204 partial.",
+      "action": "Update this current summary from authoritative counts, preserving older snapshots in dated historical records."
+    },
+    {
+      "priority": "high",
+      "path": "docs/premium-ui/live-work.json",
+      "location": "validation_note",
+      "finding": "Says 44 remains current and 150/156 deliberately withheld; both are stale.",
+      "action": "Replace current note with 54 accepted; registry candidate unapplied; no whole159 acceptance."
+    },
+    {
+      "priority": "medium",
+      "path": "docs/premium-ui/live-work.json",
+      "location": "agent_organisation and agent_organisation_current",
+      "finding": "Two incompatible old active-wave lists are retained as current.",
+      "action": "Use actual live agent state and timestamp, or say historical contributions without claiming agents are currently active."
+    },
+    {
+      "priority": "medium",
+      "path": "docs/premium-ui/live-work.json",
+      "location": "Historical task cards shown in current work list",
+      "finding": "Several cards retain historical overall totals 53/52/51/50/44 and now-superseded next steps (nested profile, modal focus). GUI renders task status/title/detail directly.",
+      "action": "Label cards as historical checkpoints with dates, or remove historical totals/next-step language from current list. Preserve evidence separately."
+    },
+    {
+      "priority": "medium",
+      "path": "docs/premium-ui/qa-original159-registry-v10r1-fallback-recovery.json",
+      "location": "scope",
+      "finding": "Inherited diagnostic prose says actual current application and failure is diagnostic, while manifest correctly identifies an unapplied candidate.",
+      "action": "Keep frozen raw report and add a hashed attribution wrapper clearly separating actual baseline failures from candidate normal-path passes."
+    },
+    {
+      "priority": "low",
+      "path": "docs/premium-ui/execution-status.md",
+      "location": "Prior checkpoint sections",
+      "finding": "Earlier paragraphs say V8 import isolated, direct repair pending and profile unapplied. Latest top section is correct but lower sections lack uniform dated historical framing.",
+      "action": "Add an explicit historical-checkpoints boundary after current section; never treat historical statuses as latest state."
+    },
+    {
+      "priority": "low",
+      "path": "docs/premium-ui/acceptance-audit-current.json",
+      "location": "limitations[0]",
+      "finding": "All requirement completion remains unproven is imprecise alongside 54 exact documented acceptances.",
+      "action": "Clarify that completion of the entire 260-requirement programme remains unproven; 54 scoped acceptances are recorded."
+    },
+    {
+      "priority": "low",
+      "path": "docs/premium-ui/agent-workstreams-current.json",
+      "location": "recorded_at_utc/status",
+      "finding": "Current-named agent file is an October22 historical wave.",
+      "action": "Display recorded date and historical status; do not infer current live concurrency from this file."
+    }
+  ],
+  "recommended_gui": {
+    "headline": "54 of 260 requirements accepted",
+    "subline": "204 in progress \u00b7 1 native assistive-technology check pending \u00b7 1 physical-device dependency",
+    "active_task": "Registry draft preservation \u2014 isolated repair under test",
+    "active_detail": "Baseline draft loss reproduced in six browser cases. Candidate passes the same six normal rename cases across Chromium, Firefox and WebKit at phone and desktop widths. Candidate remains unapplied; recovery, lifecycle and accessibility checks remain.",
+    "verified_checkpoint": "Import V9r1 applied: 90 browser contexts, 114 unit tests, held build and prior54 acceptance checks passed.",
+    "team": "More than10 specialists have contributed across coordinated waves; up to3 specialists run alongside the integrator. Display current active names only from a fresh live-agent query.",
+    "boundaries": "Frontend-only goal remains active. Physical checks pending by user choice. No commit, push, deployment or production operation authorized."
+  },
+  "shared_current_records_modified": false,
+  "application_modified": false
+}

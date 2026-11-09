@@ -1311,7 +1311,7 @@ function goToDuty(st: State, key: string | null, field: string): void {
     excluded_units: '[data-field="excluded_units"]',
   };
   const target = (selector[field] && row?.querySelector<HTMLElement>(selector[field])) || row?.querySelector<HTMLElement>("[data-toggle-duty]");
-  row?.scrollIntoView({ block: "start", behavior: reducedMotion() ? "auto" : "smooth" });
+  (target ?? row)?.scrollIntoView({ block: "start", behavior: reducedMotion() ? "auto" : "smooth" });
   target?.focus({ preventScroll: true });
 }
 
@@ -1472,8 +1472,11 @@ async function openReview(st: State): Promise<void> {
         setStatus(st, "Your rules were saved. Reload saved rules before saving again; your later edits are kept.", "warning");
       }
     }
-    if (ownsReviewFocus && st.root.isConnected && st.root.contains(st.page) && changeCount(st) > 0 && document.activeElement === document.body)
-      st.page.querySelector<HTMLElement>("[data-review], [data-save-refresh]")?.focus({ preventScroll: true });
+    if (ownsReviewFocus && st.root.isConnected && st.root.contains(st.page) && (changeCount(st) > 0 || (saved?.confirmed && st.saveOperation === saved)) && document.activeElement === document.body) {
+      const recoveryTarget = st.page.querySelector<HTMLElement>("[data-review], [data-save-refresh]");
+      recoveryTarget?.scrollIntoView({ block: "nearest", behavior: "instant" });
+      recoveryTarget?.focus({ preventScroll: true });
+    }
   }, { once: true });
   let phase: "checking" | "ready" | "saving" | "stale" | "reloading" | "saved-refresh" = st.saveOperation?.confirmed ? "saved-refresh" : "checking";
   let problems: RotaRuleProblem[] = [];
@@ -1490,7 +1493,7 @@ async function openReview(st: State): Promise<void> {
       const closeIndex = Array.from(dialog.querySelectorAll("[data-close]")).findIndex(button => button === active);
       const retryFocused = active === dialog.querySelector("[data-save-refresh-retry]");
       dialog.innerHTML = `<header class="mw-header"><div><h2>Rules saved</h2><p>The save completed. Reload only reads the latest saved rules.</p></div>
-        <button type="button" data-close aria-label="Close review">&times;</button></header>
+        <button type="button" data-close aria-label="Close review">${decorativeIcon("close")}</button></header>
         <div class="mw-content rr-review">${nextStep({
           tone: saved.error ? "warning" : "info",
           title: saved.error ? "Saved; latest details unavailable" : saved.busy ? "Reloading saved details" : "Saved details need reload",
@@ -1513,7 +1516,7 @@ async function openReview(st: State): Promise<void> {
         <div><p class="rr-review__msg"><strong>${esc(label(p.duty_key))}</strong>: ${esc(p.message)}</p>${p.fix ? `<p class="rr-review__fix">${esc(p.fix)}</p>` : ""}</div>
         <button type="button" class="icon-button btn-sm" data-goto="${esc(p.duty_key ?? "")}" data-goto-field="${esc(p.field ?? "")}" aria-label="${esc(p.duty_key ? `Go to duty: ${label(p.duty_key)}` : "Go to safety guardrails")}">${p.duty_key ? "Go to duty" : "Go to guardrails"}</button></li>`;
     dialog.innerHTML = `<header class="mw-header"><div><h2>Review changes</h2><p>Nothing is saved until you confirm.</p></div>
-        <button type="button" data-close aria-label="Close review">×</button></header>
+        <button type="button" data-close aria-label="Close review">${decorativeIcon("close")}</button></header>
       <div class="mw-content rr-review">
         <section class="rr-review__section"><h3>${badge(String(n), "info")} What will change</h3>${changesHtml(st)}</section>
         ${phase === "checking" ? `<p class="rr-review__busy">Checking the rules…</p>` : ""}
@@ -1786,7 +1789,7 @@ async function openHistory(st: State): Promise<void> {
             </li>`;
           }).join("")}</ol>`;
     dialog.innerHTML = `<header class="mw-header"><div><h2>Rota rules history</h2><p>Every save is kept. Compare a version with the current rules, or restore it.</p></div>
-        <button type="button" data-close aria-label="Close history">×</button></header>
+        <button type="button" data-close aria-label="Close history">${decorativeIcon("close")}</button></header>
       <div class="mw-content rr-review">
         ${loadError ? nextStep({ tone: "danger", title: "History could not load", body: loadError, actionHtml: `<button type="button" class="icon-button btn-sm" data-history-retry>Try again</button>` }) : ""}
         ${stale ? nextStep({ tone: "warning", title: "Another admin changed the rules", body: "The rules changed after this page loaded them, so nothing was restored. Reload the latest rules, then restore again.", actionHtml: `<button type="button" class="primary btn-sm" data-history-reload>Reload rules</button>` }) : ""}
@@ -1946,6 +1949,19 @@ function pageHtml(st: State): string {
 
 function bindPage(st: State): void {
   const page = st.page;
+  page.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape" || event.defaultPrevented) return;
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    const help = target.closest<HTMLButtonElement>('.rr-help[aria-expanded="true"]');
+    if (!help) return;
+    const id = help.dataset.help ?? "";
+    const region = page.querySelector<HTMLElement>(`#${sel(id)}`);
+    event.preventDefault();
+    help.setAttribute("aria-expanded", "false");
+    if (region) region.hidden = true;
+    st.openHints.delete(id);
+  });
   page.addEventListener("click", (event) => {
     const target = event.target as HTMLElement;
     const el = <T extends HTMLElement = HTMLElement>(selector: string) => target.closest<T>(selector);

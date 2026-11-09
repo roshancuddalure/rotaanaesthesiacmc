@@ -1,0 +1,1226 @@
+{
+  "recorded_at_utc": "2026-10-30T09:35:36.453Z",
+  "reviewer": "/root/unit150156_acceptance_review",
+  "source_sha256": {
+    "frontend/src/record-workspace.ts": "7c196c12b114c48bf2db4ee57aad7e591d8e3acc7a77cccd15abbad7c349fb8f",
+    "frontend/src/reference-workspace.ts": "78c231ea1d5ab15bd3a4b5f2f8265529451a51bacc68d2a4aac1708a4be30292",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/member-workspace.ts": "0ef8c1ef2234c7a50d8ca10b8aaa3998a654d452f563bd4c75531faef09d6c63"
+  },
+  "test_sha256": "e4da05b1e0976d849f32b110a5644c8392b8806371e649f56d901b9d13c79117",
+  "scope": "Independent candidate closure rerun of peer-authored exported record-workspace6engine/width contexts with4fields×active/archived scenarios each. Native unchanged Review captures exact locally intercepted preview body; all saves/other writes rejected. Catalog shape matches source-supported persisted inactive built-in overrides; not a backend persistence or policy test. All48active/archived scenarios assert exact unchanged value retention; disabled current/FormData omission asserted for24archived scenarios. Candidate5231overlay; no application integration.",
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "cases": [
+        {
+          "kind": "units",
+          "field": "posting_type",
+          "reference": "posting_type",
+          "archived": false,
+          "returnedExistingValue": "2ND_CALL",
+          "visibleSelected": "2ND_CALL",
+          "previewValue": "2ND_CALL",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "1ST_CALL",
+              "label": "1st Call",
+              "selected": false,
+              "disabled": false
+            },
+            {
+              "value": "2ND_CALL",
+              "label": "2nd Call",
+              "selected": true,
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "kind": "units",
+          "field": "posting_type",
+          "reference": "posting_type",
+          "archived": true,
+          "returnedExistingValue": "2ND_CALL",
+          "visibleSelected": "2ND_CALL",
+          "previewValue": "2ND_CALL",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "2ND_CALL",
+              "label": "2nd Call (archived; current record)",
+              "selected": true,
+              "disabled": true
+            },
+            {
+              "value": "1ST_CALL",
+              "label": "1st Call",
+              "selected": false,
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "kind": "leave",
+          "field": "leave_type",
+          "reference": "leave_type",
+          "archived": false,
+          "returnedExistingValue": "CL",
+          "visibleSelected": "CL",
+          "previewValue": "CL",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "ANNUAL_LEAVE",
+              "label": "Annual leave",
+              "selected": false,
+              "disabled": false
+            },
+            {
+              "value": "CL",
+              "label": "Casual leave",
+              "selected": true,
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "kind": "leave",
+          "field": "leave_type",
+          "reference": "leave_type",
+          "archived": true,
+          "returnedExistingValue": "CL",
+          "visibleSelected": "CL",
+          "previewValue": "CL",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "CL",
+              "label": "Casual leave (archived; current record)",
+              "selected": true,
+              "disabled": true
+            },
+            {
+              "value": "ANNUAL_LEAVE",
+              "label": "Annual leave",
+              "selected": false,
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "kind": "leave",
+          "field": "leave_slot",
+          "reference": "leave_slot",
+          "archived": false,
+          "returnedExistingValue": "AM",
+          "visibleSelected": "AM",
+          "previewValue": "AM",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "FULL_DAY",
+              "label": "Full day",
+              "selected": false,
+              "disabled": false
+            },
+            {
+              "value": "AM",
+              "label": "Morning",
+              "selected": true,
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "kind": "leave",
+          "field": "leave_slot",
+          "reference": "leave_slot",
+          "archived": true,
+          "returnedExistingValue": "AM",
+          "visibleSelected": "AM",
+          "previewValue": "AM",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "AM",
+              "label": "Morning (archived; current record)",
+              "selected": true,
+              "disabled": true
+            },
+            {
+              "value": "FULL_DAY",
+              "label": "Full day",
+              "selected": false,
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "kind": "leave",
+          "field": "status",
+          "reference": "leave_status",
+          "archived": false,
+          "returnedExistingValue": "requested",
+          "visibleSelected": "requested",
+          "previewValue": "requested",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "approved",
+              "label": "Approved",
+              "selected": false,
+              "disabled": false
+            },
+            {
+              "value": "requested",
+              "label": "Requested",
+              "selected": true,
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "kind": "leave",
+          "field": "status",
+          "reference": "leave_status",
+          "archived": true,
+          "returnedExistingValue": "requested",
+          "visibleSelected": "requested",
+          "previewValue": "requested",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "requested",
+              "label": "Requested (archived; current record)",
+              "selected": true,
+              "disabled": true
+            },
+            {
+              "value": "approved",
+              "label": "Approved",
+              "selected": false,
+              "disabled": false
+            }
+          ]
+        }
+      ],
+      "errors": [],
+      "unexpected": [],
+      "previewPosts": 8,
+      "saveRequests": 0
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "cases": [
+        {
+          "kind": "units",
+          "field": "posting_type",
+          "reference": "posting_type",
+          "archived": false,
+          "returnedExistingValue": "2ND_CALL",
+          "visibleSelected": "2ND_CALL",
+          "previewValue": "2ND_CALL",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "1ST_CALL",
+              "label": "1st Call",
+              "selected": false,
+              "disabled": false
+            },
+            {
+              "value": "2ND_CALL",
+              "label": "2nd Call",
+              "selected": true,
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "kind": "units",
+          "field": "posting_type",
+          "reference": "posting_type",
+          "archived": true,
+          "returnedExistingValue": "2ND_CALL",
+          "visibleSelected": "2ND_CALL",
+          "previewValue": "2ND_CALL",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "2ND_CALL",
+              "label": "2nd Call (archived; current record)",
+              "selected": true,
+              "disabled": true
+            },
+            {
+              "value": "1ST_CALL",
+              "label": "1st Call",
+              "selected": false,
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "kind": "leave",
+          "field": "leave_type",
+          "reference": "leave_type",
+          "archived": false,
+          "returnedExistingValue": "CL",
+          "visibleSelected": "CL",
+          "previewValue": "CL",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "ANNUAL_LEAVE",
+              "label": "Annual leave",
+              "selected": false,
+              "disabled": false
+            },
+            {
+              "value": "CL",
+              "label": "Casual leave",
+              "selected": true,
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "kind": "leave",
+          "field": "leave_type",
+          "reference": "leave_type",
+          "archived": true,
+          "returnedExistingValue": "CL",
+          "visibleSelected": "CL",
+          "previewValue": "CL",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "CL",
+              "label": "Casual leave (archived; current record)",
+              "selected": true,
+              "disabled": true
+            },
+            {
+              "value": "ANNUAL_LEAVE",
+              "label": "Annual leave",
+              "selected": false,
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "kind": "leave",
+          "field": "leave_slot",
+          "reference": "leave_slot",
+          "archived": false,
+          "returnedExistingValue": "AM",
+          "visibleSelected": "AM",
+          "previewValue": "AM",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "FULL_DAY",
+              "label": "Full day",
+              "selected": false,
+              "disabled": false
+            },
+            {
+              "value": "AM",
+              "label": "Morning",
+              "selected": true,
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "kind": "leave",
+          "field": "leave_slot",
+          "reference": "leave_slot",
+          "archived": true,
+          "returnedExistingValue": "AM",
+          "visibleSelected": "AM",
+          "previewValue": "AM",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "AM",
+              "label": "Morning (archived; current record)",
+              "selected": true,
+              "disabled": true
+            },
+            {
+              "value": "FULL_DAY",
+              "label": "Full day",
+              "selected": false,
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "kind": "leave",
+          "field": "status",
+          "reference": "leave_status",
+          "archived": false,
+          "returnedExistingValue": "requested",
+          "visibleSelected": "requested",
+          "previewValue": "requested",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "approved",
+              "label": "Approved",
+              "selected": false,
+              "disabled": false
+            },
+            {
+              "value": "requested",
+              "label": "Requested",
+              "selected": true,
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "kind": "leave",
+          "field": "status",
+          "reference": "leave_status",
+          "archived": true,
+          "returnedExistingValue": "requested",
+          "visibleSelected": "requested",
+          "previewValue": "requested",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "requested",
+              "label": "Requested (archived; current record)",
+              "selected": true,
+              "disabled": true
+            },
+            {
+              "value": "approved",
+              "label": "Approved",
+              "selected": false,
+              "disabled": false
+            }
+          ]
+        }
+      ],
+      "errors": [],
+      "unexpected": [],
+      "previewPosts": 8,
+      "saveRequests": 0
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "cases": [
+        {
+          "kind": "units",
+          "field": "posting_type",
+          "reference": "posting_type",
+          "archived": false,
+          "returnedExistingValue": "2ND_CALL",
+          "visibleSelected": "2ND_CALL",
+          "previewValue": "2ND_CALL",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "1ST_CALL",
+              "label": "1st Call",
+              "selected": false,
+              "disabled": false
+            },
+            {
+              "value": "2ND_CALL",
+              "label": "2nd Call",
+              "selected": true,
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "kind": "units",
+          "field": "posting_type",
+          "reference": "posting_type",
+          "archived": true,
+          "returnedExistingValue": "2ND_CALL",
+          "visibleSelected": "2ND_CALL",
+          "previewValue": "2ND_CALL",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "2ND_CALL",
+              "label": "2nd Call (archived; current record)",
+              "selected": true,
+              "disabled": true
+            },
+            {
+              "value": "1ST_CALL",
+              "label": "1st Call",
+              "selected": false,
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "kind": "leave",
+          "field": "leave_type",
+          "reference": "leave_type",
+          "archived": false,
+          "returnedExistingValue": "CL",
+          "visibleSelected": "CL",
+          "previewValue": "CL",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "ANNUAL_LEAVE",
+              "label": "Annual leave",
+              "selected": false,
+              "disabled": false
+            },
+            {
+              "value": "CL",
+              "label": "Casual leave",
+              "selected": true,
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "kind": "leave",
+          "field": "leave_type",
+          "reference": "leave_type",
+          "archived": true,
+          "returnedExistingValue": "CL",
+          "visibleSelected": "CL",
+          "previewValue": "CL",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "CL",
+              "label": "Casual leave (archived; current record)",
+              "selected": true,
+              "disabled": true
+            },
+            {
+              "value": "ANNUAL_LEAVE",
+              "label": "Annual leave",
+              "selected": false,
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "kind": "leave",
+          "field": "leave_slot",
+          "reference": "leave_slot",
+          "archived": false,
+          "returnedExistingValue": "AM",
+          "visibleSelected": "AM",
+          "previewValue": "AM",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "FULL_DAY",
+              "label": "Full day",
+              "selected": false,
+              "disabled": false
+            },
+            {
+              "value": "AM",
+              "label": "Morning",
+              "selected": true,
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "kind": "leave",
+          "field": "leave_slot",
+          "reference": "leave_slot",
+          "archived": true,
+          "returnedExistingValue": "AM",
+          "visibleSelected": "AM",
+          "previewValue": "AM",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "AM",
+              "label": "Morning (archived; current record)",
+              "selected": true,
+              "disabled": true
+            },
+            {
+              "value": "FULL_DAY",
+              "label": "Full day",
+              "selected": false,
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "kind": "leave",
+          "field": "status",
+          "reference": "leave_status",
+          "archived": false,
+          "returnedExistingValue": "requested",
+          "visibleSelected": "requested",
+          "previewValue": "requested",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "approved",
+              "label": "Approved",
+              "selected": false,
+              "disabled": false
+            },
+            {
+              "value": "requested",
+              "label": "Requested",
+              "selected": true,
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "kind": "leave",
+          "field": "status",
+          "reference": "leave_status",
+          "archived": true,
+          "returnedExistingValue": "requested",
+          "visibleSelected": "requested",
+          "previewValue": "requested",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "requested",
+              "label": "Requested (archived; current record)",
+              "selected": true,
+              "disabled": true
+            },
+            {
+              "value": "approved",
+              "label": "Approved",
+              "selected": false,
+              "disabled": false
+            }
+          ]
+        }
+      ],
+      "errors": [],
+      "unexpected": [],
+      "previewPosts": 8,
+      "saveRequests": 0
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "cases": [
+        {
+          "kind": "units",
+          "field": "posting_type",
+          "reference": "posting_type",
+          "archived": false,
+          "returnedExistingValue": "2ND_CALL",
+          "visibleSelected": "2ND_CALL",
+          "previewValue": "2ND_CALL",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "1ST_CALL",
+              "label": "1st Call",
+              "selected": false,
+              "disabled": false
+            },
+            {
+              "value": "2ND_CALL",
+              "label": "2nd Call",
+              "selected": true,
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "kind": "units",
+          "field": "posting_type",
+          "reference": "posting_type",
+          "archived": true,
+          "returnedExistingValue": "2ND_CALL",
+          "visibleSelected": "2ND_CALL",
+          "previewValue": "2ND_CALL",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "2ND_CALL",
+              "label": "2nd Call (archived; current record)",
+              "selected": true,
+              "disabled": true
+            },
+            {
+              "value": "1ST_CALL",
+              "label": "1st Call",
+              "selected": false,
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "kind": "leave",
+          "field": "leave_type",
+          "reference": "leave_type",
+          "archived": false,
+          "returnedExistingValue": "CL",
+          "visibleSelected": "CL",
+          "previewValue": "CL",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "ANNUAL_LEAVE",
+              "label": "Annual leave",
+              "selected": false,
+              "disabled": false
+            },
+            {
+              "value": "CL",
+              "label": "Casual leave",
+              "selected": true,
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "kind": "leave",
+          "field": "leave_type",
+          "reference": "leave_type",
+          "archived": true,
+          "returnedExistingValue": "CL",
+          "visibleSelected": "CL",
+          "previewValue": "CL",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "CL",
+              "label": "Casual leave (archived; current record)",
+              "selected": true,
+              "disabled": true
+            },
+            {
+              "value": "ANNUAL_LEAVE",
+              "label": "Annual leave",
+              "selected": false,
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "kind": "leave",
+          "field": "leave_slot",
+          "reference": "leave_slot",
+          "archived": false,
+          "returnedExistingValue": "AM",
+          "visibleSelected": "AM",
+          "previewValue": "AM",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "FULL_DAY",
+              "label": "Full day",
+              "selected": false,
+              "disabled": false
+            },
+            {
+              "value": "AM",
+              "label": "Morning",
+              "selected": true,
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "kind": "leave",
+          "field": "leave_slot",
+          "reference": "leave_slot",
+          "archived": true,
+          "returnedExistingValue": "AM",
+          "visibleSelected": "AM",
+          "previewValue": "AM",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "AM",
+              "label": "Morning (archived; current record)",
+              "selected": true,
+              "disabled": true
+            },
+            {
+              "value": "FULL_DAY",
+              "label": "Full day",
+              "selected": false,
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "kind": "leave",
+          "field": "status",
+          "reference": "leave_status",
+          "archived": false,
+          "returnedExistingValue": "requested",
+          "visibleSelected": "requested",
+          "previewValue": "requested",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "approved",
+              "label": "Approved",
+              "selected": false,
+              "disabled": false
+            },
+            {
+              "value": "requested",
+              "label": "Requested",
+              "selected": true,
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "kind": "leave",
+          "field": "status",
+          "reference": "leave_status",
+          "archived": true,
+          "returnedExistingValue": "requested",
+          "visibleSelected": "requested",
+          "previewValue": "requested",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "requested",
+              "label": "Requested (archived; current record)",
+              "selected": true,
+              "disabled": true
+            },
+            {
+              "value": "approved",
+              "label": "Approved",
+              "selected": false,
+              "disabled": false
+            }
+          ]
+        }
+      ],
+      "errors": [],
+      "unexpected": [],
+      "previewPosts": 8,
+      "saveRequests": 0
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "cases": [
+        {
+          "kind": "units",
+          "field": "posting_type",
+          "reference": "posting_type",
+          "archived": false,
+          "returnedExistingValue": "2ND_CALL",
+          "visibleSelected": "2ND_CALL",
+          "previewValue": "2ND_CALL",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "1ST_CALL",
+              "label": "1st Call",
+              "selected": false,
+              "disabled": false
+            },
+            {
+              "value": "2ND_CALL",
+              "label": "2nd Call",
+              "selected": true,
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "kind": "units",
+          "field": "posting_type",
+          "reference": "posting_type",
+          "archived": true,
+          "returnedExistingValue": "2ND_CALL",
+          "visibleSelected": "2ND_CALL",
+          "previewValue": "2ND_CALL",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "2ND_CALL",
+              "label": "2nd Call (archived; current record)",
+              "selected": true,
+              "disabled": true
+            },
+            {
+              "value": "1ST_CALL",
+              "label": "1st Call",
+              "selected": false,
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "kind": "leave",
+          "field": "leave_type",
+          "reference": "leave_type",
+          "archived": false,
+          "returnedExistingValue": "CL",
+          "visibleSelected": "CL",
+          "previewValue": "CL",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "ANNUAL_LEAVE",
+              "label": "Annual leave",
+              "selected": false,
+              "disabled": false
+            },
+            {
+              "value": "CL",
+              "label": "Casual leave",
+              "selected": true,
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "kind": "leave",
+          "field": "leave_type",
+          "reference": "leave_type",
+          "archived": true,
+          "returnedExistingValue": "CL",
+          "visibleSelected": "CL",
+          "previewValue": "CL",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "CL",
+              "label": "Casual leave (archived; current record)",
+              "selected": true,
+              "disabled": true
+            },
+            {
+              "value": "ANNUAL_LEAVE",
+              "label": "Annual leave",
+              "selected": false,
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "kind": "leave",
+          "field": "leave_slot",
+          "reference": "leave_slot",
+          "archived": false,
+          "returnedExistingValue": "AM",
+          "visibleSelected": "AM",
+          "previewValue": "AM",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "FULL_DAY",
+              "label": "Full day",
+              "selected": false,
+              "disabled": false
+            },
+            {
+              "value": "AM",
+              "label": "Morning",
+              "selected": true,
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "kind": "leave",
+          "field": "leave_slot",
+          "reference": "leave_slot",
+          "archived": true,
+          "returnedExistingValue": "AM",
+          "visibleSelected": "AM",
+          "previewValue": "AM",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "AM",
+              "label": "Morning (archived; current record)",
+              "selected": true,
+              "disabled": true
+            },
+            {
+              "value": "FULL_DAY",
+              "label": "Full day",
+              "selected": false,
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "kind": "leave",
+          "field": "status",
+          "reference": "leave_status",
+          "archived": false,
+          "returnedExistingValue": "requested",
+          "visibleSelected": "requested",
+          "previewValue": "requested",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "approved",
+              "label": "Approved",
+              "selected": false,
+              "disabled": false
+            },
+            {
+              "value": "requested",
+              "label": "Requested",
+              "selected": true,
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "kind": "leave",
+          "field": "status",
+          "reference": "leave_status",
+          "archived": true,
+          "returnedExistingValue": "requested",
+          "visibleSelected": "requested",
+          "previewValue": "requested",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "requested",
+              "label": "Requested (archived; current record)",
+              "selected": true,
+              "disabled": true
+            },
+            {
+              "value": "approved",
+              "label": "Approved",
+              "selected": false,
+              "disabled": false
+            }
+          ]
+        }
+      ],
+      "errors": [],
+      "unexpected": [],
+      "previewPosts": 8,
+      "saveRequests": 0
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "cases": [
+        {
+          "kind": "units",
+          "field": "posting_type",
+          "reference": "posting_type",
+          "archived": false,
+          "returnedExistingValue": "2ND_CALL",
+          "visibleSelected": "2ND_CALL",
+          "previewValue": "2ND_CALL",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "1ST_CALL",
+              "label": "1st Call",
+              "selected": false,
+              "disabled": false
+            },
+            {
+              "value": "2ND_CALL",
+              "label": "2nd Call",
+              "selected": true,
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "kind": "units",
+          "field": "posting_type",
+          "reference": "posting_type",
+          "archived": true,
+          "returnedExistingValue": "2ND_CALL",
+          "visibleSelected": "2ND_CALL",
+          "previewValue": "2ND_CALL",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "2ND_CALL",
+              "label": "2nd Call (archived; current record)",
+              "selected": true,
+              "disabled": true
+            },
+            {
+              "value": "1ST_CALL",
+              "label": "1st Call",
+              "selected": false,
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "kind": "leave",
+          "field": "leave_type",
+          "reference": "leave_type",
+          "archived": false,
+          "returnedExistingValue": "CL",
+          "visibleSelected": "CL",
+          "previewValue": "CL",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "ANNUAL_LEAVE",
+              "label": "Annual leave",
+              "selected": false,
+              "disabled": false
+            },
+            {
+              "value": "CL",
+              "label": "Casual leave",
+              "selected": true,
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "kind": "leave",
+          "field": "leave_type",
+          "reference": "leave_type",
+          "archived": true,
+          "returnedExistingValue": "CL",
+          "visibleSelected": "CL",
+          "previewValue": "CL",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "CL",
+              "label": "Casual leave (archived; current record)",
+              "selected": true,
+              "disabled": true
+            },
+            {
+              "value": "ANNUAL_LEAVE",
+              "label": "Annual leave",
+              "selected": false,
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "kind": "leave",
+          "field": "leave_slot",
+          "reference": "leave_slot",
+          "archived": false,
+          "returnedExistingValue": "AM",
+          "visibleSelected": "AM",
+          "previewValue": "AM",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "FULL_DAY",
+              "label": "Full day",
+              "selected": false,
+              "disabled": false
+            },
+            {
+              "value": "AM",
+              "label": "Morning",
+              "selected": true,
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "kind": "leave",
+          "field": "leave_slot",
+          "reference": "leave_slot",
+          "archived": true,
+          "returnedExistingValue": "AM",
+          "visibleSelected": "AM",
+          "previewValue": "AM",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "AM",
+              "label": "Morning (archived; current record)",
+              "selected": true,
+              "disabled": true
+            },
+            {
+              "value": "FULL_DAY",
+              "label": "Full day",
+              "selected": false,
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "kind": "leave",
+          "field": "status",
+          "reference": "leave_status",
+          "archived": false,
+          "returnedExistingValue": "requested",
+          "visibleSelected": "requested",
+          "previewValue": "requested",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "approved",
+              "label": "Approved",
+              "selected": false,
+              "disabled": false
+            },
+            {
+              "value": "requested",
+              "label": "Requested",
+              "selected": true,
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "kind": "leave",
+          "field": "status",
+          "reference": "leave_status",
+          "archived": true,
+          "returnedExistingValue": "requested",
+          "visibleSelected": "requested",
+          "previewValue": "requested",
+          "valuePreserved": true,
+          "options": [
+            {
+              "value": "requested",
+              "label": "Requested (archived; current record)",
+              "selected": true,
+              "disabled": true
+            },
+            {
+              "value": "approved",
+              "label": "Approved",
+              "selected": false,
+              "disabled": false
+            }
+          ]
+        }
+      ],
+      "errors": [],
+      "unexpected": [],
+      "previewPosts": 8,
+      "saveRequests": 0
+    }
+  ]
+}

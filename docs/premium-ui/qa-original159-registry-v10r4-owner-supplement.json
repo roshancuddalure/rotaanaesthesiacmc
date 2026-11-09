@@ -1,0 +1,1314 @@
+{
+  "recorded_at_utc": "2026-11-09T10:35:47.622Z",
+  "author": "/root/registry_lifecycle_r3_review",
+  "executor": "/root",
+  "application_changed": false,
+  "scope": "12 Chromium contexts: 320/1280 x accepted PUT then route/month/account owner steering, native-only duplicate close, accepted-then-new-dirty refusal, gated busy PUT Escape refusal. All writes locally fulfilled; other GETs disposable RAM8031. No whole159 acceptance.",
+  "candidate_manifest": {
+    "recorded_at_utc": "2026-11-09T10:32:01.201139+00:00",
+    "operator": "/root",
+    "application_changed": false,
+    "files": {
+      "main.ts": {
+        "before_sha256": "96ab7c4c6b14d41736ad4153313b1270677e324fcab6b11c3a5b0d8ac3e47a0b",
+        "candidate_sha256": "9f5359ad9e8014098bc12c8ed3f9e1c6b1a06d1a4f92797b7f9da24bfba6e6b8",
+        "v10r1_sha256": "ea77a0f96a9f7e168489c7c7a2315bd7e631fe02b985cfd61b8b0ab185fdb2ac",
+        "v10r2_sha256": "1017a2d1bed914294ed680cde5bc397c337094664cde3d445d68b05ca94a8949",
+        "v10r3_sha256": "9f5359ad9e8014098bc12c8ed3f9e1c6b1a06d1a4f92797b7f9da24bfba6e6b8"
+      },
+      "reference-workspace.ts": {
+        "before_sha256": "78c231ea1d5ab15bd3a4b5f2f8265529451a51bacc68d2a4aac1708a4be30292",
+        "candidate_sha256": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd",
+        "v10r1_sha256": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd",
+        "v10r2_sha256": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd",
+        "v10r3_sha256": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd"
+      },
+      "extra-duty.ts": {
+        "before_sha256": "52084624922de21f2a0fa478eb1ca4c883cdeb66dd1d05147d0f21fe806bc7ea",
+        "candidate_sha256": "529e420fc05ce5bfa42655b8863e449e09e22a7c0abe9baf4db5c94c4797b8c3",
+        "v10r1_sha256": "96ec1451980ea1dda2ce9bc0f96401d3d3e57d78512962b81ab777d649a4a592",
+        "v10r2_sha256": "21edb8d59249b7c5be30d59c79f4e20b350930bdc16bd097e957a9c22650855f",
+        "v10r3_sha256": "21edb8d59249b7c5be30d59c79f4e20b350930bdc16bd097e957a9c22650855f"
+      }
+    },
+    "scope": "Isolated r3 plus retain only actual known unit IDs in select; placeholder No other units is never a saved selection. Existing real missing selected ID still retained/unavailable. No application change."
+  },
+  "held_source_sha256": {
+    "main.ts": "96ab7c4c6b14d41736ad4153313b1270677e324fcab6b11c3a5b0d8ac3e47a0b",
+    "reference-workspace.ts": "78c231ea1d5ab15bd3a4b5f2f8265529451a51bacc68d2a4aac1708a4be30292",
+    "extra-duty.ts": "52084624922de21f2a0fa478eb1ca4c883cdeb66dd1d05147d0f21fe806bc7ea"
+  },
+  "test_sha256": "eecd32f3b506e9696642f0b274b34bb49190b60fccf324b1bd2f782e2bac158a",
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "mode": "route-owner",
+      "passed": true,
+      "before": {
+        "registryReads": 0,
+        "boardReads": 1,
+        "fallbackReads": 1
+      },
+      "afterSteering": {
+        "registryReads": 2,
+        "boardReads": 1,
+        "fallbackReads": 1
+      },
+      "after": {
+        "registryReads": 2,
+        "boardReads": 1,
+        "fallbackReads": 1
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/units/registry-b",
+          "payload": {
+            "name": "Royal Renamed registry-b",
+            "campus": "Main",
+            "code": "B",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "revision": "one",
+            "call_minimums": []
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/units/registry-b",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        }
+      ],
+      "prompts": [],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "mode": "month-owner",
+      "passed": true,
+      "before": {
+        "registryReads": 0,
+        "boardReads": 1,
+        "fallbackReads": 1
+      },
+      "afterSteering": {
+        "registryReads": 2,
+        "boardReads": 2,
+        "fallbackReads": 2
+      },
+      "after": {
+        "registryReads": 2,
+        "boardReads": 2,
+        "fallbackReads": 2
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/units/registry-b",
+          "payload": {
+            "name": "Royal Renamed registry-b",
+            "campus": "Main",
+            "code": "B",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "revision": "one",
+            "call_minimums": []
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/units/registry-b",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-12"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-12"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "prompts": [],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "mode": "account-owner",
+      "passed": true,
+      "before": {
+        "registryReads": 0,
+        "boardReads": 1,
+        "fallbackReads": 1
+      },
+      "afterSteering": {
+        "registryReads": 2,
+        "boardReads": 1,
+        "fallbackReads": 1
+      },
+      "after": {
+        "registryReads": 2,
+        "boardReads": 1,
+        "fallbackReads": 1
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/units/registry-b",
+          "payload": {
+            "name": "Royal Renamed registry-b",
+            "campus": "Main",
+            "code": "B",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "revision": "one",
+            "call_minimums": []
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/units/registry-b",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        }
+      ],
+      "prompts": [],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "mode": "native-close",
+      "passed": true,
+      "before": {
+        "registryReads": 0,
+        "boardReads": 1,
+        "fallbackReads": 1
+      },
+      "afterSteering": {
+        "registryReads": 2,
+        "boardReads": 1,
+        "fallbackReads": 1
+      },
+      "after": {
+        "registryReads": 2,
+        "boardReads": 2,
+        "fallbackReads": 2
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/units/registry-b",
+          "payload": {
+            "name": "Royal Renamed registry-b",
+            "campus": "Main",
+            "code": "B",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "revision": "one",
+            "call_minimums": []
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/units/registry-b",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "prompts": [],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "mode": "accepted-dirty-refusal",
+      "passed": true,
+      "before": {
+        "registryReads": 0,
+        "boardReads": 1,
+        "fallbackReads": 1
+      },
+      "afterSteering": {
+        "registryReads": 2,
+        "boardReads": 1,
+        "fallbackReads": 1
+      },
+      "after": {
+        "registryReads": 2,
+        "boardReads": 2,
+        "fallbackReads": 2
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/units/registry-b",
+          "payload": {
+            "name": "Royal Renamed registry-b",
+            "campus": "Main",
+            "code": "B",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "revision": "one",
+            "call_minimums": []
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/units/registry-b",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "prompts": [
+        "Discard unsaved unit details?",
+        "Discard unsaved unit details?"
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "mode": "busy-close",
+      "passed": true,
+      "before": {
+        "registryReads": 0,
+        "boardReads": 1,
+        "fallbackReads": 1
+      },
+      "afterSteering": {
+        "registryReads": 2,
+        "boardReads": 1,
+        "fallbackReads": 1
+      },
+      "after": {
+        "registryReads": 2,
+        "boardReads": 2,
+        "fallbackReads": 2
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/units/registry-b",
+          "payload": {
+            "name": "Royal Renamed registry-b",
+            "campus": "Main",
+            "code": "B",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "revision": "one",
+            "call_minimums": []
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/units/registry-b",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "prompts": [],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "mode": "route-owner",
+      "passed": true,
+      "before": {
+        "registryReads": 0,
+        "boardReads": 1,
+        "fallbackReads": 1
+      },
+      "afterSteering": {
+        "registryReads": 2,
+        "boardReads": 1,
+        "fallbackReads": 1
+      },
+      "after": {
+        "registryReads": 2,
+        "boardReads": 1,
+        "fallbackReads": 1
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/units/registry-b",
+          "payload": {
+            "name": "Royal Renamed registry-b",
+            "campus": "Main",
+            "code": "B",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "revision": "one",
+            "call_minimums": []
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/units/registry-b",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        }
+      ],
+      "prompts": [],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "mode": "month-owner",
+      "passed": true,
+      "before": {
+        "registryReads": 0,
+        "boardReads": 1,
+        "fallbackReads": 1
+      },
+      "afterSteering": {
+        "registryReads": 2,
+        "boardReads": 2,
+        "fallbackReads": 2
+      },
+      "after": {
+        "registryReads": 2,
+        "boardReads": 2,
+        "fallbackReads": 2
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/units/registry-b",
+          "payload": {
+            "name": "Royal Renamed registry-b",
+            "campus": "Main",
+            "code": "B",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "revision": "one",
+            "call_minimums": []
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/units/registry-b",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-12"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-12"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "prompts": [],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "mode": "account-owner",
+      "passed": true,
+      "before": {
+        "registryReads": 0,
+        "boardReads": 1,
+        "fallbackReads": 1
+      },
+      "afterSteering": {
+        "registryReads": 2,
+        "boardReads": 1,
+        "fallbackReads": 1
+      },
+      "after": {
+        "registryReads": 2,
+        "boardReads": 1,
+        "fallbackReads": 1
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/units/registry-b",
+          "payload": {
+            "name": "Royal Renamed registry-b",
+            "campus": "Main",
+            "code": "B",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "revision": "one",
+            "call_minimums": []
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/units/registry-b",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        }
+      ],
+      "prompts": [],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "mode": "native-close",
+      "passed": true,
+      "before": {
+        "registryReads": 0,
+        "boardReads": 1,
+        "fallbackReads": 1
+      },
+      "afterSteering": {
+        "registryReads": 2,
+        "boardReads": 1,
+        "fallbackReads": 1
+      },
+      "after": {
+        "registryReads": 2,
+        "boardReads": 2,
+        "fallbackReads": 2
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/units/registry-b",
+          "payload": {
+            "name": "Royal Renamed registry-b",
+            "campus": "Main",
+            "code": "B",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "revision": "one",
+            "call_minimums": []
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/units/registry-b",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "prompts": [],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "mode": "accepted-dirty-refusal",
+      "passed": true,
+      "before": {
+        "registryReads": 0,
+        "boardReads": 1,
+        "fallbackReads": 1
+      },
+      "afterSteering": {
+        "registryReads": 2,
+        "boardReads": 1,
+        "fallbackReads": 1
+      },
+      "after": {
+        "registryReads": 2,
+        "boardReads": 2,
+        "fallbackReads": 2
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/units/registry-b",
+          "payload": {
+            "name": "Royal Renamed registry-b",
+            "campus": "Main",
+            "code": "B",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "revision": "one",
+            "call_minimums": []
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/units/registry-b",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "prompts": [
+        "Discard unsaved unit details?",
+        "Discard unsaved unit details?"
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "mode": "busy-close",
+      "passed": true,
+      "before": {
+        "registryReads": 0,
+        "boardReads": 1,
+        "fallbackReads": 1
+      },
+      "afterSteering": {
+        "registryReads": 2,
+        "boardReads": 1,
+        "fallbackReads": 1
+      },
+      "after": {
+        "registryReads": 2,
+        "boardReads": 2,
+        "fallbackReads": 2
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/units/registry-b",
+          "payload": {
+            "name": "Royal Renamed registry-b",
+            "campus": "Main",
+            "code": "B",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "revision": "one",
+            "call_minimums": []
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/units/registry-b",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "prompts": [],
+      "errors": []
+    }
+  ]
+}

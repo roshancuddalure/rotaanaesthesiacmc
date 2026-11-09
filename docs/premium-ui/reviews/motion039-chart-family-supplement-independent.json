@@ -1,0 +1,33 @@
+{
+  "recorded_at_utc": "2026-10-28T15:51:17.220678+00:00",
+  "reviewer": "/root/motion039_final_review",
+  "scope": "Independent supplemental classification for the actual chart helper, completing the author’s separately retained 24-context classification with 12 later chart contexts. No original author artifact or application modified.",
+  "parent_classification": {
+    "path": "docs/premium-ui/reviews/motion039-family-classification-current.json",
+    "sha256": "5798b7e4da0f8b422d2ce002f5e16c0c072e626ddc0df3e98519fbbf6de1f438"
+  },
+  "family": "bar-height",
+  "actual_selector": ".bar",
+  "rationale": "renderAnalysisBars returns static inline heights in newly rendered markup. The current implementation does not mutate existing bar heights to demonstrate a data-update tween. Actual exported helper under production CSS computes 0.3s height transition normally and none/0s under reduce; known, zero and unplottable returned records and native data disclosure remain identical.",
+  "coverage": {
+    "report": "docs/premium-ui/qa-motion-chart-bars.json",
+    "test": "frontend/tests/premium-motion-chart-bars.browser.mjs",
+    "log": "tmp/motion039-chart-bars-final.log",
+    "contexts": 12,
+    "recorded_execution_status": "Complete successful raw matrix and terminal success log; this reviewer did not own the process handle or rerun browsers.",
+    "report_sha256": "46438e18b222fe20865f253119880ff7e3b40acde865a76633bccb6cb9464754",
+    "test_sha256": "cbab3965243ca4c59cb72d4e30f34437630c6c2ff4892d729156153d62d9f144",
+    "log_sha256": "14c410ebf516011baef64eed88f071f565decba125320cecddf7f5d9801f8c20",
+    "scope": "Actual exported renderAnalysisBars helper and unchanged production CSS;300ms authored chart height transition resolves normally and becomes0 underreduce, exact known/zero/unplottable records and native data disclosure unchanged. No fabricated in-place bar height mutation, backend calls or actual chart-data update workflow claimed."
+  },
+  "source_sha256": {
+    "frontend/src/analysis-charts.ts": "823a2cddb07d0f69ba1fe12719e4094ae29fda839769e1f4b2dc75e7aa887c4a",
+    "frontend/src/ui.ts": "680d7830bca8826b46b6f1dc2c0d064d2a3a2e16fb41188d2c323de6bccf85b2",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "f4c646977ef2cce1ef1a31e6b99de17f5749a60b3282a888ba4412b83e348516"
+  },
+  "limits": [
+    "No fabricated in-place animation/data mutation, backend calls or parser correctness claim.",
+    "Source-backed .bar classification is superseded only in runtime coverage by this supplemental actual-renderer proof; all other original classification entries remain unchanged."
+  ]
+}

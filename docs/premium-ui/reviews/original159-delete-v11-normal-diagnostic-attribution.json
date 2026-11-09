@@ -1,0 +1,32 @@
+{
+  "recorded_at_utc": "2026-11-09T12:24:54.482174+00:00",
+  "operator": "/root",
+  "classification": "verified_bug_with_isolated_repair",
+  "defect_id": "FE-POSTING-DELETE-FALLBACK-DRAFT-001",
+  "baseline": {
+    "path": "docs/premium-ui/qa-original159-delete-fallback-draft-diagnostic.json",
+    "sha256": "e44c8cd5602d361f5dee3db8a4291b7569405c3b871a2bdf303621e2a4c100a5",
+    "contexts": 18,
+    "passed": 0,
+    "terminal_exit_code": 1,
+    "observed": "Acceptedpostingdeletion rebuilds originalhost/row, resetsdirtyC,BtoB,C anddisablesSave acrossmodal/monthanddesktoprow/selectedentries."
+  },
+  "candidate": {
+    "path": "docs/premium-ui/qa-original159-delete-v11-fallback-retention.json",
+    "sha256": "b15eb605b5deb3a42bdcce78d0610c3f67cae74e5b4a934a233c53412c4c1cc2",
+    "contexts": 18,
+    "passed": 18,
+    "terminal_exit_code": 0,
+    "candidate_main_sha256": "523ea9474e6b65f34df9fe0e3f404bd0b6b89e7705e310a3da509bb24eb72d7e",
+    "applied": false,
+    "observed": "Same18normalpaths retainhost/row,dirtyorder,SaveandRoyal/Mainfilters;oneaccepteddeleteandoneparentGET. Onlyexistingpreview/deletePOSTslocallyfulfilled."
+  },
+  "scope": "Failure/passsets are distinct rootexecutions. Original159partial;no freshunit/build/integrationacceptance orLeave deletionproof.",
+  "pending": [
+    "Independentnewcontroller-source review",
+    "Posting GET503/malformedreadretrywithoutDELETEreplay",
+    "ActualLeave deletionandcancellationdependentcontext",
+    "Staleownerandfocus",
+    "Freshappliedtests/unit/build/prioracceptance/packagebeforeintegrationclaim"
+  ]
+}

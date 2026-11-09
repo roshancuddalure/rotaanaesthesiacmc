@@ -1,0 +1,225 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-10-28T08:21:13.416979+00:00",
+  "scope": "New nonduplicate mappings: immutable before-fix12 bug reproductions (desired behavior FAILED), separate final18 passing regressions. No whole131 acceptance or prior31 blanket certification.",
+  "entries": [
+    {
+      "suite": "frontend/tests/premium-profile-cancel-pending-proof.browser.mjs",
+      "sha256": "b77b74667e4a8357f8d4b5d5eaea6e64c2cdcddfef9dc644151dfc4d10ffa38d",
+      "source_inspected": true,
+      "execution_verified": true,
+      "execution_verification_scope": "Historical before-fix reproduction completed12cases; NOT a desired-behavior pass and must not rerun as a passing regression against fixed app.",
+      "screens": [
+        "Actual exported canonical member workspace Details/edit/save/Cancel and Compare changes in isolated HTML with actual styles"
+      ],
+      "contexts": {
+        "engines": [
+          "chromium",
+          "firefox",
+          "webkit"
+        ],
+        "widths": [
+          320,
+          1280
+        ],
+        "height": 900,
+        "cases": 12,
+        "outcomes": [
+          "503",
+          "success"
+        ],
+        "themes": "Default only",
+        "fixture": "All GET/PUT routes locally fulfilled. Native open/edit/type/save/Cancel/confirm/Escape-free Close controls; actual PUT held before response, no private controller-state mutation."
+      },
+      "raw_report": "tmp/profile-cancel-pending-proof/report.json",
+      "raw_report_sha256": "660a2131d3443c1f80d00775df71e1abc5c3dd8a921f590eaf2d63b1988492d6",
+      "assertion_groups": [
+        {
+          "action": "native-bug-reproduction-pending-cancel-discards-submitted-draft",
+          "selector": "Save changes; heldPUT; [data-cancel-edit]; actual Discard unsaved changes confirm",
+          "outcome": "Before-fix Cancel remained enabled while Saving disabled. Native accepted Cancel reset draft to original read-only and removed saving UI before PUT released. Close still refused while busy. These assertions describe observed broken behavior, not desired pass.",
+          "source_lines": [
+            [
+              32,
+              36
+            ],
+            [
+              57,
+              70
+            ]
+          ],
+          "evidence_class": "historical_native_defect_reproduction",
+          "report_paths": [
+            "tmp/profile-cancel-pending-proof/report.json"
+          ]
+        },
+        {
+          "action": "separate-refusal-and-success-outcomes",
+          "selector": "503 error; reenterEdit; success heading and changedcallback",
+          "outcome": "503 left original value/viewmode; reentering Edit lacked submitted draft. Success still returned submitted name/revision and callback1. Exactly one PUT; desired pending visibility false12/12 and refusal draft recovery false6/6 explicitly recorded.",
+          "source_lines": [
+            [
+              75,
+              91
+            ]
+          ],
+          "evidence_class": "historical_native_defect_reproduction",
+          "report_paths": [
+            "tmp/profile-cancel-pending-proof/report.json"
+          ]
+        }
+      ],
+      "limitations": [
+        "No real backend persistence, roles, server request cancellation, physical device or native AT certification.",
+        "Module/stylesheet harness, not full app entry; no screenshot geometry/zoom/theme sweep.",
+        "Current app hash intentionally differs; historical12 immutable report is not refreshed or reinterpreted as fixed behavior. Script exit0 means reproduction succeeded."
+      ],
+      "classification": "historical_defect_reproduction_not_desired_behavior_pass",
+      "historical_source_sha256": {
+        "src/member-workspace.ts": "2d52a71134b38e6ec1b2398ddac0cd90ac85829d0bd6ba084b92c1693f2bb97d",
+        "src/ui.ts": "680d7830bca8826b46b6f1dc2c0d064d2a3a2e16fb41188d2c323de6bccf85b2",
+        "src/form-validation.ts": "a6d6cfa746f502cf05e5f4f1e1acade1c7ca82b592a497d98b79661854783a93",
+        "src/workspace-load-state.ts": "cdd0e323d7e83e6e668a381bbfcc37cad4726b1193ac5de31d5f14e03eecd9c6",
+        "src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+        "src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+        "src/premium-theme.css": "d9113665ea4657cc9d5539db9017bbce76981881b2896341155694552610f1f6",
+        "tests/premium-profile-cancel-pending-proof.browser.mjs": "b77b74667e4a8357f8d4b5d5eaea6e64c2cdcddfef9dc644151dfc4d10ffa38d"
+      },
+      "current_script_matches_historical_report": true,
+      "historical_member_workspace_matches_saved_baseline": true
+    },
+    {
+      "suite": "frontend/tests/premium-profile-cancel-pending-regression.browser.mjs",
+      "sha256": "cb17e8151d53b840c51cf7ad898f646c7d05a028ad13292e5054b5a070ecf8fe",
+      "source_inspected": true,
+      "execution_verified": true,
+      "execution_verification_scope": "Fresh final18 desired-behavior regression cases passed against held finalsource; no whole131 acceptance.",
+      "screens": [
+        "Actual exported canonical member workspace Details/edit/save/Cancel and Compare changes in isolated HTML with actual styles"
+      ],
+      "contexts": {
+        "engines": [
+          "chromium",
+          "firefox",
+          "webkit"
+        ],
+        "widths": [
+          320,
+          1280
+        ],
+        "height": 900,
+        "cases": 18,
+        "outcomes": [
+          "503",
+          "409",
+          "success"
+        ],
+        "themes": "Default only",
+        "fixture": "All GET/PUT routes locally fulfilled. Native open/edit/type/save/Cancel/confirm/Escape-free Close controls; actual PUT held before response, no private controller-state mutation."
+      },
+      "raw_report": "docs/premium-ui/qa-profile-cancel-pending-regression.json",
+      "raw_report_sha256": "df9b4c79123928a22bfbc81f061945cc238362f587f62fbd47e81d3fbb699ac1",
+      "assertion_groups": [
+        {
+          "action": "exact-original-put-and-three-response-fixtures",
+          "selector": "PUT /admin/member-workspace/cancel-regression; multipart-free JSON payload",
+          "outcome": "Actual one canonical PUT preserves original ID/revision/full draft aliases/designations and preserve_previous_name. Separate503 refusal,409 detail.current conflict shape, success saved-two response.",
+          "source_lines": [
+            [
+              16,
+              19
+            ],
+            [
+              29,
+              36
+            ]
+          ],
+          "evidence_class": "native_browser_locally_fulfilled_requests",
+          "report_paths": [
+            "docs/premium-ui/qa-profile-cancel-pending-regression.json"
+          ]
+        },
+        {
+          "action": "pending-native-cancel-protection-and-close-busy-guard",
+          "selector": "[data-cancel-edit]; Saving button; canonical field; Close",
+          "outcome": "Cancel native disabled and Saving disabled. Attempt focus/Enter on disabled Cancel does not claim focus success; no discard dialog, extraPUT or editor exit; submitted value/Saving remain. Close remains busy-blocked; actual field/Cancel nodes unchanged.",
+          "source_lines": [
+            [
+              41,
+              51
+            ]
+          ],
+          "evidence_class": "native_browser_locally_fulfilled_requests",
+          "report_paths": [
+            "docs/premium-ui/qa-profile-cancel-pending-regression.json"
+          ]
+        },
+        {
+          "action": "503409-retained-draft-nodes-and-targeted-finally-unlock",
+          "selector": "canonical field; [data-cancel-edit]; #mw-form; Save changes",
+          "outcome": "Both refusals retain submitted editable value and exact field/Cancel/form element identities. Targeted finally reenables Cancel/Save without rerender. Callback remains0.",
+          "source_lines": [
+            [
+              58,
+              65
+            ]
+          ],
+          "evidence_class": "native_browser_locally_fulfilled_requests",
+          "report_paths": [
+            "docs/premium-ui/qa-profile-cancel-pending-regression.json"
+          ]
+        },
+        {
+          "action": "409-comparison-keep-draft-idle-discard-contract",
+          "selector": "Compare changes; Keep my draft for review; Cancel native confirmation",
+          "outcome": "409 comparison includes concurrent saved and submitted names. Keep draft retains submitted name/current-revision context; idleCancel decline preserves editable draft; accept resets to original for503 and concurrent current member for409. No additionalPUT.",
+          "source_lines": [
+            [
+              66,
+              74
+            ]
+          ],
+          "evidence_class": "native_browser_locally_fulfilled_requests",
+          "report_paths": [
+            "docs/premium-ui/qa-profile-cancel-pending-regression.json"
+          ]
+        },
+        {
+          "action": "success-single-callback-and-source-hold",
+          "selector": "saved heading/edit action; changed callback; actual puts; source hashes",
+          "outcome": "Successful held request returns attempted name with exact ID/saved-two callback once; onePUT/no automatic replay; no pageerror; final actual app/test hashes equal start manifest.",
+          "source_lines": [
+            [
+              53,
+              57
+            ],
+            [
+              76,
+              82
+            ]
+          ],
+          "evidence_class": "native_browser_locally_fulfilled_requests",
+          "report_paths": [
+            "docs/premium-ui/qa-profile-cancel-pending-regression.json"
+          ]
+        }
+      ],
+      "limitations": [
+        "No real backend persistence, roles, server request cancellation, physical device or native AT certification.",
+        "Module/stylesheet harness, not full app entry; no screenshot geometry/zoom/theme sweep."
+      ],
+      "source_sha256": {
+        "src/member-workspace.ts": "2d566c17e7562cc5af00dc731ddd55387e7d013fa9dd277688d64150ab28a0c3",
+        "src/ui.ts": "680d7830bca8826b46b6f1dc2c0d064d2a3a2e16fb41188d2c323de6bccf85b2",
+        "src/form-validation.ts": "a6d6cfa746f502cf05e5f4f1e1acade1c7ca82b592a497d98b79661854783a93",
+        "src/workspace-load-state.ts": "cdd0e323d7e83e6e668a381bbfcc37cad4726b1193ac5de31d5f14e03eecd9c6",
+        "src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+        "src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+        "src/premium-theme.css": "d9113665ea4657cc9d5539db9017bbce76981881b2896341155694552610f1f6",
+        "tests/premium-profile-cancel-pending-regression.browser.mjs": "cb17e8151d53b840c51cf7ad898f646c7d05a028ad13292e5054b5a070ecf8fe"
+      },
+      "current_report_hashes_verified": true
+    }
+  ],
+  "source_review": "docs/premium-ui/reviews/profile-cancel-pending-guard-review.json"
+}

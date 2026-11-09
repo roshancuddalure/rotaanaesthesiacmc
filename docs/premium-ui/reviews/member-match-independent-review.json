@@ -1,0 +1,71 @@
+﻿{
+    "recorded_at_utc":  "2026-10-28T06:23:37.4220109Z",
+    "reviewer":  "/root/import_progress_recovery_review",
+    "requirement_id":  134,
+    "whole_goal_completion_claim":  false,
+    "app_or_test_edits":  false,
+    "disposition":  "Recommend accepting original134 for the explicitly tested member matching/import surfaces after root finishes outstanding regression disposition; no whole-goal acceptance.",
+    "source_sha256":  {
+                          "frontend/src/ui.ts":  "a1f8e5a527d6517ac2a1037545a6449b406e3ca8e6e0f7b3f940918e6d12eddc",
+                          "frontend/src/member-import.ts":  "58742f27a951c8c2dea3b428c9f419b60e8882d12ec8978fd218e8fea731c5ec",
+                          "frontend/src/member-workspace.ts":  "340f4c9d0b6ee676bba226ca3c5e577028fb04ed0149b62a57a09f936d206b6d",
+                          "frontend/src/operational-import.ts":  "e112f581d096d4a8c1f81b297d989dcbac4b18327e3de8a8d218deecba060030",
+                          "frontend/src/past-duties.ts":  "58e3ba3344f5c99457f796151c5039629f663dd24bc40e36738283bb2030de33",
+                          "frontend/src/services/api.ts":  "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+                          "frontend/src/premium-theme.css":  "f9a52bbb83955b97b61a45eca2e40050e08c0108ee2dea6c413bef8a709f21e4",
+                          "frontend/tests/premium-match-identity.browser.mjs":  "a674c27b0a8666a4b80bfe101c47509c0128318f15a2e1723802e77d9f38a855",
+                          "frontend/tests/premium-workbook-choice-lifetime.browser.mjs":  "d22bf755ed8c1c3974baa437b2a983a484460eafccc910b3ab735f2bceb37b2e",
+                          "frontend/tests/ui.test.mjs":  "298fa359856cac78dcbf868724f984b39be2c1117e47fbf0ba6bbac4214d2afd"
+                      },
+    "inspected_evidence_sha256":  {
+                                      "docs/premium-ui/qa-match-identity.json":  "0bde93c5ab8882133ca9755654e204446032e9e27c9a86d7b0b2a1a571c6abb3",
+                                      "docs/premium-ui/qa-workbook-choice-lifetime.json":  "9a450aaf6ff9b85de39aaefc3225340bcc2b28982296eba8beb1d84acd7c48b2",
+                                      "tmp/member-match-source-proof.json":  "d0f09cc48defca40af387024d3298911563361fdff91ffe0570be1a4e3484f7f",
+                                      "tmp/member-import-ownership-proof.json":  "8cab5051d04e28000e379ee6fdf22c815dfd0812add5d57a064689280fc81194"
+                                  },
+    "exact_conditions":  [
+                             {
+                                 "condition":  "Aliases and matching candidates show enough identity information to distinguish existing people from new-person creation.",
+                                 "result":  "Supported",
+                                 "evidence":  "24 current hash-bound native workflows: approved_alias raw spelling to returned canonical identity, same-name candidates distinguished by IDs, returned existing selection; workbook new/skip and CSV distinct/undo explicit no-existing-person results. Unit cases cover selected identity, absent ID, person_id candidate shape, escaping, order and five-alternative limit."
+                             },
+                             {
+                                 "condition":  "Selecting or clearing a match visibly states the resulting identity, with stale lookups unable to overwrite the current choice.",
+                                 "result":  "Supported within tested contexts",
+                                 "evidence":  "24 workflows select equal-name B, verify exact existing request options/corrections/resolutions and returned identity; failed refresh retains last returned identity with pending explanation and blocks Apply. Workbook reset/remount lifecycle12 covers old success after current ready and old503 while current pending across three engines at320/1280. All12 select current-c; six refusal cases retain disabled native file/Working and no stale message/identity or Apply. Fresh root CSV lifetime6/candidate12 and operational candidate6/file-apply race12 logs supplement ownership boundaries."
+                             }
+                         ],
+    "source_review":  [
+                          "Returned selected IDs are workbook target_id, CSV person_id with before, operational person_match.person_id or returned after.person_id, and past normalized.person_id. Operational target_id is a record ID and is not used as member identity.",
+                          "Shared filtering removes only returned matched ID; absent selectedId retains all ID-bearing candidates. CSV matched candidate availability remains unchanged.",
+                          "Identity labels and added dropdown text escape server values. Candidate reason retained. Operational create means new leave/unit record and does not trigger new-member label.",
+                          "Live pending helper changes presentation without replacing controls or identities; CSV updateBlocker and operational say update existing rows.",
+                          "Workbook follow-up epoch invalidates reset/remount work; file/options/mount ownership protects all awaited result commits and catch/finally, stale hosts cannot act, and old completion cannot unlock current state. API arguments, preview hash, manual apply and refresh call preserved."
+                      ],
+    "proof_scope":  [
+                        "Historical display proof is reproducible against tmp/member-match-display-held; its all-handler byte equality is not claimed for the later workbook lifecycle fix.",
+                        "Current workbook ownership proof compares API/serialization calls exactly and handler bodies after removing only added mount entry guards; direct diff separately reviewed. Static guard assertions do not establish runtime race behavior.",
+                        "Browser runtime reports and current hash checks establish the tested race outcomes; report existence alone was not used."
+                    ],
+    "verification":  {
+                         "new_native_adapter_workflows":  24,
+                         "new_workbook_lifecycle_cases":  12,
+                         "unit_tests_passed":  114,
+                         "source_and_test_report_hashes_match_current":  true
+                     },
+    "pending":  [
+                    "Root past-actions regression rerun pending when review written; do not describe it as passed."
+                ],
+    "limitations":  [
+                        "Controlled local component fixtures with intercepted API responses; no real persistence, role authorization, physical-device or native assistive-technology certification.",
+                        "Workbook runtime ownership cases target delayed preview selection success/refusal after reset/remount; inspect/template/apply ownership branches are source-reviewed, not all independently delayed by this suite.",
+                        "No claim that every application lookup family or all260 requirements is complete. Requirement140 actual persistence/artifact scope remains separate."
+                    ],
+    "review_findings":  [
+                            "Earlier candidate-reason loss corrected.",
+                            "Earlier nonlive pending labels corrected through shared DOM update helper.",
+                            "Actual workbook stale reset/remount overwrite reproduced before fix; preserved before report.",
+                            "Lifecycle test global-text false negative corrected to selected identity; clean rerun12 passed.",
+                            "Initial operational toolbar timeout attributed to absent disposable fixture; fresh12-workflow rerun passes after fixture restoration, without app workaround."
+                        ]
+}

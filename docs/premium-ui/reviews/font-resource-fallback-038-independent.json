@@ -1,0 +1,94 @@
+{
+  "recorded_at_utc": "2026-10-28T15:20:36.142881+00:00",
+  "reviewer": "/root/foundation_font_acceptance_recovery",
+  "scope": "Independent exact38 source/test/raw review, no new browser run or application/ledger mutation. Font fault fixture intentionally creates an otherwise absent network dependency.",
+  "recommendation": "Keep38 partial until all current font-family and shared icon-family extension evidence is reviewed.",
+  "item_id": 38,
+  "requirement": "Provide reliable local font and icon fallbacks so blocked resources cannot erase labels or alter control usability.",
+  "condition_reviews": [
+    {
+      "condition": "Provide usable local font stacks and icon assets or text fallbacks",
+      "result": "pass_source_classification",
+      "rationale": "All six font-family declarations use usable local generic fallbacks. The only SVG literal is the local eight-family helper; it has no font/image/use dependency and keeps meaning in control names or adjacent text. Remaining textual glyphs retain text/control labels and do not fetch an icon font.",
+      "limits": "Source classification is not native assistive technology or every-placement runtime certification."
+    },
+    {
+      "condition": "Block optional external font/icon resources and verify labels, control targets and layout remain usable",
+      "result": "partial",
+      "rationale": "24 current contexts prove blocked Inter load and error FontFace, deployed-stack text metric equivalence, readable hit-tested named controls and native outcomes in actual shell, canonical profile and component reference. Other current mono/serif declarations and six non-menu shared SVG glyphs have no current blocked-font rendered proof. Earlier gallery is historical and not silently transferred.",
+      "needed": "Bind all six applicable family declarations or justified inactive exceptions; render shared eight SVG families under font failure and exercise actual monospace member-match/archive controls without mutation."
+    }
+  ],
+  "evidence_sha256": {
+    "docs/premium-ui/reviews/font-resource-fallback-current.json": "5b0d054e70896e92e7c312b50ba1a6c7a1dd02402a444ed1d4005709a8a5f37b",
+    "frontend/tests/premium-font-resource-fallback.browser.mjs": "29a8267a0ae4eca3b611fc96273e9a9f622299fc23a22cf882fa632400919902",
+    "docs/premium-ui/reviews/font-resource-fallback-038-review.md": "47262731fc68c76112eac74236fa162f2499daa07d7c6e0dcd5ba996c650c639",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/decorative-icons.ts": "7e2d11356114e96f242435a2cd7cb7bc24cdc1787142e864e1cf053f92c373d7",
+    "frontend/src/ui.ts": "680d7830bca8826b46b6f1dc2c0d064d2a3a2e16fb41188d2c323de6bccf85b2",
+    "frontend/src/member-bulk.ts": "e0d040ab5f9f83a090a15fe4b4b619d25e97ae8b06d86dface5b4a62231f5202",
+    "frontend/src/main.ts": "658711ebf2ce8b26094131a5f1e4fe383d9ff98f6d0fc3dc5e9961fba44ac983",
+    "frontend/src/limits.ts": "f7c040de08fd0a593e1e071d7c09b2696344b9b85bbcd836f5367b49e4ef8db6",
+    "frontend/src/rota-rules.ts": "21c76de1e2db86e75b778c088a558a9bfb859fd1ef6b683e627c594ec3d5966a"
+  },
+  "checks": {
+    "runtime_contexts": 24,
+    "failures": 0,
+    "declared_source_hashes_current": true,
+    "test_hash_current": true,
+    "application_external_resources_observed": 0
+  },
+  "classified_font_instances": [
+    {
+      "source": "frontend/src/styles.css",
+      "line": 165,
+      "selector": "body",
+      "family": "Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+      "runtime": "24contexts actual shell/profile/reference forcedInterfailure"
+    },
+    {
+      "source": "frontend/src/styles.css",
+      "line": 500,
+      "selector": ".readonly-field",
+      "family": "var(--font-mono, ui-monospace, monospace)",
+      "runtime": "source-only; actual caller main call setup System ID"
+    },
+    {
+      "source": "frontend/src/styles.css",
+      "line": 3581,
+      "selector": ".person-metric strong",
+      "family": "Georgia, Times New Roman, serif",
+      "runtime": "No TS/HTML markup caller found; inactive CSS classified exception pending current reference render"
+    },
+    {
+      "source": "frontend/src/styles.css",
+      "line": 3608,
+      "selector": ".person-day strong",
+      "family": "Georgia, Times New Roman, serif",
+      "runtime": "No TS/HTML markup caller found; inactive CSS classified exception pending current reference render"
+    },
+    {
+      "source": "frontend/src/styles.css",
+      "line": 6327,
+      "selector": ".member-match__raw",
+      "family": "var(--font-mono, ui-monospace, monospace)",
+      "runtime": "actual shared memberMatch helper not covered fontfailureyet"
+    },
+    {
+      "source": "frontend/src/styles.css",
+      "line": 6362,
+      "selector": ".archive-all__phrase input",
+      "family": "var(--font-mono, ui-monospace, monospace)",
+      "runtime": "actual archive confirmation control not covered fontfailureyet"
+    }
+  ],
+  "separate_findings": [
+    "Mobile menu open/close width40,height44 is existing target geometry. It is not a font-failure regression or a pass for a separate44x44target requirement."
+  ],
+  "limits": [
+    "Synthetic failure is not a production external-font outage.",
+    "Root200 is CSS scaling and may not enlarge fixed-pixel labels.",
+    "No backend mutation, actual persistence, native AT, physical device or operating-system font installation certification.",
+    "No acceptance ledger changes."
+  ]
+}

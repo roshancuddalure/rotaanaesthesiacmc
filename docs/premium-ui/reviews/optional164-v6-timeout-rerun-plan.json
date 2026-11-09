@@ -1,0 +1,45 @@
+{
+  "recorded_at_utc": "2026-10-31T01:21:29.358054+00:00",
+  "reviewer": "/root/optional164_v5_metric_diagnostic",
+  "application_changed": false,
+  "observed_failures": [
+    {
+      "suite": "normal",
+      "engine": "firefox",
+      "scenario": "first two-round-recovery",
+      "finding": "12-second click action timed out on template settings summary after Playwright reported visible, enabled, stable and done scrolling. Chromium10 contexts completed.",
+      "log": "tmp/optional164-v6-integrated.log"
+    },
+    {
+      "suite": "focus",
+      "engine": "firefox",
+      "scenario": "first figures-summary",
+      "finding": "12-second navigation timed out waiting for load. Chromium8 contexts completed.",
+      "log": "tmp/optional164-v6-focus-integrated.log"
+    }
+  ],
+  "diagnosis": "Both are observation/action timeouts, not failed functional assertions. Concurrent browser/build suites were reported, but contention is a hypothesis, not established root cause. Scoped source inspection shows no Firefox-specific settings-summary behavior change; same summary and primary form remain intact in V6.",
+  "rerun_changes": "Standard30-second action timeout and explicit DOMContentLoaded navigation with30-second timeout. Assertions, fixtures, scenarios, engines and writes policy identical; unique artifacts preserve all initial failures. No write retry added.",
+  "rerun_tests": [
+    {
+      "original_path": "frontend\\tests\\premium-optional164-v6-integrated.browser.mjs",
+      "original_sha256": "f92fbe458081b03dc90cf98906db495a2c0a3090277d05e23f1235c23faaf89a",
+      "rerun_path": "frontend\\tests\\premium-optional164-v6-integrated-sequenced-r1.browser.mjs",
+      "rerun_sha256": "c96d028e7fca387400123f36a4e2d44e955311864f5bc044daf4670d1bc4cb73",
+      "functional_assertions_identical": true
+    },
+    {
+      "original_path": "frontend\\tests\\premium-optional164-v6-focus-integrated.browser.mjs",
+      "original_sha256": "c99db975ca296476f3e784d1b11c14b4eab64f2519348dd9a4e8f745dc183f7a",
+      "rerun_path": "frontend\\tests\\premium-optional164-v6-focus-integrated-sequenced-r1.browser.mjs",
+      "rerun_sha256": "247ab0c21313c7e3b5556fab690fdff10ae59a8176bcf4d1018410e9bf02de53",
+      "functional_assertions_identical": true
+    }
+  ],
+  "runner": {
+    "path": "tmp\\run_optional164_v6_sequenced_r1.py",
+    "sha256": "91aefcc50579390d63b74802552471b51934b3b28c9581b074aed0dbaade8717",
+    "execution_policy": "Do not start until root confirms other CPU-heavy suites ended. Normal30 then focus24 in sequence; durable per-suite and aggregate exit files."
+  },
+  "completion_claim": false
+}

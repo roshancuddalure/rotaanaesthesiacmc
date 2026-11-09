@@ -1,0 +1,74 @@
+{
+  "recorded_at_utc": "2026-10-30T11:27:46.239702+00:00",
+  "reviewer": "/root/dependent159_remaining_callback_audit",
+  "mode": "Read-only source audit and newly authored actual-app diagnostic; no product/backend/ledger edits.",
+  "decision": "Keep159partial. Record save parent callbacks are independently confirmed to repaint a newer route,despite guarded unitregistry branch. Other unguarded paths below are source candidates,not runtimeverified bugs.",
+  "own_execution": {
+    "contexts": 24,
+    "terminal_exit_code_observed": 0,
+    "terminal_session": 81890,
+    "same_view_controls": 12,
+    "late_route_overwrites": 12,
+    "browsers": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "widths": [
+      320,
+      1280
+    ],
+    "record_kinds": [
+      "units",
+      "leave"
+    ],
+    "mutations": "Only local preview/save POST fulfill; all other writes rejected. GETlocalRAM only."
+  },
+  "confirmed_bug": {
+    "trigger": "Actual Addposting/Addleave reviewed and Save sent; hold localSave, navigate actual hash toUserGuide,then release confirmed response.",
+    "observed": "Save closes editor then unconditionally invokes parent renderLeave or renderUnitManagement. Hash remains #view=user-guide; guidecontent disappears and sectiontitle becomes Leave calendar and availability or Monthly unit postings. Reproduced12/12latecases;12sameviewcontrols correctly refresh.",
+    "source_edge": "main.ts handleViewClick recordButton saved callback; record-workspace.ts Save awaits request,close(),saved() without originating parent-view scope.",
+    "recommended_repair": "Capture initiating account,activeview,viewsequence,rendergeneration,connectedroot before opening recordeditor. On confirmation keep same-account cache invalidation,but only invoke dependent render when original owner still matches. Check before renderTicket/header/skeleton begins. This single-save editor closes after success,so no repeated-save generation adoption is needed. Preserve identity/values/review_token/save/request/policy semantics.",
+    "next_tests": [
+      "Current sameview success preserves Unit search/campus and Leave display choices.",
+      "Late success after route change/awayback/newer render/account reset suppresses repaint; explicitreturn reads confirmed result.",
+      "Preview/refusedSave/readback503 do not repeat save automatically; unrelated newer editor drafts remain."
+    ]
+  },
+  "other_source_candidates": [
+    {
+      "path": "main.ts operationalImport updated callback",
+      "finding": "Unconditionally invalidates cache and renders dependent kind. operational-import ownsApply guards dialog/file/preview/revision,not parent route/account/render ownership.",
+      "status": "Source concern only; no actual importApply\u2192newroute runtime reproduction yet."
+    },
+    {
+      "path": "main.ts data-approve-month-leave callback + leave-approval.ts onApproved",
+      "finding": "Captured approvalMonth only; callback toast/renderLeave unconditionally. Module guards cancel whileapplying and renderclosedstate,but onApproved is called after response without originating main owner check.",
+      "status": "Source concern only; no heldmonthlyapproval/newroute runtime proof in thispacket."
+    },
+    {
+      "path": "main.ts legacy leave-form and apply-leave-import handlers",
+      "finding": "Awaited writes followed by unconditional UI feedback/render. Native form connectedness or original account/view/render is not captured at these exact handlers.",
+      "status": "Source concern only; no new runtime proof or wholelegacyflow claim."
+    }
+  ],
+  "already_guarded_control": {
+    "path": "main.ts data-cancel-leave",
+    "finding": "Explicit account/viewsequence/rendergeneration/month/rootconnected predicate checked before confirmation and after awaitedcancel success/failure. Not classified as broken by thisaudit; earlier142/143/146 scope remains separate."
+  },
+  "scope_limits": [
+    "No whole159or160or260 acceptance. Unitregistry boundedrepair remains distinct from record/import/monthlycallbacks.",
+    "No backendauthorization,persisteddata/scheduling/export changes or productionoperation.",
+    "Sourcehash bindings reflect four-file combined applied build; no nativeAT/physicaldevice claim.",
+    "Source suspicions are not counted as additional verified bugs without actual outcomes."
+  ],
+  "evidence_sha256": {
+    "docs/premium-ui/qa-reference159-record-save-route-independent.json": "e227a8d13597e16150e880ca5311b9bb5794ff1764a9145792428e67396e8a38",
+    "frontend/tests/premium-reference159-record-save-route-independent.browser.mjs": "89340296babdf2e2c44b781c7b6ccf1507a4cd8601d165f3a644c2d090b53177",
+    "tmp/reference159-record-save-route-independent.log": "0447242c6ab6f84be66f851197d2e57bcb583b69996cc3edb15dfacd611355cb",
+    "frontend/src/main.ts": "d71d357b2cb2128249b0f76f7ddbbc9c1dff73fee208c9497b73953bc0820212",
+    "frontend/src/record-workspace.ts": "469fd6bf2e4118b15ad343d8059cd3cfb0acbc6483bea969ca5fb93488644335",
+    "frontend/src/operational-import.ts": "00a6339fb0bd56dcae64ec05cb79ad041364a502ee207dec71c95106b2c20ce8",
+    "frontend/src/leave-approval.ts": "42e5a47751ae081d1b97108209c7a2b53272985251d153aa065f7718f43e544f"
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "recorded_at_utc": "2026-11-09T09:25:12.449162+00:00",
+  "author": "/root/profile_parent_final_audit",
+  "application_changed": false,
+  "browser_executed": false,
+  "decision": "Import-only isolated implementation proposal; independent source/runtime review required before application",
+  "scope": "Extend immutable V7 retained parent coordinator to normalized import after accepted batch and actual final close. No backend/API mutation/read/payload/permission/export changes; no registry/delete/core-member/fallbackreference changes.",
+  "source_packet": "tmp\\profile-parent-refresh-v8",
+  "source_hashes": {
+    "tmp\\profile-parent-refresh-v8\\main.ts": "96ab7c4c6b14d41736ad4153313b1270677e324fcab6b11c3a5b0d8ac3e47a0b",
+    "tmp\\profile-parent-refresh-v8\\operational-import.ts": "d4ec84f649759642020a83adf9ef9cf8b4754c068149130f752d19ddda8fe09b",
+    "tmp\\profile-parent-refresh-v8\\member-workspace.ts": "105cc1d91ea4815d565ad4859fc01412cf576a3203c07834f4010e3fef7ef1a5",
+    "tmp\\profile-parent-refresh-v8\\manifest.json": "94924876601d403ba4d8f9e54c8829d26805f0240c8288bf8b9220d4b750f28b",
+    "tmp\\profile-parent-refresh-v8\\verification.json": "91022d8cf397bd357aa09e7b24404b48c378c3e0a40630888b5d6749f2390b69"
+  },
+  "implementation": [
+    "New optional last OperationalImportLifecycle argument has confirmed({kind,month,batchId}) and closed(); existing four-arg callers unchanged.",
+    "notifyParentConfirmed occurs immediately after accepted existing apply POST, before ownsApply guard/result markup/legacy updated callback. Notification callback errors are isolated with constant warnings; no private response objects logged.",
+    "Actual close function retains busy/dirty refusal; successful dialog.close/remove triggers one idempotent closed notification. Native queued close listener catches native path without double notification. No retry/replacement code for this same import dialog is introduced.",
+    "Main creates one existing createDependentParentLifecycle only when originating activeView matches import kind, before opening. Repeated accepted batches dirty the same helper without parent reads while import is open; final close starts one current owned read. Cancel/no accepted batch closes helper with changed=false so no parent GET.",
+    "When retained parent exists, legacy updated callback returns before old full-render/cache code; accepted lifecycle is sole signal. Nonrelevant original callers keep original account/view/render/root/month gates and full-render behavior. No double parent refresh.",
+    "Same-account cache invalidation remains in helper confirmed even after parent owner expired; current root/month/overlay/account ownership must match before notice/read/paint/focus. Existing unitLoadSeq/shared parent read generation and GET-only retry path are reused.",
+    "Profile/direct record coordinator branches unchanged; only import callsite block changes in main. Member hook file byte-identical105cc."
+  ],
+  "why_no_general_lease_framework": "One import dialog already owns all sequential batches and existing nested dialogs. Reuse one existing deferred lifecycle; confirmed may run multiple times, closed once. Avoid global event listeners, per-batch leases or duplicate retry/panel implementations until a demonstrated concurrent child owner requires them.",
+  "proof": {
+    "full_virtual_frontend_typecheck_diagnostics": 0,
+    "source_replay_and_reverse": true,
+    "main_existing_API_readwrite_storage_confirm_expressions_exact": 123,
+    "import_existing_API_readwrite_storage_confirm_expressions_exact": 20,
+    "member_existing_API_readwrite_storage_confirm_expressions_exact": 32,
+    "extra_GET_or_POST_expressions": 0,
+    "existing_mutation_payload_preview_tokens_target_semantics": "Exact existing effect AST text equality; no extra mutation or serialization calls"
+  },
+  "required_actual_matrix": [
+    "Units import accepted1batch, keepimportopen and original pending/complete review intact; no parent GET while dialog remains open; close then1freshownedUnitGET, retained settings draft/form if reachable and actual inlinefallback order/control host, search/campus/page/month.",
+    "Leave import acceptedbatch, keepopen result intact; finalclose1threeGETgroup updatesrequests/calendar/pressure together retainingDaylist/month/survivingselection/disclosure/historynodes.",
+    "Two acceptedfiles/batches in same openimport; no premature parent read and one final freshsnapshot afterclose; exactly2applyPOSTs, each acceptedID/payload/exclusions/ack unchanged.",
+    "Accepted apply then result-render exception or own child state supersession: same-account cache invalidated and finalclose fresh parent read occurs; no acceptedapply replay from parentGETretry.",
+    "Finalclose after parentGET503: saved status distinct from readfailed, old snapshot/drafts retained, reachable keyboardGET-onlyretry no new apply; no multiple listener/read duplication.",
+    "Dirtycancel refusal retainsdialog/no parentread; accepteddiscard without any batch emitsclosed once but zeroGET; headerclose/Escape/nativeclose all actualonce.",
+    "Held apply/parent read then route/month/account/root/Unitoverlay replacement: stale callbacks never repaint/focus/toast; later explicit visit loadsfresh same-accountconfirmeddata.",
+    "After first acceptedbatch, choose secondfile/altermappingdraft then close-refuse: unsaved nextfile/importdraft intact; do not treat finished state incorrectly as confirmed secondfile.",
+    "Cross-month import input may differ from captured parentmonth; do not skip relevant GET solely on appliedmonth. Reuse parentcapturedmonth and owner; fixtures must assert actualexisting importedtargetbehavior.",
+    "Nested import unit/reference creation still own existing local callbacks; inventory parent dependency propagation separately. V8 lifecycle only signals accepted import apply, not all nested reference mutations."
+  ],
+  "remaining_gaps": [
+    "No runtime/browser outcome evidence; V7 source gates do not prove new importer lifecycle.",
+    "No new shape guard on child result itself; existing importer result behavior unchanged. accepted-before-markup hook ensures parent notification is not contingent on it.",
+    "Nested reference/unit creation without applyingimport can change relevant parent data but does not trigger V8 import-apply hook; requires separately reviewed actual mutation dependency signal.",
+    "Registry accepted-before-ownGET/finalclose lifecycle, postingdelete retained refresh, directLeavedecisions and member-core parent refresh remain original159pending.",
+    "Fallback reference readbackV2 is separate scratch and not integrated here. Current inlinefallback host preserved by retained painter; registryrename/newunit label completeness remains unresolved.",
+    "No full159 acceptance or source application authorization implied by this packet."
+  ]
+}

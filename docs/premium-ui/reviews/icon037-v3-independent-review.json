@@ -1,0 +1,108 @@
+{
+  "recorded_at_utc": "2026-10-29T03:51:22.489023+00:00",
+  "reviewer": "/root/icons_current_v3",
+  "scope": "Independent frozen icon V3 source and bounded operational review; not whole37, all260, physical or native AT acceptance.",
+  "application_changed": false,
+  "source_review": {
+    "files": 9,
+    "exact_replay": true,
+    "control_attributes_and_selected_effects_equal": true,
+    "typecheck_diagnostics": 0,
+    "records": 45,
+    "non_import_records": 40,
+    "non_import_occurrences": 45,
+    "import_insertions": 5,
+    "eight_existing_paths_and_renderer_unchanged": true,
+    "ninth_local_variant": "help"
+  },
+  "runtime": {
+    "exit_code": 0,
+    "actual_app_proposal_contexts": 18,
+    "applied_baseline_contexts": 6,
+    "engines": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "profiles": [
+      "320phone light/dark",
+      "1280desktop light/dark",
+      "320x568 root font200% dark",
+      "390x320 short light"
+    ],
+    "passed_assertions": [
+      "Metric help actual SVG stroke click opens exact description; focused Escape clears it and retains control focus.",
+      "Unit Prev/Next actual chevron path clicks change selected unit and disabled edges without refetch.",
+      "Regular and special unit modal close pixel hits target original button, close modal and retain44px minimum targets. Original unit opener/BODY defect remains separately pending focus integration.",
+      "Account Profile and Change password close pixel hits target original buttons, close and recover account-menu-button focus.",
+      "Generic Analysis pagination traverses55 rows with actual Next SVG clicks and keyboard Prev; correct25/25/5 rows, disabled edges, unchanged Prev/Next names and search reset to one result."
+    ],
+    "diagnostics_not_passes": [
+      "Rules hint aria-expanded stays false while linked region is visible in all18 proposal and all6 applied baseline contexts."
+    ],
+    "writes_to_backend": 0,
+    "validation_posts": "Existing Rules eligibility-check POSTs locally fulfilled only; no save request allowed."
+  },
+  "findings": [
+    {
+      "id": "ICON037-RULES-HELP-OWNERSHIP-001",
+      "severity": "medium",
+      "status": "confirmed_preexisting",
+      "baseline_cases": 6,
+      "proposal_cases": 18,
+      "expected": "Rules hint visible state and aria-expanded agree; existing module owns its linked region and Escape state.",
+      "observed": "The Rules page listener sets aria-expanded true and opens aria-controls region; main generic document [data-help] listener then toggles it false. Regions remain visible while announced collapsed.",
+      "source": [
+        "frontend/src/rota-rules.ts bindPage click [data-help]",
+        "frontend/src/main.ts generic document click [data-help]"
+      ],
+      "recommendation": "Separate narrow frontend ownership repair, keeping generic main help out of .rr-help and giving Rules coherent Escape/openHints state. Parent requested scratch-only authoring of that repair; it is not part of this independent icon endorsement."
+    }
+  ],
+  "new_scope_corrections_reviewed": [
+    "Four unit/day glyph navigation controls now use shared chevron. Actual unit branch tested; day branch still pending.",
+    "Four generic paginator branches now use same-family chevron beside original labels; actual enabled/disabled branches tested.",
+    "Metric and Rules help use ninth same-family constant path; metric actual behavior passes; Rules preexisting owner collision separately confirmed."
+  ],
+  "remaining_runtime_matrix": [
+    "Other4 new close renderings: review action, mobile More, rota day and review slot; real keyboard/touch/dirty/pending refusal and original opener recovery.",
+    "Actual day navigation boundaries/month and new focus integration combined with SVG patch.",
+    "Filter chip removal SVG target, retained other filters and row count/focus.",
+    "Preflight safe/unsafe, Publish ready/blocking/warnings and both debrief contexts; reject publish mutations.",
+    "Compute all five condition/completion/ordinal roles without capability/preference changes or generation.",
+    "Superadmin allowed/denied, both dialogs, blocked/cross-level reasons, completion and uncertain readback; local mutation fixtures only.",
+    "CSV/workbook/operational import upload/mapping/preview/held apply/error/retry/done roles and exact fields.",
+    "Extra-duty/Balance safety pseudo suppression, all three native disclosures, one SVG, values and normal150ms/reduced motion.",
+    "Current full-source classification reconciliation plus prior font-resource/8+help-family fallback and existing17-close regressions.",
+    "Measure all remaining touch targets, optical alignment and short/enlarged layouts; this review measured the two unit close targets and sampled other real SVG hits, not every control."
+  ],
+  "harness_corrections": [
+    "Initial selected first Rules help was hidden inside collapsed editor; use actual Expand all and visible help.",
+    "Profile close selector also selected text Cancel; target named modal-close header.",
+    "Personnel table is intentionally hidden in phone representation; inspect actual visible person cards for waits/rows.",
+    "One inline Python shell edit failed parsing before execution; corrected with a file-based generator. Original failed scripts/logs retained in explicit tmp/icon037-v3-independent-initial-* directories."
+  ],
+  "visual_review": {
+    "reviewer": "/root/icons_current_v3",
+    "screenshot": "docs/premium-ui/screenshots/icon037-v3-independent/rules-help-phone.png",
+    "scope": "One phone Rules-help illustration inspected; no all-surface visual claim."
+  },
+  "decision": "Source-safe bounded candidate with earlier nav/pagination/help omissions corrected; selected operational paths pass. Do not accept whole37 or copy stale files over focus integration. Remaining matrix and separate Rules ownership repair required.",
+  "evidence_sha256": {
+    "docs/premium-ui/reviews/icon037-v3-independent-source.json": "c5008e74c35fbb35940d6b11b4493e25749aa4e70fff1cbb29282e97e640a3b7",
+    "docs/premium-ui/qa-icon037-v3-independent.json": "8d5d9855b404fe2a0efdc3c567a8f1487d199260a11b886c557031de509f7fb9",
+    "frontend/tests/premium-icons037-v3-independent.browser.mjs": "92fa82e4eff2fa1d1a707a86798463e021493c8762b79aadaf6edf8b21562257",
+    "tmp/icon037-v3-independent-runtime.log": "ccde493933cd0d5cc57d6c86b5f64ce4865e6827ccf4900a9c6459d7bac6deac",
+    "tmp/icons037-v3-independent-source.mjs": "d8ac648d3bc61af10422967fec21c915ae436390817a19d49e1262b97d71abb5",
+    "tmp/icons037-v3-independent-preview-server.mjs": "5157b458610debbf6a5e77a6b3792a22a4214c530a3bc04d408a12648b417daf",
+    "tmp/icon037-remaining-proposal-v3/source-manifest.json": "c9460aeac7d2bc58bdbfd1f0dacc78ec3448cfa50e170e6f327523c2c1a1f6a8",
+    "tmp/icon037-remaining-proposal-v3/edits.json": "4433c62f9949ae0068250943ea576544790d1a52f3ce87dc125614e1efd58c2d",
+    "tmp/icon037-remaining-proposal-v3/proposal.patch": "e18bb91d72b807454b218ab6b4ce114bb133b19726ed1f01ba21aac8276c7967",
+    "docs/premium-ui/screenshots/icon037-v3-independent/rules-help-phone.png": "913ff902f4ebc789ff4109fa0fba15989ea22f44138bc40f3dc91e3b1ab7040d"
+  },
+  "limits": [
+    "Root/other agents may integrate newer frontend changes after this frozen review; source equality is recorded at review start only. Rebase exact substitutions at eventual integration.",
+    "No backend/API/permission/scheduling/storage/persisted-data change by this reviewer. No ledger/current package edits.",
+    "Frozen preview5218 remains separate from applied app5197 and focus preview5216."
+  ]
+}

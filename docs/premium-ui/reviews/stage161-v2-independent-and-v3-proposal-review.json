@@ -1,0 +1,87 @@
+{
+  "recorded_at_utc": "2026-11-03T05:09:25.438863+00:00",
+  "reviewer": "/root/stage161_v2_independent_resume",
+  "application_edits_by_reviewer": false,
+  "ledger_edits": false,
+  "decision": "Do not integrate V2; V3 is a source-verified scratch repair with runtime gates unfulfilled. No whole161 acceptance.",
+  "source_inspection": {
+    "five_operation_ids": "setup/template/assignment/review/publish independent from four existing route destinations; duplicate route does not collide in state painting.",
+    "readiness": "Existing scope/template blocker classification, zero-all-blockers Reviewdone and latest_publish history semantics retained. Assignmentdone uses finite nonnegative total/assigned/open, positive total, assigned==total/open0/no Open slots blocker; missingcounts unknown.",
+    "mutations": "Exact normalized non-get imported API/storage/JSON/confirm expressions unchanged. GET timing intentionally changes to owned fresh checklist reads on workflow pages; Publish records own read instead of duplicate cached read.",
+    "onDataChange": "Dependent cache invalidation now precedes workflow refresh, avoiding immediate old cached checklist reuse. Accountreset clearsfreshness andincrements readseq.",
+    "v2_gap": "beginWorkflowRead setschecking and guards success/failure with viewSeq. Navigate away while readheld: terminal result is ignored and same-month Overview remains Checking checklist indefinitely, even though no current read owns it.",
+    "v3_repair": "New interrupted freshness state, interruptWorkflowRead on acceptednavigateToView/showView/monthchange only whencurrentlychecking; invalidates readseq, paints unknown/lastknown with paused wording immediately, no newGET. Late result remains ignored. Cancelled rules/limits confirmation occurs before navigation interruption. Accountreset retains clearing."
+  },
+  "actual_observations": {
+    "v2_r3_partial_log": "First five Chromiumcontexts logged:320 route-away reproduced checking defect,320 month supersession retainedDecember,320 explicit32px labels/states fit Overviewwithoutpageoverflow,1280 route-away reproduced defect,1280 monthsupersession retainedDecember. This is partial log evidence, not a completed eighteen-context report.",
+    "historical_author_reports": "V2 author surfaces12/recovery6/wrongmonth6 reports and sourceproof exist. They remain author evidence with originalsourcebindings, not newly independently rerun certification."
+  },
+  "execution_outcomes": [
+    {
+      "test": "frontend/tests/premium-stage161-v2-independent-owner.browser.mjs",
+      "exit_code": 1,
+      "outcome": "Chromium320route-away diagnostic passed; nextmonth assertion failed because rendered month is CSSuppercase DECEMBER whereas testregexwas case-sensitive."
+    },
+    {
+      "test": "frontend/tests/premium-stage161-v2-independent-owner-r2.browser.mjs",
+      "exit_code": 1,
+      "outcome": "Partial scenarios observed; Firefox32px computed assertion returned empty on replaced/detachedOverviewelement. R3 adds networkidle/explicitcomputed-stylewait, no relaxed functional assertions."
+    },
+    {
+      "test": "frontend/tests/premium-stage161-v2-independent-owner-r3.browser.mjs",
+      "terminal_session": 74025,
+      "exit_code": 1,
+      "outcome": "Partialfirst5contexts logged; later page.goto DOMContentLoaded30000ms timeout. No final18report."
+    },
+    {
+      "test": "frontend/tests/premium-stage161-v3-owner-author.browser.mjs",
+      "terminal_session": 58035,
+      "exit_code": 1,
+      "outcome": "Firstpage.goto DOMContentLoaded30000ms timeout. No24runtimepass/report."
+    },
+    {
+      "test": "tmp/prove_stage161_operations_v3.mjs",
+      "terminal_session": 61057,
+      "exit_code": 0,
+      "outcome": "Exact baseline reverse/CSSprefix retained/allblocker+publishedhistory retained/APIeffects equal/fullvirtualprojectTS0. Initialproof harness compared rawCRLF/LF calltext; normalizedcomparison corrects provenance withoutchangingcallvalues."
+    }
+  ],
+  "candidate": {
+    "main": "tmp/stage161-operations-v3/main.ts",
+    "main_sha256": "ea8f60996b04bcaf3e4bf62b3a507b8ff02b728c536ad31d63b32116fc7bcf0c",
+    "css": "tmp/stage161-operations-v3/premium-theme.css",
+    "css_sha256": "4ed06899f6f79b45812a5707368ce7b870e6d4e749b6d4409951cbf058cf09b6",
+    "baseline_main_sha256": "e88c69570e7faf9b4277b541e073c8bd2ca3805c23f4feead544f16770f6e07a",
+    "applied_main_at_seal_sha256": "d13bd73108d89d6efb70a66426e6f8e9f6e50400475575b7a40cb06eef12c1bc",
+    "rebase_required": "Parent applied mappingcallbackD13 while frozen V3 stays basedE88. Exact guarded rebase must retain mapping callback before application."
+  },
+  "next_gates": [
+    "Run one unique V3 owner suite after competing browserload ends, preserving immediatepaused check and later success/failure suppression, monthsupersession andsignout; no automatic mutationretry.",
+    "Independent review of V3 navigation interruption source, freshness wording and account/month/readgeneration behavior.",
+    "Rebase V3 onto current mapping callback before applying; fullTS/APIeffect proof and heldbuild then affected browser+prioraccepted applicability.",
+    "Complete/read exact161 fullmatrix and rootvisualenlargedtext/marker inspections; do not accept from partialcounts or sourceproof alone."
+  ],
+  "limitations": [
+    "Contention is suspected but not established as navigation-timeout cause; no productfailure inferred from timeout alone.",
+    "32px explicit label/state scaling is not nativebrowserzoom; no physical/nativeAT certification.",
+    "No current successful whole18/24 independentruntime report; no new161 acceptance."
+  ],
+  "evidence_sha256": {
+    "tmp/stage161-operations-v2/manifest.json": "b09c54406e98e687685cccad36d51ab0acb0cd1eae202e6020939cac44fbfe47",
+    "tmp/stage161-operations-v3/manifest.json": "495ecadea3ea27f9652be7c97b99b44d35ce3b89febaa9a7d824512f2194fa58",
+    "tmp/stage161-operations-v3/source-proof.json": "c892a086ba2ffd1a5c5bb29eecd969316d3f9830139f2eb8736dd627fa0338d3",
+    "tmp/stage161-operations-v3/v2-to-v3-edits.json": "ac6ffb1dfe6e76bebd01b514bc36b76397c8420ffaf46b263001ef67d91d534e",
+    "tmp/stage161-operations-v3/exact.patch": "79ba0259af3d1a82c7c0bffb263c4cf2ed4bc982b2d306670d4612a07860c62c",
+    "frontend/tests/premium-stage161-v2-independent-owner.browser.mjs": "486aadaf78c4700c6d9f647fed7ebe76bb9c6362c7a4080e36fd8ef827421f24",
+    "frontend/tests/premium-stage161-v2-independent-owner-r2.browser.mjs": "4e93b9e0bd33d9a89186353f82405245af1e769f5dc8ed7441cfdca87ff94b9f",
+    "frontend/tests/premium-stage161-v2-independent-owner-r3.browser.mjs": "0a9d43306ffa67873d41dd911e3cbca30f71a11db73dc554850dff625f0e97d2",
+    "frontend/tests/premium-stage161-v3-owner-author.browser.mjs": "ba1be7a6dd0c5f050509df774062e1c91f88f530222713b28ef4a44545af81f3",
+    "tmp/stage161-v2-independent-owner.log": "91fb2b0412f230ceb8d3019dc6bc92cf108d95bda31eec987d8f744789264c31",
+    "tmp/stage161-v2-independent-owner-r2.log": "2e1a2c652c70897c8d7b2239b86a5d60e25a2b2fc05bde443cbb4ddc1837daca",
+    "tmp/stage161-v2-independent-owner-r3.log": "dd968630458d4c9a073f1dcd0a575289004f5bbc7c092c4d505af835a44436bf",
+    "tmp/stage161-v3-owner-author.log": "04b897ba32076ef57eed72c8d491f147c8fa6e2d837487eff2b05fb622bf457c",
+    "tmp/stage161-v3-proof.log": "66212f86808cf8be0b818ecc7ebc5ffbf7660aca865878f752132f380de13525",
+    "docs/premium-ui/screenshots/stage161-v2-independent/1280-overview-200.png": "281880f3300e90c83fc97fdf6f05fd20a12e444374e3c5fbff3949ec8ae09b08",
+    "docs/premium-ui/screenshots/stage161-v2-independent/320-overview-200.png": "081c900ebaad64fb30f9fccd7e3d30a4dd9550bab7ceb79f8e98b161867266ae"
+  }
+}

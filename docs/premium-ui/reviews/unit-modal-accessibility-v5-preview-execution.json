@@ -1,0 +1,115 @@
+{
+  "recorded_at_utc": "2026-10-29T03:33:34.629477+00:00",
+  "author": "/root",
+  "scope": "Scratch V5 nested unit focus candidate:33 actual-app contexts plus6 controlled lifecycle contexts. Corresponding focusable Manage opener also retained after nonfocusable card-title clicks. No application changes or whole-item acceptance.",
+  "application_changed": false,
+  "actual_app_contexts": 33,
+  "controlled_lifecycle_contexts": 6,
+  "total_browser_contexts": 39,
+  "executions": [
+    {
+      "kind": "actual_app_keyboard_normal_enlarged_short_light_dark",
+      "report": "docs/premium-ui/qa-unit-modal-accessibility-v5-preview.json",
+      "report_sha256": "d83b440e6d84f8cb70c539b77246b99fd6bd384feb918c9f703d1f605759f713",
+      "test": "frontend/tests/premium-unit-modal-accessibility-v5-preview.browser.mjs",
+      "test_sha256": "af267da640bcbbda41bba9968cc625b653e1cda26c5ac6c847019ed3253702fc",
+      "log": "tmp/unit-modal-accessibility-v5-preview.log",
+      "log_sha256": "98b687807a0ffd8154110d104e2f96077ea61037d0e322aa3c199c18d130b177",
+      "contexts": 18,
+      "exit_code": 0
+    },
+    {
+      "kind": "controlled_helper_rerender_native_return_newer_intent_abort",
+      "report": "docs/premium-ui/qa-unit-modal-accessibility-v5-lifecycle-probe.json",
+      "report_sha256": "994927ea8c30e07f08f4724d237140c277da3aad133e11b59314df79c75e8e7f",
+      "test": "frontend/tests/premium-unit-modal-accessibility-v5-lifecycle-probe.browser.mjs",
+      "test_sha256": "b73b1e3b4d4eab8cc0ab84a733c30752661891a423d5a6402910275980e312ef",
+      "log": "tmp/unit-modal-accessibility-v5-lifecycle-probe.log",
+      "log_sha256": "9e53d4e81c73c6f841a912f6ca79eb1d8661dd9a42dacad198ed7d3469003756",
+      "contexts": 6,
+      "exit_code": 0
+    },
+    {
+      "kind": "actual_app_mouse_touch_native_record_and_profile_failure",
+      "report": "docs/premium-ui/qa-unit-modal-accessibility-v5-native-pointer-probe.json",
+      "report_sha256": "af3735afc747c8505625d14e215b301fa7a2d40777454efd21038e5bbe9ca0c7",
+      "test": "frontend/tests/premium-unit-modal-accessibility-v5-native-pointer-probe.browser.mjs",
+      "test_sha256": "d574d159619e48472124a8214e4fb534885efaf6a1be0da58017bf57fc5d3bd0",
+      "log": "tmp/unit-modal-accessibility-v5-native-pointer-probe.log",
+      "log_sha256": "564a5b7617b1d7f8997b414243e1f8f64f512f504252e8271aadd10984f04cd0",
+      "contexts": 6,
+      "exit_code": 0
+    },
+    {
+      "kind": "actual_app_mouse_touch_native_record_and_successful_profile_tabs",
+      "report": "docs/premium-ui/qa-unit-modal-accessibility-v5-native-profile-success.json",
+      "report_sha256": "024c54007fef3f725deef4328d6c09c1690bf6b8c551927a6ecb4c67bf56e278",
+      "test": "frontend/tests/premium-unit-modal-accessibility-v5-native-profile-success.browser.mjs",
+      "test_sha256": "403bf0b864fb46861e18c6c84b8f6388ed57ade2aafb824570296d3e2b961d69",
+      "log": "tmp/unit-modal-accessibility-v5-native-profile-success.log",
+      "log_sha256": "564a5b7617b1d7f8997b414243e1f8f64f512f504252e8271aadd10984f04cd0",
+      "contexts": 6,
+      "exit_code": 0
+    },
+    {
+      "kind": "actual_app_card_title_opener",
+      "report": "docs/premium-ui/qa-unit-modal-card-opener-v5.json",
+      "test": "frontend/tests/premium-unit-modal-card-opener-v5.browser.mjs",
+      "log": "tmp/unit-modal-card-opener-v5.log",
+      "contexts": 3,
+      "exit_code": 0,
+      "report_sha256": "72078fb461ddd00df47f6f91b915050dbbe4e87c48252297a51e316d518bf233",
+      "test_sha256": "006d158834872c0422b3280799e54df73ad37081a25270ba6aef04b6c1fb0f6c",
+      "log_sha256": "ce0a66935269f60f7f7d4f8ff64ad64c6fee3e42506e039d55a39279c8ffb9db"
+    }
+  ],
+  "candidate_source_sha256": {
+    "tmp/unit-modal-accessibility-v5/main.ts": "62226f3480e4089b39df8ff31a0b0f509672231a8bd303f0b51abec96401b57b",
+    "tmp/unit-modal-accessibility-v5/unit-modal-accessibility.ts": "90d670e574a4c5d0b4b1390c916ce242563ac7ccbe8a3c9da8baf76eae7359a6"
+  },
+  "applied_main_sha256": "cb6ee8d2bedc1401cedcda8e20e199f60bd8418e2a24baa00a373c5290a52168",
+  "source_proof": "tmp/unit-modal-accessibility-v5/source-proof.json",
+  "source_proof_sha256": "3a47645191633a64720f7e0a5b219f7aa4b2fa27dec060e06b28e42e21e86f5f",
+  "development_findings": [
+    {
+      "evidence": "docs/premium-ui/qa-unit-monthly-baseline.json",
+      "finding": "Existing unit modal ignored by body-only overlay ownership; focus outside, failed Escape and lost opener after cached unit navigation."
+    },
+    {
+      "evidence": "docs/premium-ui/qa-unit-modal-accessibility-v1-lifecycle-probe.json",
+      "finding": "All6 scratch V1 controlled cases leave focus on BODY when native dialog closes after unit DOM replacement. V2+ wait for native close owner to finish and restore only otherwise unowned BODY focus."
+    },
+    {
+      "evidence": "docs/premium-ui/qa-unit-modal-accessibility-v2-native-pointer-probe.json",
+      "finding": "WebKit pointer native editor/profile returns to wrong unit control. V3 pointerdown focus insufficient because later default pointer behavior blurs button; preserved V3 failing test/log. V4 captures click before existing delegated native opener handler, retaining exact mouse/touch opener."
+    },
+    {
+      "evidence": "tmp/unit-modal-accessibility-v2-harness-metadata",
+      "finding": "V2 test variable profile shadowed viewport metadata with a Locator; initial scripts/reports/logs preserved. V3+ rename profileDialog; V4 verifies real profile objects. No UI failure attributed to this harness metadata bug."
+    },
+    {
+      "evidence": "docs/premium-ui/qa-unit-modal-card-opener-v4-probe.json",
+      "finding": "All3 V4 actual card-title click paths return to BODY because the card is not focusable. V5 records its corresponding Manage button and excludes unfocusable/disabled generic nodes as usable openers. Actual V5 corresponding Manage return passes in all3 engines."
+    }
+  ],
+  "review_focus": [
+    "Nested inert path excludes app itself and restores original inert flags without affecting native top-layer/body overlays.",
+    "Guarded native-close microtask must retain newer deliberate focus and run only while current unit and shell lifetime are active.",
+    "Retain view-root mounting and delegated unit/member/record actions, original API/save handlers, native dirty/pending safeguards and cached navigation.",
+    "One import and one shell-lifetime call must exactly reverse; no backend/policy/storage/network changes.",
+    "Review rapid close/reopen, account/view teardown, body overlay stacking, rerender/native return and root text/short height/touch focus."
+  ],
+  "next_gate": "Independent source/lifecycle and adverse actual-controller review, then apply with baseline-hash guard and repeat integrated browser/unit/held-build/prior40 applicability checks.",
+  "limits": [
+    "Latest author and operator root; no independent V4 endorsement yet.",
+    "Successful-profile fixture6 covers loaded profile, actual tabs and native return; earlier failure6 covers503 recovery close. Inherited older report wording mentioning failure is not the successful fixture semantics. Both mouse/touch exact-opener results are asserted, despite earlier diagnostic wording retained in the pointer report.",
+    "All operational writes rejected; GETs fixtures or local RAM. No backend persistence, native AT, physical-device or production claim.",
+    "queueMicrotask is used for guarded native-close focus recovery. Earlier prototype source-proof phrase no scheduling helpers was ambiguous; V4 current proof explicitly distinguishes microtasks from duty scheduling/timers.",
+    "Full260 goal and145147 incomplete; current applied source still sealed40 accepted.",
+    "V4 preview5215 remains historical; V5 preview5216 is current. Applied app5197/dashboard5199/RAM8031 remain unchanged. No live test process is implied after terminal success."
+  ],
+  "parent": {
+    "path": "docs/premium-ui/reviews/unit-modal-accessibility-v4-preview-execution.json",
+    "sha256": "ff8498ae5e00f255dbaaff23c5a9e4a3ea3bbe28e96796e9080008e3e173876a"
+  }
+}

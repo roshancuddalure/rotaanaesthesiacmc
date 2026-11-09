@@ -1,0 +1,47 @@
+{
+  "recorded_at_utc": "2026-11-03T07:59:30.186267+00:00",
+  "reviewer": "/root/stage161_v4_review",
+  "application_changed": false,
+  "acceptance_ledger_changed": false,
+  "decision": "V5 source candidate ready for deferred runtime/independent review; do not integrate or accept whole161 from source checks.",
+  "baseline_main_sha256": "d13bd73108d89d6efb70a66426e6f8e9f6e50400475575b7a40cb06eef12c1bc",
+  "candidate_main_sha256": "92ae905af7ae749e361b98c6c95f8fdba0d025f9b385020d60ff8db2962b57f2",
+  "candidate_css_sha256": "0af149568e47bfdddac32a4b94a360a835239f801e9dcfe1c71eb6336d82eb93",
+  "source_checks": {
+    "exact_baseline_reverse": true,
+    "existing_non_get_effect_parity": true,
+    "typecheck_diagnostics": 0,
+    "pure_classifier_cases": 386
+  },
+  "ownership_review": [
+    "beginWorkflowRead captures account/month/viewSeq and monotonic readSeq. Success/failure checks all four before changing cache/freshness. Wrong-month checklist response marks tracker unavailable without accepting its progress.",
+    "interruptWorkflowRead invalidates only currently checking generation and sets interrupted before accepted navigate/showView/month transition. Guard placement follows existing unsaved-draft navigation decisions. No GET starts in interrupt.",
+    "Nonworkflow routes including Overview paint cached state only. Publish records its own read result; refreshWorkflowTracker skips Publish to avoid immediate reuse of old cache or duplicate GET. Other workflow routes intentionally read checklist after rendering; GET timing differs from baseline and is not claimed unchanged.",
+    "onDataChange clears checklist/cache before starting any workflow refresh. Signout clears workflowStatus/freshness and increments readSeq. Original role/action mutation expressions and all-blocker Review and published-history completion are preserved.",
+    "Five stable operation IDs separate assignment from template even though both use existing rota-template destination. DOM painting uses operation key, avoiding duplicate-view lookup collision. No computation auto-runs on navigation."
+  ],
+  "classification_policy": [
+    "Only nonnegative integer, internally consistent total/assigned/open counts are known; invalid values produce assignmentunknown.",
+    "Valid returned assignment progress may remainDone alongside scope/template blockers because that records already-filled slots; this does not make Review/Publish ready. Original blockers and readiness guidance remain visible. This preserves valid V4 semantics as instructed by root, without inventing backend policy."
+  ],
+  "source_concerns_outside_patch": [
+    "renderRotaPublish still stores/renders its returned object before workflow read-success validates matching month. Tracker becomesunavailable for wrong-month response, but the page can show that object. This was not introduced as a new API contract; actual wrong-month rendered page handling remains an audit concern and should be checked before broadtruthfulreadiness certification."
+  ],
+  "deferred_runtime_gates": [
+    "Actual owner24: pending success/failure route-away becomespaused immediately, oldmonth cannot repaintnewmonth, signout doesnotrestoreprivate UI.",
+    "Classification72 historical states plus new rendered invalid counts; unknown mustbevisible/accessible.",
+    "Surface12 Template/Overview five IDs/consistentlabels andcache-onlyOverview; optionalassignmenttools remainreachable and marker visible.",
+    "Enlargedtext320/1280 actual32px computed labels/states, laststage reachable, no pageoverflow; emulationisnotnativezoom.",
+    "Fresh-known checklist503 and retry recovery; returnedwrongmonth tracker/page truthfulness.",
+    "Root applied integration, unit/build, prior52 applicability, separate independentreview and exactwhole161conditionadjudication."
+  ],
+  "metadata_addendum": "Copied proof runner retains prior author field /root/stage161_v2_independent_resume. Actual V5 countguard preparation and successful proof execution performed by /root/stage161_v4_review; raw proof is preserved.",
+  "evidence_sha256": {
+    "tmp/stage161-operations-v5/manifest.json": "09f0a18fdb52c2dba04bfd14ce4ed3ec88aa9c0ba50d222ff34264d5efbe060f",
+    "tmp/stage161-operations-v5/source-proof.json": "7f05a33fbf70ba47a54000069b2294dda92e15cceb901115503d92cb6ca60ab8",
+    "tmp/stage161-operations-v5/main.ts": "92ae905af7ae749e361b98c6c95f8fdba0d025f9b385020d60ff8db2962b57f2",
+    "tmp/stage161-operations-v5/premium-theme.css": "0af149568e47bfdddac32a4b94a360a835239f801e9dcfe1c71eb6336d82eb93",
+    "docs/premium-ui/reviews/stage161-v4-independent-classification-source-review.json": "979f4e778d53266a57c3dbdf121be104630504dbaf61541ca4172e65be3234ce",
+    "docs/premium-ui/reviews/stage161-v5-count-guard-source-cases.json": "2776930419ce423b5e32cf58cedf65b8d1709622f963929e8fe4a7821021ce1a"
+  }
+}

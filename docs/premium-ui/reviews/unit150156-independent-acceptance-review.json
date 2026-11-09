@@ -1,0 +1,174 @@
+{
+  "recorded_at_utc": "2026-10-30T09:24:08.858785+00:00",
+  "reviewer": "/root/unit150156_acceptance_review",
+  "independent": true,
+  "scope": "Exact independent source/assertion/current-evidence review for150/156 plus independently authored actual special/empty-unit context probes. No application/backend/acceptance/ledger/package edits.",
+  "decision": "recommend_acceptance_of_exact150_and156_frontend_requirements",
+  "source_snapshot": "current9f42main and declared unchanged source/artifact hashes verified",
+  "items": [
+    {
+      "item_id": 150,
+      "requirement": "Keep create-unit and add-member actions visible at the relevant unit context, preserving existing normalized reference workflows.",
+      "conditions": [
+        {
+          "condition": "Create-unit and add-member entry points are visible where users manage the relevant unit context.",
+          "decision": "pass_for_exact_stated_frontend_condition",
+          "rationale": "Current main has admin Add unit in the unit toolbar and empty unit state; unit modal has Add member posting at the relevant unit or special-posting context. Root36 current mouse/touch/keyboard cases actually activate the visible toolbar/regular-unit paths across3engines320/1280 admin/board roles. This reviewer additionally activated special PAIN and empty-unit CTA paths in separately authored current-source6-case controller runs. Browser actionability is actual activation evidence,not a count-only source claim.",
+          "evidence": [
+            "docs/premium-ui/reviews/unit-create-opener-integrated-execution.json",
+            "docs/premium-ui/qa-unit150156-special-empty-independent.json"
+          ]
+        },
+        {
+          "condition": "They open the existing normalized reference/assignment workflow with the correct context and existing permissions.",
+          "decision": "pass_for_exact_stated_frontend_condition",
+          "rationale": "Toolbar/empty Create unit opens the existing normalized unit registry in fresh-create mode,with clear unit fields and no posting dates. Unit Add member posting opens existing Add posting with exact selected unit and June/July month bounds and an unselected person. Nested Create unit uses the normalized units POST and selects only the returned id after successful locally fulfilled save;503 retains fields and leaves outer unit unselected. Existing source admin gates map computer_admin/superadmin to reference creation and withhold reference/member creation controls for board role; current admin/board UI cases prove those gates,not backend authorization. Special PAIN independently retains PAIN with no guessed unit/person and July bounds. Existing UI permissions and workflow routing are preserved.",
+          "evidence": [
+            "docs/premium-ui/reviews/unit-create-opener-integrated-execution.json",
+            "docs/premium-ui/qa-unit150156-special-empty-independent.json"
+          ]
+        }
+      ],
+      "blocking_gaps": []
+    },
+    {
+      "item_id": 156,
+      "requirement": "Preserve clear distinction between adding a reference value, assigning a person and editing an existing dated record.",
+      "conditions": [
+        {
+          "condition": "Action labels and editor context clearly identify whether the user is adding a reference, assigning a person or editing an existing dated record.",
+          "decision": "pass_for_exact_stated_frontend_condition",
+          "rationale": "The three requested operation categories are visibly distinct: normalized registry Add a unit/Create unit with reference fields and no dated-record field; Add posting with new-record explanation,member/unit/type and effective date inputs; Edit posting with Editing record/existing member/unit/date/notes. Exact rendered titles/fields and actual controls are asserted in root current unit/month cases; normalized nested-create retains the surrounding assignment draft rather than presenting unit creation as assigning the person. Shared record source derives Add/Edit label and endpoint kind from explicit identity/kind,not inferred labels.",
+          "evidence": [
+            "docs/premium-ui/reviews/unit-create-opener-integrated-execution.json",
+            "docs/premium-ui/qa-unit150156-special-empty-independent.json"
+          ]
+        },
+        {
+          "condition": "Each action targets its existing record type and date scope without presenting one operation as another.",
+          "decision": "pass_for_exact_stated_frontend_condition",
+          "rationale": "Current additional12 actual root contexts submit new assignment preview without an identity and exact selected member/unit/month dates,then edit preview with the existing record identity and original dates/notes. Requests go to units/preview; normalized unit reference creation goes to normalization/units with its own name/campus/code payload and no posting mutation. Independent PAIN preview additionally proves special assignment type,blankunit and newidentity omission. Registry count-month is visibly separate from posting dates,so reference counts are not falsely recast as a dated assignment scope. This supports the exact category/context requirement; it does not certify all supported reference types155,all consequent refresh159 or actual persisted monthly mutation160.",
+          "evidence": [
+            "docs/premium-ui/reviews/unit-create-opener-integrated-execution.json",
+            "docs/premium-ui/qa-unit150156-special-empty-independent.json"
+          ]
+        }
+      ],
+      "blocking_gaps": []
+    }
+  ],
+  "independent_probe_executions": [
+    {
+      "report": "docs/premium-ui/qa-unit150156-special-independent.json",
+      "report_sha256": "8a125b94a4d66847566ca2c7d44f7d3a97d7dbcedd94fd7d61483407e0ac00e6",
+      "test": "frontend/tests/premium-unit150156-special-independent.browser.mjs",
+      "test_sha256": "b2cd4db14bacebd9c3047a4ed431ddad7fac088014ab12b289c909802b1389ee",
+      "log": "tmp/unit150156-special-independent.log",
+      "log_sha256": "11cd47f2bbeaf63c70702bd4ad53a36ea831d772770e662bffd6f0baac3f6100",
+      "contexts": 6,
+      "exit_code": 0,
+      "operator": "/root/unit150156_acceptance_review"
+    },
+    {
+      "report": "docs/premium-ui/qa-unit150156-special-empty-independent.json",
+      "report_sha256": "28a2ffcc4ea3662ebd9cbd90c429e343809e25f769ebc2bdb916804b8e87b683",
+      "test": "frontend/tests/premium-unit150156-special-empty-independent.browser.mjs",
+      "test_sha256": "533ec95c3f7f798934bc809e434897948743669ea2cbce19c026356f597c3e16",
+      "log": "tmp/unit150156-special-empty-independent.log",
+      "log_sha256": "11cd47f2bbeaf63c70702bd4ad53a36ea831d772770e662bffd6f0baac3f6100",
+      "contexts": 6,
+      "exit_code": 0,
+      "operator": "/root/unit150156_acceptance_review"
+    }
+  ],
+  "independent_actual_browser_contexts": 12,
+  "independent_count_disclosure": "6special-only contexts plus6special+empty contexts; the latter repeat the special case while extending empty creation. Do not describe as12distinct product states or as root60independent reruns.",
+  "reviewed_parent_execution_checks": [
+    {
+      "name": "preview",
+      "contexts": 12,
+      "report_test_log_hashes_valid": true,
+      "terminal_log_consistent_with_declared_success": true
+    },
+    {
+      "name": "touch",
+      "contexts": 12,
+      "report_test_log_hashes_valid": true,
+      "terminal_log_consistent_with_declared_success": true
+    },
+    {
+      "name": "keyboard",
+      "contexts": 12,
+      "report_test_log_hashes_valid": true,
+      "terminal_log_consistent_with_declared_success": true
+    },
+    {
+      "name": "new-unit",
+      "contexts": 6,
+      "report_test_log_hashes_valid": true,
+      "terminal_log_consistent_with_declared_success": true
+    },
+    {
+      "name": "staffing",
+      "contexts": 6,
+      "report_test_log_hashes_valid": true,
+      "terminal_log_consistent_with_declared_success": true
+    },
+    {
+      "name": "new-preview",
+      "contexts": 12,
+      "report_test_log_hashes_valid": true,
+      "terminal_log_consistent_with_declared_success": true
+    }
+  ],
+  "source_preservation": {
+    "two_disclosed_focus_lines_reverse_to_complete_preceding_main": true,
+    "unit_only_record_focus_guard": true,
+    "existing_API_payload_state_role_dates_handlers_except_focus_unchanged": true,
+    "current_build_source_artifacts_hashes_valid": true
+  },
+  "superadmin_limit": "Source-equivalent isAdminUser branch includes superadmin; actual current UI role tests cover computer_admin and rota_board_member,not a separate superadmin login.",
+  "evidence_sha256": {
+    "docs/premium-ui/reviews/unit-create-opener-integrated-execution.json": "1fd647bba7dedd86b5421edca86c6fb18b22c7893fce3b828bccfcb2997e0779",
+    "docs/premium-ui/reviews/unit-create-opener-prior44-applicability.json": "beb9becdae912f29d75d7e0ece480df3fddf27f488a8526ffc677f15aba5718a",
+    "tmp/unit-create-opener-v1/source-proof.json": "b3e58c5e4f6b92bfbdc472df84b7fadde6734bfdfc696fe9773d41b234ecb591",
+    "tmp/unit-create-opener-v1/before-main.ts": "10f87a958f40a9019617b3f36732502d8394992796191bb5daf30ee66058d64c",
+    "docs/premium-ui/acceptance-criteria/items-087-173.json": "a7bf1322bd8e08a1fddd4195095d9cc52a8867a1b8a2bda9b523917fae458576",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json": "4b92ad27bed1f27cbff7697c41b0df0645e520dc4f14b58bbfc190748d570424",
+    "frontend/src/main.ts": "9f42daa30c62a348ba3a3ac6deabae37bb904f3dbefd66e11584f2a7e373b9f6",
+    "frontend/src/record-workspace.ts": "7c196c12b114c48bf2db4ee57aad7e591d8e3acc7a77cccd15abbad7c349fb8f",
+    "frontend/src/reference-workspace.ts": "78c231ea1d5ab15bd3a4b5f2f8265529451a51bacc68d2a4aac1708a4be30292",
+    "frontend/src/session-role.ts": "bb13b581f4d2320d7010ca754567ed2aa7a504abd4ec3eaae6bfbc830306fb1b",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "docs/premium-ui/qa-unit-create-opener-v1-preview-integrated.json": "c929ac135f14dd78e0c78551f63140a6d32655e32a10a6e802948d4e434bee9d",
+    "frontend/tests/premium-unit-create-opener-v1-preview.browser.integrated.mjs": "29c7d7536744b12c306ec46827ceae99efedafd019f2ec14a92d6bb1337cdd3a",
+    "tmp/unit-create-opener-integrated-preview.log": "af7393843926a0c8ccd26c3bb5d8c67437abaead935c96e3518bf2513f2a6191",
+    "docs/premium-ui/qa-unit-create-opener-v1-touch-integrated.json": "abb05899d0d077091feb753c72024931a781b4bf18d41670fa2dd359f6a4bafa",
+    "frontend/tests/premium-unit-create-opener-v1-touch.browser.integrated.mjs": "110a2743b299d4db3b1851ee7c77e24d1583d9494a856981cd208706dfabd664",
+    "tmp/unit-create-opener-integrated-touch.log": "af7393843926a0c8ccd26c3bb5d8c67437abaead935c96e3518bf2513f2a6191",
+    "docs/premium-ui/qa-unit-create-opener-v1-keyboard-integrated.json": "7bddea30c5ba5bd488a71fc9863b62867c4a3abb17a8dff7a4c7cdfd94290bd2",
+    "frontend/tests/premium-unit-create-opener-v1-keyboard.browser.integrated.mjs": "c7ccfca27a21bb8757258a8bc0616a34b2980add9088c365228f0bfb6b70d73c",
+    "tmp/unit-create-opener-integrated-keyboard.log": "af7393843926a0c8ccd26c3bb5d8c67437abaead935c96e3518bf2513f2a6191",
+    "docs/premium-ui/qa-record-new-unit-context-current-integrated.json": "b47470770200be1b9af09729e140df5f4913f834348ff393c1d231584bfe83a7",
+    "frontend/tests/premium-record-new-unit-context-current.browser.integrated.mjs": "73c771d5f99eefb8f02ab5fb9cacec634a78622a895d5cb071b4672e6bbbf31e",
+    "tmp/unit-create-opener-integrated-new-unit.log": "7fbdb9ae476a49e788040db0474ec77598bb3b85bbba28097d3726c6877229f7",
+    "docs/premium-ui/qa-staffing-review-context-current-integrated.json": "29488b3be3e7a94a1b774a1d087f85f3d4a8ad2bd5236bd2a71d88abfe868e1b",
+    "frontend/tests/premium-staffing-review-context-current.browser.integrated.mjs": "44918deb78d3f6b5d04de050cc21eabeffc937be4f6394477ffce71b6410ee15",
+    "tmp/unit-create-opener-integrated-staffing.log": "923e4cb7ede23708f91f420f0744ec0976f271e130ec234f5e28530cdb4cc5ef",
+    "docs/premium-ui/qa-unit-new-record-preview-context-current.json": "4cd073028c74b0c8da9eed9aa4f1d4837c87717da7ecac649d3fe0f631578088",
+    "frontend/tests/premium-unit-new-record-preview-context-current.browser.mjs": "586be8ac0cbdadc734f735427c5466a4f25eb9f071d48e0f2e484fe5e04569b0",
+    "tmp/unit-new-record-preview-context-current.log": "af7393843926a0c8ccd26c3bb5d8c67437abaead935c96e3518bf2513f2a6191",
+    "docs/premium-ui/qa-unit150156-special-independent.json": "8a125b94a4d66847566ca2c7d44f7d3a97d7dbcedd94fd7d61483407e0ac00e6",
+    "frontend/tests/premium-unit150156-special-independent.browser.mjs": "b2cd4db14bacebd9c3047a4ed431ddad7fac088014ab12b289c909802b1389ee",
+    "tmp/unit150156-special-independent.log": "11cd47f2bbeaf63c70702bd4ad53a36ea831d772770e662bffd6f0baac3f6100",
+    "docs/premium-ui/qa-unit150156-special-empty-independent.json": "28a2ffcc4ea3662ebd9cbd90c429e343809e25f769ebc2bdb916804b8e87b683",
+    "frontend/tests/premium-unit150156-special-empty-independent.browser.mjs": "533ec95c3f7f798934bc809e434897948743669ea2cbce19c026356f597c3e16",
+    "tmp/unit150156-special-empty-independent.log": "11cd47f2bbeaf63c70702bd4ad53a36ea831d772770e662bffd6f0baac3f6100"
+  },
+  "limits": [
+    "Root60 were reviewed through actual assertions/raw/log/hash evidence,not independently rerun wholesale. Independently authored new probes are12 actual current-source contexts as disclosed.",
+    "All unit-create/record-preview POSTs locally fulfilled or refused; this is UI identity/routing/authoritative-response selection proof,not backend authorization or persistence.",
+    "No blanket all-buttons/full260/nativereader/physical/production acceptance. Broader155/159/160 remain outside this recommendation.",
+    "The unit registry member-count month is intentionally visible and independent from the selected posting month; this is not a promise its counts follow the board month."
+  ]
+}

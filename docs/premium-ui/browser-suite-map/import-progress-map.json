@@ -1,0 +1,466 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-10-28T06:55:41.471638+00:00",
+  "scope": "Assertion-level mapping of two freshly executed import progress/retention suites (78 total workflows), passive upload helper, and current-source unit-loader provenance. No requirement135/136 acceptance inferred.",
+  "entries": [
+    {
+      "suite": "frontend/tests/premium-import-progress-recovery.browser.mjs",
+      "sha256": "2b11a9986ad64bc063ba6f2ef20fe27bc322c63dd5f7e8cc5d737b85afac575a",
+      "source_inspected": true,
+      "execution_verified": true,
+      "execution_verification_scope": "Executed this exact script/helper/app snapshot; 42 completed locally fulfilled native browser workflows passed, including end-of-run held-source hash assertions. No whole-requirement acceptance.",
+      "screens": [
+        "Actual mounted member CSV/Excel panel",
+        "Actual member CSV dialog",
+        "Actual operational units import dialog",
+        "Actual operational leave import dialog"
+      ],
+      "contexts": {
+        "engines": [
+          "chromium",
+          "firefox",
+          "webkit"
+        ],
+        "widths": [
+          320,
+          1280
+        ],
+        "heights": {
+          "320": 568,
+          "1280": 900
+        },
+        "themes": "Default only; no explicit light/dark or forced-colors sweep in these two suites.",
+        "cases": 42,
+        "fixture": "Isolated same-origin HTML imports the real exported components and actual styles. Every API response locally fulfilled. Native files, mapping selects, candidate/member controls, Enter/Escape and native confirmation dialogs; no private controller state or HTML replacement to establish outcomes.",
+        "variants": "24 workbook cases: ordinary/replayed server result ? callback remount-then-throw/same-mount-throw ? 3 engines ? 2 widths. 18 memberCSV/units/leave ordinary-throw cases. MemberCSV roster_sync and operational update_matching modes."
+      },
+      "source_snapshot": {
+        "raw_report": "docs/premium-ui/qa-import-progress-recovery.json",
+        "raw_report_sha256": "b4ae5947afe53069de5b78b498cb2e239013d03eb259d51d7b32ee950d465aab",
+        "source_sha256": {
+          "src/ui.ts": "680d7830bca8826b46b6f1dc2c0d064d2a3a2e16fb41188d2c323de6bccf85b2",
+          "src/member-import.ts": "d4c70924c8a089de3fa836491d2e2bf6b6b7d38c17571d516c1f9bc194ad3e50",
+          "src/member-workspace.ts": "2d52a71134b38e6ec1b2398ddac0cd90ac85829d0bd6ba084b92c1693f2bb97d",
+          "src/operational-import.ts": "4ab9468b70cdc425e00daba864c3e116815a0dfcdb6628fa5cdf51aa7abaf976",
+          "src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+          "src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+          "src/premium-theme.css": "d9113665ea4657cc9d5539db9017bbce76981881b2896341155694552610f1f6",
+          "tests/premium-import-progress-recovery.browser.mjs": "2b11a9986ad64bc063ba6f2ef20fe27bc322c63dd5f7e8cc5d737b85afac575a",
+          "tests/fixtures/import-upload-observer.mjs": "ef20334b30a036c61d11558da867c2fa38041460323275378dce0f9a29c63ec7"
+        },
+        "current_hashes_match_report": true
+      },
+      "assertion_groups": [
+        {
+          "action": "truthful-stage-state-machine",
+          "selector": "[data-import-steps] .ds-steps__item; [aria-current=step]",
+          "outcome": "Exact four data-state sequence and current-step count at Upload, Map, returned Review, manual Apply pending and confirmed all-done. Initial columns503 remains Upload; replacement resets progress before successful column read.",
+          "source_lines": [
+            [
+              35,
+              43
+            ],
+            [
+              130,
+              148
+            ],
+            [
+              165,
+              176
+            ],
+            [
+              189,
+              193
+            ]
+          ],
+          "evidence_class": "native_browser_locally_fulfilled_requests",
+          "report_paths": [
+            "docs/premium-ui/qa-import-progress-recovery.json"
+          ]
+        },
+        {
+          "action": "columns503-retained-file-safe-existing-preview-or-inspect-retry",
+          "selector": "input[type=file]; [data-mi=inspect]; Preview import / Preview and normalize; mapping selectors",
+          "outcome": "Column error retains file and guidance. Workbook uses native Read File and Columns retry. Dialogs use existing Preview with supported automatic-header fixture; resulting preview still uploads initial.csv. Native replacement removes abandoned mapping controls and old rows.",
+          "source_lines": [
+            [
+              83,
+              93
+            ],
+            [
+              131,
+              148
+            ]
+          ],
+          "evidence_class": "native_browser_locally_fulfilled_requests",
+          "report_paths": [
+            "docs/premium-ui/qa-import-progress-recovery.json"
+          ]
+        },
+        {
+          "action": "preview503-file-mapping-member-choice-retention-and-stale-apply-block",
+          "selector": "[data-pick-member=b]; .member-match__pending/identity; native preview; Apply",
+          "outcome": "Failed member-choice preview retains pending last returned result; Apply sends zero requests while stale. Explicit Preview retry has exactly the failed request file/name/hash/settings, including custom mapping and member correction; units/leave also retain DMY date format.",
+          "source_lines": [
+            [
+              149,
+              159
+            ]
+          ],
+          "evidence_class": "native_browser_locally_fulfilled_requests",
+          "report_paths": [
+            "docs/premium-ui/qa-import-progress-recovery.json"
+          ]
+        },
+        {
+          "action": "native-discard-keeps-draft",
+          "selector": "Escape; native Discard this import draft dialog",
+          "outcome": "For the three dialog surfaces, dismissing the actual discard prompt keeps the same dialog open. Workbook has no corresponding close/discard dialog; its boundary behavior is covered separately.",
+          "source_lines": [
+            [
+              160,
+              164
+            ]
+          ],
+          "evidence_class": "native_browser_locally_fulfilled_requests",
+          "report_paths": [
+            "docs/premium-ui/qa-import-progress-recovery.json"
+          ]
+        },
+        {
+          "action": "manual-apply-pending-unconfirmed503-and-existing-retry-authority",
+          "selector": "Apply; file input disabled state; error/status copy",
+          "outcome": "Held manual Apply makes Apply current and disables native file replacement. 503 returns Review, unlocks controls and explicitly states changes may already have saved and to check records/history. Workbook remains blocked until Preview again. Retry Preview settings stay exact.",
+          "source_lines": [
+            [
+              165,
+              173
+            ]
+          ],
+          "evidence_class": "native_browser_locally_fulfilled_requests",
+          "report_paths": [
+            "docs/premium-ui/qa-import-progress-recovery.json"
+          ]
+        },
+        {
+          "action": "confirmed-apply-callback-failure-and-exact-manual-retry-bodies",
+          "selector": "Workbook remount / callback throw; completed steps; status; intercepted Apply body",
+          "outcome": "Confirmed response remains completed even when callback fails. Ordinary and replayed workbook remount cases retain honest saved-result/replay wording and suppress obsolete error/finally paint; no unobserved refreshed claim. Other callback failures explicitly say confirmed. Exactly two user-activated applies, no automatic replay; payloads identical, exact workbook preview hash/options and dialog exclusion/archive/acknowledgement shapes asserted.",
+          "source_lines": [
+            [
+              68,
+              81
+            ],
+            [
+              174,
+              188
+            ]
+          ],
+          "evidence_class": "native_browser_locally_fulfilled_requests",
+          "report_paths": [
+            "docs/premium-ui/qa-import-progress-recovery.json"
+          ]
+        },
+        {
+          "action": "post-completion-native-replacement-and-source-stability",
+          "selector": "input[type=file]; mapping controls; source SHA256 list",
+          "outcome": "Native replacement after confirmed result removes old mapping controls and resets to Upload, then Map after columns response. No pageerror; all listed actual app/helper/test hashes equal start snapshot at end.",
+          "source_lines": [
+            [
+              189,
+              201
+            ]
+          ],
+          "evidence_class": "native_browser_locally_fulfilled_requests",
+          "report_paths": [
+            "docs/premium-ui/qa-import-progress-recovery.json"
+          ]
+        },
+        {
+          "action": "actual-file-name-and-byte-observation",
+          "selector": "Native fetch FormData File; intercepted multipart file fields",
+          "outcome": "Every engine asserts actual File name/text passed into real fetch. Chromium/Firefox additionally assert raw intercepted multipart bytes. WebKit protocol omission is not interpreted as actual file loss or server-received-byte proof.",
+          "source_lines": [
+            [
+              68,
+              87
+            ]
+          ],
+          "evidence_class": "native_browser_locally_fulfilled_requests",
+          "report_paths": [
+            "docs/premium-ui/qa-import-progress-recovery.json"
+          ]
+        }
+      ],
+      "limitations": [
+        "No actual backend persistence, production authorization, server-received upload bytes, physical-device touch or native assistive-technology certification. All API responses including writes are locally fulfilled.",
+        "No all-mode Apply matrix: core Apply cases use memberCSV roster_sync and operational update_matching; other-mode retention comes from the separate boundary suite, which never applies.",
+        "No measured error-text/footer geometry, screenshots, zoom or theme sweep in these scripts; those require separate evidence.",
+        "Initial harness timing diagnostic and old28-pass preobserver run are historical, not additional successful cases in the42 count."
+      ]
+    },
+    {
+      "suite": "frontend/tests/premium-import-retention-boundaries.browser.mjs",
+      "sha256": "0a35a7fd3ecc05250b6164802f83633778f3fbafdbcf5306491d017b3683353f",
+      "source_inspected": true,
+      "execution_verified": true,
+      "execution_verification_scope": "Executed this exact script/helper/app snapshot; 36 completed locally fulfilled native browser workflows passed, including end-of-run held-source hash assertions. No whole-requirement acceptance.",
+      "screens": [
+        "Actual mounted member CSV/Excel panel",
+        "Actual member CSV dialog",
+        "Actual operational units import dialog",
+        "Actual operational leave import dialog"
+      ],
+      "contexts": {
+        "engines": [
+          "chromium",
+          "firefox",
+          "webkit"
+        ],
+        "widths": [
+          320,
+          1280
+        ],
+        "heights": {
+          "320": 568,
+          "1280": 900
+        },
+        "themes": "Default only; no explicit light/dark or forced-colors sweep in these two suites.",
+        "cases": 36,
+        "fixture": "Isolated same-origin HTML imports the real exported components and actual styles. Every API response locally fulfilled. Native files, mapping selects, candidate/member controls, Enter/Escape and native confirmation dialogs; no private controller state or HTML replacement to establish outcomes.",
+        "mode_matrix": {
+          "chromium": {
+            "cases": 20,
+            "member_csv": [
+              "roster_sync",
+              "create_only",
+              "update_existing"
+            ],
+            "units_and_leave": [
+              "update_matching",
+              "append",
+              "replace_month"
+            ],
+            "widths": [
+              320,
+              1280
+            ]
+          },
+          "firefox_and_webkit": {
+            "cases_each": 8,
+            "member_csv": [
+              "roster_sync"
+            ],
+            "units_and_leave": [
+              "update_matching"
+            ],
+            "widths": [
+              320,
+              1280
+            ]
+          },
+          "workbook": "No mode selector; one workflow per engine/width."
+        }
+      },
+      "source_snapshot": {
+        "raw_report": "docs/premium-ui/qa-import-retention-boundaries.json",
+        "raw_report_sha256": "b63f4cda89d4db94d8832b84e22ff5084232ceb74850df9d8106b31c6dfed2aa",
+        "source_sha256": {
+          "src/ui.ts": "680d7830bca8826b46b6f1dc2c0d064d2a3a2e16fb41188d2c323de6bccf85b2",
+          "src/member-import.ts": "d4c70924c8a089de3fa836491d2e2bf6b6b7d38c17571d516c1f9bc194ad3e50",
+          "src/member-workspace.ts": "2d52a71134b38e6ec1b2398ddac0cd90ac85829d0bd6ba084b92c1693f2bb97d",
+          "src/operational-import.ts": "4ab9468b70cdc425e00daba864c3e116815a0dfcdb6628fa5cdf51aa7abaf976",
+          "src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+          "src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+          "src/premium-theme.css": "d9113665ea4657cc9d5539db9017bbce76981881b2896341155694552610f1f6",
+          "tests/premium-import-retention-boundaries.browser.mjs": "0a35a7fd3ecc05250b6164802f83633778f3fbafdbcf5306491d017b3683353f",
+          "tests/fixtures/import-upload-observer.mjs": "ef20334b30a036c61d11558da867c2fa38041460323275378dce0f9a29c63ec7"
+        },
+        "current_hashes_match_report": true
+      },
+      "assertion_groups": [
+        {
+          "action": "nonempty-review-choices-retained-across-preview503-and-manual-retry",
+          "selector": "Workbook skip/member resolution; CSV row inclusion/archive and member_id; operational exclusion/person_id",
+          "outcome": "Exact failed/retried request file hash/name/mapping/corrections/mode/month preserved. Workbook resolutions are2=b,3=skip. CSV row3 inclusion choice survives; roster_sync missing-member archive checkbox stays checked. Operational CSV:3 exclusion survives in both actual settings and native checkbox. create_only existing-member fixture remains invalid with existing server-style error; explicit inclusion retained rather than pretending a valid create.",
+          "source_lines": [
+            [
+              31,
+              33
+            ],
+            [
+              45,
+              57
+            ],
+            [
+              66,
+              94
+            ]
+          ],
+          "evidence_class": "native_browser_locally_fulfilled_requests",
+          "report_paths": [
+            "docs/premium-ui/qa-import-retention-boundaries.json"
+          ]
+        },
+        {
+          "action": "ready-review-native-replacement-clears-authority-and-review-decisions",
+          "selector": "input[type=file]; .member-match; mappings; row include/archive/exclusion",
+          "outcome": "Help states replacement discards mappings/review choices before repetition. Native replacement removes ready review and returns Map after columns; refreshed replacement preview has empty corrections/resolutions and normal include defaults, no retained archive or operational exclusions.",
+          "source_lines": [
+            [
+              95,
+              106
+            ]
+          ],
+          "evidence_class": "native_browser_locally_fulfilled_requests",
+          "report_paths": [
+            "docs/premium-ui/qa-import-retention-boundaries.json"
+          ]
+        },
+        {
+          "action": "accepted-native-discard-and-reopen-with-empty-file-permissions",
+          "selector": "Escape; actual native Discard prompt; reopen action; input.files",
+          "outcome": "Accepting existing discard closes/removes each dialog; reopening has no selected File, mapping controls or review rows. No changes to actual discard implementation are exercised synthetically.",
+          "source_lines": [
+            [
+              107,
+              109
+            ]
+          ],
+          "evidence_class": "native_browser_locally_fulfilled_requests",
+          "report_paths": [
+            "docs/premium-ui/qa-import-retention-boundaries.json"
+          ]
+        },
+        {
+          "action": "actual-browser-reload-lifetime-boundary",
+          "selector": "page.reload; real reimport/mount; native input.files; stages",
+          "outcome": "Actual reload followed by mounting the real components starts with no selected File, mapping or review; Upload current and later stages upcoming. Test mount does not reset controller private data to fabricate reload behavior.",
+          "source_lines": [
+            [
+              19,
+              25
+            ],
+            [
+              111,
+              114
+            ]
+          ],
+          "evidence_class": "native_browser_locally_fulfilled_requests",
+          "report_paths": [
+            "docs/premium-ui/qa-import-retention-boundaries.json"
+          ]
+        },
+        {
+          "action": "no-apply-and-held-source-proof",
+          "selector": "Intercepted API paths; pageerror; final source hashes",
+          "outcome": "Every branch rejects unexpected Apply and finishes with zero Apply calls; no pageerror. Listed actual source and own/helper test hashes remain exactly held.",
+          "source_lines": [
+            45,
+            [
+              115,
+              121
+            ]
+          ],
+          "evidence_class": "native_browser_locally_fulfilled_requests",
+          "report_paths": [
+            "docs/premium-ui/qa-import-retention-boundaries.json"
+          ]
+        },
+        {
+          "action": "actual-upload-file-evidence",
+          "selector": "FormData File and intercepted multipart",
+          "outcome": "Actual browser-side File name/text matched for every request, with unmodified native fetch and separate Chromium/Firefox raw multipart equality. WebKit raw-byte omission remains an explicit limitation.",
+          "source_lines": [
+            46
+          ],
+          "evidence_class": "native_browser_locally_fulfilled_requests",
+          "report_paths": [
+            "docs/premium-ui/qa-import-retention-boundaries.json"
+          ]
+        }
+      ],
+      "limitations": [
+        "No Apply requests or actual persistence in this suite. replace_month retention does not certify acknowledgement, replacement semantics or Apply payloads for that mode.",
+        "Remaining modes exercised in Chromium only; Firefox/WebKit use default modes.",
+        "Closing/reopening is applicable to dialogs; workbook uses real reload boundary because its panel has no importer-specific discard dialog.",
+        "No File restoration across reload is claimed or attempted. No geometry, screenshot, zoom, theme or native AT certification."
+      ]
+    }
+  ],
+  "supporting_helpers": [
+    {
+      "path": "frontend/tests/fixtures/import-upload-observer.mjs",
+      "sha256": "ef20334b30a036c61d11558da867c2fa38041460323275378dce0f9a29c63ec7",
+      "source_inspected": true,
+      "consumed_and_hash_bound_by": [
+        "frontend/tests/premium-import-progress-recovery.browser.mjs",
+        "frontend/tests/premium-import-retention-boundaries.browser.mjs"
+      ],
+      "source_lines": [
+        [
+          3,
+          15
+        ],
+        [
+          17,
+          22
+        ]
+      ],
+      "behavior": "Passive addInitScript wrapper observes actual FormData File name/text and pathname. Calls originalFetch.apply(this, arguments) and returns its unchanged native return; does not modify options/body or replace application API serialization. observedImportFile reads completed observations for the same request path.",
+      "limitation": "Observation certifies the actual browser File sent to native fetch, not backend receipt. WebKit intercepted multipart omits file bytes; Chromium/Firefox retain raw multipart assertions.",
+      "report_paths": [
+        "docs/premium-ui/qa-import-progress-recovery.json",
+        "docs/premium-ui/qa-import-retention-boundaries.json"
+      ]
+    }
+  ],
+  "applied_unit_loader_proof": {
+    "test": "frontend/tests/member-management.test.mjs",
+    "current_test_sha256": "cb2155099a0882f72800ad31bed4614d0b427b2f7fe02b9e4a943208a11ccbdf",
+    "source_inspected": true,
+    "loader_source_lines": [
+      [
+        35,
+        51
+      ]
+    ],
+    "actual_behavior": "compiledModule reads ../src/${filename} as UTF-8 at execution, transpiles that source with TypeScript, rewrites API/workspace import bindings to doubles, recursively compiles current ui/member-import/audit-time/member-presentation modules, then imports the generated data URL. importUi loads current member-import.ts; no copied controller implementation or prebuilt JS is used.",
+    "scoped_test_source_lines": [
+      [
+        60,
+        105
+      ]
+    ],
+    "scoped_assertions": "Current-source member CSV controller retains review on filtering, requires call approval, uses selected member, exact confirm_call_changes and reviewed-hash on apply, calls refresh once, displays the newly applied honest confirmed/saved-result copy, and removes Apply after success. Root updated only the obsolete old success-copy expectation.",
+    "raw_log": "tmp/premium-import-progress-unit.log",
+    "raw_log_sha256": "465a1836022aa7ea29ae49ecb485b2d09f64ee616b7835cbcf0f2cb922a8e78a",
+    "log_summary_source_lines": [
+      [
+        119,
+        126
+      ]
+    ],
+    "retained_run_summary": {
+      "tests": 114,
+      "pass": 114,
+      "fail": 0
+    },
+    "run_command_from_log": "npm test -> node --test tests/*.test.mjs",
+    "limitations": "The retained114-pass log has no embedded source-hash manifest. Current source hashes are recorded at mapping; loader provenance is source-inspected, not a fabricated historical log hash binding. API doubles and lightweight hosts do not certify browser rendering or backend behavior.",
+    "current_local_source_sha256": {
+      "src/member-import.ts": "d4c70924c8a089de3fa836491d2e2bf6b6b7d38c17571d516c1f9bc194ad3e50",
+      "src/ui.ts": "680d7830bca8826b46b6f1dc2c0d064d2a3a2e16fb41188d2c323de6bccf85b2",
+      "src/member-presentation.ts": "71c8c8f7b1eadd1d02e84e3a997f3c636a3b7edb04b4bf527b19bdde223c5f60",
+      "src/audit-time.ts": "136542cb2daec343417532d372f2e8ce01a0e6103ef6c62a7a4a8017ac8a6d15"
+    }
+  },
+  "historical_diagnostics": {
+    "not_additional_passes": true,
+    "old_28_completed_then_webkit_capture_failure_report": "docs/premium-ui/qa-import-progress-recovery-chromium-firefox-pre-observer.json",
+    "old_test_copy": "tmp/premium-import-progress-recovery-pre-observer.browser.mjs",
+    "old_test_copy_sha256": "8f6f243e4f11a32e2bb70bd7d5acaf7cf6725e20fed42fd02bf34f7743124af5",
+    "timing_diagnostic": "tmp/progress-smoke-before-settle-diagnostic.json",
+    "interpretation": "Preobserver WebKit capture failure did not prove product file loss. Fresh78 workflows use held passive observation and explicit evidence limits."
+  }
+}

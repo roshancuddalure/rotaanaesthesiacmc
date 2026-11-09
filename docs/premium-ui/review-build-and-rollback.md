@@ -2,7 +2,52 @@
 
 This working tree is an active, incomplete implementation of the approved 260-item plan. The execution report, traceability ledger and individual runtime reports define what has actually been checked. A green build is not release acceptance. Physical-device checks are pending at the user's direction; manual screen-reader checks remain pending separately.
 
-## Current effective identity review snapshot
+## Current unit and Rules review snapshot — 29 October 2026
+
+`tmp/premium-frontend-review-20261029-unit-rules44.zip` seals the held build after scoped unit-card wrapping and Rules-help ownership repairs. SHA-256: `437fe7f1a9df4d7fc9e9dba24d6446a3d36bb059f544698c7170e19035102be8`. All15 static frontend/review payload entries verify. Packaging-time verification is preserved in `reviews/verification-packaging-20261029-unit-rules44.json`; the current pointer is `review-build-current.json`.
+
+The batch passes105 integrated browser contexts (93original plus12strengthened stress reruns),114unit tests and held build. Original149/151/152/154 are explicitly accepted from current exact condition evidence; prior40 acceptances are retained,44total. Independent parent unit gap audit and Rules diagnosis/original fix author are disclosed; root authored/tested the final closure. No final independent combined-source,full260,nativeAT,physical-device or backend-persistence certification is claimed. This archive is review-only,includes concurrent frontend work,and is not deployment authorization or a known-good deployed rollback release.
+
+## Historical unit-focus review snapshot — 29 October 2026
+
+`tmp/premium-frontend-review-20261029-unit-focus.zip` seals the held build after the frontend unit focus/overlay ownership repair. SHA-256: `bc16312ac13b38f75259281f88a804a6fb2df315278749098457ecaea88bccb0`. All15 static frontend/review payload entries verify; packaging-time verification is preserved in `reviews/verification-packaging-20261029-unit-focus.json`. The pointer is `review-build-current.json`.
+
+The applied repair passed69 integrated browser contexts,114 unit tests and a held build. Explicit source/ownership and runtime applicability retain40 accepted requirements. Independent reviewers identified the V5/V6 issues; root resolved later duplicate upper-popup opening and newer-focus interactions inV9 and performed final integration checks. No final independentV9 endorsement, full260 acceptance, backend persistence, nativeAT or physical-device certification is claimed. The archive remains review-only and is not deployment authorization or a known-good deployed rollback release.
+
+## Historical monthly-unit review snapshot — 29 October 2026
+
+The current pointer is `review-build-current.json`. The review archive is `tmp/premium-frontend-review-20261029-unit-monthly.zip`, SHA-256 `2aca772d7e621b37db26e46ae7c8df9ac1fe8c1d27b25aa8c70cdde2c47f63dd`. Its 15 static frontend/review payload entries were verified against the held build. Packaging-time verification is preserved in `reviews/verification-packaging-20261029-unit-monthly.json`.
+
+The applied two-file monthly-unit presentation batch passed 36 integrated browser workflows and 114 unit tests. It describes monthly leave-record coverage, preserves valid counts and rule fields, distinguishes missing totals from zero, and repairs unit title contrast, neutral chips and 44px header controls. Explicit source applicability retains 40 accepted requirements; it does not accept whole145147 or the full260 goal. The existing nested unit-modal keyboard lifecycle defects remain open for a separate frontend repair. This archive is review-only, includes concurrent frontend work, and is not deployment authorization or a known-good deployed rollback release.
+
+## Historical profile draft/workload review snapshot
+
+tmp/premium-frontend-review-20261024-profile-draft-workload.zip seals the held frontend build with in-place section markers, supported nested duty navigation, compact workload metrics and explicit unknown history states.
+SHA-256: a9ffd682a11b14762a320523c8f99673a26773e02bb772cb5021a3b04ac52a6c. Review only; full goal incomplete and deployment unauthorized.
+Packaging-time verification: docs/premium-ui/reviews/verification-packaging-20261024-profile-draft-workload.json.
+Five new suites passed33 contexts, including624 history variants,108 duty drilldowns and66 value cases. All12 profile regression suites,110 unit tests and held build passed.
+Evidence: reviews/profile-draft-workload-current.json. Original127/132/133 accepted after root and independent review;25 of260 accepted overall.
+This archive is not a known-good deployed rollback release. Item259 acceptance stays bound to its original named profile-tabs artifact and does not automatically transfer.
+
+## Historical both-profile hierarchy review snapshot
+
+tmp/premium-frontend-review-20261024-profile-hierarchy.zip seals the held frontend build with shared strict date presentation, compact full identity access, dated position history and metadata disclosures across both variants.
+SHA-256: 63d4916c05b3fca615f4a77c44254349524843648dfd58d55038042270aa28ec. Review only; full goal incomplete, deployment unauthorized.
+Packaging-time verification: docs/premium-ui/reviews/verification-packaging-20261024-profile-hierarchy.json.
+27 new browser contexts contain408 workflows; all12 existing profile regression suites,110 unit tests and held-input build passed.
+Evidence: reviews/profile-hierarchy-current.json. Original122/126/128/130 accepted after root and independent condition review;22 of260 accepted overall.
+This archive is not a known-good deployed rollback release. Item259 remains bound to its original named profile-tabs artifact; acceptance does not transfer automatically.
+
+## Historical designation header review snapshot
+
+tmp/premium-frontend-review-20261024-designation-header.zip seals the held frontend build with strict recorded-designation presentation and compact full identity access.
+SHA-256: c3ab3f5030053fa8997fb210364ca1cebdf188339a56ce34de02bc09c26dc01a. Review only; the goal is incomplete and deployment is unauthorized.
+Packaging-time verification: docs/premium-ui/reviews/verification-packaging-20261024-designation-header.json.
+Nine new contexts contain180 GET-only workflows;49 additional regression contexts/workflows,110 unit tests and a held-input build passed.
+Evidence: reviews/designation-header-current.json.122/126 remain partial pending legacy parity;18 of260 requirements accepted.
+This archive is not a known-good deployed rollback release. Item259 remains bound to its original named profile-tabs archive and does not transfer automatically.
+
+## Historical effective identity review snapshot
 
 tmp/premium-frontend-review-20261024-effective-identity.zip seals the held frontend build with distinct null, omitted and unknown effective call-level presentation and scoped long-value wrapping.
 SHA-256: 0a3f0f5549b9a80128b73fdfeae220009c7045433e6501a9a6e594d92aefd933. Review only; the goal remains incomplete and deployment is unauthorized.
@@ -309,3 +354,51 @@ The repository contains concurrent backend, rules and extra-duty work. Do not re
 The task-start source snapshot is recorded in `tmp/premium-ui-baseline-path.txt`. It is comparison evidence, not a safe whole-worktree restore target. Inspect the selected UI diff, current file hashes and concurrent changes, then prepare a reverse patch containing only the reviewed UI edits. Apply it locally, resolve shared-file overlaps explicitly and rerun the affected frontend checks before proposing a release rollback. Preserve the existing API payloads, permissions, scheduling calculations, database semantics and export contents.
 
 No deployment, push, production database operation or backend modification is authorized by these review instructions. The UI task has made no backend edits; `backend-boundary.json` separately records concurrent changes since the baseline. Keep unresolved acceptance items visible in the execution report and do not mark the persistent goal complete until the approved item-specific acceptance is proven.
+
+## 28 October — member matching review
+
+Current review archive: `tmp/premium-frontend-review-20261028-member-matching.zip`, SHA256 `f890c1684b6f325ef726b213a72e990b2683802fb8034dcaeeed23cefa7d4cc9`. Its15 static/review payload entries and manifest match the held build. Original134 adds ID-aware candidate presentation and workbook request ownership.26/260 accepted; the archive remains incomplete and is not a deployment or known-good rollback artifact. A separate workbook/past mobile containment defect is under investigation. Preserve the older immutable artifacts and follow the selective reverse-patch boundary above.
+
+## 28 October — import recovery and reviewed states
+
+Current review archive: `tmp/premium-frontend-review-20261028-import-recovery.zip`, SHA256 `24a90b4f8e3b3fc8309021eb8ee318c5e1ba8ee5cfe1533374d0b1a4462f7e80`. Its15 static/review payload entries and manifest match the held build. Original135/136 adds truthful stages and retained draft recovery. Mobile containment repaired;111/166/169 presentation accepted with stated evidence.31/260 accepted; the archive remains incomplete and is not a deployment or known-good rollback artifact. 180 import and12 separate generation workflows,114 units and held build pass. Physical/native AT checks remain pending. Preserve the older immutable artifacts and follow the selective reverse-patch boundary above.
+
+## 28 October — pending profile Cancel guard
+
+Review archive `tmp/premium-frontend-review-20261028-profile-cancel-guard.zip`, SHA256 `d219ef84cd82ac87c2d504f335c3ebe89f6569e2b76839414112ec0cfcc938fd`, contains15 static/review payload entries plus manifest. Three exact source replacements protect pending draft cancellation and restore Cancel after refusal.30 current browser regressions,114 units and held build pass;31 scoped acceptances retained through explicit source wrappers. Full131 layout proposal remains unimplemented. This is an incomplete local review artifact, with no deployment authorization or known-good rollback claim.
+
+## 28 October — profile editor consistency
+
+Review archive `tmp/premium-frontend-review-20261028-profile-editor-consistency.zip`, SHA256 `1f254da571906690f3f5c3cb9b2d41e9072a27c617505afbc9c5979bfa23cb66`.144 browser workflows (54 new,90 regressions),114 units and held build pass. Original131 accepted after exact source/Unicode/contract review and actual pointer/constrained-layout defect repair.32/260 accepted; native AT and physical checks remain unperformed.15 static/review payload entries plus manifest; no deployment authorization or known-good rollback claim. Preserve concurrent work and use the selective reverse-patch procedure above.
+
+## 28 October 2026: import context and mobile reachability
+
+Local runner recovered. Original137–139 accepted after exact six-condition independent review and root source/assertion/geometry gate:114 new plus180 regression browser contexts,114 units and held production build.35 accepted,223 partial,1 pending,1 physical-device dependency. No vertical ancestor clipping or actual sticky/fixed overlap in804 recorded rectangles; contained workbook/past tables retain horizontal scrolling at enlarged root text. No full-label horizontal visibility, browser zoom, physical-device or native AT claim. Review-only archive `tmp/premium-frontend-review-20261028-import-context-mobile.zip`, SHA256 `9fe2728344a42880e0e7ad5cf3c9960f550db6252f2b8afdb03b8abe4ef9fc96`. Fifteen static/review payload entries plus manifest; no push, deployment or known-good rollback claim. Prior archives and source-scoped reviews remain preserved.
+
+## 28 October 2026: font resilience and rules-review reveal
+
+Original38 accepted after36 font-failure contexts across all6 declared font-family selectors and8 shared SVG families, with native shell/profile/reference/archive-cancel outcomes. Exact one-expression Rules repair now scrolls the selected field instead of its tall article;12 native five-path motion contexts,20 Rules regressions,114 units andheld build pass. Independent source delta review preserves prior35 scopes.36accepted,222partial,1pending,1dependency. Whole37/39 remain incomplete. Close-icon proposal held for scoped SVG hit-target protection before application. Review-only archive `tmp/premium-frontend-review-20261028-font-fallback-rules-reveal.zip`, SHA256 `911014062b06975e01b9bf10db4f5589c4440d7f9e58f8cc441578b39539f042`; no push, deployment, physical/nativeAT or known-good rollback claim.
+
+## 28 October 2026: motion contract acceptance
+
+Original39accepted after exacttwo-condition independent/root review:56CSSrules,8keyframes and23explicitimperative/frame calls classified;36 browser contexts cover five guarded scrollsites, seven active keyframefamilies and the actual300ms bar-renderer transition with native data disclosure. Shared selector aliases/defaultinstantpositioning/frame scheduling have explicit source applicability, not invented individual runtime passes.37accepted,221partial,1pending,1dependency. Review-only archive `tmp/premium-frontend-review-20261028-motion-contract.zip`, SHA256 `5ec952883dca0efd37a0d46376830f9fa1fc809b24b11b1b87d3dc9e96c9db10`; no deployment, push or known-good rollback claim. Full260remainsactive.
+
+## 28 October 2026: close controls, recovery focus and leave approval
+
+38/260accepted after original142realRAMindividual/monthlyapproval gate. Bounded close batch uses17localSVGclosecontrols andthree44pxminimumtargets;36contexts/612nativeplacements pluscompact12/menu3 pass.177selectedclose/import/lifecyclecontexts,114units andheldbuild pass;12actualRAMleavecontexts separately verifyreadback, stale409/fresh-tokenacknowledgements and unchangedassignmentIDs. Two real focus defects were diagnosed, with retained failures: WebKitdrawerpointerclose nowreturnsopener; savedRulesclose instantlyreveals/focusestheownedrecoverycontrolwithoutstealingnewerfocus. Prior37acceptances explicitlyrevalidatedaftercurrentdelta. Whole37remainsincomplete; remainingiconsproposalunapplied. Review-only archive `tmp/premium-frontend-review-20261028-close-focus-leave-approval.zip`, SHA256 `bbaf6b762a5fb79ee836fb3ae2541cd7f8d0730107581eea98b6544d53a08aba`. Physical/nativeATpending;no backendedit,productiondataoperation,push,deployment orknown-goodrollbackclaim.
+
+## 29 October 2026: legacy leave status and editor guidance
+
+Applied exactly two reviewed frontend files. Legacy Recent Leave now uses readable known statuses and preserves exact escaped unknown text, including the prior tolerance for malformed non-string data. Normalized leave editor guidance defers operation-specific availability to returned checks.85 selected browser contexts,114 units and a held-source build pass. Real individual/monthly approval readback uses only dedicated8025RAM; assignment identity retained. Existing38 accepted requirements explicitly revalidated. Full145/147, calendar focus and remaining icons remain incomplete; physical/nativeAT checks pending. Specialist final runtime review was interrupted by a usage limit; root reviewed source/test/report/log/build evidence, with pre-application independent source gate retained. No backend, production, push or deployment changes.
+
+## 29 October 2026: applied V8 leave presentation/focus checkpoint
+
+Applied main/theme plus new leave-calendar-focus helper against exact reviewed/tested baseline.314currentbrowsercontexts pass(176actualshell/138controlledhelperfault-lifecycle),114units andheldproductionbuildpass.1488forward/reversefull-focus-ringdatechecks,96touch-emulatedmodalopenings,72secondarycatalog/delete-previewcloses verified. Fresh12actualRAMapprovalcasespreserveindividual/monthlyreadback,stale409refusal andassignmentidentity. Existing38acceptances explicitlyrevalidated; no new141144145147completionclaim. V7productionhelperreviewedindependently; exactV8Morefocus/44pxdelta andintegratedruntime reviewedbyroot, finalindependentV8reviewpendingavailability. All61tableliteralbodies/documentarydecisions preserved. Newinstantfocusfamily explicitlyclassified; no oldsourcehashesrewritten. Globalreference/canonical/importstatuswork andremainingiconsremainincomplete. No backend/configuredDB/production/push/deploymentchanges; physical/nativeATpending.
+
+## 29 October 2026: original141/144 and operation-scoped guidance
+
+40/260accepted after exactoriginal141toolbar and144phoneDaylist conditionadjudication. Rootreadcurrent314caseappliedevidence, independentparentV7source/runtimeaudits withtheirremaininggapsexplicitlyclosedbyV8actualMoretarget/focus/outcomes, andfourcurrentlight/darkphone/desktopscreenshots. No independentfinalV8reviewis falselyclaimed. Twoadditionalstaticguidanceparagraphs incanonicalprofile/referenceapproval-label editor applied;12currentcontexts/48controllerworkflows,114units andheldbuildpass. Exactreverseofone literalperfilepreservesallvalues/options/handlers/requests/permissions. Original38revalidatedbefore141144acceptance. Original145147/globaloperationalimportstatussummary remainsincomplete; remainingiconsandphysical/nativeATpending. No backend/configuredDB/production/push/deploychanges.
+
+## 29 October 2026: applied leave-import approval summary
+
+Applied one frontend module. Collapsed leave rows show the normalized approval proposal, distinct returned preview input when values differ, and clean/stale authority text through the existing previewDirty lifecycle. Input may include earlier operator corrections; it is not labelled original file content. Missing/null/blank/unknown values do not imply approval.102 current browser contexts pass:24status,12review-context,24mobile and42progress/recovery pages. The recovery count includes workbook replay/remount/callback variants, not merely24defaultsurfacecases.114units andheldbuildpass. API/settings/token/body/permission/handler/state semantics recover exactly after removing disclosed presentation additions. Previous40acceptances explicitly revalidated; original145147full-representationreview remains. Sourceaudit corrected an older no-table wording mistake: member-workspace owns one CSV reference table, unchanged outside its separate guidance paragraph; all61tablebodies/decisions unchanged andbindingsfresh. No backend/configuredDB/push/deploy; physical/nativeATpending.

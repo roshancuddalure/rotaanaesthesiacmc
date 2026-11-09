@@ -1,0 +1,38 @@
+{
+  "recorded_at_utc": "2026-10-29T00:18:02.105619+00:00",
+  "reviewer": "/root",
+  "scope": "Read-only V7?V8 source applicability before integration. This is not a final independent integration sign-off.",
+  "exact_delta_patch": {
+    "path": "tmp/leave-status-v8/delta-from-v7.patch",
+    "sha256": "56b0592385e499e342f1e5dfdc595ec9ebf30efdf5588d2990dbc8106777cf01"
+  },
+  "source_proof": {
+    "path": "tmp/leave-status-v8/source-proof.json",
+    "sha256": "fd144b0bbe550e6d096cc75d3e218de36cd7a93915f3108ddc8ae868c7854f60"
+  },
+  "helper_bytes_identical": true,
+  "v7_evidence": {
+    "docs/premium-ui/reviews/leave-status-v7-independent-production-source-review.json": "e4ac655c05c6d5ff186b4b863f4368eb498f981c3e4aed1fd48c97e808d5587f",
+    "docs/premium-ui/reviews/leave-status-v7-preview-operator-execution.json": "11760adc6cfe0cc6cfdc53acf46009356b489cc3b24e0ddd9dada0ed933de1bf",
+    "docs/premium-ui/reviews/leave-v7-native-activation-preview-execution.json": "d7a77bd2f6e78b88a0444917785798213d41577f43bdcbdcadac75396dca4074",
+    "docs/premium-ui/reviews/leave-calendar-focus-helper-v7-execution.json": "7ff55ce88f01de96e10933c24da3d7961b1da7070053f35321491a7c0133b8c5",
+    "docs/premium-ui/reviews/leave-calendar-focus-helper-v7-supplement-execution.json": "9bf8e54be9f81867c3006ebc698e4ecdd40d048d39ef90e159a75dacecc55a8d",
+    "docs/premium-ui/reviews/leave-v7-toolbar-regression-preview-execution.json": "2477f9b6ab8411967c41a3fe728830b3f9fa36c44d026ed1d8b95c04f1dd5a19"
+  },
+  "change_review": [
+    "V8 only adds two scoped focus-to-visible-summary actions in Leave toolbar catalog/month-delete branches and one scoped menuitem44px rule. V7 helper and leave calendar/status markup/data iteration/requests remain byte-identical.",
+    "The catalog focus is guarded by the actual Leave actions ancestor, so other catalog launch sites remain unchanged. Month delete focus applies only kindleave in the same toolbar before unchanged preview construction.",
+    "No menu is reopened after dialog close; summary is the visible stable return point, avoiding focus into hidden details. Native dialog newer-intent guards remain unchanged.",
+    "No request/body/token/permission/confirmation/save/delete semantics changed. TwelveactualMorepreviewcontexts prove noextra close requests andnoactualmutation.",
+    "Normal/stress core, reverse touch/pressure andtoolbar reruns underway against frozenV8. PriorV7regression56 andhelper138 are historical snapshots; explicit matching-source rationale doesnotrewrite their recorded hashes or call them freshV8runs."
+  ],
+  "remaining_gates": [
+    "FreshV8core/activation/toolbar terminalresults",
+    "IndependentV8delta/runtime review",
+    "Finalexactsourceapplication",
+    "Integratedrequiredregressions,unit/heldbuild andprior38acceptance bridge",
+    "Original141144conditionreview andoriginal145147remainingglobalstatuswork"
+  ],
+  "whole_items_accepted": [],
+  "application_changed": false
+}

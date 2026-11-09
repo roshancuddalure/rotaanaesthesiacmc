@@ -1,0 +1,11 @@
+# Independent V6 source follow-up: bounded pass
+
+Reviewer: `/root/unit_focus_source_v5`. V6 resolves the V5 stale-pointer blocker. The separate actual-app counterexample now returns to Manage B after a cancelled gesture on A followed by keyboard activation of B, in all six engine/width contexts. A second independent run also checks actual Manage clicks and nonfocusable card-title clicks; both return to their corresponding Manage control in all six contexts. The two runs contain12 contexts and36 asserted subcases, with no operational writes or page errors.
+
+V6 removes pointer candidate state, its pointerdown listener and the1500ms priority. It commits only the actual root-scoped opening click immediately before the existing delegated handler. Keyboard direct-open therefore resolves current active focus, while abandoned pointer gestures leave no stale higher-priority candidate. Card-title clicks focus the corresponding Manage button, and existing in-unit native opener capture remains intact. I inspected the complete revised helper against V5, including native-close/abort guards and background inert restoration.
+
+A fresh independent full-project TypeScript overlay produces zero diagnostics. Removing the single helper import and binding exactly restores current applied main. No existing handler, request, storage, policy, mount or scheduling implementation changes. The new module has no network/storage/eval/timer calls; its guarded native-close microtasks remain explicit.
+
+No additional blocker was identified within this bounded source review. The candidate can proceed after the separate adverse-runtime review and original candidate regressions are clear, then needs integrated browser/unit/held-build/prior40 applicability checks. This is not independent replay of every root test, full260 approval, production readiness or a zero-bug guarantee. Physical-device/nativeAT and persistence claims remain outside scope.
+
+`unit-modal-accessibility-v6-independent-source.json` binds exact candidate sources, fresh compile output and both independently authored actual-app test/report/log sets. V5's failing review and diagnostics remain unchanged. No application, candidate, backend, current acceptance or archive was edited by this reviewer.

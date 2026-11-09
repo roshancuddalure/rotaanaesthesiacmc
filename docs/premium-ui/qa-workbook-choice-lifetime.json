@@ -1,0 +1,966 @@
+{
+  "recorded_at_utc": "2026-10-28T10:09:29.497Z",
+  "source_sha256": {
+    "src/member-import.ts": "d985f4aefa5bfdd71b6f0a53995a8c63b3c827639158ec584b97e72f14ced061",
+    "src/ui.ts": "680d7830bca8826b46b6f1dc2c0d064d2a3a2e16fb41188d2c323de6bccf85b2",
+    "src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "tests/premium-workbook-choice-lifetime.browser.mjs": "d22bf755ed8c1c3974baa437b2a983a484460eafccc910b3ab735f2bceb37b2e"
+  },
+  "scope": "Actual workbook component with native upload/inspect/preview/pick/filter; existing resetMemberImport and mount used for account reset/remount. Three engines at320/1280: delayed old candidate success after current ready, and old503 while current pending. All API responses fulfilled locally; no actual backend writes or persistence claim.",
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "scenario": "old-success-current-ready",
+      "delayedOldChoiceCannotOverwrite": true,
+      "oldRequestWasHeld": true,
+      "currentFile": "current.csv",
+      "selectedIdentity": "Existing member · Member ID: current-c",
+      "before": "Import and Review Members\n✓\nUpload file\n(done)\n✓\nMap columns\n(done)\n3\nReview rows\n4\nApply\n\nFiles and selections are kept while this page remains open. Replacing the file resets mappings and review choices. After leaving or reloading, you may need to choose the file again.\n\nUpload CSV or Excel (up to 5 MB and 5000 rows). Every name is checked against the master list and saved aliases, including previously imported, historical, and archived members.\n\nBlank cells preserve existing values. Members absent from the file stay unchanged. Existing names stay unchanged when matched; duties, leave, and postings remain linked.\n\nDesignation requires an effective-from date. Use Excel dates or YYYY-MM-DD. Separate aliases with semicolons. Resolve uncertain matches or skip rows before applying.\n\nDownload Excel Template\nDownload CSV Template (Name + Call Level)\nCSV or Excel file\ncurrent.csv\nHeader row\nRead File and Columns\nWorksheet\nMembers\nname *\nIgnore column\n1: Name\nPreview Normalized Members\n\nWorksheet returned by preview: Not returned. Member mode is not returned by this importer; review the returned row actions below.\n\nCurrent returned preview. Review included rows and the existing Apply confirmations before saving.\n\n1 update · 0 needs review\n\nReview rows\nall\nneeds review\nupdate\ncreate\nunchanged\nskip\nDownload Rejected Rows CSV\nFile row\tMember\tAction / changes\tDecision\n2\t\n\nSource spelling\n→\nCurrent account member\nMatched\n\nExisting member · Member ID: current-c\n\nMatch:\n\nUse Old same name\nExisting member · Member ID: old-a\nUse Old same name\nExisting member · Member ID: old-b\n\t\nupdate\n\t\nSkip this row\nEdit row\n\nApply records the reviewed changes and source rows in import history.\n\nApply Reviewed Import",
+      "after": "Import and Review Members\n✓\nUpload file\n(done)\n✓\nMap columns\n(done)\n3\nReview rows\n4\nApply\n\nFiles and selections are kept while this page remains open. Replacing the file resets mappings and review choices. After leaving or reloading, you may need to choose the file again.\n\nUpload CSV or Excel (up to 5 MB and 5000 rows). Every name is checked against the master list and saved aliases, including previously imported, historical, and archived members.\n\nBlank cells preserve existing values. Members absent from the file stay unchanged. Existing names stay unchanged when matched; duties, leave, and postings remain linked.\n\nDesignation requires an effective-from date. Use Excel dates or YYYY-MM-DD. Separate aliases with semicolons. Resolve uncertain matches or skip rows before applying.\n\nDownload Excel Template\nDownload CSV Template (Name + Call Level)\nCSV or Excel file\ncurrent.csv\nHeader row\nRead File and Columns\nWorksheet\nMembers\nname *\nIgnore column\n1: Name\nPreview Normalized Members\n\nWorksheet returned by preview: Not returned. Member mode is not returned by this importer; review the returned row actions below.\n\nCurrent returned preview. Review included rows and the existing Apply confirmations before saving.\n\n1 update · 0 needs review\n\nReview rows\nall\nneeds review\nupdate\ncreate\nunchanged\nskip\nDownload Rejected Rows CSV\nFile row\tMember\tAction / changes\tDecision\n2\t\n\nSource spelling\n→\nCurrent account member\nMatched\n\nExisting member · Member ID: current-c\n\nMatch:\n\nUse Old same name\nExisting member · Member ID: old-a\nUse Old same name\nExisting member · Member ID: old-b\n\t\nupdate\n\t\nSkip this row\nEdit row\n\nApply records the reviewed changes and source rows in import history.\n\nApply Reviewed Import",
+      "requests": [
+        {
+          "path": "/api/v1/admin/members/import/inspect",
+          "filename": "old.csv",
+          "options": {
+            "sheet": "",
+            "header_row": 1,
+            "mapping": {},
+            "resolutions": {}
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/preview",
+          "filename": "old.csv",
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {},
+            "confirm_call_changes": false
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/preview",
+          "filename": "old.csv",
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "old-b"
+            },
+            "confirm_call_changes": false
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/inspect",
+          "filename": "current.csv",
+          "options": {
+            "sheet": "",
+            "header_row": 1,
+            "mapping": {},
+            "resolutions": {}
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/preview",
+          "filename": "current.csv",
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {},
+            "confirm_call_changes": false
+          }
+        }
+      ],
+      "applies": 0,
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "scenario": "old-refusal-current-pending",
+      "delayedOldChoiceCannotOverwrite": true,
+      "oldRequestWasHeld": true,
+      "currentFile": "current.csv",
+      "pendingState": {
+        "fileDisabled": true,
+        "working": true,
+        "staleMessage": false,
+        "oldIdentity": false,
+        "applyCount": 0
+      },
+      "selectedIdentity": "Existing member · Member ID: current-c",
+      "before": "Import and Review Members\n✓\nUpload file\n(done)\n2\nMap columns\n3\nReview rows\n4\nApply\n\nFiles and selections are kept while this page remains open. Replacing the file resets mappings and review choices. After leaving or reloading, you may need to choose the file again.\n\nUpload CSV or Excel (up to 5 MB and 5000 rows). Every name is checked against the master list and saved aliases, including previously imported, historical, and archived members.\n\nBlank cells preserve existing values. Members absent from the file stay unchanged. Existing names stay unchanged when matched; duties, leave, and postings remain linked.\n\nDesignation requires an effective-from date. Use Excel dates or YYYY-MM-DD. Separate aliases with semicolons. Resolve uncertain matches or skip rows before applying.\n\nDownload Excel Template\nDownload CSV Template (Name + Call Level)\nCSV or Excel file\ncurrent.csv\nHeader row\nRead File and Columns\nWorksheet\nMembers\nname *\nIgnore column\n1: Name\nPreview Normalized Members\n\nWorking…",
+      "after": "Import and Review Members\n✓\nUpload file\n(done)\n✓\nMap columns\n(done)\n3\nReview rows\n4\nApply\n\nFiles and selections are kept while this page remains open. Replacing the file resets mappings and review choices. After leaving or reloading, you may need to choose the file again.\n\nUpload CSV or Excel (up to 5 MB and 5000 rows). Every name is checked against the master list and saved aliases, including previously imported, historical, and archived members.\n\nBlank cells preserve existing values. Members absent from the file stay unchanged. Existing names stay unchanged when matched; duties, leave, and postings remain linked.\n\nDesignation requires an effective-from date. Use Excel dates or YYYY-MM-DD. Separate aliases with semicolons. Resolve uncertain matches or skip rows before applying.\n\nDownload Excel Template\nDownload CSV Template (Name + Call Level)\nCSV or Excel file\ncurrent.csv\nHeader row\nRead File and Columns\nWorksheet\nMembers\nname *\nIgnore column\n1: Name\nPreview Normalized Members\n\nWorksheet returned by preview: Not returned. Member mode is not returned by this importer; review the returned row actions below.\n\nCurrent returned preview. Review included rows and the existing Apply confirmations before saving.\n\n1 update · 0 needs review\n\nReview rows\nall\nneeds review\nupdate\ncreate\nunchanged\nskip\nDownload Rejected Rows CSV\nFile row\tMember\tAction / changes\tDecision\n2\t\n\nSource spelling\n→\nCurrent account member\nMatched\n\nExisting member · Member ID: current-c\n\nMatch:\n\nUse Old same name\nExisting member · Member ID: old-a\nUse Old same name\nExisting member · Member ID: old-b\n\t\nupdate\n\t\nSkip this row\nEdit row\n\nApply records the reviewed changes and source rows in import history.\n\nApply Reviewed Import",
+      "requests": [
+        {
+          "path": "/api/v1/admin/members/import/inspect",
+          "filename": "old.csv",
+          "options": {
+            "sheet": "",
+            "header_row": 1,
+            "mapping": {},
+            "resolutions": {}
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/preview",
+          "filename": "old.csv",
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {},
+            "confirm_call_changes": false
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/preview",
+          "filename": "old.csv",
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "old-b"
+            },
+            "confirm_call_changes": false
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/inspect",
+          "filename": "current.csv",
+          "options": {
+            "sheet": "",
+            "header_row": 1,
+            "mapping": {},
+            "resolutions": {}
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/preview",
+          "filename": "current.csv",
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {},
+            "confirm_call_changes": false
+          }
+        }
+      ],
+      "applies": 0,
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "scenario": "old-success-current-ready",
+      "delayedOldChoiceCannotOverwrite": true,
+      "oldRequestWasHeld": true,
+      "currentFile": "current.csv",
+      "selectedIdentity": "Existing member · Member ID: current-c",
+      "before": "Import and Review Members\n✓\nUpload file\n(done)\n✓\nMap columns\n(done)\n3\nReview rows\n4\nApply\n\nFiles and selections are kept while this page remains open. Replacing the file resets mappings and review choices. After leaving or reloading, you may need to choose the file again.\n\nUpload CSV or Excel (up to 5 MB and 5000 rows). Every name is checked against the master list and saved aliases, including previously imported, historical, and archived members.\n\nBlank cells preserve existing values. Members absent from the file stay unchanged. Existing names stay unchanged when matched; duties, leave, and postings remain linked.\n\nDesignation requires an effective-from date. Use Excel dates or YYYY-MM-DD. Separate aliases with semicolons. Resolve uncertain matches or skip rows before applying.\n\nDownload Excel Template\nDownload CSV Template (Name + Call Level)\nCSV or Excel file\ncurrent.csv\nHeader row\nRead File and Columns\nWorksheet\nMembers\nname *\nIgnore column\n1: Name\nPreview Normalized Members\n\nWorksheet returned by preview: Not returned. Member mode is not returned by this importer; review the returned row actions below.\n\nCurrent returned preview. Review included rows and the existing Apply confirmations before saving.\n\n1 update · 0 needs review\n\nReview rows\nall\nneeds review\nupdate\ncreate\nunchanged\nskip\nDownload Rejected Rows CSV\nFile row\tMember\tAction / changes\tDecision\n2\t\n\nSource spelling\n→\nCurrent account member\nMatched\n\nExisting member · Member ID: current-c\n\nMatch:\n\nUse Old same name\nExisting member · Member ID: old-a\nUse Old same name\nExisting member · Member ID: old-b\n\t\nupdate\n\t\nSkip this row\nEdit row\n\nApply records the reviewed changes and source rows in import history.\n\nApply Reviewed Import",
+      "after": "Import and Review Members\n✓\nUpload file\n(done)\n✓\nMap columns\n(done)\n3\nReview rows\n4\nApply\n\nFiles and selections are kept while this page remains open. Replacing the file resets mappings and review choices. After leaving or reloading, you may need to choose the file again.\n\nUpload CSV or Excel (up to 5 MB and 5000 rows). Every name is checked against the master list and saved aliases, including previously imported, historical, and archived members.\n\nBlank cells preserve existing values. Members absent from the file stay unchanged. Existing names stay unchanged when matched; duties, leave, and postings remain linked.\n\nDesignation requires an effective-from date. Use Excel dates or YYYY-MM-DD. Separate aliases with semicolons. Resolve uncertain matches or skip rows before applying.\n\nDownload Excel Template\nDownload CSV Template (Name + Call Level)\nCSV or Excel file\ncurrent.csv\nHeader row\nRead File and Columns\nWorksheet\nMembers\nname *\nIgnore column\n1: Name\nPreview Normalized Members\n\nWorksheet returned by preview: Not returned. Member mode is not returned by this importer; review the returned row actions below.\n\nCurrent returned preview. Review included rows and the existing Apply confirmations before saving.\n\n1 update · 0 needs review\n\nReview rows\nall\nneeds review\nupdate\ncreate\nunchanged\nskip\nDownload Rejected Rows CSV\nFile row\tMember\tAction / changes\tDecision\n2\t\n\nSource spelling\n→\nCurrent account member\nMatched\n\nExisting member · Member ID: current-c\n\nMatch:\n\nUse Old same name\nExisting member · Member ID: old-a\nUse Old same name\nExisting member · Member ID: old-b\n\t\nupdate\n\t\nSkip this row\nEdit row\n\nApply records the reviewed changes and source rows in import history.\n\nApply Reviewed Import",
+      "requests": [
+        {
+          "path": "/api/v1/admin/members/import/inspect",
+          "filename": "old.csv",
+          "options": {
+            "sheet": "",
+            "header_row": 1,
+            "mapping": {},
+            "resolutions": {}
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/preview",
+          "filename": "old.csv",
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {},
+            "confirm_call_changes": false
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/preview",
+          "filename": "old.csv",
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "old-b"
+            },
+            "confirm_call_changes": false
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/inspect",
+          "filename": "current.csv",
+          "options": {
+            "sheet": "",
+            "header_row": 1,
+            "mapping": {},
+            "resolutions": {}
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/preview",
+          "filename": "current.csv",
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {},
+            "confirm_call_changes": false
+          }
+        }
+      ],
+      "applies": 0,
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "scenario": "old-refusal-current-pending",
+      "delayedOldChoiceCannotOverwrite": true,
+      "oldRequestWasHeld": true,
+      "currentFile": "current.csv",
+      "pendingState": {
+        "fileDisabled": true,
+        "working": true,
+        "staleMessage": false,
+        "oldIdentity": false,
+        "applyCount": 0
+      },
+      "selectedIdentity": "Existing member · Member ID: current-c",
+      "before": "Import and Review Members\n✓\nUpload file\n(done)\n2\nMap columns\n3\nReview rows\n4\nApply\n\nFiles and selections are kept while this page remains open. Replacing the file resets mappings and review choices. After leaving or reloading, you may need to choose the file again.\n\nUpload CSV or Excel (up to 5 MB and 5000 rows). Every name is checked against the master list and saved aliases, including previously imported, historical, and archived members.\n\nBlank cells preserve existing values. Members absent from the file stay unchanged. Existing names stay unchanged when matched; duties, leave, and postings remain linked.\n\nDesignation requires an effective-from date. Use Excel dates or YYYY-MM-DD. Separate aliases with semicolons. Resolve uncertain matches or skip rows before applying.\n\nDownload Excel Template\nDownload CSV Template (Name + Call Level)\nCSV or Excel file\ncurrent.csv\nHeader row\nRead File and Columns\nWorksheet\nMembers\nname *\nIgnore column\n1: Name\nPreview Normalized Members\n\nWorking…",
+      "after": "Import and Review Members\n✓\nUpload file\n(done)\n✓\nMap columns\n(done)\n3\nReview rows\n4\nApply\n\nFiles and selections are kept while this page remains open. Replacing the file resets mappings and review choices. After leaving or reloading, you may need to choose the file again.\n\nUpload CSV or Excel (up to 5 MB and 5000 rows). Every name is checked against the master list and saved aliases, including previously imported, historical, and archived members.\n\nBlank cells preserve existing values. Members absent from the file stay unchanged. Existing names stay unchanged when matched; duties, leave, and postings remain linked.\n\nDesignation requires an effective-from date. Use Excel dates or YYYY-MM-DD. Separate aliases with semicolons. Resolve uncertain matches or skip rows before applying.\n\nDownload Excel Template\nDownload CSV Template (Name + Call Level)\nCSV or Excel file\ncurrent.csv\nHeader row\nRead File and Columns\nWorksheet\nMembers\nname *\nIgnore column\n1: Name\nPreview Normalized Members\n\nWorksheet returned by preview: Not returned. Member mode is not returned by this importer; review the returned row actions below.\n\nCurrent returned preview. Review included rows and the existing Apply confirmations before saving.\n\n1 update · 0 needs review\n\nReview rows\nall\nneeds review\nupdate\ncreate\nunchanged\nskip\nDownload Rejected Rows CSV\nFile row\tMember\tAction / changes\tDecision\n2\t\n\nSource spelling\n→\nCurrent account member\nMatched\n\nExisting member · Member ID: current-c\n\nMatch:\n\nUse Old same name\nExisting member · Member ID: old-a\nUse Old same name\nExisting member · Member ID: old-b\n\t\nupdate\n\t\nSkip this row\nEdit row\n\nApply records the reviewed changes and source rows in import history.\n\nApply Reviewed Import",
+      "requests": [
+        {
+          "path": "/api/v1/admin/members/import/inspect",
+          "filename": "old.csv",
+          "options": {
+            "sheet": "",
+            "header_row": 1,
+            "mapping": {},
+            "resolutions": {}
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/preview",
+          "filename": "old.csv",
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {},
+            "confirm_call_changes": false
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/preview",
+          "filename": "old.csv",
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "old-b"
+            },
+            "confirm_call_changes": false
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/inspect",
+          "filename": "current.csv",
+          "options": {
+            "sheet": "",
+            "header_row": 1,
+            "mapping": {},
+            "resolutions": {}
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/preview",
+          "filename": "current.csv",
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {},
+            "confirm_call_changes": false
+          }
+        }
+      ],
+      "applies": 0,
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "scenario": "old-success-current-ready",
+      "delayedOldChoiceCannotOverwrite": true,
+      "oldRequestWasHeld": true,
+      "currentFile": "current.csv",
+      "selectedIdentity": "Existing member · Member ID: current-c",
+      "before": "Import and Review Members\n✓\nUpload file\n(done)\n✓\nMap columns\n(done)\n3\nReview rows\n4\nApply\n\nFiles and selections are kept while this page remains open. Replacing the file resets mappings and review choices. After leaving or reloading, you may need to choose the file again.\n\nUpload CSV or Excel (up to 5 MB and 5000 rows). Every name is checked against the master list and saved aliases, including previously imported, historical, and archived members.\n\nBlank cells preserve existing values. Members absent from the file stay unchanged. Existing names stay unchanged when matched; duties, leave, and postings remain linked.\n\nDesignation requires an effective-from date. Use Excel dates or YYYY-MM-DD. Separate aliases with semicolons. Resolve uncertain matches or skip rows before applying.\n\nDownload Excel Template\nDownload CSV Template (Name + Call Level)\nCSV or Excel file\ncurrent.csv\nHeader row\nRead File and Columns\nWorksheet\nname *\nPreview Normalized Members\n\nWorksheet returned by preview: Not returned. Member mode is not returned by this importer; review the returned row actions below.\n\nCurrent returned preview. Review included rows and the existing Apply confirmations before saving.\n\n1 update · 0 needs review\n\nReview rows\nDownload Rejected Rows CSV\nFile row\tMember\tAction / changes\tDecision\n2\t\n\nSource spelling\n→\nCurrent account member\nMatched\n\nExisting member · Member ID: current-c\n\nMatch:\n\nUse Old same name\nExisting member · Member ID: old-a\nUse Old same name\nExisting member · Member ID: old-b\n\t\nupdate\n\t\nSkip this row\nEdit row\n\nApply records the reviewed changes and source rows in import history.\n\nApply Reviewed Import",
+      "after": "Import and Review Members\n✓\nUpload file\n(done)\n✓\nMap columns\n(done)\n3\nReview rows\n4\nApply\n\nFiles and selections are kept while this page remains open. Replacing the file resets mappings and review choices. After leaving or reloading, you may need to choose the file again.\n\nUpload CSV or Excel (up to 5 MB and 5000 rows). Every name is checked against the master list and saved aliases, including previously imported, historical, and archived members.\n\nBlank cells preserve existing values. Members absent from the file stay unchanged. Existing names stay unchanged when matched; duties, leave, and postings remain linked.\n\nDesignation requires an effective-from date. Use Excel dates or YYYY-MM-DD. Separate aliases with semicolons. Resolve uncertain matches or skip rows before applying.\n\nDownload Excel Template\nDownload CSV Template (Name + Call Level)\nCSV or Excel file\ncurrent.csv\nHeader row\nRead File and Columns\nWorksheet\nname *\nPreview Normalized Members\n\nWorksheet returned by preview: Not returned. Member mode is not returned by this importer; review the returned row actions below.\n\nCurrent returned preview. Review included rows and the existing Apply confirmations before saving.\n\n1 update · 0 needs review\n\nReview rows\nDownload Rejected Rows CSV\nFile row\tMember\tAction / changes\tDecision\n2\t\n\nSource spelling\n→\nCurrent account member\nMatched\n\nExisting member · Member ID: current-c\n\nMatch:\n\nUse Old same name\nExisting member · Member ID: old-a\nUse Old same name\nExisting member · Member ID: old-b\n\t\nupdate\n\t\nSkip this row\nEdit row\n\nApply records the reviewed changes and source rows in import history.\n\nApply Reviewed Import",
+      "requests": [
+        {
+          "path": "/api/v1/admin/members/import/inspect",
+          "filename": "old.csv",
+          "options": {
+            "sheet": "",
+            "header_row": 1,
+            "mapping": {},
+            "resolutions": {}
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/preview",
+          "filename": "old.csv",
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {},
+            "confirm_call_changes": false
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/preview",
+          "filename": "old.csv",
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "old-b"
+            },
+            "confirm_call_changes": false
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/inspect",
+          "filename": "current.csv",
+          "options": {
+            "sheet": "",
+            "header_row": 1,
+            "mapping": {},
+            "resolutions": {}
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/preview",
+          "filename": "current.csv",
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {},
+            "confirm_call_changes": false
+          }
+        }
+      ],
+      "applies": 0,
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "scenario": "old-refusal-current-pending",
+      "delayedOldChoiceCannotOverwrite": true,
+      "oldRequestWasHeld": true,
+      "currentFile": "current.csv",
+      "pendingState": {
+        "fileDisabled": true,
+        "working": true,
+        "staleMessage": false,
+        "oldIdentity": false,
+        "applyCount": 0
+      },
+      "selectedIdentity": "Existing member · Member ID: current-c",
+      "before": "Import and Review Members\n✓\nUpload file\n(done)\n2\nMap columns\n3\nReview rows\n4\nApply\n\nFiles and selections are kept while this page remains open. Replacing the file resets mappings and review choices. After leaving or reloading, you may need to choose the file again.\n\nUpload CSV or Excel (up to 5 MB and 5000 rows). Every name is checked against the master list and saved aliases, including previously imported, historical, and archived members.\n\nBlank cells preserve existing values. Members absent from the file stay unchanged. Existing names stay unchanged when matched; duties, leave, and postings remain linked.\n\nDesignation requires an effective-from date. Use Excel dates or YYYY-MM-DD. Separate aliases with semicolons. Resolve uncertain matches or skip rows before applying.\n\nDownload Excel Template\nDownload CSV Template (Name + Call Level)\nCSV or Excel file\ncurrent.csv\nHeader row\nRead File and Columns\nWorksheet\nname *\nPreview Normalized Members\n\nWorking…",
+      "after": "Import and Review Members\n✓\nUpload file\n(done)\n✓\nMap columns\n(done)\n3\nReview rows\n4\nApply\n\nFiles and selections are kept while this page remains open. Replacing the file resets mappings and review choices. After leaving or reloading, you may need to choose the file again.\n\nUpload CSV or Excel (up to 5 MB and 5000 rows). Every name is checked against the master list and saved aliases, including previously imported, historical, and archived members.\n\nBlank cells preserve existing values. Members absent from the file stay unchanged. Existing names stay unchanged when matched; duties, leave, and postings remain linked.\n\nDesignation requires an effective-from date. Use Excel dates or YYYY-MM-DD. Separate aliases with semicolons. Resolve uncertain matches or skip rows before applying.\n\nDownload Excel Template\nDownload CSV Template (Name + Call Level)\nCSV or Excel file\ncurrent.csv\nHeader row\nRead File and Columns\nWorksheet\nname *\nPreview Normalized Members\n\nWorksheet returned by preview: Not returned. Member mode is not returned by this importer; review the returned row actions below.\n\nCurrent returned preview. Review included rows and the existing Apply confirmations before saving.\n\n1 update · 0 needs review\n\nReview rows\nDownload Rejected Rows CSV\nFile row\tMember\tAction / changes\tDecision\n2\t\n\nSource spelling\n→\nCurrent account member\nMatched\n\nExisting member · Member ID: current-c\n\nMatch:\n\nUse Old same name\nExisting member · Member ID: old-a\nUse Old same name\nExisting member · Member ID: old-b\n\t\nupdate\n\t\nSkip this row\nEdit row\n\nApply records the reviewed changes and source rows in import history.\n\nApply Reviewed Import",
+      "requests": [
+        {
+          "path": "/api/v1/admin/members/import/inspect",
+          "filename": "old.csv",
+          "options": {
+            "sheet": "",
+            "header_row": 1,
+            "mapping": {},
+            "resolutions": {}
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/preview",
+          "filename": "old.csv",
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {},
+            "confirm_call_changes": false
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/preview",
+          "filename": "old.csv",
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "old-b"
+            },
+            "confirm_call_changes": false
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/inspect",
+          "filename": "current.csv",
+          "options": {
+            "sheet": "",
+            "header_row": 1,
+            "mapping": {},
+            "resolutions": {}
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/preview",
+          "filename": "current.csv",
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {},
+            "confirm_call_changes": false
+          }
+        }
+      ],
+      "applies": 0,
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "scenario": "old-success-current-ready",
+      "delayedOldChoiceCannotOverwrite": true,
+      "oldRequestWasHeld": true,
+      "currentFile": "current.csv",
+      "selectedIdentity": "Existing member · Member ID: current-c",
+      "before": "Import and Review Members\n✓\nUpload file\n(done)\n✓\nMap columns\n(done)\n3\nReview rows\n4\nApply\n\nFiles and selections are kept while this page remains open. Replacing the file resets mappings and review choices. After leaving or reloading, you may need to choose the file again.\n\nUpload CSV or Excel (up to 5 MB and 5000 rows). Every name is checked against the master list and saved aliases, including previously imported, historical, and archived members.\n\nBlank cells preserve existing values. Members absent from the file stay unchanged. Existing names stay unchanged when matched; duties, leave, and postings remain linked.\n\nDesignation requires an effective-from date. Use Excel dates or YYYY-MM-DD. Separate aliases with semicolons. Resolve uncertain matches or skip rows before applying.\n\nDownload Excel Template\nDownload CSV Template (Name + Call Level)\nCSV or Excel file\ncurrent.csv\nHeader row\nRead File and Columns\nWorksheet\nname *\nPreview Normalized Members\n\nWorksheet returned by preview: Not returned. Member mode is not returned by this importer; review the returned row actions below.\n\nCurrent returned preview. Review included rows and the existing Apply confirmations before saving.\n\n1 update · 0 needs review\n\nReview rows\nDownload Rejected Rows CSV\nFile row\tMember\tAction / changes\tDecision\n2\t\n\nSource spelling\n→\nCurrent account member\nMatched\n\nExisting member · Member ID: current-c\n\nMatch:\n\nUse Old same name\nExisting member · Member ID: old-a\nUse Old same name\nExisting member · Member ID: old-b\n\t\nupdate\n\t\nSkip this row\nEdit row\n\nApply records the reviewed changes and source rows in import history.\n\nApply Reviewed Import",
+      "after": "Import and Review Members\n✓\nUpload file\n(done)\n✓\nMap columns\n(done)\n3\nReview rows\n4\nApply\n\nFiles and selections are kept while this page remains open. Replacing the file resets mappings and review choices. After leaving or reloading, you may need to choose the file again.\n\nUpload CSV or Excel (up to 5 MB and 5000 rows). Every name is checked against the master list and saved aliases, including previously imported, historical, and archived members.\n\nBlank cells preserve existing values. Members absent from the file stay unchanged. Existing names stay unchanged when matched; duties, leave, and postings remain linked.\n\nDesignation requires an effective-from date. Use Excel dates or YYYY-MM-DD. Separate aliases with semicolons. Resolve uncertain matches or skip rows before applying.\n\nDownload Excel Template\nDownload CSV Template (Name + Call Level)\nCSV or Excel file\ncurrent.csv\nHeader row\nRead File and Columns\nWorksheet\nname *\nPreview Normalized Members\n\nWorksheet returned by preview: Not returned. Member mode is not returned by this importer; review the returned row actions below.\n\nCurrent returned preview. Review included rows and the existing Apply confirmations before saving.\n\n1 update · 0 needs review\n\nReview rows\nDownload Rejected Rows CSV\nFile row\tMember\tAction / changes\tDecision\n2\t\n\nSource spelling\n→\nCurrent account member\nMatched\n\nExisting member · Member ID: current-c\n\nMatch:\n\nUse Old same name\nExisting member · Member ID: old-a\nUse Old same name\nExisting member · Member ID: old-b\n\t\nupdate\n\t\nSkip this row\nEdit row\n\nApply records the reviewed changes and source rows in import history.\n\nApply Reviewed Import",
+      "requests": [
+        {
+          "path": "/api/v1/admin/members/import/inspect",
+          "filename": "old.csv",
+          "options": {
+            "sheet": "",
+            "header_row": 1,
+            "mapping": {},
+            "resolutions": {}
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/preview",
+          "filename": "old.csv",
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {},
+            "confirm_call_changes": false
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/preview",
+          "filename": "old.csv",
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "old-b"
+            },
+            "confirm_call_changes": false
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/inspect",
+          "filename": "current.csv",
+          "options": {
+            "sheet": "",
+            "header_row": 1,
+            "mapping": {},
+            "resolutions": {}
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/preview",
+          "filename": "current.csv",
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {},
+            "confirm_call_changes": false
+          }
+        }
+      ],
+      "applies": 0,
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "scenario": "old-refusal-current-pending",
+      "delayedOldChoiceCannotOverwrite": true,
+      "oldRequestWasHeld": true,
+      "currentFile": "current.csv",
+      "pendingState": {
+        "fileDisabled": true,
+        "working": true,
+        "staleMessage": false,
+        "oldIdentity": false,
+        "applyCount": 0
+      },
+      "selectedIdentity": "Existing member · Member ID: current-c",
+      "before": "Import and Review Members\n✓\nUpload file\n(done)\n2\nMap columns\n3\nReview rows\n4\nApply\n\nFiles and selections are kept while this page remains open. Replacing the file resets mappings and review choices. After leaving or reloading, you may need to choose the file again.\n\nUpload CSV or Excel (up to 5 MB and 5000 rows). Every name is checked against the master list and saved aliases, including previously imported, historical, and archived members.\n\nBlank cells preserve existing values. Members absent from the file stay unchanged. Existing names stay unchanged when matched; duties, leave, and postings remain linked.\n\nDesignation requires an effective-from date. Use Excel dates or YYYY-MM-DD. Separate aliases with semicolons. Resolve uncertain matches or skip rows before applying.\n\nDownload Excel Template\nDownload CSV Template (Name + Call Level)\nCSV or Excel file\ncurrent.csv\nHeader row\nRead File and Columns\nWorksheet\nname *\nPreview Normalized Members\n\nWorking…",
+      "after": "Import and Review Members\n✓\nUpload file\n(done)\n✓\nMap columns\n(done)\n3\nReview rows\n4\nApply\n\nFiles and selections are kept while this page remains open. Replacing the file resets mappings and review choices. After leaving or reloading, you may need to choose the file again.\n\nUpload CSV or Excel (up to 5 MB and 5000 rows). Every name is checked against the master list and saved aliases, including previously imported, historical, and archived members.\n\nBlank cells preserve existing values. Members absent from the file stay unchanged. Existing names stay unchanged when matched; duties, leave, and postings remain linked.\n\nDesignation requires an effective-from date. Use Excel dates or YYYY-MM-DD. Separate aliases with semicolons. Resolve uncertain matches or skip rows before applying.\n\nDownload Excel Template\nDownload CSV Template (Name + Call Level)\nCSV or Excel file\ncurrent.csv\nHeader row\nRead File and Columns\nWorksheet\nname *\nPreview Normalized Members\n\nWorksheet returned by preview: Not returned. Member mode is not returned by this importer; review the returned row actions below.\n\nCurrent returned preview. Review included rows and the existing Apply confirmations before saving.\n\n1 update · 0 needs review\n\nReview rows\nDownload Rejected Rows CSV\nFile row\tMember\tAction / changes\tDecision\n2\t\n\nSource spelling\n→\nCurrent account member\nMatched\n\nExisting member · Member ID: current-c\n\nMatch:\n\nUse Old same name\nExisting member · Member ID: old-a\nUse Old same name\nExisting member · Member ID: old-b\n\t\nupdate\n\t\nSkip this row\nEdit row\n\nApply records the reviewed changes and source rows in import history.\n\nApply Reviewed Import",
+      "requests": [
+        {
+          "path": "/api/v1/admin/members/import/inspect",
+          "filename": "old.csv",
+          "options": {
+            "sheet": "",
+            "header_row": 1,
+            "mapping": {},
+            "resolutions": {}
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/preview",
+          "filename": "old.csv",
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {},
+            "confirm_call_changes": false
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/preview",
+          "filename": "old.csv",
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "old-b"
+            },
+            "confirm_call_changes": false
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/inspect",
+          "filename": "current.csv",
+          "options": {
+            "sheet": "",
+            "header_row": 1,
+            "mapping": {},
+            "resolutions": {}
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/preview",
+          "filename": "current.csv",
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {},
+            "confirm_call_changes": false
+          }
+        }
+      ],
+      "applies": 0,
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "scenario": "old-success-current-ready",
+      "delayedOldChoiceCannotOverwrite": true,
+      "oldRequestWasHeld": true,
+      "currentFile": "current.csv",
+      "selectedIdentity": "Existing member · Member ID: current-c",
+      "before": "Import and Review Members\n✓\nUpload file\n(done)\n✓\nMap columns\n(done)\n3\nReview rows\n4\nApply\n\nFiles and selections are kept while this page remains open. Replacing the file resets mappings and review choices. After leaving or reloading, you may need to choose the file again.\n\nUpload CSV or Excel (up to 5 MB and 5000 rows). Every name is checked against the master list and saved aliases, including previously imported, historical, and archived members.\n\nBlank cells preserve existing values. Members absent from the file stay unchanged. Existing names stay unchanged when matched; duties, leave, and postings remain linked.\n\nDesignation requires an effective-from date. Use Excel dates or YYYY-MM-DD. Separate aliases with semicolons. Resolve uncertain matches or skip rows before applying.\n\nDownload Excel Template\nDownload CSV Template (Name + Call Level)\nCSV or Excel file\ncurrent.csv\nHeader row\nRead File and Columns\nWorksheet\nname *\nPreview Normalized Members\n\nWorksheet returned by preview: Not returned. Member mode is not returned by this importer; review the returned row actions below.\n\nCurrent returned preview. Review included rows and the existing Apply confirmations before saving.\n\n1 update · 0 needs review\n\nReview rows\nDownload Rejected Rows CSV\nFile row\tMember\tAction / changes\tDecision\n2\t\n\nSource spelling\n→\nCurrent account member\nMatched\n\nExisting member · Member ID: current-c\n\nMatch:\n\nUse Old same name\nExisting member · Member ID: old-a\nUse Old same name\nExisting member · Member ID: old-b\nupdate\nSkip this row\nEdit row\n\nApply records the reviewed changes and source rows in import history.\n\nApply Reviewed Import",
+      "after": "Import and Review Members\n✓\nUpload file\n(done)\n✓\nMap columns\n(done)\n3\nReview rows\n4\nApply\n\nFiles and selections are kept while this page remains open. Replacing the file resets mappings and review choices. After leaving or reloading, you may need to choose the file again.\n\nUpload CSV or Excel (up to 5 MB and 5000 rows). Every name is checked against the master list and saved aliases, including previously imported, historical, and archived members.\n\nBlank cells preserve existing values. Members absent from the file stay unchanged. Existing names stay unchanged when matched; duties, leave, and postings remain linked.\n\nDesignation requires an effective-from date. Use Excel dates or YYYY-MM-DD. Separate aliases with semicolons. Resolve uncertain matches or skip rows before applying.\n\nDownload Excel Template\nDownload CSV Template (Name + Call Level)\nCSV or Excel file\ncurrent.csv\nHeader row\nRead File and Columns\nWorksheet\nname *\nPreview Normalized Members\n\nWorksheet returned by preview: Not returned. Member mode is not returned by this importer; review the returned row actions below.\n\nCurrent returned preview. Review included rows and the existing Apply confirmations before saving.\n\n1 update · 0 needs review\n\nReview rows\nDownload Rejected Rows CSV\nFile row\tMember\tAction / changes\tDecision\n2\t\n\nSource spelling\n→\nCurrent account member\nMatched\n\nExisting member · Member ID: current-c\n\nMatch:\n\nUse Old same name\nExisting member · Member ID: old-a\nUse Old same name\nExisting member · Member ID: old-b\nupdate\nSkip this row\nEdit row\n\nApply records the reviewed changes and source rows in import history.\n\nApply Reviewed Import",
+      "requests": [
+        {
+          "path": "/api/v1/admin/members/import/inspect",
+          "filename": "old.csv",
+          "options": {
+            "sheet": "",
+            "header_row": 1,
+            "mapping": {},
+            "resolutions": {}
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/preview",
+          "filename": "old.csv",
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {},
+            "confirm_call_changes": false
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/preview",
+          "filename": "old.csv",
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "old-b"
+            },
+            "confirm_call_changes": false
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/inspect",
+          "filename": "current.csv",
+          "options": {
+            "sheet": "",
+            "header_row": 1,
+            "mapping": {},
+            "resolutions": {}
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/preview",
+          "filename": "current.csv",
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {},
+            "confirm_call_changes": false
+          }
+        }
+      ],
+      "applies": 0,
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "scenario": "old-refusal-current-pending",
+      "delayedOldChoiceCannotOverwrite": true,
+      "oldRequestWasHeld": true,
+      "currentFile": "current.csv",
+      "pendingState": {
+        "fileDisabled": true,
+        "working": true,
+        "staleMessage": false,
+        "oldIdentity": false,
+        "applyCount": 0
+      },
+      "selectedIdentity": "Existing member · Member ID: current-c",
+      "before": "Import and Review Members\n✓\nUpload file\n(done)\n2\nMap columns\n3\nReview rows\n4\nApply\n\nFiles and selections are kept while this page remains open. Replacing the file resets mappings and review choices. After leaving or reloading, you may need to choose the file again.\n\nUpload CSV or Excel (up to 5 MB and 5000 rows). Every name is checked against the master list and saved aliases, including previously imported, historical, and archived members.\n\nBlank cells preserve existing values. Members absent from the file stay unchanged. Existing names stay unchanged when matched; duties, leave, and postings remain linked.\n\nDesignation requires an effective-from date. Use Excel dates or YYYY-MM-DD. Separate aliases with semicolons. Resolve uncertain matches or skip rows before applying.\n\nDownload Excel Template\nDownload CSV Template (Name + Call Level)\nCSV or Excel file\ncurrent.csv\nHeader row\nRead File and Columns\nWorksheet\nname *\nPreview Normalized Members\n\nWorking…",
+      "after": "Import and Review Members\n✓\nUpload file\n(done)\n✓\nMap columns\n(done)\n3\nReview rows\n4\nApply\n\nFiles and selections are kept while this page remains open. Replacing the file resets mappings and review choices. After leaving or reloading, you may need to choose the file again.\n\nUpload CSV or Excel (up to 5 MB and 5000 rows). Every name is checked against the master list and saved aliases, including previously imported, historical, and archived members.\n\nBlank cells preserve existing values. Members absent from the file stay unchanged. Existing names stay unchanged when matched; duties, leave, and postings remain linked.\n\nDesignation requires an effective-from date. Use Excel dates or YYYY-MM-DD. Separate aliases with semicolons. Resolve uncertain matches or skip rows before applying.\n\nDownload Excel Template\nDownload CSV Template (Name + Call Level)\nCSV or Excel file\ncurrent.csv\nHeader row\nRead File and Columns\nWorksheet\nname *\nPreview Normalized Members\n\nWorksheet returned by preview: Not returned. Member mode is not returned by this importer; review the returned row actions below.\n\nCurrent returned preview. Review included rows and the existing Apply confirmations before saving.\n\n1 update · 0 needs review\n\nReview rows\nDownload Rejected Rows CSV\nFile row\tMember\tAction / changes\tDecision\n2\t\n\nSource spelling\n→\nCurrent account member\nMatched\n\nExisting member · Member ID: current-c\n\nMatch:\n\nUse Old same name\nExisting member · Member ID: old-a\nUse Old same name\nExisting member · Member ID: old-b\nupdate\nSkip this row\nEdit row\n\nApply records the reviewed changes and source rows in import history.\n\nApply Reviewed Import",
+      "requests": [
+        {
+          "path": "/api/v1/admin/members/import/inspect",
+          "filename": "old.csv",
+          "options": {
+            "sheet": "",
+            "header_row": 1,
+            "mapping": {},
+            "resolutions": {}
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/preview",
+          "filename": "old.csv",
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {},
+            "confirm_call_changes": false
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/preview",
+          "filename": "old.csv",
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "old-b"
+            },
+            "confirm_call_changes": false
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/inspect",
+          "filename": "current.csv",
+          "options": {
+            "sheet": "",
+            "header_row": 1,
+            "mapping": {},
+            "resolutions": {}
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/preview",
+          "filename": "current.csv",
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {},
+            "confirm_call_changes": false
+          }
+        }
+      ],
+      "applies": 0,
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "scenario": "old-success-current-ready",
+      "delayedOldChoiceCannotOverwrite": true,
+      "oldRequestWasHeld": true,
+      "currentFile": "current.csv",
+      "selectedIdentity": "Existing member · Member ID: current-c",
+      "before": "Import and Review Members\n✓\nUpload file\n(done)\n✓\nMap columns\n(done)\n3\nReview rows\n4\nApply\n\nFiles and selections are kept while this page remains open. Replacing the file resets mappings and review choices. After leaving or reloading, you may need to choose the file again.\n\nUpload CSV or Excel (up to 5 MB and 5000 rows). Every name is checked against the master list and saved aliases, including previously imported, historical, and archived members.\n\nBlank cells preserve existing values. Members absent from the file stay unchanged. Existing names stay unchanged when matched; duties, leave, and postings remain linked.\n\nDesignation requires an effective-from date. Use Excel dates or YYYY-MM-DD. Separate aliases with semicolons. Resolve uncertain matches or skip rows before applying.\n\nDownload Excel Template\nDownload CSV Template (Name + Call Level)\nCSV or Excel file\ncurrent.csv\nHeader row\nRead File and Columns\nWorksheet\nname *\nPreview Normalized Members\n\nWorksheet returned by preview: Not returned. Member mode is not returned by this importer; review the returned row actions below.\n\nCurrent returned preview. Review included rows and the existing Apply confirmations before saving.\n\n1 update · 0 needs review\n\nReview rows\nDownload Rejected Rows CSV\nFile row\tMember\tAction / changes\tDecision\n2\t\n\nSource spelling\n→\nCurrent account member\nMatched\n\nExisting member · Member ID: current-c\n\nMatch:\n\nUse Old same name\nExisting member · Member ID: old-a\nUse Old same name\nExisting member · Member ID: old-b\nupdate\nSkip this row\nEdit row\n\nApply records the reviewed changes and source rows in import history.\n\nApply Reviewed Import",
+      "after": "Import and Review Members\n✓\nUpload file\n(done)\n✓\nMap columns\n(done)\n3\nReview rows\n4\nApply\n\nFiles and selections are kept while this page remains open. Replacing the file resets mappings and review choices. After leaving or reloading, you may need to choose the file again.\n\nUpload CSV or Excel (up to 5 MB and 5000 rows). Every name is checked against the master list and saved aliases, including previously imported, historical, and archived members.\n\nBlank cells preserve existing values. Members absent from the file stay unchanged. Existing names stay unchanged when matched; duties, leave, and postings remain linked.\n\nDesignation requires an effective-from date. Use Excel dates or YYYY-MM-DD. Separate aliases with semicolons. Resolve uncertain matches or skip rows before applying.\n\nDownload Excel Template\nDownload CSV Template (Name + Call Level)\nCSV or Excel file\ncurrent.csv\nHeader row\nRead File and Columns\nWorksheet\nname *\nPreview Normalized Members\n\nWorksheet returned by preview: Not returned. Member mode is not returned by this importer; review the returned row actions below.\n\nCurrent returned preview. Review included rows and the existing Apply confirmations before saving.\n\n1 update · 0 needs review\n\nReview rows\nDownload Rejected Rows CSV\nFile row\tMember\tAction / changes\tDecision\n2\t\n\nSource spelling\n→\nCurrent account member\nMatched\n\nExisting member · Member ID: current-c\n\nMatch:\n\nUse Old same name\nExisting member · Member ID: old-a\nUse Old same name\nExisting member · Member ID: old-b\nupdate\nSkip this row\nEdit row\n\nApply records the reviewed changes and source rows in import history.\n\nApply Reviewed Import",
+      "requests": [
+        {
+          "path": "/api/v1/admin/members/import/inspect",
+          "filename": "old.csv",
+          "options": {
+            "sheet": "",
+            "header_row": 1,
+            "mapping": {},
+            "resolutions": {}
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/preview",
+          "filename": "old.csv",
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {},
+            "confirm_call_changes": false
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/preview",
+          "filename": "old.csv",
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "old-b"
+            },
+            "confirm_call_changes": false
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/inspect",
+          "filename": "current.csv",
+          "options": {
+            "sheet": "",
+            "header_row": 1,
+            "mapping": {},
+            "resolutions": {}
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/preview",
+          "filename": "current.csv",
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {},
+            "confirm_call_changes": false
+          }
+        }
+      ],
+      "applies": 0,
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "scenario": "old-refusal-current-pending",
+      "delayedOldChoiceCannotOverwrite": true,
+      "oldRequestWasHeld": true,
+      "currentFile": "current.csv",
+      "pendingState": {
+        "fileDisabled": true,
+        "working": true,
+        "staleMessage": false,
+        "oldIdentity": false,
+        "applyCount": 0
+      },
+      "selectedIdentity": "Existing member · Member ID: current-c",
+      "before": "Import and Review Members\n✓\nUpload file\n(done)\n2\nMap columns\n3\nReview rows\n4\nApply\n\nFiles and selections are kept while this page remains open. Replacing the file resets mappings and review choices. After leaving or reloading, you may need to choose the file again.\n\nUpload CSV or Excel (up to 5 MB and 5000 rows). Every name is checked against the master list and saved aliases, including previously imported, historical, and archived members.\n\nBlank cells preserve existing values. Members absent from the file stay unchanged. Existing names stay unchanged when matched; duties, leave, and postings remain linked.\n\nDesignation requires an effective-from date. Use Excel dates or YYYY-MM-DD. Separate aliases with semicolons. Resolve uncertain matches or skip rows before applying.\n\nDownload Excel Template\nDownload CSV Template (Name + Call Level)\nCSV or Excel file\ncurrent.csv\nHeader row\nRead File and Columns\nWorksheet\nname *\nPreview Normalized Members\n\nWorking…",
+      "after": "Import and Review Members\n✓\nUpload file\n(done)\n✓\nMap columns\n(done)\n3\nReview rows\n4\nApply\n\nFiles and selections are kept while this page remains open. Replacing the file resets mappings and review choices. After leaving or reloading, you may need to choose the file again.\n\nUpload CSV or Excel (up to 5 MB and 5000 rows). Every name is checked against the master list and saved aliases, including previously imported, historical, and archived members.\n\nBlank cells preserve existing values. Members absent from the file stay unchanged. Existing names stay unchanged when matched; duties, leave, and postings remain linked.\n\nDesignation requires an effective-from date. Use Excel dates or YYYY-MM-DD. Separate aliases with semicolons. Resolve uncertain matches or skip rows before applying.\n\nDownload Excel Template\nDownload CSV Template (Name + Call Level)\nCSV or Excel file\ncurrent.csv\nHeader row\nRead File and Columns\nWorksheet\nname *\nPreview Normalized Members\n\nWorksheet returned by preview: Not returned. Member mode is not returned by this importer; review the returned row actions below.\n\nCurrent returned preview. Review included rows and the existing Apply confirmations before saving.\n\n1 update · 0 needs review\n\nReview rows\nDownload Rejected Rows CSV\nFile row\tMember\tAction / changes\tDecision\n2\t\n\nSource spelling\n→\nCurrent account member\nMatched\n\nExisting member · Member ID: current-c\n\nMatch:\n\nUse Old same name\nExisting member · Member ID: old-a\nUse Old same name\nExisting member · Member ID: old-b\nupdate\nSkip this row\nEdit row\n\nApply records the reviewed changes and source rows in import history.\n\nApply Reviewed Import",
+      "requests": [
+        {
+          "path": "/api/v1/admin/members/import/inspect",
+          "filename": "old.csv",
+          "options": {
+            "sheet": "",
+            "header_row": 1,
+            "mapping": {},
+            "resolutions": {}
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/preview",
+          "filename": "old.csv",
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {},
+            "confirm_call_changes": false
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/preview",
+          "filename": "old.csv",
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {
+              "2": "old-b"
+            },
+            "confirm_call_changes": false
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/inspect",
+          "filename": "current.csv",
+          "options": {
+            "sheet": "",
+            "header_row": 1,
+            "mapping": {},
+            "resolutions": {}
+          }
+        },
+        {
+          "path": "/api/v1/admin/members/import/preview",
+          "filename": "current.csv",
+          "options": {
+            "sheet": "Members",
+            "header_row": 1,
+            "mapping": {
+              "name": 0
+            },
+            "resolutions": {},
+            "confirm_call_changes": false
+          }
+        }
+      ],
+      "applies": 0,
+      "errors": []
+    }
+  ]
+}

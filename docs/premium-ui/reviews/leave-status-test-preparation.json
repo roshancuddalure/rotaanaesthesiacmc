@@ -1,0 +1,49 @@
+{
+  "recorded_at_utc": "2026-10-28T17:46:34.264454+00:00",
+  "author": "/root/leave_status_runtime_plan",
+  "status": "test_prepared_candidate_gate_failed",
+  "acceptance_claim": false,
+  "original_items": [
+    141,
+    144,
+    145,
+    147
+  ],
+  "covered_by_new_semantics_test": [
+    "144 faithful calendar/list/day-modal entry counts, duplicate person sessions and cross-month range",
+    "145 all applicable active-day statuses and complete-list known/unknown safe textual statuses",
+    "147 returned approved blocking counts versus pending warning guidance"
+  ],
+  "not_covered": [
+    "141 full toolbar role/geometry/hierarchy matrix",
+    "Monthly approval statuses and actual persistence (separate tests)",
+    "Complete 28/29/30/31 month boundary matrix (existing separate suite)",
+    "Native assistive technology and physical devices"
+  ],
+  "planned_matrix": {
+    "normal": "3 engines x 320/1280 x light/dark = 12 contexts",
+    "stress": "3 engines x 320x568 root-font200% / 390x320 root-font100% x light/dark = 12 contexts"
+  },
+  "findings": [
+    {
+      "id": "leave-unknown-status-card-overflow",
+      "evidence": "tmp/leave-status-overflow-probe.json",
+      "result": "Existing live5197 and v2preview5201 both scrollWidth384 at viewport320; escaped hostile unknown-status badge min-content stretches leave card. Narrow v5 wrapping fix proposed by separate author, not yet fully certified."
+    },
+    {
+      "id": "leave-calendar-native-focus-partial-reveal",
+      "evidence": "tmp/leave-status-native-focus-probe.json",
+      "result": "v5 Chromium320 all31 dates receive exact focus, but some remain partially clipped. May13 rectangle258.84..368.28 inside clip29..291 has center313.56 outside; 3-second strict reveal wait fails. Independent review pending; no silent assertion relaxation."
+    }
+  ],
+  "artifact_sha256": {
+    "frontend/tests/premium-leave-status-overflow-probe.browser.mjs": "27a85a531047e12cb29a418f90b31bd0b2bfe4eb80123fd43146ff0978a63264",
+    "frontend/tests/premium-leave-status-native-focus-probe.browser.mjs": "ad85772dbe2b23190115ebead037c19ce2cb47b39d34ed25a590654e1b30e29d",
+    "tmp/leave-status-overflow-probe.json": "7fa0bac2adca99eb40a93cfb030262fda1322cb61de1417bd8e78c082bbbed78",
+    "tmp/leave-status-native-focus-probe.json": "cdc02488d7106272db665e5ef8cbd6d67640ddb8ac158e785f103dcd08a4e13b",
+    "tmp/leave-status-v5-preview-native-focus-timeout.json": "42526df3703478bfa043ff1b387c4447a55b58949eb40682c597d7de5cc59e6d",
+    "tmp/leave-status-semantics-v5-center-gate.browser.mjs": "2bfa1e61db03ccd1a32a2d7065ad3182caff7ee04636b31a75d7cc8969d63d69"
+  },
+  "safety": "New tests/probes only. GET-only loopback shell fixture, no application/backend/ledger edits, no production requests. Final application test run remains required after any scratch candidate is applied.",
+  "test_evolution": "Original failing v5 center-only gate preserved in immutable scratch copy. The active test will strengthen to full button plus actual computed focus outline within scroller client clip; this record continues to bind the original failed gate, not the future test."
+}

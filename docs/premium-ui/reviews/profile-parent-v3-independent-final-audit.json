@@ -1,0 +1,69 @@
+{
+  "recorded_at_utc": "2026-11-09T07:36:21.335434+00:00",
+  "reviewer": "/root/profile_parent_final_audit",
+  "scope": "Independent read-only source review of isolated V3 proposal. No application edits or browser executions. Existing 12 normal and 12 read-failure cases are parent evidence, not newly executed by reviewer.",
+  "decision": "changes_required_before_integration",
+  "source_sha256": {
+    "tmp/profile-parent-refresh-v3/main.ts": "d088ee577eb723d682ba759a0af10cb63f511ab898ae9f36267ca99930c7503e",
+    "tmp/profile-operational-lifecycle-v1/member-workspace.ts": "105cc1d91ea4815d565ad4859fc01412cf576a3203c07834f4010e3fef7ef1a5",
+    "tmp/profile-parent-refresh-v3/effect-proof.json": "e66ea36cabace38fbb8b20b97c462cc920e074bdbe9faa6bff969f4601db9526",
+    "docs/premium-ui/reviews/profile-parent-operational-refresh-implementation-design.json": "6df54d96a9a9baa01e9917de2f8ab9f92673a4eecd4834783f175529fac0496b"
+  },
+  "findings": [
+    {
+      "id": "PROFILE-PARENT-V3-REVIEW-001",
+      "severity": "medium",
+      "confidence": "source-proven control-state mismatch; browser reproduction still required",
+      "location": "tmp/profile-parent-refresh-v3/main.ts:3114",
+      "title": "Retained desktop Delete selected control is not reconciled after pruning Leave selection",
+      "trigger": "Select a Leave row, open its member profile, edit that leave so it no longer intersects the displayed month, then close the profile. The returned monthly request list excludes that record.",
+      "evidence": "renderLeaveSnapshot calls pruneAdminSelection at line3967. refreshProfileLeaveReadback replaces tbody/count/mobile card-list but retains desktop table-caption Delete selected and never invokes syncAdminSelection. Desktop button therefore retains old count/enabled state while adminSelection is empty. Delegated handler at line9863 silently returns for empty ids.",
+      "impact": "Desktop shows an enabled Delete selected (1) button which does nothing, violating truthful action state and the no dead buttons requirement. Mobile controls receive newly rendered count, producing desktop/mobile disagreement.",
+      "requested_fix": "Call existing syncAdminSelection(\"leave\") after the owned Leave partial paint has reconciled rows/cards, preserving existing selection and button identities. Do not change deletion handlers/payloads.",
+      "required_test": "Select one record, edit its dates out of month through profile, assert desktop retained button identity with Delete selected (0), disabled, removed checkbox and retained unrelated selected rows. Verify equivalent mobile state and no deletion request."
+    },
+    {
+      "id": "PROFILE-PARENT-V3-REVIEW-002",
+      "severity": "high",
+      "confidence": "source-proven malformed-response commit ordering; exact browser recovery case required",
+      "location": "tmp/profile-parent-refresh-v3/main.ts:3179",
+      "title": "Malformed successful responses can overwrite valid global snapshots before dependent render fails",
+      "trigger": "Parent GET returns HTTP200 with matching month but missing consumed arrays, or a Leave request row missing status/person.",
+      "evidence": "Units branch checks only result.month, then assigns unitManagement/units/unitAssignments before refreshUnitBoardReadback calls validation_issues.filter and unit_summaries.reduce. Leave branch checks month fields and Array.isArray(requests), then assigns leaveCalendar/leaveRequests/leavePressure before renderLeaveSnapshot calls row.status.toLowerCase or pressure.days iteration. A malformed response throws after valid globals have been replaced; some Unit regions may already have been painted.",
+      "impact": "The catch reports last-known visible data retained while globals may be malformed and some regions already updated. Subsequent parent actions or day-view toggles can fail or consume inconsistent state until a successful retry.",
+      "requested_fix": "Validate minimally consumed object/array/member/status shape for all staged results before committing any globals or painting. Keep validation narrowly structural, with explicit user-facing recoverable GET-only failure; do not invent backend policy. For failures while rendering even shape-valid data, either stage DOM rendering before commit or restore previous snapshot and ensure no partial paint is presented as complete.",
+      "required_test": "Matching-month200 responses missing units/assignments/validation_issues/unit_summaries, Leave days/summary dictionaries, request status/person: retained prior globals/DOM/draft/selection, visible reachable retry, exactly one accepted mutation and GET-only retry recovery."
+    },
+    {
+      "id": "PROFILE-PARENT-V3-REVIEW-003",
+      "severity": "medium",
+      "confidence": "deterministic source identity collision; browser reproduction required",
+      "location": "tmp/profile-parent-refresh-v3/main.ts:3107",
+      "title": "Focus restoration matches the first duplicate member link rather than the original operational record",
+      "trigger": "Two Leave rows/cards or special-posting cards belong to the same member. While the deferred read is held, focus the second record member link, then resolve the read with both records still present.",
+      "evidence": "patchProfileParentRegion captures focused element data attributes/value and finds the first matching descendant. Member links have only data-open-member and data-profile-tab; multiple records for one member share those attributes. Stable leave/posting record identity exists in surrounding record actions, and posting article data-unit-row-form, but is not captured by this matcher.",
+      "impact": "Focus jumps to the first record for that member, losing the user's active record context despite successful readback. This can make the next keyboard action act in a different dated row.",
+      "requested_fix": "Capture nearest stable operational record identity (existing posting article record id or corresponding row/card record action id) and restrict focus replacement lookup to that same record before matching semantic control. If the original record disappears, use the owned region/status fallback rather than a different member occurrence.",
+      "required_test": "Duplicate member records with distinct immutable IDs and date ranges, focus second record link while GET held, resolve/reorder response and assert focus remains on same record in desktop rows/mobile cards/special posting cards. Removed record should focus truthful owned status or region, not another record."
+    }
+  ],
+  "positive_observations": [
+    "Lifecycle metadata is captured before awaited mutation; confirmed notifications precede internal profile GETs, separating saved state from read failures.",
+    "Native close notification is idempotent and Previous/Next replacement suppresses final close while passing the lifecycle onward.",
+    "Parent ownership includes account object, route sequence, render sequence, root identity, month and original overlay identity. Units adds existing unitLoadSeq read generation.",
+    "Read-only parent refresh uses existing GET helpers and preserves explicit GET-only retry rather than replaying operational writes.",
+    "Existing non-GET/storage/confirmation equality is supported by provided exact-effect proof; that proof does not establish broader runtime correctness."
+  ],
+  "remaining_runtime_gates": [
+    "Held read then route/month/account/root/overlay replacement",
+    "Multiple mutations, profile Previous/Next, late mutation after profile closed",
+    "Failed profile GET with separately successful or failed parent GET",
+    "Newer settings input and focus during parent read",
+    "Cross-kind Leave edit from Units and posting edit from Leave affecting returned summaries",
+    "Structural malformed200, selection prune and duplicate record focus cases above"
+  ],
+  "limitations": [
+    "No new browser load, backend access, application changes, source rebase or integration approval. V3 is based on B0 and requires guarded rebase to stageV9 before current-source verification.",
+    "Reported runtime evidence covers only documented normal/failure cases; broad ownership, shape, focus and coalescing conclusions remain unproven."
+  ]
+}

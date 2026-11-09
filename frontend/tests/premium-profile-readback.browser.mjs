@@ -67,7 +67,7 @@ try{
   if(action==='comment')await dialog.getByText(values.body,{exact:true}).waitFor();
   if(action==='alias')await dialog.getByText(values.alias,{exact:true}).waitFor();
   if(action==='details')await dialog.getByRole('heading',{name:values.name,exact:true}).waitFor();
-  if(action==='designation')await dialog.locator('strong').filter({hasText:values.designation}).waitFor();
+  if(action==='designation')await dialog.locator('[data-designation-timeline]').getByRole('heading',{name:values.designation,exact:true}).waitFor();
   if(action==='call')await dialog.getByText(values.reason,{exact:true}).waitFor();
   assert.equal(writes,1);assert.equal(gets,4);assert.deepEqual(errors,[]);
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);

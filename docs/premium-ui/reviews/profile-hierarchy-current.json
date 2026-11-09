@@ -1,0 +1,85 @@
+{
+  "recorded_at_utc": "2026-10-24T11:08:36.015327+00:00",
+  "completion_claim": false,
+  "scope": "Both-profile primary identity, compact full-text access, dated position history and metadata hierarchy.",
+  "source_sha256": {
+    "frontend/src/member-workspace.ts": "f6386f39469cfcb3a3526deff06cdb9037bb7483574d988bf5e1a568d2db5782",
+    "frontend/src/member-profile.ts": "3a31d989707c006ed18f33a26105c8ed855d70bca29a0dc4d925a763979cd1af",
+    "frontend/src/member-presentation.ts": "99874e6e80efadd671be1c6d5b17b50e93e061bf8e7f2538535724baafd7d887",
+    "frontend/src/premium-theme.css": "46764b33f5c230611b17074e4e196d0a2faac72dcc18de8dc37a74a2fb7e67ad"
+  },
+  "checks": {
+    "new_browser_contexts": 27,
+    "nested_new_workflows": 408,
+    "exact_mocked_comment_posts": 36,
+    "regression_suites_passed": 12,
+    "unit_tests_passed": 110,
+    "held_build_passed": true,
+    "minimum_measured_usable_content_px": 106
+  },
+  "execution_evidence": [
+    {
+      "report": "docs/premium-ui/qa-profile-hierarchy.json",
+      "test": "frontend/tests/premium-profile-hierarchy.browser.mjs",
+      "exit_code": 0,
+      "scope": "9 contexts with 324 nested workflows; exact assertions and raw scope define behavior."
+    },
+    {
+      "report": "docs/premium-ui/qa-profile-metadata-state.json",
+      "test": "frontend/tests/premium-profile-metadata-state.browser.mjs",
+      "exit_code": 0,
+      "scope": "6 contexts with 48 nested workflows; exact assertions and raw scope define behavior."
+    },
+    {
+      "report": "docs/premium-ui/qa-profile-record-provenance.json",
+      "test": "frontend/tests/premium-profile-record-provenance.browser.mjs",
+      "exit_code": 0,
+      "scope": "6 contexts with 12 nested workflows; exact assertions and raw scope define behavior."
+    },
+    {
+      "report": "docs/premium-ui/qa-profile-designation-dates.json",
+      "test": "frontend/tests/premium-profile-designation-dates.browser.mjs",
+      "exit_code": 0,
+      "scope": "6 contexts with 24 nested workflows; exact assertions and raw scope define behavior."
+    }
+  ],
+  "regression_execution": "docs/premium-ui/reviews/profile-hierarchy-regression-execution.json",
+  "source_preservation": "docs/premium-ui/reviews/profile-hierarchy-source-preservation.json",
+  "unit_loader_proof": "docs/premium-ui/reviews/profile-hierarchy-unit-loader-proof.json",
+  "changes": [
+    "Shared strict calendar/date presentation serves canonical device-date and legacy returned-system-date views. Both show primary identity before secondary metadata.",
+    "Both header variants retain full escaped text with native arrow scrolling, visible overflow cues and Close outside the region.",
+    "Read-only designation chronology sorts wrappers, preserves original editor indices, and distinguishes displayed-date, ended, scheduled, missing and invalid ranges.",
+    "Known record provenance and IDs use labelled native disclosures. Essential dates, notes, statuses and unknown fields remain primary. State/focus is keyed to record identity through rerender and insertion/removal.",
+    "Overview metric cards use compact aligned content; all existing form/save handlers and original CSS prefix remain unchanged."
+  ],
+  "independent_review": {
+    "reviewer": "/root/effective_final_audit",
+    "outcome": "Recomputed all four raw source/test hashes and counts.27 contexts/408 workflows,zero errors,min usable content106px. Recommends122126128130 after exact-condition audit; fresh call-timeline/date-card regressions match held sources. Source byte preservation independently confirmed."
+  },
+  "root_review": {
+    "reviewer": "/root",
+    "method": "Read complete isolated patch, all new assertions and exact original122126128130 conditions. Viewed both normal320 profile captures and desktop/long variants. Executed source preservation proof, held integrated build and110 unit tests; inspected all12 regression outcomes. Preserved obsolete-selector and native-browser test-assumption failures without altering production contracts."
+  },
+  "evidence": [
+    "docs/premium-ui/reviews/profile-hierarchy-regression-execution.json",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json",
+    "docs/premium-ui/reviews/profile-hierarchy-source-preservation.json",
+    "docs/premium-ui/reviews/profile-hierarchy-unit-loader-proof.json",
+    "docs/premium-ui/qa-profile-hierarchy.json",
+    "frontend/tests/premium-profile-hierarchy.browser.mjs",
+    "docs/premium-ui/qa-profile-metadata-state.json",
+    "frontend/tests/premium-profile-metadata-state.browser.mjs",
+    "docs/premium-ui/qa-profile-record-provenance.json",
+    "frontend/tests/premium-profile-record-provenance.browser.mjs",
+    "docs/premium-ui/qa-profile-designation-dates.json",
+    "frontend/tests/premium-profile-designation-dates.browser.mjs"
+  ],
+  "limitations": [
+    "27 new contexts contain408 nested workflows; these counts are not additive browser contexts.36 comment POSTs are fulfilled locally with exact bodies; no real backend persistence or authorization certification.",
+    "Responsive tests use320x480,1280x900 and320x640 with root text200%; text enlargement is not full browser zoom. No physical-device or native assistive-technology certification.",
+    "Legacy comparison date is returned15September2026 while browser date is24October. Invalid or absent returned date is unknown, never silently replaced by device date. No backend date computation claim.",
+    "Designation history represents returned position ranges, not inferred rank or promotion precedence. Missing/duplicate designation IDs deliberately have no restoration ownership. Existing unique-record disclosures keep state by identity.",
+    "This frontend batch changes no backend, API contract, role guards, scheduling, persisted semantics or export contents. No commit, push or deployment."
+  ]
+}

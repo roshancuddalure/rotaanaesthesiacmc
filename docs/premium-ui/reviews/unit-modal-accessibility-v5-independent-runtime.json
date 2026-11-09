@@ -1,0 +1,112 @@
+{
+  "recorded_at_utc": "2026-10-29T03:50:16.100105+00:00",
+  "reviewer": "/root/unit_focus_runtime_v5",
+  "status": "changes_requested_v6_upper_legacy_opener_return",
+  "scope": "Independent actual-app adverse runtime review of unapplied V5 and root-provided V6. Eighteen contexts total:6historicalV5,6V6adverse and6V6upper-legacy diagnostics; not18passingV6contexts or full-item acceptance. No application/candidate/shared-ledger edits.",
+  "executions": [
+    {
+      "name": "v5_adverse",
+      "report": "docs/premium-ui/qa-unit-modal-independent-v5-adverse.json",
+      "report_sha256": "64697513e59286e077f4f7b64b997b31dca4efc9171dd05f19e7e713c79df95c",
+      "test": "frontend/tests/premium-unit-modal-independent-v5-adverse.browser.mjs",
+      "test_sha256": "a692e358efaa65353f9334d2fd9d735fd45590b07a3f9474f338852b3d15a7f9",
+      "log": "tmp/unit-modal-independent-v5-adverse.log",
+      "log_sha256": "6a352434e08851240ec9981ffc23c0bed6749466e61f64ef1ec79289d2e5b51c",
+      "exit_code": 0,
+      "contexts": 6,
+      "source_hashes_held": true
+    },
+    {
+      "name": "v6_adverse",
+      "report": "docs/premium-ui/qa-unit-modal-independent-v6-adverse.json",
+      "report_sha256": "a2fa3d7f01b56b598db338f46da4da2b777b3da6f97a89d2ecebe8122782a4e8",
+      "test": "frontend/tests/premium-unit-modal-independent-v6-adverse.browser.mjs",
+      "test_sha256": "6dc4e1bda7ef952d5254f92d3b7297e0ee7c5fe7c54f8e3affa913236fac18f4",
+      "log": "tmp/unit-modal-independent-v6-adverse.log",
+      "log_sha256": "09b5fb87938f0ece143dee35dda84a62a6e7c9b576d07fa5633b9f0f72fae429",
+      "exit_code": 0,
+      "contexts": 6,
+      "source_hashes_held": true
+    },
+    {
+      "name": "v6_upper_legacy",
+      "report": "docs/premium-ui/qa-unit-modal-independent-v6-legacy-overlay.json",
+      "report_sha256": "ef6a010ff52b78d2eb4f0bd56a7bd0b1fee6040446df9f6c5c7bf9bb94133898",
+      "test": "frontend/tests/premium-unit-modal-independent-v6-legacy-overlay.browser.mjs",
+      "test_sha256": "a7bdd313e4d9f3b87481c3aa9b0c2a218e18d423dbb1b255482f2c4616fb5960",
+      "log": "tmp/unit-modal-independent-v6-legacy-overlay.log",
+      "log_sha256": "dd7c1579f3bc13dd6ed3d2f30c8ff08f5221f97815f7c82f019e2a0f5277e97c",
+      "exit_code": 0,
+      "contexts": 6,
+      "source_hashes_held": true
+    }
+  ],
+  "findings": [
+    {
+      "id": "IND-UNIT-FOCUS-STALE-POINTER",
+      "severity": "high",
+      "candidate": "V5",
+      "reproduced_contexts": 6,
+      "observed": "Cancelled pointer press on Manage A, then focus seeded on A and actual native Tab to Manage B followed by Enter opens B. Escape returns to Manage A in all3engines320/1280. The stored pointer candidate overrides the newer keyboard opener.",
+      "expected": "Close returns to the button that actually opened B through the later keyboard action.",
+      "v6_retest": "All6 V6 adverse cases assert actual return to Manage B and pass. V6 removed the stored pointer/timestamp and commits actual opening click instead.",
+      "disposition": "fixed_in_unapplied_v6"
+    },
+    {
+      "id": "IND-UNIT-FOCUS-UPPER-LEGACY-RETURN",
+      "severity": "medium",
+      "candidate": "V6",
+      "reproduced_contexts": 6,
+      "observed": "Keyboard activation of a unit validation review button opens the actual body review-action modal. Initial upper focus, Escape dismissal, unit survival and app inert restoration work. Closing returns to the unit Close button in every case, although the exact original review button is still connected and visible.",
+      "expected": "A dismissed upper overlay returns to its exact surviving unit review opener; a generic unit-close fallback is reserved for missing/unusable openers.",
+      "source_corroboration": "Shared shell records body-overlay openers only from focus outside any backdrop or a previously known body overlay; it excludes focus within the nested unit backdrop. Unit helper captures native member/record opener clicks but not the unit review-action opener, then resumes BODY focus to Close.",
+      "required_action": "Preserve the specific unit review-action opener across the upper legacy overlay, including keyboard and mouse/touch, without changing existing review handlers, actions, API calls or top-overlay Escape ownership. Re-run this actual native entry path plus native profile/record/newer-focus and teardown cases.",
+      "disposition": "open_in_unapplied_v6"
+    }
+  ],
+  "verified_v6_bounded_outcomes": [
+    "Actual delegated Edit posting opens the correct person/unit/dated record and retains starts_on/ends_on/notes.",
+    "Held locally intercepted preview503 allows no duplicate request; existing native Escape/header close refuse while busy without a dirty confirmation.",
+    "Failed preview retains edited notes; dirty Escape dismissal refuses, accepted footer discard closes and exact touch Edit opener is restored.",
+    "Preview body preserves person_id/unit_id/starts_on/ends_on/notes; no save request is sent.",
+    "Actual special-card title touch opens its modal and returns to the corresponding Manage special-postings button.",
+    "Actual hash route away from Units removes the modal and restores prior shell inert states, including intentionally inert closed mobile sidebar.",
+    "Actual return to Units preserves its existing auto-reopened selected-unit modal; test accommodates that original behavior.",
+    "Actual edit-record GET401 raises the existing Session recovery in the native editor. Confirmed Sign in again clears private dialogs, aborts shell handlers, shows usable non-inert login and does not revive old unit UI after Escape.",
+    "Actual body review-action upper overlay retains initial focus, Escape priority and unit survival; only exact original opener return remains deficient."
+  ],
+  "evidence_sha256": {
+    "docs/premium-ui/qa-unit-modal-independent-v5-adverse.json": "64697513e59286e077f4f7b64b997b31dca4efc9171dd05f19e7e713c79df95c",
+    "frontend/tests/premium-unit-modal-independent-v5-adverse.browser.mjs": "a692e358efaa65353f9334d2fd9d735fd45590b07a3f9474f338852b3d15a7f9",
+    "tmp/unit-modal-independent-v5-adverse.log": "6a352434e08851240ec9981ffc23c0bed6749466e61f64ef1ec79289d2e5b51c",
+    "docs/premium-ui/qa-unit-modal-independent-v6-adverse.json": "a2fa3d7f01b56b598db338f46da4da2b777b3da6f97a89d2ecebe8122782a4e8",
+    "frontend/tests/premium-unit-modal-independent-v6-adverse.browser.mjs": "6dc4e1bda7ef952d5254f92d3b7297e0ee7c5fe7c54f8e3affa913236fac18f4",
+    "tmp/unit-modal-independent-v6-adverse.log": "09b5fb87938f0ece143dee35dda84a62a6e7c9b576d07fa5633b9f0f72fae429",
+    "docs/premium-ui/qa-unit-modal-independent-v6-legacy-overlay.json": "ef6a010ff52b78d2eb4f0bd56a7bd0b1fee6040446df9f6c5c7bf9bb94133898",
+    "frontend/tests/premium-unit-modal-independent-v6-legacy-overlay.browser.mjs": "a7bdd313e4d9f3b87481c3aa9b0c2a218e18d423dbb1b255482f2c4616fb5960",
+    "tmp/unit-modal-independent-v6-legacy-overlay.log": "dd7c1579f3bc13dd6ed3d2f30c8ff08f5221f97815f7c82f019e2a0f5277e97c",
+    "tmp/unit-modal-accessibility-v5/main.ts": "62226f3480e4089b39df8ff31a0b0f509672231a8bd303f0b51abec96401b57b",
+    "tmp/unit-modal-accessibility-v5/unit-modal-accessibility.ts": "90d670e574a4c5d0b4b1390c916ce242563ac7ccbe8a3c9da8baf76eae7359a6",
+    "tmp/unit-modal-accessibility-v6/main.ts": "62226f3480e4089b39df8ff31a0b0f509672231a8bd303f0b51abec96401b57b",
+    "tmp/unit-modal-accessibility-v6/unit-modal-accessibility.ts": "de22a88ab3f8c0945d07b9cdb86c41fea429fd46cba43a40d41fae0ba66267cb",
+    "frontend/src/main.ts": "cb6ee8d2bedc1401cedcda8e20e199f60bd8418e2a24baa00a373c5290a52168",
+    "frontend/src/shell-accessibility.ts": "47a8302e3272e90162d995f2e1d91a36c94116c76a97f5e62b2ecc31de79efc9",
+    "frontend/src/record-workspace.ts": "7c196c12b114c48bf2db4ee57aad7e591d8e3acc7a77cccd15abbad7c349fb8f",
+    "frontend/src/member-workspace.ts": "0ef8c1ef2234c7a50d8ca10b8aaa3998a654d452f563bd4c75531faef09d6c63",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+  },
+  "harness_notes": [
+    "Initial V5 teardown assumed sidebar inert=false at phone width. Source confirms closed mobile sidebar is intentionally inert; corrected assertion compares the actual pre-modal state. Saved prior scripts/logs show this was a harness assertion, not a new app regression.",
+    "Asynchronous route callback disposal initially masked that assertion; final teardown awaits networkidle at the route endpoint and removes routes with documented ignoreErrors during context closure. Application pageerror arrays and unexpected-write assertions remain strict.",
+    "Initial V6 account-test setup tried to tap background Manage after returning to Units, but the original selected unit modal had already reopened. The test now respects that existing state instead of changing it. Saved initial log/script retained.",
+    "V6 raw scope text retains inherited no account reset claim boilerplate. The actual V6 assertions/results prove frontend session-expiry recovery/teardown only, not a server-side account reset, successful new login or new-account authorization."
+  ],
+  "integration_recommendation": "Do not integrate V5. Retain V6 stale-intent correction and bounded passing outcomes, but repair/review the upper legacy exact opener return before claiming complete unit-modal focus recovery. Current product sources remain unchanged.",
+  "limits": [
+    "Root-provided scratch preview; no production build, persistence, backend authorization, scheduling or export correctness certification.",
+    "All operational preview POSTs locally fulfilled; every other nonGET rejected. Remaining GETs use explicit fixtures or127.0.0.1:8031 disposable RAM. No configured database mutations.",
+    "No broad visual/contrast, root200/short-height, normal-motion or native AT certification added here; root evidence has its own declared scope.",
+    "Rapid replacement/controlled abort checks in root reports not substituted for independent runtime; this review independently covers actual view and actual session-refusal teardown.",
+    "No full260 or original item acceptance, ledger/signoff/package updates, backend edits or deployment."
+  ]
+}

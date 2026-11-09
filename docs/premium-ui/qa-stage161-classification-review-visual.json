@@ -1,0 +1,106 @@
+{
+  "recorded_at_utc": "2026-10-30T18:14:12.486Z",
+  "reviewer": "/root/stage161_classification_review",
+  "scope": "Independent two-context visual supplement: Chromium320/1280 current-schema call-level blocker. Review needs-action text, disabled Publish and full page image; no app changes. Candidate overlay is frozen; no application edits. NoGenerate/Apply/DB mutation;GETlocalmock/disposablefixture only.",
+  "test_sha256": "e2ddf45aa81e49631636f993d7960562b74d975023cc1174ff115ea08987b2a9",
+  "source_sha256": {
+    "frontend/src/main.ts": "162dd5f04f185f4506c38dba974f0cd927b3e09d1ce85f5fd0da0f0de566885c",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "40bc7f91441cc805375a2e13332f424c88423c93124bf34123dff4bcffbf5673",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+  },
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "state": "call-level-mismatch",
+      "returnedBlockers": [
+        "Call level mismatches"
+      ],
+      "canPublish": false,
+      "expected": [
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Rota Setup\n    , done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Rota Template\n    , done"
+        },
+        {
+          "view": "rota-review",
+          "state": "blocked",
+          "text": "3\n    Rota Review\n    , needs action"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "4\n    Publish & Export\n    , not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "state": "call-level-mismatch",
+      "returnedBlockers": [
+        "Call level mismatches"
+      ],
+      "canPublish": false,
+      "expected": [
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Rota Setup\n    , done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Rota Template\n    , done"
+        },
+        {
+          "view": "rota-review",
+          "state": "blocked",
+          "text": "3\n    Rota Review\n    , needs action"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "4\n    Publish & Export\n    , not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    }
+  ]
+}

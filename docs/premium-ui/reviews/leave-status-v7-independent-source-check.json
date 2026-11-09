@@ -1,0 +1,36 @@
+{
+  "reviewer": "/root/remaining_icons_independent",
+  "recorded_at_utc": "2026-10-28T22:56:15.347Z",
+  "passed": true,
+  "scratch": "tmp/leave-status-v7",
+  "candidate_sha256": {
+    "main.ts": "cefb30a235398c3a00d77279b81b8b37a0a1c6206c73f30e4e914af94fab0f03",
+    "premium-theme.css": "aa0d3c25681b83298cd53f45f009ed2f1f8e64b0f334903936d269c886d399d7",
+    "leave-calendar-focus.ts": "93bc00fb0c753ef342412e2f58730126d17918c09edfd6f3e58f72b43d1cc2b3"
+  },
+  "baseline_current_match": true,
+  "existing_effect_calls_identical_after_disclosed_installation_removed": 154,
+  "existing_assigned_handlers_identical": 3,
+  "other_functions_unchanged": 330,
+  "changed_existing_functions": [
+    "leaveStatusLabel",
+    "renderLeaveCalendarDays",
+    "renderLeaveDayList",
+    "renderLeaveDayModal",
+    "renderLeave"
+  ],
+  "css_prefix_preserved": true,
+  "pure_status_helpers_independently_executed": true,
+  "helper_forbidden_effect_scan_pass": true,
+  "helper_effect_expressions": [
+    "lifetime.addEventListener(\"abort\", stop, { once: true })",
+    "root.addEventListener(\"focusin\", event => {\r\n    stop();\r\n    const eventTarget = event.target;\r\n    if (!(eventTarget instanceof HTMLButtonElement) || !eventTarget.matches(\"[data-leave-day]\")) return;\r\n    const target = eventTarget;\r\n    const region = target.closest<HTMLElement>(\".leave-month-scroll\");\r\n    if (!region || !root!.contains(region) || target !== root!.ownerDocument.activeElement) return;\r\n    const pending = new AbortController();\r\n    let frame = 0, stable = 0, last = \"\";\r\n    const started = view!.performance.now();\r\n    const cancel = () => {\r\n      const outstanding = frame;\r\n      frame = 0;\r\n      if (stopPending === cancel) stopPending = undefined;\r\n      pending.abort();\r\n      if (outstanding) {\r\n        try {\r\n          if (typeof view!.cancelAnimationFrame === \"function\") view!.cancelAnimationFrame(outstanding);\r\n        } catch {\r\n          // Aborted ownership prevents an uncancellable callback from doing work.\r\n        }\r\n      }\r\n    };\r\n    stopPending = cancel;\r\n    const intentOptions = { capture: true, once: true, signal: pending.signal };\r\n    for (const name of [\"pointerdown\", \"wheel\", \"keydown\"]) {\r\n      root!.ownerDocument.addEventListener(name, cancel, intentOptions);\r\n    }\r\n    target.addEventListener(\"focusout\", cancel, { once: true, signal: pending.signal });\r\n    const owns = () => !pending.signal.aborted && !lifetime.aborted\r\n      && root!.isConnected && region.isConnected && target.isConnected\r\n      && root!.contains(region) && region.contains(target)\r\n      && target === root!.ownerDocument.activeElement\r\n      && !target.closest(\"[hidden], [inert]\");\r\n\r\n    function geometry() {\r\n      const b = target.getBoundingClientRect(), c = region!.getBoundingClientRect();\r\n      const style = view!.getComputedStyle(target);\r\n      const ring = style.outlineStyle === \"none\" ? 0\r\n        : (Number.parseFloat(style.outlineWidth) || 0) + Math.max(0, Number.parseFloat(style.outlineOffset) || 0);\r\n      const left = c.left + region!.clientLeft, right = left + region!.clientWidth;\r\n      return { b, c, ring, left, right,\r\n        visible: b.width > 0 && b.height > 0 && c.width > 0 && c.height > 0,\r\n        fits: b.left - ring >= left - 0.5 && b.right + ring <= right + 0.5 };\r\n    }\r\n\r\n    function tick(): void {\r\n      frame = 0;\r\n      if (!owns()) { cancel(); return; }\r\n      try {\r\n        const before = geometry();\r\n        if (!before.visible) { cancel(); return; }\r\n        if (view!.performance.now() - started >= 1000) {\r\n          help(region!, true);\r\n          cancel();\r\n          return;\r\n        }\r\n        const margin = Math.max(5, before.ring + 1);\r\n        const raw = before.b.left - margin < before.left ? before.b.left - margin - before.left\r\n          : before.b.right + margin > before.right ? before.b.right + margin - before.right : 0;\r\n        const delta = raw < 0 ? Math.floor(raw) : Math.ceil(raw);\r\n        if (delta) {\r\n          try {\r\n            if (typeof region!.scrollBy !== \"function\") throw new Error(\"Native scroll unavailable\");\r\n            region!.scrollBy({ left: delta, behavior: \"instant\" });\r\n          } catch {\r\n            region!.scrollLeft += delta;\r\n          }\r\n        }\r\n        const after = geometry();\r\n        const signature = [after.b.left, after.b.right, after.b.top, after.b.bottom,\r\n          after.c.left, after.c.right, after.c.top, after.c.bottom,\r\n          region!.clientWidth, region!.clientHeight, region!.scrollLeft]\r\n          .map(value => Math.round(value * 100) / 100).join(\",\");\r\n        stable = after.fits && signature === last ? stable + 1 : 0;\r\n        last = signature;\r\n        if (stable >= 4) { help(region!, false); cancel(); return; }\r\n        if (typeof view!.requestAnimationFrame !== \"function\") {\r\n          help(region!, true);\r\n          cancel();\r\n          return;\r\n        }\r\n        frame = view!.requestAnimationFrame(tick);\r\n      } catch {\r\n        if (owns()) help(region!, true);\r\n        cancel();\r\n      }\r\n    }\r\n    tick();\r\n  }, { signal: lifetime })",
+    "root!.ownerDocument.addEventListener(name, cancel, intentOptions)",
+    "target.addEventListener(\"focusout\", cancel, { once: true, signal: pending.signal })"
+  ],
+  "overlay_typescript_diagnostics": 0,
+  "limits": [
+    "Source comparison and overlay compile only; actual new helper differs from injected diagnostic and needs native runtime/fallback/error/lifecycle tests.",
+    "New helper installation and its listener/RAF/instant-scroll/recovery effects are deliberate exceptions, not blanket handler parity."
+  ]
+}

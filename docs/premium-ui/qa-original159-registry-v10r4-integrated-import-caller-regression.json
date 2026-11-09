@@ -1,0 +1,491 @@
+{
+  "recorded_at_utc": "2026-11-09T10:40:49.056Z",
+  "author": "/root/profile_parent_final_audit",
+  "decision": "4 bounded Chromium Units import caller regression contexts passed",
+  "scope": "Chromium320/1280 Units accepted import normal and parent503 GETonlykeyboardretry only; no Leave/twobatch/childmarkup cases executed. ActualCSV/normalization/apply controls and existing locally fulfilled POST contracts; retained inlinefallbackorder/filter or Daylist/disclosure. No production/wholegoal/whole159 claim.",
+  "source_sha256": {
+    "frontend/src/main.ts": "9f5359ad9e8014098bc12c8ed3f9e1c6b1a06d1a4f92797b7f9da24bfba6e6b8",
+    "frontend/src/reference-workspace.ts": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd",
+    "frontend/src/extra-duty.ts": "529e420fc05ce5bfa42655b8863e449e09e22a7c0abe9baf4db5c94c4797b8c3",
+    "frontend/src/member-workspace.ts": "105cc1d91ea4815d565ad4859fc01412cf576a3203c07834f4010e3fef7ef1a5",
+    "frontend/src/operational-import.ts": "1ccbcf4181330a5f66c59b0723ec02f878a268b6b3030aa99b177de1b7070355",
+    "frontend/src/record-workspace.ts": "469fd6bf2e4118b15ad343d8059cd3cfb0acbc6483bea969ca5fb93488644335",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+  },
+  "candidate_sha256": {
+    "main.ts": "9f5359ad9e8014098bc12c8ed3f9e1c6b1a06d1a4f92797b7f9da24bfba6e6b8",
+    "reference-workspace.ts": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd",
+    "extra-duty.ts": "529e420fc05ce5bfa42655b8863e449e09e22a7c0abe9baf4db5c94c4797b8c3",
+    "member-workspace.ts": "105cc1d91ea4815d565ad4859fc01412cf576a3203c07834f4010e3fef7ef1a5",
+    "operational-import.ts": "1ccbcf4181330a5f66c59b0723ec02f878a268b6b3030aa99b177de1b7070355",
+    "record-workspace.ts": "469fd6bf2e4118b15ad343d8059cd3cfb0acbc6483bea969ca5fb93488644335",
+    "services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+  },
+  "test_sha256": "9bf7349b14222a53115f374d6c99bc046a1c4b978bab610be3b28fad12e4c789",
+  "expected_contexts": 4,
+  "failed_contexts": 0,
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "kind": "units",
+      "scenario": "normal",
+      "passed": true,
+      "deferredUntilActualClose": true,
+      "coalescedBatches": 1,
+      "parentReadGroups": 1,
+      "readFailureRetryGETOnly": false,
+      "childMarkupFaultObserved": false,
+      "unrelatedDraftOrChosenViewRetained": true,
+      "reads": {
+        "units": 2,
+        "calendar": 0,
+        "requests": 0,
+        "pressure": 0
+      },
+      "writes": [
+        {
+          "path": "/api/v1/import-review/columns",
+          "phase": "columns",
+          "method": "POST"
+        },
+        {
+          "path": "/api/v1/import-review/units/preview",
+          "phase": "preview",
+          "method": "POST"
+        },
+        {
+          "path": "/api/v1/import-review/v8-preview-1/apply",
+          "phase": "apply",
+          "method": "POST",
+          "body": {
+            "excluded": [],
+            "acknowledge_warnings": false
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/columns",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/units/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/v8-preview-1/apply",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "kind": "units",
+      "scenario": "parent503",
+      "passed": true,
+      "deferredUntilActualClose": true,
+      "coalescedBatches": 1,
+      "parentReadGroups": 2,
+      "readFailureRetryGETOnly": true,
+      "childMarkupFaultObserved": false,
+      "unrelatedDraftOrChosenViewRetained": true,
+      "reads": {
+        "units": 3,
+        "calendar": 0,
+        "requests": 0,
+        "pressure": 0
+      },
+      "writes": [
+        {
+          "path": "/api/v1/import-review/columns",
+          "phase": "columns",
+          "method": "POST"
+        },
+        {
+          "path": "/api/v1/import-review/units/preview",
+          "phase": "preview",
+          "method": "POST"
+        },
+        {
+          "path": "/api/v1/import-review/v8-preview-1/apply",
+          "phase": "apply",
+          "method": "POST",
+          "body": {
+            "excluded": [],
+            "acknowledge_warnings": false
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/columns",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/units/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/v8-preview-1/apply",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "kind": "units",
+      "scenario": "normal",
+      "passed": true,
+      "deferredUntilActualClose": true,
+      "coalescedBatches": 1,
+      "parentReadGroups": 1,
+      "readFailureRetryGETOnly": false,
+      "childMarkupFaultObserved": false,
+      "unrelatedDraftOrChosenViewRetained": true,
+      "reads": {
+        "units": 2,
+        "calendar": 0,
+        "requests": 0,
+        "pressure": 0
+      },
+      "writes": [
+        {
+          "path": "/api/v1/import-review/columns",
+          "phase": "columns",
+          "method": "POST"
+        },
+        {
+          "path": "/api/v1/import-review/units/preview",
+          "phase": "preview",
+          "method": "POST"
+        },
+        {
+          "path": "/api/v1/import-review/v8-preview-1/apply",
+          "phase": "apply",
+          "method": "POST",
+          "body": {
+            "excluded": [],
+            "acknowledge_warnings": false
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/columns",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/units/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/v8-preview-1/apply",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "kind": "units",
+      "scenario": "parent503",
+      "passed": true,
+      "deferredUntilActualClose": true,
+      "coalescedBatches": 1,
+      "parentReadGroups": 2,
+      "readFailureRetryGETOnly": true,
+      "childMarkupFaultObserved": false,
+      "unrelatedDraftOrChosenViewRetained": true,
+      "reads": {
+        "units": 3,
+        "calendar": 0,
+        "requests": 0,
+        "pressure": 0
+      },
+      "writes": [
+        {
+          "path": "/api/v1/import-review/columns",
+          "phase": "columns",
+          "method": "POST"
+        },
+        {
+          "path": "/api/v1/import-review/units/preview",
+          "phase": "preview",
+          "method": "POST"
+        },
+        {
+          "path": "/api/v1/import-review/v8-preview-1/apply",
+          "phase": "apply",
+          "method": "POST",
+          "body": {
+            "excluded": [],
+            "acknowledge_warnings": false
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/columns",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/units/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/v8-preview-1/apply",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    }
+  ]
+}

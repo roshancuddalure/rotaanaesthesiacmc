@@ -1,0 +1,21 @@
+{
+  "recorded_at_utc": "2026-10-28T16:42:33.847855+00:00",
+  "scope": "Original142 actualleaveapprovalreadback only. OtherleaveUIrequirements remainpartial.",
+  "checks": {
+    "browser_contexts": 12,
+    "admin_contexts": 6,
+    "board_contexts": 6,
+    "actual_individual_and_monthly_ram_readback": true,
+    "assignment_identity_preserved": true
+  },
+  "acceptance": "docs/premium-ui/reviews/leave142-acceptance.json",
+  "independent_review": "docs/premium-ui/reviews/leave142-persistence-independent-final-review.json",
+  "limitations": [
+    "This verifies disposable SQLite RAM persistence, not production/PostgreSQL concurrency or durable process-restart storage.",
+    "May2026 is the concrete selected-month fixture, with cross-month full range and changed-scope token validation; it is not every month/calendar layout.",
+    "No uncertain-network mutation failure is injected; that remains separately scoped intercepted recovery evidence.",
+    "Physical-device, software keyboard and native assistive technology unperformed.",
+    "Toolbar hierarchy and calendar/status/safety text under141/144/145/147 remain separate requirements.",
+    "No production database, deployment, push, backend-source/API-contract/permission or scheduling-semantic changes by this review."
+  ]
+}

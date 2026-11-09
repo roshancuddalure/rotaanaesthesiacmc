@@ -1,0 +1,30 @@
+{
+  "recorded_at_utc": "2026-10-24T11:14:06.543Z",
+  "scope": "Execute the actual transpiled pure frontend memberMatch renderer with explicit local candidate IDs. No server resolver, browser interaction or persistence claim.",
+  "source_sha256": {
+    "frontend/src/ui.ts": "88579ed75c8c72e4fd4e2d98508a58c42b925202362589a2469623664c2a975f"
+  },
+  "fixture": {
+    "raw": "Dr Same Name",
+    "status": "matched",
+    "name": "Dr Same Name",
+    "method": "canonical_exact",
+    "candidates": [
+      {
+        "id": "first-person",
+        "name": "Dr Same Name",
+        "call_level": "1ST_CALL"
+      },
+      {
+        "id": "second-person",
+        "name": "Dr Same Name",
+        "call_level": "2ND_CALL"
+      }
+    ]
+  },
+  "distinct_same_name_alternative_rendered": false,
+  "different_name_control_alternative_rendered": true,
+  "observed_issue": true,
+  "limitation": "MemberMatchView does not currently carry a selected member ID. This probe proves name-based candidate suppression, not resolver correctness or selection outcomes. A future fix must preserve exact identity and existing contracts.",
+  "next_requirement": 134
+}

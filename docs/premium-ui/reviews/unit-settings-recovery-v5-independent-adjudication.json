@@ -1,0 +1,44 @@
+{
+  "recorded_at_utc": "2026-10-31T01:21:15.885396+00:00",
+  "reviewer": "/root/unit_settings_v2_independent_review",
+  "candidate_sha256": {
+    "main.ts": "54a6849b644984698858f07c072961b47368d48cbe8bb77a8538e3973a0d29d4",
+    "unit-settings-recovery.ts": "4cfcd55615c77fa39aa08ee57abb3e807412fb9fb6c42af71dbb86a4458ce51d"
+  },
+  "baseline_byte_sha256": "2798e0cbbf61b1a473695f99f9f56b57c3ad249c9987abe00421f4a50e2731eb",
+  "source_checks": {
+    "only_import_and_settings_branch_changed_from_frozen_baseline": true,
+    "existing_unit_id_numeric_validation_exact": true,
+    "existing_PUT_payload_exact": true,
+    "same_month_expression_captured_at_start": true,
+    "separate_lifetime_and_read_generation_ownership": true,
+    "no_network_calls_in_helper": true,
+    "same_account_cache_invalidation_retained": true,
+    "retry_focus_ownership_captured_before_hiding_and_handles_disabled_body_blur": true,
+    "newer_focus_not_stolen": true
+  },
+  "independent_runtime": {
+    "docs/premium-ui/qa-unit-settings-recovery-v5-independent-helper.json": {
+      "sha256": "b530fb478e34591757b54313a9534dc0b4db61bcab8583a0c7c67a2ed76fb54a",
+      "contexts": 48
+    },
+    "docs/premium-ui/qa-unit-settings-recovery-v5-independent-stale.json": {
+      "sha256": "dd3694aa417c832bf22a025a46e4ab03a5fce6195a924ad37f6d10b69eb51161",
+      "contexts": 12
+    }
+  },
+  "diagnostics_preserved": [
+    "docs/premium-ui/reviews/unit-settings-recovery-v3-independent-source-and-focus-defect.json",
+    "docs/premium-ui/reviews/unit-settings-recovery-v3-independent-test-archive.json",
+    "tmp/unit-settings-recovery-v4-independent-helper-r2.log",
+    "tmp/unit-settings-recovery-v5-independent-helper.log",
+    "tmp/unit-settings-recovery-v5-independent-stale.log"
+  ],
+  "recommendation": "V5 source and scoped recovery behavior approved for exact guarded integration/rebase, subject to root native24 plus keyboard-focus supplement, unit/build checks and prior-acceptance applicability. Do not infer whole requirement159 acceptance: remaining dependent-view inventory must be adjudicated separately.",
+  "limitations": [
+    "48 helper cases use isolated exact compiled helper and simulated ownership/read-generation adapter; they do not prove arbitrary main-view concurrent reads.",
+    "12 native stale cases cover explicit modal close and Guide-away-return-then-close while PUT held. They do not cover every account/month/permission transition.",
+    "Existing unit selection may restore a modal on return before obsolete PUT completes; test explicitly closes returned modal before release, then verifies completion does not reopen it.",
+    "No production writes, backend edits, API contracts or permissions changed."
+  ]
+}

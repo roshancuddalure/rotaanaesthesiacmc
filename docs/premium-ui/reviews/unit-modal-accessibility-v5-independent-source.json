@@ -1,0 +1,115 @@
+{
+  "recorded_at_utc": "2026-10-29T03:43:22.518087+00:00",
+  "reviewer": "/root/unit_focus_source_v5",
+  "independent": true,
+  "scope": "V5 independent source/lifecycle review and separately authored actual-app stale-pointer counterexample. No application, candidate, acceptance, backend or package edits.",
+  "decision": "request_changes_do_not_integrate_v5_unchanged",
+  "source_preservation": "pass_bounded",
+  "lifecycle_correctness": "fail_newer_keyboard_intent",
+  "source_sha256": {
+    "frontend/src/main.ts": "cb6ee8d2bedc1401cedcda8e20e199f60bd8418e2a24baa00a373c5290a52168",
+    "tmp/unit-modal-accessibility-v5/main.ts": "62226f3480e4089b39df8ff31a0b0f509672231a8bd303f0b51abec96401b57b",
+    "tmp/unit-modal-accessibility-v5/unit-modal-accessibility.ts": "90d670e574a4c5d0b4b1390c916ce242563ac7ccbe8a3c9da8baf76eae7359a6",
+    "frontend/src/shell-accessibility.ts": "47a8302e3272e90162d995f2e1d91a36c94116c76a97f5e62b2ecc31de79efc9",
+    "frontend/src/member-workspace.ts": "0ef8c1ef2234c7a50d8ca10b8aaa3998a654d452f563bd4c75531faef09d6c63",
+    "frontend/src/record-workspace.ts": "7c196c12b114c48bf2db4ee57aad7e591d8e3acc7a77cccd15abbad7c349fb8f"
+  },
+  "checks": [
+    {
+      "name": "Exact main delta",
+      "result": "pass",
+      "detail": "Independently removed exactly one helper import and one existing shell binding; candidate main recovers complete applied main byte-for-byte. Existing unit mounts, delegated handlers, API payloads, permissions, scheduling and storage implementations unchanged."
+    },
+    {
+      "name": "Independent TypeScript overlay",
+      "result": "pass",
+      "detail": "Fresh full-project TypeScript compile with virtual helper/main overlay produced zero diagnostics. Helper has no imports, network/storage/eval/timer calls. Guarded queueMicrotask exists for native close recovery; it is not a duty scheduler."
+    },
+    {
+      "name": "Inert path and cleanup",
+      "result": "source_reviewed_bounded",
+      "detail": "Sibling branches become inert along modal-to-app path, excluding app itself. Prior flags are saved/restored. Modal replacement releases old map before shielding new branches. Shell abort disconnects both observers and signal-bound listeners and releases inert flags; pending microtask guards signal/current/connection before recovery."
+    },
+    {
+      "name": "Native/body overlay ownership",
+      "result": "source_reviewed_bounded",
+      "detail": "Native open dialogs and visible direct-body overlays suppress unit key/focus ownership. Direct native close listeners defer BODY-only recovery until native handlers finish and preserve newer non-BODY intent. Existing workspaceDialog and record-editor close/dirty/busy owners inspected. Root native/lifecycle packet is attributed to root, not rerun or recertified by this source reviewer."
+    },
+    {
+      "name": "Card-title corresponding opener",
+      "result": "source_reviewed_bounded",
+      "detail": "V5 resolves an unfocusable card pointer target to its Manage child and rejects generic unfocusable/disabled opener candidates. This fixes the particular V4 title path but leaves stale pointer priority ahead of newer keyboard intent."
+    },
+    {
+      "name": "Stale pointer versus newer keyboard intent",
+      "result": "fail_reproduced",
+      "detail": "Independent native mouse-down on A then release outside both cards does not open a modal. Focus/Enter on B shortly afterward opens B correctly. Escape returns focus to Manage A in all6engine/width contexts. Control case without cancelled pointer returns B in all6."
+    }
+  ],
+  "findings": [
+    {
+      "id": "UNIT-FOCUS-V5-STALE-POINTER-001",
+      "priority": "P2",
+      "integration_blocker": true,
+      "source": "tmp/unit-modal-accessibility-v5/unit-modal-accessibility.ts",
+      "lines": [
+        30,
+        31,
+        125,
+        142
+      ],
+      "title": "Cancelled pointer gesture overrides the newer keyboard opener",
+      "expected": "A cancelled gesture on A must not override the later keyboard activation of B; closing B returns to B.",
+      "actual": "All6 actual-app contexts open Intent Unit B but return to Manage Intent Unit A after Escape; pointer ages33–74ms remain within the1500ms candidate window.",
+      "cause": "pointerOpener is recorded on pointerdown and remains after a cancelled click. rememberOpener prefers it to active/outside focus; no keyboard invalidation runs before the !modal early return.",
+      "reproduction": [
+        "Mouse down on Manage A.",
+        "Move to page coordinate2,2 and release; confirm no unit modal opened.",
+        "Focus Manage B and press Enter within1500ms.",
+        "Confirm title Intent Unit B; press Escape.",
+        "Observe active Manage A instead of B."
+      ],
+      "evidence": "docs/premium-ui/qa-unit-focus-v5-independent-source-probe.json",
+      "recommended_fix": "Commit only the actual opening click immediately before existing delegated open, or explicitly invalidate abandoned pointer candidates on newer keyboard intent. Preserve keyboard direct-open, nonfocusable card→Manage, WebKit and nested native opener behavior. No main business handler or API change is needed."
+    }
+  ],
+  "independent_runtime": {
+    "contexts": 6,
+    "engines": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "widths": [
+      320,
+      1280
+    ],
+    "subcases": 12,
+    "passing_controls": 6,
+    "failing_cancelled_pointer_cases": 6,
+    "all_operational_writes_rejected": true,
+    "get_sources": "locally fulfilled month fixtures and loopback8031RAM",
+    "exit_code": 0,
+    "exit_semantics": "Diagnostic intentionally records the failing outcome; terminal0 is not a candidate-correctness pass."
+  },
+  "evidence_sha256": {
+    "docs/premium-ui/qa-unit-focus-v5-independent-source-probe.json": "6992150beda59f91a455c150a0328f605b59170975398c52acbb2f7871b89825",
+    "docs/premium-ui/reviews/unit-modal-accessibility-v5-independent-source-check.json": "61890abfe611b79382a36b125b8b59f4f90a597e4794670878df21202618f24b",
+    "frontend/tests/premium-unit-focus-v5-independent-source-probe.browser.mjs": "4da78bd432d383d180a5b5b52636beb28d31200fab603e36fe5662459d53fa5d",
+    "tmp/unit-focus-v5-independent-source-probe.log": "14626a61939bafc40f951af0b230decde6c38f255116b4baef68bca4e90f7d8e",
+    "tmp/unit-focus-v5-independent-typecheck.mjs": "551a44cf9af229fd25e385a642caaa39fd11f6c2d907ce62a913b5f48aef5da5",
+    "docs/premium-ui/reviews/unit-modal-accessibility-v5-handoff.md": "52bca5712e171f935c4f823d601fd4afe11dce0b54c90208c3b89dc3a7bc7d2f",
+    "docs/premium-ui/reviews/unit-modal-accessibility-v5-preview-execution.json": "cd0f0fadbee786884f65ddd75b5fd685fc4af68e8f2b7f2f9eac1bfc80816423",
+    "docs/premium-ui/reviews/unit-modal-accessibility-v5-settings-extension.json": "8410461b802a2c004732e10c139a4193718106cbf0097fc87cc032c2010894f6"
+  },
+  "required_next": [
+    "Fix source in a new immutable candidate; retain this V5 failure evidence.",
+    "Rerun independent cancelled-pointer→keyboard case plus original WebKit mouse/touch, card-title, native success/failure and lifecycle checks on the revised candidate.",
+    "Independently inspect revised source before integration; then run integrated browser/units/held-build and preserve prior40 applicability."
+  ],
+  "limits": [
+    "This is independent source and one adverse actual-app path review, not independent replay of root45candidate/6baseline contexts.",
+    "No full260, whole145147, physical-device/nativeAT or zero-bug certification.",
+    "No application/candidate/backend/current-acceptance/archive modifications."
+  ]
+}

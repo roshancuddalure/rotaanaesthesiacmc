@@ -1,0 +1,17 @@
+{
+  "recorded_at_utc": "2026-10-29T00:45:29.614575+00:00",
+  "reviewer": "/root",
+  "v1_disposition": "Do notapply; source/type/probes passed butfilevaluecaptionisoverbroad.",
+  "backend_read_only_findings": [
+    {
+      "source": "backend/app/services/operational_import.py:320",
+      "finding": "values merges originalmappedrowvalues withcorrections before normalization."
+    },
+    {
+      "source": "backend/app/services/operational_import.py:505",
+      "finding": "Returned row.values is thatmergedinput, not guaranteed originalfilecontent; row.after is normalizedproposal."
+    }
+  ],
+  "v2_fix": "Label separatelyaspreviewinput. Localedits do notupdate lastreturned summaryuntilrefresh; visiblependingauthority explainsstaleness. No rawfileorigininference.",
+  "application_changed": false
+}

@@ -1,0 +1,503 @@
+{
+  "recorded_at_utc": "2026-10-31T01:39:58.752Z",
+  "reviewer": "/root/frontend160_remaining_scope_map",
+  "decision": "CONFIRMED FRONTEND DEFECT in all6 native applied contexts. Saved fallback chip remains1 after confirmedPUT2 and successfulGETunits2 while input3 is a newer unsaved draft. Diagnostic success means reproduction,not product acceptance.",
+  "scope": "Independent extension of keyboard6 native test;3engines320/1280. PUT/read503/manualGETonlyretry locally fulfilled. Source byte guarded; all mutations intercepted. Primary form/newdraft/focus assertions retained. No application edits.",
+  "test_sha256": "889d02e940e4c3e5ed93ad890c9e4aaabc9bb476995ef65ec4138bb61ccef636",
+  "applied_main_sha256": "e88c69570e7faf9b4277b541e073c8bd2ca3805c23f4feead544f16770f6e07a",
+  "applied_helper_sha256": "4cfcd55615c77fa39aa08ee57abb3e807412fb9fb6c42af71dbb86a4458ce51d",
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "scenario": "pending-new-draft",
+      "puts": 1,
+      "reads": 3,
+      "returnedMinimums": [
+        1,
+        2
+      ],
+      "savedFallbackBefore": 1,
+      "savedFallbackAfterRefresh": 1,
+      "newUnsavedDraft": "3",
+      "status": "Previous rules are saved and refreshed. New edits are not saved yet.",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "body": null
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/unit-management/units/settings-unit/settings",
+          "body": {
+            "minimum_free_people": 2,
+            "call_minimums": [
+              {
+                "call_level": "2ND_CALL",
+                "minimum_free_people": 2
+              }
+            ]
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        }
+      ],
+      "errors": [],
+      "defectConfirmed": true
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "scenario": "pending-new-draft",
+      "puts": 1,
+      "reads": 3,
+      "returnedMinimums": [
+        1,
+        2
+      ],
+      "savedFallbackBefore": 1,
+      "savedFallbackAfterRefresh": 1,
+      "newUnsavedDraft": "3",
+      "status": "Previous rules are saved and refreshed. New edits are not saved yet.",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "body": null
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/unit-management/units/settings-unit/settings",
+          "body": {
+            "minimum_free_people": 2,
+            "call_minimums": [
+              {
+                "call_level": "2ND_CALL",
+                "minimum_free_people": 2
+              }
+            ]
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        }
+      ],
+      "errors": [],
+      "defectConfirmed": true
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "scenario": "pending-new-draft",
+      "puts": 1,
+      "reads": 3,
+      "returnedMinimums": [
+        1,
+        2
+      ],
+      "savedFallbackBefore": 1,
+      "savedFallbackAfterRefresh": 1,
+      "newUnsavedDraft": "3",
+      "status": "Previous rules are saved and refreshed. New edits are not saved yet.",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "body": null
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/unit-management/units/settings-unit/settings",
+          "body": {
+            "minimum_free_people": 2,
+            "call_minimums": [
+              {
+                "call_level": "2ND_CALL",
+                "minimum_free_people": 2
+              }
+            ]
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        }
+      ],
+      "errors": [],
+      "defectConfirmed": true
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "scenario": "pending-new-draft",
+      "puts": 1,
+      "reads": 3,
+      "returnedMinimums": [
+        1,
+        2
+      ],
+      "savedFallbackBefore": 1,
+      "savedFallbackAfterRefresh": 1,
+      "newUnsavedDraft": "3",
+      "status": "Previous rules are saved and refreshed. New edits are not saved yet.",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "body": null
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/unit-management/units/settings-unit/settings",
+          "body": {
+            "minimum_free_people": 2,
+            "call_minimums": [
+              {
+                "call_level": "2ND_CALL",
+                "minimum_free_people": 2
+              }
+            ]
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        }
+      ],
+      "errors": [],
+      "defectConfirmed": true
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "scenario": "pending-new-draft",
+      "puts": 1,
+      "reads": 3,
+      "returnedMinimums": [
+        1,
+        2
+      ],
+      "savedFallbackBefore": 1,
+      "savedFallbackAfterRefresh": 1,
+      "newUnsavedDraft": "3",
+      "status": "Previous rules are saved and refreshed. New edits are not saved yet.",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "body": null
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/unit-management/units/settings-unit/settings",
+          "body": {
+            "minimum_free_people": 2,
+            "call_minimums": [
+              {
+                "call_level": "2ND_CALL",
+                "minimum_free_people": 2
+              }
+            ]
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        }
+      ],
+      "errors": [],
+      "defectConfirmed": true
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "scenario": "pending-new-draft",
+      "puts": 1,
+      "reads": 3,
+      "returnedMinimums": [
+        1,
+        2
+      ],
+      "savedFallbackBefore": 1,
+      "savedFallbackAfterRefresh": 1,
+      "newUnsavedDraft": "3",
+      "status": "Previous rules are saved and refreshed. New edits are not saved yet.",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "body": null
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/unit-management/units/settings-unit/settings",
+          "body": {
+            "minimum_free_people": 2,
+            "call_minimums": [
+              {
+                "call_level": "2ND_CALL",
+                "minimum_free_people": 2
+              }
+            ]
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "body": null
+        }
+      ],
+      "errors": [],
+      "defectConfirmed": true
+    }
+  ]
+}

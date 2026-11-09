@@ -1,0 +1,55 @@
+{
+  "recorded_at_utc": "2026-11-03T08:03:14.618852+00:00",
+  "reviewer": "/root/profile_parent_refresh_audit",
+  "mode": "Read-only independent source assessment; no candidate browser execution",
+  "application_changed": false,
+  "acceptance_ledger_changed": false,
+  "decision": "V5 resolves prior wrong-month and missing-unit entry focus paths in source, but do not integrate before active-beforeprint/mediafalse full-list and returned-notice-focus cases are resolved or verified.",
+  "candidate_sha256": {
+    "main.ts": "3844c817254b52a070e1d2948468920e3e0907b3e25b43e435ff2a11ae2cd625",
+    "unit-board-filters.ts": "c29d92e9b9b397a757ab7c449c82dcf45265d6c34059e7b986231ea11f0e5377",
+    "unit-settings-recovery.ts": "9e899c32f81c23b2fbedbe164e188880c21cc7dad5021a57f6cac9fe98e38679"
+  },
+  "baseline_sha256": {
+    "main.ts": "d13bd73108d89d6efb70a66426e6f8e9f6e50400475575b7a40cb06eef12c1bc",
+    "unit-board-filters.ts": "b52758e18a4d6abeda57b57ef84e0614b085a317e9d3ca345e096d860ea384a3",
+    "unit-settings-recovery.ts": "4cfcd55615c77fa39aa08ee57abb3e807412fb9fb6c42af71dbb86a4458ce51d"
+  },
+  "verified_source_paths": [
+    "Wrong-month successful read is rejected before shared cache assignment/LoadedMonth/UI commit. Existing generation and lifetime guards remain distinct; failure stays GET-only recoverable.",
+    "Missing returned unit retains settings form/inputs, marks their native validity, paints explicit unavailable modal regions and throws before helper success announcement. Displaced owned navigation/member/validation focus is captured before removal/disable and restored only when still owned.",
+    "Returned unit clears missing-unit validity and marker before applying current bounds; removed call rows retain draft nodes with explicit custom validity and warning, added rows append fresh values. Existing input values are not replaced.",
+    "Helper captures precommit newerDraft and extends saved signature only with server-added keys, leaving existing numeric baseline/dirty edits intact; added rows alone do not manufacture user edits. Signature order follows retained existing DOM plus appended new rows.",
+    "Board readback reuses WeakMap-owned existing binder; input/select nodes, filter values and print/focus/media event listener identities remain, and cleanup deletes only its owned refresher. Existing apply clamps page and rerenders matching fresh rows.",
+    "Print old snapshot is retired before fresh row apply, preventing afterprint from reattaching old posting nodes. Media-true print starts a new fresh snapshot. This does not prove mediafalse beforeprint remains full-list materialized."
+  ],
+  "remaining_source_concerns": [
+    {
+      "severity": "high",
+      "finding": "Active beforeprint lifecycle with matchMedia false is lost during fresh refresh; full matching list may become paginated.",
+      "source": "startPrint responds to beforeprint regardless of media.matches, setting restorePrint. refreshReadback calls finishPrint then apply, and restarts only if media.matches. If false, paginated50 rows remain until afterprint even if a larger active print list was previously materialized.",
+      "runtime_gate": "More than50 matching postings: beforeprint while mediafalse -> assertallrows; successful readback -> assertallfreshmatchingrows; afterprint -> correctpaged50 and no oldrows. Also media-true and focus guards.",
+      "suggested_fix": "Capture prior active print state Boolean(restorePrint)||media.matches before finishPrint, then restart after freshapply if it was active. Keep frozen V5 and create new candidate."
+    },
+    {
+      "severity": "medium",
+      "finding": "Returned-unit notice removal may discard deliberately focused unavailable notice.",
+      "source": "At refreshUnitModalReadback entry active may be [data-unit-readback-unavailable]. Returned-unit branch removes this element before setting displaced; it is outside later replaced regions. If focused during held retry, helper focusMoved prevents retry-owned fallback and BODY can remain.",
+      "runtime_gate": "Missing-unit failure -> start held retry -> deliberately focus unavailable notice -> valid current unit returns. Verify owned status focus recovery while retaining new draft; separately newer input focus must remain untouched.",
+      "suggested_fix": "Capture whether the soon-removed notice owns active focus, then use current status/retained equivalent target only if that element was displaced and no newer unrelated focus took ownership."
+    }
+  ],
+  "other_limits": [
+    "Source inspection does not independently certify author TypeScript/effect proof or planned174 runtime cases. Existing author sourceproof is linked as attributed supporting evidence.",
+    "No new defect claim for duplicated server call levels, malformed numeric schemas or external concurrent min changes without actual evidence; normal saved baseline is finite by existing validation.",
+    "Whole159 still includes independently confirmed nested profile parent refresh defect, outside this settings painter. No whole159/260 acceptance."
+  ],
+  "evidence_sha256": {
+    "tmp/settings159-readback-regions-v5/main.ts": "3844c817254b52a070e1d2948468920e3e0907b3e25b43e435ff2a11ae2cd625",
+    "tmp/settings159-readback-regions-v5/unit-board-filters.ts": "c29d92e9b9b397a757ab7c449c82dcf45265d6c34059e7b986231ea11f0e5377",
+    "tmp/settings159-readback-regions-v5/unit-settings-recovery.ts": "9e899c32f81c23b2fbedbe164e188880c21cc7dad5021a57f6cac9fe98e38679",
+    "tmp/settings159-readback-regions-v5/source-proof.json": "fe0d9eb9da3d3855739d117da1cabf474d8c76411db6f80ef6ef74d5c8821eac",
+    "docs/premium-ui/reviews/settings159-v4-independent-source-assessment.json": "ee6baf6d7110cbe4ec71aab99854feb7e212f2e11fcb3befb9966a3195384e96",
+    "docs/premium-ui/reviews/profile-parent-refresh-independent-defect.json": "34703b0a661155cf3a7f31dc59ad2f8ee5ce64f1257b65e8bf9406c0527e1df5"
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "reviewer": "/root/remaining_icons_independent",
+  "recorded_at_utc": "2026-10-28T23:07:38.634Z",
+  "passed": true,
+  "method": "Separately parsed original and preview-copy JS ASTs; exact canonical assert-call arrays compared with declared intentional presentation-copy replacements only. New _v7Assert source/test guards excluded from original-assertion parity; no existing action assertion removed.",
+  "results": [
+    {
+      "parent": "frontend/tests/premium-leave-calendar-boundaries.browser.mjs",
+      "copy": "frontend/tests/premium-leave-calendar-boundaries-v7-preview.browser.mjs",
+      "assertions": 23,
+      "all_original_assertions_preserved_except_exact_reviewed_copy_changes": true,
+      "classifications": "Existing empty28/29/30/31monthfixtures; GET-only. Native semantics/actions/counts unchanged."
+    },
+    {
+      "parent": "frontend/tests/premium-leave-list.browser.mjs",
+      "copy": "frontend/tests/premium-leave-list-v7-preview.browser.mjs",
+      "assertions": 25,
+      "all_original_assertions_preserved_except_exact_reviewed_copy_changes": true,
+      "classifications": "DEFENSIVE inherited calendar fixture includes cancelled/rejected despite realserviceexcludingthosefromactivecalendar. Rendering robustness only; faithfulbackendcalendar semantics are separately tested."
+    },
+    {
+      "parent": "frontend/tests/premium-leave-pressure.browser.mjs",
+      "copy": "frontend/tests/premium-leave-pressure-v7-preview.browser.mjs",
+      "assertions": 24,
+      "all_original_assertions_preserved_except_exact_reviewed_copy_changes": true,
+      "classifications": "Existing display fixture retains independently supplied pressurecounts/ranks/groups; no backendaggregateconsistency certification. All original assertions unchanged."
+    },
+    {
+      "parent": "frontend/tests/premium-monthly-leave-review.browser.mjs",
+      "copy": "frontend/tests/premium-monthly-leave-review-v7-preview.browser.mjs",
+      "assertions": 28,
+      "all_original_assertions_preserved_except_exact_reviewed_copy_changes": true,
+      "classifications": "Existing18pendingrows/2duties; allpreview/approvalPOSTslocallyfulfilled. Actual token/payload/acknowledgement/refusal/recovery assertions unchanged; persistence separately tested."
+    },
+    {
+      "parent": "frontend/tests/premium-leave-independent-review.browser.mjs",
+      "copy": "frontend/tests/premium-leave-independent-review-v7-preview.browser.mjs",
+      "assertions": 21,
+      "all_original_assertions_preserved_except_exact_reviewed_copy_changes": true,
+      "classifications": "DEFENSIVE inherited leap-day fixture includes cancelled/rejected entries impossibleforrealactivecalendar; retainedsolelyforrenderingrobustness. Faithfulfixtureseparate."
+    }
+  ],
+  "limits": [
+    "Assertion parity complements direct fixture/action source inspection; it is not runtime evidence or a proof of backend aggregate consistency.",
+    "Defensive inherited cancelled/rejected active-calendar fixtures remain explicitly separated from faithful service data."
+  ]
+}

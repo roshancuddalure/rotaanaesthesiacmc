@@ -1,0 +1,106 @@
+{
+  "recorded_at_utc": "2026-10-30T09:28:58.550734+00:00",
+  "reviewer": "/root/unit150156_acceptance_review",
+  "independent": true,
+  "scope": "Bounded explicit superseding addendum after current archived-reference defect evidence. Original initial review remains immutable. No product/ledger/backend/package edits.",
+  "decision": "withhold_both150_and156_until_picker_context_integrity_fixed_and_verified",
+  "supersedes_recommendation": {
+    "path": "docs/premium-ui/reviews/unit150156-independent-acceptance-review.json",
+    "sha256": "2a4bdd039929dbaea2bc333e5a186a2924fc9e7cc66784a49343e9d1c021f654",
+    "previous_recommendation": "recommend_acceptance_of_exact150_and156_frontend_requirements",
+    "why": "Initial review covered active choices. New current-source counterexamples materially contradict correct special creation context150 and existing dated editor subtype/status context156; restricting acceptance to earlier active controls would narrow the known-bug scope."
+  },
+  "findings": [
+    {
+      "id": "UNIT150-ARCHIVED-SPECIAL-CONTEXT-001",
+      "source": "frontend/src/record-workspace.ts select helper filters only i.active",
+      "evidence": "docs/premium-ui/qa-unit150-archived-special-independent.json",
+      "operator": "/root/unit150156_acceptance_review",
+      "actual_contexts": 6,
+      "observed": "All3engines320/1280 offer Pain Calls Add member posting, but an inactivePAIN option is removed. Native select falls to firstactive2ND_CALL; unchanged local preview submits2ND_CALL with no unit, instead of the offeredPAIN context.",
+      "expected": "An unavailable initial new reference must not silently select a different operation subtype. Preserve active-only creation policy with explicit unavailable/empty required choice or other reviewed truthful state; no invented permission to create archived values.",
+      "severity": "blocking150_correct_context"
+    },
+    {
+      "id": "UNIT156-ARCHIVED-EXISTING-CONTEXT-001",
+      "evidence": "docs/premium-ui/qa-reference155-archived-existing-independent.json",
+      "operator": "/root/reference155_159_audit",
+      "actual_contexts": 6,
+      "archived_scenarios": 24,
+      "active_control_scenarios": 24,
+      "observed": "All24archived existing posting_type/leave_type/leave_slot/status scenarios drop the saved value and submit a different first active value on unchanged Review.24active controls preserve values. Existing identity/date endpoint can remain correct while the record meaning changes silently.",
+      "expected": "Existing saved reference/status/session/subtype remains accurately represented and unchanged unless operator explicitly changes it; archival restricts new selection without silently replacing existing data.",
+      "severity": "blocking156_existing_editor_context"
+    }
+  ],
+  "items": [
+    {
+      "item_id": 150,
+      "requirement": "Keep create-unit and add-member actions visible at the relevant unit context, preserving existing normalized reference workflows.",
+      "conditions": [
+        {
+          "condition": "Create-unit and add-member entry points are visible where users manage the relevant unit context.",
+          "decision": "entry_points_remain_proven_but_whole_requirement_withheld",
+          "rationale": "Visible toolbar/empty/regular/special creation entries and existing role gates remain established; the offered special creation branch now has a real incorrect-context counterexample."
+        },
+        {
+          "condition": "They open the existing normalized reference/assignment workflow with the correct context and existing permissions.",
+          "decision": "contradicted_by_current_inactive_special_context",
+          "rationale": "OfferedPAIN creation becomes2ND_CALL in visible picker and preview across all6 independent current contexts; correct routing by endpoint alone does not preserve the action context."
+        }
+      ]
+    },
+    {
+      "item_id": 156,
+      "requirement": "Preserve clear distinction between adding a reference value, assigning a person and editing an existing dated record.",
+      "conditions": [
+        {
+          "condition": "Action labels and editor context clearly identify whether the user is adding a reference, assigning a person or editing an existing dated record.",
+          "decision": "operation_labels_proven_existing_editor_context_incomplete",
+          "rationale": "Add unit/Add posting/Edit posting labels still distinguish the broad operations, but the existing editor cannot truthfully represent an archived saved subtype/session/status; categorical labels alone are insufficient for a full-context endorsement."
+        },
+        {
+          "condition": "Each action targets its existing record type and date scope without presenting one operation as another.",
+          "decision": "materially_contradicted_by_silent_reference_replacement",
+          "rationale": "Correct identity and dates do not cure unchanged Review silently replacing posting subtype or leave type/session/approval state. This materially alters the intended existing dated record context and must block whole156 acceptance."
+        }
+      ]
+    }
+  ],
+  "new_independent_execution": {
+    "report": "docs/premium-ui/qa-unit150-archived-special-independent.json",
+    "report_sha256": "4c5355f3495f5cd0799686b7c852c74a62ce56b3b598b61c3a57a675d97eac76",
+    "test": "frontend/tests/premium-unit150-archived-special-independent.browser.mjs",
+    "test_sha256": "ddfdb9085c5289b730059aa24e4f7e180035b5e3b6e075e42c9ed3ebb5c41daa",
+    "log": "tmp/unit150-archived-special-independent.log",
+    "log_sha256": "65479ba00a27245e5813be575f193ef36f309e5ea7f64ca1eca1eb226f57cb7e",
+    "contexts": 6,
+    "exit_code": 0,
+    "meaning": "Diagnostic assertions record all6 real current failures; terminal0 means evidence collection succeeded,not that offered context is correct."
+  },
+  "required_closure": [
+    "Preserve archived/unknown current values in existing unit/leave editors without silently allowing an unrelated first active default.",
+    "Represent unavailable initial new defaults explicitly; do not auto-promote to2ND_CALL,approved or other active values.",
+    "Independently rerun existing archived4field×3engine×2width cases and actual specialPAIN unavailable creation cases on the repaired candidate. Verify visible labels/current context and exact unchanged/new-preview bodies.",
+    "Retain prior active controls,regular/empty/special native entries,June/July exact identity/dates,roles,mouse/touch/keyboard focus and nested authoritative unit creation without backend/policy changes."
+  ],
+  "evidence_sha256": {
+    "docs/premium-ui/reviews/unit150156-independent-acceptance-review.json": "2a4bdd039929dbaea2bc333e5a186a2924fc9e7cc66784a49343e9d1c021f654",
+    "docs/premium-ui/qa-reference155-archived-existing-independent.json": "287c85fa6aa106d5905a98027bf90878ad342cee7a6e5a117a28da250f94604d",
+    "frontend/tests/premium-reference155-archived-existing-independent.browser.mjs": "91b91123394a967f0eedc541ac6ba1ba0fafa1bda59ac82d902af6bca9fda588",
+    "docs/premium-ui/qa-unit150-archived-special-independent.json": "4c5355f3495f5cd0799686b7c852c74a62ce56b3b598b61c3a57a675d97eac76",
+    "frontend/tests/premium-unit150-archived-special-independent.browser.mjs": "ddfdb9085c5289b730059aa24e4f7e180035b5e3b6e075e42c9ed3ebb5c41daa",
+    "tmp/unit150-archived-special-independent.log": "65479ba00a27245e5813be575f193ef36f309e5ea7f64ca1eca1eb226f57cb7e",
+    "frontend/src/main.ts": "9f42daa30c62a348ba3a3ac6deabae37bb904f3dbefd66e11584f2a7e373b9f6",
+    "frontend/src/record-workspace.ts": "7c196c12b114c48bf2db4ee57aad7e591d8e3acc7a77cccd15abbad7c349fb8f",
+    "frontend/src/reference-workspace.ts": "78c231ea1d5ab15bd3a4b5f2f8265529451a51bacc68d2a4aac1708a4be30292",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "docs/premium-ui/acceptance-criteria/items-087-173.json": "a7bf1322bd8e08a1fddd4195095d9cc52a8867a1b8a2bda9b523917fae458576"
+  },
+  "limits": [
+    "No ledger status change. Root should retain current44 count; this addendum supersedes only the initial recommendation for150/156.",
+    "All preview POSTs locally fulfilled/refused; no backend save or persisted-data change. Native select/context corruption is actual observed UI/request evidence.",
+    "Fix is still scratch/unreviewed; no pre-endorsement of its policy or final behavior.",
+    "Prior active-context/focus evidence remains valid for its original cases; it cannot erase the negative current-source counterexamples."
+  ]
+}

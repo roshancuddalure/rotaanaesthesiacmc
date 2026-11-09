@@ -1,0 +1,126 @@
+{
+  "recorded_at_utc": "2026-11-09T08:03:41.090098+00:00",
+  "reviewer": "/root",
+  "decision": "approved_for_guarded_application",
+  "scope": "Bounded profile operational mutation dependent Units/Leave readback and immutable-record focus repair. No whole159 acceptance.",
+  "candidate_sha256": {
+    "frontend/src/main.ts": "2b8f68c069e599af50a4ac1b2146a7018d6268f290b90a9949130a057dc91b43",
+    "frontend/src/member-workspace.ts": "105cc1d91ea4815d565ad4859fc01412cf576a3203c07834f4010e3fef7ef1a5"
+  },
+  "candidate_browser_contexts": 144,
+  "executions": [
+    {
+      "test": "frontend/tests/premium-profile-parent-refresh-v5-normal.browser.mjs",
+      "report": "docs/premium-ui/qa-profile-parent-refresh-v5-normal.json",
+      "contexts": 12,
+      "exit_code": 0
+    },
+    {
+      "test": "frontend/tests/premium-profile-parent-refresh-v5-read-failure.browser.mjs",
+      "report": "docs/premium-ui/qa-profile-parent-refresh-v5-read-failure.json",
+      "contexts": 12,
+      "exit_code": 0
+    },
+    {
+      "test": "frontend/tests/premium-profile-parent-refresh-v5-malformed200.browser.mjs",
+      "report": "docs/premium-ui/qa-profile-parent-refresh-v5-malformed200.json",
+      "contexts": 12,
+      "exit_code": 0
+    },
+    {
+      "test": "frontend/tests/premium-profile-parent-v5-owner-coalescing-r1.browser.mjs",
+      "report": "docs/premium-ui/qa-profile-parent-v5-owner-coalescing-r1.json",
+      "contexts": 36,
+      "exit_code": 0
+    },
+    {
+      "test": "frontend/tests/premium-profile-parent-refresh-v5-selection-focus.browser.mjs",
+      "report": "docs/premium-ui/qa-profile-parent-refresh-v5-selection-focus.json",
+      "contexts": 18,
+      "exit_code": 0
+    },
+    {
+      "test": "frontend/tests/premium-profile-parent-v5-leave-owner.browser.mjs",
+      "report": "docs/premium-ui/qa-profile-parent-v5-leave-owner.json",
+      "contexts": 24,
+      "exit_code": 0
+    },
+    {
+      "test": "frontend/tests/premium-profile-parent-v5-normal-unit-duplicate-focus-recovery.browser.mjs",
+      "report": "docs/premium-ui/qa-profile-parent-v5-normal-unit-duplicate-focus-recovery.json",
+      "contexts": 6,
+      "exit_code": 0
+    },
+    {
+      "test": "frontend/tests/premium-profile-parent-v5-replacement-lifecycle.browser.mjs",
+      "report": "docs/premium-ui/qa-profile-parent-v5-replacement-lifecycle.json",
+      "contexts": 12,
+      "exit_code": 0
+    },
+    {
+      "test": "frontend/tests/premium-profile-parent-v5-settings-notice-focus6.browser.mjs",
+      "report": "docs/premium-ui/qa-profile-parent-v5-settings-notice-focus6.json",
+      "contexts": 6,
+      "exit_code": 0
+    },
+    {
+      "test": "frontend/tests/premium-profile-parent-v5-settings-newer-input-focus6.browser.mjs",
+      "report": "docs/premium-ui/qa-profile-parent-v5-settings-newer-input-focus6.json",
+      "contexts": 6,
+      "exit_code": 0
+    }
+  ],
+  "root_findings": [
+    "Confirmed operational events occur after accepted mutation and before own read; parent read defers to final actual close, including Next/initial retry replacement.",
+    "Owned account/route/month/render/root/modal and latest read gates prevent stale repaint. Read failures retain snapshots and expose GET-only retry without replaying mutation.",
+    "Partial painters preserve settings/form/filter/history/view nodes; Leave selection counts synchronize; focus uses immutable record identity and respects newer input.",
+    "Independent V4 review exposed normal Unit focus bug; six actual failures retained. V5 two-edit helper repair passes six equivalent recovery cases and shared settings focus replays.",
+    "Full144 scratch cases passed. All existing mutation expressions/serialization/confirmation/storage are preserved by layered source reversal/effect proofs. Applied verification must be fresh."
+  ],
+  "evidence_sha256": {
+    "tmp/profile-parent-v5-candidate-run/exit.json": "0bdb84f0855c8f0ab4a8263325fa77235690345ef2ae5d96275e9e55ead0fca3",
+    "docs/premium-ui/reviews/profile-parent-v5-unit-readback-helper-independent-review.json": "e4092b3298329db3c8d95e7c6ede595c5a99e4d0b59d460e02de603865a87e77",
+    "docs/premium-ui/reviews/profile-parent-v5-unit-readback-helper-execution-supplement.json": "6596e659b7ef66a40c23219dbe6726469440dfc06cb18f64bf422881a8a783c5",
+    "docs/premium-ui/reviews/profile-parent-v4-independent-condition-source-review.json": "deb1bd6fec15fed4958f445698324e2dfe875441d0787fcb492c8ab20c55cd8d",
+    "tmp/profile-parent-refresh-v5/source-effect-typecheck-proof-r1.json": "9555ec5f87f87b5e88c94ffeb9de5a3811985d3b2e54f91025a4d766bc8bab7b",
+    "tmp/profile-parent-refresh-v4/source-reversal-proof.json": "cc76200c8e23d0a84c5fc88c02da0e8e23ce2fc4404b3b7a7f50584ed0b35781",
+    "tmp/profile-parent-refresh-v4/effect-proof.json": "3b7474fbe93d27aa808a1c1aabb68cea560637b862472b33374dcc7410c87edd",
+    "tmp/profile-operational-lifecycle-v1/source-proof.json": "c99e1516de2bc1b9580861482a2672ea93e8ecbed17c1074293148872ef8a28e",
+    "docs/premium-ui/reviews/profile-parent-v5-prior53-source-analysis.json": "0a3872341bca9e905228e0fd18647d429020825e55b3eb336dad25a5cb494cd7",
+    "frontend/tests/premium-profile-parent-refresh-v5-normal.browser.mjs": "28ecaad1ac56c6839bcfe705d7cba8a9a7f160d418513fe87c9d9afc047d8ed2",
+    "docs/premium-ui/qa-profile-parent-refresh-v5-normal.json": "03c5743f26150188f1856e957c9eb7ee8ef2da69af932093b8515ca21937064d",
+    "tmp/profile-parent-v5-candidate-run/01.log": "4529b31d6c6c4aa672bd7fe8e15184b083224b994710cdea1c9d3352d5156eae",
+    "frontend/tests/premium-profile-parent-refresh-v5-read-failure.browser.mjs": "0a6125b1d508aa15dfc6ba9a062bc288fa2a3a22a1a2150ea1bf16abce77e93a",
+    "docs/premium-ui/qa-profile-parent-refresh-v5-read-failure.json": "a73c59507485fd4b4023fd4972069f9dd4a690b7e3f442affdff7db6bc22857b",
+    "tmp/profile-parent-v5-candidate-run/02.log": "68abc3f13203e7698b081dac7d0f7cb6e097e791ef67ad7ecb03f2dde6e4953d",
+    "frontend/tests/premium-profile-parent-refresh-v5-malformed200.browser.mjs": "67939f3401ce818d581a68b2afe566bb0c577ac24423af3c8de6fb84c2e48e75",
+    "docs/premium-ui/qa-profile-parent-refresh-v5-malformed200.json": "ca7feda8fca27ea03b97dd15f194c504016226ac6ae4c016c6411dbf140a2788",
+    "tmp/profile-parent-v5-candidate-run/03.log": "daa271daa4a8f4fb374fb0e64b53343cb1428ed82d09999afc7fde5d679ebc45",
+    "frontend/tests/premium-profile-parent-v5-owner-coalescing-r1.browser.mjs": "abfaa619fd39ccb849f4c67dae732e46d5e299739f31ccc4defffa71c6a932ef",
+    "docs/premium-ui/qa-profile-parent-v5-owner-coalescing-r1.json": "d5ce9c87a043538842190e0ddbd6b30eca5948476ef6517bd619e6eed5088c30",
+    "tmp/profile-parent-v5-candidate-run/04.log": "9a3ef0e0b536cf28477b545d26a9a662ccd147de5cd02689a7c219f8b14066b5",
+    "frontend/tests/premium-profile-parent-refresh-v5-selection-focus.browser.mjs": "f081aa2725484be080e13944695185eeb7ffc30e4a376eb557935acf3d3d0eaa",
+    "docs/premium-ui/qa-profile-parent-refresh-v5-selection-focus.json": "7304aafbe932d6c3da1c2e6a671c6f054ee0067de441b0a2b4a14d2223ff5fc3",
+    "tmp/profile-parent-v5-candidate-run/05.log": "c123cbb472b86f4ec446833a2cfe5b5f7e1d83b2d255ec33523f32e8f088702c",
+    "frontend/tests/premium-profile-parent-v5-leave-owner.browser.mjs": "f60ebb559cafbcdd05f899d226ff52be2e98692deeecf787c4f3901336e98206",
+    "docs/premium-ui/qa-profile-parent-v5-leave-owner.json": "c36f6479ac36fc7bbe41cc257f8c185dc4538f9375d7ea0e2e11cb5749b99130",
+    "tmp/profile-parent-v5-candidate-run/06.log": "434963591cb2db0f32e1564393233def81eefb878021e29de84293e0a532b847",
+    "frontend/tests/premium-profile-parent-v5-normal-unit-duplicate-focus-recovery.browser.mjs": "4ffd87a510fc5944b8fc6d26a3930e74e7221544d0433e431f7bb89c0400086a",
+    "docs/premium-ui/qa-profile-parent-v5-normal-unit-duplicate-focus-recovery.json": "11e34d9fabb90553a594654a0ef8d20d7eeca15c3cc4cd8c39ae716af2c67ae2",
+    "tmp/profile-parent-v5-candidate-run/07.log": "c2fda1189f190134dc7bf976c75a6df41b0b91d0527e8045e42a6315e4740032",
+    "frontend/tests/premium-profile-parent-v5-replacement-lifecycle.browser.mjs": "37e15d5f18dc455526a6218a15da0ce4db08c962fe32fd279cb7970bb0a6702f",
+    "docs/premium-ui/qa-profile-parent-v5-replacement-lifecycle.json": "fda96bcea2244ff14de0426f3d14ef801efc497a7e116df39cc5379ff3f4a6b6",
+    "tmp/profile-parent-v5-replacement-lifecycle.log": "4ca876103093f3fd67bdaba0791e6d1b2f008ba8c23db69769e1fcf61e687a92",
+    "frontend/tests/premium-profile-parent-v5-settings-notice-focus6.browser.mjs": "b8c805ee996894b1d14c07ebea7273df327006bcb5a12c792c5534424067d010",
+    "docs/premium-ui/qa-profile-parent-v5-settings-notice-focus6.json": "c3b1a6c1aa133e490ec9d374bd6910204ecdda62f8fa6f7738e58f1705304c9c",
+    "tmp/profile-parent-v5-settings-notice-focus6.log": "e35e4006ffd51260f014ca712adf5428e9646c39f1cfb1b7b99b20283ca0ec24",
+    "frontend/tests/premium-profile-parent-v5-settings-newer-input-focus6.browser.mjs": "a034e6053c8506634d113a88e0b4a5f5231c4dc03d803dca79a5e01839ed6c7d",
+    "docs/premium-ui/qa-profile-parent-v5-settings-newer-input-focus6.json": "8050cc70ee546a339891b9fe32f3cadadcdfca54f721ae54fd766a357fe8c253",
+    "tmp/profile-parent-v5-settings-newer-input-focus6.log": "9a2599bbb36b04d33cf324a5907882cc220ad4dda35b6cd80046b5bb91c8ccb4"
+  },
+  "limits": [
+    "Direct record/editor/import/registry/delete and member-core dependency families require further work. Six direct-edit draft failures remain open.",
+    "No physical device/nativeAT or production persistence certification.",
+    "Prior53 source applicability, fresh applied144/unit114/build and packaging are required after application."
+  ]
+}

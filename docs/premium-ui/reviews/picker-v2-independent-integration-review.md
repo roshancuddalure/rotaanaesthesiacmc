@@ -1,0 +1,9 @@
+# Independent picker V2 integration review
+
+Recommend integrating exact scratch V2 `9482f14f...` by replaying its helper and two context-prefix declarations into current CRLF source. Keep150/155/156 partial until current-app regressions and requirement adjudication. No application edits were made by this reviewer.
+
+Own12 actual-main contexts passed terminal0 across Chromium,Firefox,WebKit at phone,desktop,short and computed root32. Existing archived posting identity/value/date/member/unit/notes survive unchanged local preview; disabled selected options are omitted by native FormData, and the unchanged draft merge preserves the stored key. New unavailable PAIN defaults require explicit active choice. Wrapped sibling context is outside the clean label, uniquely associated and measured without truncation/overflow.
+
+An additional own48 cases cover all four reference fields with archived and hostile unknown values at320 root16/32 across three engines. Two successive local422 previews retain exact values, clean field names and resolvable hint/error descriptions. Simultaneous editors have unique IDs; hint lifetime ends with its editor. The initial live last() locator harness timeout is preserved and corrected; it was not a product defect.
+
+Independent exact reversal restores the full LF baseline after the three declared edits. Combined virtual TypeScript with staffing candidate has zero diagnostics. API/reader/save handlers remain unchanged. All previews were fulfilled locally503/422; other writes rejected. No nativeAT,physical-device,Save/persistence or whole155 claim is made. The root32 screenshot includes a temporary native required tooltip after invalid submission; line-bound geometry separately checks full wrapped hint text. Companion JSON binds reports,tests,logs and limitations.

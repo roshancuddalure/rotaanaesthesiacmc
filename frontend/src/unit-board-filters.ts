@@ -1,14 +1,22 @@
 import { prepareUnitMemberPrint } from './unit-member-lists';
 
+type UnitBoardPostings = { groups: string[]; render: (indexes: number[]) => string; page?: number; pageChanged?: (page: number) => void };
+const boardReadbackRefreshers = new WeakMap<HTMLElement, (postings: UnitBoardPostings) => void>();
+
+/** Refresh an existing board binding without adding print, focus or input listeners. */
+export function refreshUnitBoardFilters(root: HTMLElement, postings: UnitBoardPostings): void {
+  boardReadbackRefreshers.get(root)?.(postings);
+}
+
 /** Filter the displayed unit groups, preserving authoritative month totals and assignments. */
 export function bindUnitBoardFilters(root: HTMLElement, changed: (search: string, campus: string) => void,
-  postings?: { groups: string[]; render: (indexes: number[]) => string; page?: number; pageChanged?: (page: number) => void }) {
+  postings?: UnitBoardPostings) {
   const search = root.querySelector<HTMLInputElement>('[data-unit-board-search]');
   const campus = root.querySelector<HTMLSelectElement>('[data-unit-board-campus]');
   const count = root.querySelector<HTMLElement>('[data-unit-board-count]');
   if (!search || !campus || !count) return;
-  const cards = [...root.querySelectorAll<HTMLElement>('[data-unit-board-card]')];
-  const rows = [...root.querySelectorAll<HTMLElement>('[data-unit-board-row]')];
+  let cards = [...root.querySelectorAll<HTMLElement>('[data-unit-board-card]')];
+  let rows = [...root.querySelectorAll<HTMLElement>('[data-unit-board-row]')];
   let page = postings?.page ?? 0;
   const pageSize = 50;
   let previousFilter = JSON.stringify([search.value.trim().toLocaleLowerCase(), campus.value]);
@@ -63,6 +71,19 @@ export function bindUnitBoardFilters(root: HTMLElement, changed: (search: string
     if (reset) reset.disabled = !search.value && !campus.value;
     changed(search.value, campus.value);
   };
+  const refreshReadback = (next: UnitBoardPostings) => {
+    if (!search.isConnected || !root.contains(search)) return;
+    // beforeprint can precede print-media matching. Preserve that active
+    // lifecycle as well as media state when recreating the fresh full list.
+    const wasPrinting = Boolean(restorePrint) || media.matches;
+    finishPrint();
+    postings = next;
+    cards = [...root.querySelectorAll<HTMLElement>('[data-unit-board-card]')];
+    rows = [...root.querySelectorAll<HTMLElement>('[data-unit-board-row]')];
+    apply();
+    if (wasPrinting) startPrint();
+  };
+  boardReadbackRefreshers.set(root, refreshReadback);
   search.oninput = apply;
   campus.onchange = apply;
   root.querySelectorAll<HTMLButtonElement>('[data-unit-board-reset]').forEach(button => {
@@ -107,6 +128,7 @@ export function bindUnitBoardFilters(root: HTMLElement, changed: (search: string
     window.removeEventListener('afterprint', finishPrint);
     media.removeEventListener('change', mediaChanged);
     document.removeEventListener('focusin', trackFocus);
+    if (boardReadbackRefreshers.get(root) === refreshReadback) boardReadbackRefreshers.delete(root);
     cleanup.disconnect();
   });
   cleanup.observe(document.body, {childList:true, subtree:true});

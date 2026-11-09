@@ -1,3 +1,4 @@
+import { decorativeIcon } from "./decorative-icons";
 // "Clear all members" for admins. Clearing ARCHIVES every active member (never deletes):
 // duties, leave, postings and history keep their links, and the whole batch can be
 // restored in one step. The server checks admin rights, the preview token (data unchanged
@@ -47,7 +48,7 @@ export async function openArchiveAll(onChanged: () => void | Promise<void>): Pro
   const render = () => {
     if (!dialog.isConnected) return;
     const header = `<header class="mw-header"><div><h2>Clear all members</h2><p>Archives every active member. Nothing is deleted, and you can restore the whole batch.</p></div>
-      <button type="button" data-close aria-label="Close clear all members">×</button></header>`;
+      <button type="button" data-close aria-label="Close clear all members">${decorativeIcon("close")}</button></header>`;
     let body: string;
     if (result) {
       body = `<div class="archive-all__done" role="status">

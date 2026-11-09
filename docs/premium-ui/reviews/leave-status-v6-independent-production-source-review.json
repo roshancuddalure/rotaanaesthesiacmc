@@ -1,0 +1,88 @@
+{
+  "reviewer": "/root/remaining_icons_independent",
+  "recorded_at_utc": "2026-10-28T22:52:26.599913+00:00",
+  "candidate": "tmp/leave-status-v6",
+  "decision": "source_parity_and_compile_pass_hold_integration_for_three_fixes_and_runtime",
+  "integration_approved": false,
+  "runtime_accepted": false,
+  "items_accepted": [],
+  "application_changed_by_reviewer": false,
+  "source_check": {
+    "path": "docs/premium-ui/reviews/leave-status-v6-independent-source-check.json",
+    "sha256": "27ad46d3ea71b49f1033063ef7e157d3d171441043b7085248e6793eba6c2a25",
+    "passed": true
+  },
+  "candidate_sha256": {
+    "main.ts": "16f38415189294f32b034a497df60bfb619233850df62b094eff0b6a7a6bdc43",
+    "premium-theme.css": "aa0d3c25681b83298cd53f45f009ed2f1f8e64b0f334903936d269c886d399d7",
+    "leave-calendar-focus.ts": "347f7d10ec511d87e0f6861e592da7dc79806e1fe0546a389aa69b4e9bc93a6e"
+  },
+  "confirmed": [
+    "existing154effectcalls3assignedhandlers330otherfunctionsunchangedafterexacthelperinstallationremoved",
+    "purestatushelpersprototype-safeandrecordcountspreserved",
+    "originalCSSprefixpreserved",
+    "fullprojectnewoverlaymoduleTypeScript0diagnostics",
+    "oneAbortSignallifetimewithperfocuspendingcontroller",
+    "documentcapturemanualintentcancellation",
+    "fullcomputedring/clientclip/targetgeometrysignature",
+    "boundedmonotoniconesecondRAFinstant_horizontalonly",
+    "scrollBymissing_throwingfallbackscrollLeft",
+    "savedhelptextandrolewithstatusDaylistfallback"
+  ],
+  "required_fixes": [
+    {
+      "id": "LEAVE-FOCUS-CANCEL-001",
+      "finding": "Unconditional cancelAnimationFrame can throw before clearing frame/owner bookkeeping.",
+      "required": "Capture ID, clear frame/owner first, abort pending, feature-check and catch native cancel failure; aborted callback must not act or reschedule.",
+      "runtime_tests": [
+        "missing cancelAnimationFrame",
+        "throwing cancelAnimationFrame",
+        "native newerinput and lifetimeabort whileframepending",
+        "uncancellablecallback ownership guard"
+      ]
+    },
+    {
+      "id": "LEAVE-FOCUS-NO-RAF-002",
+      "finding": "MissingRAF currently uses momentary fit as success even though nativeanimation can later clip target.",
+      "required": "Show actionable Daylistfallback when RAFunavailable; only stablecompletion restores priorhelp.",
+      "runtime_tests": [
+        "missing RAF initiallyfitting thencontinuingnativescroll",
+        "missing RAF clipped",
+        "throwing RAF",
+        "real Daylist remainsusable"
+      ]
+    },
+    {
+      "id": "LEAVE-FOCUS-DEADLINE-003",
+      "finding": "Deadline before stablecompletion can clear recovery if targetmomentarilyfits.",
+      "required": "Keep/showfailurefallback on expired stabilization; only fourstablefittingframes restoreshelp.",
+      "runtime_tests": [
+        "forced deadline withmovingcurrentlyfittinggeometry",
+        "permanentlyclipped/no-opscroll",
+        "laterstable recovery exacttextandrole restoration"
+      ]
+    }
+  ],
+  "author_response": "Root agreed supersedingv7; frozenv6unchanged.",
+  "fresh_runtime_required": [
+    "threeenginesboththemesalllayouts strict fullrectandring settlement",
+    "allforward/reverse datefocus/nativekeyboard/touch/pointer/modalopener outcomes",
+    "newermanualintent inside/outside region",
+    "abort/hide/inert/disconnect/rerender cleanup",
+    "scrollBy and scrollLeft unsupported/throwing/no-op paths",
+    "RAF and cancelRAF unsupported/throwing paths",
+    "deadline/recovery/reset correctness"
+  ],
+  "diagnostic_reference": {
+    "path": "docs/premium-ui/reviews/leave-calendar-focus-independent-diagnostics.json",
+    "sha256": "eab69c4c77ce55f9937cefd39ccf7538915f2a828ea189fc8004e75084e7587d",
+    "limit": "Different injected implementation; notproductionmodule runtimeproof"
+  },
+  "narrative": "docs/premium-ui/reviews/leave-status-v6-independent-production-source-review.md",
+  "limits": [
+    "Read-only applicationreview; onlyscratchproofscript/reviewartifactswritten.",
+    "No v6runtimepass, acceptance, build/package/deployment claim.",
+    "Separate WebKit pointeropen/Escape openerissue under investigation.",
+    "Physicaldevice/nativeATpending."
+  ]
+}

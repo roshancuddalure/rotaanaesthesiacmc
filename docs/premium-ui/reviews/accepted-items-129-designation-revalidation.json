@@ -1,0 +1,97 @@
+{
+  "recorded_at_utc": "2026-10-24T10:27:29.083574+00:00",
+  "scope_type": "exact_runtime_requirement",
+  "scope": "Original129posting/leavehistorycardpresentationandeditrecordidentityonly. Noallprofilehistory128/backendauthorization/persistence/AT/physicalclaim.",
+  "independent_review": {
+    "reviewer": "/root/profile_dates_semantics_review",
+    "method": "Read-onlysource/beforepatch/APIcontract/newraw/assertion/hashreview;noauthoringorexecution",
+    "outcome": "Explicitrecommendation129withinexactpresentation+editoridentityscope; no writepersistenceconditionimposed."
+  },
+  "root_review": {
+    "reviewer": "/root",
+    "method": "Readexactoriginaltwo129conditions,fullstrictcalendar/readcarddiff,allnewassertionsand7contextresults. Inspectedactual320timeline/1280leavecaptures, exactnonfirsteditorGETfields andper-carddescriptiontargets. Originalhandlers/formatterpreservationproofandproductionRAMregressionsseparate. Adminfixtureboundsstated; commoncardconstructionandrecordIDhandlerunconditionalbyrole, existingeditorreceivesunchangedadminflag."
+  },
+  "requirement_scope_rationale": {
+    "129": [
+      "Eachposting/leaveisonecardwithunit/typeheading,fulldate-range,independentvalidatedtemporalstate andreturnedleavestatus.7currentcontextscover6posting+6leavefixturesincludingcrossmonth/single/open/missing/invalid/reversedranges,longescapedcontentand320CSSrootfont200%;geometry/assertionskeepcardsreadableandactions44px.",
+      "Everyeditactionremainsinsidetheexactcorrespondingcardanddescribedbyitsuniquedatedcontext.Eachnewcontextopensnon-firstposting-target/leave-targetviaactualexistinghandler,assertsexactnormalizationGETIDs/rawdates/member/unit/type/slot/status/notesandCanceloriginfocus. HandlerusesreturnedrowIDdirectly;readpresentationdoesnotreorderrecordcache."
+    ]
+  },
+  "execution_evidence": [
+    {
+      "report": "docs/premium-ui/qa-profile-date-cards.json",
+      "test": "frontend/tests/premium-profile-date-cards.browser.mjs",
+      "exit_code": 0,
+      "scope": "Rootheld7contexts,12recordspercase,GET-onlylocalfixtures."
+    }
+  ],
+  "evidence_sha256": {
+    "docs/premium-ui/acceptance-criteria/items-087-173.json": "a7bf1322bd8e08a1fddd4195095d9cc52a8867a1b8a2bda9b523917fae458576",
+    "docs/premium-ui/qa-profile-date-cards.json": "23a3160a22e23c2a5bff372d5a6d007c342c9ddb4caac094b073587fe2a52b3d",
+    "frontend/tests/premium-profile-date-cards.browser.mjs": "f140d5c0299cf56ad589f4c312434c49bd5364af5d1471d7d1f6d344e25b1d35",
+    "docs/premium-ui/reviews/profile-date-cards-current.json": "fc1ce3b70e409ab0fbfb6eec5eb160212a3bec707dc1f154416e7b3481e3186e",
+    "frontend/src/member-workspace.ts": "81d535cfc7091b558d334418110e4575d226285e0624b22bfd61c1b46a1eb93f",
+    "frontend/src/record-workspace.ts": "aff5fa264638bad4448e8e0c42434e6245b4dbe55b970e0b026a05d2631b9bec",
+    "frontend/src/ui.ts": "88579ed75c8c72e4fd4e2d98508a58c42b925202362589a2469623664c2a975f",
+    "frontend/src/audit-time.ts": "136542cb2daec343417532d372f2e8ce01a0e6103ef6c62a7a4a8017ac8a6d15",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "622976f3ce8f54c8238a7e6a7ba5925e10238aca09347d13c87acb1bcf819bde",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/workspace-load-state.ts": "cdd0e323d7e83e6e668a381bbfcc37cad4726b1193ac5de31d5f14e03eecd9c6",
+    "docs/premium-ui/reviews/profile-card-129-acceptance.json": "1d0c013cbe1b8b04fde0c4752e894b9d469cc9db958078c6326e9864cf948c4e",
+    "docs/premium-ui/reviews/effective-identity-source-preservation.json": "45d54bae26f0224dca3c2d375340cc7b51ece15d9cac40b7b4591d894060e8e0",
+    "docs/premium-ui/reviews/accepted-items-129-effective-identity-revalidation.json": "a2dc34391b9c8fdd3953bb1ec06bf1de84774d05b824951d076d47104bba2339",
+    "docs/premium-ui/reviews/designation-header-source-preservation.json": "c2eb738fa3bc4782c419feb6ecfcb49d52670180f9f879f1a222711643e2c8c5"
+  },
+  "items": [
+    {
+      "item_id": 129,
+      "requirement": "Reflow posting and leave histories into date-aware mobile cards while keeping edit actions adjacent to the affected record.",
+      "conditions": [
+        {
+          "condition": "Posting and leave histories reflow into readable date-aware cards on narrow screens.",
+          "satisfied": true,
+          "evidence": [
+            "docs/premium-ui/qa-profile-date-cards.json",
+            "frontend/tests/premium-profile-date-cards.browser.mjs"
+          ],
+          "rationale": "Eachposting/leaveisonecardwithunit/typeheading,fulldate-range,independentvalidatedtemporalstate andreturnedleavestatus.7currentcontextscover6posting+6leavefixturesincludingcrossmonth/single/open/missing/invalid/reversedranges,longescapedcontentand320CSSrootfont200%;geometry/assertionskeepcardsreadableandactions44px."
+        },
+        {
+          "condition": "Each edit action remains adjacent to and acts on the corresponding dated record.",
+          "satisfied": true,
+          "evidence": [
+            "docs/premium-ui/qa-profile-date-cards.json",
+            "frontend/tests/premium-profile-date-cards.browser.mjs"
+          ],
+          "rationale": "Everyeditactionremainsinsidetheexactcorrespondingcardanddescribedbyitsuniquedatedcontext.Eachnewcontextopensnon-firstposting-target/leave-targetviaactualexistinghandler,assertsexactnormalizationGETIDs/rawdates/member/unit/type/slot/status/notesandCanceloriginfocus. HandlerusesreturnedrowIDdirectly;readpresentationdoesnotreorderrecordcache."
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "Adminfixtureemulationonly; broadrolepermissions/nativeAT/physical/realzoomseparate. Existingcard/handlerconstructionsharedbyroles;no permissionexpansion.",
+    "Newtestcertifiescorrespondingeditoropens/cancelcontext,notallpossiblepersistededitoutcomes; original129doesnotrequirebackendmutationcertification.",
+    "128canonical/legacytimelinecompleteness and122/133nullableheaderdisplayremainpartial."
+  ],
+  "effective_identity_revalidation": {
+    "reviewer": "/root",
+    "changed_evidence": [
+      "docs/premium-ui/qa-profile-date-cards.json",
+      "frontend/src/member-workspace.ts",
+      "frontend/src/premium-theme.css"
+    ],
+    "method": "Readfullhelper/markup-onlydiff,allafter-formbytesunchangedandCSSprefixexactproof. Sourceonlydisplayno virtualizedcontent. Designrole/tokens/fixtures/workflowinvariantsretained; guideclassification/literalmobilechoicesunchangedwithcurrentline/digestrefresh. Fresh6tab/12countand7datecardreportsmatchescurrentheldsourceandoriginal123–125/129conditions. NarrowheaderidentitywrapselectorscannotmatchLeaveapproval/calendar/pressure.",
+    "limits": "No transferofhistoricalruntimeclaimsoutsidefreshscope;122/133/128remainpartial. Original259namedreviewartifactremainsimmutableandunmodified."
+  },
+  "designation_header_revalidation": {
+    "reviewer": "/root",
+    "changed_evidence": [
+      "docs/premium-ui/qa-profile-date-cards.json",
+      "frontend/src/member-workspace.ts",
+      "frontend/src/premium-theme.css"
+    ],
+    "method": "Display-only canonical helper/header/Overview patch read; form wiring and all later bytes preserved; existing CSS prefix identical. New selectors match only canonical identity. Current six tab, twelve count and seven date-card regressions preserve original accepted123/124/125/129 conditions. Classification decisions/literals remain unchanged with refreshed source bindings.",
+    "limits": "No broader historical runtime recertification. Original259 immutable named archive remains untouched;122/126/128/130 stay partial."
+  }
+}

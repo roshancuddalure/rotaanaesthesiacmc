@@ -1,0 +1,169 @@
+{
+  "recorded_at_utc": "2026-10-29T01:15:12.110180+00:00",
+  "scope_type": "exact_runtime_requirement",
+  "scope": "Original38 local font/icon fallback resilience across all classified font declarations and shared SVG families, plus actual shell/profile/reference/archive outcomes. Full260 remains incomplete.",
+  "independent_review": {
+    "reviewer": "/root/close_icons_037_preparation",
+    "report": "docs/premium-ui/reviews/font-resource-fallback-038-peer-final-review.json"
+  },
+  "root_review": {
+    "reviewer": "/root",
+    "method": "Read both actual test sources and peer exact-condition review; verify failed FontFace requests/error status, unchanged deployed stacks and appropriate metrics versus OS-font limits. Inspect6font selector classes/8local SVG shapes, actual native action and archiveCancel paths. Bind explicit one-expression unrelated Rules delta through independent source review,12 native motion contexts,20 Rules checks,114 units and held build. Do not rehash historical raw reports."
+  },
+  "requirement_scope_rationale": {
+    "38": [
+      "Source scan finds six font-family declarations, all with explicit system/generic local fallback: body Inter→ui-sans/system/sans, three mono selectors→ui-monospace/monospace, two serif selectors→Georgia/Times/serif. The two legacy person-* declarations have no current TS/HTML caller and are deliberately rendered as CSS fixtures rather than claimed operational flows. All eight decorative icon variants are local inline SVG path/rect/circle shapes sharing currentColor/24viewBox/2stroke and named textual control wrappers. No remote icon font, SVG use/image, application font-face, CSS import or webfont URL is present in the inspected source/entry scope. The extension exercises every declared family selector plus actual memberMatch and actual archive monospace input; it is broader than one representative body sample.",
+      "The original24 actual shell/profile/reference contexts block external resources and deliberately reject an injected Inter FontFace while retaining the deployed family stack. Rejected load, error face, request failure and fallback text metrics/linebox equality corroborate visible labels, no document overflow and successful native menu, profile edit/discard and local reference outcomes. The additional12 contexts block Inter/Georgia resources, render all six family selectors and all eight local SVG variants with labels and nonempty local geometry, and natively type the actual archive phrase, verify eligibility, then Cancel without mutation and restore opener focus. Georgia secondary-stack equality is correctly diagnostic because a failed webface does not remove installed OS Georgia; actual text visibility/positive width/containment remains asserted. All API traffic is expected GET-only; every mutation is rejected. Width40×44 menu controls are explicitly an existing separate target-size issue, not a font-outage regression or a38claim of universal44px."
+    ]
+  },
+  "execution_evidence": [
+    {
+      "test": "frontend/tests/premium-font-resource-fallback.browser.mjs",
+      "test_sha256": "29a8267a0ae4eca3b611fc96273e9a9f622299fc23a22cf882fa632400919902",
+      "report": "docs/premium-ui/reviews/font-resource-fallback-current.json",
+      "report_sha256": "5b0d054e70896e92e7c312b50ba1a6c7a1dd02402a444ed1d4005709a8a5f37b",
+      "contexts": 24,
+      "scope": "Actual application guide/shell, canonical member workspace opened through real exported module and native launcher, and deployed component reference. Three engines, light/dark, 320/1280, normal/200% root font-size override (explicit px-token text may remain unchanged). Injected test-only failed Inter @font-face; deployed font-family stack is never replaced. All external resources aborted and all API traffic GET-only to disposable loopback fixture or locally fulfilled profile reads. No persistence, application changes, physical devices or native assistive technology.",
+      "exit_code": 0
+    },
+    {
+      "test": "frontend/tests/premium-font-family-icons-failure.browser.mjs",
+      "test_sha256": "fde56971ab4156c971c15d56f9ee17b45f0f7e2697967882db10b0b58beed48e",
+      "report": "docs/premium-ui/reviews/font-family-icons-failure-current.json",
+      "report_sha256": "0ed03ea8dc1e2a9afc86da3e38f7a50a088938612a763c99d8a9102d88d78f44",
+      "contexts": 12,
+      "scope": "All six current CSS font-family selector declarations in a controlled production-CSS component-reference fixture, actual memberMatch helper, all eight shared SVG families and actual archive confirmation type/enable/Cancel. External test-only Inter and Georgia webfont requests fail; the deployed stacks stay unchanged. Local generic monospace remains intrinsic. Three engines, two themes,320/1280. All API reads locally fulfilled and all mutations refused.",
+      "exit_code": 0
+    }
+  ],
+  "evidence_sha256": {
+    "docs/premium-ui/reviews/font-resource-fallback-038-peer-final-review.json": "bbc1a2cdd79a2fe22d003ac0f69cd2fc97b9162d0070dcbc767744af3bff9af3",
+    "docs/premium-ui/reviews/motion039-one-expression-independent-applicability.json": "71f72f88e19be12497389e66f0620f9167fb53ab77b1949d99d651266e11aea8",
+    "docs/premium-ui/reviews/motion039-target-reveal-current.json": "9d240753216b5dc8de1450b29c844cbf957e1b8e056bb22ea4d432e0a8b8bcc6",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json": "d2d90945ee6d8f3b9bad48458ee9e4fe09425eeb940ffbbb485977976e701647",
+    "docs/premium-ui/acceptance-criteria/items-001-086.json": "5f84ff2a0927e6f67f8e09d326e5874bb49e27b6c1752ad6443c5a4b8ccb0625",
+    "docs/premium-ui/reviews/font-resource-fallback-038-review.md": "47262731fc68c76112eac74236fa162f2499daa07d7c6e0dcd5ba996c650c639",
+    "frontend/src/decorative-icons.ts": "7e2d11356114e96f242435a2cd7cb7bc24cdc1787142e864e1cf053f92c373d7",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "b34613418086c715ed4eee37ddfc115daccffecc5399772078ef2076de620868",
+    "frontend/src/component-reference.css": "46ed291bfdd2463fdc470392a12207bf37fca0478587c24a5019b82e6f7262ee",
+    "frontend/index.html": "4b7afb8eeccdd1d27d12a2550c90817a997c6ff90da0b044fd18c36b93223914",
+    "frontend/component-reference.html": "4273ea2a972d964be7ff2ffeed8ab5224df32d7cbf8b58461424b9ffd2831ebb",
+    "frontend/tests/premium-font-resource-fallback.browser.mjs": "29a8267a0ae4eca3b611fc96273e9a9f622299fc23a22cf882fa632400919902",
+    "docs/premium-ui/reviews/font-resource-fallback-current.json": "5b0d054e70896e92e7c312b50ba1a6c7a1dd02402a444ed1d4005709a8a5f37b",
+    "frontend/tests/premium-font-family-icons-failure.browser.mjs": "fde56971ab4156c971c15d56f9ee17b45f0f7e2697967882db10b0b58beed48e",
+    "docs/premium-ui/reviews/font-family-icons-failure-current.json": "0ed03ea8dc1e2a9afc86da3e38f7a50a088938612a763c99d8a9102d88d78f44",
+    "docs/premium-ui/reviews/font-resource-fallback-038-acceptance.json": "e61c064bb8a6e59fa5faf161437adf2b1906450249b5b0d6f496348306cdc98e",
+    "docs/premium-ui/reviews/close37-final-prior37-applicability.json": "6645c2c56653a5cf57d27e767fd4917b5eef3993fff5fd5254a72d20ab794f4a",
+    "docs/premium-ui/reviews/close37-final-runtime-review.json": "05f6980aa1f723b43bd9a3eff30088b8b2ba54161bfb0c09ef6d8552ef19b377",
+    "docs/premium-ui/reviews/close37-final-execution-current.json": "18a24a3debb7c070e3dd0c2b42b3f7fecd8ba7566cf0c0ce201f1792e58a3e39",
+    "docs/premium-ui/reviews/accepted-items-38-close37-final-revalidation.json": "86c910fde9483ffbe3fc810405d08f516c6b0c13adfa6b1f442f7fdf81520d74",
+    "docs/premium-ui/reviews/leave-extra-v2-prior38-applicability.json": "2e414e82cb3b9a94587ed219d4b4219328428d11c026e52e2c86929a04eec067",
+    "docs/premium-ui/reviews/leave-extra-v2-integrated-execution.json": "5509d9068f7a92ec3d6ccc2d9918edb7a80d08335d4a209096b5e361610e9108",
+    "docs/premium-ui/reviews/leave-extra-surfaces-independent-review-v2.json": "b7cee9efdaf7ed892a2d5203e6e8402b9797236af53fe346bb3e571e1b7836c5",
+    "docs/premium-ui/reviews/accepted-items-38-leave-extra-v2-revalidation.json": "f29809e91010389d7004d4cacfbd1151fab8e12dc6f9a873bf690d352a5fafbd",
+    "docs/premium-ui/reviews/leave-v8-prior38-applicability.json": "bd1b3f6ba713e24533bbfe449ddb6a22d43117699e3db99c870fcb97db0549cf",
+    "docs/premium-ui/reviews/leave-v8-integrated-execution.json": "65e22c4c35ae64f66ebfdc212ef93b215eb9d154067de5d76d3fbe031f27e985",
+    "frontend/src/main.ts": "b2c4d95966eb6885744123bdefdbfa20c08dace6ed1346e7ee8b98c85ee013ea",
+    "frontend/src/leave-calendar-focus.ts": "93bc00fb0c753ef342412e2f58730126d17918c09edfd6f3e58f72b43d1cc2b3",
+    "docs/premium-ui/reviews/accepted-items-38-leave-v8-revalidation.json": "93e99b8cb5985e5959cb782114b2720b12b6e0d0d894a6e3f567e39b851838b0",
+    "docs/premium-ui/reviews/leave-operation-guidance-prior38-applicability.json": "0b50c02a179ee462204b44570b7c6337c8e5aad24fc0f1bb169182d82e809d48",
+    "docs/premium-ui/reviews/leave-operation-guidance-integrated-execution.json": "e1ad5987b7165dfd029a2d9e68394637a7ff240bf1fd9f6dae5968742ce703c9",
+    "frontend/src/member-workspace.ts": "0ef8c1ef2234c7a50d8ca10b8aaa3998a654d452f563bd4c75531faef09d6c63",
+    "frontend/src/reference-workspace.ts": "78c231ea1d5ab15bd3a4b5f2f8265529451a51bacc68d2a4aac1708a4be30292",
+    "docs/premium-ui/reviews/accepted-items-38-leave-guidance-revalidation.json": "ef8c83de5a8bf2f9eab6ea49cbf771f3947d8b495f9c2f611363e41726ac9ca3",
+    "docs/premium-ui/reviews/leave-import-status-v4-prior40-applicability.json": "cdb91abbddee81612f1d1de43fff97c60456b39c87d1df4bc3d0e05e5fe77ead",
+    "docs/premium-ui/reviews/leave-import-status-v4-integrated-execution.json": "6f56406f07dd468b2e44b762a9e0ad53741de0329ff45658e12f031b287ccd88",
+    "docs/premium-ui/reviews/leave-guidance-table-applicability-correction.json": "a97fb75f3c47abdc57c11387811e775d64836de274eb54f6edce5d0f688e2ba0",
+    "frontend/src/operational-import.ts": "6f9a3e6e40a3faa63c3a023c15e56e1a9ee22e46a734247bd085954e3e9340e1"
+  },
+  "items": [
+    {
+      "item_id": 38,
+      "requirement": "Provide reliable local font and icon fallbacks so blocked resources cannot erase labels or alter control usability.",
+      "conditions": [
+        {
+          "condition": "Provide usable local font stacks and icon assets or text fallbacks",
+          "satisfied": true,
+          "rationale": "Source scan finds six font-family declarations, all with explicit system/generic local fallback: body Inter→ui-sans/system/sans, three mono selectors→ui-monospace/monospace, two serif selectors→Georgia/Times/serif. The two legacy person-* declarations have no current TS/HTML caller and are deliberately rendered as CSS fixtures rather than claimed operational flows. All eight decorative icon variants are local inline SVG path/rect/circle shapes sharing currentColor/24viewBox/2stroke and named textual control wrappers. No remote icon font, SVG use/image, application font-face, CSS import or webfont URL is present in the inspected source/entry scope. The extension exercises every declared family selector plus actual memberMatch and actual archive monospace input; it is broader than one representative body sample.",
+          "evidence": [
+            "docs/premium-ui/reviews/font-resource-fallback-current.json",
+            "docs/premium-ui/reviews/font-family-icons-failure-current.json"
+          ]
+        },
+        {
+          "condition": "Block optional external font/icon resources and verify labels, control targets and layout remain usable",
+          "satisfied": true,
+          "rationale": "The original24 actual shell/profile/reference contexts block external resources and deliberately reject an injected Inter FontFace while retaining the deployed family stack. Rejected load, error face, request failure and fallback text metrics/linebox equality corroborate visible labels, no document overflow and successful native menu, profile edit/discard and local reference outcomes. The additional12 contexts block Inter/Georgia resources, render all six family selectors and all eight local SVG variants with labels and nonempty local geometry, and natively type the actual archive phrase, verify eligibility, then Cancel without mutation and restore opener focus. Georgia secondary-stack equality is correctly diagnostic because a failed webface does not remove installed OS Georgia; actual text visibility/positive width/containment remains asserted. All API traffic is expected GET-only; every mutation is rejected. Width40×44 menu controls are explicitly an existing separate target-size issue, not a font-outage regression or a38claim of universal44px.",
+          "evidence": [
+            "docs/premium-ui/reviews/font-resource-fallback-current.json",
+            "docs/premium-ui/reviews/font-family-icons-failure-current.json"
+          ]
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "No production external resource currently exists to fail; these tests inject controlled optional resource failures without changing deployed stacks.",
+    "Failed Georgia webfont does not establish OS-font removal; generic and installed-font combinations are environment dependent.",
+    "All shared SVG families and all explicit CSS family declarations are covered; this does not certify every operational icon placement/alignment required by separate37.",
+    "CSS root200 is not browser zoom or universal enlargement of fixed-pixel labels. Existing40×44 menu target remains a separate refinement.",
+    "Physical device, software keyboard and native AT checks remain unperformed.",
+    "The real archive control is enabled but never activated; no persistence/authorization certification.",
+    "36font contexts are historical held snapshots before the exact Rules reveal-target change. Independent delta applicability confirms no font/icon/CSS/control source impact; raw hash lists remain unchanged.",
+    "38 does not accept every icon placement/alignment under37 or all motion treatments under39."
+  ],
+  "close37_final_revalidation": {
+    "reviewer": "/root",
+    "parent": "docs/premium-ui/reviews/font-resource-fallback-038-acceptance.json",
+    "changed_evidence": [
+      "docs/premium-ui/reviews/frontend-build-snapshot-current.json",
+      "frontend/src/premium-theme.css"
+    ],
+    "final_applicability": "docs/premium-ui/reviews/close37-final-prior37-applicability.json",
+    "scope": "Explicit current source+native bounded runtime bridge, originalconditions/scopes retained. Historical source raw not rewritten; no whole37 acceptance."
+  },
+  "leave_extra_v2_revalidation": {
+    "reviewer": "/root",
+    "parent": "docs/premium-ui/reviews/accepted-items-38-close37-final-revalidation.json",
+    "changed_evidence": [
+      "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/leave-extra-v2-prior38-applicability.json",
+    "independent_source_review": "docs/premium-ui/reviews/leave-extra-surfaces-independent-review-v2.json",
+    "current_runtime": "docs/premium-ui/reviews/leave-extra-v2-integrated-execution.json",
+    "scope": "Original requirement/condition wording and historical executions retained. Explicit pure presentation delta and current selected regressions bridge updated hashes. No new requirement acceptance."
+  },
+  "leave_v8_revalidation": {
+    "reviewer": "/root",
+    "parent": "docs/premium-ui/reviews/accepted-items-38-leave-extra-v2-revalidation.json",
+    "changed_evidence": [
+      "docs/premium-ui/reviews/frontend-build-snapshot-current.json",
+      "frontend/src/premium-theme.css"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/leave-v8-prior38-applicability.json",
+    "current_execution": "docs/premium-ui/reviews/leave-v8-integrated-execution.json",
+    "scope": "Originalrequirements/conditions/historicalexecutions retained; explicitcurrentUI/focusdelta plus314selectedcontexts andsourceapplicability bridge. No newitemacceptance orindependentV8reviewclaim."
+  },
+  "leave_guidance_revalidation": {
+    "reviewer": "/root",
+    "parent": "docs/premium-ui/reviews/accepted-items-38-leave-v8-revalidation.json",
+    "changed_evidence": [
+      "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/leave-operation-guidance-prior38-applicability.json",
+    "current_execution": "docs/premium-ui/reviews/leave-operation-guidance-integrated-execution.json",
+    "scope": "Originalconditions andhistoricalexecutionsretained; twostaticguidanceparagraphs reviewed withexactreversal/current12casegeometry/actions. No newitemacceptance."
+  },
+  "leave_import_status_v4_revalidation": {
+    "reviewer": "/root",
+    "parent": "docs/premium-ui/reviews/accepted-items-38-leave-guidance-revalidation.json",
+    "changed_evidence": [
+      "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/leave-import-status-v4-prior40-applicability.json",
+    "current_execution": "docs/premium-ui/reviews/leave-import-status-v4-integrated-execution.json",
+    "table_documentation_correction": "docs/premium-ui/reviews/leave-guidance-table-applicability-correction.json",
+    "scope": "Originalrequirements/conditions/historicalexecutions retained; exactpresentation-onlysource reversal/current102case outcomes bridgeupdatedevidence. No newitemacceptance."
+  }
+}

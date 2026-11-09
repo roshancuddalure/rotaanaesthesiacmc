@@ -1,0 +1,44 @@
+{
+  "recorded_at_utc": "2026-11-09T08:12:29.583372+00:00",
+  "author": "/root/profile_parent_final_audit",
+  "application_changed": false,
+  "browser_executed": false,
+  "status": "Prepared12 expected-correct flows; source-discovered existing delegation gap must be diagnosed before claiming flows execute",
+  "test": "frontend\\tests\\premium-original159-direct-leave-day-v6-candidate.browser.mjs",
+  "test_sha256": "190ab83b76f4c36f5adef8279e3b6b7cf9d1261ac7731901b48bbcddd0f88880",
+  "node_check_exit": 0,
+  "source_baseline": {
+    "main": "2b8f68c069e599af50a4ac1b2146a7018d6268f290b90a9949130a057dc91b43",
+    "member": "105cc1d91ea4815d565ad4859fc01412cf576a3203c07834f4010e3fef7ef1a5"
+  },
+  "candidate_main": "6c306cf2cd619a0003ca547c0fdf73a88a1abf95939234cf0d86193624db6404",
+  "preview": 5294,
+  "fixture_GET_fallback": 8031,
+  "expected_contexts": 12,
+  "dimensions": [
+    "chromium/firefox/webkit",
+    "320/1280",
+    "dated-add / dated-add-read503"
+  ],
+  "flow": [
+    "Choose Day list; select unrelated sibling Leave and open pressure disclosure",
+    "Open actual Nov5 day overlay and click existing Add leave on this day button",
+    "Require actual editor opening and intentional day closure; inspect initialdatesNov5, choose actual member option, leave statusrequested; submit existing preview/review token/save",
+    "Require atomic parent3GET fresh snapshot or one requests503 with retained entire old snapshot then keyboard GET-only retry",
+    "Assert Daylist/month/sibling selection/pressure disclosure/view/history identities and no resurrected day overlay; one accepted save only"
+  ],
+  "source_discovered_entrypoint_gap": {
+    "classification": "Source-proven missing click delegation; actual rendered no-action diagnostic not yet executed by author",
+    "open": "main openLeaveDayModal uses document.body.insertAdjacentHTML, so day Add is outside viewRoot",
+    "handler": "handleViewClick owns existing Add/Edit operational logic and is attached to viewRoot only; document forwarding at V6main10819 matches #rota-day-modal only",
+    "body": "Remaining document click handler covers closeLeaveDayModal but no data-add-operational-record dispatch",
+    "impact": "Real day Add may do nothing before any editor appears, so tests must not fake the handler dispatch to reach desired owner path",
+    "next_action": "Root execute one actual day Add diagnostic first. If confirmed, implement a separate guarded forwarding repair for #leave-day-modal with !viewRoot.contains condition to avoid duplicate dispatch; preserve current V6 and existing rota overlay forwarding. Then rebase harness source guards and run all12 actual flows."
+  },
+  "report": "docs/premium-ui/qa-original159-direct-leave-day-v6-candidate.json",
+  "limits": [
+    "No actual browser outcomes authored; no full159 acceptance.",
+    "These12 cover dated Add success and Add503 recovery. Existing Leave Edit is not covered and must remain explicit.",
+    "No backend/API/policy or mutation payload changes; all writes in harness fulfilled locally."
+  ]
+}

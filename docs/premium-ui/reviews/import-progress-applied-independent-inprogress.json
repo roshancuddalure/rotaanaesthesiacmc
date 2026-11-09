@@ -1,0 +1,76 @@
+{
+  "recorded_at_utc": "2026-10-28T06:36:05.220Z",
+  "reviewer": "/root/import_progress_recovery_review",
+  "status": "In progress: actual source approved for runtime verification; requirements135136 not accepted",
+  "completion_claim": false,
+  "app_or_test_edits": false,
+  "files": [
+    {
+      "path": "frontend/src/ui.ts",
+      "before_sha256": "a1f8e5a527d6517ac2a1037545a6449b406e3ca8e6e0f7b3f940918e6d12eddc",
+      "proposal_sha256": "0acd01eb611edaa97b60f6cad366d62ec3779de6241117e0fd894150d3e66ca4",
+      "applied_sha256": "680d7830bca8826b46b6f1dc2c0d064d2a3a2e16fb41188d2c323de6bccf85b2",
+      "exact_proposal_bytes": false,
+      "proposal_content_identical_after_CRLF_to_LF": true,
+      "api_serialization_expression_count": 0,
+      "api_serialization_AST_text_equal_after_CRLF_to_LF": true,
+      "ownership_AST_text_equal_after_CRLF_to_LF": true
+    },
+    {
+      "path": "frontend/src/member-import.ts",
+      "before_sha256": "58742f27a951c8c2dea3b428c9f419b60e8882d12ec8978fd218e8fea731c5ec",
+      "proposal_sha256": "d29664bc01adbe36713d30a3c789737ed779dc082afc26bb3fe1c1091872de94",
+      "applied_sha256": "d4c70924c8a089de3fa836491d2e2bf6b6b7d38c17571d516c1f9bc194ad3e50",
+      "exact_proposal_bytes": false,
+      "proposal_content_identical_after_CRLF_to_LF": true,
+      "api_serialization_expression_count": 5,
+      "api_serialization_AST_text_equal_after_CRLF_to_LF": true,
+      "ownership_AST_text_equal_after_CRLF_to_LF": true
+    },
+    {
+      "path": "frontend/src/member-workspace.ts",
+      "before_sha256": "340f4c9d0b6ee676bba226ca3c5e577028fb04ed0149b62a57a09f936d206b6d",
+      "proposal_sha256": "2d52a71134b38e6ec1b2398ddac0cd90ac85829d0bd6ba084b92c1693f2bb97d",
+      "applied_sha256": "2d52a71134b38e6ec1b2398ddac0cd90ac85829d0bd6ba084b92c1693f2bb97d",
+      "exact_proposal_bytes": true,
+      "proposal_content_identical_after_CRLF_to_LF": true,
+      "api_serialization_expression_count": 33,
+      "api_serialization_AST_text_equal_after_CRLF_to_LF": true,
+      "ownership_AST_text_equal_after_CRLF_to_LF": true
+    },
+    {
+      "path": "frontend/src/operational-import.ts",
+      "before_sha256": "e112f581d096d4a8c1f81b297d989dcbac4b18327e3de8a8d218deecba060030",
+      "proposal_sha256": "4ab9468b70cdc425e00daba864c3e116815a0dfcdb6628fa5cdf51aa7abaf976",
+      "applied_sha256": "4ab9468b70cdc425e00daba864c3e116815a0dfcdb6628fa5cdf51aa7abaf976",
+      "exact_proposal_bytes": true,
+      "proposal_content_identical_after_CRLF_to_LF": true,
+      "api_serialization_expression_count": 23,
+      "api_serialization_AST_text_equal_after_CRLF_to_LF": true,
+      "ownership_AST_text_equal_after_CRLF_to_LF": true
+    }
+  ],
+  "normalization": "Only CRLF to LF applied for declared textual comparisons. Raw hashes retained; exact byte identity is not claimed where false.",
+  "css": {
+    "path": "frontend/src/premium-theme.css",
+    "sha256": "d9113665ea4657cc9d5539db9017bbce76981881b2896341155694552610f1f6",
+    "expected_rule_present": true,
+    "scope": "member-import fieldsets only; no overflow hiding or table display change"
+  },
+  "review_findings": [
+    "Actual application content matches final prepared copies after declared newline normalization. Workbook and ui raw proposal hashes differ due line endings; workspace and operational match exactly.",
+    "Stage flags and reset/Apply-current updates are presentation only; API/serialization calls and ownership declarations preserved.",
+    "Unconfirmed apply explicitly may already have saved and requires checking records/history before repeating. Confirmed apply callback failure retains completed state.",
+    "Original134 sealed archive and previous25 revalidation are not rewritten. Future current-source revalidation required for26 prior acceptances."
+  ],
+  "required_runtime": [
+    "Full135136 native P1-P11 including retained inputs and exact payloads, failed preview/apply, late ownership, callback rejection/remount and file replacement.",
+    "Production CSS narrow/desktop containment and table-local scroll, long IDs, native selection and final row/action reachability.",
+    "Fresh matching24 and workbook lifetime12 plus appropriate54 importer/18 profile regressions, unit/build and explicit scoped prior26 revalidation."
+  ],
+  "limits": [
+    "Source review only; dynamic CSS probe is not production stylesheet verification.",
+    "No backend/persistence/export/permissions/scheduling semantics claim, physical-device/nativeAT or goal completion.",
+    "Runtime/build results are forthcoming and not inferred from report paths."
+  ]
+}

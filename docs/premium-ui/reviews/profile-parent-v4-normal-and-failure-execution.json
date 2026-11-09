@@ -1,0 +1,42 @@
+{
+  "recorded_at_utc": "2026-11-09T07:43:21.798858+00:00",
+  "operator": "/root",
+  "scope": "24 scratch expected-correct and GET503/retry contexts; final V4 snapshot. Application unchanged; broader ownership tests ongoing.",
+  "candidate_sha256": {
+    "tmp/profile-parent-refresh-v4/main.ts": "355e71753eb79135d4bdefb94837da4fc1ff727b12a2ed1f9c4bdb4b5d744a07",
+    "tmp/profile-parent-refresh-v4/member-workspace.ts": "105cc1d91ea4815d565ad4859fc01412cf576a3203c07834f4010e3fef7ef1a5"
+  },
+  "executions": [
+    {
+      "label": "normal",
+      "contexts": 12,
+      "exit_code": 0,
+      "test": "frontend/tests/premium-profile-parent-refresh-v4-normal.browser.mjs",
+      "report": "docs/premium-ui/qa-profile-parent-refresh-v4-normal.json",
+      "log": "tmp/profile-parent-v4-normal-r1.log",
+      "hashes": {
+        "docs/premium-ui/qa-profile-parent-refresh-v4-normal.json": "99038961edc07713c5558af77086c1bb3135baa65620d1af20c3ed994932da07",
+        "frontend/tests/premium-profile-parent-refresh-v4-normal.browser.mjs": "10432a48850fb17d74b6e8344f452c68d8e7c6ab035fdb54c989c3dcd9fba75a",
+        "tmp/profile-parent-v4-normal-r1.log": "2d3f415f66e1fe0f476a9f4b7cf3777294e13d9dd4d3384f4e53ee84a74abc47"
+      }
+    },
+    {
+      "label": "read-failure",
+      "contexts": 12,
+      "exit_code": 0,
+      "test": "frontend/tests/premium-profile-parent-refresh-v4-read-failure.browser.mjs",
+      "report": "docs/premium-ui/qa-profile-parent-refresh-v4-read-failure.json",
+      "log": "tmp/profile-parent-v4-read-failure.log",
+      "hashes": {
+        "docs/premium-ui/qa-profile-parent-refresh-v4-read-failure.json": "c8647cfa136725e79c395776f9282047c1712700fe810d9277a502f00b63be88",
+        "frontend/tests/premium-profile-parent-refresh-v4-read-failure.browser.mjs": "f326cdabd0684b53893f5c002aaf0cdf611bea71a0c8a7c1c80d34e4acad3579",
+        "tmp/profile-parent-v4-read-failure.log": "492d53531edcbf3a439a6166045f51856dad5ab44236720e8a57cc10accfa218"
+      }
+    }
+  ],
+  "browser_contexts": 24,
+  "limits": [
+    "One initial wrong-working-directory preparation command failed before browser launch; its log preserved. Corrected invocation passed12.",
+    "No backend or production mutations. Whole159 remainspartial."
+  ]
+}

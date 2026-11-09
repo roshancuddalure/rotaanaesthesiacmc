@@ -1,0 +1,71 @@
+{
+  "recorded_at_utc": "2026-10-30T16:19:47.458278+00:00",
+  "reviewer": "/root/stage161_truthful_readiness_matrix",
+  "mode": "Read-only source audit and60newactualapp tracker states; no product/backend/ledger edits.",
+  "decision": "Keep161partial: actualsupportedCalllevelmismatch blocker is omitted from Reviewdone classification. No acceptance ofallstage/readiness requirements.",
+  "requirement": "Present setup, template allocation, member assignment, review and publishing as clear operational stages with truthful readiness cues.",
+  "own_executions": [
+    {
+      "report": "docs/premium-ui/qa-stage161-readiness-independent.json",
+      "test": "frontend/tests/premium-stage161-readiness-independent.browser.mjs",
+      "log": "tmp/stage161-readiness-independent.log",
+      "contexts": 54,
+      "exit_code": 0,
+      "terminal_session_observed": 2623,
+      "operator": "/root/stage161_truthful_readiness_matrix",
+      "authorship": "New independent test"
+    },
+    {
+      "report": "docs/premium-ui/qa-stage161-calllevel-proper-independent.json",
+      "test": "frontend/tests/premium-stage161-calllevel-proper-independent.browser.mjs",
+      "log": "tmp/stage161-calllevel-proper-independent.log",
+      "contexts": 6,
+      "exit_code": 0,
+      "terminal_session_observed": 61206,
+      "operator": "/root/stage161_truthful_readiness_matrix",
+      "authorship": "New independent test"
+    }
+  ],
+  "verified_defect": {
+    "title": "Review marked done despite a current call-level mismatch requiring Review action",
+    "proper_contexts": 6,
+    "observed": "Current-schema checklist returns Call level mismatches blocker andcan_publishfalse;actualsidebar Review data-state=done/green andscreenreaderlabeldone. Mainchecklist renders blockerandOpenRotaReviewbutton/reassignmentinstruction. All3engines320/1280 repeat.",
+    "expected": "Review must remain needsaction while the authoritative checklist directs unresolvedassignment correction inReview.",
+    "root_cause": "workflowStateFrom reviewDone excludes only Open slots,Hard safety blockers,Exchange requests; backendcurrentblockers alsoincludeCalllevelmismatches. MainPUBLISH_CHECK_FIX mapsCalllevelmismatches to rota-review already.",
+    "backend_boundary": "Read-onlybackendinspection confirms currentserverlabel/rule; no proposedbackendrule/permission change.",
+    "proper_fixture": "Final6supplement removesblockeditem fromclearchecks andsetsassigned_slots2/total2; no duplicated clearblockeror0/2summary ambiguity."
+  },
+  "matrix_limits": [
+    "Initial54states establishdeclaredtrackerfunction outcomes butusebaseclearchecks/summary modifiedonlyasdocumented. Proper6supplement is primarycounterexample withconsistentCalllevelmismatchcheckboxstate.",
+    "Freshunavailablechecklist gives unknownsteps; doesnotcertify failedrefreshwithcachedknownstate.",
+    "Fourworkflowsteps alone do notdisprove161firstcondition: TemplategenerationReadiness separatelynames Buildtemplate/Autoassignmembers/Extradutylayer/Reviewdraft. Need currentactualtemplate/setup/review state matrix toclosewhole161.",
+    "Currentreadinesssignalsarefrontendconvenience,not publishauthorization orbackendpolicy proof.",
+    "Published fixture initiallymissedrequiredstatus andthrewwhileformatting; fixedcurrentApprovalschema andpreserveddiagnostics. No productbugattributedtofixture."
+  ],
+  "visual_review": {
+    "viewed": "docs/premium-ui/screenshots/stage161-independent/call-level-mismatch-proper-desktop.png",
+    "finding": "Sidebar Reviewgreen/done contradicts visiblyblocking Calllevelmismatches instruction toReassigninReview. Publishblockedcopyclear. Computeradminfixturealsohasviewonlypermission; no claimdisabledPublishcausedsolelythisblocker."
+  },
+  "next_actions": [
+    "ClassifyReviewdoneonlywhenscope/templateprerequisitesandallreturnedpublishblockersareclear,includingunknownfutureblockers conservatively. Retainpublishedhistoryandexistingbackendpublishingrules.",
+    "Test proposedclassification onallcurrentblockertitles,combinations/unknownblocker/unavailable,publishedandreadycontrols; thenverifyactualtracker/counterexample route.",
+    "Completecurrenttemplate/setup/reviewstagecomprehensionandreadinessmatrix beforeaccepting161."
+  ],
+  "evidence_sha256": {
+    "docs/premium-ui/qa-stage161-readiness-independent.json": "c5754dfc6819afcb437729135c04d6e7e0c9167cc67932b086e9079431cec471",
+    "frontend/tests/premium-stage161-readiness-independent.browser.mjs": "4c8de30899be4716c27133787416219222926fe8f9d4666d8aa955695f4e1007",
+    "tmp/stage161-readiness-independent.log": "5057e1f1c59d005dd37d424d58e030394c10d779c13cdc09f805785966af1876",
+    "docs/premium-ui/qa-stage161-calllevel-proper-independent.json": "9f168982f876ccbd935b9e3f67ef7ccd47e36ab6475a307ce148efff3c5620e8",
+    "frontend/tests/premium-stage161-calllevel-proper-independent.browser.mjs": "60492474c260dedaa5d2c497dbcc208526a3cc5ed50933b490a219df0c76a3d8",
+    "tmp/stage161-calllevel-proper-independent.log": "2a4c5844f0207e2edf5c4071c14a4a9100b054774bbf9f6684139f0acf251a64",
+    "frontend/src/main.ts": "162dd5f04f185f4506c38dba974f0cd927b3e09d1ce85f5fd0da0f0de566885c",
+    "backend/app/services/rota_publish.py": "9445d96e5854b34827851fd940e57d02bf934417c0802cb8d613f2fa694a8408",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "docs/premium-ui/reviews/generation161165-independent-gapmap.json": "85d47b2d8b775369dff0a0ecee4f8dd0144463af53198d9c309f424beaf9e07b",
+    "docs/premium-ui/screenshots/stage161-independent/call-level-mismatch-proper-desktop.png": "ee3cb1583e8e38015d2f92bc28c256394f555a4005526c67bf4acc2d7d2004f4",
+    "tmp/stage161-readiness-fixture-diagnostic.log": "6dad5ed760b62af808a190c7a90d5cf2e3fab69c63de2c4c4104ffbf7210fdae",
+    "tmp/stage161-readiness-published-fixture-diagnostic.log": "c41cb33f68fddf4526574c09773466c90cc2a36bd80ef0d4644684690a9d81f8",
+    "tmp/stage161-calllevel-summary-fixture-diagnostic.log": "2a4c5844f0207e2edf5c4071c14a4a9100b054774bbf9f6684139f0acf251a64"
+  },
+  "source_snapshot": "Main96b7frozenwhilebothfull54andproper6executed. Parentmayrebasecallbackguardslater; thispacketdoesnotblindlyclaimfreshsourceafterchange."
+}

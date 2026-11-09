@@ -1,0 +1,111 @@
+{
+  "recorded_at_utc": "2026-11-09T05:55:45.568032+00:00",
+  "operator": "/root/stage161_v4_review",
+  "application_changed": false,
+  "scope": "150actualcandidatebrowsercontexts (notappliedproduct), sourceparity/fullTS0,pure386classifier+4Publishcontextsimulations. No whole161 acceptance.",
+  "source_sha256": {
+    "frontend/src/main.ts": "b0d19e0e1db79a298f7b41c729227a89f69e24186d19517286d979c0deb0584c",
+    "frontend/src/premium-theme.css": "40bc7f91441cc805375a2e13332f424c88423c93124bf34123dff4bcffbf5673",
+    "tmp/stage161-operations-v7/main.ts": "2bf62a4f03aabd274d98eb051f171ba2bdf641d6185193476c2e5d4dff662475",
+    "tmp/stage161-operations-v7/premium-theme.css": "0af149568e47bfdddac32a4b94a360a835239f801e9dcfe1c71eb6336d82eb93"
+  },
+  "browser_contexts": 150,
+  "executions": [
+    {
+      "kind": "owner",
+      "contexts": 24,
+      "exit_code": 0,
+      "operator": "/root/stage161_v4_review",
+      "evidence_sha256": {
+        "frontend/tests/premium-stage161-v7-owner-candidate.browser.mjs": "add14b24f7a6f8eaaef783cebf2704c1ab7f2c95502d9ed71532f688a08f0fa9",
+        "docs/premium-ui/qa-stage161-v7-owner-candidate.json": "2aa7c3b25b1369940b732f7b12d875ea023e7ed8a66ee77b744595730bd1714b",
+        "tmp/stage161-v7-candidate-sequence/owner.log": "fe48a3dc8ce6c0a6a890b256073e093f6e6f5cf3b8a4adb541d41e5f8f9c2baf"
+      }
+    },
+    {
+      "kind": "classification",
+      "contexts": 72,
+      "exit_code": 0,
+      "operator": "/root/stage161_v4_review",
+      "evidence_sha256": {
+        "frontend/tests/premium-stage161-v7-classification-candidate.browser.mjs": "81697246d8fdcb98dc12de10fc880a33cccfe3b4ea9aeaace8859832b0b326bd",
+        "docs/premium-ui/qa-stage161-operations-v7-classification-author.json": "21bf1fbe7c6f1a74308d8b9bf83a54d78c3868c968593ff65eee3cddb0a0f460",
+        "tmp/stage161-v7-candidate-sequence/classification.log": "e0ab4a7199bcc8cd29dfc973cb581b47f3152cd2b04c5766bda3157e54d608bf"
+      }
+    },
+    {
+      "kind": "surfaces",
+      "contexts": 12,
+      "exit_code": 0,
+      "operator": "/root/stage161_v4_review",
+      "evidence_sha256": {
+        "frontend/tests/premium-stage161-v7-surfaces-candidate.browser.mjs": "b60f1e9bc97e17f600b1b3114b6e01ff9936d2869fd2ba30421062df3bf7b829",
+        "docs/premium-ui/qa-stage161-operations-v7-surfaces-author.json": "182004e1aded2a3667ade9282d451347e66282d2a57c14e021d065d8645a0b3a",
+        "tmp/stage161-v7-candidate-remainder/surfaces.log": "52d2c0bde5639d1b5a867f76c96fc7fdafa2321e762fa66e752274207e82c9b0"
+      }
+    },
+    {
+      "kind": "wrongmonth",
+      "contexts": 6,
+      "exit_code": 0,
+      "operator": "/root/stage161_v4_review",
+      "evidence_sha256": {
+        "frontend/tests/premium-stage161-v7-wrongmonth-candidate.browser.mjs": "25c47abd3297238fce5111c6901493f105653865d69e315d5cdfc7f034b3a688",
+        "docs/premium-ui/qa-stage161-v7-wrongmonth-candidate.json": "a840caabee502c8084580a512a3460dbb73441af296f5a5d0f727aefb2dac479",
+        "tmp/stage161-v7-candidate-remainder/wrongmonth.log": "ea00ae85f2641143d4de5693b1a24065dcae1ba0835500e63f570dd166f13154"
+      }
+    },
+    {
+      "kind": "invalidcounts-text",
+      "contexts": 30,
+      "exit_code": 0,
+      "operator": "/root/stage161_v4_review",
+      "evidence_sha256": {
+        "frontend/tests/premium-stage161-v7-invalidcounts-text-candidate.browser.mjs": "0fa6758564aafd2919ac8705f5faeced0f48c02ab622c79df849a47253366221",
+        "docs/premium-ui/qa-stage161-v7-invalidcounts-text-candidate.json": "6787c9fea81e7f02ce0c08640d3b2167065f9d5d26c56d07bb240df560433586",
+        "tmp/stage161-v7-candidate-remainder/invalidcounts-text.log": "1ef13810f93defe31ba6b4e01f68fbc30a66aa987a3a1b66d1e7ae354a053509"
+      }
+    },
+    {
+      "kind": "known503",
+      "contexts": 6,
+      "exit_code": 0,
+      "operator": "/root/stage161_v4_review",
+      "evidence_sha256": {
+        "frontend/tests/premium-stage161-v7-known503-candidate.browser.mjs": "a7503a133c539919ff78c2001d20dd7fbf5a1ae38e7d99123648fa02a2c7261e",
+        "docs/premium-ui/qa-stage161-v7-known503-candidate.json": "8e1721895c9075094fd428af75eb6299015a184e4f0fc3f137065b133c09dc32",
+        "tmp/stage161-v7-candidate-remainder/known503.log": "be15184914fd940d0f9335d99434b18782ee7ff8604e4048750c155b088b221e"
+      }
+    }
+  ],
+  "source_checks": {
+    "typecheck_diagnostics": 0,
+    "pure_classifier_cases": 386,
+    "pure_renderer_context_cases": 4
+  },
+  "root_provenance_addendum": "Inherited raw test report scope strings still mention V1/V2author ancestry and some filenames retain-author; actual sourcecandidate2bf62/appB0 and operatorstage161_v4_review recorded here and rawhashes. Original assertions retained, no prior result relabelled as newrun.",
+  "diagnostics": [
+    "Initialsequence classifier childterminal0/all72casespassed butrunnerexpected different reportfilename. Rawactualoutput retained; wrapperterminal1 explicitlyreconciled,96browsercasespassed. Remaindernewrunnerexecuted onlyremaining54,terminal0.",
+    "Historical V2/V3 navigationtimeouts and priorfreshnessfailures remain untouched; no oldpassclaim."
+  ],
+  "visual_review": "Inspected320Template fullpage: five cards ordered/distinct, descriptions and statewording wrap, optionaltoolssummarymarker and keyboardfocus visible. Actual32pxOverview tests assertcomputedtext,lastbuttonkeyboardreachability,no pageoverflow at320/1280; textscaling notnativezoom.",
+  "evidence_sha256": {
+    "tmp/stage161-operations-v7/source-proof.json": "4591301646b8d0c64666904b8766d60835fa622835adf621ee638632fe9bedfb",
+    "tmp/stage161-operations-v7/manifest.json": "4b074583f64273774f3b3c848a69f02343a003d5beab54927407f1299f1a2331",
+    "docs/premium-ui/reviews/stage161-v7-count-guard-source-cases.json": "b3952c16d1ba4cb153bfb363f00753f963ea88eecf159a5c6a0daa07d9d4986f",
+    "docs/premium-ui/reviews/stage161-v7-publish-context-source-cases.json": "157500c0fe4ad82bc6c76916ee7d2106de2db3934220153a96cc91d5a5785653",
+    "tmp/stage161-v7-candidate-sequence/exit-reconciled.json": "e69d68287de9397937ebbfe6e1624c7179fb3a421a82d609e210854853210165",
+    "tmp/stage161-v7-candidate-remainder/exit.json": "37d89cc3e5d05e70e14cafb9bb0cebb0c1660ed06032703b3f6e8f5d4010f553",
+    "docs/premium-ui/screenshots/stage161-operations-v7/1280-overview-32px.png": "191bd4ab7691134a3961325e51cf765f2c4d7292316d9d11764f6a1d1e7068d3",
+    "docs/premium-ui/screenshots/stage161-operations-v7/1280-template.png": "d34fba0fee636c4f9e09dfa374399f025ad2146052a872fbb66dc02465987280",
+    "docs/premium-ui/screenshots/stage161-operations-v7/1280-unavailable.png": "8fb2b2b3aed29c100c0acce0e2b43f6ae1dd0078c1c5684a825c65789239d449",
+    "docs/premium-ui/screenshots/stage161-operations-v7/320-overview-32px.png": "b833c7d634115aec3bbd18ea4577ee00dcebb138989facfcde7430e34f7c241b",
+    "docs/premium-ui/screenshots/stage161-operations-v7/320-template.png": "44bc9a592b10e046ae738093ce622ca0901897d53cfbd7dec511fb90d5f5f891",
+    "docs/premium-ui/screenshots/stage161-operations-v7/320-unavailable.png": "5ec18171e4f527fa55b721c4b1c2e463c74e0167f1c35a2c0d588ea1962e1888"
+  },
+  "limitations": [
+    "NativeAT/physicalchecks pending. Browser tests use local GET fixtures and noactualPublish/Export/Generate/Apply.",
+    "Same-view data-change notification duringheldPublishread remains source verificationconcern: read generation invalidates butrenderTicket doesnot. Must reconcile beforewhole161certification.",
+    "Unit/build/prior52/apply/browserintegration and independentwhole161review remain separate."
+  ]
+}

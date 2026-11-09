@@ -1,0 +1,51 @@
+{
+  "recorded_at_utc": "2026-10-29T04:41:00.311150+00:00",
+  "reviewer": "/root",
+  "scope": "Read-only next153/147 frontend status+rule-context audit. Backend inspected only to establish returned field meaning; no backend edits or operations.",
+  "application_changed_by_audit": false,
+  "source_sha256": {
+    "frontend/src/main.ts": "9f42daa30c62a348ba3a3ac6deabae37bb904f3dbefd66e11584f2a7e373b9f6",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "backend/app/services/rota_safety.py": "f1f01763aef71c160aebe3dec7156285d56ff8a4676e30daa7b3fa16d3d9769e",
+    "docs/premium-ui/reviews/staffing-review-current.json": "899bb100fc6a10e8c174c7a89b09108610792d5105c707fb5ff4856d7300fbfe",
+    "docs/premium-ui/qa-staffing-review-context-current.json": "ea2a95c41ea968a17abd5594b009aca16ac90f54b8de5fc699a4960ed0c5c8be"
+  },
+  "original153_conditions": [
+    "Warnings show the authoritative rule and affected date alongside the staffing issue.",
+    "Existing editor links open the relevant unit/member/date context without guessing a new operational remedy."
+  ],
+  "established_current_evidence": [
+    "Current6 staffing-controller workflows preserve all103returned unit-day checks,affected unit/month,existing unit editor link,missing-unit fallback and503read/retry outcomes. No mutation.",
+    "Current unit-board warning fixture shows explicit member71/date/configured minimum and opens correct posting; this is bounded board context,notproof that template aggregate includes that same rule text."
+  ],
+  "source_findings": [
+    {
+      "surface": "renderUnitDaySafetyRows",
+      "finding": "Date/unit/status and returned slot/count metrics are visible; popup parameters include minimum_available,not rule reasons. Existing links target actual rota date or returned unit id and selected template month."
+    },
+    {
+      "surface": "RotaSafetyMonth.unit_day_safety.minimum_available_members",
+      "finding": "Backend aggregation is min(row.available_members) across same unit/date slots. It is an observed available-members metric,not the configured minimum-free rule. Do not relabel it as configured threshold."
+    },
+    {
+      "surface": "RotaSafetyMonth.slots[].reasons",
+      "finding": "Backend returns operation-specific reason text including applicable absolute/percentage thresholds or pending-leave warning semantics. Preserve verbatim escaped text and returned status rather than deriving a new client safety judgement."
+    },
+    {
+      "surface": "renderSlotSafetyCell",
+      "finding": "Current main renders reasons.slice(0,1),so additional returned reasons would not be accessible there. Current backend safety_status usually emits one reason via an if/elif chain; this is source-confirmed omission risk for multiple returned values,not a claim every current real record is truncated."
+    }
+  ],
+  "remaining153_gap": "Current aggregate warning popup lacks explicit related returned rule-reason context; a passing action/navigation test alone cannot prove first condition. Keep153partial until full rule/date display and representative action tests.",
+  "recommended_frontend_only_work": [
+    "Display relevant returned slot reasons with explicit duty/date/unit identity in aggregate warning review or linked detail,matching actual returned unit_id/date without guessed mapping.",
+    "Keep daily minimum-available metric distinct from configured threshold. Empty/missing reason fields should be truthfully unavailable; do not synthesize safe/approved state.",
+    "Retain all returned reasons via natural-flow disclosure without losing original status,label,date,counts,available/blocked people or current editor actions.",
+    "Test safe/pending/hard-block/unknown/missing,multiple reasons and hostile strings,after100row cases,unitnull mismatch,2months,read failures and exact actual unit/day/editor destinations. No new mutation or business rules."
+  ],
+  "limits": [
+    "Audit only,not implementation or acceptance.",
+    "No backend safety correctness or availability recommendation. UI should reflect returned authoritative data.",
+    "Current main hash includes just-applied two-line unit opener repair; its integrated tests/applicability are separate and in progress."
+  ]
+}

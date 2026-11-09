@@ -1,0 +1,1716 @@
+{
+  "recorded_at_utc": "2026-10-28T22:57:03.899Z",
+  "base": "http://127.0.0.1:5204",
+  "candidateDirectory": "../tmp/leave-status-v6",
+  "candidate_sha256": {
+    "main.ts": "16f38415189294f32b034a497df60bfb619233850df62b094eff0b6a7a6bdc43",
+    "premium-theme.css": "aa0d3c25681b83298cd53f45f009ed2f1f8e64b0f334903936d269c886d399d7",
+    "leave-calendar-focus.ts": "347f7d10ec511d87e0f6861e592da7dc79806e1fe0546a389aa69b4e9bc93a6e"
+  },
+  "source_sha256": {
+    "frontend/src/main.ts": "20fc4e1c086f4ae6c25a381a176b590173f7ee680d6eec205489dc97eb069ea6",
+    "frontend/src/premium-theme.css": "9344ea87024b282475a3b9f110ce9c83bdc5dca1dc984961eefed044c2ad6065",
+    "frontend/src/member-profile.ts": "6874284e2437402f0cb00d57841f0d4170d8ecc6f2067ad2a156e38c3b0b69f2",
+    "frontend/src/record-workspace.ts": "7c196c12b114c48bf2db4ee57aad7e591d8e3acc7a77cccd15abbad7c349fb8f",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+  },
+  "test_sha256": "86789730ad4ed548708e465feb4bc2f6bfac3df55d739b31f78b02a913f4f8cb",
+  "scope": "Isolated exact imported candidate helper with actual native31-date scroller/styles. Native input cancellation plus deterministic fault injection of RAF/cancelRAF/scrollBy/performance clock and moving rect. Controlled RAF is not a full app/native scroll animation proof; actual-shell tester separately covers real month workflows. All API traffic blocked; no writes. Emulation only.",
+  "passed": false,
+  "contexts": 30,
+  "failed": 30,
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "height": 568,
+      "root": 200,
+      "scenario": "raf-missing",
+      "passed": false,
+      "failure": {
+        "message": "Unavailable settling must disclose Day list fallback even when instantaneous geometry fits\n\n'note' !== 'status'\n",
+        "stack": "AssertionError [ERR_ASSERTION]: Unavailable settling must disclose Day list fallback even when instantaneous geometry fits\n\n'note' !== 'status'\n\n    at file:///D:/Coding/Duty%20Rota%20software/frontend/tests/premium-leave-calendar-focus-helper.browser.mjs:74:12"
+      },
+      "trace": {
+        "failureSnapshot": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 0,
+          "stats": {
+            "requested": 0,
+            "cancelled": 0,
+            "callbacks": 0,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        }
+      },
+      "pageErrors": [],
+      "requests": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "height": 568,
+      "root": 200,
+      "scenario": "cancelRAF-missing",
+      "passed": false,
+      "failure": {
+        "message": "No escaped errors from optional frame cancellation/fallback\n+ actual - expected\n\n+ [\n+   'view.cancelAnimationFrame is not a function'\n+ ]\n- []\n",
+        "stack": "AssertionError [ERR_ASSERTION]: No escaped errors from optional frame cancellation/fallback\n+ actual - expected\n\n+ [\n+   'view.cancelAnimationFrame is not a function'\n+ ]\n- []\n\n    at file:///D:/Coding/Duty%20Rota%20software/frontend/tests/premium-leave-calendar-focus-helper.browser.mjs:89:41"
+      },
+      "trace": {
+        "start": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 1,
+          "stats": {
+            "requested": 1,
+            "cancelled": 0,
+            "callbacks": 0,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        },
+        "afterIntent": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 1,
+          "stats": {
+            "requested": 1,
+            "cancelled": 0,
+            "callbacks": 0,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        },
+        "end": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 0,
+          "stats": {
+            "requested": 1,
+            "cancelled": 0,
+            "callbacks": 1,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        },
+        "failureSnapshot": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 0,
+          "stats": {
+            "requested": 1,
+            "cancelled": 0,
+            "callbacks": 1,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        }
+      },
+      "pageErrors": [
+        "view.cancelAnimationFrame is not a function"
+      ],
+      "requests": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "height": 568,
+      "root": 200,
+      "scenario": "cancelRAF-throws",
+      "passed": false,
+      "failure": {
+        "message": "No escaped errors from optional frame cancellation/fallback\n+ actual - expected\n\n+ [\n+   'Injected cancelRAF failure'\n+ ]\n- []\n",
+        "stack": "AssertionError [ERR_ASSERTION]: No escaped errors from optional frame cancellation/fallback\n+ actual - expected\n\n+ [\n+   'Injected cancelRAF failure'\n+ ]\n- []\n\n    at file:///D:/Coding/Duty%20Rota%20software/frontend/tests/premium-leave-calendar-focus-helper.browser.mjs:89:41"
+      },
+      "trace": {
+        "start": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 1,
+          "stats": {
+            "requested": 1,
+            "cancelled": 0,
+            "callbacks": 0,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        },
+        "afterIntent": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 1,
+          "stats": {
+            "requested": 1,
+            "cancelled": 1,
+            "callbacks": 0,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        },
+        "end": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 0,
+          "stats": {
+            "requested": 1,
+            "cancelled": 1,
+            "callbacks": 1,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        },
+        "failureSnapshot": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 0,
+          "stats": {
+            "requested": 1,
+            "cancelled": 1,
+            "callbacks": 1,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        }
+      },
+      "pageErrors": [
+        "Injected cancelRAF failure"
+      ],
+      "requests": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "height": 568,
+      "root": 200,
+      "scenario": "moving-deadline-fitting",
+      "passed": false,
+      "failure": {
+        "message": "Moving-but-fitting deadline cannot claim stable success\n\n'note' !== 'status'\n",
+        "stack": "AssertionError [ERR_ASSERTION]: Moving-but-fitting deadline cannot claim stable success\n\n'note' !== 'status'\n\n    at file:///D:/Coding/Duty%20Rota%20software/frontend/tests/premium-leave-calendar-focus-helper.browser.mjs:78:118"
+      },
+      "trace": {
+        "failureSnapshot": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 0,
+          "stats": {
+            "requested": 4,
+            "cancelled": 0,
+            "callbacks": 4,
+            "geometryReads": 9,
+            "scrollCalls": 4,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        }
+      },
+      "pageErrors": [],
+      "requests": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "height": 568,
+      "root": 200,
+      "scenario": "later-stable-restores-hint",
+      "passed": false,
+      "failure": {
+        "message": "Expected values to be strictly equal:\n\n'note' !== 'status'\n",
+        "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n'note' !== 'status'\n\n    at file:///D:/Coding/Duty%20Rota%20software/frontend/tests/premium-leave-calendar-focus-helper.browser.mjs:80:12"
+      },
+      "trace": {
+        "failureSnapshot": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 0,
+          "stats": {
+            "requested": 0,
+            "cancelled": 0,
+            "callbacks": 0,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        }
+      },
+      "pageErrors": [],
+      "requests": []
+    },
+    {
+      "engine": "chromium",
+      "width": 390,
+      "height": 320,
+      "root": 100,
+      "scenario": "raf-missing",
+      "passed": false,
+      "failure": {
+        "message": "Unavailable settling must disclose Day list fallback even when instantaneous geometry fits\n\n'note' !== 'status'\n",
+        "stack": "AssertionError [ERR_ASSERTION]: Unavailable settling must disclose Day list fallback even when instantaneous geometry fits\n\n'note' !== 'status'\n\n    at file:///D:/Coding/Duty%20Rota%20software/frontend/tests/premium-leave-calendar-focus-helper.browser.mjs:74:12"
+      },
+      "trace": {
+        "failureSnapshot": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 0,
+          "stats": {
+            "requested": 0,
+            "cancelled": 0,
+            "callbacks": 0,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        }
+      },
+      "pageErrors": [],
+      "requests": []
+    },
+    {
+      "engine": "chromium",
+      "width": 390,
+      "height": 320,
+      "root": 100,
+      "scenario": "cancelRAF-missing",
+      "passed": false,
+      "failure": {
+        "message": "No escaped errors from optional frame cancellation/fallback\n+ actual - expected\n\n+ [\n+   'view.cancelAnimationFrame is not a function'\n+ ]\n- []\n",
+        "stack": "AssertionError [ERR_ASSERTION]: No escaped errors from optional frame cancellation/fallback\n+ actual - expected\n\n+ [\n+   'view.cancelAnimationFrame is not a function'\n+ ]\n- []\n\n    at file:///D:/Coding/Duty%20Rota%20software/frontend/tests/premium-leave-calendar-focus-helper.browser.mjs:89:41"
+      },
+      "trace": {
+        "start": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 1,
+          "stats": {
+            "requested": 1,
+            "cancelled": 0,
+            "callbacks": 0,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        },
+        "afterIntent": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 1,
+          "stats": {
+            "requested": 1,
+            "cancelled": 0,
+            "callbacks": 0,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        },
+        "end": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 0,
+          "stats": {
+            "requested": 1,
+            "cancelled": 0,
+            "callbacks": 1,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        },
+        "failureSnapshot": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 0,
+          "stats": {
+            "requested": 1,
+            "cancelled": 0,
+            "callbacks": 1,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        }
+      },
+      "pageErrors": [
+        "view.cancelAnimationFrame is not a function"
+      ],
+      "requests": []
+    },
+    {
+      "engine": "chromium",
+      "width": 390,
+      "height": 320,
+      "root": 100,
+      "scenario": "cancelRAF-throws",
+      "passed": false,
+      "failure": {
+        "message": "No escaped errors from optional frame cancellation/fallback\n+ actual - expected\n\n+ [\n+   'Injected cancelRAF failure'\n+ ]\n- []\n",
+        "stack": "AssertionError [ERR_ASSERTION]: No escaped errors from optional frame cancellation/fallback\n+ actual - expected\n\n+ [\n+   'Injected cancelRAF failure'\n+ ]\n- []\n\n    at file:///D:/Coding/Duty%20Rota%20software/frontend/tests/premium-leave-calendar-focus-helper.browser.mjs:89:41"
+      },
+      "trace": {
+        "start": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 1,
+          "stats": {
+            "requested": 1,
+            "cancelled": 0,
+            "callbacks": 0,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        },
+        "afterIntent": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 1,
+          "stats": {
+            "requested": 1,
+            "cancelled": 1,
+            "callbacks": 0,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        },
+        "end": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 0,
+          "stats": {
+            "requested": 1,
+            "cancelled": 1,
+            "callbacks": 1,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        },
+        "failureSnapshot": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 0,
+          "stats": {
+            "requested": 1,
+            "cancelled": 1,
+            "callbacks": 1,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        }
+      },
+      "pageErrors": [
+        "Injected cancelRAF failure"
+      ],
+      "requests": []
+    },
+    {
+      "engine": "chromium",
+      "width": 390,
+      "height": 320,
+      "root": 100,
+      "scenario": "moving-deadline-fitting",
+      "passed": false,
+      "failure": {
+        "message": "Moving-but-fitting deadline cannot claim stable success\n\n'note' !== 'status'\n",
+        "stack": "AssertionError [ERR_ASSERTION]: Moving-but-fitting deadline cannot claim stable success\n\n'note' !== 'status'\n\n    at file:///D:/Coding/Duty%20Rota%20software/frontend/tests/premium-leave-calendar-focus-helper.browser.mjs:78:118"
+      },
+      "trace": {
+        "failureSnapshot": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 0,
+          "stats": {
+            "requested": 4,
+            "cancelled": 0,
+            "callbacks": 4,
+            "geometryReads": 9,
+            "scrollCalls": 4,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        }
+      },
+      "pageErrors": [],
+      "requests": []
+    },
+    {
+      "engine": "chromium",
+      "width": 390,
+      "height": 320,
+      "root": 100,
+      "scenario": "later-stable-restores-hint",
+      "passed": false,
+      "failure": {
+        "message": "Expected values to be strictly equal:\n\n'note' !== 'status'\n",
+        "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n'note' !== 'status'\n\n    at file:///D:/Coding/Duty%20Rota%20software/frontend/tests/premium-leave-calendar-focus-helper.browser.mjs:80:12"
+      },
+      "trace": {
+        "failureSnapshot": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 0,
+          "stats": {
+            "requested": 0,
+            "cancelled": 0,
+            "callbacks": 0,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        }
+      },
+      "pageErrors": [],
+      "requests": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "height": 568,
+      "root": 200,
+      "scenario": "raf-missing",
+      "passed": false,
+      "failure": {
+        "message": "Unavailable settling must disclose Day list fallback even when instantaneous geometry fits\n\n'note' !== 'status'\n",
+        "stack": "AssertionError [ERR_ASSERTION]: Unavailable settling must disclose Day list fallback even when instantaneous geometry fits\n\n'note' !== 'status'\n\n    at file:///D:/Coding/Duty%20Rota%20software/frontend/tests/premium-leave-calendar-focus-helper.browser.mjs:74:12"
+      },
+      "trace": {
+        "failureSnapshot": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 0,
+          "stats": {
+            "requested": 0,
+            "cancelled": 0,
+            "callbacks": 0,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        }
+      },
+      "pageErrors": [],
+      "requests": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "height": 568,
+      "root": 200,
+      "scenario": "cancelRAF-missing",
+      "passed": false,
+      "failure": {
+        "message": "No escaped errors from optional frame cancellation/fallback\n+ actual - expected\n\n+ [\n+   'view.cancelAnimationFrame is not a function'\n+ ]\n- []\n",
+        "stack": "AssertionError [ERR_ASSERTION]: No escaped errors from optional frame cancellation/fallback\n+ actual - expected\n\n+ [\n+   'view.cancelAnimationFrame is not a function'\n+ ]\n- []\n\n    at file:///D:/Coding/Duty%20Rota%20software/frontend/tests/premium-leave-calendar-focus-helper.browser.mjs:89:41"
+      },
+      "trace": {
+        "start": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 1,
+          "stats": {
+            "requested": 1,
+            "cancelled": 0,
+            "callbacks": 0,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        },
+        "afterIntent": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 1,
+          "stats": {
+            "requested": 1,
+            "cancelled": 0,
+            "callbacks": 0,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        },
+        "end": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 0,
+          "stats": {
+            "requested": 1,
+            "cancelled": 0,
+            "callbacks": 1,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        },
+        "failureSnapshot": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 0,
+          "stats": {
+            "requested": 1,
+            "cancelled": 0,
+            "callbacks": 1,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        }
+      },
+      "pageErrors": [
+        "view.cancelAnimationFrame is not a function"
+      ],
+      "requests": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "height": 568,
+      "root": 200,
+      "scenario": "cancelRAF-throws",
+      "passed": false,
+      "failure": {
+        "message": "No escaped errors from optional frame cancellation/fallback\n+ actual - expected\n\n+ [\n+   'Injected cancelRAF failure'\n+ ]\n- []\n",
+        "stack": "AssertionError [ERR_ASSERTION]: No escaped errors from optional frame cancellation/fallback\n+ actual - expected\n\n+ [\n+   'Injected cancelRAF failure'\n+ ]\n- []\n\n    at file:///D:/Coding/Duty%20Rota%20software/frontend/tests/premium-leave-calendar-focus-helper.browser.mjs:89:41"
+      },
+      "trace": {
+        "start": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 1,
+          "stats": {
+            "requested": 1,
+            "cancelled": 0,
+            "callbacks": 0,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        },
+        "afterIntent": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 1,
+          "stats": {
+            "requested": 1,
+            "cancelled": 1,
+            "callbacks": 0,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        },
+        "end": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 0,
+          "stats": {
+            "requested": 1,
+            "cancelled": 1,
+            "callbacks": 1,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        },
+        "failureSnapshot": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 0,
+          "stats": {
+            "requested": 1,
+            "cancelled": 1,
+            "callbacks": 1,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        }
+      },
+      "pageErrors": [
+        "Injected cancelRAF failure"
+      ],
+      "requests": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "height": 568,
+      "root": 200,
+      "scenario": "moving-deadline-fitting",
+      "passed": false,
+      "failure": {
+        "message": "Moving-but-fitting deadline cannot claim stable success\n\n'note' !== 'status'\n",
+        "stack": "AssertionError [ERR_ASSERTION]: Moving-but-fitting deadline cannot claim stable success\n\n'note' !== 'status'\n\n    at file:///D:/Coding/Duty%20Rota%20software/frontend/tests/premium-leave-calendar-focus-helper.browser.mjs:78:118"
+      },
+      "trace": {
+        "failureSnapshot": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 0,
+          "stats": {
+            "requested": 4,
+            "cancelled": 0,
+            "callbacks": 4,
+            "geometryReads": 9,
+            "scrollCalls": 4,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        }
+      },
+      "pageErrors": [],
+      "requests": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "height": 568,
+      "root": 200,
+      "scenario": "later-stable-restores-hint",
+      "passed": false,
+      "failure": {
+        "message": "Expected values to be strictly equal:\n\n'note' !== 'status'\n",
+        "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n'note' !== 'status'\n\n    at file:///D:/Coding/Duty%20Rota%20software/frontend/tests/premium-leave-calendar-focus-helper.browser.mjs:80:12"
+      },
+      "trace": {
+        "failureSnapshot": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 0,
+          "stats": {
+            "requested": 0,
+            "cancelled": 0,
+            "callbacks": 0,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        }
+      },
+      "pageErrors": [],
+      "requests": []
+    },
+    {
+      "engine": "firefox",
+      "width": 390,
+      "height": 320,
+      "root": 100,
+      "scenario": "raf-missing",
+      "passed": false,
+      "failure": {
+        "message": "Unavailable settling must disclose Day list fallback even when instantaneous geometry fits\n\n'note' !== 'status'\n",
+        "stack": "AssertionError [ERR_ASSERTION]: Unavailable settling must disclose Day list fallback even when instantaneous geometry fits\n\n'note' !== 'status'\n\n    at file:///D:/Coding/Duty%20Rota%20software/frontend/tests/premium-leave-calendar-focus-helper.browser.mjs:74:12"
+      },
+      "trace": {
+        "failureSnapshot": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 0,
+          "stats": {
+            "requested": 0,
+            "cancelled": 0,
+            "callbacks": 0,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        }
+      },
+      "pageErrors": [],
+      "requests": []
+    },
+    {
+      "engine": "firefox",
+      "width": 390,
+      "height": 320,
+      "root": 100,
+      "scenario": "cancelRAF-missing",
+      "passed": false,
+      "failure": {
+        "message": "No escaped errors from optional frame cancellation/fallback\n+ actual - expected\n\n+ [\n+   'view.cancelAnimationFrame is not a function'\n+ ]\n- []\n",
+        "stack": "AssertionError [ERR_ASSERTION]: No escaped errors from optional frame cancellation/fallback\n+ actual - expected\n\n+ [\n+   'view.cancelAnimationFrame is not a function'\n+ ]\n- []\n\n    at file:///D:/Coding/Duty%20Rota%20software/frontend/tests/premium-leave-calendar-focus-helper.browser.mjs:89:41"
+      },
+      "trace": {
+        "start": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 1,
+          "stats": {
+            "requested": 1,
+            "cancelled": 0,
+            "callbacks": 0,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        },
+        "afterIntent": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 1,
+          "stats": {
+            "requested": 1,
+            "cancelled": 0,
+            "callbacks": 0,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        },
+        "end": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 0,
+          "stats": {
+            "requested": 1,
+            "cancelled": 0,
+            "callbacks": 1,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        },
+        "failureSnapshot": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 0,
+          "stats": {
+            "requested": 1,
+            "cancelled": 0,
+            "callbacks": 1,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        }
+      },
+      "pageErrors": [
+        "view.cancelAnimationFrame is not a function"
+      ],
+      "requests": []
+    },
+    {
+      "engine": "firefox",
+      "width": 390,
+      "height": 320,
+      "root": 100,
+      "scenario": "cancelRAF-throws",
+      "passed": false,
+      "failure": {
+        "message": "No escaped errors from optional frame cancellation/fallback\n+ actual - expected\n\n+ [\n+   'Injected cancelRAF failure'\n+ ]\n- []\n",
+        "stack": "AssertionError [ERR_ASSERTION]: No escaped errors from optional frame cancellation/fallback\n+ actual - expected\n\n+ [\n+   'Injected cancelRAF failure'\n+ ]\n- []\n\n    at file:///D:/Coding/Duty%20Rota%20software/frontend/tests/premium-leave-calendar-focus-helper.browser.mjs:89:41"
+      },
+      "trace": {
+        "start": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 1,
+          "stats": {
+            "requested": 1,
+            "cancelled": 0,
+            "callbacks": 0,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        },
+        "afterIntent": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 1,
+          "stats": {
+            "requested": 1,
+            "cancelled": 1,
+            "callbacks": 0,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        },
+        "end": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 0,
+          "stats": {
+            "requested": 1,
+            "cancelled": 1,
+            "callbacks": 1,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        },
+        "failureSnapshot": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 0,
+          "stats": {
+            "requested": 1,
+            "cancelled": 1,
+            "callbacks": 1,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        }
+      },
+      "pageErrors": [
+        "Injected cancelRAF failure"
+      ],
+      "requests": []
+    },
+    {
+      "engine": "firefox",
+      "width": 390,
+      "height": 320,
+      "root": 100,
+      "scenario": "moving-deadline-fitting",
+      "passed": false,
+      "failure": {
+        "message": "Moving-but-fitting deadline cannot claim stable success\n\n'note' !== 'status'\n",
+        "stack": "AssertionError [ERR_ASSERTION]: Moving-but-fitting deadline cannot claim stable success\n\n'note' !== 'status'\n\n    at file:///D:/Coding/Duty%20Rota%20software/frontend/tests/premium-leave-calendar-focus-helper.browser.mjs:78:118"
+      },
+      "trace": {
+        "failureSnapshot": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 0,
+          "stats": {
+            "requested": 4,
+            "cancelled": 0,
+            "callbacks": 4,
+            "geometryReads": 9,
+            "scrollCalls": 4,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        }
+      },
+      "pageErrors": [],
+      "requests": []
+    },
+    {
+      "engine": "firefox",
+      "width": 390,
+      "height": 320,
+      "root": 100,
+      "scenario": "later-stable-restores-hint",
+      "passed": false,
+      "failure": {
+        "message": "Expected values to be strictly equal:\n\n'note' !== 'status'\n",
+        "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n'note' !== 'status'\n\n    at file:///D:/Coding/Duty%20Rota%20software/frontend/tests/premium-leave-calendar-focus-helper.browser.mjs:80:12"
+      },
+      "trace": {
+        "failureSnapshot": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 0,
+          "stats": {
+            "requested": 0,
+            "cancelled": 0,
+            "callbacks": 0,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        }
+      },
+      "pageErrors": [],
+      "requests": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "height": 568,
+      "root": 200,
+      "scenario": "raf-missing",
+      "passed": false,
+      "failure": {
+        "message": "Unavailable settling must disclose Day list fallback even when instantaneous geometry fits\n\n'note' !== 'status'\n",
+        "stack": "AssertionError [ERR_ASSERTION]: Unavailable settling must disclose Day list fallback even when instantaneous geometry fits\n\n'note' !== 'status'\n\n    at file:///D:/Coding/Duty%20Rota%20software/frontend/tests/premium-leave-calendar-focus-helper.browser.mjs:74:12"
+      },
+      "trace": {
+        "failureSnapshot": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 0,
+          "stats": {
+            "requested": 0,
+            "cancelled": 0,
+            "callbacks": 0,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        }
+      },
+      "pageErrors": [],
+      "requests": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "height": 568,
+      "root": 200,
+      "scenario": "cancelRAF-missing",
+      "passed": false,
+      "failure": {
+        "message": "No escaped errors from optional frame cancellation/fallback\n+ actual - expected\n\n+ [\n+   \"view.cancelAnimationFrame is not a function. (In 'view.cancelAnimationFrame(frame)', 'view.cancelAnimationFrame' is undefined)\"\n+ ]\n- []\n",
+        "stack": "AssertionError [ERR_ASSERTION]: No escaped errors from optional frame cancellation/fallback\n+ actual - expected\n\n+ [\n+   \"view.cancelAnimationFrame is not a function. (In 'view.cancelAnimationFrame(frame)', 'view.cancelAnimationFrame' is undefined)\"\n+ ]\n- []\n\n    at file:///D:/Coding/Duty%20Rota%20software/frontend/tests/premium-leave-calendar-focus-helper.browser.mjs:89:41"
+      },
+      "trace": {
+        "start": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 1,
+          "stats": {
+            "requested": 1,
+            "cancelled": 0,
+            "callbacks": 0,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        },
+        "afterIntent": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 1,
+          "stats": {
+            "requested": 1,
+            "cancelled": 0,
+            "callbacks": 0,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        },
+        "end": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 0,
+          "stats": {
+            "requested": 1,
+            "cancelled": 0,
+            "callbacks": 1,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        },
+        "failureSnapshot": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 0,
+          "stats": {
+            "requested": 1,
+            "cancelled": 0,
+            "callbacks": 1,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        }
+      },
+      "pageErrors": [
+        "view.cancelAnimationFrame is not a function. (In 'view.cancelAnimationFrame(frame)', 'view.cancelAnimationFrame' is undefined)"
+      ],
+      "requests": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "height": 568,
+      "root": 200,
+      "scenario": "cancelRAF-throws",
+      "passed": false,
+      "failure": {
+        "message": "No escaped errors from optional frame cancellation/fallback\n+ actual - expected\n\n+ [\n+   'Injected cancelRAF failure'\n+ ]\n- []\n",
+        "stack": "AssertionError [ERR_ASSERTION]: No escaped errors from optional frame cancellation/fallback\n+ actual - expected\n\n+ [\n+   'Injected cancelRAF failure'\n+ ]\n- []\n\n    at file:///D:/Coding/Duty%20Rota%20software/frontend/tests/premium-leave-calendar-focus-helper.browser.mjs:89:41"
+      },
+      "trace": {
+        "start": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 1,
+          "stats": {
+            "requested": 1,
+            "cancelled": 0,
+            "callbacks": 0,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        },
+        "afterIntent": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 1,
+          "stats": {
+            "requested": 1,
+            "cancelled": 1,
+            "callbacks": 0,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        },
+        "end": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 0,
+          "stats": {
+            "requested": 1,
+            "cancelled": 1,
+            "callbacks": 1,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        },
+        "failureSnapshot": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 0,
+          "stats": {
+            "requested": 1,
+            "cancelled": 1,
+            "callbacks": 1,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        }
+      },
+      "pageErrors": [
+        "Injected cancelRAF failure"
+      ],
+      "requests": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "height": 568,
+      "root": 200,
+      "scenario": "moving-deadline-fitting",
+      "passed": false,
+      "failure": {
+        "message": "Moving-but-fitting deadline cannot claim stable success\n\n'note' !== 'status'\n",
+        "stack": "AssertionError [ERR_ASSERTION]: Moving-but-fitting deadline cannot claim stable success\n\n'note' !== 'status'\n\n    at file:///D:/Coding/Duty%20Rota%20software/frontend/tests/premium-leave-calendar-focus-helper.browser.mjs:78:118"
+      },
+      "trace": {
+        "failureSnapshot": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 0,
+          "stats": {
+            "requested": 4,
+            "cancelled": 0,
+            "callbacks": 4,
+            "geometryReads": 9,
+            "scrollCalls": 4,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        }
+      },
+      "pageErrors": [],
+      "requests": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "height": 568,
+      "root": 200,
+      "scenario": "later-stable-restores-hint",
+      "passed": false,
+      "failure": {
+        "message": "Expected values to be strictly equal:\n\n'note' !== 'status'\n",
+        "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n'note' !== 'status'\n\n    at file:///D:/Coding/Duty%20Rota%20software/frontend/tests/premium-leave-calendar-focus-helper.browser.mjs:80:12"
+      },
+      "trace": {
+        "failureSnapshot": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 0,
+          "stats": {
+            "requested": 0,
+            "cancelled": 0,
+            "callbacks": 0,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        }
+      },
+      "pageErrors": [],
+      "requests": []
+    },
+    {
+      "engine": "webkit",
+      "width": 390,
+      "height": 320,
+      "root": 100,
+      "scenario": "raf-missing",
+      "passed": false,
+      "failure": {
+        "message": "Unavailable settling must disclose Day list fallback even when instantaneous geometry fits\n\n'note' !== 'status'\n",
+        "stack": "AssertionError [ERR_ASSERTION]: Unavailable settling must disclose Day list fallback even when instantaneous geometry fits\n\n'note' !== 'status'\n\n    at file:///D:/Coding/Duty%20Rota%20software/frontend/tests/premium-leave-calendar-focus-helper.browser.mjs:74:12"
+      },
+      "trace": {
+        "failureSnapshot": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 0,
+          "stats": {
+            "requested": 0,
+            "cancelled": 0,
+            "callbacks": 0,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        }
+      },
+      "pageErrors": [],
+      "requests": []
+    },
+    {
+      "engine": "webkit",
+      "width": 390,
+      "height": 320,
+      "root": 100,
+      "scenario": "cancelRAF-missing",
+      "passed": false,
+      "failure": {
+        "message": "No escaped errors from optional frame cancellation/fallback\n+ actual - expected\n\n+ [\n+   \"view.cancelAnimationFrame is not a function. (In 'view.cancelAnimationFrame(frame)', 'view.cancelAnimationFrame' is undefined)\"\n+ ]\n- []\n",
+        "stack": "AssertionError [ERR_ASSERTION]: No escaped errors from optional frame cancellation/fallback\n+ actual - expected\n\n+ [\n+   \"view.cancelAnimationFrame is not a function. (In 'view.cancelAnimationFrame(frame)', 'view.cancelAnimationFrame' is undefined)\"\n+ ]\n- []\n\n    at file:///D:/Coding/Duty%20Rota%20software/frontend/tests/premium-leave-calendar-focus-helper.browser.mjs:89:41"
+      },
+      "trace": {
+        "start": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 1,
+          "stats": {
+            "requested": 1,
+            "cancelled": 0,
+            "callbacks": 0,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        },
+        "afterIntent": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 1,
+          "stats": {
+            "requested": 1,
+            "cancelled": 0,
+            "callbacks": 0,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        },
+        "end": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 0,
+          "stats": {
+            "requested": 1,
+            "cancelled": 0,
+            "callbacks": 1,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        },
+        "failureSnapshot": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 0,
+          "stats": {
+            "requested": 1,
+            "cancelled": 0,
+            "callbacks": 1,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        }
+      },
+      "pageErrors": [
+        "view.cancelAnimationFrame is not a function. (In 'view.cancelAnimationFrame(frame)', 'view.cancelAnimationFrame' is undefined)"
+      ],
+      "requests": []
+    },
+    {
+      "engine": "webkit",
+      "width": 390,
+      "height": 320,
+      "root": 100,
+      "scenario": "cancelRAF-throws",
+      "passed": false,
+      "failure": {
+        "message": "No escaped errors from optional frame cancellation/fallback\n+ actual - expected\n\n+ [\n+   'Injected cancelRAF failure'\n+ ]\n- []\n",
+        "stack": "AssertionError [ERR_ASSERTION]: No escaped errors from optional frame cancellation/fallback\n+ actual - expected\n\n+ [\n+   'Injected cancelRAF failure'\n+ ]\n- []\n\n    at file:///D:/Coding/Duty%20Rota%20software/frontend/tests/premium-leave-calendar-focus-helper.browser.mjs:89:41"
+      },
+      "trace": {
+        "start": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 1,
+          "stats": {
+            "requested": 1,
+            "cancelled": 0,
+            "callbacks": 0,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        },
+        "afterIntent": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 1,
+          "stats": {
+            "requested": 1,
+            "cancelled": 1,
+            "callbacks": 0,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        },
+        "end": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 0,
+          "stats": {
+            "requested": 1,
+            "cancelled": 1,
+            "callbacks": 1,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        },
+        "failureSnapshot": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 0,
+          "stats": {
+            "requested": 1,
+            "cancelled": 1,
+            "callbacks": 1,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        }
+      },
+      "pageErrors": [
+        "Injected cancelRAF failure"
+      ],
+      "requests": []
+    },
+    {
+      "engine": "webkit",
+      "width": 390,
+      "height": 320,
+      "root": 100,
+      "scenario": "moving-deadline-fitting",
+      "passed": false,
+      "failure": {
+        "message": "Moving-but-fitting deadline cannot claim stable success\n\n'note' !== 'status'\n",
+        "stack": "AssertionError [ERR_ASSERTION]: Moving-but-fitting deadline cannot claim stable success\n\n'note' !== 'status'\n\n    at file:///D:/Coding/Duty%20Rota%20software/frontend/tests/premium-leave-calendar-focus-helper.browser.mjs:78:118"
+      },
+      "trace": {
+        "failureSnapshot": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 0,
+          "stats": {
+            "requested": 4,
+            "cancelled": 0,
+            "callbacks": 4,
+            "geometryReads": 9,
+            "scrollCalls": 4,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        }
+      },
+      "pageErrors": [],
+      "requests": []
+    },
+    {
+      "engine": "webkit",
+      "width": 390,
+      "height": 320,
+      "root": 100,
+      "scenario": "later-stable-restores-hint",
+      "passed": false,
+      "failure": {
+        "message": "Expected values to be strictly equal:\n\n'note' !== 'status'\n",
+        "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n'note' !== 'status'\n\n    at file:///D:/Coding/Duty%20Rota%20software/frontend/tests/premium-leave-calendar-focus-helper.browser.mjs:80:12"
+      },
+      "trace": {
+        "failureSnapshot": {
+          "active": true,
+          "role": "note",
+          "hint": "Scroll across the month. Choose Day list for a full-width view.",
+          "pending": 0,
+          "stats": {
+            "requested": 0,
+            "cancelled": 0,
+            "callbacks": 0,
+            "geometryReads": 2,
+            "scrollCalls": 1,
+            "callbackErrors": [],
+            "intents": []
+          },
+          "scrollLeft": 0,
+          "fits": true,
+          "connected": true
+        }
+      },
+      "pageErrors": [],
+      "requests": []
+    }
+  ]
+}

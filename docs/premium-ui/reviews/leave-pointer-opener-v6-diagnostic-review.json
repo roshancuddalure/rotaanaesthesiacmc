@@ -1,0 +1,77 @@
+{
+  "recorded_at_utc": "2026-10-28T22:53:06.462571+00:00",
+  "reviewer_operator": "/root/leave_status_runtime_plan",
+  "status": "existing_pointer_opener_defect_confirmed_response_fix_passed_not_applied",
+  "full_v6_matrix_results": {
+    "normal_exit_code": 1,
+    "stress_exit_code": 1,
+    "fully_completed_contexts": 16,
+    "failure": "Both stop in first WebKit320context after native pointer opens May31 Daylist then Escape restores old May1 opener. Full31calendarfocusring and status word/containment checks passed before failure. This is not a full matrix pass."
+  },
+  "before_after_cases": 4,
+  "cause": "WebKit native pointer does not focus clicked day. At new overlay capture activeElement is BODY; unchanged shell accessibility remembers prior keyboard May1 opener and restores it after Escape. Same defect reproduced in current live5197 and frozenv6preview5204, normal and root200.",
+  "response_only_fix": "Within existing intentional [data-leave-day] activation branch, call leaveDayBtn.focus({preventScroll:true}) immediately before existing openLeaveDayModal. Main response transformed in browser experiment only; no app/candidate source edit.",
+  "fix_result": "AllfourcasesrestoreexactclickedMay31withnoextraAPIorpageerrors. Shellprivateopenercapture/restore and native input trace retained.",
+  "instrumentation_limit": "Shell source response received observational-only trace pushes around unchanged opener selection/set/restore operations. Proposed main response focus is a deliberate semantic experiment, not evidence of currently applied behavior.",
+  "artifacts": [
+    {
+      "path": "tmp/leave-pointer-opener-webkit-current-v6-diagnostic.json",
+      "sha256": "627110460fd370f0e7b86daf60bdb6b4f9cf7c3956efd59e33417df96c90053e"
+    },
+    {
+      "path": "tmp/leave-pointer-opener-webkit-response-focus-experiment.json",
+      "sha256": "f2e380d55f397f536055a5bbac9b76d71eab447489ddc2e173735072e0061dc8"
+    },
+    {
+      "path": "frontend/tests/premium-leave-pointer-opener-v6-diagnostic.browser.mjs",
+      "sha256": "01f464398e297a9eabd1adf0514f2b3637bce8e0312054ce3d8ace850447efc9"
+    },
+    {
+      "path": "frontend/tests/premium-leave-pointer-opener-focus-response-experiment.browser.mjs",
+      "sha256": "280228bf40664e2fb83f2ba1c7a0c0253b16a58b023a1f30553463cafde70454"
+    },
+    {
+      "path": "tmp/leave-pointer-opener-webkit-current-v6-diagnostic.log",
+      "sha256": "28f27aa5130e5b1ea5a231c105b01051af0e659579a7c28d401f22d62e71fa5a"
+    },
+    {
+      "path": "tmp/leave-pointer-opener-webkit-response-focus-experiment.log",
+      "sha256": "80ae054c43b3881c0e071fb5bd49f6f7d858be74ed4dc088611cf8a691077ae7"
+    },
+    {
+      "path": "frontend/tests/premium-leave-status-semantics-v6-preview.browser.mjs",
+      "sha256": "4758117c7a365f737ac854b040b97337476b8eabe3712d5cf09bf1fc263a454e"
+    },
+    {
+      "path": "docs/premium-ui/qa-leave-status-semantics-v6-preview.json",
+      "sha256": "600f943ce1b480f30aae8b27e2e04de4f19eec11ea6800dc0e37cd087c65bcf9"
+    },
+    {
+      "path": "docs/premium-ui/qa-leave-status-semantics-v6-preview-stress.json",
+      "sha256": "1b67fc600dbcf98b9991dfe757f9736bec0b1a60cbf6de171e5f81d6b44e1e7a"
+    },
+    {
+      "path": "tmp/leave-status-v6-preview-native-operator.log",
+      "sha256": "1d81f667ceac84380b2bbd13ce6bc5a5baeb9e49fc988d38079b2df0fe8012d5"
+    },
+    {
+      "path": "tmp/leave-status-v6-preview-stress-operator.log",
+      "sha256": "ce8fae325014ea994a4c7e8f1e90a4f2c34275437522ef437b474e65c39a7f7c"
+    }
+  ],
+  "source_sha256": {
+    "frontend/src/main.ts": "20fc4e1c086f4ae6c25a381a176b590173f7ee680d6eec205489dc97eb069ea6",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "9344ea87024b282475a3b9f110ce9c83bdc5dca1dc984961eefed044c2ad6065",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/ui.ts": "680d7830bca8826b46b6f1dc2c0d064d2a3a2e16fb41188d2c323de6bccf85b2",
+    "frontend/src/record-workspace.ts": "7c196c12b114c48bf2db4ee57aad7e591d8e3acc7a77cccd15abbad7c349fb8f"
+  },
+  "v6_candidate_sha256": {
+    "main.ts": "16f38415189294f32b034a497df60bfb619233850df62b094eff0b6a7a6bdc43",
+    "premium-theme.css": "aa0d3c25681b83298cd53f45f009ed2f1f8e64b0f334903936d269c886d399d7",
+    "leave-calendar-focus.ts": "347f7d10ec511d87e0f6861e592da7dc79806e1fe0546a389aa69b4e9bc93a6e"
+  },
+  "acceptance_claim": false,
+  "next_gate": "Root prepares separate v7 with reviewed recovery fixes and intentional opener focus; fresh complete24context normal/stress matrix required. Failedv6reportsremainfrozen."
+}

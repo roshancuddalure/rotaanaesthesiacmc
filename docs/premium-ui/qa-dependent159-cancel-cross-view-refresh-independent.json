@@ -1,0 +1,655 @@
+{
+  "recorded_at_utc": "2026-10-31T01:31:17.060Z",
+  "reviewer": "/root/unit_settings_v2_independent_review",
+  "scope": "Six actual current-app browser cross-view checks,3engines320/1280. Load Units active-leave summary, navigate Leave and confirm one locally fulfilled cancellation, return Units: forced unit GET renders changed active-leave totals. Explicit board refresh remains GET-only without another mutation. No backend persistence/authorization assertion; all writes locally intercepted, remainingGET fixture8031.",
+  "source_sha256": {
+    "frontend/src/main.ts": "e88c69570e7faf9b4277b541e073c8bd2ca3805c23f4feead544f16770f6e07a"
+  },
+  "test_sha256": "b7a18c5a2c735013041c02c3e4a23f113cf04fa5184b9b8e292218c2aaefd796",
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "initialText": "Cache Audit Unit\n\nMain\n\nManage\n\n0 without active leave records · 1 assigned · 1 with active leave records this month.\n\nConfigured minimum free: 1\n\n2ND CALL\n\n1 of 1 postings shown\n\nDr Cache Audit\n1 Nov 2026 – 30 Nov 2026\nUpcoming posting",
+      "returnedText": "Cache Audit Unit\n\nMain\n\nManage\n\n1 without active leave records · 1 assigned · 0 with active leave records this month.\n\nConfigured minimum free: 1\n\n2ND CALL\n\n1 of 1 postings shown\n\nDr Cache Audit\n1 Nov 2026 – 30 Nov 2026\nUpcoming posting",
+      "afterExplicitRefresh": "Cache Audit Unit\n\nMain\n\nManage\n\n1 without active leave records · 1 assigned · 0 with active leave records this month.\n\nConfigured minimum free: 1\n\n2ND CALL\n\n1 of 1 postings shown\n\nDr Cache Audit\n1 Nov 2026 – 30 Nov 2026\nUpcoming posting",
+      "staleDependentCountsOnReturn": false,
+      "unitReadsOnReturn": 2,
+      "unitReadsAfterExplicitRefresh": 3,
+      "mutations": 1,
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/cache-leave/cancel"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "initialText": "Cache Audit Unit\n\nMain\n\nManage\n\n0 without active leave records · 1 assigned · 1 with active leave records this month.\n\nConfigured minimum free: 1\n\n2ND CALL\n\n1 of 1 postings shown\n\nDr Cache Audit\n1 Nov 2026 – 30 Nov 2026\nUpcoming posting",
+      "returnedText": "Cache Audit Unit\n\nMain\n\nManage\n\n1 without active leave records · 1 assigned · 0 with active leave records this month.\n\nConfigured minimum free: 1\n\n2ND CALL\n\n1 of 1 postings shown\n\nDr Cache Audit\n1 Nov 2026 – 30 Nov 2026\nUpcoming posting",
+      "afterExplicitRefresh": "Cache Audit Unit\n\nMain\n\nManage\n\n1 without active leave records · 1 assigned · 0 with active leave records this month.\n\nConfigured minimum free: 1\n\n2ND CALL\n\n1 of 1 postings shown\n\nDr Cache Audit\n1 Nov 2026 – 30 Nov 2026\nUpcoming posting",
+      "staleDependentCountsOnReturn": false,
+      "unitReadsOnReturn": 2,
+      "unitReadsAfterExplicitRefresh": 3,
+      "mutations": 1,
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/cache-leave/cancel"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "initialText": "Cache Audit Unit\n\nMain\n\nManage\n\n0 without active leave records · 1 assigned · 1 with active leave records this month.\n\nConfigured minimum free: 1\n\n2ND CALL\n\n1 of 1 postings shown\n\nDr Cache Audit\n1 Nov 2026 – 30 Nov 2026\nUpcoming posting",
+      "returnedText": "Cache Audit Unit\n\nMain\n\nManage\n\n1 without active leave records · 1 assigned · 0 with active leave records this month.\n\nConfigured minimum free: 1\n\n2ND CALL\n\n1 of 1 postings shown\n\nDr Cache Audit\n1 Nov 2026 – 30 Nov 2026\nUpcoming posting",
+      "afterExplicitRefresh": "Cache Audit Unit\n\nMain\n\nManage\n\n1 without active leave records · 1 assigned · 0 with active leave records this month.\n\nConfigured minimum free: 1\n\n2ND CALL\n\n1 of 1 postings shown\n\nDr Cache Audit\n1 Nov 2026 – 30 Nov 2026\nUpcoming posting",
+      "staleDependentCountsOnReturn": false,
+      "unitReadsOnReturn": 2,
+      "unitReadsAfterExplicitRefresh": 3,
+      "mutations": 1,
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/cache-leave/cancel"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "initialText": "Cache Audit Unit\n\nMain\n\nManage\n\n0 without active leave records · 1 assigned · 1 with active leave records this month.\n\nConfigured minimum free: 1\n\n2ND CALL\n\n1 of 1 postings shown\n\nDr Cache Audit\n1 Nov 2026 – 30 Nov 2026\nUpcoming posting",
+      "returnedText": "Cache Audit Unit\n\nMain\n\nManage\n\n1 without active leave records · 1 assigned · 0 with active leave records this month.\n\nConfigured minimum free: 1\n\n2ND CALL\n\n1 of 1 postings shown\n\nDr Cache Audit\n1 Nov 2026 – 30 Nov 2026\nUpcoming posting",
+      "afterExplicitRefresh": "Cache Audit Unit\n\nMain\n\nManage\n\n1 without active leave records · 1 assigned · 0 with active leave records this month.\n\nConfigured minimum free: 1\n\n2ND CALL\n\n1 of 1 postings shown\n\nDr Cache Audit\n1 Nov 2026 – 30 Nov 2026\nUpcoming posting",
+      "staleDependentCountsOnReturn": false,
+      "unitReadsOnReturn": 2,
+      "unitReadsAfterExplicitRefresh": 3,
+      "mutations": 1,
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/cache-leave/cancel"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "initialText": "Cache Audit Unit\n\nMain\n\nManage\n\n0 without active leave records · 1 assigned · 1 with active leave records this month.\n\nConfigured minimum free: 1\n\n2ND CALL\n\n1 of 1 postings shown\n\nDr Cache Audit\n1 Nov 2026 – 30 Nov 2026\nUpcoming posting",
+      "returnedText": "Cache Audit Unit\n\nMain\n\nManage\n\n1 without active leave records · 1 assigned · 0 with active leave records this month.\n\nConfigured minimum free: 1\n\n2ND CALL\n\n1 of 1 postings shown\n\nDr Cache Audit\n1 Nov 2026 – 30 Nov 2026\nUpcoming posting",
+      "afterExplicitRefresh": "Cache Audit Unit\n\nMain\n\nManage\n\n1 without active leave records · 1 assigned · 0 with active leave records this month.\n\nConfigured minimum free: 1\n\n2ND CALL\n\n1 of 1 postings shown\n\nDr Cache Audit\n1 Nov 2026 – 30 Nov 2026\nUpcoming posting",
+      "staleDependentCountsOnReturn": false,
+      "unitReadsOnReturn": 2,
+      "unitReadsAfterExplicitRefresh": 3,
+      "mutations": 1,
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/cache-leave/cancel"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "initialText": "Cache Audit Unit\n\nMain\n\nManage\n\n0 without active leave records · 1 assigned · 1 with active leave records this month.\n\nConfigured minimum free: 1\n\n2ND CALL\n\n1 of 1 postings shown\n\nDr Cache Audit\n1 Nov 2026 – 30 Nov 2026\nUpcoming posting",
+      "returnedText": "Cache Audit Unit\n\nMain\n\nManage\n\n1 without active leave records · 1 assigned · 0 with active leave records this month.\n\nConfigured minimum free: 1\n\n2ND CALL\n\n1 of 1 postings shown\n\nDr Cache Audit\n1 Nov 2026 – 30 Nov 2026\nUpcoming posting",
+      "afterExplicitRefresh": "Cache Audit Unit\n\nMain\n\nManage\n\n1 without active leave records · 1 assigned · 0 with active leave records this month.\n\nConfigured minimum free: 1\n\n2ND CALL\n\n1 of 1 postings shown\n\nDr Cache Audit\n1 Nov 2026 – 30 Nov 2026\nUpcoming posting",
+      "staleDependentCountsOnReturn": false,
+      "unitReadsOnReturn": 2,
+      "unitReadsAfterExplicitRefresh": 3,
+      "mutations": 1,
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/cache-leave/cancel"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        }
+      ],
+      "errors": []
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "recorded_at_utc": "2026-10-31T01:32:44.666409+00:00",
+  "operator": "/root/frontend160_remaining_scope_map",
+  "decision": "Eight real-RAM Leave selected/month deletion contexts verified. Original160 remains partial; no application/backend/ledger edits.",
+  "terminal_browser_exit_code_observed": 0,
+  "contexts": 8,
+  "engines": [
+    "Chromium"
+  ],
+  "widths": [
+    320,
+    1280
+  ],
+  "fixture": {
+    "port": 5274,
+    "host": "127.0.0.1",
+    "database": "sqlite+pysqlite:///:memory:",
+    "pool": "StaticPool",
+    "explicit_db_auth_overrides": true,
+    "configured_db_used": false,
+    "shared8031_8025_reset": false
+  },
+  "verified": [
+    "Native selectedJuly Leave checkboxes at320/1280 select exactly two existing identities across two members; visible count2; actual selected-delete preview/confirm/decline.",
+    "Native More leave tools -> Delete all leave forJuly2026 selects independently derived starts_on-in-July IDs:3records including July31-Aug2 imported leave; June30-July2 is retained. Month scope is not calendar overlap or a filtered unit action.",
+    "Preview POST returns exact expected IDs/count/token; independent full SQL state unchanged before confirmation.",
+    "Month Delete disabled for missing/wrong adjacent-month phrase; exact DELETE LEAVE 2026-07 enables it. Confirm POST repeats captured selection/month,preview token and exact phrase.",
+    "Confirmed target rows alone removed; every exact target serialization retained in one same-batch recycle entry per ID,30day retention,all previous recycle entries unchanged.",
+    "Unselected sibling remains after selected-delete; adjacent June-only and June30-July2 leaves retained in all cases. All member/unit/posting/duty-slot/duty-assignment SQL rows unchanged,adjacentJune unit-management GET unchanged.",
+    "Cancel after reviewed selection and even entered correct month phrase sends no deletion and leaves all SQL rows unchanged.",
+    "Eight cases without pageerror or horizontal viewport overflow."
+  ],
+  "limitations": [
+    "Leave selected/month workflows only; posting bulk,hidden selection pruning across filters/months,restore and409 stale-preview realRAM are not tested here.",
+    "Chromium320/1280 only; not fullbrowser/nativeAT/physical/production/whole160/all260.",
+    "Read-only SQL comparison covers seven explicit tables,not every DBtable; source and fixture definitions are hashed."
+  ],
+  "remaining160": [
+    "Native posting selected/month deletion with independent starts_on boundary/sibling readback.",
+    "Hidden selection pruning when month/filter changes; stale409preview token and explicit re-confirmation in actualRAM if broad action scope requires.",
+    "Current actualRAM individual/month approval and append/upsert/replace imports or exact applicability for prior true persistence packets.",
+    "Selected-unit rule settings/global unit reference mutation persistence and unchanged sibling/date boundaries.",
+    "Cross-month/special null-unit posting add/edit; similarly named identities; remaining planned crossbrowser checks."
+  ],
+  "source_sha256": {
+    "frontend/src/main.ts": "e88c69570e7faf9b4277b541e073c8bd2ca3805c23f4feead544f16770f6e07a",
+    "frontend/src/admin-delete.ts": "7a3eb13237272ad8b44f523bea5483ebeae60fc9c8b58d92035fe15c74528979",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/member-workspace.ts": "0ef8c1ef2234c7a50d8ca10b8aaa3998a654d452f563bd4c75531faef09d6c63"
+  },
+  "evidence_sha256": {
+    "docs/premium-ui/qa-context160-ram-bulk-delete-independent.json": "f37cfdd7288d2e9dffc6f3ff4df8cb02fe86b8e5eb8818a7b2d17227d15782d0",
+    "frontend/tests/premium-context160-ram-bulk-delete-independent.browser.mjs": "b0f01148fa5da8c3a614f8cfd279fc33701ac07089fcd90980e856b72434cdf4",
+    "tmp/context160_ram_bulk_delete_server.py": "fc254d317c4465d86894bf707ce1e6eee1016f243e72ee9178fdf50a341f5b9c",
+    "tmp/context160-ram-bulk-delete-independent.log": "7d5100766c1b2710afaa89742450645e85eca8b898eecdd09a330b4fb6ff4139",
+    "docs/premium-ui/reviews/context160-ram-delete-independent-subset.json": "94fa890946f6c4402696a18b6dc68f6cce5ba81c1e1b1a4712f5d55c4481f8ff"
+  }
+}

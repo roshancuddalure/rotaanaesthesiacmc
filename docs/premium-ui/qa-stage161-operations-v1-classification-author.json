@@ -1,0 +1,3802 @@
+{
+  "recorded_at_utc": "2026-10-31T01:37:07.740Z",
+  "reviewer": "/root/generation161_stage_clarity_current_audit",
+  "scope": "Scratch V1 author tracker matrix72states withfiveoperationIDs; originalfourstageexpectationsretained plusassignmentcounts:3engines320/1280 with12 returned-checklist states, all six known blocker labels plus future unknown, scope-only, published-with-blocker history, ready and unavailable. Classification expected outcomes asserted. V1overlay frozen; noapplicationedits. AllblockerReviewline andpublishedhistory retained; no whole161acceptance. NoGenerate/Apply/DB mutation;GETlocalmock/disposablefixture only.",
+  "test_sha256": "666755a4dc3e81059039ad795d587a2117e41c3b4a5628f235bfd09f3ccbda8f",
+  "source_sha256": {
+    "frontend/src/main.ts": "e88c69570e7faf9b4277b541e073c8bd2ca3805c23f4feead544f16770f6e07a",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "40bc7f91441cc805375a2e13332f424c88423c93124bf34123dff4bcffbf5673",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+  },
+  "candidate_main_sha256": "163ef1e75d476536e256bc9673389cce24b442e6b7651672d583d141b8231d45",
+  "candidate_css_sha256": "274f6943bbccc171367c56779ca0336372a8dc194e56f9468f43385032e6fabe",
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "state": "unlocked-empty",
+      "returnedBlockers": [
+        "Monthly unit scope",
+        "Generated slots"
+      ],
+      "canPublish": false,
+      "expected": [
+        "blocked",
+        "pending",
+        "pending",
+        "pending",
+        "pending"
+      ],
+      "actual": [
+        "blocked",
+        "pending",
+        "pending",
+        "pending",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "blocked",
+          "text": "1\n    Setup\n    , Needs action"
+        },
+        {
+          "view": "rota-template",
+          "state": "pending",
+          "text": "2\n    Build template\n    , Not started"
+        },
+        {
+          "view": "rota-template",
+          "state": "pending",
+          "text": "3\n    Assign members\n    , Not started"
+        },
+        {
+          "view": "rota-review",
+          "state": "pending",
+          "text": "4\n    Review\n    , Not started"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "state": "locked-empty",
+      "returnedBlockers": [
+        "Generated slots"
+      ],
+      "canPublish": false,
+      "expected": [
+        "done",
+        "blocked",
+        "pending",
+        "pending",
+        "pending"
+      ],
+      "actual": [
+        "done",
+        "blocked",
+        "pending",
+        "pending",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "blocked",
+          "text": "2\n    Build template\n    , Needs action"
+        },
+        {
+          "view": "rota-template",
+          "state": "pending",
+          "text": "3\n    Assign members\n    , Not started"
+        },
+        {
+          "view": "rota-review",
+          "state": "pending",
+          "text": "4\n    Review\n    , Not started"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "state": "open-unassigned",
+      "returnedBlockers": [
+        "Open slots"
+      ],
+      "canPublish": false,
+      "expected": [
+        "done",
+        "done",
+        "blocked",
+        "blocked",
+        "pending"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "blocked",
+        "blocked",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "blocked",
+          "text": "3\n    Assign members\n    , Needs action"
+        },
+        {
+          "view": "rota-review",
+          "state": "blocked",
+          "text": "4\n    Review\n    , Needs action"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "state": "safety-blocked",
+      "returnedBlockers": [
+        "Hard safety blockers"
+      ],
+      "canPublish": false,
+      "expected": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "blocked",
+          "text": "4\n    Review\n    , Needs action"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "state": "exchange-blocked",
+      "returnedBlockers": [
+        "Exchange requests"
+      ],
+      "canPublish": false,
+      "expected": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "blocked",
+          "text": "4\n    Review\n    , Needs action"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "state": "call-level-mismatch",
+      "returnedBlockers": [
+        "Call level mismatches"
+      ],
+      "canPublish": false,
+      "expected": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "blocked",
+          "text": "4\n    Review\n    , Needs action"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "state": "scope-only",
+      "returnedBlockers": [
+        "Monthly unit scope"
+      ],
+      "canPublish": false,
+      "expected": [
+        "blocked",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "actual": [
+        "blocked",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "blocked",
+          "text": "1\n    Setup\n    , Needs action"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "blocked",
+          "text": "4\n    Review\n    , Needs action"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "state": "future-blocker",
+      "returnedBlockers": [
+        "Future authoritative blocker"
+      ],
+      "canPublish": false,
+      "expected": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "blocked",
+          "text": "4\n    Review\n    , Needs action"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "state": "published-override-blocked",
+      "returnedBlockers": [
+        "Call level mismatches"
+      ],
+      "canPublish": false,
+      "expected": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "done"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "done"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "blocked",
+          "text": "4\n    Review\n    , Needs action"
+        },
+        {
+          "view": "rota-publish",
+          "state": "done",
+          "text": "5\n    Publish\n    , Done"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "state": "ready-draft",
+      "returnedBlockers": [],
+      "canPublish": true,
+      "expected": [
+        "done",
+        "done",
+        "done",
+        "done",
+        "blocked"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "done",
+        "done",
+        "blocked"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "done",
+          "text": "4\n    Review\n    , Done"
+        },
+        {
+          "view": "rota-publish",
+          "state": "blocked",
+          "text": "5\n    Publish\n    , Needs action"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "state": "published",
+      "returnedBlockers": [],
+      "canPublish": true,
+      "expected": [
+        "done",
+        "done",
+        "done",
+        "done",
+        "done"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "done",
+        "done",
+        "done"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "done",
+          "text": "4\n    Review\n    , Done"
+        },
+        {
+          "view": "rota-publish",
+          "state": "done",
+          "text": "5\n    Publish\n    , Done"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "state": "read-unavailable",
+      "returnedBlockers": null,
+      "canPublish": false,
+      "expected": [
+        "unknown",
+        "unknown",
+        "unknown",
+        "unknown",
+        "unknown"
+      ],
+      "actual": [
+        "unknown",
+        "unknown",
+        "unknown",
+        "unknown",
+        "unknown"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "unknown",
+          "text": "1\n    Setup\n    , Open to check"
+        },
+        {
+          "view": "rota-template",
+          "state": "unknown",
+          "text": "2\n    Build template\n    , Open to check"
+        },
+        {
+          "view": "rota-template",
+          "state": "unknown",
+          "text": "3\n    Assign members\n    , Open to check"
+        },
+        {
+          "view": "rota-review",
+          "state": "unknown",
+          "text": "4\n    Review\n    , Open to check"
+        },
+        {
+          "view": "rota-publish",
+          "state": "unknown",
+          "text": "5\n    Publish\n    , Open to check"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "state": "unlocked-empty",
+      "returnedBlockers": [
+        "Monthly unit scope",
+        "Generated slots"
+      ],
+      "canPublish": false,
+      "expected": [
+        "blocked",
+        "pending",
+        "pending",
+        "pending",
+        "pending"
+      ],
+      "actual": [
+        "blocked",
+        "pending",
+        "pending",
+        "pending",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "blocked",
+          "text": "1\n    Setup\n    , Needs action"
+        },
+        {
+          "view": "rota-template",
+          "state": "pending",
+          "text": "2\n    Build template\n    , Not started"
+        },
+        {
+          "view": "rota-template",
+          "state": "pending",
+          "text": "3\n    Assign members\n    , Not started"
+        },
+        {
+          "view": "rota-review",
+          "state": "pending",
+          "text": "4\n    Review\n    , Not started"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "state": "locked-empty",
+      "returnedBlockers": [
+        "Generated slots"
+      ],
+      "canPublish": false,
+      "expected": [
+        "done",
+        "blocked",
+        "pending",
+        "pending",
+        "pending"
+      ],
+      "actual": [
+        "done",
+        "blocked",
+        "pending",
+        "pending",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "blocked",
+          "text": "2\n    Build template\n    , Needs action"
+        },
+        {
+          "view": "rota-template",
+          "state": "pending",
+          "text": "3\n    Assign members\n    , Not started"
+        },
+        {
+          "view": "rota-review",
+          "state": "pending",
+          "text": "4\n    Review\n    , Not started"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "state": "open-unassigned",
+      "returnedBlockers": [
+        "Open slots"
+      ],
+      "canPublish": false,
+      "expected": [
+        "done",
+        "done",
+        "blocked",
+        "blocked",
+        "pending"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "blocked",
+        "blocked",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "blocked",
+          "text": "3\n    Assign members\n    , Needs action"
+        },
+        {
+          "view": "rota-review",
+          "state": "blocked",
+          "text": "4\n    Review\n    , Needs action"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "state": "safety-blocked",
+      "returnedBlockers": [
+        "Hard safety blockers"
+      ],
+      "canPublish": false,
+      "expected": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "blocked",
+          "text": "4\n    Review\n    , Needs action"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "state": "exchange-blocked",
+      "returnedBlockers": [
+        "Exchange requests"
+      ],
+      "canPublish": false,
+      "expected": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "blocked",
+          "text": "4\n    Review\n    , Needs action"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "state": "call-level-mismatch",
+      "returnedBlockers": [
+        "Call level mismatches"
+      ],
+      "canPublish": false,
+      "expected": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "blocked",
+          "text": "4\n    Review\n    , Needs action"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "state": "scope-only",
+      "returnedBlockers": [
+        "Monthly unit scope"
+      ],
+      "canPublish": false,
+      "expected": [
+        "blocked",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "actual": [
+        "blocked",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "blocked",
+          "text": "1\n    Setup\n    , Needs action"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "blocked",
+          "text": "4\n    Review\n    , Needs action"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "state": "future-blocker",
+      "returnedBlockers": [
+        "Future authoritative blocker"
+      ],
+      "canPublish": false,
+      "expected": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "blocked",
+          "text": "4\n    Review\n    , Needs action"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "state": "published-override-blocked",
+      "returnedBlockers": [
+        "Call level mismatches"
+      ],
+      "canPublish": false,
+      "expected": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "done"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "done"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "blocked",
+          "text": "4\n    Review\n    , Needs action"
+        },
+        {
+          "view": "rota-publish",
+          "state": "done",
+          "text": "5\n    Publish\n    , Done"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "state": "ready-draft",
+      "returnedBlockers": [],
+      "canPublish": true,
+      "expected": [
+        "done",
+        "done",
+        "done",
+        "done",
+        "blocked"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "done",
+        "done",
+        "blocked"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "done",
+          "text": "4\n    Review\n    , Done"
+        },
+        {
+          "view": "rota-publish",
+          "state": "blocked",
+          "text": "5\n    Publish\n    , Needs action"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "state": "published",
+      "returnedBlockers": [],
+      "canPublish": true,
+      "expected": [
+        "done",
+        "done",
+        "done",
+        "done",
+        "done"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "done",
+        "done",
+        "done"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "done",
+          "text": "4\n    Review\n    , Done"
+        },
+        {
+          "view": "rota-publish",
+          "state": "done",
+          "text": "5\n    Publish\n    , Done"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "state": "read-unavailable",
+      "returnedBlockers": null,
+      "canPublish": false,
+      "expected": [
+        "unknown",
+        "unknown",
+        "unknown",
+        "unknown",
+        "unknown"
+      ],
+      "actual": [
+        "unknown",
+        "unknown",
+        "unknown",
+        "unknown",
+        "unknown"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "unknown",
+          "text": "1\n    Setup\n    , Open to check"
+        },
+        {
+          "view": "rota-template",
+          "state": "unknown",
+          "text": "2\n    Build template\n    , Open to check"
+        },
+        {
+          "view": "rota-template",
+          "state": "unknown",
+          "text": "3\n    Assign members\n    , Open to check"
+        },
+        {
+          "view": "rota-review",
+          "state": "unknown",
+          "text": "4\n    Review\n    , Open to check"
+        },
+        {
+          "view": "rota-publish",
+          "state": "unknown",
+          "text": "5\n    Publish\n    , Open to check"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "state": "unlocked-empty",
+      "returnedBlockers": [
+        "Monthly unit scope",
+        "Generated slots"
+      ],
+      "canPublish": false,
+      "expected": [
+        "blocked",
+        "pending",
+        "pending",
+        "pending",
+        "pending"
+      ],
+      "actual": [
+        "blocked",
+        "pending",
+        "pending",
+        "pending",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "blocked",
+          "text": "1\n    Setup\n    , Needs action"
+        },
+        {
+          "view": "rota-template",
+          "state": "pending",
+          "text": "2\n    Build template\n    , Not started"
+        },
+        {
+          "view": "rota-template",
+          "state": "pending",
+          "text": "3\n    Assign members\n    , Not started"
+        },
+        {
+          "view": "rota-review",
+          "state": "pending",
+          "text": "4\n    Review\n    , Not started"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "state": "locked-empty",
+      "returnedBlockers": [
+        "Generated slots"
+      ],
+      "canPublish": false,
+      "expected": [
+        "done",
+        "blocked",
+        "pending",
+        "pending",
+        "pending"
+      ],
+      "actual": [
+        "done",
+        "blocked",
+        "pending",
+        "pending",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "blocked",
+          "text": "2\n    Build template\n    , Needs action"
+        },
+        {
+          "view": "rota-template",
+          "state": "pending",
+          "text": "3\n    Assign members\n    , Not started"
+        },
+        {
+          "view": "rota-review",
+          "state": "pending",
+          "text": "4\n    Review\n    , Not started"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "state": "open-unassigned",
+      "returnedBlockers": [
+        "Open slots"
+      ],
+      "canPublish": false,
+      "expected": [
+        "done",
+        "done",
+        "blocked",
+        "blocked",
+        "pending"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "blocked",
+        "blocked",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "blocked",
+          "text": "3\n    Assign members\n    , Needs action"
+        },
+        {
+          "view": "rota-review",
+          "state": "blocked",
+          "text": "4\n    Review\n    , Needs action"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "state": "safety-blocked",
+      "returnedBlockers": [
+        "Hard safety blockers"
+      ],
+      "canPublish": false,
+      "expected": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "blocked",
+          "text": "4\n    Review\n    , Needs action"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "state": "exchange-blocked",
+      "returnedBlockers": [
+        "Exchange requests"
+      ],
+      "canPublish": false,
+      "expected": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "blocked",
+          "text": "4\n    Review\n    , Needs action"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "state": "call-level-mismatch",
+      "returnedBlockers": [
+        "Call level mismatches"
+      ],
+      "canPublish": false,
+      "expected": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "blocked",
+          "text": "4\n    Review\n    , Needs action"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "state": "scope-only",
+      "returnedBlockers": [
+        "Monthly unit scope"
+      ],
+      "canPublish": false,
+      "expected": [
+        "blocked",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "actual": [
+        "blocked",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "blocked",
+          "text": "1\n    Setup\n    , Needs action"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "blocked",
+          "text": "4\n    Review\n    , Needs action"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "state": "future-blocker",
+      "returnedBlockers": [
+        "Future authoritative blocker"
+      ],
+      "canPublish": false,
+      "expected": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "blocked",
+          "text": "4\n    Review\n    , Needs action"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "state": "published-override-blocked",
+      "returnedBlockers": [
+        "Call level mismatches"
+      ],
+      "canPublish": false,
+      "expected": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "done"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "done"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "blocked",
+          "text": "4\n    Review\n    , Needs action"
+        },
+        {
+          "view": "rota-publish",
+          "state": "done",
+          "text": "5\n    Publish\n    , Done"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "state": "ready-draft",
+      "returnedBlockers": [],
+      "canPublish": true,
+      "expected": [
+        "done",
+        "done",
+        "done",
+        "done",
+        "blocked"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "done",
+        "done",
+        "blocked"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "done",
+          "text": "4\n    Review\n    , Done"
+        },
+        {
+          "view": "rota-publish",
+          "state": "blocked",
+          "text": "5\n    Publish\n    , Needs action"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "state": "published",
+      "returnedBlockers": [],
+      "canPublish": true,
+      "expected": [
+        "done",
+        "done",
+        "done",
+        "done",
+        "done"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "done",
+        "done",
+        "done"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "done",
+          "text": "4\n    Review\n    , Done"
+        },
+        {
+          "view": "rota-publish",
+          "state": "done",
+          "text": "5\n    Publish\n    , Done"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "state": "read-unavailable",
+      "returnedBlockers": null,
+      "canPublish": false,
+      "expected": [
+        "unknown",
+        "unknown",
+        "unknown",
+        "unknown",
+        "unknown"
+      ],
+      "actual": [
+        "unknown",
+        "unknown",
+        "unknown",
+        "unknown",
+        "unknown"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "unknown",
+          "text": "1\n    Setup\n    , Open to check"
+        },
+        {
+          "view": "rota-template",
+          "state": "unknown",
+          "text": "2\n    Build template\n    , Open to check"
+        },
+        {
+          "view": "rota-template",
+          "state": "unknown",
+          "text": "3\n    Assign members\n    , Open to check"
+        },
+        {
+          "view": "rota-review",
+          "state": "unknown",
+          "text": "4\n    Review\n    , Open to check"
+        },
+        {
+          "view": "rota-publish",
+          "state": "unknown",
+          "text": "5\n    Publish\n    , Open to check"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "state": "unlocked-empty",
+      "returnedBlockers": [
+        "Monthly unit scope",
+        "Generated slots"
+      ],
+      "canPublish": false,
+      "expected": [
+        "blocked",
+        "pending",
+        "pending",
+        "pending",
+        "pending"
+      ],
+      "actual": [
+        "blocked",
+        "pending",
+        "pending",
+        "pending",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "blocked",
+          "text": "1\n    Setup\n    , Needs action"
+        },
+        {
+          "view": "rota-template",
+          "state": "pending",
+          "text": "2\n    Build template\n    , Not started"
+        },
+        {
+          "view": "rota-template",
+          "state": "pending",
+          "text": "3\n    Assign members\n    , Not started"
+        },
+        {
+          "view": "rota-review",
+          "state": "pending",
+          "text": "4\n    Review\n    , Not started"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "state": "locked-empty",
+      "returnedBlockers": [
+        "Generated slots"
+      ],
+      "canPublish": false,
+      "expected": [
+        "done",
+        "blocked",
+        "pending",
+        "pending",
+        "pending"
+      ],
+      "actual": [
+        "done",
+        "blocked",
+        "pending",
+        "pending",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "blocked",
+          "text": "2\n    Build template\n    , Needs action"
+        },
+        {
+          "view": "rota-template",
+          "state": "pending",
+          "text": "3\n    Assign members\n    , Not started"
+        },
+        {
+          "view": "rota-review",
+          "state": "pending",
+          "text": "4\n    Review\n    , Not started"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "state": "open-unassigned",
+      "returnedBlockers": [
+        "Open slots"
+      ],
+      "canPublish": false,
+      "expected": [
+        "done",
+        "done",
+        "blocked",
+        "blocked",
+        "pending"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "blocked",
+        "blocked",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "blocked",
+          "text": "3\n    Assign members\n    , Needs action"
+        },
+        {
+          "view": "rota-review",
+          "state": "blocked",
+          "text": "4\n    Review\n    , Needs action"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "state": "safety-blocked",
+      "returnedBlockers": [
+        "Hard safety blockers"
+      ],
+      "canPublish": false,
+      "expected": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "blocked",
+          "text": "4\n    Review\n    , Needs action"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "state": "exchange-blocked",
+      "returnedBlockers": [
+        "Exchange requests"
+      ],
+      "canPublish": false,
+      "expected": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "blocked",
+          "text": "4\n    Review\n    , Needs action"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "state": "call-level-mismatch",
+      "returnedBlockers": [
+        "Call level mismatches"
+      ],
+      "canPublish": false,
+      "expected": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "blocked",
+          "text": "4\n    Review\n    , Needs action"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "state": "scope-only",
+      "returnedBlockers": [
+        "Monthly unit scope"
+      ],
+      "canPublish": false,
+      "expected": [
+        "blocked",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "actual": [
+        "blocked",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "blocked",
+          "text": "1\n    Setup\n    , Needs action"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "blocked",
+          "text": "4\n    Review\n    , Needs action"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "state": "future-blocker",
+      "returnedBlockers": [
+        "Future authoritative blocker"
+      ],
+      "canPublish": false,
+      "expected": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "blocked",
+          "text": "4\n    Review\n    , Needs action"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "state": "published-override-blocked",
+      "returnedBlockers": [
+        "Call level mismatches"
+      ],
+      "canPublish": false,
+      "expected": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "done"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "done"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "blocked",
+          "text": "4\n    Review\n    , Needs action"
+        },
+        {
+          "view": "rota-publish",
+          "state": "done",
+          "text": "5\n    Publish\n    , Done"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "state": "ready-draft",
+      "returnedBlockers": [],
+      "canPublish": true,
+      "expected": [
+        "done",
+        "done",
+        "done",
+        "done",
+        "blocked"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "done",
+        "done",
+        "blocked"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "done",
+          "text": "4\n    Review\n    , Done"
+        },
+        {
+          "view": "rota-publish",
+          "state": "blocked",
+          "text": "5\n    Publish\n    , Needs action"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "state": "published",
+      "returnedBlockers": [],
+      "canPublish": true,
+      "expected": [
+        "done",
+        "done",
+        "done",
+        "done",
+        "done"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "done",
+        "done",
+        "done"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "done",
+          "text": "4\n    Review\n    , Done"
+        },
+        {
+          "view": "rota-publish",
+          "state": "done",
+          "text": "5\n    Publish\n    , Done"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "state": "read-unavailable",
+      "returnedBlockers": null,
+      "canPublish": false,
+      "expected": [
+        "unknown",
+        "unknown",
+        "unknown",
+        "unknown",
+        "unknown"
+      ],
+      "actual": [
+        "unknown",
+        "unknown",
+        "unknown",
+        "unknown",
+        "unknown"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "unknown",
+          "text": "1\n    Setup\n    , Open to check"
+        },
+        {
+          "view": "rota-template",
+          "state": "unknown",
+          "text": "2\n    Build template\n    , Open to check"
+        },
+        {
+          "view": "rota-template",
+          "state": "unknown",
+          "text": "3\n    Assign members\n    , Open to check"
+        },
+        {
+          "view": "rota-review",
+          "state": "unknown",
+          "text": "4\n    Review\n    , Open to check"
+        },
+        {
+          "view": "rota-publish",
+          "state": "unknown",
+          "text": "5\n    Publish\n    , Open to check"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "state": "unlocked-empty",
+      "returnedBlockers": [
+        "Monthly unit scope",
+        "Generated slots"
+      ],
+      "canPublish": false,
+      "expected": [
+        "blocked",
+        "pending",
+        "pending",
+        "pending",
+        "pending"
+      ],
+      "actual": [
+        "blocked",
+        "pending",
+        "pending",
+        "pending",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "blocked",
+          "text": "1\n    Setup\n    , Needs action"
+        },
+        {
+          "view": "rota-template",
+          "state": "pending",
+          "text": "2\n    Build template\n    , Not started"
+        },
+        {
+          "view": "rota-template",
+          "state": "pending",
+          "text": "3\n    Assign members\n    , Not started"
+        },
+        {
+          "view": "rota-review",
+          "state": "pending",
+          "text": "4\n    Review\n    , Not started"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "state": "locked-empty",
+      "returnedBlockers": [
+        "Generated slots"
+      ],
+      "canPublish": false,
+      "expected": [
+        "done",
+        "blocked",
+        "pending",
+        "pending",
+        "pending"
+      ],
+      "actual": [
+        "done",
+        "blocked",
+        "pending",
+        "pending",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "blocked",
+          "text": "2\n    Build template\n    , Needs action"
+        },
+        {
+          "view": "rota-template",
+          "state": "pending",
+          "text": "3\n    Assign members\n    , Not started"
+        },
+        {
+          "view": "rota-review",
+          "state": "pending",
+          "text": "4\n    Review\n    , Not started"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "state": "open-unassigned",
+      "returnedBlockers": [
+        "Open slots"
+      ],
+      "canPublish": false,
+      "expected": [
+        "done",
+        "done",
+        "blocked",
+        "blocked",
+        "pending"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "blocked",
+        "blocked",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "blocked",
+          "text": "3\n    Assign members\n    , Needs action"
+        },
+        {
+          "view": "rota-review",
+          "state": "blocked",
+          "text": "4\n    Review\n    , Needs action"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "state": "safety-blocked",
+      "returnedBlockers": [
+        "Hard safety blockers"
+      ],
+      "canPublish": false,
+      "expected": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "blocked",
+          "text": "4\n    Review\n    , Needs action"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "state": "exchange-blocked",
+      "returnedBlockers": [
+        "Exchange requests"
+      ],
+      "canPublish": false,
+      "expected": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "blocked",
+          "text": "4\n    Review\n    , Needs action"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "state": "call-level-mismatch",
+      "returnedBlockers": [
+        "Call level mismatches"
+      ],
+      "canPublish": false,
+      "expected": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "blocked",
+          "text": "4\n    Review\n    , Needs action"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "state": "scope-only",
+      "returnedBlockers": [
+        "Monthly unit scope"
+      ],
+      "canPublish": false,
+      "expected": [
+        "blocked",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "actual": [
+        "blocked",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "blocked",
+          "text": "1\n    Setup\n    , Needs action"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "blocked",
+          "text": "4\n    Review\n    , Needs action"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "state": "future-blocker",
+      "returnedBlockers": [
+        "Future authoritative blocker"
+      ],
+      "canPublish": false,
+      "expected": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "blocked",
+          "text": "4\n    Review\n    , Needs action"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "state": "published-override-blocked",
+      "returnedBlockers": [
+        "Call level mismatches"
+      ],
+      "canPublish": false,
+      "expected": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "done"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "done"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "blocked",
+          "text": "4\n    Review\n    , Needs action"
+        },
+        {
+          "view": "rota-publish",
+          "state": "done",
+          "text": "5\n    Publish\n    , Done"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "state": "ready-draft",
+      "returnedBlockers": [],
+      "canPublish": true,
+      "expected": [
+        "done",
+        "done",
+        "done",
+        "done",
+        "blocked"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "done",
+        "done",
+        "blocked"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "done",
+          "text": "4\n    Review\n    , Done"
+        },
+        {
+          "view": "rota-publish",
+          "state": "blocked",
+          "text": "5\n    Publish\n    , Needs action"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "state": "published",
+      "returnedBlockers": [],
+      "canPublish": true,
+      "expected": [
+        "done",
+        "done",
+        "done",
+        "done",
+        "done"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "done",
+        "done",
+        "done"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "done",
+          "text": "4\n    Review\n    , Done"
+        },
+        {
+          "view": "rota-publish",
+          "state": "done",
+          "text": "5\n    Publish\n    , Done"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "state": "read-unavailable",
+      "returnedBlockers": null,
+      "canPublish": false,
+      "expected": [
+        "unknown",
+        "unknown",
+        "unknown",
+        "unknown",
+        "unknown"
+      ],
+      "actual": [
+        "unknown",
+        "unknown",
+        "unknown",
+        "unknown",
+        "unknown"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "unknown",
+          "text": "1\n    Setup\n    , Open to check"
+        },
+        {
+          "view": "rota-template",
+          "state": "unknown",
+          "text": "2\n    Build template\n    , Open to check"
+        },
+        {
+          "view": "rota-template",
+          "state": "unknown",
+          "text": "3\n    Assign members\n    , Open to check"
+        },
+        {
+          "view": "rota-review",
+          "state": "unknown",
+          "text": "4\n    Review\n    , Open to check"
+        },
+        {
+          "view": "rota-publish",
+          "state": "unknown",
+          "text": "5\n    Publish\n    , Open to check"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "state": "unlocked-empty",
+      "returnedBlockers": [
+        "Monthly unit scope",
+        "Generated slots"
+      ],
+      "canPublish": false,
+      "expected": [
+        "blocked",
+        "pending",
+        "pending",
+        "pending",
+        "pending"
+      ],
+      "actual": [
+        "blocked",
+        "pending",
+        "pending",
+        "pending",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "blocked",
+          "text": "1\n    Setup\n    , Needs action"
+        },
+        {
+          "view": "rota-template",
+          "state": "pending",
+          "text": "2\n    Build template\n    , Not started"
+        },
+        {
+          "view": "rota-template",
+          "state": "pending",
+          "text": "3\n    Assign members\n    , Not started"
+        },
+        {
+          "view": "rota-review",
+          "state": "pending",
+          "text": "4\n    Review\n    , Not started"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "state": "locked-empty",
+      "returnedBlockers": [
+        "Generated slots"
+      ],
+      "canPublish": false,
+      "expected": [
+        "done",
+        "blocked",
+        "pending",
+        "pending",
+        "pending"
+      ],
+      "actual": [
+        "done",
+        "blocked",
+        "pending",
+        "pending",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "blocked",
+          "text": "2\n    Build template\n    , Needs action"
+        },
+        {
+          "view": "rota-template",
+          "state": "pending",
+          "text": "3\n    Assign members\n    , Not started"
+        },
+        {
+          "view": "rota-review",
+          "state": "pending",
+          "text": "4\n    Review\n    , Not started"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "state": "open-unassigned",
+      "returnedBlockers": [
+        "Open slots"
+      ],
+      "canPublish": false,
+      "expected": [
+        "done",
+        "done",
+        "blocked",
+        "blocked",
+        "pending"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "blocked",
+        "blocked",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "blocked",
+          "text": "3\n    Assign members\n    , Needs action"
+        },
+        {
+          "view": "rota-review",
+          "state": "blocked",
+          "text": "4\n    Review\n    , Needs action"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "state": "safety-blocked",
+      "returnedBlockers": [
+        "Hard safety blockers"
+      ],
+      "canPublish": false,
+      "expected": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "blocked",
+          "text": "4\n    Review\n    , Needs action"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "state": "exchange-blocked",
+      "returnedBlockers": [
+        "Exchange requests"
+      ],
+      "canPublish": false,
+      "expected": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "blocked",
+          "text": "4\n    Review\n    , Needs action"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "state": "call-level-mismatch",
+      "returnedBlockers": [
+        "Call level mismatches"
+      ],
+      "canPublish": false,
+      "expected": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "blocked",
+          "text": "4\n    Review\n    , Needs action"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "state": "scope-only",
+      "returnedBlockers": [
+        "Monthly unit scope"
+      ],
+      "canPublish": false,
+      "expected": [
+        "blocked",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "actual": [
+        "blocked",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "blocked",
+          "text": "1\n    Setup\n    , Needs action"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "blocked",
+          "text": "4\n    Review\n    , Needs action"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "state": "future-blocker",
+      "returnedBlockers": [
+        "Future authoritative blocker"
+      ],
+      "canPublish": false,
+      "expected": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "pending"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "blocked",
+          "text": "4\n    Review\n    , Needs action"
+        },
+        {
+          "view": "rota-publish",
+          "state": "pending",
+          "text": "5\n    Publish\n    , Not started"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "state": "published-override-blocked",
+      "returnedBlockers": [
+        "Call level mismatches"
+      ],
+      "canPublish": false,
+      "expected": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "done"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "done",
+        "blocked",
+        "done"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "blocked",
+          "text": "4\n    Review\n    , Needs action"
+        },
+        {
+          "view": "rota-publish",
+          "state": "done",
+          "text": "5\n    Publish\n    , Done"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "state": "ready-draft",
+      "returnedBlockers": [],
+      "canPublish": true,
+      "expected": [
+        "done",
+        "done",
+        "done",
+        "done",
+        "blocked"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "done",
+        "done",
+        "blocked"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "done",
+          "text": "4\n    Review\n    , Done"
+        },
+        {
+          "view": "rota-publish",
+          "state": "blocked",
+          "text": "5\n    Publish\n    , Needs action"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "state": "published",
+      "returnedBlockers": [],
+      "canPublish": true,
+      "expected": [
+        "done",
+        "done",
+        "done",
+        "done",
+        "done"
+      ],
+      "actual": [
+        "done",
+        "done",
+        "done",
+        "done",
+        "done"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "done",
+          "text": "1\n    Setup\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "2\n    Build template\n    , Done"
+        },
+        {
+          "view": "rota-template",
+          "state": "done",
+          "text": "3\n    Assign members\n    , Done"
+        },
+        {
+          "view": "rota-review",
+          "state": "done",
+          "text": "4\n    Review\n    , Done"
+        },
+        {
+          "view": "rota-publish",
+          "state": "done",
+          "text": "5\n    Publish\n    , Done"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "state": "read-unavailable",
+      "returnedBlockers": null,
+      "canPublish": false,
+      "expected": [
+        "unknown",
+        "unknown",
+        "unknown",
+        "unknown",
+        "unknown"
+      ],
+      "actual": [
+        "unknown",
+        "unknown",
+        "unknown",
+        "unknown",
+        "unknown"
+      ],
+      "conditionMatches": true,
+      "rows": [
+        {
+          "view": "rota-setup",
+          "state": "unknown",
+          "text": "1\n    Setup\n    , Open to check"
+        },
+        {
+          "view": "rota-template",
+          "state": "unknown",
+          "text": "2\n    Build template\n    , Open to check"
+        },
+        {
+          "view": "rota-template",
+          "state": "unknown",
+          "text": "3\n    Assign members\n    , Open to check"
+        },
+        {
+          "view": "rota-review",
+          "state": "unknown",
+          "text": "4\n    Review\n    , Open to check"
+        },
+        {
+          "view": "rota-publish",
+          "state": "unknown",
+          "text": "5\n    Publish\n    , Open to check"
+        }
+      ],
+      "errors": [],
+      "writes": []
+    }
+  ]
+}

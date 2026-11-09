@@ -1,0 +1,42 @@
+{
+  "recorded_at_utc": "2026-11-03T05:23:32.342903+00:00",
+  "reviewer": "/root/mapping_parent_resume_review",
+  "application_changed": false,
+  "mode": "Read-only second source pass, no browserexecution while coordinated144author matrix active",
+  "candidate_main_sha256": "6a093622f67352bee662ef686de502d49df029cf2b18913a013d2eaaf527d427",
+  "findings": [
+    {
+      "classification": "source_path_gap_unreproduced",
+      "topic": "Wrong-month successful read",
+      "source": "main settings read validates only own unitLoadSeq; commit assigns result and labels LoadedMonth capturedsettingsMonth, modal uses result.month, board refresher silently skips mismatch.",
+      "recommendation": "Reject result.month!==settingsMonth before global commit with explicit recoverable error; GET-onlyretry retains draft. Test valid\u2192wrongmonth200\u2192validretry with noextraPUT and no crossmonthDOM/statepaint."
+    },
+    {
+      "classification": "source_focus_gap",
+      "topic": "Missing unit destroys owned action focus",
+      "source": "Missing branch replaces member/validationchildren and disables nav without owned focus restoration.",
+      "recommendation": "V5 planned focus repair should capture active identity before mutation and focus notice/status only if removed/disabled owned target nowBODY; preserve newerinput/otherdialog focus."
+    }
+  ],
+  "challenge_results": {
+    "baseline_ordering": "Baseline callrows keep existing DOM order; newly returned rows append to both DOM and baseline so no ordering-onlydirty change. Backend duplicatecalllevel contract remains a separate validation boundary; no duplicatebug inferred.",
+    "null_nan": "Existing submit validation rejects nonfinite before save; pending invalid user values serialize differently and remain dirty. Emptycallnumeric0 andfloored equivalents preserve existing payload semantics. No new nonfinite bug proved.",
+    "user_revert": "Dirty snapshot is synchronous immediatelybeforecommit; if existing values equal saved signature then fallbackreopen is safe. With newer draft, baseline extends onlynewserverrows; existing changedvalues remain dirty. New serverrow edited later shouldcompareagainstreturnedbaseline andbecomedirty.",
+    "validity": "Missingunitvalidity markers clear onvalidunitreturn; missingcall customvalidity re-evaluates percall onreturnedunit. Existingboundsupdated in place retains numericnodes; nativevalidation blocks out-of-current-bounddraft ratherthan clamping.",
+    "print_snapshot": "finishPrint releases prior table/member snapshots thenfreshapply andprintmedia restart captures freshnormalrows, avoiding oldrowrestore. beforeprint-only/mediafalse and focus-afterfreshapply still need runtime cases.",
+    "profile_parent": "Memberworkspace recordeditor saved callback deletes only profile cache and loadTab; profilecancel does same. Main onMemberWorkspaceChanged handles memberDetails/roles and memberslist, not nestedrecords. Global onDataChange invalidates caches but does not rerender currently visible underlying Units/Leave. Actual parentafterclose freshness unproved."
+  },
+  "independent_targeted_test_matrix_not_executed": [
+    "Existing V5helper48scenarios rerun againstchangedhelper, plusservercalladdedwhileclean/dirty thenuserrevert; exact numeric-equivalent/noextraPUT assertions.",
+    "Actual unitremovedafterPUT: unavailable notice, nativeSaveinvalid, GET-onlyretry restoredunit clearsvalidity/notice andfreshens board/modal while retainingdraft/node/focus.",
+    "Callremoved/addedback, maxdecreased underdraft, sibling/newcallvalues: nativeinvalid noPUT; newserverrows notunsaved untiluseredit; userrevert disablesunchangedSave.",
+    "Wrongmonth200 andnewerreadgeneration rejectbeforecommit; no crossmonth units/postings/title/chip paint, savedstate retryavailable.",
+    "Printbeforeprint-only(mediafalse) and printmedia=true; readback changedrows/counts whileprinting thenafterprint; requirefreshmatchfullrows andfreshnormalpage restoration, nooldnodes, preservedfilters, noaddedlisteners.",
+    "Missingunit/newheaderdisable/memberrowremoved whileactionfocused; fallbacknotice/status reachable, ownedfocusonly; newerinput/childnativedialogmustnotbestolen.",
+    "Memberprofile overactualUnits andLeave: edit/create/cancelleaveorposting inprofile, closeprofile, assertunderlyingexactcount/row/freshGET whileunrelatedfilter/draftpreserved. Testfaileddependentread GET-onlyretry andlateclose/route/accountcallbacks."
+  ],
+  "limits": [
+    "No new browser tests run in this pass; wrong-month issue is source-confirmed reachable path under malformed/wrong-contextresponse but not runtime defect claim.",
+    "No whole159 acceptance or backend/API semantics changes."
+  ]
+}

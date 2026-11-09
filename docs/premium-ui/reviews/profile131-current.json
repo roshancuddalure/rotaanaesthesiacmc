@@ -1,0 +1,198 @@
+{
+  "recorded_at_utc": "2026-10-28T09:42:45.543206+00:00",
+  "scope": "Original131 profile editing action conventions across canonical, legacy independent sections and nested posting/leave records.",
+  "completion_claim": false,
+  "source_sha256": {
+    "frontend/src/member-workspace.ts": "6d6d361f7eb66a519423cd46c26a6af7596b0679b8443d12ae82ecbb31271c3f",
+    "frontend/src/member-profile.ts": "39f8bc4d281c9d8f3da9cad3a7ef98e4ecef1b0ba020145ca20439228fdc3df3",
+    "frontend/src/record-workspace.ts": "23a2ec5e7cc77d2ce167345496865335efda58703155f0d5cfb3ca5c23488f5c",
+    "frontend/src/premium-theme.css": "f4c646977ef2cce1ef1a31e6b99de17f5749a60b3282a888ba4412b83e348516"
+  },
+  "checks": {
+    "new_contexts": 54,
+    "regression_contexts": 90,
+    "total_browser_contexts": 144,
+    "unit_tests": 114,
+    "held_build": true
+  },
+  "execution_evidence": [
+    {
+      "report": "docs/premium-ui/qa-profile-editor-actions.json",
+      "test": "frontend/tests/premium-profile-editor-actions.browser.mjs",
+      "exit_code": 0,
+      "contexts": 18,
+      "scope": "Actual canonical combined editor and legacy five independent section editors; native edits/pending503/manualretry/discard and real action/footer geometry at reduced heights plus root text200%. Root text enlargement is CSS font-size, not browser zoom. All API responses locally fulfilled; no backend or whole131 acceptance."
+    },
+    {
+      "report": "docs/premium-ui/qa-profile-record-patterns.json",
+      "test": "frontend/tests/premium-profile-record-patterns.browser.mjs",
+      "exit_code": 0,
+      "contexts": 24,
+      "scope": "Execute only against reviewed final131applicationhold. Actual canonical profile→nested posting/leave add/edit, native review/save/failure/readback/discard. All API responses fulfilled locally; no real persistence/authorization claim."
+    },
+    {
+      "report": "docs/premium-ui/qa-profile-tab-pointer.json",
+      "test": "frontend/tests/premium-profile-tab-pointer.browser.mjs",
+      "exit_code": 0,
+      "contexts": 12,
+      "scope": "Native Playwright click/tap only; no force or synthetic dispatch or keyboard substitute. Passive capture records actual pointer/touch/click event targets and rail coordinates. Final strict regression requires all native click/tap roundtrips reach Details and no page errors. Historical before-fix evidence remains separate."
+    },
+    {
+      "test": "frontend/tests/premium-profile-section-state.browser.mjs",
+      "report": "docs/premium-ui/qa-profile-section-state.json",
+      "log": "tmp/profile131-final-section-state.log",
+      "contexts": 6,
+      "exit_code": 0,
+      "test_sha256": "36d6db3f30b0fd9669442a32e243d102d971a4c75f09c1566389d0250a69c01d",
+      "report_sha256": "d9dc50a09142340d04d26eef5196b7d57bd0e15b8ec6130cbc2497febdaf4d20",
+      "log_sha256": "8c869525a49083a58c2f0a8c9b463039feb2cf21c80c4a3acb140c365de108f8",
+      "scope": "6engine-width contexts, canonical and legacy editable profiles. Native multi-section typing/caret identity, baseline dirty markers, hidden local validation and first invalid reachability, existing loaded/error/retry descriptions, native refused/confirmed discard,12 exact local PUTs and18 local comment POSTs with failure/success/confirmed-save readback failure and GET-only recovery. All network fulfilled locally; no real persistence/backend authorization/physical device/native AT claim.",
+      "raw_report_has_source_hashes": true
+    },
+    {
+      "test": "frontend/tests/premium-profile-section-markers.browser.mjs",
+      "report": "docs/premium-ui/qa-profile-section-markers.json",
+      "log": "tmp/profile131-final-section-markers.log",
+      "contexts": 6,
+      "exit_code": 0,
+      "test_sha256": "01aeb17209c3c24d6e8d601cf9297640a326273ab5d44f84b82c20b1a133d556",
+      "report_sha256": "b36122fe63068c0dd122cfe5ab6fe5fa1a357394d6e4f484c2c494f6eda2fe92",
+      "log_sha256": "8555c59fffa299cb0f7c6c194af387b27f2114ccd30ce58a91ec0e0a61d65d6a",
+      "scope": "6engine-width contexts. Canonical Names aliases native selected-range replacement retains node/focus/caret and immediate accessible dirty marker, exact baseline clears. Legacy required comment native validation/focus and section status coexist with independent alias draft; no tabs invented. All GET locally fulfilled; no persistence/backend authorization/physical device/native AT certification.",
+      "raw_report_has_source_hashes": true
+    },
+    {
+      "test": "frontend/tests/premium-member-validation-indexed.browser.mjs",
+      "report": "docs/premium-ui/reviews/member-validation-indexed-current.json",
+      "log": "tmp/profile131-final-validation.log",
+      "contexts": 6,
+      "exit_code": 0,
+      "test_sha256": "45f3ee89f18c526502ceeb2da2f69baf59592162015970baf6fab1d60531f00b",
+      "report_sha256": "3deae6d34a5c0a94ecd6ab23f66dceac07b20d54e0b19a5be416dac0837fea5b",
+      "log_sha256": "8485312959f010ae7416c6474fc8c7ee743811f3ce9c01b1c737531fc9a071e7",
+      "scope": "Canonical member structured422 indexed designation/call-level date errors, cross-tab error reveal and preserved409 comparison/keep draft. Three engines320/1280, intercepted writes only.",
+      "raw_report_has_source_hashes": true
+    },
+    {
+      "test": "frontend/tests/premium-member-save-independent.browser.mjs",
+      "report": "docs/premium-ui/qa-member-save-independent.json",
+      "log": "tmp/profile131-member-save-final.log",
+      "contexts": 6,
+      "exit_code": 0,
+      "test_sha256": "09c05dd22c41321098d58f0fc7aa2f10b7b5a53cbee7feff9e802bee91aad2c8",
+      "report_sha256": "fbeeed5b374d59569077267f46c9a87eecf9ff57c9dab6b706f3c47c3cb6cd3c",
+      "log_sha256": "1d52a74bf55401146872dcb0e78e7b62ba8ee807e6d2eb765bd0de501e7a802a",
+      "scope": "Canonicalmemberactualanalyticsentry3engines320/1280;fullPUTpayload intercepted503/retry andindependentfixtureGETreopen. No realmemberpersistence/permission/schedulingchange certification.",
+      "raw_report_has_source_hashes": true
+    },
+    {
+      "test": "frontend/tests/premium-legacy-profile-fields.browser.mjs",
+      "report": "docs/premium-ui/qa-legacy-profile-fields.json",
+      "log": "tmp/profile131-final-legacy-fields.log",
+      "contexts": 6,
+      "exit_code": 0,
+      "test_sha256": "653db5e528c0adc5952241497b5b415e739fdd204682d785e6829609e15d989e",
+      "report_sha256": "e7416f7cd434369a49b52383249e5cc9805662f600e36e8f6dfb96949b2ecbd5",
+      "log_sha256": "49becf250c3ddea396cbccc2379e3f68b05ff54991db845fb0ce675323d082ec",
+      "scope": "Actual legacy native profile:3disclosures,5forms/fields,details503/manualretry,siblingdraft,exactpayloads/mockGETreadback,scheduledstatus,escapedcomment andcleanclose.3engines320/1280. All API requests intercepted; no backend permissions or persisted semantics certification.",
+      "raw_report_has_source_hashes": true
+    },
+    {
+      "test": "frontend/tests/premium-profile-readback.browser.mjs",
+      "report": "docs/premium-ui/qa-profile-readback.json",
+      "log": "tmp/profile131-final-readback.log",
+      "contexts": 15,
+      "exit_code": 0,
+      "test_sha256": "e1d8a7c89075496edc2d75faabbcdef0500469402e0357375edefaeea0a2ffac",
+      "report_sha256": "ca4afb4868c17c967de388186f34f8ceb9cdf69d027b8b9cc21412536bc19551",
+      "log_sha256": "d7cb9cbfb91c09aa282483843200dfff42acd5998be7feff2dcaf415cf82e767",
+      "scope": "Actual legacy profile component with all five mutation/readback responses intercepted. GET-only manual recovery; no real backend persistence or physical-device claim.",
+      "raw_report_has_source_hashes": false
+    },
+    {
+      "test": "frontend/tests/premium-profile-draft-review.browser.mjs",
+      "report": "docs/premium-ui/qa-profile-draft-independent.json",
+      "log": "tmp/profile131-final-draft-review.log",
+      "contexts": 3,
+      "exit_code": 0,
+      "test_sha256": "3dbc02db7dd57896f06bab0108b874617c28875e9c0127b1013fb0364b108bee",
+      "report_sha256": "8a117adfa184d6311b234cd796dfb3fadeaf44f1093dfdbb250150ea69a5e89d",
+      "log_sha256": "97a0d2e74c8c0ca2c1a5320ef15d1c963feb552519e0cb4650247cb49bad2847",
+      "scope": "Isolated actual legacy member-profile native dialog. Chromium viewport emulation; all mutation responses intercepted. beforeunload listener checked through cancellable event, not a claim about browser exit confirmation or physical hardware.",
+      "raw_report_has_source_hashes": false
+    },
+    {
+      "test": "frontend/tests/premium-profile-cancel-pending-regression.browser.mjs",
+      "report": "docs/premium-ui/qa-profile-cancel-pending-regression.json",
+      "log": "tmp/profile131-final-cancel-pending.log",
+      "contexts": 18,
+      "exit_code": 0,
+      "test_sha256": "cb17e8151d53b840c51cf7ad898f646c7d05a028ad13292e5054b5a070ecf8fe",
+      "report_sha256": "3e400d9fb243cea4b409cc09a8f830e8fd0c0807c9ce53c30a0b347c0f425981",
+      "log_sha256": "a432c1b3a6a170aabf57ace96f58600efc81a4dd0ab2c37ce4cd94fb7066a0e8",
+      "scope": "Actual native canonical profile edit/heldPUT, attempted keyboard interaction with disabled Cancel (no claim that disabled control receives focus), existing Close busy guard, separate503/409/success responses, retained nodes/draft and targeted finally unlock, conflict comparison/Keep my draft, idle discard decline/accept and exact original PUT. All API responses locally fulfilled; no actual backend persistence or request-abort policy claim. Immutable before-fix reproduction remains separate.",
+      "raw_report_has_source_hashes": true
+    },
+    {
+      "test": "frontend/tests/premium-record-close.browser.mjs",
+      "report": "docs/premium-ui/qa-record-close.json",
+      "log": "tmp/profile131-final-record-close.log",
+      "contexts": 12,
+      "exit_code": 0,
+      "test_sha256": "5b9db59aa4daa2901e97d3914ed24e45c1255b2510fa9705c5b5e5ac7165cd8c",
+      "report_sha256": "a6a4a8a8033c77cfc48dbf610a0b4b12e9028617eea6d6c4c107b90a2433c5b1",
+      "log_sha256": "0f086eec0e38111f544a5fa23ec4f9489c748535d7ab58640f9967b96c03b46c",
+      "scope": "Actual native posting/leave editor header/footer/Escape closes.3engines320/1280: pristine,search-only,dirtydecline/accept,pendingreviewblocked,503recovery,focus andsyntheticunload cleanup. All GET/previewPOST intercepted; no save/backend writes, no physical exit claim.",
+      "raw_report_has_source_hashes": true
+    },
+    {
+      "test": "frontend/tests/premium-member-linked-actions-independent.browser.mjs",
+      "report": "docs/premium-ui/qa-member-linked-actions-independent.json",
+      "log": "tmp/profile131-final-linked-actions.log",
+      "contexts": 6,
+      "exit_code": 0,
+      "test_sha256": "46b52b54f94c2866a8d6eab0e54e1284a7343fd6434cf52f048a31d3a42b4368",
+      "report_sha256": "583da97a3f1fd0541d3f2e617a60495ceb16b16307a3c11c39649b7bdb3bae19",
+      "log_sha256": "f54313e2979412ee5ad0cae43a4d51aa3a738884c7ed7e48734636a82fe016ff",
+      "scope": "Actual analytics→member→nested record editor;3engines320/1280. All mutation requests intercepted (one503cancel/case),allotherrequestsGETfixtureonly. Nested editor keyboard-entryfocus verified; WebKitpointerclickdoesnotnecessarilyfocusopener. No accepted cancellation/save/persistence certification.",
+      "raw_report_has_source_hashes": true
+    },
+    {
+      "test": "frontend/tests/premium-profile-cancel-identity.browser.mjs",
+      "report": "docs/premium-ui/qa-profile-cancel-identity.json",
+      "log": "tmp/profile131-final-cancel-identity.log",
+      "contexts": 6,
+      "exit_code": 0,
+      "test_sha256": "b42e5c406e9c0bebd95853bcee552a296c963fe5901aa6953ce0da9055f0f6d5",
+      "report_sha256": "aee21550ca02adb6d413c9179a2fb99e683e050ff3c9bf26fec3be91b24ba08f",
+      "log_sha256": "635783640a2fd5327a019cd44540e6aa825b49a289bea89519f7748510b8e7f6",
+      "scope": "Actual member workspace, native confirmation text and keyboard activation, 3 engines x 320/1280, cross-month/overlapping targets, rejection, mocked POST503, GET-only recovery and exact accepted ID/body. All API calls mocked; no backend enforcement, production changes or physical native prompt visual certification.",
+      "raw_report_has_source_hashes": true
+    }
+  ],
+  "independent_review": "docs/premium-ui/reviews/profile-editor-consistency-final-review.json",
+  "root_review": {
+    "reviewer": "/root",
+    "method": "Read full clean patch and exact criteria, reject corrupted draft before applying, inspect raw UTF8/no-nonASCII-drift proof. Verify combined save scope vs independent sections vs reviewed record target. Actual pointer and constrained-layout defects retained before repair, then fixed with no-op metadata preservation/decorative hit targets and one profile scroll container. Recompute final source/test/report hashes, inspect144 passing contexts,114 units and held build."
+  },
+  "evidence": [
+    "docs/premium-ui/reviews/profile131-regression-execution.json",
+    "docs/premium-ui/reviews/profile-editor-consistency-final-review.json",
+    "docs/premium-ui/reviews/profile131-prior31-source-applicability.json",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json",
+    "tmp/profile131-final-unit.log",
+    "tmp/profile131-final-source-delta-proof.json",
+    "tmp/profile131-final-contract-proof.json",
+    "docs/premium-ui/reviews/profile131-clean-proposal-readiness.json",
+    "frontend/tmp/premium131/latest-provenance.json"
+  ],
+  "limitations": [
+    "All mutation responses locally fulfilled; exact payloads and controlled independent GET readbacks are frontend evidence, not real database persistence or authorization certification.",
+    "New54 contexts comprise18 canonical/legacy action states,24 nested records and12 native click/tap workflows. Existing11 regression suites contain90 contexts. Total144 is not multiplied by internal assertions.",
+    "Root CSS text enlargement200% is not browser zoom. Physical-device and native assistive-technology checks remain unperformed.",
+    "Nested Save remains enabled while request pending as before; existing busy guard ignores native repeats. No request-abort policy or stronger field lock is claimed.",
+    "Old preparation literal proof is historical; latest provenance and full-source reconstruction bind the Cancel rebase and refined recovery copy. Only metadata function and two scoped CSS additions differ from the reviewed proposal.",
+    "Original131 covers profile editors and their actual posting/leave nested editors. Linked reference/merge/creator launches retain separate boundaries; no recursive acceptance of every unrelated child editor.",
+    "Full260 goal remains incomplete. No backend edit, API change, scheduling/persistence/export semantic change, push or deployment."
+  ]
+}

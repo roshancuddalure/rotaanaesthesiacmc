@@ -1,0 +1,91 @@
+{
+  "recorded_at_utc": "2026-10-30T11:33:13.833262+00:00",
+  "reviewer": "/root/import157_final_scope_audit",
+  "mode": "Independent exact-condition/source/result audit of prior36 contexts plus six newly authored/executed current Past Duties contexts. No product/backend/ledger edits.",
+  "item_id": 157,
+  "requirement": "Keep imported record corrections attached to their original preview row, with visible completion and unresolved-state indicators.",
+  "decision": "Recommend original157 acceptance after root final sign-off/current source applicability checks. Past Duties is included,not excluded to narrow the original requirement. No other item accepted by this packet.",
+  "conditions": [
+    {
+      "condition": "Corrections remain attached to their originating preview row through rerender, matching and retry.",
+      "satisfied_on_inspected_applied_source": true,
+      "rationale": "Operational units/leave corrections use returned row keys (including identical source row numbers across sheets), retain exact corrections through503/retry,pagination/rerender and reject stale preview ownership after newer correction. Member CSV/workbook current similar-name rows2/3 select different stable IDs B/A; heldfailure/retry does not leak corrections to another origin and replacement resets both. Newly executed Past Duties test covers two same-name sources on row2 with different column keys,distinctsame-name memberIDs,held503blockingotherrowchanges,manualretry/filter/rerender,exactB/Aresolutionpayloads and sheet/file replacement clears both. Main legacy unit/leave importer handlers remain in source but current Units/Leave rendering routes to normalized import; no separate currently rendered legacy correction controls found. Import history is read-only,not a new correction surface."
+    },
+    {
+      "condition": "Completion and unresolved indicators reflect that row's latest authoritative review state.",
+      "satisfied_on_inspected_applied_source": true,
+      "rationale": "Operational authoritative ready/review counts24/2→25/1→26/0 are asserted only after good returned previews; stale heldresponses and newer edits cannot mark completion. Current member identity tests retain returnedA while localB is pending/refused,blockApplyuntilsuccessfulreview,and correctly assign latestB/A to each row. Past Duties held503 displays pending/changed authority and blocksApplywithoutrequest; retryconfirms firstcorrectedrow while otherremainsunresolved,second returnedpreview shows2correct/0review. Local resolution selections are not treated as authoritative matchedidentity. Confirmation/hash/backend semantics unchanged."
+    }
+  ],
+  "scope_inventory": [
+    {
+      "surface": "Normalized operational unit/leave import",
+      "proof": "Parent12new current cases,source applicability across one direct-reference-triggerfocusline only; row/state/request logic unchanged."
+    },
+    {
+      "surface": "Member workbook import and member CSV import",
+      "proof": "Parent12currentidentity +12newcrossrow cases with heldfailure/retry/file replacement."
+    },
+    {
+      "surface": "Past Duties import",
+      "proof": "New6actualcontrollercases,current full declaredsource hashes held."
+    },
+    {
+      "surface": "Read-only member/workflow histories and historical analysis import",
+      "proof": "No editable preview-row correction workflow in these surfaces; not claimed as runtime correction paths."
+    },
+    {
+      "surface": "Legacy main leave/unit importer handlers",
+      "proof": "Source handlers remain,while current route renderings expose data-open-normalized-import and no old leave-import-form/unit-import-form construction. Source search is scoped callsite evidence,not a universal dead-code certification."
+    }
+  ],
+  "own_executions": [
+    {
+      "report": "docs/premium-ui/qa-import157-past-row-authority-independent.json",
+      "test": "frontend/tests/premium-import157-past-row-authority-independent.browser.mjs",
+      "log": "tmp/import157-past-row-authority-independent.log",
+      "contexts": 6,
+      "exit_code": 0,
+      "terminal_session_observed": 47572,
+      "authorship": "New independent test by this reviewer"
+    }
+  ],
+  "inspected_parent_contexts": 36,
+  "total_bounded_contexts": 42,
+  "source_sha256": {
+    "frontend/src/past-duties.ts": "659bc4a927a8d4efbaf0ab0050941262555319e3fbc1ca85064332435ea32bd1",
+    "frontend/src/operational-import.ts": "00a6339fb0bd56dcae64ec05cb79ad041364a502ee207dec71c95106b2c20ce8",
+    "frontend/src/member-workspace.ts": "0ef8c1ef2234c7a50d8ca10b8aaa3998a654d452f563bd4c75531faef09d6c63",
+    "frontend/src/member-import.ts": "d985f4aefa5bfdd71b6f0a53995a8c63b3c827639158ec584b97e72f14ced061",
+    "frontend/src/ui.ts": "680d7830bca8826b46b6f1dc2c0d064d2a3a2e16fb41188d2c323de6bccf85b2",
+    "frontend/src/import-review-presentation.ts": "4371d8a267480de774dbe32232cdeead69c041d8803bdcc9d9b24d5c7d13f8a9",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/main.ts": "d71d357b2cb2128249b0f76f7ddbbc9c1dff73fee208c9497b73953bc0820212"
+  },
+  "evidence_sha256": {
+    "docs/premium-ui/reviews/import157-cancellation158-current-independent-audit.json": "3d52f1c58f953417c1c70b01b018111e122bdb687305f2b177834eb0e872d042",
+    "docs/premium-ui/reviews/import157-member-crossrow-independent-supplement.json": "d1294232f08129cfd29ccb2108702904675b0d6ca1cd4eb8ced490de75821793",
+    "docs/premium-ui/qa-import157-past-row-authority-independent.json": "e19ab8bec9b4ab921b417e72999d6e40f54b5333598716e219e91f64e978a984",
+    "frontend/tests/premium-import157-past-row-authority-independent.browser.mjs": "57a5fbc24cd3240582844dfe523c2fe5f83fc4e74aa4fb0bc205cb7e4b541bfd",
+    "tmp/import157-past-row-authority-independent.log": "1203447c3564134ae3d23e2dc3618f3e9625e8744e291a289a97ce48dd4fe378",
+    "tmp/import157-past-row-authority-fieldset-harness.log": "77ed913a7980200b3584c4d41099f23830771a1b849f97e8bfeee68c9b3fbc84",
+    "docs/premium-ui/acceptance-criteria/items-087-173.json": "a7bf1322bd8e08a1fddd4195095d9cc52a8867a1b8a2bda9b523917fae458576",
+    "frontend/src/past-duties.ts": "659bc4a927a8d4efbaf0ab0050941262555319e3fbc1ca85064332435ea32bd1",
+    "frontend/src/operational-import.ts": "00a6339fb0bd56dcae64ec05cb79ad041364a502ee207dec71c95106b2c20ce8",
+    "frontend/src/member-workspace.ts": "0ef8c1ef2234c7a50d8ca10b8aaa3998a654d452f563bd4c75531faef09d6c63",
+    "frontend/src/member-import.ts": "d985f4aefa5bfdd71b6f0a53995a8c63b3c827639158ec584b97e72f14ced061",
+    "frontend/src/ui.ts": "680d7830bca8826b46b6f1dc2c0d064d2a3a2e16fb41188d2c323de6bccf85b2",
+    "frontend/src/import-review-presentation.ts": "4371d8a267480de774dbe32232cdeead69c041d8803bdcc9d9b24d5c7d13f8a9",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/main.ts": "d71d357b2cb2128249b0f76f7ddbbc9c1dff73fee208c9497b73953bc0820212"
+  },
+  "diagnostics": [
+    "First PastDuties harness incorrectly polled button.disabled although disabled state is inherited fromfieldset. Preserved terminal1 log; changed to native :disabled state without relaxing gate. Final six-context rerun terminal0 observed. No application defect attributed."
+  ],
+  "limitations": [
+    "Recommendation only; coordinator must issue acceptance/ledger result after current source/build/prior-requirement checks.",
+    "Only six own browser contexts; prior36 were independently authored/executed by reference157158_evidence_audit and inspected here,not reattributed as own execution.",
+    "Uploads/inspect/previews locallyfulfilled; noApply/backendpersistence/authorization/parseraccuracy/production certification.",
+    "Physical devices/nativeAT pending; no whole158159160/260 acceptance."
+  ]
+}

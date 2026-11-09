@@ -1,0 +1,4882 @@
+{
+  "recorded_at_utc": "2026-10-28T22:56:12.682Z",
+  "base": "http://127.0.0.1:5205",
+  "candidate": {
+    "directory": "../tmp/leave-status-v7",
+    "source_sha256": {
+      "main.ts": "cefb30a235398c3a00d77279b81b8b37a0a1c6206c73f30e4e914af94fab0f03",
+      "premium-theme.css": "aa0d3c25681b83298cd53f45f009ed2f1f8e64b0f334903936d269c886d399d7",
+      "leave-calendar-focus.ts": "93bc00fb0c753ef342412e2f58730126d17918c09edfd6f3e58f72b43d1cc2b3"
+    },
+    "final_source_sha256": {
+      "main.ts": "cefb30a235398c3a00d77279b81b8b37a0a1c6206c73f30e4e914af94fab0f03",
+      "premium-theme.css": "aa0d3c25681b83298cd53f45f009ed2f1f8e64b0f334903936d269c886d399d7",
+      "leave-calendar-focus.ts": "93bc00fb0c753ef342412e2f58730126d17918c09edfd6f3e58f72b43d1cc2b3"
+    },
+    "limit": "Transform-only candidate preview; application source hashes below identify held live files, not candidate bytes."
+  },
+  "test_sha256": "9c3b64dd5bc677fba60fce56d69d2d292815bd406454405365d00e530e047fd1",
+  "source_sha256": {
+    "frontend/src/main.ts": "20fc4e1c086f4ae6c25a381a176b590173f7ee680d6eec205489dc97eb069ea6",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "9344ea87024b282475a3b9f110ce9c83bdc5dca1dc984961eefed044c2ad6065",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/ui.ts": "680d7830bca8826b46b6f1dc2c0d064d2a3a2e16fb41188d2c323de6bccf85b2",
+    "frontend/src/record-workspace.ts": "7c196c12b114c48bf2db4ee57aad7e591d8e3acc7a77cccd15abbad7c349fb8f"
+  },
+  "final_source_sha256": {
+    "frontend/src/main.ts": "20fc4e1c086f4ae6c25a381a176b590173f7ee680d6eec205489dc97eb069ea6",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "9344ea87024b282475a3b9f110ce9c83bdc5dca1dc984961eefed044c2ad6065",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/ui.ts": "680d7830bca8826b46b6f1dc2c0d064d2a3a2e16fb41188d2c323de6bccf85b2",
+    "frontend/src/record-workspace.ts": "7c196c12b114c48bf2db4ee57aad7e591d8e3acc7a77cccd15abbad7c349fb8f"
+  },
+  "scope": "Actual shell with GET-only contract-faithful active calendar/pressure fixture and complete request-list defensive unknown statuses; three engines, 320/1280 light/dark. No backend mutation, scheduling decision, native AT or physical-device claim. Monthly review remains separately tested.",
+  "fixture": {
+    "calendar": {
+      "month": "2026-05",
+      "summary": {
+        "month": "2026-05",
+        "starts_on": "2026-05-01",
+        "ends_on": "2026-05-31",
+        "total_requests": 5,
+        "blocking_requests": 2,
+        "people_on_leave": 4,
+        "total_leave_days": 5,
+        "busiest_day": {
+          "date": "2026-05-01",
+          "count": 4
+        },
+        "status_counts": {
+          "approved": 2,
+          "requested": 1,
+          "imported_pending_review": 2
+        },
+        "type_counts": {
+          "ANNUAL_LEAVE": 5
+        },
+        "slot_counts": {
+          "AM": 1,
+          "PM": 1,
+          "FULL_DAY": 3
+        },
+        "unit_counts": {
+          "Main Unit": 5
+        },
+        "call_level_counts": {
+          "1ST_CALL": 5
+        }
+      },
+      "days": {
+        "2026-05-01": [
+          {
+            "leave_id": "a-am",
+            "person_id": "a",
+            "person_name": "Duplicate Session Member",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "AM",
+            "status": "approved",
+            "unit": "Main Unit",
+            "posting_type": "1ST_CALL",
+            "call_level": "1ST_CALL"
+          },
+          {
+            "leave_id": "a-pm",
+            "person_id": "a",
+            "person_name": "Duplicate Session Member",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "PM",
+            "status": "requested",
+            "unit": "Main Unit",
+            "posting_type": "1ST_CALL",
+            "call_level": "1ST_CALL"
+          },
+          {
+            "leave_id": "b-import",
+            "person_id": "b",
+            "person_name": "Example <img src=x onerror=\"window.leaveStatusInjected=true\"> VeryLongMemberNameVeryLongMemberNameVeryLongMemberNameVeryLongMemberNameVeryLongMemberName",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "imported_pending_review",
+            "unit": "Main Unit",
+            "posting_type": "1ST_CALL",
+            "call_level": "1ST_CALL"
+          },
+          {
+            "leave_id": "c-full",
+            "person_id": "c",
+            "person_name": "Approved Whole Day",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "approved",
+            "unit": "Main Unit",
+            "posting_type": "1ST_CALL",
+            "call_level": "1ST_CALL"
+          }
+        ],
+        "2026-05-31": [
+          {
+            "leave_id": "d-cross",
+            "person_id": "d",
+            "person_name": "Cross Month Member",
+            "leave_type": "ANNUAL_LEAVE",
+            "leave_slot": "FULL_DAY",
+            "status": "imported_pending_review",
+            "unit": "Main Unit",
+            "posting_type": "1ST_CALL",
+            "call_level": "1ST_CALL"
+          }
+        ]
+      }
+    },
+    "requestIds": [
+      {
+        "id": "a-am",
+        "status": "approved",
+        "slot": "AM",
+        "starts_on": "2026-05-01",
+        "ends_on": "2026-05-01"
+      },
+      {
+        "id": "a-pm",
+        "status": "requested",
+        "slot": "PM",
+        "starts_on": "2026-05-01",
+        "ends_on": "2026-05-01"
+      },
+      {
+        "id": "b-import",
+        "status": "imported_pending_review",
+        "slot": "FULL_DAY",
+        "starts_on": "2026-05-01",
+        "ends_on": "2026-05-01"
+      },
+      {
+        "id": "c-full",
+        "status": "approved",
+        "slot": "FULL_DAY",
+        "starts_on": "2026-05-01",
+        "ends_on": "2026-05-01"
+      },
+      {
+        "id": "d-cross",
+        "status": "imported_pending_review",
+        "slot": "FULL_DAY",
+        "starts_on": "2026-05-31",
+        "ends_on": "2026-06-02"
+      },
+      {
+        "id": "inactive-0",
+        "status": "cancelled",
+        "slot": "FULL_DAY",
+        "starts_on": "2026-05-01",
+        "ends_on": "2026-05-01"
+      },
+      {
+        "id": "inactive-1",
+        "status": "rejected",
+        "slot": "FULL_DAY",
+        "starts_on": "2026-05-01",
+        "ends_on": "2026-05-01"
+      },
+      {
+        "id": "inactive-2",
+        "status": "constructor",
+        "slot": "FULL_DAY",
+        "starts_on": "2026-05-01",
+        "ends_on": "2026-05-01"
+      },
+      {
+        "id": "inactive-3",
+        "status": "__proto__",
+        "slot": "FULL_DAY",
+        "starts_on": "2026-05-01",
+        "ends_on": "2026-05-01"
+      },
+      {
+        "id": "inactive-4",
+        "status": "toString",
+        "slot": "FULL_DAY",
+        "starts_on": "2026-05-01",
+        "ends_on": "2026-05-01"
+      },
+      {
+        "id": "inactive-5",
+        "status": "<img src=x onerror=\"window.leaveStatusInjected=true\">",
+        "slot": "FULL_DAY",
+        "starts_on": "2026-05-01",
+        "ends_on": "2026-05-01"
+      }
+    ],
+    "pressure": {
+      "month": "2026-05",
+      "starts_on": "2026-05-01",
+      "ends_on": "2026-05-31",
+      "unit_totals": {
+        "Main Unit": 5
+      },
+      "call_level_totals": {
+        "1ST_CALL": 5
+      },
+      "blockers": [],
+      "days": [
+        {
+          "date": "2026-05-01",
+          "total_people": 4,
+          "blocking_people": 2,
+          "unit_counts": {
+            "Main Unit": 4
+          },
+          "call_level_counts": {
+            "1ST_CALL": 4
+          },
+          "entries": [
+            {
+              "leave_id": "a-am",
+              "person_id": "a",
+              "person_name": "Duplicate Session Member",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "AM",
+              "status": "approved",
+              "unit": "Main Unit",
+              "posting_type": "1ST_CALL",
+              "call_level": "1ST_CALL"
+            },
+            {
+              "leave_id": "a-pm",
+              "person_id": "a",
+              "person_name": "Duplicate Session Member",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "PM",
+              "status": "requested",
+              "unit": "Main Unit",
+              "posting_type": "1ST_CALL",
+              "call_level": "1ST_CALL"
+            },
+            {
+              "leave_id": "b-import",
+              "person_id": "b",
+              "person_name": "Example <img src=x onerror=\"window.leaveStatusInjected=true\"> VeryLongMemberNameVeryLongMemberNameVeryLongMemberNameVeryLongMemberNameVeryLongMemberName",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "imported_pending_review",
+              "unit": "Main Unit",
+              "posting_type": "1ST_CALL",
+              "call_level": "1ST_CALL"
+            },
+            {
+              "leave_id": "c-full",
+              "person_id": "c",
+              "person_name": "Approved Whole Day",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "approved",
+              "unit": "Main Unit",
+              "posting_type": "1ST_CALL",
+              "call_level": "1ST_CALL"
+            }
+          ]
+        },
+        {
+          "date": "2026-05-31",
+          "total_people": 1,
+          "blocking_people": 0,
+          "unit_counts": {
+            "Main Unit": 1
+          },
+          "call_level_counts": {
+            "1ST_CALL": 1
+          },
+          "entries": [
+            {
+              "leave_id": "d-cross",
+              "person_id": "d",
+              "person_name": "Cross Month Member",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "imported_pending_review",
+              "unit": "Main Unit",
+              "posting_type": "1ST_CALL",
+              "call_level": "1ST_CALL"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "height": 900,
+      "rootPercent": 100,
+      "scheme": "light",
+      "statusGeometry": [
+        {
+          "text": "2 Approved",
+          "width": 99.4375,
+          "height": 15.59375,
+          "left": 5,
+          "right": 104.4375,
+          "bottom": 69.1875,
+          "cardWidth": 109.4375,
+          "cardHeight": 124.96875,
+          "fontSize": "12px",
+          "wordLines": [
+            {
+              "word": "Approved",
+              "lines": 1
+            }
+          ],
+          "visible": true,
+          "clip": false
+        },
+        {
+          "text": "1 Requested",
+          "width": 99.4375,
+          "height": 15.59375,
+          "left": 5,
+          "right": 104.4375,
+          "bottom": 86.78125,
+          "cardWidth": 109.4375,
+          "cardHeight": 124.96875,
+          "fontSize": "12px",
+          "wordLines": [
+            {
+              "word": "Requested",
+              "lines": 1
+            }
+          ],
+          "visible": true,
+          "clip": false
+        },
+        {
+          "text": "1 Imported, Pending Review",
+          "width": 99.4375,
+          "height": 31.1875,
+          "left": 5,
+          "right": 104.4375,
+          "bottom": 119.96875,
+          "cardWidth": 109.4375,
+          "cardHeight": 124.96875,
+          "fontSize": "12px",
+          "wordLines": [
+            {
+              "word": "Imported",
+              "lines": 1
+            },
+            {
+              "word": "Pending",
+              "lines": 1
+            },
+            {
+              "word": "Review",
+              "lines": 1
+            }
+          ],
+          "visible": true,
+          "clip": false
+        }
+      ],
+      "scrollBefore": {
+        "left": 0,
+        "width": 260,
+        "scrollWidth": 792
+      },
+      "keyboardDayGeometry": [
+        {
+          "day": "2026-05-01",
+          "left": 102.703125,
+          "right": 212.140625,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 381
+        },
+        {
+          "day": "2026-05-02",
+          "left": 168.140625,
+          "right": 277.5625,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 428
+        },
+        {
+          "day": "2026-05-03",
+          "left": 176.5625,
+          "right": 286,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 532
+        },
+        {
+          "day": "2026-05-04",
+          "left": 34,
+          "right": 143.421875,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-05",
+          "left": 143.421875,
+          "right": 252.84375,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 3
+        },
+        {
+          "day": "2026-05-06",
+          "left": 173.84375,
+          "right": 283.28125,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 85
+        },
+        {
+          "day": "2026-05-07",
+          "left": 175.28125,
+          "right": 284.703125,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 196
+        },
+        {
+          "day": "2026-05-08",
+          "left": 174.703125,
+          "right": 284.140625,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 309
+        },
+        {
+          "day": "2026-05-09",
+          "left": 175.140625,
+          "right": 284.5625,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 421
+        },
+        {
+          "day": "2026-05-10",
+          "left": 176.5625,
+          "right": 286,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 532
+        },
+        {
+          "day": "2026-05-11",
+          "left": 34,
+          "right": 143.421875,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-12",
+          "left": 146.421875,
+          "right": 255.84375,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-13",
+          "left": 174.84375,
+          "right": 284.28125,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 84
+        },
+        {
+          "day": "2026-05-14",
+          "left": 175.28125,
+          "right": 284.703125,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 196
+        },
+        {
+          "day": "2026-05-15",
+          "left": 174.703125,
+          "right": 284.140625,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 309
+        },
+        {
+          "day": "2026-05-16",
+          "left": 175.140625,
+          "right": 284.5625,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 421
+        },
+        {
+          "day": "2026-05-17",
+          "left": 176.5625,
+          "right": 286,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 532
+        },
+        {
+          "day": "2026-05-18",
+          "left": 34,
+          "right": 143.421875,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-19",
+          "left": 146.421875,
+          "right": 255.84375,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-20",
+          "left": 174.84375,
+          "right": 284.28125,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 84
+        },
+        {
+          "day": "2026-05-21",
+          "left": 175.28125,
+          "right": 284.703125,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 196
+        },
+        {
+          "day": "2026-05-22",
+          "left": 174.703125,
+          "right": 284.140625,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 309
+        },
+        {
+          "day": "2026-05-23",
+          "left": 175.140625,
+          "right": 284.5625,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 421
+        },
+        {
+          "day": "2026-05-24",
+          "left": 176.5625,
+          "right": 286,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 532
+        },
+        {
+          "day": "2026-05-25",
+          "left": 34,
+          "right": 143.421875,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-26",
+          "left": 146.421875,
+          "right": 255.84375,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-27",
+          "left": 174.84375,
+          "right": 284.28125,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 84
+        },
+        {
+          "day": "2026-05-28",
+          "left": 175.28125,
+          "right": 284.703125,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 196
+        },
+        {
+          "day": "2026-05-29",
+          "left": 174.703125,
+          "right": 284.140625,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 309
+        },
+        {
+          "day": "2026-05-30",
+          "left": 175.140625,
+          "right": 284.5625,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 421
+        },
+        {
+          "day": "2026-05-31",
+          "left": 176.5625,
+          "right": 286,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 532
+        }
+      ],
+      "returnedActiveEntryIds": {
+        "2026-05-01": [
+          "a-am",
+          "a-pm",
+          "b-import",
+          "c-full"
+        ],
+        "2026-05-31": [
+          "d-cross"
+        ]
+      },
+      "duplicateSessionsPreserved": true,
+      "knownAndUnknownRequestStatusesTextual": true,
+      "warningVsApprovedSessionGuidance": true,
+      "returnedBlockingAndTotalUnchanged": true,
+      "monthListModalNoRefetch": true,
+      "fullCrossMonthRequestRange": true,
+      "escapedText": true,
+      "exactFocusReturn": true,
+      "axeViolations": 0,
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "height": 900,
+      "rootPercent": 100,
+      "scheme": "dark",
+      "statusGeometry": [
+        {
+          "text": "2 Approved",
+          "width": 99.4375,
+          "height": 15.59375,
+          "left": 5,
+          "right": 104.4375,
+          "bottom": 69.1875,
+          "cardWidth": 109.4375,
+          "cardHeight": 124.96875,
+          "fontSize": "12px",
+          "wordLines": [
+            {
+              "word": "Approved",
+              "lines": 1
+            }
+          ],
+          "visible": true,
+          "clip": false
+        },
+        {
+          "text": "1 Requested",
+          "width": 99.4375,
+          "height": 15.59375,
+          "left": 5,
+          "right": 104.4375,
+          "bottom": 86.78125,
+          "cardWidth": 109.4375,
+          "cardHeight": 124.96875,
+          "fontSize": "12px",
+          "wordLines": [
+            {
+              "word": "Requested",
+              "lines": 1
+            }
+          ],
+          "visible": true,
+          "clip": false
+        },
+        {
+          "text": "1 Imported, Pending Review",
+          "width": 99.4375,
+          "height": 31.1875,
+          "left": 5,
+          "right": 104.4375,
+          "bottom": 119.96875,
+          "cardWidth": 109.4375,
+          "cardHeight": 124.96875,
+          "fontSize": "12px",
+          "wordLines": [
+            {
+              "word": "Imported",
+              "lines": 1
+            },
+            {
+              "word": "Pending",
+              "lines": 1
+            },
+            {
+              "word": "Review",
+              "lines": 1
+            }
+          ],
+          "visible": true,
+          "clip": false
+        }
+      ],
+      "scrollBefore": {
+        "left": 0,
+        "width": 260,
+        "scrollWidth": 792
+      },
+      "keyboardDayGeometry": [
+        {
+          "day": "2026-05-01",
+          "left": 101.703125,
+          "right": 211.140625,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 382
+        },
+        {
+          "day": "2026-05-02",
+          "left": 169.140625,
+          "right": 278.5625,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 427
+        },
+        {
+          "day": "2026-05-03",
+          "left": 176.5625,
+          "right": 286,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 532
+        },
+        {
+          "day": "2026-05-04",
+          "left": 34,
+          "right": 143.421875,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-05",
+          "left": 140.421875,
+          "right": 249.84375,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 6
+        },
+        {
+          "day": "2026-05-06",
+          "left": 169.84375,
+          "right": 279.28125,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 89
+        },
+        {
+          "day": "2026-05-07",
+          "left": 173.28125,
+          "right": 282.703125,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 198
+        },
+        {
+          "day": "2026-05-08",
+          "left": 174.703125,
+          "right": 284.140625,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 309
+        },
+        {
+          "day": "2026-05-09",
+          "left": 175.140625,
+          "right": 284.5625,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 421
+        },
+        {
+          "day": "2026-05-10",
+          "left": 176.5625,
+          "right": 286,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 532
+        },
+        {
+          "day": "2026-05-11",
+          "left": 34,
+          "right": 143.421875,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-12",
+          "left": 146.421875,
+          "right": 255.84375,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-13",
+          "left": 174.84375,
+          "right": 284.28125,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 84
+        },
+        {
+          "day": "2026-05-14",
+          "left": 175.28125,
+          "right": 284.703125,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 196
+        },
+        {
+          "day": "2026-05-15",
+          "left": 174.703125,
+          "right": 284.140625,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 309
+        },
+        {
+          "day": "2026-05-16",
+          "left": 175.140625,
+          "right": 284.5625,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 421
+        },
+        {
+          "day": "2026-05-17",
+          "left": 176.5625,
+          "right": 286,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 532
+        },
+        {
+          "day": "2026-05-18",
+          "left": 34,
+          "right": 143.421875,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-19",
+          "left": 146.421875,
+          "right": 255.84375,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-20",
+          "left": 174.84375,
+          "right": 284.28125,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 84
+        },
+        {
+          "day": "2026-05-21",
+          "left": 175.28125,
+          "right": 284.703125,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 196
+        },
+        {
+          "day": "2026-05-22",
+          "left": 174.703125,
+          "right": 284.140625,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 309
+        },
+        {
+          "day": "2026-05-23",
+          "left": 175.140625,
+          "right": 284.5625,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 421
+        },
+        {
+          "day": "2026-05-24",
+          "left": 176.5625,
+          "right": 286,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 532
+        },
+        {
+          "day": "2026-05-25",
+          "left": 34,
+          "right": 143.421875,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-26",
+          "left": 146.421875,
+          "right": 255.84375,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-27",
+          "left": 174.84375,
+          "right": 284.28125,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 84
+        },
+        {
+          "day": "2026-05-28",
+          "left": 175.28125,
+          "right": 284.703125,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 196
+        },
+        {
+          "day": "2026-05-29",
+          "left": 174.703125,
+          "right": 284.140625,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 309
+        },
+        {
+          "day": "2026-05-30",
+          "left": 175.140625,
+          "right": 284.5625,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 421
+        },
+        {
+          "day": "2026-05-31",
+          "left": 176.5625,
+          "right": 286,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 532
+        }
+      ],
+      "returnedActiveEntryIds": {
+        "2026-05-01": [
+          "a-am",
+          "a-pm",
+          "b-import",
+          "c-full"
+        ],
+        "2026-05-31": [
+          "d-cross"
+        ]
+      },
+      "duplicateSessionsPreserved": true,
+      "knownAndUnknownRequestStatusesTextual": true,
+      "warningVsApprovedSessionGuidance": true,
+      "returnedBlockingAndTotalUnchanged": true,
+      "monthListModalNoRefetch": true,
+      "fullCrossMonthRequestRange": true,
+      "escapedText": true,
+      "exactFocusReturn": true,
+      "axeViolations": 0,
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "height": 900,
+      "rootPercent": 100,
+      "scheme": "light",
+      "statusGeometry": [
+        {
+          "text": "2 Approved",
+          "width": 104.28125,
+          "height": 15.59375,
+          "left": 9,
+          "right": 113.28125,
+          "bottom": 45.1875,
+          "cardWidth": 122.28125,
+          "cardHeight": 169.03125,
+          "fontSize": "12px",
+          "wordLines": [
+            {
+              "word": "Approved",
+              "lines": 1
+            }
+          ],
+          "visible": true,
+          "clip": false
+        },
+        {
+          "text": "1 Requested",
+          "width": 104.28125,
+          "height": 15.59375,
+          "left": 9,
+          "right": 113.28125,
+          "bottom": 62.78125,
+          "cardWidth": 122.28125,
+          "cardHeight": 169.03125,
+          "fontSize": "12px",
+          "wordLines": [
+            {
+              "word": "Requested",
+              "lines": 1
+            }
+          ],
+          "visible": true,
+          "clip": false
+        },
+        {
+          "text": "1 Imported, Pending Review",
+          "width": 104.28125,
+          "height": 31.1875,
+          "left": 9,
+          "right": 113.28125,
+          "bottom": 95.96875,
+          "cardWidth": 122.28125,
+          "cardHeight": 169.03125,
+          "fontSize": "12px",
+          "wordLines": [
+            {
+              "word": "Imported",
+              "lines": 1
+            },
+            {
+              "word": "Pending",
+              "lines": 1
+            },
+            {
+              "word": "Review",
+              "lines": 1
+            }
+          ],
+          "visible": true,
+          "clip": false
+        }
+      ],
+      "scrollBefore": {
+        "left": 0,
+        "width": 900,
+        "scrollWidth": 900
+      },
+      "keyboardDayGeometry": [
+        {
+          "day": "2026-05-01",
+          "left": 839.140625,
+          "right": 961.421875,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-02",
+          "left": 967.421875,
+          "right": 1089.703125,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-03",
+          "left": 1095.703125,
+          "right": 1217.984375,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-04",
+          "left": 326,
+          "right": 448.28125,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-05",
+          "left": 454.28125,
+          "right": 576.5625,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-06",
+          "left": 582.5625,
+          "right": 704.84375,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-07",
+          "left": 710.84375,
+          "right": 833.140625,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-08",
+          "left": 839.140625,
+          "right": 961.421875,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-09",
+          "left": 967.421875,
+          "right": 1089.703125,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-10",
+          "left": 1095.703125,
+          "right": 1217.984375,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-11",
+          "left": 326,
+          "right": 448.28125,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-12",
+          "left": 454.28125,
+          "right": 576.5625,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-13",
+          "left": 582.5625,
+          "right": 704.84375,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-14",
+          "left": 710.84375,
+          "right": 833.140625,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-15",
+          "left": 839.140625,
+          "right": 961.421875,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-16",
+          "left": 967.421875,
+          "right": 1089.703125,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-17",
+          "left": 1095.703125,
+          "right": 1217.984375,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-18",
+          "left": 326,
+          "right": 448.28125,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-19",
+          "left": 454.28125,
+          "right": 576.5625,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-20",
+          "left": 582.5625,
+          "right": 704.84375,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-21",
+          "left": 710.84375,
+          "right": 833.140625,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-22",
+          "left": 839.140625,
+          "right": 961.421875,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-23",
+          "left": 967.421875,
+          "right": 1089.703125,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-24",
+          "left": 1095.703125,
+          "right": 1217.984375,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-25",
+          "left": 326,
+          "right": 448.28125,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-26",
+          "left": 454.28125,
+          "right": 576.5625,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-27",
+          "left": 582.5625,
+          "right": 704.84375,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-28",
+          "left": 710.84375,
+          "right": 833.140625,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-29",
+          "left": 839.140625,
+          "right": 961.421875,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-30",
+          "left": 967.421875,
+          "right": 1089.703125,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-31",
+          "left": 1095.703125,
+          "right": 1217.984375,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        }
+      ],
+      "returnedActiveEntryIds": {
+        "2026-05-01": [
+          "a-am",
+          "a-pm",
+          "b-import",
+          "c-full"
+        ],
+        "2026-05-31": [
+          "d-cross"
+        ]
+      },
+      "duplicateSessionsPreserved": true,
+      "knownAndUnknownRequestStatusesTextual": true,
+      "warningVsApprovedSessionGuidance": true,
+      "returnedBlockingAndTotalUnchanged": true,
+      "monthListModalNoRefetch": true,
+      "fullCrossMonthRequestRange": true,
+      "escapedText": true,
+      "exactFocusReturn": true,
+      "axeViolations": 0,
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "height": 900,
+      "rootPercent": 100,
+      "scheme": "dark",
+      "statusGeometry": [
+        {
+          "text": "2 Approved",
+          "width": 104.28125,
+          "height": 15.59375,
+          "left": 9,
+          "right": 113.28125,
+          "bottom": 45.1875,
+          "cardWidth": 122.28125,
+          "cardHeight": 169.03125,
+          "fontSize": "12px",
+          "wordLines": [
+            {
+              "word": "Approved",
+              "lines": 1
+            }
+          ],
+          "visible": true,
+          "clip": false
+        },
+        {
+          "text": "1 Requested",
+          "width": 104.28125,
+          "height": 15.59375,
+          "left": 9,
+          "right": 113.28125,
+          "bottom": 62.78125,
+          "cardWidth": 122.28125,
+          "cardHeight": 169.03125,
+          "fontSize": "12px",
+          "wordLines": [
+            {
+              "word": "Requested",
+              "lines": 1
+            }
+          ],
+          "visible": true,
+          "clip": false
+        },
+        {
+          "text": "1 Imported, Pending Review",
+          "width": 104.28125,
+          "height": 31.1875,
+          "left": 9,
+          "right": 113.28125,
+          "bottom": 95.96875,
+          "cardWidth": 122.28125,
+          "cardHeight": 169.03125,
+          "fontSize": "12px",
+          "wordLines": [
+            {
+              "word": "Imported",
+              "lines": 1
+            },
+            {
+              "word": "Pending",
+              "lines": 1
+            },
+            {
+              "word": "Review",
+              "lines": 1
+            }
+          ],
+          "visible": true,
+          "clip": false
+        }
+      ],
+      "scrollBefore": {
+        "left": 0,
+        "width": 900,
+        "scrollWidth": 900
+      },
+      "keyboardDayGeometry": [
+        {
+          "day": "2026-05-01",
+          "left": 839.140625,
+          "right": 961.421875,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-02",
+          "left": 967.421875,
+          "right": 1089.703125,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-03",
+          "left": 1095.703125,
+          "right": 1217.984375,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-04",
+          "left": 326,
+          "right": 448.28125,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-05",
+          "left": 454.28125,
+          "right": 576.5625,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-06",
+          "left": 582.5625,
+          "right": 704.84375,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-07",
+          "left": 710.84375,
+          "right": 833.140625,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-08",
+          "left": 839.140625,
+          "right": 961.421875,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-09",
+          "left": 967.421875,
+          "right": 1089.703125,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-10",
+          "left": 1095.703125,
+          "right": 1217.984375,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-11",
+          "left": 326,
+          "right": 448.28125,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-12",
+          "left": 454.28125,
+          "right": 576.5625,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-13",
+          "left": 582.5625,
+          "right": 704.84375,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-14",
+          "left": 710.84375,
+          "right": 833.140625,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-15",
+          "left": 839.140625,
+          "right": 961.421875,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-16",
+          "left": 967.421875,
+          "right": 1089.703125,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-17",
+          "left": 1095.703125,
+          "right": 1217.984375,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-18",
+          "left": 326,
+          "right": 448.28125,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-19",
+          "left": 454.28125,
+          "right": 576.5625,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-20",
+          "left": 582.5625,
+          "right": 704.84375,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-21",
+          "left": 710.84375,
+          "right": 833.140625,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-22",
+          "left": 839.140625,
+          "right": 961.421875,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-23",
+          "left": 967.421875,
+          "right": 1089.703125,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-24",
+          "left": 1095.703125,
+          "right": 1217.984375,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-25",
+          "left": 326,
+          "right": 448.28125,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-26",
+          "left": 454.28125,
+          "right": 576.5625,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-27",
+          "left": 582.5625,
+          "right": 704.84375,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-28",
+          "left": 710.84375,
+          "right": 833.140625,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-29",
+          "left": 839.140625,
+          "right": 961.421875,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-30",
+          "left": 967.421875,
+          "right": 1089.703125,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-31",
+          "left": 1095.703125,
+          "right": 1217.984375,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        }
+      ],
+      "returnedActiveEntryIds": {
+        "2026-05-01": [
+          "a-am",
+          "a-pm",
+          "b-import",
+          "c-full"
+        ],
+        "2026-05-31": [
+          "d-cross"
+        ]
+      },
+      "duplicateSessionsPreserved": true,
+      "knownAndUnknownRequestStatusesTextual": true,
+      "warningVsApprovedSessionGuidance": true,
+      "returnedBlockingAndTotalUnchanged": true,
+      "monthListModalNoRefetch": true,
+      "fullCrossMonthRequestRange": true,
+      "escapedText": true,
+      "exactFocusReturn": true,
+      "axeViolations": 0,
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "height": 900,
+      "rootPercent": 100,
+      "scheme": "light",
+      "statusGeometry": [
+        {
+          "text": "2 Approved",
+          "width": 99.43333435058594,
+          "height": 15.599990844726562,
+          "left": 5,
+          "right": 104.43333435058594,
+          "bottom": 69.19998168945312,
+          "cardWidth": 109.43333435058594,
+          "cardHeight": 125,
+          "fontSize": "12px",
+          "wordLines": [
+            {
+              "word": "Approved",
+              "lines": 1
+            }
+          ],
+          "visible": true,
+          "clip": false
+        },
+        {
+          "text": "1 Requested",
+          "width": 99.43333435058594,
+          "height": 15.600006103515625,
+          "left": 5,
+          "right": 104.43333435058594,
+          "bottom": 86.80000305175781,
+          "cardWidth": 109.43333435058594,
+          "cardHeight": 125,
+          "fontSize": "12px",
+          "wordLines": [
+            {
+              "word": "Requested",
+              "lines": 1
+            }
+          ],
+          "visible": true,
+          "clip": false
+        },
+        {
+          "text": "1 Imported, Pending Review",
+          "width": 99.43333435058594,
+          "height": 31.199996948242188,
+          "left": 5,
+          "right": 104.43333435058594,
+          "bottom": 120,
+          "cardWidth": 109.43333435058594,
+          "cardHeight": 125,
+          "fontSize": "12px",
+          "wordLines": [
+            {
+              "word": "Imported",
+              "lines": 1
+            },
+            {
+              "word": "Pending",
+              "lines": 1
+            },
+            {
+              "word": "Review",
+              "lines": 1
+            }
+          ],
+          "visible": true,
+          "clip": false
+        }
+      ],
+      "scrollBefore": {
+        "left": 0,
+        "width": 260,
+        "scrollWidth": 792
+      },
+      "keyboardDayGeometry": [
+        {
+          "day": "2026-05-01",
+          "left": 105.73333740234375,
+          "right": 215.1666717529297,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 378
+        },
+        {
+          "day": "2026-05-02",
+          "left": 175.1666717529297,
+          "right": 284.6000061035156,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 421
+        },
+        {
+          "day": "2026-05-03",
+          "left": 176.60000610351562,
+          "right": 286.03334045410156,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 532
+        },
+        {
+          "day": "2026-05-04",
+          "left": 34,
+          "right": 143.43333435058594,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-05",
+          "left": 146.43333435058594,
+          "right": 255.86666870117188,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-06",
+          "left": 174.86666870117188,
+          "right": 284.3000030517578,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 84
+        },
+        {
+          "day": "2026-05-07",
+          "left": 105.30000305175781,
+          "right": 214.73333740234375,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 266
+        },
+        {
+          "day": "2026-05-08",
+          "left": 174.73333740234375,
+          "right": 284.1666717529297,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 309
+        },
+        {
+          "day": "2026-05-09",
+          "left": 105.16667175292969,
+          "right": 214.60000610351562,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 491
+        },
+        {
+          "day": "2026-05-10",
+          "left": 176.60000610351562,
+          "right": 286.03334045410156,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 532
+        },
+        {
+          "day": "2026-05-11",
+          "left": 34,
+          "right": 143.43333435058594,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-12",
+          "left": 146.43333435058594,
+          "right": 255.86666870117188,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-13",
+          "left": 174.86666870117188,
+          "right": 284.3000030517578,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 84
+        },
+        {
+          "day": "2026-05-14",
+          "left": 105.30000305175781,
+          "right": 214.73333740234375,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 266
+        },
+        {
+          "day": "2026-05-15",
+          "left": 174.73333740234375,
+          "right": 284.1666717529297,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 309
+        },
+        {
+          "day": "2026-05-16",
+          "left": 105.16667175292969,
+          "right": 214.60000610351562,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 491
+        },
+        {
+          "day": "2026-05-17",
+          "left": 176.60000610351562,
+          "right": 286.03334045410156,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 532
+        },
+        {
+          "day": "2026-05-18",
+          "left": 34,
+          "right": 143.43333435058594,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-19",
+          "left": 146.43333435058594,
+          "right": 255.86666870117188,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-20",
+          "left": 174.86666870117188,
+          "right": 284.3000030517578,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 84
+        },
+        {
+          "day": "2026-05-21",
+          "left": 105.30000305175781,
+          "right": 214.73333740234375,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 266
+        },
+        {
+          "day": "2026-05-22",
+          "left": 174.73333740234375,
+          "right": 284.1666717529297,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 309
+        },
+        {
+          "day": "2026-05-23",
+          "left": 105.16667175292969,
+          "right": 214.60000610351562,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 491
+        },
+        {
+          "day": "2026-05-24",
+          "left": 176.60000610351562,
+          "right": 286.03334045410156,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 532
+        },
+        {
+          "day": "2026-05-25",
+          "left": 34,
+          "right": 143.43333435058594,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-26",
+          "left": 146.43333435058594,
+          "right": 255.86666870117188,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-27",
+          "left": 174.86666870117188,
+          "right": 284.3000030517578,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 84
+        },
+        {
+          "day": "2026-05-28",
+          "left": 105.30000305175781,
+          "right": 214.73333740234375,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 266
+        },
+        {
+          "day": "2026-05-29",
+          "left": 174.73333740234375,
+          "right": 284.1666717529297,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 309
+        },
+        {
+          "day": "2026-05-30",
+          "left": 105.16667175292969,
+          "right": 214.60000610351562,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 491
+        },
+        {
+          "day": "2026-05-31",
+          "left": 176.60000610351562,
+          "right": 286.03334045410156,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 532
+        }
+      ],
+      "returnedActiveEntryIds": {
+        "2026-05-01": [
+          "a-am",
+          "a-pm",
+          "b-import",
+          "c-full"
+        ],
+        "2026-05-31": [
+          "d-cross"
+        ]
+      },
+      "duplicateSessionsPreserved": true,
+      "knownAndUnknownRequestStatusesTextual": true,
+      "warningVsApprovedSessionGuidance": true,
+      "returnedBlockingAndTotalUnchanged": true,
+      "monthListModalNoRefetch": true,
+      "fullCrossMonthRequestRange": true,
+      "escapedText": true,
+      "exactFocusReturn": true,
+      "axeViolations": 0,
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "height": 900,
+      "rootPercent": 100,
+      "scheme": "dark",
+      "statusGeometry": [
+        {
+          "text": "2 Approved",
+          "width": 99.43333435058594,
+          "height": 15.599990844726562,
+          "left": 5,
+          "right": 104.43333435058594,
+          "bottom": 69.19998168945312,
+          "cardWidth": 109.43333435058594,
+          "cardHeight": 125,
+          "fontSize": "12px",
+          "wordLines": [
+            {
+              "word": "Approved",
+              "lines": 1
+            }
+          ],
+          "visible": true,
+          "clip": false
+        },
+        {
+          "text": "1 Requested",
+          "width": 99.43333435058594,
+          "height": 15.600006103515625,
+          "left": 5,
+          "right": 104.43333435058594,
+          "bottom": 86.80000305175781,
+          "cardWidth": 109.43333435058594,
+          "cardHeight": 125,
+          "fontSize": "12px",
+          "wordLines": [
+            {
+              "word": "Requested",
+              "lines": 1
+            }
+          ],
+          "visible": true,
+          "clip": false
+        },
+        {
+          "text": "1 Imported, Pending Review",
+          "width": 99.43333435058594,
+          "height": 31.199996948242188,
+          "left": 5,
+          "right": 104.43333435058594,
+          "bottom": 120,
+          "cardWidth": 109.43333435058594,
+          "cardHeight": 125,
+          "fontSize": "12px",
+          "wordLines": [
+            {
+              "word": "Imported",
+              "lines": 1
+            },
+            {
+              "word": "Pending",
+              "lines": 1
+            },
+            {
+              "word": "Review",
+              "lines": 1
+            }
+          ],
+          "visible": true,
+          "clip": false
+        }
+      ],
+      "scrollBefore": {
+        "left": 0,
+        "width": 260,
+        "scrollWidth": 792
+      },
+      "keyboardDayGeometry": [
+        {
+          "day": "2026-05-01",
+          "left": 105.73333740234375,
+          "right": 215.1666717529297,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 378
+        },
+        {
+          "day": "2026-05-02",
+          "left": 175.1666717529297,
+          "right": 284.6000061035156,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 421
+        },
+        {
+          "day": "2026-05-03",
+          "left": 176.60000610351562,
+          "right": 286.03334045410156,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 532
+        },
+        {
+          "day": "2026-05-04",
+          "left": 34,
+          "right": 143.43333435058594,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-05",
+          "left": 146.43333435058594,
+          "right": 255.86666870117188,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-06",
+          "left": 174.86666870117188,
+          "right": 284.3000030517578,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 84
+        },
+        {
+          "day": "2026-05-07",
+          "left": 105.30000305175781,
+          "right": 214.73333740234375,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 266
+        },
+        {
+          "day": "2026-05-08",
+          "left": 174.73333740234375,
+          "right": 284.1666717529297,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 309
+        },
+        {
+          "day": "2026-05-09",
+          "left": 105.16667175292969,
+          "right": 214.60000610351562,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 491
+        },
+        {
+          "day": "2026-05-10",
+          "left": 176.60000610351562,
+          "right": 286.03334045410156,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 532
+        },
+        {
+          "day": "2026-05-11",
+          "left": 34,
+          "right": 143.43333435058594,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-12",
+          "left": 146.43333435058594,
+          "right": 255.86666870117188,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-13",
+          "left": 174.86666870117188,
+          "right": 284.3000030517578,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 84
+        },
+        {
+          "day": "2026-05-14",
+          "left": 105.30000305175781,
+          "right": 214.73333740234375,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 266
+        },
+        {
+          "day": "2026-05-15",
+          "left": 174.73333740234375,
+          "right": 284.1666717529297,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 309
+        },
+        {
+          "day": "2026-05-16",
+          "left": 105.16667175292969,
+          "right": 214.60000610351562,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 491
+        },
+        {
+          "day": "2026-05-17",
+          "left": 176.60000610351562,
+          "right": 286.03334045410156,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 532
+        },
+        {
+          "day": "2026-05-18",
+          "left": 34,
+          "right": 143.43333435058594,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-19",
+          "left": 146.43333435058594,
+          "right": 255.86666870117188,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-20",
+          "left": 174.86666870117188,
+          "right": 284.3000030517578,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 84
+        },
+        {
+          "day": "2026-05-21",
+          "left": 105.30000305175781,
+          "right": 214.73333740234375,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 266
+        },
+        {
+          "day": "2026-05-22",
+          "left": 174.73333740234375,
+          "right": 284.1666717529297,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 309
+        },
+        {
+          "day": "2026-05-23",
+          "left": 105.16667175292969,
+          "right": 214.60000610351562,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 491
+        },
+        {
+          "day": "2026-05-24",
+          "left": 176.60000610351562,
+          "right": 286.03334045410156,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 532
+        },
+        {
+          "day": "2026-05-25",
+          "left": 34,
+          "right": 143.43333435058594,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-26",
+          "left": 146.43333435058594,
+          "right": 255.86666870117188,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-27",
+          "left": 174.86666870117188,
+          "right": 284.3000030517578,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 84
+        },
+        {
+          "day": "2026-05-28",
+          "left": 105.30000305175781,
+          "right": 214.73333740234375,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 266
+        },
+        {
+          "day": "2026-05-29",
+          "left": 174.73333740234375,
+          "right": 284.1666717529297,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 309
+        },
+        {
+          "day": "2026-05-30",
+          "left": 105.16667175292969,
+          "right": 214.60000610351562,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 491
+        },
+        {
+          "day": "2026-05-31",
+          "left": 176.60000610351562,
+          "right": 286.03334045410156,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 532
+        }
+      ],
+      "returnedActiveEntryIds": {
+        "2026-05-01": [
+          "a-am",
+          "a-pm",
+          "b-import",
+          "c-full"
+        ],
+        "2026-05-31": [
+          "d-cross"
+        ]
+      },
+      "duplicateSessionsPreserved": true,
+      "knownAndUnknownRequestStatusesTextual": true,
+      "warningVsApprovedSessionGuidance": true,
+      "returnedBlockingAndTotalUnchanged": true,
+      "monthListModalNoRefetch": true,
+      "fullCrossMonthRequestRange": true,
+      "escapedText": true,
+      "exactFocusReturn": true,
+      "axeViolations": 0,
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "height": 900,
+      "rootPercent": 100,
+      "scheme": "light",
+      "statusGeometry": [
+        {
+          "text": "2 Approved",
+          "width": 104.28334045410156,
+          "height": 15.600006103515625,
+          "left": 9,
+          "right": 113.28334045410156,
+          "bottom": 45.19999694824219,
+          "cardWidth": 122.28334045410156,
+          "cardHeight": 169.13333129882812,
+          "fontSize": "12px",
+          "wordLines": [
+            {
+              "word": "Approved",
+              "lines": 1
+            }
+          ],
+          "visible": true,
+          "clip": false
+        },
+        {
+          "text": "1 Requested",
+          "width": 104.28334045410156,
+          "height": 15.600006103515625,
+          "left": 9,
+          "right": 113.28334045410156,
+          "bottom": 62.80000305175781,
+          "cardWidth": 122.28334045410156,
+          "cardHeight": 169.13333129882812,
+          "fontSize": "12px",
+          "wordLines": [
+            {
+              "word": "Requested",
+              "lines": 1
+            }
+          ],
+          "visible": true,
+          "clip": false
+        },
+        {
+          "text": "1 Imported, Pending Review",
+          "width": 104.28334045410156,
+          "height": 31.199996948242188,
+          "left": 9,
+          "right": 113.28334045410156,
+          "bottom": 96,
+          "cardWidth": 122.28334045410156,
+          "cardHeight": 169.13333129882812,
+          "fontSize": "12px",
+          "wordLines": [
+            {
+              "word": "Imported",
+              "lines": 1
+            },
+            {
+              "word": "Pending",
+              "lines": 1
+            },
+            {
+              "word": "Review",
+              "lines": 1
+            }
+          ],
+          "visible": true,
+          "clip": false
+        }
+      ],
+      "scrollBefore": {
+        "left": 0,
+        "width": 900,
+        "scrollWidth": 900
+      },
+      "keyboardDayGeometry": [
+        {
+          "day": "2026-05-01",
+          "left": 839.13330078125,
+          "right": 961.4166412353516,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-02",
+          "left": 967.4166870117188,
+          "right": 1089.7000122070312,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-03",
+          "left": 1095.699951171875,
+          "right": 1217.9832916259766,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-04",
+          "left": 326,
+          "right": 448.28334045410156,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-05",
+          "left": 454.2833251953125,
+          "right": 576.566650390625,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-06",
+          "left": 582.566650390625,
+          "right": 704.8499908447266,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-07",
+          "left": 710.8499755859375,
+          "right": 833.13330078125,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-08",
+          "left": 839.13330078125,
+          "right": 961.4166412353516,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-09",
+          "left": 967.4166870117188,
+          "right": 1089.7000122070312,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-10",
+          "left": 1095.699951171875,
+          "right": 1217.9832916259766,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-11",
+          "left": 326,
+          "right": 448.28334045410156,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-12",
+          "left": 454.2833251953125,
+          "right": 576.566650390625,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-13",
+          "left": 582.566650390625,
+          "right": 704.8499908447266,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-14",
+          "left": 710.8499755859375,
+          "right": 833.13330078125,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-15",
+          "left": 839.13330078125,
+          "right": 961.4166412353516,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-16",
+          "left": 967.4166870117188,
+          "right": 1089.7000122070312,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-17",
+          "left": 1095.699951171875,
+          "right": 1217.9832916259766,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-18",
+          "left": 326,
+          "right": 448.28334045410156,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-19",
+          "left": 454.2833251953125,
+          "right": 576.566650390625,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-20",
+          "left": 582.566650390625,
+          "right": 704.8499908447266,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-21",
+          "left": 710.8499755859375,
+          "right": 833.13330078125,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-22",
+          "left": 839.13330078125,
+          "right": 961.4166412353516,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-23",
+          "left": 967.4166870117188,
+          "right": 1089.7000122070312,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-24",
+          "left": 1095.699951171875,
+          "right": 1217.9832916259766,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-25",
+          "left": 326,
+          "right": 448.28334045410156,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-26",
+          "left": 454.2833251953125,
+          "right": 576.566650390625,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-27",
+          "left": 582.566650390625,
+          "right": 704.8499908447266,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-28",
+          "left": 710.8499755859375,
+          "right": 833.13330078125,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-29",
+          "left": 839.13330078125,
+          "right": 961.4166412353516,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-30",
+          "left": 967.4166870117188,
+          "right": 1089.7000122070312,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-31",
+          "left": 1095.699951171875,
+          "right": 1217.9832916259766,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        }
+      ],
+      "returnedActiveEntryIds": {
+        "2026-05-01": [
+          "a-am",
+          "a-pm",
+          "b-import",
+          "c-full"
+        ],
+        "2026-05-31": [
+          "d-cross"
+        ]
+      },
+      "duplicateSessionsPreserved": true,
+      "knownAndUnknownRequestStatusesTextual": true,
+      "warningVsApprovedSessionGuidance": true,
+      "returnedBlockingAndTotalUnchanged": true,
+      "monthListModalNoRefetch": true,
+      "fullCrossMonthRequestRange": true,
+      "escapedText": true,
+      "exactFocusReturn": true,
+      "axeViolations": 0,
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "height": 900,
+      "rootPercent": 100,
+      "scheme": "dark",
+      "statusGeometry": [
+        {
+          "text": "2 Approved",
+          "width": 104.28334045410156,
+          "height": 15.600006103515625,
+          "left": 9,
+          "right": 113.28334045410156,
+          "bottom": 45.19999694824219,
+          "cardWidth": 122.28334045410156,
+          "cardHeight": 169.13333129882812,
+          "fontSize": "12px",
+          "wordLines": [
+            {
+              "word": "Approved",
+              "lines": 1
+            }
+          ],
+          "visible": true,
+          "clip": false
+        },
+        {
+          "text": "1 Requested",
+          "width": 104.28334045410156,
+          "height": 15.600006103515625,
+          "left": 9,
+          "right": 113.28334045410156,
+          "bottom": 62.80000305175781,
+          "cardWidth": 122.28334045410156,
+          "cardHeight": 169.13333129882812,
+          "fontSize": "12px",
+          "wordLines": [
+            {
+              "word": "Requested",
+              "lines": 1
+            }
+          ],
+          "visible": true,
+          "clip": false
+        },
+        {
+          "text": "1 Imported, Pending Review",
+          "width": 104.28334045410156,
+          "height": 31.199996948242188,
+          "left": 9,
+          "right": 113.28334045410156,
+          "bottom": 96,
+          "cardWidth": 122.28334045410156,
+          "cardHeight": 169.13333129882812,
+          "fontSize": "12px",
+          "wordLines": [
+            {
+              "word": "Imported",
+              "lines": 1
+            },
+            {
+              "word": "Pending",
+              "lines": 1
+            },
+            {
+              "word": "Review",
+              "lines": 1
+            }
+          ],
+          "visible": true,
+          "clip": false
+        }
+      ],
+      "scrollBefore": {
+        "left": 0,
+        "width": 900,
+        "scrollWidth": 900
+      },
+      "keyboardDayGeometry": [
+        {
+          "day": "2026-05-01",
+          "left": 839.13330078125,
+          "right": 961.4166412353516,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-02",
+          "left": 967.4166870117188,
+          "right": 1089.7000122070312,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-03",
+          "left": 1095.699951171875,
+          "right": 1217.9832916259766,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-04",
+          "left": 326,
+          "right": 448.28334045410156,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-05",
+          "left": 454.2833251953125,
+          "right": 576.566650390625,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-06",
+          "left": 582.566650390625,
+          "right": 704.8499908447266,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-07",
+          "left": 710.8499755859375,
+          "right": 833.13330078125,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-08",
+          "left": 839.13330078125,
+          "right": 961.4166412353516,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-09",
+          "left": 967.4166870117188,
+          "right": 1089.7000122070312,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-10",
+          "left": 1095.699951171875,
+          "right": 1217.9832916259766,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-11",
+          "left": 326,
+          "right": 448.28334045410156,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-12",
+          "left": 454.2833251953125,
+          "right": 576.566650390625,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-13",
+          "left": 582.566650390625,
+          "right": 704.8499908447266,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-14",
+          "left": 710.8499755859375,
+          "right": 833.13330078125,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-15",
+          "left": 839.13330078125,
+          "right": 961.4166412353516,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-16",
+          "left": 967.4166870117188,
+          "right": 1089.7000122070312,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-17",
+          "left": 1095.699951171875,
+          "right": 1217.9832916259766,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-18",
+          "left": 326,
+          "right": 448.28334045410156,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-19",
+          "left": 454.2833251953125,
+          "right": 576.566650390625,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-20",
+          "left": 582.566650390625,
+          "right": 704.8499908447266,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-21",
+          "left": 710.8499755859375,
+          "right": 833.13330078125,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-22",
+          "left": 839.13330078125,
+          "right": 961.4166412353516,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-23",
+          "left": 967.4166870117188,
+          "right": 1089.7000122070312,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-24",
+          "left": 1095.699951171875,
+          "right": 1217.9832916259766,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-25",
+          "left": 326,
+          "right": 448.28334045410156,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-26",
+          "left": 454.2833251953125,
+          "right": 576.566650390625,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-27",
+          "left": 582.566650390625,
+          "right": 704.8499908447266,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-28",
+          "left": 710.8499755859375,
+          "right": 833.13330078125,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-29",
+          "left": 839.13330078125,
+          "right": 961.4166412353516,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-30",
+          "left": 967.4166870117188,
+          "right": 1089.7000122070312,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-31",
+          "left": 1095.699951171875,
+          "right": 1217.9832916259766,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        }
+      ],
+      "returnedActiveEntryIds": {
+        "2026-05-01": [
+          "a-am",
+          "a-pm",
+          "b-import",
+          "c-full"
+        ],
+        "2026-05-31": [
+          "d-cross"
+        ]
+      },
+      "duplicateSessionsPreserved": true,
+      "knownAndUnknownRequestStatusesTextual": true,
+      "warningVsApprovedSessionGuidance": true,
+      "returnedBlockingAndTotalUnchanged": true,
+      "monthListModalNoRefetch": true,
+      "fullCrossMonthRequestRange": true,
+      "escapedText": true,
+      "exactFocusReturn": true,
+      "axeViolations": 0,
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "height": 900,
+      "rootPercent": 100,
+      "scheme": "light",
+      "statusGeometry": [
+        {
+          "text": "2 Approved",
+          "width": 99.4375,
+          "height": 15.59375,
+          "left": 5,
+          "right": 104.4375,
+          "bottom": 69.1875,
+          "cardWidth": 109.4375,
+          "cardHeight": 124.96875,
+          "fontSize": "12px",
+          "wordLines": [
+            {
+              "word": "Approved",
+              "lines": 1
+            }
+          ],
+          "visible": true,
+          "clip": false
+        },
+        {
+          "text": "1 Requested",
+          "width": 99.4375,
+          "height": 15.59375,
+          "left": 5,
+          "right": 104.4375,
+          "bottom": 86.78125,
+          "cardWidth": 109.4375,
+          "cardHeight": 124.96875,
+          "fontSize": "12px",
+          "wordLines": [
+            {
+              "word": "Requested",
+              "lines": 1
+            }
+          ],
+          "visible": true,
+          "clip": false
+        },
+        {
+          "text": "1 Imported, Pending Review",
+          "width": 99.4375,
+          "height": 31.1875,
+          "left": 5,
+          "right": 104.4375,
+          "bottom": 119.96875,
+          "cardWidth": 109.4375,
+          "cardHeight": 124.96875,
+          "fontSize": "12px",
+          "wordLines": [
+            {
+              "word": "Imported",
+              "lines": 1
+            },
+            {
+              "word": "Pending",
+              "lines": 1
+            },
+            {
+              "word": "Review",
+              "lines": 1
+            }
+          ],
+          "visible": true,
+          "clip": false
+        }
+      ],
+      "scrollBefore": {
+        "left": 0,
+        "width": 260,
+        "scrollWidth": 792
+      },
+      "keyboardDayGeometry": [
+        {
+          "day": "2026-05-01",
+          "left": 174.703125,
+          "right": 284.140625,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 309
+        },
+        {
+          "day": "2026-05-02",
+          "left": 175.140625,
+          "right": 284.5625,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 421
+        },
+        {
+          "day": "2026-05-03",
+          "left": 176.5625,
+          "right": 286,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 532
+        },
+        {
+          "day": "2026-05-04",
+          "left": 34,
+          "right": 143.421875,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-05",
+          "left": 146.421875,
+          "right": 255.84375,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-06",
+          "left": 174.84375,
+          "right": 284.28125,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 84
+        },
+        {
+          "day": "2026-05-07",
+          "left": 175.28125,
+          "right": 284.703125,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 196
+        },
+        {
+          "day": "2026-05-08",
+          "left": 174.703125,
+          "right": 284.140625,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 309
+        },
+        {
+          "day": "2026-05-09",
+          "left": 175.140625,
+          "right": 284.5625,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 421
+        },
+        {
+          "day": "2026-05-10",
+          "left": 176.5625,
+          "right": 286,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 532
+        },
+        {
+          "day": "2026-05-11",
+          "left": 34,
+          "right": 143.421875,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-12",
+          "left": 146.421875,
+          "right": 255.84375,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-13",
+          "left": 174.84375,
+          "right": 284.28125,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 84
+        },
+        {
+          "day": "2026-05-14",
+          "left": 175.28125,
+          "right": 284.703125,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 196
+        },
+        {
+          "day": "2026-05-15",
+          "left": 174.703125,
+          "right": 284.140625,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 309
+        },
+        {
+          "day": "2026-05-16",
+          "left": 175.140625,
+          "right": 284.5625,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 421
+        },
+        {
+          "day": "2026-05-17",
+          "left": 176.5625,
+          "right": 286,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 532
+        },
+        {
+          "day": "2026-05-18",
+          "left": 34,
+          "right": 143.421875,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-19",
+          "left": 146.421875,
+          "right": 255.84375,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-20",
+          "left": 174.84375,
+          "right": 284.28125,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 84
+        },
+        {
+          "day": "2026-05-21",
+          "left": 175.28125,
+          "right": 284.703125,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 196
+        },
+        {
+          "day": "2026-05-22",
+          "left": 174.703125,
+          "right": 284.140625,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 309
+        },
+        {
+          "day": "2026-05-23",
+          "left": 175.140625,
+          "right": 284.5625,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 421
+        },
+        {
+          "day": "2026-05-24",
+          "left": 176.5625,
+          "right": 286,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 532
+        },
+        {
+          "day": "2026-05-25",
+          "left": 34,
+          "right": 143.421875,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-26",
+          "left": 146.421875,
+          "right": 255.84375,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-27",
+          "left": 174.84375,
+          "right": 284.28125,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 84
+        },
+        {
+          "day": "2026-05-28",
+          "left": 175.28125,
+          "right": 284.703125,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 196
+        },
+        {
+          "day": "2026-05-29",
+          "left": 174.703125,
+          "right": 284.140625,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 309
+        },
+        {
+          "day": "2026-05-30",
+          "left": 175.140625,
+          "right": 284.5625,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 421
+        },
+        {
+          "day": "2026-05-31",
+          "left": 176.5625,
+          "right": 286,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 532
+        }
+      ],
+      "returnedActiveEntryIds": {
+        "2026-05-01": [
+          "a-am",
+          "a-pm",
+          "b-import",
+          "c-full"
+        ],
+        "2026-05-31": [
+          "d-cross"
+        ]
+      },
+      "duplicateSessionsPreserved": true,
+      "knownAndUnknownRequestStatusesTextual": true,
+      "warningVsApprovedSessionGuidance": true,
+      "returnedBlockingAndTotalUnchanged": true,
+      "monthListModalNoRefetch": true,
+      "fullCrossMonthRequestRange": true,
+      "escapedText": true,
+      "exactFocusReturn": true,
+      "axeViolations": 0,
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "height": 900,
+      "rootPercent": 100,
+      "scheme": "dark",
+      "statusGeometry": [
+        {
+          "text": "2 Approved",
+          "width": 99.4375,
+          "height": 15.59375,
+          "left": 5,
+          "right": 104.4375,
+          "bottom": 69.1875,
+          "cardWidth": 109.4375,
+          "cardHeight": 124.96875,
+          "fontSize": "12px",
+          "wordLines": [
+            {
+              "word": "Approved",
+              "lines": 1
+            }
+          ],
+          "visible": true,
+          "clip": false
+        },
+        {
+          "text": "1 Requested",
+          "width": 99.4375,
+          "height": 15.59375,
+          "left": 5,
+          "right": 104.4375,
+          "bottom": 86.78125,
+          "cardWidth": 109.4375,
+          "cardHeight": 124.96875,
+          "fontSize": "12px",
+          "wordLines": [
+            {
+              "word": "Requested",
+              "lines": 1
+            }
+          ],
+          "visible": true,
+          "clip": false
+        },
+        {
+          "text": "1 Imported, Pending Review",
+          "width": 99.4375,
+          "height": 31.1875,
+          "left": 5,
+          "right": 104.4375,
+          "bottom": 119.96875,
+          "cardWidth": 109.4375,
+          "cardHeight": 124.96875,
+          "fontSize": "12px",
+          "wordLines": [
+            {
+              "word": "Imported",
+              "lines": 1
+            },
+            {
+              "word": "Pending",
+              "lines": 1
+            },
+            {
+              "word": "Review",
+              "lines": 1
+            }
+          ],
+          "visible": true,
+          "clip": false
+        }
+      ],
+      "scrollBefore": {
+        "left": 0,
+        "width": 260,
+        "scrollWidth": 792
+      },
+      "keyboardDayGeometry": [
+        {
+          "day": "2026-05-01",
+          "left": 174.703125,
+          "right": 284.140625,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 309
+        },
+        {
+          "day": "2026-05-02",
+          "left": 175.140625,
+          "right": 284.5625,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 421
+        },
+        {
+          "day": "2026-05-03",
+          "left": 176.5625,
+          "right": 286,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 532
+        },
+        {
+          "day": "2026-05-04",
+          "left": 34,
+          "right": 143.421875,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-05",
+          "left": 146.421875,
+          "right": 255.84375,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-06",
+          "left": 174.84375,
+          "right": 284.28125,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 84
+        },
+        {
+          "day": "2026-05-07",
+          "left": 175.28125,
+          "right": 284.703125,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 196
+        },
+        {
+          "day": "2026-05-08",
+          "left": 174.703125,
+          "right": 284.140625,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 309
+        },
+        {
+          "day": "2026-05-09",
+          "left": 175.140625,
+          "right": 284.5625,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 421
+        },
+        {
+          "day": "2026-05-10",
+          "left": 176.5625,
+          "right": 286,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 532
+        },
+        {
+          "day": "2026-05-11",
+          "left": 34,
+          "right": 143.421875,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-12",
+          "left": 146.421875,
+          "right": 255.84375,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-13",
+          "left": 174.84375,
+          "right": 284.28125,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 84
+        },
+        {
+          "day": "2026-05-14",
+          "left": 175.28125,
+          "right": 284.703125,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 196
+        },
+        {
+          "day": "2026-05-15",
+          "left": 174.703125,
+          "right": 284.140625,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 309
+        },
+        {
+          "day": "2026-05-16",
+          "left": 175.140625,
+          "right": 284.5625,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 421
+        },
+        {
+          "day": "2026-05-17",
+          "left": 176.5625,
+          "right": 286,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 532
+        },
+        {
+          "day": "2026-05-18",
+          "left": 34,
+          "right": 143.421875,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-19",
+          "left": 146.421875,
+          "right": 255.84375,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-20",
+          "left": 174.84375,
+          "right": 284.28125,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 84
+        },
+        {
+          "day": "2026-05-21",
+          "left": 175.28125,
+          "right": 284.703125,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 196
+        },
+        {
+          "day": "2026-05-22",
+          "left": 174.703125,
+          "right": 284.140625,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 309
+        },
+        {
+          "day": "2026-05-23",
+          "left": 175.140625,
+          "right": 284.5625,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 421
+        },
+        {
+          "day": "2026-05-24",
+          "left": 176.5625,
+          "right": 286,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 532
+        },
+        {
+          "day": "2026-05-25",
+          "left": 34,
+          "right": 143.421875,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-26",
+          "left": 146.421875,
+          "right": 255.84375,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-27",
+          "left": 174.84375,
+          "right": 284.28125,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 84
+        },
+        {
+          "day": "2026-05-28",
+          "left": 175.28125,
+          "right": 284.703125,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 196
+        },
+        {
+          "day": "2026-05-29",
+          "left": 174.703125,
+          "right": 284.140625,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 309
+        },
+        {
+          "day": "2026-05-30",
+          "left": 175.140625,
+          "right": 284.5625,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 421
+        },
+        {
+          "day": "2026-05-31",
+          "left": 176.5625,
+          "right": 286,
+          "outlineExtent": 4,
+          "clipLeft": 30,
+          "clipRight": 290,
+          "scrollLeft": 532
+        }
+      ],
+      "returnedActiveEntryIds": {
+        "2026-05-01": [
+          "a-am",
+          "a-pm",
+          "b-import",
+          "c-full"
+        ],
+        "2026-05-31": [
+          "d-cross"
+        ]
+      },
+      "duplicateSessionsPreserved": true,
+      "knownAndUnknownRequestStatusesTextual": true,
+      "warningVsApprovedSessionGuidance": true,
+      "returnedBlockingAndTotalUnchanged": true,
+      "monthListModalNoRefetch": true,
+      "fullCrossMonthRequestRange": true,
+      "escapedText": true,
+      "exactFocusReturn": true,
+      "axeViolations": 0,
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "height": 900,
+      "rootPercent": 100,
+      "scheme": "light",
+      "statusGeometry": [
+        {
+          "text": "2 Approved",
+          "width": 104.28125,
+          "height": 15.59375,
+          "left": 9,
+          "right": 113.28125,
+          "bottom": 45.1875,
+          "cardWidth": 122.28125,
+          "cardHeight": 169.03125,
+          "fontSize": "12px",
+          "wordLines": [
+            {
+              "word": "Approved",
+              "lines": 1
+            }
+          ],
+          "visible": true,
+          "clip": false
+        },
+        {
+          "text": "1 Requested",
+          "width": 104.28125,
+          "height": 15.59375,
+          "left": 9,
+          "right": 113.28125,
+          "bottom": 62.78125,
+          "cardWidth": 122.28125,
+          "cardHeight": 169.03125,
+          "fontSize": "12px",
+          "wordLines": [
+            {
+              "word": "Requested",
+              "lines": 1
+            }
+          ],
+          "visible": true,
+          "clip": false
+        },
+        {
+          "text": "1 Imported, Pending Review",
+          "width": 104.28125,
+          "height": 31.1875,
+          "left": 9,
+          "right": 113.28125,
+          "bottom": 95.96875,
+          "cardWidth": 122.28125,
+          "cardHeight": 169.03125,
+          "fontSize": "12px",
+          "wordLines": [
+            {
+              "word": "Imported",
+              "lines": 1
+            },
+            {
+              "word": "Pending",
+              "lines": 1
+            },
+            {
+              "word": "Review",
+              "lines": 1
+            }
+          ],
+          "visible": true,
+          "clip": false
+        }
+      ],
+      "scrollBefore": {
+        "left": 0,
+        "width": 900,
+        "scrollWidth": 900
+      },
+      "keyboardDayGeometry": [
+        {
+          "day": "2026-05-01",
+          "left": 839.140625,
+          "right": 961.421875,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-02",
+          "left": 967.421875,
+          "right": 1089.703125,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-03",
+          "left": 1095.703125,
+          "right": 1218,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-04",
+          "left": 326,
+          "right": 448.28125,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-05",
+          "left": 454.28125,
+          "right": 576.5625,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-06",
+          "left": 582.5625,
+          "right": 704.84375,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-07",
+          "left": 710.84375,
+          "right": 833.140625,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-08",
+          "left": 839.140625,
+          "right": 961.421875,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-09",
+          "left": 967.421875,
+          "right": 1089.703125,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-10",
+          "left": 1095.703125,
+          "right": 1218,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-11",
+          "left": 326,
+          "right": 448.28125,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-12",
+          "left": 454.28125,
+          "right": 576.5625,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-13",
+          "left": 582.5625,
+          "right": 704.84375,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-14",
+          "left": 710.84375,
+          "right": 833.140625,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-15",
+          "left": 839.140625,
+          "right": 961.421875,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-16",
+          "left": 967.421875,
+          "right": 1089.703125,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-17",
+          "left": 1095.703125,
+          "right": 1218,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-18",
+          "left": 326,
+          "right": 448.28125,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-19",
+          "left": 454.28125,
+          "right": 576.5625,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-20",
+          "left": 582.5625,
+          "right": 704.84375,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-21",
+          "left": 710.84375,
+          "right": 833.140625,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-22",
+          "left": 839.140625,
+          "right": 961.421875,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-23",
+          "left": 967.421875,
+          "right": 1089.703125,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-24",
+          "left": 1095.703125,
+          "right": 1218,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-25",
+          "left": 326,
+          "right": 448.28125,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-26",
+          "left": 454.28125,
+          "right": 576.5625,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-27",
+          "left": 582.5625,
+          "right": 704.84375,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-28",
+          "left": 710.84375,
+          "right": 833.140625,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-29",
+          "left": 839.140625,
+          "right": 961.421875,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-30",
+          "left": 967.421875,
+          "right": 1089.703125,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-31",
+          "left": 1095.703125,
+          "right": 1218,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        }
+      ],
+      "returnedActiveEntryIds": {
+        "2026-05-01": [
+          "a-am",
+          "a-pm",
+          "b-import",
+          "c-full"
+        ],
+        "2026-05-31": [
+          "d-cross"
+        ]
+      },
+      "duplicateSessionsPreserved": true,
+      "knownAndUnknownRequestStatusesTextual": true,
+      "warningVsApprovedSessionGuidance": true,
+      "returnedBlockingAndTotalUnchanged": true,
+      "monthListModalNoRefetch": true,
+      "fullCrossMonthRequestRange": true,
+      "escapedText": true,
+      "exactFocusReturn": true,
+      "axeViolations": 0,
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "height": 900,
+      "rootPercent": 100,
+      "scheme": "dark",
+      "statusGeometry": [
+        {
+          "text": "2 Approved",
+          "width": 104.28125,
+          "height": 15.59375,
+          "left": 9,
+          "right": 113.28125,
+          "bottom": 45.1875,
+          "cardWidth": 122.28125,
+          "cardHeight": 169.03125,
+          "fontSize": "12px",
+          "wordLines": [
+            {
+              "word": "Approved",
+              "lines": 1
+            }
+          ],
+          "visible": true,
+          "clip": false
+        },
+        {
+          "text": "1 Requested",
+          "width": 104.28125,
+          "height": 15.59375,
+          "left": 9,
+          "right": 113.28125,
+          "bottom": 62.78125,
+          "cardWidth": 122.28125,
+          "cardHeight": 169.03125,
+          "fontSize": "12px",
+          "wordLines": [
+            {
+              "word": "Requested",
+              "lines": 1
+            }
+          ],
+          "visible": true,
+          "clip": false
+        },
+        {
+          "text": "1 Imported, Pending Review",
+          "width": 104.28125,
+          "height": 31.1875,
+          "left": 9,
+          "right": 113.28125,
+          "bottom": 95.96875,
+          "cardWidth": 122.28125,
+          "cardHeight": 169.03125,
+          "fontSize": "12px",
+          "wordLines": [
+            {
+              "word": "Imported",
+              "lines": 1
+            },
+            {
+              "word": "Pending",
+              "lines": 1
+            },
+            {
+              "word": "Review",
+              "lines": 1
+            }
+          ],
+          "visible": true,
+          "clip": false
+        }
+      ],
+      "scrollBefore": {
+        "left": 0,
+        "width": 900,
+        "scrollWidth": 900
+      },
+      "keyboardDayGeometry": [
+        {
+          "day": "2026-05-01",
+          "left": 839.140625,
+          "right": 961.421875,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-02",
+          "left": 967.421875,
+          "right": 1089.703125,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-03",
+          "left": 1095.703125,
+          "right": 1218,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-04",
+          "left": 326,
+          "right": 448.28125,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-05",
+          "left": 454.28125,
+          "right": 576.5625,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-06",
+          "left": 582.5625,
+          "right": 704.84375,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-07",
+          "left": 710.84375,
+          "right": 833.140625,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-08",
+          "left": 839.140625,
+          "right": 961.421875,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-09",
+          "left": 967.421875,
+          "right": 1089.703125,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-10",
+          "left": 1095.703125,
+          "right": 1218,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-11",
+          "left": 326,
+          "right": 448.28125,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-12",
+          "left": 454.28125,
+          "right": 576.5625,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-13",
+          "left": 582.5625,
+          "right": 704.84375,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-14",
+          "left": 710.84375,
+          "right": 833.140625,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-15",
+          "left": 839.140625,
+          "right": 961.421875,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-16",
+          "left": 967.421875,
+          "right": 1089.703125,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-17",
+          "left": 1095.703125,
+          "right": 1218,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-18",
+          "left": 326,
+          "right": 448.28125,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-19",
+          "left": 454.28125,
+          "right": 576.5625,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-20",
+          "left": 582.5625,
+          "right": 704.84375,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-21",
+          "left": 710.84375,
+          "right": 833.140625,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-22",
+          "left": 839.140625,
+          "right": 961.421875,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-23",
+          "left": 967.421875,
+          "right": 1089.703125,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-24",
+          "left": 1095.703125,
+          "right": 1218,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-25",
+          "left": 326,
+          "right": 448.28125,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-26",
+          "left": 454.28125,
+          "right": 576.5625,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-27",
+          "left": 582.5625,
+          "right": 704.84375,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-28",
+          "left": 710.84375,
+          "right": 833.140625,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-29",
+          "left": 839.140625,
+          "right": 961.421875,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-30",
+          "left": 967.421875,
+          "right": 1089.703125,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        },
+        {
+          "day": "2026-05-31",
+          "left": 1095.703125,
+          "right": 1218,
+          "outlineExtent": 4,
+          "clipLeft": 322,
+          "clipRight": 1222,
+          "scrollLeft": 0
+        }
+      ],
+      "returnedActiveEntryIds": {
+        "2026-05-01": [
+          "a-am",
+          "a-pm",
+          "b-import",
+          "c-full"
+        ],
+        "2026-05-31": [
+          "d-cross"
+        ]
+      },
+      "duplicateSessionsPreserved": true,
+      "knownAndUnknownRequestStatusesTextual": true,
+      "warningVsApprovedSessionGuidance": true,
+      "returnedBlockingAndTotalUnchanged": true,
+      "monthListModalNoRefetch": true,
+      "fullCrossMonthRequestRange": true,
+      "escapedText": true,
+      "exactFocusReturn": true,
+      "axeViolations": 0,
+      "errors": []
+    }
+  ]
+}

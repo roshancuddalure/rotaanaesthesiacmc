@@ -1,0 +1,85 @@
+{
+  "recorded_at_utc": "2026-10-29T03:46:38.368749+00:00",
+  "reviewer": "/root/unit_focus_source_v5",
+  "independent": true,
+  "scope": "Independent V6 source delta and targeted actual-app focus-return verification, following immutable V5 request-changes finding. No application/candidate/backend/acceptance/package edits.",
+  "decision": "source_review_pass_bounded_integration_candidate",
+  "recommendation": "V5 stale-pointer blocker is resolved. No additional source blocker identified within this reviewed helper/main delta. V6 can proceed to integration after the separate adverse-runtime reviewer and required original candidate regressions are clear; integrated unit/browser/held-build/prior40 gates remain necessary.",
+  "source_sha256": {
+    "frontend/src/main.ts": "cb6ee8d2bedc1401cedcda8e20e199f60bd8418e2a24baa00a373c5290a52168",
+    "tmp/unit-modal-accessibility-v6/main.ts": "62226f3480e4089b39df8ff31a0b0f509672231a8bd303f0b51abec96401b57b",
+    "tmp/unit-modal-accessibility-v6/unit-modal-accessibility.ts": "de22a88ab3f8c0945d07b9cdb86c41fea429fd46cba43a40d41fae0ba66267cb",
+    "frontend/src/shell-accessibility.ts": "47a8302e3272e90162d995f2e1d91a36c94116c76a97f5e62b2ecc31de79efc9",
+    "frontend/src/member-workspace.ts": "0ef8c1ef2234c7a50d8ca10b8aaa3998a654d452f563bd4c75531faef09d6c63",
+    "frontend/src/record-workspace.ts": "7c196c12b114c48bf2db4ee57aad7e591d8e3acc7a77cccd15abbad7c349fb8f"
+  },
+  "resolved_findings": [
+    {
+      "id": "UNIT-FOCUS-V5-STALE-POINTER-001",
+      "status": "resolved_in_v6_scratch",
+      "parent_review": "docs/premium-ui/reviews/unit-modal-accessibility-v5-independent-source.json",
+      "fix": "Removed pointer candidate state, pointerdown listener and1500ms priority. Outside opening click commits/focuses the actual usable button or card Manage control before existing delegated open. rememberOpener uses active focus then outsideFocus; abandoned gestures leave no higher-priority stored candidate.",
+      "verification": "Exact independent actual-app counterexample passes all6engine/width contexts; six controls also pass. Separate real Manage and card-title opening clicks retain exact corresponding return in all6contexts."
+    }
+  ],
+  "checks": [
+    {
+      "name": "Main source preservation",
+      "result": "pass",
+      "detail": "Fresh independent exact one-import/one-bind reversal restores current applied main; source owner/API/main handlers remain byte-identical."
+    },
+    {
+      "name": "Independent full TypeScript overlay",
+      "result": "pass",
+      "detail": "Zero diagnostics with virtual helper; no helper imports/network/storage/eval/timer calls."
+    },
+    {
+      "name": "Complete helper delta inspection",
+      "result": "pass_bounded",
+      "detail": "V6 removes stale pointer machinery and adds only root-scoped actual click focus commitment. Existing in-unit native opener capture, inert restoration, modal replacement, Tab/Escape and native-close/abort guards remain unchanged from inspected V5. Element.closest handles SVG descendants; member-list/profile child actions are excluded from outside unit opener commitment."
+    },
+    {
+      "name": "Newer intent and actual opening clicks",
+      "result": "pass_independent_actual_app",
+      "detail": "Six exact-regression contexts plus six follow-up contexts,36 asserted subcases total. All Chromium/Firefox/WebKit320/1280. No operational writes; GET fixture/local RAM."
+    }
+  ],
+  "executions": [
+    {
+      "report": "docs/premium-ui/qa-unit-focus-v6-independent-source-probe.json",
+      "test": "frontend/tests/premium-unit-focus-v6-independent-source-probe.browser.mjs",
+      "log": "tmp/unit-focus-v6-independent-source-probe.log",
+      "contexts": 6,
+      "exit_code": 0,
+      "scope": "Exact cancelled-pointer/newer-keyboard control+regression case",
+      "report_sha256": "2b8d96165335abfd7e712fb7ac66dacf7099ab76456f70e6289eac054382a8ee",
+      "test_sha256": "2f6ee5dd51ffbc0b4c04153f6df9772931c00859de9fc9467b564f951ccf9fc7",
+      "log_sha256": "09de70e7e0b88b7c02e78d46dda32a034391e6096b4c5c97f1254e3c7436d5c8"
+    },
+    {
+      "report": "docs/premium-ui/qa-unit-focus-v6-opening-clicks-independent.json",
+      "test": "frontend/tests/premium-unit-focus-v6-opening-clicks-independent.browser.mjs",
+      "log": "tmp/unit-focus-v6-opening-clicks-independent.log",
+      "contexts": 6,
+      "exit_code": 0,
+      "scope": "Independent actual Manage/card-title click exact return plus repeated keyboard/cancelled-pointer cases",
+      "report_sha256": "9ba3bbb18eeb117bfab0cde594166661e592e8a386fd9a3c4d96e1d7aeabaf03",
+      "test_sha256": "33ba60ea8be8ca783e6652f7c71a7fbbb4e5be3f75b2766140dd9cbef2a131e4",
+      "log_sha256": "14428d3474c5bd07b9f05c7a91ead5eb944a43064b96f8ce8d3dab39ce5354a9"
+    }
+  ],
+  "independent_runtime_contexts": 12,
+  "independent_asserted_subcases": 36,
+  "evidence_sha256": {
+    "docs/premium-ui/reviews/unit-modal-accessibility-v5-independent-source.json": "5125317665b452060ad07455df22b3637b5d51e0c7937675eaf3bb52773ac8e9",
+    "docs/premium-ui/reviews/unit-modal-accessibility-v6-independent-source-check.json": "0f1f9ff1e178948de5e8bd1fcf881d8004e6717891e1137df919a40c9f119b03",
+    "tmp/unit-focus-v6-independent-typecheck.mjs": "72325297dc2267b3dbc26b0e8034f1aadedee948a93a5833dff5d10093e8a94e",
+    "tmp/unit-modal-accessibility-v6/source-proof.json": "02077ce7de21ab77f94e1f9beba3d1cdde6b87d6052c82e2196a36d814325a65"
+  },
+  "limits": [
+    "Bounded source and targeted runtime endorsement; not independent replay of every root candidate context or a guarantee of every modal lifetime.",
+    "Separate adverse-runtime review, original native success/failure/mouse/touch/short/enlarged/abort regressions and integrated checks still required.",
+    "Physical devices/nativeAT, backend persistence, full260 and whole145147 certification remain unproven.",
+    "No application/candidate/current acceptance/backend/archive changes by this reviewer."
+  ]
+}

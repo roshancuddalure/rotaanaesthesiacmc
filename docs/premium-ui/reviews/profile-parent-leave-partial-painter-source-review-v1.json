@@ -1,0 +1,87 @@
+{
+  "recorded_at_utc": "2026-11-09T05:51:28.446207+00:00",
+  "reviewer": "/root/settings_v5_finish",
+  "application_changed": false,
+  "source_sha256": {
+    "frontend/src/main.ts": "b0d19e0e1db79a298f7b41c729227a89f69e24186d19517286d979c0deb0584c",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+  },
+  "extracted_renderer": "tmp/profile-parent-leave-snapshot-extraction-v1/main.ts",
+  "verdict": "Source-grounded painter plan only; integration/runtime/focus evidence still required.",
+  "read_snapshot": {
+    "shape": "{month:string, calendar:LeaveCalendar, requests:LeaveRequest[], pressure:LeavePressure, members?:DepartmentMember[]}",
+    "batch": "Promise.all([getLeaveCalendar(month),getLeaveRequests(month),getLeavePressure(month)]), same existing three GETs. Existing member GET only if current members cache empty; stage result until complete owner validation. No new mutation call.",
+    "precommit_validation": [
+      "calendar.month===capturedMonth",
+      "calendar.summary.month===capturedMonth",
+      "pressure.month===capturedMonth",
+      "requests is Array; no returned month property exists on LeaveRequest[]. Bind its getLeaveRequests(capturedMonth) invocation to immutable capture and complete-read generation instead of inventing record-start-date filtering.",
+      "All current account/viewSeq/renderSeq/root connected+identity/activeView leave/leaveMonth/readGeneration/parent lifetime checks pass before ANY snapshot assignment and again before paint.",
+      "Do not partially commit calendar before pressure/requests fail. Preserve current known DOM with explicit refresh failed/manual GET-only retry; never repeat record mutation."
+    ]
+  },
+  "readonly_regions": [
+    {
+      "selector": ".board-metrics",
+      "strategy": "replace children from detached fresh renderer; preserve section if focused boundary is needed."
+    },
+    {
+      "selector": ".analytics-grid",
+      "strategy": "replace children from fresh snapshot."
+    },
+    {
+      "selector": ".leave-pressure-details",
+      "strategy": "replace inner summary/content while preserving details.open; region summary focus recovered semantically if replaced."
+    },
+    {
+      "selector": "#leave-month-view .leave-calendar-grid",
+      "strategy": "replace date buttons; preserve outer scroll region, selected Month/Day list controls and scroll offsets. Semantic focus identity is data-leave-day ISO date."
+    },
+    {
+      "selector": "#leave-day-list-view",
+      "strategy": "replace contents from snapshot; retain outer region and current hidden state chosen by latest leaveCalendarView at paint time."
+    },
+    {
+      "selector": "section[aria-labelledby=\"leave-list-title\"] tbody",
+      "strategy": "replace current rows only; update .table-caption__count text; preserve table/section/toolbar controls where possible."
+    },
+    {
+      "selector": "section.card-list[aria-label=\"Leave this month\"]",
+      "strategy": "replace current cards including selection-count bar; existing root delegation retained, no listener rebind."
+    }
+  ],
+  "preserve_or_patch_in_place": [
+    {
+      "selector": ".page-toolbar[aria-label=\"Leave actions\"]",
+      "strategy": "Preserve all button/details/link DOM. Update only .page-toolbar__context and approve-month button text/disabled from returned pending count; existingrole gating staysexact. If selected-count controls duplicated table/card preserve roles and update counts from pruned selection; explicit staleIDs removed only by original pruneAdminSelection."
+    },
+    {
+      "selector": ".leave-calendar__switch",
+      "strategy": "Keep Month/Day list button identities and current aria-pressed; derive visibility from latest leaveCalendarView at paint, not captured value when profile opened."
+    },
+    {
+      "selector": ".leave-pressure-details and nested details",
+      "strategy": "Retain open flags by stable summary identity only within exact region; do not steal focus from surviving toolbar/form/profile controls."
+    },
+    {
+      "selector": "#leave-history-host",
+      "strategy": "Retain exact host and existing history controller; no new mountWorkflowImportHistory call for snapshot-only parent refresh. Existing full renderLeave mount remains unchanged."
+    },
+    {
+      "selector": "native body dialogs / external drafts",
+      "strategy": "Never replace body or those nodes. Parent close coordination should wait for profile/editor closure before underlying paint, with owner recheck. Another modal opened meanwhile is a new owner; suppress stale paint/focus."
+    }
+  ],
+  "day_modal": {
+    "current_shape": "#leave-day-modal is body-level .modal-backdrop with .person-modal-header h3, header p summary, .leave-day-modal-body containing Add leave on this day button and rendered callgroups. It currently has no stable ISO day attribute.",
+    "safe_attribute": "Add data-leave-modal-date=\"${escapeHtml(day)}\" to existing #leave-day-modal root. Do NOT put existing data-leave-day on backdrop: delegated closest([data-leave-day]) would mistake any child click for opening that date.",
+    "preserve": "Keep backdrop/dialog/header close/Add leave button identities; update header summary and callgroup contents from captured ISO day using current calendar. Validate ISO day remains within requested calendar month; if not, show explicit current-context unavailable/close affordance rather than repaint differentmonth.",
+    "focus": "Capture actual focused descendant semantic identity before replace; preserve surviving focused nodes. Restore replacement only if original ownedfocus displaced toBODY/disconnected; choose current header/status as programmatic tabindex=-1 fallback if target disappeared. Never restore if operator intentionally focused elsewhere while GET held."
+  },
+  "gaps": [
+    "No dedicated Leave text/status/unit filters exist in current rendered Leave page. Month/Day list and open-day context are actual controls; avoid inventing filter state.",
+    "Admin selection pruning is an intentional existing synchronous renderer effect, not a pure renderer claim. Build detached markup only after valid complete snapshot is committed; stale guard must occur before calling renderer.",
+    "Source preflight renderer reads current globals and can prune selection even when detached markup is discarded; coordinator must not render it speculatively under stale ownership.",
+    "This review does not establish browser behavior or whole159 acceptance."
+  ]
+}

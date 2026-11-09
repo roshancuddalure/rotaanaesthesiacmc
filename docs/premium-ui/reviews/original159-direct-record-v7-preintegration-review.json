@@ -1,0 +1,54 @@
+{
+  "recorded_at_utc": "2026-11-09T09:25:46.684750+00:00",
+  "reviewer": "/root",
+  "decision": "approved_for_guarded_application",
+  "candidate_sha256": {
+    "frontend/src/main.ts": "7ab96e2109aec76f027bbd80bc9535ee40c0eaacc4040eea3261e4b4c8e3d2d6",
+    "frontend/src/member-workspace.ts": "105cc1d91ea4815d565ad4859fc01412cf576a3203c07834f4010e3fef7ef1a5"
+  },
+  "candidate_core_contexts": 60,
+  "candidate_execution_manifest": "docs/premium-ui/reviews/original159-direct-record-v7-candidate-application-gates.json",
+  "external_overlay_smoke": {
+    "passed": true,
+    "report": "docs/premium-ui/qa-external-day-overlays-v7-candidate-smoke.json",
+    "test": "frontend/tests/premium-external-day-overlays-v7-candidate-smoke.browser.mjs",
+    "contexts": 12,
+    "action_outcomes": 66
+  },
+  "root_findings": [
+    "Direct normalized record saved callback runs after actual editor close; captured existing owner uses retained readback rather than replacing unrelated settings/fallback host.",
+    "Dated Leave action closes selected day overlay before capturing surviving parent owner; date/person/status/token unchanged.",
+    "One selector extension forwards external Leave day actions through existing handler; rootoutside guard and separate body branches avoid duplicate Add. Actual Leave/Rota close/Escape/backdrop/mode/nav/date editor66 outcomes passed, no mutations.",
+    "Exact source reversal and nonGET/storage/confirm parity, TS0 and independent source review support guarded main-only application."
+  ],
+  "evidence_sha256": {
+    "docs/premium-ui/reviews/original159-direct-record-v7-candidate60-execution.json": "752be2f42554806ea2e9b500b30860e179cf8144d1db2051a64b0ef0394f5b0a",
+    "docs/premium-ui/reviews/original159-direct-record-v7-candidate-application-gates.json": "89cce7eb196131b073c5f10e0cd5f82f94a7274275192e2fa7d2bf4e35989f43",
+    "docs/premium-ui/reviews/original159-direct-record-v7-route-harness-adjudication.json": "a73544acddbdb9c984ded40f366bbfcebf06ebc70933c7e50628cc0f6bbd9a4d",
+    "docs/premium-ui/qa-external-day-overlays-v7-candidate-smoke.json": "e24ea9a64c3d940a230a0f2e6b3f9954f8d0b2d8f3a0772fc3709533b437c754",
+    "frontend/tests/premium-external-day-overlays-v7-candidate-smoke.browser.mjs": "9f95b80e5bec5bfc848e2c214c758b643ed7c43c2c42c822408bc87442872dc6",
+    "tmp/external-day-overlays-v7-candidate-smoke.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docs/premium-ui/reviews/original159-direct-record-v7-independent-source-review.json": "d289d2a3d4cd9e47e6c51fd825087d4201ddcc142abda3b94ed307d6dc091dd4",
+    "docs/premium-ui/reviews/original159-direct-record-v7-prior54-source-analysis.json": "cc008676bc03a085923759b62842352ee358e04d949b64e6ad917e07b5e7b515",
+    "tmp/profile-parent-refresh-v6/manifest.json": "98a9cd57b69ac1d058992cadf54252d3a867efb9724f8ed897056119876be6ae",
+    "tmp/profile-parent-refresh-v6/effect-proof.json": "ab7aec45afec687ef4e8013adc989251b58ccf5d97b812799a5e3e6d71a6a330",
+    "tmp/profile-parent-refresh-v7/manifest.json": "9026e19747f394c04756e52e3d79c04f7c5774fe7da2d69831ad5c49cc2c122b",
+    "tmp/profile-parent-refresh-v7/effect-proof.json": "e2a6120ffef3eb275fd7c0d6645f6b098f69f4b230229a1901ca6a2fe788d874",
+    "tmp/profile-parent-refresh-v7/initial-typecheck.json": "1d51c6b435cd7cf368cf4fabe2bebae1e350584ee6773ff089fefc6dbf52517f",
+    "frontend/tests/premium-original159-direct-record-v7-normal.browser.mjs": "88df684f215d7487e3eaf0627a8b94b0ec28619ac5822d685fe49010846828be",
+    "docs/premium-ui/qa-original159-direct-record-v7-normal.json": "613dff6fa2bd104a275e795286b9750c13efa58aeebd9a33a6291bb843ccc7c4",
+    "frontend/tests/premium-original159-direct-record-v7-recovery-owner.browser.mjs": "dc700dc437f9bb65f218c02b1d3da49f2a367e9d0293b9a15f72f8ac67f9e230",
+    "docs/premium-ui/qa-original159-direct-record-v7-recovery-owner.json": "6ac50991346de7ab706791cbf6ab45538ba4f67b52dfb8f56c51e8b391a0d130",
+    "frontend/tests/premium-original159-direct-record-v7-route-owner-r1.browser.mjs": "b2852f1cf54dc02336c6a848464c822d3566cb377e8b28501636fa9b8c4e887d",
+    "docs/premium-ui/qa-original159-direct-record-v7-route-owner-r1.json": "2080452dac7168e21930034bb3188648b92a17deaa57f9e80624f6aef23abe05",
+    "frontend/tests/premium-original159-direct-leave-day-v7-candidate.browser.mjs": "d13bd64a61f134c2112d06e8ef1c10ae21fd8380c818bb3f0d634c63418eb801",
+    "docs/premium-ui/qa-original159-direct-leave-day-v7-candidate.json": "0413ccfdf39c33db449eb0b9e9bf3157e2b549951a1eaeaf9a00a6327575ed37",
+    "frontend/tests/premium-original159-direct-leave-edit-v7-candidate.browser.mjs": "434f3e562491185d5dd9ebabff2d5151738c0fb0bc7071bbf8604901d0b4c2be",
+    "docs/premium-ui/qa-original159-direct-leave-edit-v7-candidate.json": "220ce6ba4a445f4190f4967dabc9b9835bad0e4da53bd912295fa006cf1d7ad2"
+  },
+  "limits": [
+    "No whole159 acceptance; import/registry/delete/member-core families remain.",
+    "Candidate60 plus12overlay are not fresh applied checks; rerunafterapplication withunit/build/prior54 applicability.",
+    "No backend/persistedsemantics/scheduling/export/production edits."
+  ]
+}

@@ -107,7 +107,7 @@ try {
     await form.locator('[name=designation]').fill('Senior Registrar');
     await form.locator('[name=effective_from]').fill('2026-11-01');
     await form.getByRole('button',{name:'Add Designation',exact:true}).click();
-    await dlg.locator('strong').filter({hasText:'Senior Registrar'}).waitFor();
+    await dlg.locator('[data-designation-timeline] h4').filter({hasText:'Senior Registrar'}).waitFor();
     form=dlg.locator('[data-profile-form="alias"]');
     await form.locator('[name=alias]').fill('Dr Example Alias');
     await form.getByRole('button',{name:'Add Alias',exact:true}).click();

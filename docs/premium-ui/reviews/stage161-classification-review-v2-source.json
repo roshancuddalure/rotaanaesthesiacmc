@@ -1,0 +1,23 @@
+{
+  "recorded_at_utc": "2026-10-30T18:12:59.520Z",
+  "reviewer": "/root/stage161_classification_review",
+  "application_changed": false,
+  "exact_one_line_reverse": true,
+  "api_storage_serialization_confirm_expressions_equal": true,
+  "typecheck_diagnostics": 0,
+  "pure_classification_cases": 130,
+  "known_server_blocker_labels": [
+    "Monthly unit scope",
+    "Generated slots",
+    "Open slots",
+    "Hard safety blockers",
+    "Exchange requests",
+    "Call level mismatches"
+  ],
+  "unknown_blockers_conservatively_review_blocked": true,
+  "published_history_semantics_unchanged": true,
+  "before_sha256": "162dd5f04f185f4506c38dba974f0cd927b3e09d1ce85f5fd0da0f0de566885c",
+  "candidate_sha256": "2798e0cbbf61b1a473695f99f9f56b57c3ad249c9987abe00421f4a50e2731eb",
+  "scope": "Independent rebase and source/effect/classification proof. Existing backend publish blocker policy and request actions unchanged. Only convenience Review completion is corrected. No whole161 stage/readiness acceptance.",
+  "harness_correction": "Initial proof compared every call expression, which correctly differed by removal of three private Set.has classification queries. Exact whole-source reversal proves only the declared line changed; effect parity now explicitly covers request/fetch/post/confirm/JSON/storage expressions. No product change or classification threshold relaxed."
+}

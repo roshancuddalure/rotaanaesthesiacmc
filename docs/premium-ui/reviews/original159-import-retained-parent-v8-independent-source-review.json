@@ -1,0 +1,66 @@
+{
+  "recorded_at_utc": "2026-11-09T09:30:02.332335+00:00",
+  "reviewer": "/root/stage161_final_review",
+  "scope": "Independent source-only review of V8 import lifecycle96ab main/d4ec importer over immutable V7. Reviewer did not author V8 source. No browser load, application change or acceptance ledger mutation.",
+  "decision": "conditional_recommendation_for_runtime_verification_no_new_source_blocker_found",
+  "source_blocking_findings": [],
+  "findings": [
+    {
+      "id": "V8-NESTED-REFERENCE-DEPENDENCY-GAP",
+      "kind": "known_scope_gap_not_new_regression",
+      "reason": "Creating or modifying a Unit/reference from nested importer dialogs without applying an import changes parent dependencies but never reaches notifyParentConfirmed. Their existing callbacks only refresh importer options/dirty its preview. V8 covers accepted import apply only; registry/reference family needs a separate accepted-write signal and retained-parent readback before whole159 can pass."
+    },
+    {
+      "id": "V8-POSTAPPLY-DIRTY-CLOSE-GAP",
+      "kind": "existing_importer_behavior_requires_runtime_disposition",
+      "reason": "After accepted apply finished=true; choosing a new file or running a new preview explicitly resets finished=false, so those pending drafts are protected. dirtyPreview invoked by mapping/settings edits alone does not reset finished; a subsequent close can skip existing discard confirmation. This is unchanged from baseline and does not lose a confirmed parent notification, but runtime tests must distinguish second-file protection from edited-after-complete settings rather than claim all dirty transitions are protected."
+    }
+  ],
+  "positive_source_review": [
+    "Optional fifth lifecycle argument preserves old four-argument callers. Hook metadata kind/month/batchId is captured from the accepted preview. confirmed fires immediately after existing apply POST resolves and before ownsApply/result rendering/legacy updated. Confirmed parent state therefore survives child render errors or superseded child state.",
+    "Both hook calls isolate exceptions with fixed console.warn strings and no private error/response/draft objects. Existing request bodies, exclusions, acknowledge flag, review IDs, serialization, storage and confirmation expressions remain exact under source proof. No new GET/POST expressions or backend semantics.",
+    "Manual close retains busy and pending-file/preview discard refusal. Only successful close invokes parentClosed, idempotent against queued native close event. Cancel prevents default and delegates same close path. Native queued close event provides coverage for native closure; workspace unload protection cleans its listener/observer on close/removal.",
+    "One originating parent lifecycle is reused for every accepted batch in one importer. confirmed dirties same owner but starts no parent GET until actual final close. closed with changed=false triggers no read. Two sequential accepted batches coalesce to one final current snapshot read, subject to actual runtime verification.",
+    "Main early-return from legacy updated when importParent exists prevents old full-parent render/cache path from running alongside deferred refresh. Nonretained contexts keep original account/route/render/root/month guards. Profile/direct-record paths and actual retained painter/controller code are unchanged.",
+    "Same-account confirmed hook invalidates cache even if originating route is no longer current. Current account, month, route generation, render generation, root identity and original Unit/Leave overlay ownership gate notices, reads, snapshot commit and focus. Deferred read additionally uses latest parent read ownership and existing unitLoadSeq; GET-only retry cannot replay accepted import apply.",
+    "Importer-chosen month can differ from captured parent month. Main intentionally refreshes currently captured parent month and does not require applied month equality; this preserves relevant parent snapshot truth without inventing cross-month scheduling policy."
+  ],
+  "required_runtime_gates": [
+    "Unit and Leave accepted-batch open importer: no premature parent GET, actual final close one owned GET/group; returned data refreshed with actual settings/fallback/filter/page/month/Daylist/sibling selection/disclosure/history nodes retained.",
+    "Two accepted batches in same open dialog: two exact apply POSTs and one final current parent GET/group; zero parent reads for dirty close refusal or discarded no-accepted-batch import.",
+    "Header Close/Escape/native close idempotency, busy refusal, first accepted then second-file dirty close refusal; explicitly inspect settings-only postcomplete edits per known baseline gap.",
+    "Confirmed POST followed by child result-render failure or child ownership supersession: cache invalidation independent, final close fresh owned parent; failed parent read uses reachable keyboard GET-only retry without apply replay.",
+    "Held apply/parent read route/month/account/root/Unit overlay replacement: no stale private paint/focus/notice, later explicit same-account visit loads accepted data.",
+    "Cross-month imported preview metadata and retained selected parent month; unchanged exclusions/acknowledgment/target rows/status."
+  ],
+  "proof_checked": {
+    "source_manifest_hashes_match": true,
+    "exact_replay_reverse_reported": true,
+    "full_virtual_TS_diagnostics": 0,
+    "effect_expression_counts": {
+      "main.ts": 123,
+      "operational-import.ts": 20,
+      "member-workspace.ts": 32
+    }
+  },
+  "limitations": [
+    "No browser outcomes claimed. No whole159 acceptance or registry/delete/Leave decision/core-member/fallback-reference completion.",
+    "Source proof does not validate runtime coalescing, callback counts, read recovery or all nested mutations; actual bounded outcomes required before integration.",
+    "Existing child malformed result handling/business logic remains unchanged. External consumer misuse via direct native dialog.close can bypass manual dirty guard as before; no new user path is introduced."
+  ],
+  "evidence_sha256": {
+    "tmp/profile-parent-refresh-v8/manifest.json": "94924876601d403ba4d8f9e54c8829d26805f0240c8288bf8b9220d4b750f28b",
+    "tmp/profile-parent-refresh-v8/verification.json": "91022d8cf397bd357aa09e7b24404b48c378c3e0a40630888b5d6749f2390b69",
+    "tmp/profile-parent-refresh-v8/main.ts": "96ab7c4c6b14d41736ad4153313b1270677e324fcab6b11c3a5b0d8ac3e47a0b",
+    "tmp/profile-parent-refresh-v8/operational-import.ts": "d4ec84f649759642020a83adf9ef9cf8b4754c068149130f752d19ddda8fe09b",
+    "tmp/profile-parent-refresh-v8/member-workspace.ts": "105cc1d91ea4815d565ad4859fc01412cf576a3203c07834f4010e3fef7ef1a5",
+    "tmp/profile-parent-refresh-v8/main.ts.patch": "3df82ceb3d396793e8f550db5c3c21736d6b550cfa23ece0688b5b3bc7efcb6e",
+    "tmp/profile-parent-refresh-v8/operational-import.ts.patch": "133c5794fb117d8f1b46e1274c212155307f8c1728dfb8ee9a95c0c1421867fb",
+    "docs/premium-ui/reviews/original159-import-retained-parent-v8-source-review.json": "6ea8c8aae40bf1fcf4bd427e937a7de3bb083708577de2ee78792531def0b9e5",
+    "frontend/src/workspace-load-state.ts": "cdd0e323d7e83e6e668a381bbfcc37cad4726b1193ac5de31d5f14e03eecd9c6",
+    "frontend/src/member-workspace.ts": "105cc1d91ea4815d565ad4859fc01412cf576a3203c07834f4010e3fef7ef1a5"
+  },
+  "application_changed": false,
+  "browser_executed": false,
+  "acceptance_ledger_changed": false
+}

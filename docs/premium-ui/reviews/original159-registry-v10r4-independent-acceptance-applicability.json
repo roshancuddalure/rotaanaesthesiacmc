@@ -1,0 +1,37 @@
+{
+  "recorded_at_utc": "2026-11-09T10:33:13.995449+00:00",
+  "reviewer": "/root/registry_acceptance_applicability",
+  "application_changed": false,
+  "browser_executed": false,
+  "scope": "Independent exact r3-to-r4 source delta and safe preparation of12 bounded shared caller regressions. No acceptance or ledger changes.",
+  "source_sha256": {
+    "docs\\premium-ui\\reviews\\original159-registry-v10r3-independent-acceptance-applicability.json": "a160c8a0f45a73a4be17f2f16eee462770abaf834ad57a2842c0ceedd6f8e302",
+    "tmp\\registry-parent-refresh-v10r3\\main.ts": "9f5359ad9e8014098bc12c8ed3f9e1c6b1a06d1a4f92797b7f9da24bfba6e6b8",
+    "tmp\\registry-parent-refresh-v10r3\\reference-workspace.ts": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd",
+    "tmp\\registry-parent-refresh-v10r3\\extra-duty.ts": "21edb8d59249b7c5be30d59c79f4e20b350930bdc16bd097e957a9c22650855f",
+    "tmp\\registry-parent-refresh-v10r4\\main.ts": "9f5359ad9e8014098bc12c8ed3f9e1c6b1a06d1a4f92797b7f9da24bfba6e6b8",
+    "tmp\\registry-parent-refresh-v10r4\\reference-workspace.ts": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd",
+    "tmp\\registry-parent-refresh-v10r4\\extra-duty.ts": "529e420fc05ce5bfa42655b8863e449e09e22a7c0abe9baf4db5c94c4797b8c3"
+  },
+  "delta": {
+    "main_exact": true,
+    "reference_exact": true,
+    "extra_only_change": {
+      "before": "const selected = select.value, currentDraft = draft.get(id) ?? [];",
+      "after": "const selected = names.has(select.value) ? select.value : \"\", currentDraft = draft.get(id) ?? [];"
+    }
+  },
+  "opinion": "One-line normalization treats a placeholder value not present in known unit names as no selected real unit. This avoids retaining the empty choices placeholder as an unavailable unit. It does not alter any parent caller API, lifecycle hook, request, mutation, payload, saved/draft order or owner guard. Prior independent r3 applicability conclusions and required runtime/integration gates remain applicable through these exact hashes.",
+  "limits": "Existing missing real unit IDs retained in names still keep explicit unavailable choices. New option enablement and accessibility outcomes require root runtime checks; no browser outcome claimed here. Original159 remains partial; accepted count unchanged.",
+  "prepared_tests": {
+    "frontend\\tests\\premium-original159-registry-v10r4-direct-caller-regression.browser.mjs": "f40b722f6c6e0bc9ad41d1fdd102284c614686753e5938643b5a13096c3b3a71",
+    "frontend\\tests\\premium-original159-registry-v10r4-profile-caller-regression.browser.mjs": "a9eede66a18eafe3b0efb633bcda573ddc896dddbd81c5d7ed41833791fdd4d8",
+    "frontend\\tests\\premium-original159-registry-v10r4-import-caller-regression.browser.mjs": "308c97fed6b48f4a38353dbd020f06d9b8b79e654f4fdc9ad4ef03c3f2491e44"
+  },
+  "expected_contexts": 12,
+  "test_scope": "Three scripts, Chromium320/1280 Units: direct Add normal/Edit parent5034; profile posting-edit normal2 and parent5032 (two raw reports); import normal/parent5034. Existing selected interaction assertions retained. Syntax checks all0.",
+  "required_remaining_gates": [
+    "Root executes candidate registry78 plus focus/owner supplements and these12; exact outcomes must be held.",
+    "Repeat affected tests after integration, fresh unit/build, table/anchor source binding, explicit prior54 applicability, verifier and review archive."
+  ]
+}

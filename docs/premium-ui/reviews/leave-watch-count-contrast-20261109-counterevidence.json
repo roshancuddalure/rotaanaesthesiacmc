@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-09T09:28:24.927346+00:00",
+  "reviewer": "theme_foundation_closeout source/evidence audit; root executed browser diagnostic",
+  "scope": "N02 exactwatchcount counterevidence only, notwhole28 acceptance",
+  "decision": "No contrast defect established: actualwatchcount22px700islargeText,3.537815524843951ratioexceedsapplicable3threshold inallsixcontexts. NoCSSfix needed for thispair.",
+  "original_failure": {
+    "test": "frontend/tests/premium-leave-watch-count-contrast-20261109-diagnostic.browser.mjs",
+    "sha256": "f6f523da22f3ee0510e8d910fcb3bc920143d7951c3903bcea95bb497a954c7e",
+    "log": "tmp/leave-watch-count-contrast-20261109-diagnostic.log",
+    "log_sha256": "a3e0e288bf1ce553abb5876dd7973f14bf32c29c79747de4d11319bb6821452f",
+    "classification": "Harnessprecondition assumednormaltext fromlowerspecificity12px source rule; actualcomputedlargeTexttrue. It failedbeforefirstcontextreport, notacontrastfailure."
+  },
+  "corrected_execution": {
+    "report": "docs/premium-ui/qa-leave-watch-count-contrast-20261109-diagnostic-r1.json",
+    "sha256": "5d0628fc2d4933a9d82340385f9a463300d2522c5b0efd9932084b7267cfd50c",
+    "test": "frontend/tests/premium-leave-watch-count-contrast-20261109-diagnostic-r1.browser.mjs",
+    "test_sha256": "b2ef193a1c511678ab4b8905e79b518e1b33869e5510263450269493352cb130",
+    "contexts": 6,
+    "matrix": "Chromium/Firefox/WebKit320/1280light",
+    "fontSize": 22,
+    "fontWeight": 700,
+    "threshold": 3,
+    "ratio": 3.537815524843951,
+    "passed": 6,
+    "contrast_failures": 0,
+    "actualClassification": "4entries/10busiest share0.4 produceswatchclass; highcomparison10/10 confirmed",
+    "mutations_forwarded": 0
+  },
+  "source_applicability": {
+    "historical_main": {
+      "path": "tmp/original159-direct-record-v7-integration-before/main.ts",
+      "sha256": "2b8f68c069e599af50a4ac1b2146a7018d6268f290b90a9949130a057dc91b43"
+    },
+    "current_main": {
+      "path": "frontend/src/main.ts",
+      "sha256": "7ab96e2109aec76f027bbd80bc9535ee40c0eaacc4040eea3261e4b4c8e3d2d6"
+    },
+    "exact_unchanged_functions": [
+      {
+        "function": "leaveDayEntries",
+        "method": "exactdeclarationtext through nexttop-level function/type/class declaration; explicit sourceblock equality",
+        "sha256": "1ec711125e5b5c8f7596e40ddebe030dea64b3f5bd72f638e4bd98b54de76136",
+        "characters": 189
+      },
+      {
+        "function": "leaveDayStatusCounts",
+        "method": "exactdeclarationtext through nexttop-level function/type/class declaration; explicit sourceblock equality",
+        "sha256": "4e37e065e604bb1c15c0630ce522a39de040fcc66bbe81e8c723f450aa65fef2",
+        "characters": 241
+      },
+      {
+        "function": "leaveDayStatusSummary",
+        "method": "exactdeclarationtext through nexttop-level function/type/class declaration; explicit sourceblock equality",
+        "sha256": "ace15d50ff692aa757bf4873e5312ab509d9e0c209392fbbb84be81546bc7061",
+        "characters": 314
+      },
+      {
+        "function": "renderLeaveCalendarDays",
+        "method": "exactdeclarationtext through nexttop-level function/type/class declaration; explicit sourceblock equality",
+        "sha256": "be9398a6d8900f99689d1d85ce81fb2bfb10e3b69a45e6a2d169f346571caf87",
+        "characters": 2170
+      },
+      {
+        "function": "leaveStatusLabel",
+        "method": "exactdeclarationtext through nexttop-level function/type/class declaration; explicit sourceblock equality",
+        "sha256": "8f91856b5f7a980fddc1a223d80813664eecfe7306cd412950d5c482251e8e5c",
+        "characters": 396
+      }
+    ],
+    "styles_css_sha256": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "premium_theme_css_sha256": "acc46b2249087f365ca855bcd9630628c390c4cdf013301daaee40ede80e55f4",
+    "method": "Historicalreporthashverifiedagainstactualpreserved2b8source; eachnamedrenderer/classifier/helperexacttextcomparedtocurrent7ab; bothCSSfilesbyteexacttoreport. Noexistingreportrehashorclaimfreshcurrentbrowserexecution."
+  },
+  "limitations": [
+    "No darktheme result claimed",
+    "No otherstateorcountfont/contextcontrast certified",
+    "No whole28/25/21 acceptance or ledgerstatuschange",
+    "NativeAT/physicalchecks notperformed"
+  ],
+  "application_mutations": false
+}

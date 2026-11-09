@@ -1,0 +1,55 @@
+{
+  "recorded_at_utc": "2026-10-28T16:00:05.686Z",
+  "author": "/root/leave_frontend_next_audit",
+  "scope": "Execute exact current extracted TypeScript label functions, not duplicated implementation. Source-level unknown-value presentation probe only, no browser/backend/API mutation.",
+  "source": "frontend/src/main.ts",
+  "source_sha256": "6676ae91ec39f33eea0b5347b5f2394804e9cf04c30d0d80c0cc515436c8efac",
+  "results": [
+    {
+      "input": "approved",
+      "returned_type": "string",
+      "display_string": "Approved"
+    },
+    {
+      "input": "requested",
+      "returned_type": "string",
+      "display_string": "Requested"
+    },
+    {
+      "input": "imported_pending_review",
+      "returned_type": "string",
+      "display_string": "Imported, Pending Review"
+    },
+    {
+      "input": "cancelled",
+      "returned_type": "string",
+      "display_string": "Cancelled"
+    },
+    {
+      "input": "rejected",
+      "returned_type": "string",
+      "display_string": "Rejected"
+    },
+    {
+      "input": "unknown_status",
+      "returned_type": "string",
+      "display_string": "Unknown Status"
+    },
+    {
+      "input": "__proto__",
+      "returned_type": "object",
+      "display_string": "[object Object]"
+    },
+    {
+      "input": "constructor",
+      "returned_type": "function",
+      "display_string": "function Object() { [native code] }"
+    },
+    {
+      "input": "toString",
+      "returned_type": "function",
+      "display_string": "function toString() { [native code] }"
+    }
+  ],
+  "finding": "Prototype-bearing status-label lookup returns inherited object/functions for __proto__,constructor,toString rather than a plain status label. Existing escaping prevents direct HTML injection, but display text is incorrect. A future pure presentation fix should use an own-property lookup while preserving all known status labels. This is separate from the frozen historical scratch candidate."
+}
