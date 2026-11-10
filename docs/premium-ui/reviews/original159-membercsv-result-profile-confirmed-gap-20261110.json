@@ -1,0 +1,34 @@
+{
+  "recorded_at_utc": "2026-11-10T08:05:28.738738+00:00",
+  "reviewer": "/root",
+  "execution": {
+    "report": "docs/premium-ui/qa-original159-membercsv-result-profile-diagnostic-smoke-20261110.json",
+    "test": "frontend/tests/premium-original159-membercsv-result-profile-diagnostic-20261110.browser.mjs",
+    "exit_code": 1,
+    "contexts": 1
+  },
+  "finding": "Actual Members CSV accepted import result-profile core rename leaves underlying Members list showing old name after profile and importer close. No followup member GET occurs.",
+  "observed": {
+    "saved": true,
+    "applied": true,
+    "memberReads": 2,
+    "expectedApiName": "Dr CSV Result Renamed NEW",
+    "parentNames": [
+      "Dr CSV Result Original OLD",
+      "Open profile",
+      "Change call level",
+      "Dr CSV Result Original OLD",
+      "Open profile",
+      "Change call level"
+    ],
+    "search": "",
+    "errors": []
+  },
+  "scope": "One Chromium320 diagnostic with accepted writes intercepted locally; no production mutation. Failed expected-correct-state assertion retained. Source noop callback corroborates missing refresh.",
+  "evidence_sha256": {
+    "docs/premium-ui/qa-original159-membercsv-result-profile-diagnostic-smoke-20261110.json": "c09d3c4d41ccbdc8d90c548febba5d8681504defacc5022d68ba5c3707b22bfd",
+    "frontend/tests/premium-original159-membercsv-result-profile-diagnostic-20261110.browser.mjs": "91bf5ccd3e01880da7729120b337b59ddd31c3a20f084928c788cea9405d4281",
+    "frontend/src/member-workspace.ts": "506c486046fe6f0bbea5c6c4bf6357fec6e9649d91a9ed1ed890551ed3503cca"
+  },
+  "next": "Isolated frontend lifecycle repair; meaningful no-op/refused/read-failure/coalescing and owner tests before integration. No whole159 acceptance."
+}

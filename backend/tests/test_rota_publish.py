@@ -18,6 +18,81 @@ from app.services.rota_publish import final_rota_export, publish_rota_month, rot
 from app.services.rota_setup import monthly_setup
 
 
+def test_assignment_exports_and_stale_approval():
+    import pytest
+    from app.services.rota_publish import RotaPublishError
+    from app.services.rota_template import eagle_eye_export
+
+    engine = create_engine("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(engine)
+    with Session(engine) as session:
+        seed_publish_context(session)
+        person = session.query(Person).filter_by(canonical_name="Assigned Member").one()
+        person.canonical_name = '=HYPERLINK("https://example.com","Member")'
+        session.commit()
+        _, payload = eagle_eye_export(session, "2026-05")
+        draft = load_workbook(BytesIO(payload))
+        assert "Assigned Eagle Eye" in draft.sheetnames
+        assert person.canonical_name in draft["Assigned Eagle Eye"].cell(3, 2).value
+        assert draft["Draft Assignments"].cell(2, 7).data_type == "s"
+        assert "DRAFT" in draft["Download Status"].cell(1, 1).value
+        assert draft["Assigned Eagle Eye"].freeze_panes == "B2"
+        assert draft["Assigned Eagle Eye"].cell(1, 2).fill.fgColor.rgb.endswith("FFE699")
+        with pytest.raises(RotaPublishError, match="Publish"):
+            final_rota_export(session, "2026-05")
+        publish_rota_month(session, month="2026-05", approved_by=seed_superadmin(session),
+                           confirm_warnings=True, approval_note="Board approved the assignment review.")
+        _, payload = final_rota_export(session, "2026-05")
+        approved = load_workbook(BytesIO(payload))
+        for name in ["Assigned Eagle Eye", "Final Rota", "Member workload", "Fairness",
+                     "Coverage", "Compliance", "Trend", "Audit trail", "Over limit"]:
+            assert name in approved.sheetnames
+        assert approved["Final Rota"].cell(2, 7).data_type == "s"
+        assignment = session.query(DutyAssignment).first()
+        original_name = person.canonical_name
+        person.canonical_name = "Former assigned member"
+        session.flush()
+        same_name_member = Person(canonical_name=original_name, call_level=person.call_level)
+        session.add(same_name_member)
+        session.flush()
+        assignment.person = same_name_member
+        session.commit()
+        with pytest.raises(RotaPublishError, match="changed after approval"):
+            final_rota_export(session, "2026-05")
+        assignment.person = person
+        assignment.status = "cancelled"
+        session.commit()
+        with pytest.raises(RotaPublishError, match="changed after approval") as error:
+            final_rota_export(session, "2026-05")
+        assert error.value.status_code == 409
+    engine.dispose()
+
+
+def test_assignment_export_api_errors_are_actionable(monkeypatch):
+    import importlib
+
+    with publish_client() as client:
+        headers = {"Authorization": f"Bearer {sign_in(client)}"}
+        assert client.get("/api/v1/rota-publish/export?month=2026-05", headers=headers).status_code == 409
+        assert client.get("/api/v1/rota-template/eagle-eye-export?month=bad", headers=headers).status_code == 400
+        empty = client.get("/api/v1/rota-template/eagle-eye-export?month=2026-06", headers=headers)
+        assert empty.status_code == 400
+        assert "Generate duty slots" in empty.json()["detail"]
+
+        def fail(*args, **kwargs):
+            raise RuntimeError("private internal storage path")
+
+        for module_name, function, url in [
+            ("rota_publish", "final_rota_export", "/api/v1/rota-publish/export?month=2026-05"),
+            ("rota_template", "eagle_eye_export", "/api/v1/rota-template/eagle-eye-export?month=2026-05"),
+        ]:
+            monkeypatch.setattr(importlib.import_module(f"app.api.v1.{module_name}"), function, fail)
+            response = client.get(url, headers=headers)
+            assert response.status_code == 500
+            assert "retry" in response.json()["detail"]
+            assert "private internal" not in response.text
+
+
 def duty_bounds(day: date) -> tuple[datetime, datetime]:
     starts_at = datetime.combine(day, time(hour=8))
     return starts_at, starts_at + timedelta(hours=24)

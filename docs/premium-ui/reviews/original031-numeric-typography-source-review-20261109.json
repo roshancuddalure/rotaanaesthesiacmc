@@ -1,0 +1,831 @@
+{
+  "recorded_at_utc": "2026-11-09T17:28:29.811Z",
+  "operator": "/root/numeric31_typography_review",
+  "scope": "Read-only source/UX proposal review. No product changes, browser runs, or acceptance claim.",
+  "source_sha256": {
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "acc46b2249087f365ca855bcd9630628c390c4cdf013301daaee40ede80e55f4",
+    "frontend/src/component-reference.css": "46ed291bfdd2463fdc470392a12207bf37fca0478587c24a5019b82e6f7262ee"
+  },
+  "diagnostic": {
+    "path": "docs/premium-ui/qa-original031-numeric-actual-diagnostic-r1.json",
+    "sha256": "2fe31d03860ac90b229965e9358f56da6ba1e113dd28928fbb7f947911bc1a11",
+    "operator": "/root/numeric31_scope_audit"
+  },
+  "recommendation": {
+    "candidate": "In the existing premium-theme.css body foundation rule add font-variant-numeric: tabular-nums. Follow with :where(button, input, select, textarea, option, optgroup) { font-variant-numeric: inherit; } in the same foundation block. Preserve existing positive numeric rules.",
+    "selectorsRationale": "body provides inherited defaults for unclassified table cells, prose containing numeric dates/capacity/runtime, metrics, comparison rows and newly rendered dialogs. Explicit native-control inheritance defeats any user-agent font shorthand resetting inherited numeric variants without changing control family, size, weight, appearance or behavior. option/optgroup included for popup numeric choices; native picker internals remain platform-dependent.",
+    "authorShorthandFinding": "Every authored CSS font shorthand in the three loaded stylesheets is font: inherit. They inherit numeric variants; there is no current non-inherit authored shorthand requiring a concrete numeric exception.",
+    "resetFinding": "No authored numeric normal/proportional reset exists in this stylesheet inventory.",
+    "avoid": "No universal * rule, !important, numeric text replacement, number formatting change, monospace blanket replacement or six-surface-only patch. Do not change font-family/size/weight/line-height to obtain tabular behavior.",
+    "exceptions": "No present semantic exception to tabular digits is established by source. Existing Georgia metric/day faces and mono code/raw-match/archive-confirmation faces stay unchanged; feature support depends on installed font. Do not claim equal-width shaping from computed CSS alone."
+  },
+  "inventory": {
+    "fontShorthandCount": 33,
+    "nonInheritFontShorthandCount": 0,
+    "fontRules": [
+      {
+        "file": "frontend/src/styles.css",
+        "line": 238,
+        "selector": "button,\ninput,\nselect,\ntextarea",
+        "property": "font",
+        "value": "inherit",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 1128,
+        "selector": ".review-action-link,\n.review-text-button,\n.review-inline-button,\n.review-status-button",
+        "property": "font",
+        "value": "inherit",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 1228,
+        "selector": ".leave-day-card",
+        "property": "font",
+        "value": "inherit",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 3204,
+        "selector": ".table-sort",
+        "property": "font",
+        "value": "inherit",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 3223,
+        "selector": ".person-link",
+        "property": "font",
+        "value": "inherit",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 3525,
+        "selector": ".change-password-form input",
+        "property": "font",
+        "value": "inherit",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 3769,
+        "selector": ".analysis-search",
+        "property": "font",
+        "value": "inherit",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 4849,
+        "selector": ".member-profile-link",
+        "property": "font",
+        "value": "inherit",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 4854,
+        "selector": ".member-workspace button",
+        "property": "font",
+        "value": "inherit",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 4869,
+        "selector": ".member-workspace input, .member-workspace select, .member-workspace textarea",
+        "property": "font",
+        "value": "inherit",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 5263,
+        "selector": "input[type=\"file\"]::file-selector-button",
+        "property": "font",
+        "value": "inherit",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 5636,
+        "selector": ".working-month input",
+        "property": "font",
+        "value": "inherit",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 5724,
+        "selector": ".account-menu__list [role=\"menuitem\"]",
+        "property": "font",
+        "value": "inherit",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 5806,
+        "selector": ".row-menu__list [role=\"menuitem\"]",
+        "property": "font",
+        "value": "inherit",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 5927,
+        "selector": ".quality-link",
+        "property": "font",
+        "value": "inherit",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 6117,
+        "selector": ".leave-calendar .leave-day-card",
+        "property": "font",
+        "value": "inherit",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 6332,
+        "selector": ".member-pick",
+        "property": "font",
+        "value": "inherit",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 6465,
+        "selector": ".rr-tile",
+        "property": "font",
+        "value": "inherit",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 6487,
+        "selector": ".rr-filter",
+        "property": "font",
+        "value": "inherit",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 6498,
+        "selector": ".rr-cat__toggle",
+        "property": "font",
+        "value": "inherit",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 6518,
+        "selector": ".rr-duty__toggle",
+        "property": "font",
+        "value": "inherit",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 6553,
+        "selector": ".rr-help",
+        "property": "font",
+        "value": "inherit",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 6566,
+        "selector": ".rr-chip",
+        "property": "font",
+        "value": "inherit",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 6913,
+        "selector": ".superadmin-action",
+        "property": "font",
+        "value": "inherit",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 6996,
+        "selector": ".superadmin-danger-button, .superadmin-workspace .superadmin-danger-button",
+        "property": "font",
+        "value": "inherit",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 7098,
+        "selector": ".limits-page .limits-input input",
+        "property": "font",
+        "value": "inherit",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 7114,
+        "selector": ".limits-switch",
+        "property": "font",
+        "value": "inherit",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 7170,
+        "selector": ".limits-linkish",
+        "property": "font",
+        "value": "inherit",
+        "important": false
+      },
+      {
+        "file": "frontend/src/premium-theme.css",
+        "line": 356,
+        "selector": ".toast-dismiss",
+        "property": "font",
+        "value": "inherit",
+        "important": false
+      },
+      {
+        "file": "frontend/src/premium-theme.css",
+        "line": 374,
+        "selector": ".help-icon[data-help]",
+        "property": "font",
+        "value": "inherit",
+        "important": false
+      },
+      {
+        "file": "frontend/src/premium-theme.css",
+        "line": 479,
+        "selector": ".frontend-recovery button",
+        "property": "font",
+        "value": "inherit",
+        "important": false
+      },
+      {
+        "file": "frontend/src/premium-theme.css",
+        "line": 1014,
+        "selector": ".leave-calendar .leave-day-card .leave-day-card__statuses > span",
+        "property": "font",
+        "value": "inherit",
+        "important": false
+      },
+      {
+        "file": "frontend/src/component-reference.css",
+        "line": 28,
+        "selector": ".component-reference :where(input:not([type='checkbox']):not([type='radio']), select, textarea)",
+        "property": "font",
+        "value": "inherit",
+        "important": false
+      }
+    ],
+    "numericRules": [
+      {
+        "file": "frontend/src/styles.css",
+        "line": 811,
+        "selector": ".num",
+        "property": "font-variant-numeric",
+        "value": "tabular-nums",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 2805,
+        "selector": ".call-chip-count",
+        "property": "font-variant-numeric",
+        "value": "tabular-nums",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 3930,
+        "selector": ".page-info",
+        "property": "font-variant-numeric",
+        "value": "tabular-nums",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 3935,
+        "selector": ".page-label",
+        "property": "font-variant-numeric",
+        "value": "tabular-nums",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 5090,
+        "selector": ".num, .metric > span, td.num",
+        "property": "font-variant-numeric",
+        "value": "tabular-nums",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 5270,
+        "selector": "input[type=\"month\"],\ninput[type=\"date\"]",
+        "property": "font-variant-numeric",
+        "value": "tabular-nums",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 5842,
+        "selector": ".segmented-filter .status-toggle .count",
+        "property": "font-variant-numeric",
+        "value": "tabular-nums",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 6469,
+        "selector": ".rr-tile__value",
+        "property": "font-variant-numeric",
+        "value": "tabular-nums",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 6490,
+        "selector": ".rr-filter__count",
+        "property": "font-variant-numeric",
+        "value": "tabular-nums",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 6533,
+        "selector": ".rr-count",
+        "property": "font-variant-numeric",
+        "value": "tabular-nums",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 6603,
+        "selector": ".rr-preview__count strong",
+        "property": "font-variant-numeric",
+        "value": "tabular-nums",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 6872,
+        "selector": ".over-limit-figure",
+        "property": "font-variant-numeric",
+        "value": "tabular-nums",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 6952,
+        "selector": ".superadmin-chip__count",
+        "property": "font-variant-numeric",
+        "value": "tabular-nums",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 6990,
+        "selector": ".superadmin-reason__count",
+        "property": "font-variant-numeric",
+        "value": "tabular-nums",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 7098,
+        "selector": ".limits-page .limits-input input",
+        "property": "font-variant-numeric",
+        "value": "tabular-nums",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 7105,
+        "selector": ".limits-saved strong",
+        "property": "font-variant-numeric",
+        "value": "tabular-nums",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 7135,
+        "selector": ".limits-table, table.limits-table:not(.member-table):not(.accounts-table)",
+        "property": "font-variant-numeric",
+        "value": "tabular-nums",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 7178,
+        "selector": ".limits-count",
+        "property": "font-variant-numeric",
+        "value": "tabular-nums",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 7203,
+        "selector": ".limits-note-count",
+        "property": "font-variant-numeric",
+        "value": "tabular-nums",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 7233,
+        "selector": ".limits-spread__count",
+        "property": "font-variant-numeric",
+        "value": "tabular-nums",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 7234,
+        "selector": ".limits-spread__diff",
+        "property": "font-variant-numeric",
+        "value": "tabular-nums",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 7245,
+        "selector": ".rr-limits__item dd",
+        "property": "font-variant-numeric",
+        "value": "tabular-nums",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 7362,
+        "selector": ".balance-bar__value",
+        "property": "font-variant-numeric",
+        "value": "tabular-nums",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 7406,
+        "selector": ".balance-table .is-num",
+        "property": "font-variant-numeric",
+        "value": "tabular-nums",
+        "important": false
+      },
+      {
+        "file": "frontend/src/premium-theme.css",
+        "line": 175,
+        "selector": ":where(.num, .metric, .compute-diagnostics, .working-month, time, td.num)",
+        "property": "font-variant-numeric",
+        "value": "tabular-nums",
+        "important": false
+      },
+      {
+        "file": "frontend/src/premium-theme.css",
+        "line": 285,
+        "selector": ".mw-history dd, .audit-chip-row strong",
+        "property": "font-variant-numeric",
+        "value": "tabular-nums",
+        "important": false
+      },
+      {
+        "file": "frontend/src/premium-theme.css",
+        "line": 729,
+        "selector": ".chart-data :is(th, td):not(:first-child)",
+        "property": "font-variant-numeric",
+        "value": "tabular-nums",
+        "important": false
+      },
+      {
+        "file": "frontend/src/premium-theme.css",
+        "line": 769,
+        "selector": ".diagnostics-counts dd",
+        "property": "font-variant-numeric",
+        "value": "tabular-nums",
+        "important": false
+      },
+      {
+        "file": "frontend/src/premium-theme.css",
+        "line": 793,
+        "selector": ".leave-pressure-counts dd",
+        "property": "font-variant-numeric",
+        "value": "tabular-nums",
+        "important": false
+      },
+      {
+        "file": "frontend/src/premium-theme.css",
+        "line": 797,
+        "selector": ".leave-pressure-days time",
+        "property": "font-variant-numeric",
+        "value": "tabular-nums",
+        "important": false
+      },
+      {
+        "file": "frontend/src/premium-theme.css",
+        "line": 800,
+        "selector": ".leave-pressure-days dd",
+        "property": "font-variant-numeric",
+        "value": "tabular-nums",
+        "important": false
+      },
+      {
+        "file": "frontend/src/premium-theme.css",
+        "line": 958,
+        "selector": "[data-profile-workload-metrics] dd",
+        "property": "font-variant-numeric",
+        "value": "tabular-nums",
+        "important": false
+      },
+      {
+        "file": "frontend/src/component-reference.css",
+        "line": 10,
+        "selector": ".reference-token-grid output",
+        "property": "font-variant-numeric",
+        "value": "tabular-nums",
+        "important": false
+      }
+    ],
+    "families": [
+      {
+        "file": "frontend/src/styles.css",
+        "line": 165,
+        "selector": "body",
+        "property": "font-family",
+        "value": "Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,\n    \"Segoe UI\", sans-serif",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 500,
+        "selector": ".readonly-field",
+        "property": "font-family",
+        "value": "var(--font-mono, ui-monospace, monospace)",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 3581,
+        "selector": ".person-metric strong",
+        "property": "font-family",
+        "value": "Georgia, \"Times New Roman\", serif",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 3608,
+        "selector": ".person-day strong",
+        "property": "font-family",
+        "value": "Georgia, \"Times New Roman\", serif",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 6327,
+        "selector": ".member-match__raw",
+        "property": "font-family",
+        "value": "var(--font-mono, ui-monospace, monospace)",
+        "important": false
+      },
+      {
+        "file": "frontend/src/styles.css",
+        "line": 6362,
+        "selector": ".archive-all__phrase input",
+        "property": "font-family",
+        "value": "var(--font-mono, ui-monospace, monospace)",
+        "important": false
+      }
+    ],
+    "actualCategories": [
+      "workload totals",
+      "percentages",
+      "dates",
+      "capacity",
+      "runtime",
+      "comparison columns"
+    ],
+    "representativeActualSurfaces": [
+      {
+        "category": "workload totals",
+        "name": "Analysis total 24-hour duties",
+        "route": "#view=analysis",
+        "tag": "SPAN",
+        "className": "",
+        "baselineComputed": "tabular-nums",
+        "rawValue": "32"
+      },
+      {
+        "category": "percentages",
+        "name": "Analysis weekend share",
+        "route": "#view=analysis",
+        "tag": "SPAN",
+        "className": "",
+        "baselineComputed": "tabular-nums",
+        "rawValue": "37.5%"
+      },
+      {
+        "category": "workload totals",
+        "name": "Duty mix main total",
+        "route": "#view=analysis",
+        "tag": "STRONG",
+        "className": "",
+        "baselineComputed": "normal",
+        "rawValue": "32"
+      },
+      {
+        "category": "dates",
+        "name": "Leave table single date",
+        "route": "#view=leave",
+        "tag": "TD",
+        "className": "",
+        "baselineComputed": "normal",
+        "rawValue": "9 Nov 2026"
+      },
+      {
+        "category": "dates",
+        "name": "Leave mobile card date and session",
+        "route": "#view=leave",
+        "tag": "P",
+        "className": "",
+        "baselineComputed": "normal",
+        "rawValue": "9 Nov 2026 · Casual Leave · Full Day"
+      },
+      {
+        "category": "capacity",
+        "name": "Configured minimum free",
+        "route": "#view=units",
+        "tag": "P",
+        "className": "",
+        "baselineComputed": "normal",
+        "rawValue": "Configured minimum free: 2"
+      },
+      {
+        "category": "capacity",
+        "name": "Monthly records without active leave",
+        "route": "#view=units",
+        "tag": "STRONG",
+        "className": "",
+        "baselineComputed": "normal",
+        "rawValue": "3"
+      },
+      {
+        "category": "runtime",
+        "name": "Existing completed proposal planning/session runtime",
+        "route": "#view=rota-template",
+        "tag": "P",
+        "className": "",
+        "baselineComputed": "normal",
+        "rawValue": "Planning: 12.35 s on server; this session: 0.00 s."
+      },
+      {
+        "category": "dates",
+        "name": "Proposal duty date with unit/duty context",
+        "route": "#view=rota-template",
+        "tag": "TD",
+        "className": "",
+        "baselineComputed": "normal",
+        "rawValue": "2026-11-09Numeric Unit · Main duty"
+      },
+      {
+        "category": "comparison columns",
+        "name": "All duties: Current range",
+        "route": "#view=rota-template",
+        "tag": "TD",
+        "className": "",
+        "baselineComputed": "normal",
+        "rawValue": "3 to 5"
+      },
+      {
+        "category": "comparison columns",
+        "name": "All duties: Proposed range",
+        "route": "#view=rota-template",
+        "tag": "TD",
+        "className": "",
+        "baselineComputed": "normal",
+        "rawValue": "3 to 6"
+      },
+      {
+        "category": "comparison columns",
+        "name": "All duties: Current mean",
+        "route": "#view=rota-template",
+        "tag": "TD",
+        "className": "",
+        "baselineComputed": "normal",
+        "rawValue": "4"
+      },
+      {
+        "category": "comparison columns",
+        "name": "All duties: Proposed mean",
+        "route": "#view=rota-template",
+        "tag": "TD",
+        "className": "",
+        "baselineComputed": "normal",
+        "rawValue": "4.25"
+      },
+      {
+        "category": "comparison columns",
+        "name": "24-hour duties: Current range",
+        "route": "#view=rota-template",
+        "tag": "TD",
+        "className": "",
+        "baselineComputed": "normal",
+        "rawValue": "1 to 3"
+      },
+      {
+        "category": "comparison columns",
+        "name": "24-hour duties: Proposed range",
+        "route": "#view=rota-template",
+        "tag": "TD",
+        "className": "",
+        "baselineComputed": "normal",
+        "rawValue": "1 to 4"
+      },
+      {
+        "category": "comparison columns",
+        "name": "24-hour duties: Current mean",
+        "route": "#view=rota-template",
+        "tag": "TD",
+        "className": "",
+        "baselineComputed": "normal",
+        "rawValue": "2"
+      },
+      {
+        "category": "comparison columns",
+        "name": "24-hour duties: Proposed mean",
+        "route": "#view=rota-template",
+        "tag": "TD",
+        "className": "",
+        "baselineComputed": "normal",
+        "rawValue": "2.25"
+      },
+      {
+        "category": "comparison columns",
+        "name": "Weekend 24-hour duties: Current range",
+        "route": "#view=rota-template",
+        "tag": "TD",
+        "className": "",
+        "baselineComputed": "normal",
+        "rawValue": "0 to 1"
+      },
+      {
+        "category": "comparison columns",
+        "name": "Weekend 24-hour duties: Proposed range",
+        "route": "#view=rota-template",
+        "tag": "TD",
+        "className": "",
+        "baselineComputed": "normal",
+        "rawValue": "0 to 1"
+      },
+      {
+        "category": "comparison columns",
+        "name": "Weekend 24-hour duties: Current mean",
+        "route": "#view=rota-template",
+        "tag": "TD",
+        "className": "",
+        "baselineComputed": "normal",
+        "rawValue": "0.75"
+      },
+      {
+        "category": "comparison columns",
+        "name": "Weekend 24-hour duties: Proposed mean",
+        "route": "#view=rota-template",
+        "tag": "TD",
+        "className": "",
+        "baselineComputed": "normal",
+        "rawValue": "0.75"
+      }
+    ]
+  },
+  "tradeoffs": [
+    "Tabular digits improve scanning and reduce jitter when counts change. Numeric prose/identifiers across the UI also inherit the feature, so body default is deliberately broader than isolated data tables.",
+    "Digit advance widths may increase and wrap dates or dense summaries at narrow widths. Root must run real 320px/mobile and desktop routes and control/dialog checks, not infer safe geometry from CSS source.",
+    "The font feature does not change DOM text, locale formatting, decimal precision, parsing, persisted values, API payloads or exported CSV contents. CSS-only source delta can prove those paths unchanged, but visible print layout may change.",
+    "Computed fontVariantNumeric confirms requested feature cascade, not glyph feature availability in every OS font or inside native date/month picker UI. Physical devices remain pending."
+  ],
+  "validationRequired": [
+    "Run actual existing six-category diagnostic against the exact staged candidate across Chromium/Firefox/WebKit, 320/1280 and light/dark; raw rendered strings must remain exact.",
+    "Check native numeric/date/month/select/button controls and profile Georgia metrics/day tiles plus monospace exception faces through actual existing app controls.",
+    "Check document horizontal overflow and local clipping at all visited numeric surfaces, control reachability, dialog behavior, and existing read-only/API contract invariants.",
+    "Review exact diff limited to this CSS declaration/default inheritance; do not claim whole original31 based only on 20 representative probes."
+  ],
+  "standards": [
+    {
+      "url": "https://www.w3.org/TR/css-fonts-4/#font-variant-numeric-prop",
+      "support": "Inherited numeric variant property and tabular numeral feature."
+    },
+    {
+      "url": "https://www.w3.org/TR/css-fonts-4/#font-prop",
+      "support": "Font shorthand handling of constituent font variant properties; use inherit for explicit control fallback."
+    }
+  ],
+  "whole_requirement_completion_proven": false
+}

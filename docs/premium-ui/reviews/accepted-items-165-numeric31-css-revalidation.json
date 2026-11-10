@@ -1,0 +1,286 @@
+{
+  "recorded_at_utc": "2026-11-10T04:26:59.660384+00:00",
+  "scope_type": "exact_runtime_requirement",
+  "scope": "Original165templateproposalreview layout,data preservation andfullrowexposure only. Not161164generationreadiness/optionalreportrecovery or260goal.",
+  "items": [
+    {
+      "item_id": 165,
+      "requirement": "Give template proposals a balanced review layout showing units, dates, forced choices and unresolved work before apply.",
+      "conditions": [
+        {
+          "condition": "Review presents units, dates, forced choices and unresolved work before apply with clear hierarchy.",
+          "satisfied": true,
+          "evidence": [
+            "docs/premium-ui/reviews/generation165-independent-adjudication.json"
+          ],
+          "rationale": "Actualtemplateproposalreview displays selectedmonth anddistincttitle,returnedunit/date/duty rows,explicitForcedallocation·Reviewrequired markers,andunresolvedaggregate beforeApply. Newnormal6contexts plus6supplementalcontexts cover67orderedrows/14forced/1unresolved,phone320/desktop1280across3engines. Supplementincludesunresolvedwith emptyreturnedunit:rawunitisnotinventedanditsreasonexplicitlyexplainsunresolvedduty. Root32actualcomputedfontasserted;dialogcontained,lastrowandreviewscheckbox/Applyreachable. Reviewer visuallyinspectedChrome320top/unresolved and1280top:clearstage/month/status/counts,forcedmarkerandunresolvedreason,visibleexplicitreviewfooter."
+        },
+        {
+          "condition": "The layout exposes all proposed decisions and does not change their values or silently omit rows.",
+          "satisfied": true,
+          "evidence": [
+            "docs/premium-ui/reviews/generation165-independent-adjudication.json"
+          ],
+          "rationale": "Source maps everyjob.decisions entry withoutslice/filterandescapes date/unit/duty/reason. Both6-contexttestscompareall67orderedrendered rows andallreturneddate/unit/duty/reason/forcedvalues,includinglongunit andhostiletext. No rowsomitted;lastrowreachableonscroll. Applyremainsdisableduntiltheuserchecksexplicitreview;noApplyorGeneratewasinvoked. Thisprovesproposalpresentationdata,notbackendgenerationpolicyoractualpersistedApply."
+        }
+      ]
+    }
+  ],
+  "requirement_scope_rationale": "Bothoriginalconditions matchedtoactual67decisionproposalreview,forced/unresolvedcontext,phonecards/desktopcolumns androot32reachability;allorderedvalues asserted. NoApply/GPU/backendsemanticclaim. Proposalcontroller/styles unchanged acrossmain-onlyimportcallbackguard,currentheldbuildmatchesentireproduct.",
+  "execution_evidence": [
+    {
+      "report": "docs/premium-ui/qa-generation165-populated-independent.json",
+      "test": "frontend/tests/premium-generation165-populated-independent.browser.mjs",
+      "exit_code": 0,
+      "contexts": 6,
+      "operator": "/root/generation161165_gap_audit",
+      "authorship": "New independent test"
+    },
+    {
+      "report": "docs/premium-ui/qa-generation165-visual-independent-supplement.json",
+      "test": "frontend/tests/premium-generation165-visual-independent-supplement.browser.mjs",
+      "exit_code": 0,
+      "contexts": 6,
+      "operator": "/root/generation161165_gap_audit",
+      "authorship": "New independent test"
+    }
+  ],
+  "independent_review": {
+    "reviewer": "/root/generation161165_gap_audit",
+    "report": "docs/premium-ui/reviews/generation165-independent-adjudication.json",
+    "method": "Independent exact165condition/source/runtime/visualreview;12newactualproposalcontrollercontexts. No application/backend/ledger edits."
+  },
+  "root_review": {
+    "reviewer": "/root",
+    "method": "Read originaltwo165conditions,currentproposalmap/render andindependentall67rowassertions/reviewgate. Visuallyinspect320-top and320-unresolved images:clearstage/month/counts,forcedtext,emptyunitunresolvedreason andexplicitreviewfooter;desktop/sourceintegrityreviewbound. Validateallsource/evidencehashes,currentbuild andprior50guardapplicability. No acceptancefromcounts alone."
+  },
+  "evidence_sha256": {
+    "docs/premium-ui/reviews/generation165-independent-adjudication.json": "262191dfd0ef2dc3b2db2a612ab2b8b06fd715340b253d5d869368c755e7e84d",
+    "docs/premium-ui/reviews/frontend-build-snapshot-current.json": "b15c4f92aff6f1d894d2a6b515f3992c59964c78c5071201e29c92502e2d825a",
+    "docs/premium-ui/reviews/reference159-import-owner-prior50-applicability.json": "dc9ae719dbb4cc685dce269d82405673657b7feb02c14ea905451c73069a7946",
+    "docs/premium-ui/acceptance-criteria/items-087-173.json": "a7bf1322bd8e08a1fddd4195095d9cc52a8867a1b8a2bda9b523917fae458576",
+    "docs/premium-ui/reviews/generation161165-independent-gapmap.json": "85d47b2d8b775369dff0a0ecee4f8dd0144463af53198d9c309f424beaf9e07b",
+    "frontend/src/rota-compute.ts": "e5f967e6166e2ace9352983a468002d45850188d8811363230305d7597fb70ab",
+    "frontend/src/member-workspace.ts": "506c486046fe6f0bbea5c6c4bf6357fec6e9649d91a9ed1ed890551ed3503cca",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "2e4f85d813061ebc9f696b92d50ae24717a7781a3688187d02c7339c00bea4a1",
+    "tmp/generation165-populated-unit-whitespace-diagnostic.log": "5596efb5e1c04f3a1d0e26581690efdd0e58890d039d65db149125f434b60c7b",
+    "docs/premium-ui/qa-generation165-populated-independent.json": "4910e9e301140f990192f92a5e2671ea59c111d729b83a6a4839d952e8d67c44",
+    "frontend/tests/premium-generation165-populated-independent.browser.mjs": "773fac16495e66f028e6375f544361dd8d9a7b107ab17f9ec7ab4ede0f856307",
+    "tmp/generation165-populated-independent.log": "f0b91b86b53bfbc745a2f005ffcd62afdaf2c895d37c334478ac57ac53516c91",
+    "docs/premium-ui/qa-generation165-visual-independent-supplement.json": "b09658e3e780b0ec7200dc22ab58f4d1455c508c94580e29a8b4489434ef6d37",
+    "frontend/tests/premium-generation165-visual-independent-supplement.browser.mjs": "15105bbbc1201575d32ac4dd4b9529254de910a895ea619e1c85450568fe3c9a",
+    "tmp/generation165-visual-independent-supplement.log": "f0b91b86b53bfbc745a2f005ffcd62afdaf2c895d37c334478ac57ac53516c91",
+    "docs/premium-ui/screenshots/generation165-independent/1280-review-actions.png": "e626106295d078e535b11d072e697b9cb27f22404752180d926e4160814ce88d",
+    "docs/premium-ui/screenshots/generation165-independent/1280-top.png": "b80069413f6831987c7eca4b01c2d769719a5020333baf772650e8bdac3b236c",
+    "docs/premium-ui/screenshots/generation165-independent/1280-unresolved.png": "fe4074439ca1c9bffce7a2c2d50f5c57c077b43d7d0e34deeae6b88025d307f7",
+    "docs/premium-ui/screenshots/generation165-independent/320-review-actions.png": "ad1e471e2647ca7653cd372b80d1e994bd6d492dff0444eb0270db809367933f",
+    "docs/premium-ui/screenshots/generation165-independent/320-top.png": "7f7d3643562a940449e4499df82ff5dd13f0abbb7fbcd299a7b1a197a7942c25",
+    "docs/premium-ui/screenshots/generation165-independent/320-unresolved.png": "013ed002c67bf69a24a3da0f7c5380a5f1ccbe79180fd25b80e77d6f1b0dba9e",
+    "docs/premium-ui/reviews/item165-acceptance.json": "aecbce3eeb7f22cc3f92e3a9ccb7e5dabe47497d6358d592fde9ae3bec53ccf2",
+    "docs/premium-ui/reviews/reference159-monthly-delete-combined-prior51-applicability.json": "9e0c9f9fee82e7ecf3fb0dd577081185236182ae5049891b853fe5182b6177a4",
+    "docs/premium-ui/reviews/reference159-monthly-delete-combined-v1-integrated-execution.json": "e870aee829c2ace0d0300874e86aa4d56ee5d51b0fe57a2a3d59d5f100b40ed9",
+    "docs/premium-ui/reviews/monthly-delete-combined-v1-table-applicability.json": "fc7eac3ec028e1588240906ade45d3d2cb938b63209fa6aa01700f0e68ec7510",
+    "docs/premium-ui/reviews/accepted-items-165-monthly-delete-combined-v1-revalidation.json": "0a3ebd12be39e9c2a8baba9e7a5065093cce4df919ff5cf6b8dd45ce6420a0a9",
+    "docs/premium-ui/reviews/stage161-classification-prior51-applicability.json": "e54dd60fdb9759ef40be5fcb178fe3ea9305b108fe62b494825fa80b31a09d45",
+    "docs/premium-ui/reviews/stage161-classification-integrated-execution.json": "e78524598a04e0e5330557233e7d71f93bad0010e611a8cf0c7df0585d633e29",
+    "docs/premium-ui/reviews/stage161-classification-table-applicability.json": "44b7498658cac874afcf978ba4625bb99b5f4dbf29d3916916e7c7373479f627",
+    "docs/premium-ui/reviews/accepted-items-165-stage161-classification-revalidation.json": "a3d93433383f4775acbf25b01a20f28b891b7eba9b6e7790c80d2bdc77856056",
+    "docs/premium-ui/reviews/optional164-v6-prior51-applicability.json": "f04155df8098ac33b02794bac651ac06020d5e3628b255b784161a08c469ba83",
+    "docs/premium-ui/reviews/optional164-v6-integrated-execution.json": "2eedc4e2457902c479425c544a98acc4d96b94b01cc276eb5cb31f320d5793b6",
+    "docs/premium-ui/reviews/optional164-v6-fastmode-execution.json": "dbcbff03f17fb54c2a3d3e3284acd475cf40ed6b54b7a4f47f9d903424a75268",
+    "docs/premium-ui/reviews/optional164-v6-table-applicability.json": "fe27049b04f6b10d3ff02da922075939dc7cc396b52e6e05539db786eaa450a3",
+    "docs/premium-ui/reviews/accepted-items-165-optional164-v6-revalidation.json": "2a6851671b90da6248368f7bbc77321934f932c99ca59159e7e8528db34da898",
+    "docs/premium-ui/reviews/unit-settings-recovery-v6-prior52-applicability.json": "9e3a029f6425ff6af5fe307f26e781a8a9217e163b9c72b1755f4a0add65c2c8",
+    "docs/premium-ui/reviews/unit-settings-recovery-v6-integrated-execution.json": "a123b0ab1ef44bf5cf077f086c2c92e6d17308b2429db118a845a220f46c5c67",
+    "docs/premium-ui/reviews/unit-settings-recovery-v6-table-applicability.json": "a4a310318208444d5f731eb99085d3e616e562f17477653fc0cbc74422a447c9",
+    "docs/premium-ui/reviews/accepted-items-165-unit-settings-v6-revalidation.json": "174b6ea566d6c5c3b0d55dd134801ce4a29d6f038aa105cac824a3bd93641afd",
+    "docs/premium-ui/reviews/mapping-parent-v1-prior52-applicability.json": "2a4d619ffa38a20f2b3c9ea01f9c7d795cf03b69982ed445834712bf7d1051d6",
+    "docs/premium-ui/reviews/mapping-parent-v1-integrated-execution.json": "9e1a25c14666218b0c5033b8f9b77d6034b00377c0abb18936c933e68b0c79b1",
+    "docs/premium-ui/reviews/mapping-parent-v1-table-applicability.json": "1460c32aea25f9a4a6d37591e973aa6b599aa35aa28bd43f8426ccb6966620d6",
+    "docs/premium-ui/reviews/accepted-items-165-mapping-parent-v1-revalidation.json": "879d8303a495ae649ce4c87e3311d4a42494eacf88fef8dd4a40977940112ad6",
+    "docs/premium-ui/reviews/settings159-v7-prior52-applicability.json": "8c8d54996a418a035ddd28c762dc16331446e9279e68c535729d77f68b3bdb36",
+    "docs/premium-ui/reviews/settings159-v7-integrated-execution.json": "ecab26160223451f8b63522d1221b626d9fac4bd799d0b527da1a0c7895c4c59",
+    "docs/premium-ui/reviews/settings159-v7-table-applicability.json": "77f55c62d43502999441cd6f62a6ef633e295c5c2147aac4406712eeb4b8a2b5",
+    "docs/premium-ui/reviews/accepted-items-165-settings159-v7-revalidation.json": "57a2bc7e86f9d999b96c2255197418971f1d25b32a022575c71b68c2dc55a3c3",
+    "docs/premium-ui/reviews/stage161-v9-prior52-applicability.json": "fd3f67c51e95285e2f02312c7083770a26153dc2982cc36f3c0f289d980cc559",
+    "docs/premium-ui/reviews/stage161-v9-integrated-execution.json": "2ed0829e4e11597837449827708a02cffe2f1b09d2fbfe6e8573c19d06f90ab0",
+    "docs/premium-ui/reviews/stage161-v9-table-applicability.json": "6245658dc65768099e2c83dd3ed0179957e05ed7abf5704c39a80ffdd36e609b",
+    "docs/premium-ui/reviews/accepted-items-165-stage161-v9-revalidation.json": "e7a6fbd4c053ee8f307ea31badb382c4d5c2e4fcc14582f798ac29c5066c6e6f",
+    "docs/premium-ui/reviews/profile-parent-v5-prior53-applicability.json": "2b0936328b9f8d10209aebeb585460f70b4ac52ecbc614c18b41c876baf75d9d",
+    "docs/premium-ui/reviews/profile-parent-v5-integrated-execution.json": "ea3c751d8d62f1aca3edd53e40228635de44719e8f8269a7d80d2955347620bc",
+    "docs/premium-ui/reviews/profile-parent-v5-table-applicability.json": "856a344b771982807b0f0a1272f5cabc465f0c2f284f39e816a9cdaf73c79620",
+    "docs/premium-ui/reviews/accepted-items-165-profile-parent-v5-revalidation.json": "72bdc64c9f6a82cf70eaafb9073e65b30def5f66a68a4e1c0bc51a00ad98cc2f",
+    "docs/premium-ui/reviews/original159-direct-record-v7-prior54-applicability.json": "ff5d8a29002e015776e0156beffc9ee12f7f2f6563742d9f67f976466e739335",
+    "docs/premium-ui/reviews/original159-direct-record-v7-integrated-execution.json": "f50fdc238f7ecde920678e6ecb152b1828a820ccebeba09495974ba4210e4d29",
+    "docs/premium-ui/reviews/original159-direct-record-v7-table-applicability.json": "5433d70c0e02a3c6b6328bff28cb62981bdbdf6f975acb16dad2d105096492f6",
+    "docs/premium-ui/reviews/accepted-items-165-direct-record-v7-revalidation.json": "0433bf0141e0161bf8245b2ed047e730a91a3e0acca2da6eaa2097736370eaa1",
+    "docs/premium-ui/reviews/original159-import-v9r1-prior54-applicability.json": "44cce7dfd4f1dd7a8e58f9720d28d74d2715df3fe5ee433df1e608fedf12338c",
+    "docs/premium-ui/reviews/original159-import-v9r1-integrated-execution.json": "a4ee37412da49741e03e1b5d327bbc56f52645a6fb0eea5f7d5593dbaa1e05f7",
+    "docs/premium-ui/reviews/original159-import-v9r1-table-applicability.json": "548a2ffc8b22303463a809639fe9af5ef51d42e7a8d26c005e015d0968e0e1e2",
+    "docs/premium-ui/reviews/accepted-items-165-import-v9r1-revalidation.json": "3e4909b15c5531525a138d11d07d19fbd59a4d3b3b771cee5be6207f13bd4839",
+    "docs/premium-ui/reviews/original159-registry-v10r4-prior54-applicability.json": "a83e24de5bc816efa51a227278b9bd7851a000b0549a71c810186e404f07617c",
+    "docs/premium-ui/reviews/original159-registry-v10r4-integrated-execution.json": "b536fd5597a8ff6da97d070e7c69ac7f30ab3f495040f01992be8a253874a98b",
+    "docs/premium-ui/reviews/original159-registry-v10r4-table-applicability.json": "8b1f0778132cb156692347db5f7abd16673cbcfee9703db762b75ee95dd53da7",
+    "docs/premium-ui/reviews/accepted-items-165-registry-v10r4-revalidation.json": "57bff4e7d776ad71fca27824274a8de5213a6905ab04aba3e79415b6ba9cb91f",
+    "docs/premium-ui/reviews/original159-delete-v11r1-prior56-applicability.json": "0f9c5a604fd9d76758f06c93e8ea2e19980ef526537586ad4b518b7b8aea33ac",
+    "docs/premium-ui/reviews/original159-delete-v11r1-integrated-execution.json": "6ac42d0030d361de882165866da7c0304b5210ddb10b731af4c2a99d66cdf8dd",
+    "docs/premium-ui/reviews/original159-delete-v11r1-table-applicability.json": "7b729a87804e64fa7c291e0c689794f0000c3404a35f8e50709f79b6d100f587",
+    "docs/premium-ui/reviews/accepted-items-165-delete-v11r1-revalidation.json": "1fca82f08297e5845b7255dfba5531fc84c81c41a4a47084d36e48b6dfd69607",
+    "docs/premium-ui/reviews/original159-member-core-v12-prior56-applicability.json": "ccd94c1143ba27121d393ab451c749a737ea559e6d261a1b2e79199b7a6b6a23",
+    "docs/premium-ui/reviews/original159-member-core-v12-integrated-execution.json": "6fddc71bf53adb5a1b907df0aec03d41a107b5cfc236532293c226b2ab602675",
+    "docs/premium-ui/reviews/original159-member-core-v12-table-applicability.json": "5af9e219517c85f0c25d6eae620e098fd0b4db32bfc332e03b274c9b6e0c21de",
+    "docs/premium-ui/reviews/accepted-items-165-member-core-v12-revalidation.json": "d47e761ce08356e1d0c4b55f5dc9d6cd3a8a57755d4b47ee66545c613a1e1e39",
+    "docs/premium-ui/reviews/original159-leave-nondelete-v1r2-prior56-applicability.json": "1f0fd204224582950a0c7491638802033c0c07e5e95cb1fb2e4cbb0da2ce6b59",
+    "docs/premium-ui/reviews/original159-leave-nondelete-v1r2-integrated-execution.json": "73ae2f189745587de8d3272ce21dcbb19a4aaeeffaf33904bfdac9f784a714cf",
+    "docs/premium-ui/reviews/original159-leave-nondelete-v1r2-table-applicability.json": "f6c6c76ca76d06ee4d25de715d574dbe4c6bdb7940e4369142744edf016ad32d",
+    "docs/premium-ui/reviews/accepted-items-165-leave-nondelete-v1r2-revalidation.json": "f50b64730041765d37d545ac40bd8e3b0bf9f0ce5398e8c93cb4577d3f758514",
+    "docs/premium-ui/reviews/original159-nested-reference-v13r2-prior56-applicability.json": "22f733cae1153f3dc7e82d65e8f2320169e64e97876f6cde7735d7d4d7a13df1",
+    "docs/premium-ui/reviews/original159-nested-reference-v13r2-integrated-execution.json": "f90b0bf41d7a4b8f7332c88d66406613649ad3de332284641bcc8a343508fee6",
+    "docs/premium-ui/reviews/original159-nested-reference-v13r2-table-applicability.json": "bced364f21b452b208b082e12c64e3c4eedddfd64933c7f8104648729ff6dd89",
+    "docs/premium-ui/reviews/accepted-items-165-nested-reference-v13r2-revalidation.json": "855499dde51f74524822d67186e34b2a3c964e97d29596ce9cfa98ed2c8feccc",
+    "docs/premium-ui/reviews/original031-numeric-v2-prior56-applicability.json": "3dfeb41670b9e386b251e032654017cbad904aecf5ec0f2f4fad8e390b2a87f5",
+    "docs/premium-ui/reviews/original031-numeric-v2-applied-execution.json": "d117658747bc1e180e806e0619483431578d0a7be40af6a7b6de8deb9465e98c",
+    "docs/premium-ui/reviews/original031-numeric-mounted-css-execution.json": "7c190522e78bacdf82e0b33a5866ac693ee81318eb7aa274ab902e63293ca875",
+    "docs/premium-ui/reviews/original031-numeric-css-prior56-independent-applicability.json": "01b603024d1815898749d83f3aa25e98f97f8453d0674fd549f632b22e1da314"
+  },
+  "limitations": [
+    "12independentmockproposalcontexts;no realgeneration/Apply/backendpersistence/parser/GPUperformance certification.",
+    "Root32 is textscaling,notnativebrowserzoom;nativeAT/physicalpending.",
+    "Emptyreturnedunitstaysblankandunresolvedreasonexplicit;no inventedunit.",
+    "161164remainpartialwithspecificgapmap;full260incomplete."
+  ],
+  "monthly_delete_combined_v1_revalidation": {
+    "parent": "docs/premium-ui/reviews/item165-acceptance.json",
+    "changed_evidence": [
+      "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/reference159-monthly-delete-combined-prior51-applicability.json",
+    "scope": "Originalconditions retained by exactdelta/current54outcomes; unrelatedhistoricaltests notclaimedrerun."
+  },
+  "stage161_classification_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-165-monthly-delete-combined-v1-revalidation.json",
+    "changed_evidence": [
+      "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/stage161-classification-prior51-applicability.json",
+    "scope": "Originalconditions retained byexactoneline/current72outcomes."
+  },
+  "optional164_v6_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-165-stage161-classification-revalidation.json",
+    "changed_evidence": [
+      "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/optional164-v6-prior51-applicability.json",
+    "scope": "Original conditions retained by exact scoped source analysis and126 current affected-surface outcomes."
+  },
+  "unit_settings_v6_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-165-optional164-v6-revalidation.json",
+    "changed_evidence": [
+      "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/unit-settings-recovery-v6-prior52-applicability.json",
+    "scope": "Original conditions retained by exact bounded settings source delta and44current affected-surface outcomes; isolated48helper applicability separate."
+  },
+  "mapping_parent_v1_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-165-unit-settings-v6-revalidation.json",
+    "changed_evidence": [
+      "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/mapping-parent-v1-prior52-applicability.json",
+    "scope": "Original conditions retained by exact bounded callback source delta and42current affected-surface outcomes. No new whole159 acceptance."
+  },
+  "settings159_v7_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-165-mapping-parent-v1-revalidation.json",
+    "changed_evidence": [
+      "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/settings159-v7-prior52-applicability.json",
+    "scope": "Original conditions retained by exact bounded callback source delta and42current affected-surface outcomes. No new whole159 acceptance."
+  },
+  "stage161_v9_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-165-settings159-v7-revalidation.json",
+    "changed_evidence": [
+      "docs/premium-ui/reviews/frontend-build-snapshot-current.json",
+      "frontend/src/premium-theme.css"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/stage161-v9-prior52-applicability.json",
+    "scope": "Original conditions retained by exact bounded stage/readiness source delta and168current affected-surface outcomes. Whole161 acceptance is separate; no159 acceptance."
+  },
+  "profile_parent_v5_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-165-stage161-v9-revalidation.json",
+    "changed_evidence": [
+      "docs/premium-ui/reviews/frontend-build-snapshot-current.json",
+      "frontend/src/member-workspace.ts"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/profile-parent-v5-prior53-applicability.json",
+    "scope": "Original condition scope retained by reviewed source delta and144 current applied parent/focus/replacement outcomes; historical evidence keeps provenance. No whole159 acceptance."
+  },
+  "direct_record_v7_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-165-profile-parent-v5-revalidation.json",
+    "changed_evidence": [
+      "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/original159-direct-record-v7-prior54-applicability.json",
+    "scope": "Original conditions retained by reviewed bounded source delta/current72 outcomes; historical evidence retains provenance. No whole159 acceptance."
+  },
+  "import_v9r1_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-165-direct-record-v7-revalidation.json",
+    "changed_evidence": [
+      "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/original159-import-v9r1-prior54-applicability.json",
+    "scope": "Originalcondition scope retained; source-reviewed bounded import delta and90applied outcomes. No whole159acceptance."
+  },
+  "registry_v10r4_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-165-import-v9r1-revalidation.json",
+    "changed_evidence": [
+      "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/original159-registry-v10r4-prior54-applicability.json",
+    "scope": "Originalcondition scope retained; independent registry source review,106applied outcomes and12sharedcaller regressions. No whole159acceptance."
+  },
+  "delete_v11r1_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-165-registry-v10r4-revalidation.json",
+    "changed_evidence": [
+      "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/original159-delete-v11r1-prior56-applicability.json",
+    "scope": "Originalconditionsretained; independentboundedsource reviews,102appliedchecks,114unit/heldbuild. No whole159acceptance."
+  },
+  "member_core_v12_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-165-delete-v11r1-revalidation.json",
+    "changed_evidence": [
+      "docs/premium-ui/reviews/frontend-build-snapshot-current.json",
+      "frontend/src/member-workspace.ts"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/original159-member-core-v12-prior56-applicability.json",
+    "scope": "Originalconditionsretained; independentboundedsource reviews,86appliedchecks,114unit/heldbuild. No whole159acceptance."
+  },
+  "leave_nondelete_v1r2_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-165-member-core-v12-revalidation.json",
+    "changed_evidence": [
+      "docs/premium-ui/reviews/frontend-build-snapshot-current.json"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/original159-leave-nondelete-v1r2-prior56-applicability.json",
+    "scope": "Originalconditionsretained; independentboundedsource reviews,48appliedchecks,114unit/heldbuild. No whole159acceptance."
+  },
+  "nested_reference_v13r2_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-165-leave-nondelete-v1r2-revalidation.json",
+    "changed_evidence": [
+      "docs/premium-ui/reviews/frontend-build-snapshot-current.json",
+      "frontend/src/member-workspace.ts"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/original159-nested-reference-v13r2-prior56-applicability.json",
+    "scope": "Originalconditionsretained; independentboundedsource reviews,120appliedchecks,114unit/heldbuild. No whole159acceptance."
+  },
+  "numeric31_css_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-165-nested-reference-v13r2-revalidation.json",
+    "applicability": "docs/premium-ui/reviews/original031-numeric-v2-prior56-applicability.json",
+    "changed_paths": [
+      "docs/premium-ui/reviews/frontend-build-snapshot-current.json",
+      "frontend/src/premium-theme.css"
+    ],
+    "scope": "Original exact conditions retained; no runtime scope expansion."
+  }
+}

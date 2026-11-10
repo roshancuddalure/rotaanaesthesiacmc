@@ -2,7 +2,7 @@ import { decorativeIcon } from "./decorative-icons";
 import { request, type DepartmentMember } from "./services/api";
 import { workspaceDialog } from "./member-workspace";
 import { openUnitRegistry, openReferenceCatalog } from "./reference-workspace";
-import { createMemberInline } from "./operational-import";
+import { createMemberInline, type NestedReferenceChange } from "./operational-import";
 import { workspaceLoading, workspaceLoadFailure, protectWorkspaceDraft } from "./workspace-load-state";
 
 type Row = Record<string, any>;
@@ -16,6 +16,12 @@ const esc = (v: unknown) =>
       ]!,
   );
 
+export type RecordEditorParentLifecycle = Readonly<{
+  confirmed: () => void;
+  referenceConfirmed: (change: NestedReferenceChange) => void;
+  closed: () => void;
+}>;
+
 export async function openRecordEditor(
   kind: "units" | "leave",
   personId: string | undefined,
@@ -23,6 +29,7 @@ export async function openRecordEditor(
   admin: boolean,
   saved: () => void,
   initial?: Row,
+  parentLifecycle?: RecordEditorParentLifecycle,
 ) {
   const referenceContextPrefix = `record-reference-${++recordEditorContextSequence}`;
   const opener = document.activeElement as HTMLElement | null;
@@ -30,6 +37,18 @@ export async function openRecordEditor(
     `${identity ? "Edit" : "Add"} ${kind === "units" ? "posting" : "leave"}`,
     "mw-import record-workspace",
   );
+  let parentClosed = false;
+  const notifyParentClosed = () => {
+    if (parentClosed) return;
+    parentClosed = true;
+    try { parentLifecycle?.closed(); }
+    catch { console.warn("The dependent editor close notification could not be delivered."); }
+  };
+  const notifyReferenceConfirmed = (change: NestedReferenceChange) => {
+    try { parentLifecycle?.referenceConfirmed(change); }
+    catch { console.warn("The dependent reference change notification could not be delivered."); }
+  };
+  dialog.addEventListener("close", notifyParentClosed, {once: true});
   let busy = false,
     dirty = false,
     token: string | undefined;
@@ -55,6 +74,7 @@ export async function openRecordEditor(
     dialog.close();
     dialog.remove();
     opener?.focus();
+    notifyParentClosed();
   };
   dialog.addEventListener("cancel", (e) => {
     e.preventDefault();
@@ -243,7 +263,7 @@ export async function openRecordEditor(
           dirty = true;
           render();
           dialog.querySelector<HTMLSelectElement>("[name=person_id]")?.focus();
-        });
+        }, notifyReferenceConfirmed);
       });
     dialog
       .querySelector<HTMLButtonElement>("[data-new-unit]")
@@ -264,6 +284,10 @@ export async function openRecordEditor(
           },
           undefined,
           true,
+          {
+            confirmed: () => notifyReferenceConfirmed({entity: "unit", operation: "save"}),
+            closed: () => {},
+          },
         );
       });
     dialog
@@ -278,6 +302,7 @@ export async function openRecordEditor(
             const owned = focused instanceof HTMLElement && dialog.contains(focused);
             const name = owned ? focused.getAttribute("name") : null;
             const memberSearch = owned && focused.matches('[data-member-search]');
+            const referenceOpener = owned && focused.matches('[data-references]');
             const search = memberSearch ? (focused as HTMLInputElement).value : "";
             const selection = focused instanceof HTMLInputElement || focused instanceof HTMLTextAreaElement
               ? [focused.selectionStart, focused.selectionEnd] : null;
@@ -285,7 +310,8 @@ export async function openRecordEditor(
             render();
             if (owned && (document.activeElement === document.body || document.activeElement === dialog)) {
               const target = name ? dialog.querySelector<HTMLElement>(`[name="${CSS.escape(name)}"]`)
-                : memberSearch ? dialog.querySelector<HTMLInputElement>('[data-member-search]') : null;
+                : memberSearch ? dialog.querySelector<HTMLInputElement>('[data-member-search]')
+                : referenceOpener ? dialog.querySelector<HTMLButtonElement>('[data-references]') : null;
               if (target) {
                 if (memberSearch) {
                   (target as HTMLInputElement).value = search;
@@ -373,6 +399,8 @@ export async function openRecordEditor(
               review_token: token,
             }),
           });
+          try { parentLifecycle?.confirmed(); }
+          catch { console.warn("The dependent editor change notification could not be delivered."); }
           dirty = false;
           busy = false;
           close();

@@ -1,0 +1,166 @@
+{
+  "recorded_at_utc": "2026-11-10T08:03:41.835100+00:00",
+  "author": "/root/generation174_harness_repair",
+  "scope": "Read-only product audit of selected remaining families after applied catalogV14r2. Authored one diagnostic only; no browser run, ledger or product edit. Not a universal runtime reachability inventory.",
+  "criterion_source": {
+    "path": "docs/premium-ui/acceptance-criteria/items-087-173.json",
+    "sha256": "a7bf1322bd8e08a1fddd4195095d9cc52a8867a1b8a2bda9b523917fae458576"
+  },
+  "exact_item159": {
+    "item_id": 159,
+    "requirement": "Refresh dependent leave and unit views after confirmed mutations without discarding unrelated unsaved edits or chosen filters.",
+    "acceptance_scope": "Dependent refresh preserving unrelated drafts and filters",
+    "pass_conditions": [
+      "Confirmed leave/unit/reference mutations refresh their relevant dependent views.",
+      "Unrelated unsaved edits and chosen filters survive those refreshes, and failed read-back does not repeat the mutation."
+    ],
+    "evidence_needed": [
+      "Scoped source inspection and rendered or interaction evidence addressing the stated conditions.",
+      "Equivalent fixtures, actual existing requests/results and independent persisted or artifact read-back where the condition asserts a mutation/export outcome."
+    ],
+    "existing_evidence_candidates": [
+      "docs/premium-ui/qa-import-created-unit.json",
+      "docs/premium-ui/qa-import-reference-controls.json",
+      "docs/premium-ui/reviews/import-unit-reference-current.json",
+      "docs/premium-ui/qa-record-reference-refresh.json",
+      "docs/premium-ui/reviews/record-reference-refresh-current.json"
+    ],
+    "remaining_gap": "Verify actual mutation followed by dependency refresh and recoverable read failure."
+  },
+  "source_sha256": {
+    "frontend/src/main.ts": "ebf67f1733f620e406054d0c4a82cf1c203fd0e6603a843eec45b25a1a09df4d",
+    "frontend/src/reference-workspace.ts": "91133b6913c3e7c5a493bbf19436ca06ba5ad9d1813a13974c70d0d6473a434a",
+    "frontend/src/member-workspace.ts": "506c486046fe6f0bbea5c6c4bf6357fec6e9649d91a9ed1ed890551ed3503cca",
+    "frontend/src/member-import.ts": "d985f4aefa5bfdd71b6f0a53995a8c63b3c827639158ec584b97e72f14ced061",
+    "frontend/src/extra-duty.ts": "529e420fc05ce5bfa42655b8863e449e09e22a7c0abe9baf4db5c94c4797b8c3",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/data-sync.ts": "8408ff9eb6369d486126b7471ffc15a45fbe7f6fe5decd73b231f1dbf07c2f02",
+    "frontend/src/workspace-load-state.ts": "cdd0e323d7e83e6e668a381bbfcc37cad4726b1193ac5de31d5f14e03eecd9c6",
+    "frontend/src/premium-theme.css": "2e4f85d813061ebc9f696b92d50ae24717a7781a3688187d02c7339c00bea4a1"
+  },
+  "families": [
+    {
+      "family": "Mapping creation",
+      "entry": "main.ts9556 openMappingCreator; reference-workspace.ts24-149",
+      "confirmed": "POST admin/mappings accepted; closes then saved callback.",
+      "dependency": "Current Mappings list/options; main callback loadMappings(true,mappingCurrent), then renderMappings.",
+      "retention": "loadMappings preserves dirty row target/status/notes and missing edited rows; search/filter state closure.",
+      "recovery": "loadMappings catches read error, retains old maps and displays Try again. No automatic accepted POST replay.",
+      "classification": "Existing applied bounded repair; current source still correct by inspection.",
+      "evidence": "reviews/mapping-parent-v1-integrated-execution.json historical42; compare current exact changed-function applicability, not repeat historical defect.",
+      "159_conditions": [
+        1,
+        2
+      ],
+      "next": "No new implementation justified. Revalidate historical mapping-parent proof against unchanged functions and exercise meaningful unresolved race only if one is found."
+    },
+    {
+      "family": "Mapping row edit/save",
+      "entry": "main.ts10856-10887 [data-save], updateLocalMapping1452, renderMappings3015",
+      "confirmed": "updateMapping PUT returns authoritative saved row.",
+      "dependency": "Saved mapping row uses returned data; other dirty row objects retained.",
+      "retention": "Per-ID operation token and pending controls; render reads existing mappingDraftIds.",
+      "recovery": "No own readback GET; mutation refusals/toasts separate from accepted-readback concerns.",
+      "classification": "Current source supports expected behavior; missing broad159 evidence is not a verified bug.",
+      "159_conditions": [
+        1,
+        2
+      ],
+      "next": "Use existing original134 evidence/current wrappers. If needed test concurrent save-A while edit-B, exact returnedA and unsavedB/filter preserved; do not add needless whole-list GET."
+    },
+    {
+      "family": "Historical mapping Scan",
+      "entry": "main.ts #scan-mappings and loadMappings(true,current)",
+      "confirmed": "Existing scan POST; mappingScanConfirmed tracks success.",
+      "dependency": "Current mappings plus options merged without replacing dirty rows.",
+      "recovery": "Retry mappings GET only after accepted scan/read failure.",
+      "classification": "Existing bounded original135/136 proof; no current defect identified.",
+      "159_conditions": [
+        1,
+        2
+      ],
+      "next": "Keep exact scoped current applicability, no product change solely for inventory completeness."
+    },
+    {
+      "family": "Inline Unit fallback order Save success",
+      "entry": "extra-duty.ts887-919 [data-fb-save]",
+      "confirmed": "PUT extra-duty/unit-fallbacks/{unit}; actual returned fallback IDs committed into saved/draft of that owner only.",
+      "dependency": "Owning fallback editor and future extra-duty run. No reason to fabricate board membership/count changes.",
+      "retention": "Independent Maps preserve other unit row drafts; repaintUnit only owner. Old host async response cannot repaint disconnected new host.",
+      "classification": "Source-correct successful normal path; historical extra-duty.browser.mjs324-345 verifies one order, not current exhaustive failure/race matrix.",
+      "159_conditions": [
+        1,
+        2
+      ],
+      "next": "Targeted accepted return differing order + second-row draft + disconnected owner/current owner proof if needed; no unconditional parent remount."
+    },
+    {
+      "family": "Inline fallback unsuccessful/ambiguous response",
+      "entry": "extra-duty.ts904-916 catch error",
+      "behavior": "Every caught request error appends Nothing was changed; try again. Source cannot establish no server commit for network loss/accepted malformed body. No explicit read-only reconciliation offered in this row.",
+      "classification": "Source-supported misleading/uncertain outcome risk, not a reproduced current mutation loss. PUT same order may be idempotent, so do not call this duplicate assignment bug.",
+      "159_conditions": [
+        2
+      ],
+      "next": "Diagnostic locally accept/store exact PUT order but return malformed JSON or drop response; inspect actual API error and copy, preserve second-row draft. Test explicit read-only reconciliation separately before designing change. Do not change backend/order semantics."
+    },
+    {
+      "family": "MemberCSV accepted Apply notification timing",
+      "entry": "member-workspace.ts1732-1766; main.ts10619",
+      "confirmed": "CSV Apply returns accepted; applied=true before result rendering; done() called only after result rendering/handlers.",
+      "dependency": "Underlying Members list refresh via done?renderMembers; normal Units/Leave not simultaneously visible.",
+      "retention": "Accepted Apply result rendering error can skip done but shows confirmed/result-unavailable copy. Main renderMembers uses skeleton and generic Members unavailable on read error.",
+      "classification": "Conditional member-reference scope and unverified rendering/readback risk. Do not assert original159 requires every Members workflow or actual stale Units on later navigation.",
+      "159_conditions": [
+        1,
+        2
+      ],
+      "next": "If member-reference scope is retained, targeted accepted Apply result render fault/read503 with unrelated Members add draft/filter before opening CSV; inspect draft retention and truthful reload guidance."
+    },
+    {
+      "family": "MemberCSV result member profile edit",
+      "entry": "member-workspace.ts1752 result button openMemberWorkspace(id,true,()=>{}); main10619 CSV done refresh only on Apply",
+      "confirmed": "Nested profile accepted core PUT/merge uses noop changed callback; parentLifecycle argument absent.",
+      "dependency": "Already rendered underlying Members list after successful CSV Apply; no automatic onDataChange render (main470 only invalidates caches).",
+      "classification": "Highest priority normal-flow source-supported stale-list hypothesis, not runtime-confirmed.",
+      "159_conditions": [
+        1
+      ],
+      "next": "Run newly frozen actualUI diagnostic first; known accepted CSV?result profile core rename?close both, expect underlying current member name, record memberGET baseline and accepted PUT. No speculative product repair until reproduced."
+    },
+    {
+      "family": "Member workbook importer is distinct from MemberCSV",
+      "entry": "member-import.ts230-254; main5384 mountMemberImport(host,renderMembers)",
+      "confirmed": "Workbook Apply sets applied before await refresh; catch explicitly says Import was confirmed but refreshed member view unavailable.",
+      "dependency": "Mounted Members screen; no simultaneous Unit/Leave owner.",
+      "classification": "Source already distinguishes accepted Apply/read error. Do not conflate with result-member popup path; it has no result-member profile controls.",
+      "159_conditions": [
+        1,
+        2
+      ],
+      "next": "Use existing workbook lifetime/action evidence; only extend direct dependency/draft checks if included in agreed member-reference scope."
+    }
+  ],
+  "priority": {
+    "first": "MemberCSV result profile name/status edit, successful normal flow with skipped list notification.",
+    "reason": "Direct currently rendered caller demonstrably bypasses main member change wrapper; no artificial renderer fault needed. Actual stale UI still requires diagnostic.",
+    "scope_caution": "Adjacent member-reference dependency. Does not prove stale Leave/Unit board on navigation; force-fresh Unit navigation and cache invalidation are counterevidence."
+  },
+  "diagnostic": {
+    "path": "frontend/tests/premium-original159-membercsv-result-profile-diagnostic-20261110.browser.mjs",
+    "sha256": "91bf5ccd3e01880da7729120b337b59ddd31c3a20f084928c788cea9405d4281",
+    "syntax_check_exit_code": 0,
+    "execution_status": "Unexecuted; root should run smoke then full if useful.",
+    "smoke_env": "MEMBERCSV159_SMOKE=1",
+    "smoke_contexts": 1,
+    "full_contexts": 6,
+    "report_paths": [
+      "docs/premium-ui/qa-original159-membercsv-result-profile-diagnostic-smoke-20261110.json",
+      "docs/premium-ui/qa-original159-membercsv-result-profile-diagnostic-20261110.json"
+    ],
+    "acceptance_boundary": "Failure counts only product evidence if successful Apply and accepted corePUT/profile updated are reached; early selector/setup assertion is harness failure. Raw observed.saved/applied,memberReads,expectedApiName,parentNames,writes distinguish stages.",
+    "fixture_boundary": "All write requests fulfilled locally. Other reads forwarded only disposable RAM8031; no backend mutation, scheduling, GPU or production API."
+  },
+  "historical_inventory_disposition": "V13r1 F08-F11 isolated findings are superseded by appliedV13r2 120 evidence; F15 acceptedPUT/ownGETClose issue superseded by applied catalogV14r2 56. Do not carry their old not-applied statuses as current bugs. F17 mapping creation prior42 fixed; F18/F19 need scoped applicability, not automatic repair. F20/F21 remain finite investigated families above.",
+  "goal_status": "Whole159 remains partial until remaining relevant concrete families and exact evidence conditions reviewed; no new acceptance from this audit."
+}

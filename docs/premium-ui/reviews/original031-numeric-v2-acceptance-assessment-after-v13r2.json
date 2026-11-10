@@ -1,0 +1,137 @@
+{
+  "recorded_at_utc": "2026-11-10T04:08:57.533Z",
+  "reviewer": "/root/leave159_nondelete_groundwork",
+  "application_changed": false,
+  "browser_executed_by_reviewer": false,
+  "acceptance_decision": "Original31 is not accepted yet because CSS remains isolated. Source and executed scoped evidence support held CSS integration, followed by fresh applied six-category and build/source bindings. No requirement expansion to every button/picker or all260.",
+  "original_requirement": "Use tabular numerals for workload totals, dates, percentages, capacity, runtime and comparison columns.",
+  "original_conditions": [
+    "Apply tabular numerals to workload totals, dates, percentages, capacity, runtime and comparison columns",
+    "Verify computed numeric typography on actual instances in every requested category without altering values"
+  ],
+  "source_css": {
+    "applied_sha256": "acc46b2249087f365ca855bcd9630628c390c4cdf013301daaee40ede80e55f4",
+    "isolated_candidate_sha256": "2e4f85d813061ebc9f696b92d50ae24717a7781a3688187d02c7339c00bea4a1",
+    "append_only": true,
+    "new_declarations": [
+      "body { font-variant-numeric: tabular-nums; }",
+      ":where(button, input, select, textarea, option, optgroup) { font-variant-numeric: inherit; }"
+    ]
+  },
+  "evidence": {
+    "six_category": {
+      "path": "docs/premium-ui/qa-original031-numeric-v2-six-category.json",
+      "sha256": "633a58c4e82f3a37f44629000f0531033f9da0657b3280bb598b84d70430255f",
+      "test_path": "frontend/tests/premium-original031-numeric-v2-six-category.browser.mjs",
+      "test_sha256": "9c62025c9fcafaadd3be58aaf5f5fcbaafc358a7d7ccfd8839f24d4d1588697a",
+      "contexts": 12,
+      "probes": 252,
+      "categories": {
+        "workload totals": 24,
+        "percentages": 12,
+        "dates": 36,
+        "capacity": 24,
+        "runtime": 12,
+        "comparison columns": 144
+      },
+      "executed_main_sha256": "15b79223710a53a9e0ccdd70373a92e568f6ee603f56e3747454ab25ac258cc0",
+      "scope": "Actual six requested categories, three engines320/1280 light/dark, computed numeric feature requests and exact existing formatter values. Representative category instances, not every OS glyph or picker."
+    },
+    "paired_routes": {
+      "path": "docs/premium-ui/qa-original031-numeric-v2-route-pairs-r2.json",
+      "sha256": "33f3a469c69988e623733e51d0f7a02c46572ddfdce2febd36f6588ff707a8d2",
+      "test_path": "frontend/tests/premium-original031-numeric-v2-route-pairs-r2.browser.mjs",
+      "test_sha256": "a7302bd76a9b1ea2e664cbd2539114b46814d6fa18a379cf03106ae062cc7291",
+      "comparison_cases": 12,
+      "browser_contexts": 24,
+      "paired_route_observations": 228,
+      "actual_route_visits": 456,
+      "all_passed": true,
+      "executed_main_sha256": "15b79223710a53a9e0ccdd70373a92e568f6ee603f56e3747454ab25ac258cc0",
+      "numeric_observations": 8124,
+      "candidate_fixture_branches": {
+        "populated-or-guidance": 84,
+        "possibly-empty": 132,
+        "alert-or-error": 12
+      },
+      "scope": "Actual19route initial/read-only navigation snapshots. Exact raw main/control text/value/state/non-numeric font attributes, computed numeric variants, baseline-relative page overflow and eligible hidden/clip/ellipsis numeric text truncation; no new/worse local clips. Fixed Date/shared RAM bodies/matched Vite build define. No new mutation outcome proof."
+    }
+  },
+  "v13r2_source_bridge": {
+    "files": [
+      {
+        "file": "frontend/src/main.ts",
+        "before_sha256": "15b79223710a53a9e0ccdd70373a92e568f6ee603f56e3747454ab25ac258cc0",
+        "current_applied_sha256": "ebf67f1733f620e406054d0c4a82cf1c203fd0e6603a843eec45b25a1a09df4d",
+        "all_existing_template_literals_exact": 672,
+        "table_form_literals_exact": {
+          "table": 37,
+          "form": 14
+        }
+      },
+      {
+        "file": "frontend/src/member-workspace.ts",
+        "before_sha256": "88774f277131a1ed83174d288d882653fc04add295b8237fefa62636e08617ea",
+        "current_applied_sha256": "506c486046fe6f0bbea5c6c4bf6357fec6e9649d91a9ed1ed890551ed3503cca",
+        "all_existing_template_literals_exact": 161,
+        "table_form_literals_exact": {
+          "table": 1,
+          "form": 2
+        }
+      },
+      {
+        "file": "frontend/src/operational-import.ts",
+        "before_sha256": "1ccbcf4181330a5f66c59b0723ec02f878a268b6b3030aa99b177de1b7070355",
+        "current_applied_sha256": "01d58023203380fedcee010cd3001b8e2bb478397144566ef92142a515a14b38",
+        "all_existing_template_literals_exact": 52,
+        "table_form_literals_exact": {
+          "table": 0,
+          "form": 2
+        }
+      },
+      {
+        "file": "frontend/src/record-workspace.ts",
+        "before_sha256": "469fd6bf2e4118b15ad343d8059cd3cfb0acbc6483bea969ca5fb93488644335",
+        "current_applied_sha256": "20b50cdbd991b5b5a16d06b51020be2838514a553823512373818f65636427aa",
+        "all_existing_template_literals_exact": 30,
+        "table_form_literals_exact": {
+          "table": 0,
+          "form": 1
+        }
+      },
+      {
+        "file": "frontend/src/reference-workspace.ts",
+        "before_sha256": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd",
+        "current_applied_sha256": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd",
+        "all_existing_template_literals_exact": 49,
+        "table_form_literals_exact": {
+          "table": 0,
+          "form": 3
+        }
+      }
+    ],
+    "independent_source_review": "docs/premium-ui/reviews/original159-nested-reference-v13r2-independent-lifecycle-review.json",
+    "assessment": "All numeric/presentation template literals remain exact in current four changed modules and unchanged reference module. Shared styles/formatters/analysis/compute/comparison code held exact. V13r2 adds accepted-mutation lifecycle wiring and one importer row-profile lifecycle adapter, not initial numeric formatting or typography. New profile path also existed visually; changed callback lifetime now invalidates after accepted writes. It does not add a numeric font reset or markup exception.",
+    "limits": "Timing/outcome behavior is changed and requires root-held applied120/unit/build evidence; this source bridge alone does not certify those paths. Unexecuted/inflight results are not treated as passed."
+  },
+  "recommendation": {
+    "integration": "After current held V13r2 build/browser runs reach terminal and source remains held, apply only exact candidate CSS2e4f with beforehashacc46. Preserve catalogV14 isolated. Run fresh applied six-category252 under current V13r2 hashes and served applied CSS, plus build and current acceptance source bindings.",
+    "repeat_all228": "A repeat of all historical228 pairs is not required solely because V13r2 changes lifecycle callbacks: independent full template/style/formatter parity and unchanged initial-route rendering support scoped applicability of the existing paired regression evidence. Keep it explicitly historical/pre-V13r2 paired evidence; do not relabel it fresh applied228. If source/markup/font/formatting changes again, paired branches differ, or applied252 reveals a mismatch, re-evaluate and run targeted or full comparisons.",
+    "build_identity": "Current applied build ID may differ from historical paireddev build. Historical pair matched IDs at its own execution; new build identity needs its own applied binding rather than rewriting historical text or source attribution.",
+    "condition1": "Global inherited numeric policy covers applicable HTML text/control descendants across workload totals/dates/percentages/capacity/runtime/comparison categories, including newly mounted dialogs. Existing positive authored tabular rules preserved; no current proportional/reset exception. Record applicable surface inventory and explicit native/SVG/canvas boundaries.",
+    "condition2": "Fresh applied actual six-category252 computed-variant and independent expected-value assertions should prove exact original31 second condition. Historical228 adds broad unchanged-value/font/layout regression support through explicit source bridge. No need invent all-button/native-picker acceptance criterion for31."
+  },
+  "pending_gates": [
+    "CSS exact held integration has not happened at this review.",
+    "Fresh applied252 against current V13r2 source and actual served CSS/build remains required.",
+    "Root appliedV13r2 120/build ongoing at request time; inspect terminal evidence separately before final current acceptance.",
+    "Bind classified numeric surface categories/exceptions and executed reports to current source/build, then run acceptance verifier without relaxing its exact conditions."
+  ],
+  "limitations": [
+    "Computed tabular-nums proves CSS feature request, not actual equal-advance shaping for every installed fallback font or browser-owned native popup/picker. Do not claim universal native glyph certification.",
+    "Paired route fixture empty/guidance branches do not prove populated data missing there; actual six-family rich fixtures supply requested-category evidence.",
+    "Local truncation measure excludes ancestor-only clipping, native value internals, mixed parent text, SVG/canvas/pseudo-elements and intentional scroll containers; no every-layout claim.",
+    "Widths320/1280, three engines and light/dark are actual measured scope. Physical devices/native assistive technology remain pending.",
+    "Original31 exact acceptance is distinct from all159/all260 completion. CatalogV14 Close/focus issues remain isolated and unresolved."
+  ]
+}

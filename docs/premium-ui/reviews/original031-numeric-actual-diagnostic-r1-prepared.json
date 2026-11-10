@@ -1,0 +1,43 @@
+{
+  "recorded_at_utc": "2026-11-09T17:22:54.611856+00:00",
+  "operator": "/root/numeric31_scope_audit",
+  "status": "prepared_not_run",
+  "application_changed": false,
+  "browser_executed": false,
+  "actual_route_readiness_verified": false,
+  "actual_numeric_observations": null,
+  "whole_requirement_completion_proven": false,
+  "script": "frontend/tests/premium-original031-numeric-actual-diagnostic-r1.browser.mjs",
+  "script_sha256": "cb32b84e0739c684ad0a2dca5559adb293518327bdb050dad079c10677db2076",
+  "original_script": "frontend/tests/premium-original031-numeric-actual-diagnostic.browser.mjs",
+  "original_script_sha256": "3b1a0f440b4be9b74814c427bd1c68bf990191a1309a8e85a8bfaa603506caca",
+  "original_script_unchanged": true,
+  "edits": [
+    "Held main.ts hash only: 9f5359 to 45743f",
+    "Unique diagnostic-r1 output report filename"
+  ],
+  "all_other_script_bytes_unchanged": true,
+  "source_sha256": {
+    "frontend/src/main.ts": "45743fb64260289e50526480572bf25e33d8dc1a69f83397286660a03951cfba",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "acc46b2249087f365ca855bcd9630628c390c4cdf013301daaee40ede80e55f4",
+    "frontend/src/rota-compute.ts": "e5f967e6166e2ace9352983a468002d45850188d8811363230305d7597fb70ab",
+    "frontend/src/generation-comparison.ts": "a331e6a20880b4535401262a3da35f2a98d38af93061552867e6f71d0d18115e",
+    "frontend/src/analysis-charts.ts": "823a2cddb07d0f69ba1fe12719e4094ae29fda839769e1f4b2dc75e7aa887c4a",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/ui.ts": "680d7830bca8826b46b6f1dc2c0d064d2a3a2e16fb41188d2c323de6bccf85b2"
+  },
+  "source_delta_analysis": "docs/premium-ui/reviews/original159-delete-v11r1-prior56-source-analysis.json",
+  "source_delta_analysis_sha256": "8783117cd5acd872bf96faf119dc83fe1aee9c10c3fd42d62606e5f45c0a7856",
+  "source_delta_analysis_changed_functions": [
+    "runAdminDelete"
+  ],
+  "scope": "Preparation only. Existing diagnostic control flow, real route navigation, GET-only fixtures and numeric exact-string assertions retained. No assertion is made that Autoassign or any route actually rendered; root will execute after its active browser run.",
+  "syntax_check": {
+    "command": "node --check frontend/tests/premium-original031-numeric-actual-diagnostic-r1.browser.mjs",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "browser_executed": false
+  }
+}

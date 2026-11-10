@@ -1,0 +1,1194 @@
+{
+  "recorded_at_utc": "2026-11-09T17:39:45.561Z",
+  "operator": "/root",
+  "author": "/root/core_v12_fault_tests",
+  "execution_target": "Isolated V12 member-workspace overlay; other product source applied; no integration acceptance",
+  "candidate_sha256": "88774f277131a1ed83174d288d882653fc04add295b8237fefa62636e08617ea",
+  "application_changed_by_test": false,
+  "source_sha256": {
+    "frontend/src/main.ts": "45743fb64260289e50526480572bf25e33d8dc1a69f83397286660a03951cfba",
+    "frontend/src/member-workspace.ts": "105cc1d91ea4815d565ad4859fc01412cf576a3203c07834f4010e3fef7ef1a5",
+    "frontend/src/extra-duty.ts": "529e420fc05ce5bfa42655b8863e449e09e22a7c0abe9baf4db5c94c4797b8c3",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+  },
+  "test_sha256": "14a08930e1778ac49b205d80ad7a81bed732d7aeb28fb07bc4c74e767ab54198",
+  "scope": "8 Chromium contexts at320/1280 from Unit modal or Leave list: successful core PUT followed by one injected child structuredClone failure, and two successful core PUTs coalesced into one dependent parent GET only after final close. Local writes strictly bounded and exact full payloads asserted. Unit minimum3 and fallback C,B drafts, Royal/Main filters and Leave list retained. Fault must be caught without unhandled JS errors or automatic mutation replay. Only unhandled GETs use RAM8031. No physical-device/native AT or real database verification.",
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "view": "units",
+      "mode": "postaccepted-childfault",
+      "childFaultEvidence": {
+        "faults": [
+          {
+            "name": "Dr Core Renamed NEW",
+            "stack": "Error: INJECTED_CORE_POSTACCEPTED_CLONE_FAULT\n    at window.structuredClone (<anonymous>:9:25)\n    at dialog.querySelector.onsubmit (http://127.0.0.1:5305/src/member-workspace.ts:996:17)"
+          }
+        ],
+        "armed": false,
+        "errorText": "INJECTED_CORE_POSTACCEPTED_CLONE_FAULT"
+      },
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "leaveReads": 0,
+        "memberReads": 1
+      },
+      "after": {
+        "unitReads": 2,
+        "leaveReads": 0,
+        "memberReads": 1
+      },
+      "observed": {
+        "parentNames": [
+          "Dr Core Renamed NEW",
+          "Dr Core Renamed NEW",
+          "Dr Core Renamed NEW"
+        ],
+        "settingsValue": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "fallbackHostRetained": true,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [
+          "core-c",
+          "core-b"
+        ],
+        "fallbackSaveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "body": {
+            "id": "core-parent-person",
+            "canonical_name": "Dr Core Renamed NEW",
+            "call_level": "3RD_CALL",
+            "active_status": "active",
+            "aliases": [],
+            "designations": [],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/postings",
+          "search": ""
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "view": "units",
+      "mode": "two-saves-coalesced",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "leaveReads": 0,
+        "memberReads": 1
+      },
+      "after": {
+        "unitReads": 2,
+        "leaveReads": 0,
+        "memberReads": 3
+      },
+      "observed": {
+        "parentNames": [
+          "Dr Core Renamed FINAL",
+          "Dr Core Renamed FINAL",
+          "Dr Core Renamed FINAL"
+        ],
+        "settingsValue": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "fallbackHostRetained": true,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [
+          "core-c",
+          "core-b"
+        ],
+        "fallbackSaveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "body": {
+            "id": "core-parent-person",
+            "canonical_name": "Dr Core Renamed NEW",
+            "call_level": "3RD_CALL",
+            "active_status": "active",
+            "aliases": [],
+            "designations": [],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "body": {
+            "id": "core-parent-person",
+            "canonical_name": "Dr Core Renamed FINAL",
+            "call_level": "3RD_CALL",
+            "active_status": "active",
+            "aliases": [],
+            "designations": [],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/postings",
+          "search": ""
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/audit",
+          "search": ""
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/audit",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "view": "leave",
+      "mode": "postaccepted-childfault",
+      "childFaultEvidence": {
+        "faults": [
+          {
+            "name": "Dr Core Renamed NEW",
+            "stack": "Error: INJECTED_CORE_POSTACCEPTED_CLONE_FAULT\n    at window.structuredClone (<anonymous>:9:25)\n    at dialog.querySelector.onsubmit (http://127.0.0.1:5305/src/member-workspace.ts:996:17)"
+          }
+        ],
+        "armed": false,
+        "errorText": "INJECTED_CORE_POSTACCEPTED_CLONE_FAULT"
+      },
+      "passed": true,
+      "before": {
+        "unitReads": 0,
+        "leaveReads": 1,
+        "memberReads": 1
+      },
+      "after": {
+        "unitReads": 0,
+        "leaveReads": 2,
+        "memberReads": 1
+      },
+      "observed": {
+        "parentNames": [
+          "Dr Core Renamed NEW",
+          "Dr Core Renamed NEW"
+        ],
+        "formRetained": false,
+        "inputRetained": false,
+        "fallbackHostRetained": false,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [],
+        "fallbackSaveEnabled": false,
+        "leaveList": "true",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "body": {
+            "id": "core-parent-person",
+            "canonical_name": "Dr Core Renamed NEW",
+            "call_level": "3RD_CALL",
+            "active_status": "active",
+            "aliases": [],
+            "designations": [],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/leave",
+          "search": ""
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "view": "leave",
+      "mode": "two-saves-coalesced",
+      "passed": true,
+      "before": {
+        "unitReads": 0,
+        "leaveReads": 1,
+        "memberReads": 1
+      },
+      "after": {
+        "unitReads": 0,
+        "leaveReads": 2,
+        "memberReads": 3
+      },
+      "observed": {
+        "parentNames": [
+          "Dr Core Renamed FINAL",
+          "Dr Core Renamed FINAL"
+        ],
+        "formRetained": false,
+        "inputRetained": false,
+        "fallbackHostRetained": false,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [],
+        "fallbackSaveEnabled": false,
+        "leaveList": "true",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "body": {
+            "id": "core-parent-person",
+            "canonical_name": "Dr Core Renamed NEW",
+            "call_level": "3RD_CALL",
+            "active_status": "active",
+            "aliases": [],
+            "designations": [],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "body": {
+            "id": "core-parent-person",
+            "canonical_name": "Dr Core Renamed FINAL",
+            "call_level": "3RD_CALL",
+            "active_status": "active",
+            "aliases": [],
+            "designations": [],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/leave",
+          "search": ""
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/audit",
+          "search": ""
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/audit",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "view": "units",
+      "mode": "postaccepted-childfault",
+      "childFaultEvidence": {
+        "faults": [
+          {
+            "name": "Dr Core Renamed NEW",
+            "stack": "Error: INJECTED_CORE_POSTACCEPTED_CLONE_FAULT\n    at window.structuredClone (<anonymous>:9:25)\n    at dialog.querySelector.onsubmit (http://127.0.0.1:5305/src/member-workspace.ts:996:17)"
+          }
+        ],
+        "armed": false,
+        "errorText": "INJECTED_CORE_POSTACCEPTED_CLONE_FAULT"
+      },
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "leaveReads": 0,
+        "memberReads": 1
+      },
+      "after": {
+        "unitReads": 2,
+        "leaveReads": 0,
+        "memberReads": 1
+      },
+      "observed": {
+        "parentNames": [
+          "Dr Core Renamed NEW",
+          "Dr Core Renamed NEW",
+          "Dr Core Renamed NEW"
+        ],
+        "settingsValue": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "fallbackHostRetained": true,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [
+          "core-c",
+          "core-b"
+        ],
+        "fallbackSaveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "body": {
+            "id": "core-parent-person",
+            "canonical_name": "Dr Core Renamed NEW",
+            "call_level": "3RD_CALL",
+            "active_status": "active",
+            "aliases": [],
+            "designations": [],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/postings",
+          "search": ""
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "view": "units",
+      "mode": "two-saves-coalesced",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "leaveReads": 0,
+        "memberReads": 1
+      },
+      "after": {
+        "unitReads": 2,
+        "leaveReads": 0,
+        "memberReads": 3
+      },
+      "observed": {
+        "parentNames": [
+          "Dr Core Renamed FINAL",
+          "Dr Core Renamed FINAL",
+          "Dr Core Renamed FINAL"
+        ],
+        "settingsValue": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "fallbackHostRetained": true,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [
+          "core-c",
+          "core-b"
+        ],
+        "fallbackSaveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "body": {
+            "id": "core-parent-person",
+            "canonical_name": "Dr Core Renamed NEW",
+            "call_level": "3RD_CALL",
+            "active_status": "active",
+            "aliases": [],
+            "designations": [],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "body": {
+            "id": "core-parent-person",
+            "canonical_name": "Dr Core Renamed FINAL",
+            "call_level": "3RD_CALL",
+            "active_status": "active",
+            "aliases": [],
+            "designations": [],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/postings",
+          "search": ""
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/audit",
+          "search": ""
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/audit",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "view": "leave",
+      "mode": "postaccepted-childfault",
+      "childFaultEvidence": {
+        "faults": [
+          {
+            "name": "Dr Core Renamed NEW",
+            "stack": "Error: INJECTED_CORE_POSTACCEPTED_CLONE_FAULT\n    at window.structuredClone (<anonymous>:9:25)\n    at dialog.querySelector.onsubmit (http://127.0.0.1:5305/src/member-workspace.ts:996:17)"
+          }
+        ],
+        "armed": false,
+        "errorText": "INJECTED_CORE_POSTACCEPTED_CLONE_FAULT"
+      },
+      "passed": true,
+      "before": {
+        "unitReads": 0,
+        "leaveReads": 1,
+        "memberReads": 1
+      },
+      "after": {
+        "unitReads": 0,
+        "leaveReads": 2,
+        "memberReads": 1
+      },
+      "observed": {
+        "parentNames": [
+          "Dr Core Renamed NEW",
+          "Dr Core Renamed NEW"
+        ],
+        "formRetained": false,
+        "inputRetained": false,
+        "fallbackHostRetained": false,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [],
+        "fallbackSaveEnabled": false,
+        "leaveList": "true",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "body": {
+            "id": "core-parent-person",
+            "canonical_name": "Dr Core Renamed NEW",
+            "call_level": "3RD_CALL",
+            "active_status": "active",
+            "aliases": [],
+            "designations": [],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/leave",
+          "search": ""
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "view": "leave",
+      "mode": "two-saves-coalesced",
+      "passed": true,
+      "before": {
+        "unitReads": 0,
+        "leaveReads": 1,
+        "memberReads": 1
+      },
+      "after": {
+        "unitReads": 0,
+        "leaveReads": 2,
+        "memberReads": 3
+      },
+      "observed": {
+        "parentNames": [
+          "Dr Core Renamed FINAL",
+          "Dr Core Renamed FINAL"
+        ],
+        "formRetained": false,
+        "inputRetained": false,
+        "fallbackHostRetained": false,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [],
+        "fallbackSaveEnabled": false,
+        "leaveList": "true",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "body": {
+            "id": "core-parent-person",
+            "canonical_name": "Dr Core Renamed NEW",
+            "call_level": "3RD_CALL",
+            "active_status": "active",
+            "aliases": [],
+            "designations": [],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "body": {
+            "id": "core-parent-person",
+            "canonical_name": "Dr Core Renamed FINAL",
+            "call_level": "3RD_CALL",
+            "active_status": "active",
+            "aliases": [],
+            "designations": [],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/leave",
+          "search": ""
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/audit",
+          "search": ""
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/audit",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    }
+  ]
+}

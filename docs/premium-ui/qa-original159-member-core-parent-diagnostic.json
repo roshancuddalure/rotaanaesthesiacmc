@@ -1,0 +1,1163 @@
+{
+  "recorded_at_utc": "2026-11-09T17:30:05.269Z",
+  "operator": "/root",
+  "author": "/root/membercore159_source",
+  "execution_target": "Applied source only; expected-correct diagnostic, not acceptance",
+  "application_changed_by_test": false,
+  "source_sha256": {
+    "frontend/src/main.ts": "45743fb64260289e50526480572bf25e33d8dc1a69f83397286660a03951cfba",
+    "frontend/src/member-workspace.ts": "105cc1d91ea4815d565ad4859fc01412cf576a3203c07834f4010e3fef7ef1a5",
+    "frontend/src/extra-duty.ts": "529e420fc05ce5bfa42655b8863e449e09e22a7c0abe9baf4db5c94c4797b8c3",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+  },
+  "test_sha256": "719b3d096c4d32a7e2735f32f4ab0d4420366e7551cde1ec338e64143a37e986",
+  "scope": "12 actual UI core profile name and base-call-level saves from Unit modal or Leave list across Chromium/Firefox/WebKit at320/1280. Units starts unrelated minimum3 and fallback C,B drafts with Royal/Main filters. Writes fulfilled locally; unhandled GETs only RAM8031. Parent name readback plus retention is expected. No physical-device/native AT or real database verification.",
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "view": "units",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    3) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"SICU\" data-unit-board-card=\"special:SICU\" data-unit-board-search=\"sicu special posting\">…</article> aka getByText('SICU Special posting Manage Nobody posted this month.')\n    4) <article data-unit-board-campus=\"special\" data-open-special-unit-modal=\"DRP\" data-unit-board-card=\"special:DRP\" class=\"unit-card special-unit-card\" data-unit-board-search=\"drp special posting\">…</article> aka getByText('DRP Special posting Manage Nobody posted this month.')\n    5) <article class=\"unit-card\" data-open-unit-modal=\"core-parent\" data-unit-board-campus=\"campus:Main\" data-unit-board-card=\"unit:core-parent\" data-unit-board-search=\"royal core parent main dr core original old\">…</article> aka getByText('Royal Core parent Main Manage 1 without active leave records · 1 assigned · 0')\n    6) <article class=\"unit-card\" data-open-unit-modal=\"core-b\" data-unit-board-card=\"unit:core-b\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal core b main\">…</article> aka getByText('Royal Core b Main Manage 0')\n    7) <article class=\"unit-card\" data-open-unit-modal=\"core-c\" data-unit-board-card=\"unit:core-c\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal core c main\">…</article> aka getByText('Royal Core c Main Manage 0')\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "saved": false,
+      "observed": {
+        "parentNames": [
+          "Dr Core Original OLD",
+          "Dr Core Original OLD"
+        ],
+        "formRetained": false,
+        "inputRetained": false,
+        "fallbackHostRetained": true,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [
+          "core-c",
+          "core-b"
+        ],
+        "fallbackSaveEnabled": true,
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "reads": {
+        "unitReads": 1,
+        "leaveReads": 0,
+        "memberReads": 1
+      },
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "view": "leave",
+      "passed": false,
+      "assertion": "page.waitForFunction: Timeout 2500ms exceeded.",
+      "saved": true,
+      "observed": {
+        "parentNames": [
+          "Dr Core Original OLD",
+          "Dr Core Original OLD"
+        ],
+        "formRetained": false,
+        "inputRetained": false,
+        "fallbackHostRetained": false,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [],
+        "fallbackSaveEnabled": false,
+        "leaveList": "true",
+        "notices": []
+      },
+      "reads": {
+        "unitReads": 0,
+        "leaveReads": 1,
+        "memberReads": 2
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "body": {
+            "id": "core-parent-person",
+            "canonical_name": "Dr Core Renamed NEW",
+            "call_level": "3RD_CALL",
+            "active_status": "active",
+            "aliases": [],
+            "designations": [],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/leave",
+          "search": ""
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/audit",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "view": "units",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    3) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"SICU\" data-unit-board-card=\"special:SICU\" data-unit-board-search=\"sicu special posting\">…</article> aka getByText('SICU Special posting Manage Nobody posted this month.')\n    4) <article data-unit-board-campus=\"special\" data-open-special-unit-modal=\"DRP\" data-unit-board-card=\"special:DRP\" class=\"unit-card special-unit-card\" data-unit-board-search=\"drp special posting\">…</article> aka getByText('DRP Special posting Manage Nobody posted this month.')\n    5) <article class=\"unit-card\" data-open-unit-modal=\"core-parent\" data-unit-board-campus=\"campus:Main\" data-unit-board-card=\"unit:core-parent\" data-unit-board-search=\"royal core parent main dr core original old\">…</article> aka getByText('Royal Core parent Main Manage 1 without active leave records · 1 assigned · 0')\n    6) <article class=\"unit-card\" data-open-unit-modal=\"core-b\" data-unit-board-card=\"unit:core-b\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal core b main\">…</article> aka getByText('Royal Core b Main Manage 0')\n    7) <article class=\"unit-card\" data-open-unit-modal=\"core-c\" data-unit-board-card=\"unit:core-c\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal core c main\">…</article> aka getByText('Royal Core c Main Manage 0')\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "saved": false,
+      "observed": {
+        "parentNames": [
+          "Dr Core Original OLD",
+          "Dr Core Original OLD"
+        ],
+        "formRetained": false,
+        "inputRetained": false,
+        "fallbackHostRetained": true,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [
+          "core-c",
+          "core-b"
+        ],
+        "fallbackSaveEnabled": true,
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "reads": {
+        "unitReads": 1,
+        "leaveReads": 0,
+        "memberReads": 1
+      },
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "view": "leave",
+      "passed": false,
+      "assertion": "page.waitForFunction: Timeout 2500ms exceeded.",
+      "saved": true,
+      "observed": {
+        "parentNames": [
+          "Dr Core Original OLD",
+          "Dr Core Original OLD"
+        ],
+        "formRetained": false,
+        "inputRetained": false,
+        "fallbackHostRetained": false,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [],
+        "fallbackSaveEnabled": false,
+        "leaveList": "true",
+        "notices": []
+      },
+      "reads": {
+        "unitReads": 0,
+        "leaveReads": 1,
+        "memberReads": 2
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "body": {
+            "id": "core-parent-person",
+            "canonical_name": "Dr Core Renamed NEW",
+            "call_level": "3RD_CALL",
+            "active_status": "active",
+            "aliases": [],
+            "designations": [],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/leave",
+          "search": ""
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/audit",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "view": "units",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    ...\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "saved": false,
+      "observed": {
+        "parentNames": [
+          "Dr Core Original OLD",
+          "Dr Core Original OLD"
+        ],
+        "formRetained": false,
+        "inputRetained": false,
+        "fallbackHostRetained": true,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [
+          "core-c",
+          "core-b"
+        ],
+        "fallbackSaveEnabled": true,
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "reads": {
+        "unitReads": 1,
+        "leaveReads": 0,
+        "memberReads": 1
+      },
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "view": "leave",
+      "passed": false,
+      "assertion": "page.waitForFunction: Timeout 2500ms exceeded.",
+      "saved": true,
+      "observed": {
+        "parentNames": [
+          "Dr Core Original OLD",
+          "Dr Core Original OLD"
+        ],
+        "formRetained": false,
+        "inputRetained": false,
+        "fallbackHostRetained": false,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [],
+        "fallbackSaveEnabled": false,
+        "leaveList": "true",
+        "notices": []
+      },
+      "reads": {
+        "unitReads": 0,
+        "leaveReads": 1,
+        "memberReads": 2
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "body": {
+            "id": "core-parent-person",
+            "canonical_name": "Dr Core Renamed NEW",
+            "call_level": "3RD_CALL",
+            "active_status": "active",
+            "aliases": [],
+            "designations": [],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/leave",
+          "search": ""
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/audit",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "view": "units",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    ...\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "saved": false,
+      "observed": {
+        "parentNames": [
+          "Dr Core Original OLD",
+          "Dr Core Original OLD"
+        ],
+        "formRetained": false,
+        "inputRetained": false,
+        "fallbackHostRetained": true,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [
+          "core-c",
+          "core-b"
+        ],
+        "fallbackSaveEnabled": true,
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "reads": {
+        "unitReads": 1,
+        "leaveReads": 0,
+        "memberReads": 1
+      },
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "view": "leave",
+      "passed": false,
+      "assertion": "page.waitForFunction: Timeout 2500ms exceeded.",
+      "saved": true,
+      "observed": {
+        "parentNames": [
+          "Dr Core Original OLD",
+          "Dr Core Original OLD"
+        ],
+        "formRetained": false,
+        "inputRetained": false,
+        "fallbackHostRetained": false,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [],
+        "fallbackSaveEnabled": false,
+        "leaveList": "true",
+        "notices": []
+      },
+      "reads": {
+        "unitReads": 0,
+        "leaveReads": 1,
+        "memberReads": 2
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "body": {
+            "id": "core-parent-person",
+            "canonical_name": "Dr Core Renamed NEW",
+            "call_level": "3RD_CALL",
+            "active_status": "active",
+            "aliases": [],
+            "designations": [],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/leave",
+          "search": ""
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/audit",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "view": "units",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    3) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"SICU\" data-unit-board-card=\"special:SICU\" data-unit-board-search=\"sicu special posting\">…</article> aka getByText('SICU Special posting Manage Nobody posted this month.')\n    4) <article data-unit-board-campus=\"special\" data-open-special-unit-modal=\"DRP\" data-unit-board-card=\"special:DRP\" class=\"unit-card special-unit-card\" data-unit-board-search=\"drp special posting\">…</article> aka getByText('DRP Special posting Manage Nobody posted this month.')\n    5) <article class=\"unit-card\" data-open-unit-modal=\"core-parent\" data-unit-board-campus=\"campus:Main\" data-unit-board-card=\"unit:core-parent\" data-unit-board-search=\"royal core parent main dr core original old\">…</article> aka getByText('Royal Core parent Main Manage 1 without active leave records · 1 assigned · 0')\n    6) <article class=\"unit-card\" data-open-unit-modal=\"core-b\" data-unit-board-card=\"unit:core-b\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal core b main\">…</article> aka getByText('Royal Core b Main Manage 0')\n    7) <article class=\"unit-card\" data-open-unit-modal=\"core-c\" data-unit-board-card=\"unit:core-c\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal core c main\">…</article> aka getByText('Royal Core c Main Manage 0')\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "saved": false,
+      "observed": {
+        "parentNames": [
+          "Dr Core Original OLD",
+          "Dr Core Original OLD"
+        ],
+        "formRetained": false,
+        "inputRetained": false,
+        "fallbackHostRetained": true,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [
+          "core-c",
+          "core-b"
+        ],
+        "fallbackSaveEnabled": true,
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "reads": {
+        "unitReads": 1,
+        "leaveReads": 0,
+        "memberReads": 1
+      },
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "view": "leave",
+      "passed": false,
+      "assertion": "page.waitForFunction: Timeout 2500ms exceeded.",
+      "saved": true,
+      "observed": {
+        "parentNames": [
+          "Dr Core Original OLD",
+          "Dr Core Original OLD"
+        ],
+        "formRetained": false,
+        "inputRetained": false,
+        "fallbackHostRetained": false,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [],
+        "fallbackSaveEnabled": false,
+        "leaveList": "true",
+        "notices": []
+      },
+      "reads": {
+        "unitReads": 0,
+        "leaveReads": 1,
+        "memberReads": 2
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "body": {
+            "id": "core-parent-person",
+            "canonical_name": "Dr Core Renamed NEW",
+            "call_level": "3RD_CALL",
+            "active_status": "active",
+            "aliases": [],
+            "designations": [],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/leave",
+          "search": ""
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/audit",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "view": "units",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    3) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"SICU\" data-unit-board-card=\"special:SICU\" data-unit-board-search=\"sicu special posting\">…</article> aka getByText('SICU Special posting Manage Nobody posted this month.')\n    4) <article data-unit-board-campus=\"special\" data-open-special-unit-modal=\"DRP\" data-unit-board-card=\"special:DRP\" class=\"unit-card special-unit-card\" data-unit-board-search=\"drp special posting\">…</article> aka getByText('DRP Special posting Manage Nobody posted this month.')\n    5) <article class=\"unit-card\" data-open-unit-modal=\"core-parent\" data-unit-board-campus=\"campus:Main\" data-unit-board-card=\"unit:core-parent\" data-unit-board-search=\"royal core parent main dr core original old\">…</article> aka getByText('Royal Core parent Main Manage 1 without active leave records · 1 assigned · 0')\n    6) <article class=\"unit-card\" data-open-unit-modal=\"core-b\" data-unit-board-card=\"unit:core-b\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal core b main\">…</article> aka getByText('Royal Core b Main Manage 0')\n    7) <article class=\"unit-card\" data-open-unit-modal=\"core-c\" data-unit-board-card=\"unit:core-c\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal core c main\">…</article> aka getByText('Royal Core c Main Manage 0')\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "saved": false,
+      "observed": {
+        "parentNames": [
+          "Dr Core Original OLD",
+          "Dr Core Original OLD"
+        ],
+        "formRetained": false,
+        "inputRetained": false,
+        "fallbackHostRetained": true,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [
+          "core-c",
+          "core-b"
+        ],
+        "fallbackSaveEnabled": true,
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "reads": {
+        "unitReads": 1,
+        "leaveReads": 0,
+        "memberReads": 1
+      },
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "view": "leave",
+      "passed": false,
+      "assertion": "page.waitForFunction: Timeout 2500ms exceeded.",
+      "saved": true,
+      "observed": {
+        "parentNames": [
+          "Dr Core Original OLD",
+          "Dr Core Original OLD"
+        ],
+        "formRetained": false,
+        "inputRetained": false,
+        "fallbackHostRetained": false,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [],
+        "fallbackSaveEnabled": false,
+        "leaveList": "true",
+        "notices": []
+      },
+      "reads": {
+        "unitReads": 0,
+        "leaveReads": 1,
+        "memberReads": 2
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "body": {
+            "id": "core-parent-person",
+            "canonical_name": "Dr Core Renamed NEW",
+            "call_level": "3RD_CALL",
+            "active_status": "active",
+            "aliases": [],
+            "designations": [],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/leave",
+          "search": ""
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/audit",
+          "search": ""
+        }
+      ],
+      "errors": []
+    }
+  ]
+}

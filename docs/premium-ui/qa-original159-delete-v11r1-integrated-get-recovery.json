@@ -1,0 +1,2196 @@
+{
+  "recorded_at_utc": "2026-11-09T17:22:17.388Z",
+  "operator": "/root",
+  "author": "/root/delete159_groundwork",
+  "application_changed_by_test": false,
+  "execution_target": "applied source",
+  "candidate_sha256": "45743fb64260289e50526480572bf25e33d8dc1a69f83397286660a03951cfba",
+  "scope": "18 applied source GET503 recovery posting deletion contexts: modal and month across three engines at320/1280; desktop row and selected across three engines. Each starts unrelated fallback C,B draft and Royal/Main filters. Only preview/delete POSTs locally fulfilled; unhandled GETs disposable RAM8031. No browser run by author; a failed assertion is diagnostic evidence, not acceptance.",
+  "source_sha256": {
+    "frontend/src/main.ts": "45743fb64260289e50526480572bf25e33d8dc1a69f83397286660a03951cfba",
+    "frontend/src/extra-duty.ts": "529e420fc05ce5bfa42655b8863e449e09e22a7c0abe9baf4db5c94c4797b8c3",
+    "frontend/src/admin-delete.ts": "7a3eb13237272ad8b44f523bea5483ebeae60fc9c8b58d92035fe15c74528979",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+  },
+  "test_sha256": "7710217cfe926bc05bfb802451042489733dfe2fc1e2bad5b270e1dab3de9da4",
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "entry": "modal",
+      "passed": true,
+      "observed": {
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "delete-c",
+          "delete-b"
+        ],
+        "saveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "failedObserved": {
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "delete-c",
+          "delete-b"
+        ],
+        "saveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "before": {
+        "unitReads": 1,
+        "fallbackReads": 1
+      },
+      "after": {
+        "unitReads": 3,
+        "fallbackReads": 1
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "posting",
+            "ids": [
+              "delete-parent-posting"
+            ]
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "posting",
+            "ids": [
+              "delete-parent-posting"
+            ],
+            "preview_token": "delete-fallback-preview"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "entry": "month",
+      "passed": true,
+      "observed": {
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "delete-c",
+          "delete-b"
+        ],
+        "saveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "failedObserved": {
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "delete-c",
+          "delete-b"
+        ],
+        "saveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "before": {
+        "unitReads": 1,
+        "fallbackReads": 1
+      },
+      "after": {
+        "unitReads": 3,
+        "fallbackReads": 1
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "posting",
+            "month": "2026-11"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "posting",
+            "month": "2026-11",
+            "preview_token": "delete-fallback-preview",
+            "confirm_phrase": "DELETE POSTINGS NOVEMBER 2026"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "entry": "modal",
+      "passed": true,
+      "observed": {
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "delete-c",
+          "delete-b"
+        ],
+        "saveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "failedObserved": {
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "delete-c",
+          "delete-b"
+        ],
+        "saveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "before": {
+        "unitReads": 1,
+        "fallbackReads": 1
+      },
+      "after": {
+        "unitReads": 3,
+        "fallbackReads": 1
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "posting",
+            "ids": [
+              "delete-parent-posting"
+            ]
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "posting",
+            "ids": [
+              "delete-parent-posting"
+            ],
+            "preview_token": "delete-fallback-preview"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "entry": "month",
+      "passed": true,
+      "observed": {
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "delete-c",
+          "delete-b"
+        ],
+        "saveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "failedObserved": {
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "delete-c",
+          "delete-b"
+        ],
+        "saveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "before": {
+        "unitReads": 1,
+        "fallbackReads": 1
+      },
+      "after": {
+        "unitReads": 3,
+        "fallbackReads": 1
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "posting",
+            "month": "2026-11"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "posting",
+            "month": "2026-11",
+            "preview_token": "delete-fallback-preview",
+            "confirm_phrase": "DELETE POSTINGS NOVEMBER 2026"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "entry": "row",
+      "passed": true,
+      "observed": {
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "delete-c",
+          "delete-b"
+        ],
+        "saveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "failedObserved": {
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "delete-c",
+          "delete-b"
+        ],
+        "saveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "before": {
+        "unitReads": 1,
+        "fallbackReads": 1
+      },
+      "after": {
+        "unitReads": 3,
+        "fallbackReads": 1
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "posting",
+            "ids": [
+              "delete-parent-posting"
+            ]
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "posting",
+            "ids": [
+              "delete-parent-posting"
+            ],
+            "preview_token": "delete-fallback-preview"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "entry": "selected",
+      "passed": true,
+      "observed": {
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "delete-c",
+          "delete-b"
+        ],
+        "saveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "failedObserved": {
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "delete-c",
+          "delete-b"
+        ],
+        "saveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "before": {
+        "unitReads": 1,
+        "fallbackReads": 1
+      },
+      "after": {
+        "unitReads": 3,
+        "fallbackReads": 1
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "posting",
+            "ids": [
+              "delete-parent-posting"
+            ]
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "posting",
+            "ids": [
+              "delete-parent-posting"
+            ],
+            "preview_token": "delete-fallback-preview"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "entry": "modal",
+      "passed": true,
+      "observed": {
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "delete-c",
+          "delete-b"
+        ],
+        "saveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "failedObserved": {
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "delete-c",
+          "delete-b"
+        ],
+        "saveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "before": {
+        "unitReads": 1,
+        "fallbackReads": 1
+      },
+      "after": {
+        "unitReads": 3,
+        "fallbackReads": 1
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "posting",
+            "ids": [
+              "delete-parent-posting"
+            ]
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "posting",
+            "ids": [
+              "delete-parent-posting"
+            ],
+            "preview_token": "delete-fallback-preview"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "entry": "month",
+      "passed": true,
+      "observed": {
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "delete-c",
+          "delete-b"
+        ],
+        "saveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "failedObserved": {
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "delete-c",
+          "delete-b"
+        ],
+        "saveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "before": {
+        "unitReads": 1,
+        "fallbackReads": 1
+      },
+      "after": {
+        "unitReads": 3,
+        "fallbackReads": 1
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "posting",
+            "month": "2026-11"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "posting",
+            "month": "2026-11",
+            "preview_token": "delete-fallback-preview",
+            "confirm_phrase": "DELETE POSTINGS NOVEMBER 2026"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "entry": "modal",
+      "passed": true,
+      "observed": {
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "delete-c",
+          "delete-b"
+        ],
+        "saveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "failedObserved": {
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "delete-c",
+          "delete-b"
+        ],
+        "saveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "before": {
+        "unitReads": 1,
+        "fallbackReads": 1
+      },
+      "after": {
+        "unitReads": 3,
+        "fallbackReads": 1
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "posting",
+            "ids": [
+              "delete-parent-posting"
+            ]
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "posting",
+            "ids": [
+              "delete-parent-posting"
+            ],
+            "preview_token": "delete-fallback-preview"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "entry": "month",
+      "passed": true,
+      "observed": {
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "delete-c",
+          "delete-b"
+        ],
+        "saveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "failedObserved": {
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "delete-c",
+          "delete-b"
+        ],
+        "saveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "before": {
+        "unitReads": 1,
+        "fallbackReads": 1
+      },
+      "after": {
+        "unitReads": 3,
+        "fallbackReads": 1
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "posting",
+            "month": "2026-11"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "posting",
+            "month": "2026-11",
+            "preview_token": "delete-fallback-preview",
+            "confirm_phrase": "DELETE POSTINGS NOVEMBER 2026"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "entry": "row",
+      "passed": true,
+      "observed": {
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "delete-c",
+          "delete-b"
+        ],
+        "saveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "failedObserved": {
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "delete-c",
+          "delete-b"
+        ],
+        "saveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "before": {
+        "unitReads": 1,
+        "fallbackReads": 1
+      },
+      "after": {
+        "unitReads": 3,
+        "fallbackReads": 1
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "posting",
+            "ids": [
+              "delete-parent-posting"
+            ]
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "posting",
+            "ids": [
+              "delete-parent-posting"
+            ],
+            "preview_token": "delete-fallback-preview"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "entry": "selected",
+      "passed": true,
+      "observed": {
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "delete-c",
+          "delete-b"
+        ],
+        "saveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "failedObserved": {
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "delete-c",
+          "delete-b"
+        ],
+        "saveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "before": {
+        "unitReads": 1,
+        "fallbackReads": 1
+      },
+      "after": {
+        "unitReads": 3,
+        "fallbackReads": 1
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "posting",
+            "ids": [
+              "delete-parent-posting"
+            ]
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "posting",
+            "ids": [
+              "delete-parent-posting"
+            ],
+            "preview_token": "delete-fallback-preview"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "entry": "modal",
+      "passed": true,
+      "observed": {
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "delete-c",
+          "delete-b"
+        ],
+        "saveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "failedObserved": {
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "delete-c",
+          "delete-b"
+        ],
+        "saveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "before": {
+        "unitReads": 1,
+        "fallbackReads": 1
+      },
+      "after": {
+        "unitReads": 3,
+        "fallbackReads": 1
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "posting",
+            "ids": [
+              "delete-parent-posting"
+            ]
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "posting",
+            "ids": [
+              "delete-parent-posting"
+            ],
+            "preview_token": "delete-fallback-preview"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "entry": "month",
+      "passed": true,
+      "observed": {
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "delete-c",
+          "delete-b"
+        ],
+        "saveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "failedObserved": {
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "delete-c",
+          "delete-b"
+        ],
+        "saveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "before": {
+        "unitReads": 1,
+        "fallbackReads": 1
+      },
+      "after": {
+        "unitReads": 3,
+        "fallbackReads": 1
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "posting",
+            "month": "2026-11"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "posting",
+            "month": "2026-11",
+            "preview_token": "delete-fallback-preview",
+            "confirm_phrase": "DELETE POSTINGS NOVEMBER 2026"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "entry": "modal",
+      "passed": true,
+      "observed": {
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "delete-c",
+          "delete-b"
+        ],
+        "saveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "failedObserved": {
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "delete-c",
+          "delete-b"
+        ],
+        "saveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "before": {
+        "unitReads": 1,
+        "fallbackReads": 1
+      },
+      "after": {
+        "unitReads": 3,
+        "fallbackReads": 1
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "posting",
+            "ids": [
+              "delete-parent-posting"
+            ]
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "posting",
+            "ids": [
+              "delete-parent-posting"
+            ],
+            "preview_token": "delete-fallback-preview"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "entry": "month",
+      "passed": true,
+      "observed": {
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "delete-c",
+          "delete-b"
+        ],
+        "saveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "failedObserved": {
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "delete-c",
+          "delete-b"
+        ],
+        "saveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "before": {
+        "unitReads": 1,
+        "fallbackReads": 1
+      },
+      "after": {
+        "unitReads": 3,
+        "fallbackReads": 1
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "posting",
+            "month": "2026-11"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "posting",
+            "month": "2026-11",
+            "preview_token": "delete-fallback-preview",
+            "confirm_phrase": "DELETE POSTINGS NOVEMBER 2026"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "entry": "row",
+      "passed": true,
+      "observed": {
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "delete-c",
+          "delete-b"
+        ],
+        "saveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "failedObserved": {
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "delete-c",
+          "delete-b"
+        ],
+        "saveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "before": {
+        "unitReads": 1,
+        "fallbackReads": 1
+      },
+      "after": {
+        "unitReads": 3,
+        "fallbackReads": 1
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "posting",
+            "ids": [
+              "delete-parent-posting"
+            ]
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "posting",
+            "ids": [
+              "delete-parent-posting"
+            ],
+            "preview_token": "delete-fallback-preview"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "entry": "selected",
+      "passed": true,
+      "observed": {
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "delete-c",
+          "delete-b"
+        ],
+        "saveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "failedObserved": {
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "delete-c",
+          "delete-b"
+        ],
+        "saveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "before": {
+        "unitReads": 1,
+        "fallbackReads": 1
+      },
+      "after": {
+        "unitReads": 3,
+        "fallbackReads": 1
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "posting",
+            "ids": [
+              "delete-parent-posting"
+            ]
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "posting",
+            "ids": [
+              "delete-parent-posting"
+            ],
+            "preview_token": "delete-fallback-preview"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    }
+  ]
+}

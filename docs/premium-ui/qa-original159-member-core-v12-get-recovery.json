@@ -1,0 +1,1944 @@
+{
+  "recorded_at_utc": "2026-11-09T17:33:44.440Z",
+  "operator": "/root",
+  "author": "/root/membercore159_source",
+  "execution_target": "Isolated V12 member-workspace overlay; other product source applied; no integration acceptance",
+  "candidate_sha256": "88774f277131a1ed83174d288d882653fc04add295b8237fefa62636e08617ea",
+  "application_changed_by_test": false,
+  "source_sha256": {
+    "frontend/src/main.ts": "45743fb64260289e50526480572bf25e33d8dc1a69f83397286660a03951cfba",
+    "frontend/src/member-workspace.ts": "105cc1d91ea4815d565ad4859fc01412cf576a3203c07834f4010e3fef7ef1a5",
+    "frontend/src/extra-duty.ts": "529e420fc05ce5bfa42655b8863e449e09e22a7c0abe9baf4db5c94c4797b8c3",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+  },
+  "test_sha256": "c4418c7dc43a84e55f62bf6d8e113ed4ae8089df35076104b14e534435ebcaee",
+  "scope": "12 core profile save parentGET503/keyboardGET-onlyretry name and base-call-level saves from Unit modal or Leave list across Chromium/Firefox/WebKit at320/1280. Units starts unrelated minimum3 and fallback C,B drafts with Royal/Main filters. Writes fulfilled locally; unhandled GETs only RAM8031. Parent name readback plus retention is expected. No physical-device/native AT or real database verification.",
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "view": "units",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "leaveReads": 0,
+        "memberReads": 1
+      },
+      "after": {
+        "unitReads": 3,
+        "leaveReads": 0,
+        "memberReads": 2
+      },
+      "observed": {
+        "parentNames": [
+          "Dr Core Renamed NEW",
+          "Dr Core Renamed NEW",
+          "Dr Core Renamed NEW"
+        ],
+        "settingsValue": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "fallbackHostRetained": true,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [
+          "core-c",
+          "core-b"
+        ],
+        "fallbackSaveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "failedObserved": {
+        "parentNames": [
+          "Dr Core Original OLD",
+          "Dr Core Original OLD",
+          "Dr Core Original OLD"
+        ],
+        "settingsValue": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "fallbackHostRetained": true,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [
+          "core-c",
+          "core-b"
+        ],
+        "fallbackSaveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Changes are saved, but this view could not refresh. Saved member; dependent unit read unavailable Previously loaded information may be out of date.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "body": {
+            "id": "core-parent-person",
+            "canonical_name": "Dr Core Renamed NEW",
+            "call_level": "3RD_CALL",
+            "active_status": "active",
+            "aliases": [],
+            "designations": [],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/postings",
+          "search": ""
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/audit",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "view": "leave",
+      "passed": true,
+      "before": {
+        "unitReads": 0,
+        "leaveReads": 1,
+        "memberReads": 1
+      },
+      "after": {
+        "unitReads": 0,
+        "leaveReads": 3,
+        "memberReads": 2
+      },
+      "observed": {
+        "parentNames": [
+          "Dr Core Renamed NEW",
+          "Dr Core Renamed NEW"
+        ],
+        "formRetained": false,
+        "inputRetained": false,
+        "fallbackHostRetained": false,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [],
+        "fallbackSaveEnabled": false,
+        "leaveList": "true",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "failedObserved": {
+        "parentNames": [
+          "Dr Core Original OLD",
+          "Dr Core Original OLD"
+        ],
+        "formRetained": false,
+        "inputRetained": false,
+        "fallbackHostRetained": false,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [],
+        "fallbackSaveEnabled": false,
+        "leaveList": "true",
+        "notices": [
+          "Changes are saved, but this view could not refresh. Saved member; dependent leave read unavailable Previously loaded information may be out of date.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "body": {
+            "id": "core-parent-person",
+            "canonical_name": "Dr Core Renamed NEW",
+            "call_level": "3RD_CALL",
+            "active_status": "active",
+            "aliases": [],
+            "designations": [],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/leave",
+          "search": ""
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/audit",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "view": "units",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "leaveReads": 0,
+        "memberReads": 1
+      },
+      "after": {
+        "unitReads": 3,
+        "leaveReads": 0,
+        "memberReads": 2
+      },
+      "observed": {
+        "parentNames": [
+          "Dr Core Renamed NEW",
+          "Dr Core Renamed NEW",
+          "Dr Core Renamed NEW"
+        ],
+        "settingsValue": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "fallbackHostRetained": true,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [
+          "core-c",
+          "core-b"
+        ],
+        "fallbackSaveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "failedObserved": {
+        "parentNames": [
+          "Dr Core Original OLD",
+          "Dr Core Original OLD",
+          "Dr Core Original OLD"
+        ],
+        "settingsValue": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "fallbackHostRetained": true,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [
+          "core-c",
+          "core-b"
+        ],
+        "fallbackSaveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Changes are saved, but this view could not refresh. Saved member; dependent unit read unavailable Previously loaded information may be out of date.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "body": {
+            "id": "core-parent-person",
+            "canonical_name": "Dr Core Renamed NEW",
+            "call_level": "3RD_CALL",
+            "active_status": "active",
+            "aliases": [],
+            "designations": [],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/postings",
+          "search": ""
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/audit",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "view": "leave",
+      "passed": true,
+      "before": {
+        "unitReads": 0,
+        "leaveReads": 1,
+        "memberReads": 1
+      },
+      "after": {
+        "unitReads": 0,
+        "leaveReads": 3,
+        "memberReads": 2
+      },
+      "observed": {
+        "parentNames": [
+          "Dr Core Renamed NEW",
+          "Dr Core Renamed NEW"
+        ],
+        "formRetained": false,
+        "inputRetained": false,
+        "fallbackHostRetained": false,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [],
+        "fallbackSaveEnabled": false,
+        "leaveList": "true",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "failedObserved": {
+        "parentNames": [
+          "Dr Core Original OLD",
+          "Dr Core Original OLD"
+        ],
+        "formRetained": false,
+        "inputRetained": false,
+        "fallbackHostRetained": false,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [],
+        "fallbackSaveEnabled": false,
+        "leaveList": "true",
+        "notices": [
+          "Changes are saved, but this view could not refresh. Saved member; dependent leave read unavailable Previously loaded information may be out of date.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "body": {
+            "id": "core-parent-person",
+            "canonical_name": "Dr Core Renamed NEW",
+            "call_level": "3RD_CALL",
+            "active_status": "active",
+            "aliases": [],
+            "designations": [],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/leave",
+          "search": ""
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/audit",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "view": "units",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "leaveReads": 0,
+        "memberReads": 1
+      },
+      "after": {
+        "unitReads": 3,
+        "leaveReads": 0,
+        "memberReads": 2
+      },
+      "observed": {
+        "parentNames": [
+          "Dr Core Renamed NEW",
+          "Dr Core Renamed NEW",
+          "Dr Core Renamed NEW"
+        ],
+        "settingsValue": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "fallbackHostRetained": true,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [
+          "core-c",
+          "core-b"
+        ],
+        "fallbackSaveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "failedObserved": {
+        "parentNames": [
+          "Dr Core Original OLD",
+          "Dr Core Original OLD",
+          "Dr Core Original OLD"
+        ],
+        "settingsValue": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "fallbackHostRetained": true,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [
+          "core-c",
+          "core-b"
+        ],
+        "fallbackSaveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Changes are saved, but this view could not refresh. Saved member; dependent unit read unavailable Previously loaded information may be out of date.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "body": {
+            "id": "core-parent-person",
+            "canonical_name": "Dr Core Renamed NEW",
+            "call_level": "3RD_CALL",
+            "active_status": "active",
+            "aliases": [],
+            "designations": [],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/postings",
+          "search": ""
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/audit",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "view": "leave",
+      "passed": true,
+      "before": {
+        "unitReads": 0,
+        "leaveReads": 1,
+        "memberReads": 1
+      },
+      "after": {
+        "unitReads": 0,
+        "leaveReads": 3,
+        "memberReads": 2
+      },
+      "observed": {
+        "parentNames": [
+          "Dr Core Renamed NEW",
+          "Dr Core Renamed NEW"
+        ],
+        "formRetained": false,
+        "inputRetained": false,
+        "fallbackHostRetained": false,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [],
+        "fallbackSaveEnabled": false,
+        "leaveList": "true",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "failedObserved": {
+        "parentNames": [
+          "Dr Core Original OLD",
+          "Dr Core Original OLD"
+        ],
+        "formRetained": false,
+        "inputRetained": false,
+        "fallbackHostRetained": false,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [],
+        "fallbackSaveEnabled": false,
+        "leaveList": "true",
+        "notices": [
+          "Changes are saved, but this view could not refresh. Saved member; dependent leave read unavailable Previously loaded information may be out of date.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "body": {
+            "id": "core-parent-person",
+            "canonical_name": "Dr Core Renamed NEW",
+            "call_level": "3RD_CALL",
+            "active_status": "active",
+            "aliases": [],
+            "designations": [],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/leave",
+          "search": ""
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/audit",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "view": "units",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "leaveReads": 0,
+        "memberReads": 1
+      },
+      "after": {
+        "unitReads": 3,
+        "leaveReads": 0,
+        "memberReads": 2
+      },
+      "observed": {
+        "parentNames": [
+          "Dr Core Renamed NEW",
+          "Dr Core Renamed NEW",
+          "Dr Core Renamed NEW"
+        ],
+        "settingsValue": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "fallbackHostRetained": true,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [
+          "core-c",
+          "core-b"
+        ],
+        "fallbackSaveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "failedObserved": {
+        "parentNames": [
+          "Dr Core Original OLD",
+          "Dr Core Original OLD",
+          "Dr Core Original OLD"
+        ],
+        "settingsValue": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "fallbackHostRetained": true,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [
+          "core-c",
+          "core-b"
+        ],
+        "fallbackSaveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Changes are saved, but this view could not refresh. Saved member; dependent unit read unavailable Previously loaded information may be out of date.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "body": {
+            "id": "core-parent-person",
+            "canonical_name": "Dr Core Renamed NEW",
+            "call_level": "3RD_CALL",
+            "active_status": "active",
+            "aliases": [],
+            "designations": [],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/postings",
+          "search": ""
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/audit",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "view": "leave",
+      "passed": true,
+      "before": {
+        "unitReads": 0,
+        "leaveReads": 1,
+        "memberReads": 1
+      },
+      "after": {
+        "unitReads": 0,
+        "leaveReads": 3,
+        "memberReads": 2
+      },
+      "observed": {
+        "parentNames": [
+          "Dr Core Renamed NEW",
+          "Dr Core Renamed NEW"
+        ],
+        "formRetained": false,
+        "inputRetained": false,
+        "fallbackHostRetained": false,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [],
+        "fallbackSaveEnabled": false,
+        "leaveList": "true",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "failedObserved": {
+        "parentNames": [
+          "Dr Core Original OLD",
+          "Dr Core Original OLD"
+        ],
+        "formRetained": false,
+        "inputRetained": false,
+        "fallbackHostRetained": false,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [],
+        "fallbackSaveEnabled": false,
+        "leaveList": "true",
+        "notices": [
+          "Changes are saved, but this view could not refresh. Saved member; dependent leave read unavailable Previously loaded information may be out of date.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "body": {
+            "id": "core-parent-person",
+            "canonical_name": "Dr Core Renamed NEW",
+            "call_level": "3RD_CALL",
+            "active_status": "active",
+            "aliases": [],
+            "designations": [],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/leave",
+          "search": ""
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/audit",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "view": "units",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "leaveReads": 0,
+        "memberReads": 1
+      },
+      "after": {
+        "unitReads": 3,
+        "leaveReads": 0,
+        "memberReads": 2
+      },
+      "observed": {
+        "parentNames": [
+          "Dr Core Renamed NEW",
+          "Dr Core Renamed NEW",
+          "Dr Core Renamed NEW"
+        ],
+        "settingsValue": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "fallbackHostRetained": true,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [
+          "core-c",
+          "core-b"
+        ],
+        "fallbackSaveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "failedObserved": {
+        "parentNames": [
+          "Dr Core Original OLD",
+          "Dr Core Original OLD",
+          "Dr Core Original OLD"
+        ],
+        "settingsValue": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "fallbackHostRetained": true,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [
+          "core-c",
+          "core-b"
+        ],
+        "fallbackSaveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Changes are saved, but this view could not refresh. Saved member; dependent unit read unavailable Previously loaded information may be out of date.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "body": {
+            "id": "core-parent-person",
+            "canonical_name": "Dr Core Renamed NEW",
+            "call_level": "3RD_CALL",
+            "active_status": "active",
+            "aliases": [],
+            "designations": [],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/postings",
+          "search": ""
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/audit",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "view": "leave",
+      "passed": true,
+      "before": {
+        "unitReads": 0,
+        "leaveReads": 1,
+        "memberReads": 1
+      },
+      "after": {
+        "unitReads": 0,
+        "leaveReads": 3,
+        "memberReads": 2
+      },
+      "observed": {
+        "parentNames": [
+          "Dr Core Renamed NEW",
+          "Dr Core Renamed NEW"
+        ],
+        "formRetained": false,
+        "inputRetained": false,
+        "fallbackHostRetained": false,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [],
+        "fallbackSaveEnabled": false,
+        "leaveList": "true",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "failedObserved": {
+        "parentNames": [
+          "Dr Core Original OLD",
+          "Dr Core Original OLD"
+        ],
+        "formRetained": false,
+        "inputRetained": false,
+        "fallbackHostRetained": false,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [],
+        "fallbackSaveEnabled": false,
+        "leaveList": "true",
+        "notices": [
+          "Changes are saved, but this view could not refresh. Saved member; dependent leave read unavailable Previously loaded information may be out of date.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "body": {
+            "id": "core-parent-person",
+            "canonical_name": "Dr Core Renamed NEW",
+            "call_level": "3RD_CALL",
+            "active_status": "active",
+            "aliases": [],
+            "designations": [],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/leave",
+          "search": ""
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/audit",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "view": "units",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "leaveReads": 0,
+        "memberReads": 1
+      },
+      "after": {
+        "unitReads": 3,
+        "leaveReads": 0,
+        "memberReads": 2
+      },
+      "observed": {
+        "parentNames": [
+          "Dr Core Renamed NEW",
+          "Dr Core Renamed NEW",
+          "Dr Core Renamed NEW"
+        ],
+        "settingsValue": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "fallbackHostRetained": true,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [
+          "core-c",
+          "core-b"
+        ],
+        "fallbackSaveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "failedObserved": {
+        "parentNames": [
+          "Dr Core Original OLD",
+          "Dr Core Original OLD",
+          "Dr Core Original OLD"
+        ],
+        "settingsValue": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "fallbackHostRetained": true,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [
+          "core-c",
+          "core-b"
+        ],
+        "fallbackSaveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Changes are saved, but this view could not refresh. Saved member; dependent unit read unavailable Previously loaded information may be out of date.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "body": {
+            "id": "core-parent-person",
+            "canonical_name": "Dr Core Renamed NEW",
+            "call_level": "3RD_CALL",
+            "active_status": "active",
+            "aliases": [],
+            "designations": [],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/postings",
+          "search": ""
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/audit",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "view": "leave",
+      "passed": true,
+      "before": {
+        "unitReads": 0,
+        "leaveReads": 1,
+        "memberReads": 1
+      },
+      "after": {
+        "unitReads": 0,
+        "leaveReads": 3,
+        "memberReads": 2
+      },
+      "observed": {
+        "parentNames": [
+          "Dr Core Renamed NEW",
+          "Dr Core Renamed NEW"
+        ],
+        "formRetained": false,
+        "inputRetained": false,
+        "fallbackHostRetained": false,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [],
+        "fallbackSaveEnabled": false,
+        "leaveList": "true",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "failedObserved": {
+        "parentNames": [
+          "Dr Core Original OLD",
+          "Dr Core Original OLD"
+        ],
+        "formRetained": false,
+        "inputRetained": false,
+        "fallbackHostRetained": false,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [],
+        "fallbackSaveEnabled": false,
+        "leaveList": "true",
+        "notices": [
+          "Changes are saved, but this view could not refresh. Saved member; dependent leave read unavailable Previously loaded information may be out of date.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "body": {
+            "id": "core-parent-person",
+            "canonical_name": "Dr Core Renamed NEW",
+            "call_level": "3RD_CALL",
+            "active_status": "active",
+            "aliases": [],
+            "designations": [],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/leave",
+          "search": ""
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/audit",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    }
+  ]
+}

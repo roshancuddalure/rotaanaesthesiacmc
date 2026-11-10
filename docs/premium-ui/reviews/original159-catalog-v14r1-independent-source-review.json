@@ -1,0 +1,97 @@
+{
+  "recorded_at_utc": "2026-11-10T02:27:37.564099+00:00",
+  "reviewer": "/root/leave159_nondelete_groundwork",
+  "application_changed": false,
+  "browser_executed_by_reviewer": false,
+  "source_decision": "Do not integrate V14r1 yet: permanent callback failure has no explicit Close escape, and new Close/async-consumer focus timing needs actual validation or repair. Candidate remains isolated.",
+  "bindings": {
+    "manifest_sha256": "6587238ac4a4f4dbf27d922b326c334570e3b4a7b0c6b9e6bdd90ea981f81b8b",
+    "before_sha256": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd",
+    "candidate_sha256": "fc28d355e64c94694751ad956801058902623081a80e19543256b3a137c5bcaf",
+    "exact_edit_reversal_restores_baseline_bytes": true,
+    "mixed_line_endings_preserved": true,
+    "author_proof_sha256": "9336414ade5d5f0c04c4499fde52a3ae09911ee276ec234b9d38d9b88dc8e250",
+    "author_typecheck_diagnostics": [],
+    "author_effects": {
+      "count": 26,
+      "exact": true,
+      "coverage": "Every request GET/write, requestMultipartJSON, JSON.stringify, confirm, safeLocalStorage/localStorage call in reference module"
+    },
+    "author_markup": {
+      "template_count": 49,
+      "string_literal_count": 338,
+      "exact": true
+    },
+    "current_source_sha256": {
+      "frontend/src/main.ts": "15b79223710a53a9e0ccdd70373a92e568f6ee603f56e3747454ab25ac258cc0",
+      "frontend/src/member-workspace.ts": "88774f277131a1ed83174d288d882653fc04add295b8237fefa62636e08617ea",
+      "frontend/src/operational-import.ts": "1ccbcf4181330a5f66c59b0723ec02f878a268b6b3030aa99b177de1b7070355",
+      "frontend/src/record-workspace.ts": "469fd6bf2e4118b15ad343d8059cd3cfb0acbc6483bea969ca5fb93488644335",
+      "frontend/src/reference-workspace.ts": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd",
+      "frontend/src/workspace-load-state.ts": "cdd0e323d7e83e6e668a381bbfcc37cad4726b1193ac5de31d5f14e03eecd9c6",
+      "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+    }
+  },
+  "baseline": {
+    "path": "docs/premium-ui/qa-original159-catalog-consumer-close-diagnostic-20261110.json",
+    "sha256": "0250f4bcff404beec59ef5e8ab1ab58ed5831c267971f7e436406aa4f7f210d4",
+    "contexts": 12,
+    "passed": 6,
+    "failed": 6,
+    "classification": "Six actual accepted-PUT/ownGET503/Close consumer captions stale; six explicit ownGET-retry controls pass. Diagnostic is ancestry, not candidate proof."
+  },
+  "positive_findings": [
+    "Separate pendingReferenceNotification is set immediately after accepted existing PUT and plain boolean state updates, before own catalog GET. It is not lost when own load/render/focus later throws. No response-property access is required to mark pending.",
+    "On successful owned kind load, normal render/focus precedes saved at existing timing. Pending clears only after synchronous saved returns. Normal successful callback is not repeated on later Close.",
+    "On failed own GET, Close attempts pending delivery before removal. Synchronous throw retains pending and existing saved-result GET-only retry; no mutation request expression or template changed.",
+    "Busy and dirty guards remain before Close. Dirty refusal prevents callback/dismissal. Own saved loading close retains existing confirmedReferenceSave busy-unlock policy. Kind ownership guard remains; pending notification is not accidentally reset by switching/failed-loading another kind.",
+    "Current consumer callbacks do invalidation, preview staling, no-op or launch read-only options refresh, not persisted mutations. A callback that side-effects then throws can repeat those effects on explicit retry; no exactly-once general claim.",
+    "Existing static main label helpers and scheduling semantics untouched. Catalog caption refresh is scoped to direct consumers, not universal month-board label propagation."
+  ],
+  "reentrancy_assessment": {
+    "normal_saved_load": "busy remains true while accepted save awaits own load, so reentrant Close during normal synchronous callback is refused by existing busy guard.",
+    "failed_get_close": "busy is false and pending stays true until saved returns; no independent delivery-in-progress guard. A callback synchronously dispatching this same catalog Close could recursively redeliver.",
+    "current_consumers": "No current callback source found synchronously closing/reentering its catalog; do not invent a current user-triggered recursion defect. Guard this if introducing reentrant callbacks or changing failure escape design."
+  },
+  "async_consumer_limits": [
+    "saved typed () => void can synchronously return after launching Promise work; clearing pending does not certify that options GET or rerender succeeded. Existing record caller catches options failure and reports draft-preserved inline warning.",
+    "An internally caught rejected options read cannot be detected by this candidate; new catalog retry cannot be claimed as async consumer recovery without explicit separate mechanism/evidence.",
+    "Underlying record caller and main/import owner lifetime controls are outside this catalog-only source edit; do not infer all159 completion."
+  ],
+  "blockers": [
+    {
+      "id": "V14R1-PERMANENT-CALLBACK-CLOSE-TRAP",
+      "severity": "high",
+      "status": "source-confirmed recovery blocker; no current real callback-failure runtime asserted",
+      "path": "tmp/catalog-consumer-v14r1/reference-workspace.ts:573",
+      "mechanism": "On Close, notifySavedReference invokes saved while pending remains true. A synchronous exception produces savedReadbackFailure(dialog,...,close). That failure panel Close invokes the same close function, again invokes the same pending callback, and catches the same permanent exception. GET retry similarly retains pending. No explicit way to dismiss this dialog without calling the permanently failing callback exists. Existing busy=false does not break the cycle.",
+      "requirement": "Preserve truthful accepted-save state and read-only retries, while providing a deliberate safe escape after notification failure. The escape must not replay PUT, falsely claim consumer refreshed, or silently discard unrelated outer drafts.",
+      "validation": "Actual permanent-throwing saved callback after accepted PUT, both normal read and ownGET503 Close path: user can explicitly leave the catalog and retain outer draft. One PUT; no infinite redelivery/recursion; stale consumer outcome clearly represented."
+    },
+    {
+      "id": "V14R1-CLOSE-ASYNC-CONSUMER-FOCUS",
+      "severity": "medium",
+      "status": "source-supported timing risk; actual focus diagnostic required before integration, not a claimed reproduced runtime failure",
+      "paths": [
+        "tmp/catalog-consumer-v14r1/reference-workspace.ts:576",
+        "frontend/src/record-workspace.ts:274"
+      ],
+      "mechanism": "New failed-ownGET Close path invokes saved before closing, so record callback starts asynchronous options() read. Catalog then closes/removes/restores opener [data-references]. When options resolves, callback sees that button inside still-open editor, captures name=null and memberSearch=false, then render() detaches it. Its restoration target handles named field or member-search only, leaving no target for this unnamed opener. A native dialog/global fallback may influence actual focus, so runtime proof is required.",
+      "requirement": "Actual close-after-ownGET503 and delayed options GET success must retain or intentionally recover focus to a connected visible meaningful editor control, without stealing newer operator focus. Preserve notes/date/member/unit/type draft and no additional PUT.",
+      "validation": "Three-engine320/1280 actual Units > Add posting > catalog save > ownGET503 > Close with controlled options-response release; capture activeElement identity before close, after close and after editor rerender. Add newer-focus movement before release and consumer optionsGET failure cases. Do not infer focus success from stale opener.focus() call alone."
+    }
+  ],
+  "required_runtime_gates": [
+    "Resolve source Close trap and actual delayed consumer focus gate before candidate integration.",
+    "Normal save/successful ownGET/Close delivers one callback; no-write/cancel/refused/422/PUT503 zero pending callbacks; no save replay.",
+    "Accepted PUT/ownGET503/Close delivers consumer update and preserves draft/meaning/stable key. Explicit ownGET retry followed Close does not duplicate completed callback.",
+    "One-shot and permanent callback throws on successful load and failed-ownGET Close, no mutation replay, truthful saved state and explicit exit.",
+    "Busy save/load Close/Escape and kind/dirty refusal remain working; pending callback not lost by later kind/read failure.",
+    "Newer focus movement and opener detachment during asynchronous record consumer refresh verified with actual controls."
+  ],
+  "limits": [
+    "Independent read-only source/hash/reversal/evidence review only; no source/test/ledger edits or browser execution by reviewer.",
+    "Author TypeScript/effect/markup proof inspected and bound, not independently rerun here.",
+    "No native/physical-device or full original159/all260 acceptance."
+  ]
+}

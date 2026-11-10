@@ -1,0 +1,179 @@
+{
+  "recorded_at_utc": "2026-11-10T08:14:09.594Z",
+  "author": "/root/generation174_harness_repair",
+  "operator": "/root when actually executed",
+  "scope": "Isolated V15r1 two-file5313 preview,54contexts:3engines320/1280 x normal,no-op,refused,two-saves,caught clonefault,initial profileGETretry,CSV replacement after profile detached while background ownerGET held,and programmatic route/account expiry. OwnCSVApply refresh baseline and one accepted-profile finalClose followup only. Allwrites local; supportingGET RAM8031. No actual Next because result profile ids empty. Not whole159.",
+  "source_sha256": {
+    "frontend/src/main.ts": "ebf67f1733f620e406054d0c4a82cf1c203fd0e6603a843eec45b25a1a09df4d",
+    "frontend/src/member-workspace.ts": "506c486046fe6f0bbea5c6c4bf6357fec6e9649d91a9ed1ed890551ed3503cca",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/premium-theme.css": "2e4f85d813061ebc9f696b92d50ae24717a7781a3688187d02c7339c00bea4a1",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86"
+  },
+  "candidate_sha256": {
+    "frontend/src/main.ts": "cc2bc958023b942b9c0cf0644067d93f31f0cd4100dda24d1cf38f94c15da802",
+    "frontend/src/member-workspace.ts": "527f4f55aac3c4ac9de54f679940ff0c06b679a8fb28543bba963b3baa43a52b"
+  },
+  "test_sha256": "0d02688b0e9bf2acc14a833866bbd574eb1f03e28a8024a14e559b100800050a",
+  "smoke": true,
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "scenario": "normal",
+      "passed": true,
+      "readsBeforeProfile": 2,
+      "corePuts": 1,
+      "profileReads": 1,
+      "observed": {
+        "saved": true,
+        "applied": true,
+        "memberReads": 3,
+        "expectedApiName": "Dr CSV Result Renamed NEW",
+        "parentNames": [
+          "Dr CSV Result Renamed NEW",
+          "Open profile",
+          "Change call level",
+          "Dr CSV Result Renamed NEW",
+          "Open profile",
+          "Change call level"
+        ],
+        "search": "",
+        "errors": []
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/member-workspace/csv/csv159-preview/apply",
+          "body": {
+            "excluded": [],
+            "archive_missing": []
+          }
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/csv159-result-person",
+          "body": {
+            "id": "csv159-result-person",
+            "canonical_name": "Dr CSV Result Renamed NEW",
+            "call_level": "2ND_CALL",
+            "active_status": "active",
+            "revision": "one",
+            "aliases": [],
+            "designations": [],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "query": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "query": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "query": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "query": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "query": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/invalid",
+          "query": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/audit",
+          "query": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/import/history",
+          "query": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/member-workspace/csv/columns",
+          "query": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/member-workspace/csv/preview",
+          "query": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/member-workspace/csv/csv159-preview/apply",
+          "query": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "query": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/invalid",
+          "query": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/audit",
+          "query": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/import/history",
+          "query": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/csv159-result-person",
+          "query": ""
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/csv159-result-person",
+          "query": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "query": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/invalid",
+          "query": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/audit",
+          "query": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/import/history",
+          "query": ""
+        }
+      ],
+      "errors": []
+    }
+  ]
+}

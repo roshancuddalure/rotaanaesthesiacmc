@@ -1,0 +1,116 @@
+{
+  "recorded_at_utc": "2026-11-10T08:01:06.403834+00:00",
+  "reviewer": "/root/catalog14_runtime_harness",
+  "independent_of_candidate_and_harness_author": true,
+  "product_edited": false,
+  "ledger_edited": false,
+  "browser_executed": false,
+  "item_id": 183,
+  "requirement": "Improve eligibility-group search and membership presentation without changing group normalization, dates or eligibility semantics.",
+  "decision": "Scoped candidate is suitable for continued integration preparation after the concrete additional gates below; not full original183 acceptance. Twelve passing intercepted-fixture cases support frontend search/date presentation and exact payload, not persisted server membership/eligibility readback.",
+  "exact_conditions": [
+    {
+      "condition": "Search visibly changes matching eligibility groups and presents member identity and date applicability clearly.",
+      "assessment": "Supported within bounded actual-app fixture: group name/key/description search, member name/call label, saved date range disclosure with all returned records including historical/future/invalid, empty/unavailable states. Call-level search and concrete applicability wording reviewed in source but not queried in12case harness."
+    },
+    {
+      "condition": "Group normalization, membership dates and eligibility results match existing API behavior after search, edit and reload.",
+      "assessment": "Partial. All134 existing API/confirm/serialization/storage call expressions independently AST-exact; exact membership PUT body preserved after search. Mock membership readback changes local JS array and cannot establish persisted API membership dates, normalization or eligibility results. Actual API readback/eligibility evidence required before exact-condition acceptance."
+    }
+  ],
+  "source_review": {
+    "before_main_sha256": "ebf67f1733f620e406054d0c4a82cf1c203fd0e6603a843eec45b25a1a09df4d",
+    "candidate_main_sha256": "40328bfa13d0617ea8e04492ae13b836919f29ed6f443b6c9931e3450b677ae7",
+    "product_matches_before": true,
+    "existing_effects_independent_AST_count": 134,
+    "existing_effects_exact": true,
+    "virtual_TypeScript_diagnostics": [],
+    "date_behavior": "All returned members are mapped without filtering against active master list or date-now. Valid ISO calendar dates displayed unchanged via time[datetime]; invalid/impossible or missing starts explicit Date unavailable; only null end explicitly No end date reported. No eligibility/current-membership inference. Existing edit effective-from default and PUT dates remain unchanged.",
+    "escaping": "Group search data attribute and all returned IDs, names, call labels and valid dates pass escapeHtml. Invalid dates are never interpolated. Fixture escaped <unsafe> name is basic text coverage, not full adversarial browser injection proof.",
+    "search_behavior": "Only group tr hidden/display, visible counter and empty note change; independent member filter and selected group/checkboxes/effective date remain separate. Existing selected group may be hidden in results without changing selected group, correctly retaining its explicit editor heading. New query resets on existing full render, no persistence promise.",
+    "accessibility": "Native wrapped search label supplies accessible name, aria-controls targets table, native details/summary exposes returned dates, time elements preserve machine dates, status region reports count. Keyboard tests cover summary, clear and save/group controls. Native AT announcements/zoom not directly verified.",
+    "preserved_semantics": "Returned records are described as saved records rather than real-time eligibility. Historical inactive-master members remain in disclosure, while existing editable member-grid eligibility/active filters remain untouched."
+  },
+  "runtime_review": {
+    "contexts": 12,
+    "engine_width_theme_matrix": "Chromium/Firefox/WebKit x320/1280 xlight/dark",
+    "supported": [
+      "Name/key/description group queries visibly select Group Beta; no-match note and keyboard clear restore all3 rows.",
+      "Member Alpha search, effective-from2026-12-03, same selected group and checkbox array retained during group filtering.",
+      "All4 returned records appear including historical inactive-master person, future open end and invalid dates; unavailable members vs returned empty list distinguished.",
+      "One exact existing membership PUT body, mock readback with2saved records and wrong-call checkbox disabled; all remote nonGET refused.",
+      "Native keyboard open disclosure and save, computed theme assertion, long-name open disclosure page overflow checks, no uncaught JS errors."
+    ],
+    "limits": [
+      "Checkbox state preservation snapshot uses default checked members; no actual toggled draft before filtering.",
+      "Successful result contains summary booleans rather than raw writes/reads/snapshots; exact assertions were inspected in frozen test, not independently re-executed.",
+      "No group normalization edit, real persisted API eligibility calculation, recoverable GET/PUT failure, 200% zoom, live AT, or resize of an already configured disclosure."
+    ]
+  },
+  "meaningful_gates_before_integration": [
+    "Add call-level query to advertised search coverage, plus quoted/markup-bearing group name/key/description; prove no injected nodes or handler execution and correct normalized text match.",
+    "Toggle a real eligible-member checkbox away from baseline, set date and independent member query, filter/clear groups and assert all draft values and checkbox node identity preserved without write.",
+    "Focused keyboard search/disclosure/visible group navigation and bounded reflow320->768->1280 with open long membership disclosure; check focused element reachable and content/actions not clipped, including local table horizontal overflow ownership.",
+    "Recover one group-details/read failure and retry through actual existing UI; verify unavailable/empty membership records remain distinct and retry sends reads only. Preserve raw failure evidence; do not claim all frontend errors tested.",
+    "Fresh applied equivalent source-bound targeted cases, appropriate unit/build and prior58 source applicability before considering integrated verified."
+  ],
+  "gates_before_full183_acceptance": [
+    "Persist membership edits through disposable RAM API and explicitly reload membership/eligibility results using actual existing endpoint behavior, or bind equivalent prior real-API evidence with exact current-source applicability. Do not rename mock JS readback to persisted API proof.",
+    "Verify group normalization and dates remain exact after edit/reload; exercise representative effective dates and wrong-call result consistent with backend existing policy without modifying policy."
+  ],
+  "evidence": [
+    {
+      "path": "tmp/original183-group-search-v1/manifest.json",
+      "sha256": "f330a8069f6180ab2b3e5a1eaaadef35db3fd08c7747d549aeeb50d8ec0c442b"
+    },
+    {
+      "path": "tmp/original183-group-search-v1/before-main.ts",
+      "sha256": "ebf67f1733f620e406054d0c4a82cf1c203fd0e6603a843eec45b25a1a09df4d"
+    },
+    {
+      "path": "tmp/original183-group-search-v1/main.ts",
+      "sha256": "40328bfa13d0617ea8e04492ae13b836919f29ed6f443b6c9931e3450b677ae7"
+    },
+    {
+      "path": "tmp/original183-group-search-v1/change-minimal.patch",
+      "sha256": "c4067f80c07f90f531a2d90d163d071b1810769164d2d8f139964abf4bf4a9f9"
+    },
+    {
+      "path": "tmp/original183-group-search-v1/runtime-r1.browser.mjs",
+      "sha256": "d502d98d65d7b440b9484aa1b7bab57dce6c271bb0aaf1ace9788bcae4a5208c"
+    },
+    {
+      "path": "tmp/original183-group-search-v1/runtime-r1-report.json",
+      "sha256": "ee29976203ba603945191b6ba0729d9493211b4c8bb6e074298d96af1256818e"
+    },
+    {
+      "path": "tmp/original183-group-search-v1/typecheck-effect-proof.json",
+      "sha256": "1a3a4ea7c29ad39948aeb4cc7d6382d3972cfac8fe85a475a7ba96d07aa9ff3e"
+    },
+    {
+      "path": "tmp/original183-group-search-v1/served-source-proof.json",
+      "sha256": "fe96a60b516ce584d8029b4b4ea7ade05ca3f644cd03c66f0c4e0f908e650eec"
+    },
+    {
+      "path": "tmp/original183-group-search-v1/source-guards.json",
+      "sha256": "38f06f2073d76ea902310b33a908567984575be93b776a1262df27697dfec206"
+    },
+    {
+      "path": "docs/premium-ui/acceptance-criteria/items-174-260.json",
+      "sha256": "faa73e22aaeaf81c75886803908b250906fb55e85031087bb5e211aa7394dbac"
+    },
+    {
+      "path": "frontend/src/services/api.ts",
+      "sha256": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+    },
+    {
+      "path": "tmp/original183-independent-effects.cjs",
+      "sha256": "381c78f416897d1a2c857a738d160f43f78093486ab0cc9bd01a1eec2c75d13f"
+    }
+  ],
+  "limits": [
+    "No source defect proven merely from missing tests.",
+    "Physical devices and native AT pending; emulation accepted by user.",
+    "No backend, API, permissions, scheduling, persisted semantics or export changes proposed. No ledger acceptance or full260 completion."
+  ]
+}

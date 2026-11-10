@@ -1,0 +1,42 @@
+{
+  "recorded_at_utc": "2026-11-10T08:51:29.412Z",
+  "operator": "/root",
+  "source_sha256": {
+    "frontend/src/rota-rules.ts": "86bf98ac12a401f7c484647bfaec98c8815abe401406f95b245421e16a1fff4a",
+    "frontend/src/member-workspace.ts": "527f4f55aac3c4ac9de54f679940ff0c06b679a8fb28543bba963b3baa43a52b",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "e97203cb8f7bb4db32e48cdd899a54c3a671052117fe06f0904ea810868402d9"
+  },
+  "scope": "Actual exported rules editor; grouped headings/summaries, unsaved markers, declined/confirmed discard, review cancel and exact mocked full payload save/readback; last validation/Done/review geometry. No actual server policy or production mutation.",
+  "terminal": true,
+  "results": [
+    {
+      "passed": false,
+      "engine": "chromium",
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "error": "TimeoutError: page.waitForFunction: Timeout 2500ms exceeded.",
+      "stack": "page.waitForFunction: Timeout 2500ms exceeded.\n    at D:\\Coding\\Duty Rota software\\frontend\\tests\\premium-original181-rules-category-marker-r1-20261110.browser.mjs:26:15",
+      "geometry": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/rota-rules/phase-one"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/rota-rules/phase-one/check"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/rota-rules/phase-one/check"
+        }
+      ],
+      "writes": [],
+      "errors": []
+    }
+  ]
+}

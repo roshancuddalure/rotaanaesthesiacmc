@@ -889,8 +889,8 @@ function listHtml(st: State): string {
         <button type="button" class="rr-cat__toggle" aria-expanded="${!collapsed}" aria-controls="${catId}" data-toggle-cat="${esc(cat)}" data-fk="cat:${esc(cat)}">
           ${CHEVRON}<span class="rr-cat__name">${esc(categoryLabel(cat, true))}</span>
           <span class="rr-cat__count">${rules.length === total ? plural(total, "duty", "duties") : `${rules.length} of ${total} duties`}</span>
-          ${edited ? `<span class="rr-cat__flag is-info">${edited} edited</span>` : ""}
-          ${nobody ? `<span class="rr-cat__flag is-danger">${nobody} with nobody</span>` : ""}
+          <span class="rr-cat__flag is-info" data-cat-edited ${edited ? "" : "hidden"}>${edited} edited</span>
+          <span class="rr-cat__flag is-danger" data-cat-unavailable ${nobody ? "" : "hidden"}>${nobody} with nobody</span>
         </button>
       </h3>
       <div class="rr-cat__body" id="${catId}" ${collapsed ? "hidden" : ""}>${rules.map((rule) => dutyHtml(st, rule)).join("")}</div>
@@ -1062,6 +1062,21 @@ function paintGuard(st: State): void {
   });
 }
 
+/** Refresh category status without replacing focused toggles or editor fields. */
+function paintCategoryFlags(st: State): void {
+  st.page.querySelectorAll<HTMLElement>(".rr-cat[data-cat]").forEach((section) => {
+    const rules = [...section.querySelectorAll<HTMLElement>("[data-duty-row]")]
+      .map((row) => draftRule(st, row.dataset.dutyRow ?? ""))
+      .filter((rule): rule is DutyRule => Boolean(rule));
+    const edited = rules.filter((rule) => isChanged(st, rule)).length;
+    const nobody = rules.filter((rule) => rule.active && eligibleNow(st, rule.key) === 0).length;
+    for (const [selector, count, suffix] of [["[data-cat-edited]", edited, "edited"], ["[data-cat-unavailable]", nobody, "with nobody"]] as const) {
+      const flag = section.querySelector<HTMLElement>(selector);
+      if (flag) { flag.textContent = `${count} ${suffix}`; flag.hidden = count === 0; }
+    }
+  });
+}
+
 /** Updates eligible counts, warnings and previews in place (after a check). */
 function paintChecks(st: State): void {
   for (const rule of st.draft.duty_rules) {
@@ -1077,6 +1092,7 @@ function paintChecks(st: State): void {
       if (who) head.innerHTML = who.innerHTML;
     }
   }
+  paintCategoryFlags(st);
   paintSummary(st);
   const guardOpen = st.guardOpen;
   const guard = part(st, "guard");

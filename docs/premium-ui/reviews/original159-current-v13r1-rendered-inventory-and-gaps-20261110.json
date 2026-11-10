@@ -1,0 +1,477 @@
+{
+  "recorded_at_utc": "2026-11-10T02:09:16.069754+00:00",
+  "author": "/root/nestedreference159_groundwork",
+  "decision": "Whole original159 remains partial. Current applied repairs have bounded historical/integrated proof; isolated V13r1 closes one reproduced nested chain and passes48 cases, but is not applied and more chains/runtime supplements remain.",
+  "scope": "Read-only current-renderer source audit plus inspection of declared evidence artifacts. No browser execution, code changes, ledger/progress changes or backend writes. Inventory is a reviewable list of discovered reachable mutation families, not a mathematical proof of all runtime execution paths.",
+  "requirements": [
+    "Confirmed leave/unit/reference mutations refresh relevant dependent views.",
+    "Unrelated unsaved edits/chosen filters survive refresh; readback failure must not repeat confirmed mutation."
+  ],
+  "current_applied_source_sha256": {
+    "frontend/src/main.ts": "15b79223710a53a9e0ccdd70373a92e568f6ee603f56e3747454ab25ac258cc0",
+    "frontend/src/member-workspace.ts": "88774f277131a1ed83174d288d882653fc04add295b8237fefa62636e08617ea",
+    "frontend/src/operational-import.ts": "1ccbcf4181330a5f66c59b0723ec02f878a268b6b3030aa99b177de1b7070355",
+    "frontend/src/record-workspace.ts": "469fd6bf2e4118b15ad343d8059cd3cfb0acbc6483bea969ca5fb93488644335",
+    "frontend/src/reference-workspace.ts": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd",
+    "frontend/src/extra-duty.ts": "529e420fc05ce5bfa42655b8863e449e09e22a7c0abe9baf4db5c94c4797b8c3",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/data-sync.ts": "8408ff9eb6369d486126b7471ffc15a45fbe7f6fe5decd73b231f1dbf07c2f02",
+    "frontend/src/admin-delete.ts": "7a3eb13237272ad8b44f523bea5483ebeae60fc9c8b58d92035fe15c74528979",
+    "frontend/src/unit-settings-recovery.ts": "9e899c32f81c23b2fbedbe164e188880c21cc7dad5021a57f6cac9fe98e38679",
+    "frontend/src/member-duplicates.ts": "f43e871e219a6652bad3fa027b2566448ed69ef51a833f185821cbfa0b70f4c5"
+  },
+  "isolated_candidate_sha256": {
+    "main.ts": "ebf67f1733f620e406054d0c4a82cf1c203fd0e6603a843eec45b25a1a09df4d",
+    "member-workspace.ts": "506c486046fe6f0bbea5c6c4bf6357fec6e9649d91a9ed1ed890551ed3503cca",
+    "operational-import.ts": "d14e9b132a58e965f97a1531ab95845215092bbc6cf602c4344412047227e7a4",
+    "record-workspace.ts": "20b50cdbd991b5b5a16d06b51020be2838514a553823512373818f65636427aa",
+    "reference-workspace.ts": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd"
+  },
+  "global_sync_counterevidence": "services/api readMutationResult emits data-sync notifications. main onDataChange clears members/audit and invalidates Unit cache; navigation to Units forces fresh renderUnitManagement(true). This is cache invalidation, not automatic refresh of currently rendered retained parent. Lack of callback does not alone prove stale data on later navigation.",
+  "inventory": [
+    {
+      "id": "F01",
+      "family": "Unit modal staffing rules",
+      "rendered_entry": "main #unit-settings-form",
+      "accepted_transport": "Existing saveUnitSettingsWithRecovery API adapter",
+      "relevant_dependents": "Current month board/modal counts, returned staffing bounds and validation",
+      "current_source_refresh": "Settings retained readback helper stages owned month result; no full parent remount",
+      "retention": "Existing settings controls and newer edits/focus retained; unrelated fallback draft preserved",
+      "retry": "GET-only explicit settings recovery",
+      "status": "applied bounded repair",
+      "evidence": "settings159-v7-integrated-execution.json",
+      "remaining": "No all-mutator/all-route generalization; latest-reader cross-family races remain runtime bounded."
+    },
+    {
+      "id": "F02",
+      "family": "Direct normalized posting Add/Edit",
+      "rendered_entry": "Unit modal/posting board [data-add-operational-record], [data-edit-operational-record]",
+      "accepted_transport": "POST normalization/records/units/preview then save",
+      "relevant_dependents": "Parent Unit board, modal posting cards/counts and validation",
+      "current_source_refresh": "Applied V7 uses saved\u2192confirmed/closed parent owner; isolated V13r1 moves accepted hook before close and suppresses duplicate legacy read",
+      "retention": "Settings input/node identity, fallback host/order, month/search/campus retained",
+      "retry": "Owned parent GET failure explicit read-only retry",
+      "status": "applied V7; V13r1 timing extension isolated",
+      "evidence": "original159-direct-record-v7-integrated-execution.json",
+      "remaining": "V13r1 own Save and combined nested+own Save runtime supplement pending at audit freeze."
+    },
+    {
+      "id": "F03",
+      "family": "Direct normalized Leave Add/Edit/approval label",
+      "rendered_entry": "Leave row/card/day overlay normalized editor",
+      "accepted_transport": "POST normalization/records/leave/preview then save",
+      "relevant_dependents": "Current Leave records/calendar/pressure; selected IDs pruned only if no longer returned",
+      "current_source_refresh": "Existing retained parent closure; V13r1 same accepted-hook timing extension",
+      "retention": "Day list/disclosure/selections and unrelated controls survive scoped partial painter",
+      "retry": "GET-only parent retry",
+      "status": "applied bounded repair",
+      "evidence": "original159-direct-record-v7-integrated-execution.json",
+      "remaining": "Do not infer all Leave decision paths solely from own-editor matrix."
+    },
+    {
+      "id": "F04",
+      "family": "Profile Postings/Leave record Save and Leave Cancel",
+      "rendered_entry": "Member profile Postings/Leave tabs from Units/Leave member links",
+      "accepted_transport": "Normalized record save or POST profile leave cancel",
+      "relevant_dependents": "Profile tab/activity data plus underlying owned Unit/Leave month",
+      "current_source_refresh": "Profile lifecycle accepted before own readback; same owner forwarded through Next/initial Retry; final actual profile close refreshes parent",
+      "retention": "Profile own drafts and underlying unrelated settings/fallback/list states retained in bounded executions",
+      "retry": "Profile own GET retry and parent GET-only retry separate",
+      "status": "applied bounded repair",
+      "evidence": "profile-parent-v5-integrated-execution.json",
+      "remaining": "V13r1 adds nested reference forwarding; shared source source bridge does not certify all stacked focus/lifetime combinations."
+    },
+    {
+      "id": "F05",
+      "family": "Profile member core/status/date/call/alias/designation edit and merge",
+      "rendered_entry": "Member profile Details/Edit; Members row Archive/Restore opens same profile with proposed status",
+      "accepted_transport": "PUT admin member-workspace core; POST merge",
+      "relevant_dependents": "Profile identity/tabs, returned member list and current Unit/Leave person data",
+      "current_source_refresh": "Core V12 accepted signal before clone/changed/render; root parent on final profile close; Members source callback rereads members/audit",
+      "retention": "Same root owner and partial painters retain current parent controls; actual status semantics unchanged",
+      "retry": "Own profile read failures plus current parent read recovery",
+      "status": "applied bounded repair",
+      "evidence": "original159-member-core-v12-integrated-execution.json",
+      "remaining": "Standalone Members route has no simultaneous Unit/Leave parent; return-navigation freshness is separate. No new global stale bug inferred."
+    },
+    {
+      "id": "F06",
+      "family": "Normalized Units/Leave import Apply",
+      "rendered_entry": "Toolbar [data-open-normalized-import] > actual CSV preview > Apply reviewed rows",
+      "accepted_transport": "POST import-review/{id}/apply",
+      "relevant_dependents": "Current month Unit board/modal or Leave records/calendar/pressure",
+      "current_source_refresh": "Accepted Apply lifecycle independent of result paint; final importer close coalesces repeated batches",
+      "retention": "Importer file/mapping/exclusions remain until chosen discard; parent settings/fallback/filter or Leave view retained",
+      "retry": "Parent GET-only retry never repeats Apply; child result failure distinct",
+      "status": "applied bounded repair",
+      "evidence": "original159-import-v9r1-integrated-execution.json",
+      "remaining": "V13r1 nested-reference changes intentionally do not fake accepted Apply batch/hasConfirmedImport state."
+    },
+    {
+      "id": "F07",
+      "family": "Department unit create/edit/archive/aliases/minimums",
+      "rendered_entry": "Unit toolbar Add unit/Manage units registry",
+      "accepted_transport": "POST or PUT normalization/units",
+      "relevant_dependents": "Registry list/counts; Unit board/modal definition; complete fallback labels/add choices/new owners",
+      "current_source_refresh": "Standalone V10r4 accepted hook before own GET, final registry close triggers retained month + complete fallback reference reads",
+      "retention": "Fallback saved/draft order and nodes retained; new owners initialized only from actual complete fallback snapshot",
+      "retry": "Own registry GET retry separate from parent/reference GET retry",
+      "status": "applied bounded repair",
+      "evidence": "original159-registry-v10r4-integrated-execution.json",
+      "remaining": "All status/archive variants require actual contract/runtime evidence, not assumptions from active-only board lists."
+    },
+    {
+      "id": "F08",
+      "family": "Nested unit creation in record editor or importer without parent Save/Apply",
+      "rendered_entry": "Record [data-new-unit] or import row [data-create-unit]",
+      "accepted_transport": "Registry POST; createNew auto-closes after accepted response, no registry post-create GET",
+      "relevant_dependents": "Enclosing choices + underlying Unit board/modal + complete fallback references",
+      "current_source_refresh": "Applied baseline lacks bridge; isolated V13r1 uses registry accepted hook\u2192referenceConfirmed\u2192same outer owner; child close no-op",
+      "retention": "Final owner close preserves unrelated settings/fallback/filter drafts; deferred while importer/editor open",
+      "retry": "Actual importer member/unit choice GET503 can fail after accepted unit; final parent read independent",
+      "status": "confirmed applied baseline defect; isolated candidate bounded6+42 pass",
+      "evidence": "original159-nested-reference-baseline-r1-execution.json;original159-nested-reference-v13r1-first48-execution.json",
+      "remaining": "Not applied; do not claim nested registry own GET503 where createNew bypasses it. Own Save/profile/parent recovery/owner supplements remain pending."
+    },
+    {
+      "id": "F09",
+      "family": "Nested actual member creation or read-only existing choice",
+      "rendered_entry": "Record [data-new-member]; importer [data-create-member] > Create member or Use existing",
+      "accepted_transport": "POST admin/members for creation; POST resolve and GET members are lookup only",
+      "relevant_dependents": "Enclosing member choices; existing dated data only as returned by month reads, no invented assignments/counts",
+      "current_source_refresh": "Isolated V13r1 actual accepted POST signal before alive()/fallible result use; Use existing done callback does not signal mutation",
+      "retention": "Outer owner close coalesces accepted changes; no Unit fallback reference GET solely for member creation",
+      "retry": "JSON-null accepted result candidate case still marks parent before child consumer failure",
+      "status": "isolated candidate import member/create/null/Useexisting/cancel bounded pass",
+      "evidence": "original159-nested-reference-v13r1-first48-execution.json",
+      "remaining": "Record direct member-create and further nested profile/restoration/merge paths need remaining actual matrix; no global member count claim."
+    },
+    {
+      "id": "F10",
+      "family": "Create-member lookup Review/restore nested member profile",
+      "rendered_entry": "Create member dialog [data-review-existing]",
+      "accepted_transport": "Existing profile core/merge/record mutation APIs",
+      "relevant_dependents": "Lookup candidates/local choices and underlying outer month",
+      "current_source_refresh": "V13r1 supplies profile lifecycle and reference adapter to notify same outer owner; nested profile closed no-op",
+      "retention": "Outer draft retained; final actual outer close owns parent refresh",
+      "retry": "Accepted signal precedes profile own GET failures",
+      "status": "source bridge; dedicated runtime pending",
+      "evidence": "original159-nested-reference-v13r1-independent-lifecycle-review.json",
+      "remaining": "Test actual [data-review-existing] path including accepted restore/core then own read failure, never infer from read-only lookup."
+    },
+    {
+      "id": "F11",
+      "family": "Importer row candidate profile actions",
+      "rendered_entry": "Rendered [data-review-candidate] in import row details",
+      "accepted_transport": "Member core/merge or normalized posting/Leave save/cancel from opened profile",
+      "relevant_dependents": "Importer local identity preview and underlying current month person/records",
+      "current_source_refresh": "Current applied AND V13r1 still call openMemberWorkspace with six args, no parentLifecycle. changed(member) updates local choices/renderReview/dirtyPreview only",
+      "retention": "Local renderReview may replace open row controls; parent draft untouched but freshness after final no-Apply discard unproven",
+      "retry": "No root reference confirmation on this distinct chain; own profile has separate retries",
+      "status": "source-supported uncovered chain; NOT runtime-confirmed defect",
+      "evidence": null,
+      "remaining": "Next diagnostic: unresolved row candidate profile\u2192accepted core name or posting save\u2192close profile\u2192discard importer WITHOUT Apply; assert current board/list updates while fallback/filter draft retained. Distinguish this from F10."
+    },
+    {
+      "id": "F12",
+      "family": "Direct Leave Cancel",
+      "rendered_entry": "Rendered [data-cancel-leave] row/card menu",
+      "accepted_transport": "Existing cancelLeaveRequest POST",
+      "relevant_dependents": "Current Leave month requests/calendar/pressure and selected IDs; Unit cache invalidated globally",
+      "current_source_refresh": "Applied LeaveV1r2 accepted current-owner signal then retained readback, known-confirmed control markers",
+      "retention": "Same list/day/disclosure/selection controls retained where still applicable; no full remount",
+      "retry": "GET-only retry, action copy reflects accepted cancellation",
+      "status": "applied bounded repair",
+      "evidence": "original159-leave-nondelete-v1r2-integrated-execution.json",
+      "remaining": "No blanket zero-bug claim for simultaneous profile/import owners."
+    },
+    {
+      "id": "F13",
+      "family": "Approve all pending Leave for month",
+      "rendered_entry": "Rendered admin [data-approve-month-leave]",
+      "accepted_transport": "Existing monthly preview/token/acknowledgement/apply module",
+      "relevant_dependents": "Current Leave counts/calendar/requests/pressure",
+      "current_source_refresh": "Applied LeaveV1r2 current-owner callback retained readback after approval module reports accepted count",
+      "retention": "Chosen list/disclosure/selections and unrelated parent control identities retained",
+      "retry": "GET-only parent retry never repeats approval Apply",
+      "status": "applied bounded repair",
+      "evidence": "original159-leave-nondelete-v1r2-integrated-execution.json",
+      "remaining": "Do not conflate approval module timeout/uncertainty contract with parent read retry."
+    },
+    {
+      "id": "F14",
+      "family": "Leave/posting/member deletion variants",
+      "rendered_entry": "Row/card delete menus, selected delete, whole-month delete; Unit Remove posting cards",
+      "accepted_transport": "Shared runAdminDelete preview/token/typed-confirm/apply",
+      "relevant_dependents": "Current kind records, selected IDs and month stats; person eligibility via actual returned data",
+      "current_source_refresh": "V11r1 current owner created before mutation; confirmed then retained owned partial readback where kind is Units/Leave",
+      "retention": "Unrelated Unit settings/fallback drafts, Leave selection/disclosures retained within covered variants",
+      "retry": "Read-only recovery separates accepted delete from failed GET",
+      "status": "applied bounded repair",
+      "evidence": "original159-delete-v11r1-integrated-execution.json",
+      "remaining": "Use exact declared variants/engines in report; shared controller source does not prove every absent combination."
+    },
+    {
+      "id": "F15",
+      "family": "Reference catalog seven kinds create/edit/archive/aliases/behavior",
+      "rendered_entry": "Main Labels and mappings; Mappings Manage reference labels; record [data-references]; import [data-manage-import-references]; profile designation catalog",
+      "accepted_transport": "PUT normalization/catalog/{kind}/{key}",
+      "relevant_dependents": "Actual catalog consumers: normalized editor options, import preview normalization/aliases; main uses some static label helpers",
+      "current_source_refresh": "Catalog accepted PUT sets confirmed flag, then own GET/load/render calls saved. Accepted PUT+GET503+Close never calls saved. Main saved only invalidates Unit cache; import dirtyPreview only; record options GET preserves draft; profile designation callback no-op",
+      "retention": "Own catalog controls reconstructed after successful save; enclosing record draft/caret/search restoration exists. No generic live parent consumer refresh proven",
+      "retry": "Own savedReadbackFailure GET-only retry; outer references lack accepted-before-read callback",
+      "status": "source-supported gaps; historical scoped tests do not close whole159",
+      "evidence": null,
+      "remaining": "Map each campus/designation/leave_type/leave_slot/leave_status/posting_type/duty_type consumer before changing; reproduce one actual consumed label update after accepted PUT and readback503 Close, ensure stale outer preview cannot claim current. Static main labels are counterevidence against invented universal rename bug."
+    },
+    {
+      "id": "F16",
+      "family": "Catalog Add Mapping control",
+      "rendered_entry": "Catalog [data-add-mapping]",
+      "accepted_transport": "No independent mapping POST: requires selected reference then focuses aliases field",
+      "relevant_dependents": "Aliases become part of later catalog PUT only",
+      "current_source_refresh": "Source control is navigation/focus, not confirmed mutation",
+      "retention": "Existing unsaved catalog form retained",
+      "retry": "Not a mutation retry path",
+      "status": "excluded as independent mutation",
+      "evidence": null,
+      "remaining": "Do not invent a nested openMappingCreator path here."
+    },
+    {
+      "id": "F17",
+      "family": "Add imported label mapping",
+      "rendered_entry": "Mappings toolbar [data-create-import-mapping]",
+      "accepted_transport": "POST admin/mappings via openMappingCreator",
+      "relevant_dependents": "Current mappings table/cards/options and existing dirty rows",
+      "current_source_refresh": "Current main guarded callback loadMappings(true,current), then renderMappings; repaired original defaultfalse draft loss",
+      "retention": "Unrelated mapping row drafts/search/filter retained by merge-preserving loader",
+      "retry": "Failed reload offers Try again GET-only; no automatic POST replay",
+      "status": "applied bounded repair; old V6 defect superseded",
+      "evidence": "mapping-parent-v1-integrated-execution.json",
+      "remaining": "Current-binding/source bridge required for historical42 contexts; do not resurrect old V6 current-defect label."
+    },
+    {
+      "id": "F18",
+      "family": "Mapping row Save",
+      "rendered_entry": "Rendered Mappings [data-save]",
+      "accepted_transport": "updateMapping existing adapter",
+      "relevant_dependents": "Authoritative saved row while preserving other dirty rows",
+      "current_source_refresh": "Current token/account/view/root guards then updateLocalMapping(saved.id,saved,false) and renderMappings",
+      "retention": "Other mapping objects/draft IDs preserved; source Save locks only relevant pending controls",
+      "retry": "Mutation uncertainty guidance remains API-level; no own GET required for returned row",
+      "status": "historical item134 bounded evidence; current source inspected",
+      "evidence": null,
+      "remaining": "Need exact accepted134 current applicability before relying on all old matrices. Stacked catalog normalization semantics are separate."
+    },
+    {
+      "id": "F19",
+      "family": "Scan historical mappings",
+      "rendered_entry": "Mappings #scan-mappings",
+      "accepted_transport": "scanHistoricalMappings existing POST",
+      "relevant_dependents": "Current mappings list merged with unrelated dirty rows",
+      "current_source_refresh": "Current account/view/render/root/sequence guard, confirmed scan flag, loadMappings(true,current)",
+      "retention": "mapping drafts/search/filter retained; scan blocks conflicting pending saves",
+      "retry": "If scan accepted but GET fails, Retry mappings reloads without Scan replay",
+      "status": "historical items135/136 bounded evidence; current source inspected",
+      "evidence": null,
+      "remaining": "No scope claim for historical import generation; Scan mapping evidence alone not whole159."
+    },
+    {
+      "id": "F20",
+      "family": "Inline Unit fallback order Save",
+      "rendered_entry": "Current Unit #unit-fallbacks-host [data-fb-save]",
+      "accepted_transport": "PUT extra-duty/unit-fallbacks/{id}",
+      "relevant_dependents": "That fallback editor authoritative order and next extra-duty computation",
+      "current_source_refresh": "Component commits actual returned fallback IDs and repaints only owning row, independent rows remain",
+      "retention": "Other fallback row drafts remain component-owned; no reason to fabricate board assignment/count changes",
+      "retry": "Existing catch says Nothing was changed even for uncertain failures; this is truthful-recovery review risk (original160), not a demonstrated missing dependent view refresh",
+      "status": "rendered source inspected; recovery scope gap",
+      "evidence": null,
+      "remaining": "Test returned authoritative order versus local unsaved edit and timeout/response-loss recovery separately. Do not turn optional future-run preference into invented live rota regeneration."
+    },
+    {
+      "id": "F21",
+      "family": "Members route CSV create/update/archive; core admin utilities",
+      "rendered_entry": "Members Import CSV, Clean invalid names, Prefill call levels, Reconcile roster, Review duplicates, Clear all",
+      "accepted_transport": "Member CSV Apply; existing admin preview/apply, duplicate merge, archive module",
+      "relevant_dependents": "Members list/audit and future Unit/Leave return-navigation data",
+      "current_source_refresh": "Members callbacks renderMembers/getMembers after accepted result; global data-sync clears Unit cache; Unit navigation force reload. Member CSV result member profiles currently opened without root parent; route is Members",
+      "retention": "No simultaneous Unit/Leave parent on normal Members route. Member list filter/draft preservation and readback failure are separate applicability requirements",
+      "retry": "CSV done runs after result render; accepted Apply plus injected render failure can skip Members refresh; source-supported recovery risk, not runtime reproduction here",
+      "status": "adjacent member-reference families; no new global bug inferred",
+      "evidence": null,
+      "remaining": "Dedicated Members-stage mutation/readback/draft evidence needed if included in original159 scope. Do not equate no visible Unit parent on Members route with stale Unit data after navigation."
+    }
+  ],
+  "unreachable_legacy_handlers": [
+    {
+      "handler": "form.id === leave-form",
+      "rendered": false,
+      "reason": "No current renderer emits id=leave-form. CSS class leave-form on settings/exchange forms is unrelated."
+    },
+    {
+      "handler": "form.id === unit-assignment-form",
+      "rendered": false,
+      "reason": "Current posting actions use normalized editor; no live matching form id found."
+    },
+    {
+      "handler": "data-unit-row-form submit branch",
+      "rendered": false,
+      "reason": "Current data-unit-row-form is an article with Edit/Remove controls, not a submit form."
+    },
+    {
+      "handler": "apply-leave-import/apply-unit-import IDs",
+      "rendered": false,
+      "reason": "Legacy handlers remain; live current import toolbars use normalized import dialog. No live emitted Apply IDs found."
+    },
+    {
+      "handler": "target.dataset.callLevel old inline member selector",
+      "rendered": false,
+      "reason": "No current data-call-level attribute emission found; current member status/edit routes use profile workspace. Do not infer live call update from handler alone."
+    },
+    {
+      "handler": "run-historical-import",
+      "rendered": false,
+      "reason": "Handler exists but current main renderer has no matching emitted id. Historical-file scan is a distinct rendered control."
+    }
+  ],
+  "evidence_artifacts": {
+    "dependent159-current-v6-rendered-inventory-and-gaps.json": {
+      "path": "docs/premium-ui/reviews/dependent159-current-v6-rendered-inventory-and-gaps.json",
+      "sha256": "fe01efaf62a0b8696dcfab90ae78cbf75213e7a21966cb2a1e14c1477526e80c",
+      "recorded_at_utc": "2026-10-31T01:35:13.523981+00:00",
+      "reported_scope": "Keep whole159partial. Settings V6 closes its known defect, but Add mapping refresh independently loses unrelated existing draft. Profile-linked posting/leave mutation underlying-parent behavior remains unverified and must be inspected/tested before whole acceptance.",
+      "classification": "Historical bounded execution or source bridge; interpret only exact declared scope, never universal current coverage."
+    },
+    "settings159-v7-integrated-execution.json": {
+      "path": "docs/premium-ui/reviews/settings159-v7-integrated-execution.json",
+      "sha256": "ecab26160223451f8b63522d1221b626d9fac4bd799d0b527da1a0c7895c4c59",
+      "recorded_at_utc": "2026-11-09T05:46:01.735283+00:00",
+      "reported_scope": "Applied settings returned-data recovery:90 actual browser workflows across Chromium/Firefox/WebKit320/1280,114unit tests and heldbuild. Whole159 remains open for separately confirmed nested-profile parent refresh.",
+      "classification": "Historical bounded execution or source bridge; interpret only exact declared scope, never universal current coverage."
+    },
+    "profile-parent-v5-integrated-execution.json": {
+      "path": "docs/premium-ui/reviews/profile-parent-v5-integrated-execution.json",
+      "sha256": "ea3c751d8d62f1aca3edd53e40228635de44719e8f8269a7d80d2955347620bc",
+      "recorded_at_utc": "2026-11-09T08:12:01.212797+00:00",
+      "reported_scope": "144 actual applied browser contexts on final profile-parent V5 main/member across Chromium/Firefox/WebKit320/1280. Normal/read-failure/malformed response, Unit/Leave owner races, coalesced saves, selection prune, record-specific focus, Next/Retry popup replacement and shared settings focus. No whole159 acceptance.",
+      "classification": "Historical bounded execution or source bridge; interpret only exact declared scope, never universal current coverage."
+    },
+    "original159-direct-record-v7-integrated-execution.json": {
+      "path": "docs/premium-ui/reviews/original159-direct-record-v7-integrated-execution.json",
+      "sha256": "f50fdc238f7ecde920678e6ecb152b1828a820ccebeba09495974ba4210e4d29",
+      "recorded_at_utc": "2026-11-09T09:32:25.017114+00:00",
+      "reported_scope": "Fresh72 applied browser contexts:60 direct Unit/Leave record draft/readback cases and12 external overlay contexts/66actionoutcomes; no whole159 acceptance.",
+      "classification": "Historical bounded execution or source bridge; interpret only exact declared scope, never universal current coverage."
+    },
+    "original159-import-v9r1-integrated-execution.json": {
+      "path": "docs/premium-ui/reviews/original159-import-v9r1-integrated-execution.json",
+      "sha256": "a4ee37412da49741e03e1b5d327bbc56f52645a6fb0eea5f7d5593dbaa1e05f7",
+      "recorded_at_utc": "2026-11-09T10:09:39.526547+00:00",
+      "reported_scope": "Fresh90 applied import retained-parent/draft/uncertainty contexts on main96ab/importer1ccbc.78threeengine320/1280cases and12Chromium owner supplement. No whole159 acceptance.",
+      "classification": "Historical bounded execution or source bridge; interpret only exact declared scope, never universal current coverage."
+    },
+    "original159-registry-v10r4-integrated-execution.json": {
+      "path": "docs/premium-ui/reviews/original159-registry-v10r4-integrated-execution.json",
+      "sha256": "b536fd5597a8ff6da97d070e7c69ac7f30ab3f495040f01992be8a253874a98b",
+      "recorded_at_utc": "2026-11-09T10:41:39.283067+00:00",
+      "reported_scope": "Fresh106 applied browser contexts:78threeengine320/1280registry paths and28Chromiumowner/focus/sharedcaller contexts. Candidate106 are separate.114unit and heldbuild pass. Original159 remainspartial.",
+      "classification": "Historical bounded execution or source bridge; interpret only exact declared scope, never universal current coverage."
+    },
+    "original159-delete-v11r1-integrated-execution.json": {
+      "path": "docs/premium-ui/reviews/original159-delete-v11r1-integrated-execution.json",
+      "sha256": "6ac42d0030d361de882165866da7c0304b5210ddb10b731af4c2a99d66cdf8dd",
+      "recorded_at_utc": "2026-11-09T17:24:30.086312+00:00",
+      "reported_scope": "Fresh102appliedbrowsercontexts:90threeenginephone/desktopposting/Leave/shape/settingsand12Chromiumowner/focus/cancel. Candidate102distinctexecution. No whole159acceptance.",
+      "classification": "Historical bounded execution or source bridge; interpret only exact declared scope, never universal current coverage."
+    },
+    "original159-member-core-v12-integrated-execution.json": {
+      "path": "docs/premium-ui/reviews/original159-member-core-v12-integrated-execution.json",
+      "sha256": "6fddc71bf53adb5a1b907df0aec03d41a107b5cfc236532293c226b2ab602675",
+      "recorded_at_utc": "2026-11-09T17:50:00.445105+00:00",
+      "reported_scope": "Fresh86appliedbrowsercontexts:48threeenginephone/desktopcore/merge/recovery and38Chromiumowner/fault/coalescing/unconfirmed/NextRetry. Candidate86distinctexecution. No whole159acceptance.",
+      "classification": "Historical bounded execution or source bridge; interpret only exact declared scope, never universal current coverage."
+    },
+    "original159-leave-nondelete-v1r2-integrated-execution.json": {
+      "path": "docs/premium-ui/reviews/original159-leave-nondelete-v1r2-integrated-execution.json",
+      "sha256": "73ae2f189745587de8d3272ce21dcbb19a4aaeeffaf33904bfdac9f784a714cf",
+      "recorded_at_utc": "2026-11-10T01:58:17.006096+00:00",
+      "reported_scope": "Fresh48 applied scenarios:24 three-engine320/1280 normal/read503-retry and24 Chromium duty/token/preview+approval failures/refusal/marking-fault/delayed mutation and in-flight parent read supersession. Candidate48 is a distinct execution. Original159 partial.",
+      "classification": "Historical bounded execution or source bridge; interpret only exact declared scope, never universal current coverage."
+    },
+    "mapping-parent-v1-integrated-execution.json": {
+      "path": "docs/premium-ui/reviews/mapping-parent-v1-integrated-execution.json",
+      "sha256": "9e1a25c14666218b0c5033b8f9b77d6034b00377c0abb18936c933e68b0c79b1",
+      "recorded_at_utc": "2026-11-03T05:18:13.661394+00:00",
+      "reported_scope": "Applied Add mapping parent callback only.42 native browser contexts,114unit and heldbuild. No whole159 acceptance.",
+      "classification": "Historical bounded execution or source bridge; interpret only exact declared scope, never universal current coverage."
+    },
+    "original159-nested-reference-baseline-r1-execution.json": {
+      "path": "docs/premium-ui/reviews/original159-nested-reference-baseline-r1-execution.json",
+      "sha256": "616f551847bbf47a75a31d73c4d65c09a0c8d921829a2bff3139653bc153832f",
+      "recorded_at_utc": "2026-11-09T17:59:09.464806+00:00",
+      "reported_scope": "Three engines at320/1280; local writes, RAM GETs.",
+      "classification": "Historical bounded execution or source bridge; interpret only exact declared scope, never universal current coverage."
+    },
+    "original159-nested-reference-v13r1-first48-execution.json": {
+      "path": "docs/premium-ui/reviews/original159-nested-reference-v13r1-first48-execution.json",
+      "sha256": "7c0151906f3f7d21aea9b02c50ffc1af1774ba416c4c81c9ca76c19b6cb57c24",
+      "recorded_at_utc": "2026-11-10T02:02:08.620960+00:00",
+      "reported_scope": "Three engines320/1280:6 nested record-unit create then discard and42 actual CSV preview unit/member create,choicesGET503,accepted JSON-null member result,Use existing or cancel without Apply. Deferred root refresh only for accepted mutations;dirty fallback/settings/filter identities retained and new unit choices synchronized.",
+      "classification": "Historical bounded execution or source bridge; interpret only exact declared scope, never universal current coverage."
+    },
+    "original159-nested-reference-v13r1-prior56-source-analysis.json": {
+      "path": "docs/premium-ui/reviews/original159-nested-reference-v13r1-prior56-source-analysis.json",
+      "sha256": "1d2a53db3365e1496f7eca74668b1b9dddc7a09fa24c163b7d4e688f0b4462f7",
+      "recorded_at_utc": "2026-11-10T02:04:22.248Z",
+      "reported_scope": "Isolated V13r1 over applied LeaveV1r2 baseline; source applicability only, no reacceptance.",
+      "classification": "Historical bounded execution or source bridge; interpret only exact declared scope, never universal current coverage."
+    },
+    "original159-nested-reference-v13r1-independent-lifecycle-review.json": {
+      "path": "docs/premium-ui/reviews/original159-nested-reference-v13r1-independent-lifecycle-review.json",
+      "sha256": "b12796fbf6bf602de93931b5a5ba1d8efadbd52c09ea5f2ecc4e83aae33437f4",
+      "recorded_at_utc": "2026-11-10T01:58:38.627960+00:00",
+      "reported_scope": null,
+      "classification": "Historical bounded execution or source bridge; interpret only exact declared scope, never universal current coverage."
+    }
+  },
+  "historical_V6_reconciliation": [
+    "Old Add mapping parent default preserveDrafts=false defect is superseded by applied mapping-parent-v1 guarded loadMappings(true,current); do not present V6 historical failure as current.",
+    "Old profile underlying-parent concern is superseded in bounded scopes by profile V5/core V12 and later source bridges.",
+    "Old registry/import direct callbacks now have retained lifecycle changes V9r1/V10r4; nested no-Apply/no-Save chain remained separate and was reproduced by root correctedR1 before V13r1.",
+    "Historical counts/runtime successes only support their declared source, browser and trigger scope. Current binding needs exact successive source applicability; this inventory is not blanket reacceptance."
+  ],
+  "next_diagnostic_priorities": [
+    {
+      "priority": 1,
+      "family": "F11",
+      "task": "Actual import row candidate-profile confirmed name/posting/Leave mutation then final no-Apply discard; prove parent freshness and preservation."
+    },
+    {
+      "priority": 2,
+      "family": "F15",
+      "task": "Seven-kind consumer map, then actual consumed catalog accepted PUT\u2192GET503\u2192Close outer draft: stale reference authority/callback proof and GET-only retry."
+    },
+    {
+      "priority": 3,
+      "family": "F08-F10",
+      "task": "Finish separate V13r1 own Save/profile/parent503/ownership supplements, independent source review and applied integration; first48 not enough."
+    },
+    {
+      "priority": 4,
+      "family": "F17-F19",
+      "task": "Validate historical mapping evidence source bridges/current bindings; Add mapping historical defect is fixed, avoid redundant unsupported bug claim."
+    },
+    {
+      "priority": 5,
+      "family": "F20-F21",
+      "task": "Bound inline fallback uncertain-save copy and Members accepted-result-paint failure independently; decide original159 versus other recovery requirement scope from actual plan, no scheduling or persistence changes."
+    }
+  ],
+  "exclusions_and_limits": [
+    "Rota generation, GPU, extra-duty assignment runs, exchange approval, accounts and eligibility group configuration are separate functional areas; do not silently expand this frontend dependency audit into scheduling changes.",
+    "New reference metadata/callbacks must not alter backend/API contracts, permissions, member eligibility policy, archived membership semantics, duty behavior or export contents.",
+    "No native assistive-technology or physical-device outcome; emulation acceptance is bounded to actually performed tests.",
+    "No all260/original159 acceptance or zero-new-bug guarantee implied."
+  ]
+}

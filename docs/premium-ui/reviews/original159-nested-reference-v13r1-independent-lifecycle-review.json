@@ -1,0 +1,115 @@
+{
+  "recorded_at_utc": "2026-11-10T01:58:38.627960+00:00",
+  "reviewer": "/root/leave159_nondelete_groundwork",
+  "source_decision": "Suitable for isolated browser validation; prior narrow source blocker resolved. No browser approval or application implied.",
+  "application_changed": false,
+  "browser_executed": false,
+  "files": [
+    {
+      "file": "main.ts",
+      "before_sha256": "15b79223710a53a9e0ccdd70373a92e568f6ee603f56e3747454ab25ac258cc0",
+      "candidate_sha256": "ebf67f1733f620e406054d0c4a82cf1c203fd0e6603a843eec45b25a1a09df4d",
+      "unchanged": false,
+      "independent_hashes_verified": true,
+      "reverse_all_edits_to_before_normalized_line_endings": true,
+      "product_sha256_at_review": "15b79223710a53a9e0ccdd70373a92e568f6ee603f56e3747454ab25ac258cc0"
+    },
+    {
+      "file": "member-workspace.ts",
+      "before_sha256": "88774f277131a1ed83174d288d882653fc04add295b8237fefa62636e08617ea",
+      "candidate_sha256": "506c486046fe6f0bbea5c6c4bf6357fec6e9649d91a9ed1ed890551ed3503cca",
+      "unchanged": false,
+      "independent_hashes_verified": true,
+      "reverse_all_edits_to_before_normalized_line_endings": true,
+      "product_sha256_at_review": "88774f277131a1ed83174d288d882653fc04add295b8237fefa62636e08617ea"
+    },
+    {
+      "file": "operational-import.ts",
+      "before_sha256": "1ccbcf4181330a5f66c59b0723ec02f878a268b6b3030aa99b177de1b7070355",
+      "candidate_sha256": "d14e9b132a58e965f97a1531ab95845215092bbc6cf602c4344412047227e7a4",
+      "unchanged": false,
+      "independent_hashes_verified": true,
+      "reverse_all_edits_to_before_normalized_line_endings": true,
+      "product_sha256_at_review": "1ccbcf4181330a5f66c59b0723ec02f878a268b6b3030aa99b177de1b7070355"
+    },
+    {
+      "file": "record-workspace.ts",
+      "before_sha256": "469fd6bf2e4118b15ad343d8059cd3cfb0acbc6483bea969ca5fb93488644335",
+      "candidate_sha256": "20b50cdbd991b5b5a16d06b51020be2838514a553823512373818f65636427aa",
+      "unchanged": false,
+      "independent_hashes_verified": true,
+      "reverse_all_edits_to_before_normalized_line_endings": true,
+      "product_sha256_at_review": "469fd6bf2e4118b15ad343d8059cd3cfb0acbc6483bea969ca5fb93488644335"
+    },
+    {
+      "file": "reference-workspace.ts",
+      "before_sha256": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd",
+      "candidate_sha256": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd",
+      "unchanged": true,
+      "independent_hashes_verified": true,
+      "reverse_all_edits_to_before_normalized_line_endings": true,
+      "product_sha256_at_review": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd"
+    }
+  ],
+  "manifest_sha256": "41f629f597a2c52207ff91f968afe61ff6fef7200c403b5130efdbe63c0e375e",
+  "edits_sha256": "f0cbeacf1a98a19ed0af56cb5dc22550a28f6d33b06fbd29047f9b0fc28be5ca",
+  "author_proof": {
+    "path": "tmp/nested-reference-v13r1/typecheck-request-markup-proof.json",
+    "sha256": "758451c5f8fc7341f2da0510ab2e9d589eaba091c0e259d17b02216a62f09ea1",
+    "typecheck_diagnostics": [],
+    "request_markup_proofs_all_exact": true
+  },
+  "prior_review": {
+    "path": "docs/premium-ui/reviews/original159-nested-reference-v13-independent-lifecycle-review.json",
+    "sha256": "6b948741d666eec87f8f311c58b49f4f74c6f5a3cd73f5d9e3a1dbb0c7272c9b",
+    "source_analysis_still_applicable": "All V13 edit objects except optional newly-created member id are identical. Member/record/reference candidates byteexact to V13; main patch same onto Leave V1r2. Existing full chain/lifetime findings from prior review apply to these unchanged paths."
+  },
+  "resolved_blockers": [
+    {
+      "id": "V13-ACCEPTED-MEMBER-NULL-001",
+      "resolution": "Actual new-member accepted hook now constructs only constant entity/member and operation/create metadata before alive()/dirty/close/done; no response-property access precedes notification. id is optional and not required by parent reference flag.",
+      "runtime_still_required": "Locally accepted POST with JSON-null result must demonstrate parent invalidation then final-outer-close GET/recovery, one mutation only; downstream child consumer still cannot treat malformed data as a valid member."
+    },
+    {
+      "id": "V13-CURRENT-BASE-LEAVE-PRESERVATION",
+      "resolution": "Main baseline now exact applied Leave V1r2 15b792. Independently compared full cancellation and monthly approval handler blocks; both byteexact after bridge overlay. Same nested-reference patch objects as V13, so rebase did not discard current Leave work."
+    }
+  ],
+  "preserved_leave_blocks": [
+    {
+      "start": "const cancelLeaveBtn = target.closest<HTMLButtonElement>(\"[data-cancel-leave]\");",
+      "sha256": "14213c4564495a18a715ea11d84f04b1c1762e37850673a64474acddb41a944b",
+      "exact": true
+    },
+    {
+      "start": "if (target.closest(\"[data-approve-month-leave]\") && isAdminUser()) {",
+      "sha256": "7219214134bb9217cceb7325d1c8958308d1c7c2e3f038dc282ee453f516e07f",
+      "exact": true
+    }
+  ],
+  "callback_lifetime_assessment": [
+    "Registry accepted confirmation remains before fallible result/readback and uses createNew auto-close path in nested record/import callers. Child close adapters are no-op. Import choices reload failure cannot erase already-recorded parent change.",
+    "Own record accepted confirmation occurs before editor close/saved. Root legacy saved callback returns when same retained owner supplied, avoiding duplicate parent read. Profile legacy saved retains only cache invalidation/tab load, accepted notification moved into child confirmed hook.",
+    "Record actual explicit/native closes share idempotent callback; busy/dirty refusal notifies nothing. Profile outer Next/Prev/initial Retry forward same lifecycle and suppress replacement-close notification. Final outer actual close triggers existing changed owner only.",
+    "Use existing member only invokes done and produces no new confirmed hook. Review/restore profile uses existing actual member/record accepted callbacks; no false unit flag or fabricated batch Apply confirmation. Nested reference event distinct from actual Apply hook, preserving hasConfirmedImport semantics.",
+    "Fallback complete GET is conditional on actual unit-reference event, captured original host only, using existing shape/owner/latest guard and GET-only retry. Member creation does not fabricate postings/counts; account/view/month/root/modal supersession relies unchanged owned controller.",
+    "Accepted notification failures remain isolated by constant warnings; no mutation replay introduced. Source catches do not establish that notifications always succeed under injected DOM failures."
+  ],
+  "blockers": [],
+  "runtime_gates_still_pending": [
+    "Actual corrected baseline six contexts must pass on merged current source, not only V13 isolated snapshot.",
+    "Cancel/no nested mutation and Use existing produce zero root reads; dirty discard refusal leaves owner pending without refresh.",
+    "Nested accepted unit then outer cancel; nested accepted unit plus own record save; multiple nested unit/member changes then outer close each coalesce one owned read, no extra legacy callback read.",
+    "Importer unit choices GET503 and retry, accepted member creation, review/restore and merge child read failures; no signal lost because a later callback throws.",
+    "Nested profile/record/import chain, profile Next and initial-load Retry replacements, final native/explicit close, route/month/account/root/day-overlay supersession and newer focus.",
+    "Complete fallback GET503/malformed/disconnected host recovery retains settings/fallback drafts and uses only GET retry. No board-active membership substitution.",
+    "Malformed member resolved JSON null must preserve accepted invalidation and truthful error, one POST only."
+  ],
+  "limits": [
+    "Independent source/hash/reversal review only; no browser runs and no product/test edits by reviewer.",
+    "Author full TypeScript/request/markup proof inspected and hash-bound, not independently rerun here.",
+    "Runtime baseline six actual failures remains ancestry only; candidate/merged/applied tests still required.",
+    "Catalog lifecycle, whole original159 and all260 acceptance remain outside this proof.",
+    "Physical-device/native assistive-technology checks remain pending."
+  ]
+}

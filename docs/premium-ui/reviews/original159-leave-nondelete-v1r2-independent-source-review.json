@@ -1,0 +1,65 @@
+{
+  "recorded_at_utc": "2026-11-09T17:56:32.042Z",
+  "reviewer": "/root/core_v12_final_review",
+  "mode": "Independent read-only source and baseline diagnostic review. No browser/typecheck/build execution by this reviewer. No application/ledger edits.",
+  "candidate": "V1r2 only; V1 and V1r1 preserved but superseded for proposed source testing",
+  "source_sha256": {
+    "frontend/src/main.ts": "45743fb64260289e50526480572bf25e33d8dc1a69f83397286660a03951cfba",
+    "tmp/leave-nondelete-v1r2/main.ts": "15b79223710a53a9e0ccdd70373a92e568f6ee603f56e3747454ab25ac258cc0",
+    "frontend/src/leave-approval.ts": "42e5a47751ae081d1b97108209c7a2b53272985251d153aa065f7718f43e544f",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/member-workspace.ts": "88774f277131a1ed83174d288d882653fc04add295b8237fefa62636e08617ea",
+    "docs/premium-ui/qa-original159-leave-nondelete-retention-diagnostic.json": "f23617b41c250c9eb189704c50482df0d143160b45836d05dfd1ddaacfedde14",
+    "tmp/leave-nondelete-v1r2/edits.json": "af5c7f5b7d5e1aab149f6e3f5067c910454394a86cb1d9cc14d19bf05538d175"
+  },
+  "verdict": "Suitable for isolated runtime testing. No source blocker found; accepted cosmetic marking failure no longer suppresses independent recovery notification attempt. Not integration approval.",
+  "independent_checks": {
+    "complete_candidate_reverse_edits_restore_applied_bytes": true,
+    "changed_top_level_functions": [
+      "bindViewEvents"
+    ],
+    "existing_effect_expressions_exact": true,
+    "effect_count": 33,
+    "templates_exact": true,
+    "template_count": 672,
+    "baseline_confirmed_decisions": 24,
+    "baseline_retention_failures": 24,
+    "baseline_requests503_last_known_erased": 12
+  },
+  "findings": [
+    {
+      "status": "preserved_contracts",
+      "detail": "Exact existing effects and entire byte-reversal proof confine delta to two bindViewEvents branches. Native confirmation, account/view/render/month/root/signal guard, actual cancellation call and admin-only monthly entry remain unchanged. leave-approval request token/body/timeouts/acknowledgement/review reset and auth-generation decoder protection remain unchanged."
+    },
+    {
+      "status": "normal_cancellation_state_suitable",
+      "detail": "After accepted cancellation and original ownership guard, all desktop/mobile matching root action buttons receive Cancellation saved and disabled. textContent removes the spinner on the initiating button; retained stale state cannot normally replay the same cancellation. This does not newly prevent concurrent use of the other action copy before acceptance."
+    },
+    {
+      "status": "v1_and_v1r1_exception_fixed_bounded",
+      "detail": "V1 marking exceptions escaped to mutation catch and could reset a confirmed action. V1r1 caught them truthfully but skipped parent notification. V1r2 isolates cosmetic marking in its own best-effort catch, then independently attempts confirmed()/closed(). Marking failure no longer suppresses that recovery notification or reclassifies a known accepted cancellation as mutation failure."
+    },
+    {
+      "status": "fault_path_limits",
+      "detail": "A marking fault may leave a spinner or another enabled copy until successful readback replaces rows. If parent GET fails, existing saved-but-stale notice and GET-only Retry are available when notification succeeds. If notification itself throws synchronously, saved-result catch gives explicit reopen-month fallback. This is not a guarantee against every arbitrary browser DOM or Promise failure."
+    },
+    {
+      "status": "monthly_callback_timing_suitable_for_testing",
+      "detail": "Lifecycle is captured before opening actual monthly review and used only after existing accepted callback owner check. Calling closed here is a logical immediate action completion, not an actual approval-dialog close listener. Existing callback-before-dialog.close timing remains; refresh begins GETs then awaits. Verify real dialog removal/focus before async parent paint in all engines."
+    },
+    {
+      "status": "owned_readback_unchanged",
+      "detail": "Existing createDependentParentLifecycle is byte-exact. It validates complete three-GET monthly read before committing, retains last-known data on failure, arbitrates owner/latest read, and its explicit Retry is read-only. Passing existing source through a new trigger still requires runtime matrix."
+    }
+  ],
+  "required_runtime_gates": [
+    "Actual cancellation card/table and monthly preview+acknowledge+approve at320/1280 in Chromium/Firefox/WebKit: normal plus accepted-write requests503 and explicit GET-only recovery; retain Day list, pressure details/open, unrelated selected ID and import history.",
+    "Accepted cancellation marking fault must still attempt parent notification and GET-only recovery. Notification failure must preserve one accepted POST and truthful saved/reopen state. No mutation-failure toast or mutation replay; bound spinner/copy state under fault until successful repaint.",
+    "Approval preview refusal/refresh/failure, disabled acknowledgement, Apply failure/uncertainty, unchanged Close/Escape, native cancel refusal, double activation and correct returned count/token/body. No confirmed parent read for unconfirmed decisions.",
+    "Route/month/account/root/day-overlay supersession and delayed earlier/newer reads; keep newer input focus and avoid stale paint. Bound native UI actions versus programmatic steering explicitly.",
+    "Separate calendar, requests and pressure GET failure/shape/wrong-month recovery if claiming all read failures; requests503 alone only proves that branch."
+  ],
+  "limitations": [
+    "No candidate browser result reviewed yet. No integration or prior56 source-wrapper regeneration approval. Whole original159 and260 goal remain incomplete. No backend/API/permission/scheduling/data/export changes authorized by this review."
+  ]
+}

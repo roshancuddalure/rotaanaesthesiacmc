@@ -1,0 +1,92 @@
+{
+  "recorded_at_utc": "2026-11-10T08:15:49.297062+00:00",
+  "reviewer": "/root/catalog14_runtime_harness",
+  "role_disclosure": "Original and R1 geometry harness author; this is transparent failure diagnosis, not independent product approval.",
+  "product_edited": false,
+  "candidate_css_edited": false,
+  "browser_executed": false,
+  "raw_run": {
+    "path": "tmp/original175-sticky-date-v1/geometry-candidate-report.json",
+    "sha256": "b4748ec8cf3819f1023782ee9eaa07f17b3b22a65a2847feee156c38ba20e500",
+    "contexts": 12,
+    "passing": 5,
+    "failing": 7,
+    "immutable_preserved": true
+  },
+  "failures": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "theme": "dark",
+      "raw_error": "AssertionError [ERR_ASSERTION]: Opaque pinned cell",
+      "observations_retained": 9,
+      "disposition": "Harness opacity string check incorrectly rejects opaque RGB black; numeric alpha R1 corrects this without changing required opacity."
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "theme": "light",
+      "raw_error": "TimeoutError: page.waitForFunction: Timeout 10000ms exceeded.",
+      "observations_retained": 4,
+      "disposition": "HEAD-only user CSS text inflation introduces overflow without BODY mutation or real resize scan trigger. R1 explicitly follows actual viewport reflow. Does not certify unobserved standalone font-only layout changes."
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "theme": "dark",
+      "raw_error": "TimeoutError: page.waitForFunction: Timeout 10000ms exceeded.",
+      "observations_retained": 4,
+      "disposition": "HEAD-only user CSS text inflation introduces overflow without BODY mutation or real resize scan trigger. R1 explicitly follows actual viewport reflow. Does not certify unobserved standalone font-only layout changes."
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "theme": "light",
+      "raw_error": "TimeoutError: page.waitForFunction: Timeout 10000ms exceeded.",
+      "observations_retained": 4,
+      "disposition": "HEAD-only user CSS text inflation introduces overflow without BODY mutation or real resize scan trigger. R1 explicitly follows actual viewport reflow. Does not certify unobserved standalone font-only layout changes."
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "theme": "dark",
+      "raw_error": "TimeoutError: page.waitForFunction: Timeout 10000ms exceeded.",
+      "observations_retained": 4,
+      "disposition": "HEAD-only user CSS text inflation introduces overflow without BODY mutation or real resize scan trigger. R1 explicitly follows actual viewport reflow. Does not certify unobserved standalone font-only layout changes."
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "theme": "light",
+      "raw_error": "TimeoutError: page.waitForFunction: Timeout 10000ms exceeded.",
+      "observations_retained": 4,
+      "disposition": "HEAD-only user CSS text inflation introduces overflow without BODY mutation or real resize scan trigger. R1 explicitly follows actual viewport reflow. Does not certify unobserved standalone font-only layout changes."
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "theme": "dark",
+      "raw_error": "TimeoutError: page.waitForFunction: Timeout 10000ms exceeded.",
+      "observations_retained": 4,
+      "disposition": "HEAD-only user CSS text inflation introduces overflow without BODY mutation or real resize scan trigger. R1 explicitly follows actual viewport reflow. Does not certify unobserved standalone font-only layout changes."
+    }
+  ],
+  "R1": {
+    "path": "tmp/original175-sticky-date-v1/geometry-candidate-r1.browser.mjs",
+    "sha256": "d8c1efe4280dc078a8218fb075f0382255d7b298f146469cc5a412902b4c4d8f",
+    "syntax_exit": 0,
+    "executed": false,
+    "changes": [
+      "Parse computed RGB/RGBA alpha numerically; 3channelRGB is opaque1 including black. Still rejects alpha!=1 and contrast<4.5.",
+      "After explicit200percentcomparisontext HEADoverride, perform real viewportwidth+1thenoriginalwidth. Existing actual resize handler scans newoverflow regions. All name/role/focus/keyboard assertions retained.",
+      "Allow native keyboardscroll animation settle300ms before endpointplacement; add explicitstartscrollLeft0 assertion aswellasendmax to ensure both measured endpoints are real."
+    ],
+    "coverage_scope": "All12engine/width/theme contexts and bothprimary/remainder, existing200percenttext andChromiumforcedcolors same. No relaxed date/opacity/contrast/layer/localoverflow requirement."
+  },
+  "source_reasoning": "main.ts labelScrollableRegions is called by BODY childList MutationObserver and windowresize. page.addStyleTag placesSTYLEinHEAD. Font-only style injection can cause layout overflow but is not a childListchange insideBODY; test originally waits for regionlabel without producing any supported scan trigger. This is not proof that no other real font-only resize scenario needs support.",
+  "remaining_qualification": [
+    "Font-only layout growth without actual resize or observed DOM mutation is not certified. A separate ResizeObserver investigation may be justified if that state is intended to be supported; do not describe existing scan as universal.",
+    "No new CSS defect demonstrated by these seven failures; fivecompletedcontexts plus prior sixaction contexts are bounded evidence, not enough to skip correctedR1 execution.",
+    "Candidate e97203 remains isolated; no product/ledger edits."
+  ]
+}

@@ -1,0 +1,125 @@
+{
+  "recorded_at_utc": "2026-11-10T01:57:11.685065+00:00",
+  "reviewer": "/root/leave159_nondelete_groundwork",
+  "application_changed": false,
+  "browser_executed": false,
+  "decision": "Normal source lifetime design is coherent; address the narrow accepted-result notification ordering blocker and perform required runtime gates before application. Exact V13 is based on main45743 and must also preserve now-applied Leave V1r2 on integration.",
+  "source_files": [
+    {
+      "file": "main.ts",
+      "before_sha256": "45743fb64260289e50526480572bf25e33d8dc1a69f83397286660a03951cfba",
+      "candidate_sha256": "79376d0e779bf922f6ef01921b037e2bace45795accb98522020f24636bde7fc",
+      "unchanged": false,
+      "independently_hash_verified": true,
+      "all_declared_edits_reverse_to_before_normalized_line_endings": true,
+      "current_product_sha256": "15b79223710a53a9e0ccdd70373a92e568f6ee603f56e3747454ab25ac258cc0"
+    },
+    {
+      "file": "member-workspace.ts",
+      "before_sha256": "88774f277131a1ed83174d288d882653fc04add295b8237fefa62636e08617ea",
+      "candidate_sha256": "506c486046fe6f0bbea5c6c4bf6357fec6e9649d91a9ed1ed890551ed3503cca",
+      "unchanged": false,
+      "independently_hash_verified": true,
+      "all_declared_edits_reverse_to_before_normalized_line_endings": true,
+      "current_product_sha256": "88774f277131a1ed83174d288d882653fc04add295b8237fefa62636e08617ea"
+    },
+    {
+      "file": "operational-import.ts",
+      "before_sha256": "1ccbcf4181330a5f66c59b0723ec02f878a268b6b3030aa99b177de1b7070355",
+      "candidate_sha256": "eb7e1d300a79174c6e75b52c5aa228d02a082f2603adc28d55f0a54d8ba16475",
+      "unchanged": false,
+      "independently_hash_verified": true,
+      "all_declared_edits_reverse_to_before_normalized_line_endings": true,
+      "current_product_sha256": "1ccbcf4181330a5f66c59b0723ec02f878a268b6b3030aa99b177de1b7070355"
+    },
+    {
+      "file": "record-workspace.ts",
+      "before_sha256": "469fd6bf2e4118b15ad343d8059cd3cfb0acbc6483bea969ca5fb93488644335",
+      "candidate_sha256": "20b50cdbd991b5b5a16d06b51020be2838514a553823512373818f65636427aa",
+      "unchanged": false,
+      "independently_hash_verified": true,
+      "all_declared_edits_reverse_to_before_normalized_line_endings": true,
+      "current_product_sha256": "469fd6bf2e4118b15ad343d8059cd3cfb0acbc6483bea969ca5fb93488644335"
+    },
+    {
+      "file": "reference-workspace.ts",
+      "before_sha256": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd",
+      "candidate_sha256": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd",
+      "unchanged": true,
+      "independently_hash_verified": true,
+      "all_declared_edits_reverse_to_before_normalized_line_endings": true,
+      "current_product_sha256": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd"
+    }
+  ],
+  "independent_evidence": {
+    "manifest_sha256": "4240ac2014b9eeb4701c5791bbee8bf3da3912ef2c3808de84003e4e6d1150f6",
+    "edits_sha256": "b973f73521e0d59b501e9e8a8f5f851efcc75ad34b2f23088af32e0c5f8db3cd",
+    "author_static_proof_path": "tmp/nested-reference-v13/typecheck-request-markup-proof.json",
+    "author_static_proof_sha256": "965e3d6456926ec386225259e5052c8c67d7d43ea126bba080786e77ecfad10c",
+    "design_sha256": "6c336406586c502c30d6bd32dbcafd7c2b7b05fdb1e7a1272672d76d98d68e7b",
+    "review_notes_sha256": "a61a309df5f933a0c8b6c91e1af9c706663b1f34f74c07443200857e75246e84",
+    "corrected_baseline_path": "docs/premium-ui/qa-original159-nested-reference-unit-cancel-diagnostic-r1.json",
+    "corrected_baseline_sha256": "62bcd0c0398fbf831486bffe364ce149203fa8d68775a732a11112035feabadd",
+    "baseline_contexts": 6,
+    "baseline_failed": 6,
+    "baseline_all_have_actual_unit_POST": true
+  },
+  "findings": [
+    {
+      "topic": "Accepted before child fallible work",
+      "assessment": "Registry unchanged493 notifies before selected/result assignment and own reads. Both nested registry callers use createNew=true: actual save closes registry then invokes legacy callback; do not invent its own postwrite GET in this mode. Importer choices GET after callback is an actual fallible read and now occurs after accepted signal. Own record save notifies directly after awaited save, before dirty/close/saved work. New member callback is before alive/done but see null-result blocker."
+    },
+    {
+      "topic": "Record close and coalescing",
+      "assessment": "Record actual explicit close calls dialog.close/remove, restores opener then idempotent notification. Native close also notifies once. Busy/dirty refusal never calls closure. Root direct caller returns from legacy saved() when retained lifecycle exists, avoiding old second confirmed/closed pair. Nested reference+own save only mark same owner; final record close starts one retained read. Must runtime test close-event queue and postaccepted DOM faults."
+    },
+    {
+      "topic": "Profile chain and replacement",
+      "assessment": "Child record closed callback deliberately no-op; accepted record signals existing profile notifyParent exactly once, reference changes use distinct optional referenceConfirmed. Profile cache load callback still runs after record save but no second notification. Profile Next/Prev and initial-load Retry forward the same parentLifecycle while replacingProfile suppresses old actual close notification. Final replacement profile close owns root refresh; existing draft refusal semantics unchanged. Initial-load close relies existing queued close listener, which remains unchanged."
+    },
+    {
+      "topic": "Use existing and member review",
+      "assessment": "Use existing member path invokes only close and done, with no new confirmation hook; resolving candidates is not a mutation signal. Review/restore profile forwards actual existing accepted member save/merge and record cancel/save through metadata adapter; child profile closed no-op leaves create-member/import/record outer owner intact. Unit changes use unit metadata so complete fallback refresh is reserved for actual unit definition mutations."
+    },
+    {
+      "topic": "Import Apply versus nested reference",
+      "assessment": "referenceConfirmed is separate from real Apply confirmed({kind,month,batchId}); no fake batch/id and no hasConfirmedImport mutation from a reference save. Existing importer explicit/native close coalesces. Existing true Apply signal remains immediately after successful response and before fallible own presentation work. Member and registry choices callbacks can fail without erasing the already-recorded parent change."
+    },
+    {
+      "topic": "Fallback and parent ownership",
+      "assessment": "New wrapper captures original host and one existing retained owner once. Only actual entity unit sets flag. Existing full fallback helper used, not month-active units list. Flag remains set for GET-only retries; host connectivity/WeakMap commit and existing parent account/view/render/month/root/modal/latest-read checks gate paint. No child close triggers root read while outer owner remains open. Board may update before fallback commit fails; old references/order remain with stale/retry notice. No atomic refresh claim justified."
+    },
+    {
+      "topic": "Compatibility and scope",
+      "assessment": "Four changed candidates and unchanged reference module verified against manifest; every declared edit reverses to original source after normalizing line endings. Author virtual TypeScript/request/markup proof hash bindings inspected but not rerun. No product/test/browser/API/backend edits by reviewer. Catalog lifecycle remains explicitly deferred, so this cannot complete all original159."
+    }
+  ],
+  "blockers": [
+    {
+      "id": "V13-ACCEPTED-MEMBER-NULL-001",
+      "severity": "medium",
+      "scope": "Malformed resolved mutation response; not an established normal-path failure",
+      "file": "operational-import.ts",
+      "candidate_line": 242,
+      "finding": "The new accepted-member callback evaluates id: member.id outside notifyConfirmed guarded body. request<T> parses JSON without runtime DepartmentMember validation, so a successful response containing JSON null/undefined-like result causes dereference failure before parent reference invalidation. This contradicts accepted-before-fallible bridge ordering for this malformed-response case.",
+      "source": "notifyConfirmed({entity: \"member\", operation: \"create\", id: member.id}); occurs directly after resolved POST and before alive(). id is optional metadata and no parent consumer requires it.",
+      "recommendation": "In a new immutable revision, signal member/create without id or safely extract optional id after ensuring accepted notification cannot be skipped; preserve done(member) and existing visible error semantics. Do not retry the POST automatically.",
+      "required_proof": "Locally accept member POST returning null (or another unconsumable valid JSON shape), then close/discard actual outer owner. Verify actual parent invalidation/GET-only recovery still occurs, no false successful creation/done selection and no duplicate POST. Normal valid member case remains covered separately.",
+      "not_claimed": "No browser execution by reviewer; no assertion that real backend currently returns this shape."
+    }
+  ],
+  "runtime_gates": [
+    "Actual corrected baseline six contexts must pass on merged current source, not only V13 isolated snapshot.",
+    "Cancel/no nested mutation and Use existing produce zero root reads; dirty discard refusal leaves owner pending without refresh.",
+    "Nested accepted unit then outer cancel; nested accepted unit plus own record save; multiple nested unit/member changes then outer close each coalesce one owned read, no extra legacy callback read.",
+    "Importer unit choices GET503 and retry, accepted member creation, review/restore and merge child read failures; no signal lost because a later callback throws.",
+    "Nested profile/record/import chain, profile Next and initial-load Retry replacements, final native/explicit close, route/month/account/root/day-overlay supersession and newer focus.",
+    "Complete fallback GET503/malformed/disconnected host recovery retains settings/fallback drafts and uses only GET retry. No board-active membership substitution.",
+    "Malformed member resolved JSON null must preserve accepted invalidation and truthful error, one POST only."
+  ],
+  "limits": [
+    "Source review does not establish browser outcomes, all-role permissions or all original159 completion.",
+    "Current product main differs from isolated baseline due now-applied Leave V1r2; source integration requires exact preservation/rebase and new applied verification.",
+    "Physical-device/native assistive-technology checks remain pending."
+  ]
+}

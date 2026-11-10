@@ -1,20 +1,21 @@
 {
   "status": "active_incomplete",
-  "recorded_at_utc": "2026-11-09T12:24:54.482174+00:00",
+  "recorded_at_utc": "2026-11-10T11:00:57.511328+00:00",
   "scope": "260 approved frontend actions; UI task makes no backend edits or production changes; concurrent work separately preserved",
   "current_unit_tests": {
-    "passed": 114,
+    "passed": 117,
     "exit_code": 0,
-    "log": "tmp/original159-registry-v10r4-unit.log",
-    "receipt": "tmp/original159-registry-v10r4-unit-exit.json",
-    "main_sha256": "9f5359ad9e8014098bc12c8ed3f9e1c6b1a06d1a4f92797b7f9da24bfba6e6b8"
+    "log": "tmp/past185-current-serial-unit/unit.log",
+    "exit_report": "tmp/past185-current-serial-unit/exit.json",
+    "test_concurrency": 1,
+    "prior_failed_run": "tmp/mapping184-reference-v5/unit.log"
   },
   "build": {
     "passed": true,
     "exit_code": 0,
     "inputs_held": true,
-    "log": "tmp/original159-registry-v10r4-build.log",
-    "input_snapshot": "docs/premium-ui/reviews/frontend-build-snapshot-original159-registry-v10r4.json",
+    "log": "tmp/mapping184-reference-v5/build.log",
+    "input_snapshot": "docs/premium-ui/reviews/frontend-build-snapshot-original184-mapping-v5.json",
     "limit": "Integrated build includes concurrent work; size cannot be attributed only to UI batch. Held inputs and audit dist match do not establish every runtime/action outcome."
   },
   "responsive": {
@@ -329,21 +330,21 @@
     "frontend/src/leave-approval.ts": "42e5a47751ae081d1b97108209c7a2b53272985251d153aa065f7718f43e544f",
     "frontend/src/leave-calendar-focus.ts": "93bc00fb0c753ef342412e2f58730126d17918c09edfd6f3e58f72b43d1cc2b3",
     "frontend/src/limits.ts": "f7c040de08fd0a593e1e071d7c09b2696344b9b85bbcd836f5367b49e4ef8db6",
-    "frontend/src/main.ts": "9f5359ad9e8014098bc12c8ed3f9e1c6b1a06d1a4f92797b7f9da24bfba6e6b8",
+    "frontend/src/main.ts": "8c49cdfd6c16b334e336544ea6642433922edec28d8b15a927a0374805cd55c3",
     "frontend/src/member-bulk.ts": "8ae7cf7d899a528027d9362c6f4c895d0cb9f8b14fdb2a3458acc090617f378d",
     "frontend/src/member-duplicates.ts": "f43e871e219a6652bad3fa027b2566448ed69ef51a833f185821cbfa0b70f4c5",
     "frontend/src/member-import-history.ts": "0357db668bac46f7c4c28c575e2f7c688b00c95671acb1f475aea0946e89ec92",
     "frontend/src/member-import.ts": "d985f4aefa5bfdd71b6f0a53995a8c63b3c827639158ec584b97e72f14ced061",
     "frontend/src/member-presentation.ts": "71c8c8f7b1eadd1d02e84e3a997f3c636a3b7edb04b4bf527b19bdde223c5f60",
     "frontend/src/member-profile.ts": "6874284e2437402f0cb00d57841f0d4170d8ecc6f2067ad2a156e38c3b0b69f2",
-    "frontend/src/member-workspace.ts": "105cc1d91ea4815d565ad4859fc01412cf576a3203c07834f4010e3fef7ef1a5",
+    "frontend/src/member-workspace.ts": "527f4f55aac3c4ac9de54f679940ff0c06b679a8fb28543bba963b3baa43a52b",
     "frontend/src/navigation-history.ts": "7987fe6b5034c80e44708b0e46d5bf4009a1e3eabca092a5b8a31ca1afdde0b4",
-    "frontend/src/operational-import.ts": "1ccbcf4181330a5f66c59b0723ec02f878a268b6b3030aa99b177de1b7070355",
+    "frontend/src/operational-import.ts": "01d58023203380fedcee010cd3001b8e2bb478397144566ef92142a515a14b38",
     "frontend/src/past-duties.ts": "659bc4a927a8d4efbaf0ab0050941262555319e3fbc1ca85064332435ea32bd1",
-    "frontend/src/premium-theme.css": "acc46b2249087f365ca855bcd9630628c390c4cdf013301daaee40ede80e55f4",
-    "frontend/src/record-workspace.ts": "469fd6bf2e4118b15ad343d8059cd3cfb0acbc6483bea969ca5fb93488644335",
+    "frontend/src/premium-theme.css": "e97203cb8f7bb4db32e48cdd899a54c3a671052117fe06f0904ea810868402d9",
+    "frontend/src/record-workspace.ts": "75589574417ed6f6287e625392417d3776411a8e7ef413a940e33915e57a6c33",
     "frontend/src/recycle-bin.ts": "7d2e02cd9f198999e2c7eaf788218ed3164781b39536176a63180a92c65ffc17",
-    "frontend/src/reference-workspace.ts": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd",
+    "frontend/src/reference-workspace.ts": "91133b6913c3e7c5a493bbf19436ca06ba5ad9d1813a13974c70d0d6473a434a",
     "frontend/src/rota-compute.ts": "e5f967e6166e2ace9352983a468002d45850188d8811363230305d7597fb70ab",
     "frontend/src/rota-intelligence.ts": "bda7257a3cafdcf6c4122575cc454abb1623f27dbd13950ea1d61260a23bb79b",
     "frontend/src/rota-rules.ts": "86bf98ac12a401f7c484647bfaec98c8815abe401406f95b245421e16a1fff4a",
@@ -444,7 +445,7 @@
   },
   "independent_qa_final_review": "pending; bounded independent keyboard and lifecycle findings are separately recorded",
   "container_build": "not run; Docker unavailable; source copy contract and built public assets verified",
-  "snapshot_note": "RegistryV10r4 passed106freshapplied browserchecks,114unit and heldbuild;prior54verified. Candidate106 separate. Optionalread/focus/create/accessibility/placeholder selection repairs verified.54/260accepted;whole159/260incomplete. Earlier reports retain exact historical scope;physical/nativeATpending.",
+  "snapshot_note": "61 recorded exact acceptances validated at the preceding checkpoint. After185 presentation/CSS application, current-source applicability awaits fresh33browser/fullunit/heldbuild and scoped61review. Requirement185 remains partial. Last60archive is historical for latestsource; no backend/deploy. Physical/native AT pending.",
   "review_artifact": "docs/premium-ui/review-build-current.json",
   "acceptance_audit": "docs/premium-ui/acceptance-audit-current.json",
   "current_rules_regression": {
@@ -1337,16 +1338,16 @@
     "scope": "FalseReviewdoneblockercuefixedbounded;whole161stageclarity/errorstatepending."
   },
   "current_recovery_checkpoint": {
-    "main_sha256": "9f5359ad9e8014098bc12c8ed3f9e1c6b1a06d1a4f92797b7f9da24bfba6e6b8",
+    "main_sha256": "45743fb64260289e50526480572bf25e33d8dc1a69f83397286660a03951cfba",
     "optional164_applied": true,
     "held_primary_contexts": 42,
     "malformed_contexts": 24,
-    "pending": "Remaining refresh families and documentary15/19adjudication;full260active.",
+    "pending": "Fresh185 applied browsers/fullunit/heldbuild, prior61 current-source applicability and exact185 independent review.",
     "settings_recovery": "V7 returned-data repair applied;90currentbrowser/114unit/heldbuild pass.",
-    "last_review_archive_current_source_matches": true,
+    "last_review_archive_current_source_matches": false,
     "physical_checks": "pending by user choice",
     "browser_contexts_passed": 126,
-    "accepted_requirements": 55,
+    "accepted_requirements": 59,
     "prior51_applicability": "verified",
     "item164": "accepted exact original requirement",
     "prior52_applicability": "verified after stageV9",
@@ -1358,7 +1359,10 @@
     "prior54_applicability": "verified after registryV10r4",
     "direct_record_applied_browser_contexts": 72,
     "import_parent_applied_browser_contexts": 90,
-    "registry_applied_browser_contexts": 106
+    "registry_applied_browser_contexts": 106,
+    "prior56_applicability": "Verified numeric CSS applicability after48mounted regressions and independent112condition matrix",
+    "delete_applied_browser_contexts": 102,
+    "last_review_archive": "tmp/premium-frontend-review-20261110-mapping184-v5-60.zip"
   },
   "current_stage161": {
     "status": "accepted exact original requirement",
@@ -1413,11 +1417,134 @@
     "acceptance": "docs/premium-ui/reviews/original019-documentary-priority-acceptance-20261109.json",
     "scope": "Actualprioritizationonly;noqueuedruntimecompletion."
   },
-  "current_delete_parent_candidate": {
-    "status": "isolated_unapplied",
-    "evidence": "docs/premium-ui/reviews/original159-delete-v11-normal-diagnostic-attribution.json",
-    "baseline_failures": 18,
-    "candidate_normal_passes": 18,
-    "scope": "Sourceandbroaderrecoveryreviewpending. AppliedproducthashesremainregistryV10r4."
+  "current_defect_register": {
+    "status": "accepted_documentary_item15",
+    "acceptance": "docs/premium-ui/reviews/original015-documentary-register-acceptance-20261109.json",
+    "scope": "Registerusability/provenanceonly;notresolutionoftrackedbugs."
+  },
+  "current_delete_parent_refresh": {
+    "status": "applied_verified_bounded",
+    "execution": "docs/premium-ui/reviews/original159-delete-v11r1-integrated-execution.json",
+    "browser_contexts": 102,
+    "prior56": "docs/premium-ui/reviews/original159-delete-v11r1-prior56-applicability.json",
+    "original159": "partial;member-core,nestedreferenceandothernondeleteLeavefamiliesremain"
+  },
+  "current_delete_review_archive": {
+    "path": "tmp/premium-frontend-review-20261109-delete-v11r1-56.zip",
+    "sha256": "77d9f03877e0a37224a76c3752401369f347e9568af8c06f693634dd47d8ee3d",
+    "verification_snapshot": "docs/premium-ui/reviews/verification-packaging-20261109-delete-v11r1-56.json",
+    "scope": "Exactcurrentfrontendasset/source match; frozenverificationbytescitedbymanifest unchanged. Currentrecord adds packagingoutcome. No full260acceptance."
+  },
+  "current_member_core_refresh": {
+    "status": "applied_verified_bounded",
+    "execution": "docs/premium-ui/reviews/original159-member-core-v12-integrated-execution.json",
+    "browser_contexts": 86,
+    "coverage": "48 Chromium/Firefox/WebKit phone/desktop normal and failed-read saves/merges; 38 Chromium owner supersession before close, child fault, coalescing, unconfirmed edits and Leave Next/Retry cases.",
+    "prior56": "docs/premium-ui/reviews/original159-member-core-v12-prior56-applicability.json",
+    "original159": "partial"
+  },
+  "current_member_core_review_archive": {
+    "path": "tmp/premium-frontend-review-20261109-member-core-v12-56.zip",
+    "sha256": "931385b2730c98dd7c1bbd61b1a23be159d3e5bc53d263669ab2250336793286",
+    "verification_snapshot": "docs/premium-ui/reviews/verification-packaging-20261109-member-core-v12-56.json",
+    "scope": "Exact current source/dist;review only,incomplete."
+  },
+  "current_leave_decision_refresh": {
+    "status": "applied_verified_bounded",
+    "execution": "docs/premium-ui/reviews/original159-leave-nondelete-v1r2-integrated-execution.json",
+    "browser_contexts": 48,
+    "prior56": "docs/premium-ui/reviews/original159-leave-nondelete-v1r2-prior56-applicability.json",
+    "original159": "partial",
+    "additional_monthly_owner_checks": {
+      "contexts": 12,
+      "execution": "docs/premium-ui/reviews/original159-leave-monthly-owner-r1-applied-execution.json",
+      "total_fresh_applied_contexts": 60
+    }
+  },
+  "current_leave_decision_review_archive": {
+    "path": "tmp/premium-frontend-review-20261110-leave-nondelete-v1r2-56.zip",
+    "sha256": "8c0cd1343adb0ce71bbbb84683220aebd3e7a5f21f5011e55def900fb2bf5453",
+    "verification_snapshot": "docs/premium-ui/reviews/verification-packaging-20261110-leave-nondelete-v1r2-56.json",
+    "scope": "Exact current source/dist;review only,incomplete."
+  },
+  "current_nested_reference_refresh": {
+    "status": "applied_verified_bounded",
+    "execution": "docs/premium-ui/reviews/original159-nested-reference-v13r2-integrated-execution.json",
+    "passing_scenario_instances": 120,
+    "actual_contexts_executed": 138,
+    "prior56": "docs/premium-ui/reviews/original159-nested-reference-v13r2-prior56-applicability.json",
+    "original159": "partial"
+  },
+  "current_numeric_typography": {
+    "status": "applied_exact_requirement_accepted",
+    "passing_probes": 252,
+    "engine_width_theme_combinations": 12,
+    "execution": "docs/premium-ui/reviews/original031-numeric-v2-applied-execution.json",
+    "pending": "No original31 work remains within exact criteria; OSglyph/nativepicker/physical/nativeAT limits explicit.",
+    "acceptance": "docs/premium-ui/reviews/original031-numeric-v2-exact-acceptance.json",
+    "mounted_regressions": {
+      "contexts": 48,
+      "execution": "docs/premium-ui/reviews/original031-numeric-mounted-css-execution.json"
+    }
+  },
+  "current_consolidated_review_archive": {
+    "path": "tmp/premium-frontend-review-20261110-combined183-175-v15-59.zip",
+    "sha256": "277f537e1034392e3a3db7272b4c660b74d4885d85e2cf60fd5501e16ea04b6d",
+    "verification_snapshot": "docs/premium-ui/reviews/verification-packaging-20261110-combined183-175-v15-59.json",
+    "scope": "Exact current source/dist review match; incomplete, no deployment."
+  },
+  "current_catalog_recovery": {
+    "contexts": 56,
+    "status": "applied_scoped_verified",
+    "execution": "docs/premium-ui/reviews/original159-catalog-v14r2-integrated-execution.json",
+    "prior57_applicability": "docs/premium-ui/reviews/original159-catalog-v14r2-prior57-applicability.json",
+    "limit": "Whole159 partial; bounded callback/focus/readback coverage."
+  },
+  "current_generator_state_preservation": {
+    "accepted_item": 174,
+    "contexts": 9,
+    "acceptance": "docs/premium-ui/reviews/original174-reflow-recovery-exact-acceptance-20261110.json",
+    "limit": "Actual module fixture, finite preparation failures; no real solving, Apply or GPU step."
+  },
+  "current_combined_frontend_wave": {
+    "status": "applied_verified_original183_accepted",
+    "candidate_contexts": 84,
+    "application": "docs/premium-ui/reviews/combined183-175-v15-application-20261110.json",
+    "unit_tests": 114,
+    "held_build_passed": true,
+    "acceptance_change": 0,
+    "applied_contexts": 84,
+    "execution": "docs/premium-ui/reviews/combined183-175-v15-applied-execution-20261110.json",
+    "acceptance": "docs/premium-ui/reviews/original183-group-search-dates-exact-acceptance-20261110.json",
+    "prior58_applicability": "docs/premium-ui/reviews/combined183-175-v15-prior58-applicability-20261110.json"
+  },
+  "current_rules_category_checkpoint": {
+    "applied": true,
+    "contexts": 18,
+    "execution": "docs/premium-ui/reviews/original181-category-v1-applied-execution-20261110.json",
+    "exact_acceptance": "pending_independent_review",
+    "prior59_applicability": "docs/premium-ui/reviews/original181-category-v1-prior59-applicability-20261110.json",
+    "prior59_verified": true
+  },
+  "current_mapping_reference_checkpoint": {
+    "status": "accepted_exact_runtime_requirement",
+    "contexts": 61,
+    "execution": "docs/premium-ui/reviews/original184-mapping-v5-applied-execution-20261110.json",
+    "new_module": "frontend/src/mapping-reference-details.ts",
+    "accessibility_contexts": 18,
+    "accessibility_addendum": "docs/premium-ui/reviews/original184-mapping-v5-accessibility-eta-addendum-20261110.json",
+    "prior_acceptances_revalidated": 59,
+    "acceptance": "docs/premium-ui/reviews/original184-mapping-targets-exact-acceptance-20261110.json",
+    "independent_contexts": 12
+  },
+  "current_rota_responsive_checkpoint": {
+    "status": "accepted_exact_runtime_requirement",
+    "contexts": 24,
+    "acceptance": "docs/premium-ui/reviews/original175-rota-responsive-exact-acceptance-20261110.json"
+  },
+  "current_historical_import_checkpoint": {
+    "status": "applied_verification_pending",
+    "candidate_contexts": 33,
+    "application": "docs/premium-ui/reviews/original185-steps-v2-application-20261110.json"
   }
 }

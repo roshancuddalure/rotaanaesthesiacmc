@@ -1,0 +1,7009 @@
+{
+  "recorded_at_utc": "2026-11-10T02:09:27.677Z",
+  "author": "/root/leave159_nondelete_groundwork",
+  "operator": "/root when actually executed",
+  "execution_target": "isolated exact V13r1 overlay5307",
+  "application_changed_by_test": false,
+  "source_sha256": {
+    "frontend/src/main.ts": "15b79223710a53a9e0ccdd70373a92e568f6ee603f56e3747454ab25ac258cc0",
+    "frontend/src/member-workspace.ts": "88774f277131a1ed83174d288d882653fc04add295b8237fefa62636e08617ea",
+    "frontend/src/operational-import.ts": "1ccbcf4181330a5f66c59b0723ec02f878a268b6b3030aa99b177de1b7070355",
+    "frontend/src/record-workspace.ts": "469fd6bf2e4118b15ad343d8059cd3cfb0acbc6483bea969ca5fb93488644335",
+    "frontend/src/reference-workspace.ts": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd",
+    "frontend/src/extra-duty.ts": "529e420fc05ce5bfa42655b8863e449e09e22a7c0abe9baf4db5c94c4797b8c3"
+  },
+  "candidate_sha256": {
+    "frontend/src/main.ts": "ebf67f1733f620e406054d0c4a82cf1c203fd0e6603a843eec45b25a1a09df4d",
+    "frontend/src/member-workspace.ts": "506c486046fe6f0bbea5c6c4bf6357fec6e9649d91a9ed1ed890551ed3503cca",
+    "frontend/src/operational-import.ts": "d14e9b132a58e965f97a1531ab95845215092bbc6cf602c4344412047227e7a4",
+    "frontend/src/record-workspace.ts": "20b50cdbd991b5b5a16d06b51020be2838514a553823512373818f65636427aa",
+    "frontend/src/reference-workspace.ts": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd"
+  },
+  "test_sha256": "d3bd20754eac4d4df1f955e47b4ba24f18a28a963ebf739c5777b32fdb362fc6",
+  "scope": "42 bounded contexts: 36 Chromium/Firefox/WebKit320/1280 direct reviewed record save alone, nested accepted unit/member then own save, profile nested unit+editor save deferred to final profile close, Use Existing then discard with zero mutation/root refresh, accepted unit+record followed by parent503 and Enter GET-only retry. Six additional Chromium320/1280 route/month/account-expired nested-reference owners reject late close refresh. All actual controls, local non-GETs and RAM-only remaining reads. Existing token/body values checked and exact one accepted record save/no replay; settings/fallback nodes/order/filters retained.",
+  "limits": [
+    "Author has not run browsers; a generated report is evidence only when root actually executes this frozen file.",
+    "Owner scenarios supersede owner while outer editor is open, then close; they do not cover an already-inflight parent read resolving after supersession.",
+    "Owner navigation deliberately bypasses modal inert background via actual location/storage/month events to test lifetime ownership.",
+    "Only parent month503 injected; independent full fallback GET failure/malformed read and profile replacement Next/Retry are separate gates.",
+    "No physical-device/native assistive technology or full original159 acceptance."
+  ],
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "scenario": "direct-save",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "after": {
+        "unitReads": 2,
+        "fbReads": 1
+      },
+      "profileReads": 0,
+      "failedObserved": null,
+      "observed": {
+        "settings": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "body": {
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-parent",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "body": {
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-parent",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            },
+            "review_token": "chain-exact-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "scenario": "direct-unit-save",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "after": {
+        "unitReads": 2,
+        "fbReads": 2
+      },
+      "profileReads": 0,
+      "failedObserved": null,
+      "observed": {
+        "settings": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "body": {
+            "name": "Royal Chain New",
+            "campus": "Main",
+            "code": "CNEW",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "call_minimums": []
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "body": {
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-new-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "body": {
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-new-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            },
+            "review_token": "chain-exact-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code",
+          "search": "?name=Royal%20Chain%20New&campus="
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "scenario": "direct-member-save",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "after": {
+        "unitReads": 2,
+        "fbReads": 1
+      },
+      "profileReads": 0,
+      "failedObserved": null,
+      "observed": {
+        "settings": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/members/resolve",
+          "body": {
+            "name": "Dr Chain Created"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members",
+          "body": {
+            "canonical_name": "Dr Chain Created",
+            "call_level": "2ND_CALL"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "body": {
+            "values": {
+              "person_id": "chain-new-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-parent",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "body": {
+            "values": {
+              "person_id": "chain-new-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-parent",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            },
+            "review_token": "chain-exact-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/members/resolve",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "scenario": "profile-unit-save",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "after": {
+        "unitReads": 2,
+        "fbReads": 2
+      },
+      "profileReads": 2,
+      "failedObserved": null,
+      "observed": {
+        "settings": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "body": {
+            "name": "Royal Chain New",
+            "campus": "Main",
+            "code": "CNEW",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "call_minimums": []
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "body": {
+            "identity": "chain-posting",
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-new-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW",
+              "id": "chain-posting",
+              "person": {
+                "id": "chain-person",
+                "canonical_name": "Dr Chain Existing",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "unit": {
+                "id": "chain-parent",
+                "name": "Royal Chain Parent",
+                "campus": "Main",
+                "code": "CP",
+                "minimum_free_people": 1,
+                "active_status": "active",
+                "aliases": [],
+                "notes": "",
+                "call_minimums": [],
+                "revision": "one",
+                "usage": {
+                  "postings": 1,
+                  "duties": 0,
+                  "future_postings": 1,
+                  "future_duties": 0,
+                  "selected_members": 1
+                }
+              },
+              "source": "manual"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "body": {
+            "identity": "chain-posting",
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-new-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW",
+              "id": "chain-posting",
+              "person": {
+                "id": "chain-person",
+                "canonical_name": "Dr Chain Existing",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "unit": {
+                "id": "chain-parent",
+                "name": "Royal Chain Parent",
+                "campus": "Main",
+                "code": "CP",
+                "minimum_free_people": 1,
+                "active_status": "active",
+                "aliases": [],
+                "notes": "",
+                "call_minimums": [],
+                "revision": "one",
+                "usage": {
+                  "postings": 1,
+                  "duties": 0,
+                  "future_postings": 1,
+                  "future_duties": 0,
+                  "selected_members": 1
+                }
+              },
+              "source": "manual"
+            },
+            "review_token": "chain-exact-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/chain-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/chain-person/postings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/records/units/chain-posting",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code",
+          "search": "?name=Royal%20Chain%20New&campus="
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/chain-person/postings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "scenario": "existing-cancel",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "after": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "observed": {
+        "settings": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": []
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/members/resolve",
+          "body": {
+            "name": "Dr Chain Existing"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/members/resolve",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "scenario": "unit-save-parent503",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "after": {
+        "unitReads": 3,
+        "fbReads": 3
+      },
+      "profileReads": 0,
+      "failedObserved": {
+        "settings": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Changes are saved, but this view could not refresh. Accepted chained changes; parent read temporarily unavailable Previously loaded information may be out of date.Refresh saved changes"
+        ]
+      },
+      "observed": {
+        "settings": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "body": {
+            "name": "Royal Chain New",
+            "campus": "Main",
+            "code": "CNEW",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "call_minimums": []
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "body": {
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-new-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "body": {
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-new-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            },
+            "review_token": "chain-exact-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code",
+          "search": "?name=Royal%20Chain%20New&campus="
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "scenario": "owner-route",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "afterSteering": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "after": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "body": {
+            "name": "Royal Chain New",
+            "campus": "Main",
+            "code": "CNEW",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "call_minimums": []
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code",
+          "search": "?name=Royal%20Chain%20New&campus="
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "scenario": "owner-month",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "afterSteering": {
+        "unitReads": 2,
+        "fbReads": 2
+      },
+      "after": {
+        "unitReads": 2,
+        "fbReads": 2
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "body": {
+            "name": "Royal Chain New",
+            "campus": "Main",
+            "code": "CNEW",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "call_minimums": []
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code",
+          "search": "?name=Royal%20Chain%20New&campus="
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-12"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-12"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "scenario": "owner-account",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "afterSteering": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "after": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "body": {
+            "name": "Royal Chain New",
+            "campus": "Main",
+            "code": "CNEW",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "call_minimums": []
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code",
+          "search": "?name=Royal%20Chain%20New&campus="
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "scenario": "direct-save",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "after": {
+        "unitReads": 2,
+        "fbReads": 1
+      },
+      "profileReads": 0,
+      "failedObserved": null,
+      "observed": {
+        "settings": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "body": {
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-parent",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "body": {
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-parent",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            },
+            "review_token": "chain-exact-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "scenario": "direct-unit-save",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "after": {
+        "unitReads": 2,
+        "fbReads": 2
+      },
+      "profileReads": 0,
+      "failedObserved": null,
+      "observed": {
+        "settings": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "body": {
+            "name": "Royal Chain New",
+            "campus": "Main",
+            "code": "CNEW",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "call_minimums": []
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "body": {
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-new-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "body": {
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-new-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            },
+            "review_token": "chain-exact-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code",
+          "search": "?name=Royal%20Chain%20New&campus="
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "scenario": "direct-member-save",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "after": {
+        "unitReads": 2,
+        "fbReads": 1
+      },
+      "profileReads": 0,
+      "failedObserved": null,
+      "observed": {
+        "settings": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/members/resolve",
+          "body": {
+            "name": "Dr Chain Created"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members",
+          "body": {
+            "canonical_name": "Dr Chain Created",
+            "call_level": "2ND_CALL"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "body": {
+            "values": {
+              "person_id": "chain-new-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-parent",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "body": {
+            "values": {
+              "person_id": "chain-new-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-parent",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            },
+            "review_token": "chain-exact-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/members/resolve",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "scenario": "profile-unit-save",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "after": {
+        "unitReads": 2,
+        "fbReads": 2
+      },
+      "profileReads": 2,
+      "failedObserved": null,
+      "observed": {
+        "settings": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "body": {
+            "name": "Royal Chain New",
+            "campus": "Main",
+            "code": "CNEW",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "call_minimums": []
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "body": {
+            "identity": "chain-posting",
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-new-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW",
+              "id": "chain-posting",
+              "person": {
+                "id": "chain-person",
+                "canonical_name": "Dr Chain Existing",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "unit": {
+                "id": "chain-parent",
+                "name": "Royal Chain Parent",
+                "campus": "Main",
+                "code": "CP",
+                "minimum_free_people": 1,
+                "active_status": "active",
+                "aliases": [],
+                "notes": "",
+                "call_minimums": [],
+                "revision": "one",
+                "usage": {
+                  "postings": 1,
+                  "duties": 0,
+                  "future_postings": 1,
+                  "future_duties": 0,
+                  "selected_members": 1
+                }
+              },
+              "source": "manual"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "body": {
+            "identity": "chain-posting",
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-new-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW",
+              "id": "chain-posting",
+              "person": {
+                "id": "chain-person",
+                "canonical_name": "Dr Chain Existing",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "unit": {
+                "id": "chain-parent",
+                "name": "Royal Chain Parent",
+                "campus": "Main",
+                "code": "CP",
+                "minimum_free_people": 1,
+                "active_status": "active",
+                "aliases": [],
+                "notes": "",
+                "call_minimums": [],
+                "revision": "one",
+                "usage": {
+                  "postings": 1,
+                  "duties": 0,
+                  "future_postings": 1,
+                  "future_duties": 0,
+                  "selected_members": 1
+                }
+              },
+              "source": "manual"
+            },
+            "review_token": "chain-exact-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/chain-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/chain-person/postings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/records/units/chain-posting",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code",
+          "search": "?name=Royal%20Chain%20New&campus="
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/chain-person/postings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "scenario": "existing-cancel",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "after": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "observed": {
+        "settings": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": []
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/members/resolve",
+          "body": {
+            "name": "Dr Chain Existing"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/members/resolve",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "scenario": "unit-save-parent503",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "after": {
+        "unitReads": 3,
+        "fbReads": 3
+      },
+      "profileReads": 0,
+      "failedObserved": {
+        "settings": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Changes are saved, but this view could not refresh. Accepted chained changes; parent read temporarily unavailable Previously loaded information may be out of date.Refresh saved changes"
+        ]
+      },
+      "observed": {
+        "settings": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "body": {
+            "name": "Royal Chain New",
+            "campus": "Main",
+            "code": "CNEW",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "call_minimums": []
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "body": {
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-new-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "body": {
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-new-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            },
+            "review_token": "chain-exact-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code",
+          "search": "?name=Royal%20Chain%20New&campus="
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "scenario": "owner-route",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "afterSteering": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "after": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "body": {
+            "name": "Royal Chain New",
+            "campus": "Main",
+            "code": "CNEW",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "call_minimums": []
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code",
+          "search": "?name=Royal%20Chain%20New&campus="
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "scenario": "owner-month",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "afterSteering": {
+        "unitReads": 2,
+        "fbReads": 2
+      },
+      "after": {
+        "unitReads": 2,
+        "fbReads": 2
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "body": {
+            "name": "Royal Chain New",
+            "campus": "Main",
+            "code": "CNEW",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "call_minimums": []
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code",
+          "search": "?name=Royal%20Chain%20New&campus="
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-12"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-12"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "scenario": "owner-account",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "afterSteering": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "after": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "body": {
+            "name": "Royal Chain New",
+            "campus": "Main",
+            "code": "CNEW",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "call_minimums": []
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code",
+          "search": "?name=Royal%20Chain%20New&campus="
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "scenario": "direct-save",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "after": {
+        "unitReads": 2,
+        "fbReads": 1
+      },
+      "profileReads": 0,
+      "failedObserved": null,
+      "observed": {
+        "settings": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "body": {
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-parent",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "body": {
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-parent",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            },
+            "review_token": "chain-exact-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "scenario": "direct-unit-save",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "after": {
+        "unitReads": 2,
+        "fbReads": 2
+      },
+      "profileReads": 0,
+      "failedObserved": null,
+      "observed": {
+        "settings": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "body": {
+            "name": "Royal Chain New",
+            "campus": "Main",
+            "code": "CNEW",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "call_minimums": []
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "body": {
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-new-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "body": {
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-new-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            },
+            "review_token": "chain-exact-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code",
+          "search": "?name=Royal%20Chain%20New&campus="
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "scenario": "direct-member-save",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "after": {
+        "unitReads": 2,
+        "fbReads": 1
+      },
+      "profileReads": 0,
+      "failedObserved": null,
+      "observed": {
+        "settings": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/members/resolve",
+          "body": {
+            "name": "Dr Chain Created"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members",
+          "body": {
+            "canonical_name": "Dr Chain Created",
+            "call_level": "2ND_CALL"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "body": {
+            "values": {
+              "person_id": "chain-new-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-parent",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "body": {
+            "values": {
+              "person_id": "chain-new-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-parent",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            },
+            "review_token": "chain-exact-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/members/resolve",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "scenario": "profile-unit-save",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "after": {
+        "unitReads": 2,
+        "fbReads": 2
+      },
+      "profileReads": 2,
+      "failedObserved": null,
+      "observed": {
+        "settings": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "body": {
+            "name": "Royal Chain New",
+            "campus": "Main",
+            "code": "CNEW",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "call_minimums": []
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "body": {
+            "identity": "chain-posting",
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-new-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW",
+              "id": "chain-posting",
+              "person": {
+                "id": "chain-person",
+                "canonical_name": "Dr Chain Existing",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "unit": {
+                "id": "chain-parent",
+                "name": "Royal Chain Parent",
+                "campus": "Main",
+                "code": "CP",
+                "minimum_free_people": 1,
+                "active_status": "active",
+                "aliases": [],
+                "notes": "",
+                "call_minimums": [],
+                "revision": "one",
+                "usage": {
+                  "postings": 1,
+                  "duties": 0,
+                  "future_postings": 1,
+                  "future_duties": 0,
+                  "selected_members": 1
+                }
+              },
+              "source": "manual"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "body": {
+            "identity": "chain-posting",
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-new-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW",
+              "id": "chain-posting",
+              "person": {
+                "id": "chain-person",
+                "canonical_name": "Dr Chain Existing",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "unit": {
+                "id": "chain-parent",
+                "name": "Royal Chain Parent",
+                "campus": "Main",
+                "code": "CP",
+                "minimum_free_people": 1,
+                "active_status": "active",
+                "aliases": [],
+                "notes": "",
+                "call_minimums": [],
+                "revision": "one",
+                "usage": {
+                  "postings": 1,
+                  "duties": 0,
+                  "future_postings": 1,
+                  "future_duties": 0,
+                  "selected_members": 1
+                }
+              },
+              "source": "manual"
+            },
+            "review_token": "chain-exact-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/chain-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/chain-person/postings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/records/units/chain-posting",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code",
+          "search": "?name=Royal%20Chain%20New&campus="
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/chain-person/postings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "scenario": "existing-cancel",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "after": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "observed": {
+        "settings": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": []
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/members/resolve",
+          "body": {
+            "name": "Dr Chain Existing"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/members/resolve",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "scenario": "unit-save-parent503",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "after": {
+        "unitReads": 3,
+        "fbReads": 3
+      },
+      "profileReads": 0,
+      "failedObserved": {
+        "settings": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Changes are saved, but this view could not refresh. Accepted chained changes; parent read temporarily unavailable Previously loaded information may be out of date.Refresh saved changes"
+        ]
+      },
+      "observed": {
+        "settings": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "body": {
+            "name": "Royal Chain New",
+            "campus": "Main",
+            "code": "CNEW",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "call_minimums": []
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "body": {
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-new-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "body": {
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-new-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            },
+            "review_token": "chain-exact-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code",
+          "search": "?name=Royal%20Chain%20New&campus="
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "scenario": "direct-save",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "after": {
+        "unitReads": 2,
+        "fbReads": 1
+      },
+      "profileReads": 0,
+      "failedObserved": null,
+      "observed": {
+        "settings": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "body": {
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-parent",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "body": {
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-parent",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            },
+            "review_token": "chain-exact-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "scenario": "direct-unit-save",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "after": {
+        "unitReads": 2,
+        "fbReads": 2
+      },
+      "profileReads": 0,
+      "failedObserved": null,
+      "observed": {
+        "settings": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "body": {
+            "name": "Royal Chain New",
+            "campus": "Main",
+            "code": "CNEW",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "call_minimums": []
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "body": {
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-new-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "body": {
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-new-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            },
+            "review_token": "chain-exact-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code",
+          "search": "?name=Royal%20Chain%20New&campus="
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "scenario": "direct-member-save",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "after": {
+        "unitReads": 2,
+        "fbReads": 1
+      },
+      "profileReads": 0,
+      "failedObserved": null,
+      "observed": {
+        "settings": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/members/resolve",
+          "body": {
+            "name": "Dr Chain Created"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members",
+          "body": {
+            "canonical_name": "Dr Chain Created",
+            "call_level": "2ND_CALL"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "body": {
+            "values": {
+              "person_id": "chain-new-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-parent",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "body": {
+            "values": {
+              "person_id": "chain-new-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-parent",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            },
+            "review_token": "chain-exact-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/members/resolve",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "scenario": "profile-unit-save",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "after": {
+        "unitReads": 2,
+        "fbReads": 2
+      },
+      "profileReads": 2,
+      "failedObserved": null,
+      "observed": {
+        "settings": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "body": {
+            "name": "Royal Chain New",
+            "campus": "Main",
+            "code": "CNEW",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "call_minimums": []
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "body": {
+            "identity": "chain-posting",
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-new-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW",
+              "id": "chain-posting",
+              "person": {
+                "id": "chain-person",
+                "canonical_name": "Dr Chain Existing",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "unit": {
+                "id": "chain-parent",
+                "name": "Royal Chain Parent",
+                "campus": "Main",
+                "code": "CP",
+                "minimum_free_people": 1,
+                "active_status": "active",
+                "aliases": [],
+                "notes": "",
+                "call_minimums": [],
+                "revision": "one",
+                "usage": {
+                  "postings": 1,
+                  "duties": 0,
+                  "future_postings": 1,
+                  "future_duties": 0,
+                  "selected_members": 1
+                }
+              },
+              "source": "manual"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "body": {
+            "identity": "chain-posting",
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-new-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW",
+              "id": "chain-posting",
+              "person": {
+                "id": "chain-person",
+                "canonical_name": "Dr Chain Existing",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "unit": {
+                "id": "chain-parent",
+                "name": "Royal Chain Parent",
+                "campus": "Main",
+                "code": "CP",
+                "minimum_free_people": 1,
+                "active_status": "active",
+                "aliases": [],
+                "notes": "",
+                "call_minimums": [],
+                "revision": "one",
+                "usage": {
+                  "postings": 1,
+                  "duties": 0,
+                  "future_postings": 1,
+                  "future_duties": 0,
+                  "selected_members": 1
+                }
+              },
+              "source": "manual"
+            },
+            "review_token": "chain-exact-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/chain-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/chain-person/postings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/records/units/chain-posting",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code",
+          "search": "?name=Royal%20Chain%20New&campus="
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/chain-person/postings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "scenario": "existing-cancel",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "after": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "observed": {
+        "settings": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": []
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/members/resolve",
+          "body": {
+            "name": "Dr Chain Existing"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/members/resolve",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "scenario": "unit-save-parent503",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "after": {
+        "unitReads": 3,
+        "fbReads": 3
+      },
+      "profileReads": 0,
+      "failedObserved": {
+        "settings": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Changes are saved, but this view could not refresh. Accepted chained changes; parent read temporarily unavailable Previously loaded information may be out of date.Refresh saved changes"
+        ]
+      },
+      "observed": {
+        "settings": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "body": {
+            "name": "Royal Chain New",
+            "campus": "Main",
+            "code": "CNEW",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "call_minimums": []
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "body": {
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-new-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "body": {
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-new-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            },
+            "review_token": "chain-exact-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code",
+          "search": "?name=Royal%20Chain%20New&campus="
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "scenario": "direct-save",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "after": {
+        "unitReads": 2,
+        "fbReads": 1
+      },
+      "profileReads": 0,
+      "failedObserved": null,
+      "observed": {
+        "settings": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "body": {
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-parent",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "body": {
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-parent",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            },
+            "review_token": "chain-exact-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "scenario": "direct-unit-save",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "after": {
+        "unitReads": 2,
+        "fbReads": 2
+      },
+      "profileReads": 0,
+      "failedObserved": null,
+      "observed": {
+        "settings": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "body": {
+            "name": "Royal Chain New",
+            "campus": "Main",
+            "code": "CNEW",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "call_minimums": []
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "body": {
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-new-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "body": {
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-new-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            },
+            "review_token": "chain-exact-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code",
+          "search": "?name=Royal%20Chain%20New&campus="
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "scenario": "direct-member-save",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "after": {
+        "unitReads": 2,
+        "fbReads": 1
+      },
+      "profileReads": 0,
+      "failedObserved": null,
+      "observed": {
+        "settings": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/members/resolve",
+          "body": {
+            "name": "Dr Chain Created"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members",
+          "body": {
+            "canonical_name": "Dr Chain Created",
+            "call_level": "2ND_CALL"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "body": {
+            "values": {
+              "person_id": "chain-new-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-parent",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "body": {
+            "values": {
+              "person_id": "chain-new-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-parent",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            },
+            "review_token": "chain-exact-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/members/resolve",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "scenario": "profile-unit-save",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "after": {
+        "unitReads": 2,
+        "fbReads": 2
+      },
+      "profileReads": 2,
+      "failedObserved": null,
+      "observed": {
+        "settings": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "body": {
+            "name": "Royal Chain New",
+            "campus": "Main",
+            "code": "CNEW",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "call_minimums": []
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "body": {
+            "identity": "chain-posting",
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-new-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW",
+              "id": "chain-posting",
+              "person": {
+                "id": "chain-person",
+                "canonical_name": "Dr Chain Existing",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "unit": {
+                "id": "chain-parent",
+                "name": "Royal Chain Parent",
+                "campus": "Main",
+                "code": "CP",
+                "minimum_free_people": 1,
+                "active_status": "active",
+                "aliases": [],
+                "notes": "",
+                "call_minimums": [],
+                "revision": "one",
+                "usage": {
+                  "postings": 1,
+                  "duties": 0,
+                  "future_postings": 1,
+                  "future_duties": 0,
+                  "selected_members": 1
+                }
+              },
+              "source": "manual"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "body": {
+            "identity": "chain-posting",
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-new-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW",
+              "id": "chain-posting",
+              "person": {
+                "id": "chain-person",
+                "canonical_name": "Dr Chain Existing",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "unit": {
+                "id": "chain-parent",
+                "name": "Royal Chain Parent",
+                "campus": "Main",
+                "code": "CP",
+                "minimum_free_people": 1,
+                "active_status": "active",
+                "aliases": [],
+                "notes": "",
+                "call_minimums": [],
+                "revision": "one",
+                "usage": {
+                  "postings": 1,
+                  "duties": 0,
+                  "future_postings": 1,
+                  "future_duties": 0,
+                  "selected_members": 1
+                }
+              },
+              "source": "manual"
+            },
+            "review_token": "chain-exact-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/chain-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/chain-person/postings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/records/units/chain-posting",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code",
+          "search": "?name=Royal%20Chain%20New&campus="
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/chain-person/postings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "scenario": "existing-cancel",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "after": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "observed": {
+        "settings": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": []
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/members/resolve",
+          "body": {
+            "name": "Dr Chain Existing"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/members/resolve",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "scenario": "unit-save-parent503",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "after": {
+        "unitReads": 3,
+        "fbReads": 3
+      },
+      "profileReads": 0,
+      "failedObserved": {
+        "settings": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Changes are saved, but this view could not refresh. Accepted chained changes; parent read temporarily unavailable Previously loaded information may be out of date.Refresh saved changes"
+        ]
+      },
+      "observed": {
+        "settings": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "body": {
+            "name": "Royal Chain New",
+            "campus": "Main",
+            "code": "CNEW",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "call_minimums": []
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "body": {
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-new-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "body": {
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-new-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            },
+            "review_token": "chain-exact-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code",
+          "search": "?name=Royal%20Chain%20New&campus="
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "scenario": "direct-save",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "after": {
+        "unitReads": 2,
+        "fbReads": 1
+      },
+      "profileReads": 0,
+      "failedObserved": null,
+      "observed": {
+        "settings": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "body": {
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-parent",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "body": {
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-parent",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            },
+            "review_token": "chain-exact-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "scenario": "direct-unit-save",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "after": {
+        "unitReads": 2,
+        "fbReads": 2
+      },
+      "profileReads": 0,
+      "failedObserved": null,
+      "observed": {
+        "settings": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "body": {
+            "name": "Royal Chain New",
+            "campus": "Main",
+            "code": "CNEW",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "call_minimums": []
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "body": {
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-new-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "body": {
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-new-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            },
+            "review_token": "chain-exact-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code",
+          "search": "?name=Royal%20Chain%20New&campus="
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "scenario": "direct-member-save",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "after": {
+        "unitReads": 2,
+        "fbReads": 1
+      },
+      "profileReads": 0,
+      "failedObserved": null,
+      "observed": {
+        "settings": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/members/resolve",
+          "body": {
+            "name": "Dr Chain Created"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members",
+          "body": {
+            "canonical_name": "Dr Chain Created",
+            "call_level": "2ND_CALL"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "body": {
+            "values": {
+              "person_id": "chain-new-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-parent",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "body": {
+            "values": {
+              "person_id": "chain-new-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-parent",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            },
+            "review_token": "chain-exact-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/members/resolve",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "scenario": "profile-unit-save",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "after": {
+        "unitReads": 2,
+        "fbReads": 2
+      },
+      "profileReads": 2,
+      "failedObserved": null,
+      "observed": {
+        "settings": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "body": {
+            "name": "Royal Chain New",
+            "campus": "Main",
+            "code": "CNEW",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "call_minimums": []
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "body": {
+            "identity": "chain-posting",
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-new-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW",
+              "id": "chain-posting",
+              "person": {
+                "id": "chain-person",
+                "canonical_name": "Dr Chain Existing",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "unit": {
+                "id": "chain-parent",
+                "name": "Royal Chain Parent",
+                "campus": "Main",
+                "code": "CP",
+                "minimum_free_people": 1,
+                "active_status": "active",
+                "aliases": [],
+                "notes": "",
+                "call_minimums": [],
+                "revision": "one",
+                "usage": {
+                  "postings": 1,
+                  "duties": 0,
+                  "future_postings": 1,
+                  "future_duties": 0,
+                  "selected_members": 1
+                }
+              },
+              "source": "manual"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "body": {
+            "identity": "chain-posting",
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-new-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW",
+              "id": "chain-posting",
+              "person": {
+                "id": "chain-person",
+                "canonical_name": "Dr Chain Existing",
+                "call_level": "2ND_CALL",
+                "active_status": "active",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "unit": {
+                "id": "chain-parent",
+                "name": "Royal Chain Parent",
+                "campus": "Main",
+                "code": "CP",
+                "minimum_free_people": 1,
+                "active_status": "active",
+                "aliases": [],
+                "notes": "",
+                "call_minimums": [],
+                "revision": "one",
+                "usage": {
+                  "postings": 1,
+                  "duties": 0,
+                  "future_postings": 1,
+                  "future_duties": 0,
+                  "selected_members": 1
+                }
+              },
+              "source": "manual"
+            },
+            "review_token": "chain-exact-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/chain-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/chain-person/postings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/records/units/chain-posting",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code",
+          "search": "?name=Royal%20Chain%20New&campus="
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/chain-person/postings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "scenario": "existing-cancel",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "after": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "observed": {
+        "settings": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": []
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/members/resolve",
+          "body": {
+            "name": "Dr Chain Existing"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/members/resolve",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "scenario": "unit-save-parent503",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "after": {
+        "unitReads": 3,
+        "fbReads": 3
+      },
+      "profileReads": 0,
+      "failedObserved": {
+        "settings": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Changes are saved, but this view could not refresh. Accepted chained changes; parent read temporarily unavailable Previously loaded information may be out of date.Refresh saved changes"
+        ]
+      },
+      "observed": {
+        "settings": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "body": {
+            "name": "Royal Chain New",
+            "campus": "Main",
+            "code": "CNEW",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "call_minimums": []
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "body": {
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-new-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "body": {
+            "values": {
+              "person_id": "chain-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "chain-new-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Chain notes NEW"
+            },
+            "review_token": "chain-exact-review-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code",
+          "search": "?name=Royal%20Chain%20New&campus="
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    }
+  ]
+}

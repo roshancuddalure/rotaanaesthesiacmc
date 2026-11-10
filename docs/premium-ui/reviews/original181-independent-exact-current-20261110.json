@@ -1,0 +1,116 @@
+{
+  "recorded_at_utc": "2026-11-10T10:52:19.532164+00:00",
+  "reviewer": "/root/rules181_exact_review_nov10",
+  "independence": "Reviewer did not author or edit product changes, original applied tests, original criteria or immutable prior evidence. New test copies preserve assertions and add current screenshots; additional historical dock stress replay produced unresolved harness races retained below.",
+  "item_id": 181,
+  "recommendation": "partial_pending_settled_dock_supplement",
+  "source_sha256": {
+    "frontend/src/rota-rules.ts": "ebf2734ccfe81a8ff3b3530a5f94213a77b2f5c9faf052e02faa3222aa7756ea",
+    "frontend/src/member-workspace.ts": "527f4f55aac3c4ac9de54f679940ff0c06b679a8fb28543bba963b3baa43a52b",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "d01cccff66209792a1336061a8ada822d350387ac9b5076dee0fe9b2ccd0aa57"
+  },
+  "current_build_bridge": {
+    "snapshot": "docs/premium-ui/reviews/frontend-build-snapshot-original184-mapping-v5.json",
+    "all_reviewed_runtime_sources_exact": true,
+    "rules_source_same_as_applied_execution": true,
+    "note": "Mapping changes do not alter rules source or scoped rules CSS; current source hashes match held successful mapping-v5 build. This is source applicability, not execution of built artifacts."
+  },
+  "condition_assessments": [
+    {
+      "condition": "Rule sections have consistent headings, concise summaries and an accurate unsaved marker as edits change.",
+      "status": "supported",
+      "evidence": [
+        "docs/premium-ui/qa-original181-independent-current-core-20261110.json",
+        "docs/premium-ui/qa-original181-independent-current-stress-20261110.json"
+      ],
+      "assessment": "Three-engine actual module fixture shows distinct Main/PAC h3 headings and duty counts, global and row/category dirty markers; exact revert hides count, two dirty duties count2, filter-visible count1, eligibility response changes nobody marker. Node identity and exact caret retained. Native discard decline/confirm and review Escape plus exact mocked save/readback assertions pass. Desktop edited and narrow validation screenshots inspected; both use consistent section/field headings and clear unsaved text."
+    },
+    {
+      "condition": "Sticky save controls remain reachable without obscuring the last rule or validation message on narrow and short screens.",
+      "status": "bounded_supported_supplement_pending",
+      "evidence": [
+        "docs/premium-ui/qa-original181-independent-current-core-20261110.json",
+        "docs/premium-ui/qa-original181-independent-current-stress-20261110.json"
+      ],
+      "assessment": "18 fresh current-source cases verify last validation message, last Done and Review and save within viewport and hit-testable at320x568,844x390,1280x900 across3engines. Additional historical dock test covers28px text/noObserver/resize but current replay hit asynchronous node replacement and immediate focus assertions; no persistent occlusion established. Do not claim full supplemental pass or accept until stable current-node measurements settle."
+    }
+  ],
+  "executions": [
+    {
+      "report": "docs/premium-ui/qa-original181-independent-current-core-20261110.json",
+      "test": "frontend/tests/premium-original181-independent-current-core-20261110.browser.mjs",
+      "exit_code": 0,
+      "contexts": 9
+    },
+    {
+      "report": "docs/premium-ui/qa-original181-independent-current-stress-20261110.json",
+      "test": "frontend/tests/premium-original181-independent-current-stress-20261110.browser.mjs",
+      "exit_code": 0,
+      "contexts": 9
+    }
+  ],
+  "supplemental_failure_analysis": {
+    "diagnostic": "WebKit844x390 normal Review top212.578125 bottom256.578125 within390, actualBUTTON hit true; failure line26col227 is immediate focus comparison after dialogdetached. Another settled run got allzero rect on locator-evaluated button, while preceding atomic query on current button had passed. paintChecks calls paintSummary which replaces savebar.innerHTML, so captured-node measurement can race pending live-check completion. These observations require harness synchronization and are not proof of persistent product reachability failure.",
+    "product_changes": false,
+    "failures_retained": true
+  },
+  "limits": [
+    "Fixture intercepts rules GET/checkPOST/PUT; no real backend persistence/eligibility certification.",
+    "Light-theme bounded rules fixtures; no new all-theme visual certification.",
+    "Screenshots and native keyboard emulation do not establish native assistive technology or physical device outcomes.",
+    "Root acceptance/ledger update deliberately not performed."
+  ],
+  "evidence_sha256": {
+    "docs/premium-ui/qa-original181-independent-current-core-20261110.json": "3d3b5dc6cc71a49e67195b0012db44c8f8921efbb79b3c6f525c0eef4b9414fd",
+    "docs/premium-ui/qa-original181-independent-current-stress-20261110.json": "eaafbfe2ec48fc916eb5a6dd674e39aa2b225ff04b606ed7cc16b7bdae856e29",
+    "frontend/tests/premium-original181-independent-current-core-20261110.browser.mjs": "0d82d8cbe324f651180857cdab132bee56e8f1df1f6558b9d5fcad1bc33a2f3d",
+    "frontend/tests/premium-original181-independent-current-stress-20261110.browser.mjs": "b47c3a85ab3ad14c2226c2b1e8ae6fac2ed90b00e769a08cb235a99057a6556f",
+    "docs/premium-ui/reviews/frontend-build-snapshot-original184-mapping-v5.json": "c0587e348da3c5cce765edf45339603b86eef0992b5bcffc39b0f8905f241552",
+    "docs/premium-ui/acceptance-criteria/items-174-260.json": "faa73e22aaeaf81c75886803908b250906fb55e85031087bb5e211aa7394dbac",
+    "docs/premium-ui/reviews/original181-category-v1-applied-execution-20261110.json": "d7dae35c01c1e4192c8ec031df0c15416ead09cbfe93b4fbd9711c346061ba65",
+    "tmp/rules181-category-v1/function-scope.json": "f9228b66791b961a294f49eaa7ff6ccece2f500a44b6424745fa2fe9658daae1",
+    "tmp/rules181-category-v1/typecheck-effect-proof.json": "d8db58b5deb86d782ace0d86c2222ee43c94621a72e66e4afd17a2262aca8b5b",
+    "tmp/rules181-independent-dock-diagnostic-20261110.log": "d5cdef752b1f1d4cbdadff48131a1269a492985cab5a62b2fe631dd5bc625b2a",
+    "tmp/rules181-independent-dock-diagnostic-20261110-exit.json": "24e5c3365e5fa29886bec3f99b69d9cf04cbda8103cf7c3337a45b505686df08",
+    "tmp/rules181-independent-dock-settled-20261110.log": "97bce9195ccabb04f97ca2cbc2b4f85f5aa451e1d1412fa767b8a01bf0e13025",
+    "tmp/rules181-independent-dock-settled-20261110-exit.json": "1833994ce973ff0299a4c0cbc93995cc1bcbfd10ea8e3d14d562cba3600746ee",
+    "docs/premium-ui/screenshots/original181-independent-current/core-chromium-1280-edited.png": "65875bf9a964b01799c51e01b113d70ac26f2e6d01ed9af574d7d6ad05b292fb",
+    "docs/premium-ui/screenshots/original181-independent-current/core-chromium-1280-validation.png": "0cc7c96637f08ab45fa1c632382d758a61281662fda066a8dfac169cfa41df34",
+    "docs/premium-ui/screenshots/original181-independent-current/core-chromium-320-edited.png": "11789c5ae25bdcaea43a928972cf2df73a7f7cfb46b4695973e920d91655823e",
+    "docs/premium-ui/screenshots/original181-independent-current/core-chromium-320-validation.png": "730e62921acfbf26c2eff203ac5909a84540dbf651315a0ce1f2e937e8d7d30b",
+    "docs/premium-ui/screenshots/original181-independent-current/core-chromium-844-edited.png": "12b631c0e7da3fd3030b5705f523c4d979e0508377a443882edba5a53a03c5f7",
+    "docs/premium-ui/screenshots/original181-independent-current/core-chromium-844-validation.png": "47839e8eff7f4b8629dc87e56a193c564f18cc9b5c8bfd4060cfd469f751d671",
+    "docs/premium-ui/screenshots/original181-independent-current/core-firefox-1280-edited.png": "f692b9167a4f20bf82af662c9a84626ecebe2a25862dc5006e184b5c3675accc",
+    "docs/premium-ui/screenshots/original181-independent-current/core-firefox-1280-validation.png": "3ad1e0acc7335bfd2a41c4f26eba546907037f6c697240038ffc54b280a6dd23",
+    "docs/premium-ui/screenshots/original181-independent-current/core-firefox-320-edited.png": "98c72193f6c69fb47bc5ff665d04e0bdda0205fca28e8c2b4264a2bac72f3fb2",
+    "docs/premium-ui/screenshots/original181-independent-current/core-firefox-320-validation.png": "79352f3cf12ce52446b591ffad2ddf970ee83a0e9d20c082ccaaf0bfdf0a8544",
+    "docs/premium-ui/screenshots/original181-independent-current/core-firefox-844-edited.png": "0d5168508122fcc6373fa1b12e5b172afcf180688c5af717dd6f9e1f81a7bfd0",
+    "docs/premium-ui/screenshots/original181-independent-current/core-firefox-844-validation.png": "1b07081a15221f582caeee9a383196048ca38930bb2cef933fb36793b5a89982",
+    "docs/premium-ui/screenshots/original181-independent-current/core-webkit-1280-edited.png": "192080a84d717a54191367ef7557e28bb1c7a5c42cc3f80522b67debdfc3aa8a",
+    "docs/premium-ui/screenshots/original181-independent-current/core-webkit-1280-validation.png": "820665347e2aa8812719e8fa2980bd86d1a03c7889068a4eaba0dfec6ae315e0",
+    "docs/premium-ui/screenshots/original181-independent-current/core-webkit-320-edited.png": "e5c6b63563295f19fdced7e0be9791d10b2cc51fd023a726c69c0c31bba2c228",
+    "docs/premium-ui/screenshots/original181-independent-current/core-webkit-320-validation.png": "ba95e95021b5d85e34f0630581280c9ceffd9f9b757e01575270e96d12d82c92",
+    "docs/premium-ui/screenshots/original181-independent-current/core-webkit-844-edited.png": "d0470b9f56d5b9c73afd8f1bf2c09c7db02022bea9f15730af639507cee9e0eb",
+    "docs/premium-ui/screenshots/original181-independent-current/core-webkit-844-validation.png": "e83b1cd45d0d0ddd6a74ac4f86702c7423594607a6f1b4191e83e28b66310594",
+    "docs/premium-ui/screenshots/original181-independent-current/stress-chromium-1280-edited.png": "65875bf9a964b01799c51e01b113d70ac26f2e6d01ed9af574d7d6ad05b292fb",
+    "docs/premium-ui/screenshots/original181-independent-current/stress-chromium-1280-validation.png": "e83aa139d6d1924f573edd1cb082195d61de9139728bfeb04f06b91cfe21113f",
+    "docs/premium-ui/screenshots/original181-independent-current/stress-chromium-320-edited.png": "11789c5ae25bdcaea43a928972cf2df73a7f7cfb46b4695973e920d91655823e",
+    "docs/premium-ui/screenshots/original181-independent-current/stress-chromium-320-validation.png": "b115747a91716a305fe5775bfd9b8bd19d8672714fec6197621fe75e879b9f94",
+    "docs/premium-ui/screenshots/original181-independent-current/stress-chromium-844-edited.png": "12b631c0e7da3fd3030b5705f523c4d979e0508377a443882edba5a53a03c5f7",
+    "docs/premium-ui/screenshots/original181-independent-current/stress-chromium-844-validation.png": "51965cae18b07c490b72abb77057b3f8b38d2b2cb0a39ec91919187dafd9f750",
+    "docs/premium-ui/screenshots/original181-independent-current/stress-firefox-1280-edited.png": "f692b9167a4f20bf82af662c9a84626ecebe2a25862dc5006e184b5c3675accc",
+    "docs/premium-ui/screenshots/original181-independent-current/stress-firefox-1280-validation.png": "1d76edd20fdf996d94a4e803fd20d5f38ea5ed79bf8ca748704e9e5af1efa5e1",
+    "docs/premium-ui/screenshots/original181-independent-current/stress-firefox-320-edited.png": "98c72193f6c69fb47bc5ff665d04e0bdda0205fca28e8c2b4264a2bac72f3fb2",
+    "docs/premium-ui/screenshots/original181-independent-current/stress-firefox-320-validation.png": "f25c2970fac2fdbc1591af2c67f393967fa678e69aa53c052b4a7a42e099cbfc",
+    "docs/premium-ui/screenshots/original181-independent-current/stress-firefox-844-edited.png": "0d5168508122fcc6373fa1b12e5b172afcf180688c5af717dd6f9e1f81a7bfd0",
+    "docs/premium-ui/screenshots/original181-independent-current/stress-firefox-844-validation.png": "5a03673bf5f97a1d133e15a6ed7971691babb5607579243ccea297dde33daf86",
+    "docs/premium-ui/screenshots/original181-independent-current/stress-webkit-1280-edited.png": "192080a84d717a54191367ef7557e28bb1c7a5c42cc3f80522b67debdfc3aa8a",
+    "docs/premium-ui/screenshots/original181-independent-current/stress-webkit-1280-validation.png": "ce01e92fa2c17aec391bf92b535feee9552f6bb5956d8016e684e3db6a1bc24a",
+    "docs/premium-ui/screenshots/original181-independent-current/stress-webkit-320-edited.png": "e5c6b63563295f19fdced7e0be9791d10b2cc51fd023a726c69c0c31bba2c228",
+    "docs/premium-ui/screenshots/original181-independent-current/stress-webkit-320-validation.png": "d3a84a0806e5e306aa8ab8eace13d39eabb7a940391b080eabe8ac25c454b3b2",
+    "docs/premium-ui/screenshots/original181-independent-current/stress-webkit-844-edited.png": "d0470b9f56d5b9c73afd8f1bf2c09c7db02022bea9f15730af639507cee9e0eb",
+    "docs/premium-ui/screenshots/original181-independent-current/stress-webkit-844-validation.png": "f2aacce34b50ca721b014f4838c93913976e304254c4df129df8be8d864446dc"
+  }
+}

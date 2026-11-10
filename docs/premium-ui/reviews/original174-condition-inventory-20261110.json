@@ -1,0 +1,75 @@
+{
+  "recorded_at_utc": "2026-11-10T04:29:31.629167+00:00",
+  "author": "/root/nestedreference159_groundwork",
+  "scope": "Requirement-derived exact conditions and authored evidence map only, no runtime completion or ledger mutation.",
+  "criterion_source": {
+    "path": "docs/premium-ui/acceptance-criteria/items-174-260.json",
+    "sha256": "faa73e22aaeaf81c75886803908b250906fb55e85031087bb5e211aa7394dbac"
+  },
+  "item174": {
+    "item_id": 174,
+    "requirement": "Preserve locks, selected repair scope and member preferences across responsive reflow and recoverable frontend errors.",
+    "acceptance_scope": "Generation locks, repair selection and member preference controls",
+    "pass_conditions": [
+      "Set nondefault locks, repair scope and preferences; resize through mobile and desktop layouts and verify the selections remain identical.",
+      "Inject a recoverable frontend failure and recover without resetting those choices or changing the eventual request payload."
+    ],
+    "evidence_needed": [
+      "Recorded control values and request payloads before/after resize and recovery.",
+      "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+    ],
+    "existing_evidence_candidates": [
+      "docs/premium-ui/qa-intelligence-drafts.json",
+      "docs/premium-ui/qa-generation-actions-current.json"
+    ],
+    "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for generation locks, repair selection and member preference controls, then supply missing evidence against each pass condition.",
+    "procedural_exception": null
+  },
+  "current_source_sha256": {
+    "frontend/src/main.ts": "ebf67f1733f620e406054d0c4a82cf1c203fd0e6603a843eec45b25a1a09df4d",
+    "frontend/src/rota-intelligence.ts": "bda7257a3cafdcf6c4122575cc454abb1623f27dbd13950ea1d61260a23bb79b",
+    "frontend/src/member-workspace.ts": "506c486046fe6f0bbea5c6c4bf6357fec6e9649d91a9ed1ed890551ed3503cca",
+    "frontend/src/operational-import.ts": "01d58023203380fedcee010cd3001b8e2bb478397144566ef92142a515a14b38",
+    "frontend/src/record-workspace.ts": "20b50cdbd991b5b5a16d06b51020be2838514a553823512373818f65636427aa",
+    "frontend/src/compute-device.ts": "c7083623b77132d2ace7d1a0a815ad457a695c9e381afcfd1aeb91af1a6d4eca",
+    "frontend/src/compute-conflict.ts": "1e69a3b0258c2da5f7588f7a6e2c6a8f26bf9130be9dd34e62e27c9431a05623",
+    "frontend/src/compute-protocol.ts": "d9dff1ad6ddda42e63da02dc6dd3d322f3cdc17fe824698e578a38cfcc57e1a5",
+    "frontend/src/frontend-runtime.ts": "45efce04e229e0bdcbc84de4c9570dd9c04877b2adb869269a6e40ff68b12a01",
+    "frontend/src/workspace-load-state.ts": "cdd0e323d7e83e6e668a381bbfcc37cad4726b1193ac5de31d5f14e03eecd9c6",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "2e4f85d813061ebc9f696b92d50ae24717a7781a3688187d02c7339c00bea4a1",
+    "frontend/src/generation-reversal-scope.ts": "4f5ce7136076e2b9ab3f07f91405083a7955425f19ebc7b8cdd1e6e22108e2af",
+    "frontend/src/generation-comparison.ts": "a331e6a20880b4535401262a3da35f2a98d38af93061552867e6f71d0d18115e"
+  },
+  "conditions": [
+    {
+      "exact_condition": "Set nondefault locks, repair scope and preferences; resize through mobile and desktop layouts and verify the selections remain identical.",
+      "proof_observables": [
+        "Nondefault lock on assigned slot-A and independent repair on assigned slot-B simultaneously selected under repair mode.",
+        "Committed preference slot-B/person-B/Avoid100 and unsent dropdown slot-C/person-A/Prefer-100 kept distinct.",
+        "One open current workspace traverses1280\u2192320\u2192768\u21921280 with snapshots identical for all planning controls and checkbox identities; browser emulation only."
+      ],
+      "planned_test": "frontend/tests/premium-original174-reflow-recovery-current.browser.mjs",
+      "status": "unexecuted"
+    },
+    {
+      "exact_condition": "Inject a recoverable frontend failure and recover without resetting those choices or changing the eventual request payload.",
+      "proof_observables": [
+        "First capabilities GET503 raises frontend-handled recoverable action error before any jobs POST.",
+        "Explicit Generate retry retains every planning value and sends exact same jobs body as no-failure paired control.",
+        "Separate injected one-shot frontend callback error in AbortSignal.timeout(15000) before the capability request produces same preserved state and explicit-retry payload; caught by action wrapper, not global pageerror.",
+        "Actual jobs POST/validate responses are locally fulfilled completed proposals; no Apply, no assignment persistence, no GPU requested."
+      ],
+      "planned_test": "frontend/tests/premium-original174-reflow-recovery-current.browser.mjs",
+      "status": "unexecuted"
+    }
+  ],
+  "evidence_rules": [
+    "Record source hashes before and after, exact served TS source maps and CSS responses, browser/role/fixture, raw requests, per-viewport control snapshots, error state and successful retry.",
+    "Use one paired baseline per engine then compare both error runs to that baseline; committed preferences inferred also from exact request rather than count alone.",
+    "Scope excludes conflict handoff/new workspace, explicit discard/reopen, page reload/crash, physical-device/native assistive-technology behavior.",
+    "No source change recommended unless observed test mismatch establishes actual defect."
+  ],
+  "execution_contexts": "9 contexts:3 engines \u00d7 baseline,capabilities503,one-shot frontend timeout-construction exception. Each configured context traverses four viewport widths and records controls."
+}

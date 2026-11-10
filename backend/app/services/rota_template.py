@@ -2414,8 +2414,9 @@ def write_eagle_eye_matrix(
     workbook: xlsxwriter.Workbook,
     slots: list[DutySlot],
     rules: RotaPhaseOneRules,
+    *, assigned_names: bool = False,
 ) -> None:
-    worksheet = workbook.add_worksheet("Eagle Eye")
+    worksheet = workbook.add_worksheet("Assigned Eagle Eye" if assigned_names else "Eagle Eye")
     normal_header = workbook.add_format(
         {"bold": True, "bg_color": "#0F172A", "font_color": "#FFFFFF", "border": 1, "align": "center", "valign": "vcenter", "text_wrap": True}
     )
@@ -2455,6 +2456,11 @@ def write_eagle_eye_matrix(
     units_by_duty_day: dict[tuple[str, date], list[str]] = {}
     for slot in slots:
         unit_name = display_unit_for_slot(slot.unit, rule_by_key.get(slot.duty_type))
+        if assigned_names:
+            names = sorted({a.person.canonical_name if a.person else str(a.person_id)
+                            for a in slot.assignments
+                            if a.status.lower() in {"assigned", "draft", "confirmed"}})
+            unit_name = f"{unit_name}: {', '.join(names) if names else 'Unfilled'}"
         if unit_name:
             units_by_duty_day.setdefault((slot.duty_type, slot.duty_date), []).append(unit_name)
 
@@ -2474,14 +2480,20 @@ def write_eagle_eye_matrix(
         worksheet.write(row, 0, rule.label if rule else duty_key, duty_format)
         for col, day in enumerate(dates, start=1):
             units = sorted(set(units_by_duty_day.get((duty_key, day), [])))
-            worksheet.write(row, col, ", ".join(units), weekend_cell if day.weekday() >= 5 else normal_cell)
+            worksheet.write(row, col, "\n".join(units) if assigned_names else ", ".join(units), weekend_cell if day.weekday() >= 5 else normal_cell)
+        if assigned_names:
+            worksheet.set_row(row, min(409, max(48, max((len(v) for (k, _d), v in units_by_duty_day.items() if k == duty_key), default=1) * 32)))
         row += 1
 
     worksheet.set_column(0, 0, 24)
     for col, day in enumerate(dates, start=1):
-        worksheet.set_column(col, col, 13, weekend_cell if day.weekday() >= 5 else normal_cell)
+        worksheet.set_column(col, col, 25 if assigned_names else 13, weekend_cell if day.weekday() >= 5 else normal_cell)
     worksheet.set_row(0, 34)
     worksheet.freeze_panes(1, 1)
+    worksheet.hide_gridlines(2)
+    worksheet.set_landscape()
+    worksheet.fit_to_pages(1, 0)
+    worksheet.repeat_rows(0)
 
 
 def eagle_eye_export(db: Session, month: str) -> tuple[str, bytes]:
@@ -2489,8 +2501,18 @@ def eagle_eye_export(db: Session, month: str) -> tuple[str, bytes]:
     _rule_version, rules = get_phase_one_rules(db)
     slots = template_slots_for_period(db, period.id)
     output = BytesIO()
-    workbook = xlsxwriter.Workbook(output, {"in_memory": True})
+    workbook = xlsxwriter.Workbook(output, {"in_memory": True, "strings_to_formulas": False, "strings_to_urls": False})
+    if not slots:
+        raise ValueError("Generate duty slots before downloading assignments.")
     write_eagle_eye_matrix(workbook, slots, rules)
+    write_eagle_eye_matrix(workbook, slots, rules, assigned_names=True)
+    from app.services.rota_publish import assignment_rows, write_rows
+    write_rows(workbook, "Draft Assignments", ["Date", "Day", "Unit", "Unit Code", "Duty", "Slot Label", "Assigned Member", "Call Level", "Assignment Source", "Override Reason", "Template Status", "Template Reason"], assignment_rows(slots))
+    worksheet = workbook.add_worksheet("Download Status")
+    worksheet.write_string(0, 0, "DRAFT - for review before board approval")
+    worksheet.write_string(1, 0, month)
+    worksheet.set_column(0, 0, 65)
+    workbook.worksheets()[1].activate()
     workbook.close()
     return f"eagle-eye-rota-template-{month}.xlsx", output.getvalue()
 
@@ -2500,7 +2522,7 @@ def call_wise_template_export(db: Session, month: str) -> tuple[str, bytes]:
     _rule_version, rules = get_phase_one_rules(db)
     slots = template_slots_for_period(db, period.id)
     output = BytesIO()
-    workbook = xlsxwriter.Workbook(output, {"in_memory": True})
+    workbook = xlsxwriter.Workbook(output, {"in_memory": True, "strings_to_formulas": False, "strings_to_urls": False})
     write_call_wise_template_export(workbook, slots, rules)
     workbook.close()
     return f"call-wise-rota-template-{month}.xlsx", output.getvalue()

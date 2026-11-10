@@ -1,3 +1,5 @@
+import { installListPagination } from "./list-pagination";
+import { createMappingReferenceDetails } from "./mapping-reference-details";
 import { saveUnitSettingsWithRecovery } from "./unit-settings-recovery";
 import { bindUnitModalAccessibility } from "./unit-modal-accessibility";
 import { bindLeaveCalendarFocus } from "./leave-calendar-focus";
@@ -19,7 +21,7 @@ import { balanceStageHtml, openBalanceDuties } from "./balance-duties";
 import { installSuperadminActions, superadminSlotAction, publishAnywayControl, publishOverrideNotice, openPublishAnyway } from "./superadmin";
 import { preference as computePreference } from "./compute-device";
 import { openRecordEditor } from "./record-workspace";
-import { openOperationalImport } from "./operational-import";
+import { openOperationalImport, type NestedReferenceChange } from "./operational-import";
 import { openUnitRegistry, openReferenceCatalog, openMappingCreator } from "./reference-workspace";
 import { openMemberWorkspace, openMemberCsvImport, type ProfileParentLifecycle } from "./member-workspace";
 /**
@@ -360,6 +362,9 @@ let mappings: AdminMapping[] = [];
 let options: MappingOptions = { duty_types: [], mapping_types: [] };
 let activeMappingType: MappingType | "all" = "all";
 let mappingSearch = "";
+let mappingReferenceDetails: ReturnType<typeof createMappingReferenceDetails> | null = null;
+let mappingReferenceOwnerCurrent: (() => boolean) | null = null;
+let mappingReferenceRetrying = false;
 let mappingLoadSequence = 0;
 let mappingLoadError = '';
 const mappingDraftIds = new Set<string>();
@@ -1593,7 +1598,9 @@ let analysisPersonSort: keyof AnalysisPerson = "total_24hr";
 let analysisPersonSortDir: "asc" | "desc" = "desc";
 
 // Pagination state — one page index per table, keyed by a stable table id
-const PAGE_SIZE = 25;
+const PAGE_SIZE = 10;
+const tablePageSizes: Record<string, number> = {};
+function getPageSize(tableId: string): number { return tablePageSizes[tableId] ?? PAGE_SIZE; }
 const UNIT_IMPORT_PAGE_SIZE = 10;
 const UNIT_IMPORT_TABLE_ID = "unit-import-preview";
 const analysisPagination: Record<string, number> = {};
@@ -1612,25 +1619,28 @@ function resetPages(): void {
   }
 }
 
-function paginate<T>(items: T[], tableId: string, pageSize = PAGE_SIZE): T[] {
-  const page = getPage(tableId);
+function paginate<T>(items: T[], tableId: string, _pageSize = PAGE_SIZE): T[] {
+  const pageSize = getPageSize(tableId);
+  const page = Math.max(0, Math.min(getPage(tableId), Math.ceil(items.length / pageSize) - 1));
+  setPage(tableId, page);
   return items.slice(page * pageSize, (page + 1) * pageSize);
 }
 
-function renderPaginator(tableId: string, totalItems: number, pageSize = PAGE_SIZE): string {
-  const totalPages = Math.ceil(totalItems / pageSize);
-  if (totalPages <= 1) return "";
+function renderPaginator(tableId: string, totalItems: number, _pageSize = PAGE_SIZE): string {
+  const pageSize = getPageSize(tableId);
+  const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
   const page = getPage(tableId);
-  const start = page * pageSize + 1;
+  const start = totalItems ? page * pageSize + 1 : 0;
   const end = Math.min((page + 1) * pageSize, totalItems);
   const prev = page > 0
-    ? `<button class="page-btn" data-set-page="${tableId}:${page - 1}">&#8592; Prev</button>`
-    : `<button class="page-btn" disabled>&#8592; Prev</button>`;
+    ? `<button type="button" class="page-btn" data-set-page="${tableId}:${page - 1}">&#8592; Prev</button>`
+    : `<button type="button" class="page-btn" disabled>&#8592; Prev</button>`;
   const next = page < totalPages - 1
-    ? `<button class="page-btn" data-set-page="${tableId}:${page + 1}">Next &#8594;</button>`
-    : `<button class="page-btn" disabled>Next &#8594;</button>`;
+    ? `<button type="button" class="page-btn" data-set-page="${tableId}:${page + 1}">Next &#8594;</button>`
+    : `<button type="button" class="page-btn" disabled>Next &#8594;</button>`;
   return `
-    <div class="paginator">
+    <div class="paginator" data-table-paginator="${tableId}">
+      <label>Rows per page <select data-page-size="${tableId}" aria-label="Rows per page">${[10, 20, 30].map(size => `<option value="${size}" ${size === pageSize ? "selected" : ""}>${size}</option>`).join("")}</select></label>
       <span class="page-label">Page ${page + 1} of ${totalPages}</span>
       <div class="paginator-controls">
         ${prev}
@@ -2034,7 +2044,7 @@ function refreshPersonnelResultsInPlace(): boolean {
 
   const people = filteredSortedPeople();
   const pageItems = paginate(people, TID);
-  const offset = getPage(TID) * PAGE_SIZE;
+  const offset = getPage(TID) * getPageSize(TID);
   const rows = pageItems.map((person, index) => `
         <tr>
           <td>
@@ -2083,7 +2093,7 @@ function renderAnalysisPersonnelTab(): string {
   const TID = "personnel";
   const people = filteredSortedPeople();
   const pageItems = paginate(people, TID);
-  const offset = getPage(TID) * PAGE_SIZE;
+  const offset = getPage(TID) * getPageSize(TID);
   const rows = pageItems
     .map(
       (person, index) => `
@@ -2181,7 +2191,7 @@ function renderAnalysisWeekendTab(): string {
   }));
 
   const pageItems = paginate(weekendPeople, TID);
-  const offset = getPage(TID) * PAGE_SIZE;
+  const offset = getPage(TID) * getPageSize(TID);
   const rows = pageItems
     .map(
       (p, i) => `
@@ -2244,7 +2254,7 @@ function renderAnalysisWeekendTab(): string {
       </table>
       ${renderPaginator(TID, weekendPeople.length)}
     </section>
-    <section class="card-list analysis-card-list">${cards || `<p class="empty">No weekend duties.</p>`}</section>
+    <section class="card-list analysis-card-list">${cards || `<p class="empty">No weekend duties.</p>`}${renderPaginator(TID, weekendPeople.length)}</section>
   `;
 }
 
@@ -2271,7 +2281,7 @@ function renderAnalysisDutyTypesTab(): string {
     .filter((p) => p.total_24hr > 0)
     .sort((a, b) => b.total_24hr - a.total_24hr);
   const pageItems = paginate(allDutyPeople, TID);
-  const offset = getPage(TID) * PAGE_SIZE;
+  const offset = getPage(TID) * getPageSize(TID);
   const dutyTypeRows = pageItems
     .map((p, i) => ({
       person: p,
@@ -2321,7 +2331,7 @@ function renderAnalysisDutyTypesTab(): string {
       </table>
       ${renderPaginator(TID, allDutyPeople.length)}
     </section>
-    <section class="card-list analysis-card-list">${dutyTypeCards || `<p class="empty">No data.</p>`}</section>
+    <section class="card-list analysis-card-list">${dutyTypeCards || `<p class="empty">No data.</p>`}${renderPaginator(TID, allDutyPeople.length)}</section>
   `;
 }
 
@@ -2332,7 +2342,7 @@ function renderAnalysisCartSchellTab(): string {
   const allCartPeople = [...analysis.people]
     .filter((p) => p.cart > 0)
     .sort((a, b) => b.cart - a.cart);
-  const cartOffset = getPage(CART_TID) * PAGE_SIZE;
+  const cartOffset = getPage(CART_TID) * getPageSize(CART_TID);
   const cartRows = paginate(allCartPeople, CART_TID)
     .map((p, i) => ({
       person: p,
@@ -2348,7 +2358,6 @@ function renderAnalysisCartSchellTab(): string {
   const schellOnlyRows = [...analysis.people]
     .filter((p) => p.schell > 0 && p.cart === 0)
     .sort((a, b) => b.schell - a.schell)
-    .slice(0, 15)
     .map((p, i) => ({
       person: p,
       row: `
@@ -2407,6 +2416,7 @@ function renderAnalysisCartSchellTab(): string {
     <section class="mobile-section card-list analysis-card-list">
       <h3>CART Performers</h3>
       ${cartCards || `<p class="empty">No CART duties.</p>`}
+      ${renderPaginator(CART_TID, allCartPeople.length)}
     </section>
     <section class="mobile-section card-list analysis-card-list">
       <h3>Schell Only (No CART)</h3>
@@ -2427,7 +2437,7 @@ function renderAnalysisFifthCallTab(): string {
     total: analysis!.people.reduce((sum, p) => sum + (p.fifth_call_monthly[month] ?? 0), 0),
   }));
   const pageItems = paginate(fifthPeople, TID);
-  const offset = getPage(TID) * PAGE_SIZE;
+  const offset = getPage(TID) * getPageSize(TID);
   const rows = pageItems
     .map((p, i) => ({
       person: p,
@@ -2481,7 +2491,7 @@ function renderAnalysisFifthCallTab(): string {
       </table>
       ${renderPaginator(TID, fifthPeople.length)}
     </section>
-    <section class="card-list analysis-card-list">${cards || `<p class="empty">No 5th call duties.</p>`}</section>
+    <section class="card-list analysis-card-list">${cards || `<p class="empty">No 5th call duties.</p>`}${renderPaginator(TID, fifthPeople.length)}</section>
   `;
 }
 
@@ -2493,7 +2503,7 @@ function renderAnalysisShiftsPacTab(): string {
     .filter((p) => p.pac > 0 || analysisShiftTotal(p) > 0 || p.caesar_a > 0 || p.rc12hr > 0 || p.cb_co12hr > 0)
     .sort((a, b) => b.pac + analysisShiftTotal(b) - (a.pac + analysisShiftTotal(a)));
   const pageItems = paginate(allShiftsPac, TID);
-  const offset = getPage(TID) * PAGE_SIZE;
+  const offset = getPage(TID) * getPageSize(TID);
   const rows = pageItems
     .map((p, i) => ({
       person: p,
@@ -2555,7 +2565,7 @@ function renderAnalysisShiftsPacTab(): string {
       </table>
       ${renderPaginator(TID, allShiftsPac.length)}
     </section>
-    <section class="card-list analysis-card-list">${cards || `<p class="empty">No shift/PAC data.</p>`}</section>
+    <section class="card-list analysis-card-list">${cards || `<p class="empty">No shift/PAC data.</p>`}${renderPaginator(TID, allShiftsPac.length)}</section>
   `;
 }
 
@@ -2575,7 +2585,7 @@ function renderAnalysisPostingsTab(): string {
         .sort((a, b) => b[key].length - a[key].length);
       if (!people.length) return "";
       const pageItems = paginate(people, tid);
-      const offset = getPage(tid) * PAGE_SIZE;
+      const offset = getPage(tid) * getPageSize(tid);
       const rows = pageItems
         .map((p, i) => ({
           person: p,
@@ -2607,6 +2617,7 @@ function renderAnalysisPostingsTab(): string {
         <section class="mobile-section card-list analysis-card-list">
           <h3>${label} <span class="posting-count">${people.length} people</span></h3>
           ${cards}
+          ${renderPaginator(tid, people.length)}
         </section>
       `;
     })
@@ -2638,7 +2649,7 @@ function renderAnalysisPromotionsTab(): string {
     const label = analysis!.month_labels[m];
     return (timelineMap[label] ?? []).map((c) => ({ label, c }));
   });
-  const tlOffset = getPage(TL_TID) * PROMO_PAGE;
+  const tlOffset = getPage(TL_TID) * getPageSize(TL_TID);
   const timelineRows = paginate(allTimelineItems, TL_TID, PROMO_PAGE)
     .map(({ label, c }) => `
           <tr>
@@ -2660,7 +2671,7 @@ function renderAnalysisPromotionsTab(): string {
     )
     .join("");
 
-  const ppOffset = getPage(PP_TID) * PROMO_PAGE;
+  const ppOffset = getPage(PP_TID) * getPageSize(PP_TID);
   const personRows = paginate(promoted, PP_TID, PROMO_PAGE)
     .map(
       (p, i) => `
@@ -2706,10 +2717,12 @@ function renderAnalysisPromotionsTab(): string {
     <section class="mobile-section card-list analysis-card-list">
       <h3>Promotion Timeline</h3>
       ${timelineCards || `<p class="empty">No promotions detected.</p>`}
+      ${renderPaginator(TL_TID, allTimelineItems.length)}
     </section>
     <section class="mobile-section card-list analysis-card-list">
       <h3>Promotions by Person</h3>
       ${personCards || `<p class="empty">No promotions.</p>`}
+      ${renderPaginator(PP_TID, promoted.length)}
     </section>
   `;
 }
@@ -2770,7 +2783,6 @@ function renderAnalysisPreflight(preflight: AnalysisPreflight): string {
 
 function renderManualReview(review: AnalysisManualReview): string {
   const topRows = review.top_skipped_names
-    .slice(0, 25)
     .map(
       (row) => `
         <tr>
@@ -2791,7 +2803,6 @@ function renderManualReview(review: AnalysisManualReview): string {
     )
     .join("");
   const unmappedRows = review.unmapped_duty_rows
-    .slice(0, 12)
     .map(
       (row) => `
         <tr>
@@ -2808,7 +2819,6 @@ function renderManualReview(review: AnalysisManualReview): string {
     )
     .join("");
   const comparisonRows = review.reference_comparison
-    .slice(0, 17)
     .map(
       (row) => `
         <tr>
@@ -2988,7 +2998,10 @@ function renderMappingFilters() {
 
 function renderDutyTarget(mapping: AdminMapping): string {
   const choices = [
-    `<option value="">Needs review</option>`,
+    `<option value="">No target selected</option>`,
+    ...(mapping.target_key && !options.duty_types.some((choice) => choice.key === mapping.target_key)
+      ? [`<option value="${escapeHtml(mapping.target_key)}" selected>${escapeHtml(mapping.target_label || mapping.target_key)} (${escapeHtml(mapping.target_key)}) — saved target outside current choices</option>`]
+      : []),
     ...options.duty_types.map(
       (dutyType) => `
         <option value="${escapeHtml(dutyType.key)}" ${mapping.target_key === dutyType.key ? "selected" : ""}>
@@ -3010,6 +3023,60 @@ function renderTextTarget(mapping: AdminMapping): string {
       placeholder="Target key"
     />
   `;
+}
+
+function resetMappingReferenceDetails() {
+  mappingReferenceDetails?.dispose();
+  mappingReferenceDetails = null;
+  mappingReferenceOwnerCurrent = null;
+  mappingReferenceRetrying = false;
+}
+
+function mappingReviewLabel(status: string): string {
+  return status === "reviewed" ? "Reviewed" : status === "suggested" ? "Suggested; review needed"
+    : status === "needs_review" ? "Needs review" : `Unrecognized review state: ${status || "not provided"}`;
+}
+
+function paintMappingReferenceDetails() {
+  if (activeView !== "mappings" || !viewRoot?.isConnected || !isAdminUser()) return;
+  const byId = new Map(mappings.map(mapping => [mapping.id, mapping]));
+  for (const region of viewRoot.querySelectorAll<HTMLElement>("[data-mapping-details]")) {
+    const mapping = byId.get(region.dataset.mappingDetails ?? "");
+    if (!mapping) continue;
+    const detail = mappingReferenceDetails?.describe(mapping.mapping_type, mapping.target_key);
+    const identity = region.querySelector<HTMLElement>("[data-target-identity]");
+    const activity = region.querySelector<HTMLElement>("[data-target-activity]");
+    const label = region.querySelector<HTMLElement>("[data-target-label]");
+    const labelText = detail?.label && detail.label !== mapping.target_key ? detail.label : "";
+    if (label) { if (label.textContent !== labelText) label.textContent = labelText; label.hidden = !labelText; }
+    const identityText = mapping.target_key || "No target selected";
+    if (identity && identity.textContent !== identityText) identity.textContent = identityText;
+    if (activity) {
+      const message = detail?.message ?? (mapping.target_key ? "Target activity not loaded" : "No target selected");
+      if (activity.textContent !== message) activity.textContent = message;
+      if (activity.dataset.state !== (detail?.state ?? "unavailable")) activity.dataset.state = detail?.state ?? "unavailable";
+    }
+    const review = region.closest("tr")?.querySelector<HTMLElement>("[data-mapping-review-state]");
+    if (review && review.textContent !== mappingReviewLabel(mapping.status)) review.textContent = mappingReviewLabel(mapping.status);
+  }
+  const failed = mappingReferenceDetails?.hasError() ?? false;
+  const loading = mappingReferenceDetails?.isLoading() ?? false;
+  const status = viewRoot.querySelector<HTMLElement>("[data-mapping-reference-status]");
+  if (status) status.textContent = failed ? "Some target activity details could not load. Mapping edits remain available; reload only reads reference details."
+    : loading ? "Reading target activity. Mapping edits remain available." : "";
+  const retry = viewRoot.querySelector<HTMLButtonElement>("[data-retry-mapping-references]");
+  if (retry) { retry.hidden = !failed && !mappingReferenceRetrying; retry.disabled = loading; }
+}
+
+function ensureMappingReferenceDetails() {
+  if (!mappings.length || activeView !== "mappings" || !isAdminUser()) return;
+  if (mappingReferenceDetails && mappingReferenceOwnerCurrent?.()) { paintMappingReferenceDetails(); return; }
+  resetMappingReferenceDetails();
+  const account = currentUser, view = viewSeq, root = viewRoot;
+  const current = () => account === currentUser && view === viewSeq && root === viewRoot && Boolean(root?.isConnected) && activeView === "mappings";
+  mappingReferenceOwnerCurrent = current;
+  mappingReferenceDetails = createMappingReferenceDetails(current, paintMappingReferenceDetails);
+  void mappingReferenceDetails.load();
 }
 
 function renderMappings() {
@@ -3036,6 +3103,7 @@ function renderMappings() {
           </td>
           <td data-label="Target key">
             ${mapping.mapping_type === "duty_label" ? renderDutyTarget(mapping) : renderTextTarget(mapping)}
+            <div class="mapping-target-detail" data-mapping-details="${escapeHtml(mapping.id)}"><strong data-target-label hidden></strong><code data-target-identity>${escapeHtml(mapping.target_key || "No target selected")}</code><small data-target-activity>${mapping.target_key ? "Target activity not loaded" : "No target selected"}</small></div>
           </td>
           <td data-label="Display label">
             <input
@@ -3048,10 +3116,12 @@ function renderMappings() {
           </td>
           <td data-label="Status">
             <select data-field="status" data-id="${mapping.id}" aria-label="Status for ${escapeHtml(mapping.source_label)}">
+              ${!["needs_review", "suggested", "reviewed"].includes(mapping.status) ? `<option value="${escapeHtml(mapping.status)}" selected>${escapeHtml(mappingReviewLabel(mapping.status))}</option>` : ""}
               <option value="needs_review" ${mapping.status === "needs_review" ? "selected" : ""}>Needs review</option>
               <option value="suggested" ${mapping.status === "suggested" ? "selected" : ""}>Suggested</option>
               <option value="reviewed" ${mapping.status === "reviewed" ? "selected" : ""}>Reviewed</option>
             </select>
+            <small data-mapping-review-state>${escapeHtml(mappingReviewLabel(mapping.status))}</small>
           </td>
           <td data-label="Notes">
             <input data-field="notes" data-id="${mapping.id}" value="${escapeHtml(mapping.notes ?? "")}" placeholder="Notes" aria-label="Notes for ${escapeHtml(mapping.source_label)}" />
@@ -3077,6 +3147,8 @@ function renderMappings() {
       </div>
     </section>
     <section class="panel mapping-filters">
+      <p class="panel-note" data-mapping-reference-status role="status"></p>
+      <button type="button" class="quiet-button" data-retry-mapping-references hidden>Reload target details</button>
       ${renderMappingFilters()}
       <label for="mapping-search" class="visually-hidden">Search mappings</label>
       <input id="mapping-search" type="search" placeholder="Search source label…" value="${escapeHtml(mappingSearch)}" />
@@ -3104,6 +3176,8 @@ function renderMappings() {
       </table>
     </section>
   `;
+  ensureMappingReferenceDetails();
+  paintMappingReferenceDetails();
   if (mappingScanPending) lockMappingScanControls(true);
   lockPendingMappingSaves();
   const replacement = focusedId ? viewRoot.querySelector<HTMLElement>(`#${CSS.escape(focusedId)}`)
@@ -3397,9 +3471,27 @@ function createDependentParentLifecycle(
   };
 }
 
+function createNestedReferenceParentLifecycle(pendingMessage?: string) {
+  const fallbackHost = activeView === "units" ? viewRoot?.querySelector<HTMLElement>("#unit-fallbacks-host") : undefined;
+  let unitReferencesChanged = false;
+  const parent = createDependentParentLifecycle(pendingMessage, async () => {
+    if (unitReferencesChanged && fallbackHost) return prepareUnitFallbackReadback(fallbackHost);
+    return () => {};
+  });
+  if (!parent) return;
+  return {
+    confirmed: parent.confirmed,
+    referenceConfirmed(change: NestedReferenceChange) {
+      if (change.entity === "unit") unitReferencesChanged = true;
+      parent.confirmed();
+    },
+    closed: parent.closed,
+  };
+}
+
 function openMemberWorkspaceWithParent(id: string, admin: boolean, changed: (member: DepartmentMember) => void,
   ids: string[] = [], initialTab = "overview", proposedStatus?: string) {
-  return openMemberWorkspace(id, admin, changed, ids, initialTab, proposedStatus, createDependentParentLifecycle());
+  return openMemberWorkspace(id, admin, changed, ids, initialTab, proposedStatus, createNestedReferenceParentLifecycle());
 }
 
 
@@ -3584,6 +3676,9 @@ async function runAdminDelete(
   const deleteRender = renderSeq;
   const deleteRoot = viewRoot;
   const deleteMonth = kind === "posting" ? unitMonth : kind === "leave" ? leaveMonth : null;
+  const retainedParent = kind === "posting" || kind === "leave"
+    ? createDependentParentLifecycle("Deletion confirmed. Refreshing the current view while retaining unrelated drafts and filters.")
+    : undefined;
   const result = await confirmAdminDelete({ kind, ...target, title });
   if (!result || deleteAccount !== currentUser) return;
   // A confirmed posting deletion still invalidates cached data for an explicit later visit.
@@ -3593,9 +3688,15 @@ async function runAdminDelete(
       || deleteMonth !== (kind === "posting" ? unitMonth : kind === "leave" ? leaveMonth : null)) return;
   for (const id of target.ids ?? []) adminSelection[kind].delete(id);
   if (target.month) adminSelection[kind].clear();
+  if (retainedParent) syncAdminSelection(kind);
   const [one, many] = ADMIN_DELETE_NOUN[kind];
   showToast(`${result.deleted} ${result.deleted === 1 ? one : many} deleted. Restore from Recycle bin within 30 days if needed.`, "success");
-  await refresh();
+  if (retainedParent) {
+    if (kind === "posting" && unitEditingAssignmentId && target.ids?.includes(unitEditingAssignmentId))
+      unitEditingAssignmentId = null;
+    retainedParent.confirmed();
+    retainedParent.closed();
+  } else await refresh();
 }
 
 function memberRowActions(member: DepartmentMember): string {
@@ -5370,6 +5471,36 @@ function renderSingleCallLevelOptions(selected = ""): string {
   `).join("")}`;
 }
 
+function filterEligibilityGroups(query: string) {
+  const normalized = query.trim().toLowerCase();
+  const rows = Array.from(document.querySelectorAll<HTMLElement>("[data-eligibility-group-row]"));
+  let visible = 0;
+  for (const row of rows) {
+    const matches = !normalized || (row.dataset.eligibilityGroupSearch ?? "").toLowerCase().includes(normalized);
+    row.hidden = !matches;
+    row.style.display = matches ? "" : "none";
+    if (matches) visible += 1;
+  }
+  const count = document.querySelector<HTMLElement>("#eligibility-group-visible-count");
+  if (count) count.textContent = String(visible);
+  const empty = document.querySelector<HTMLElement>("#eligibility-group-search-empty");
+  if (empty) empty.hidden = visible > 0 || rows.length === 0;
+}
+
+function renderSavedClusterMemberships(cluster: CallCluster | null): string {
+  if (!cluster) return "";
+  if (!Array.isArray(cluster.members)) return `<p class="panel-note" data-cluster-membership-dates-unavailable>Saved membership dates were not returned. Reload this group to try again.</p>`;
+  if (!cluster.members.length) return `<p class="panel-note" data-cluster-membership-dates-empty>No saved membership records were returned for this group.</p>`;
+  const date = (value: string | null, end: boolean): string => {
+    if (value === null && end) return "No end date reported";
+    if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return "Date unavailable";
+    const parsed = new Date(`${value}T00:00:00Z`);
+    if (!Number.isFinite(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== value) return "Date unavailable";
+    return `<time datetime="${escapeHtml(value)}">${escapeHtml(value)}</time>`;
+  };
+  return `<details class="cluster-saved-memberships" data-cluster-saved-memberships><summary>Saved membership dates (${cluster.members.length} records)</summary><p class="panel-note">Dates below are the saved records returned for this group. They do not confirm eligibility for a particular duty. Editing the selection or date below changes the draft only.</p><ul>${cluster.members.map((member) => `<li data-cluster-membership-record="${escapeHtml(member.id)}"><strong>${escapeHtml(member.canonical_name || "Member name unavailable")}</strong><span> · ${escapeHtml(callLevelLabel(member.call_level ?? ""))}</span><p>From ${date(member.effective_from, false)} · Until ${date(member.effective_to, true)}</p></li>`).join("")}</ul></details>`;
+}
+
 function filterClusterMembers(query: string) {
   const normalizedQuery = query.trim().toLowerCase();
   const rows = Array.from(document.querySelectorAll<HTMLElement>("[data-cluster-member-row]"));
@@ -5462,7 +5593,7 @@ async function renderCallClusters(createNew = false, savedMessage = "", requeste
   }
 
   const clusterRows = callClusters.map((cluster) => `
-    <tr>
+    <tr data-eligibility-group-row data-eligibility-group-search="${escapeHtml(`${cluster.name} ${cluster.key} ${cluster.description ?? ""} ${callLevelLabel(normalizeCallLevel(cluster.call_level))}`)}">
       <td><button class="review-text-button" type="button" data-open-call-cluster="${escapeHtml(cluster.id)}">${escapeHtml(cluster.name)}</button>${cluster.active ? "" : `<small>${badge("Inactive", "neutral")}</small>`}</td>
       <td>${escapeHtml(callLevelLabel(normalizeCallLevel(cluster.call_level)))}</td>
       <td>${cluster.member_count}</td>
@@ -5518,7 +5649,10 @@ async function renderCallClusters(createNew = false, savedMessage = "", requeste
       </form>
       <section class="panel table-panel">
         <h3>Existing Eligibility Groups</h3>
-        <table>
+        <label class="cluster-member-search">Search eligibility groups<input type="search" id="eligibility-group-search" placeholder="Name, system ID, description or call level" autocomplete="off" aria-controls="eligibility-group-results" /></label>
+        <p class="panel-note" role="status"><strong id="eligibility-group-visible-count">${callClusters.length}</strong> groups shown</p>
+        <p class="empty-state" id="eligibility-group-search-empty" hidden>No eligibility groups match this search. Clear the search to show all groups.</p>
+        <table id="eligibility-group-results">
           <thead><tr><th>Group</th><th>Parent call</th><th>Members</th><th>Status</th></tr></thead>
           <tbody>${clusterRows || `<tr><td colspan="4" class="empty">No eligibility groups created yet.</td></tr>`}</tbody>
         </table>
@@ -5535,6 +5669,7 @@ async function renderCallClusters(createNew = false, savedMessage = "", requeste
         <label>Effective from<input id="cluster-effective-from" type="date" value="${new Date().toISOString().slice(0, 10)}" ${activeCallCluster ? "" : "disabled"} /></label>
         <button class="primary" type="submit" id="save-call-cluster-members" ${activeCallCluster ? "" : "disabled"}>Save Members</button>
       </div>
+      ${renderSavedClusterMemberships(activeCallCluster)}
       <p class="empty-state" id="cluster-member-search-empty" hidden>No members match this search.</p>
       <div class="cluster-member-grid">${memberRows || `<p class="empty-state">No active members found.</p>`}</div>
     </form>
@@ -6071,8 +6206,7 @@ function renderCandidateSuggestions(
     return `<span class="empty-state compact-empty">Loading suggestions from Unit Management...</span>`;
   }
   const candidates = (candidateSlot?.candidates ?? [])
-    .filter((candidate) => !rejectedRotaCandidates.has(rejectedCandidateKey(slot.id, candidate.person_id)))
-    .slice(0, 8);
+    .filter((candidate) => !rejectedRotaCandidates.has(rejectedCandidateKey(slot.id, candidate.person_id)));
   if (!candidates.length) {
     return `<span class="empty-state compact-empty">${candidateSlot ? "No eligible unit members found for this slot." : "Suggestions are still loading for this slot."}</span>`;
   }
@@ -6540,7 +6674,7 @@ function renderAllocationCallLevelRows(stats: RotaTemplateAllocationStatistics):
 }
 
 function renderAllocationEventRows(stats: RotaTemplateAllocationStatistics): string {
-  return stats.blocked_or_skipped_events.slice(0, 100).map((event) => `
+  return stats.blocked_or_skipped_events.map((event) => `
     <tr>
       <td>${escapeHtml(event.duty_date ?? "")}</td>
       <td>${escapeHtml(event.unit_name || codeLabel(event.unit_code, "Unresolved"))}</td>
@@ -6721,7 +6855,7 @@ function renderRotaTemplateOverview(
   const detailedPanels = `
     <section class="panel table-panel staffing-safety">
       <h3>Unit-Day Safety</h3>
-      <div class="table-scroll staffing-primary"><table>
+      <div class="table-scroll staffing-primary" tabindex="0" role="region" aria-label="Unit-Day Safety (scrollable)"><table>
         <thead>
           <tr>
             <th>Date</th>
@@ -6736,7 +6870,7 @@ function renderRotaTemplateOverview(
         </thead>
         <tbody>${renderUnitDaySafetyRows(safety) || `<tr><td colspan="8" class="empty">No safety checks yet. Generate empty slots first.</td></tr>`}</tbody>
       </table></div>
-      ${safety.unit_day_safety.length > 100 ? `<p class="panel-note">Showing the first 100 of ${safety.unit_day_safety.length} reported checks. Expand the remaining checks below.</p><details class="staffing-remainder"><summary>Show remaining ${safety.unit_day_safety.length - 100} unit-day checks</summary><div class="table-scroll"><table><caption>Remaining unit-day safety checks, in reported order</caption><thead><tr><th>Date</th><th>Unit</th><th>Safety</th><th>Slots</th><th>Safe</th><th>Review</th><th>Hard Blocked</th><th>Minimum Available</th></tr></thead><tbody>${renderUnitDaySafetyRows(safety, 100, safety.unit_day_safety.length)}</tbody></table></div></details>` : ""}
+      ${safety.unit_day_safety.length > 100 ? `<p class="panel-note">Showing the first 100 of ${safety.unit_day_safety.length} reported checks. Expand the remaining checks below.</p><details class="staffing-remainder"><summary>Show remaining ${safety.unit_day_safety.length - 100} unit-day checks</summary><div class="table-scroll" tabindex="0" role="region" aria-label="Remaining unit-day safety checks (scrollable)"><table><caption>Remaining unit-day safety checks, in reported order</caption><thead><tr><th>Date</th><th>Unit</th><th>Safety</th><th>Slots</th><th>Safe</th><th>Review</th><th>Hard Blocked</th><th>Minimum Available</th></tr></thead><tbody>${renderUnitDaySafetyRows(safety, 100, safety.unit_day_safety.length)}</tbody></table></div></details>` : ""}
     </section>
     ${calendarPanel}
     ${renderAutoFillReport(autoFill)}
@@ -7057,7 +7191,7 @@ function renderUnitDaySafetyRows(safety: RotaSafetyMonth, start = 0, end = 100):
 
 function renderTemplateEvents(template: RotaTemplateMonth): string {
   const events = template.latest_run?.events ?? [];
-  return events.slice(0, 80).map((event) => `
+  return events.map((event) => `
     <tr>
       <td>${escapeHtml(event.duty_date ?? "")}</td>
       <td>${escapeHtml(event.unit_name ?? "Unit")}</td>
@@ -7076,7 +7210,7 @@ function autoFillActionLabel(action: string): string {
 }
 
 function renderAutoFillEvents(run: NonNullable<RotaAutoFillMonth["latest_run"]>): string {
-  return run.events.slice(0, 100).map((event) => `
+  return run.events.map((event) => `
     <tr>
       <td>${escapeHtml(event.duty_date ?? "")}</td>
       <td><strong>${escapeHtml(event.unit_name ?? "Unit")}</strong></td>
@@ -7319,7 +7453,7 @@ async function renderRotaTemplate() {
           <details class="row-menu">
             <summary class="icon-button" aria-label="Export rota">Export</summary>
             <div class="row-menu__list" role="menu">
-              <button type="button" role="menuitem" id="download-eagle-eye-export" ${template.slots.length ? "" : "disabled"}>Eagle Eye workbook</button>
+              <button type="button" role="menuitem" id="download-eagle-eye-export" ${template.slots.length ? "" : "disabled"}>Draft assignments Excel (Eagle Eye)</button>
               <button type="button" role="menuitem" id="download-call-wise-template-export" ${template.slots.length ? "" : "disabled"}>Call-wise workbook</button>
             </div>
           </details>
@@ -7588,7 +7722,7 @@ function renderReviewAssignments(assignments: RotaSlotAssignment[] = []): string
 }
 
 function renderReviewItemRows(review: RotaReviewMonth, items: RotaReviewMonth["review_items"]): string {
-  return items.slice(0, 160).map((item) => {
+  return items.map((item) => {
     if (!item.slot) return "";
     const issues = item.issues ?? [];
     const assignments = item.assignments ?? [];
@@ -7670,7 +7804,7 @@ function renderReviewCandidateCards(slotId: string): string {
   if (!candidateSlot) {
     return `<button class="icon-button" type="button" data-load-review-slot-candidates="${escapeHtml(slotId)}">Load Suggestions</button>`;
   }
-  const candidates = candidateSlot.candidates.slice(0, 8);
+  const candidates = candidateSlot.candidates;
   if (!candidates.length) {
     return `<span class="empty-state compact-empty">No matching unit members found for this slot.</span>`;
   }
@@ -7839,7 +7973,7 @@ async function loadExchangeCandidatesForAssignment(assignmentId: string) {
 }
 
 function renderWorkloadRows(review: RotaReviewMonth): string {
-  return (review.person_workload ?? []).slice(0, 120).map((row) => `
+  return (review.person_workload ?? []).map((row) => `
     <tr>
       <td><strong>${escapeHtml(row.person_name)}</strong><small>${escapeHtml(callLevelLabel(row.call_level))}</small></td>
       <td>${row.total_assignments}</td>
@@ -7955,7 +8089,7 @@ function renderExchangeTargetHelp(review: RotaReviewMonth): string {
 }
 
 function renderExchangeRows(review: RotaReviewMonth): string {
-  return (review.exchange_requests ?? []).slice(0, 80).map((exchange) => {
+  return (review.exchange_requests ?? []).map((exchange) => {
     const canDecide = !["approved", "rejected", "blocked"].includes(exchange.status);
     return `
       <tr>
@@ -8261,6 +8395,8 @@ async function renderRotaPublish(publicationConfirmed = false) {
       <h3 id="publish-approval-title">Board approval</h3>
       <p class="panel-note" data-publish-consequence>Publishing records final board approval for ${escapeHtml(formatMonth(rotaPublishMonth))}. Applying a generated draft does not publish it. The server checks publishing prerequisites again when you confirm.</p>
       ${!canApprove ? `<p class="inline-note">${badge("View only", "neutral")} Final approval needs a rota board member, HOD or superadmin account.</p>` : ""}
+      <p>Download the current assignments for review before recording board approval.</p>
+      <button type="button" class="quiet-button" id="download-draft-assignment-export" ${publish.summary.total_slots ? "" : "disabled"}>Download draft assignments Excel</button>
       <form class="publish-form" id="rota-publish-form">
         <label class="checkbox-line">
           <input id="publish-confirm-warnings" type="checkbox" ${publish.requires_warning_confirmation ? "" : "checked"} ${canApprove ? "" : "disabled"} />
@@ -8277,10 +8413,11 @@ async function renderRotaPublish(publicationConfirmed = false) {
     </section>
     <section class="panel action-panel" id="publish-export">
       <div>
-        <h3>Final Excel export</h3>
+        <h3>Approved Excel and 360&deg; evaluation</h3>
+        <p>Assigned names and dates, member workload, fairness, limits, coverage, compliance, trends and audit history. Unavailable analysis sections are clearly marked in the workbook.</p>
         ${renderLatestPublish(publish)}
       </div>
-      <button class="primary" type="button" id="download-rota-export" ${publish.latest_publish ? "" : "disabled"}>Download Excel</button>
+      <button class="primary" type="button" id="download-rota-export" ${publish.latest_publish ? "" : "disabled"}>Download approved Excel</button>
     </section>
     ${isAdminUser() ? `<section class="panel action-panel" id="publish-audit-report">
       <div><h3>360° audit report</h3><p class="muted-text">Coverage, workload, fairness, extra duties (ledger) and an independent rules check for ${escapeHtml(formatMonth(rotaPublishMonth))}. Ready for sign-off and printing.</p></div>
@@ -8703,6 +8840,7 @@ async function loadMappings(preserveDrafts = false, contextCurrent: () => boolea
     const [nextOptions, nextMappings] = await Promise.all([getMappingOptions(), getMappings()]);
     if (!current()) return false;
     options = nextOptions;
+    if (preserveDrafts) resetMappingReferenceDetails();
     if (preserveDrafts) {
       const drafts = new Map(mappings.filter(mapping => mappingDraftIds.has(mapping.id)).map(mapping => [mapping.id, mapping]));
       mappings = nextMappings.map(mapping => {
@@ -8822,6 +8960,7 @@ function navigateToView(selectedView: string, historyMode: "push" | "replace" = 
   if (selectedView !== activeView) viewScrollPositions.set(activeView, {x: window.scrollX, y: window.scrollY});
   cancelScrollRestore?.();
   interruptWorkflowRead();
+  if (selectedView !== "mappings") resetMappingReferenceDetails();
   activeView = selectedView;
   viewSeq++;
   writeRoute(selectedView, historyMode === 'replace');
@@ -9554,24 +9693,20 @@ function bindViewEvents() {
       // A dated Leave action intentionally closes its day overlay. Capture the
       // retained parent only after that close, so its owner is the surviving view.
       if (recordButton.dataset.initialDate) closeLeaveDayModal();
-      const recordParent = recordView === kind ? createDependentParentLifecycle(
-        "Changes saved. The current view will refresh while retaining unrelated edits.",
+      const recordParent = recordView === kind ? createNestedReferenceParentLifecycle(
+        "Changes saved. The current view will refresh when the editor closes, retaining unrelated edits.",
       ) : undefined;
       void openRecordEditor(kind, undefined, recordButton.dataset.editOperationalRecord, isAdminUser(), () => {
+        if (recordParent) return;
         if (recordAccount !== currentUser) return;
         invalidateUnitManagementCache();
         if (recordView !== kind || activeView !== recordView || viewSeq !== recordSequence
             || renderSeq !== recordRender || viewRoot !== recordRoot || !recordRoot?.isConnected
             || recordMonth !== (kind === "units" ? unitMonth : leaveMonth)) return;
-        if (recordParent) {
-          // The existing saved callback runs after the editor has actually closed.
-          // This one-shot notification has no lease or cancel lifecycle to leak.
-          try { recordParent.confirmed(); recordParent.closed(); }
-          catch { showToast("Changes are saved, but the view refresh could not start. Reopen this month to load current information.", "warning"); }
-        } else if (kind === "leave") void renderLeave(); else void renderUnitManagement(true);
+        if (kind === "leave") void renderLeave(); else void renderUnitManagement(true);
       }, kind === "units"
         ? {unit_id: recordButton.dataset.initialUnit || "", posting_type: recordButton.dataset.initialPosting || "2ND_CALL", starts_on:unitManagement?.starts_on || `${unitMonth}-01`, ends_on:unitManagement?.ends_on || ""}
-        : recordButton.dataset.initialDate ? { starts_on: recordButton.dataset.initialDate, ends_on: recordButton.dataset.initialDate } : undefined);
+        : recordButton.dataset.initialDate ? { starts_on: recordButton.dataset.initialDate, ends_on: recordButton.dataset.initialDate } : undefined, recordParent);
       return;
     }
     const operationalImport = target.closest<HTMLElement>("[data-open-normalized-import]");
@@ -9585,8 +9720,8 @@ function bindViewEvents() {
       let importRender = renderSeq;
       // One dialog owns one deferred parent refresh. Multiple accepted batches
       // mark this same owner dirty; final close coalesces its latest read.
-      const importParent = importView === kind ? createDependentParentLifecycle(
-        "Import changes saved. This view will refresh when the import review closes; unrelated edits are retained.",
+      const importParent = importView === kind ? createNestedReferenceParentLifecycle(
+        "Changes saved. This view will refresh when the import review closes; unrelated edits are retained.",
       ) : undefined;
       void openOperationalImport(kind, importMonth, () => {
         if (importParent) return;
@@ -9601,6 +9736,7 @@ function bindViewEvents() {
         void refresh;
       }, isAdminUser(), importParent ? {
         confirmed: () => { importParent.confirmed(); },
+        referenceConfirmed: change => { importParent.referenceConfirmed(change); },
         closed: () => { importParent.closed(); },
       } : undefined);
       return;
@@ -9899,12 +10035,30 @@ function bindViewEvents() {
         && activeView === "leave" && viewSeq === submittedView && renderSeq === submittedRender
         && leaveMonth === submittedMonth && viewRoot === submittedRoot && Boolean(submittedRoot?.isConnected);
       if (!current() || !confirmAction(`Cancel leave for ${leave.person.canonical_name}?\nFrom: ${formatDate(leave.starts_on, { weekday: false })}\nUntil: ${formatDate(leave.ends_on, { weekday: false })}\nCategory: ${leaveTypeLabel(leave.leave_type)}\nSlot: ${leaveTypeLabel(leave.leave_slot)}\nStatus: ${leaveStatusLabel(leave.status)}\nRecord ID: ${leave.id}\n\nHistory is retained. Existing duties remain assigned and may need review.`)) return;
+      const cancelParent = createDependentParentLifecycle(
+        "Cancellation confirmed. Refreshing this view while retaining unrelated selections and controls.",
+      );
       setButtonLoading(cancelLeaveBtn, true, "Cancel");
       try {
         await cancelLeaveRequest(leave.id);
         if (!current()) return;
         showToast("Leave cancelled", "success");
-        await renderLeave();
+        if (cancelParent) {
+          // The accepted cancellation must not remain a replayable loading action
+          // in last-known rows while a read-only refresh is pending or unavailable.
+          try {
+            submittedRoot?.querySelectorAll<HTMLButtonElement>("[data-cancel-leave]").forEach(button => {
+              if (button.dataset.cancelLeave === leave.id) {
+                button.textContent = "Cancellation saved";
+                button.disabled = true;
+              }
+            });
+          } catch {
+            // A cosmetic action-label failure must not suppress saved-data recovery.
+          }
+          try { cancelParent.confirmed(); cancelParent.closed(); }
+          catch { showToast("Cancellation is saved, but the view refresh could not start. Reopen this month to load current information.", "warning"); }
+        } else await renderLeave();
       } catch (error) {
         if (!current()) return;
         showToast(error instanceof Error ? error.message : "Failed to cancel leave", "error");
@@ -10118,12 +10272,18 @@ function bindViewEvents() {
       const approvalSequence = viewSeq;
       const approvalRender = renderSeq;
       const approvalRoot = viewRoot;
+      const approvalParent = createDependentParentLifecycle(
+        "Approval confirmed. Refreshing this view while retaining unrelated selections and controls.",
+      );
       openMonthlyLeaveApproval(approvalMonth, count => {
         if (approvalAccount !== currentUser || approvalView !== "leave" || activeView !== approvalView
             || viewSeq !== approvalSequence || renderSeq !== approvalRender || viewRoot !== approvalRoot
             || !approvalRoot?.isConnected || leaveMonth !== approvalMonth) return;
         showToast(`${count} leave request${count === 1 ? "" : "s"} approved for ${formatMonth(approvalMonth)}`, "success");
-        void renderLeave();
+        if (approvalParent) {
+          try { approvalParent.confirmed(); approvalParent.closed(); }
+          catch { showToast("Approval is saved, but the view refresh could not start. Reopen this month to load current information.", "warning"); }
+        } else void renderLeave();
       });
       return;
     }
@@ -10409,11 +10569,11 @@ function bindViewEvents() {
       return;
     }
 
-    if (target.id === "download-eagle-eye-export") {
-      const btn = target.closest<HTMLButtonElement>("#download-eagle-eye-export");
+    if (target.id === "download-eagle-eye-export" || target.id === "download-draft-assignment-export") {
+      const btn = target.closest<HTMLButtonElement>("button");
       setButtonLoading(btn, true, "Export Eagle Eye");
       try {
-        const { blob, filename } = await downloadRotaTemplateEagleEyeExport(rotaTemplateMonth);
+        const { blob, filename } = await downloadRotaTemplateEagleEyeExport(target.id === "download-draft-assignment-export" ? rotaPublishMonth : rotaTemplateMonth);
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = url;
@@ -10568,7 +10728,12 @@ function bindViewEvents() {
     }
 
     if (target.closest("#import-member-csv")) {
-      openMemberCsvImport(() => { void renderMembers(); });
+      const csvAccount = currentUser, csvView = viewSeq, csvRoot = viewRoot;
+      openMemberCsvImport(() => { void renderMembers(); }, () => {
+        if (currentUser !== csvAccount || activeView !== "members" || viewSeq !== csvView
+          || viewRoot !== csvRoot || !csvRoot?.isConnected) return;
+        void renderMembers();
+      });
       return;
     }
     const statusAction = target.closest<HTMLButtonElement>("[data-archive-member], [data-restore-member]");
@@ -10805,6 +10970,24 @@ function bindViewEvents() {
     }
 
 
+    const referenceRetry = target.closest<HTMLButtonElement>("[data-retry-mapping-references]");
+    if (referenceRetry) {
+      if (referenceRetry.disabled || activeView !== "mappings" || !mappingReferenceDetails || !mappingReferenceOwnerCurrent?.()) return;
+      const details = mappingReferenceDetails, current = mappingReferenceOwnerCurrent;
+      const ownedFocus = document.activeElement === referenceRetry;
+      mappingReferenceRetrying = true;
+      try { await details.load(); }
+      finally {
+        if (current() && mappingReferenceDetails === details) {
+          mappingReferenceRetrying = false;
+          paintMappingReferenceDetails();
+          if (ownedFocus && (document.activeElement === referenceRetry || document.activeElement === document.body)) {
+            (referenceRetry.hidden ? viewRoot?.querySelector<HTMLElement>("[data-manage-reference-catalog]") : referenceRetry)?.focus({preventScroll: true});
+          }
+        }
+      }
+      return;
+    }
     const save = target.closest<HTMLButtonElement>("[data-save]");
     if (save?.dataset.save) {
       if (mappingScanPending || mappingSavePending.has(save.dataset.save) || save.disabled || activeView !== 'mappings' || !isAdminUser()) return;
@@ -11146,7 +11329,16 @@ function bindViewEvents() {
     }
     updateLocalMapping(id, patch);
     const row = target.closest("tr");
-    if (row) row.classList.add("dirty");
+    if (row) {
+      row.classList.add("dirty");
+      if (field === "target_key") {
+        const review = row.querySelector<HTMLSelectElement>('[data-field="status"]');
+        const label = row.querySelector<HTMLInputElement>('[data-field="target_label"]');
+        if (review) review.value = patch.status ?? "needs_review";
+        if (label) label.value = patch.target_label ?? "";
+      }
+    }
+    paintMappingReferenceDetails();
   });
 
   viewRoot?.addEventListener("input", (event) => {
@@ -11169,6 +11361,10 @@ function bindViewEvents() {
     if (target.id === "mapping-search") {
       mappingSearch = target.value;
       renderMappings();
+      return;
+    }
+    if (target.id === "eligibility-group-search") {
+      filterEligibilityGroups(target.value);
       return;
     }
     if (target.id === "cluster-member-search") {
@@ -11294,6 +11490,7 @@ window.addEventListener('popstate', () => {
 });
 
 function resetPrivateSessionView() {
+  resetMappingReferenceDetails();
   disposeRotaRulesPage();
   disposeLimitsPage();
   sessionRecoveryObserver?.disconnect();
@@ -11427,3 +11624,13 @@ window.addEventListener('duty-rota:session-expired', () => {
 });
 
 void boot().finally(markFrontendReady);
+
+installListPagination();
+document.addEventListener("change", event => {
+  const select = event.target as HTMLSelectElement;
+  const tableId = select.dataset?.pageSize;
+  if (!tableId || ![10, 20, 30].includes(Number(select.value))) return;
+  tablePageSizes[tableId] = Number(select.value);
+  setPage(tableId, 0);
+  refreshAnalysisTabContent();
+});

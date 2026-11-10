@@ -1,0 +1,715 @@
+{
+  "recorded_at_utc": "2026-11-10T04:13:08.328Z",
+  "author": "/root/leave159_nondelete_groundwork",
+  "operator": "/root when actually executed",
+  "execution_target": "fresh applied V13r2 source5197",
+  "application_changed_by_test": false,
+  "source_sha256": {
+    "frontend/src/main.ts": "ebf67f1733f620e406054d0c4a82cf1c203fd0e6603a843eec45b25a1a09df4d",
+    "frontend/src/member-workspace.ts": "506c486046fe6f0bbea5c6c4bf6357fec6e9649d91a9ed1ed890551ed3503cca",
+    "frontend/src/operational-import.ts": "01d58023203380fedcee010cd3001b8e2bb478397144566ef92142a515a14b38",
+    "frontend/src/record-workspace.ts": "20b50cdbd991b5b5a16d06b51020be2838514a553823512373818f65636427aa",
+    "frontend/src/reference-workspace.ts": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd",
+    "frontend/src/extra-duty.ts": "529e420fc05ce5bfa42655b8863e449e09e22a7c0abe9baf4db5c94c4797b8c3"
+  },
+  "candidate_sha256": {
+    "frontend/src/main.ts": "ebf67f1733f620e406054d0c4a82cf1c203fd0e6603a843eec45b25a1a09df4d",
+    "frontend/src/member-workspace.ts": "506c486046fe6f0bbea5c6c4bf6357fec6e9649d91a9ed1ed890551ed3503cca",
+    "frontend/src/operational-import.ts": "01d58023203380fedcee010cd3001b8e2bb478397144566ef92142a515a14b38",
+    "frontend/src/record-workspace.ts": "20b50cdbd991b5b5a16d06b51020be2838514a553823512373818f65636427aa",
+    "frontend/src/reference-workspace.ts": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd"
+  },
+  "test_sha256": "9313f2b14adae8670d04195f8c696ebd7ed84d04aa255246ca67f64c31adba74",
+  "scope": "42 bounded contexts: 36 Chromium/Firefox/WebKit320/1280 direct reviewed record save alone, nested accepted unit/member then own save, profile nested unit+editor save deferred to final profile close, Use Existing then discard with zero mutation/root refresh, accepted unit+record followed by parent503 and Enter GET-only retry. Six additional Chromium320/1280 route/month/account-expired nested-reference owners reject late close refresh. All actual controls, local non-GETs and RAM-only remaining reads. Existing token/body values checked and exact one accepted record save/no replay; settings/fallback nodes/order/filters retained.",
+  "limits": [
+    "Author has not run browsers; a generated report is evidence only when root actually executes this frozen file.",
+    "Owner scenarios supersede owner while outer editor is open, then close; they do not cover an already-inflight parent read resolving after supersession.",
+    "Owner navigation deliberately bypasses modal inert background via actual location/storage/month events to test lifetime ownership.",
+    "Only parent month503 injected; independent full fallback GET failure/malformed read and profile replacement Next/Retry are separate gates.",
+    "No physical-device/native assistive technology or full original159 acceptance."
+  ],
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "scenario": "owner-route",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "afterSteering": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "after": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "body": {
+            "name": "Royal Chain New",
+            "campus": "Main",
+            "code": "CNEW",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "call_minimums": []
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code",
+          "search": "?name=Royal%20Chain%20New&campus="
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "scenario": "owner-month",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "afterSteering": {
+        "unitReads": 2,
+        "fbReads": 2
+      },
+      "after": {
+        "unitReads": 2,
+        "fbReads": 2
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "body": {
+            "name": "Royal Chain New",
+            "campus": "Main",
+            "code": "CNEW",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "call_minimums": []
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code",
+          "search": "?name=Royal%20Chain%20New&campus="
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-12"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-12"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "scenario": "owner-account",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "afterSteering": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "after": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "body": {
+            "name": "Royal Chain New",
+            "campus": "Main",
+            "code": "CNEW",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "call_minimums": []
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code",
+          "search": "?name=Royal%20Chain%20New&campus="
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "scenario": "owner-route",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "afterSteering": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "after": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "body": {
+            "name": "Royal Chain New",
+            "campus": "Main",
+            "code": "CNEW",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "call_minimums": []
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code",
+          "search": "?name=Royal%20Chain%20New&campus="
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "scenario": "owner-month",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "afterSteering": {
+        "unitReads": 2,
+        "fbReads": 2
+      },
+      "after": {
+        "unitReads": 2,
+        "fbReads": 2
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "body": {
+            "name": "Royal Chain New",
+            "campus": "Main",
+            "code": "CNEW",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "call_minimums": []
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code",
+          "search": "?name=Royal%20Chain%20New&campus="
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-12"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-12"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "scenario": "owner-account",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "afterSteering": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "after": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "body": {
+            "name": "Royal Chain New",
+            "campus": "Main",
+            "code": "CNEW",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "call_minimums": []
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code",
+          "search": "?name=Royal%20Chain%20New&campus="
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        }
+      ],
+      "errors": []
+    }
+  ]
+}

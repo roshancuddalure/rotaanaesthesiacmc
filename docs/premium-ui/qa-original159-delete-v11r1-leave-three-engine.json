@@ -1,0 +1,4937 @@
+{
+  "recorded_at_utc": "2026-11-09T17:16:21.399Z",
+  "operator": "/root",
+  "author": "/root/delete159_groundwork",
+  "application_changed": false,
+  "candidate_sha256": "45743fb64260289e50526480572bf25e33d8dc1a69f83397286660a03951cfba",
+  "source_sha256": {
+    "frontend/src/main.ts": "9f5359ad9e8014098bc12c8ed3f9e1c6b1a06d1a4f92797b7f9da24bfba6e6b8",
+    "frontend/src/member-workspace.ts": "105cc1d91ea4815d565ad4859fc01412cf576a3203c07834f4010e3fef7ef1a5",
+    "frontend/src/admin-delete.ts": "7a3eb13237272ad8b44f523bea5483ebeae60fc9c8b58d92035fe15c74528979",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+  },
+  "test_sha256": "dce491084dfc5bc650d80ce3a860316b749b33e04980baa294617b9084b303e9",
+  "scope": "36 three-engine candidate contexts: real Leave row/card, selected and month delete at320/1280, normal and one post-confirm requestsGET503 with keyboard GET-only retry. Two actual leave identities; row deletion preserves unrelated selected ID, selected deletes precisely selected target, month legitimately clears both. Day list control and pressure disclosure nodes/open state retained. Both existing POSTs local; remaining GETs RAM8031 only. No browser execution by author.",
+  "limits": [
+    "Chromium only; no Firefox/WebKit/physical-device/native AT claim.",
+    "503 injected only in requests endpoint; malformed/wrong-month/calendar/pressure failure and route/month/account races are separate.",
+    "Readback replaces record rows by design; identity assertions cover surviving Day list control and pressure container, not deleted record controls.",
+    "This test does not establish all original159 mutation families or broader Leave approval/cancellation behavior."
+  ],
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "entry": "row",
+      "failure": "none",
+      "passed": true,
+      "before": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "after": {
+        "calendar": 2,
+        "requests": 2,
+        "pressure": 2
+      },
+      "observed": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [
+          "leave-delete-other",
+          "leave-delete-other"
+        ],
+        "targetControls": 0,
+        "otherControls": 2,
+        "context": "November 2026 · 1 leave record for 1 person"
+      },
+      "failedObserved": null,
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ]
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ],
+            "preview_token": "leave-delete-local-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "entry": "row",
+      "failure": "requests503",
+      "passed": true,
+      "before": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "after": {
+        "calendar": 3,
+        "requests": 3,
+        "pressure": 3
+      },
+      "observed": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [
+          "leave-delete-other",
+          "leave-delete-other"
+        ],
+        "targetControls": 0,
+        "otherControls": 2,
+        "context": "November 2026 · 1 leave record for 1 person"
+      },
+      "failedObserved": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [
+          "leave-delete-other",
+          "leave-delete-other"
+        ],
+        "targetControls": 2,
+        "otherControls": 2,
+        "context": "November 2026 · 2 leave records for 2 people"
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ]
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ],
+            "preview_token": "leave-delete-local-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "entry": "selected",
+      "failure": "none",
+      "passed": true,
+      "before": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "after": {
+        "calendar": 2,
+        "requests": 2,
+        "pressure": 2
+      },
+      "observed": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [],
+        "targetControls": 0,
+        "otherControls": 2,
+        "context": "November 2026 · 1 leave record for 1 person"
+      },
+      "failedObserved": null,
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ]
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ],
+            "preview_token": "leave-delete-local-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "entry": "selected",
+      "failure": "requests503",
+      "passed": true,
+      "before": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "after": {
+        "calendar": 3,
+        "requests": 3,
+        "pressure": 3
+      },
+      "observed": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [],
+        "targetControls": 0,
+        "otherControls": 2,
+        "context": "November 2026 · 1 leave record for 1 person"
+      },
+      "failedObserved": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [],
+        "targetControls": 2,
+        "otherControls": 2,
+        "context": "November 2026 · 2 leave records for 2 people"
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ]
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ],
+            "preview_token": "leave-delete-local-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "entry": "month",
+      "failure": "none",
+      "passed": true,
+      "before": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "after": {
+        "calendar": 2,
+        "requests": 2,
+        "pressure": 2
+      },
+      "observed": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [],
+        "targetControls": 0,
+        "otherControls": 0,
+        "context": "November 2026 · 0 leave records for 0 people"
+      },
+      "failedObserved": null,
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "leave",
+            "month": "2026-11"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "leave",
+            "month": "2026-11",
+            "preview_token": "leave-delete-local-token",
+            "confirm_phrase": "DELETE LEAVE NOVEMBER 2026"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "entry": "month",
+      "failure": "requests503",
+      "passed": true,
+      "before": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "after": {
+        "calendar": 3,
+        "requests": 3,
+        "pressure": 3
+      },
+      "observed": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [],
+        "targetControls": 0,
+        "otherControls": 0,
+        "context": "November 2026 · 0 leave records for 0 people"
+      },
+      "failedObserved": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [],
+        "targetControls": 2,
+        "otherControls": 2,
+        "context": "November 2026 · 2 leave records for 2 people"
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "leave",
+            "month": "2026-11"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "leave",
+            "month": "2026-11",
+            "preview_token": "leave-delete-local-token",
+            "confirm_phrase": "DELETE LEAVE NOVEMBER 2026"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "entry": "row",
+      "failure": "none",
+      "passed": true,
+      "before": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "after": {
+        "calendar": 2,
+        "requests": 2,
+        "pressure": 2
+      },
+      "observed": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [
+          "leave-delete-other",
+          "leave-delete-other"
+        ],
+        "targetControls": 0,
+        "otherControls": 2,
+        "context": "November 2026 · 1 leave record for 1 person"
+      },
+      "failedObserved": null,
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ]
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ],
+            "preview_token": "leave-delete-local-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "entry": "row",
+      "failure": "requests503",
+      "passed": true,
+      "before": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "after": {
+        "calendar": 3,
+        "requests": 3,
+        "pressure": 3
+      },
+      "observed": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [
+          "leave-delete-other",
+          "leave-delete-other"
+        ],
+        "targetControls": 0,
+        "otherControls": 2,
+        "context": "November 2026 · 1 leave record for 1 person"
+      },
+      "failedObserved": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [
+          "leave-delete-other",
+          "leave-delete-other"
+        ],
+        "targetControls": 2,
+        "otherControls": 2,
+        "context": "November 2026 · 2 leave records for 2 people"
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ]
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ],
+            "preview_token": "leave-delete-local-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "entry": "selected",
+      "failure": "none",
+      "passed": true,
+      "before": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "after": {
+        "calendar": 2,
+        "requests": 2,
+        "pressure": 2
+      },
+      "observed": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [],
+        "targetControls": 0,
+        "otherControls": 2,
+        "context": "November 2026 · 1 leave record for 1 person"
+      },
+      "failedObserved": null,
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ]
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ],
+            "preview_token": "leave-delete-local-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "entry": "selected",
+      "failure": "requests503",
+      "passed": true,
+      "before": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "after": {
+        "calendar": 3,
+        "requests": 3,
+        "pressure": 3
+      },
+      "observed": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [],
+        "targetControls": 0,
+        "otherControls": 2,
+        "context": "November 2026 · 1 leave record for 1 person"
+      },
+      "failedObserved": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [],
+        "targetControls": 2,
+        "otherControls": 2,
+        "context": "November 2026 · 2 leave records for 2 people"
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ]
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ],
+            "preview_token": "leave-delete-local-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "entry": "month",
+      "failure": "none",
+      "passed": true,
+      "before": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "after": {
+        "calendar": 2,
+        "requests": 2,
+        "pressure": 2
+      },
+      "observed": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [],
+        "targetControls": 0,
+        "otherControls": 0,
+        "context": "November 2026 · 0 leave records for 0 people"
+      },
+      "failedObserved": null,
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "leave",
+            "month": "2026-11"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "leave",
+            "month": "2026-11",
+            "preview_token": "leave-delete-local-token",
+            "confirm_phrase": "DELETE LEAVE NOVEMBER 2026"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "entry": "month",
+      "failure": "requests503",
+      "passed": true,
+      "before": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "after": {
+        "calendar": 3,
+        "requests": 3,
+        "pressure": 3
+      },
+      "observed": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [],
+        "targetControls": 0,
+        "otherControls": 0,
+        "context": "November 2026 · 0 leave records for 0 people"
+      },
+      "failedObserved": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [],
+        "targetControls": 2,
+        "otherControls": 2,
+        "context": "November 2026 · 2 leave records for 2 people"
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "leave",
+            "month": "2026-11"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "leave",
+            "month": "2026-11",
+            "preview_token": "leave-delete-local-token",
+            "confirm_phrase": "DELETE LEAVE NOVEMBER 2026"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "entry": "row",
+      "failure": "none",
+      "passed": true,
+      "before": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "after": {
+        "calendar": 2,
+        "requests": 2,
+        "pressure": 2
+      },
+      "observed": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [
+          "leave-delete-other",
+          "leave-delete-other"
+        ],
+        "targetControls": 0,
+        "otherControls": 2,
+        "context": "November 2026 · 1 leave record for 1 person"
+      },
+      "failedObserved": null,
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ]
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ],
+            "preview_token": "leave-delete-local-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "entry": "row",
+      "failure": "requests503",
+      "passed": true,
+      "before": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "after": {
+        "calendar": 3,
+        "requests": 3,
+        "pressure": 3
+      },
+      "observed": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [
+          "leave-delete-other",
+          "leave-delete-other"
+        ],
+        "targetControls": 0,
+        "otherControls": 2,
+        "context": "November 2026 · 1 leave record for 1 person"
+      },
+      "failedObserved": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [
+          "leave-delete-other",
+          "leave-delete-other"
+        ],
+        "targetControls": 2,
+        "otherControls": 2,
+        "context": "November 2026 · 2 leave records for 2 people"
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ]
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ],
+            "preview_token": "leave-delete-local-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "entry": "selected",
+      "failure": "none",
+      "passed": true,
+      "before": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "after": {
+        "calendar": 2,
+        "requests": 2,
+        "pressure": 2
+      },
+      "observed": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [],
+        "targetControls": 0,
+        "otherControls": 2,
+        "context": "November 2026 · 1 leave record for 1 person"
+      },
+      "failedObserved": null,
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ]
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ],
+            "preview_token": "leave-delete-local-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "entry": "selected",
+      "failure": "requests503",
+      "passed": true,
+      "before": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "after": {
+        "calendar": 3,
+        "requests": 3,
+        "pressure": 3
+      },
+      "observed": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [],
+        "targetControls": 0,
+        "otherControls": 2,
+        "context": "November 2026 · 1 leave record for 1 person"
+      },
+      "failedObserved": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [],
+        "targetControls": 2,
+        "otherControls": 2,
+        "context": "November 2026 · 2 leave records for 2 people"
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ]
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ],
+            "preview_token": "leave-delete-local-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "entry": "month",
+      "failure": "none",
+      "passed": true,
+      "before": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "after": {
+        "calendar": 2,
+        "requests": 2,
+        "pressure": 2
+      },
+      "observed": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [],
+        "targetControls": 0,
+        "otherControls": 0,
+        "context": "November 2026 · 0 leave records for 0 people"
+      },
+      "failedObserved": null,
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "leave",
+            "month": "2026-11"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "leave",
+            "month": "2026-11",
+            "preview_token": "leave-delete-local-token",
+            "confirm_phrase": "DELETE LEAVE NOVEMBER 2026"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "entry": "month",
+      "failure": "requests503",
+      "passed": true,
+      "before": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "after": {
+        "calendar": 3,
+        "requests": 3,
+        "pressure": 3
+      },
+      "observed": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [],
+        "targetControls": 0,
+        "otherControls": 0,
+        "context": "November 2026 · 0 leave records for 0 people"
+      },
+      "failedObserved": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [],
+        "targetControls": 2,
+        "otherControls": 2,
+        "context": "November 2026 · 2 leave records for 2 people"
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "leave",
+            "month": "2026-11"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "leave",
+            "month": "2026-11",
+            "preview_token": "leave-delete-local-token",
+            "confirm_phrase": "DELETE LEAVE NOVEMBER 2026"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "entry": "row",
+      "failure": "none",
+      "passed": true,
+      "before": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "after": {
+        "calendar": 2,
+        "requests": 2,
+        "pressure": 2
+      },
+      "observed": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [
+          "leave-delete-other",
+          "leave-delete-other"
+        ],
+        "targetControls": 0,
+        "otherControls": 2,
+        "context": "November 2026 · 1 leave record for 1 person"
+      },
+      "failedObserved": null,
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ]
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ],
+            "preview_token": "leave-delete-local-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "entry": "row",
+      "failure": "requests503",
+      "passed": true,
+      "before": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "after": {
+        "calendar": 3,
+        "requests": 3,
+        "pressure": 3
+      },
+      "observed": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [
+          "leave-delete-other",
+          "leave-delete-other"
+        ],
+        "targetControls": 0,
+        "otherControls": 2,
+        "context": "November 2026 · 1 leave record for 1 person"
+      },
+      "failedObserved": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [
+          "leave-delete-other",
+          "leave-delete-other"
+        ],
+        "targetControls": 2,
+        "otherControls": 2,
+        "context": "November 2026 · 2 leave records for 2 people"
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ]
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ],
+            "preview_token": "leave-delete-local-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "entry": "selected",
+      "failure": "none",
+      "passed": true,
+      "before": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "after": {
+        "calendar": 2,
+        "requests": 2,
+        "pressure": 2
+      },
+      "observed": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [],
+        "targetControls": 0,
+        "otherControls": 2,
+        "context": "November 2026 · 1 leave record for 1 person"
+      },
+      "failedObserved": null,
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ]
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ],
+            "preview_token": "leave-delete-local-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "entry": "selected",
+      "failure": "requests503",
+      "passed": true,
+      "before": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "after": {
+        "calendar": 3,
+        "requests": 3,
+        "pressure": 3
+      },
+      "observed": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [],
+        "targetControls": 0,
+        "otherControls": 2,
+        "context": "November 2026 · 1 leave record for 1 person"
+      },
+      "failedObserved": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [],
+        "targetControls": 2,
+        "otherControls": 2,
+        "context": "November 2026 · 2 leave records for 2 people"
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ]
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ],
+            "preview_token": "leave-delete-local-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "entry": "month",
+      "failure": "none",
+      "passed": true,
+      "before": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "after": {
+        "calendar": 2,
+        "requests": 2,
+        "pressure": 2
+      },
+      "observed": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [],
+        "targetControls": 0,
+        "otherControls": 0,
+        "context": "November 2026 · 0 leave records for 0 people"
+      },
+      "failedObserved": null,
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "leave",
+            "month": "2026-11"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "leave",
+            "month": "2026-11",
+            "preview_token": "leave-delete-local-token",
+            "confirm_phrase": "DELETE LEAVE NOVEMBER 2026"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "entry": "month",
+      "failure": "requests503",
+      "passed": true,
+      "before": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "after": {
+        "calendar": 3,
+        "requests": 3,
+        "pressure": 3
+      },
+      "observed": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [],
+        "targetControls": 0,
+        "otherControls": 0,
+        "context": "November 2026 · 0 leave records for 0 people"
+      },
+      "failedObserved": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [],
+        "targetControls": 2,
+        "otherControls": 2,
+        "context": "November 2026 · 2 leave records for 2 people"
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "leave",
+            "month": "2026-11"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "leave",
+            "month": "2026-11",
+            "preview_token": "leave-delete-local-token",
+            "confirm_phrase": "DELETE LEAVE NOVEMBER 2026"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "entry": "row",
+      "failure": "none",
+      "passed": true,
+      "before": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "after": {
+        "calendar": 2,
+        "requests": 2,
+        "pressure": 2
+      },
+      "observed": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [
+          "leave-delete-other",
+          "leave-delete-other"
+        ],
+        "targetControls": 0,
+        "otherControls": 2,
+        "context": "November 2026 · 1 leave record for 1 person"
+      },
+      "failedObserved": null,
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ]
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ],
+            "preview_token": "leave-delete-local-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "entry": "row",
+      "failure": "requests503",
+      "passed": true,
+      "before": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "after": {
+        "calendar": 3,
+        "requests": 3,
+        "pressure": 3
+      },
+      "observed": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [
+          "leave-delete-other",
+          "leave-delete-other"
+        ],
+        "targetControls": 0,
+        "otherControls": 2,
+        "context": "November 2026 · 1 leave record for 1 person"
+      },
+      "failedObserved": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [
+          "leave-delete-other",
+          "leave-delete-other"
+        ],
+        "targetControls": 2,
+        "otherControls": 2,
+        "context": "November 2026 · 2 leave records for 2 people"
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ]
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ],
+            "preview_token": "leave-delete-local-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "entry": "selected",
+      "failure": "none",
+      "passed": true,
+      "before": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "after": {
+        "calendar": 2,
+        "requests": 2,
+        "pressure": 2
+      },
+      "observed": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [],
+        "targetControls": 0,
+        "otherControls": 2,
+        "context": "November 2026 · 1 leave record for 1 person"
+      },
+      "failedObserved": null,
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ]
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ],
+            "preview_token": "leave-delete-local-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "entry": "selected",
+      "failure": "requests503",
+      "passed": true,
+      "before": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "after": {
+        "calendar": 3,
+        "requests": 3,
+        "pressure": 3
+      },
+      "observed": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [],
+        "targetControls": 0,
+        "otherControls": 2,
+        "context": "November 2026 · 1 leave record for 1 person"
+      },
+      "failedObserved": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [],
+        "targetControls": 2,
+        "otherControls": 2,
+        "context": "November 2026 · 2 leave records for 2 people"
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ]
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ],
+            "preview_token": "leave-delete-local-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "entry": "month",
+      "failure": "none",
+      "passed": true,
+      "before": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "after": {
+        "calendar": 2,
+        "requests": 2,
+        "pressure": 2
+      },
+      "observed": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [],
+        "targetControls": 0,
+        "otherControls": 0,
+        "context": "November 2026 · 0 leave records for 0 people"
+      },
+      "failedObserved": null,
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "leave",
+            "month": "2026-11"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "leave",
+            "month": "2026-11",
+            "preview_token": "leave-delete-local-token",
+            "confirm_phrase": "DELETE LEAVE NOVEMBER 2026"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "entry": "month",
+      "failure": "requests503",
+      "passed": true,
+      "before": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "after": {
+        "calendar": 3,
+        "requests": 3,
+        "pressure": 3
+      },
+      "observed": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [],
+        "targetControls": 0,
+        "otherControls": 0,
+        "context": "November 2026 · 0 leave records for 0 people"
+      },
+      "failedObserved": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [],
+        "targetControls": 2,
+        "otherControls": 2,
+        "context": "November 2026 · 2 leave records for 2 people"
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "leave",
+            "month": "2026-11"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "leave",
+            "month": "2026-11",
+            "preview_token": "leave-delete-local-token",
+            "confirm_phrase": "DELETE LEAVE NOVEMBER 2026"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "entry": "row",
+      "failure": "none",
+      "passed": true,
+      "before": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "after": {
+        "calendar": 2,
+        "requests": 2,
+        "pressure": 2
+      },
+      "observed": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [
+          "leave-delete-other",
+          "leave-delete-other"
+        ],
+        "targetControls": 0,
+        "otherControls": 2,
+        "context": "November 2026 · 1 leave record for 1 person"
+      },
+      "failedObserved": null,
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ]
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ],
+            "preview_token": "leave-delete-local-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "entry": "row",
+      "failure": "requests503",
+      "passed": true,
+      "before": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "after": {
+        "calendar": 3,
+        "requests": 3,
+        "pressure": 3
+      },
+      "observed": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [
+          "leave-delete-other",
+          "leave-delete-other"
+        ],
+        "targetControls": 0,
+        "otherControls": 2,
+        "context": "November 2026 · 1 leave record for 1 person"
+      },
+      "failedObserved": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [
+          "leave-delete-other",
+          "leave-delete-other"
+        ],
+        "targetControls": 2,
+        "otherControls": 2,
+        "context": "November 2026 · 2 leave records for 2 people"
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ]
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ],
+            "preview_token": "leave-delete-local-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "entry": "selected",
+      "failure": "none",
+      "passed": true,
+      "before": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "after": {
+        "calendar": 2,
+        "requests": 2,
+        "pressure": 2
+      },
+      "observed": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [],
+        "targetControls": 0,
+        "otherControls": 2,
+        "context": "November 2026 · 1 leave record for 1 person"
+      },
+      "failedObserved": null,
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ]
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ],
+            "preview_token": "leave-delete-local-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "entry": "selected",
+      "failure": "requests503",
+      "passed": true,
+      "before": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "after": {
+        "calendar": 3,
+        "requests": 3,
+        "pressure": 3
+      },
+      "observed": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [],
+        "targetControls": 0,
+        "otherControls": 2,
+        "context": "November 2026 · 1 leave record for 1 person"
+      },
+      "failedObserved": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [],
+        "targetControls": 2,
+        "otherControls": 2,
+        "context": "November 2026 · 2 leave records for 2 people"
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ]
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "leave",
+            "ids": [
+              "leave-delete-target"
+            ],
+            "preview_token": "leave-delete-local-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "entry": "month",
+      "failure": "none",
+      "passed": true,
+      "before": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "after": {
+        "calendar": 2,
+        "requests": 2,
+        "pressure": 2
+      },
+      "observed": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [],
+        "targetControls": 0,
+        "otherControls": 0,
+        "context": "November 2026 · 0 leave records for 0 people"
+      },
+      "failedObserved": null,
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "leave",
+            "month": "2026-11"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "leave",
+            "month": "2026-11",
+            "preview_token": "leave-delete-local-token",
+            "confirm_phrase": "DELETE LEAVE NOVEMBER 2026"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "entry": "month",
+      "failure": "requests503",
+      "passed": true,
+      "before": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "after": {
+        "calendar": 3,
+        "requests": 3,
+        "pressure": 3
+      },
+      "observed": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [],
+        "targetControls": 0,
+        "otherControls": 0,
+        "context": "November 2026 · 0 leave records for 0 people"
+      },
+      "failedObserved": {
+        "dayList": "true",
+        "dayControlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "selected": [],
+        "targetControls": 2,
+        "otherControls": 2,
+        "context": "November 2026 · 2 leave records for 2 people"
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "body": {
+            "kind": "leave",
+            "month": "2026-11"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "body": {
+            "kind": "leave",
+            "month": "2026-11",
+            "preview_token": "leave-delete-local-token",
+            "confirm_phrase": "DELETE LEAVE NOVEMBER 2026"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/delete",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    }
+  ]
+}

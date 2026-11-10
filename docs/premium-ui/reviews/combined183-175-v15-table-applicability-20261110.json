@@ -1,0 +1,21 @@
+{
+  "recorded_at_utc": "2026-11-10T08:43:13.612574+00:00",
+  "reviewer": "/root",
+  "scope": "Refresh all61 current AST table bindings; no classification/mobile semantic decision changed. This is table applicability, not wholeitem runtime acceptance.",
+  "changes": [
+    {
+      "source": "frontend/src/main.ts",
+      "ordinal": 18,
+      "owner": "renderCallClusters",
+      "before": "<table>",
+      "after": "<table id=\"eligibility-group-results\">"
+    }
+  ],
+  "all_owners_and_counts_exact": true,
+  "all_semantic_mobile_decisions_exact": true,
+  "explanation": "Existing eligibility record-list table receives id solely for new search aria-controls. Columns/actions/record order stay unchanged; two staffing scroll-container attributes are outside table opening literals.",
+  "evidence_sha256": {
+    "tmp/combined183-175-v15-table-inventory-before/table-surface-inventory.json": "d4509af0aa77a34b8de2eae09c4cc3293782b40310891fc469bfd7fe01e0e4fa",
+    "docs/premium-ui/table-surface-inventory.json": "e0fba662aabd8c18f274b4673e39d98f9c5004a92b430aac65e74b17bf3a1a73"
+  }
+}

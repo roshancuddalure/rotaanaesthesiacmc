@@ -1,0 +1,153 @@
+{
+  "recorded_at_utc": "2026-11-10T07:53:50.388604+00:00",
+  "reviewer": "/root/generation174_harness_repair",
+  "item_id": 174,
+  "role_disclosure": "I authored the R1 harness repair. This is post-execution analysis by its author, not an independent test-author review or root execution attestation. A different reviewer must assess the frozen evidence before independent signoff.",
+  "product_edited": false,
+  "browser_executed_by_reviewer": false,
+  "ledger_edited": false,
+  "artifact_sha256": {
+    "docs/premium-ui/qa-original174-reflow-recovery-current-r1-20261110.json": "162d044b600997d243da36ff9f2c210626bfb5ecdcc154beb09921f9340287dd",
+    "docs/premium-ui/reviews/original174-condition-inventory-20261110.json": "5e948b5b621e306148050aadbf30df6b3917051c5b4607316831528e0a749818",
+    "docs/premium-ui/reviews/frontend-build-snapshot-original031-numeric-v2.json": "b15c4f92aff6f1d894d2a6b515f3992c59964c78c5071201e29c92502e2d825a",
+    "frontend/tests/premium-original174-reflow-recovery-current-r1.browser.mjs": "8cf8ec88509adbbcee29a5879625bb50dd75c6e5f8b90462bcd449457c111e8c",
+    "docs/premium-ui/reviews/original174-harness-r1-handoff-20261110.json": "230cfe4d8cffafe087b1ecb0f2ae112bcbb78d646724041bad33c41cb0206556",
+    "docs/premium-ui/reviews/original174-independent-requirement-perspective-20261110.json": "93174f6e41f67ad35d09f05841ac4a457f85c18ff710deaf9c3a40a39b6e4540",
+    "tmp/original174-reflow-recovery-r1.log": "745e10279b2b753bc8021183dd9b632d0eba04632f4f2ef360b3517bd814ffb3",
+    "docs/premium-ui/qa-original174-reflow-recovery-current-r1-smoke-20261110.json": "6639527b7ad1145b5ddf6536d6a7b4d4ab16b48bbe01f4052d0eb77fb53634ca",
+    "tmp/original174-reflow-recovery-r1-smoke.log": "260b7670a0d5120f874f82f17a69de2a747f91f7a5a693154f0b49f2e51e34b8"
+  },
+  "exact_condition_assessment": [
+    {
+      "condition": "Set nondefault locks, repair scope and preferences; resize through mobile and desktop layouts and verify the selections remain identical.",
+      "assessment": "Supported at the frozen executed source snapshot.",
+      "proof": "Nine contexts configure simultaneous distinct lock-a/repair-b, repair mode, budget60, committed repair-b/person-b/Avoid100 preference, and separate unsent spare-c/person-a/Prefer-100 row. Every context traverses1280/320/768/1280 with identical controls, including27 actual resize snapshots preserving lock/repair node identity. All51 control snapshots equal expectedControls and show no page/dialog overflow. Actual exact jobs payload contains committed preference only, excluding the distinct unadded row."
+    },
+    {
+      "condition": "Inject a recoverable frontend failure and recover without resetting those choices or changing the eventual request payload.",
+      "assessment": "Supported at frozen snapshot for the two concrete recoverable errors tested.",
+      "proof": "Each engine pairs baseline with first capabilitiesGET503 then explicit Generate retry, and a separate one-shot synchronous AbortSignal.timeout(15000) construction throw then explicit retry. Both errors appear in live status with all controls unchanged. All six recovery payloads equal the independently specified expected body and their same-engine baseline. Each context creates one locally fulfilled proposal and validates once. Test asserts zero jobs/validation before retry and zero capability transport before the frontend exception."
+    }
+  ],
+  "summary": {
+    "full_contexts": 9,
+    "baseline": 3,
+    "capability503_recovery": 3,
+    "frontend_construction_exception_recovery": 3,
+    "control_snapshots": 51,
+    "resize_node_identity_snapshots": 27,
+    "paired_recovery_payloads_equal_baseline": 6,
+    "jobs_create_posts_locally_fulfilled": 9,
+    "validation_posts_locally_fulfilled": 9,
+    "apply_requests": 0,
+    "gpu_step_requests": 0
+  },
+  "context_checks": [
+    {
+      "engine": "chromium",
+      "scenario": "baseline",
+      "identical_control_snapshots": 5,
+      "identical_eventual_payload_to_expected_and_paired_baseline": true,
+      "only_permitted_fixture_requests": true,
+      "no_uncaught_errors_or_page_dialog_overflow": true
+    },
+    {
+      "engine": "chromium",
+      "scenario": "capabilities503",
+      "identical_control_snapshots": 6,
+      "identical_eventual_payload_to_expected_and_paired_baseline": true,
+      "only_permitted_fixture_requests": true,
+      "no_uncaught_errors_or_page_dialog_overflow": true
+    },
+    {
+      "engine": "chromium",
+      "scenario": "frontend-timeout-error",
+      "identical_control_snapshots": 6,
+      "identical_eventual_payload_to_expected_and_paired_baseline": true,
+      "only_permitted_fixture_requests": true,
+      "no_uncaught_errors_or_page_dialog_overflow": true
+    },
+    {
+      "engine": "firefox",
+      "scenario": "baseline",
+      "identical_control_snapshots": 5,
+      "identical_eventual_payload_to_expected_and_paired_baseline": true,
+      "only_permitted_fixture_requests": true,
+      "no_uncaught_errors_or_page_dialog_overflow": true
+    },
+    {
+      "engine": "firefox",
+      "scenario": "capabilities503",
+      "identical_control_snapshots": 6,
+      "identical_eventual_payload_to_expected_and_paired_baseline": true,
+      "only_permitted_fixture_requests": true,
+      "no_uncaught_errors_or_page_dialog_overflow": true
+    },
+    {
+      "engine": "firefox",
+      "scenario": "frontend-timeout-error",
+      "identical_control_snapshots": 6,
+      "identical_eventual_payload_to_expected_and_paired_baseline": true,
+      "only_permitted_fixture_requests": true,
+      "no_uncaught_errors_or_page_dialog_overflow": true
+    },
+    {
+      "engine": "webkit",
+      "scenario": "baseline",
+      "identical_control_snapshots": 5,
+      "identical_eventual_payload_to_expected_and_paired_baseline": true,
+      "only_permitted_fixture_requests": true,
+      "no_uncaught_errors_or_page_dialog_overflow": true
+    },
+    {
+      "engine": "webkit",
+      "scenario": "capabilities503",
+      "identical_control_snapshots": 6,
+      "identical_eventual_payload_to_expected_and_paired_baseline": true,
+      "only_permitted_fixture_requests": true,
+      "no_uncaught_errors_or_page_dialog_overflow": true
+    },
+    {
+      "engine": "webkit",
+      "scenario": "frontend-timeout-error",
+      "identical_control_snapshots": 6,
+      "identical_eventual_payload_to_expected_and_paired_baseline": true,
+      "only_permitted_fixture_requests": true,
+      "no_uncaught_errors_or_page_dialog_overflow": true
+    }
+  ],
+  "build_applicability": {
+    "frozen_snapshot_path": "docs/premium-ui/reviews/frontend-build-snapshot-original031-numeric-v2.json",
+    "sha256": "b15c4f92aff6f1d894d2a6b515f3992c59964c78c5071201e29c92502e2d825a",
+    "build_exit_code": 0,
+    "recorded_build_inputs_unchanged_during_build": true,
+    "all15_executed_runtime_held_source_hashes_exact_in_frozen_build": true,
+    "build_input_count": 70,
+    "changed_current_inputs_at_review": {
+      "frontend/src/record-workspace.ts": {
+        "at_build_sha256": "20b50cdbd991b5b5a16d06b51020be2838514a553823512373818f65636427aa",
+        "at_review_sha256": "75589574417ed6f6287e625392417d3776411a8e7ef413a940e33915e57a6c33"
+      },
+      "frontend/src/reference-workspace.ts": {
+        "at_build_sha256": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd",
+        "at_review_sha256": "91133b6913c3e7c5a493bbf19436ca06ba5ad9d1813a13974c70d0d6473a434a"
+      }
+    },
+    "qualification": "The executed evidence exactly matches the frozen numericV2 successful build for all15 held runtime source hashes. Current product changed concurrently after execution; do not claim full current-build applicability from this frozen evidence. Assess/rebuild changed inputs and dependency applicability before current acceptance.",
+    "runtime_mode": "Actual Vite-served source with source-map/direct-CSS hash guards. These contexts did not execute bundled dist assets."
+  },
+  "boundary_analysis": [
+    "Frontend exception is a synchronous AbortSignal.timeout construction failure in computeRequest before request transport; action catches it, displays status and finally rerenders. It is not an elapsed network timeout or global unhandled exception.",
+    "Capabilities503 is a read failure handled before proposal creation; recovery does not replay an uncertain mutation.",
+    "Fixture invokes actual exported openIntelligentRota, shared workspaceDialog and actual CSS. Role/admin and API responses are fixture-controlled.",
+    "All recorded API traffic is setup/recent/capability GETs and locally fulfilled jobs-create/validate POSTs. Unlisted routes are rejected; exact engine is server; no Apply or step requests occur. This does not execute backend policy or real GPU."
+  ],
+  "limitations": [
+    "Not independent of test authorship; separate reviewer needed.",
+    "Concurrent record-workspace/reference-workspace changes mean current full-build applicability is not proven here.",
+    "Physical-device/nativeAT checks remain pending; browser emulation only.",
+    "No full-app launcher, scheduling quality, backend authorization/policy, real GPU, reload/crash/conflict/new-workspace persistence or universal error guarantee.",
+    "No ledger mutation or completion claim for other requirements."
+  ],
+  "prior_failed_run_disposition": "Original nine cases failed on an impossible locator before configured state; immutable original failure remains. R1 fixes harness only and produces actual configured-state evidence."
+}

@@ -2860,12 +2860,12 @@ def render_html(data: dict[str, Any]) -> str:
 # =========================================================================== XLSX rendering
 
 
-def render_xlsx(data: dict[str, Any]) -> bytes:
+def render_xlsx(data: dict[str, Any], *, workbook: Any = None) -> bytes:
     """Render the report as an Excel workbook (sheets in contract order)."""
     import xlsxwriter
 
     output = BytesIO()
-    wb = xlsxwriter.Workbook(output, {"in_memory": True, "strings_to_formulas": False, "strings_to_urls": False})
+    wb = workbook or xlsxwriter.Workbook(output, {"in_memory": True, "strings_to_formulas": False, "strings_to_urls": False})
     wb.set_properties({"title": f"{REPORT_TITLE} {data['meta'].get('month', '')}", "company": DEPARTMENT_NAME,
                        "comments": f"data fingerprint {data['meta'].get('data_fingerprint')}"})
     NAVY, CRIMSON = "#0F1E36", "#B42335"
@@ -3364,5 +3364,6 @@ def render_xlsx(data: dict[str, Any]) -> bytes:
     ]:
         guarded(name, key, fn)
     wb.worksheets()[0].activate()
-    wb.close()
+    if workbook is None:
+        wb.close()
     return output.getvalue()

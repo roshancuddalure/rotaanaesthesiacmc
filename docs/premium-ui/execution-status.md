@@ -1,3 +1,51 @@
+## Group search accepted; combined frontend checkpoint verified — 10 November 2026
+
+59 of260 accepted:14 documentary+45 runtime. Original183 now meets search/date presentation and unchanged existing API normalization/date/group eligibility conditions. Twelve real RAM baseline/candidate contexts yield six exact pairs; rich UI12 and applied reflow/recovery6 checks preserve drafts and avoid duplicate writes. Independent component review and root exact composition/source bridge support final acceptance.
+
+The combined search, CSV-result profile refresh and sticky comparison dates are applied.84 fresh application browser cases,114 unit tests and source-held production build pass. All58 previous scoped acceptances revalidated; table61 classifications unchanged. The new59 review archive and all payload/source/dist hashes are verified through review-build-current.json. The bundle-size warning remains recorded. No deployment or backend operation. Rules181 category edited markers remain stale after edits/live validation; isolated repair is prepared. Original175/159 and overall260 remain incomplete; physical/nativeAT checks pending.
+
+Earlier checkpoint sections retain historical status and next steps.
+
+## Catalog recovery verified and generator state accepted — 10 November 2026
+
+58 of260 requirements accepted:14 documentary and44 runtime. Original174 is accepted after nine three-engine generator module-fixture scenarios,51 exact state snapshots and six recovered payload comparisons. Locks, repair selections, committed preferences and the unsent row survive responsive reflow and tested setup failures. An independent source/build bridge covers the concurrent two-function catalog edits. No actual solver, Apply or GPU step was run.
+
+Catalog recovery is applied in record/reference workspaces.56 fresh applied checks verify save/readback/Close, GET-only retry, callback-error escape and delayed owned focus.114 unit tests and held production build passed. All57 previous scoped acceptances revalidated with unchanged table/form shapes and semantic/mobile decisions; original159 remains partial. The consolidated58 review archive is sealed and hash-verified through review-build-current.json. Eligibility-group search/saved dates remain isolated:12 initial and12 strengthened presentation checks plus12 real RAM API baseline/candidate contexts pass; independent final review is pending. Physical-device and native AT checks remain pending.
+
+Earlier sections below retain historical checkpoint claims and next steps.
+
+## Numeric typography accepted and nested refresh integrated — 10 November 2026
+
+57 of260 requirements are accepted:14documentary and43runtime. Numeric item31 now satisfies its exact two conditions: global inherited tabular feature request across classified HTML families, verified actual computed typography and unchanged values in all six requested categories.252 passing probes span twelve engine/width/theme combinations; one interruptedFirefox compute-dialog case was rerun unchanged and its original rawfailure retained.48fresh mounted-state profile-tab/header/import/proposal cases and held production build pass. All56prior exact acceptances revalidate through an independent112condition CSS-applicability review; historical228pairedroute observations retain their original source attribution and a markup/style bridge. NativeOSpicker/glyph-shaping/physical/nativeAT limits remain explicit.
+
+Nested-reference V13r2 is applied in four frontend modules: accepted unit/member/profile changes propagate to the existing outer owner before fallible child work, and final close refreshes dependent views even when outer Save/Apply is canceled.120passing scenario instances come from138actually executed contexts; sourceguard/timing failures and obsolete tests remain separately recorded, never relabelled.114unit tests and source-held build pass. API bodies, permissions, scheduling, persisted semantics and exports remain unchanged. Whole159 remains partial for catalog and other inventoried gaps.
+
+The catalog candidate remains isolated: focus loss and permanent callback-error escape must be repaired and verified. The current57checkpoint is review-only; no production, commit,push or deployment operation. Consolidated package integrity is a separate gate.
+
+## Leave decision retained-view checkpoint — 10 November 2026
+
+Cancellation and monthly approval now refresh the retained Leave view after accepted current-owner responses. Existing native confirmation, request bodies, review token, duty acknowledgement, counts, timeouts and persisted semantics remain unchanged. Accepted cancellation controls become disabled while the last-known snapshot remains; cosmetic marking failure is independent of the recovery notification.
+
+48 fresh applied browser scenarios pass, plus114 unit tests and held production build.24 span Chromium/Firefox/WebKit320/1280 normal and accepted-write requests503 recovery with keyboard GET-only retry.24 Chromium contexts cover duty acknowledgement, fresh review tokens after preview/approval failures, refusal, mutation failure, injected cosmetic fault, delayed accepted mutation and in-flight parent GET superseded by route/month/account. No duplicate accepted write follows a read retry. All56 prior scoped acceptances revalidate; original159 remains partial. Earlier wrong-badge/hidden-innerText harness failures and test-endhash mismatch remain explicitly excluded from acceptance.
+
+Nested-reference V13r1 is isolated, not applied: six editor-discard candidate scenarios pass;42 actual CSV preview paths are being run. Numeric item31 remains isolated. Physical-device/native assistive-technology checks remain pending. No backend, production, commit, push or deployment operation.
+
+## Profile core retained-parent checkpoint — 9 November 2026
+
+Member-core V12 is applied: accepted core PUT and merge POST notify the existing parent lifecycle before child cloning or rendering can fail. Final profile close refreshes the retained Units or Leave view without discarding drafts. Request bodies, paths, serialization, permissions and persisted semantics remain unchanged.
+
+Fresh applied evidence:86 browser scenarios,114 unit tests and a source-held production build.48 contexts cover normal/GET-failure saves and merges across Chromium,Firefox and WebKit at320/1280.38 Chromium contexts cover owner supersession before final close, child clone faults after accepted writes, coalescing, unconfirmed edits and Leave Next/Retry. The raw Next/Retry descriptive scope overstates engine/Unit coverage; actual rows are six Chromium Leave contexts. No in-flight parent GET race claim follows from the owner supplement. Historical failures and aborted harness runs remain separate.
+
+All56 previously scoped acceptances revalidate. Item159 and the full260 remain incomplete; nested references and reachable nondelete Leave actions are next. Numeric item31 remains an isolated candidate with252 passed probes, not an applied or accepted change. Physical-device and native assistive-technology checks remain pending.
+
+## Deletion retained-parent checkpoint — 9 November 2026
+
+Delete V11r1 is applied and verified:102 fresh browser contexts,114 unit tests and held build.90 contexts span Chromium/Firefox/WebKit at320/1280 for normal/GET503 posting deletion, wrong-month/malformed200 recovery, Leave row/selected/month deletion and dirty unit-settings retention.12 Chromium contexts cover delayed accepted responses after route/month/account replacement, newer surviving search focus, removed board focus and preview cancellation. Candidate102 and applied102 are separate executions. All56 scoped acceptances revalidate; original159 remains partial for member-core, nested-reference and other nondelete Leave families.
+
+Only runAdminDelete changes. Existing preview/deletion token/phrase requests, target selection semantics and account/view/root/month guard remain. Confirmed posting/Leave deletion refreshes the retained parent; selected checkboxes/counts sync immediately, including failed GET. Retry reads never replay accepted deletion. Member callback, shared controllers and render functions stay byte-exact;37 table and14 form literals and100 color-anchor text groups remain unchanged with explicit offsets. Initial18actual baseline draftloss cases and failed focus harness4 remain preserved; corrected12focus cases pass. No backend/API/permission/scheduling/persistence/export semantics, production, commit, push or deployment operation.
+
+The current programme has56 accepted requirements,202 partial,one native assistive-technology check pending andone physical-device dependency. The dated older checkpoints retain their historical counts and status. Numeric-typography item31 now has an independent six-category source map and prepared diagnostic only; no runtime acceptance follows from that preparation.
+
 ## Registry retained-reference checkpoint — 9 November 2026
 
 Registry V10r4 is applied and verified:106 fresh browser contexts,114 unit tests and held build.78 contexts cover13 registry paths across Chromium/Firefox/WebKit at320/1280;28 Chromium contexts cover close-time expired owners, native/dirty/busy close, delayed focus recovery and direct/profile/import shared callers. Candidate106 and applied106 are separate runs. Accepted registry changes refresh retained labels, accessible names and complete new-owner choices after final close; unrelated fallback orders/control nodes and filters survive. Valid primary board data renders when optional references fail, with truthful GET-only recovery. New choices do not retain the old empty placeholder as a real unit.

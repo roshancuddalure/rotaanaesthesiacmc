@@ -1,0 +1,2712 @@
+{
+  "recorded_at_utc": "2026-11-09T17:58:25.373Z",
+  "author": "/root/leave159_nondelete_groundwork",
+  "operator": "/root when actually executed",
+  "execution_target": "isolated V1r2 source overlay",
+  "candidate_sha256": "15b79223710a53a9e0ccdd70373a92e568f6ee603f56e3747454ab25ac258cc0",
+  "source_sha256": {
+    "frontend/src/main.ts": "45743fb64260289e50526480572bf25e33d8dc1a69f83397286660a03951cfba",
+    "frontend/src/leave-approval.ts": "42e5a47751ae081d1b97108209c7a2b53272985251d153aa065f7718f43e544f",
+    "frontend/src/member-workspace.ts": "88774f277131a1ed83174d288d882653fc04add295b8237fefa62636e08617ea",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+  },
+  "test_sha256": "6175dd73d7243dfa87518e8d6845f960508a7e98a9196de8a52fbe8dd332a79b",
+  "application_changed_by_test": false,
+  "scope": "24 isolated V1r2 contexts: cancellation and monthly approval, normal and accepted-write requestsGET503 with keyboard GET-only retry, three engines at320/1280. Local writes only; remaining GETs RAM8031. Checks unrelated selection, existing Day list/pressure controls, disclosure, stale last-known records, exact read counts excluding initial, both returned status presentations, accepted cancellation controls not replayable, and one mutation only.",
+  "limits": [
+    "Author has not executed this test.",
+    "This does not prove every original159 family.",
+    "No physical-device or native assistive-technology checks.",
+    "Monthly approval uses no affected duties; existing duty acknowledgement coverage remains separate."
+  ],
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "action": "cancel",
+      "failure": "none",
+      "passed": true,
+      "observed": {
+        "controlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": true,
+        "status": "Saved changes are reflected in this view.Refresh saved changes"
+      },
+      "failedObserved": null,
+      "statusCopies": [
+        "Cancelled",
+        "Cancelled"
+      ],
+      "initialReads": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "parentReads": {
+        "calendar": 2,
+        "requests": 2,
+        "pressure": 2
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/nondelete-leave-target/cancel",
+          "body": {}
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "action": "cancel",
+      "failure": "requests503",
+      "passed": true,
+      "observed": {
+        "controlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": true,
+        "status": "Saved changes are reflected in this view.Refresh saved changes"
+      },
+      "failedObserved": {
+        "controlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": true,
+        "status": "Changes are saved, but this view could not refresh. Local confirmed-decision readback failure Previously loaded information may be out of date.Refresh saved changes"
+      },
+      "statusCopies": [
+        "Cancelled",
+        "Cancelled"
+      ],
+      "initialReads": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "parentReads": {
+        "calendar": 3,
+        "requests": 3,
+        "pressure": 3
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/nondelete-leave-target/cancel",
+          "body": {}
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "action": "approve-month",
+      "failure": "none",
+      "passed": true,
+      "observed": {
+        "controlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": true,
+        "status": "Saved changes are reflected in this view.Refresh saved changes"
+      },
+      "failedObserved": null,
+      "statusCopies": [
+        "Approved",
+        "Approved"
+      ],
+      "initialReads": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "parentReads": {
+        "calendar": 2,
+        "requests": 2,
+        "pressure": 2
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approval-preview",
+          "body": {
+            "month": "2026-11"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approve-month",
+          "body": {
+            "month": "2026-11",
+            "review_token": "nondelete-review-token",
+            "acknowledge_duties": false
+          }
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "action": "approve-month",
+      "failure": "requests503",
+      "passed": true,
+      "observed": {
+        "controlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": true,
+        "status": "Saved changes are reflected in this view.Refresh saved changes"
+      },
+      "failedObserved": {
+        "controlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": true,
+        "status": "Changes are saved, but this view could not refresh. Local confirmed-decision readback failure Previously loaded information may be out of date.Refresh saved changes"
+      },
+      "statusCopies": [
+        "Approved",
+        "Approved"
+      ],
+      "initialReads": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "parentReads": {
+        "calendar": 3,
+        "requests": 3,
+        "pressure": 3
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approval-preview",
+          "body": {
+            "month": "2026-11"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approve-month",
+          "body": {
+            "month": "2026-11",
+            "review_token": "nondelete-review-token",
+            "acknowledge_duties": false
+          }
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "action": "cancel",
+      "failure": "none",
+      "passed": true,
+      "observed": {
+        "controlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": true,
+        "status": "Saved changes are reflected in this view.Refresh saved changes"
+      },
+      "failedObserved": null,
+      "statusCopies": [
+        "Cancelled",
+        "Cancelled"
+      ],
+      "initialReads": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "parentReads": {
+        "calendar": 2,
+        "requests": 2,
+        "pressure": 2
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/nondelete-leave-target/cancel",
+          "body": {}
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "action": "cancel",
+      "failure": "requests503",
+      "passed": true,
+      "observed": {
+        "controlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": true,
+        "status": "Saved changes are reflected in this view.Refresh saved changes"
+      },
+      "failedObserved": {
+        "controlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": true,
+        "status": "Changes are saved, but this view could not refresh. Local confirmed-decision readback failure Previously loaded information may be out of date.Refresh saved changes"
+      },
+      "statusCopies": [
+        "Cancelled",
+        "Cancelled"
+      ],
+      "initialReads": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "parentReads": {
+        "calendar": 3,
+        "requests": 3,
+        "pressure": 3
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/nondelete-leave-target/cancel",
+          "body": {}
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "action": "approve-month",
+      "failure": "none",
+      "passed": true,
+      "observed": {
+        "controlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": true,
+        "status": "Saved changes are reflected in this view.Refresh saved changes"
+      },
+      "failedObserved": null,
+      "statusCopies": [
+        "Approved",
+        "Approved"
+      ],
+      "initialReads": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "parentReads": {
+        "calendar": 2,
+        "requests": 2,
+        "pressure": 2
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approval-preview",
+          "body": {
+            "month": "2026-11"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approve-month",
+          "body": {
+            "month": "2026-11",
+            "review_token": "nondelete-review-token",
+            "acknowledge_duties": false
+          }
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "action": "approve-month",
+      "failure": "requests503",
+      "passed": true,
+      "observed": {
+        "controlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": true,
+        "status": "Saved changes are reflected in this view.Refresh saved changes"
+      },
+      "failedObserved": {
+        "controlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": true,
+        "status": "Changes are saved, but this view could not refresh. Local confirmed-decision readback failure Previously loaded information may be out of date.Refresh saved changes"
+      },
+      "statusCopies": [
+        "Approved",
+        "Approved"
+      ],
+      "initialReads": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "parentReads": {
+        "calendar": 3,
+        "requests": 3,
+        "pressure": 3
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approval-preview",
+          "body": {
+            "month": "2026-11"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approve-month",
+          "body": {
+            "month": "2026-11",
+            "review_token": "nondelete-review-token",
+            "acknowledge_duties": false
+          }
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "action": "cancel",
+      "failure": "none",
+      "passed": true,
+      "observed": {
+        "controlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": true,
+        "status": "Saved changes are reflected in this view.Refresh saved changes"
+      },
+      "failedObserved": null,
+      "statusCopies": [
+        "Cancelled",
+        "Cancelled"
+      ],
+      "initialReads": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "parentReads": {
+        "calendar": 2,
+        "requests": 2,
+        "pressure": 2
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/nondelete-leave-target/cancel",
+          "body": {}
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "action": "cancel",
+      "failure": "requests503",
+      "passed": true,
+      "observed": {
+        "controlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": true,
+        "status": "Saved changes are reflected in this view.Refresh saved changes"
+      },
+      "failedObserved": {
+        "controlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": true,
+        "status": "Changes are saved, but this view could not refresh. Local confirmed-decision readback failure Previously loaded information may be out of date.Refresh saved changes"
+      },
+      "statusCopies": [
+        "Cancelled",
+        "Cancelled"
+      ],
+      "initialReads": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "parentReads": {
+        "calendar": 3,
+        "requests": 3,
+        "pressure": 3
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/nondelete-leave-target/cancel",
+          "body": {}
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "action": "approve-month",
+      "failure": "none",
+      "passed": true,
+      "observed": {
+        "controlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": true,
+        "status": "Saved changes are reflected in this view.Refresh saved changes"
+      },
+      "failedObserved": null,
+      "statusCopies": [
+        "Approved",
+        "Approved"
+      ],
+      "initialReads": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "parentReads": {
+        "calendar": 2,
+        "requests": 2,
+        "pressure": 2
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approval-preview",
+          "body": {
+            "month": "2026-11"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approve-month",
+          "body": {
+            "month": "2026-11",
+            "review_token": "nondelete-review-token",
+            "acknowledge_duties": false
+          }
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "action": "approve-month",
+      "failure": "requests503",
+      "passed": true,
+      "observed": {
+        "controlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": true,
+        "status": "Saved changes are reflected in this view.Refresh saved changes"
+      },
+      "failedObserved": {
+        "controlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": true,
+        "status": "Changes are saved, but this view could not refresh. Local confirmed-decision readback failure Previously loaded information may be out of date.Refresh saved changes"
+      },
+      "statusCopies": [
+        "Approved",
+        "Approved"
+      ],
+      "initialReads": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "parentReads": {
+        "calendar": 3,
+        "requests": 3,
+        "pressure": 3
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approval-preview",
+          "body": {
+            "month": "2026-11"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approve-month",
+          "body": {
+            "month": "2026-11",
+            "review_token": "nondelete-review-token",
+            "acknowledge_duties": false
+          }
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "action": "cancel",
+      "failure": "none",
+      "passed": true,
+      "observed": {
+        "controlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": true,
+        "status": "Saved changes are reflected in this view.Refresh saved changes"
+      },
+      "failedObserved": null,
+      "statusCopies": [
+        "Cancelled",
+        "Cancelled"
+      ],
+      "initialReads": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "parentReads": {
+        "calendar": 2,
+        "requests": 2,
+        "pressure": 2
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/nondelete-leave-target/cancel",
+          "body": {}
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "action": "cancel",
+      "failure": "requests503",
+      "passed": true,
+      "observed": {
+        "controlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": true,
+        "status": "Saved changes are reflected in this view.Refresh saved changes"
+      },
+      "failedObserved": {
+        "controlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": true,
+        "status": "Changes are saved, but this view could not refresh. Local confirmed-decision readback failure Previously loaded information may be out of date.Refresh saved changes"
+      },
+      "statusCopies": [
+        "Cancelled",
+        "Cancelled"
+      ],
+      "initialReads": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "parentReads": {
+        "calendar": 3,
+        "requests": 3,
+        "pressure": 3
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/nondelete-leave-target/cancel",
+          "body": {}
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "action": "approve-month",
+      "failure": "none",
+      "passed": true,
+      "observed": {
+        "controlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": true,
+        "status": "Saved changes are reflected in this view.Refresh saved changes"
+      },
+      "failedObserved": null,
+      "statusCopies": [
+        "Approved",
+        "Approved"
+      ],
+      "initialReads": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "parentReads": {
+        "calendar": 2,
+        "requests": 2,
+        "pressure": 2
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approval-preview",
+          "body": {
+            "month": "2026-11"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approve-month",
+          "body": {
+            "month": "2026-11",
+            "review_token": "nondelete-review-token",
+            "acknowledge_duties": false
+          }
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "action": "approve-month",
+      "failure": "requests503",
+      "passed": true,
+      "observed": {
+        "controlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": true,
+        "status": "Saved changes are reflected in this view.Refresh saved changes"
+      },
+      "failedObserved": {
+        "controlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": true,
+        "status": "Changes are saved, but this view could not refresh. Local confirmed-decision readback failure Previously loaded information may be out of date.Refresh saved changes"
+      },
+      "statusCopies": [
+        "Approved",
+        "Approved"
+      ],
+      "initialReads": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "parentReads": {
+        "calendar": 3,
+        "requests": 3,
+        "pressure": 3
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approval-preview",
+          "body": {
+            "month": "2026-11"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approve-month",
+          "body": {
+            "month": "2026-11",
+            "review_token": "nondelete-review-token",
+            "acknowledge_duties": false
+          }
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "action": "cancel",
+      "failure": "none",
+      "passed": true,
+      "observed": {
+        "controlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": true,
+        "status": "Saved changes are reflected in this view.Refresh saved changes"
+      },
+      "failedObserved": null,
+      "statusCopies": [
+        "Cancelled",
+        "Cancelled"
+      ],
+      "initialReads": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "parentReads": {
+        "calendar": 2,
+        "requests": 2,
+        "pressure": 2
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/nondelete-leave-target/cancel",
+          "body": {}
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "action": "cancel",
+      "failure": "requests503",
+      "passed": true,
+      "observed": {
+        "controlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": true,
+        "status": "Saved changes are reflected in this view.Refresh saved changes"
+      },
+      "failedObserved": {
+        "controlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": true,
+        "status": "Changes are saved, but this view could not refresh. Local confirmed-decision readback failure Previously loaded information may be out of date.Refresh saved changes"
+      },
+      "statusCopies": [
+        "Cancelled",
+        "Cancelled"
+      ],
+      "initialReads": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "parentReads": {
+        "calendar": 3,
+        "requests": 3,
+        "pressure": 3
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/nondelete-leave-target/cancel",
+          "body": {}
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "action": "approve-month",
+      "failure": "none",
+      "passed": true,
+      "observed": {
+        "controlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": true,
+        "status": "Saved changes are reflected in this view.Refresh saved changes"
+      },
+      "failedObserved": null,
+      "statusCopies": [
+        "Approved",
+        "Approved"
+      ],
+      "initialReads": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "parentReads": {
+        "calendar": 2,
+        "requests": 2,
+        "pressure": 2
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approval-preview",
+          "body": {
+            "month": "2026-11"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approve-month",
+          "body": {
+            "month": "2026-11",
+            "review_token": "nondelete-review-token",
+            "acknowledge_duties": false
+          }
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "action": "approve-month",
+      "failure": "requests503",
+      "passed": true,
+      "observed": {
+        "controlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": true,
+        "status": "Saved changes are reflected in this view.Refresh saved changes"
+      },
+      "failedObserved": {
+        "controlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": true,
+        "status": "Changes are saved, but this view could not refresh. Local confirmed-decision readback failure Previously loaded information may be out of date.Refresh saved changes"
+      },
+      "statusCopies": [
+        "Approved",
+        "Approved"
+      ],
+      "initialReads": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "parentReads": {
+        "calendar": 3,
+        "requests": 3,
+        "pressure": 3
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approval-preview",
+          "body": {
+            "month": "2026-11"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approve-month",
+          "body": {
+            "month": "2026-11",
+            "review_token": "nondelete-review-token",
+            "acknowledge_duties": false
+          }
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "action": "cancel",
+      "failure": "none",
+      "passed": true,
+      "observed": {
+        "controlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": true,
+        "status": "Saved changes are reflected in this view.Refresh saved changes"
+      },
+      "failedObserved": null,
+      "statusCopies": [
+        "Cancelled",
+        "Cancelled"
+      ],
+      "initialReads": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "parentReads": {
+        "calendar": 2,
+        "requests": 2,
+        "pressure": 2
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/nondelete-leave-target/cancel",
+          "body": {}
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "action": "cancel",
+      "failure": "requests503",
+      "passed": true,
+      "observed": {
+        "controlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": true,
+        "status": "Saved changes are reflected in this view.Refresh saved changes"
+      },
+      "failedObserved": {
+        "controlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": true,
+        "status": "Changes are saved, but this view could not refresh. Local confirmed-decision readback failure Previously loaded information may be out of date.Refresh saved changes"
+      },
+      "statusCopies": [
+        "Cancelled",
+        "Cancelled"
+      ],
+      "initialReads": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "parentReads": {
+        "calendar": 3,
+        "requests": 3,
+        "pressure": 3
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/nondelete-leave-target/cancel",
+          "body": {}
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "action": "approve-month",
+      "failure": "none",
+      "passed": true,
+      "observed": {
+        "controlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": true,
+        "status": "Saved changes are reflected in this view.Refresh saved changes"
+      },
+      "failedObserved": null,
+      "statusCopies": [
+        "Approved",
+        "Approved"
+      ],
+      "initialReads": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "parentReads": {
+        "calendar": 2,
+        "requests": 2,
+        "pressure": 2
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approval-preview",
+          "body": {
+            "month": "2026-11"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approve-month",
+          "body": {
+            "month": "2026-11",
+            "review_token": "nondelete-review-token",
+            "acknowledge_duties": false
+          }
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "action": "approve-month",
+      "failure": "requests503",
+      "passed": true,
+      "observed": {
+        "controlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": true,
+        "status": "Saved changes are reflected in this view.Refresh saved changes"
+      },
+      "failedObserved": {
+        "controlRetained": true,
+        "pressureRetained": true,
+        "pressureOpen": true,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": true,
+        "status": "Changes are saved, but this view could not refresh. Local confirmed-decision readback failure Previously loaded information may be out of date.Refresh saved changes"
+      },
+      "statusCopies": [
+        "Approved",
+        "Approved"
+      ],
+      "initialReads": {
+        "calendar": 1,
+        "requests": 1,
+        "pressure": 1
+      },
+      "parentReads": {
+        "calendar": 3,
+        "requests": 3,
+        "pressure": 3
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approval-preview",
+          "body": {
+            "month": "2026-11"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approve-month",
+          "body": {
+            "month": "2026-11",
+            "review_token": "nondelete-review-token",
+            "acknowledge_duties": false
+          }
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    }
+  ]
+}

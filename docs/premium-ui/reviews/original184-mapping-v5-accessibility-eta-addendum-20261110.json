@@ -1,0 +1,40 @@
+{
+  "recorded_at_utc": "2026-11-10T10:16:46.809965+00:00",
+  "operator": "/root",
+  "scope": "18 additional automated accessibility mapping contexts and two progress-window ETA/recovery contexts. No whole-requirement acceptance increment.",
+  "source_sha256": {
+    "frontend/src/main.ts": "2b013209784a58b1cee8d8a778131c1d132b5041a378e03753e6abb504d55ce6",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "d01cccff66209792a1336061a8ada822d350387ac9b5076dee0fe9b2ccd0aa57"
+  },
+  "checks": {
+    "mapping_accessibility_contexts": 18,
+    "zero_axe_violations": true,
+    "tags": [
+      "wcag2a",
+      "wcag2aa",
+      "wcag21a",
+      "wcag21aa"
+    ],
+    "scoped_to": "#view-root",
+    "progress_widths": [
+      320,
+      1280
+    ],
+    "progress_503_preserves_estimate_and_recovers": true,
+    "accepted_requirements_revalidated": 59
+  },
+  "evidence_sha256": {
+    "docs/premium-ui/qa-original184-mapping-v5-accessibility-20261110.json": "c9295cfc934c73d229c949c379eacf9a098b8212dba867fd5b53d03849770cc6",
+    "frontend/tests/premium-original184-mapping-v5-accessibility-20261110.browser.mjs": "9e364838936c900e34a3c10bb6925c48ae9c74279fc62387c08b4afc8dc982ab",
+    "tmp/progress-eta-check.json": "7e4b6e44830223cd91171b1ca2fab9bcc2246c520c4a95b8c2dd37b7d888edd2",
+    "tmp/check_progress_eta.mjs": "e1dc17c08eb7cffebda6390a8ee159bada55b25d604f77d9aae064161b756c04",
+    "docs/premium-ui/reviews/original184-mapping-v5-prior59-applicability-20261110.json": "126eb259301fc4ab650a826dafbb25118d6dc31d10c64a4e40119f7543bc5836"
+  },
+  "limitations": [
+    "Automated accessibility is scoped to the mounted mapping fixture, not native assistive technology or all routes.",
+    "The estimate is a low-confidence manual scope allowance, not measured throughput or a guaranteed finish date.",
+    "Exact mapping184 and rules181 independent reviews remain pending. Physical-device checks remain pending; browser emulation is approved."
+  ]
+}

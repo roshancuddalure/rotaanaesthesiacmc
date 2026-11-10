@@ -1,0 +1,119 @@
+{
+  "recorded_at_utc": "2026-11-09T17:52:11.808221+00:00",
+  "author": "/root/nestedreference159_groundwork",
+  "decision": "Isolated implementation design only; no product changes or browser executions. Requires source revalidation and runtime proof before integration.",
+  "source_sha256": {
+    "frontend/src/main.ts": "45743fb64260289e50526480572bf25e33d8dc1a69f83397286660a03951cfba",
+    "frontend/src/member-workspace.ts": "88774f277131a1ed83174d288d882653fc04add295b8237fefa62636e08617ea",
+    "frontend/src/operational-import.ts": "1ccbcf4181330a5f66c59b0723ec02f878a268b6b3030aa99b177de1b7070355",
+    "frontend/src/record-workspace.ts": "469fd6bf2e4118b15ad343d8059cd3cfb0acbc6483bea969ca5fb93488644335",
+    "frontend/src/reference-workspace.ts": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd",
+    "frontend/src/extra-duty.ts": "529e420fc05ce5bfa42655b8863e449e09e22a7c0abe9baf4db5c94c4797b8c3"
+  },
+  "minimal_shared_signal": "type NestedReferenceChange = Readonly<{entity: \"unit\" | \"member\"; operation: \"save\" | \"create\" | \"restore\" | \"merge\"; id?: string}>; This is frontend invalidation metadata only, not an API request body. UnitRegistry existing confirmed() can map to {entity:\"unit\",operation:\"save\"} without inventing IDs.",
+  "ordered_changes": [
+    {
+      "file": "reference-workspace.ts",
+      "change": "Reuse existing optional UnitRegistryParentLifecycle accepted confirmed() hook at line493. Do not change its transport or legacy saved(unit). Registry closed supplied by enclosing editor/import is a no-op: the enclosing popup remains the refresh owner. Accepted POST/PUT then child readback failure still confirms before GET."
+    },
+    {
+      "file": "operational-import.ts:createMemberInline",
+      "change": "Add optional third argument confirmed(change). Immediately after awaited POST /api/v1/admin/members resolves, invoke it inside isolated constant-warning try/catch BEFORE alive() guard and before close()/done(). Do not notify from Use existing member path. Keep done() semantics unchanged. For Review/restore profile, forward actual confirmed member mutation metadata through an optional profile reference notification adapter; never infer mutation from successful candidate lookup or profile open."
+    },
+    {
+      "file": "operational-import.ts:OperationalImportLifecycle",
+      "change": "Add optional referenceConfirmed(change) alongside current required accepted-Apply confirmed({kind,month,batchId}) and closed(). Do not fake a batchId or call Apply-confirmed for a nested reference mutation. Nested unit registry fourth argument confirmed forwards referenceConfirmed; closed is no-op. Nested new-member third callback forwards referenceConfirmed. Existing actual Apply notification stays unchanged; final importer explicit/native close is already idempotent."
+    },
+    {
+      "file": "record-workspace.ts:openRecordEditor",
+      "change": "Add optional seventh RecordEditorParentLifecycle argument: {confirmed():void; referenceConfirmed(change):void; closed():void}. Notify confirmed() immediately after existing record-save POST resolves and before dirty=false/close. Add guarded idempotent closed notification from actual explicit/native close. Forward nested registry accepted confirmed to referenceConfirmed with child closed no-op; forward actual member POST via new optional createMemberInline callback. Existing draft edits/options/legacy saved() remain. No optional lifecycle means previous caller behavior."
+    },
+    {
+      "file": "main.ts:direct record caller",
+      "change": "Supply one existing retained parent lifecycle as seventh argument. Own record accepted confirmed and nested referenceConfirmed both mark this same owner changed. Final editor close only calls closed. In existing saved callback, return if supplied retained lifecycle exists; otherwise preserve previous full-render fallback. This replaces its current confirmed()+closed() pair, avoiding two reads after accepted nested reference plus later accepted posting."
+    },
+    {
+      "file": "main.ts:normalized import caller",
+      "change": "Keep existing Apply confirmed/closed mappings. Add referenceConfirmed adapter that records entity flags and calls same importParent.confirmed(). Use truthful generic pending text such as Changes saved; this view refreshes when the import review closes, because no accepted import batch may exist."
+    },
+    {
+      "file": "main.ts:dependent reference read staging",
+      "change": "Capture original fallbackHost once with owner. Supply existing prepareReferences callback to the same lifecycle, conditional on actually confirmed unit-reference flag; use prepareUnitFallbackReadback(originalHost) only when present. This returns no-op for ordinary record/import Apply and never remounts fallback editor. Do not derive full unit membership from month-active board. Preserve current owner/latest checks and read-only retry path."
+    },
+    {
+      "file": "member-workspace.ts:nested record caller",
+      "change": "Profile is the outer owner. Forward child record accepted confirmed through existing notifyParent once and remove corresponding duplicate notification from legacy saved callback, which still refreshes profile caches/tabs. Child referenceConfirmed must be forwarded by a new optional ProfileParentLifecycle.referenceConfirmed(change), not by pretending a unit is a person record; child closed is no-op. Main openMemberWorkspaceWithParent adapts referenceConfirmed to same root owner and records complete fallback read flag. Final profile close alone calls root closed. Preserve profile Next/load-retry lifecycle replacement behavior."
+    }
+  ],
+  "member_read_scope": {
+    "observed": "Current Unit posting cards derive members from getUnitManagementMonth assignments. Record editor and import choices obtain /api/v1/admin/members themselves. A newly created unposted member need not change board counts or assignments. Global members[] also powers Members/eligibility screens, which have their own loads.",
+    "recommendation": "Propagate actual member confirmation and invalidate current parent using existing read contracts; do not fabricate an assignment or count increment. Do not automatically introduce a global member GET/DOM picker replacement without proving a retained consumer needs it. For restore/merge of already posted person, month read supplies actual returned identity data. If a retained consumer of global members is subsequently proven stale, stage and validate a members read under the same owner and update only that consumer with its draft retained.",
+    "exclusion": "No notification for read-only member selection. Do not claim creation means existing dated postings changed."
+  },
+  "before_after_sequences": [
+    {
+      "scenario": "direct record > new unit > cancel record",
+      "before": [
+        "Registry POST accepted",
+        "Only editor unit choices/draft update after registry GET",
+        "Record Cancel drops unsaved posting",
+        "Main saved never called; parent unit card/fallback choices stale"
+      ],
+      "after": [
+        "Registry POST accepted -> editor.referenceConfirmed(unit) -> owned root changed flag",
+        "Registry GET may succeed/fail independently; its close does not close root lifecycle",
+        "Record Cancel refusal leaves owner open and no read",
+        "Actual record Cancel -> idempotent root closed -> existing month GET + complete fallback GET staged",
+        "Owned current response -> partial board/modal update + reference merge, settings and fallback draft nodes/order retained"
+      ]
+    },
+    {
+      "scenario": "import > new unit > cancel import without Apply",
+      "after": [
+        "Nested registry accepted hook marks same import root changed even before its own GET",
+        "No import batch confirmed state, no Apply replay, no fake batch identity",
+        "Final importer discard confirmation accepted -> root closed once",
+        "One coalesced read refreshes actual new unit and complete fallback references"
+      ]
+    },
+    {
+      "scenario": "nested mutation then own record save",
+      "after": [
+        "Nested accepted reference -> owner changed, still open",
+        "Own posting accepted save -> same changed flag, before editor close",
+        "Actual editor close -> one refresh",
+        "Legacy saved callback performs no second root confirmation when optional lifecycle supplied"
+      ]
+    },
+    {
+      "scenario": "profile > record editor > new unit > discard editor",
+      "after": [
+        "Accepted registry notification flows editor -> profile referenceConfirmed -> same root owner changed",
+        "Registry close and record Cancel do not close root lifecycle",
+        "Profile remains interactive and its tab drafts retained",
+        "Final profile close -> root read once, unless owner superseded"
+      ]
+    },
+    {
+      "scenario": "member create then use existing comparison",
+      "after": [
+        "Actual member POST accepted -> referenceConfirmed before alive guard",
+        "Use existing -> done(member) only; zero mutation notifications",
+        "Rejected/uncertain member POST -> no confirmed hook; retain existing recovery guidance",
+        "Profile restore/merge -> actual existing accepted-write lifecycle must forward, not merely changed()/candidate callback"
+      ]
+    }
+  ],
+  "recovery_and_invariants": [
+    "Accepted child mutation followed by registry GET503 then Close must still refresh final parent; explicit retry is GET-only.",
+    "Failure of complete fallback read must preserve old references and unsaved order; existing lifecycle marks stale and offers read-only retry after its partial board update. Do not claim atomic all-or-nothing UI refresh.",
+    "Two accepted nested mutations before final close coalesce one parent read. Parent reference flag remains true until successful refresh so GET-only retry includes required references.",
+    "No mutation cancel/Use existing selection must perform zero parent refresh reads.",
+    "Check account/view/month/root/render/modal identity before DOM paint and commit closure; superseded owners cannot paint.",
+    "If original fallback host disconnected, do not bind/repaint a replacement host from stale owner.",
+    "Signal failures are isolated; constant warning contains no member names, request bodies or auth data. No write should be retried by signal catch.",
+    "Retain request methods/paths/payload expressions, confirmation semantics, persisted call-minimum behavior, permissions, exports and scheduling."
+  ],
+  "deferred_separate_family": "Catalog lifecycle is a real related source risk, but not silently included in the unit/member design. It needs separate accepted-write-before-ownGET plus actual relevant consumer mapping, because main uses static label helpers and duty catalog contains scheduling behavior. No automatic mutation or behavior transformation.",
+  "test_gate": "Run authored nested-unit-cancel diagnostic only after held browser runs finish; then extend with accepted child GET503 close, no-write cancel, member Use existing versus POST, two nested writes, nested profile, rootGET503 retry, month/route/account supersession, retained draft identity/order/filter and newer focus. Current authored diagnostic is not execution proof."
+}

@@ -1,0 +1,138 @@
+{
+  "recorded_at_utc": "2026-11-09T17:38:14.463Z",
+  "reviewer": "/root/core_v12_final_review",
+  "application_changed": false,
+  "mode": "Independent read-only integration applicability review. This script and its unique report are the only files written by this reviewer. No build or browser run.",
+  "source_sha256": {
+    "frontend/src/member-workspace.ts": "105cc1d91ea4815d565ad4859fc01412cf576a3203c07834f4010e3fef7ef1a5",
+    "tmp/member-core-parent-v12/member-workspace.ts": "88774f277131a1ed83174d288d882653fc04add295b8237fefa62636e08617ea",
+    "frontend/src/main.ts": "45743fb64260289e50526480572bf25e33d8dc1a69f83397286660a03951cfba",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+  },
+  "result": "No source blocker in the exact isolated V12 candidate. Runtime and integrated-current-source gates still required; not blanket integration approval or original159 acceptance.",
+  "independent_checks": {
+    "exact_four_edit_reversal_restores_entire_applied_module_bytes": true,
+    "changed_existing_top_level_named_functions": [
+      "openMemberWorkspace"
+    ],
+    "unchanged_existing_top_level_named_functions": [
+      "memberCallPresentation",
+      "localCalendarToday",
+      "memberDesignationPresentation",
+      "recordedDateMarkup",
+      "recordedRange",
+      "updateMemberSectionCue",
+      "revealMemberSection",
+      "memberSectionsVertical",
+      "updateMemberIdentityScroll",
+      "workspaceDialog",
+      "openMemberCsvImport"
+    ],
+    "existing_effect_expression_count": 32,
+    "existing_effect_expressions_byte_exact": true,
+    "effect_scope": "Every request including GETs, requestMultipartJSON, JSON.stringify, confirm, safeLocalStorage and localStorage call in member-workspace.",
+    "existing_template_count": 161,
+    "existing_template_expressions_byte_exact": true,
+    "notifications_before": [
+      "notifyParent({kind: \"leave\", personId: cancelledPersonId, recordId: cancelledRecordId, operation: \"cancel\"})",
+      "notifyParent({kind: savedKind, personId: savedPersonId, recordId: savedRecordId, operation: \"save\"})"
+    ],
+    "notifications_candidate": [
+      "notifyParent({kind: \"leave\", personId: cancelledPersonId, recordId: cancelledRecordId, operation: \"cancel\"})",
+      "notifyParent({kind: savedKind, personId: savedPersonId, recordId: savedRecordId, operation: \"save\"})",
+      "notifyParent({kind: \"member\", personId: id, operation: \"merge\"})",
+      "notifyParent({kind: \"member\", personId: id, operation: \"save\"})"
+    ],
+    "main_controller_bytes_unchanged": true
+  },
+  "prior_acceptance_applicability": {
+    "accepted_item_ids": [
+      10,
+      11,
+      13,
+      15,
+      18,
+      19,
+      22,
+      29,
+      34,
+      35,
+      38,
+      39,
+      101,
+      111,
+      116,
+      122,
+      123,
+      124,
+      125,
+      126,
+      127,
+      128,
+      129,
+      130,
+      131,
+      132,
+      133,
+      134,
+      135,
+      136,
+      137,
+      138,
+      139,
+      141,
+      142,
+      143,
+      144,
+      146,
+      148,
+      149,
+      150,
+      151,
+      152,
+      153,
+      154,
+      155,
+      156,
+      157,
+      158,
+      161,
+      164,
+      165,
+      166,
+      169,
+      235,
+      259
+    ],
+    "conclusion": "No accepted requirement is reopened by an identified source contradiction. Existing profile markup, error text, request expressions, forms, fields, sections, focus helpers and existing linked-record mutation branches are byte-exact after four-edit reversal. This is a narrow source bridge; the new accepted core/merge triggers deliberately exercise an existing main lifecycle that must be verified at runtime.",
+    "gate": "After candidate safety matrix and fresh applied-source tests/build pass, regenerate prior56 evidence wrappers with exact member hash, held build and AST/markup source analysis. Do not rewrite historical runtime reports, imply historical tests ran again, or accept original159 solely from this hook repair.",
+    "historical_evidence_inspected": [
+      "docs/premium-ui/reviews/original159-member-core-v12-independent-source-review.json",
+      "docs/premium-ui/reviews/original159-member-core-v12-normal-attribution.json",
+      "docs/premium-ui/reviews/original159-member-core-v12-recovery-execution.json",
+      "docs/premium-ui/reviews/original159-member-core-v12-merge-r1-execution.json"
+    ],
+    "observed_reported_runtime": "Root-attributed candidate normal12, parent503/read-only retry12, and Chromium merge4. Reports explicitly remain candidate-only and bounded; reviewer did not execute them."
+  },
+  "source_findings": [
+    "Both added notifications immediately follow resolved existing mutation requests, before structuredClone, changed callback, cache/render code. Rejected or uncertain request paths never run the hooks.",
+    "notifyParent catches callback errors and logs constant copy without response details. The hooks neither serialize data nor modify existing requests, revisions, permissions, confirmation strings or returned member semantics.",
+    "Main45743 confirmed() ignores the widened discriminated payload, invalidates only owned account cache, checks account/view/month/root/render/modal ownership, and marks changed. closed() gates deferred read; multiple accepted writes before close coalesce.",
+    "Main read failure copy says changes saved but view could not refresh. Explicit retry invokes only refresh(), not the original PUT/merge POST. Existing draft-preserving partial painting is unchanged.",
+    "Explicit/native profile closure is idempotent. Next/Previous and initial-load Retry forward the same lifecycle and suppress replacement close; failed/declined dirty closure does not notify final close.",
+    "New callbacks execute while busy for core save but only local merge button is disabled during existing merge. That pre-existing merge concurrency behavior is unchanged; no new guarantee asserted.",
+    "A merged-away source remains in the existing fixed navigation IDs. Initial-load failure is recoverable through existing controls; candidate does not change membership/navigation semantics. Test if navigating that edge is claimed."
+  ],
+  "remaining_meaningful_gates": [
+    "Ownership matrix: delayed parent reads followed by route, month, account, overlay replacement and competing newer read cannot commit obsolete returned data.",
+    "Accepted-response child transformation/render failure still refreshes after final close; rejected mutation, declined confirmation, unchanged close and failed validation emit zero confirmed parent reads.",
+    "Two accepted core saves or save plus merge while profile stays open cause no early parent read and exactly one final owned refresh.",
+    "Next/Previous replacement and initial-load Retry retain pending accepted change until actual final close; explicit/native close idempotent and refused dirty close does not release.",
+    "Fresh applied-source execution of key normal, merge, parent503 recovery and owner/fault checks, TypeScript/build and appropriate existing unit suite before integration verification is reported.",
+    "If roles/designation/base-call semantics are claimed, assert actual effective returned parent behavior rather than assuming an override rule from a different posting type."
+  ],
+  "limitations": [
+    "Initial analysis assertion included nested render function and correctly failed before writing the report. Final top-level declaration analysis intentionally excludes nested declarations; complete byte reversal still covers the entire module.",
+    "No browser or build execution by this reviewer. No current ledger or application edits. No full original159 or 260-item completion claim. Physical device and native assistive technology checks remain pending."
+  ]
+}

@@ -1,0 +1,152 @@
+{
+  "recorded_at_utc": "2026-11-10T04:12:31.454893+00:00",
+  "author": "/root/nestedreference159_groundwork",
+  "application_changed": false,
+  "browser_executed": false,
+  "criterion_source": {
+    "path": "docs/premium-ui/acceptance-criteria/items-174-260.json",
+    "sha256": "faa73e22aaeaf81c75886803908b250906fb55e85031087bb5e211aa7394dbac"
+  },
+  "item174": {
+    "item_id": 174,
+    "requirement": "Preserve locks, selected repair scope and member preferences across responsive reflow and recoverable frontend errors.",
+    "acceptance_scope": "Generation locks, repair selection and member preference controls",
+    "pass_conditions": [
+      "Set nondefault locks, repair scope and preferences; resize through mobile and desktop layouts and verify the selections remain identical.",
+      "Inject a recoverable frontend failure and recover without resetting those choices or changing the eventual request payload."
+    ],
+    "evidence_needed": [
+      "Recorded control values and request payloads before/after resize and recovery.",
+      "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+    ],
+    "existing_evidence_candidates": [
+      "docs/premium-ui/qa-intelligence-drafts.json",
+      "docs/premium-ui/qa-generation-actions-current.json"
+    ],
+    "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for generation locks, repair selection and member preference controls, then supply missing evidence against each pass condition.",
+    "procedural_exception": null
+  },
+  "decision": "Partial/unproven against exact item174 criteria. Existing source appears designed to retain selections; no current runtime defect demonstrated. Strongest next action is focused current-source resize+recoverable-error+exact-request test, not a speculative code change.",
+  "current_source_sha256": {
+    "frontend/src/rota-intelligence.ts": "bda7257a3cafdcf6c4122575cc454abb1623f27dbd13950ea1d61260a23bb79b",
+    "frontend/src/member-workspace.ts": "506c486046fe6f0bbea5c6c4bf6357fec6e9649d91a9ed1ed890551ed3503cca",
+    "frontend/src/main.ts": "ebf67f1733f620e406054d0c4a82cf1c203fd0e6603a843eec45b25a1a09df4d",
+    "frontend/src/workspace-load-state.ts": "cdd0e323d7e83e6e668a381bbfcc37cad4726b1193ac5de31d5f14e03eecd9c6",
+    "frontend/src/compute-device.ts": "c7083623b77132d2ace7d1a0a815ad457a695c9e381afcfd1aeb91af1a6d4eca",
+    "frontend/src/compute-conflict.ts": "1e69a3b0258c2da5f7588f7a6e2c6a8f26bf9130be9dd34e62e27c9431a05623",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "acc46b2249087f365ca855bcd9630628c390c4cdf013301daaee40ede80e55f4",
+    "frontend/src/frontend-runtime.ts": "45efce04e229e0bdcbc84de4c9570dd9c04877b2adb869269a6e40ff68b12a01"
+  },
+  "actual_controls": [
+    {
+      "scope": "Intelligent generator launcher",
+      "source": "main.ts:7345,10235-10251",
+      "selector": "#run-intelligent-rota",
+      "behavior": "Actual enabled launcher imports openIntelligentRota for captured rotaTemplateMonth; requires draft template with slots."
+    },
+    {
+      "scope": "Planning priority/budget",
+      "source": "rota-intelligence.ts:39,100-104,181-182",
+      "selectors": [
+        "[data-mode]",
+        "[data-seconds]"
+      ],
+      "state": "mode and seconds closure variables; render reads them; eventual jobs body includes both."
+    },
+    {
+      "scope": "Locks and selected repair scope",
+      "source": "rota-intelligence.ts:46-48,105-108,183-184",
+      "selectors": [
+        "[data-lock=\"slot-id\"]",
+        "[data-repair=\"slot-id\"]"
+      ],
+      "state": "Two closure Sets. Checking lock removes same slot from repairs; checking repair removes same slot from locks. Only slots with exactly one assigned person render repair checkbox; repair checkboxes disabled outside repair mode. These are deliberate mutual-exclusion semantics, not state-loss defects."
+    },
+    {
+      "scope": "Member preference list and unsent preference row",
+      "source": "rota-intelligence.ts:45,47,109,144-146,203-205,223",
+      "selectors": [
+        "[data-pref-slot]",
+        "[data-pref-person]",
+        "[data-pref-cost]",
+        "[data-add-preference]"
+      ],
+      "state": "Accepted local Add appends preferences array. Current unsent dropdown selection stored in preferenceDraft and restored after render. Jobs request includes committed preferences array, not unadded preferenceDraft."
+    }
+  ],
+  "retention_source_evidence": [
+    {
+      "condition": "Responsive reflow",
+      "observation": "rota-intelligence.ts has no resize handler that replaces closure state. Shared workspaceDialog handles window/visualViewport resize through fitViewport; controls should persist on CSS/geometry reflow. This is source support, not an actual before/after resize record."
+    },
+    {
+      "condition": "Internal rerenders",
+      "observation": "render checks Sets to render checked state, restores preferenceDraft dropdowns, retains mode/seconds and preferences count. Tab navigation and lock/repair actions call render; selections remain closure-owned."
+    },
+    {
+      "condition": "Recoverable action error",
+      "observation": "action(work) catch displays notice, attempts GET job refresh if job exists, then finally busy=false;render(). It does not clear repairs/locks/preferences/preferenceDraft. A capabilities GET503 before creating any job is a particularly clean read-only failure to verify retention without uncertain mutation."
+    },
+    {
+      "condition": "Final payload",
+      "observation": "Generate reads closures into POST rota-intelligence/jobs: {month,mode,seconds,engine,repair_slots:mode===repair?[...repairs]:[],locked_slots:[...locks],preferences}. Exact array membership/order must be recorded after resize and recovery; compare same selections in successful baseline and failed-then-recovered scenario."
+    },
+    {
+      "condition": "Exceptions",
+      "observation": "Conflict handoff showProposalConflict retry reopens a new workspace, so closure state is not guaranteed across conflict/reopen. Initial setup failure occurs before choices can be set. Closing/discarding intentionally ends workspace. Do not treat those as the ordinary recoverable-in-place error scenario without separately defining expected behavior."
+    }
+  ],
+  "historical_evidence": [
+    {
+      "path": "docs/premium-ui/qa-intelligence-drafts.json",
+      "sha256": "78fd9cbcf82bf5fd8483b8c266b1ad12238fdb9dc99a4da7244291b0979a9e99",
+      "reported_passed": 36,
+      "reported_scope": "Actual source modules with intercepted requests; synthetic beforeunload tests predicate only. No native exit or physical-device claim.",
+      "generation_workflows": 0,
+      "source_bindings": {
+        "frontend/src/rota-intelligence.ts": "ab0155910cd3f9cf7729154df1205bceaa21c89fa808ec0abe89374335107317",
+        "frontend/src/workspace-load-state.ts": "6e6b71134b14d499e1f292482796acbe4c57ce3066de0d5a482a9911a2cbee34",
+        "frontend/src/frontend-runtime.ts": "45efce04e229e0bdcbc84de4c9570dd9c04877b2adb869269a6e40ff68b12a01",
+        "frontend/tests/premium-intelligence-drafts.browser.mjs": "0f317b7d1ffaa40a63145e1c65ea0cfaf7df53ff8e12d80c34b1fb48c7661a17"
+      }
+    },
+    {
+      "path": "docs/premium-ui/qa-generation-actions-current.json",
+      "sha256": "ff19cde63d9710b69ddb84c250939a652045f9cf94819b121a495346979a4fba",
+      "reported_passed": null,
+      "reported_scope": null,
+      "generation_workflows": 21,
+      "source_bindings": {}
+    }
+  ],
+  "historical_coverage_assessment": [
+    "qa-intelligence-drafts36 covers fixed width320/1280 contexts, tab draft retention, close/Escape/unload predicate, teaching/calendar accepted/read failure, pending request lifetime and Apply clean baseline. It does not set nondefault locks or repairs, never resizes an already configured dialog, and never records intelligent jobs create payload after that sequence.",
+    "Its historical rota-intelligence source ab015591 differs from current bda7257a; workspace-load-state also differs. It cannot directly certify current174 without exact source applicability or fresh execution. frontend-runtime remains equal in the inspected hash.",
+    "qa-generation-actions-current includes configuration checkbox mutual exclusion and adding one default preference, plus unrelated assistant failure retry and other stages. It does not show selected lock AND a different selected repair slot surviving actual viewport transition and error, nor a jobs request body with those nondefaults. No top-level source hash binding found in that report.",
+    "Fixed mobile and desktop cases are not the same as responsive reflow of one configured open dialog. Synthetic beforeunload only tests guard predicate, not physical browser exit."
+  ],
+  "strongest_next_actual_test": {
+    "name": "item174 intelligent planning nondefault selections resize + in-place capabilities failure + exact create payload",
+    "matrix": "Chromium/Firefox/WebKit, administrator; start1280\u2192320\u2192768\u21921280 in one open dialog. Optional second inverse320\u21921280\u2192320 if root wants both directions. Emulation only.",
+    "fixture": "Actual exported openIntelligentRota with current CSS and shared workspaceDialog. Setup >=3 slots: slot-lock with one assigned member, slot-repair with one assigned member, slot-spare unassigned; >=2 people. Recent jobs GET returns []; no job proposal conflict. All API calls intercepted, no GPU: set compute preference to server using existing supported storage/API configuration, and capabilities response browser_gpu=false/optimizer_gpu=false.",
+    "steps": [
+      "Open actual current workspace; set mode repair and nondefault seconds60. Open Locks details, check slot-lock Lock and different slot-repair Allow replacement. Reopen details after each intentional render; assert both independent selections simultaneously remain.",
+      "Select nondefault slot/member/preference Avoid100 and Add preference. Then set unsent preference controls to a different combination; record both committed preference count and unsent dropdown values.",
+      "Record controls, checked IDs and relevant DOM identities, then resize through stated breakpoints; record same values after each resize and ensure dialog/page no unintended overflow. No artificial change events just to trigger state restoration.",
+      "Click Generate with first GET rota-compute/capabilities returning503. Assert truthful error notice and Generate reenabled, zero jobs POST and zero assignment Apply; record choices unchanged including committed preference count and unsent row.",
+      "Retry Generate with capabilities success, browser_gpu=false/optimizer_gpu=false; locally fulfill intelligence jobs POST as a completed zero-change draft with well-shaped report. Record exact jobs body and compare to expected {month,mode:repair,seconds:60,engine:server,repair_slots:[slot-repair],locked_slots:[slot-lock],preferences:[{slot_id:chosenCommittedSlot,person_id:chosenCommittedPerson,penalty:100}]}. Unadded preferenceDraft excluded by design.",
+      "Return Plan after review and verify choices still present; no Apply. Compare eventual payload with paired fresh no-failure scenario using identical controls, so the failure path demonstrably preserves semantics."
+    ],
+    "failure_classification": "503 here is recoverable transport/read failure displayed by frontend, not a thrown DOM rendering exception. If criterion demands an actual frontend exception too, separately inject prepareEngine rejection through supported failure fixture or a single controlled callback exception with documented exact location; do not call network503 proof of all frontend exceptions.",
+    "evidence": "Fresh held source/build hashes, raw request logs including failed capability GET and single successful intelligent create, before/after control snapshots at every viewport and recovery step, no mutation replay or Apply, errors list, exact test source. Do not reset acceptance or mutate backend."
+  },
+  "narrow_gaps": [
+    "No current-source paired resize/error/payload evidence found in named174 candidates.",
+    "Actual current module does not display each committed preference as a removable visible list, only count; this is adjacent UI discoverability, not evidence that stored preferences are lost. Do not expand174 into a new functionality change.",
+    "Cross-workspace conflict handoff and explicit close/reopen use new closure state; not covered by ordinary in-place error source reasoning.",
+    "Physical-device/native assistive technology remain pending; source audit alone cannot prove focus, overflow or operation outcomes."
+  ],
+  "no_change_recommendation": "Run the narrow current implementation test first. If it passes exact criteria, use item-specific evidence acceptance; only implement fixes if actual observed selection or request mismatch identifies a defect."
+}

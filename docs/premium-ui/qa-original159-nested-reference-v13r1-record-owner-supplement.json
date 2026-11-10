@@ -1,0 +1,2931 @@
+{
+  "recorded_at_utc": "2026-11-10T02:04:57.472Z",
+  "author": "/root/leave159_nondelete_groundwork",
+  "operator": "/root when actually executed",
+  "execution_target": "isolated exact V13r1 overlay5307",
+  "application_changed_by_test": false,
+  "source_sha256": {
+    "frontend/src/main.ts": "15b79223710a53a9e0ccdd70373a92e568f6ee603f56e3747454ab25ac258cc0",
+    "frontend/src/member-workspace.ts": "88774f277131a1ed83174d288d882653fc04add295b8237fefa62636e08617ea",
+    "frontend/src/operational-import.ts": "1ccbcf4181330a5f66c59b0723ec02f878a268b6b3030aa99b177de1b7070355",
+    "frontend/src/record-workspace.ts": "469fd6bf2e4118b15ad343d8059cd3cfb0acbc6483bea969ca5fb93488644335",
+    "frontend/src/reference-workspace.ts": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd",
+    "frontend/src/extra-duty.ts": "529e420fc05ce5bfa42655b8863e449e09e22a7c0abe9baf4db5c94c4797b8c3"
+  },
+  "candidate_sha256": {
+    "frontend/src/main.ts": "ebf67f1733f620e406054d0c4a82cf1c203fd0e6603a843eec45b25a1a09df4d",
+    "frontend/src/member-workspace.ts": "506c486046fe6f0bbea5c6c4bf6357fec6e9649d91a9ed1ed890551ed3503cca",
+    "frontend/src/operational-import.ts": "d14e9b132a58e965f97a1531ab95845215092bbc6cf602c4344412047227e7a4",
+    "frontend/src/record-workspace.ts": "20b50cdbd991b5b5a16d06b51020be2838514a553823512373818f65636427aa",
+    "frontend/src/reference-workspace.ts": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd"
+  },
+  "test_sha256": "0b10f2fca13479396ad8e1d40bd004e4c4b56b6f4f11adcd401eeeda53671a95",
+  "scope": "42 bounded contexts: 36 Chromium/Firefox/WebKit320/1280 direct reviewed record save alone, nested accepted unit/member then own save, profile nested unit+editor save deferred to final profile close, Use Existing then discard with zero mutation/root refresh, accepted unit+record followed by parent503 and Enter GET-only retry. Six additional Chromium320/1280 route/month/account-expired nested-reference owners reject late close refresh. All actual controls, local non-GETs and RAM-only remaining reads. Existing token/body values checked and exact one accepted record save/no replay; settings/fallback nodes/order/filters retained.",
+  "limits": [
+    "Author has not run browsers; a generated report is evidence only when root actually executes this frozen file.",
+    "Owner scenarios supersede owner while outer editor is open, then close; they do not cover an already-inflight parent read resolving after supersession.",
+    "Owner navigation deliberately bypasses modal inert background via actual location/storage/month events to test lifetime ownership.",
+    "Only parent month503 injected; independent full fallback GET failure/malformed read and profile replacement Next/Retry are separate gates.",
+    "No physical-device/native assistive technology or full original159 acceptance."
+  ],
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "scenario": "direct-save",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    3) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"SICU\" data-unit-board-card=\"special:SICU\" data-unit-board-search=\"sicu special posting\">…</article> aka getByText('SICU Special posting Manage Nobody posted this month.')\n    4) <article data-unit-board-campus=\"special\" data-open-special-unit-modal=\"DRP\" data-unit-board-card=\"special:DRP\" class=\"unit-card special-unit-card\" data-unit-board-search=\"drp special posting\">…</article> aka getByText('DRP Special posting Manage Nobody posted this month.')\n    5) <article class=\"unit-card\" data-open-unit-modal=\"chain-parent\" data-unit-board-campus=\"campus:Main\" data-unit-board-card=\"unit:chain-parent\" data-unit-board-search=\"royal chain parent main dr chain existing\">…</article> aka getByText('Royal Chain Parent Main Manage 1 without active leave records · 1 assigned · 0')\n    6) <article class=\"unit-card\" data-open-unit-modal=\"chain-b\" data-unit-board-card=\"unit:chain-b\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain b main\">…</article> aka getByText('Royal Chain B Main Manage 0')\n    7) <article class=\"unit-card\" data-open-unit-modal=\"chain-c\" data-unit-board-card=\"unit:chain-c\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain c main\">…</article> aka getByText('Royal Chain C Main Manage 0')\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "observed": {
+        "formRetained": false,
+        "inputRetained": false,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "createdUnit": false,
+      "createdMember": false,
+      "unitReads": 1,
+      "fbReads": 1,
+      "profileReads": 0,
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "scenario": "direct-unit-save",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    3) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"SICU\" data-unit-board-card=\"special:SICU\" data-unit-board-search=\"sicu special posting\">…</article> aka getByText('SICU Special posting Manage Nobody posted this month.')\n    4) <article data-unit-board-campus=\"special\" data-open-special-unit-modal=\"DRP\" data-unit-board-card=\"special:DRP\" class=\"unit-card special-unit-card\" data-unit-board-search=\"drp special posting\">…</article> aka getByText('DRP Special posting Manage Nobody posted this month.')\n    5) <article class=\"unit-card\" data-open-unit-modal=\"chain-parent\" data-unit-board-campus=\"campus:Main\" data-unit-board-card=\"unit:chain-parent\" data-unit-board-search=\"royal chain parent main dr chain existing\">…</article> aka getByText('Royal Chain Parent Main Manage 1 without active leave records · 1 assigned · 0')\n    6) <article class=\"unit-card\" data-open-unit-modal=\"chain-b\" data-unit-board-card=\"unit:chain-b\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain b main\">…</article> aka getByText('Royal Chain B Main Manage 0')\n    7) <article class=\"unit-card\" data-open-unit-modal=\"chain-c\" data-unit-board-card=\"unit:chain-c\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain c main\">…</article> aka getByText('Royal Chain C Main Manage 0')\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "observed": {
+        "formRetained": false,
+        "inputRetained": false,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "createdUnit": false,
+      "createdMember": false,
+      "unitReads": 1,
+      "fbReads": 1,
+      "profileReads": 0,
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "scenario": "direct-member-save",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    3) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"SICU\" data-unit-board-card=\"special:SICU\" data-unit-board-search=\"sicu special posting\">…</article> aka getByText('SICU Special posting Manage Nobody posted this month.')\n    4) <article data-unit-board-campus=\"special\" data-open-special-unit-modal=\"DRP\" data-unit-board-card=\"special:DRP\" class=\"unit-card special-unit-card\" data-unit-board-search=\"drp special posting\">…</article> aka getByText('DRP Special posting Manage Nobody posted this month.')\n    5) <article class=\"unit-card\" data-open-unit-modal=\"chain-parent\" data-unit-board-campus=\"campus:Main\" data-unit-board-card=\"unit:chain-parent\" data-unit-board-search=\"royal chain parent main dr chain existing\">…</article> aka getByText('Royal Chain Parent Main Manage 1 without active leave records · 1 assigned · 0')\n    6) <article class=\"unit-card\" data-open-unit-modal=\"chain-b\" data-unit-board-card=\"unit:chain-b\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain b main\">…</article> aka getByText('Royal Chain B Main Manage 0')\n    7) <article class=\"unit-card\" data-open-unit-modal=\"chain-c\" data-unit-board-card=\"unit:chain-c\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain c main\">…</article> aka getByText('Royal Chain C Main Manage 0')\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "observed": {
+        "formRetained": false,
+        "inputRetained": false,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "createdUnit": false,
+      "createdMember": false,
+      "unitReads": 1,
+      "fbReads": 1,
+      "profileReads": 0,
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "scenario": "profile-unit-save",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    3) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"SICU\" data-unit-board-card=\"special:SICU\" data-unit-board-search=\"sicu special posting\">…</article> aka getByText('SICU Special posting Manage Nobody posted this month.')\n    4) <article data-unit-board-campus=\"special\" data-open-special-unit-modal=\"DRP\" data-unit-board-card=\"special:DRP\" class=\"unit-card special-unit-card\" data-unit-board-search=\"drp special posting\">…</article> aka getByText('DRP Special posting Manage Nobody posted this month.')\n    5) <article class=\"unit-card\" data-open-unit-modal=\"chain-parent\" data-unit-board-campus=\"campus:Main\" data-unit-board-card=\"unit:chain-parent\" data-unit-board-search=\"royal chain parent main dr chain existing\">…</article> aka getByText('Royal Chain Parent Main Manage 1 without active leave records · 1 assigned · 0')\n    6) <article class=\"unit-card\" data-open-unit-modal=\"chain-b\" data-unit-board-card=\"unit:chain-b\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain b main\">…</article> aka getByText('Royal Chain B Main Manage 0')\n    7) <article class=\"unit-card\" data-open-unit-modal=\"chain-c\" data-unit-board-card=\"unit:chain-c\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain c main\">…</article> aka getByText('Royal Chain C Main Manage 0')\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "observed": {
+        "formRetained": false,
+        "inputRetained": false,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "createdUnit": false,
+      "createdMember": false,
+      "unitReads": 1,
+      "fbReads": 1,
+      "profileReads": 0,
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "scenario": "existing-cancel",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    3) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"SICU\" data-unit-board-card=\"special:SICU\" data-unit-board-search=\"sicu special posting\">…</article> aka getByText('SICU Special posting Manage Nobody posted this month.')\n    4) <article data-unit-board-campus=\"special\" data-open-special-unit-modal=\"DRP\" data-unit-board-card=\"special:DRP\" class=\"unit-card special-unit-card\" data-unit-board-search=\"drp special posting\">…</article> aka getByText('DRP Special posting Manage Nobody posted this month.')\n    5) <article class=\"unit-card\" data-open-unit-modal=\"chain-parent\" data-unit-board-campus=\"campus:Main\" data-unit-board-card=\"unit:chain-parent\" data-unit-board-search=\"royal chain parent main dr chain existing\">…</article> aka getByText('Royal Chain Parent Main Manage 1 without active leave records · 1 assigned · 0')\n    6) <article class=\"unit-card\" data-open-unit-modal=\"chain-b\" data-unit-board-card=\"unit:chain-b\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain b main\">…</article> aka getByText('Royal Chain B Main Manage 0')\n    7) <article class=\"unit-card\" data-open-unit-modal=\"chain-c\" data-unit-board-card=\"unit:chain-c\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain c main\">…</article> aka getByText('Royal Chain C Main Manage 0')\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "observed": {
+        "formRetained": false,
+        "inputRetained": false,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "createdUnit": false,
+      "createdMember": false,
+      "unitReads": 1,
+      "fbReads": 1,
+      "profileReads": 0,
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "scenario": "unit-save-parent503",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    3) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"SICU\" data-unit-board-card=\"special:SICU\" data-unit-board-search=\"sicu special posting\">…</article> aka getByText('SICU Special posting Manage Nobody posted this month.')\n    4) <article data-unit-board-campus=\"special\" data-open-special-unit-modal=\"DRP\" data-unit-board-card=\"special:DRP\" class=\"unit-card special-unit-card\" data-unit-board-search=\"drp special posting\">…</article> aka getByText('DRP Special posting Manage Nobody posted this month.')\n    5) <article class=\"unit-card\" data-open-unit-modal=\"chain-parent\" data-unit-board-campus=\"campus:Main\" data-unit-board-card=\"unit:chain-parent\" data-unit-board-search=\"royal chain parent main dr chain existing\">…</article> aka getByText('Royal Chain Parent Main Manage 1 without active leave records · 1 assigned · 0')\n    6) <article class=\"unit-card\" data-open-unit-modal=\"chain-b\" data-unit-board-card=\"unit:chain-b\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain b main\">…</article> aka getByText('Royal Chain B Main Manage 0')\n    7) <article class=\"unit-card\" data-open-unit-modal=\"chain-c\" data-unit-board-card=\"unit:chain-c\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain c main\">…</article> aka getByText('Royal Chain C Main Manage 0')\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "observed": {
+        "formRetained": false,
+        "inputRetained": false,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "createdUnit": false,
+      "createdMember": false,
+      "unitReads": 1,
+      "fbReads": 1,
+      "profileReads": 0,
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "scenario": "owner-route",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    3) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"SICU\" data-unit-board-card=\"special:SICU\" data-unit-board-search=\"sicu special posting\">…</article> aka getByText('SICU Special posting Manage Nobody posted this month.')\n    4) <article data-unit-board-campus=\"special\" data-open-special-unit-modal=\"DRP\" data-unit-board-card=\"special:DRP\" class=\"unit-card special-unit-card\" data-unit-board-search=\"drp special posting\">…</article> aka getByText('DRP Special posting Manage Nobody posted this month.')\n    5) <article class=\"unit-card\" data-open-unit-modal=\"chain-parent\" data-unit-board-campus=\"campus:Main\" data-unit-board-card=\"unit:chain-parent\" data-unit-board-search=\"royal chain parent main dr chain existing\">…</article> aka getByText('Royal Chain Parent Main Manage 1 without active leave records · 1 assigned · 0')\n    6) <article class=\"unit-card\" data-open-unit-modal=\"chain-b\" data-unit-board-card=\"unit:chain-b\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain b main\">…</article> aka getByText('Royal Chain B Main Manage 0')\n    7) <article class=\"unit-card\" data-open-unit-modal=\"chain-c\" data-unit-board-card=\"unit:chain-c\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain c main\">…</article> aka getByText('Royal Chain C Main Manage 0')\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "observed": {
+        "formRetained": false,
+        "inputRetained": false,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "createdUnit": false,
+      "createdMember": false,
+      "unitReads": 1,
+      "fbReads": 1,
+      "profileReads": 0,
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "scenario": "owner-month",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    3) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"SICU\" data-unit-board-card=\"special:SICU\" data-unit-board-search=\"sicu special posting\">…</article> aka getByText('SICU Special posting Manage Nobody posted this month.')\n    4) <article data-unit-board-campus=\"special\" data-open-special-unit-modal=\"DRP\" data-unit-board-card=\"special:DRP\" class=\"unit-card special-unit-card\" data-unit-board-search=\"drp special posting\">…</article> aka getByText('DRP Special posting Manage Nobody posted this month.')\n    5) <article class=\"unit-card\" data-open-unit-modal=\"chain-parent\" data-unit-board-campus=\"campus:Main\" data-unit-board-card=\"unit:chain-parent\" data-unit-board-search=\"royal chain parent main dr chain existing\">…</article> aka getByText('Royal Chain Parent Main Manage 1 without active leave records · 1 assigned · 0')\n    6) <article class=\"unit-card\" data-open-unit-modal=\"chain-b\" data-unit-board-card=\"unit:chain-b\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain b main\">…</article> aka getByText('Royal Chain B Main Manage 0')\n    7) <article class=\"unit-card\" data-open-unit-modal=\"chain-c\" data-unit-board-card=\"unit:chain-c\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain c main\">…</article> aka getByText('Royal Chain C Main Manage 0')\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "observed": {
+        "formRetained": false,
+        "inputRetained": false,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "createdUnit": false,
+      "createdMember": false,
+      "unitReads": 1,
+      "fbReads": 1,
+      "profileReads": 0,
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "scenario": "owner-account",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    3) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"SICU\" data-unit-board-card=\"special:SICU\" data-unit-board-search=\"sicu special posting\">…</article> aka getByText('SICU Special posting Manage Nobody posted this month.')\n    4) <article data-unit-board-campus=\"special\" data-open-special-unit-modal=\"DRP\" data-unit-board-card=\"special:DRP\" class=\"unit-card special-unit-card\" data-unit-board-search=\"drp special posting\">…</article> aka getByText('DRP Special posting Manage Nobody posted this month.')\n    5) <article class=\"unit-card\" data-open-unit-modal=\"chain-parent\" data-unit-board-campus=\"campus:Main\" data-unit-board-card=\"unit:chain-parent\" data-unit-board-search=\"royal chain parent main dr chain existing\">…</article> aka getByText('Royal Chain Parent Main Manage 1 without active leave records · 1 assigned · 0')\n    6) <article class=\"unit-card\" data-open-unit-modal=\"chain-b\" data-unit-board-card=\"unit:chain-b\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain b main\">…</article> aka getByText('Royal Chain B Main Manage 0')\n    7) <article class=\"unit-card\" data-open-unit-modal=\"chain-c\" data-unit-board-card=\"unit:chain-c\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain c main\">…</article> aka getByText('Royal Chain C Main Manage 0')\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "observed": {
+        "formRetained": false,
+        "inputRetained": false,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "createdUnit": false,
+      "createdMember": false,
+      "unitReads": 1,
+      "fbReads": 1,
+      "profileReads": 0,
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "scenario": "direct-save",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    3) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"SICU\" data-unit-board-card=\"special:SICU\" data-unit-board-search=\"sicu special posting\">…</article> aka getByText('SICU Special posting Manage Nobody posted this month.')\n    4) <article data-unit-board-campus=\"special\" data-open-special-unit-modal=\"DRP\" data-unit-board-card=\"special:DRP\" class=\"unit-card special-unit-card\" data-unit-board-search=\"drp special posting\">…</article> aka getByText('DRP Special posting Manage Nobody posted this month.')\n    5) <article class=\"unit-card\" data-open-unit-modal=\"chain-parent\" data-unit-board-campus=\"campus:Main\" data-unit-board-card=\"unit:chain-parent\" data-unit-board-search=\"royal chain parent main dr chain existing\">…</article> aka getByText('Royal Chain Parent Main Manage 1 without active leave records · 1 assigned · 0')\n    6) <article class=\"unit-card\" data-open-unit-modal=\"chain-b\" data-unit-board-card=\"unit:chain-b\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain b main\">…</article> aka getByText('Royal Chain B Main Manage 0')\n    7) <article class=\"unit-card\" data-open-unit-modal=\"chain-c\" data-unit-board-card=\"unit:chain-c\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain c main\">…</article> aka getByText('Royal Chain C Main Manage 0')\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "observed": {
+        "formRetained": false,
+        "inputRetained": false,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "createdUnit": false,
+      "createdMember": false,
+      "unitReads": 1,
+      "fbReads": 1,
+      "profileReads": 0,
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "scenario": "direct-unit-save",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    3) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"SICU\" data-unit-board-card=\"special:SICU\" data-unit-board-search=\"sicu special posting\">…</article> aka getByText('SICU Special posting Manage Nobody posted this month.')\n    4) <article data-unit-board-campus=\"special\" data-open-special-unit-modal=\"DRP\" data-unit-board-card=\"special:DRP\" class=\"unit-card special-unit-card\" data-unit-board-search=\"drp special posting\">…</article> aka getByText('DRP Special posting Manage Nobody posted this month.')\n    5) <article class=\"unit-card\" data-open-unit-modal=\"chain-parent\" data-unit-board-campus=\"campus:Main\" data-unit-board-card=\"unit:chain-parent\" data-unit-board-search=\"royal chain parent main dr chain existing\">…</article> aka getByText('Royal Chain Parent Main Manage 1 without active leave records · 1 assigned · 0')\n    6) <article class=\"unit-card\" data-open-unit-modal=\"chain-b\" data-unit-board-card=\"unit:chain-b\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain b main\">…</article> aka getByText('Royal Chain B Main Manage 0')\n    7) <article class=\"unit-card\" data-open-unit-modal=\"chain-c\" data-unit-board-card=\"unit:chain-c\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain c main\">…</article> aka getByText('Royal Chain C Main Manage 0')\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "observed": {
+        "formRetained": false,
+        "inputRetained": false,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "createdUnit": false,
+      "createdMember": false,
+      "unitReads": 1,
+      "fbReads": 1,
+      "profileReads": 0,
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "scenario": "direct-member-save",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    3) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"SICU\" data-unit-board-card=\"special:SICU\" data-unit-board-search=\"sicu special posting\">…</article> aka getByText('SICU Special posting Manage Nobody posted this month.')\n    4) <article data-unit-board-campus=\"special\" data-open-special-unit-modal=\"DRP\" data-unit-board-card=\"special:DRP\" class=\"unit-card special-unit-card\" data-unit-board-search=\"drp special posting\">…</article> aka getByText('DRP Special posting Manage Nobody posted this month.')\n    5) <article class=\"unit-card\" data-open-unit-modal=\"chain-parent\" data-unit-board-campus=\"campus:Main\" data-unit-board-card=\"unit:chain-parent\" data-unit-board-search=\"royal chain parent main dr chain existing\">…</article> aka getByText('Royal Chain Parent Main Manage 1 without active leave records · 1 assigned · 0')\n    6) <article class=\"unit-card\" data-open-unit-modal=\"chain-b\" data-unit-board-card=\"unit:chain-b\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain b main\">…</article> aka getByText('Royal Chain B Main Manage 0')\n    7) <article class=\"unit-card\" data-open-unit-modal=\"chain-c\" data-unit-board-card=\"unit:chain-c\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain c main\">…</article> aka getByText('Royal Chain C Main Manage 0')\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "observed": {
+        "formRetained": false,
+        "inputRetained": false,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "createdUnit": false,
+      "createdMember": false,
+      "unitReads": 1,
+      "fbReads": 1,
+      "profileReads": 0,
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "scenario": "profile-unit-save",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    3) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"SICU\" data-unit-board-card=\"special:SICU\" data-unit-board-search=\"sicu special posting\">…</article> aka getByText('SICU Special posting Manage Nobody posted this month.')\n    4) <article data-unit-board-campus=\"special\" data-open-special-unit-modal=\"DRP\" data-unit-board-card=\"special:DRP\" class=\"unit-card special-unit-card\" data-unit-board-search=\"drp special posting\">…</article> aka getByText('DRP Special posting Manage Nobody posted this month.')\n    5) <article class=\"unit-card\" data-open-unit-modal=\"chain-parent\" data-unit-board-campus=\"campus:Main\" data-unit-board-card=\"unit:chain-parent\" data-unit-board-search=\"royal chain parent main dr chain existing\">…</article> aka getByText('Royal Chain Parent Main Manage 1 without active leave records · 1 assigned · 0')\n    6) <article class=\"unit-card\" data-open-unit-modal=\"chain-b\" data-unit-board-card=\"unit:chain-b\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain b main\">…</article> aka getByText('Royal Chain B Main Manage 0')\n    7) <article class=\"unit-card\" data-open-unit-modal=\"chain-c\" data-unit-board-card=\"unit:chain-c\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain c main\">…</article> aka getByText('Royal Chain C Main Manage 0')\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "observed": {
+        "formRetained": false,
+        "inputRetained": false,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "createdUnit": false,
+      "createdMember": false,
+      "unitReads": 1,
+      "fbReads": 1,
+      "profileReads": 0,
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "scenario": "existing-cancel",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    3) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"SICU\" data-unit-board-card=\"special:SICU\" data-unit-board-search=\"sicu special posting\">…</article> aka getByText('SICU Special posting Manage Nobody posted this month.')\n    4) <article data-unit-board-campus=\"special\" data-open-special-unit-modal=\"DRP\" data-unit-board-card=\"special:DRP\" class=\"unit-card special-unit-card\" data-unit-board-search=\"drp special posting\">…</article> aka getByText('DRP Special posting Manage Nobody posted this month.')\n    5) <article class=\"unit-card\" data-open-unit-modal=\"chain-parent\" data-unit-board-campus=\"campus:Main\" data-unit-board-card=\"unit:chain-parent\" data-unit-board-search=\"royal chain parent main dr chain existing\">…</article> aka getByText('Royal Chain Parent Main Manage 1 without active leave records · 1 assigned · 0')\n    6) <article class=\"unit-card\" data-open-unit-modal=\"chain-b\" data-unit-board-card=\"unit:chain-b\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain b main\">…</article> aka getByText('Royal Chain B Main Manage 0')\n    7) <article class=\"unit-card\" data-open-unit-modal=\"chain-c\" data-unit-board-card=\"unit:chain-c\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain c main\">…</article> aka getByText('Royal Chain C Main Manage 0')\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "observed": {
+        "formRetained": false,
+        "inputRetained": false,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "createdUnit": false,
+      "createdMember": false,
+      "unitReads": 1,
+      "fbReads": 1,
+      "profileReads": 0,
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "scenario": "unit-save-parent503",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    3) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"SICU\" data-unit-board-card=\"special:SICU\" data-unit-board-search=\"sicu special posting\">…</article> aka getByText('SICU Special posting Manage Nobody posted this month.')\n    4) <article data-unit-board-campus=\"special\" data-open-special-unit-modal=\"DRP\" data-unit-board-card=\"special:DRP\" class=\"unit-card special-unit-card\" data-unit-board-search=\"drp special posting\">…</article> aka getByText('DRP Special posting Manage Nobody posted this month.')\n    5) <article class=\"unit-card\" data-open-unit-modal=\"chain-parent\" data-unit-board-campus=\"campus:Main\" data-unit-board-card=\"unit:chain-parent\" data-unit-board-search=\"royal chain parent main dr chain existing\">…</article> aka getByText('Royal Chain Parent Main Manage 1 without active leave records · 1 assigned · 0')\n    6) <article class=\"unit-card\" data-open-unit-modal=\"chain-b\" data-unit-board-card=\"unit:chain-b\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain b main\">…</article> aka getByText('Royal Chain B Main Manage 0')\n    7) <article class=\"unit-card\" data-open-unit-modal=\"chain-c\" data-unit-board-card=\"unit:chain-c\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain c main\">…</article> aka getByText('Royal Chain C Main Manage 0')\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "observed": {
+        "formRetained": false,
+        "inputRetained": false,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "createdUnit": false,
+      "createdMember": false,
+      "unitReads": 1,
+      "fbReads": 1,
+      "profileReads": 0,
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "scenario": "owner-route",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    3) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"SICU\" data-unit-board-card=\"special:SICU\" data-unit-board-search=\"sicu special posting\">…</article> aka getByText('SICU Special posting Manage Nobody posted this month.')\n    4) <article data-unit-board-campus=\"special\" data-open-special-unit-modal=\"DRP\" data-unit-board-card=\"special:DRP\" class=\"unit-card special-unit-card\" data-unit-board-search=\"drp special posting\">…</article> aka getByText('DRP Special posting Manage Nobody posted this month.')\n    5) <article class=\"unit-card\" data-open-unit-modal=\"chain-parent\" data-unit-board-campus=\"campus:Main\" data-unit-board-card=\"unit:chain-parent\" data-unit-board-search=\"royal chain parent main dr chain existing\">…</article> aka getByText('Royal Chain Parent Main Manage 1 without active leave records · 1 assigned · 0')\n    6) <article class=\"unit-card\" data-open-unit-modal=\"chain-b\" data-unit-board-card=\"unit:chain-b\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain b main\">…</article> aka getByText('Royal Chain B Main Manage 0')\n    7) <article class=\"unit-card\" data-open-unit-modal=\"chain-c\" data-unit-board-card=\"unit:chain-c\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain c main\">…</article> aka getByText('Royal Chain C Main Manage 0')\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "observed": {
+        "formRetained": false,
+        "inputRetained": false,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "createdUnit": false,
+      "createdMember": false,
+      "unitReads": 1,
+      "fbReads": 1,
+      "profileReads": 0,
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "scenario": "owner-month",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    3) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"SICU\" data-unit-board-card=\"special:SICU\" data-unit-board-search=\"sicu special posting\">…</article> aka getByText('SICU Special posting Manage Nobody posted this month.')\n    4) <article data-unit-board-campus=\"special\" data-open-special-unit-modal=\"DRP\" data-unit-board-card=\"special:DRP\" class=\"unit-card special-unit-card\" data-unit-board-search=\"drp special posting\">…</article> aka getByText('DRP Special posting Manage Nobody posted this month.')\n    5) <article class=\"unit-card\" data-open-unit-modal=\"chain-parent\" data-unit-board-campus=\"campus:Main\" data-unit-board-card=\"unit:chain-parent\" data-unit-board-search=\"royal chain parent main dr chain existing\">…</article> aka getByText('Royal Chain Parent Main Manage 1 without active leave records · 1 assigned · 0')\n    6) <article class=\"unit-card\" data-open-unit-modal=\"chain-b\" data-unit-board-card=\"unit:chain-b\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain b main\">…</article> aka getByText('Royal Chain B Main Manage 0')\n    7) <article class=\"unit-card\" data-open-unit-modal=\"chain-c\" data-unit-board-card=\"unit:chain-c\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain c main\">…</article> aka getByText('Royal Chain C Main Manage 0')\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "observed": {
+        "formRetained": false,
+        "inputRetained": false,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "createdUnit": false,
+      "createdMember": false,
+      "unitReads": 1,
+      "fbReads": 1,
+      "profileReads": 0,
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "scenario": "owner-account",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    3) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"SICU\" data-unit-board-card=\"special:SICU\" data-unit-board-search=\"sicu special posting\">…</article> aka getByText('SICU Special posting Manage Nobody posted this month.')\n    4) <article data-unit-board-campus=\"special\" data-open-special-unit-modal=\"DRP\" data-unit-board-card=\"special:DRP\" class=\"unit-card special-unit-card\" data-unit-board-search=\"drp special posting\">…</article> aka getByText('DRP Special posting Manage Nobody posted this month.')\n    5) <article class=\"unit-card\" data-open-unit-modal=\"chain-parent\" data-unit-board-campus=\"campus:Main\" data-unit-board-card=\"unit:chain-parent\" data-unit-board-search=\"royal chain parent main dr chain existing\">…</article> aka getByText('Royal Chain Parent Main Manage 1 without active leave records · 1 assigned · 0')\n    6) <article class=\"unit-card\" data-open-unit-modal=\"chain-b\" data-unit-board-card=\"unit:chain-b\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain b main\">…</article> aka getByText('Royal Chain B Main Manage 0')\n    7) <article class=\"unit-card\" data-open-unit-modal=\"chain-c\" data-unit-board-card=\"unit:chain-c\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain c main\">…</article> aka getByText('Royal Chain C Main Manage 0')\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "observed": {
+        "formRetained": false,
+        "inputRetained": false,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "createdUnit": false,
+      "createdMember": false,
+      "unitReads": 1,
+      "fbReads": 1,
+      "profileReads": 0,
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "scenario": "direct-save",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    ...\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "observed": {
+        "formRetained": false,
+        "inputRetained": false,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "createdUnit": false,
+      "createdMember": false,
+      "unitReads": 1,
+      "fbReads": 1,
+      "profileReads": 0,
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "scenario": "direct-unit-save",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    ...\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "observed": {
+        "formRetained": false,
+        "inputRetained": false,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "createdUnit": false,
+      "createdMember": false,
+      "unitReads": 1,
+      "fbReads": 1,
+      "profileReads": 0,
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "scenario": "direct-member-save",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    ...\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "observed": {
+        "formRetained": false,
+        "inputRetained": false,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "createdUnit": false,
+      "createdMember": false,
+      "unitReads": 1,
+      "fbReads": 1,
+      "profileReads": 0,
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "scenario": "profile-unit-save",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    ...\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "observed": {
+        "formRetained": false,
+        "inputRetained": false,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "createdUnit": false,
+      "createdMember": false,
+      "unitReads": 1,
+      "fbReads": 1,
+      "profileReads": 0,
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "scenario": "existing-cancel",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    ...\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "observed": {
+        "formRetained": false,
+        "inputRetained": false,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "createdUnit": false,
+      "createdMember": false,
+      "unitReads": 1,
+      "fbReads": 1,
+      "profileReads": 0,
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "scenario": "unit-save-parent503",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    ...\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "observed": {
+        "formRetained": false,
+        "inputRetained": false,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "createdUnit": false,
+      "createdMember": false,
+      "unitReads": 1,
+      "fbReads": 1,
+      "profileReads": 0,
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "scenario": "direct-save",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    ...\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "observed": {
+        "formRetained": false,
+        "inputRetained": false,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "createdUnit": false,
+      "createdMember": false,
+      "unitReads": 1,
+      "fbReads": 1,
+      "profileReads": 0,
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "scenario": "direct-unit-save",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    ...\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "observed": {
+        "formRetained": false,
+        "inputRetained": false,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "createdUnit": false,
+      "createdMember": false,
+      "unitReads": 1,
+      "fbReads": 1,
+      "profileReads": 0,
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "scenario": "direct-member-save",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    ...\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "observed": {
+        "formRetained": false,
+        "inputRetained": false,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "createdUnit": false,
+      "createdMember": false,
+      "unitReads": 1,
+      "fbReads": 1,
+      "profileReads": 0,
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "scenario": "profile-unit-save",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    ...\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "observed": {
+        "formRetained": false,
+        "inputRetained": false,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "createdUnit": false,
+      "createdMember": false,
+      "unitReads": 1,
+      "fbReads": 1,
+      "profileReads": 0,
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "scenario": "existing-cancel",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    ...\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "observed": {
+        "formRetained": false,
+        "inputRetained": false,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "createdUnit": false,
+      "createdMember": false,
+      "unitReads": 1,
+      "fbReads": 1,
+      "profileReads": 0,
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "scenario": "unit-save-parent503",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    ...\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "observed": {
+        "formRetained": false,
+        "inputRetained": false,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "createdUnit": false,
+      "createdMember": false,
+      "unitReads": 1,
+      "fbReads": 1,
+      "profileReads": 0,
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "scenario": "direct-save",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    3) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"SICU\" data-unit-board-card=\"special:SICU\" data-unit-board-search=\"sicu special posting\">…</article> aka getByText('SICU Special posting Manage Nobody posted this month.')\n    4) <article data-unit-board-campus=\"special\" data-open-special-unit-modal=\"DRP\" data-unit-board-card=\"special:DRP\" class=\"unit-card special-unit-card\" data-unit-board-search=\"drp special posting\">…</article> aka getByText('DRP Special posting Manage Nobody posted this month.')\n    5) <article class=\"unit-card\" data-open-unit-modal=\"chain-parent\" data-unit-board-campus=\"campus:Main\" data-unit-board-card=\"unit:chain-parent\" data-unit-board-search=\"royal chain parent main dr chain existing\">…</article> aka getByText('Royal Chain Parent Main Manage 1 without active leave records · 1 assigned · 0')\n    6) <article class=\"unit-card\" data-open-unit-modal=\"chain-b\" data-unit-board-card=\"unit:chain-b\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain b main\">…</article> aka getByText('Royal Chain B Main Manage 0')\n    7) <article class=\"unit-card\" data-open-unit-modal=\"chain-c\" data-unit-board-card=\"unit:chain-c\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain c main\">…</article> aka getByText('Royal Chain C Main Manage 0')\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "observed": {
+        "formRetained": false,
+        "inputRetained": false,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "createdUnit": false,
+      "createdMember": false,
+      "unitReads": 1,
+      "fbReads": 1,
+      "profileReads": 0,
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "scenario": "direct-unit-save",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    3) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"SICU\" data-unit-board-card=\"special:SICU\" data-unit-board-search=\"sicu special posting\">…</article> aka getByText('SICU Special posting Manage Nobody posted this month.')\n    4) <article data-unit-board-campus=\"special\" data-open-special-unit-modal=\"DRP\" data-unit-board-card=\"special:DRP\" class=\"unit-card special-unit-card\" data-unit-board-search=\"drp special posting\">…</article> aka getByText('DRP Special posting Manage Nobody posted this month.')\n    5) <article class=\"unit-card\" data-open-unit-modal=\"chain-parent\" data-unit-board-campus=\"campus:Main\" data-unit-board-card=\"unit:chain-parent\" data-unit-board-search=\"royal chain parent main dr chain existing\">…</article> aka getByText('Royal Chain Parent Main Manage 1 without active leave records · 1 assigned · 0')\n    6) <article class=\"unit-card\" data-open-unit-modal=\"chain-b\" data-unit-board-card=\"unit:chain-b\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain b main\">…</article> aka getByText('Royal Chain B Main Manage 0')\n    7) <article class=\"unit-card\" data-open-unit-modal=\"chain-c\" data-unit-board-card=\"unit:chain-c\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain c main\">…</article> aka getByText('Royal Chain C Main Manage 0')\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "observed": {
+        "formRetained": false,
+        "inputRetained": false,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "createdUnit": false,
+      "createdMember": false,
+      "unitReads": 1,
+      "fbReads": 1,
+      "profileReads": 0,
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "scenario": "direct-member-save",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    3) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"SICU\" data-unit-board-card=\"special:SICU\" data-unit-board-search=\"sicu special posting\">…</article> aka getByText('SICU Special posting Manage Nobody posted this month.')\n    4) <article data-unit-board-campus=\"special\" data-open-special-unit-modal=\"DRP\" data-unit-board-card=\"special:DRP\" class=\"unit-card special-unit-card\" data-unit-board-search=\"drp special posting\">…</article> aka getByText('DRP Special posting Manage Nobody posted this month.')\n    5) <article class=\"unit-card\" data-open-unit-modal=\"chain-parent\" data-unit-board-campus=\"campus:Main\" data-unit-board-card=\"unit:chain-parent\" data-unit-board-search=\"royal chain parent main dr chain existing\">…</article> aka getByText('Royal Chain Parent Main Manage 1 without active leave records · 1 assigned · 0')\n    6) <article class=\"unit-card\" data-open-unit-modal=\"chain-b\" data-unit-board-card=\"unit:chain-b\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain b main\">…</article> aka getByText('Royal Chain B Main Manage 0')\n    7) <article class=\"unit-card\" data-open-unit-modal=\"chain-c\" data-unit-board-card=\"unit:chain-c\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain c main\">…</article> aka getByText('Royal Chain C Main Manage 0')\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "observed": {
+        "formRetained": false,
+        "inputRetained": false,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "createdUnit": false,
+      "createdMember": false,
+      "unitReads": 1,
+      "fbReads": 1,
+      "profileReads": 0,
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "scenario": "profile-unit-save",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    3) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"SICU\" data-unit-board-card=\"special:SICU\" data-unit-board-search=\"sicu special posting\">…</article> aka getByText('SICU Special posting Manage Nobody posted this month.')\n    4) <article data-unit-board-campus=\"special\" data-open-special-unit-modal=\"DRP\" data-unit-board-card=\"special:DRP\" class=\"unit-card special-unit-card\" data-unit-board-search=\"drp special posting\">…</article> aka getByText('DRP Special posting Manage Nobody posted this month.')\n    5) <article class=\"unit-card\" data-open-unit-modal=\"chain-parent\" data-unit-board-campus=\"campus:Main\" data-unit-board-card=\"unit:chain-parent\" data-unit-board-search=\"royal chain parent main dr chain existing\">…</article> aka getByText('Royal Chain Parent Main Manage 1 without active leave records · 1 assigned · 0')\n    6) <article class=\"unit-card\" data-open-unit-modal=\"chain-b\" data-unit-board-card=\"unit:chain-b\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain b main\">…</article> aka getByText('Royal Chain B Main Manage 0')\n    7) <article class=\"unit-card\" data-open-unit-modal=\"chain-c\" data-unit-board-card=\"unit:chain-c\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain c main\">…</article> aka getByText('Royal Chain C Main Manage 0')\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "observed": {
+        "formRetained": false,
+        "inputRetained": false,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "createdUnit": false,
+      "createdMember": false,
+      "unitReads": 1,
+      "fbReads": 1,
+      "profileReads": 0,
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "scenario": "existing-cancel",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    3) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"SICU\" data-unit-board-card=\"special:SICU\" data-unit-board-search=\"sicu special posting\">…</article> aka getByText('SICU Special posting Manage Nobody posted this month.')\n    4) <article data-unit-board-campus=\"special\" data-open-special-unit-modal=\"DRP\" data-unit-board-card=\"special:DRP\" class=\"unit-card special-unit-card\" data-unit-board-search=\"drp special posting\">…</article> aka getByText('DRP Special posting Manage Nobody posted this month.')\n    5) <article class=\"unit-card\" data-open-unit-modal=\"chain-parent\" data-unit-board-campus=\"campus:Main\" data-unit-board-card=\"unit:chain-parent\" data-unit-board-search=\"royal chain parent main dr chain existing\">…</article> aka getByText('Royal Chain Parent Main Manage 1 without active leave records · 1 assigned · 0')\n    6) <article class=\"unit-card\" data-open-unit-modal=\"chain-b\" data-unit-board-card=\"unit:chain-b\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain b main\">…</article> aka getByText('Royal Chain B Main Manage 0')\n    7) <article class=\"unit-card\" data-open-unit-modal=\"chain-c\" data-unit-board-card=\"unit:chain-c\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain c main\">…</article> aka getByText('Royal Chain C Main Manage 0')\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "observed": {
+        "formRetained": false,
+        "inputRetained": false,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "createdUnit": false,
+      "createdMember": false,
+      "unitReads": 1,
+      "fbReads": 1,
+      "profileReads": 0,
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "scenario": "unit-save-parent503",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    3) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"SICU\" data-unit-board-card=\"special:SICU\" data-unit-board-search=\"sicu special posting\">…</article> aka getByText('SICU Special posting Manage Nobody posted this month.')\n    4) <article data-unit-board-campus=\"special\" data-open-special-unit-modal=\"DRP\" data-unit-board-card=\"special:DRP\" class=\"unit-card special-unit-card\" data-unit-board-search=\"drp special posting\">…</article> aka getByText('DRP Special posting Manage Nobody posted this month.')\n    5) <article class=\"unit-card\" data-open-unit-modal=\"chain-parent\" data-unit-board-campus=\"campus:Main\" data-unit-board-card=\"unit:chain-parent\" data-unit-board-search=\"royal chain parent main dr chain existing\">…</article> aka getByText('Royal Chain Parent Main Manage 1 without active leave records · 1 assigned · 0')\n    6) <article class=\"unit-card\" data-open-unit-modal=\"chain-b\" data-unit-board-card=\"unit:chain-b\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain b main\">…</article> aka getByText('Royal Chain B Main Manage 0')\n    7) <article class=\"unit-card\" data-open-unit-modal=\"chain-c\" data-unit-board-card=\"unit:chain-c\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain c main\">…</article> aka getByText('Royal Chain C Main Manage 0')\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "observed": {
+        "formRetained": false,
+        "inputRetained": false,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "createdUnit": false,
+      "createdMember": false,
+      "unitReads": 1,
+      "fbReads": 1,
+      "profileReads": 0,
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "scenario": "direct-save",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    3) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"SICU\" data-unit-board-card=\"special:SICU\" data-unit-board-search=\"sicu special posting\">…</article> aka getByText('SICU Special posting Manage Nobody posted this month.')\n    4) <article data-unit-board-campus=\"special\" data-open-special-unit-modal=\"DRP\" data-unit-board-card=\"special:DRP\" class=\"unit-card special-unit-card\" data-unit-board-search=\"drp special posting\">…</article> aka getByText('DRP Special posting Manage Nobody posted this month.')\n    5) <article class=\"unit-card\" data-open-unit-modal=\"chain-parent\" data-unit-board-campus=\"campus:Main\" data-unit-board-card=\"unit:chain-parent\" data-unit-board-search=\"royal chain parent main dr chain existing\">…</article> aka getByText('Royal Chain Parent Main Manage 1 without active leave records · 1 assigned · 0')\n    6) <article class=\"unit-card\" data-open-unit-modal=\"chain-b\" data-unit-board-card=\"unit:chain-b\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain b main\">…</article> aka getByText('Royal Chain B Main Manage 0')\n    7) <article class=\"unit-card\" data-open-unit-modal=\"chain-c\" data-unit-board-card=\"unit:chain-c\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain c main\">…</article> aka getByText('Royal Chain C Main Manage 0')\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "observed": {
+        "formRetained": false,
+        "inputRetained": false,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "createdUnit": false,
+      "createdMember": false,
+      "unitReads": 1,
+      "fbReads": 1,
+      "profileReads": 0,
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "scenario": "direct-unit-save",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    3) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"SICU\" data-unit-board-card=\"special:SICU\" data-unit-board-search=\"sicu special posting\">…</article> aka getByText('SICU Special posting Manage Nobody posted this month.')\n    4) <article data-unit-board-campus=\"special\" data-open-special-unit-modal=\"DRP\" data-unit-board-card=\"special:DRP\" class=\"unit-card special-unit-card\" data-unit-board-search=\"drp special posting\">…</article> aka getByText('DRP Special posting Manage Nobody posted this month.')\n    5) <article class=\"unit-card\" data-open-unit-modal=\"chain-parent\" data-unit-board-campus=\"campus:Main\" data-unit-board-card=\"unit:chain-parent\" data-unit-board-search=\"royal chain parent main dr chain existing\">…</article> aka getByText('Royal Chain Parent Main Manage 1 without active leave records · 1 assigned · 0')\n    6) <article class=\"unit-card\" data-open-unit-modal=\"chain-b\" data-unit-board-card=\"unit:chain-b\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain b main\">…</article> aka getByText('Royal Chain B Main Manage 0')\n    7) <article class=\"unit-card\" data-open-unit-modal=\"chain-c\" data-unit-board-card=\"unit:chain-c\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain c main\">…</article> aka getByText('Royal Chain C Main Manage 0')\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "observed": {
+        "formRetained": false,
+        "inputRetained": false,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "createdUnit": false,
+      "createdMember": false,
+      "unitReads": 1,
+      "fbReads": 1,
+      "profileReads": 0,
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "scenario": "direct-member-save",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    3) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"SICU\" data-unit-board-card=\"special:SICU\" data-unit-board-search=\"sicu special posting\">…</article> aka getByText('SICU Special posting Manage Nobody posted this month.')\n    4) <article data-unit-board-campus=\"special\" data-open-special-unit-modal=\"DRP\" data-unit-board-card=\"special:DRP\" class=\"unit-card special-unit-card\" data-unit-board-search=\"drp special posting\">…</article> aka getByText('DRP Special posting Manage Nobody posted this month.')\n    5) <article class=\"unit-card\" data-open-unit-modal=\"chain-parent\" data-unit-board-campus=\"campus:Main\" data-unit-board-card=\"unit:chain-parent\" data-unit-board-search=\"royal chain parent main dr chain existing\">…</article> aka getByText('Royal Chain Parent Main Manage 1 without active leave records · 1 assigned · 0')\n    6) <article class=\"unit-card\" data-open-unit-modal=\"chain-b\" data-unit-board-card=\"unit:chain-b\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain b main\">…</article> aka getByText('Royal Chain B Main Manage 0')\n    7) <article class=\"unit-card\" data-open-unit-modal=\"chain-c\" data-unit-board-card=\"unit:chain-c\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain c main\">…</article> aka getByText('Royal Chain C Main Manage 0')\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "observed": {
+        "formRetained": false,
+        "inputRetained": false,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "createdUnit": false,
+      "createdMember": false,
+      "unitReads": 1,
+      "fbReads": 1,
+      "profileReads": 0,
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "scenario": "profile-unit-save",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    3) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"SICU\" data-unit-board-card=\"special:SICU\" data-unit-board-search=\"sicu special posting\">…</article> aka getByText('SICU Special posting Manage Nobody posted this month.')\n    4) <article data-unit-board-campus=\"special\" data-open-special-unit-modal=\"DRP\" data-unit-board-card=\"special:DRP\" class=\"unit-card special-unit-card\" data-unit-board-search=\"drp special posting\">…</article> aka getByText('DRP Special posting Manage Nobody posted this month.')\n    5) <article class=\"unit-card\" data-open-unit-modal=\"chain-parent\" data-unit-board-campus=\"campus:Main\" data-unit-board-card=\"unit:chain-parent\" data-unit-board-search=\"royal chain parent main dr chain existing\">…</article> aka getByText('Royal Chain Parent Main Manage 1 without active leave records · 1 assigned · 0')\n    6) <article class=\"unit-card\" data-open-unit-modal=\"chain-b\" data-unit-board-card=\"unit:chain-b\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain b main\">…</article> aka getByText('Royal Chain B Main Manage 0')\n    7) <article class=\"unit-card\" data-open-unit-modal=\"chain-c\" data-unit-board-card=\"unit:chain-c\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain c main\">…</article> aka getByText('Royal Chain C Main Manage 0')\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "observed": {
+        "formRetained": false,
+        "inputRetained": false,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "createdUnit": false,
+      "createdMember": false,
+      "unitReads": 1,
+      "fbReads": 1,
+      "profileReads": 0,
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "scenario": "existing-cancel",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    3) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"SICU\" data-unit-board-card=\"special:SICU\" data-unit-board-search=\"sicu special posting\">…</article> aka getByText('SICU Special posting Manage Nobody posted this month.')\n    4) <article data-unit-board-campus=\"special\" data-open-special-unit-modal=\"DRP\" data-unit-board-card=\"special:DRP\" class=\"unit-card special-unit-card\" data-unit-board-search=\"drp special posting\">…</article> aka getByText('DRP Special posting Manage Nobody posted this month.')\n    5) <article class=\"unit-card\" data-open-unit-modal=\"chain-parent\" data-unit-board-campus=\"campus:Main\" data-unit-board-card=\"unit:chain-parent\" data-unit-board-search=\"royal chain parent main dr chain existing\">…</article> aka getByText('Royal Chain Parent Main Manage 1 without active leave records · 1 assigned · 0')\n    6) <article class=\"unit-card\" data-open-unit-modal=\"chain-b\" data-unit-board-card=\"unit:chain-b\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain b main\">…</article> aka getByText('Royal Chain B Main Manage 0')\n    7) <article class=\"unit-card\" data-open-unit-modal=\"chain-c\" data-unit-board-card=\"unit:chain-c\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain c main\">…</article> aka getByText('Royal Chain C Main Manage 0')\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "observed": {
+        "formRetained": false,
+        "inputRetained": false,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "createdUnit": false,
+      "createdMember": false,
+      "unitReads": 1,
+      "fbReads": 1,
+      "profileReads": 0,
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "scenario": "unit-save-parent503",
+      "passed": false,
+      "assertion": "locator.fill: Error: strict mode violation: locator('[data-unit-board-search]') resolved to 7 elements:\n    1) <input value=\"\" type=\"search\" data-unit-board-search=\"\" placeholder=\"Unit, campus or member name\"/> aka getByRole('searchbox', { name: 'Find a unit or member' })\n    2) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"PAIN\" data-unit-board-card=\"special:PAIN\" data-unit-board-search=\"pain calls special posting\">…</article> aka getByText('Pain Calls Special posting Manage Nobody posted this month.')\n    3) <article data-unit-board-campus=\"special\" class=\"unit-card special-unit-card\" data-open-special-unit-modal=\"SICU\" data-unit-board-card=\"special:SICU\" data-unit-board-search=\"sicu special posting\">…</article> aka getByText('SICU Special posting Manage Nobody posted this month.')\n    4) <article data-unit-board-campus=\"special\" data-open-special-unit-modal=\"DRP\" data-unit-board-card=\"special:DRP\" class=\"unit-card special-unit-card\" data-unit-board-search=\"drp special posting\">…</article> aka getByText('DRP Special posting Manage Nobody posted this month.')\n    5) <article class=\"unit-card\" data-open-unit-modal=\"chain-parent\" data-unit-board-campus=\"campus:Main\" data-unit-board-card=\"unit:chain-parent\" data-unit-board-search=\"royal chain parent main dr chain existing\">…</article> aka getByText('Royal Chain Parent Main Manage 1 without active leave records · 1 assigned · 0')\n    6) <article class=\"unit-card\" data-open-unit-modal=\"chain-b\" data-unit-board-card=\"unit:chain-b\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain b main\">…</article> aka getByText('Royal Chain B Main Manage 0')\n    7) <article class=\"unit-card\" data-open-unit-modal=\"chain-c\" data-unit-board-card=\"unit:chain-c\" data-unit-board-campus=\"campus:Main\" data-unit-board-search=\"royal chain c main\">…</article> aka getByText('Royal Chain C Main Manage 0')\n\nCall log:\n\u001b[2m  - waiting for locator('[data-unit-board-search]')\u001b[22m\n",
+      "observed": {
+        "formRetained": false,
+        "inputRetained": false,
+        "hostRetained": true,
+        "rowRetained": true,
+        "order": [
+          "chain-c",
+          "chain-b"
+        ],
+        "search": "",
+        "campus": "",
+        "notices": []
+      },
+      "createdUnit": false,
+      "createdMember": false,
+      "unitReads": 1,
+      "fbReads": 1,
+      "profileReads": 0,
+      "writes": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        }
+      ],
+      "errors": []
+    }
+  ]
+}

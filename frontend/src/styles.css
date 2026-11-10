@@ -7460,3 +7460,14 @@ button.rr-tile[aria-pressed="true"] { border-color: var(--color-info-text); box-
 .balance-move__codes { display: block; margin-top: 2px; font-size: var(--text-xs); color: var(--color-text-secondary); }
 .balance-about__extra { font-size: var(--text-sm); }
 .extra-duty-ledger__transfer { justify-self: start; padding: 1px var(--space-2); border-left: 3px solid var(--color-primary); border-radius: var(--radius-sm); background: var(--color-surface-muted); color: var(--color-text); font-size: var(--text-sm); }
+
+[data-pagination-hidden] { display: none !important; }
+.list-paginator { flex-wrap: wrap; gap: .75rem; margin-block: .75rem; }
+.paginator label { display: inline-flex; align-items: center; gap: .5rem; }
+.paginator select { width: auto; min-width: 4.5rem; }
+@media print {
+  [data-pagination-hidden] { display: revert !important; }
+  .paginator { display: none !important; }
+}
+
+.paginator-controls { flex-wrap: wrap; }

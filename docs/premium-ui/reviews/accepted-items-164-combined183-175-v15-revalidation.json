@@ -1,0 +1,255 @@
+{
+  "recorded_at_utc": "2026-11-10T08:46:51.407572+00:00",
+  "scope_type": "exact_runtime_requirement",
+  "scope": "Original164 optional-report isolation and read-only recovery; not scheduling/Apply outcomes or full260.",
+  "items": [
+    {
+      "item_id": 164,
+      "requirement": "Maintain essential generation actions while optional reports load or fail, preserving the existing nonblocking foundation.",
+      "conditions": [
+        {
+          "condition": "Optional reports load and fail without disabling otherwise available essential generation actions.",
+          "satisfied": true,
+          "evidence": [
+            "docs/premium-ui/qa-optional164-v6-held-primary-integrated.json",
+            "docs/premium-ui/qa-optional164-v6-integrated-sequenced-r1.json",
+            "docs/premium-ui/qa-optional164-v6-malformed-integrated.json",
+            "docs/premium-ui/qa-optional164-v6-fastmode-independent.json"
+          ],
+          "rationale": "42 actual3engine320/1280 cases hold all four optional GETs, launch native early Build/Autoassign chooser/Quick safe fill/Whole-month optimisation dialogs, then fail reads and verify otherwise available essential actions and open dialog survive. Deadline-late-response, navigation and focus variants are explicit.30 post-failure/retry and24 malformed-response cases retain available Build;6 fastmode cases retain baseline Build/Autoassign availability with only statistics read. Primary toolbar markup, permission/status disabled expressions and early-readiness/delegated entry handlers are exact to2798."
+        },
+        {
+          "condition": "Recovery retries the optional read rather than repeating or resetting primary generation work.",
+          "satisfied": true,
+          "evidence": [
+            "docs/premium-ui/qa-optional164-v6-integrated-sequenced-r1.json",
+            "docs/premium-ui/qa-optional164-v6-focus-integrated-sequenced-r1.json",
+            "docs/premium-ui/qa-optional164-v6-malformed-integrated.json",
+            "docs/premium-ui/qa-optional164-v6-fastmode-independent.json"
+          ],
+          "rationale": "30 actual recovery contexts verify failed-subset GET-only retries, two rounds, primary GET count, identical primary form nodes/edited dates/options and account/route/month guards.24 focus contexts preserve intentional optional-panel focus and figures node identity.24 malformed contexts reject null/wrong-shape/wrong-month successful responses and recover with only failed report rereads.6 fastmode contexts read statistics twice and skipped reports zero times, primary once; newer edits persist. All reports assert no writes. All non-get imported API, storage mutation, serialization and confirm expressions are unchanged by exact source proof; primary generation work is not repeated by recovery."
+        }
+      ]
+    }
+  ],
+  "requirement_scope_rationale": "Both exact conditions proved: essential action dialogs launch while optional reads are held and survive failures; retry reads only failed reports, preserves core form nodes/values and does not repeat primary GET/write. Full126cases include normal,focus,malformed,held-primary and fastmode. Existing permission/status controls and all other handlers exact; no narrowed requirement or real generation/Apply claim.",
+  "execution_evidence": [
+    {
+      "report": "docs/premium-ui/qa-optional164-v6-integrated-sequenced-r1.json",
+      "test": "frontend/tests/premium-optional164-v6-integrated-sequenced-r1.browser.mjs",
+      "exit_code": 0,
+      "contexts": 30,
+      "operator": "/root"
+    },
+    {
+      "report": "docs/premium-ui/qa-optional164-v6-focus-integrated-sequenced-r1.json",
+      "test": "frontend/tests/premium-optional164-v6-focus-integrated-sequenced-r1.browser.mjs",
+      "exit_code": 0,
+      "contexts": 24,
+      "operator": "/root"
+    },
+    {
+      "report": "docs/premium-ui/qa-optional164-v6-malformed-integrated.json",
+      "test": "frontend/tests/premium-optional164-v6-malformed-integrated.browser.mjs",
+      "exit_code": 0,
+      "contexts": 24,
+      "operator": "/root"
+    },
+    {
+      "report": "docs/premium-ui/qa-optional164-v6-held-primary-integrated.json",
+      "test": "frontend/tests/premium-optional164-v6-held-primary-integrated.browser.mjs",
+      "exit_code": 0,
+      "contexts": 42,
+      "operator": "/root"
+    },
+    {
+      "report": "docs/premium-ui/qa-optional164-v6-fastmode-independent.json",
+      "test": "frontend/tests/premium-optional164-v6-fastmode-independent.browser.mjs",
+      "exit_code": 0,
+      "contexts": 6,
+      "operator": "/root/optional164_v5_metric_diagnostic"
+    }
+  ],
+  "independent_review": {
+    "reviewer": "/root/optional164_v5_metric_diagnostic",
+    "report": "docs/premium-ui/reviews/optional164-current-independent-adjudication.json",
+    "method": "Independent original-condition/source/current126case adjudication; authored6fastmode and malformed diagnostic."
+  },
+  "root_review": {
+    "reviewer": "/root",
+    "method": "Inspected exact requirements, applied diff, source confinement, malformed/read subset and focus assertions, held-primary42 controls/dialog survival, fastmode6. Confirmed all terminal exits, heldbuild and114unit; prior51 bridge verified. Initial timeouts/hidden-disclosure diagnostics preserved."
+  },
+  "evidence_sha256": {
+    "docs/premium-ui/acceptance-criteria/items-087-173.json": "a7bf1322bd8e08a1fddd4195095d9cc52a8867a1b8a2bda9b523917fae458576",
+    "docs/premium-ui/qa-optional164-v6-fastmode-independent.json": "640e198e80944b3ae76b9d40d4604d33e88ab1a72e9d60e704c658c5a13345fc",
+    "docs/premium-ui/qa-optional164-v6-focus-integrated-sequenced-r1.json": "eedea61cbafe15953901f749c73caeeaf4b05f91a784bcf5134043db417a238d",
+    "docs/premium-ui/qa-optional164-v6-held-primary-integrated.json": "3c764ff3617b40b9c1ddad2ffe4f41a66d466634f8c3dd587cde595ee1bba326",
+    "docs/premium-ui/qa-optional164-v6-integrated-sequenced-r1.json": "a3cc2d99078f4269e86c3f3cdef338f5228b08e3046c92ce44aa3e101ad3a183",
+    "docs/premium-ui/qa-optional164-v6-malformed-integrated.json": "3648a1494dc010800e42bfa920079bcb9ab834d5929684961ecd360a7428d9a6",
+    "docs/premium-ui/reviews/frontend-build-snapshot-optional164-v6.json": "7f25d3d49330d35995da7e25ead8f81017e7ff7b2445d0c731fe4d7b9f1115bc",
+    "docs/premium-ui/reviews/optional164-current-independent-adjudication.json": "94560c744ff07ad5a8b982308a2eae30b23b5f3a780b413cd584ff7fd6244c2c",
+    "docs/premium-ui/reviews/optional164-v6-fastmode-execution.json": "dbcbff03f17fb54c2a3d3e3284acd475cf40ed6b54b7a4f47f9d903424a75268",
+    "docs/premium-ui/reviews/optional164-v6-integrated-execution.json": "2eedc4e2457902c479425c544a98acc4d96b94b01cc276eb5cb31f320d5793b6",
+    "docs/premium-ui/reviews/optional164-v6-prior51-applicability.json": "f04155df8098ac33b02794bac651ac06020d5e3628b255b784161a08c469ba83",
+    "frontend/src/main.ts": "8c49cdfd6c16b334e336544ea6642433922edec28d8b15a927a0374805cd55c3",
+    "frontend/tests/premium-optional164-v6-fastmode-independent.browser.mjs": "18c8db9ad3a0ef3bf43179ae122d3fabc36768d6d408fa1d04fa2870a39f5934",
+    "frontend/tests/premium-optional164-v6-focus-integrated-sequenced-r1.browser.mjs": "247ab0c21313c7e3b5556fab690fdff10ae59a8176bcf4d1018410e9bf02de53",
+    "frontend/tests/premium-optional164-v6-held-primary-integrated.browser.mjs": "eae9130796247c4409da62277ef6e54c10e16c6484a7e2bbe7f78498012e1300",
+    "frontend/tests/premium-optional164-v6-integrated-sequenced-r1.browser.mjs": "c96d028e7fca387400123f36a4e2d44e955311864f5bc044daf4670d1bc4cb73",
+    "frontend/tests/premium-optional164-v6-malformed-integrated.browser.mjs": "dcab77de849dcdd2d2331fcb5610bd40ae631a1a7d6fecb00e44acf77e3d2130",
+    "tmp/optional164-v6-focus-integrated-sequenced-r1.log": "94b151aeaaec3b77b3c0b90750bed315e2307b34ada5e6b426e75f86ffda6359",
+    "tmp/optional164-v6-held-primary-integrated.log": "fcd1cb3512319c007100b28c49ceef9da8b4975bab0b88cc782fe1f0d281873b",
+    "tmp/optional164-v6-integrated-sequenced-r1.log": "bace33336c87b914da18df568fa6e2972357cc47db5dc725ff8187e8d83ec1ca",
+    "tmp/optional164-v6-malformed-integrated.log": "02da24ae6af1045d994db5c895ea7d126c4f9d52e27d7af07ac5a6a2884c6124",
+    "docs/premium-ui/reviews/item164-acceptance.json": "718049ed288c0d7b3f8bd09003f1fa83ff50fa02d41c21e1317b95c9f630be6a",
+    "docs/premium-ui/reviews/unit-settings-recovery-v6-prior52-applicability.json": "9e3a029f6425ff6af5fe307f26e781a8a9217e163b9c72b1755f4a0add65c2c8",
+    "docs/premium-ui/reviews/unit-settings-recovery-v6-integrated-execution.json": "a123b0ab1ef44bf5cf077f086c2c92e6d17308b2429db118a845a220f46c5c67",
+    "docs/premium-ui/reviews/unit-settings-recovery-v6-table-applicability.json": "a4a310318208444d5f731eb99085d3e616e562f17477653fc0cbc74422a447c9",
+    "docs/premium-ui/reviews/accepted-items-164-unit-settings-v6-revalidation.json": "76176eb26f8e7b718bd2bbc581ff84c7b119e9b748de3627cef5cc9863132874",
+    "docs/premium-ui/reviews/mapping-parent-v1-prior52-applicability.json": "2a4d619ffa38a20f2b3c9ea01f9c7d795cf03b69982ed445834712bf7d1051d6",
+    "docs/premium-ui/reviews/mapping-parent-v1-integrated-execution.json": "9e1a25c14666218b0c5033b8f9b77d6034b00377c0abb18936c933e68b0c79b1",
+    "docs/premium-ui/reviews/mapping-parent-v1-table-applicability.json": "1460c32aea25f9a4a6d37591e973aa6b599aa35aa28bd43f8426ccb6966620d6",
+    "docs/premium-ui/reviews/accepted-items-164-mapping-parent-v1-revalidation.json": "cfa15d1e1621218d58107462308e491fb78cfe38654977ee6624d632bc4967d0",
+    "docs/premium-ui/reviews/settings159-v7-prior52-applicability.json": "8c8d54996a418a035ddd28c762dc16331446e9279e68c535729d77f68b3bdb36",
+    "docs/premium-ui/reviews/settings159-v7-integrated-execution.json": "ecab26160223451f8b63522d1221b626d9fac4bd799d0b527da1a0c7895c4c59",
+    "docs/premium-ui/reviews/settings159-v7-table-applicability.json": "77f55c62d43502999441cd6f62a6ef633e295c5c2147aac4406712eeb4b8a2b5",
+    "docs/premium-ui/reviews/accepted-items-164-settings159-v7-revalidation.json": "41b7ad977b13bac9dd55efd2b0e99854829aa4d51a781f1fab7791ee68facc98",
+    "docs/premium-ui/reviews/stage161-v9-prior52-applicability.json": "fd3f67c51e95285e2f02312c7083770a26153dc2982cc36f3c0f289d980cc559",
+    "docs/premium-ui/reviews/stage161-v9-integrated-execution.json": "2ed0829e4e11597837449827708a02cffe2f1b09d2fbfe6e8573c19d06f90ab0",
+    "docs/premium-ui/reviews/stage161-v9-table-applicability.json": "6245658dc65768099e2c83dd3ed0179957e05ed7abf5704c39a80ffdd36e609b",
+    "docs/premium-ui/reviews/accepted-items-164-stage161-v9-revalidation.json": "538470cd97c90deb66ee9d43da1d08e3be8bc30e5cf744b4f95e4724b32854d3",
+    "docs/premium-ui/reviews/profile-parent-v5-prior53-applicability.json": "2b0936328b9f8d10209aebeb585460f70b4ac52ecbc614c18b41c876baf75d9d",
+    "docs/premium-ui/reviews/profile-parent-v5-integrated-execution.json": "ea3c751d8d62f1aca3edd53e40228635de44719e8f8269a7d80d2955347620bc",
+    "docs/premium-ui/reviews/profile-parent-v5-table-applicability.json": "856a344b771982807b0f0a1272f5cabc465f0c2f284f39e816a9cdaf73c79620",
+    "docs/premium-ui/reviews/accepted-items-164-profile-parent-v5-revalidation.json": "e1d3a2f8cc30fb1378222bac36dfcb7cfe9530af7aae506269d3b59ba55e2939",
+    "docs/premium-ui/reviews/original159-direct-record-v7-prior54-applicability.json": "ff5d8a29002e015776e0156beffc9ee12f7f2f6563742d9f67f976466e739335",
+    "docs/premium-ui/reviews/original159-direct-record-v7-integrated-execution.json": "f50fdc238f7ecde920678e6ecb152b1828a820ccebeba09495974ba4210e4d29",
+    "docs/premium-ui/reviews/original159-direct-record-v7-table-applicability.json": "5433d70c0e02a3c6b6328bff28cb62981bdbdf6f975acb16dad2d105096492f6",
+    "docs/premium-ui/reviews/accepted-items-164-direct-record-v7-revalidation.json": "706ca9b9d840be4575cbb3d1a6454533db82800a299ca465b060faf4153e7c19",
+    "docs/premium-ui/reviews/original159-import-v9r1-prior54-applicability.json": "44cce7dfd4f1dd7a8e58f9720d28d74d2715df3fe5ee433df1e608fedf12338c",
+    "docs/premium-ui/reviews/original159-import-v9r1-integrated-execution.json": "a4ee37412da49741e03e1b5d327bbc56f52645a6fb0eea5f7d5593dbaa1e05f7",
+    "docs/premium-ui/reviews/original159-import-v9r1-table-applicability.json": "548a2ffc8b22303463a809639fe9af5ef51d42e7a8d26c005e015d0968e0e1e2",
+    "docs/premium-ui/reviews/accepted-items-164-import-v9r1-revalidation.json": "9ce75db93f9c1cd3f505a9c7e0e7f4833ea2c8ac20bbea156f5b936ddab7a181",
+    "docs/premium-ui/reviews/original159-registry-v10r4-prior54-applicability.json": "a83e24de5bc816efa51a227278b9bd7851a000b0549a71c810186e404f07617c",
+    "docs/premium-ui/reviews/original159-registry-v10r4-integrated-execution.json": "b536fd5597a8ff6da97d070e7c69ac7f30ab3f495040f01992be8a253874a98b",
+    "docs/premium-ui/reviews/original159-registry-v10r4-table-applicability.json": "8b1f0778132cb156692347db5f7abd16673cbcfee9703db762b75ee95dd53da7",
+    "docs/premium-ui/reviews/accepted-items-164-registry-v10r4-revalidation.json": "86acb5e87e48336df3e9bacc6d07b633394fc52939f53c7b1a23e37bb805b706",
+    "docs/premium-ui/reviews/original159-delete-v11r1-prior56-applicability.json": "0f9c5a604fd9d76758f06c93e8ea2e19980ef526537586ad4b518b7b8aea33ac",
+    "docs/premium-ui/reviews/original159-delete-v11r1-integrated-execution.json": "6ac42d0030d361de882165866da7c0304b5210ddb10b731af4c2a99d66cdf8dd",
+    "docs/premium-ui/reviews/original159-delete-v11r1-table-applicability.json": "7b729a87804e64fa7c291e0c689794f0000c3404a35f8e50709f79b6d100f587",
+    "docs/premium-ui/reviews/accepted-items-164-delete-v11r1-revalidation.json": "0171074707250e5ef6ce828e26d81cc194fcfb1505dc4b810d5a5cfa2d28f67e",
+    "docs/premium-ui/reviews/original159-leave-nondelete-v1r2-prior56-applicability.json": "1f0fd204224582950a0c7491638802033c0c07e5e95cb1fb2e4cbb0da2ce6b59",
+    "docs/premium-ui/reviews/original159-leave-nondelete-v1r2-integrated-execution.json": "73ae2f189745587de8d3272ce21dcbb19a4aaeeffaf33904bfdac9f784a714cf",
+    "docs/premium-ui/reviews/original159-leave-nondelete-v1r2-table-applicability.json": "f6c6c76ca76d06ee4d25de715d574dbe4c6bdb7940e4369142744edf016ad32d",
+    "docs/premium-ui/reviews/accepted-items-164-leave-nondelete-v1r2-revalidation.json": "b76b46d467ac588de778cd24ce7b4598c0d623c029f183d9d0320cbd9b3a22af",
+    "docs/premium-ui/reviews/original159-nested-reference-v13r2-prior56-applicability.json": "22f733cae1153f3dc7e82d65e8f2320169e64e97876f6cde7735d7d4d7a13df1",
+    "docs/premium-ui/reviews/original159-nested-reference-v13r2-integrated-execution.json": "f90b0bf41d7a4b8f7332c88d66406613649ad3de332284641bcc8a343508fee6",
+    "docs/premium-ui/reviews/original159-nested-reference-v13r2-table-applicability.json": "bced364f21b452b208b082e12c64e3c4eedddfd64933c7f8104648729ff6dd89",
+    "docs/premium-ui/reviews/accepted-items-164-nested-reference-v13r2-revalidation.json": "c133d0636084e05d5be00d6f94372fdb466e38e8fc493eaeb654fe41087f2480",
+    "docs/premium-ui/reviews/combined183-175-v15-prior58-applicability-20261110.json": "3dfa0707925178749c7e7e6c47b58a3f38aa2f08d4434b6c8658171d7cc505b8",
+    "docs/premium-ui/reviews/combined183-175-v15-applied-execution-20261110.json": "454399d305ec744c1c765a20c0f2709e76ae2066a3f3777ddd1b5001087baddd",
+    "docs/premium-ui/reviews/combined183-175-v15-table-applicability-20261110.json": "955fe2372a74ce2d7ab8ef27acfcdeac8e98f9b2803aedcaa4f18604cf0c0dd6"
+  },
+  "limitations": [
+    "Tests launch generation dialogs and preserve existing preparation settings; they do not execute real computation, Apply proposals, certify eligibility, GPU hardware, persisted results or exports. Those outcomes are not required to establish optional-report isolation and primary work nonrepetition; their underlying handlers/contracts are unchanged.",
+    "No new certification of unrelated Review/Publish optional data consumers or standalone compute reports. Source confinement and unchanged other modules preserve prior scope; no requirement164 claim is expanded to those unrelated reports.",
+    "The deadline fixture accelerates only the12000ms timer to600ms; no real12second latency/performance certification.",
+    "Physical-device/native assistive-technology checks remain pending per user preference and broader goal. This exact read-isolation requirement does not impose them."
+  ],
+  "unit_settings_v6_revalidation": {
+    "parent": "docs/premium-ui/reviews/item164-acceptance.json",
+    "changed_evidence": [
+      "frontend/src/main.ts"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/unit-settings-recovery-v6-prior52-applicability.json",
+    "scope": "Original conditions retained by exact bounded settings source delta and44current affected-surface outcomes; isolated48helper applicability separate."
+  },
+  "mapping_parent_v1_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-164-unit-settings-v6-revalidation.json",
+    "changed_evidence": [
+      "frontend/src/main.ts"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/mapping-parent-v1-prior52-applicability.json",
+    "scope": "Original conditions retained by exact bounded callback source delta and42current affected-surface outcomes. No new whole159 acceptance."
+  },
+  "settings159_v7_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-164-mapping-parent-v1-revalidation.json",
+    "changed_evidence": [
+      "frontend/src/main.ts"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/settings159-v7-prior52-applicability.json",
+    "scope": "Original conditions retained by exact bounded callback source delta and42current affected-surface outcomes. No new whole159 acceptance."
+  },
+  "stage161_v9_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-164-settings159-v7-revalidation.json",
+    "changed_evidence": [
+      "frontend/src/main.ts"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/stage161-v9-prior52-applicability.json",
+    "scope": "Original conditions retained by exact bounded stage/readiness source delta and168current affected-surface outcomes. Whole161 acceptance is separate; no159 acceptance."
+  },
+  "profile_parent_v5_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-164-stage161-v9-revalidation.json",
+    "changed_evidence": [
+      "frontend/src/main.ts"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/profile-parent-v5-prior53-applicability.json",
+    "scope": "Original condition scope retained by reviewed source delta and144 current applied parent/focus/replacement outcomes; historical evidence keeps provenance. No whole159 acceptance."
+  },
+  "direct_record_v7_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-164-profile-parent-v5-revalidation.json",
+    "changed_evidence": [
+      "frontend/src/main.ts"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/original159-direct-record-v7-prior54-applicability.json",
+    "scope": "Original conditions retained by reviewed bounded source delta/current72 outcomes; historical evidence retains provenance. No whole159 acceptance."
+  },
+  "import_v9r1_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-164-direct-record-v7-revalidation.json",
+    "changed_evidence": [
+      "frontend/src/main.ts"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/original159-import-v9r1-prior54-applicability.json",
+    "scope": "Originalcondition scope retained; source-reviewed bounded import delta and90applied outcomes. No whole159acceptance."
+  },
+  "registry_v10r4_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-164-import-v9r1-revalidation.json",
+    "changed_evidence": [
+      "frontend/src/main.ts"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/original159-registry-v10r4-prior54-applicability.json",
+    "scope": "Originalcondition scope retained; independent registry source review,106applied outcomes and12sharedcaller regressions. No whole159acceptance."
+  },
+  "delete_v11r1_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-164-registry-v10r4-revalidation.json",
+    "changed_evidence": [
+      "frontend/src/main.ts"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/original159-delete-v11r1-prior56-applicability.json",
+    "scope": "Originalconditionsretained; independentboundedsource reviews,102appliedchecks,114unit/heldbuild. No whole159acceptance."
+  },
+  "leave_nondelete_v1r2_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-164-delete-v11r1-revalidation.json",
+    "changed_evidence": [
+      "frontend/src/main.ts"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/original159-leave-nondelete-v1r2-prior56-applicability.json",
+    "scope": "Originalconditionsretained; independentboundedsource reviews,48appliedchecks,114unit/heldbuild. No whole159acceptance."
+  },
+  "nested_reference_v13r2_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-164-leave-nondelete-v1r2-revalidation.json",
+    "changed_evidence": [
+      "frontend/src/main.ts"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/original159-nested-reference-v13r2-prior56-applicability.json",
+    "scope": "Originalconditionsretained; independentboundedsource reviews,120appliedchecks,114unit/heldbuild. No whole159acceptance."
+  },
+  "combined183_175_v15_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-164-nested-reference-v13r2-revalidation.json",
+    "changed_evidence": [
+      "frontend/src/main.ts"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/combined183-175-v15-prior58-applicability-20261110.json",
+    "scope": "Exact original conditions retained; scoped component reviews and root composition/84applied/unit114/heldbuild evidence. No new wholeitem acceptance."
+  }
+}

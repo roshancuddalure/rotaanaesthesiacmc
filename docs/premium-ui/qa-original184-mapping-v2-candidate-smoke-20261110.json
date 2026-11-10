@@ -1,0 +1,47 @@
+{
+  "recorded_at_utc": "2026-11-10T09:25:30.804Z",
+  "operator": "/root",
+  "source_sha256": {
+    "frontend/src/main.ts": "8c49cdfd6c16b334e336544ea6642433922edec28d8b15a927a0374805cd55c3",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "e97203cb8f7bb4db32e48cdd899a54c3a671052117fe06f0904ea810868402d9"
+  },
+  "candidate_files": [
+    {
+      "file": "main.ts",
+      "before_sha256": "8c49cdfd6c16b334e336544ea6642433922edec28d8b15a927a0374805cd55c3",
+      "candidate_sha256": "78d1db06f8fd54e67889bdcc06ba14dffffda656d7d65a9ab09bba3bc09a4ce9"
+    },
+    {
+      "file": "premium-theme.css",
+      "before_sha256": "e97203cb8f7bb4db32e48cdd899a54c3a671052117fe06f0904ea810868402d9",
+      "candidate_sha256": "9614423fa043414d5a7aa2cef0e695d20b0e8677ffbb6a940e68cb0004e1056e"
+    },
+    {
+      "file": "mapping-reference-details.ts",
+      "candidate_sha256": "689db9784860a170abf436deb2080a62ba6f316a78d74b13cb1f3ef93506e0ae",
+      "new_unapplied_module": true
+    }
+  ],
+  "terminal": true,
+  "scope": "Actual mappingroute isolated main/controller/CSS. Intercepted writes and referenceGET fixtures; supportingreadonlyRAM8031 GETs. Exact payload and read-only retries, dirty-control/node/focus preservation; no production or backendpolicy certification.",
+  "results": [
+    {
+      "passed": false,
+      "engine": "chromium",
+      "width": 320,
+      "theme": "light",
+      "scenario": "normal",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\ntrue !== false\n",
+      "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\ntrue !== false\n\n    at file:///D:/Coding/Duty%20Rota%20software/frontend/tests/premium-original184-mapping-v2-candidate-20261110.browser.mjs:28:17",
+      "writes": [],
+      "reads": [
+        "/api/v1/normalization/catalog/duty_type",
+        "/api/v1/normalization/catalog/posting_type",
+        "/api/v1/normalization/units"
+      ],
+      "errors": []
+    }
+  ]
+}

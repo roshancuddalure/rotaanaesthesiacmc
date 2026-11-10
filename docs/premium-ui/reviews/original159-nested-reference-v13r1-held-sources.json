@@ -1,0 +1,153 @@
+{
+  "recorded_at_utc": "2026-11-09T17:48:08.361321+00:00",
+  "author": "/root/nestedreference159_groundwork",
+  "scope": "Read-only source audit. No browser executions, product edits, backend writes or whole-item acceptance. Findings are risks, not runtime-confirmed defects.",
+  "source_sha256": {
+    "frontend/src/main.ts": "15b79223710a53a9e0ccdd70373a92e568f6ee603f56e3747454ab25ac258cc0",
+    "frontend/src/member-workspace.ts": "88774f277131a1ed83174d288d882653fc04add295b8237fefa62636e08617ea",
+    "frontend/src/operational-import.ts": "1ccbcf4181330a5f66c59b0723ec02f878a268b6b3030aa99b177de1b7070355",
+    "frontend/src/record-workspace.ts": "469fd6bf2e4118b15ad343d8059cd3cfb0acbc6483bea969ca5fb93488644335",
+    "frontend/src/reference-workspace.ts": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd",
+    "frontend/src/extra-duty.ts": "529e420fc05ce5bfa42655b8863e449e09e22a7c0abe9baf4db5c94c4797b8c3"
+  },
+  "findings": [
+    {
+      "id": "N159-01",
+      "status": "source-supported-risk-not-runtime-confirmed",
+      "chain": "Units > normalized import > unresolved row Create unit > accepted registry POST > close registry > discard import without Apply",
+      "anchors": [
+        "main.ts:9597-9614",
+        "operational-import.ts:696-767",
+        "operational-import.ts:271-274,909",
+        "reference-workspace.ts:490-497"
+      ],
+      "observation": "Nested registry gets three arguments, omitting the optional accepted-mutation lifecycle. Its legacy callback refreshes only importer corrections/options. The importer parent is notified only by an accepted Apply. No parent freshness follows a unit creation alone.",
+      "expected": "After final importer close, refresh the still-owned Unit board and complete fallback reference list while retaining existing fallback order, settings drafts, search, campus and month. No import Apply or fallback PUT should occur."
+    },
+    {
+      "id": "N159-02",
+      "status": "source-supported-risk-not-runtime-confirmed",
+      "chain": "Units > Add posting > Add unit > accepted registry POST > close registry > discard posting editor",
+      "anchors": [
+        "main.ts:9566-9583",
+        "record-workspace.ts:53-58,248-267",
+        "reference-workspace.ts:490-497"
+      ],
+      "observation": "Nested registry only pushes returned unit into editor choices and draft; cancelling posting editor never invokes main saved callback. Unit existence is already persisted and independent of unsaved posting.",
+      "expected": "Final editor close must refresh current parent for the accepted unit mutation only. Preserve unrelated parent settings/order/filter drafts and never save the discarded posting."
+    },
+    {
+      "id": "N159-03",
+      "status": "source-supported-risk-not-runtime-confirmed",
+      "chain": "Importer or record editor > Manage labels and mappings > accepted catalog PUT > its GET fails > close catalog > close unsaved owner",
+      "anchors": [
+        "reference-workspace.ts:577-600,737-779",
+        "operational-import.ts:324-333",
+        "record-workspace.ts:270-306",
+        "main.ts:9545-9551"
+      ],
+      "observation": "Catalog saved callback fires only after its readback succeeds. On accepted PUT plus readback503, closing has no mutation lifecycle notification; even successful callbacks reach only dirtyPreview/options/cache invalidation.",
+      "expected": "Notify actual accepted reference mutation before its GET; final enclosing close should refresh only relevant dependent data. Map actual consumers before choosing endpoints. Do not claim all current labels come from catalog: main also has static call/leave label helpers."
+    },
+    {
+      "id": "N159-04",
+      "status": "source-supported-risk-not-runtime-confirmed",
+      "chain": "Importer or record editor > Create member > accepted admin member POST > discard owner without Apply/posting save",
+      "anchors": [
+        "operational-import.ts:74-240,682-693",
+        "record-workspace.ts:236-247"
+      ],
+      "observation": "Accepted create calls done(member) for local choices only. This same done callback also handles Use existing member at lines148-157, so it cannot be treated unconditionally as a mutation. Nested Review/restore at lines165-176 similarly only checks candidates on change.",
+      "expected": "Distinct confirmed-mutation notification, excluding read-only Use existing and cancelled/failed creates. Determine actual Unit member picker consumer; member creation alone need not change posting counts or generate assignments."
+    }
+  ],
+  "diagnostic_matrix": [
+    {
+      "priority": 1,
+      "case": "record-new-unit-cancel",
+      "engines": [
+        "chromium",
+        "firefox",
+        "webkit"
+      ],
+      "widths": [
+        320,
+        1280
+      ],
+      "triggers": [
+        "[data-add-operational-record=\"units\"]",
+        "dialog.record-workspace [data-new-unit]",
+        "dialog.reference-workspace #registry-unit-form",
+        "dialog.record-workspace [data-close]"
+      ],
+      "guards": [
+        "Exactly one locally fulfilled unit POST; zero record save/preview/import Apply/fallback PUT",
+        "Parent original fallback host/row/order + settings input retained",
+        "New unit board card visible after final editor close without navigation",
+        "New unit included in fallback Add choice only from complete fallback GET"
+      ]
+    },
+    {
+      "priority": 2,
+      "case": "import-unresolved-unit-cancel",
+      "engines": [
+        "chromium",
+        "firefox",
+        "webkit"
+      ],
+      "widths": [
+        320,
+        1280
+      ],
+      "triggers": [
+        "[data-open-normalized-import=\"units\"]",
+        "form[data-settings] input[type=file]",
+        "[data-create-unit]",
+        "[data-close]"
+      ],
+      "guards": [
+        "Preview transport fixture follows consumed Preview shape; it is not an accepted Apply",
+        "Existing file/corrections/exclusions unchanged until explicit final discard",
+        "Same accepted-new-unit final parent expectations as first case"
+      ]
+    },
+    {
+      "priority": 3,
+      "case": "nested-own-read-failure",
+      "variants": [
+        "registry acceptedPOST then normalization/units GET503 then close",
+        "catalog acceptedPUT then catalog GET503 then close"
+      ],
+      "guards": [
+        "Accepted mutation remains persisted in fixture",
+        "GET-only recovery cannot replay POST/PUT",
+        "Closing readback failure still marks parent changed exactly once"
+      ]
+    },
+    {
+      "priority": 4,
+      "case": "owner-recovery",
+      "variants": [
+        "final parent GET503 + keyboard retry",
+        "route/month/account supersedes read",
+        "newer focus and settings edit during held read",
+        "two nested accepted mutations coalesce one final read",
+        "dirty close refusal does not close parent lifecycle",
+        "no mutation cancellation performs zero parent reads"
+      ],
+      "guards": [
+        "No stale owner DOM paint",
+        "Retry is bounded/read-only",
+        "No silent reset of retained drafts"
+      ]
+    }
+  ],
+  "contract_notes": [
+    "Use complete existing extra-duty/unit-fallbacks read for fallback membership; never infer archived/full membership from month-active Unit board.",
+    "createMemberInline done means chosen member OR created member; retain distinction.",
+    "Reference catalog exposes duty behavior editing; frontend fix must not alter persisted behavior, permissions or scheduling.",
+    "Defer parent refresh until final owning popup close; child close alone must not reset open editor/import draft."
+  ],
+  "rebase_recorded_at_utc": "2026-11-10T01:57:07.617737+00:00",
+  "rebase_note": "Held-source guard snapshot for V13r1 only. Main includes applied LeaveV1r2 changes. Original audit finding line anchors belong to its frozen prior main; no new audit or runtime acceptance implied."
+}

@@ -71,10 +71,21 @@ function updateLeaveImportApprovalAuthority(root: HTMLElement, dirty: boolean): 
     .forEach(element => { element.textContent = leaveImportApprovalAuthority(dirty); });
 }
 
+export type NestedReferenceChange = Readonly<{
+  entity: "unit" | "member" | "record";
+  operation: "save" | "create" | "restore" | "merge" | "cancel";
+  id?: string;
+}>;
+
 export async function createMemberInline(
   name: string,
   done: (member: DepartmentMember) => void,
+  confirmed?: (change: NestedReferenceChange) => void,
 ) {
+  const notifyConfirmed = (change: NestedReferenceChange) => {
+    try { confirmed?.(change); }
+    catch { console.warn("The dependent reference change notification could not be delivered."); }
+  };
   const dialog = workspaceDialog("Create department member", "mw-import");
   dialog.innerHTML = `<header class="mw-header"><h2>Create department member</h2><button type="button" data-close aria-label="Close member creation">${decorativeIcon("close")}</button></header><form class="mw-content"><p>Check the suggested existing members before creating a new identity. This creates the member; the import still requires review and apply.</p><label>Full member name<input name="canonical_name" required maxlength="255" value="${esc(name)}"></label><section data-existing-members aria-live="polite"></section><label>Default call level<select name="call_level"><option value="">Unassigned</option>${["1ST_CALL", "2ND_CALL", "3RD_CALL", "CO_4TH_CALL", "4TH_CALL", "5TH_CALL"].map((key) => `<option>${key}</option>`).join("")}</select></label><p data-error class="mw-error" role="alert"></p><button class="primary" type="submit">Create member</button></form>`;
   let busy = false;
@@ -174,6 +185,11 @@ export async function createMemberInline(
                 [],
                 "details",
                 "active",
+                {
+                  confirmed: change => notifyConfirmed({entity: change.kind === "member" ? "member" : "record", operation: change.operation, id: change.personId}),
+                  referenceConfirmed: notifyConfirmed,
+                  closed: () => {},
+                },
               );
             }),
         );
@@ -223,6 +239,7 @@ export async function createMemberInline(
           call_level: values.call_level || null,
         }),
       });
+      notifyConfirmed({entity: "member", operation: "create"});
       if (!alive()) return;
       busy = false;
       memberDraftDirty = false;
@@ -246,6 +263,7 @@ export async function createMemberInline(
 }
 
 export type OperationalImportLifecycle = Readonly<{
+  referenceConfirmed?: (change: NestedReferenceChange) => void;
   confirmed: (change: Readonly<{kind: "units" | "leave"; month: string; batchId: string}>) => void;
   closed: () => void;
 }>;
@@ -267,6 +285,10 @@ export async function openOperationalImport(
     parentClosed = true;
     try { parentLifecycle?.closed(); }
     catch { console.warn("The dependent import view close notification could not be delivered."); }
+  };
+  const notifyReferenceConfirmed = (change: NestedReferenceChange) => {
+    try { parentLifecycle?.referenceConfirmed?.(change); }
+    catch { console.warn("The dependent reference change notification could not be delivered."); }
   };
   const notifyParentConfirmed = (applied: Preview) => {
     try { parentLifecycle?.confirmed({kind, month: applied.month, batchId: applied.id}); }
@@ -295,6 +317,7 @@ export async function openOperationalImport(
   };
   const excluded = new Set<string>();
   let page = 0;
+  let pageSize = 10;
   const title = kind === "units" ? "Unitwise assignments" : "Leave";
   dialog.innerHTML = `<header class="mw-header"><div><h2>Import ${title.toLowerCase()}</h2><div data-import-steps>${steps(IMPORT_STEPS, 0)}</div></div><button data-close type="button" aria-label="Close import review">${decorativeIcon("close")}</button></header><div class="mw-content"><div class="registry-actions"><a class="icon-button" href="/templates/${kind === "units" ? "unitwise-assignments" : "leave-records"}.csv" download>Download ${kind === "units" ? "unitwise" : "leave"} CSV template</a><a class="quiet-button" href="/templates/${kind === "units" ? "unitwise-assignments" : "leave-records"}-example.csv" download>Download example CSV</a>${admin ? `<button type="button" class="quiet-button" data-manage-import-references>Manage labels and mappings</button>` : ""}</div><details class="mw-csv-help"><summary>CSV examples</summary><p>Use one row per dated record. Replace the illustrative member and unit names with your department records.</p><pre>${kind === "units" ? "member_name,unit_name,posting_type,starts_on,ends_on\nDr Example Member,Main Unit IV,2ND_CALL,2026-10-01,2026-10-31" : "member_name,starts_on,ends_on,leave_type,leave_slot,status\nDr Example Member,2026-10-03,2026-10-04,CL,FULL_DAY,approved"}</pre></details><p>Files and selections are kept in this open import. Replacing the file resets mappings and review choices. Closing, leaving or reloading may require choosing the file again.</p><form data-settings><label>Month<input type="month" name="month" required value="${esc(month)}"></label><label>File (up to 5 MB and 5,000 rows)<input type="file" required accept="${kind === "units" ? ".csv,.xlsx,.xlsm,.txt" : ".csv,.xlsx,.xls"}"></label><label>Operation<select name="mode"><option value="append">Append new records</option><option value="update_matching">Update matching member/date records</option><option value="replace_month">Replace imported records in this month</option></select></label><label>Dates in this file<select name="date_format"><option value="auto">ISO / detect unambiguous dates</option><option value="DMY">Day / month / year</option><option value="MDY">Month / day / year</option></select></label><p>Ambiguous dates need an explicit format. Blank unitwise dates use the selected month. Leave needs a start date. Replacement preserves records outside the month${kind === "leave" ? " and manually entered leave" : ""}.</p><div data-mapping></div><button class="primary" type="submit">Preview and normalize</button></form><p data-message role="status"></p><section data-review></section></div>`;
   function setStep(index: number) {
@@ -497,7 +520,8 @@ export async function openOperationalImport(
   function renderReview() {
     if (!preview) return;
     const root = dialog.querySelector<HTMLElement>("[data-review]")!;
-    const shown = preview.rows.slice(page * 25, (page + 1) * 25);
+    page = Math.max(0, Math.min(page, Math.ceil(preview.rows.length / pageSize) - 1));
+    const shown = preview.rows.slice(page * pageSize, (page + 1) * pageSize);
     const reviewCounts = () =>
       `${preview!.rows.filter((row) => !excluded.has(row.key) && !row.issues.length).length} ready · ${preview!.rows.filter((row) => !excluded.has(row.key) && row.issues.length).length} need review · ${excluded.size} excluded`;
     const actionCount = (action: string) => preview!.rows.filter((row) => row.action === action && !excluded.has(row.key)).length;
@@ -580,7 +604,7 @@ export async function openOperationalImport(
             preview!.rows.map((r) => ({ key: r.key, issues: r.issues, label: `row ${r.source.row} “${r.values.member_name ?? ""}”` })),
             excluded,
           );
-    root.innerHTML = `<h3>Resolve and review</h3><section aria-label="Server import preview scope"><p>${esc(importPreviewModeText("records", preview.mode))}</p><p>Month returned by preview: <strong>${esc(preview.month || "Not returned")}</strong>. ${preview.rows.length} ${kind === "units" ? "posting" : "leave"} rows returned for review.${preview.mode === "replace_month" ? Array.isArray(preview.replacement_scope) ? ` ${preview.replacement_scope.length} existing imported records returned in replacement scope; inspect that scope below.` : " Replacement scope was not returned." : ""}</p><p data-import-preview-authority>${importPreviewAuthorityText(previewDirty)}</p></section>${groupedSummary}<p data-review-counts class="review-counts">${reviewCounts()}</p>${preview.mode === "replace_month" ? `<details><summary>${Array.isArray(preview.replacement_scope) ? preview.replacement_scope.length : "Not returned"} existing records affected by replacement</summary>${(Array.isArray(preview.replacement_scope) ? preview.replacement_scope : []).map((r) => `<p>${esc(members.find((m) => m.id === r.person_id)?.canonical_name || r.person_id)} · ${esc(r.starts_on)} to ${esc(r.ends_on || "Ongoing")}</p>`).join("")}</details>` : ""}${shown.map(rowHtml).join("")}<div class="pager" ${preview.rows.length <= 25 ? "hidden" : ""}><button type="button" class="icon-button btn-sm" data-page="-1" ${page === 0 ? "disabled" : ""}>Previous rows</button><span>Page ${page + 1} of ${Math.ceil(preview.rows.length / 25)}</span><button type="button" class="icon-button btn-sm" data-page="1" ${(page + 1) * 25 >= preview.rows.length ? "disabled" : ""}>Next rows</button></div><label class="checkbox-line"><input type="checkbox" data-acknowledge> I reviewed the affected duties and replacement scope</label><div class="registry-actions import-apply-bar"><button type="button" class="icon-button" data-refresh>Refresh normalized preview</button><button type="button" class="quiet-button" data-report>Download row report</button><button type="button" class="primary" data-apply ${previewDirty ? 'aria-disabled="true"' : ""}>Apply reviewed rows</button></div><p class="import-apply-blocker" data-apply-blocker role="status">${esc(blocker())}</p><p data-apply-status role="status" aria-live="polite"></p>`;
+    root.innerHTML = `<h3>Resolve and review</h3><section aria-label="Server import preview scope"><p>${esc(importPreviewModeText("records", preview.mode))}</p><p>Month returned by preview: <strong>${esc(preview.month || "Not returned")}</strong>. ${preview.rows.length} ${kind === "units" ? "posting" : "leave"} rows returned for review.${preview.mode === "replace_month" ? Array.isArray(preview.replacement_scope) ? ` ${preview.replacement_scope.length} existing imported records returned in replacement scope; inspect that scope below.` : " Replacement scope was not returned." : ""}</p><p data-import-preview-authority>${importPreviewAuthorityText(previewDirty)}</p></section>${groupedSummary}<p data-review-counts class="review-counts">${reviewCounts()}</p>${preview.mode === "replace_month" ? `<details><summary>${Array.isArray(preview.replacement_scope) ? preview.replacement_scope.length : "Not returned"} existing records affected by replacement</summary>${(Array.isArray(preview.replacement_scope) ? preview.replacement_scope : []).map((r) => `<p>${esc(members.find((m) => m.id === r.person_id)?.canonical_name || r.person_id)} · ${esc(r.starts_on)} to ${esc(r.ends_on || "Ongoing")}</p>`).join("")}</details>` : ""}${shown.map(rowHtml).join("")}<div class="pager"><label>Rows per page <select data-review-page-size aria-label="Rows per page">${[10,20,30].map(size => `<option ${size === pageSize ? "selected" : ""}>${size}</option>`).join("")}</select></label><button type="button" class="icon-button btn-sm" data-page="-1" ${page === 0 ? "disabled" : ""}>Previous rows</button><span>Page ${page + 1} of ${Math.max(1, Math.ceil(preview.rows.length / pageSize))}</span><button type="button" class="icon-button btn-sm" data-page="1" ${(page + 1) * pageSize >= preview.rows.length ? "disabled" : ""}>Next rows</button></div><label class="checkbox-line"><input type="checkbox" data-acknowledge> I reviewed the affected duties and replacement scope</label><div class="registry-actions import-apply-bar"><button type="button" class="icon-button" data-refresh>Refresh normalized preview</button><button type="button" class="quiet-button" data-report>Download row report</button><button type="button" class="primary" data-apply ${previewDirty ? 'aria-disabled="true"' : ""}>Apply reviewed rows</button></div><p class="import-apply-blocker" data-apply-blocker role="status">${esc(blocker())}</p><p data-apply-status role="status" aria-live="polite"></p>`;
     // One-click member choice: save it and re-run the preview so the row is checked again.
     root.querySelectorAll<HTMLButtonElement>("[data-pick-member]").forEach(
       (button) =>
@@ -611,6 +635,11 @@ export async function openOperationalImport(
             candidate?.active_status !== "active" && admin
               ? "active"
               : undefined,
+            {
+              confirmed: change => notifyReferenceConfirmed({entity: change.kind === "member" ? "member" : "record", operation: change.operation, id: change.personId}),
+              referenceConfirmed: notifyReferenceConfirmed,
+              closed: () => {},
+            },
           );
         }),
     );
@@ -664,6 +693,14 @@ export async function openOperationalImport(
           if (note) note.textContent = blocker();
         }),
     );
+    root.querySelector<HTMLSelectElement>("[data-review-page-size]")?.addEventListener("change", event => {
+      const value = Number((event.target as HTMLSelectElement).value);
+      if (![10, 20, 30].includes(value)) return;
+      pageSize = value;
+      page = 0;
+      renderReview();
+      root.querySelector<HTMLSelectElement>("[data-review-page-size]")?.focus();
+    });
     root.querySelectorAll<HTMLButtonElement>("[data-page]").forEach(
       (b) =>
         (b.onclick = () => {
@@ -690,7 +727,7 @@ export async function openOperationalImport(
             (corrections[row.key] ??= {}).person_id = member.id;
             renderReview();
             dirtyPreview();
-          });
+          }, notifyReferenceConfirmed);
         }),
     );
     root.querySelectorAll<HTMLButtonElement>("[data-create-unit]").forEach(
@@ -764,6 +801,10 @@ export async function openOperationalImport(
             },
             undefined,
             true,
+            {
+              confirmed: () => notifyReferenceConfirmed({entity: "unit", operation: "save"}),
+              closed: () => {},
+            },
           );
         }),
     );

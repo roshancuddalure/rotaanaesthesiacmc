@@ -1077,3 +1077,76 @@ td { line-height: 1.5; }
 .generation-stages[data-workflow-operations] .assignment-tools .extra-duty-stage { padding-left: var(--space-2); margin-top: var(--space-3); }
 @media (max-width: 1000px) { .generation-stages[data-workflow-operations] { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 640px) { .generation-stages[data-workflow-operations] { grid-template-columns: 1fr; } }
+
+/* Align operational numbers without changing their displayed values. */
+body { font-variant-numeric: tabular-nums; }
+:where(button, input, select, textarea, option, optgroup) { font-variant-numeric: inherit; }
+
+/* Keep each unit-day comparison tied to its date while the other columns scroll. */
+@media screen {
+  .staffing-safety .table-scroll { isolation: isolate; }
+  .staffing-safety .table-scroll thead th { z-index: 2; }
+  .staffing-safety .table-scroll :is(th, td):first-child {
+    position: sticky;
+    inset-inline-start: 0;
+    z-index: 1;
+    background: var(--color-surface);
+    box-shadow: inset -1px 0 var(--color-border);
+  }
+  .staffing-safety .table-scroll thead th:first-child {
+    z-index: 3;
+    background: var(--color-th-bg);
+  }
+  .staffing-safety .table-scroll tbody tr:hover > td:first-child {
+    background: var(--color-table-hover);
+  }
+}
+@media screen and (forced-colors: active) {
+  .staffing-safety .table-scroll :is(th, td):first-child,
+  .staffing-safety .table-scroll thead th:first-child,
+  .staffing-safety .table-scroll tbody tr:hover > td:first-child {
+    color: CanvasText;
+    background: Canvas;
+    border-inline-end: 1px solid CanvasText;
+    box-shadow: none;
+  }
+}
+
+/* Mapping identities and read-only reference details remain readable beside editors. */
+.mapping-editor .mapping-target-detail { display: grid; gap: 4px; min-width: 0; margin-top: 8px; }
+.mapping-editor .mapping-target-detail code { white-space: normal; overflow-wrap: anywhere; }
+.mapping-editor [data-mapping-review-state] { display: block; margin-top: 6px; }
+.mapping-editor [data-target-activity][data-state="inactive"] { font-weight: 700; }
+.mapping-editor :is(input, select) { min-width: 0; max-width: 100%; }
+.mapping-filters [data-retry-mapping-references][hidden] { display: none; }
+
+/* Keep the human reference name distinct from its exact system key. */
+.mapping-target-detail [data-target-label] { font-size: var(--text-sm); line-height: 1.45; font-weight: 600; overflow-wrap: anywhere; }
+.mapping-target-detail [data-target-label][hidden] { display: none; }
+.mapping-target-detail code { font-size: var(--text-xs); color: var(--color-text-secondary); }
+.mapping-editor [data-save] { white-space: nowrap; overflow-wrap: normal; min-inline-size: 56px; padding-inline: var(--space-2); }
+@media (min-width: 1101px) {
+  .mapping-editor .mapping-table { table-layout: fixed; width: 100%; }
+  .mapping-table th:nth-child(1) { width: 20%; }
+  .mapping-table th:nth-child(2) { width: 25%; }
+  .mapping-table th:nth-child(3) { width: 14%; }
+  .mapping-table th:nth-child(4) { width: 14%; }
+  .mapping-table th:nth-child(5) { width: 15%; }
+  .mapping-table th:nth-child(6) { width: 12%; }
+}
+@media (min-width: 769px) and (max-width: 1100px) {
+  .mapping-editor { overflow: visible; padding: var(--space-3); }
+  .mapping-editor table.mapping-table { display: block; min-width: 0; width: 100%; }
+  .mapping-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .mapping-table tbody { display: grid; gap: var(--space-4); }
+  .mapping-table tr { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); padding: var(--space-4); border: 1px solid var(--color-border); border-radius: var(--radius-card); background: var(--color-surface); }
+  .mapping-table td { display: grid; min-width: 0; gap: 6px; padding: 0; border: 0; }
+  .mapping-table td:nth-child(1), .mapping-table td:nth-child(2), .mapping-table td:nth-child(5), .mapping-table td:nth-child(6) { grid-column: 1 / -1; }
+  .mapping-table td[data-label]::before { content: attr(data-label); font-size: var(--text-sm); font-weight: 600; color: var(--color-text-secondary); }
+  .mapping-table td:last-child button { width: 100%; }
+}
+
+/* Historical-import progress uses the shared steps and accommodates enlarged text. */
+[data-past-progress] .ds-steps__item { max-inline-size: 100%; }
+[data-past-progress] .ds-steps__item > span:nth-child(2) { min-inline-size: 0; overflow-wrap: anywhere; }
+[data-past-progress] .ds-steps__dot { min-inline-size: 1.6em; min-block-size: 1.6em; flex-shrink: 0; }

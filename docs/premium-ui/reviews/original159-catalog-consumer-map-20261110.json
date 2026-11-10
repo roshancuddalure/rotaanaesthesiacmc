@@ -1,0 +1,98 @@
+{
+  "recorded_at_utc": "2026-11-10T02:17:16.327746+00:00",
+  "author": "/root/catalog159_consumer_groundwork",
+  "decision": "Read-only source-risk groundwork. No browser executed; no current runtime defect, completed item159 or acceptance claim.",
+  "source_sha256": {
+    "frontend/src/main.ts": "15b79223710a53a9e0ccdd70373a92e568f6ee603f56e3747454ab25ac258cc0",
+    "frontend/src/member-workspace.ts": "88774f277131a1ed83174d288d882653fc04add295b8237fefa62636e08617ea",
+    "frontend/src/record-workspace.ts": "469fd6bf2e4118b15ad343d8059cd3cfb0acbc6483bea969ca5fb93488644335",
+    "frontend/src/operational-import.ts": "1ccbcf4181330a5f66c59b0723ec02f878a268b6b3030aa99b177de1b7070355",
+    "frontend/src/reference-workspace.ts": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd",
+    "frontend/src/workspace-load-state.ts": "cdd0e323d7e83e6e668a381bbfcc37cad4726b1193ac5de31d5f14e03eecd9c6",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+  },
+  "source_scope": "Applied sources only; isolated V13r2 is not presumed applied or tested by this audit.",
+  "catalog_save_sequence": {
+    "source": "frontend/src/reference-workspace.ts:542-794",
+    "accepted": "Existing PUT resolves, dirty=false, confirmedReferenceSave=true, then await load().",
+    "successful_read": "load GETs own catalog kind, replaces items, clears confirmedReferenceSave, renders, restores focus, then calls saved().",
+    "read_failure": "GET503 while confirmed invokes savedReadbackFailure. Try again performs load GET only. Close calls close(), removes catalog and focuses opener without saved(). Unlike createNew unit registry, reference save does not auto-close.",
+    "risk": "A confirmed catalog mutation followed by failed own readback and Close can omit a consuming callback. The effect depends on the specific caller and rendered consumer; no universal dependency claim follows."
+  },
+  "kinds": [
+    {
+      "kind": "campus",
+      "direct_catalog_consumer": "Catalog list/edit/history only among these rendered files.",
+      "counterevidence": "Unit registry campus is input[name=campus] free text; record unit labels/import unit options use returned unit.campus, not campus catalog. Main campus filters derive unit management values. No source-supported universal renamed-campus propagation bug."
+    },
+    {
+      "kind": "designation",
+      "direct_catalog_consumer": "Catalog list/edit/history. Profile Roles opens this kind but passes empty callback.",
+      "counterevidence": "Profile designation editor is input[data-d][data-key=designation], free text. Identity uses returned member.designations through member-presentation. Catalog rename is not itself a member designation mutation."
+    },
+    {
+      "kind": "leave_type",
+      "direct_catalog_consumer": "Record Leave editor options(): GET catalog/leave_type; render select[name=leave_type] uses active item.key/label. Manage labels callback reloads options and rerenders retained draft.",
+      "other": "Leave import toolbar opens initial leave_type; successful callback dirties preview, whose next normalization request can consume updated server definitions. Preview row correction is plain input, not catalog-backed select."
+    },
+    {
+      "kind": "leave_slot",
+      "direct_catalog_consumer": "Record Leave editor GET catalog/leave_slot \u2192 native select[name=leave_slot] item labels. Catalog Operational meaning maps_to selects supported behavior.",
+      "counterevidence": "Main Leave/session text is static leaveTypeLabel(key), not catalog label lookup; do not assert this rename changes existing month row captions."
+    },
+    {
+      "kind": "leave_status",
+      "direct_catalog_consumer": "Record Leave editor GET catalog/leave_status \u2192 native select[name=status] item labels. Catalog maps_to controls existing operational meaning.",
+      "counterevidence": "Main leaveStatusLabel has hard-coded known labels and titlecase fallback. Renaming a catalog caption alone does not imply persisted approval state or month caption changes."
+    },
+    {
+      "kind": "posting_type",
+      "direct_catalog_consumer": "Record Units editor GET catalog/posting_type \u2192 native select[name=posting_type] item labels; mapping creator category posting_label GETs same catalog and renders option.label.",
+      "other": "Unit import toolbar opens posting_type; successful callback invalidates preview, but correction fields are text inputs. Main posting labels use normalized call-level helpers.",
+      "strongest_diagnostic": "Actual Units\u2192Add posting\u2192Manage labels\u2192switch posting_type\u2192rename existing 2ND_CALL\u2192accepted local PUT\u2192GET503\u2192Close. Inspect still-open select caption/value and unrelated notes/settings; compare explicit GET retry control."
+    },
+    {
+      "kind": "duty_type",
+      "direct_catalog_consumer": "Mapping creator category duty_label GETs duty_type and renders item.label. Catalog owns existing scheduling behavior editor.",
+      "counterevidence": "Main mapping options.duty_types comes from getMappingOptions; rota template labels/duty options come from returned template. They are indirect server-returned consumers, not live direct catalog lookups. No scheduling behavior change proposed."
+    }
+  ],
+  "caller_effects": [
+    {
+      "caller": "record-workspace.ts [data-references], lines274-308",
+      "success": "options() rereads members/units and consumed catalogs, then render with current draft. Preserves notes/date/id draft, attempts owned focus/selection/scroll restoration.",
+      "close_after_read_failure_risk": "No options reread; existing item label/active availability remains old. The old stable key is deliberately unchanged; caption freshness and reference authority are the issue."
+    },
+    {
+      "caller": "operational-import.ts [data-manage-import-references], lines324-334 and dirtyPreview",
+      "success": "dirtyPreview invalidates stale reviewed state; no catalog choice arrays exist here.",
+      "close_after_read_failure_risk": "Existing preview may not be marked stale after changed aliases/operational meaning. Requires actual preview diagnostic before calling current bug; changing display label alone is weaker because parser meaning may be unaffected."
+    },
+    {
+      "caller": "member-workspace.ts [data-manage-profile-references], line873",
+      "success": "Empty callback. Existing profile labels derive returned member strings.",
+      "close_after_read_failure_risk": "No omitted callback propagation effect established."
+    },
+    {
+      "caller": "main.ts [data-manage-reference-catalog], line9551",
+      "success": "Invalidates Unit cache only; no currently mounted retained parent refresh and no reloadMappings callback here.",
+      "close_after_read_failure_risk": "Missing cache invalidation alone is not sufficient: services/api global data-sync invalidates Unit cache. Main labels mostly static; no universal stale rename claim."
+    }
+  ],
+  "diagnostic": {
+    "path": "frontend/tests/premium-original159-catalog-consumer-close-diagnostic-20261110.browser.mjs",
+    "sha256": "a7372c9928576e4226f1c9eac4c354ccfbb4f588c340d2b1e71491890d9cc7a0",
+    "status": "authored_not_executed",
+    "contexts": 12,
+    "matrix": "Three engines \u00d7320/1280 \u00d7Close/GET-retry; one locally fulfilled catalog PUT per context. Real app navigation/UI, no injected fake UI. Unknown mutations rejected; otherwise-unhandled GETs use RAM8031 only.",
+    "selectors": "Native input[name=label], select[data-kind], select[name=posting_type], textarea[name=notes] qualified by actual dialogs. Reference catalog stays open after save; recovery Close and retry\u2192Cancel explicit. No assumption of unit-registry createNew auto-close.",
+    "source_guards": "Frozen local and served source-map hashes before execution, local hashes after. Root must derive a new unique version/report if applied source changes; do not rewrite frozen script or old report.",
+    "expected_interpretation": "Close case expected-correct assertion may fail on current source, while retry is positive control. Assertion failures must be inspected for actual acceptance, GET503 and final observed caption, not automatically declared product defects."
+  },
+  "limits": [
+    "No browser runtime, backend mutation or production access by this specialist.",
+    "No product, backend, API, permissions, scheduling, persistence or export changes.",
+    "No original159/all260 acceptance or physical-device/native-AT verification.",
+    "Only discovered direct catalog URL consumers in frontend/src are reference-workspace and record-workspace. Indirect server-derived data and other source modules require separate evidence."
+  ]
+}

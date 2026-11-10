@@ -1,0 +1,270 @@
+{
+  "recorded_at_utc": "2026-11-10T04:16:32.002772+00:00",
+  "scope_type": "exact_runtime_requirement",
+  "scope": "Exact original161 five distinct operational stages and truthful available-state cues. Whole159/160 and260 remain incomplete.",
+  "items": [
+    {
+      "item_id": 161,
+      "requirement": "Present setup, template allocation, member assignment, review and publishing as clear operational stages with truthful readiness cues.",
+      "conditions": [
+        {
+          "condition": "Setup, template allocation, member assignment, review and publishing are presented as distinct understandable stages.",
+          "satisfied": true,
+          "evidence": [
+            "docs/premium-ui/qa-stage161-v9-surfaces-integrated.json",
+            "docs/premium-ui/qa-stage161-v9-invalidcounts-text-integrated.json",
+            "docs/premium-ui/qa-stage161-v9-contrast-integrated.json"
+          ],
+          "rationale": "WORKFLOW_STEPS contains five distinct operation identifiers and ordered Setup, Build template, Assign members, Review and Publish labels. Template and assignment share their existing route but have separate identifiers, labels, explanatory copy and ordinal stages. This preserves the application route contract while distinguishing operations. The shell tracker, Overview cards and generation stage list use the same five identifiers; header context uses steps 1, 2?3, 4 and 5. Optional balance and extra-duty controls remain inside the assignment stage. The applied surface assertions check exact labels/order on shell, Template and Overview, keyboard opening of optional tools, cache-only Overview and no horizontal page overflow. Recorded Chromium mobile Template screenshot has five individually bounded cards with wrapping copy. Desktop 32px Overview screenshot shows five individually bounded, legible cards and focused Publish control."
+        },
+        {
+          "condition": "Readiness indicators derive from actual available state and do not mark incomplete stages complete.",
+          "satisfied": true,
+          "evidence": [
+            "docs/premium-ui/qa-stage161-v9-owner-integrated.json",
+            "docs/premium-ui/qa-stage161-v9-classification-integrated.json",
+            "docs/premium-ui/qa-stage161-v9-wrongmonth-integrated.json",
+            "docs/premium-ui/qa-stage161-v9-invalidcounts-text-integrated.json",
+            "docs/premium-ui/qa-stage161-v9-known503-integrated.json",
+            "docs/premium-ui/qa-stage161-v9-datachange-integrated.json"
+          ],
+          "rationale": "Setup and template readiness derive from their authoritative server blocker titles; Review requires scope complete, template complete and zero returned blockers, including future unrecognized blocker titles. The browser classification matrix asserts incomplete, ready, unavailable and historical publication variants rather than merely the number of displayed stages. Assignment completion additionally requires nonnegative integer total/assigned/open counts with assigned + open = total, positive total, all assigned, zero open and no Open slots blocker. Missing, fractional and inconsistent counts render assignment unknown. Valid filled assignment progress can coexist with another-stage blocker; Review still remains blocked. Publication completion means an existing recorded publication (latest_publish), preserving the current application history semantics. It does not claim that later edits have been reapproved; Publish page explicitly states any later change needs new approval. Freshness and last-known wording are separate from progress: checking, unavailable and interrupted states render unknown visual state and explicit Last known accessible text rather than current completion. First-failure checks show unknown. Current account, month, view generation and latest read identity gate accepted checklist results. Wrong-month Publish data and superseded same-view responses cannot commit the old approval controls. Applied recorded cases verify stale/read failure and GET-only recovery, wrong-month rejection, route-away success and failure, superseding month, sign-out and local data-change ownership. Computed sidebar cue contrast is at least 9.31:1 across tested gradient endpoints in light mode; all 12 light/dark engine-width cases pass 4.5:1."
+        }
+      ]
+    }
+  ],
+  "independent_review": "docs/premium-ui/reviews/stage161-v9-independent-final-review.json",
+  "root_review": {
+    "reviewer": "/root",
+    "scope": "Inspected applied source, actual final168 browser reports, heldbuild0 and114unit0. Existing52 original scoped acceptances revalidated with explicit source applicability; independent exact two-condition review supports acceptance. Initial extracted unit harness dependency failure retained and repaired with positive/negative context assertions."
+  },
+  "execution_evidence": [
+    {
+      "label": "owner",
+      "test": "frontend/tests/premium-stage161-v9-owner-integrated.browser.mjs",
+      "report": "docs/premium-ui/qa-stage161-v9-owner-integrated.json",
+      "contexts": 24,
+      "operator": "/root",
+      "exit_code": 0,
+      "evidence_sha256": {
+        "frontend/tests/premium-stage161-v9-owner-integrated.browser.mjs": "b61f59b08a8740da3c2f8d74d0b784a575db9f5401ed92967f069463e5a263de",
+        "docs/premium-ui/qa-stage161-v9-owner-integrated.json": "ad345a59aa98552a0bb79bdb722c1c7ed444e60a98bff9bee4ce5b91d1016571",
+        "tmp/stage161-v9-integrated-run/owner.log": "fe48a3dc8ce6c0a6a890b256073e093f6e6f5cf3b8a4adb541d41e5f8f9c2baf",
+        "tmp/stage161-v9-integrated-run/owner-exit.json": "431b8eacfd2da55225dab127be4c032674a97e8b3a2bd344ca8fbaaf196dac0d"
+      }
+    },
+    {
+      "label": "classification",
+      "test": "frontend/tests/premium-stage161-v9-classification-integrated.browser.mjs",
+      "report": "docs/premium-ui/qa-stage161-v9-classification-integrated.json",
+      "contexts": 72,
+      "operator": "/root",
+      "exit_code": 0,
+      "evidence_sha256": {
+        "frontend/tests/premium-stage161-v9-classification-integrated.browser.mjs": "31e9a552e494368fffcc51a81ced04c13d79eb5d72d70e0af3e9dd8ec880b64b",
+        "docs/premium-ui/qa-stage161-v9-classification-integrated.json": "f8ce16f8eb64c1252e4cc28a25217bc154d4cd3d4bfa2cc0a250e979b81837e3",
+        "tmp/stage161-v9-integrated-run/classification.log": "e0ab4a7199bcc8cd29dfc973cb581b47f3152cd2b04c5766bda3157e54d608bf",
+        "tmp/stage161-v9-integrated-run/classification-exit.json": "88bce27885c3b6d29860ab0db99edabcab03292cfd761eab863be0d542c6f1c2"
+      }
+    },
+    {
+      "label": "surfaces",
+      "test": "frontend/tests/premium-stage161-v9-surfaces-integrated.browser.mjs",
+      "report": "docs/premium-ui/qa-stage161-v9-surfaces-integrated.json",
+      "contexts": 12,
+      "operator": "/root",
+      "exit_code": 0,
+      "evidence_sha256": {
+        "frontend/tests/premium-stage161-v9-surfaces-integrated.browser.mjs": "992968da5e2f445d6eb26aa6cbcdbc22e1fce9529eb50b8e994440af296da91b",
+        "docs/premium-ui/qa-stage161-v9-surfaces-integrated.json": "3a0460a553db73a234f0926e82b696f3e72c1921c2adec8cadf3a2a85092c8d2",
+        "tmp/stage161-v9-integrated-run/surfaces.log": "52d2c0bde5639d1b5a867f76c96fc7fdafa2321e762fa66e752274207e82c9b0",
+        "tmp/stage161-v9-integrated-run/surfaces-exit.json": "34d4de89bfbfeab0e7c40f7d6e4206b096a6a26bb10d6fcd1e7ff8753b73cdd1"
+      }
+    },
+    {
+      "label": "wrongmonth",
+      "test": "frontend/tests/premium-stage161-v9-wrongmonth-integrated.browser.mjs",
+      "report": "docs/premium-ui/qa-stage161-v9-wrongmonth-integrated.json",
+      "contexts": 6,
+      "operator": "/root",
+      "exit_code": 0,
+      "evidence_sha256": {
+        "frontend/tests/premium-stage161-v9-wrongmonth-integrated.browser.mjs": "17fc3de65aac88a1e72ea2f2fec949cf53df1a71a22934cf1c2b716cf8552b3b",
+        "docs/premium-ui/qa-stage161-v9-wrongmonth-integrated.json": "579fa57e7a908851f421d2c60e6138a2af7192948bcb66110eecdb7fe228d200",
+        "tmp/stage161-v9-integrated-run/wrongmonth.log": "ea00ae85f2641143d4de5693b1a24065dcae1ba0835500e63f570dd166f13154",
+        "tmp/stage161-v9-integrated-run/wrongmonth-exit.json": "c17c4670e7f9c1f6411d9abbcaefda25572979a8759497ecf34bd057e2735d6f"
+      }
+    },
+    {
+      "label": "invalidcounts-text",
+      "test": "frontend/tests/premium-stage161-v9-invalidcounts-text-integrated.browser.mjs",
+      "report": "docs/premium-ui/qa-stage161-v9-invalidcounts-text-integrated.json",
+      "contexts": 30,
+      "operator": "/root",
+      "exit_code": 0,
+      "evidence_sha256": {
+        "frontend/tests/premium-stage161-v9-invalidcounts-text-integrated.browser.mjs": "3fc9377536eef7abcd445dcf7212fa1d226c911d671c2afb192012388cc68817",
+        "docs/premium-ui/qa-stage161-v9-invalidcounts-text-integrated.json": "5bd42d298d70f9ee02fa20ad6a7f1226fab111364498577ae67e6d6fc23e0998",
+        "tmp/stage161-v9-integrated-run/invalidcounts-text.log": "1ef13810f93defe31ba6b4e01f68fbc30a66aa987a3a1b66d1e7ae354a053509",
+        "tmp/stage161-v9-integrated-run/invalidcounts-text-exit.json": "4112bf3b0c3341694f83542ab93903c5f0d85ba5b8466849efe5f1d5f6e64739"
+      }
+    },
+    {
+      "label": "known503",
+      "test": "frontend/tests/premium-stage161-v9-known503-integrated.browser.mjs",
+      "report": "docs/premium-ui/qa-stage161-v9-known503-integrated.json",
+      "contexts": 6,
+      "operator": "/root",
+      "exit_code": 0,
+      "evidence_sha256": {
+        "frontend/tests/premium-stage161-v9-known503-integrated.browser.mjs": "ce551ed4c8864524e878780f659b7c80761a6037b4de9e827ef0bd90f44c09c9",
+        "docs/premium-ui/qa-stage161-v9-known503-integrated.json": "fd06461b590224cc4a01fbe75f936c8d797afff5ecbba14359a0b57c31c301ac",
+        "tmp/stage161-v9-integrated-run/known503.log": "be15184914fd940d0f9335d99434b18782ee7ff8604e4048750c155b088b221e",
+        "tmp/stage161-v9-integrated-run/known503-exit.json": "4ebda7481a670b189f48882eb17cdc4b8d3038fe5d51b4ed4ff7ffd8f5ec1804"
+      }
+    },
+    {
+      "label": "datachange",
+      "test": "frontend/tests/premium-stage161-v9-datachange-integrated.browser.mjs",
+      "report": "docs/premium-ui/qa-stage161-v9-datachange-integrated.json",
+      "contexts": 6,
+      "operator": "/root",
+      "exit_code": 0,
+      "evidence_sha256": {
+        "frontend/tests/premium-stage161-v9-datachange-integrated.browser.mjs": "f72596b6964bb007369849834503be4c43020465af625c31f548c79afb8f57f3",
+        "docs/premium-ui/qa-stage161-v9-datachange-integrated.json": "e8c6f168fb3b847b9a7a9d73085505e5c78e70a81f82efd1832b63544f72cafa",
+        "tmp/stage161-v9-integrated-run/datachange.log": "6f341e8e9c2e0d1bbc5ac021463af9466f35ff73f8810645196cfa6f6fec7810",
+        "tmp/stage161-v9-integrated-run/datachange-exit.json": "2e16fda0b8054652dc52f1968776e766650dcff1eaf7533f0449cd17d34201d4"
+      }
+    },
+    {
+      "label": "contrast",
+      "test": "frontend/tests/premium-stage161-v9-contrast-integrated.browser.mjs",
+      "report": "docs/premium-ui/qa-stage161-v9-contrast-integrated.json",
+      "contexts": 12,
+      "operator": "/root",
+      "exit_code": 0,
+      "evidence_sha256": {
+        "frontend/tests/premium-stage161-v9-contrast-integrated.browser.mjs": "f9633af85a494cc3182a9c7360128c5d50c578c1cbbdac437b5980a7fbd71dd6",
+        "docs/premium-ui/qa-stage161-v9-contrast-integrated.json": "e11dd936e47125f18f2b1acb0e33e3f2caa7ed5352d8406a05836daca1df9793",
+        "tmp/stage161-v9-integrated-run/contrast.log": "d1cd14086639b681d747f3296e62215ba2f3fea4071f81f2ce2b27dc8b5c4b5f",
+        "tmp/stage161-v9-integrated-run/contrast-exit.json": "efcbe46bb7a9dfa08a961c0be55d3e7ba56f823043ac8f5a5381b1683c265120"
+      }
+    }
+  ],
+  "evidence_sha256": {
+    "frontend/src/main.ts": "ebf67f1733f620e406054d0c4a82cf1c203fd0e6603a843eec45b25a1a09df4d",
+    "frontend/src/premium-theme.css": "acc46b2249087f365ca855bcd9630628c390c4cdf013301daaee40ede80e55f4",
+    "docs/premium-ui/reviews/stage161-v9-integrated-execution.json": "2ed0829e4e11597837449827708a02cffe2f1b09d2fbfe6e8573c19d06f90ab0",
+    "docs/premium-ui/reviews/stage161-v9-independent-final-review.json": "360d4a7a2ba8d9ed637e33bf97e0aee1e8b2dbe1054d3ec109c3596b9b99d0c9",
+    "docs/premium-ui/reviews/stage161-v9-prior52-applicability.json": "fd3f67c51e95285e2f02312c7083770a26153dc2982cc36f3c0f289d980cc559",
+    "tmp/stage161-operations-v9/source-proof.json": "a29057cffdd59c727f937a8afb35bd87f2f57dee0ef40196df6f04179d812e14",
+    "docs/premium-ui/reviews/frontend-build-snapshot-stage161-v9.json": "1e4cd3f5b865e39b3d37195de924822ed7134c7e2937c66e944c717f5ee6c21f",
+    "docs/premium-ui/qa-stage161-v9-owner-integrated.json": "ad345a59aa98552a0bb79bdb722c1c7ed444e60a98bff9bee4ce5b91d1016571",
+    "frontend/tests/premium-stage161-v9-owner-integrated.browser.mjs": "b61f59b08a8740da3c2f8d74d0b784a575db9f5401ed92967f069463e5a263de",
+    "docs/premium-ui/qa-stage161-v9-classification-integrated.json": "f8ce16f8eb64c1252e4cc28a25217bc154d4cd3d4bfa2cc0a250e979b81837e3",
+    "frontend/tests/premium-stage161-v9-classification-integrated.browser.mjs": "31e9a552e494368fffcc51a81ced04c13d79eb5d72d70e0af3e9dd8ec880b64b",
+    "docs/premium-ui/qa-stage161-v9-surfaces-integrated.json": "3a0460a553db73a234f0926e82b696f3e72c1921c2adec8cadf3a2a85092c8d2",
+    "frontend/tests/premium-stage161-v9-surfaces-integrated.browser.mjs": "992968da5e2f445d6eb26aa6cbcdbc22e1fce9529eb50b8e994440af296da91b",
+    "docs/premium-ui/qa-stage161-v9-wrongmonth-integrated.json": "579fa57e7a908851f421d2c60e6138a2af7192948bcb66110eecdb7fe228d200",
+    "frontend/tests/premium-stage161-v9-wrongmonth-integrated.browser.mjs": "17fc3de65aac88a1e72ea2f2fec949cf53df1a71a22934cf1c2b716cf8552b3b",
+    "docs/premium-ui/qa-stage161-v9-invalidcounts-text-integrated.json": "5bd42d298d70f9ee02fa20ad6a7f1226fab111364498577ae67e6d6fc23e0998",
+    "frontend/tests/premium-stage161-v9-invalidcounts-text-integrated.browser.mjs": "3fc9377536eef7abcd445dcf7212fa1d226c911d671c2afb192012388cc68817",
+    "docs/premium-ui/qa-stage161-v9-known503-integrated.json": "fd06461b590224cc4a01fbe75f936c8d797afff5ecbba14359a0b57c31c301ac",
+    "frontend/tests/premium-stage161-v9-known503-integrated.browser.mjs": "ce551ed4c8864524e878780f659b7c80761a6037b4de9e827ef0bd90f44c09c9",
+    "docs/premium-ui/qa-stage161-v9-datachange-integrated.json": "e8c6f168fb3b847b9a7a9d73085505e5c78e70a81f82efd1832b63544f72cafa",
+    "frontend/tests/premium-stage161-v9-datachange-integrated.browser.mjs": "f72596b6964bb007369849834503be4c43020465af625c31f548c79afb8f57f3",
+    "docs/premium-ui/qa-stage161-v9-contrast-integrated.json": "e11dd936e47125f18f2b1acb0e33e3f2caa7ed5352d8406a05836daca1df9793",
+    "frontend/tests/premium-stage161-v9-contrast-integrated.browser.mjs": "f9633af85a494cc3182a9c7360128c5d50c578c1cbbdac437b5980a7fbd71dd6",
+    "docs/premium-ui/reviews/item161-v9-acceptance.json": "d8b25e0653f06937f244f80fe98a8a4aa968bfd74d06f4e9f5a4ac61c11a89f8",
+    "docs/premium-ui/reviews/profile-parent-v5-prior53-applicability.json": "2b0936328b9f8d10209aebeb585460f70b4ac52ecbc614c18b41c876baf75d9d",
+    "docs/premium-ui/reviews/profile-parent-v5-integrated-execution.json": "ea3c751d8d62f1aca3edd53e40228635de44719e8f8269a7d80d2955347620bc",
+    "docs/premium-ui/reviews/profile-parent-v5-table-applicability.json": "856a344b771982807b0f0a1272f5cabc465f0c2f284f39e816a9cdaf73c79620",
+    "docs/premium-ui/reviews/accepted-items-161-profile-parent-v5-revalidation.json": "66839a957455db0dd9841cae5063ef346cc5c8970e1250b61f679b28d0dc0603",
+    "docs/premium-ui/reviews/original159-direct-record-v7-prior54-applicability.json": "ff5d8a29002e015776e0156beffc9ee12f7f2f6563742d9f67f976466e739335",
+    "docs/premium-ui/reviews/original159-direct-record-v7-integrated-execution.json": "f50fdc238f7ecde920678e6ecb152b1828a820ccebeba09495974ba4210e4d29",
+    "docs/premium-ui/reviews/original159-direct-record-v7-table-applicability.json": "5433d70c0e02a3c6b6328bff28cb62981bdbdf6f975acb16dad2d105096492f6",
+    "docs/premium-ui/reviews/accepted-items-161-direct-record-v7-revalidation.json": "1cf09298f239a73aa0ad7fd32f97aa29084bccef83f08ef71d6ae2ca0600e093",
+    "docs/premium-ui/reviews/original159-import-v9r1-prior54-applicability.json": "44cce7dfd4f1dd7a8e58f9720d28d74d2715df3fe5ee433df1e608fedf12338c",
+    "docs/premium-ui/reviews/original159-import-v9r1-integrated-execution.json": "a4ee37412da49741e03e1b5d327bbc56f52645a6fb0eea5f7d5593dbaa1e05f7",
+    "docs/premium-ui/reviews/original159-import-v9r1-table-applicability.json": "548a2ffc8b22303463a809639fe9af5ef51d42e7a8d26c005e015d0968e0e1e2",
+    "docs/premium-ui/reviews/accepted-items-161-import-v9r1-revalidation.json": "acc0448b84fee8c772529d84d291d4810a161fe4911239b9bdecef08bb0a99e6",
+    "docs/premium-ui/reviews/original159-registry-v10r4-prior54-applicability.json": "a83e24de5bc816efa51a227278b9bd7851a000b0549a71c810186e404f07617c",
+    "docs/premium-ui/reviews/original159-registry-v10r4-integrated-execution.json": "b536fd5597a8ff6da97d070e7c69ac7f30ab3f495040f01992be8a253874a98b",
+    "docs/premium-ui/reviews/original159-registry-v10r4-table-applicability.json": "8b1f0778132cb156692347db5f7abd16673cbcfee9703db762b75ee95dd53da7",
+    "docs/premium-ui/reviews/accepted-items-161-registry-v10r4-revalidation.json": "ffbdf5980e1ef20d603c349c145e7d8e2c10ea5ced4509e642674fc3c68a20f0",
+    "docs/premium-ui/reviews/original159-delete-v11r1-prior56-applicability.json": "0f9c5a604fd9d76758f06c93e8ea2e19980ef526537586ad4b518b7b8aea33ac",
+    "docs/premium-ui/reviews/original159-delete-v11r1-integrated-execution.json": "6ac42d0030d361de882165866da7c0304b5210ddb10b731af4c2a99d66cdf8dd",
+    "docs/premium-ui/reviews/original159-delete-v11r1-table-applicability.json": "7b729a87804e64fa7c291e0c689794f0000c3404a35f8e50709f79b6d100f587",
+    "docs/premium-ui/reviews/accepted-items-161-delete-v11r1-revalidation.json": "6a574eedd1752e0d721f0257c7dfaa578f99aa4501d871cf453ab606d03a8d78",
+    "docs/premium-ui/reviews/original159-leave-nondelete-v1r2-prior56-applicability.json": "1f0fd204224582950a0c7491638802033c0c07e5e95cb1fb2e4cbb0da2ce6b59",
+    "docs/premium-ui/reviews/original159-leave-nondelete-v1r2-integrated-execution.json": "73ae2f189745587de8d3272ce21dcbb19a4aaeeffaf33904bfdac9f784a714cf",
+    "docs/premium-ui/reviews/original159-leave-nondelete-v1r2-table-applicability.json": "f6c6c76ca76d06ee4d25de715d574dbe4c6bdb7940e4369142744edf016ad32d",
+    "docs/premium-ui/reviews/accepted-items-161-leave-nondelete-v1r2-revalidation.json": "be74d5e805bc7109387c13c85c662d610109b961102fa0bc9d9f2aa0c92ae135",
+    "docs/premium-ui/reviews/original159-nested-reference-v13r2-prior56-applicability.json": "22f733cae1153f3dc7e82d65e8f2320169e64e97876f6cde7735d7d4d7a13df1",
+    "docs/premium-ui/reviews/original159-nested-reference-v13r2-integrated-execution.json": "f90b0bf41d7a4b8f7332c88d66406613649ad3de332284641bcc8a343508fee6",
+    "docs/premium-ui/reviews/original159-nested-reference-v13r2-table-applicability.json": "bced364f21b452b208b082e12c64e3c4eedddfd64933c7f8104648729ff6dd89"
+  },
+  "limitations": [
+    "Synthetic/disposable read fixtures do not certify production persistence, scheduling policy or hardware.",
+    "32px CSS text is not native browser zoom; physical devices/native AT remain pending.",
+    "Prior52 acceptance applicability and original161 condition review are separate gates; whole159/160/260 remain incomplete."
+  ],
+  "requirement_scope_rationale": "Both exact original conditions are supported: five separately keyed and consistently ordered operational stages across shell, Overview and generation; actual server blocker/count state, unknown and last-known cues, owner/month/read-generation rejection and read-only recovery prevent stale completion. All168 final applied browser contexts and114 unit assertions pass with held build and independent source/assertion/result review. This scope does not certify scheduling correctness or whole260 completion.",
+  "profile_parent_v5_revalidation": {
+    "parent": "docs/premium-ui/reviews/item161-v9-acceptance.json",
+    "changed_evidence": [
+      "frontend/src/main.ts"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/profile-parent-v5-prior53-applicability.json",
+    "scope": "Original condition scope retained by reviewed source delta and144 current applied parent/focus/replacement outcomes; historical evidence keeps provenance. No whole159 acceptance."
+  },
+  "direct_record_v7_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-161-profile-parent-v5-revalidation.json",
+    "changed_evidence": [
+      "frontend/src/main.ts"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/original159-direct-record-v7-prior54-applicability.json",
+    "scope": "Original conditions retained by reviewed bounded source delta/current72 outcomes; historical evidence retains provenance. No whole159 acceptance."
+  },
+  "import_v9r1_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-161-direct-record-v7-revalidation.json",
+    "changed_evidence": [
+      "frontend/src/main.ts"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/original159-import-v9r1-prior54-applicability.json",
+    "scope": "Originalcondition scope retained; source-reviewed bounded import delta and90applied outcomes. No whole159acceptance."
+  },
+  "registry_v10r4_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-161-import-v9r1-revalidation.json",
+    "changed_evidence": [
+      "frontend/src/main.ts"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/original159-registry-v10r4-prior54-applicability.json",
+    "scope": "Originalcondition scope retained; independent registry source review,106applied outcomes and12sharedcaller regressions. No whole159acceptance."
+  },
+  "delete_v11r1_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-161-registry-v10r4-revalidation.json",
+    "changed_evidence": [
+      "frontend/src/main.ts"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/original159-delete-v11r1-prior56-applicability.json",
+    "scope": "Originalconditionsretained; independentboundedsource reviews,102appliedchecks,114unit/heldbuild. No whole159acceptance."
+  },
+  "leave_nondelete_v1r2_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-161-delete-v11r1-revalidation.json",
+    "changed_evidence": [
+      "frontend/src/main.ts"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/original159-leave-nondelete-v1r2-prior56-applicability.json",
+    "scope": "Originalconditionsretained; independentboundedsource reviews,48appliedchecks,114unit/heldbuild. No whole159acceptance."
+  },
+  "nested_reference_v13r2_revalidation": {
+    "parent": "docs/premium-ui/reviews/accepted-items-161-leave-nondelete-v1r2-revalidation.json",
+    "changed_evidence": [
+      "frontend/src/main.ts"
+    ],
+    "current_applicability": "docs/premium-ui/reviews/original159-nested-reference-v13r2-prior56-applicability.json",
+    "scope": "Originalconditionsretained; independentboundedsource reviews,120appliedchecks,114unit/heldbuild. No whole159acceptance."
+  }
+}

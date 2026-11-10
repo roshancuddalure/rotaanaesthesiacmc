@@ -1,0 +1,2129 @@
+{
+  "recorded_at_utc": "2026-11-10T04:13:41.867Z",
+  "author": "/root/nestedreference159_groundwork",
+  "scope": "12 isolated V13r2 candidate contexts: direct import row data-review-candidate profile action, core or posting Save, close profile then discard importer without Apply. Separate from Create member lookup Review/restore. All mutations local, only unhandled GETs RAM8031. No recovery/ownership/physical/nativeAT or whole159 acceptance.",
+  "source_sha256": {
+    "frontend/src/main.ts": "ebf67f1733f620e406054d0c4a82cf1c203fd0e6603a843eec45b25a1a09df4d",
+    "frontend/src/member-workspace.ts": "506c486046fe6f0bbea5c6c4bf6357fec6e9649d91a9ed1ed890551ed3503cca",
+    "frontend/src/operational-import.ts": "01d58023203380fedcee010cd3001b8e2bb478397144566ef92142a515a14b38",
+    "frontend/src/record-workspace.ts": "20b50cdbd991b5b5a16d06b51020be2838514a553823512373818f65636427aa",
+    "frontend/src/reference-workspace.ts": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd",
+    "frontend/src/extra-duty.ts": "529e420fc05ce5bfa42655b8863e449e09e22a7c0abe9baf4db5c94c4797b8c3"
+  },
+  "candidate_sha256": {
+    "frontend/src/main.ts": "ebf67f1733f620e406054d0c4a82cf1c203fd0e6603a843eec45b25a1a09df4d",
+    "frontend/src/member-workspace.ts": "506c486046fe6f0bbea5c6c4bf6357fec6e9649d91a9ed1ed890551ed3503cca",
+    "frontend/src/operational-import.ts": "01d58023203380fedcee010cd3001b8e2bb478397144566ef92142a515a14b38",
+    "frontend/src/record-workspace.ts": "20b50cdbd991b5b5a16d06b51020be2838514a553823512373818f65636427aa",
+    "frontend/src/reference-workspace.ts": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd"
+  },
+  "test_sha256": "d0234b9faa7def5dc51e9f86f0e02f713b30239994d86efd256a522e4d13076a",
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "scenario": "core-save",
+      "passed": true,
+      "observed": {
+        "parentReads": 1,
+        "fallbackReads": 0,
+        "parentNames": [
+          "Dr Row Renamed NEW",
+          "Dr Row Renamed NEW"
+        ],
+        "fallbackRetained": true,
+        "fallbackOrder": [
+          "row-profile-c",
+          "row-profile-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/columns"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/units/preview"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/row-profile-person",
+          "body": {
+            "id": "row-profile-person",
+            "canonical_name": "Dr Row Renamed NEW",
+            "active_status": "active",
+            "call_level": "2ND_CALL",
+            "aliases": [],
+            "designations": [],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/columns",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/units/preview",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/row-profile-person",
+          "search": ""
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/row-profile-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "prompts": [
+        "Discard this import draft? If an Apply result was uncertain, check import history before trying again."
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "scenario": "posting-save",
+      "passed": true,
+      "observed": {
+        "parentReads": 1,
+        "fallbackReads": 0,
+        "parentNames": [
+          "Dr Row Original OLD",
+          "Dr Row Original OLD"
+        ],
+        "fallbackRetained": true,
+        "fallbackOrder": [
+          "row-profile-c",
+          "row-profile-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/columns"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/units/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "body": {
+            "identity": "row-profile-posting",
+            "values": {
+              "person_id": "row-profile-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "row-profile-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Row profile posting NEW",
+              "id": "row-profile-posting",
+              "person": {
+                "id": "row-profile-person",
+                "canonical_name": "Dr Row Original OLD",
+                "active_status": "active",
+                "call_level": "2ND_CALL",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "unit": {
+                "id": "row-profile-unit",
+                "name": "Royal Row Profile Unit",
+                "campus": "Main",
+                "code": "RP",
+                "minimum_free_people": 1,
+                "active_status": "active",
+                "notes": null
+              },
+              "source": "manual"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "body": {
+            "identity": "row-profile-posting",
+            "values": {
+              "person_id": "row-profile-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "row-profile-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Row profile posting NEW",
+              "id": "row-profile-posting",
+              "person": {
+                "id": "row-profile-person",
+                "canonical_name": "Dr Row Original OLD",
+                "active_status": "active",
+                "call_level": "2ND_CALL",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "unit": {
+                "id": "row-profile-unit",
+                "name": "Royal Row Profile Unit",
+                "campus": "Main",
+                "code": "RP",
+                "minimum_free_people": 1,
+                "active_status": "active",
+                "notes": null
+              },
+              "source": "manual"
+            },
+            "review_token": "row-profile-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/columns",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/units/preview",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/row-profile-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/row-profile-person/postings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/records/units/row-profile-posting",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/row-profile-person/postings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "prompts": [
+        "Discard this import draft? If an Apply result was uncertain, check import history before trying again."
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "scenario": "core-save",
+      "passed": true,
+      "observed": {
+        "parentReads": 1,
+        "fallbackReads": 0,
+        "parentNames": [
+          "Dr Row Renamed NEW",
+          "Dr Row Renamed NEW"
+        ],
+        "fallbackRetained": true,
+        "fallbackOrder": [
+          "row-profile-c",
+          "row-profile-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/columns"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/units/preview"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/row-profile-person",
+          "body": {
+            "id": "row-profile-person",
+            "canonical_name": "Dr Row Renamed NEW",
+            "active_status": "active",
+            "call_level": "2ND_CALL",
+            "aliases": [],
+            "designations": [],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/columns",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/units/preview",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/row-profile-person",
+          "search": ""
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/row-profile-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "prompts": [
+        "Discard this import draft? If an Apply result was uncertain, check import history before trying again."
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "scenario": "posting-save",
+      "passed": true,
+      "observed": {
+        "parentReads": 1,
+        "fallbackReads": 0,
+        "parentNames": [
+          "Dr Row Original OLD",
+          "Dr Row Original OLD"
+        ],
+        "fallbackRetained": true,
+        "fallbackOrder": [
+          "row-profile-c",
+          "row-profile-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/columns"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/units/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "body": {
+            "identity": "row-profile-posting",
+            "values": {
+              "person_id": "row-profile-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "row-profile-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Row profile posting NEW",
+              "id": "row-profile-posting",
+              "person": {
+                "id": "row-profile-person",
+                "canonical_name": "Dr Row Original OLD",
+                "active_status": "active",
+                "call_level": "2ND_CALL",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "unit": {
+                "id": "row-profile-unit",
+                "name": "Royal Row Profile Unit",
+                "campus": "Main",
+                "code": "RP",
+                "minimum_free_people": 1,
+                "active_status": "active",
+                "notes": null
+              },
+              "source": "manual"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "body": {
+            "identity": "row-profile-posting",
+            "values": {
+              "person_id": "row-profile-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "row-profile-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Row profile posting NEW",
+              "id": "row-profile-posting",
+              "person": {
+                "id": "row-profile-person",
+                "canonical_name": "Dr Row Original OLD",
+                "active_status": "active",
+                "call_level": "2ND_CALL",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "unit": {
+                "id": "row-profile-unit",
+                "name": "Royal Row Profile Unit",
+                "campus": "Main",
+                "code": "RP",
+                "minimum_free_people": 1,
+                "active_status": "active",
+                "notes": null
+              },
+              "source": "manual"
+            },
+            "review_token": "row-profile-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/columns",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/units/preview",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/row-profile-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/row-profile-person/postings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/records/units/row-profile-posting",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/row-profile-person/postings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "prompts": [
+        "Discard this import draft? If an Apply result was uncertain, check import history before trying again."
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "scenario": "core-save",
+      "passed": true,
+      "observed": {
+        "parentReads": 1,
+        "fallbackReads": 0,
+        "parentNames": [
+          "Dr Row Renamed NEW",
+          "Dr Row Renamed NEW"
+        ],
+        "fallbackRetained": true,
+        "fallbackOrder": [
+          "row-profile-c",
+          "row-profile-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/columns"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/units/preview"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/row-profile-person",
+          "body": {
+            "id": "row-profile-person",
+            "canonical_name": "Dr Row Renamed NEW",
+            "active_status": "active",
+            "call_level": "2ND_CALL",
+            "aliases": [],
+            "designations": [],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/columns",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/units/preview",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/row-profile-person",
+          "search": ""
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/row-profile-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "prompts": [
+        "Discard this import draft? If an Apply result was uncertain, check import history before trying again."
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "scenario": "posting-save",
+      "passed": true,
+      "observed": {
+        "parentReads": 1,
+        "fallbackReads": 0,
+        "parentNames": [
+          "Dr Row Original OLD",
+          "Dr Row Original OLD"
+        ],
+        "fallbackRetained": true,
+        "fallbackOrder": [
+          "row-profile-c",
+          "row-profile-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/columns"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/units/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "body": {
+            "identity": "row-profile-posting",
+            "values": {
+              "person_id": "row-profile-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "row-profile-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Row profile posting NEW",
+              "id": "row-profile-posting",
+              "person": {
+                "id": "row-profile-person",
+                "canonical_name": "Dr Row Original OLD",
+                "active_status": "active",
+                "call_level": "2ND_CALL",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "unit": {
+                "id": "row-profile-unit",
+                "name": "Royal Row Profile Unit",
+                "campus": "Main",
+                "code": "RP",
+                "minimum_free_people": 1,
+                "active_status": "active",
+                "notes": null
+              },
+              "source": "manual"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "body": {
+            "identity": "row-profile-posting",
+            "values": {
+              "person_id": "row-profile-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "row-profile-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Row profile posting NEW",
+              "id": "row-profile-posting",
+              "person": {
+                "id": "row-profile-person",
+                "canonical_name": "Dr Row Original OLD",
+                "active_status": "active",
+                "call_level": "2ND_CALL",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "unit": {
+                "id": "row-profile-unit",
+                "name": "Royal Row Profile Unit",
+                "campus": "Main",
+                "code": "RP",
+                "minimum_free_people": 1,
+                "active_status": "active",
+                "notes": null
+              },
+              "source": "manual"
+            },
+            "review_token": "row-profile-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/columns",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/units/preview",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/row-profile-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/row-profile-person/postings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/records/units/row-profile-posting",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/row-profile-person/postings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "prompts": [
+        "Discard this import draft? If an Apply result was uncertain, check import history before trying again."
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "scenario": "core-save",
+      "passed": true,
+      "observed": {
+        "parentReads": 1,
+        "fallbackReads": 0,
+        "parentNames": [
+          "Dr Row Renamed NEW",
+          "Dr Row Renamed NEW"
+        ],
+        "fallbackRetained": true,
+        "fallbackOrder": [
+          "row-profile-c",
+          "row-profile-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/columns"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/units/preview"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/row-profile-person",
+          "body": {
+            "id": "row-profile-person",
+            "canonical_name": "Dr Row Renamed NEW",
+            "active_status": "active",
+            "call_level": "2ND_CALL",
+            "aliases": [],
+            "designations": [],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/columns",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/units/preview",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/row-profile-person",
+          "search": ""
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/row-profile-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "prompts": [
+        "Discard this import draft? If an Apply result was uncertain, check import history before trying again."
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "scenario": "posting-save",
+      "passed": true,
+      "observed": {
+        "parentReads": 1,
+        "fallbackReads": 0,
+        "parentNames": [
+          "Dr Row Original OLD",
+          "Dr Row Original OLD"
+        ],
+        "fallbackRetained": true,
+        "fallbackOrder": [
+          "row-profile-c",
+          "row-profile-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/columns"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/units/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "body": {
+            "identity": "row-profile-posting",
+            "values": {
+              "person_id": "row-profile-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "row-profile-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Row profile posting NEW",
+              "id": "row-profile-posting",
+              "person": {
+                "id": "row-profile-person",
+                "canonical_name": "Dr Row Original OLD",
+                "active_status": "active",
+                "call_level": "2ND_CALL",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "unit": {
+                "id": "row-profile-unit",
+                "name": "Royal Row Profile Unit",
+                "campus": "Main",
+                "code": "RP",
+                "minimum_free_people": 1,
+                "active_status": "active",
+                "notes": null
+              },
+              "source": "manual"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "body": {
+            "identity": "row-profile-posting",
+            "values": {
+              "person_id": "row-profile-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "row-profile-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Row profile posting NEW",
+              "id": "row-profile-posting",
+              "person": {
+                "id": "row-profile-person",
+                "canonical_name": "Dr Row Original OLD",
+                "active_status": "active",
+                "call_level": "2ND_CALL",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "unit": {
+                "id": "row-profile-unit",
+                "name": "Royal Row Profile Unit",
+                "campus": "Main",
+                "code": "RP",
+                "minimum_free_people": 1,
+                "active_status": "active",
+                "notes": null
+              },
+              "source": "manual"
+            },
+            "review_token": "row-profile-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/columns",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/units/preview",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/row-profile-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/row-profile-person/postings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/records/units/row-profile-posting",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/row-profile-person/postings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "prompts": [
+        "Discard this import draft? If an Apply result was uncertain, check import history before trying again."
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "scenario": "core-save",
+      "passed": false,
+      "assertion": "{\"parentReads\":1,\"fallbackReads\":0,\"parentNames\":[\"Dr Row Original OLD\",\"Dr Row Original OLD\"],\"fallbackRetained\":true,\"fallbackOrder\":[\"row-profile-c\",\"row-profile-b\"],\"search\":\"Royal\",\"campus\":\"campus:Main\"}",
+      "saved": true,
+      "reads": {
+        "unitReads": 2,
+        "fbReads": 1
+      },
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "observed": {
+        "parentNames": [
+          "Dr Row Renamed NEW",
+          "Dr Row Renamed NEW"
+        ],
+        "profileCount": 0,
+        "importerCount": 0
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/columns"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/units/preview"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/row-profile-person",
+          "body": {
+            "id": "row-profile-person",
+            "canonical_name": "Dr Row Renamed NEW",
+            "active_status": "active",
+            "call_level": "2ND_CALL",
+            "aliases": [],
+            "designations": [],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/columns",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/units/preview",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/row-profile-person",
+          "search": ""
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/row-profile-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "prompts": [
+        "Discard this import draft? If an Apply result was uncertain, check import history before trying again."
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "scenario": "posting-save",
+      "passed": true,
+      "observed": {
+        "parentReads": 1,
+        "fallbackReads": 0,
+        "parentNames": [
+          "Dr Row Original OLD",
+          "Dr Row Original OLD"
+        ],
+        "fallbackRetained": true,
+        "fallbackOrder": [
+          "row-profile-c",
+          "row-profile-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/columns"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/units/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "body": {
+            "identity": "row-profile-posting",
+            "values": {
+              "person_id": "row-profile-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "row-profile-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Row profile posting NEW",
+              "id": "row-profile-posting",
+              "person": {
+                "id": "row-profile-person",
+                "canonical_name": "Dr Row Original OLD",
+                "active_status": "active",
+                "call_level": "2ND_CALL",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "unit": {
+                "id": "row-profile-unit",
+                "name": "Royal Row Profile Unit",
+                "campus": "Main",
+                "code": "RP",
+                "minimum_free_people": 1,
+                "active_status": "active",
+                "notes": null
+              },
+              "source": "manual"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "body": {
+            "identity": "row-profile-posting",
+            "values": {
+              "person_id": "row-profile-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "row-profile-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Row profile posting NEW",
+              "id": "row-profile-posting",
+              "person": {
+                "id": "row-profile-person",
+                "canonical_name": "Dr Row Original OLD",
+                "active_status": "active",
+                "call_level": "2ND_CALL",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "unit": {
+                "id": "row-profile-unit",
+                "name": "Royal Row Profile Unit",
+                "campus": "Main",
+                "code": "RP",
+                "minimum_free_people": 1,
+                "active_status": "active",
+                "notes": null
+              },
+              "source": "manual"
+            },
+            "review_token": "row-profile-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/columns",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/units/preview",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/row-profile-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/row-profile-person/postings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/records/units/row-profile-posting",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/row-profile-person/postings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "prompts": [
+        "Discard this import draft? If an Apply result was uncertain, check import history before trying again."
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "scenario": "core-save",
+      "passed": false,
+      "assertion": "{\"parentReads\":1,\"fallbackReads\":0,\"parentNames\":[\"Dr Row Original OLD\",\"Dr Row Original OLD\"],\"fallbackRetained\":true,\"fallbackOrder\":[\"row-profile-c\",\"row-profile-b\"],\"search\":\"Royal\",\"campus\":\"campus:Main\"}",
+      "saved": true,
+      "reads": {
+        "unitReads": 2,
+        "fbReads": 1
+      },
+      "before": {
+        "unitReads": 1,
+        "fbReads": 1
+      },
+      "observed": {
+        "parentNames": [
+          "Dr Row Renamed NEW",
+          "Dr Row Renamed NEW"
+        ],
+        "profileCount": 0,
+        "importerCount": 0
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/columns"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/units/preview"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/row-profile-person",
+          "body": {
+            "id": "row-profile-person",
+            "canonical_name": "Dr Row Renamed NEW",
+            "active_status": "active",
+            "call_level": "2ND_CALL",
+            "aliases": [],
+            "designations": [],
+            "call_level_changes": [],
+            "preserve_previous_name": true
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/columns",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/units/preview",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/row-profile-person",
+          "search": ""
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/admin/member-workspace/row-profile-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "prompts": [
+        "Discard this import draft? If an Apply result was uncertain, check import history before trying again."
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "scenario": "posting-save",
+      "passed": true,
+      "observed": {
+        "parentReads": 1,
+        "fallbackReads": 0,
+        "parentNames": [
+          "Dr Row Original OLD",
+          "Dr Row Original OLD"
+        ],
+        "fallbackRetained": true,
+        "fallbackOrder": [
+          "row-profile-c",
+          "row-profile-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/columns"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/units/preview"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "body": {
+            "identity": "row-profile-posting",
+            "values": {
+              "person_id": "row-profile-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "row-profile-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Row profile posting NEW",
+              "id": "row-profile-posting",
+              "person": {
+                "id": "row-profile-person",
+                "canonical_name": "Dr Row Original OLD",
+                "active_status": "active",
+                "call_level": "2ND_CALL",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "unit": {
+                "id": "row-profile-unit",
+                "name": "Royal Row Profile Unit",
+                "campus": "Main",
+                "code": "RP",
+                "minimum_free_people": 1,
+                "active_status": "active",
+                "notes": null
+              },
+              "source": "manual"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "body": {
+            "identity": "row-profile-posting",
+            "values": {
+              "person_id": "row-profile-person",
+              "starts_on": "2026-11-01",
+              "ends_on": "2026-11-30",
+              "posting_type": "2ND_CALL",
+              "unit_id": "row-profile-unit",
+              "leave_type": "ANNUAL_LEAVE",
+              "leave_slot": "FULL_DAY",
+              "status": "requested",
+              "notes": "Row profile posting NEW",
+              "id": "row-profile-posting",
+              "person": {
+                "id": "row-profile-person",
+                "canonical_name": "Dr Row Original OLD",
+                "active_status": "active",
+                "call_level": "2ND_CALL",
+                "aliases": [],
+                "designations": [],
+                "call_level_changes": []
+              },
+              "unit": {
+                "id": "row-profile-unit",
+                "name": "Royal Row Profile Unit",
+                "campus": "Main",
+                "code": "RP",
+                "minimum_free_people": 1,
+                "active_status": "active",
+                "notes": null
+              },
+              "source": "manual"
+            },
+            "review_token": "row-profile-token"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/columns",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/import-review/units/preview",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/row-profile-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/row-profile-person/postings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/records/units/row-profile-posting",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/preview",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/records/units/save",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/row-profile-person/postings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "prompts": [
+        "Discard this import draft? If an Apply result was uncertain, check import history before trying again."
+      ],
+      "errors": []
+    }
+  ]
+}

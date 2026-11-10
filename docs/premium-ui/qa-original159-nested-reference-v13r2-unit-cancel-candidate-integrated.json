@@ -1,0 +1,617 @@
+{
+  "recorded_at_utc": "2026-11-10T04:07:24.518Z",
+  "author": "/root/nestedreference159_groundwork",
+  "scope": "Six expected-correct nested record-editor unit creation then editor discard contexts only. Isolated V13r2 candidate; no import, member, catalog, recovery, physical-device or whole159 acceptance. All mutations locally fulfilled; unknown mutations rejected.",
+  "source_sha256": {
+    "frontend/src/main.ts": "ebf67f1733f620e406054d0c4a82cf1c203fd0e6603a843eec45b25a1a09df4d",
+    "frontend/src/member-workspace.ts": "506c486046fe6f0bbea5c6c4bf6357fec6e9649d91a9ed1ed890551ed3503cca",
+    "frontend/src/operational-import.ts": "01d58023203380fedcee010cd3001b8e2bb478397144566ef92142a515a14b38",
+    "frontend/src/record-workspace.ts": "20b50cdbd991b5b5a16d06b51020be2838514a553823512373818f65636427aa",
+    "frontend/src/reference-workspace.ts": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd",
+    "frontend/src/extra-duty.ts": "529e420fc05ce5bfa42655b8863e449e09e22a7c0abe9baf4db5c94c4797b8c3"
+  },
+  "candidate_sha256": {
+    "frontend/src/main.ts": "ebf67f1733f620e406054d0c4a82cf1c203fd0e6603a843eec45b25a1a09df4d",
+    "frontend/src/member-workspace.ts": "506c486046fe6f0bbea5c6c4bf6357fec6e9649d91a9ed1ed890551ed3503cca",
+    "frontend/src/operational-import.ts": "01d58023203380fedcee010cd3001b8e2bb478397144566ef92142a515a14b38",
+    "frontend/src/record-workspace.ts": "20b50cdbd991b5b5a16d06b51020be2838514a553823512373818f65636427aa",
+    "frontend/src/reference-workspace.ts": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd"
+  },
+  "test_sha256": "b248e2b0a3bbe73dae43c9ea9708749343eea77467824b68cf5d3b070a92a43e",
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "passed": true,
+      "observed": {
+        "parentReads": 1,
+        "newUnitCard": 1,
+        "settings": "3",
+        "retainedSettings": true,
+        "retainedFallback": true,
+        "fallbackOrder": [
+          "nested-c",
+          "nested-b"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "body": {
+            "name": "Royal Nested New",
+            "campus": "Main",
+            "code": "NN",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "call_minimums": []
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "passed": true,
+      "observed": {
+        "parentReads": 1,
+        "newUnitCard": 1,
+        "settings": "3",
+        "retainedSettings": true,
+        "retainedFallback": true,
+        "fallbackOrder": [
+          "nested-c",
+          "nested-b"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "body": {
+            "name": "Royal Nested New",
+            "campus": "Main",
+            "code": "NN",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "call_minimums": []
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "passed": true,
+      "observed": {
+        "parentReads": 1,
+        "newUnitCard": 1,
+        "settings": "3",
+        "retainedSettings": true,
+        "retainedFallback": true,
+        "fallbackOrder": [
+          "nested-c",
+          "nested-b"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "body": {
+            "name": "Royal Nested New",
+            "campus": "Main",
+            "code": "NN",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "call_minimums": []
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "passed": true,
+      "observed": {
+        "parentReads": 1,
+        "newUnitCard": 1,
+        "settings": "3",
+        "retainedSettings": true,
+        "retainedFallback": true,
+        "fallbackOrder": [
+          "nested-c",
+          "nested-b"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "body": {
+            "name": "Royal Nested New",
+            "campus": "Main",
+            "code": "NN",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "call_minimums": []
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "passed": true,
+      "observed": {
+        "parentReads": 1,
+        "newUnitCard": 1,
+        "settings": "3",
+        "retainedSettings": true,
+        "retainedFallback": true,
+        "fallbackOrder": [
+          "nested-c",
+          "nested-b"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "body": {
+            "name": "Royal Nested New",
+            "campus": "Main",
+            "code": "NN",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "call_minimums": []
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "passed": true,
+      "observed": {
+        "parentReads": 1,
+        "newUnitCard": 1,
+        "settings": "3",
+        "retainedSettings": true,
+        "retainedFallback": true,
+        "fallbackOrder": [
+          "nested-c",
+          "nested-b"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units",
+          "body": {
+            "name": "Royal Nested New",
+            "campus": "Main",
+            "code": "NN",
+            "minimum_free_people": 1,
+            "aliases": [],
+            "notes": "",
+            "active_status": "active",
+            "call_minimums": []
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units/suggest-code"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        }
+      ],
+      "errors": []
+    }
+  ]
+}

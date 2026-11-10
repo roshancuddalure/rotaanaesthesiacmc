@@ -554,6 +554,30 @@ export async function openReferenceCatalog(
     dirty = false,
     busy = false;
   let confirmedReferenceSave = false;
+  let pendingReferenceNotification = false;
+  let referenceNotificationFailed = false;
+  let notifyingReference = false;
+  const notifySavedReference = () => {
+    if (!pendingReferenceNotification || notifyingReference) return;
+    notifyingReference = true;
+    try {
+      saved();
+      pendingReferenceNotification = false;
+      referenceNotificationFailed = false;
+    } catch (error) {
+      referenceNotificationFailed = true;
+      throw error;
+    } finally {
+      notifyingReference = false;
+    }
+  };
+  const showSavedReferenceFailure = (error: unknown) => {
+    const detail = error instanceof Error ? error.message : "The latest details could not load.";
+    const warning = referenceNotificationFailed
+      ? new Error(`The reference change remains saved, but the surrounding view could not refresh. Try again only reads data and retries the view notification. Close leaves this window without refreshing that view; reopen it to load the saved reference before continuing. ${detail}`)
+      : error;
+    savedReadbackFailure(dialog, warning, () => void load(), close);
+  };
   protectWorkspaceDraft(dialog, () => dirty || (busy && !confirmedReferenceSave));
   const kinds: Record<string, string> = {
     campus: "Campuses",
@@ -565,7 +589,15 @@ export async function openReferenceCatalog(
     duty_type: "Duty types and behavior",
   };
   const close = () => {
-    if (busy || (dirty && !confirm("Discard reference changes?"))) return;
+    if (busy || notifyingReference || (dirty && !confirm("Discard reference changes?"))) return;
+    if (!referenceNotificationFailed) {
+      try {
+        notifySavedReference();
+      } catch (error) {
+        showSavedReferenceFailure(error);
+        return;
+      }
+    }
     dialog.close();
     dialog.remove();
     opener?.focus();
@@ -588,14 +620,13 @@ export async function openReferenceCatalog(
       items = loadedItems;
       selected = undefined;
       dirty = false;
-      const notifySaved = confirmedReferenceSave;
       confirmedReferenceSave = false;
       render();
       restoreFocus();
-      if (notifySaved) saved();
+      notifySavedReference();
     } catch (error) {
       if (!dialog.open || loadingKind !== kind) return;
-      if (confirmedReferenceSave) savedReadbackFailure(dialog, error, () => void load(), close);
+      if (confirmedReferenceSave || pendingReferenceNotification) showSavedReferenceFailure(error);
       else workspaceLoadFailure(dialog, "Reference labels unavailable", error, () => void load(), close);
     }
   }
@@ -776,6 +807,7 @@ export async function openReferenceCatalog(
         );
         dirty = false;
         confirmedReferenceSave = true;
+        pendingReferenceNotification = true;
         await load();
       } catch (error) {
         validation.show(error, focus.unchanged());

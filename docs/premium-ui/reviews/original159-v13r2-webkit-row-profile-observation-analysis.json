@@ -1,0 +1,127 @@
+{
+  "recorded_at_utc": "2026-11-10T04:15:50.346078+00:00",
+  "reviewer": "/root/leave159_nondelete_groundwork",
+  "product_changed": false,
+  "test_changed": false,
+  "browser_executed_by_reviewer": false,
+  "decision": "The two original failures are directly consistent with a premature DOM snapshot: the same failed-case catch subsequently records the correct renamed parent twice. No persistent overwrite is demonstrated. Require corrected successful-parent-status wait and unchanged value assertions to settle this; do not relabel original failures or assume corrected run passed.",
+  "raw_report": {
+    "path": "docs/premium-ui/qa-original159-nested-reference-v13r2-import-row-profile-candidate-integrated.json",
+    "sha256": "b4c1a52fdc972e08dff3719c4e8ac74498285ceed6a69aeda320abeb0412fefe",
+    "contexts": 12,
+    "passed": 10,
+    "failed": 2
+  },
+  "source_sha256": {
+    "frontend/src/main.ts": "ebf67f1733f620e406054d0c4a82cf1c203fd0e6603a843eec45b25a1a09df4d",
+    "frontend/src/member-workspace.ts": "506c486046fe6f0bbea5c6c4bf6357fec6e9649d91a9ed1ed890551ed3503cca",
+    "frontend/src/operational-import.ts": "01d58023203380fedcee010cd3001b8e2bb478397144566ef92142a515a14b38",
+    "frontend/src/record-workspace.ts": "20b50cdbd991b5b5a16d06b51020be2838514a553823512373818f65636427aa",
+    "frontend/src/data-sync.ts": "8408ff9eb6369d486126b7471ffc15a45fbe7f6fe5decd73b231f1dbf07c2f02",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+  },
+  "actual_observations": [
+    {
+      "engine": "webkit",
+      "width": 320,
+      "earlier_assertion_snapshot": {
+        "parentReads": 1,
+        "fallbackReads": 0,
+        "parentNames": [
+          "Dr Row Original OLD",
+          "Dr Row Original OLD"
+        ],
+        "fallbackRetained": true,
+        "fallbackOrder": [
+          "row-profile-c",
+          "row-profile-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "later_catch_snapshot": {
+        "parentNames": [
+          "Dr Row Renamed NEW",
+          "Dr Row Renamed NEW"
+        ],
+        "profileCount": 0,
+        "importerCount": 0
+      },
+      "month_GETs": [
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "no_page_errors": true,
+      "saved_mutation": true
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "earlier_assertion_snapshot": {
+        "parentReads": 1,
+        "fallbackReads": 0,
+        "parentNames": [
+          "Dr Row Original OLD",
+          "Dr Row Original OLD"
+        ],
+        "fallbackRetained": true,
+        "fallbackOrder": [
+          "row-profile-c",
+          "row-profile-b"
+        ],
+        "search": "Royal",
+        "campus": "campus:Main"
+      },
+      "later_catch_snapshot": {
+        "parentNames": [
+          "Dr Row Renamed NEW",
+          "Dr Row Renamed NEW"
+        ],
+        "profileCount": 0,
+        "importerCount": 0
+      },
+      "month_GETs": [
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "no_page_errors": true,
+      "saved_mutation": true
+    }
+  ],
+  "source_path_analysis": [
+    "Direct importer [data-review-candidate] changed(member) callback maps only the lexical importer members array, calls renderReview and dirtyPreview. It does not call main onMemberWorkspaceChanged and never assigns main unitAssignments or unitManagement. This path starts no global members/audit refresh.",
+    "Core profile save first awaits PUT, then notifies supplied lifecycle before clone/changed/render. Accepted metadata marks same importer-owned root dirty; nested profile closed is no-op. Final importer closed starts retained root refresh.",
+    "Retained Units refresh awaits Promise.all(monthGET, prepareReferences()). For this member-only event the prepared reference closure is no-op. Actual month response is still asynchronous even when route handler already increments its read counter. Reading unitReads therefore proves request interception/start, not response decode/shape validation/global commit/DOM paint.",
+    "After awaited read, owned+latest unitLoadSeq guard and shape/month checks precede assignment of unitManagement/result.units/result.assignments. refreshUnitBoardReadback synchronously renders cards and filtered table from unitAssignments, then optional modal readback; successful status is assigned only after painting and final ownership check.",
+    "unitMemberChips and renderUnitAssignmentRows take assignment.person.canonical_name directly. Main global members array is not used to resolve those names. The data-sync listener invalidates cached members/analysis/month-loaded flag but does not rewrite unitAssignments or repaint the board.",
+    "Only two month GET requests exist per failed context: initial load and one final refresh. No report evidence of a competing month read overwriting a newer response. This request list is not universal proof against every possible race.",
+    "Original harness awaits importer detached then page.waitForLoadState(networkidle), which may already be in an idle state before the deferred parent request/Promise continuation and DOM paint settle. Its subsequent combined observations use multiple cross-process awaits, so returned names can differ between the initial observed snapshot and later catch snapshot. Actual same-case NEW names in catch demonstrate update happened after the earlier OLD snapshot."
+  ],
+  "recommended_verification": [
+    "In a unique test/report preserve original assertions but wait actual owned parent success status Saved changes are reflected in this view before reading names/counters. This checks product completion, not an arbitrary timeout or retry of mutation.",
+    "Retain exact expected renamed name, one final month GET, no fallback read for member-only change, draft/filter/node retention and zero page errors. If name remains OLD after success status, treat as actual product defect and investigate returned body/latest ownership; do not waive value assertion.",
+    "Observe a short stable sample or relevant control count only if needed to detect later overwrite; do not introduce sleep-based automatic mutation reruns.",
+    "Bind corrected report/source/test hashes and preserve original10pass2failure report as observation-timing evidence."
+  ],
+  "limits": [
+    "Read-only source/raw-evidence analysis; corrected root-run result still pending at task time.",
+    "No assumption that every WebKit/UI race is solved, no whole original159 acceptance.",
+    "Physical-device/native assistive technology pending."
+  ]
+}

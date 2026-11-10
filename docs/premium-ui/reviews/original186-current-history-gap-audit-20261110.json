@@ -1,0 +1,37 @@
+{
+  "recorded_at_utc": "2026-11-10T10:45:08.037949+00:00",
+  "reviewer": "/root",
+  "scope": "Read-only current source audit to prepare original186; no product or backend changes. Source inspection is not runtime proof.",
+  "source_sha256": {
+    "frontend/src/member-import-history.ts": "0357db668bac46f7c4c28c575e2f7c688b00c95671acb1f475aea0946e89ec92",
+    "frontend/src/workflow-import-history.ts": "6af21b09f48bb6632ac7afb78759884d4aa0e9750d520f48be0c79ea3d4b5cf5",
+    "frontend/src/past-duties.ts": "659bc4a927a8d4efbaf0ab0050941262555319e3fbc1ca85064332435ea32bd1",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/audit-time.ts": "136542cb2daec343417532d372f2e8ce01a0e6103ef6c62a7a4a8017ac8a6d15",
+    "frontend/tests/premium-history.browser.mjs": "62733cf131cc58206028d0ceb085cf0114e19f3e17e077d3189c8f072f390bf2"
+  },
+  "findings": [
+    {
+      "condition": "History filters change displayed imports correctly with clear recorded-time context.",
+      "observed": "Member history renders all returned batches with no filter controls. Workflow history has existing server month scope and offset pagination but no within-page filter. Past-duty history renders returned batches with no history filter; its import-preview action filter is separate.",
+      "consequence": "Original186 cannot be accepted from existing navigation-history tests; actual import-history filtering needs implementation and exact tests.",
+      "proposed": "Add clearly labeled local filename/account/outcome filtering over the already returned history snapshot. For paginated workflow history explicitly label filter as current loaded page; preserve server month/offset calls and stable batch IDs. Keep active filters on detail/download errors. Do not claim whole-history search or alter server endpoints."
+    },
+    {
+      "condition": "Rejection downloads produce named artifacts and recover from unavailable/empty reports.",
+      "observed": "Workflow button calls existing downloadRejectedImportRows with kind/id, preserves list on errors; filename rejected_<kind>_<id>.csv. Member/past preview downloads use local existing report helpers. Shared formatAuditTimestamp retains explicit zone or unknown-zone context.",
+      "consequence": "Need parsed bytes/filename, empty/error/read retry, no duplicate mutations, timezone and unsafe text fixtures across actual history hosts; existing qa-history navigation fixture does not establish these outcomes.",
+      "proposed": "First verify existing shared readDownloadBlob empty/error handling. Avoid adding duplicate CSV serialization or changing filenames/contents. Add presentation-only empty/error guidance only if missing; route retries through existing read/download action."
+    }
+  ],
+  "next_validation": [
+    "Filter fixture with similar filenames, distinct actors/outcomes, case/whitespace inputs, no match, clear reset and batch identity after pagination.",
+    "Initial read503, detail503 and rejected503/empty200 preserve filters/rows/focus and show explicit recovery; successful retry retains exact named bytes.",
+    "UTC/offset/unzoned/missing/invalid timestamp fixtures; exact values unchanged.",
+    "Phone/desktop/both themes/keyboard and async owner expiry with no writes."
+  ],
+  "limitations": [
+    "No runtime or acceptance claim;185 isolated candidate remains separate and unintegrated.",
+    "Frontend-only scope forbids backend filter/CSV/export-content changes."
+  ]
+}

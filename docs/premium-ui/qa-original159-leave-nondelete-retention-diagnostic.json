@@ -1,0 +1,2230 @@
+{
+  "recorded_at_utc": "2026-11-09T17:51:20.795Z",
+  "author": "/root/leave159_nondelete_groundwork",
+  "operator": "/root when actually executed",
+  "source_sha256": {
+    "frontend/src/main.ts": "45743fb64260289e50526480572bf25e33d8dc1a69f83397286660a03951cfba",
+    "frontend/src/leave-approval.ts": "42e5a47751ae081d1b97108209c7a2b53272985251d153aa065f7718f43e544f",
+    "frontend/src/member-workspace.ts": "88774f277131a1ed83174d288d882653fc04add295b8237fefa62636e08617ea",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+  },
+  "test_sha256": "cbc944ee4369258ffc31c75d1322ac8db46aeccd6799c78f977ef4f31eb9e21b",
+  "application_changed_by_test": false,
+  "scope": "24 diagnostic contexts: cancellation and monthly approval, normal and accepted-write requestsGET503, three engines at320/1280. Local writes only; remaining GETs RAM8031. Checks unrelated selection, existing Day list/pressure controls, disclosure and last-known-record recovery. A failing result is diagnostic evidence, not acceptance.",
+  "limits": [
+    "Author has not executed this test.",
+    "This does not prove every original159 family.",
+    "No physical-device or native assistive-technology checks.",
+    "Monthly approval uses no affected duties; existing duty acknowledgement coverage remains separate."
+  ],
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "action": "cancel",
+      "failure": "none",
+      "passed": false,
+      "assertion": "Surviving Day list control must retain identity\n\nfalse !== true\n",
+      "confirmed": true,
+      "failedRead": false,
+      "observed": {
+        "controlRetained": false,
+        "pressureRetained": false,
+        "pressureOpen": false,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": false,
+        "status": null
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/nondelete-leave-target/cancel",
+          "body": {}
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "action": "cancel",
+      "failure": "requests503",
+      "passed": false,
+      "assertion": "Surviving Day list control must retain identity\n\nfalse !== true\n",
+      "confirmed": true,
+      "failedRead": true,
+      "observed": {
+        "controlRetained": false,
+        "pressureRetained": false,
+        "pressureOpen": null,
+        "listPressed": null,
+        "selected": [],
+        "targetRecords": 0,
+        "loadFailure": true,
+        "readOnlyRetry": false,
+        "status": null
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/nondelete-leave-target/cancel",
+          "body": {}
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "action": "approve-month",
+      "failure": "none",
+      "passed": false,
+      "assertion": "Surviving Day list control must retain identity\n\nfalse !== true\n",
+      "confirmed": true,
+      "failedRead": false,
+      "observed": {
+        "controlRetained": false,
+        "pressureRetained": false,
+        "pressureOpen": false,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": false,
+        "status": null
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approval-preview",
+          "body": {
+            "month": "2026-11"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approve-month",
+          "body": {
+            "month": "2026-11",
+            "review_token": "nondelete-review-token",
+            "acknowledge_duties": false
+          }
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "action": "approve-month",
+      "failure": "requests503",
+      "passed": false,
+      "assertion": "Surviving Day list control must retain identity\n\nfalse !== true\n",
+      "confirmed": true,
+      "failedRead": true,
+      "observed": {
+        "controlRetained": false,
+        "pressureRetained": false,
+        "pressureOpen": null,
+        "listPressed": null,
+        "selected": [],
+        "targetRecords": 0,
+        "loadFailure": true,
+        "readOnlyRetry": false,
+        "status": null
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approval-preview",
+          "body": {
+            "month": "2026-11"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approve-month",
+          "body": {
+            "month": "2026-11",
+            "review_token": "nondelete-review-token",
+            "acknowledge_duties": false
+          }
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "action": "cancel",
+      "failure": "none",
+      "passed": false,
+      "assertion": "Surviving Day list control must retain identity\n\nfalse !== true\n",
+      "confirmed": true,
+      "failedRead": false,
+      "observed": {
+        "controlRetained": false,
+        "pressureRetained": false,
+        "pressureOpen": false,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": false,
+        "status": null
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/nondelete-leave-target/cancel",
+          "body": {}
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "action": "cancel",
+      "failure": "requests503",
+      "passed": false,
+      "assertion": "Surviving Day list control must retain identity\n\nfalse !== true\n",
+      "confirmed": true,
+      "failedRead": true,
+      "observed": {
+        "controlRetained": false,
+        "pressureRetained": false,
+        "pressureOpen": null,
+        "listPressed": null,
+        "selected": [],
+        "targetRecords": 0,
+        "loadFailure": true,
+        "readOnlyRetry": false,
+        "status": null
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/nondelete-leave-target/cancel",
+          "body": {}
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "action": "approve-month",
+      "failure": "none",
+      "passed": false,
+      "assertion": "Surviving Day list control must retain identity\n\nfalse !== true\n",
+      "confirmed": true,
+      "failedRead": false,
+      "observed": {
+        "controlRetained": false,
+        "pressureRetained": false,
+        "pressureOpen": false,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": false,
+        "status": null
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approval-preview",
+          "body": {
+            "month": "2026-11"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approve-month",
+          "body": {
+            "month": "2026-11",
+            "review_token": "nondelete-review-token",
+            "acknowledge_duties": false
+          }
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "action": "approve-month",
+      "failure": "requests503",
+      "passed": false,
+      "assertion": "Surviving Day list control must retain identity\n\nfalse !== true\n",
+      "confirmed": true,
+      "failedRead": true,
+      "observed": {
+        "controlRetained": false,
+        "pressureRetained": false,
+        "pressureOpen": null,
+        "listPressed": null,
+        "selected": [],
+        "targetRecords": 0,
+        "loadFailure": true,
+        "readOnlyRetry": false,
+        "status": null
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approval-preview",
+          "body": {
+            "month": "2026-11"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approve-month",
+          "body": {
+            "month": "2026-11",
+            "review_token": "nondelete-review-token",
+            "acknowledge_duties": false
+          }
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "action": "cancel",
+      "failure": "none",
+      "passed": false,
+      "assertion": "Surviving Day list control must retain identity\n\nfalse !== true\n",
+      "confirmed": true,
+      "failedRead": false,
+      "observed": {
+        "controlRetained": false,
+        "pressureRetained": false,
+        "pressureOpen": false,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": false,
+        "status": null
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/nondelete-leave-target/cancel",
+          "body": {}
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "action": "cancel",
+      "failure": "requests503",
+      "passed": false,
+      "assertion": "Surviving Day list control must retain identity\n\nfalse !== true\n",
+      "confirmed": true,
+      "failedRead": true,
+      "observed": {
+        "controlRetained": false,
+        "pressureRetained": false,
+        "pressureOpen": null,
+        "listPressed": null,
+        "selected": [],
+        "targetRecords": 0,
+        "loadFailure": true,
+        "readOnlyRetry": false,
+        "status": null
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/nondelete-leave-target/cancel",
+          "body": {}
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "action": "approve-month",
+      "failure": "none",
+      "passed": false,
+      "assertion": "Surviving Day list control must retain identity\n\nfalse !== true\n",
+      "confirmed": true,
+      "failedRead": false,
+      "observed": {
+        "controlRetained": false,
+        "pressureRetained": false,
+        "pressureOpen": false,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": false,
+        "status": null
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approval-preview",
+          "body": {
+            "month": "2026-11"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approve-month",
+          "body": {
+            "month": "2026-11",
+            "review_token": "nondelete-review-token",
+            "acknowledge_duties": false
+          }
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "action": "approve-month",
+      "failure": "requests503",
+      "passed": false,
+      "assertion": "Surviving Day list control must retain identity\n\nfalse !== true\n",
+      "confirmed": true,
+      "failedRead": true,
+      "observed": {
+        "controlRetained": false,
+        "pressureRetained": false,
+        "pressureOpen": null,
+        "listPressed": null,
+        "selected": [],
+        "targetRecords": 0,
+        "loadFailure": true,
+        "readOnlyRetry": false,
+        "status": null
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approval-preview",
+          "body": {
+            "month": "2026-11"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approve-month",
+          "body": {
+            "month": "2026-11",
+            "review_token": "nondelete-review-token",
+            "acknowledge_duties": false
+          }
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "action": "cancel",
+      "failure": "none",
+      "passed": false,
+      "assertion": "Surviving Day list control must retain identity\n\nfalse !== true\n",
+      "confirmed": true,
+      "failedRead": false,
+      "observed": {
+        "controlRetained": false,
+        "pressureRetained": false,
+        "pressureOpen": false,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": false,
+        "status": null
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/nondelete-leave-target/cancel",
+          "body": {}
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "action": "cancel",
+      "failure": "requests503",
+      "passed": false,
+      "assertion": "Surviving Day list control must retain identity\n\nfalse !== true\n",
+      "confirmed": true,
+      "failedRead": true,
+      "observed": {
+        "controlRetained": false,
+        "pressureRetained": false,
+        "pressureOpen": null,
+        "listPressed": null,
+        "selected": [],
+        "targetRecords": 0,
+        "loadFailure": true,
+        "readOnlyRetry": false,
+        "status": null
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/nondelete-leave-target/cancel",
+          "body": {}
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "action": "approve-month",
+      "failure": "none",
+      "passed": false,
+      "assertion": "Surviving Day list control must retain identity\n\nfalse !== true\n",
+      "confirmed": true,
+      "failedRead": false,
+      "observed": {
+        "controlRetained": false,
+        "pressureRetained": false,
+        "pressureOpen": false,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": false,
+        "status": null
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approval-preview",
+          "body": {
+            "month": "2026-11"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approve-month",
+          "body": {
+            "month": "2026-11",
+            "review_token": "nondelete-review-token",
+            "acknowledge_duties": false
+          }
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "action": "approve-month",
+      "failure": "requests503",
+      "passed": false,
+      "assertion": "Surviving Day list control must retain identity\n\nfalse !== true\n",
+      "confirmed": true,
+      "failedRead": true,
+      "observed": {
+        "controlRetained": false,
+        "pressureRetained": false,
+        "pressureOpen": null,
+        "listPressed": null,
+        "selected": [],
+        "targetRecords": 0,
+        "loadFailure": true,
+        "readOnlyRetry": false,
+        "status": null
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approval-preview",
+          "body": {
+            "month": "2026-11"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approve-month",
+          "body": {
+            "month": "2026-11",
+            "review_token": "nondelete-review-token",
+            "acknowledge_duties": false
+          }
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "action": "cancel",
+      "failure": "none",
+      "passed": false,
+      "assertion": "Surviving Day list control must retain identity\n\nfalse !== true\n",
+      "confirmed": true,
+      "failedRead": false,
+      "observed": {
+        "controlRetained": false,
+        "pressureRetained": false,
+        "pressureOpen": false,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": false,
+        "status": null
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/nondelete-leave-target/cancel",
+          "body": {}
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "action": "cancel",
+      "failure": "requests503",
+      "passed": false,
+      "assertion": "Surviving Day list control must retain identity\n\nfalse !== true\n",
+      "confirmed": true,
+      "failedRead": true,
+      "observed": {
+        "controlRetained": false,
+        "pressureRetained": false,
+        "pressureOpen": null,
+        "listPressed": null,
+        "selected": [],
+        "targetRecords": 0,
+        "loadFailure": true,
+        "readOnlyRetry": false,
+        "status": null
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/nondelete-leave-target/cancel",
+          "body": {}
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "action": "approve-month",
+      "failure": "none",
+      "passed": false,
+      "assertion": "Surviving Day list control must retain identity\n\nfalse !== true\n",
+      "confirmed": true,
+      "failedRead": false,
+      "observed": {
+        "controlRetained": false,
+        "pressureRetained": false,
+        "pressureOpen": false,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": false,
+        "status": null
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approval-preview",
+          "body": {
+            "month": "2026-11"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approve-month",
+          "body": {
+            "month": "2026-11",
+            "review_token": "nondelete-review-token",
+            "acknowledge_duties": false
+          }
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "action": "approve-month",
+      "failure": "requests503",
+      "passed": false,
+      "assertion": "Surviving Day list control must retain identity\n\nfalse !== true\n",
+      "confirmed": true,
+      "failedRead": true,
+      "observed": {
+        "controlRetained": false,
+        "pressureRetained": false,
+        "pressureOpen": null,
+        "listPressed": null,
+        "selected": [],
+        "targetRecords": 0,
+        "loadFailure": true,
+        "readOnlyRetry": false,
+        "status": null
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approval-preview",
+          "body": {
+            "month": "2026-11"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approve-month",
+          "body": {
+            "month": "2026-11",
+            "review_token": "nondelete-review-token",
+            "acknowledge_duties": false
+          }
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "action": "cancel",
+      "failure": "none",
+      "passed": false,
+      "assertion": "Surviving Day list control must retain identity\n\nfalse !== true\n",
+      "confirmed": true,
+      "failedRead": false,
+      "observed": {
+        "controlRetained": false,
+        "pressureRetained": false,
+        "pressureOpen": false,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": false,
+        "status": null
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/nondelete-leave-target/cancel",
+          "body": {}
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "action": "cancel",
+      "failure": "requests503",
+      "passed": false,
+      "assertion": "Surviving Day list control must retain identity\n\nfalse !== true\n",
+      "confirmed": true,
+      "failedRead": true,
+      "observed": {
+        "controlRetained": false,
+        "pressureRetained": false,
+        "pressureOpen": null,
+        "listPressed": null,
+        "selected": [],
+        "targetRecords": 0,
+        "loadFailure": true,
+        "readOnlyRetry": false,
+        "status": null
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/requests/nondelete-leave-target/cancel",
+          "body": {}
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "action": "approve-month",
+      "failure": "none",
+      "passed": false,
+      "assertion": "Surviving Day list control must retain identity\n\nfalse !== true\n",
+      "confirmed": true,
+      "failedRead": false,
+      "observed": {
+        "controlRetained": false,
+        "pressureRetained": false,
+        "pressureOpen": false,
+        "listPressed": "true",
+        "selected": [
+          "nondelete-leave-other",
+          "nondelete-leave-other"
+        ],
+        "targetRecords": 2,
+        "loadFailure": false,
+        "readOnlyRetry": false,
+        "status": null
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approval-preview",
+          "body": {
+            "month": "2026-11"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approve-month",
+          "body": {
+            "month": "2026-11",
+            "review_token": "nondelete-review-token",
+            "acknowledge_duties": false
+          }
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "action": "approve-month",
+      "failure": "requests503",
+      "passed": false,
+      "assertion": "Surviving Day list control must retain identity\n\nfalse !== true\n",
+      "confirmed": true,
+      "failedRead": true,
+      "observed": {
+        "controlRetained": false,
+        "pressureRetained": false,
+        "pressureOpen": null,
+        "listPressed": null,
+        "selected": [],
+        "targetRecords": 0,
+        "loadFailure": true,
+        "readOnlyRetry": false,
+        "status": null
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approval-preview",
+          "body": {
+            "month": "2026-11"
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/leave/approve-month",
+          "body": {
+            "month": "2026-11",
+            "review_token": "nondelete-review-token",
+            "acknowledge_duties": false
+          }
+        }
+      ],
+      "reads": [
+        {
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    }
+  ]
+}

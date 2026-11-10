@@ -11,6 +11,8 @@ Note (handbook B1): publishing does not lock the month or snapshot the rota.
 
 from __future__ import annotations
 
+import hashlib
+import json
 from io import BytesIO
 from typing import Any
 
@@ -333,6 +335,7 @@ def publish_rota_month(
         confirmed_warnings=confirm_warnings,
         approval_note=note,
         summary={
+            "assignment_fingerprint": assignment_fingerprint(template_slots_for_period(db, period.id)),
             "checklist": checklist,
             "approved_by": approved_by.display_name,
             "approved_by_user_id": str(approved_by.id),
@@ -360,16 +363,26 @@ def write_rows(
     rows: list[list[Any]],
 ) -> None:
     worksheet = workbook.add_worksheet(name[:31])
-    header_format = workbook.add_format({"bold": True, "bg_color": "#D9EAF7", "border": 1})
+    header_format = workbook.add_format({"bold": True, "bg_color": "#0F172A", "font_color": "#FFFFFF", "border": 1, "text_wrap": True, "valign": "vcenter"})
+    body = workbook.add_format({"text_wrap": True, "valign": "top", "border": 1, "border_color": "#E2E8F0"})
+    stripe = workbook.add_format({"text_wrap": True, "valign": "top", "border": 1, "border_color": "#E2E8F0", "bg_color": "#F0F6FC"})
     for col, header in enumerate(headers):
         worksheet.write(0, col, header, header_format)
     for row_index, row in enumerate(rows, start=1):
         for col, value in enumerate(row):
-            worksheet.write(row_index, col, safe_cell(value))
+            worksheet.write(row_index, col, safe_cell(value), stripe if row_index % 2 == 0 else body)
+        worksheet.set_row(row_index, min(120, max(30, max((len(str(value or "")) // 35 + 1 for value in row), default=1) * 15)))
     for col, header in enumerate(headers):
-        width = max(len(header) + 2, 14)
-        worksheet.set_column(col, col, min(width, 32))
+        width = max(len(header) + 2, 16, max((len(str(row[col] or "")) + 2 for row in rows if col < len(row)), default=0))
+        worksheet.set_column(col, col, min(width, 52))
     worksheet.freeze_panes(1, 0)
+    worksheet.hide_gridlines(2)
+    worksheet.set_landscape()
+    worksheet.fit_to_pages(1, 0)
+    worksheet.set_row(0, 30)
+    worksheet.repeat_rows(0)
+    if rows:
+        worksheet.autofilter(0, 0, len(rows), len(headers) - 1)
 
 
 def assignment_rows(slots: list[DutySlot]) -> list[list[Any]]:
@@ -571,21 +584,43 @@ def fairness_rows(review: dict[str, object]) -> list[list[Any]]:
     return rows
 
 
+def assignment_fingerprint(slots: list[DutySlot]) -> str:
+    rows = sorted(assignment_rows(slots), key=lambda row: json.dumps(row, default=str))
+    identities = sorted([
+        {
+            "slot": str(slot.id), "unit": str(slot.unit_id),
+            "date": str(slot.duty_date), "duty": slot.duty_type,
+            "starts_at": str(slot.starts_at), "ends_at": str(slot.ends_at),
+            "call_level": slot.call_level, "is_24hr": slot.is_24hr,
+            "assignments": sorted([
+                (str(a.id), str(a.person_id), a.status.lower())
+                for a in slot.assignments
+                if a.status.lower() in {"assigned", "draft", "confirmed"}
+            ]),
+        } for slot in slots
+    ], key=lambda row: row["slot"])
+    return hashlib.sha256(json.dumps([rows, identities], default=str, sort_keys=True).encode()).hexdigest()
+
+
 def final_rota_export(db: Session, month: str) -> tuple[str, bytes]:
     """Build the final Excel workbook (summary, rota, counts, fairness, safety, review, exchanges).
 
-    Generated from the live tables at download time, so it can differ from what was approved
-    if the month changed after publishing (handbook B1).
+    Includes the assigned Eagle Eye matrix and the complete 360-degree audit.
+    New approvals record an assignment fingerprint; later assignment changes require approval again.
     """
     checklist = rota_publish_checklist(db, month)
     if checklist["latest_publish"] is None:
         raise RotaPublishError("Publish the rota before downloading the final export", status_code=409)
     period, _scope = monthly_setup(db, month)
     slots = template_slots_for_period(db, period.id)
+    approval = checklist["latest_publish"]
+    approved_fingerprint = (approval.get("summary") or {}).get("assignment_fingerprint")
+    if approved_fingerprint and approved_fingerprint != assignment_fingerprint(slots):
+        raise RotaPublishError("Assignments changed after approval. Approve the updated rota before downloading the approved workbook.", status_code=409)
     safety = month_safety(db, month)
     review = rota_review_month(db, month)
     output = BytesIO()
-    workbook = xlsxwriter.Workbook(output, {"in_memory": True})
+    workbook = xlsxwriter.Workbook(output, {"in_memory": True, "strings_to_formulas": False, "strings_to_urls": False})
 
     summary_rows = [
         ["Month", month],
@@ -597,6 +632,8 @@ def final_rota_export(db: Session, month: str) -> tuple[str, bytes]:
         ["Published by", checklist["latest_publish"]["approved_by"]],
         ["Published at", checklist["latest_publish"]["created_at"]],
         ["Approval note", checklist["latest_publish"]["approval_note"]],
+        ["Assignment verification", "Matches approved assignments" if approved_fingerprint else
+         "Legacy approval: fingerprint unavailable; this workbook reflects current assignments."],
         [
             "Published with superadmin override",
             "Yes" if checklist["latest_publish"].get("published_with_override") else "No",
@@ -782,5 +819,11 @@ def final_rota_export(db: Session, month: str) -> tuple[str, bytes]:
             for exchange in review["exchange_requests"]
         ],
     )
+    from app.services.rota_template import write_eagle_eye_matrix
+    from app.services.rota_report_360 import build_report_data, render_xlsx
+    _version, rules = get_phase_one_rules(db)
+    write_eagle_eye_matrix(workbook, slots, rules, assigned_names=True)
+    report = build_report_data(db, month)
+    render_xlsx(report, workbook=workbook)
     workbook.close()
     return f"final-rota-{month}.xlsx", output.getvalue()

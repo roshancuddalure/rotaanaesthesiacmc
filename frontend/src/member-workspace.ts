@@ -3,6 +3,7 @@ import { importRowAttention, importPreviewModeText, importPreviewAuthorityText, 
 import { recordedCalendarDate, designationPresentation, designationHistoryMarkup } from "./member-presentation";
 import { openReferenceCatalog } from "./reference-workspace";
 import { openRecordEditor } from "./record-workspace";
+import type { NestedReferenceChange } from "./operational-import";
 import { protectWorkspaceDraft, lockWorkspaceControls, workspaceLoading, workspaceLoadFailure } from "./workspace-load-state";
 import { request, requestMultipartJSON, type DepartmentMember } from "./services/api";
 import { applyBlocker, memberMatch, memberIdentityText, importRecoveryText, updateMemberMatchPending, retainActionFocus, steps, formatCalendarDate, type MemberMatchView } from "./ui";
@@ -264,13 +265,14 @@ export function workspaceDialog(
 }
 
 export type ProfileOperationalChange = Readonly<{
-  kind: "units" | "leave";
+  kind: "units" | "leave" | "member";
   personId: string;
   recordId?: string;
-  operation: "save" | "cancel";
+  operation: "save" | "cancel" | "merge";
 }>;
 
 export type ProfileParentLifecycle = Readonly<{
+  referenceConfirmed?: (change: NestedReferenceChange) => void;
   confirmed: (change: ProfileOperationalChange) => void;
   closed: () => void;
 }>;
@@ -291,6 +293,10 @@ export async function openMemberWorkspace(
   const notifyParent = (change: ProfileOperationalChange) => {
     try { parentLifecycle?.confirmed(change); }
     catch { console.warn("The dependent view refresh notification could not be delivered."); }
+  };
+  const notifyReferenceConfirmed = (change: NestedReferenceChange) => {
+    try { parentLifecycle?.referenceConfirmed?.(change); }
+    catch { console.warn("The dependent reference change notification could not be delivered."); }
   };
   const notifyParentClosed = () => {
     if (replacingProfile || parentCloseNotified) return;
@@ -987,11 +993,16 @@ export async function openMemberWorkspace(
               button.dataset.editRecord,
               admin,
               () => {
-                notifyParent({kind: savedKind, personId: savedPersonId, recordId: savedRecordId, operation: "save"});
                 delete cache[key];
                 delete cache.activity;
                 delete errors[key];
                 void loadTab();
+              },
+              undefined,
+              {
+                confirmed: () => notifyParent({kind: savedKind, personId: savedPersonId, recordId: savedRecordId, operation: "save"}),
+                referenceConfirmed: notifyReferenceConfirmed,
+                closed: () => {},
               },
             );
           }),
@@ -1121,6 +1132,7 @@ export async function openMemberWorkspace(
                 }),
               },
             );
+            notifyParent({kind: "member", personId: id, operation: "merge"});
             draft = structuredClone(member);
             changed(member);
             Object.keys(cache).forEach((k) => delete cache[k]);
@@ -1219,6 +1231,7 @@ export async function openMemberWorkspace(
             }),
           },
         );
+        notifyParent({kind: "member", personId: id, operation: "save"});
         draft = structuredClone(member);
         Object.keys(fieldErrors).forEach((key) => delete fieldErrors[key]);
         registeredErrorSections.clear();
@@ -1354,7 +1367,7 @@ export async function openMemberWorkspace(
 
 let csvExampleCueSequence = 0;
 
-export function openMemberCsvImport(done: () => void) {
+export function openMemberCsvImport(done: () => void, resultProfileChangedCallback: () => void = done) {
   const dialog = workspaceDialog("Import department members", "mw-import");
   const exampleCueId = `mw-csv-example-cue-${++csvExampleCueSequence}`;
   dialog.innerHTML = `<header class="mw-header"><div><h2>Import department members</h2><div data-import-steps>${steps(MEMBER_IMPORT_STEPS, 0)}</div></div><button type="button" data-close aria-label="Close import">${decorativeIcon("close")}</button></header><div class="mw-content"><div class="registry-actions"><a class="primary" href="/templates/department-members.csv" download>Download blank CSV template</a><a class="icon-button" href="/templates/department-members-example.csv" download>Download example CSV (filled)</a></div><p>Only canonical_name is required. Blank cells keep the member's current value. New members default to Active and Unassigned.</p><details class="mw-csv-help" open><summary>CSV format and example</summary><p>One member per row. Open the example in Excel, replace the example rows with your members, then save as <strong>CSV UTF-8</strong>.</p><p class="mw-csv-example-cue" id="${esc(exampleCueId)}">If the example extends beyond this panel, scroll horizontally. With a keyboard, focus the example and use the Left and Right arrow keys.</p><pre class="mw-csv-example" tabindex="0" role="region" aria-label="CSV example" aria-describedby="${esc(exampleCueId)}">member_id,canonical_name,active_status,call_level,designation,designation_effective_from
@@ -1368,6 +1381,16 @@ export function openMemberCsvImport(done: () => void) {
   let preview: { id: string; mode?: string; headers: string[]; rows: Row[]; missing?: Row[] } | undefined;
   let applied = false;
   let busy = false;
+  let resultProfileChanged = false;
+  const resultProfileLifecycle: ProfileParentLifecycle = {
+    confirmed() { if (dialog.isConnected && dialog.open) resultProfileChanged = true; },
+    referenceConfirmed() { if (dialog.isConnected && dialog.open) resultProfileChanged = true; },
+    closed() {
+      if (!resultProfileChanged || !dialog.isConnected || !dialog.open) return;
+      resultProfileChanged = false;
+      resultProfileChangedCallback();
+    },
+  };
   protectWorkspaceDraft(dialog, () => busy || Boolean((file || preview) && !applied));
   // True once a value, mode or mapping changed after the last preview; Apply then waits for a refresh.
   let stale = false;
@@ -1739,6 +1762,10 @@ export function openMemberCsvImport(done: () => void) {
                   button.dataset.resultMember!,
                   true,
                   () => {},
+                  [],
+                  "overview",
+                  undefined,
+                  resultProfileLifecycle,
                 );
               }),
           );

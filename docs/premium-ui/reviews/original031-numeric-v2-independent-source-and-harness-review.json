@@ -1,0 +1,195 @@
+{
+  "recorded_at_utc": "2026-11-10T02:10:20.484894+00:00",
+  "reviewer": "/root/leave159_nondelete_groundwork",
+  "application_changed": false,
+  "browser_executed_by_reviewer": false,
+  "source_decision": "No source blocker found for isolated CSS validation. Integration and original31 acceptance remain gated by relevant completed runtime checks; unexecuted broad matrix is not evidence.",
+  "original_requirement": "Use tabular numerals for workload totals, dates, percentages, capacity, runtime and comparison columns.",
+  "original_pass_conditions": [
+    "Apply tabular numerals to workload totals, dates, percentages, capacity, runtime and comparison columns",
+    "Verify computed numeric typography on actual instances in every requested category without altering values"
+  ],
+  "candidate": {
+    "path": "tmp/numeric31-tabular-v2/premium-theme.css",
+    "before_sha256": "acc46b2249087f365ca855bcd9630628c390c4cdf013301daaee40ede80e55f4",
+    "candidate_sha256": "2e4f85d813061ebc9f696b92d50ae24717a7781a3688187d02c7339c00bea4a1",
+    "all_before_bytes_preserved": true,
+    "append_exact": "\r\n/* Align operational numbers without changing their displayed values. */\r\nbody { font-variant-numeric: tabular-nums; }\r\n:where(button, input, select, textarea, option, optgroup) { font-variant-numeric: inherit; }\r\n",
+    "added_declarations": 2
+  },
+  "evidence_bindings": {
+    "manifest_sha256": "bc19d3293174c42632dd0a481ef514334f5f6415831ed07eb14b993e29e9922f",
+    "design_path": "docs/premium-ui/reviews/original031-numeric-v2-independent-refinement-and-test-design.json",
+    "design_sha256": "262b734040a4c1091a34a51cf68a6827cd2818112c552b5ca0239f4e4092ad9d",
+    "harness_handoff_sha256": "2fd3def189debdf4f568e588097493e5294cf941b4175b37a30e0835304cbda9",
+    "acceptance_definition_sha256": "5f84ff2a0927e6f67f8e09d326e5874bb49e27b6c1752ad6443c5a4b8ccb0625",
+    "six_category_report_path": "docs/premium-ui/qa-original031-numeric-v2-six-category.json",
+    "six_category_report_sha256": "633a58c4e82f3a37f44629000f0531033f9da0657b3280bb598b84d70430255f",
+    "harnesses_sha256": {
+      "frontend/tests/premium-original031-numeric-v2-six-category.browser.mjs": "9c62025c9fcafaadd3be58aaf5f5fcbaafc358a7d7ccfd8839f24d4d1588697a",
+      "frontend/tests/premium-original031-numeric-v2-route-pairs.browser.mjs": "de61faba340dc19934a2ddf68295cb9f5b3790645147ebcf581ebc4c010f13dc",
+      "tmp/numeric31-tabular-v2/premium-theme.css": "2e4f85d813061ebc9f696b92d50ae24717a7781a3688187d02c7339c00bea4a1"
+    }
+  },
+  "source_inventory": [
+    {
+      "path": "frontend/src/styles.css",
+      "sha256": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+      "authored_font_shorthand_values": [
+        "inherit",
+        "inherit",
+        "inherit",
+        "inherit",
+        "inherit",
+        "inherit",
+        "inherit",
+        "inherit",
+        "inherit",
+        "inherit",
+        "inherit",
+        "inherit",
+        "inherit",
+        "inherit",
+        "inherit",
+        "inherit",
+        "inherit",
+        "inherit",
+        "inherit",
+        "inherit",
+        "inherit",
+        "inherit",
+        "inherit",
+        "inherit",
+        "inherit",
+        "inherit",
+        "inherit",
+        "inherit"
+      ],
+      "numeric_declarations": [
+        "tabular-nums",
+        "tabular-nums",
+        "tabular-nums",
+        "tabular-nums",
+        "tabular-nums",
+        "tabular-nums",
+        "tabular-nums",
+        "tabular-nums",
+        "tabular-nums",
+        "tabular-nums",
+        "tabular-nums",
+        "tabular-nums",
+        "tabular-nums",
+        "tabular-nums",
+        "tabular-nums",
+        "tabular-nums",
+        "tabular-nums",
+        "tabular-nums",
+        "tabular-nums",
+        "tabular-nums",
+        "tabular-nums",
+        "tabular-nums",
+        "tabular-nums",
+        "tabular-nums"
+      ]
+    },
+    {
+      "path": "frontend/src/premium-theme.css",
+      "sha256": "acc46b2249087f365ca855bcd9630628c390c4cdf013301daaee40ede80e55f4",
+      "authored_font_shorthand_values": [
+        "inherit",
+        "inherit",
+        "inherit",
+        "inherit"
+      ],
+      "numeric_declarations": [
+        "tabular-nums",
+        "tabular-nums",
+        "tabular-nums",
+        "tabular-nums",
+        "tabular-nums",
+        "tabular-nums",
+        "tabular-nums",
+        "tabular-nums"
+      ]
+    },
+    {
+      "path": "frontend/src/component-reference.css",
+      "sha256": "46ed291bfdd2463fdc470392a12207bf37fca0478587c24a5019b82e6f7262ee",
+      "authored_font_shorthand_values": [
+        "inherit"
+      ],
+      "numeric_declarations": [
+        "tabular-nums"
+      ]
+    }
+  ],
+  "actual_six_category_evidence": {
+    "browser_contexts": 12,
+    "engines": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "widths": [
+      320,
+      1280
+    ],
+    "themes": [
+      "dark",
+      "light"
+    ],
+    "probes": 252,
+    "probes_by_category": {
+      "workload totals": 24,
+      "percentages": 12,
+      "dates": 36,
+      "capacity": 24,
+      "runtime": 12,
+      "comparison columns": 144
+    },
+    "all_observed_probe_values_match_fixture_expected_and_stay_unchanged": true,
+    "all_observed_computed_variants_include_tabular_nums": true,
+    "interpretation": "Actual existing product instances and navigation, including completed existing proposal and expanded comparison; no synthesized numeric DOM. Hidden responsive counterparts explicitly marked. This is representative six-family computed typography evidence, not an exhaustive instance inventory."
+  },
+  "source_findings": [
+    "Only inherited numeric-feature requests change; body supplies descendants and newly-mounted dialogs. Native controls/options/optgroups explicitly inherit while existing higher-specificity authored positive numeric rules remain. No universal-star rule, important override, formatter/value mutation, font-family/size/weight/line-height replacement or JS/API/action change.",
+    "Current three CSS sources contain only font:inherit shorthands and positive tabular numeric declarations; no authored proportional/normal numeric exception or noninherit font shorthand found in that inventory. This does not prove all OS native widget styles or fallback font support.",
+    "Global inherited policy also affects digits in names/IDs/code, guidance, pagination and mixed prose. These were not excluded in source recommendation; retained font families and values remain. Text reflow/width may change and needs responsive checks.",
+    "Including option/optgroup is a conservative inheritance-policy refinement. No reachable optgroup literal demonstrated at this snapshot; no synthetic optgroup proof should be invented. Native popup/picker drawing may be platform-owned."
+  ],
+  "paired_harness_review": {
+    "planned_comparison_cases": 12,
+    "planned_browser_contexts": 24,
+    "planned_paired_route_observations": 228,
+    "planned_actual_route_visits": 456,
+    "report_present_at_review": false,
+    "execution_status": "Not executed by this reviewer; root reported not yet run. Presence alone must never count as passing evidence.",
+    "strengths": [
+      "19 actual route selections via existing desktop/mobile navigation, superadmin fixture for permitted Limits route, fixed Date and exact cached RAM responses shared between baseline/candidate.",
+      "Exact CSS served module and shared main/member source map checks, held source hashes before/after, denied actual mutations with explicitly counted read-only phase-one-check POST.",
+      "Compares all main text and control text/labels/values/types/min/max/step/selected options/disabled/readonly/non-numeric font attributes. Numeric leaf/native option values and computed variants compared separately.",
+      "Checks new page-wide overflow and growth of existing overflow without requiring identical glyph widths or wrapping. Distinguishes session, context, paired-route and route-visit counts."
+    ],
+    "limits": [
+      "Does not open member Details/dated Roles selects, normalized Add/Edit date controls or nested profile editors; does not exercise actual numeric input/select keyboard editing/restoration or popup Escape. Those explicit design steps remain separate.",
+      "Collects elements with numeric leaf text or native values; mixed parent-owned text with child elements, pseudo-elements, canvas and SVG numerals are not exhaustively classified by the numeric snapshot. Full original31 instance inventory remains required.",
+      "Visible means laid-out nonhidden elements with positive rectangles, not proof of viewport intersection, absence of occlusion or local clipping. No local numeric-label/action overlap or scroll-container reachability assertion exists; page-wide overflow is narrower.",
+      "No glyph-advance measurement/font-feature implementation verification. Computed tabular-nums proves requested CSS feature, not equal-width shaping in every installed font or OS native popup.",
+      "Empty/guidance/error fixtures can demonstrate unchanged text and state, but cannot prove missing populated numeric data families. No broad button mutation-outcome certification from read-only navigation.",
+      "Only320/1280 are planned in this frozen harness; design390/768 cases are not covered by it."
+    ]
+  },
+  "source_blockers": [],
+  "required_before_integration_or_acceptance": [
+    "Run frozen paired route matrix and inspect actual results, fixture branches and failures; preserve any harness/product failures separately.",
+    "Complete relevant real native numeric control draft/keyboard/Escape checks and inspect local clipping/overlap where inherited digit width changes layout; no mutation required.",
+    "Produce classified applicable numeric-instance list/exceptions, mapping six-family actual probes and source inheritance to applicable current surfaces. Avoid claiming every unmounted editor/picker or all fallback-font shaping tested.",
+    "After held CSS-only integration, perform fresh applied evidence/build/prior-acceptance applicability checks before updating current acceptance.",
+    "Keep native OS popup/glyph-shaping and physical-device/native assistive technology limitations explicit."
+  ],
+  "limits": [
+    "Independent read-only source/evidence/harness review; no product/test/ledger edits or browser execution by reviewer.",
+    "Six-category raw report inspected as252actualpasses, not treated as all31/260 acceptance.",
+    "This review does not convert unexecuted paired228 into passed evidence."
+  ]
+}

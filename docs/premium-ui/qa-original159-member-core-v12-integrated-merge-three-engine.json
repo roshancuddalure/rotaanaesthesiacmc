@@ -1,0 +1,1842 @@
+{
+  "recorded_at_utc": "2026-11-09T17:45:26.221Z",
+  "operator": "/root",
+  "author": "/root/membercore159_independent_design",
+  "execution_target": "Fresh applied V12 source; bounded execution, no whole159 acceptance",
+  "candidate_sha256": "88774f277131a1ed83174d288d882653fc04add295b8237fefa62636e08617ea",
+  "application_changed_by_test": false,
+  "source_sha256": {
+    "frontend/src/main.ts": "45743fb64260289e50526480572bf25e33d8dc1a69f83397286660a03951cfba",
+    "frontend/src/member-workspace.ts": "88774f277131a1ed83174d288d882653fc04add295b8237fefa62636e08617ea",
+    "frontend/src/extra-duty.ts": "529e420fc05ce5bfa42655b8863e449e09e22a7c0abe9baf4db5c94c4797b8c3",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+  },
+  "test_sha256": "cf4d55c5e588c77aee47458a1bab574228f53dfd62517bb9161df7019e4aee43",
+  "scope": "12 actual UI confirmed member merges, Chromium/Firefox/WebKit at320/1280 from Units/Leave, exact source/target revisions, transferred source posting/leave records retain IDs but now reference same surviving member. Parent source identity disappears only after final close. Unit draft minimum3 and fallbackC,B/filter retention; Leave list retained. All writes locally fulfilled; unhandled GETs RAM8031. No physical/nativeAT/realDB evidence",
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "view": "units",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "leaveReads": 0,
+        "memberReads": 1
+      },
+      "after": {
+        "unitReads": 2,
+        "leaveReads": 0,
+        "memberReads": 2
+      },
+      "observed": {
+        "sourceLinks": 0,
+        "survivorLinks": 6,
+        "transferredPostingLinks": [
+          {
+            "personId": "core-parent-person",
+            "text": "Dr Core Original OLD"
+          },
+          {
+            "personId": "core-parent-person",
+            "text": "Dr Core Original OLD"
+          }
+        ],
+        "transferredLeaveLinks": [],
+        "parentNames": [
+          "Dr Core Original OLD",
+          "Dr Core Original OLD",
+          "Dr Core Original OLD",
+          "Dr Core Original OLD",
+          "Dr Core Original OLD",
+          "Dr Core Original OLD"
+        ],
+        "settingsValue": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "fallbackHostRetained": true,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [
+          "core-c",
+          "core-b"
+        ],
+        "fallbackSaveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/merge",
+          "body": {
+            "source_id": "core-source-person",
+            "target_revision": "target-rev-7",
+            "source_revision": "source-rev-11"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/postings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/duplicates",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/merge",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/duplicates",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/audit",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "view": "leave",
+      "passed": true,
+      "before": {
+        "unitReads": 0,
+        "leaveReads": 1,
+        "memberReads": 1
+      },
+      "after": {
+        "unitReads": 0,
+        "leaveReads": 2,
+        "memberReads": 2
+      },
+      "observed": {
+        "sourceLinks": 0,
+        "survivorLinks": 4,
+        "transferredPostingLinks": [],
+        "transferredLeaveLinks": [
+          {
+            "personId": "core-parent-person",
+            "text": "Dr Core Original OLD"
+          },
+          {
+            "personId": "core-parent-person",
+            "text": "Dr Core Original OLD"
+          }
+        ],
+        "parentNames": [
+          "Dr Core Original OLD",
+          "Dr Core Original OLD",
+          "Dr Core Original OLD",
+          "Dr Core Original OLD"
+        ],
+        "formRetained": false,
+        "inputRetained": false,
+        "fallbackHostRetained": false,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [],
+        "fallbackSaveEnabled": false,
+        "leaveList": "true",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/merge",
+          "body": {
+            "source_id": "core-source-person",
+            "target_revision": "target-rev-7",
+            "source_revision": "source-rev-11"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/leave",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/duplicates",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/merge",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/duplicates",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/audit",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "view": "units",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "leaveReads": 0,
+        "memberReads": 1
+      },
+      "after": {
+        "unitReads": 2,
+        "leaveReads": 0,
+        "memberReads": 2
+      },
+      "observed": {
+        "sourceLinks": 0,
+        "survivorLinks": 6,
+        "transferredPostingLinks": [
+          {
+            "personId": "core-parent-person",
+            "text": "Dr Core Original OLD"
+          },
+          {
+            "personId": "core-parent-person",
+            "text": "Dr Core Original OLD"
+          }
+        ],
+        "transferredLeaveLinks": [],
+        "parentNames": [
+          "Dr Core Original OLD",
+          "Dr Core Original OLD",
+          "Dr Core Original OLD",
+          "Dr Core Original OLD",
+          "Dr Core Original OLD",
+          "Dr Core Original OLD"
+        ],
+        "settingsValue": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "fallbackHostRetained": true,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [
+          "core-c",
+          "core-b"
+        ],
+        "fallbackSaveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/merge",
+          "body": {
+            "source_id": "core-source-person",
+            "target_revision": "target-rev-7",
+            "source_revision": "source-rev-11"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/postings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/duplicates",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/merge",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/duplicates",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/audit",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "view": "leave",
+      "passed": true,
+      "before": {
+        "unitReads": 0,
+        "leaveReads": 1,
+        "memberReads": 1
+      },
+      "after": {
+        "unitReads": 0,
+        "leaveReads": 2,
+        "memberReads": 2
+      },
+      "observed": {
+        "sourceLinks": 0,
+        "survivorLinks": 4,
+        "transferredPostingLinks": [],
+        "transferredLeaveLinks": [
+          {
+            "personId": "core-parent-person",
+            "text": "Dr Core Original OLD"
+          },
+          {
+            "personId": "core-parent-person",
+            "text": "Dr Core Original OLD"
+          }
+        ],
+        "parentNames": [
+          "Dr Core Original OLD",
+          "Dr Core Original OLD",
+          "Dr Core Original OLD",
+          "Dr Core Original OLD"
+        ],
+        "formRetained": false,
+        "inputRetained": false,
+        "fallbackHostRetained": false,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [],
+        "fallbackSaveEnabled": false,
+        "leaveList": "true",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/merge",
+          "body": {
+            "source_id": "core-source-person",
+            "target_revision": "target-rev-7",
+            "source_revision": "source-rev-11"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/leave",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/duplicates",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/merge",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/duplicates",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/audit",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "view": "units",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "leaveReads": 0,
+        "memberReads": 1
+      },
+      "after": {
+        "unitReads": 2,
+        "leaveReads": 0,
+        "memberReads": 2
+      },
+      "observed": {
+        "sourceLinks": 0,
+        "survivorLinks": 6,
+        "transferredPostingLinks": [
+          {
+            "personId": "core-parent-person",
+            "text": "Dr Core Original OLD"
+          },
+          {
+            "personId": "core-parent-person",
+            "text": "Dr Core Original OLD"
+          }
+        ],
+        "transferredLeaveLinks": [],
+        "parentNames": [
+          "Dr Core Original OLD",
+          "Dr Core Original OLD",
+          "Dr Core Original OLD",
+          "Dr Core Original OLD",
+          "Dr Core Original OLD",
+          "Dr Core Original OLD"
+        ],
+        "settingsValue": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "fallbackHostRetained": true,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [
+          "core-c",
+          "core-b"
+        ],
+        "fallbackSaveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/merge",
+          "body": {
+            "source_id": "core-source-person",
+            "target_revision": "target-rev-7",
+            "source_revision": "source-rev-11"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/postings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/duplicates",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/merge",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/duplicates",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/audit",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "view": "leave",
+      "passed": true,
+      "before": {
+        "unitReads": 0,
+        "leaveReads": 1,
+        "memberReads": 1
+      },
+      "after": {
+        "unitReads": 0,
+        "leaveReads": 2,
+        "memberReads": 2
+      },
+      "observed": {
+        "sourceLinks": 0,
+        "survivorLinks": 4,
+        "transferredPostingLinks": [],
+        "transferredLeaveLinks": [
+          {
+            "personId": "core-parent-person",
+            "text": "Dr Core Original OLD"
+          },
+          {
+            "personId": "core-parent-person",
+            "text": "Dr Core Original OLD"
+          }
+        ],
+        "parentNames": [
+          "Dr Core Original OLD",
+          "Dr Core Original OLD",
+          "Dr Core Original OLD",
+          "Dr Core Original OLD"
+        ],
+        "formRetained": false,
+        "inputRetained": false,
+        "fallbackHostRetained": false,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [],
+        "fallbackSaveEnabled": false,
+        "leaveList": "true",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/merge",
+          "body": {
+            "source_id": "core-source-person",
+            "target_revision": "target-rev-7",
+            "source_revision": "source-rev-11"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/leave",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/duplicates",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/merge",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/duplicates",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/audit",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "view": "units",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "leaveReads": 0,
+        "memberReads": 1
+      },
+      "after": {
+        "unitReads": 2,
+        "leaveReads": 0,
+        "memberReads": 2
+      },
+      "observed": {
+        "sourceLinks": 0,
+        "survivorLinks": 6,
+        "transferredPostingLinks": [
+          {
+            "personId": "core-parent-person",
+            "text": "Dr Core Original OLD"
+          },
+          {
+            "personId": "core-parent-person",
+            "text": "Dr Core Original OLD"
+          }
+        ],
+        "transferredLeaveLinks": [],
+        "parentNames": [
+          "Dr Core Original OLD",
+          "Dr Core Original OLD",
+          "Dr Core Original OLD",
+          "Dr Core Original OLD",
+          "Dr Core Original OLD",
+          "Dr Core Original OLD"
+        ],
+        "settingsValue": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "fallbackHostRetained": true,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [
+          "core-c",
+          "core-b"
+        ],
+        "fallbackSaveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/merge",
+          "body": {
+            "source_id": "core-source-person",
+            "target_revision": "target-rev-7",
+            "source_revision": "source-rev-11"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/postings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/duplicates",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/merge",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/duplicates",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/audit",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "view": "leave",
+      "passed": true,
+      "before": {
+        "unitReads": 0,
+        "leaveReads": 1,
+        "memberReads": 1
+      },
+      "after": {
+        "unitReads": 0,
+        "leaveReads": 2,
+        "memberReads": 2
+      },
+      "observed": {
+        "sourceLinks": 0,
+        "survivorLinks": 4,
+        "transferredPostingLinks": [],
+        "transferredLeaveLinks": [
+          {
+            "personId": "core-parent-person",
+            "text": "Dr Core Original OLD"
+          },
+          {
+            "personId": "core-parent-person",
+            "text": "Dr Core Original OLD"
+          }
+        ],
+        "parentNames": [
+          "Dr Core Original OLD",
+          "Dr Core Original OLD",
+          "Dr Core Original OLD",
+          "Dr Core Original OLD"
+        ],
+        "formRetained": false,
+        "inputRetained": false,
+        "fallbackHostRetained": false,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [],
+        "fallbackSaveEnabled": false,
+        "leaveList": "true",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/merge",
+          "body": {
+            "source_id": "core-source-person",
+            "target_revision": "target-rev-7",
+            "source_revision": "source-rev-11"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/leave",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/duplicates",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/merge",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/duplicates",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/audit",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "view": "units",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "leaveReads": 0,
+        "memberReads": 1
+      },
+      "after": {
+        "unitReads": 2,
+        "leaveReads": 0,
+        "memberReads": 2
+      },
+      "observed": {
+        "sourceLinks": 0,
+        "survivorLinks": 6,
+        "transferredPostingLinks": [
+          {
+            "personId": "core-parent-person",
+            "text": "Dr Core Original OLD"
+          },
+          {
+            "personId": "core-parent-person",
+            "text": "Dr Core Original OLD"
+          }
+        ],
+        "transferredLeaveLinks": [],
+        "parentNames": [
+          "Dr Core Original OLD",
+          "Dr Core Original OLD",
+          "Dr Core Original OLD",
+          "Dr Core Original OLD",
+          "Dr Core Original OLD",
+          "Dr Core Original OLD"
+        ],
+        "settingsValue": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "fallbackHostRetained": true,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [
+          "core-c",
+          "core-b"
+        ],
+        "fallbackSaveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/merge",
+          "body": {
+            "source_id": "core-source-person",
+            "target_revision": "target-rev-7",
+            "source_revision": "source-rev-11"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/postings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/duplicates",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/merge",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/duplicates",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/audit",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "view": "leave",
+      "passed": true,
+      "before": {
+        "unitReads": 0,
+        "leaveReads": 1,
+        "memberReads": 1
+      },
+      "after": {
+        "unitReads": 0,
+        "leaveReads": 2,
+        "memberReads": 2
+      },
+      "observed": {
+        "sourceLinks": 0,
+        "survivorLinks": 4,
+        "transferredPostingLinks": [],
+        "transferredLeaveLinks": [
+          {
+            "personId": "core-parent-person",
+            "text": "Dr Core Original OLD"
+          },
+          {
+            "personId": "core-parent-person",
+            "text": "Dr Core Original OLD"
+          }
+        ],
+        "parentNames": [
+          "Dr Core Original OLD",
+          "Dr Core Original OLD",
+          "Dr Core Original OLD",
+          "Dr Core Original OLD"
+        ],
+        "formRetained": false,
+        "inputRetained": false,
+        "fallbackHostRetained": false,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [],
+        "fallbackSaveEnabled": false,
+        "leaveList": "true",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/merge",
+          "body": {
+            "source_id": "core-source-person",
+            "target_revision": "target-rev-7",
+            "source_revision": "source-rev-11"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/leave",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/duplicates",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/merge",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/duplicates",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/audit",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "view": "units",
+      "passed": true,
+      "before": {
+        "unitReads": 1,
+        "leaveReads": 0,
+        "memberReads": 1
+      },
+      "after": {
+        "unitReads": 2,
+        "leaveReads": 0,
+        "memberReads": 2
+      },
+      "observed": {
+        "sourceLinks": 0,
+        "survivorLinks": 6,
+        "transferredPostingLinks": [
+          {
+            "personId": "core-parent-person",
+            "text": "Dr Core Original OLD"
+          },
+          {
+            "personId": "core-parent-person",
+            "text": "Dr Core Original OLD"
+          }
+        ],
+        "transferredLeaveLinks": [],
+        "parentNames": [
+          "Dr Core Original OLD",
+          "Dr Core Original OLD",
+          "Dr Core Original OLD",
+          "Dr Core Original OLD",
+          "Dr Core Original OLD",
+          "Dr Core Original OLD"
+        ],
+        "settingsValue": "3",
+        "formRetained": true,
+        "inputRetained": true,
+        "fallbackHostRetained": true,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [
+          "core-c",
+          "core-b"
+        ],
+        "fallbackSaveEnabled": true,
+        "search": "Royal",
+        "campus": "campus:Main",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/merge",
+          "body": {
+            "source_id": "core-source-person",
+            "target_revision": "target-rev-7",
+            "source_revision": "source-rev-11"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/postings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/duplicates",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/merge",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/duplicates",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/audit",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "view": "leave",
+      "passed": true,
+      "before": {
+        "unitReads": 0,
+        "leaveReads": 1,
+        "memberReads": 1
+      },
+      "after": {
+        "unitReads": 0,
+        "leaveReads": 2,
+        "memberReads": 2
+      },
+      "observed": {
+        "sourceLinks": 0,
+        "survivorLinks": 4,
+        "transferredPostingLinks": [],
+        "transferredLeaveLinks": [
+          {
+            "personId": "core-parent-person",
+            "text": "Dr Core Original OLD"
+          },
+          {
+            "personId": "core-parent-person",
+            "text": "Dr Core Original OLD"
+          }
+        ],
+        "parentNames": [
+          "Dr Core Original OLD",
+          "Dr Core Original OLD",
+          "Dr Core Original OLD",
+          "Dr Core Original OLD"
+        ],
+        "formRetained": false,
+        "inputRetained": false,
+        "fallbackHostRetained": false,
+        "fallbackRowRetained": true,
+        "fallbackOrder": [],
+        "fallbackSaveEnabled": false,
+        "leaveList": "true",
+        "notices": [
+          "Saved changes are reflected in this view.Refresh saved changes"
+        ]
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/merge",
+          "body": {
+            "source_id": "core-source-person",
+            "target_revision": "target-rev-7",
+            "source_revision": "source-rev-11"
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/leave/history",
+          "search": "?offset=0&month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/leave",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/duplicates",
+          "search": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/merge",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/member-workspace/core-parent-person/duplicates",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members/audit",
+          "search": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/calendar",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/requests",
+          "search": "?month=2026-11"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/leave/pressure",
+          "search": "?month=2026-11"
+        }
+      ],
+      "errors": []
+    }
+  ]
+}

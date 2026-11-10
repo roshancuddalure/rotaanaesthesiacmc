@@ -9,20 +9,21 @@ try {
 
 while ($true) {
     try {
-        $progressLedger = Get-Content -LiteralPath (Join-Path $progressDocs 'traceability.json') -Raw -Encoding UTF8 | ConvertFrom-Json
-        $progressAudit = Get-Content -LiteralPath (Join-Path $progressDocs 'acceptance-audit-current.json') -Raw -Encoding UTF8 | ConvertFrom-Json
-        $progressLive = Get-Content -LiteralPath (Join-Path $progressDocs 'live-work.json') -Raw -Encoding UTF8 | ConvertFrom-Json
+        # Consume the compact read-only dashboard response instead of expanding the
+        # multi-megabyte evidence register into PowerShell objects every five seconds.
+        $progressSnapshot = Invoke-RestMethod -Uri 'http://127.0.0.1:5199/progress.json' -TimeoutSec 8
+        $progressLive = $progressSnapshot.live
         Clear-Host
         Write-Host '  DUTY ROTA / FRONTEND PROGRESS' -ForegroundColor Yellow
         Write-Host '  ============================================================' -ForegroundColor DarkYellow
         Write-Host '  Full dashboard: http://127.0.0.1:5199' -ForegroundColor Cyan
         Write-Host '  Frontend only | Read-only status | Refresh every 5 seconds'
         Write-Host ''
-        $progressPartial = @($progressLedger.items | Where-Object implementation_status -EQ 'partial').Count
-        $progressPending = @($progressLedger.items | Where-Object implementation_status -EQ 'pending').Count
-        $progressDependency = @($progressLedger.items | Where-Object implementation_status -EQ 'dependency').Count
-        $progressCertified = $progressAudit.counts.whole_requirement_completion_proven
-        Write-Host "  TOTAL: $($progressLedger.items.Count)    IN PROGRESS: $progressPartial    PENDING: $progressPending" -ForegroundColor White
+        $progressPartial = [int]$progressSnapshot.counts.partial
+        $progressPending = [int]$progressSnapshot.counts.pending
+        $progressDependency = [int]$progressSnapshot.counts.dependency
+        $progressCertified = [int]$progressSnapshot.certified
+        Write-Host "  TOTAL: $($progressSnapshot.total)    IN PROGRESS: $progressPartial    PENDING: $progressPending" -ForegroundColor White
         Write-Host "  DEPENDENCIES: $progressDependency    FULLY CERTIFIED: $progressCertified" -ForegroundColor Yellow
         Write-Host '  Passed test batches do not mean whole requirements are complete.' -ForegroundColor Gray
         Write-Host ''
@@ -33,8 +34,8 @@ while ($true) {
         }
         Write-Host ''
         Write-Host '  NEXT PENDING REQUIREMENTS (first 12; full list in dashboard)' -ForegroundColor Cyan
-        foreach ($progressItem in @($progressLedger.items | Where-Object implementation_status -EQ 'pending' | Select-Object -First 12)) {
-            Write-Host ('  {0:000}  {1}' -f [int]$progressItem.item_id, $progressItem.requirement)
+        foreach ($progressItem in @($progressSnapshot.items | Where-Object status -EQ 'pending' | Select-Object -First 12)) {
+            Write-Host ('  {0:000}  {1}' -f [int]$progressItem.id, $progressItem.requirement)
         }
         Write-Host ''
         Write-Host '  Physical checks pending. Work notes are not live process monitoring.' -ForegroundColor Gray

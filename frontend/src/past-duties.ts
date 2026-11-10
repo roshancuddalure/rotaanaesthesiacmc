@@ -4,7 +4,7 @@ import {
   type PastDutyOptions, type PastDutyPreview, type PastDutyStatus, type MemberWorkbookInspection, type DepartmentMember,
   type HistoryFairnessPolicy,
 } from "./services/api";
-import { applyBlocker, memberMatch, retainActionFocus, type MemberMatchCandidate, type MemberMatchView } from "./ui";
+import { applyBlocker, memberMatch, retainActionFocus, steps, type MemberMatchCandidate, type MemberMatchView } from "./ui";
 import { formatAuditTimestamp } from "./audit-time";
 
 /** Past-duty preview row as the shared member resolver now describes it. */
@@ -73,6 +73,9 @@ export async function mountPastDuties(host: HTMLElement) {
   let busy = false;
   let message = "";
   let savedOutcome = "";
+  let savedContext: { filename: string; selectedMonth: string; returnedMonth: string; sheet: string } | undefined;
+  let selectionComplete = false;
+  let activeAction = "";
   let refreshError = "";
   let historyHtml = "";
   let filter = "all";
@@ -116,7 +119,10 @@ export async function mountPastDuties(host: HTMLElement) {
     if (!isCurrent()) return;
     const sheet = inspection?.sheets.find(s => s.name === options.sheet);
     const blocker = blockerText();
+    const progress = selectionComplete ? 4 : busy && activeAction === "apply" ? 3 : preview ? 2 : file ? 1 : 0;
     host.innerHTML = `<section class="panel member-import"><h3>Upload Past Duties</h3>
+      <div data-past-progress data-step="${progress}">${steps(["Select workbook", "Set up", "Review", "Apply"], progress)}</div>
+      <p>Historical import · Selected month: <strong>${escape(options.month)}</strong>. Review the returned dates and corrections before applying.</p>
       <p>Completed duties update statistics and future person-allocation scoring. Existing member call levels stay unchanged.</p>
       <p>Table layout: one assignment per row, with date, name, and duty type. Department matrix: date row, weekday row, then duty labels and names, as in the existing departmental rotas.</p>
       <fieldset ${busy ? "disabled" : ""}><button type="button" data-past="template">Download Duty Template</button>
@@ -154,7 +160,7 @@ export async function mountPastDuties(host: HTMLElement) {
         <button type="button" class="primary" data-past="apply" ${blocker ? 'aria-describedby="past-apply-blocker"' : ""}>Apply Reviewed Past Duties</button>
         ${blocker ? `<p class="import-apply-blocker" id="past-apply-blocker">${escape(blocker)}</p>` : ""}` : ""}
       </fieldset><p role="status">${busy ? "Working…" : escape(message)}</p>
-      ${savedOutcome ? `<section class="past-saved-outcome" aria-label="Last applied import"><p role="status">${escape(savedOutcome)}</p>${refreshError ? `<p role="alert">Your import was saved, but the latest coverage and history could not load. ${escape(refreshError)}</p><button type="button" data-past="refresh-status" ${busy ? 'disabled' : ''}>Refresh saved details</button><p>This retry only reads data; it will not apply the import again.</p>` : ''}</section>` : ''}</section>
+      ${savedOutcome ? `<section class="past-saved-outcome" aria-label="Last applied import"><p role="status">${escape(savedOutcome)}</p>${savedContext ? `<p data-past-saved-context>Saved reviewed batch: <strong>${escape(savedContext.filename)}</strong> · Selected month: ${escape(savedContext.selectedMonth)} · Returned preview month: ${escape(savedContext.returnedMonth)} · Worksheet: ${escape(savedContext.sheet)}</p>` : ""}${refreshError ? `<p role="alert">Your import was saved, but the latest coverage and history could not load. ${escape(refreshError)}</p><button type="button" data-past="refresh-status" ${busy ? 'disabled' : ''}>Refresh saved details</button><p>This retry only reads data; it will not apply the import again.</p>` : ''}</section>` : ''}</section>
       <section class="panel"><h3>Recorded History Coverage</h3><p>These are observed records, not proof of a complete roster. Missing dates and members are not assigned zero workload. Fairness uses each member's observed months within the configured window.</p>
         <div class="member-import-table"><table><thead><tr><th>Month</th><th>Duties</th><th>Members</th><th>Days recorded</th><th>Latest duty</th></tr></thead><tbody>${status.coverage.map(c => `<tr><td>${escape(c.month)}</td><td>${c.assignments}</td><td>${c.members}</td><td>${c.days_with_records}</td><td>${escape(c.latest_duty_date)}</td></tr>`).join("") || '<tr><td colspan="5">No approved past duties recorded yet.</td></tr>'}</tbody></table></div></section>
       <section class="panel member-import"><h3>Historical Fairness Settings</h3><p>History adds a ranking penalty for above-average observed burden among active peers at the same current call level. Unknown history is neutral. Safety and leave rules remain authoritative.</p>
@@ -176,6 +182,7 @@ export async function mountPastDuties(host: HTMLElement) {
     if (target.dataset.past === "filter") { filter = target.value; render(); return; }
     if (target.dataset.past === "confirm-warnings") { options.confirm_warnings = target.checked; render(); return; }
     if (target.dataset.past === "confirm-corrections") { options.confirm_corrections = target.checked; render(); return; }
+    selectionComplete = false;
     reviewed = false; options.confirm_corrections = false; options.confirm_warnings = false;
     if (target.dataset.pastRow) {
       const row = options.resolutions[target.dataset.pastRow] ??= {};
@@ -208,6 +215,7 @@ export async function mountPastDuties(host: HTMLElement) {
       const field = pick.dataset.pickMember !== undefined ? "person_id" : pick.dataset.pastResolve!;
       const resolution = options.resolutions[key] ??= {};
       resolution[field] = pick.dataset.pickMember ?? pick.dataset.pastValue ?? "";
+      selectionComplete = false;
       reviewed = false; options.confirm_corrections = false; options.confirm_warnings = false; message = "";
       if (!file || !inspection) { render(); return; }
       target = pick; action = "preview";
@@ -223,6 +231,8 @@ export async function mountPastDuties(host: HTMLElement) {
       const blocker = blockerText();
       if (blocker) { message = blocker; render(); restoreFocus(isCurrent()); return; }
     }
+    if (file && (action === "inspect" || action === "preview")) selectionComplete = false;
+    activeAction = action ?? "history";
     busy = true; message = ""; render();
     try {
       if (action === "refresh-status") {
@@ -251,12 +261,14 @@ export async function mountPastDuties(host: HTMLElement) {
         savedOutcome = ""; refreshError = "";
         const result = await pastDutyUpload<{counts: Record<string,number>; replayed?: boolean}>("apply", file, options, preview.preview_hash);
         if (!isCurrent()) return;
+        savedContext = { filename: file.name, selectedMonth: options.month, returnedMonth: preview.month || "Not returned", sheet: preview.sheet || "Not returned" };
+        selectionComplete = true;
         reviewed = false; preview = undefined;
         savedOutcome = result.replayed ? "This reviewed batch was already applied. No additional duties or corrections were recorded." : `Recorded ${result.counts.create} new duties, ${result.counts.correct} corrections, ${result.counts.unchanged} unchanged. Statistics and future candidate scoring now use the saved records.`;
         await refreshSavedStatus();
       }
     } catch (error) { message = error instanceof Error && error.message ? error.message : "Past-duty operation failed."; if (action === "apply") reviewed = false; }
-    finally { busy = false; render(); restoreFocus(isCurrent()); }
+    finally { busy = false; activeAction = ""; render(); restoreFocus(isCurrent()); }
   };
   async function refreshSavedStatus() {
     try {

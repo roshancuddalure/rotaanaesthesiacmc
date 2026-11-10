@@ -1,0 +1,39 @@
+{
+  "recorded_at_utc": "2026-11-10T13:03:19.158Z",
+  "scope": "Diagnostic only: Chromium320 fixture HTML and current CSS asset loading, no module mount/API/write or import acceptance claim.",
+  "passed": false,
+  "failure": "TimeoutError: page.goto: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:5197/__past-assets-diagnostic\", waiting until \"load\"\u001b[22m\n",
+  "source_sha256": {
+    "frontend/src/styles.css": "ae0e796c684efc9d3b861265ebf5934401f15f74d6180e7e338fcb4cdddeffc0",
+    "frontend/src/premium-theme.css": "6642ff90299a96ac8f4ecbf941be45f3b3f413c2a647ba8192ebf949b4b65e34",
+    "frontend/src/past-duties.ts": "ca145769e2d8d4c00d37de57852acc2ab83c321d1761a5c5545c3da888fa729d"
+  },
+  "sources_unchanged": true,
+  "pending": [
+    "http://127.0.0.1:5197/src/styles.css",
+    "http://127.0.0.1:5197/src/premium-theme.css"
+  ],
+  "events": [
+    {
+      "event": "request",
+      "url": "http://127.0.0.1:5197/__past-assets-diagnostic",
+      "at": 1794315757175
+    },
+    {
+      "event": "request",
+      "url": "http://127.0.0.1:5197/src/styles.css",
+      "at": 1794315762898
+    },
+    {
+      "event": "request",
+      "url": "http://127.0.0.1:5197/src/premium-theme.css",
+      "at": 1794315762898
+    },
+    {
+      "event": "finished",
+      "url": "http://127.0.0.1:5197/__past-assets-diagnostic",
+      "at": 1794315762899
+    }
+  ],
+  "errors": []
+}

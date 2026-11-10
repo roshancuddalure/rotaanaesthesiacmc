@@ -1,0 +1,110 @@
+{
+  "recorded_at_utc": "2026-11-10T04:32:27.353081+00:00",
+  "reviewer": "/root/leave159_nondelete_groundwork",
+  "application_changed": false,
+  "browser_executed_by_reviewer": false,
+  "decision": "Source suitable for isolated runtime validation; V14r1 permanent-Close trap and missing owned reference-opener focus restoration have targeted source repairs. Do not integrate until actual Close/throw/focus/newer-focus/consumer-error gates pass.",
+  "source_files": [
+    {
+      "file": "reference-workspace.ts",
+      "before_sha256": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd",
+      "candidate_sha256": "91133b6913c3e7c5a493bbf19436ca06ba5ad9d1813a13974c70d0d6473a434a",
+      "hash_verified": true,
+      "exact_delta_reversal_verified": true,
+      "line_ending_sequence_unchanged_for_untouched_bytes": true
+    },
+    {
+      "file": "record-workspace.ts",
+      "before_sha256": "20b50cdbd991b5b5a16d06b51020be2838514a553823512373818f65636427aa",
+      "candidate_sha256": "75589574417ed6f6287e625392417d3776411a8e7ef413a940e33915e57a6c33",
+      "hash_verified": true,
+      "exact_delta_reversal_verified": true,
+      "line_ending_sequence_unchanged_for_untouched_bytes": true
+    }
+  ],
+  "manifest_sha256": "239d9d4da65097fa64e8748655ac6214a95b597342f4c4f3a3c8f48a2c3b5102",
+  "proof": {
+    "path": "tmp/catalog-consumer-v14r2/typecheck-effect-proof.json",
+    "sha256": "b242572351918a4228ea14e355dca8ad887f5bfebeb3f620d757198fa476773a",
+    "typecheck_diagnostics": [],
+    "existing_effects_exact": 35,
+    "existing_templates_exact": 79,
+    "existing_strings_retained": 546,
+    "intentional_new_copy": "One saved/unrefreshed view warning template and fallback detail string; record opener selectors only.",
+    "reviewer_reran_typecheck": false
+  },
+  "actual_v14r1_counterevidence": [
+    {
+      "path": "docs/premium-ui/qa-original159-catalog-v14r1-close-focus-diagnostic-current-v13r2-r1-20261110.json",
+      "sha256": "7751cec4f570cbfe6642e697b9bb8cd2e167155884bb8255e0a40b75bd9a6ad7",
+      "contexts": 6,
+      "passed": 0
+    },
+    {
+      "path": "docs/premium-ui/qa-original159-catalog-v14r1-callback-contract-current-v13r2-20261110.json",
+      "sha256": "df81d99eb4d35369ad588392d345fa9eedb8e8d2df09b44b551f0812ba39fc18",
+      "contexts": 18,
+      "passed": 12
+    }
+  ],
+  "lifetime_review": [
+    {
+      "topic": "Accepted state and pending delivery",
+      "assessment": "Existing PUT await resolves, then dirtyfalse/confirmedsavetrue/pendingtrue before own load. Own GET/render/focus and synchronous callback errors therefore retain pending. No response dereference required to mark accepted. Successful callback clears pending and failure flags only after sync return."
+    },
+    {
+      "topic": "Permanent throw escape",
+      "assessment": "Callback catch marks referenceNotificationFailed before throwing. showSavedReferenceFailure explicitly says surrounding view could not refresh and Close leaves without refreshing. If throw first occurs during Close, warning is shown and same invocation returns, requiring another deliberate Close; if throw already occurred after successful ownGET, error Close bypasses pending callback immediately. This prevents previous retryloop while preserving truthful undelivered state. No false delivered flag, no PUT replay. Actual permanentthrow browser checks still required."
+    },
+    {
+      "topic": "Read-only retry",
+      "assessment": "Try again runs existing catalog load GET and then notifySavedReference even if previous failureflagtrue. Successful sync callback resets bothflags; laterClose notduplicated. A repeated throw keeps warning and explicitescape. A callback that sideeffects then throws may repeat on explicitretry; no general exactlyonceguarantee."
+    },
+    {
+      "topic": "Reentrancy and busy/dirty/kind",
+      "assessment": "notifyingReference guards helper duplicate/reentry and Close during active delivery, so callback-triggered synchronousClose cannot remove activecatalog or recursivelynotify. Existingbusy guard blocksClose whilewrite/load transactionpending. Dirtyrefusal still runs beforeClose and leavesowneropen. KindGETownership guard unchanged; pending notreset bykind switch/loadfailure. Currentcallbacks donot intentionallyreentercatalogload orsubmit writes; no arbitrarycallback safety claim."
+    },
+    {
+      "topic": "Temporal-dead-zone and closures",
+      "assessment": "showSavedReferenceFailure closes over constclose declaredlater and hoisted functionload. Definition alone doesnot execute these references. All callsites occur after closeinitialization: initialawaitload atfunctionend, asyncGETcontinuation, orlaternativeevents. No synchronous invocation beforeconstclose initialized found. Helperflagsinitializedbeforeeventhandlers/firstload. No TDZ blocker."
+    },
+    {
+      "topic": "Mixed endings / preserved bridge",
+      "assessment": "Reference currentdbd baseline includesmixedlineendings; exactV14r2\u2192V14r1 delta reversed byteforbyte, priorindependentV14r1\u2192dbd proof frozen. Record755\u2192current20b reverseexact. Existing V13r2 record lifecycle hooks remain byteexact except narrowfocus target. API/confirmation/storage/serialization andexistingtemplates retained."
+    },
+    {
+      "topic": "Owned opener focus",
+      "assessment": "Recordoptions Promise resolves, captures currentactiveelement andownedinsideeditor. New referenceOpener flag onlywhen that currentfocus matches actual[data-references]. Afterrender, replacementbutton focused onlyif oldfocuswasowned and resultingactiveelementisbody/editor. A newer namedfield/search uses existingrestoration; focusmovedoutsideeditor yieldsownedfalse and nofocussteal. This is narrowmissingtargetcompletion, not unconditionalopenerfocus."
+    },
+    {
+      "topic": "Async consumer limitation",
+      "assessment": "Synchronous saved callback mayreturn before options GET/render finishes; clearingpending doesnotcertify asyncconsumerread success. Existing options.catch displays draft-preserved inlinewarning. Newfixdoesnotadd retry UI or promisechain acknowledgement. Consumerreaderror requiresactualexistingwarning/draftfocus coverage; mustnotdescribe synchronous delivery as refreshedconsumer."
+    }
+  ],
+  "resolved_source_blockers": [
+    {
+      "id": "V14R1-PERMANENT-CALLBACK-CLOSE-TRAP",
+      "status": "Targetedsourcefix present; pendingruntime",
+      "mechanism": "failureflag +truthfulwarning +nextdeliberateClose bypasses undeliveredcallback"
+    },
+    {
+      "id": "V14R1-CLOSE-ASYNC-CONSUMER-FOCUS",
+      "status": "Targetedsourcefix present; pendingactualfocus/newerfocus validation",
+      "mechanism": "ownedcurrent reference-opener recognized asrestorable target aftereditorrender"
+    }
+  ],
+  "source_blockers": [],
+  "runtime_gates": [
+    "Actual acceptedPUT/ownGET503/Close updates consumedcataloglabel withkey/notes/settings drafts preserved; normalownGETsuccess andGETretry donotduplicatenotification.",
+    "One-shot andpermanent synchronouscallbackthrows afternormalread andfailed-ownGETClose; explicitCloseescapes aftertruthfulwarning;GETretry notificationonly/noPUTreplay; reentrantcallbackClose refusedsafely.",
+    "Actual asyncoptions-response-delayed Close focus remainsreplacementreferencebutton; newer namedfield/search focused before response retainsit; neweroutsideeditor focus notstolen.",
+    "Asyncconsumercatalog/options GET503 retainsdraft andshows existinginlinewarning; do notmistake maincatalogread successforconsumersuccess.",
+    "Busy/dirty/refused/cancel/422/PUT503/GETretry/kindswitch/explicitClose/nativeEscape remainexistingsemantics.",
+    "Currentappliedsource andCSS/buildbindings held; no productintegration before thesegates."
+  ],
+  "limits": [
+    "Independent source/hash/reversal/rawcounterevidence review only; no browserexecution orsource/test/ledger mutation.",
+    "Author35effects/79templates/546strings/staticTS0 inspected/hashbound, notreexecuted here.",
+    "Catalogbridge doesnotuniversallyrenamestatic mainlabels orproveall159/all260. Physical/nativeAT pending."
+  ]
+}

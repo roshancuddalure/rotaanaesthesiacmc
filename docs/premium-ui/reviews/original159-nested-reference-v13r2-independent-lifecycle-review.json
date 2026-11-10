@@ -1,0 +1,135 @@
+{
+  "recorded_at_utc": "2026-11-10T02:18:40.106953+00:00",
+  "reviewer": "/root/leave159_nondelete_groundwork",
+  "application_changed": false,
+  "browser_executed_by_reviewer": false,
+  "source_decision": "Suitable for isolated runtime validation; no additional source blocker found. Exact new importer callback forwards accepted changes into the existing outer import owner without prematurely closing it. Not application or full original159 acceptance.",
+  "files": [
+    {
+      "file": "main.ts",
+      "before_sha256": "15b79223710a53a9e0ccdd70373a92e568f6ee603f56e3747454ab25ac258cc0",
+      "candidate_sha256": "ebf67f1733f620e406054d0c4a82cf1c203fd0e6603a843eec45b25a1a09df4d",
+      "unchanged": false,
+      "v13r1_candidate_sha256": "ebf67f1733f620e406054d0c4a82cf1c203fd0e6603a843eec45b25a1a09df4d",
+      "unchanged_from_v13r1": true,
+      "independent_hash_verified": true,
+      "all_edits_reverse_to_before_normalized_line_endings": true,
+      "sole_importer_delta_exact_or_other_file_identical_to_r1": true,
+      "current_applied_sha256": "15b79223710a53a9e0ccdd70373a92e568f6ee603f56e3747454ab25ac258cc0"
+    },
+    {
+      "file": "member-workspace.ts",
+      "before_sha256": "88774f277131a1ed83174d288d882653fc04add295b8237fefa62636e08617ea",
+      "candidate_sha256": "506c486046fe6f0bbea5c6c4bf6357fec6e9649d91a9ed1ed890551ed3503cca",
+      "unchanged": false,
+      "v13r1_candidate_sha256": "506c486046fe6f0bbea5c6c4bf6357fec6e9649d91a9ed1ed890551ed3503cca",
+      "unchanged_from_v13r1": true,
+      "independent_hash_verified": true,
+      "all_edits_reverse_to_before_normalized_line_endings": true,
+      "sole_importer_delta_exact_or_other_file_identical_to_r1": true,
+      "current_applied_sha256": "88774f277131a1ed83174d288d882653fc04add295b8237fefa62636e08617ea"
+    },
+    {
+      "file": "operational-import.ts",
+      "before_sha256": "1ccbcf4181330a5f66c59b0723ec02f878a268b6b3030aa99b177de1b7070355",
+      "candidate_sha256": "01d58023203380fedcee010cd3001b8e2bb478397144566ef92142a515a14b38",
+      "unchanged": false,
+      "v13r1_candidate_sha256": "d14e9b132a58e965f97a1531ab95845215092bbc6cf602c4344412047227e7a4",
+      "unchanged_from_v13r1": false,
+      "independent_hash_verified": true,
+      "all_edits_reverse_to_before_normalized_line_endings": true,
+      "sole_importer_delta_exact_or_other_file_identical_to_r1": true,
+      "current_applied_sha256": "1ccbcf4181330a5f66c59b0723ec02f878a268b6b3030aa99b177de1b7070355"
+    },
+    {
+      "file": "record-workspace.ts",
+      "before_sha256": "469fd6bf2e4118b15ad343d8059cd3cfb0acbc6483bea969ca5fb93488644335",
+      "candidate_sha256": "20b50cdbd991b5b5a16d06b51020be2838514a553823512373818f65636427aa",
+      "unchanged": false,
+      "v13r1_candidate_sha256": "20b50cdbd991b5b5a16d06b51020be2838514a553823512373818f65636427aa",
+      "unchanged_from_v13r1": true,
+      "independent_hash_verified": true,
+      "all_edits_reverse_to_before_normalized_line_endings": true,
+      "sole_importer_delta_exact_or_other_file_identical_to_r1": true,
+      "current_applied_sha256": "469fd6bf2e4118b15ad343d8059cd3cfb0acbc6483bea969ca5fb93488644335"
+    },
+    {
+      "file": "reference-workspace.ts",
+      "before_sha256": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd",
+      "candidate_sha256": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd",
+      "unchanged": true,
+      "v13r1_candidate_sha256": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd",
+      "unchanged_from_v13r1": true,
+      "independent_hash_verified": true,
+      "all_edits_reverse_to_before_normalized_line_endings": true,
+      "sole_importer_delta_exact_or_other_file_identical_to_r1": true,
+      "current_applied_sha256": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd"
+    }
+  ],
+  "manifest_sha256": "754fc03e1d8d912e9a97eba4bcbdfd08173db959fa11a6f9d388c23333acb57f",
+  "edits_sha256": "cceaf58bd9a28451b05c57642059569032cd1f7953491b9141593c6b2b9d2ed3",
+  "sole_r1_delta": {
+    "file": "operational-import.ts",
+    "before": "            candidate?.active_status !== \"active\" && admin\n              ? \"active\"\n              : undefined,\n          );",
+    "after": "            candidate?.active_status !== \"active\" && admin\n              ? \"active\"\n              : undefined,\n            {\n              confirmed: change => notifyReferenceConfirmed({entity: change.kind === \"member\" ? \"member\" : \"record\", operation: change.operation, id: change.personId}),\n              referenceConfirmed: notifyReferenceConfirmed,\n              closed: () => {},\n            },\n          );"
+  },
+  "independent_delta_findings": [
+    "The full V13r1 edits list is preserved as an exact prefix; one additional importer edit is appended. Independently reconstructed importer from exact R1 source and sole appended edit. Main/member/record/reference candidate bytes remain identical to R1.",
+    "New seventh ProfileParentLifecycle argument is supplied only to actual renderReview [data-review-candidate] openMemberWorkspace call. Existing admin flag, candidate ID, changed(member) callback, empty navigation ids[], initial details tab and proposed active restore status remain exact.",
+    "confirmed maps existing accepted core/merge kind member to entity member; accepted posting/leave actions to entity record. This avoids falsely enabling complete fallback-reference reads for member/record changes. Distinct referenceConfirmed forwards actual nested unit events, so fallback full read is requested only when needed.",
+    "Both adapters capture the current importer notifyReferenceConfirmed closure. That protected helper forwards to the same root importParent referenceConfirmed already captured at importer open. It does not create another parent lifecycle or trigger Apply-confirmed/hasConfirmedImport state.",
+    "Nested profile closed is intentionally no-op: core or nested record Save marks same outer importer dirty; profile close must not start root read. Actual final importer close alone calls existing idempotent closed adapter. Multiple accepted changes before final close should coalesce using existing controller.",
+    "Existing changed(member) callback still updates local members array, rerenders review, and dirties preview exactly once per existing profile notification. No second changed callback, duplicate preview action or synthetic row selection is introduced. Accepted signal occurs before that callback can fail.",
+    "Underlying R1 member-workspace accepted core/merge notifications remain immediately after accepted API await and before clone/changed/render/cache work; child record hook remains before close/saved. Those exact candidate files are unchanged. This new call site therefore receives accepted signals even if subsequent profile/importer presentation fails.",
+    "No notification on merely opening a profile, selecting a candidate or discarding unsaved profile draft. Proposed active restore remains a draft until existing save resolves. Account/view/month/root/render/latest-owner checks remain owned by unchanged main parent controller.",
+    "This call passes ids[]; profile Next/Previous are disabled. Do not manufacture a reachable Next test at this opener. General replacement forwarding remains sourceexact to R1 and separately bounded by prior actual profile replacement evidence."
+  ],
+  "ancestry": {
+    "prior_review_path": "docs/premium-ui/reviews/original159-nested-reference-v13r1-independent-lifecycle-review.json",
+    "prior_review_sha256": "b12796fbf6bf602de93931b5a5ba1d8efadbd52c09ea5f2ecc4e83aae33437f4",
+    "prior_review_limits_retained": [
+      "Independent source/hash/reversal review only; no browser runs and no product/test edits by reviewer.",
+      "Author full TypeScript/request/markup proof inspected and hash-bound, not independently rerun here.",
+      "Runtime baseline six actual failures remains ancestry only; candidate/merged/applied tests still required.",
+      "Catalog lifecycle, whole original159 and all260 acceptance remain outside this proof.",
+      "Physical-device/native assistive-technology checks remain pending."
+    ],
+    "baseline_path": "docs/premium-ui/qa-original159-import-row-profile-parent-diagnostic.json",
+    "baseline_sha256": "23e0fd34f7ada987a2e482d028a809cae16c06419cafc0691243cfb494604d75",
+    "actual_baseline_contexts": 12,
+    "actual_saved_true_failures": 12,
+    "baseline_no_page_errors": true,
+    "interpretation": "Actual applied-source direct-row profile core/posting saves leave parent stale after profile close and importer discard. Not a candidate pass. R1 did not bridge this distinct opener."
+  },
+  "author_static_proof": {
+    "path": "tmp/nested-reference-v13r2/typecheck-request-markup-proof.json",
+    "sha256": "a7fdf2e6953739d49c83f9221baa39c270dbc09a38c66651fcf4c2979582f162",
+    "all_hash_bindings_verified": true,
+    "typecheck_diagnostics": [],
+    "request_markup_parity_exact": true,
+    "independently_rerun_by_reviewer": false
+  },
+  "runtime_handoff": {
+    "path": "tmp/nested-reference-v13r2/runtime-handoff.json",
+    "sha256": "a38b282c66c25cabf9fbc2daad736bb001114dd50f2d37306327fbbbc5517073",
+    "frozen_test_hashes_independently_verified": 5,
+    "planned_contexts": 120,
+    "executed_by_reviewer": 0,
+    "scope": "Prepared source/test bindings, not passed execution evidence."
+  },
+  "blockers": [],
+  "runtime_gates": [
+    "Fresh R2 five-suite120 source-bound candidate execution; R1 prior90 is ancestry and cannot silently certify changed importer.",
+    "Direct actual row-profile core and posting save: no root read on profile close; exactly one on final importer discard; no Apply, duplicate mutation or fake import batch. Returned fresh name/notes must reach parent while unrelated drafts/filters survive.",
+    "Profile/read/presentation failure after accepted core/save must still forward confirmed state; root monthGET503 retry GET-only, one original accepted mutation.",
+    "No-write profile open/cancel and dirty discard refusal do not schedule root read; multiple actual accepted changes coalesce one final parent read.",
+    "Route/month/account/root replacement before final importer close or while pending read cannot paint stale parent or steal newer focus.",
+    "Nested unit event forwarding through row profile/record must keep complete fallback GET/recovery rules; members/record changes alone must not falsely trigger it."
+  ],
+  "limits": [
+    "Read-only independent source/hash/reversal/handoff review, not browser execution. No product/test/ledger edits by reviewer.",
+    "No backend/API/permissions/persisted semantics/export/scheduling change is implied by this frontend callback bridge.",
+    "Remaining separate catalog lifecycle and other original159 mutation families not certified. No full original159/all260 completion claim.",
+    "Physical-device and native assistive-technology checks remain pending."
+  ]
+}

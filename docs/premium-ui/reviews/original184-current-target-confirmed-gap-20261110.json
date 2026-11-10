@@ -1,0 +1,35 @@
+{
+  "recorded_at_utc": "2026-11-10T09:17:28.836654+00:00",
+  "reviewer": "/root",
+  "scope": "Confirmed current mappingselector presentation gap; Chromium320 readonly actualroute fixture, not server inactive-state certification.",
+  "execution": {
+    "report": "docs/premium-ui/qa-original184-mapping-current-target-diagnostic-20261110.json",
+    "test": "frontend/tests/premium-original184-mapping-current-target-diagnostic-20261110.browser.mjs",
+    "exit_code": 1
+  },
+  "observation": {
+    "expectedApiTarget": "retired_reference",
+    "visibleTarget": "",
+    "targetOptions": [
+      "Needs review",
+      "\n          Active duty\n        "
+    ],
+    "reviewState": "reviewed",
+    "rowText": "Legacy imported duty LongNameLongNameLongNameLongNameLongNameLongNameLongNameLongNameLongNameLongNameLongNameLongNameLongNameLongNameLongName\nDuty Label\nNeeds review\nActive duty\nNeeds review\nSuggested\nReviewed\nSave",
+    "pageOverflow": false,
+    "writes": [],
+    "errors": []
+  },
+  "source_reason": "renderDutyTarget emits onlyblank/activeoptions, so a persisted missing/retired key is not an option and browser shows blank. Underlying mapping state/save handler still retain original key, exposing a UI/state mismatch.",
+  "contracts": "Current backend accepts reviewed/suggested/needs_review only; inactive must remain target metadata from catalog.active or unit.active_status, not a fabricated mapping save status.",
+  "candidate": "tmp/mapping184-reference-v1/manifest.json",
+  "evidence_sha256": {
+    "docs/premium-ui/qa-original184-mapping-current-target-diagnostic-20261110.json": "a435a47e73a41cd2c6fc956733b9dfd9150a719ffda08e34e61933d1dc9c16ca",
+    "frontend/src/main.ts": "8c49cdfd6c16b334e336544ea6642433922edec28d8b15a927a0374805cd55c3",
+    "frontend/tests/premium-original184-mapping-current-target-diagnostic-20261110.browser.mjs": "b3d0e1ab57ab2535c28730e345b42136c2d5a89bd5d1fc689032b68c6a1e6ae9",
+    "tmp/mapping184-reference-v1/manifest.json": "f12c48d754dcbf6a60ac7e383644489baea9f42e1a5a02dcfd83349564bc20cf"
+  },
+  "limits": [
+    "No mappingproductsource edit or whole184acceptance. Fullcontroller/UIread-retry-owner/focus/action gates pending."
+  ]
+}

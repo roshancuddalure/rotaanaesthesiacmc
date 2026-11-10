@@ -168,6 +168,10 @@ def export_rota_template_eagle_eye(
         filename, payload = eagle_eye_export(db, month)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except Exception as exc:
+        import logging
+        logging.getLogger(__name__).exception("Excel export failed for month %s", month)
+        raise HTTPException(status_code=500, detail="Unable to prepare the draft assignments workbook. Please retry the download.") from exc
     headers = {"Content-Disposition": f'attachment; filename="{filename}"'}
     return StreamingResponse(
         iter([payload]),

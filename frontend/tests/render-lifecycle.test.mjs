@@ -71,12 +71,20 @@ test('manual route scroll restoration is installed without blocking browsers wit
   }finally{globalThis.window=previous;}
 });
 
-const mappingFunctions=['loadMappings','updateLocalMapping'].map(name=>{
+const mappingFunctions=['resetMappingReferenceDetails','loadMappings','updateLocalMapping'].map(name=>{
   const node=tree.statements.find(node=>ts.isFunctionDeclaration(node)&&node.name?.text===name);
   assert.ok(node,`${name} source must exist`);return node.getText(tree);
 }).join('\n');
 const mappingCode=ts.transpileModule(mappingFunctions,{compilerOptions:{target:ts.ScriptTarget.ES2020}}).outputText;
-const createMappingLifecycle=new Function('getMappingOptions','getMappings',`let mappingLoadSequence=0,mappingLoadError='',mappingScanConfirmed=false,currentUser={id:'first'},options={duty_types:[]},mappings=[{id:'one',notes:'loaded draft'}];const mappingDraftIds=new Set();${mappingCode};return {load:loadMappings,edit:updateLocalMapping,switchAccount:()=>{currentUser={id:'second'};},state:()=>({options,mappings,error:mappingLoadError,draftIds:[...mappingDraftIds]})};`);
+const createMappingLifecycle=new Function('getMappingOptions','getMappings',`let mappingLoadSequence=0,mappingLoadError='',mappingScanConfirmed=false,currentUser={id:'first'},options={duty_types:[]},mappings=[{id:'one',notes:'loaded draft'}];let mappingReferenceDetails=null,mappingReferenceOwnerCurrent=null,mappingReferenceRetrying=false;const mappingDraftIds=new Set();${mappingCode};return {load:loadMappings,edit:updateLocalMapping,switchAccount:()=>{currentUser={id:'second'};},setReferenceReader:reader=>{mappingReferenceDetails=reader;},state:()=>({options,mappings,error:mappingLoadError,draftIds:[...mappingDraftIds],referenceReader:mappingReferenceDetails})};`);
+
+test('successful mapping readback disposes optional reference readers without discarding drafts; failed reads retain them',async()=>{
+  let fails=false,disposed=0;
+  const lifecycle=createMappingLifecycle(async()=>({duty_types:[]}),async()=>{if(fails)throw new Error('Read failed');return[{id:'one',notes:'server value'}];});
+  const reader={dispose(){disposed++;}};lifecycle.setReferenceReader(reader);lifecycle.edit('one',{notes:'local draft'});
+  await lifecycle.load(true);assert.equal(disposed,1);assert.equal(lifecycle.state().referenceReader,null);assert.equal(lifecycle.state().mappings[0].notes,'local draft');
+  lifecycle.setReferenceReader(reader);fails=true;await lifecycle.load(true);assert.equal(disposed,1);assert.equal(lifecycle.state().referenceReader,reader);assert.equal(lifecycle.state().mappings[0].notes,'local draft');
+});
 
 test('mapping refreshes commit only the latest load and preserve loaded drafts on failure',async()=>{
   const pending=[];

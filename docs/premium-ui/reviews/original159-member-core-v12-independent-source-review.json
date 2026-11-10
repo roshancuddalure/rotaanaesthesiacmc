@@ -1,0 +1,57 @@
+{
+  "reviewer": "/root/membercore159_independent_design",
+  "recorded_date": "2026-11-09",
+  "mode": "Read-only application review; only this unique evidence artifact was written. No browser execution.",
+  "source_sha256": {
+    "frontend/src/main.ts": "45743fb64260289e50526480572bf25e33d8dc1a69f83397286660a03951cfba",
+    "frontend/src/member-workspace.ts": "105cc1d91ea4815d565ad4859fc01412cf576a3203c07834f4010e3fef7ef1a5",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "tmp/member-core-parent-v12/member-workspace.ts": "88774f277131a1ed83174d288d882653fc04add295b8237fefa62636e08617ea"
+  },
+  "verdict": "Source design suitable for isolated runtime testing. No source blocker identified in the exact candidate. Not integration approval or requirement acceptance.",
+  "additional_evidence_inspected": {
+    "docs/premium-ui/qa-original159-member-core-parent-diagnostic-r1.json": "bf25c74d4e8337ae796be8bcc93b4863e21276a6440c0fa389f379f7fe850152",
+    "tmp/member-core-parent-v12/typecheck-effect-proof.json": "3d341ca70fb38c00ced848d5180b4a498f342d42932c03ebc3aef017978884c4",
+    "diagnostic_observation": "Corrected R1 records 12 accepted core saves, all 12 failing expected parent-name refresh in Units/Leave across three engines and two widths. Inspected Unit and Leave observations retain the old parent names; Unit form, settings value3, C/B fallback order and Royal/Main filters remain present. This is baseline defect evidence, not a candidate test.",
+    "author_typecheck_proof": "Author artifact reports zero virtual TypeScript diagnostics, exact 32 existing effects and exact 161 markup templates. Reviewer inspected the artifact and four-hunk source diff but did not rerun the author command."
+  },
+  "findings": [
+    {
+      "status": "confirmed_source_gap",
+      "detail": "Applied profile core PUT and merge POST call changed(member) but do not notifyParent. main onMemberWorkspaceChanged refreshes members and audit and renders only the Members view; mounted Unit/Leave snapshots retain their previous linked person objects. Existing linked posting/leave changes already notify."
+    },
+    {
+      "status": "candidate_ordering_suitable",
+      "detail": "Exact V12 adds a member discriminant and merge operation, plus one notification immediately after each accepted core/merge response. Both notifications precede structuredClone, changed callback and render, so a later child UI failure does not erase the parent's knowledge of the accepted mutation. Neither notification is in a finally or rejected-write path. notifyParent catches callback exceptions using a constant warning without response data."
+    },
+    {
+      "status": "lifecycle_ownership_preserved",
+      "detail": "main passes a no-argument confirmed implementation, so widening the event union does not require a new main consumer branch. Existing lifecycle captures account, view, month, root, render generation and original overlay, invalidates the Unit cache and queues a read only after closed. Next/Previous passes the same lifecycle while suppressing replacement close; initial-load Retry likewise forwards it. Explicit/native final close is idempotent. Multiple accepted writes can therefore coalesce without a new write or early parent rerender. Runtime race checks remain required."
+    },
+    {
+      "status": "mutation_semantics_preserved_in_diff",
+      "detail": "The inspected four-hunk patch changes only two type unions and adds two notifyParent calls. Existing methods, paths, request bodies, serialization, permission conditions, confirmations, cache clearing, draft transformations and close behavior are unchanged. No backend or export changes appear in this isolated patch."
+    },
+    {
+      "status": "account_counterevidence",
+      "detail": "request captures authGeneration and rejects stale-account responses before and after JSON decoding. Absence of a component-local account check is not proof of an account leak. The parent lifecycle also rejects changed account ownership. Preserve these guards and validate actual supersession behavior rather than asserting a new vulnerability."
+    }
+  ],
+  "required_runtime_matrix": [
+    "Actual core name and base-call save from both Unit and Leave parent, Chromium/Firefox/WebKit at 320 and 1280. Observe returned names and call-level semantics without inventing posting override policy.",
+    "Actual Roles save, including dated designation/call-level data, and actual merge as separate triggers. Merge must demonstrate transferred linked records/source identity disappearance through returned parent data, not just the surviving name.",
+    "Parent GET failure after accepted save and merge, followed by explicit read-only Retry; assert no PUT/POST replay, retained last-known content and truthful saved-but-stale notice.",
+    "Accepted response followed by child transformation/render failure; final close still refreshes parent once. A rejected or uncertain mutation must not emit a confirmed notification.",
+    "Two accepted writes, including save plus merge if practicable, before final close; no parent read while profile remains open and one final owned read after close.",
+    "Unchanged close, refused dirty close, declined merge confirmation and failed validation produce no dependent read. Native close/Escape and explicit close notify once.",
+    "Next/Previous and initial-load Retry replacement carry pending accepted mutation to final close. A merged-away source still present in the fixed navigation ID list must fail its profile load safely; the existing candidate does not rewrite navigation membership.",
+    "Unit settings form/input identity and unsaved value, fallback host/row identity and unsaved order, selected filters and Leave selections survive readback. Preserve newer focused inputs and avoid obsolete focus restoration.",
+    "Route/month/account/overlay replacement while the read is delayed must prevent obsolete commits. Newer parent read ownership must win; Retry stays read-only."
+  ],
+  "limits": [
+    "The original diagnostic had six Unit selector setup failures; those do not prove the Unit defect. Corrected R1 records the separate 12 accepted-save stale-parent outcomes. Reviewer did not execute either report.",
+    "No candidate browser results or TypeScript checks were executed by this reviewer.",
+    "The hook patch does not repair pre-existing merge busy-state, fixed navigation-ID membership or arbitrary child error-handler failures. Those need separate actual evidence if relevant.",
+    "No claim that all mutation families or original159 are complete. Physical-device and native assistive-technology checks remain pending."
+  ]
+}

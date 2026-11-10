@@ -1,0 +1,91 @@
+{
+  "recorded_at_utc": "2026-11-10T04:30:27.025199+00:00",
+  "reviewer": "/root/leave159_nondelete_groundwork",
+  "application_changed": false,
+  "browser_executed_by_reviewer": false,
+  "source_sha256": {
+    "frontend/src/rota-intelligence.ts": "bda7257a3cafdcf6c4122575cc454abb1623f27dbd13950ea1d61260a23bb79b",
+    "frontend/src/member-workspace.ts": "506c486046fe6f0bbea5c6c4bf6357fec6e9649d91a9ed1ed890551ed3503cca",
+    "frontend/src/main.ts": "ebf67f1733f620e406054d0c4a82cf1c203fd0e6603a843eec45b25a1a09df4d",
+    "frontend/src/workspace-load-state.ts": "cdd0e323d7e83e6e668a381bbfcc37cad4726b1193ac5de31d5f14e03eecd9c6",
+    "frontend/src/compute-device.ts": "c7083623b77132d2ace7d1a0a815ad457a695c9e381afcfd1aeb91af1a6d4eca",
+    "frontend/src/compute-conflict.ts": "1e69a3b0258c2da5f7588f7a6e2c6a8f26bf9130be9dd34e62e27c9431a05623",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/premium-theme.css": "2e4f85d813061ebc9f696b92d50ae24717a7781a3688187d02c7339c00bea4a1"
+  },
+  "criterion": {
+    "item_id": 174,
+    "requirement": "Preserve locks, selected repair scope and member preferences across responsive reflow and recoverable frontend errors.",
+    "acceptance_scope": "Generation locks, repair selection and member preference controls",
+    "pass_conditions": [
+      "Set nondefault locks, repair scope and preferences; resize through mobile and desktop layouts and verify the selections remain identical.",
+      "Inject a recoverable frontend failure and recover without resetting those choices or changing the eventual request payload."
+    ],
+    "evidence_needed": [
+      "Recorded control values and request payloads before/after resize and recovery.",
+      "Evidence must identify the relevant source/build and the covered fixture, role, state and environment; retain untested portions explicitly."
+    ],
+    "existing_evidence_candidates": [
+      "docs/premium-ui/qa-intelligence-drafts.json",
+      "docs/premium-ui/qa-generation-actions-current.json"
+    ],
+    "remaining_gap": "Completion is unassessed here: inspect the candidate contents and snapshot coverage for generation locks, repair selection and member preference controls, then supply missing evidence against each pass condition.",
+    "procedural_exception": null
+  },
+  "audit_path": "docs/premium-ui/reviews/original174-current-state-preservation-audit-20261110.json",
+  "audit_sha256": "e85da30846417daa463b175ff0b705e3d6f49132d5aa94c79b0c3d700712feec",
+  "decision": "The proposed current-source paired configured-dialog resize plus capabilities503/in-place retry plus exact eventual payload can prove both exact174 conditions if all assertions below actually pass. No speculative code change or requirement expansion is needed. Current acceptance remains unproven until executed evidence exists.",
+  "condition_assessment": [
+    {
+      "condition": "Set nondefault locks, repair scope and preferences; resize through mobile and desktop layouts and verify the selections remain identical.",
+      "sufficiency": "Set simultaneous nonempty distinct locked and repair IDs, committed nondefault member preference, mode repair and nondefault budget; traverse mobile and desktop in the same dialog, asserting exact values and preference membership before/after each resize. One fixed-mobile and separate fixed-desktop case is insufficient.",
+      "needed_assertions": [
+        "Different assigned slots for lock and repair so deliberate mutual exclusion does not masquerade as state loss.",
+        "Committed preference must use nondefault slot/person/penalty; add it through actual Add control, not only change dropdowns. Check stored outgoing preference values, not only count.",
+        "Keep another unadded preference row nondefault to prove render restores unsent controls; assert its intentional exclusion from create payload.",
+        "Actual open-dialog viewport traversal through mobile/desktop and supported intermediate breakpoint; selections remain identical without synthetic change events used as repair.",
+        "Measure meaningful controls reachable/no unintended page-wide overflow while resized; do not confuse selection retention with full adaptive UI certification."
+      ]
+    },
+    {
+      "condition": "Inject a recoverable frontend failure and recover without resetting those choices or changing the eventual request payload.",
+      "sufficiency": "A locally injected capabilitiesGET503 is a recoverable read failure handled/displayed by the frontend action catch/finally path. It is a valid concrete recoverable frontend error case. Pair successful baseline and failed-then-recovered flow with identical chosen values and compare eventual jobs create payload exactly.",
+      "needed_assertions": [
+        "Error is actually observed in live status; controls reenable, before/after state still exact, no jobs POST or Apply before retry.",
+        "Retry through real Generate control after capabilities success; one locally fulfilled jobs create, exact requestedmonth/mode/budget/engine/repair/lock/preferences body, zero Apply.",
+        "Compare payload to independent expected object AND no-failure paired payload. Equality alone can preserve the same wrong payload.",
+        "After generated review, return Plan through existing control and verify local choices remain; no template/assignment persistence or realGPU needed.",
+        "Bind current source/build/test/actual request evidence and keep fixture/admin/server-engine scope explicit."
+      ]
+    }
+  ],
+  "why_one_recoverable_variation_can_be_sufficient": [
+    "Exact condition says inject a recoverable frontend failure, not every possible HTTP status, DOM exception, GPU loss, conflict or generation action. It does not require exhaustive fault injection to accept174.",
+    "Current action catch/finally retains closure Sets/preferences/draft and rerenders from them. Capabilities error before job creation exercises this shared path without uncertain mutation semantics. Source review corroborates retained state, while actual test must prove observed flow.",
+    "A503 is transport/read failure presented/recovered by frontend. Report it as such; never describe it as thrown DOM exception or evidence for every backend/driver/error class. No need inject arbitrary render throw merely because word frontend appears."
+  ],
+  "source_mechanism": [
+    "mode/seconds/preferenceDraft and preferences/repair/lock collections live in openIntelligentRota closure; CSS/viewport fit does not reconstruct these variables. render serializes them into actual selected/checked controls.",
+    "Mode/lock/repair onchange intentionally rerenders; lock and repair on the same slot are mutually exclusive. Disabled repair controls outside repair mode are an existing policy, not lost repair state.",
+    "rememberDraft stores preference controls on input/change. Add appends only explicit committed preference object. Jobs payload includes committed preferences only, not unsent row.",
+    "action guards duplicate busy actions, catches nonconflict error, reports notice, optionally refreshes known job, then reenables/renders without clearing planning choices. Capabilities error with no job skips extra jobGET.",
+    "No numeric CSS/style change to174 state logic; currentCSS source differs from olderauditacc46 because item31 applied2e4f. Newruntime test must hold current2e4f/build, not oldCSS audit attribution."
+  ],
+  "outside_exact174_not_silently_certified": [
+    "Server/GPU scheduling correctness, quality/optimization results, backend lock enforcement and permission authorization. Test only frontend preservation and exact payload.",
+    "Template allocation/quickAutoassign/reversal/cancelApply/publish and localassistant/teaching/calendar workflows are separate controls/items; no need replay them to prove this three-control planning preservation requirement.",
+    "Conflict handoff deliberately reopens another workspace; explicit Close/discard/account change ends current draft lifetime. Do not claim persistence across such transitions from in-place503 evidence. If user requirement later includes those transitions, treat them as distinct required scope instead of asserting this test covers them.",
+    "Job create network-unknown outcome and late accepted results are separate recovery semantics. This read-before-write case must not encourage retrying an uncertain create; do not imply it certifies automatic mutation replay.",
+    "Physical-device/software-keyboard/nativeassistive technology remains pending."
+  ],
+  "additional_variations_only_if_evidence_reveals_need": [
+    "If resize causes actual DOM replacement with missing state, or one control group is not exercised, add that precise breakpoint/group case before acceptance.",
+    "If eventual payload uses wrong IDs/order/committed preference or aftererrorstate differs from baseline, reproduce/fix actual frontend bug preserving transport contract, then rerun meaningful same cases.",
+    "If requirement evidence intends recoverable post-job errors or conflict/reopen retention, explicitly expand tested scope and verify those paths; do not call simple503 universal."
+  ],
+  "acceptance_gaps_now": [
+    "Proposed test has not been inspected/executed in this review. Actual current-source snapshots and paired payload evidence remain required.",
+    "No condition is marked passed here; reviewer writes source perspective only, no ledger/test/product edit."
+  ]
+}

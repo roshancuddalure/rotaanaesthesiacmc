@@ -1,0 +1,192 @@
+{
+  "recorded_at_utc": "2026-11-10T08:14:41.952988+00:00",
+  "reviewer": "/root/next_frontend_acceptance",
+  "independent_of_author": true,
+  "scope": "V15r1 isolated CSV-result profile parent notification source review. No product/browser changes or prior58 reacceptance.",
+  "source_decision": "No source blocker found for the bounded candidate; runtime integration gates remain required.",
+  "evidence_sha256": {
+    "tmp/membercsv-result-parent-v15r1/manifest.json": "3c8fe7033100538eff7a1ade52e7817adbe8da99b8fa64787f9ae216b9c30e51",
+    "tmp/membercsv-result-parent-v15r1/frozen-handoff.json": "a2a2c86cab05227b79732cad7c0aefbbfb0bbe837b2f2dce593b09a83f46cdfa",
+    "tmp/membercsv-result-parent-v15r1/main.ts": "cc2bc958023b942b9c0cf0644067d93f31f0cd4100dda24d1cf38f94c15da802",
+    "tmp/membercsv-result-parent-v15r1/before-main.ts": "ebf67f1733f620e406054d0c4a82cf1c203fd0e6603a843eec45b25a1a09df4d",
+    "tmp/membercsv-result-parent-v15r1/main.ts.patch": "0162a61c8272a4cbf1fd9a5bf4a2d8938f5be18b680223fe29639d81cca95d2d",
+    "tmp/membercsv-result-parent-v15r1/member-workspace.ts": "527f4f55aac3c4ac9de54f679940ff0c06b679a8fb28543bba963b3baa43a52b",
+    "tmp/membercsv-result-parent-v15r1/before-member-workspace.ts": "506c486046fe6f0bbea5c6c4bf6357fec6e9649d91a9ed1ed890551ed3503cca",
+    "tmp/membercsv-result-parent-v15r1/member-workspace.ts.patch": "46f72666dbb656d8c7f68629605d1fa7ddd2d6b00480df36b9cc6d02d0b426d8",
+    "tmp/membercsv-result-parent-v15r1/typecheck-effect-proof.json": "8f9883c4eb5450ee64f9bae3a08917b7228ae28e1a0b071d99c6895456116c79",
+    "tmp/membercsv-result-parent-v15r1/independent-ast-proof.json": "50e78b993f0aa80a9d9bc46928c5055b025bdd0c4d5fce16f8a9e3fed4d6d7e5",
+    "tmp/review_membercsv_v15r1_independent.mjs": "5d68780bebbc90e6bdda765c79bcf418b10f3b7daccca4ab9c86fac32bb903f5"
+  },
+  "independent_ast": [
+    {
+      "file": "main.ts",
+      "before_sha256": "ebf67f1733f620e406054d0c4a82cf1c203fd0e6603a843eec45b25a1a09df4d",
+      "candidate_sha256": "cc2bc958023b942b9c0cf0644067d93f31f0cd4100dda24d1cf38f94c15da802",
+      "existing_effect_calls": 134,
+      "effects_exact": true,
+      "template_count": 672,
+      "templates_exact": true,
+      "top_level_named_functions": 367,
+      "changed_top_level_functions": [
+        "bindViewEvents"
+      ],
+      "existing_table_forms": [
+        {
+          "tag": "table",
+          "count": 37,
+          "exact": true
+        },
+        {
+          "tag": "form",
+          "count": 14,
+          "exact": true
+        }
+      ]
+    },
+    {
+      "file": "member-workspace.ts",
+      "before_sha256": "506c486046fe6f0bbea5c6c4bf6357fec6e9649d91a9ed1ed890551ed3503cca",
+      "candidate_sha256": "527f4f55aac3c4ac9de54f679940ff0c06b679a8fb28543bba963b3baa43a52b",
+      "existing_effect_calls": 32,
+      "effects_exact": true,
+      "template_count": 161,
+      "templates_exact": true,
+      "top_level_named_functions": 12,
+      "changed_top_level_functions": [
+        "openMemberCsvImport"
+      ],
+      "existing_table_forms": [
+        {
+          "tag": "table",
+          "count": 1,
+          "exact": true
+        },
+        {
+          "tag": "form",
+          "count": 2,
+          "exact": true
+        }
+      ]
+    }
+  ],
+  "lifecycle_review": {
+    "confirmed_before_fallible_childwork": "Existing core PUT and merge POST call notifyParent immediately after accepted response, before structuredClone, changed callback, cache cleanup and render. Operational child editors already call their confirmed lifecycle before profile reread. These profile functions are byte-identical in V15r1.",
+    "pending_and_coalescing": "New shared per-importer pending boolean accepts profile core/merge/operational/reference signals only while the original CSV dialog is connected/open. It clears before callback at actual final profile close, coalescing repeated confirmed changes and avoiding duplicate native close delivery.",
+    "no_op_refusal": "No accepted signal means false pending. Existing busy/dirty refusal returns before close/notification. Profile initial-load Retry suppresses old close and inherits lifecycle. CSV result call has ids=[]: Next is not an ordinary reachable case.",
+    "owner": "Actual main import opener captures currentUser object, viewSeq, viewRoot. Callback requires unchanged account reference, Members activeView, view generation and connected same root. Same-view own CSVApply deliberately changes renderSeq without invalidating callback, so omitting renderSeq is appropriate. renderMembers uses a fresh renderTicket to suppress superseded asynchronous paint.",
+    "csv_apply_and_drafts": "Existing Apply request, accepted-state assignment, result rendering and done() timing are exact. protectWorkspaceDraft, selected file, mappings, exclusions, previews and dirty handling are unchanged. Held Members GET after final profile Close allows ordinary new-file selection in CSV while refresh is pending; new draft preservation must be tested in that actual ordering, not by clicking through an inert profile modal.",
+    "current_outcome": "Root reported actual old-source smoke saved/applied true and two writes with no additional Members read, supporting need for this missing callback route; independent reviewer did not execute that smoke."
+  },
+  "prior58_applicability": {
+    "accepted_ids_at_review": [
+      10,
+      11,
+      13,
+      15,
+      18,
+      19,
+      22,
+      29,
+      31,
+      34,
+      35,
+      38,
+      39,
+      101,
+      111,
+      116,
+      122,
+      123,
+      124,
+      125,
+      126,
+      127,
+      128,
+      129,
+      130,
+      131,
+      132,
+      133,
+      134,
+      135,
+      136,
+      137,
+      138,
+      139,
+      141,
+      142,
+      143,
+      144,
+      146,
+      148,
+      149,
+      150,
+      151,
+      152,
+      153,
+      154,
+      155,
+      156,
+      157,
+      158,
+      161,
+      164,
+      165,
+      166,
+      169,
+      174,
+      235,
+      259
+    ],
+    "not_a_reacceptance": true,
+    "directly_relevant_conditions": [
+      111,
+      122,
+      123,
+      124,
+      125,
+      126,
+      127,
+      128,
+      129,
+      130,
+      131,
+      132,
+      133,
+      134,
+      135,
+      136,
+      137,
+      138,
+      139,
+      155,
+      156,
+      158
+    ],
+    "reason": "Only openMemberCsvImport and bindViewEvents named functions change; all other profile/editor/normalization functions remain exact. CSV/import context and underlying Members repaint/focus/draft behavior are the directly affected workflow boundaries. Existing template literal/table/form identity supports visual source applicability, not new runtime behavior.",
+    "table_forms": "Independent AST/literal extraction: main37tables14forms + member1table2forms exact; all672 main and161 member templates exact. A fresh total table source-binding inventory may still be needed after integration.",
+    "existing_api_effects": "Independent expanded extraction proves134 main imported-API/serialization/storage/confirm calls and32 member calls exact. Author proof main13 count is narrower because it excludes imported API names; it is not falsely described as134 by author.",
+    "numeric_and_styles": {
+      "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+      "frontend/src/premium-theme.css": "2e4f85d813061ebc9f696b92d50ae24717a7781a3688187d02c7339c00bea4a1",
+      "frontend/src/component-reference.css": "46ed291bfdd2463fdc470392a12207bf37fca0478587c24a5019b82e6f7262ee"
+    },
+    "numeric_limit": "No CSS, font, numeric value formatter or existing template edit in this candidate. This is source applicability only, not a rerun of typography or responsive evidence.",
+    "documentary_and_other_runtime": "No acceptance documents/definitions or unrelated scheduling/generation/leave/unit implementations are edited by this candidate. Hash-bound reviews must be revalidated by root against final merged/applied sources; current58 acceptance is not expanded here.",
+    "integration_conflict": "Original183 main.ts candidate is independent and not merged into V15r1. Apply must compose both patches and review final main hash; do not overwrite either concurrent change."
+  },
+  "runtime_gates": [
+    "Actual accepted CSVApply then result-profile core save; no preclose Members GET, one finalclose read and new identity displayed.",
+    "Repeated accepted child saves coalesce; no-op/failed save/refused close cause no new read.",
+    "Accepted write then child structuredClone/read/render failure retains pending.",
+    "Route/account/root supersession after accepted child change suppresses stale-owner read.",
+    "Hold parent MembersGET after actual profile close, select/inspect a new CSV file, then release GET: file/mapping/preview/exclusions/new dirty guard remain intact.",
+    "Initial profile load Retry handoff retains the same pending lifecycle; CSV ids=[] prevents native Next, so do not claim Next coverage.",
+    "Fresh applied unit/build/source-applicability checks after final combined merge."
+  ],
+  "known_remaining_limitations": [
+    "Parent refresh intentionally reuses existing renderMembers full-screen read/error path. That path currently shows Members unavailable on GET failure without an inline retry; V15r1 does not repair broader original159 Members recovery.",
+    "This source review does not establish runtime counts, applied build, all58 end-to-end equivalence or full260 completion.",
+    "No physical device/native assistive technology proof."
+  ]
+}

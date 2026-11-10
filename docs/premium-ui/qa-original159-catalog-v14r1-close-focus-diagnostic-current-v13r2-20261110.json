@@ -1,0 +1,671 @@
+{
+  "recorded_at_utc": "2026-11-10T04:17:12.246Z",
+  "author": "/root/catalog159_consumer_groundwork",
+  "scope": "Six actual-product expected-correct focus regression diagnostics:accepted catalog PUT→ownGET503→keyboardClose→async record consumer options rerender; focus must land on replacement data-references opener. Candidate reference overlay only, existing record source. No fake product UI or source fix. Failure may expose newly activated focus gap; inspect observed label and focus before classifying.",
+  "source_sha256": {
+    "frontend/src/main.ts": "ebf67f1733f620e406054d0c4a82cf1c203fd0e6603a843eec45b25a1a09df4d",
+    "frontend/src/member-workspace.ts": "506c486046fe6f0bbea5c6c4bf6357fec6e9649d91a9ed1ed890551ed3503cca",
+    "frontend/src/record-workspace.ts": "20b50cdbd991b5b5a16d06b51020be2838514a553823512373818f65636427aa",
+    "frontend/src/operational-import.ts": "01d58023203380fedcee010cd3001b8e2bb478397144566ef92142a515a14b38",
+    "frontend/src/reference-workspace.ts": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd",
+    "frontend/src/workspace-load-state.ts": "cdd0e323d7e83e6e668a381bbfcc37cad4726b1193ac5de31d5f14e03eecd9c6",
+    "frontend/src/services/api.ts": "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+  },
+  "test_sha256": "4c26938bfff70b604469367f35290bc789b27685d718611f4c65d7391883df69",
+  "results": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "recovery": "close",
+      "passed": false,
+      "assertion": "New Close-triggered async consumer rerender must retain focus on replacement record reference opener\n\nfalse !== true\n",
+      "observed": {
+        "label": "Royal Changed Posting Label",
+        "postingType": "2ND_CALL",
+        "notes": "Keep this unrelated posting draft",
+        "settings": "3",
+        "memberReads": 3,
+        "retainedSettings": true,
+        "catalogReads": 4,
+        "focusAfterClose": {
+          "referenceOpenerFocused": false,
+          "activeTag": "BODY",
+          "activeName": null,
+          "activeText": "\n    \n  Skip to content\n  \n  \n    \n      \n        DR\n        \n          Duty Rota\n          Rota board\n        \n        "
+        }
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/catalog/posting_type/2ND_CALL",
+          "body": {
+            "label": "Royal Changed Posting Label",
+            "aliases": [],
+            "active": true,
+            "version": 1,
+            "behavior": {
+              "maps_to": "2ND_CALL"
+            }
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/catalog/posting_type/2ND_CALL"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "chromium",
+      "width": 1280,
+      "recovery": "close",
+      "passed": false,
+      "assertion": "New Close-triggered async consumer rerender must retain focus on replacement record reference opener\n\nfalse !== true\n",
+      "observed": {
+        "label": "Royal Changed Posting Label",
+        "postingType": "2ND_CALL",
+        "notes": "Keep this unrelated posting draft",
+        "settings": "3",
+        "memberReads": 3,
+        "retainedSettings": true,
+        "catalogReads": 4,
+        "focusAfterClose": {
+          "referenceOpenerFocused": false,
+          "activeTag": "BODY",
+          "activeName": null,
+          "activeText": "\n    \n  Skip to content\n  \n  \n    \n      \n        DR\n        \n          Duty Rota\n          Rota board\n        \n        "
+        }
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/catalog/posting_type/2ND_CALL",
+          "body": {
+            "label": "Royal Changed Posting Label",
+            "aliases": [],
+            "active": true,
+            "version": 1,
+            "behavior": {
+              "maps_to": "2ND_CALL"
+            }
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/catalog/posting_type/2ND_CALL"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "recovery": "close",
+      "passed": false,
+      "assertion": "Confirmed rename refreshes the consuming editor\n+ actual - expected\n\n+ 'Original Posting Label'\n- 'Royal Changed Posting Label'\n",
+      "observed": {
+        "label": "Original Posting Label",
+        "postingType": "2ND_CALL",
+        "notes": "Keep this unrelated posting draft",
+        "settings": "3",
+        "memberReads": 3,
+        "retainedSettings": true,
+        "catalogReads": 4
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/catalog/posting_type/2ND_CALL",
+          "body": {
+            "label": "Royal Changed Posting Label",
+            "aliases": [],
+            "active": true,
+            "version": 1,
+            "behavior": {
+              "maps_to": "2ND_CALL"
+            }
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/catalog/posting_type/2ND_CALL"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "firefox",
+      "width": 1280,
+      "recovery": "close",
+      "passed": false,
+      "assertion": "Confirmed rename refreshes the consuming editor\n+ actual - expected\n\n+ 'Original Posting Label'\n- 'Royal Changed Posting Label'\n",
+      "observed": {
+        "label": "Original Posting Label",
+        "postingType": "2ND_CALL",
+        "notes": "Keep this unrelated posting draft",
+        "settings": "3",
+        "memberReads": 3,
+        "retainedSettings": true,
+        "catalogReads": 4
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/catalog/posting_type/2ND_CALL",
+          "body": {
+            "label": "Royal Changed Posting Label",
+            "aliases": [],
+            "active": true,
+            "version": 1,
+            "behavior": {
+              "maps_to": "2ND_CALL"
+            }
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/catalog/posting_type/2ND_CALL"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "recovery": "close",
+      "passed": false,
+      "assertion": "New Close-triggered async consumer rerender must retain focus on replacement record reference opener\n\nfalse !== true\n",
+      "observed": {
+        "label": "Royal Changed Posting Label",
+        "postingType": "2ND_CALL",
+        "notes": "Keep this unrelated posting draft",
+        "settings": "3",
+        "memberReads": 3,
+        "retainedSettings": true,
+        "catalogReads": 4,
+        "focusAfterClose": {
+          "referenceOpenerFocused": false,
+          "activeTag": "BODY",
+          "activeName": null,
+          "activeText": "\n    \n  Skip to content\n  \n  \n    \n      \n        DR\n        \n          Duty Rota\n          Rota board\n        \n        "
+        }
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/catalog/posting_type/2ND_CALL",
+          "body": {
+            "label": "Royal Changed Posting Label",
+            "aliases": [],
+            "active": true,
+            "version": 1,
+            "behavior": {
+              "maps_to": "2ND_CALL"
+            }
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/catalog/posting_type/2ND_CALL"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "engine": "webkit",
+      "width": 1280,
+      "recovery": "close",
+      "passed": false,
+      "assertion": "Confirmed rename refreshes the consuming editor\n+ actual - expected\n\n+ 'Original Posting Label'\n- 'Royal Changed Posting Label'\n",
+      "observed": {
+        "label": "Original Posting Label",
+        "postingType": "2ND_CALL",
+        "notes": "Keep this unrelated posting draft",
+        "settings": "3",
+        "memberReads": 3,
+        "retainedSettings": true,
+        "catalogReads": 4
+      },
+      "writes": [
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/catalog/posting_type/2ND_CALL",
+          "body": {
+            "label": "Royal Changed Posting Label",
+            "aliases": [],
+            "active": true,
+            "version": 1,
+            "behavior": {
+              "maps_to": "2ND_CALL"
+            }
+          }
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/me"
+        },
+        {
+          "method": "GET",
+          "path": "/api/health"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings/options"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/mappings"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/unit-management/month"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/imports/units/history"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/extra-duty/unit-fallbacks"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/leave_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/normalization/catalog/posting_type/2ND_CALL"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/admin/members"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/units"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/normalization/catalog/posting_type"
+        }
+      ],
+      "errors": []
+    }
+  ]
+}

@@ -1,0 +1,2433 @@
+{
+  "recorded_at_utc": "2026-11-10T02:04:22.248Z",
+  "author": "/root/nestedreference159_groundwork",
+  "application_changed": false,
+  "analysis_target": "Isolated V13r1 over applied LeaveV1r2 baseline; source applicability only, no reacceptance.",
+  "files": [
+    {
+      "file": "frontend/src/main.ts",
+      "before_sha256": "15b79223710a53a9e0ccdd70373a92e568f6ee603f56e3747454ab25ac258cc0",
+      "candidate_sha256": "ebf67f1733f620e406054d0c4a82cf1c203fd0e6603a843eec45b25a1a09df4d",
+      "changed_existing_functions": [
+        "openMemberWorkspaceWithParent",
+        "bindViewEvents"
+      ],
+      "added_functions": [
+        "createNestedReferenceParentLifecycle"
+      ],
+      "unchanged_existing_functions": [
+        "computeEngineLabel",
+        "showToast",
+        "setButtonLoading",
+        "resetButton",
+        "toggleSidebar",
+        "closeSidebarOnMobile",
+        "saveFocus",
+        "restoreFocus",
+        "captureViewport",
+        "restoreViewport",
+        "preserveViewport",
+        "confirmAction",
+        "withTimeout",
+        "isAdminUser",
+        "visibleNavItems",
+        "navItemButton",
+        "renderTicket",
+        "storedWorkingMonth",
+        "applyWorkingMonth",
+        "workflowStateFrom",
+        "workflowStateLabel",
+        "workflowFreshnessText",
+        "paintWorkflowTracker",
+        "interruptWorkflowRead",
+        "beginWorkflowRead",
+        "refreshWorkflowTracker",
+        "registerReviewContext",
+        "reviewButton",
+        "renderReviewActionModal",
+        "openReviewActionModal",
+        "closeReviewActionModal",
+        "renderChangePasswordModal",
+        "openChangePasswordModal",
+        "closeChangePasswordModal",
+        "renderProfileModal",
+        "openProfileModal",
+        "closeProfileModal",
+        "renderMobileMoreMenu",
+        "openMobileMoreMenu",
+        "closeMobileMoreMenu",
+        "runReviewAction",
+        "workflowStepButton",
+        "accountInitials",
+        "renderShell",
+        "bindAccountMenu",
+        "renderLogin",
+        "renderSignInForm",
+        "renderForgotForm",
+        "refreshShellRefs",
+        "setHeader",
+        "mappingTypeLabel",
+        "targetLabelForKey",
+        "filteredMappings",
+        "updateLocalMapping",
+        "lockMappingScanControls",
+        "lockPendingMappingSaves",
+        "overviewMonthPanel",
+        "renderOverview",
+        "getPage",
+        "setPage",
+        "resetPages",
+        "paginate",
+        "renderPaginator",
+        "topPeople",
+        "analysisShiftTotal",
+        "categoryLabel",
+        "escapeHtml",
+        "createMemberChecked",
+        "rowMenu",
+        "helpIcon",
+        "statLabel",
+        "metricNumber",
+        "metricCard",
+        "analysisCallLevelLabel",
+        "renderMiniRank",
+        "renderMiniRankValue",
+        "renderAnalysisDataCard",
+        "renderBarChart",
+        "renderMonthBars",
+        "renderDayBars",
+        "renderAnalysisOverviewTab",
+        "filteredSortedPeople",
+        "renderSortTh",
+        "refreshPersonnelResultsInPlace",
+        "renderAnalysisPersonnelTab",
+        "renderAnalysisWeekendTab",
+        "renderAnalysisDutyTypesTab",
+        "renderAnalysisCartSchellTab",
+        "renderAnalysisFifthCallTab",
+        "renderAnalysisShiftsPacTab",
+        "renderAnalysisPostingsTab",
+        "renderAnalysisPromotionsTab",
+        "openAnalysisPersonModal",
+        "renderAnalysisPreflight",
+        "renderManualReview",
+        "renderAnalysisTabContent",
+        "refreshAnalysisTabContent",
+        "revealAnalysisTab",
+        "bindAnalysisTabs",
+        "renderAnalysis",
+        "renderMappingFilters",
+        "renderDutyTarget",
+        "renderTextTarget",
+        "renderMappings",
+        "renderImports",
+        "profileReadObject",
+        "profileReadStrings",
+        "profileReadNullableText",
+        "profileReadNumber",
+        "profileReadCounts",
+        "profileReadPerson",
+        "profileReadUnit",
+        "assertProfileUnitReadShape",
+        "profileReadLeaveDayEntry",
+        "profileReadIsoDate",
+        "assertProfileLeaveReadShape",
+        "profileParentRecordIdentity",
+        "patchProfileParentRegion",
+        "refreshProfileLeaveReadback",
+        "createDependentParentLifecycle",
+        "onMemberWorkspaceChanged",
+        "latestDesignation",
+        "memberPosition",
+        "memberCallLevel",
+        "formatArchivedAt",
+        "memberStatusClass",
+        "callLevelLabel",
+        "normalizeCallLevel",
+        "filteredMembers",
+        "sortIndicator",
+        "ariaSort",
+        "memberStatusBadge",
+        "pruneAdminSelection",
+        "adminSelectBox",
+        "adminDeleteSelectedButton",
+        "syncAdminSelection",
+        "refreshMembersAfterDelete",
+        "refreshUnitsAfterDelete",
+        "runAdminDelete",
+        "memberRowActions",
+        "renderMemberRows",
+        "renderPositionOptions",
+        "renderCallLevelChoices",
+        "callLevelOptions",
+        "renderCallLevelFilterOptions",
+        "renderPositionBreakdown",
+        "updateMemberResults",
+        "renderMemberFilterSummary",
+        "renderMemberCards",
+        "updateMemberCards",
+        "addDaysIso",
+        "formatIsoDay",
+        "leaveTypeLabel",
+        "leaveStatusLabel",
+        "displayUnitText",
+        "displayUnitName",
+        "displayRotaUnitLabel",
+        "displayPostingLabel",
+        "previewStatusLabel",
+        "matchMethodLabel",
+        "renderLeaveMemberOptions",
+        "renderLeaveBreakdown",
+        "callLevelSortValue",
+        "leaveDayEntries",
+        "leaveDayStatusCounts",
+        "leaveDayStatusSummary",
+        "renderLeaveCalendarDays",
+        "renderLeaveDayList",
+        "renderLeaveDayCallGroups",
+        "renderLeaveDayModal",
+        "openLeaveDayModal",
+        "closeLeaveDayModal",
+        "renderLeaveRows",
+        "renderLeaveCards",
+        "renderLeavePressurePanel",
+        "leaveStatusBadge",
+        "leaveRowActions",
+        "renderLeaveSnapshot",
+        "renderLeave",
+        "unitPostingRank",
+        "sortUnitAssignmentsByHierarchy",
+        "renderUnitOptions",
+        "renderUnitPostingTypeOptions",
+        "specialUnitPostingLabel",
+        "unitSummary",
+        "unitCallMinimumRows",
+        "renderUnitCallMinimumRows",
+        "unitAssignmentsFor",
+        "specialUnitAssignmentsFor",
+        "validationIssuesForUnit",
+        "validationIssuesForSpecialPosting",
+        "unitMemberChips",
+        "unitMonthlyPeopleCountsAvailable",
+        "unitAvailability",
+        "renderUnitAssignmentsByUnit",
+        "unitPostingGroup",
+        "renderUnitAssignmentRows",
+        "renderUnitValidationIssues",
+        "unitImportRowByKey",
+        "invalidateUnitManagementCache",
+        "loadUnitManagementData",
+        "scheduleUnitImportPreviewRender",
+        "refreshUnitImportPreview",
+        "unitImportResolutionFor",
+        "renderUnitIssueDetails",
+        "renderSpecialPostingIssueDetails",
+        "renderUnitAssignmentEditors",
+        "renderSpecialPostingAssignmentEditors",
+        "renderPostingEditorCards",
+        "adjacentUnitId",
+        "scrollUnitAssignmentIntoView",
+        "renderUnitModal",
+        "refreshUnitBoardReadback",
+        "unitManagementReadbackCallout",
+        "refreshUnitModalReadback",
+        "openUnitModal",
+        "renderSpecialPostingModal",
+        "openSpecialPostingModal",
+        "closeUnitModal",
+        "unitFormValue",
+        "unitAssignmentPayloadFromForm",
+        "renderUnitManagement",
+        "renderMembers",
+        "syncMemberCreateControls",
+        "renderMembersView",
+        "parseCsv",
+        "renderSingleCallLevelOptions",
+        "filterClusterMembers",
+        "renderRotaRules",
+        "renderLimits",
+        "lockCallClusterForms",
+        "renderCallClusters",
+        "renderRotaSetup",
+        "latestTemplateDutyKeys",
+        "dutyTemplateGroupLabel",
+        "dutyTemplateGroupSort",
+        "renderTemplateDutyOptions",
+        "safetyStatusLabel",
+        "safetyStatusClass",
+        "templateSafetyBySlot",
+        "templateCandidatesBySlot",
+        "upsertRotaCandidateSlot",
+        "rememberRotaDayControls",
+        "restoreRotaDayControls",
+        "refreshRotaDayCandidateContent",
+        "ensureRotaDayCandidates",
+        "emptyRotaCandidates",
+        "emptyRotaSafety",
+        "returnedSafetyReasons",
+        "safetyUnitDayKey",
+        "unitDaySafetyReasonIndex",
+        "renderSlotSafetyCell",
+        "assignmentSourceLabel",
+        "candidateStatusLabel",
+        "candidateStatusClass",
+        "rejectedCandidateKey",
+        "renderCandidateSuggestion",
+        "renderCandidateSuggestions",
+        "candidateSuggestionSummary",
+        "renderCandidateSuggestionSection",
+        "assignmentCandidatesForSlot",
+        "renderSlotAssignments",
+        "renderManualAssignmentControls",
+        "rotaTemplateSlotsByDay",
+        "rotaDutyGroupRank",
+        "rotaCallRank",
+        "rotaDutyGroupLabel",
+        "sortRotaSlots",
+        "rotaCalendarSafetyClass",
+        "renderRotaTemplateCalendarDays",
+        "rotaTemplateUnitCounts",
+        "renderRotaTemplateDistribution",
+        "renderAllocationUnitRows",
+        "renderAllocationDutyMatrixRows",
+        "renderAllocationGroupMatrixRows",
+        "renderAllocationGroupCallMatrixRows",
+        "renderGroupCountSummary",
+        "fairnessPolicyLabel",
+        "renderAllocationTargetRows",
+        "renderAllocationDiagnosticRows",
+        "renderAllocationDateRows",
+        "renderAllocationCallLevelRows",
+        "renderAllocationEventRows",
+        "renderRotaAllocationStatistics",
+        "renderRotaTemplateOverviewControls",
+        "renderRotaTemplateShortRows",
+        "renderRotaTemplateOverview",
+        "rotaDaySlots",
+        "formatSlotSchedule",
+        "renderRotaSlotDetailCard",
+        "renderRotaDayDutyGroups",
+        "compactSlotStatus",
+        "renderRotaDayCompactList",
+        "renderRotaDayEagleView",
+        "renderRotaDayModal",
+        "openRotaDayModal",
+        "closeRotaDayModal",
+        "renderUnitDaySafetyRows",
+        "renderTemplateEvents",
+        "autoFillActionLabel",
+        "renderAutoFillEvents",
+        "renderAutoFillReport",
+        "renderRotaTemplateRecovery",
+        "templateNextStep",
+        "generationFocusReturn",
+        "generationReadiness",
+        "renderTemplateOptionalFigures",
+        "renderRotaTemplate",
+        "exchangeStatusLabel",
+        "exchangeStatusClass",
+        "renderReviewCandidateSummary",
+        "reviewItemHasIssue",
+        "reviewItemMatchesFilter",
+        "reviewIssueCanBeAccepted",
+        "reviewItemsByFilter",
+        "reviewFilterCount",
+        "renderRotaReviewFilters",
+        "renderReviewAssignments",
+        "renderReviewItemRows",
+        "renderReviewItemsTable",
+        "findRotaReviewItem",
+        "renderReviewCandidateCards",
+        "renderReviewIssueDecisionActions",
+        "renderRotaReviewSlotModal",
+        "openRotaReviewSlotModal",
+        "closeRotaReviewSlotModal",
+        "loadReviewSlotCandidates",
+        "acceptReviewIssueFromPrompt",
+        "loadExchangeCandidatesForAssignment",
+        "renderWorkloadRows",
+        "renderFairnessPersonList",
+        "renderGroupTotals",
+        "renderFairnessRows",
+        "selectedExchangeOption",
+        "exchangeCandidateForTarget",
+        "renderExchangeAssignmentOptions",
+        "renderExchangeTargetOptions",
+        "renderExchangeTargetHelp",
+        "renderExchangeRows",
+        "reviewNextStep",
+        "renderRotaReview",
+        "checklistStatusClass",
+        "renderChecklistCards",
+        "renderLatestPublish",
+        "publishChecklistRows",
+        "overLimitDebrief",
+        "renderRotaPublish",
+        "renderAccounts",
+        "renderDiagnostics",
+        "guideSteps",
+        "guideBullets",
+        "guideAction",
+        "renderUserGuide",
+        "loadMappings",
+        "updateNavigationState",
+        "showView",
+        "revealGuideSection",
+        "updateRouteAvailabilityNotice",
+        "navigateToView",
+        "bindNavigation",
+        "bootApp",
+        "labelScrollableRegions",
+        "boot",
+        "resetPrivateSessionView"
+      ],
+      "changed_recursive_function_declarations": [
+        "openMemberWorkspaceWithParent",
+        "bindViewEvents"
+      ],
+      "unchanged_recursive_function_declarations": [
+        {
+          "name": "computeEngineLabel",
+          "sha256": "a8fe98a8a86059b17b768b547961040ba4f7fb5f2d09ff43636e89d668db440d"
+        },
+        {
+          "name": "showToast",
+          "sha256": "4d502af3383266739bcad30ab2b309ac1d0095e2f5f109c5971e389ad7eb0c6d"
+        },
+        {
+          "name": "setButtonLoading",
+          "sha256": "98c5d5d4ec1bc9b2939424c789f24d3513eeedf703ccb8738cab1df79c0df2f6"
+        },
+        {
+          "name": "resetButton",
+          "sha256": "72391156126092a0928e5ea38bb18bc134dbde15f64719f7cb2d7fd506872a67"
+        },
+        {
+          "name": "toggleSidebar",
+          "sha256": "e98e92628cbe990d2f32fbec34d65cf61b5c441489961844876b69e2efb59ab5"
+        },
+        {
+          "name": "closeSidebarOnMobile",
+          "sha256": "e498c08318293c2c244eb987da12f0f42bf72c0367045196d3e6982df00770db"
+        },
+        {
+          "name": "saveFocus",
+          "sha256": "5acd61588e67b271fdabe0bf9d2e2436d0c0dd6991e88145f252cd80657c19bc"
+        },
+        {
+          "name": "restoreFocus",
+          "sha256": "2c12040916badcdaeae0f90797b51709e7e781ed0fa654ae74f4079cb8eca1ec"
+        },
+        {
+          "name": "captureViewport",
+          "sha256": "fbf5f67f121607e5aa0537785d2f3425febe7c755aac5140a97cafc0cca01f3f"
+        },
+        {
+          "name": "restoreViewport",
+          "sha256": "99f933716796934ac8c738be832ee6f1634e9753eceb94f7acdde69981ee90ae"
+        },
+        {
+          "name": "preserveViewport",
+          "sha256": "9a628fbba7230711f1196a3199d099686419ddadf781e4ef155b0d59ed4b0712"
+        },
+        {
+          "name": "confirmAction",
+          "sha256": "9d7fca294e462f99a27efa6d868c777c01daefa0801fd690096d89ec0b4bea54"
+        },
+        {
+          "name": "withTimeout",
+          "sha256": "f4d6a8a09ad9c3d1aade7a22d03c27b4a79bc8648d30a5565a035e87e1ba8b84"
+        },
+        {
+          "name": "isAdminUser",
+          "sha256": "ad6ab20e1bb717955a27fdd600541fd62116929fd64104295c3954e8e139f6f7"
+        },
+        {
+          "name": "visibleNavItems",
+          "sha256": "0e4c9af33d5403126531332f2e0a643fc231cc69a2782d6214e9fab785d9b0b0"
+        },
+        {
+          "name": "navItemButton",
+          "sha256": "7e575b88400f97021b77233b0ee12cd5d85c713ba42b9d0bb725c01933e491f5"
+        },
+        {
+          "name": "renderTicket",
+          "sha256": "419ea637e2b1bcb07522bbd494c351f084aec2758bd38e4c7b0d2e87e56bd80c"
+        },
+        {
+          "name": "storedWorkingMonth",
+          "sha256": "c19197197e9170db5c896cb601d0b98edd85a0e6c4c7ddd650567c0dd82e18b1"
+        },
+        {
+          "name": "applyWorkingMonth",
+          "sha256": "35d286b2b4118cca1a51a861566b1d75b2287b2a6abd6a8995d0f89f3d6c0151"
+        },
+        {
+          "name": "workflowStateFrom",
+          "sha256": "cd6e77f964d409bedbae2a17c72ab41872b18c618e95b1a0c72824fe1ce82551"
+        },
+        {
+          "name": "workflowStateLabel",
+          "sha256": "67c8b160601c6222399de6621786715d77bfddb06b32172c3cf91b440737f6d8"
+        },
+        {
+          "name": "workflowFreshnessText",
+          "sha256": "c6454ec166488ba2675022995bf20cd27024592a443f3eda6f2574cb6cb8490e"
+        },
+        {
+          "name": "paintWorkflowTracker",
+          "sha256": "512f5d51b2115cedae1b087f03aff652357886a3159b26943bd6cf1ed2a8cdb1"
+        },
+        {
+          "name": "interruptWorkflowRead",
+          "sha256": "c8a7a1a305b4a7a2fdbad0f9a8d1b2e2ff5a2132c413777a59e1a73c1be1c2d4"
+        },
+        {
+          "name": "beginWorkflowRead",
+          "sha256": "93973458bc10d55556a051f356b83e0fb05f7524d2cd4e3fb774b2b78015a35f"
+        },
+        {
+          "name": "refreshWorkflowTracker",
+          "sha256": "e888622ff8ef8f0dfd0f36817334f5a5aa431b7d2bb4bfe90c0ecae7fd2c66b8"
+        },
+        {
+          "name": "registerReviewContext",
+          "sha256": "4aadaa29d02df7956da5d93483b24daaf8c8b9b3ff11c5ff70eba4faf8e8c083"
+        },
+        {
+          "name": "reviewButton",
+          "sha256": "0fe3fa766f1208e0e2ef6244b182c3cee150e7594208c8eeda8959f6073bcb5c"
+        },
+        {
+          "name": "renderReviewActionModal",
+          "sha256": "34465e1cec0fbd315659c1909a394d3ad1b1e50b90c5513fed850f6e4cb9625d"
+        },
+        {
+          "name": "openReviewActionModal",
+          "sha256": "a43f1b90430b3792eb788ce57464af68fb99caf2d4d7aa2d838d2b20f0c45807"
+        },
+        {
+          "name": "closeReviewActionModal",
+          "sha256": "b045d4543243674835630ef2405ed9348ef3a6e03de7aef18d71c5802b174e24"
+        },
+        {
+          "name": "renderChangePasswordModal",
+          "sha256": "d559a39d03eabb4179b6edf40785ce21bb9202759191d898427cbcba180c2f17"
+        },
+        {
+          "name": "openChangePasswordModal",
+          "sha256": "1ee024c32261a527f7bd486d1744a583cf130a541169ecb7337d14639a2bbfd0"
+        },
+        {
+          "name": "closeChangePasswordModal",
+          "sha256": "2c969131a71366af26356d5d9dc8a945937ed552feeb6b176fc41787d4ffed94"
+        },
+        {
+          "name": "renderProfileModal",
+          "sha256": "4ad5b92416514d5874d883bc037f2531182c7f304f0a76c5c70f4a254aea08ae"
+        },
+        {
+          "name": "openProfileModal",
+          "sha256": "6c6b074f8c6ada516fba8b4ff420ac91f05f2fd9f79f39f891b52e71fabfa650"
+        },
+        {
+          "name": "closeProfileModal",
+          "sha256": "c2a2c213c6f07fa3db9b3689726af1abb3b65fae26d7fad9ecf29a7703e9d42b"
+        },
+        {
+          "name": "renderMobileMoreMenu",
+          "sha256": "9a7a2f99820de6b5f016230c021bdb887a09509d3cbce09d198612c8bf8bdc2c"
+        },
+        {
+          "name": "openMobileMoreMenu",
+          "sha256": "2e84ade4e4e59fabec2456e92c3864f4e74201781eaa2268d9a1224ec1e5c186"
+        },
+        {
+          "name": "closeMobileMoreMenu",
+          "sha256": "1e249f1a22b22a7cbdfb4f0b00252c12fddff28cd9ce241033fa127d9f6bee3d"
+        },
+        {
+          "name": "runReviewAction",
+          "sha256": "e5be50432b3241cb03994249b09649f4520aa8e63497871597ed15cd4df00a00"
+        },
+        {
+          "name": "workflowStepButton",
+          "sha256": "75de0ae6b645a9d999918ce54b5fdb97674286788d932423397bbacd904dbdab"
+        },
+        {
+          "name": "accountInitials",
+          "sha256": "288cd111311db2288fb5f51560c3ad9e9331ecdedb5c0e998ad191d0f25380b5"
+        },
+        {
+          "name": "renderShell",
+          "sha256": "8bd48a92c010f2926ea1854fe860deabc261719a732bdc7dd740fd26834409d0"
+        },
+        {
+          "name": "bindAccountMenu",
+          "sha256": "bb39ba730274548e7e162f6871c44ac33a3b44c33e1f44f3f99e728861791720"
+        },
+        {
+          "name": "renderLogin",
+          "sha256": "af4d45ffda12228e8abc0d09482f7cb13a636df3fe0ae2ef1ca07a13d425e943"
+        },
+        {
+          "name": "renderSignInForm",
+          "sha256": "9fed2af41785d4b4a91686bd889ef68f0e64f2f370fdab25781bdee3d47c1a52"
+        },
+        {
+          "name": "renderForgotForm",
+          "sha256": "1018d9a65bfaf30af6cf4bb8e8e2407a967a286fd33a88b11b5adceeb4e89832"
+        },
+        {
+          "name": "refreshShellRefs",
+          "sha256": "f122b74e3e65706b9bf9288707cc098d0ec7ac307211eb5bc56685e40119435e"
+        },
+        {
+          "name": "setHeader",
+          "sha256": "9cb7442320780e5f8100ebc3dcc599152e271ef30c396b5fbb1160fa5839b3d1"
+        },
+        {
+          "name": "mappingTypeLabel",
+          "sha256": "e0be47ce8ac7eb1771e1e5b7236bc65b7299aed23d96bce6ec463616d2e11e13"
+        },
+        {
+          "name": "targetLabelForKey",
+          "sha256": "a971148533ecc5847d8050ef1d3c2b16cb73d65d077cb47f8abaaee4a57ff986"
+        },
+        {
+          "name": "filteredMappings",
+          "sha256": "e66514008d93a1e569612ab7b04a16a6cda1b0f78a9ca56b508cd40c5beab58b"
+        },
+        {
+          "name": "updateLocalMapping",
+          "sha256": "a00a4bde23c5e1fccd0b32b5829f23c316aaa2436f1cb36e36efd5e4b9bd25fc"
+        },
+        {
+          "name": "lockMappingScanControls",
+          "sha256": "cdb9eb6c776c7c93e19716e969f8cf3bffb4950e8a273e971c6a42104add0c77"
+        },
+        {
+          "name": "lockPendingMappingSaves",
+          "sha256": "4f9529a587d715db02d75e5c8c451ced2678880ddde0755fd7779db4e24cdca4"
+        },
+        {
+          "name": "overviewMonthPanel",
+          "sha256": "c54495e37400974bc9cccd048131d059d0f4f086c21f7023133cbab77e3e52e0"
+        },
+        {
+          "name": "renderOverview",
+          "sha256": "2742f1b37fea9398f839c67080515677e48b168a668f06ab09b5f24a750bcf42"
+        },
+        {
+          "name": "getPage",
+          "sha256": "2bd35a20727f3020342f19f25bfde405bf7daa11bad216f2c5c0a353c2b586a2"
+        },
+        {
+          "name": "setPage",
+          "sha256": "7eb44981df429b9cd72b304a7baaa8c3bb3cf39ed78605ef564beeb8e0e8e298"
+        },
+        {
+          "name": "resetPages",
+          "sha256": "8a91e125e8512871756d5efcbbc01d1e506876256fdd3c567e090a87cf22e311"
+        },
+        {
+          "name": "paginate",
+          "sha256": "f6ab34b0c90eacef9a9d3ed0698a365781df3df149df2cc84e339169cf098d73"
+        },
+        {
+          "name": "renderPaginator",
+          "sha256": "1d4668eec21c97c2590fedb2a6a00916c859de252aaba57e0b7b717b967e53ef"
+        },
+        {
+          "name": "topPeople",
+          "sha256": "ab8eff493fb17eda466bf3e91feed3049321d088a58342723bde4723e81fd182"
+        },
+        {
+          "name": "analysisShiftTotal",
+          "sha256": "2f18690d13144fea660d7684f7bcfd55ed2e5b57b086df245647e8763fe935e4"
+        },
+        {
+          "name": "categoryLabel",
+          "sha256": "b098c147d0d8f5bf6bffc2a8098345388d228b97b79480c72694ad0cd5bf5dba"
+        },
+        {
+          "name": "escapeHtml",
+          "sha256": "d693c4bd9e24118748d76963d89a8950156e7b43a59ec2dfa32532f68c97049c"
+        },
+        {
+          "name": "createMemberChecked",
+          "sha256": "c76a8195dbb0111d7b3f70211b6d3062d24e7dcb7b7e209ab5536762366d9d64"
+        },
+        {
+          "name": "rowMenu",
+          "sha256": "e9bf34796dba69762e913538df675f24dadffbd8a9d4ba1d587e94198f63ae4f"
+        },
+        {
+          "name": "helpIcon",
+          "sha256": "dca8df9379fab717b4b776cacb860cebed64b484d699ac89f926c65cb84c1c4e"
+        },
+        {
+          "name": "statLabel",
+          "sha256": "c335ed316266a2ae29c85932a0e37551ec51d6894e325ddee69ddfb639801cdc"
+        },
+        {
+          "name": "metricNumber",
+          "sha256": "f353eb68ec407af367f20d523c27c522609888441e66a14e24bfb4776abb416b"
+        },
+        {
+          "name": "metricCard",
+          "sha256": "87a91b403479406837162f739e0bc78fee194cdf1579888ed6ad827e9a196d04"
+        },
+        {
+          "name": "analysisCallLevelLabel",
+          "sha256": "81b7e52f290df76aa0464290a9ece8c9e9be45dcd7e07bf8a95f2c4d587a38b7"
+        },
+        {
+          "name": "renderMiniRank",
+          "sha256": "468fd1cc3de88f2c5c3846fdfb69dc8cbedf97332620dd813de78b3be5a6227f"
+        },
+        {
+          "name": "renderMiniRankValue",
+          "sha256": "12520745c8d49ac2efe856524836712969d80607e523fa5be4fe856db9de0d06"
+        },
+        {
+          "name": "renderAnalysisDataCard",
+          "sha256": "7c9072307b7824ad6103dd05183b6f701ece7eea1abbb36bbd409db601085d3a"
+        },
+        {
+          "name": "renderBarChart",
+          "sha256": "dd32bf9725242b0be3354fcf78895006f33b111eb1e51f87c4c73a53fd0a75c7"
+        },
+        {
+          "name": "renderMonthBars",
+          "sha256": "4d00a35df376959589d9a58551dfbde1d9e4cbfaf3d1b25eae44022d466acfa7"
+        },
+        {
+          "name": "renderDayBars",
+          "sha256": "bdea82f25bd0cc30c0c52818981344ebb2ad7d48ce3665f97729ff00f739e023"
+        },
+        {
+          "name": "renderAnalysisOverviewTab",
+          "sha256": "2d60ea2859b3601d2005944a60f6b2d03825888cc4274965d94abae52b32d29c"
+        },
+        {
+          "name": "filteredSortedPeople",
+          "sha256": "38888832e863314352b9dac7a5effb4e95c71d9f58cfa46137133cc690900d43"
+        },
+        {
+          "name": "renderSortTh",
+          "sha256": "c6224c7217d0c1df217fc4021e9ad47c7a1edc34e6ee091e24b564a3ee1b0a0e"
+        },
+        {
+          "name": "refreshPersonnelResultsInPlace",
+          "sha256": "84a7473ae37c4b42a166cf651d56c82e8a7f2e375dc71642f70630fee315e4df"
+        },
+        {
+          "name": "renderAnalysisPersonnelTab",
+          "sha256": "0c384075f3f34ae201e982119ec93129aa50d35a8f90dc62bcd105d12db10a33"
+        },
+        {
+          "name": "renderAnalysisWeekendTab",
+          "sha256": "e1288d02add6df28b377f494e7d5dd372afe991ce411ff43557ba34a663b03d0"
+        },
+        {
+          "name": "renderAnalysisDutyTypesTab",
+          "sha256": "a10961aae96d7f4ce7513aa6aa9aa1be27aed7e7d8edeefe3fe02bc0d8b6b1bb"
+        },
+        {
+          "name": "renderAnalysisCartSchellTab",
+          "sha256": "dbc2eaa21ef299d70a31f370007a9f11af872f915ad0a44b49b3f6cb64e1833d"
+        },
+        {
+          "name": "renderAnalysisFifthCallTab",
+          "sha256": "d98fa35c67078502e5369700b9c8c9b48d5715cffedaf7ba6cfb87ede4d9fe5a"
+        },
+        {
+          "name": "renderAnalysisShiftsPacTab",
+          "sha256": "95d94ff44625d87b0cc198204befaf6b9796483d4ad2d89d9dd9e102ae8cb7dd"
+        },
+        {
+          "name": "renderAnalysisPostingsTab",
+          "sha256": "1207a82aee071b65e8e5e640ef1850a09c2413f8d0b00ecda745b6562698b57d"
+        },
+        {
+          "name": "renderAnalysisPromotionsTab",
+          "sha256": "f82afae26a6bb3cacb5171e3c41e085d0b54da737dabe5ac3f7aae0a5e0e44e9"
+        },
+        {
+          "name": "openAnalysisPersonModal",
+          "sha256": "46814f5ccfb58ab659181015d47c7e233ec5fdad163a13bd7ab60450aec9b552"
+        },
+        {
+          "name": "renderAnalysisPreflight",
+          "sha256": "73ed029bfb1258865ea97887d977944f1c9cbbd3a629e37385aa6d6e6dabae13"
+        },
+        {
+          "name": "renderManualReview",
+          "sha256": "b38d625e47813b0c244d268d399b9832feeeecb94a934d68b3862418f5b02228"
+        },
+        {
+          "name": "renderAnalysisTabContent",
+          "sha256": "13a4bca427fb1e46e8c50790490bfad52bca1254408534b0f7efce4c11b884b8"
+        },
+        {
+          "name": "refreshAnalysisTabContent",
+          "sha256": "ad9d270f3551bf2947b6fed62d9ca983fde4b3658265bfd6c682ffa4332f3644"
+        },
+        {
+          "name": "revealAnalysisTab",
+          "sha256": "da4beda1cd62a46f0076efc0060525fa4d663939df90563249343041556caa35"
+        },
+        {
+          "name": "bindAnalysisTabs",
+          "sha256": "fd0761ba235a727ff7ae320e652c98f458b0c0b9d60c44362524f4dd87203d61"
+        },
+        {
+          "name": "renderAnalysis",
+          "sha256": "2fbe450148c34bbb836f116d9ddfd04f055dea1976e69c99c515526e32557cfe"
+        },
+        {
+          "name": "renderMappingFilters",
+          "sha256": "69b3045f2e4a94644d15b2e745c51a751135cbb2a04b8012ede99a1ac953d2b8"
+        },
+        {
+          "name": "renderDutyTarget",
+          "sha256": "6360c49a490e1c73642dea478b777756d77628f5699e5e56ed93b78d5af5c3df"
+        },
+        {
+          "name": "renderTextTarget",
+          "sha256": "34e05f158654b1d56aed527dde21edd48803e3e8e7dfb64c3f2926f18af379de"
+        },
+        {
+          "name": "renderMappings",
+          "sha256": "6c399ebb1cacdfe6f595f683c8495925c37d6bcab00f7bae7e3ee797427f6320"
+        },
+        {
+          "name": "renderImports",
+          "sha256": "9cfaafacdc64dc4cc21071a20131bfb61af42756f176cabc27e72adf9f5eb01f"
+        },
+        {
+          "name": "profileReadObject",
+          "sha256": "b8a8858c0c1957723c81830255407d2a5db2f19dccc13bb15f4b509a42626d8e"
+        },
+        {
+          "name": "profileReadStrings",
+          "sha256": "cd0f74ecdbd668b90b47ddb07975ffe783aae53f6d023ae94d48aad334e72158"
+        },
+        {
+          "name": "profileReadNullableText",
+          "sha256": "964242e3d46d6028ce8785a2d902b983ea8ad39773c63a03ffc030e17d0aa242"
+        },
+        {
+          "name": "profileReadNumber",
+          "sha256": "8935fdbad6b925dab02f1e0cc6f35dba0c18f0df252211b64eb64f3e19974628"
+        },
+        {
+          "name": "profileReadCounts",
+          "sha256": "d82bd6228a60697de7d06e920bc59d352192a84173b40d1cc670f14aea3ff384"
+        },
+        {
+          "name": "profileReadPerson",
+          "sha256": "4e64d54b752d67c9c6df62d71516ef8bb2c6f739d85b9733d88b553621a6c4f7"
+        },
+        {
+          "name": "profileReadUnit",
+          "sha256": "b09c4c12f2e48bc32b7ac2c7bb3151df1ef02a7b340093781c570647bbffe31f"
+        },
+        {
+          "name": "assertProfileUnitReadShape",
+          "sha256": "be5ae20b3485598bf970ce89598cc6e090b8619069fd8c37bf7b9f0d7492fe05"
+        },
+        {
+          "name": "profileReadLeaveDayEntry",
+          "sha256": "9d252e989230b73134a25b2f0734b4582cdc9fdf4fb4722f083343fefc481f35"
+        },
+        {
+          "name": "profileReadIsoDate",
+          "sha256": "bd8c74e9d29838bf62cff4ed1f689a96b730b6b135c9e0e5d7701a43bec49d4a"
+        },
+        {
+          "name": "assertProfileLeaveReadShape",
+          "sha256": "e173b8cd04a6b67835086a5ef64c10582e98fd4f43f0ddae940ec1a1f6be23ea"
+        },
+        {
+          "name": "profileParentRecordIdentity",
+          "sha256": "cd8f2b3d7a16d931995202b651068f605779fec11c20c21ac33a390afed13d17"
+        },
+        {
+          "name": "patchProfileParentRegion",
+          "sha256": "fb88ef65807e4f75242468e91e2e7fd089e3811868c5a64c4fc4a33ba82f23f1"
+        },
+        {
+          "name": "refreshProfileLeaveReadback",
+          "sha256": "e98cc4d1b8f0d5d2c2a14b5c593f67d29b6de5a3a35ffeb2efc23145afd8842a"
+        },
+        {
+          "name": "createDependentParentLifecycle",
+          "sha256": "f7182c93b22d11ca64e416bba0b04895b71030919eb6ed9a1fa818298efbf6cf"
+        },
+        {
+          "name": "onMemberWorkspaceChanged",
+          "sha256": "7b930515b56471ecd9bd3d258e3db03535cc0c56423703173eb3d62c7d64cb0c"
+        },
+        {
+          "name": "latestDesignation",
+          "sha256": "b1ad23bb1d56fa940af87e7815f6ad65b7bfd3f8713c04922f2aa8a33f1e58ff"
+        },
+        {
+          "name": "memberPosition",
+          "sha256": "3329985378ee854b7dae8f0725e8ed09dc827aecba5935172339b66c63e9adab"
+        },
+        {
+          "name": "memberCallLevel",
+          "sha256": "d22506654b3e8d0eb64e54aa0a5539ae98241aa8f3b4783d46915bfe84198027"
+        },
+        {
+          "name": "formatArchivedAt",
+          "sha256": "a3067bdbb9e0172f48ec624a7cbce0bc8d18f87b51dd51a0ad1e73f68c884e67"
+        },
+        {
+          "name": "memberStatusClass",
+          "sha256": "a15f345c700f2e48c04892ec3bc0714df1bcf34c3e131f463342466fa674275a"
+        },
+        {
+          "name": "callLevelLabel",
+          "sha256": "4839222b6649d9bb782689145096bc92005cd416c39b921a53bdc5750e5ffb78"
+        },
+        {
+          "name": "normalizeCallLevel",
+          "sha256": "1baf326432cc35f676cfc479f97280151bc367083ab482944c61d39e82780d05"
+        },
+        {
+          "name": "filteredMembers",
+          "sha256": "7fb40b04620be3793ce94fee437649487e9056e12c3a19b22b285d30449bfe9b"
+        },
+        {
+          "name": "sortIndicator",
+          "sha256": "a70ce8821bf703add4600cd2cb197e04a3364808114877b4acbf4b042964a5dc"
+        },
+        {
+          "name": "ariaSort",
+          "sha256": "be4688e93b3f3ac00a2ea62fedfb938ec7fa673ec6827c691282bef097d25b68"
+        },
+        {
+          "name": "memberStatusBadge",
+          "sha256": "9df933f85cfe25ae7df7bd5525ef9cf8d464a9c0c3982cc73c376de4539b8726"
+        },
+        {
+          "name": "pruneAdminSelection",
+          "sha256": "a636054256401848e97c87bc6dbd9402dabe9ce91ba5c91587801f4ee7a63ca8"
+        },
+        {
+          "name": "adminSelectBox",
+          "sha256": "ad3e6187e155f8104669de903073a16bf0f47ea9e0a59221970dbbe2f7254c8c"
+        },
+        {
+          "name": "adminDeleteSelectedButton",
+          "sha256": "4af3797077c84a71aa0f0681c3d87e05e143d26dd0e17fbed58112c320e0f2c3"
+        },
+        {
+          "name": "syncAdminSelection",
+          "sha256": "b5aa191d8a46a5ebeb33c795a24e3e60420779eef9865279a0d0f2f164f1e3d7"
+        },
+        {
+          "name": "refreshMembersAfterDelete",
+          "sha256": "ad27bdd3f8b7b6fec06f14a1e07901b1a8090441ceb4090c5dc55f350d1dd193"
+        },
+        {
+          "name": "refreshUnitsAfterDelete",
+          "sha256": "7e1d2ac8692af6a0b6368081c03f337a693bbe8669f17f3ddef0bd94bdadbbd7"
+        },
+        {
+          "name": "runAdminDelete",
+          "sha256": "83dbd15dcb5318f995f4584f191c3d67e175dca13c0be87e2d9019bb35ebedab"
+        },
+        {
+          "name": "memberRowActions",
+          "sha256": "eea66d921ee1bcfcd653f67461322592578c1bd002cbcc0fe9b0302c4d0c33aa"
+        },
+        {
+          "name": "renderMemberRows",
+          "sha256": "513408372b039c4ea6bc18dd031b9fc357b0518e43c745300406c4c3b3d120cb"
+        },
+        {
+          "name": "renderPositionOptions",
+          "sha256": "3cc4f73bdbf589d7df1a0e973089b2fc12214206d4c08f3b5b8cd2d2bf79a956"
+        },
+        {
+          "name": "renderCallLevelChoices",
+          "sha256": "fe8edcee23a831bcf5762fac212543ca8dda1d0c88d677f742f3ff9fa60ee7ec"
+        },
+        {
+          "name": "callLevelOptions",
+          "sha256": "10b61c2db484753f2e3d6a483062141640d8e94c8a55f2e31432de9479358897"
+        },
+        {
+          "name": "renderCallLevelFilterOptions",
+          "sha256": "0f395c0520853564e5031ea182e30aaefb3ede02353d2d1186a4a7e2b9c7f52c"
+        },
+        {
+          "name": "renderPositionBreakdown",
+          "sha256": "f67325e06d90069eb594f5781ea330dd0299d416447ca1a5eb6bb979f5e8e086"
+        },
+        {
+          "name": "updateMemberResults",
+          "sha256": "90c5389ad6e8a0b2c577c82556161f247eb80b3756cc89bbf62c87eb0cfd4d89"
+        },
+        {
+          "name": "renderMemberFilterSummary",
+          "sha256": "7ae6d73681b0db3c0c9cdcddd9f56dd600319eb9a46b9923749eae481efc0af8"
+        },
+        {
+          "name": "renderMemberCards",
+          "sha256": "228d09e64ed61a41269301401c2ef0ceb4a654622e5574f2856283d3403e9c87"
+        },
+        {
+          "name": "updateMemberCards",
+          "sha256": "0b29b7e61b848324aa12ea61bb39460708e2f557c1f9de6ca5f4de4e02ba5a06"
+        },
+        {
+          "name": "addDaysIso",
+          "sha256": "0e40a0ffd77595c6d8968fd0d213fce2b8b3c73111c528c9c51ce0959637ac6e"
+        },
+        {
+          "name": "formatIsoDay",
+          "sha256": "2f55705ffb22579a77283669a53ea0df81d3de101a48d3d0e5a5b4eb36891250"
+        },
+        {
+          "name": "leaveTypeLabel",
+          "sha256": "da296611f25fb27bce34f46be39442bd33bc689be3456921567c2521ea3f09a6"
+        },
+        {
+          "name": "leaveStatusLabel",
+          "sha256": "5b59edbbd8a30a05c68e2797ac8ff130d1c37c9fb62cefd309979be871dcedd7"
+        },
+        {
+          "name": "displayUnitText",
+          "sha256": "a2436a5c805f99f2f781bfe39e86f96c0b51ad6574c5a8de876074d685dff77a"
+        },
+        {
+          "name": "displayUnitName",
+          "sha256": "f9508b322e2c7925eae5014c936a04b2b0f08e85b51440e8e89edd641830a225"
+        },
+        {
+          "name": "displayRotaUnitLabel",
+          "sha256": "029cbf3f9ee9dedacbc34e8e407d2b881983f17d03805c54671fb245cf5c6b5d"
+        },
+        {
+          "name": "displayPostingLabel",
+          "sha256": "549207b1246adaaca43342b4da5da1087781f17003407d12d9d3e55d5d96a7cb"
+        },
+        {
+          "name": "previewStatusLabel",
+          "sha256": "ac189cd8f3391a8614be9440cc86fc4775672ae425ea5a40e385a0d7174000d1"
+        },
+        {
+          "name": "matchMethodLabel",
+          "sha256": "71456e633d6cee1d98f98a65adf864732889f10845884d96edcbf01718c81924"
+        },
+        {
+          "name": "renderLeaveMemberOptions",
+          "sha256": "44067d2a48b88ea4eeeb2d509cae92a51b2cdd1dd3adadb157c5cc08d9cf4600"
+        },
+        {
+          "name": "renderLeaveBreakdown",
+          "sha256": "e930c8670f3519f7b0f7a9b3156d7d20e97bc9d1c414622e7e012cead6078d0b"
+        },
+        {
+          "name": "callLevelSortValue",
+          "sha256": "033c838e15c58d57fad140775e1b569c594a60ad108e4915a9c24753f50205b0"
+        },
+        {
+          "name": "leaveDayEntries",
+          "sha256": "ff965571af18b41400eea73556d70427b0d269bbda60d08664fac29b69b322f5"
+        },
+        {
+          "name": "leaveDayStatusCounts",
+          "sha256": "8256d6dabbf0f6da1d7d5cd748e6cde549c72dba80945e14cbf5178f63846842"
+        },
+        {
+          "name": "leaveDayStatusSummary",
+          "sha256": "018d9d6a7432cea396afc9bb9bb6ca82de65c1a1000aed397fd1aac8ade4ab45"
+        },
+        {
+          "name": "renderLeaveCalendarDays",
+          "sha256": "286bc22d102734a67c38131e5a0f407ed1f7f7102fca5d810ab40295885c371a"
+        },
+        {
+          "name": "renderLeaveDayList",
+          "sha256": "af3a530bcd5f7543e320a2ecedad373bd6e0b459cabf86a801b2eb6a2227f993"
+        },
+        {
+          "name": "renderLeaveDayCallGroups",
+          "sha256": "14c1a1049b17e35a7011c750b1231951411e6cddd22858c03c522f6f251693dd"
+        },
+        {
+          "name": "renderLeaveDayModal",
+          "sha256": "5fdba57f150d659bdb6bf39018ee29a372f6010963692c6ccc74ce8fcf617a5a"
+        },
+        {
+          "name": "openLeaveDayModal",
+          "sha256": "250aae0365a57d994372b6d1ceee5f54a5b707344edca71a52cbdb1c2f3d236e"
+        },
+        {
+          "name": "closeLeaveDayModal",
+          "sha256": "21346252a6f6dd60d962deecffc395fef44ea89b6ed364814660d06d6ef0e180"
+        },
+        {
+          "name": "renderLeaveRows",
+          "sha256": "d9d9c24fdcbd88f437f2fc31dacdd0f93b700bcafaf4fb96a75c5170a2691361"
+        },
+        {
+          "name": "renderLeaveCards",
+          "sha256": "192b5122526103b45318dddd40bccac0f35b295393096c6b036fa9c28daa2770"
+        },
+        {
+          "name": "renderLeavePressurePanel",
+          "sha256": "3051c499cf6094ec23c8414ee6b2168c299951373bd3cd46648bdacc9574a287"
+        },
+        {
+          "name": "leaveStatusBadge",
+          "sha256": "04bb89a6913e981ad60800947871c041d5f8726b30f9e162117e3b07df2be005"
+        },
+        {
+          "name": "leaveRowActions",
+          "sha256": "5d366d7db70d2f44f53a5a5766c25d250fe630eae9243a2df9556907ce9a98d4"
+        },
+        {
+          "name": "renderLeaveSnapshot",
+          "sha256": "56aed1987969eaa8395b99cd21faafab3fd8b03e5aa0b56c270a5b81fe92adf8"
+        },
+        {
+          "name": "renderLeave",
+          "sha256": "bd9c9f3ba06c4b5f511083f7e7e352a7603cc09921f57b26155f41cc4a0dbc21"
+        },
+        {
+          "name": "unitPostingRank",
+          "sha256": "d4fe142217193718e7fccf8c692e9f737af426ab413e7972d763bada2b1deb10"
+        },
+        {
+          "name": "sortUnitAssignmentsByHierarchy",
+          "sha256": "306932453bcf2ef96ed173e14ebd57c8a8113e4101745fc20e4f9891f4290c5c"
+        },
+        {
+          "name": "renderUnitOptions",
+          "sha256": "9d396abdffd201a09739776cb3881ecf7de210df61cd3df0bf59784797b85224"
+        },
+        {
+          "name": "renderUnitPostingTypeOptions",
+          "sha256": "a9df5e9dc5f201c1d359654c7f86ad8ecda2289acc50aa28197ec1d3b866bce4"
+        },
+        {
+          "name": "specialUnitPostingLabel",
+          "sha256": "61322443311a60e42d8d45627f7f356aa4a3f8c83b8728174ea61f2c95c2f5b9"
+        },
+        {
+          "name": "unitSummary",
+          "sha256": "f3065d2f75dae4d1b628a8ba9664a18797fe5761cc409862d5ca5b2c6089f701"
+        },
+        {
+          "name": "unitCallMinimumRows",
+          "sha256": "a7a7240ed1a3e45c64b1db5f0291e199685a6d78a02e138d025360748bc1fdf0"
+        },
+        {
+          "name": "renderUnitCallMinimumRows",
+          "sha256": "3ac2ea8c1d25cf563a498bfa55d96204212ce8e54446cc1114bf71b5f5911689"
+        },
+        {
+          "name": "unitAssignmentsFor",
+          "sha256": "e12e1056027104e05ba9bb8a57c3182ea0c7235caf32defd7c386bf03693a95a"
+        },
+        {
+          "name": "specialUnitAssignmentsFor",
+          "sha256": "3c151c8918aeee946a50b049a50adc688b6a8e93c4bbb08ae3ef4749cee38f89"
+        },
+        {
+          "name": "validationIssuesForUnit",
+          "sha256": "cf136470b432cca42d39976e01fbf8495e2244d509e8baed9b5ad23b76291ac7"
+        },
+        {
+          "name": "validationIssuesForSpecialPosting",
+          "sha256": "bd316e97eeaa5b801ea9867cc46465ac21e8232b998774dfed415656e627481f"
+        },
+        {
+          "name": "unitMemberChips",
+          "sha256": "32ad83c1ead390b011714e9af08a6cf6a860124844975f487deb842730516b68"
+        },
+        {
+          "name": "unitMonthlyPeopleCountsAvailable",
+          "sha256": "9e51c2f5ef99047c39d186bd7c7f946813992b6058f5f7c42f69f2ae238f7a20"
+        },
+        {
+          "name": "unitAvailability",
+          "sha256": "f18b4fb46f3398c6be3e90a9148be31edf99d04ea126e50377f1555b7195c085"
+        },
+        {
+          "name": "renderUnitAssignmentsByUnit",
+          "sha256": "486fcadabf80aae83386703dace698c2d9fffc60625d66b4a8c6211fc663b65a"
+        },
+        {
+          "name": "unitPostingGroup",
+          "sha256": "fe971f3fb677b13dee5f1e7ab2f5c4134faa77bdf0b513511ce5a944816b9e18"
+        },
+        {
+          "name": "renderUnitAssignmentRows",
+          "sha256": "036d174351baa065623a79041c7551c0f6104e5b40fb9a8fbba2e93ed5a4bbd7"
+        },
+        {
+          "name": "renderUnitValidationIssues",
+          "sha256": "41045f886bdbefecc3f49e7139463367ba2214625eb435d882464c9d294f8f76"
+        },
+        {
+          "name": "unitImportRowByKey",
+          "sha256": "ae6dc780da72a8ebc4b49c253b2c391107654321ed8885f3165e6959de79fc1c"
+        },
+        {
+          "name": "invalidateUnitManagementCache",
+          "sha256": "8e304edd7466ac599f7cd10061b185be80b416061f1ece511685100982c034eb"
+        },
+        {
+          "name": "loadUnitManagementData",
+          "sha256": "c722ddf4b2a638e46a2e0c72893c63c523a909153d7771120184fcfc868535da"
+        },
+        {
+          "name": "scheduleUnitImportPreviewRender",
+          "sha256": "4e3f0b79e9c8f24cd0708b4fb8fea33f34054583cf6bbdc23c24208e5ce7bebd"
+        },
+        {
+          "name": "refreshUnitImportPreview",
+          "sha256": "6813659204464d802ec3ce639bdeb0e9635112a9ba7514e3a5a135de62332ae8"
+        },
+        {
+          "name": "unitImportResolutionFor",
+          "sha256": "911399bef2ac01d0034fd136d83919341412026dca71f024c78ac31cc3823987"
+        },
+        {
+          "name": "renderUnitIssueDetails",
+          "sha256": "883a8f0dbd45858ac899a0c281ce30ab692ba2f97500f975d037dc5e6f7a0667"
+        },
+        {
+          "name": "renderSpecialPostingIssueDetails",
+          "sha256": "bd8053ae43a01293f2b3308b75e91c8632219e18daf5cba666c41124e4fdcf33"
+        },
+        {
+          "name": "renderUnitAssignmentEditors",
+          "sha256": "80e78c0609aeb05e786cc6d688ef448759a62f3c735303823e9c66d9137d685a"
+        },
+        {
+          "name": "renderSpecialPostingAssignmentEditors",
+          "sha256": "7c4231830baa42acf3b98e51309fec2a8f52bc2033def531c8b9201eedbcf4c3"
+        },
+        {
+          "name": "renderPostingEditorCards",
+          "sha256": "539468548bf4c3ae21a7d8d5971bd1c290bd72f293cdbb61ff99f52fd11511e2"
+        },
+        {
+          "name": "adjacentUnitId",
+          "sha256": "5faa05672b21d697a5779c1976fae8c7d80fd59812bffe19a17673fd092bf479"
+        },
+        {
+          "name": "scrollUnitAssignmentIntoView",
+          "sha256": "654fe348f09b0862b1f4718f74e54a2060a9c29b197e36ae8b826331938467e5"
+        },
+        {
+          "name": "renderUnitModal",
+          "sha256": "e7e83d133173337d2f09bb55ceac929c7fc3e4fbcd426b689a023a43244b892c"
+        },
+        {
+          "name": "refreshUnitBoardReadback",
+          "sha256": "3ce1dff44e525eead388307f21e99906bb7e665a50cca298f2a1f49294c526c7"
+        },
+        {
+          "name": "unitManagementReadbackCallout",
+          "sha256": "533316d3d46ce81bcd1ec72187465f3aec1a1c073fa59ef26035dc4fbc03d41e"
+        },
+        {
+          "name": "refreshUnitModalReadback",
+          "sha256": "7b563ea0487179afb6bf502fcd86a06a76025bcd2e46df839604391d9fbe0f5e"
+        },
+        {
+          "name": "openUnitModal",
+          "sha256": "c03102cefbe4046c5a61d60a9dc4ba8eb391a4a1fa86782366740393ff7a7759"
+        },
+        {
+          "name": "renderSpecialPostingModal",
+          "sha256": "7d05e77f7d0a493131430f5fd759614b58f52d450ad770ab9f565b316e6e05a5"
+        },
+        {
+          "name": "openSpecialPostingModal",
+          "sha256": "83550fbf8fb5dc8ab6af261c7699fea1b6dc723783ec2699ce3625a3ff7b3e0f"
+        },
+        {
+          "name": "closeUnitModal",
+          "sha256": "83573deebcb225389367bf172daf1108c06cfd2e1cb6d2ecfafa337eb290c353"
+        },
+        {
+          "name": "unitFormValue",
+          "sha256": "d0e258d9f8554741c5c3340b43da8029b932c88e3586d4110448f59ba22d8a3f"
+        },
+        {
+          "name": "unitAssignmentPayloadFromForm",
+          "sha256": "87ca6c2885c557563e93f2a10d5c7860281d1a6925c79f79db06aff78630a4ea"
+        },
+        {
+          "name": "renderUnitManagement",
+          "sha256": "1becdcf1fd84f90049753fd883170f8cac417aa4971884ffa7f9722592090886"
+        },
+        {
+          "name": "renderMembers",
+          "sha256": "6ebd616d9070964be5b3b63b0cc35f417b874fd1d58437898261d8b434e38983"
+        },
+        {
+          "name": "syncMemberCreateControls",
+          "sha256": "657362ab93e4f5a9a524c4cddb3a61ffb7a94d7111c55172dc08f535b4d902a9"
+        },
+        {
+          "name": "renderMembersView",
+          "sha256": "f91737b8fa95e08dd9b71002baa925ca68fa45f82b1d6519ef976b8172cb36a5"
+        },
+        {
+          "name": "parseCsv",
+          "sha256": "d806ac863011796d6e0d7852ab91443dd2bff549cb05cda017be90781c8ab555"
+        },
+        {
+          "name": "renderSingleCallLevelOptions",
+          "sha256": "e879d40a91267ccb1fdfbc85313c499b6957a08b8c1ae5be9527f44017d4c5aa"
+        },
+        {
+          "name": "filterClusterMembers",
+          "sha256": "274dcaddd21b2b9f6788544cbda017b68469f7e010f884b6b246f10dc95bccc7"
+        },
+        {
+          "name": "renderRotaRules",
+          "sha256": "4f7810eb6c5c4363b96b3ec6f5db066b774f6dcf750d5b0af0e76602663da4a2"
+        },
+        {
+          "name": "renderLimits",
+          "sha256": "8850d3fc0770ad80517c4dae2f002746eb7d50b6f35e78cc2ec46290d4b437d6"
+        },
+        {
+          "name": "lockCallClusterForms",
+          "sha256": "88c2bbe69907be1e1055e84e7a0baf0a49f62de278416b7d83fd46bcbe1401a9"
+        },
+        {
+          "name": "renderCallClusters",
+          "sha256": "4bf47eac0ac36d1bde7ecf1979ac5806d5f4127b59af8699fb4e04b83b46a4d6"
+        },
+        {
+          "name": "renderRotaSetup",
+          "sha256": "1f5bda5894cb38c1a13c0433e9fe22ee31d0301bbf143eed4885f8500d79ac68"
+        },
+        {
+          "name": "latestTemplateDutyKeys",
+          "sha256": "33f500ee30458c94f202899afeb2bd1543fe0311c15b08c36b1668e8f08a4610"
+        },
+        {
+          "name": "dutyTemplateGroupLabel",
+          "sha256": "f46e709429cad00177654b5437f737e9d8491421a9fc646070c07137be668d6f"
+        },
+        {
+          "name": "dutyTemplateGroupSort",
+          "sha256": "2e58874400ec1776f589fba465223fb5b589c0eb9749ab3c0558eb6a012859c1"
+        },
+        {
+          "name": "renderTemplateDutyOptions",
+          "sha256": "7784ffc6fc27411f988f1560078e45fa8fd39d393b6fb235df41ec9e52e08b02"
+        },
+        {
+          "name": "safetyStatusLabel",
+          "sha256": "d1f8c295bd4e0a0a6fd3b1a8bac095bbeaacb0f44cf32a63ce4a484e4e7e63c0"
+        },
+        {
+          "name": "safetyStatusClass",
+          "sha256": "bccdac4e8672589b17300b22c1c496f6283ff21907ed2fa4c34208feb1445003"
+        },
+        {
+          "name": "templateSafetyBySlot",
+          "sha256": "9558b00b4d5bbc9d510916b7b68bc74d29dd3561fce81a13d859489e53f01e3a"
+        },
+        {
+          "name": "templateCandidatesBySlot",
+          "sha256": "bcbd29166f207e71aebe4c8df5d9593bb0cb85da43d1df30f9edb80bc5a7b265"
+        },
+        {
+          "name": "upsertRotaCandidateSlot",
+          "sha256": "50a8e9efb4c6ee8410eb18448c15f6baca6548f471260fbf182fce67da78b051"
+        },
+        {
+          "name": "rememberRotaDayControls",
+          "sha256": "da1b24703dd9f8a62799124155fa6370db3aa0a47ace98acff76a5a89a145904"
+        },
+        {
+          "name": "restoreRotaDayControls",
+          "sha256": "78177431f7c1e7939062f365293d8a9741b28e7a2500361b8dca7bafb1f6d7c3"
+        },
+        {
+          "name": "refreshRotaDayCandidateContent",
+          "sha256": "59ff4680db9d046171a254725d4d8f38109c68abca209d13f3eacba36cfbe653"
+        },
+        {
+          "name": "ensureRotaDayCandidates",
+          "sha256": "4a5097923fab0e72de1a771b3cbf0a03b8790386d12678aaa65978c12d7ddfe4"
+        },
+        {
+          "name": "emptyRotaCandidates",
+          "sha256": "f30831ecde938d532f872b50cad92b4206433d0acff8970ca06302443ea32fbb"
+        },
+        {
+          "name": "emptyRotaSafety",
+          "sha256": "cbad777f434d060c9c053729a4e3a95a0f231f004b1f840369c18e48c1b5f52e"
+        },
+        {
+          "name": "returnedSafetyReasons",
+          "sha256": "35c58e3470e4fc14090cd9600a174d7a8454381bc1fface12725a70ff32f3a76"
+        },
+        {
+          "name": "safetyUnitDayKey",
+          "sha256": "87b778e6dbb0fe7eaacdef372b59762acfd8dc5e96954a6ec5fcfb84066816c8"
+        },
+        {
+          "name": "unitDaySafetyReasonIndex",
+          "sha256": "76dacfcd1c0c2134ac986617448d61f8c375fe50be56699be43e72a3906e7e8d"
+        },
+        {
+          "name": "renderSlotSafetyCell",
+          "sha256": "2a7082c90552885fb4cd30efe1af9af89a47b0aa005b69647668d4dd393f6c4b"
+        },
+        {
+          "name": "assignmentSourceLabel",
+          "sha256": "afafd858d3e57ee7a7b6cd1428154419f18ea614ae8e090bec6bbc3b93532d04"
+        },
+        {
+          "name": "candidateStatusLabel",
+          "sha256": "55ae4a3b37d5de509826ad4d757826583a24d05fbe9ff6d25dc38eb47d766535"
+        },
+        {
+          "name": "candidateStatusClass",
+          "sha256": "fe439a714e5a5556fa5a49aac445f2d6bb7769bcbbc4bc13e3e14005065b7963"
+        },
+        {
+          "name": "rejectedCandidateKey",
+          "sha256": "b458f75bda6ea9708a25c0df46740a51c86fbe42006335229a8668def2e9c636"
+        },
+        {
+          "name": "renderCandidateSuggestion",
+          "sha256": "a9dbc038c2b9b5b271c6f325dd44f6f2f0a2215ec717c8e6a5ee8f5bc5a6522a"
+        },
+        {
+          "name": "renderCandidateSuggestions",
+          "sha256": "754b0a79a145742e0cb222b36e101ec1bfa68fe0d0b83661de6387f07050524b"
+        },
+        {
+          "name": "candidateSuggestionSummary",
+          "sha256": "1ee6357fe4c35497bf60b318d6f5af00931348a1aa8b7b6925cd0c4c0c0f633e"
+        },
+        {
+          "name": "renderCandidateSuggestionSection",
+          "sha256": "be46491c7d5cc4aba06413b7c6852c4a388ea20496636d127c6a8a87403e8536"
+        },
+        {
+          "name": "assignmentCandidatesForSlot",
+          "sha256": "b2df0f142ebff5b7474688c24a275f6e82970fc17949d2f31a4844db620cb357"
+        },
+        {
+          "name": "renderSlotAssignments",
+          "sha256": "4a800706481a1a4880acd1b0c7a4bc86dea0e82dec688d1d53e93a09531f631b"
+        },
+        {
+          "name": "renderManualAssignmentControls",
+          "sha256": "af3b52235190c642709933f244d30783df6ac3bae95d86c700a9e42f20acbd60"
+        },
+        {
+          "name": "rotaTemplateSlotsByDay",
+          "sha256": "e0e167eef399a9c9498215b5328719e0f3e29241010cb9bed2bc4d76b3d24cf7"
+        },
+        {
+          "name": "rotaDutyGroupRank",
+          "sha256": "5e6369b1044b5cea18d384c60667531eb53f7ce9eb6fc4e8a1dd0bf4d3560f8d"
+        },
+        {
+          "name": "rotaCallRank",
+          "sha256": "be3960b8f325edc6027dbf6a8845f34035cedf77c835ced3efe4615dfe522919"
+        },
+        {
+          "name": "rotaDutyGroupLabel",
+          "sha256": "0c95a32122b47480c0a574c996a3f77636847c33fef2c0e3c0f8a538a5949544"
+        },
+        {
+          "name": "sortRotaSlots",
+          "sha256": "6aa2e86192235f8e1627ac77b4a76131be8d7618a68e39d41987aa22ea4db898"
+        },
+        {
+          "name": "rotaCalendarSafetyClass",
+          "sha256": "daff6e6d0be994027e56792e234383c2b64b4383c989005c5d20e89deb9920c7"
+        },
+        {
+          "name": "renderRotaTemplateCalendarDays",
+          "sha256": "5d07f3f874c0551781dd6e6f97fe90fa5dc5672e57f62666403b6edd992adce7"
+        },
+        {
+          "name": "rotaTemplateUnitCounts",
+          "sha256": "abd1ca419bc04661c38680b7f4b13877da218832f5d5e1d91424e4492ed6b2f0"
+        },
+        {
+          "name": "renderRotaTemplateDistribution",
+          "sha256": "467eeac22f39e0a6eac4165e5f6c030266f0da44a7da75b929c0e4d5012f9a53"
+        },
+        {
+          "name": "renderAllocationUnitRows",
+          "sha256": "3f9099ebeac37a35703973ed5056075d9099a02cc3ed48e771f1d11b409a4a9b"
+        },
+        {
+          "name": "renderAllocationDutyMatrixRows",
+          "sha256": "6c3911d96fff0e7ab234eedf89dfea4e6321e2afd12a224b995a5d17eb4e0562"
+        },
+        {
+          "name": "renderAllocationGroupMatrixRows",
+          "sha256": "c6ce2ec5f35a85d88979a99cd30827262fc7e151e1c41703c15db6a6f1356a17"
+        },
+        {
+          "name": "renderAllocationGroupCallMatrixRows",
+          "sha256": "1dd18555c14622523eb2d425c4d0654ce6a8e76380374d7d7508b8929966615c"
+        },
+        {
+          "name": "renderGroupCountSummary",
+          "sha256": "080ed4fa010c5fe34b8313e3c282cffe3ea26c0f7999b8aa08c2c3ba1468711a"
+        },
+        {
+          "name": "fairnessPolicyLabel",
+          "sha256": "1fac8fc0ae703d78410160bfe9a63ed60b6a0522e33092ffa28ce6645369d86f"
+        },
+        {
+          "name": "renderAllocationTargetRows",
+          "sha256": "7d3d8d27a5a99dae7009bafbac80ed5aa4e234671e79c8c4b537fe562e79a9bd"
+        },
+        {
+          "name": "renderAllocationDiagnosticRows",
+          "sha256": "323ab03a25218698705ce1084163c5ff3d60ab0ae7325fa57479326360eea69a"
+        },
+        {
+          "name": "renderAllocationDateRows",
+          "sha256": "ce8403f4daad8b25d649a42eca5247d36c4ef6722a8919a8d9e8ed3e68f477d3"
+        },
+        {
+          "name": "renderAllocationCallLevelRows",
+          "sha256": "da17f5804e5e145cc0e75a4ad9a73e1d089acc926fc03c934e12f5499d5f440a"
+        },
+        {
+          "name": "renderAllocationEventRows",
+          "sha256": "2a532d6eebba67ee61f41af1128f4ce01e311d92c8b4ac9680e952f4affb6e77"
+        },
+        {
+          "name": "renderRotaAllocationStatistics",
+          "sha256": "ecf96caf6de56ded873f6613177e44b0f8cd54d85137bac6338e539040718268"
+        },
+        {
+          "name": "renderRotaTemplateOverviewControls",
+          "sha256": "dd4f12b83d4b6047da59f7367b5ad747c45daf9349d07ae6df3410067f1761d6"
+        },
+        {
+          "name": "renderRotaTemplateShortRows",
+          "sha256": "ef382b0968af4486ecaef8a3bd387d1357b46511ff287bf7313e9ec23085d61c"
+        },
+        {
+          "name": "renderRotaTemplateOverview",
+          "sha256": "6c7cdaf9782cb0563bdb29e881d73818bd7f5de5e4b47bcd3ea20b84dd66f720"
+        },
+        {
+          "name": "rotaDaySlots",
+          "sha256": "abec961760cbda07e30c1ef1c06db7e9aa66fdc06379170f94aac0c132cadf39"
+        },
+        {
+          "name": "formatSlotSchedule",
+          "sha256": "4c680e39d590f4be773958332fdccbb0a05ab415e7f9b2cd8581f8dbea508413"
+        },
+        {
+          "name": "renderRotaSlotDetailCard",
+          "sha256": "b515efc95ddf241d0d7b131b6ad6e3d5ff51c344ff531ea67c5ec177bde16ba2"
+        },
+        {
+          "name": "renderRotaDayDutyGroups",
+          "sha256": "18651160af795d9d6c292264837ac04ace575ae2509df5c93eaf4ea77248a533"
+        },
+        {
+          "name": "compactSlotStatus",
+          "sha256": "ec90cf7531adb38ea624969472c04cc6f6b7cd81a0e784527a0fd05b4cfc3c7a"
+        },
+        {
+          "name": "renderRotaDayCompactList",
+          "sha256": "46b139d2e83eb19b2ecd8d660783eb7fd45a19875e8799f31bbed50bab521001"
+        },
+        {
+          "name": "renderRotaDayEagleView",
+          "sha256": "3df71025220290355bfe8d8abc6710e147416eb431d5f3449c180abea2a07474"
+        },
+        {
+          "name": "renderRotaDayModal",
+          "sha256": "c615be353220d5d443c00435e4e2c0f2e346a5126ef0951d2c94f25e64b081be"
+        },
+        {
+          "name": "openRotaDayModal",
+          "sha256": "ba25a672ff1810251da02c7bc99f59aca7b665811128f20f17462ba8327864d3"
+        },
+        {
+          "name": "closeRotaDayModal",
+          "sha256": "f84e7bfce10ebb7cd3741801087e4a9f37f70e7281d3caec332a9f51890235e1"
+        },
+        {
+          "name": "renderUnitDaySafetyRows",
+          "sha256": "39d9283df23def1a4432711e03efec1cdcf6d56c2464d9f86d0243023db0ba6a"
+        },
+        {
+          "name": "renderTemplateEvents",
+          "sha256": "44c67cf66e28e25ab220ff922752187d4628b2150b3d3c36596b796d9e3b2b58"
+        },
+        {
+          "name": "autoFillActionLabel",
+          "sha256": "53a43e4f20a1bd9fa1a62f2681dc0aa1a6e780488d4fa65695fc43bbb4243ef9"
+        },
+        {
+          "name": "renderAutoFillEvents",
+          "sha256": "4c9b52f4ef8cc4df98b492ed504260cf8769a6b79a176e3e7d353056bb682414"
+        },
+        {
+          "name": "renderAutoFillReport",
+          "sha256": "040aa40631e6c1f3d6288a96de3a96f3dcb73bef906d2435f46430ec0a1bb5b5"
+        },
+        {
+          "name": "renderRotaTemplateRecovery",
+          "sha256": "484ce82536a54f77a0ec902466e0435f37be7510e30dd5ae437756062bef0274"
+        },
+        {
+          "name": "templateNextStep",
+          "sha256": "0228b8082ad016aabcab457c3f35da54c20f06ddd0dda7937266fb008393f904"
+        },
+        {
+          "name": "generationFocusReturn",
+          "sha256": "16383842814479595d6f8f2c0fc88449ab2263e6055f61f7f78512ad6ba3d9b0"
+        },
+        {
+          "name": "generationReadiness",
+          "sha256": "a183293721a3908e5a6d36a642498d42d0714402d6e66c798080f32433cf73d7"
+        },
+        {
+          "name": "renderTemplateOptionalFigures",
+          "sha256": "cf54996df07640109ae36c541c4d9e6636c8995fb032d4a852d1f44c372771f3"
+        },
+        {
+          "name": "renderRotaTemplate",
+          "sha256": "2fda688d8af19e1b6c094c26622992a3509141ed93c9ded1e3ca6cf4fc121aab"
+        },
+        {
+          "name": "renderRotaTemplate.retryOptionalReports",
+          "sha256": "30f3fcceb86a54bb557aeb8892f70d34ad5beafad31039e06c6eea2c6312bfd1"
+        },
+        {
+          "name": "exchangeStatusLabel",
+          "sha256": "3fb00f9ff161d5d0b33a822a1a22901020c4d2ec8e5f28fb2826bb2c6daeb8b1"
+        },
+        {
+          "name": "exchangeStatusClass",
+          "sha256": "c5ade8871e943fe0b4ba335df52a4f14517efb20aec2b45b44e3d07211e63b7e"
+        },
+        {
+          "name": "renderReviewCandidateSummary",
+          "sha256": "649ea75dcb00a8ebb2cf5988eaef879d50183813a79a0c3e73dfa2f810cd86ec"
+        },
+        {
+          "name": "reviewItemHasIssue",
+          "sha256": "3a1a3b2947b30f6443737eeff05bca0bcb8d48184a43967d9d2062476e3f0b5b"
+        },
+        {
+          "name": "reviewItemMatchesFilter",
+          "sha256": "aa8ab3b22df33621d88d37d92083be7ba7ec6e7586b9e95a1019c710744c8a3d"
+        },
+        {
+          "name": "reviewIssueCanBeAccepted",
+          "sha256": "0f832f5886bb079dc4614b6a1d4d9b867f873b1f1985b889938dfb87e1bfc0a1"
+        },
+        {
+          "name": "reviewItemsByFilter",
+          "sha256": "62f7fb401c5d49a127487d8c8f884031e4f3a3cd12a3283017be7bde47485514"
+        },
+        {
+          "name": "reviewFilterCount",
+          "sha256": "1d497da290d9d7b56c7863f5f5ed2055305e883058286b35fa92f5222bee8fb5"
+        },
+        {
+          "name": "renderRotaReviewFilters",
+          "sha256": "f4608a3853bb396bf57fe793b51195648d21f6985e7f0cb00b350755915aae9d"
+        },
+        {
+          "name": "renderReviewAssignments",
+          "sha256": "54ff9ee4987b321fa60cce786f5a05b40f3cba9656558a7b5974bdecc091a845"
+        },
+        {
+          "name": "renderReviewItemRows",
+          "sha256": "5e4c08556764ebd8f0ae13375e014e437a6cc9b64d2cac06407730a8409ba79f"
+        },
+        {
+          "name": "renderReviewItemsTable",
+          "sha256": "8ea6b6e238edda55c933156f5d9283b915c9f79426317747fe0f116438cb9a94"
+        },
+        {
+          "name": "findRotaReviewItem",
+          "sha256": "2af59dc67aa214130204001ac62ee19c5c3f3d43d5d2233a43412b0e364a0f84"
+        },
+        {
+          "name": "renderReviewCandidateCards",
+          "sha256": "203196584b64b51fdd444f6831b0522a113fda3a467e38ee7c38998e14f202a4"
+        },
+        {
+          "name": "renderReviewIssueDecisionActions",
+          "sha256": "bb5514aa4369357f73b2a09e2a3ca2b3c7d7de53286c0976c67adf9210196d75"
+        },
+        {
+          "name": "renderRotaReviewSlotModal",
+          "sha256": "41a4c04e2193cbb8301f629a5754af9e8d4181c21904902a93080c99989a409a"
+        },
+        {
+          "name": "openRotaReviewSlotModal",
+          "sha256": "d7f9bf790b15740c7dfe98ff8a31343a5c9d93edb5815357e9642def67a2f697"
+        },
+        {
+          "name": "closeRotaReviewSlotModal",
+          "sha256": "1a0447300b57baf0cdc26af4c0f93f94febbcfb67ebdef8bc0b1c2aa76eabb5f"
+        },
+        {
+          "name": "loadReviewSlotCandidates",
+          "sha256": "9a2c29fa65d4a560f4cc4a41766f5ce3468bf5076ed949993accc9d9ac7d93d6"
+        },
+        {
+          "name": "acceptReviewIssueFromPrompt",
+          "sha256": "6d029d63b8aa99e538b3b6f98281ca353703a0b853acca4016008da1e7194c06"
+        },
+        {
+          "name": "loadExchangeCandidatesForAssignment",
+          "sha256": "f4aebcd4b818a68cd529df2ea0e1b01ac260a0ebdb1d3ce2ebb4d3fdeac6ad5b"
+        },
+        {
+          "name": "renderWorkloadRows",
+          "sha256": "f7b23a79783cf75d150d17e0bb89cbcedcdad15ed36beb71a1d4ecc13d745635"
+        },
+        {
+          "name": "renderFairnessPersonList",
+          "sha256": "0bfdef0744d53347aa5058df99d72721e3f8cc7407a122345749a6c49e707902"
+        },
+        {
+          "name": "renderGroupTotals",
+          "sha256": "2363e75de13828cc5752fb1bfd5b13557c37cc6242f120da2c47276adb07e0d2"
+        },
+        {
+          "name": "renderFairnessRows",
+          "sha256": "87d8737d5d5367236449359e309187864520cdcea99ab33764a8b4f8280a6139"
+        },
+        {
+          "name": "selectedExchangeOption",
+          "sha256": "2aa40b7cd7c7d93b1fdb6299bc757a94dc23b11ecabbab7185d3e093f6cdabfe"
+        },
+        {
+          "name": "exchangeCandidateForTarget",
+          "sha256": "ae7660ee1683e186857880d02eb6c86ce581784f57201b4a9fb45e55650dd7f3"
+        },
+        {
+          "name": "renderExchangeAssignmentOptions",
+          "sha256": "cffb6515749ce025729b5d5f5c036b33ea1575a60125e1935fa96cc2e74bedbd"
+        },
+        {
+          "name": "renderExchangeTargetOptions",
+          "sha256": "2815765b341a64c72468c419ef2fcf79f02ef0f016bed0120ec5fdd44b10834d"
+        },
+        {
+          "name": "renderExchangeTargetHelp",
+          "sha256": "3cfbfb759c57c91c00cbd856d871299f7b86adfeb788ebe0740d1da79bcf3bb6"
+        },
+        {
+          "name": "renderExchangeRows",
+          "sha256": "cf611e1c2b4d114f190e5d4652e34ceb753ac04a49b0ecd549358902bb58e807"
+        },
+        {
+          "name": "reviewNextStep",
+          "sha256": "1e17cd1f18b6469c7153d636f2c7725cd8a8f74e66e3d623f2f796862974c739"
+        },
+        {
+          "name": "renderRotaReview",
+          "sha256": "86a2fb76f17804601918688945841aa17c6e2a6989a5071d95a158a10879918d"
+        },
+        {
+          "name": "checklistStatusClass",
+          "sha256": "a21fecac6fc2892ea7c67afd2c9be5e28b1eff01b20b430de070c46d8b4cfb42"
+        },
+        {
+          "name": "renderChecklistCards",
+          "sha256": "cfc952dd0aacac9928e84818fd9c9d718834c33d1cb890e843c34314ca5fa89f"
+        },
+        {
+          "name": "renderLatestPublish",
+          "sha256": "6c4bd11fce9e55f064226f7fcf586e612bdc2f05b3162927190a8dc868acb59f"
+        },
+        {
+          "name": "publishChecklistRows",
+          "sha256": "771379f673d56641d7fabc3f9ec215260abd5ce7afdbc35579151917bf1d3f6d"
+        },
+        {
+          "name": "overLimitDebrief",
+          "sha256": "8b4d816744ef519903624e742d08cccd079a8e7dfef512672af440b2f821a74b"
+        },
+        {
+          "name": "renderRotaPublish",
+          "sha256": "b9da370e8c8a43a05324e4b28af7fdfec53b5a80a8799b0b5a0519d337c2dbd9"
+        },
+        {
+          "name": "renderAccounts",
+          "sha256": "d0cf08cbdfe7a2ac63b809b41efab112b52433526d07d61f65e4948c289f8a56"
+        },
+        {
+          "name": "renderDiagnostics",
+          "sha256": "35313dafce7e276cacd1d42feea741a746cad17493e2462bb2704cf85a30ce4f"
+        },
+        {
+          "name": "guideSteps",
+          "sha256": "cb64143bce1cd3b01211774ce53fe5017deea8b65b4d4419e0201fcab7d3f8a6"
+        },
+        {
+          "name": "guideBullets",
+          "sha256": "dc729666c16d1aede3d1cfc98ea21e4d3008600dc3b221dabc335a987a9091b4"
+        },
+        {
+          "name": "guideAction",
+          "sha256": "1491edf73be4504ef48eae4d29a7c190caed13f8def79e396ece785ab8c439af"
+        },
+        {
+          "name": "renderUserGuide",
+          "sha256": "4596c1cb6fe1ef47057debf13cc9378e7fc5e267d82ffab414adc407e35183c3"
+        },
+        {
+          "name": "loadMappings",
+          "sha256": "5b95c721cc06b5dab2ea62e5b188675d6296f092c8c5dd2f779a98a1c74a1b83"
+        },
+        {
+          "name": "updateNavigationState",
+          "sha256": "50b699c332609f29f77d29205135d888516fcf67b59b88312b8d6506cfc1dc13"
+        },
+        {
+          "name": "showView",
+          "sha256": "fd4e22989d42a0f0a9fed3e1af18e362ffd8e00bf48bc93df5697328abdc31e9"
+        },
+        {
+          "name": "revealGuideSection",
+          "sha256": "c4446736cc832dbb2bae324d1f0f37c06518ebfbbd6934d32bf1e99da118eaa4"
+        },
+        {
+          "name": "updateRouteAvailabilityNotice",
+          "sha256": "7a781e484169081c6259621b08ba77a4ff8a6c7959abd11c8d81112aa8b4e446"
+        },
+        {
+          "name": "navigateToView",
+          "sha256": "0d1afcea9cfb2d351413a7c258c217e3df3aeca7262a47b07bbf70f6f38a679d"
+        },
+        {
+          "name": "bindNavigation",
+          "sha256": "4a77c27d49ffb61380264e5d91ddcae81d32034468f9abc1eb725362fcfe1730"
+        },
+        {
+          "name": "bootApp",
+          "sha256": "209fcb612b8a16a2521e4e02d03ed93c5e3d5497b7bfd7785d74ce00f372c8f0"
+        },
+        {
+          "name": "labelScrollableRegions",
+          "sha256": "1d45fe068e11d6bb043126117d1c4f27661abaaf68825e07511ccf62f52a09aa"
+        },
+        {
+          "name": "boot",
+          "sha256": "efa89d9383d241b41f70313526d0bea0e96773aa5e86bda57128531e7ba855a7"
+        },
+        {
+          "name": "resetPrivateSessionView",
+          "sha256": "b8ee2af6a68e6daf547d3ad0b6e01d5f8e41612787c1268f04e1d6bc58a226a7"
+        }
+      ],
+      "literal_tables_equal": 37,
+      "literal_forms_equal": 14,
+      "template_literals_equal": 672
+    },
+    {
+      "file": "frontend/src/member-workspace.ts",
+      "before_sha256": "88774f277131a1ed83174d288d882653fc04add295b8237fefa62636e08617ea",
+      "candidate_sha256": "506c486046fe6f0bbea5c6c4bf6357fec6e9649d91a9ed1ed890551ed3503cca",
+      "changed_existing_functions": [
+        "openMemberWorkspace"
+      ],
+      "added_functions": [],
+      "unchanged_existing_functions": [
+        "memberCallPresentation",
+        "localCalendarToday",
+        "memberDesignationPresentation",
+        "recordedDateMarkup",
+        "recordedRange",
+        "updateMemberSectionCue",
+        "revealMemberSection",
+        "memberSectionsVertical",
+        "updateMemberIdentityScroll",
+        "workspaceDialog",
+        "openMemberCsvImport"
+      ],
+      "changed_recursive_function_declarations": [
+        "openMemberWorkspace",
+        "openMemberWorkspace.render"
+      ],
+      "unchanged_recursive_function_declarations": [
+        {
+          "name": "memberCallPresentation",
+          "sha256": "2f3f912ff0c2960f05a88325028ff500365ec6587149b20be5f97eb1def19a35"
+        },
+        {
+          "name": "localCalendarToday",
+          "sha256": "6c2cedf72d9916d9c8be84c8c5feb1f5d4da577cd4206871868a05368cf88cb1"
+        },
+        {
+          "name": "memberDesignationPresentation",
+          "sha256": "a4477128e04242c9b9392e2aa1c2c4354319b39abcaed1ca0729816f5f708393"
+        },
+        {
+          "name": "recordedDateMarkup",
+          "sha256": "efeff780c1864bdc265c62122cdb7fc799ad3f9c4d4686c2a5d4dc5edeb2765d"
+        },
+        {
+          "name": "recordedRange",
+          "sha256": "77bc7c1c3fe7337aabb28f9bdfd3be6655f94a8ef66729dda5c1def3264702bc"
+        },
+        {
+          "name": "updateMemberSectionCue",
+          "sha256": "4e890914302aabb8f8335699005d18c58479eeb783e2b69bdba491af9198b766"
+        },
+        {
+          "name": "revealMemberSection",
+          "sha256": "5182171ac6f55bc627c58ead99a532beb1c09f5f223491fa583c9ae9db700c99"
+        },
+        {
+          "name": "memberSectionsVertical",
+          "sha256": "0f7a67cefa5f325dfdba7e1069c66dfdc03ca5cafe7be99b4cbbea5deeb3dbe2"
+        },
+        {
+          "name": "updateMemberIdentityScroll",
+          "sha256": "eb543b95d0e3d017fb38d36977a84d0cedd3c52fa8e9d047ae49f6a4319b5fd5"
+        },
+        {
+          "name": "workspaceDialog",
+          "sha256": "63d17d5b78bede2bfc30c16062add87be4976dce89124d334267cf02cbb8fc84"
+        },
+        {
+          "name": "openMemberWorkspace.historyMetadata",
+          "sha256": "8e53a13f2b823ac601c9ee1d9eb69262632e5f4dddf24bc94ec54a5e3cb39d89"
+        },
+        {
+          "name": "openMemberWorkspace.sectionDraftChanged",
+          "sha256": "56318fcddae3561ab419d5324e4b20738768c3ed21f985787a9cee553bc06bfd"
+        },
+        {
+          "name": "openMemberWorkspace.sectionMetadata",
+          "sha256": "66beefe991cc69e6bdbde54b4663e6e20a872a7279cb8e3122f66783b223e595"
+        },
+        {
+          "name": "openMemberWorkspace.refreshSectionMetadata",
+          "sha256": "be937959469f1c7e2296484518227153f2f926cc360a7a608e3b9cc79ed0ee3c"
+        },
+        {
+          "name": "openMemberWorkspace.validateDraft",
+          "sha256": "75e280f6fb2e77216666c56712a5008c4d6503ba92999a8b77b27e386aa5fe08"
+        },
+        {
+          "name": "openMemberWorkspace.designationEditor",
+          "sha256": "cad7eda0c5da3f8dfde2af914e7db32bbd0e6b486118159ea9c1381b030ad1c5"
+        },
+        {
+          "name": "openMemberWorkspace.scheduledCalls",
+          "sha256": "9661159b45b8debd14b5bf2a8d028ca601274547d394a2cfd63dbd3bc14ea866"
+        },
+        {
+          "name": "openMemberWorkspace.detailedAnalysis",
+          "sha256": "ed1ba68273ba12d1a906ea5d11402d43b1f6071d3152f5bdb9ef7ee9ba45e3d5"
+        },
+        {
+          "name": "openMemberWorkspace.history",
+          "sha256": "d3169518c00e7ae3a66f252b88bc16c6105157a1ee95da07c18dadfaa23a6ac2"
+        },
+        {
+          "name": "openMemberWorkspace.content",
+          "sha256": "1b5ebdaa76dd6b0e758f8de506580a19c717bd4e78f7031df21234f21e126f6b"
+        },
+        {
+          "name": "openMemberWorkspace.status",
+          "sha256": "1ab13ec7737960da233fc1f4303ee92ff51bc77a6e371b882718eaf603a68782"
+        },
+        {
+          "name": "openMemberWorkspace.loadTab",
+          "sha256": "ee29e56793d8428009615bb5782246d0fda18f1586c3afc01fa5477ea2ceef7b"
+        },
+        {
+          "name": "openMemberCsvImport",
+          "sha256": "997923d7a3af728d45f3f4dacf5bd4d04beb68433907bd01be16c3d73ee1654d"
+        },
+        {
+          "name": "openMemberCsvImport.setImportStep",
+          "sha256": "944d9c0392beba1a10a5e9b0d740c35d07416aca87eed1325179ed365ed6e693"
+        },
+        {
+          "name": "openMemberCsvImport.previewFile",
+          "sha256": "678b9b0fd32a5a00f2c981211d28dee23b60934760fae4c77bf34d78330c70dd"
+        },
+        {
+          "name": "openMemberCsvImport.changeSummary",
+          "sha256": "1fdd2cbd1341435809d6c85103ef24e34b370afc28451756d87e17bc6884f3ac"
+        },
+        {
+          "name": "openMemberCsvImport.renderRosterPreview",
+          "sha256": "d55a7d94d7b9c27c19c35d046ad1278b21089c4e39670ec3369f8f87baa5d05e"
+        },
+        {
+          "name": "openMemberCsvImport.actions",
+          "sha256": "ba92fc31f16dfd5dd5e4233fa5fad37449d15a8bcc4c82654a55b5c5c5ed4f85"
+        },
+        {
+          "name": "openMemberCsvImport.matchView",
+          "sha256": "5656a9ee4e8b6dd083555639c32b70bcca7b0fb43a8329282757427be83c39bd"
+        },
+        {
+          "name": "openMemberCsvImport.rowHtml",
+          "sha256": "a922265e036ab85bb55c6b589379966133bd460e2902a3615b69cb02c9414b35"
+        },
+        {
+          "name": "openMemberCsvImport.blockerText",
+          "sha256": "896b2a012f77e566386cae6e8c1b1a3143c80ad76d7a05c5b64a4d2f121a101e"
+        },
+        {
+          "name": "openMemberCsvImport.updateBlocker",
+          "sha256": "778dfd2d9e18e8c6da866bb69a98c6410f291a732a2bdab97f19467eb77d45e2"
+        },
+        {
+          "name": "openMemberCsvImport.chooseRow",
+          "sha256": "72288d390aacb690f722129f366a45a83c905d1b73b43aacea6be7d1bea7940f"
+        },
+        {
+          "name": "openMemberCsvImport.renderPreview",
+          "sha256": "8789510e59a0fd331c881b79cd85a4401b1bc8889582280b5344494758b8a62c"
+        }
+      ],
+      "literal_tables_equal": 1,
+      "literal_forms_equal": 2,
+      "template_literals_equal": 161
+    },
+    {
+      "file": "frontend/src/operational-import.ts",
+      "before_sha256": "1ccbcf4181330a5f66c59b0723ec02f878a268b6b3030aa99b177de1b7070355",
+      "candidate_sha256": "d14e9b132a58e965f97a1531ab95845215092bbc6cf602c4344412047227e7a4",
+      "changed_existing_functions": [
+        "createMemberInline",
+        "openOperationalImport"
+      ],
+      "added_functions": [],
+      "unchanged_existing_functions": [
+        "leaveImportApprovalLabel",
+        "leaveImportApprovalAuthority",
+        "leaveImportApprovalSummary",
+        "updateLeaveImportApprovalAuthority"
+      ],
+      "changed_recursive_function_declarations": [
+        "createMemberInline",
+        "createMemberInline.checkExisting",
+        "openOperationalImport",
+        "openOperationalImport.renderReview"
+      ],
+      "unchanged_recursive_function_declarations": [
+        {
+          "name": "leaveImportApprovalLabel",
+          "sha256": "4baa02d36720d80b19fc7e64b9599740457f05b660c2021f575856a4bc8b33c5"
+        },
+        {
+          "name": "leaveImportApprovalAuthority",
+          "sha256": "87254abe8be8a891df9b02da93f5a8e78b3b956dd9e48d4ce8c79e998fc59f16"
+        },
+        {
+          "name": "leaveImportApprovalSummary",
+          "sha256": "c5f54ca41aac54495109d3b2fc525589f5de385eaf03593d948d47ad6d080f18"
+        },
+        {
+          "name": "updateLeaveImportApprovalAuthority",
+          "sha256": "8f04fbdb491b1c804c003905a77831d9e63bda5b7790fd1a196d1249b94aebf4"
+        },
+        {
+          "name": "openOperationalImport.setStep",
+          "sha256": "c4667349f3945cd1d97d7f56fdd01f3dae7f6da251de4333e9dd7fab26528f09"
+        },
+        {
+          "name": "openOperationalImport.loadOptions",
+          "sha256": "9de3c5a1e03bfaaf34bf350bf19f3264a213c200da62826e8177dcc05c8f2bb8"
+        },
+        {
+          "name": "openOperationalImport.say",
+          "sha256": "61614985feea84ef90f7784ee740e9f8a5e33cb96935832254bd8ccebe790e94"
+        },
+        {
+          "name": "openOperationalImport.dirtyPreview",
+          "sha256": "e5fd0b9b2280d1d3977cbf0b4c319668c25676c459f82096e34760e2f66a3344"
+        },
+        {
+          "name": "openOperationalImport.runPreview",
+          "sha256": "079a63ba4f8078a377b3c85065c97f683ba2b3806e7c649c5d1f968dca79d2f9"
+        },
+        {
+          "name": "openOperationalImport.renderMapping",
+          "sha256": "91129518daf0851b630332d0579ab4268be99515314764c67f5981d0131eed81"
+        }
+      ],
+      "literal_tables_equal": 0,
+      "literal_forms_equal": 2,
+      "template_literals_equal": 52
+    },
+    {
+      "file": "frontend/src/record-workspace.ts",
+      "before_sha256": "469fd6bf2e4118b15ad343d8059cd3cfb0acbc6483bea969ca5fb93488644335",
+      "candidate_sha256": "20b50cdbd991b5b5a16d06b51020be2838514a553823512373818f65636427aa",
+      "changed_existing_functions": [
+        "openRecordEditor"
+      ],
+      "added_functions": [],
+      "unchanged_existing_functions": [],
+      "changed_recursive_function_declarations": [
+        "openRecordEditor",
+        "openRecordEditor.render"
+      ],
+      "unchanged_recursive_function_declarations": [
+        {
+          "name": "openRecordEditor.options",
+          "sha256": "779540acfea2adda601d0fcc4e06a3539c5201e09dee575736cc9ee32de7e870"
+        },
+        {
+          "name": "openRecordEditor.loadEditor",
+          "sha256": "c3aff1d3cdee08eb9fdd83786a034835ad93b5a9c138f65a81804bec130ace91"
+        }
+      ],
+      "literal_tables_equal": 0,
+      "literal_forms_equal": 1,
+      "template_literals_equal": 30
+    },
+    {
+      "file": "frontend/src/reference-workspace.ts",
+      "before_sha256": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd",
+      "candidate_sha256": "dbd6d1bdb13893ee49d3f004518177b964101520e2bd2034d8639f1c76f134bd",
+      "changed_existing_functions": [],
+      "added_functions": [],
+      "unchanged_existing_functions": [
+        "updateRegistryResultStatus",
+        "openMappingCreator",
+        "openReferenceHistory",
+        "openUnitRegistry",
+        "openReferenceCatalog"
+      ],
+      "changed_recursive_function_declarations": [],
+      "unchanged_recursive_function_declarations": [
+        {
+          "name": "updateRegistryResultStatus",
+          "sha256": "d2ff0a98fc542ae41f2e7b134b5400d9e9a9b037d20f64b9d68cb198d5da5345"
+        },
+        {
+          "name": "openMappingCreator",
+          "sha256": "3bd1c4373c60a5be44a78c0f740d387aa444f6a72ef4d69be4b190852e8a7f1c"
+        },
+        {
+          "name": "openMappingCreator.load",
+          "sha256": "52f00159cf3a1190c61dfb170ae2b3e5007d66f1e867ffee88a7b5de79dcdd1c"
+        },
+        {
+          "name": "openReferenceHistory",
+          "sha256": "6401e5755d0178325378f37479d6b473bb0e671d05c3f504ff900a8a10327c5b"
+        },
+        {
+          "name": "openReferenceHistory.loadActivity",
+          "sha256": "f29465ddc0b498cbe5b01b8a980a93d9a5a1df0ee4d8c5cc8e02e26b60486d04"
+        },
+        {
+          "name": "openUnitRegistry",
+          "sha256": "8beb57d18df31b1ffddf742b12b2bc1f4ecd2e72b22aea012de4c07e6cb219d2"
+        },
+        {
+          "name": "openUnitRegistry.loadUnits",
+          "sha256": "d923eb7f747fd4674626764a45663c69a1875abbc30c93eabd0dfc8ad545ab39"
+        },
+        {
+          "name": "openUnitRegistry.refreshSavedUnit",
+          "sha256": "e8b0c8670c31e65025196e35d7182264c272c7a7bc01cda8ef831f2b12255334"
+        },
+        {
+          "name": "openUnitRegistry.updateCountStatus",
+          "sha256": "57ee8ef59b5150c0c82c0e2b51fa8d34da891fe010c01cf5ff525a625c41c16e"
+        },
+        {
+          "name": "openUnitRegistry.refreshMemberCounts",
+          "sha256": "2d6cb8637a38aecd2d2b8e1f912f692eea8e5dc8b9c98cfb54dbee1fd604d740"
+        },
+        {
+          "name": "openUnitRegistry.render",
+          "sha256": "889ce3b8353ec984d97e569e76b4d13fbf07367dd6d0fa1644a57edb3a53696f"
+        },
+        {
+          "name": "openUnitRegistry.render.filterUnits",
+          "sha256": "d0a81cc1ecb9ab34715d5509fd7568598051bf6e8ea0bd6588689cb977e22d18"
+        },
+        {
+          "name": "openReferenceCatalog",
+          "sha256": "03e997d16031111ae03a9b7bdab22ec47491ec90744d775830d9a7a40d46ab0d"
+        },
+        {
+          "name": "openReferenceCatalog.load",
+          "sha256": "123f14a92d29789e76d4fbd80e33c5818eaa5f37921d583dde9581dbe0fc4ba0"
+        },
+        {
+          "name": "openReferenceCatalog.render",
+          "sha256": "3de9a1021d9288148622d079fda81d6ed32df19842c0e73720a4366f1d1a6011"
+        }
+      ],
+      "literal_tables_equal": 0,
+      "literal_forms_equal": 3,
+      "template_literals_equal": 49
+    }
+  ],
+  "held_color_source_sha256": {
+    "frontend/src/main.ts": "15b79223710a53a9e0ccdd70373a92e568f6ee603f56e3747454ab25ac258cc0",
+    "frontend/src/premium-theme.css": "acc46b2249087f365ca855bcd9630628c390c4cdf013301daaee40ede80e55f4",
+    "frontend/src/styles.css": "306928f568686cfc453178f73731a797f7fe5b9f016d7128bf9cd68dc6e1fb86",
+    "frontend/src/ui.ts": "680d7830bca8826b46b6f1dc2c0d064d2a3a2e16fb41188d2c323de6bccf85b2",
+    "frontend/src/analysis-charts.ts": "823a2cddb07d0f69ba1fe12719e4094ae29fda839769e1f4b2dc75e7aa887c4a",
+    "frontend/src/superadmin.ts": "ce337c066f127db0d4400daf86e90316d5442dced44c3eea0e996584ef1ed841",
+    "frontend/src/limits.ts": "f7c040de08fd0a593e1e071d7c09b2696344b9b85bbcd836f5367b49e4ef8db6",
+    "frontend/src/component-reference.ts": "dcf2631694638459aa31be896bb966e0d8472e56b811d28464392a8fc34b15de"
+  },
+  "source_map": {
+    "path": "docs/premium-ui/reviews/semantic-color-register-20261109-item022-source-map.json",
+    "sha256": "ae0071a17e03105260aa6a510807a2d2fb1e17b857d1cbf573073555d6c08f86"
+  },
+  "effect_proof": {
+    "path": "tmp/nested-reference-v13r1/typecheck-request-markup-proof.json",
+    "sha256": "758451c5f8fc7341f2da0510ab2e9d589eaba091c0e259d17b02216a62f09ea1",
+    "typecheck_diagnostics": [],
+    "all_existing_API_markup_confirmation_storage_serialization_expressions_exact": true,
+    "details": [
+      {
+        "file": "main.ts",
+        "API_expressions": 100,
+        "serialization_confirmation_storage_expressions": 13,
+        "markup_literals_templates": 494,
+        "exact": true
+      },
+      {
+        "file": "member-workspace.ts",
+        "API_expressions": 8,
+        "serialization_confirmation_storage_expressions": 24,
+        "markup_literals_templates": 119,
+        "exact": true
+      },
+      {
+        "file": "operational-import.ts",
+        "API_expressions": 10,
+        "serialization_confirmation_storage_expressions": 10,
+        "markup_literals_templates": 34,
+        "exact": true
+      },
+      {
+        "file": "record-workspace.ts",
+        "API_expressions": 6,
+        "serialization_confirmation_storage_expressions": 3,
+        "markup_literals_templates": 19,
+        "exact": true
+      },
+      {
+        "file": "reference-workspace.ts",
+        "API_expressions": 11,
+        "serialization_confirmation_storage_expressions": 15,
+        "markup_literals_templates": 27,
+        "exact": true
+      }
+    ]
+  },
+  "preserved_retained_controllers_painters_and_delete": [
+    {
+      "name": "assertProfileUnitReadShape",
+      "sha256": "be5ae20b3485598bf970ce89598cc6e090b8619069fd8c37bf7b9f0d7492fe05",
+      "exact": true
+    },
+    {
+      "name": "assertProfileLeaveReadShape",
+      "sha256": "e173b8cd04a6b67835086a5ef64c10582e98fd4f43f0ddae940ec1a1f6be23ea",
+      "exact": true
+    },
+    {
+      "name": "patchProfileParentRegion",
+      "sha256": "fb88ef65807e4f75242468e91e2e7fd089e3811868c5a64c4fc4a33ba82f23f1",
+      "exact": true
+    },
+    {
+      "name": "refreshProfileLeaveReadback",
+      "sha256": "e98cc4d1b8f0d5d2c2a14b5c593f67d29b6de5a3a35ffeb2efc23145afd8842a",
+      "exact": true
+    },
+    {
+      "name": "createDependentParentLifecycle",
+      "sha256": "f7182c93b22d11ca64e416bba0b04895b71030919eb6ed9a1fa818298efbf6cf",
+      "exact": true
+    },
+    {
+      "name": "refreshUnitBoardReadback",
+      "sha256": "3ce1dff44e525eead388307f21e99906bb7e665a50cca298f2a1f49294c526c7",
+      "exact": true
+    },
+    {
+      "name": "refreshUnitModalReadback",
+      "sha256": "7b563ea0487179afb6bf502fcd86a06a76025bcd2e46df839604391d9fbe0f5e",
+      "exact": true
+    },
+    {
+      "name": "runAdminDelete",
+      "sha256": "83dbd15dcb5318f995f4584f191c3d67e175dca13c0be87e2d9019bb35ebedab",
+      "exact": true
+    }
+  ],
+  "preserved_full_leave_handlers": [
+    {
+      "name": "Full Leave cancellation handler including owner and known-confirmed control markers",
+      "start": "    const cancelLeaveBtn = target.closest<HTMLButtonElement>(\"[data-cancel-leave]\");",
+      "end": "    const leaveCalendarViewBtn = target.closest<HTMLButtonElement>(\"[data-leave-calendar-view]\");",
+      "sha256": "14213c4564495a18a715ea11d84f04b1c1762e37850673a64474acddb41a944b",
+      "exact": true
+    },
+    {
+      "name": "Full monthly Leave approval handler including owner and retained-parent notifications",
+      "start": "    if (target.closest(\"[data-approve-month-leave]\") && isAdminUser()) {",
+      "end": "    if (target.id === \"apply-leave-import\") {",
+      "sha256": "7219214134bb9217cceb7325d1c8958308d1c7c2e3f038dc282ee453f516e07f",
+      "exact": true
+    }
+  ],
+  "item22": {
+    "anchor_group_count": 100,
+    "all100_current_to_candidate_anchor_text_groups_exact": true,
+    "line_updates_from_applied_leaveV1r2": [
+      {
+        "file": "frontend/src/main.ts",
+        "search_literal": "function memberStatusBadge",
+        "before": [
+          {
+            "line": 3523,
+            "text": "function memberStatusBadge(member: DepartmentMember): string {"
+          }
+        ],
+        "after": [
+          {
+            "line": 3541,
+            "text": "function memberStatusBadge(member: DepartmentMember): string {"
+          }
+        ]
+      },
+      {
+        "file": "frontend/src/main.ts",
+        "search_literal": "function leaveStatusLabel",
+        "before": [
+          {
+            "line": 3786,
+            "text": "function leaveStatusLabel(value: string): string {"
+          }
+        ],
+        "after": [
+          {
+            "line": 3804,
+            "text": "function leaveStatusLabel(value: string): string {"
+          }
+        ]
+      },
+      {
+        "file": "frontend/src/main.ts",
+        "search_literal": "function leaveStatusBadge",
+        "before": [
+          {
+            "line": 4116,
+            "text": "function leaveStatusBadge(status: string): string {"
+          }
+        ],
+        "after": [
+          {
+            "line": 4134,
+            "text": "function leaveStatusBadge(status: string): string {"
+          }
+        ]
+      },
+      {
+        "file": "frontend/src/main.ts",
+        "search_literal": "function renderRotaTemplateDistribution",
+        "before": [
+          {
+            "line": 6380,
+            "text": "function renderRotaTemplateDistribution(template: RotaTemplateMonth): string {"
+          }
+        ],
+        "after": [
+          {
+            "line": 6398,
+            "text": "function renderRotaTemplateDistribution(template: RotaTemplateMonth): string {"
+          }
+        ]
+      },
+      {
+        "file": "frontend/src/main.ts",
+        "search_literal": "class=\"row-menu__danger\" data-cancel-leave",
+        "before": [
+          {
+            "line": 4124,
+            "text": "${leave.status === \"cancelled\" ? \"\" : `<button type=\"button\" role=\"menuitem\" class=\"row-menu__danger\" data-cancel-leave=\"${leave.id}\">Cancel leave…</button>`}"
+          }
+        ],
+        "after": [
+          {
+            "line": 4142,
+            "text": "${leave.status === \"cancelled\" ? \"\" : `<button type=\"button\" role=\"menuitem\" class=\"row-menu__danger\" data-cancel-leave=\"${leave.id}\">Cancel leave…</button>`}"
+          }
+        ]
+      },
+      {
+        "file": "frontend/src/main.ts",
+        "search_literal": "class=\"row-menu__danger\" data-delete-leave",
+        "before": [
+          {
+            "line": 4125,
+            "text": "${isAdminUser() ? `<button type=\"button\" role=\"menuitem\" class=\"row-menu__danger\" data-delete-leave=\"${leave.id}\">Delete leave…</button>` : \"\"}"
+          }
+        ],
+        "after": [
+          {
+            "line": 4143,
+            "text": "${isAdminUser() ? `<button type=\"button\" role=\"menuitem\" class=\"row-menu__danger\" data-delete-leave=\"${leave.id}\">Delete leave…</button>` : \"\"}"
+          }
+        ]
+      }
+    ],
+    "frozen_definition_preserved": true
+  },
+  "rationale": [
+    "Four changed files contain lifecycle wiring only. Main adds one conditional-reference wrapper and modifies profile/direct-record/import entries inside existing event binding. The retained parent controller, ownership/latest-read checks, shape validation, partial painters and full deletion function remain byteexact.",
+    "Record editor accepted own Save now notifies before close; its legacy saved callback remains for existing consumers. Main supplied-lifecycle callback skips its old duplicate notification. Profile saved callback retains cache/tab refresh while its accepted parent signal moves into the record hook. These are intentional timing changes requiring actual runtime proof.",
+    "Member creation emits constant accepted metadata before alive()/fallible child result use. Read-only Use existing emits no mutation signal. Optional reference notifications propagate unit/member/record changes through enclosing profiles, editors and importers; child close adapters are no-op so only final owner closes the retained lifecycle.",
+    "Actual confirmed unit references conditionally invoke the existing complete fallback GET helper at final outer close. Ordinary record/import/member changes do not acquire that reference read. No month-active board list is substituted for complete fallback membership, and no assignment/count is fabricated for a new unposted member.",
+    "All existing template literals and table/form literal contents are exact across five held files. Main37tables/14forms remain exact; member/import/record counts are reported per file. No CSS/font/status factory/visual markup edits. All100 semantic color anchor text groups remain exact with explicit current-to-candidate line bridges.",
+    "API request expressions and confirmation/serialization/storage expressions remain exact. Existing full Leave cancellation and monthly approval branches preserve their owner guards, confirmations, known-confirmed disabled-state behavior and retained readback callbacks byteexact. Root must still bind applied build, inventories, acceptance evidence and fresh integration outcomes before reaccepting prior56."
+  ],
+  "affected_runtime_gates": [
+    "New runtime trigger/lifetime behavior: nested reference create then outer cancel, own record save with/without nested changes, child read/consumer failure, multiple accepted changes coalescing, no-write cancel and Use existing zero read, explicit/native final close and dirty/busy refusal.",
+    "Route/month/account/render/root/modal supersession, newer focus during held read, profile Next/initial-load Retry replacement, failed complete fallback read and read-only retry are bounded by concrete execution evidence. Unchanged source does not expand those guarantees.",
+    "Prior responsive/accessibility acceptances require source/build/owner bindings after integration. Focus restoration between stacked native dialogs, malformed response UX, screen reader announcements and timing races must not be inferred from markup or request parity."
+  ],
+  "limits": [
+    "No browser execution, product edits, acceptance ledger update or progress change by this author. Root owns any reported runtime outcomes separately.",
+    "This artifact does not prove all original159 families or all260 items. Catalog and other remaining reference/legacy mutation paths remain separate scope gaps.",
+    "Physical-device and native assistive-technology checks remain pending; emulation cannot certify those.",
+    "The report checks only exact before/candidate sources frozen here; no global historical backend preservation or deployment claim."
+  ]
+}

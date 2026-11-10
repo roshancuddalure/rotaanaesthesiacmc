@@ -1,0 +1,53 @@
+{
+    "recorded_at_utc":  "2026-11-09T17:29:18.7906450Z",
+    "reviewer":  "/root/membercore159_source",
+    "scope":  "Read-only source audit of original159 member core/details/roles update propagation. No application changes or browser runs.",
+    "source_sha256":  {
+                          "frontend/src/main.ts":  "45743fb64260289e50526480572bf25e33d8dc1a69f83397286660a03951cfba",
+                          "frontend/src/member-workspace.ts":  "105cc1d91ea4815d565ad4859fc01412cf576a3203c07834f4010e3fef7ef1a5",
+                          "frontend/src/services/api.ts":  "5167f842eb4e07cf5216d18bde2ef48ded1a6692490d80dd261e4ceb038a5e3c"
+                      },
+    "findings":  [
+                     {
+                         "status":  "source_confirmed_gap_runtime_unverified",
+                         "trigger":  "Units assignment or Leave record member link opens profile; Edit profile opens Details, while Roles and aliases share the same Save changes form.",
+                         "accepted_write":  "member-workspace.ts:1200 profile form sends PUT /api/v1/admin/member-workspace/{id}; after returned DepartmentMember it calls changed(member) at1227, never notifyParent.",
+                         "existing_callback":  "main.ts:3406 onMemberWorkspaceChanged replaces global member entry, reloads /api/v1/admin/members and admin audit, and renders only activeView members.",
+                         "stale_dependency":  "Unit row at main.ts4464 reads assignment.person canonical_name/default call level; Leave row at4049 reads leave.person canonical_name/default call level. Those objects belong to previously read unitManagement/leaveRequests snapshots.",
+                         "lifecycle":  "main.ts3400 passes createDependentParentLifecycle into profile; member-workspace ProfileOperationalChange currently accepts units/leave and emits notifications only for linked cancellation963/save990.",
+                         "consequence":  "A successful profile core PUT does not currently mark the owned Unit/Leave parent for a deferred read on final profile close. An actual runtime diagnostic is required before defect acceptance."
+                     },
+                     {
+                         "status":  "separate_source_gap_runtime_unverified",
+                         "trigger":  "Names and duplicates merge",
+                         "source":  "member-workspace.ts1115 POST member-workspace/{id}/merge returns DepartmentMember;1125 changed(member), no notifyParent.",
+                         "limit":  "Core profile PUT diagnostic does not exercise merge, linked source identity removal, or duplicate cache recovery."
+                     },
+                     {
+                         "status":  "counterevidence",
+                         "source":  "services/api.ts343 and351 compare captured authGeneration before/after reading response body.",
+                         "conclusion":  "Missing component callback generation guard alone is not evidence of a cross-account leak; shared request guard rejects stale account response first."
+                     }
+                 ],
+    "diagnostic":  {
+                       "path":  "frontend/tests/premium-original159-member-core-parent-diagnostic.browser.mjs",
+                       "sha256":  "719b3d096c4d32a7e2735f32f4ab0d4420366e7551cde1ec338e64143a37e986",
+                       "executed":  false,
+                       "static_node_check_exit_code":  0,
+                       "expected_contexts":  12,
+                       "report":  "docs/premium-ui/qa-original159-member-core-parent-diagnostic.json",
+                       "mutation_safety":  "Strict browser route fulfils existing PUT locally and never forwards non-GET requests. Only remaining GETs reach disposable RAM8031."
+                   },
+    "recommendations":  [
+                            "Use the existing owned deferred parent read lifecycle; notify immediately after confirmed core response before draft/UI transformations or changed callback that could throw. Preserve payloads, roles, permission checks and cached save semantics.",
+                            "Test core save, Roles Save changes and merge as distinct mutation triggers; ensure final close coalesces multiple confirmed writes and untouched cancellation performs no dependent GET.",
+                            "Exercise parent GET failure with read-only retry, child post-accept markup failure, replacement profile Next/Retry, route/month/account supersession, and newer focused input retention before applying repair.",
+                            "Use the full returned parent snapshot for current names and default calls; do not manually invent reassignment or posting override policy. Existing posting types may override the newly saved base default."
+                        ],
+    "limitations":  [
+                        "No runtime defect claim yet.",
+                        "No application/backend/ledger edits.",
+                        "Test author did not run browsers; root coordinates execution against held applied source.",
+                        "Physical device/native AT pending."
+                    ]
+}
